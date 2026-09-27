@@ -1,0 +1,635 @@
+{
+  "note": "Catalogue products whose module NIST lists as Modules In Process / Implementation Under Test. Reviewed pairs only (REVIEWED_IN_PROCESS in priv scripts/derive_has_certification.py).",
+  "matches": [
+    {
+      "product_id": "Alibaba-Cloud-Crypto",
+      "list": "MIP",
+      "module": "Alibaba Cloud Crypto",
+      "vendor": "Alibaba Cloud Computing Ltd.",
+      "nistStage": "Cost Recovery",
+      "date": "2026-09-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "Broadcom-PGP-Cryptographic-Engine",
+      "list": "IUT",
+      "module": "PGP Cryptographic Engine",
+      "vendor": "Broadcom Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-03-11",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "Broadcom-PGP-Cryptographic-Engine",
+      "list": "IUT",
+      "module": "PGP Cryptographic Engine (Kernel Mode)",
+      "vendor": "Broadcom Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-08-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "HPE-Cryptographic-Module",
+      "list": "MIP",
+      "module": "HPE Cryptographic Module",
+      "vendor": "Hewlett Packard Enterprise",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-07-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "Hikvision-FIPS-Provider",
+      "list": "MIP",
+      "module": "Hikvision FIPS Provider",
+      "vendor": "Hangzhou Hikvision Digital Technology Co., Ltd",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-08-28",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "Oracle-OpenSSL-FIPS-Provider",
+      "list": "MIP",
+      "module": "Oracle OpenSSL FIPS Provider",
+      "vendor": "Oracle Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-06-12",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "TASS-Crypto-Engine-LMS",
+      "list": "MIP",
+      "module": "TASS Crypto Engine",
+      "vendor": "Beijing JN TASS Technology Co., Ltd.",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-09-23",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "TASS-Crypto-Engine-PQC",
+      "list": "MIP",
+      "module": "TASS Crypto Engine",
+      "vendor": "Beijing JN TASS Technology Co., Ltd.",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-09-23",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
+      "list": "MIP",
+      "module": "OpenSSL FIPS Provider",
+      "vendor": "The OpenSSL Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "amd-versal-adaptive-soc",
+      "list": "IUT",
+      "module": "AMD Versal ACAP",
+      "vendor": "Advanced Micro Devices (AMD)",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-08-19",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "android-17-pqc",
+      "list": "MIP",
+      "module": "Android Kernel Cryptographic Module",
+      "vendor": "Google, LLC",
+      "nistStage": "Pending Review",
+      "date": "2026-09-14",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "MIP",
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Pending Review",
+      "date": "2026-09-24",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-11-08",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.2.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.3.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.3.0, h4.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.4.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-05-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.4.0, h4.0)",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-05-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "blackberry-certicom-security-builder-fips-module",
+      "list": "MIP",
+      "module": "Security Builder FIPS Module",
+      "vendor": "Blackberry Limited",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-08-14",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-07-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-06-05",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-05-18",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "bouncy-castle-c-net",
+      "list": "MIP",
+      "module": "BC-FNA (Bouncy Castle FIPS .NET API)",
+      "vendor": "Legion of the Bouncy Castle Inc.",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-05-18",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciena-wavelogic-6-extreme",
+      "list": "IUT",
+      "module": "WaveLogic 6 Extreme Encryption Modem",
+      "vendor": "Ciena Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-09-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciena-wavelogic-6-extreme",
+      "list": "IUT",
+      "module": "WaveLogic 6 Extreme Encryption Module",
+      "vendor": "Ciena Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-11",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "MIP",
+      "module": "CIQ Linux Kernel - Kernel Cryptographic API",
+      "vendor": "Ctrl IQ, Inc",
+      "nistStage": "Review",
+      "date": "2026-09-01",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "MIP",
+      "module": "Rocky Linux 9 NSS Cryptographic Module",
+      "vendor": "Ctrl IQ, Inc.",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-09-20",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "IUT",
+      "module": "Rocky Linux from CIQ (RLC) 10 GnuTLS Cryptographic Module",
+      "vendor": "Ctrl IQ, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-09-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "IUT",
+      "module": "Rocky Linux from CIQ (RLC) 10 Kernel Cryptographic API",
+      "vendor": "Ctrl IQ, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-09-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "IUT",
+      "module": "Rocky Linux from CIQ (RLC) 10 NSS Cryptographic Module",
+      "vendor": "Ctrl IQ, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-09-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ciq-rocky-linux-cavp-pqc",
+      "list": "IUT",
+      "module": "Rocky Linux from CIQ (RLC) 10 OpenSSL FIPS Provider",
+      "vendor": "Ctrl IQ, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-09-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "code-siren-post-quantum-cryptographic-pqc-library",
+      "list": "IUT",
+      "module": "Code Siren Polynom Post-Quantum Cryptographic Module I",
+      "vendor": "Code Siren, LLC",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-03-09",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "code-siren-post-quantum-cryptographic-pqc-library",
+      "list": "MIP",
+      "module": "Code Siren Post-Quantum Cryptographic (PQC) Library for Desktop",
+      "vendor": "Code Siren, LLC",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-07-07",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "code-siren-post-quantum-cryptographic-pqc-library",
+      "list": "MIP",
+      "module": "Code Siren Post-Quantum Cryptographic (PQC) Library for Mobile",
+      "vendor": "Code Siren, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-07-09",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "dell-bsafe-crypto-j",
+      "list": "IUT",
+      "module": "Dell BSAFE Crypto Module for Java 8.0",
+      "vendor": "Dell Australia Pty Limited, BSAFE Product Team",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "dell-bsafe-crypto-module-for-c",
+      "list": "MIP",
+      "module": "Dell BSAFE Crypto Module for C 3.1",
+      "vendor": "Dell Australia Pty Limited, BSAFE Product Team",
+      "nistStage": "Review",
+      "date": "2026-09-23",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "entrust-nshield",
+      "list": "MIP",
+      "module": "nShield 5s Hardware Security Module",
+      "vendor": "Entrust Corporation",
+      "nistStage": "Review",
+      "date": "2026-07-30",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "fortinet-fortios",
+      "list": "MIP",
+      "module": "FortiOS 7.2/7.4",
+      "vendor": "Fortinet, Inc.",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-09-16",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "fortinet-fortios",
+      "list": "IUT",
+      "module": "FortiOS 7.6",
+      "vendor": "Fortinet, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-11-12",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "fortinet-fortiweb",
+      "list": "MIP",
+      "module": "FortiWeb 7.6.7 firmware",
+      "vendor": "Fortinet Inc.",
+      "nistStage": "Pending Review",
+      "date": "2026-09-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "fortinet-fortiweb",
+      "list": "MIP",
+      "module": "FortiWeb-VM 7.6.7 Software",
+      "vendor": "Fortinet Inc.",
+      "nistStage": "Cost Recovery",
+      "date": "2026-09-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "futurex-gsp4000-hardware-security-module",
+      "list": "MIP",
+      "module": "GSP4000 Hardware Security Module",
+      "vendor": "Futurex LP",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-07-17",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "i4p-trident-hsm",
+      "list": "IUT",
+      "module": "Trident HSM Cryptographic Module",
+      "vendor": "i4p informatics ltd.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-07",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Pending Review",
+      "date": "2026-09-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Pending Review",
+      "date": "2026-09-17",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple silicon, Kernel, Software, SL1]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Review",
+      "date": "2026-07-31",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple silicon, User, Software, SL1]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Review",
+      "date": "2026-07-30",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "openssl",
+      "list": "MIP",
+      "module": "OpenSSL FIPS Provider",
+      "vendor": "The OpenSSL Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "pqcryptolib-core",
+      "list": "MIP",
+      "module": "PQCryptoLib-Core",
+      "vendor": "PQShield Ltd.",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-08-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "quantum-xchange-platform",
+      "list": "IUT",
+      "module": "PhioTX - D",
+      "vendor": "Quantum Xchange, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-09-24",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-2",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 Kernel Cryptographic API",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-2",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 gnutls",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-2",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux FIPS Provider",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-pqc",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 Kernel Cryptographic API",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-pqc",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 gnutls",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-pqc",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux FIPS Provider",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "thales-ciphertrust-manager",
+      "list": "IUT",
+      "module": "Thales CipherTrust Manager Core Security Module",
+      "vendor": "Thales",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-05-14",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "thales-luna-hsm",
+      "list": "IUT",
+      "module": "Luna K7 Cryptographic Module",
+      "vendor": "Thales",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-07-29",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "thales-luna-hsm",
+      "list": "IUT",
+      "module": "Thales Luna G7 Cryptographic Module",
+      "vendor": "Thales",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-04-17",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ubuntu-26-04-lts",
+      "list": "IUT",
+      "module": "Canonical Ltd. Ubuntu 26.04 GnuTLS Cryptographic Module",
+      "vendor": "Canonical Group Limited",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-07-27",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ubuntu-26-04-lts",
+      "list": "IUT",
+      "module": "Canonical Ltd. Ubuntu 26.04 Libgcrypt Cryptographic Module",
+      "vendor": "Canonical Group Limited",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-07-27",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "BitLocker Dump Filter (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Boot Manager (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Code Integrity (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Cryptographic Primitives Library (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Kernel Mode Cryptographic Primitives Library (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Secure Kernel Code Integrity (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "windows-server-2025",
+      "list": "IUT",
+      "module": "Windows OS Loader (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
+      "vendor": "Microsoft Corporation",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "wolfcrypt-post-quantum",
+      "list": "MIP",
+      "module": "wolfCrypt",
+      "vendor": "wolfSSL Inc.",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-04-16",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "wolfcrypt-post-quantum",
+      "list": "IUT",
+      "module": "wolfCrypt Post Quantum",
+      "vendor": "wolfSSL Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-01-06",
+      "firstSeen": "2026-09-26"
+    }
+  ]
+}
