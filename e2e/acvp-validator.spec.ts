@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
-  test.setTimeout(360000) // WASM load + autoInit + the full workbench run (see the 180 s wait below)
+  test.setTimeout(360000) // WASM load + autoInit + the workbench run (see the 180 s wait below)
 
   test.beforeEach(async ({ page }) => {
     // Suppress the WhatsNew alertdialog (fixed inset-0 overlay) that intercepts
@@ -59,21 +59,23 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     expect(ok, 'HSM autoInit failed').toBeTruthy()
 
     // Action: Programmatic State Dispatch
-    // We dispatch custom E2E event periodically until the results state changes
+    // We dispatch custom E2E event periodically until the results state changes.
+    //
+    // 2026-09-27: every category EXCEPT slh_stateful. The whole suite no longer
+    // fits a browser budget: measured on the production build (Chromium, Rust
+    // engine) it had run 18 minutes and 1,592 rows, all passing, and was still
+    // inside the SLH-DSA "s" sets (2.6-11 s per signature on the Rust engine).
+    // SLH-DSA and the stateful schemes stay covered where time allows: the
+    // dual-engine Node run (useAcvpSuite.runResults.local) and the nightly
+    // SLH-DSA suite. The "Run All" fallback click is gone for the same reason:
+    // racing the trigger, it would start the full suite.
+    const E2E_CATEGORIES = ['symmetric', 'hashing_mac', 'kdf', 'classical', 'ml_dsa', 'ml_kem']
     let testsRunning = false
     for (let i = 0; i < 20; i++) {
       // dispatch event
-      await page.evaluate(() => {
-        window.dispatchEvent(new CustomEvent('e2e:trigger_acvp'))
-      })
-
-      // also try UI button just in case — "Execute ACVP Tests" renamed to
-      // "Run All" when the category-picker sidebar was added (2026-08-31);
-      // it still runs the full suite regardless of sidebar selection.
-      const btn = page.getByRole('button', { name: /Run All/i })
-      if (await btn.isEnabled()) {
-        await btn.click({ force: true }).catch(() => {})
-      }
+      await page.evaluate((categories) => {
+        window.dispatchEvent(new CustomEvent('e2e:trigger_acvp', { detail: { categories } }))
+      }, E2E_CATEGORIES)
 
       await page.waitForTimeout(3000)
 

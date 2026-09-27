@@ -312,15 +312,24 @@ export function useAcvpSuite() {
     runTests: (override?: Set<CategoryId>) => (runTests as typeof runTests)(override),
   }
 
-  // Attach e2e event securely. Always runs the FULL suite (ALL_CATEGORY_IDS),
-  // regardless of the sidebar's current checkbox state — e2e/acvp-validator.spec.ts
-  // asserts on ≥40 result rows across the whole suite, and that assertion must
-  // hold no matter what a prior interactive session left selected.
+  // Attach e2e event securely. Runs the categories named in the event's
+  // `detail.categories` (unknown ids ignored), or the FULL suite
+  // (ALL_CATEGORY_IDS) when none are named — never the sidebar's checkbox
+  // state, so a prior interactive session cannot change what the spec runs.
+  // (27 Sep 2026: the full suite no longer fits a browser smoke budget — the
+  // SLH-DSA "s" sets alone run past 18 minutes in Chromium — so
+  // e2e/acvp-validator.spec.ts names every category except slh_stateful.)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const handleTrigger = () => {
+      const handleTrigger = (e: Event) => {
+        const named = (e as CustomEvent<{ categories?: unknown }>).detail?.categories
+        const ids = Array.isArray(named)
+          ? new Set([...ALL_CATEGORY_IDS].filter((id) => named.includes(id)))
+          : null
         setTimeout(() => {
-          runTestsRef.current.runTests(ALL_CATEGORY_IDS).catch(console.error)
+          runTestsRef.current
+            .runTests(ids && ids.size > 0 ? ids : ALL_CATEGORY_IDS)
+            .catch(console.error)
         }, 300) // allow state to settle
       }
       window.addEventListener('e2e:trigger_acvp', handleTrigger)
