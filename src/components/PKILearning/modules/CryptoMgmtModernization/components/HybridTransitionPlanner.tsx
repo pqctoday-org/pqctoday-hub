@@ -250,7 +250,7 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
   }
   if (fipsRequired) {
     watchOuts.push(
-      'FIPS-validated module required: as of 2026 no FIPS 140-3-validated PQC module exists — gate production on the CMVP validated-module list, not algorithm GA.'
+      'FIPS-validated module required: gate production on a CMVP module certificate whose Approved Algorithms list includes the PQC algorithm you need, not on algorithm GA or an algorithm (CAVP) certificate. As of 24 Sep 2026 such certificates exist (e.g. Level 3 HSMs #5282, #5450, #5497, #5503; ML-KEM in the Level 1 AWS-LC module #5314), but most active certificates list no PQC algorithm.'
     )
   }
 

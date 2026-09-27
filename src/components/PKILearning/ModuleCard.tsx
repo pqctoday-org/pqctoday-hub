@@ -19,6 +19,7 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { LEARN_SECTIONS, WORKSHOP_STEPS, MODULE_TO_TRACK, TRACK_COLORS } from './moduleData'
+import { requiredLearnSectionIdsFor, requiredWorkshopStepIdsFor } from './manifest/learnPathScope'
 import { Button } from '@/components/ui/button'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { getNiceMapping } from '@/data/niceModuleMapping'
@@ -65,15 +66,21 @@ export const ModuleCard = ({
   const timeSpentRaw = moduleState?.timeSpent || 0
   const timeSpentFloored = Math.floor(timeSpentRaw)
 
-  // Learn-section completion percentage
-  const learnSections = LEARN_SECTIONS[module.id] ?? []
+  // Learn-section completion percentage — over the sections that count toward
+  // completion (the active learn path's, minus optional references; every
+  // section for a module with neither).
+  const requiredSections = new Set(
+    requiredLearnSectionIdsFor(module.id, moduleState?.activeLearnPath)
+  )
+  const learnSections = (LEARN_SECTIONS[module.id] ?? []).filter((s) => requiredSections.has(s.id))
   const checks = moduleState?.learnSectionChecks ?? {}
   const checkedCount = learnSections.filter((s) => checks[s.id]).length
   const learnPct =
     learnSections.length > 0 ? Math.round((checkedCount / learnSections.length) * 100) : 0
 
-  // Workshop completion percentage
-  const workshopSteps = WORKSHOP_STEPS[module.id] ?? []
+  // Workshop completion percentage — same scoping as the learn sections.
+  const requiredSteps = new Set(requiredWorkshopStepIdsFor(module.id, moduleState?.activeLearnPath))
+  const workshopSteps = (WORKSHOP_STEPS[module.id] ?? []).filter((s) => requiredSteps.has(s.id))
   const completedSteps = moduleState?.completedSteps ?? []
   const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
   const workshopPct =

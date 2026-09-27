@@ -77,6 +77,49 @@ export interface SoftwareItem {
   infrastructureLayer: string
   cisaCategory: string
   pqcSupport: string
+  /**
+   * Is the product's PQC support CERTIFIED? Distinct from whether the product
+   * holds any certificate at all — see {@link hasCertification}.
+   *
+   * Added 2026-09-26. Until then this verdict existed only as a prose prefix
+   * on `pqcSupport`, and a substring search for "CMVP"/"FIPS 140" could not
+   * tell a claim from its denial: a row reading "No (CMVP certificate #5038
+   * approved-algorithm list contains no ML-KEM…)" counted as claiming a
+   * certification. The better the note, the more certainly it was miscounted.
+   *
+   * - `yes`     — claims a formal certification covering PQC algorithms
+   * - `partial` — a qualified claim (certificate exists, scope is narrower)
+   * - `no`      — explicitly NOT PQC-certified, usually citing the certificate
+   *               whose approved-algorithm list contains no PQC
+   * - `none`    — says nothing about certification either way
+   *
+   * Optional so test mocks and older data may omit it; the loader always sets
+   * it, defaulting to `none` — the same convention as `pqcStatusCanonical`.
+   */
+  pqcCertified?: 'yes' | 'partial' | 'no' | 'none' | 'cavp' | 'in_progress'
+  /**
+   * Does the product hold ANY certificate, PQC or not? The pairing that
+   * matters is `hasCertification: 'yes'` with `pqcCertified: 'no'` — 11 active
+   * products are FIPS 140-3 validated for classical algorithms only, which is
+   * a fact the catalogue could not express before these two columns existed.
+   *
+   * `unknown` means nothing in the data asserts either way, which is the
+   * honest default — no row currently asserts `no`.
+   *
+   * `component` means the product relies on a validated module it embeds —
+   * a cloud KMS whose HSM is validated — but holds no certificate itself.
+   * Distinct from `yes` (that would claim a validation the product does not
+   * have) and from `unknown` (that would hide a known fact).
+   *
+   * FIPS 140-3 track stages, for this column and {@link pqcCertified}: `cavp`
+   * — the algorithms are CAVP-validated, the prerequisite, NOT a certificate;
+   * `in_progress` — NIST lists the module as Modules In Process / IUT (never
+   * inferred from CAVP); `yes` — a certificate is held.
+   *
+   * Optional for the same reason as {@link pqcCertified}; the loader always
+   * sets it, defaulting to `unknown`.
+   */
+  hasCertification?: 'yes' | 'no' | 'unknown' | 'component' | 'cavp' | 'in_progress'
   /** Normalized PQC status from the catalog: available | partial | roadmap |
    *  none | unknown (the single source of truth for product PQC status).
    *  Optional so test mocks / older data may omit it; the loader always sets it. */

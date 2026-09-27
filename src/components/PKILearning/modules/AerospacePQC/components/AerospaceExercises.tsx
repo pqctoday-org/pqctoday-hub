@@ -61,7 +61,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       badge: 'Certification',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'DAL-A FMS recertification for PQC takes 18-24 months and costs $5-10M for retrofit. Clean-sheet costs $2-4M because PQC is designed in from the start. MC/DC test case explosion adds ~40% to the structural coverage testing effort.',
+        'For a DAL-A FMS the retrofit path comes out longer and costlier than clean-sheet, because PQC changes already-certified software instead of being designed in, and new decision logic must reach MC/DC structural coverage. The months, costs and MC/DC percentage are this tool\u2019s planning assumptions, not published DO-178C benchmarks: compare the paths, not the absolute figures.',
       config: { step: 2 },
     },
     {

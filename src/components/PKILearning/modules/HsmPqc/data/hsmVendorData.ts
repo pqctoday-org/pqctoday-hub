@@ -69,7 +69,8 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'nShield 5',
     type: 'on-prem',
     catalogName: 'Entrust nShield',
-    fips140Level: 'FIPS 140-3 Level 3 (cert #4765; PQC firmware resubmission pending)',
+    fips140Level:
+      'FIPS 140-3 Level 3 (cert #5329, no PQC in its approved list; a newer nShield 5s entry is in CMVP Modules in Process)',
     supportedPQCAlgorithms: [
       'ML-KEM-512/768/1024',
       'ML-DSA-44/65/87',
@@ -79,7 +80,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
     formFactor: 'network',
     notes:
-      'Firmware v13.8.0 adds native ML-DSA, ML-KEM, SLH-DSA support (all CAVP validated Sep 2025). PKCS#11 mechanisms: CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM (512/768/1024), CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_ML_DSA_EXTERNAL_MU, CKM_HASH_ML_DSA_{SHA256,SHA512,SHAKE128,SHAKE256}. LMS/XMSS available via PQSDK C API only (not native PKCS#11). CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
+      'Firmware v13.8.0 adds native ML-DSA, ML-KEM, SLH-DSA support (CAVP lists them for the nShield 5 Algorithm Library - nCore, certificate A7285). PKCS#11 mechanisms: CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM (512/768/1024), CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_ML_DSA_EXTERNAL_MU, CKM_HASH_ML_DSA_{SHA256,SHA512,SHAKE128,SHAKE256}. LMS/XMSS available via PQSDK C API only (not native PKCS#11). CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
     firmwareVersion: '13.8.0+',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -96,11 +97,11 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'SecurityServer Se Gen2 (Quantum Protect)',
     type: 'on-prem',
     catalogName: 'Utimaco uTrust HSM',
-    fips140Level: 'FIPS 140-3 Level 3 (cert #3925)',
+    fips140Level: 'FIPS 140-2 Level 3 (cert #3925, Historical since sunset)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     formFactor: 'pcie',
     notes:
-      'Quantum Protect software package (Q-safe v5.0) adds PQC via in-field upgrade — no hardware swap required. FIPS 140-3 Level 3 (cert #3925). ML-KEM (512/768/1024), ML-DSA (44/65/87), and LMS CAVP validated Oct 2025 (certs #40010, #40011). XMSS supported; SLH-DSA on roadmap (no date). PQC simulator available for API testing without hardware.',
+      'Quantum Protect software package (Q-safe v5.0) adds PQC via in-field upgrade — no hardware swap required. Its FIPS 140-2 Level 3 certificate #3925 is now Historical. Utimaco announced CAVP results for ML-KEM, ML-DSA and LMS on 14 Oct 2025; the CAVP database lists A7400 (Lattice Module - ML: ML-KEM, ML-DSA) and A7401 (HBS: LMS). XMSS supported; SLH-DSA on roadmap (no date). PQC simulator available for API testing without hardware.',
     firmwareVersion: '5.0+ (Q-safe)',
     pkcs11Version: '3.0',
     hybridSupport: true,
@@ -150,11 +151,12 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'CloudHSM',
     type: 'cloud',
     catalogName: 'AWS CloudHSM',
-    fips140Level: 'FIPS 140-3 Level 3 (via AWS-LC)',
+    fips140Level:
+      'FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2 HSM Family; no PQC approved, checked 2026-09-24)',
     supportedPQCAlgorithms: ['ML-DSA-44/65/87 (preview)'],
     formFactor: 'cloud',
     notes:
-      'Dedicated managed HSM. ML-DSA (44/65/87) key pair generation and signing in preview; ML-KEM not yet available in CloudHSM hardware (AWS KMS software supports ML-KEM separately). Native PKCS#11 PQC mechanisms not yet in HSM firmware. Built on AWS-LC (FIPS 140-3 validated). Multi-AZ redundancy.',
+      "Dedicated managed HSM. ML-DSA (44/65/87) key pair generation and signing in preview; ML-KEM not yet available in CloudHSM hardware (AWS KMS software supports ML-KEM separately). Native PKCS#11 PQC mechanisms not yet in HSM firmware. The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
     firmwareVersion: 'SDK-dependent',
     pkcs11Version: '2.40 (PQC via SDK)',
     hybridSupport: false,
@@ -202,7 +204,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'QxHSM (QASM core)',
     type: 'on-prem',
     catalogName: 'Crypto4A QxHSM',
-    fips140Level: 'FIPS 140-2 Level 3 (cert #4250, Active)',
+    fips140Level: 'FIPS 140-3 Level 3 (cert #5497, lists ML-KEM, ML-DSA, SLH-DSA, LMS as approved)',
     supportedPQCAlgorithms: [
       'ML-KEM-512/768/1024',
       'ML-DSA-44/65/87',
@@ -213,8 +215,8 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
     formFactor: 'network',
     notes:
-      "FIPS 140-2 Level 3 validated (cert #4250, 2022). CAVP A4204 (LMS — world's first PQC cert) and A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) validated. FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. QxOS 5 (June 2025). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). Classic McEliece support on roadmap (not yet CAVP validated). Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
-    firmwareVersion: 'v4.4+ (production PQC); v5.0 (FIPS 140-3 resubmission pending)',
+      "FIPS 140-3 Level 3 certificate #5497 (19 Aug 2026) lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved; the earlier FIPS 140-2 certificate #4250 is Historical. CAVP A4204 (LMS — world's first PQC cert) and A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) validated. FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. QxOS 5 (June 2025). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). Classic McEliece support on roadmap (not yet CAVP validated). Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+    firmwareVersion: 'v4.4+ (production PQC)',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
     sideChannelCountermeasures: [

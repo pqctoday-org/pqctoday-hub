@@ -7,7 +7,7 @@ The Vendor & Supply Chain Risk module teaches executives how to assess, score, a
 ## Key Concepts
 
 - **Vendor PQC Scorecard** — six weighted dimensions: PQC Algorithm Support (25%), FIPS 140-3 Validation (20%), Published PQC Roadmap (15%), Crypto Agility (15%), SBOM/CBOM Delivery (10%), Hybrid Mode Support (15%)
-- **FIPS Validation Tiers** — four-tier assessment: FIPS 140-3 Validated (CMVP-certified under current standard), FIPS 140-3 Submitted (in CMVP queue), FIPS 140-2 Validated (certified under prior standard; NIST stopped accepting new 140-2 submissions in 2021), FIPS Mode / Self-Claim (vendor assertion without certification)
+- **FIPS Validation Tiers** — four-tier assessment: FIPS 140-3 Validated (CMVP-certified under current standard), FIPS 140-3 In Process (on the CMVP Modules in Process list — a queue position, not evidence of the outcome), FIPS 140-2 Validated (certified under prior standard; NIST stopped accepting new 140-2 submissions in 2021, and these certificates moved to the CMVP Historical list in September 2026 — existing systems only), FIPS Mode / Self-Claim (vendor assertion without certification)
 - **CBOM (Cryptographic Bill of Materials)** — CycloneDX-standard inventory of all cryptographic algorithms, key sizes, and usage locations within a vendor's product; essential for assessing quantum vulnerability
 - **SBOM (Software Bill of Materials)** — complete inventory of software components and dependencies; complements CBOM for identifying cryptographic library dependencies
 - **Contract Clauses** — five categories of procurement protection: PQC timeline requirements, FIPS validation mandates, CBOM delivery obligations, crypto change notification, and audit rights

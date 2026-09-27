@@ -29,6 +29,41 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.124.1] - 2026-09-26
+
+A full check of every migration-catalogue product against its own cited document: where a product listed specific post-quantum algorithms its source never mentions, the listing now says only what the source actually supports.
+
+### Fixed
+
+- **98 products named post-quantum algorithms their own source document never mentions.** [view:/migrate] [persona:ops] [persona:grc] [persona:developer] Every product that lists a specific algorithm — 515 of them — was checked against the document it cites, by two independent reviewers. In most cases the source says only "post-quantum" or "NIST standards" while the listing named ML-KEM, ML-DSA or others. Those listings now name only what the source supports, and say plainly when it names no specific algorithm. Where a product is known to support more, the fix is a better source, not a guess.
+- **17 products claimed an algorithm validation that isn't theirs.** [view:/migrate] [view:/compliance] [persona:grc] [persona:ops] Each had been linked to a NIST CAVP validation that, on inspection, belongs to someone else — OpenSSL's pointed at Chainguard's and Oracle's OpenSSL providers, Google Cloud KMS at the BoringSSL module underneath it. The validation claim is removed; the algorithms the product supports are kept.
+- **3 more duplicate products retired, and one renamed.** [view:/migrate] [persona:ops] Google Cloud KMS was listed a second time under an encryption-gateway category; IDEMIA's accelerator was listed again as a "secure element" its source never names; and Ascertia's signing server was folded into the one platform its documentation describes, now listed as Ascertia ADSS Server. Searching an old name still finds the product. The catalogue lists 890 active products.
+
+## [4.124.0] - 2026-09-26
+
+A new Learn module on how cryptographic products get certified, and a Migrate catalogue that now tells a certificate apart from the algorithm validation that comes before it.
+
+### Added
+
+- **New Learn module: Cryptographic Product Certification.** [view:/learn/crypto-product-certification] [persona:grc] [persona:architect] [persona:ops] Follows a product from algorithm validation to a certificate, in three paths you choose from inside the module: FIPS 140-3 and the CMVP, Common Criteria with the EU's EUCC and eIDAS schemes, and PCI PTS HSM approval. Covers what each certificate proves and what it does not, how post-quantum algorithms enter each scheme, and how long it really takes — every fact sourced to the scheme's own records as of 24 September 2026. Hands-on workshops end in a capstone that saves your certification plan to your artefacts, and 16 new quiz questions test it.
+- **Learn modules can now be followed by path.** [view:/learn] [persona:curious] Where a module offers several routes, a picker inside the module shows only the steps and references for the path you chose.
+
+### Changed
+
+- **The Migrate catalogue now follows the FIPS 140-3 track instead of treating every validation as a certification.** [view:/migrate] [persona:grc] [persona:ops] [persona:architect] A product whose algorithms are CAVP-validated has met the prerequisite for FIPS 140-3 — it does not hold a certificate, and the product page now says so. Only a FIPS 140-3, Common Criteria or EUCC certificate counts as certified. "In progress" is shown only when NIST lists the module as in process, never inferred from an algorithm validation. As a result, 50 products no longer read as certified (8 more are newly shown at the algorithm-validation stage), and 48 whose post-quantum algorithms are validated but not yet inside a certificate now say exactly that — the Thales Luna K7 is one: its PQC algorithms are validated, its module certificate does not include them.
+- **Certification badges say CAVP, and never call an algorithm validation a certificate.** [view:/migrate] [persona:grc] [persona:developer] The badge used to read "ACVP" with a tooltip calling it a certificate. It now matches the Compliance page, which already said "NIST CAVP".
+- **A product page now says when a certificate belongs to something inside the product.** [view:/migrate] [persona:ops] [persona:architect] A cloud key service whose HSM is FIPS-validated is not itself validated; 9 products — among them the AWS KMS and Google Cloud KMS cloud gateways, wolfSSL and BoringSSL — now say they use a validated module rather than implying a certificate of their own. Products validated for classical algorithms only say that too.
+
+### Fixed
+
+- **41 algorithm validations were missing from the Compliance and Migrate data, and are back.** [view:/compliance] [view:/migrate] [persona:grc] [persona:researcher] Our collection asked NIST for modules implementing every algorithm in a family at once, which silently dropped any module that, for example, only verifies signatures — firmware-signature checkers such as KIOXIA's and Nuvoton's among them. The catalogue now holds 309 CAVP records instead of 268.
+- **Several products were linked to the wrong company's certificate, or missed their own.** [view:/migrate] [persona:grc] [persona:ops] Fixes to how a certificate is matched to a product: a GitHub pull-request number such as "#5497" is no longer read as a certificate number; two companies are no longer treated as one because both names contain a word like "Software"; a "™" in a certificate name no longer hides it; and a product named after its chip no longer inherits a sibling chip's certificate. 155 products now link to their certificates, up from 143, and every added or removed link was checked by hand.
+- **Ten Learn modules stated certification facts they could not support, and now match the scheme records.** [view:/learn] [persona:grc] [persona:architect] Among them: unsourced "18-36 month" CMVP durations removed, AWS CloudHSM's certificate correctly attributed to its own HSM, CyberArk's FIPS level corrected, a module listed "in process" no longer presented as a result, and bare "EAL4+" claims replaced with the augmentations each certificate actually names.
+
+### Data
+
+- **One product listed twice is retired.** [view:/migrate] [persona:ops] CipherLinq had been added under two names for the same certificate; the duplicate is retired, and adding a product whose certificate is already listed is now refused.
+
 ## [4.123.3] - 2026-09-26
 
 ### Fixed

@@ -7,7 +7,15 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ExternalLink, FileText, BookOpen, Newspaper, BookText } from 'lucide-react'
+import {
+  ExternalLink,
+  FileText,
+  BookOpen,
+  Newspaper,
+  BookText,
+  AlertTriangle,
+  Info,
+} from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
@@ -61,6 +69,34 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
     .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
     .replace(/^\(|\)$/g, '')
     .trim()
+
+  // Holds a certificate, but the certificate does not cover PQC. Read from the
+  // catalogue columns rather than parsed out of pqcSupport: a substring search
+  // over the prose cannot tell a claim from its denial, which is exactly how
+  // "No (CMVP certificate #5038 … contains no ML-KEM)" used to read as a claim.
+  const classicalOnly = product.hasCertification === 'yes' && product.pqcCertified === 'no'
+
+  // Relies on a validated module it embeds, but holds no certificate itself —
+  // a cloud KMS whose HSM is FIPS-validated, a service built on a validated
+  // library. The certificate is real; it is just not this product's. Saying
+  // "unknown" would hide a known fact, and saying "yes" would claim a
+  // validation the product does not have — the validation-boundary confusion
+  // the certification learning module exists to teach.
+  const componentOnly = product.hasCertification === 'component'
+
+  // FIPS 140-3 track stages (2026-09-26). CAVP algorithm validation is the
+  // PREREQUISITE for a FIPS 140-3 certificate, not the certificate — NIST: a
+  // product "does not meet the FIPS 140 module validation requirements by
+  // simply ... acquiring validations for each of the implemented algorithms".
+  // "In progress" only when NIST lists the module as Modules In Process / IUT.
+  const cavpOnly = product.hasCertification === 'cavp'
+  const fipsInProgress = product.hasCertification === 'in_progress'
+  // Certified, but the PQC algorithms are only CAVP-validated and not in the
+  // module certificate — the Thales Luna K7 case (A7358).
+  const pqcCavpOnly =
+    (product.hasCertification === 'yes' || product.hasCertification === 'component') &&
+    product.pqcCertified === 'cavp'
+  const hasStageNote = cavpOnly || fipsInProgress || pqcCavpOnly
 
   const verification = productVerificationBadge(product)
   // Other rows of the same product line (family_id) — releases, editions or
@@ -155,12 +191,66 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         </div>
       )}
 
-      {certs.length > 0 && (
+      {(certs.length > 0 || classicalOnly || componentOnly || hasStageNote) && (
         <div>
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Certifications
           </p>
-          <CertBadges certs={certs} />
+          {certs.length > 0 && <CertBadges certs={certs} />}
+          {/*
+           * The distinction a certificate badge alone cannot make: this product
+           * IS validated, and the validation does not cover PQC. 11 active
+           * catalogue products are in that position. Before `pqcCertified`
+           * existed the verdict lived only in the prose of `pqcSupport`, so a
+           * reader seeing a FIPS 140-3 badge had no way to tell it apart from
+           * one covering ML-KEM — which is the misreading this whole column
+           * pair was added to stop.
+           */}
+          {classicalOnly && (
+            <p
+              data-testid="classical-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-warning/10 px-2 py-1 text-xs text-status-warning"
+            >
+              <AlertTriangle size={12} aria-hidden />
+              Validated for classical algorithms only — this certification does not cover PQC
+            </p>
+          )}
+          {componentOnly && (
+            <p
+              data-testid="component-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              Uses a validated module inside — the product itself holds no certificate
+            </p>
+          )}
+          {cavpOnly && (
+            <p
+              data-testid="cavp-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              Algorithms validated (CAVP) — the prerequisite for FIPS 140-3, not a certificate
+            </p>
+          )}
+          {fipsInProgress && (
+            <p
+              data-testid="fips-in-progress-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              FIPS 140-3 in progress — listed by NIST as a module in process
+            </p>
+          )}
+          {pqcCavpOnly && (
+            <p
+              data-testid="pqc-cavp-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-warning/10 px-2 py-1 text-xs text-status-warning"
+            >
+              <AlertTriangle size={12} aria-hidden />
+              PQC algorithms are CAVP-validated only — not yet covered by a FIPS 140-3 certificate
+            </p>
+          )}
         </div>
       )}
 

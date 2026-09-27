@@ -520,15 +520,20 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         sectionId="fips-acvp"
       >
         <p>
-          Before performance testing, interoperability, or TVLA, a cryptographic module must be
-          functionally correct. FIPS 140-3 applies to US federal agencies that use cryptography to
-          protect sensitive information, and to the modules they operate{' '}
-          <Cite s="fips1403" at="§6" />. The CMVP validates modules against it, and an algorithm
-          counts as an Approved security function on a module certificate only after it completes{' '}
-          <strong>CAVP</strong> algorithm validation <Cite s="cavp" />. That algorithm testing runs
-          black-box through NIST&apos;s ACVTS, which speaks the{' '}
+          Before performance testing, interoperability, or TVLA, a cryptographic implementation must
+          be functionally correct. NIST&apos;s Cryptographic Algorithm Validation Program (CAVP)
+          checks this: the implementation is tested through the{' '}
           <InlineTooltip term="ACVP">Automated Cryptographic Validation Protocol</InlineTooltip>{' '}
-          <Cite s="acvpSpec" at="§1" />.
+          and, if it passes, receives an <strong>algorithm certificate</strong>. That is not a
+          module certificate.
+        </p>
+        <p className="mt-2">
+          A FIPS 140-3 certificate comes from a separate program, the Cryptographic Module
+          Validation Program (CMVP), which validates the whole module. The module certificate lists
+          its approved algorithms, which (apart from a few vendor-affirmed functions) are backed by
+          algorithm certificates. Where a law, policy or contract requires FIPS 140-3 validated
+          modules &mdash; US federal systems, for example &mdash; algorithm validation is one
+          prerequisite, not the whole requirement.
         </p>
 
         <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 mt-2">

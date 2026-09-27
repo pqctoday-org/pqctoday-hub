@@ -75,8 +75,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             />
             <StatCard
               label="Crypto Libraries — FIPS 140-3 CMVP queue"
-              value="18–24 mo"
-              note="NIST CMVP Modules-in-Process queue length. OpenSSL 1.1.1 EoL Sept 2023; Bouncy Castle high-severity CVEs each release cycle. Re-validation outpaces fixes."
+              value="No ETA"
+              note="The NIST CMVP Modules-in-Process list (checked 24 Sep 2026) gives each module's current status and the date it entered it, not an expected completion date. Plan around an issued certificate. OpenSSL 1.1.1 EoL Sept 2023; Bouncy Castle high-severity CVEs each release cycle."
             />
             <StatCard
               label="Application Software — OMB M-23-02 inventory"
@@ -112,9 +112,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               &mdash; quoted below).
             </li>
             <li>
-              <strong>Crypto Libraries</strong> &mdash; the NIST CMVP Modules-in-Process queue runs
-              18&ndash;24 months, and the September 2025 FIPS 140-3 Implementation Guidance
-              retroactively imposed new{' '}
+              <strong>Crypto Libraries</strong> &mdash; a module on the NIST CMVP Modules-in-Process
+              list has a status, not a completion date, and the September 2025 FIPS 140-3
+              Implementation Guidance retroactively imposed new{' '}
               <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip> self-test
               requirements on modules already validated. You cannot &ldquo;audit once&rdquo; and
               walk away while OpenSSL and Bouncy Castle ship high-severity CVEs each release cycle.
@@ -628,11 +628,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
                   For HSM firmware CVEs, the constraint is even harder: the validated firmware
-                  revision is chosen by the vendor, not the customer. Vendor-controlled CMVP
-                  re-validation timelines run 6–18 months from CVE disclosure to a validated
-                  firmware release appearing on the CMVP active list{' '}
+                  revision is chosen by the vendor, not the customer. There is no published timeline
+                  from CVE disclosure to a re-validated firmware release appearing on the CMVP
+                  active list: the Modules-in-Process list shows a resubmission&apos;s status and
+                  status date, not when it will finish{' '}
                   <span className="text-xs text-muted-foreground">
-                    (NIST CMVP MIP List; observed range across HSM vendor re-submissions)
+                    (NIST CMVP Modules-in-Process list, checked 24 Sep 2026)
                   </span>
                   . During that window, the organization&apos;s options are limited to residual-risk
                   acceptance, compensating controls, or emergency procurement of an alternate

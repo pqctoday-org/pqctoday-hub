@@ -45,7 +45,7 @@ describe('CertBadges', () => {
         ]}
       />
     )
-    const trigger = screen.getByRole('button', { name: /3 FIPS certificates/i })
+    const trigger = screen.getByRole('button', { name: /3 FIPS 140-3 certificates/i })
     expect(trigger).toHaveTextContent('(3)')
     expect(trigger).toHaveAttribute('aria-expanded', 'false')
 
@@ -111,8 +111,12 @@ describe('CertBadges', () => {
         ]}
       />
     )
-    expect(screen.getByRole('button', { name: /2 FIPS certificates/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /2 FIPS 140-3 certificates/i })).toBeInTheDocument()
     const links = screen.getAllByRole('link')
-    expect(links).toHaveLength(2) // ACVP + Common Criteria, single cert each
+    expect(links).toHaveLength(2) // CAVP + Common Criteria, single record each
+    // A CAVP record is labelled CAVP and never called a certificate.
+    const cavp = links.find((l) => l.textContent?.includes('CAVP'))
+    expect(cavp).toBeDefined()
+    expect(cavp).toHaveAttribute('title', expect.stringMatching(/prerequisite, not a certificate/))
   })
 })
