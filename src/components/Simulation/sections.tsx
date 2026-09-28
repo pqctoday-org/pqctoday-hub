@@ -200,6 +200,7 @@ export function DecisionSection({
   attempt,
   onDecide,
   onClearAttempt,
+  onShowProgress,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -249,6 +250,10 @@ export function DecisionSection({
   onDecide?: (key: string, index: number, correct: boolean) => void
   /** W3 — clear it again (Easy's advertised free retry). */
   onClearAttempt?: (key: string) => void
+  /** 09-28 nav remediation (WP1.3): desktop-only — switch the board to the
+   *  Progress tab, where every step of the active level can be opened in any
+   *  order. Omitted on the phone, which has no such tab. */
+  onShowProgress?: () => void
 }) {
   // W3: the persisted attempt is the source of truth, but the component also
   // holds its own submitted-pick so single-attempt semantics survive even
@@ -308,6 +313,65 @@ export function DecisionSection({
   const chosen = attempt ? attempt.index : localPick?.key === attemptKey ? localPick.index : null
   const chosenCard = chosen != null ? (cards[chosen] ?? null) : null
   const step = nextMove.step
+
+  // 09-28 nav remediation (WP1): the control that actually DOES the step —
+  // open it in the sim, deep-link to it, or say it moved — plus the optional
+  // in-place completion. Shared by the correct-pick outcome and the pick-stands
+  // wrong outcome, so a wrong pick on Realistic/Hard still leaves a way forward
+  // (it used to render only after a correct pick: a hard dead end on phones).
+  const stepAction = (
+    <>
+      {canEmbed(step) ? (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => onOpenStep(step)}
+          className="flex h-auto w-full items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
+        >
+          <span
+            className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+          >
+            {step.kind}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-left text-sim-body font-semibold text-foreground">
+            {step.label}
+          </span>
+          <span className="shrink-0 font-mono text-sim-micro text-primary">open here →</span>
+        </Button>
+      ) : canResolveDeepLink(step.to) ? (
+        <Link
+          to={step.to}
+          onClick={() => {
+            markSimResume()
+            if (step.kind === 'reference' && step.refId) onVisitRef(step.refId)
+          }}
+          className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
+        >
+          <span
+            className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+          >
+            {step.kind}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-sim-body font-semibold text-foreground">
+            {step.label}
+          </span>
+          <span className="shrink-0 font-mono text-sim-micro text-primary">open →</span>
+        </Link>
+      ) : (
+        // WS-06: target no longer resolves — show a notice, never a dead link.
+        <div
+          className="flex items-center gap-2.5 rounded-md border border-warning/40 bg-warning/5 px-3 py-2"
+          title="This resource has moved — it'll return when the link is updated."
+        >
+          <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
+            {step.label}
+          </span>
+          <span className="shrink-0 font-mono text-sim-micro text-warning">resource moved</span>
+        </div>
+      )}
+      {renderCompletion?.(step)}
+    </>
+  )
 
   return (
     <div className="mb-4">
@@ -406,55 +470,7 @@ export function DecisionSection({
           <div className="mb-1 font-mono text-sim-micro font-extrabold text-success">
             ✓ Right call — {chosenCard.detail}
           </div>
-          {canEmbed(step) ? (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenStep(step)}
-              className="flex h-auto w-full items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
-            >
-              <span
-                className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
-              >
-                {step.kind}
-              </span>
-              <span className="min-w-0 flex-1 truncate text-left text-sim-body font-semibold text-foreground">
-                {step.label}
-              </span>
-              <span className="shrink-0 font-mono text-sim-micro text-primary">open here →</span>
-            </Button>
-          ) : canResolveDeepLink(step.to) ? (
-            <Link
-              to={step.to}
-              onClick={() => {
-                markSimResume()
-                if (step.kind === 'reference' && step.refId) onVisitRef(step.refId)
-              }}
-              className="flex items-center gap-2.5 rounded-md border border-success/40 bg-card px-3 py-2 hover:bg-muted/60"
-            >
-              <span
-                className={`rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
-              >
-                {step.kind}
-              </span>
-              <span className="min-w-0 flex-1 truncate text-sim-body font-semibold text-foreground">
-                {step.label}
-              </span>
-              <span className="shrink-0 font-mono text-sim-micro text-primary">open →</span>
-            </Link>
-          ) : (
-            // WS-06: target no longer resolves — show a notice, never a dead link.
-            <div
-              className="flex items-center gap-2.5 rounded-md border border-warning/40 bg-warning/5 px-3 py-2"
-              title="This resource has moved — it'll return when the link is updated."
-            >
-              <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-foreground">
-                {step.label}
-              </span>
-              <span className="shrink-0 font-mono text-sim-micro text-warning">resource moved</span>
-            </div>
-          )}
-          {renderCompletion?.(step)}
+          {stepAction}
         </div>
       )}
       {chosenCard && !chosenCard.correct && (
@@ -502,8 +518,24 @@ export function DecisionSection({
               ↺ try again
             </Button>
           ) : (
-            <div className="mt-1 text-sim-micro text-muted-foreground">
-              The pick stands — study the sound move above, then continue.
+            <div className="mt-2" data-testid="wrong-pick-continue">
+              <div className="mb-1 font-mono text-sim-micro font-extrabold text-success">
+                Do the sound move to continue
+              </div>
+              <div className="mb-1.5 text-sim-micro text-muted-foreground">
+                The pick stands for your score — complete the sound move to keep going.
+              </div>
+              {stepAction}
+              {onShowProgress && (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={onShowProgress}
+                  className="mt-1 h-auto p-0 font-mono text-sim-micro font-bold text-primary hover:bg-transparent"
+                >
+                  Or choose any task on Progress →
+                </Button>
+              )}
             </div>
           )}
         </div>

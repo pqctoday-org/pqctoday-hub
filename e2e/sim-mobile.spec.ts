@@ -12,12 +12,13 @@ import { test, expect, type Page, type Locator } from '@playwright/test'
  * playable to L2 including at least one activity step's Brief + check, and
  * a mid-run reload resumes correctly.
  *
- * This drives REAL decisions (tries each of the 3 options, keeps the one
- * that resolves "Right call") rather than a scripted answer key, because the
+ * This drives REAL decisions rather than a scripted answer key, because the
  * card order is deterministic-but-derived (pickWrong in sections.tsx) and
  * asserting against it directly would couple this spec to that internal
- * detail. A wrong pick never completes anything, so retrying via reload
- * (mobilePlayOpen is store-persisted — see SimulationView.tsx) is safe.
+ * detail. On Realistic (the default) a pick is first-answer-wins and is
+ * persisted, so a wrong pick is NOT retried by reload — since 09-28 (WP1) the
+ * wrong outcome exposes the sound move's own completion control, and the step
+ * is completed through that, exactly as a player would.
  */
 
 const seedUnlockedAssessment = async (page: Page) => {
@@ -115,7 +116,9 @@ const seedUnlockedAssessment = async (page: Page) => {
 /** Answer whatever quiz dialog is currently open (learn gate or Brief check),
  *  trying each option in turn until Submit reveals a passing outcome. */
 async function passAnyOpenQuiz(page: Page): Promise<void> {
-  const dialog = page.getByRole('dialog')
+  // The topmost dialog: since 09-28 (WP3.6) the Brief sheet is itself a
+  // dialog, and its check (QuizGateModal) opens inside it.
+  const dialog = page.getByRole('dialog').last()
   if ((await dialog.count()) === 0) return
   for (let attempt = 0; attempt < 8; attempt++) {
     const answerButtons: Locator[] = []
@@ -144,20 +147,27 @@ async function passAnyOpenQuiz(page: Page): Promise<void> {
   }
 }
 
-/** Selects the correct decision card in the currently-open phone Decide
- *  view, reloading (safe — mobilePlayOpen is store-persisted) and retrying a
- *  different option whenever a pick resolves as the wrong one. */
+/** Makes the decision for the currently-open phone Decide view and returns
+ *  once a way forward is on screen: "Right call", or (Realistic/Hard) the
+ *  wrong-pick "Do the sound move to continue" panel. On Easy a wrong pick shows
+ *  "try again" instead, so the next option is tried. Idempotent: if the
+ *  decision was already made (persisted), it just reports the outcome. */
 async function pickCorrect(page: Page, decide: Locator): Promise<boolean> {
+  const outcomeShown = async () =>
+    (await decide.getByText('Right call', { exact: false }).count()) > 0 ||
+    (await decide.getByTestId('wrong-pick-continue').count()) > 0
+  if (await outcomeShown()) return true
   for (const letter of ['A', 'B', 'C']) {
     const btn = decide.locator(`button[aria-label^="Option ${letter}:"]`)
-    if ((await btn.count()) === 0) continue
+    if ((await btn.count()) === 0 || (await btn.isDisabled())) continue
     await btn.click()
     await page.waitForTimeout(250)
-    if (await decide.getByText('Right call', { exact: false }).count()) return true
-    await page.reload({ waitUntil: 'domcontentloaded' })
-    // mobilePlayOpen is store-persisted, so a reload lands back in this same
-    // Decide view — but only once the WASM-crypto boot screen clears.
-    await decide.waitFor({ state: 'visible', timeout: 20_000 })
+    if (await outcomeShown()) return true
+    const retry = decide.getByRole('button', { name: /try again/i })
+    if (await retry.count()) {
+      await retry.click()
+      await page.waitForTimeout(150)
+    }
   }
   return false
 }
@@ -173,9 +183,9 @@ async function completeOneStep(
 ): Promise<'activity' | 'workshop' | 'architecture' | 'learn' | 'catalog' | 'reference' | 'stuck'> {
   // Every kind's own completion control (Mark complete / Read the brief /
   // See the result / the Hybrid-Pure PQC picker / the plain "open ->" link)
-  // only renders inside the "Right call" outcome area, which only appears
-  // AFTER a correct pick — so the pick must happen FIRST, before dispatching
-  // on which control is present.
+  // renders in the decision's outcome area — after a correct pick, or (since
+  // 09-28, WP1) after a wrong pick that stands — so the decision must happen
+  // FIRST, before dispatching on which control is present.
   const ok = await pickCorrect(page, decide)
   if (!ok) return 'stuck'
   // activity/workshop/architecture render their own completion control
@@ -287,7 +297,7 @@ test.describe('Simulation — phone play (iPhone 13)', () => {
     await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
 
     const group = page.getByRole('group', { name: /Choose a playable phase/i })
-    await group.getByText('Executive Mandate').click()
+    await group.getByRole('button', { name: /Executive Mandate/ }).click()
     await page.getByRole('button', { name: /(Play|Resume) Executive Mandate/i }).click()
 
     const decide = page.locator('[data-testid="sim-mobile-decide"]')
@@ -328,5 +338,45 @@ test.describe('Simulation — phone play (iPhone 13)', () => {
 
     expect(kinds).toContain('activity')
     expect(kinds).not.toContain('stuck')
+  })
+
+  test('a wrong pick on Realistic is not a dead end — the sound move completes the step (09-28 WP1)', async ({
+    page,
+  }, testInfo) => {
+    await seedUnlockedAssessment(page)
+    const baseUrl = new URL(testInfo.project.use.baseURL ?? 'http://localhost:4173').origin
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
+    const group = page.getByRole('group', { name: /Choose a playable phase/i })
+    await group.getByRole('button', { name: /Executive Mandate/ }).click()
+    await page.getByRole('button', { name: /(Play|Resume) Executive Mandate/i }).click()
+    const decide = page.locator('[data-testid="sim-mobile-decide"]')
+    await expect(decide).toBeVisible({ timeout: 10_000 })
+
+    const counter = async () =>
+      Number(
+        ((await decide.locator('text=/\\d+\\/\\d+ · at L\\d/').first().innerText()).match(
+          /^(\d+)\//
+        ) ?? [])[1] ?? -1
+      )
+
+    // Always pick option A; within a few steps one of them is a trap.
+    let sawWrong = false
+    for (let i = 0; i < 10 && !sawWrong; i++) {
+      const before = await counter()
+      await decide.locator('button[aria-label^="Option A:"]').click()
+      await page.waitForTimeout(250)
+      sawWrong = (await decide.getByTestId('wrong-pick-continue').count()) > 0
+      if (sawWrong) {
+        await expect(decide.getByTestId('wrong-pick-continue')).toContainText(
+          /Do the sound move to continue/i
+        )
+        // no retry on Realistic — the pick stands
+        await expect(decide.getByRole('button', { name: /try again/i })).toHaveCount(0)
+      }
+      const kind = await completeOneStep(page, decide, baseUrl)
+      expect(kind).not.toBe('stuck')
+      await expect.poll(counter, { timeout: 15_000 }).toBeGreaterThan(before)
+    }
+    expect(sawWrong).toBe(true)
   })
 })

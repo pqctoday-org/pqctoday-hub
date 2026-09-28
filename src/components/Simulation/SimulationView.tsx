@@ -836,6 +836,14 @@ export function SimulationView() {
   // Concept peeks (non-blocking) surfaced during the walkthrough, keyed to the current
   // phase: HNDL + Mosca at the open (p0), the two-track model at the roadmap, hybrid at
   // pilots. Empty outside a running walkthrough.
+  // 09-28 nav remediation (WP3.7): the walkthrough's cards ignored ✕ — its list
+  // never filtered anything, and ✕ only wrote the interactive `seenConceptPeeks`.
+  // Dismissals during a tour live here and clear when the run ends, so a
+  // re-watched tour shows its cards again.
+  const [dismissedTourPeeks, setDismissedTourPeeks] = useState<string[]>([])
+  useEffect(() => {
+    if (!autoRunPlayer.running) setDismissedTourPeeks([])
+  }, [autoRunPlayer.running])
   const walkthroughConcepts = useMemo<TourConcept[]>(() => {
     if (!isWalkthroughMode(autoRunPlayer.mode) || !autoRunPlayer.running) return []
     const phase = autoRunPlayer.phaseFocus?.phase
@@ -844,8 +852,13 @@ export function SimulationView() {
     if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
     if (stage?.conceptCards) ids.push(...stage.conceptCards)
-    return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
-  }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
+    return ids.filter((id) => !dismissedTourPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [
+    autoRunPlayer.mode,
+    autoRunPlayer.running,
+    autoRunPlayer.phaseFocus?.phase,
+    dismissedTourPeeks,
+  ])
 
   // WP2.3: the same concept peeks, brought to INTERACTIVE play — first entry to the
   // phase they're keyed to, then never again (seenConceptPeeks). Suppressed while a
@@ -2791,21 +2804,31 @@ export function SimulationView() {
                 <SimScenarioIntroCard
                   scenario={autoRunPlayer.scenarioIntro}
                   onBegin={autoRunPlayer.beginScenario}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
               {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
                 <SimPassIntroModal
                   pass={autoRunPlayer.passIntro}
                   onBegin={autoRunPlayer.beginPass}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
               {autoRunPlayer.phaseIntro && (
                 <SimPhaseIntroModal
                   phase={autoRunPlayer.phaseIntro.phase}
                   onBegin={autoRunPlayer.beginPhase}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
-              <SimArtifactReveal type={autoRunPlayer.reveal} variant="mobile" />
+              <SimArtifactReveal
+                type={autoRunPlayer.reveal}
+                variant="mobile"
+                onDismiss={autoRunPlayer.dismissReveal}
+              />
             </>
           )}
           {walkthroughDoneOpen && (
@@ -3089,10 +3112,18 @@ export function SimulationView() {
               ▶ Play
             </Button>
           )}
-          <SimAutoRunOverlay player={autoRunPlayer} />
+          <SimAutoRunOverlay
+            player={autoRunPlayer}
+            publishHeightVar
+            heightVarName="--sim-transport-h-md"
+          />
           <SimConceptPeek
             concepts={conceptPeeks}
-            onDismiss={markConceptPeekSeen}
+            onDismiss={(id) =>
+              walkthroughConcepts.length > 0
+                ? setDismissedTourPeeks((d) => (d.includes(id) ? d : [...d, id]))
+                : markConceptPeekSeen(id)
+            }
             onLearnMore={(moduleId) =>
               openStep({
                 kind: 'learn',
@@ -3102,20 +3133,29 @@ export function SimulationView() {
               })
             }
           />
-          <SimArtifactReveal type={autoRunPlayer.reveal} />
+          <SimArtifactReveal type={autoRunPlayer.reveal} onDismiss={autoRunPlayer.dismissReveal} />
           {autoRunPlayer.scenarioIntro && (
             <SimScenarioIntroCard
               scenario={autoRunPlayer.scenarioIntro}
               onBegin={autoRunPlayer.beginScenario}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
             />
           )}
           {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
-            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+            <SimPassIntroModal
+              pass={autoRunPlayer.passIntro}
+              onBegin={autoRunPlayer.beginPass}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
+            />
           )}
           {autoRunPlayer.phaseIntro && (
             <SimPhaseIntroModal
               phase={autoRunPlayer.phaseIntro.phase}
               onBegin={autoRunPlayer.beginPhase}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
             />
           )}
           {viewDoc && (
@@ -3914,6 +3954,7 @@ export function SimulationView() {
                         attempt={nextMoveAttempt}
                         onDecide={recordAttempt}
                         onClearAttempt={clearAttempt}
+                        onShowProgress={() => setActivePhaseTab('progress')}
                         wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
                         onWrongPick={(label) => {
                           // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on

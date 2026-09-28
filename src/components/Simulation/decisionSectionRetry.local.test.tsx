@@ -5,12 +5,15 @@
  * inconvenience an instant do-over erases). The card still un-sticks on its own
  * once the player completes a real step elsewhere (sections.tsx's own moveKey
  * reset, unaffected by this change) — this only removes the FREE, INSTANT path.
+ * Since 09-28 (WP1) the pick-stands branch also exposes the sound move itself,
+ * so a wrong pick is never a dead end — see decisionWrongPickContinue.local.test.tsx.
  *
  * The gate rode on the retired GUIDED mode until 2026-08-02; it now reads
  * SimBalance.decisions.freeRetryOnWrongPick, which the MODE dial selects.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { DecisionSection } from './sections'
 import { SIM_TREES } from '@/simulation'
 import type { MoveCtx } from '@/data/simMoves'
@@ -21,6 +24,10 @@ const ctx: MoveCtx = {
   size: { id: 'mid', label: 'Mid-size' },
   over: 0,
 }
+
+// The pick-stands branch now renders the sound move's deep link (09-28 WP1),
+// so the harness needs a router.
+const render = (ui: React.ReactElement) => rtlRender(<MemoryRouter>{ui}</MemoryRouter>)
 
 const p0 = SIM_TREES.p0!
 const band = p0.levels[0]!

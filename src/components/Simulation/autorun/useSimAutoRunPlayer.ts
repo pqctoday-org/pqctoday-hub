@@ -139,6 +139,14 @@ export interface SimAutoRunPlayer {
   beginPhase: () => void
   /** Dismiss the one-time scenario-framing card and continue to the first pass. */
   beginScenario: () => void
+  /** 09-28 nav remediation (WP3/D7): close whichever intro is up WITHOUT
+   *  advancing — the run stays loaded but paused, so the board is usable and the
+   *  transport's Resume / Stop are reachable. Backs the intros' ✕, Escape and
+   *  backdrop. (The intros' explicit "Stop play" calls `stop` instead.) */
+  pauseAndDismissIntro: () => void
+  /** 09-28 nav remediation (WP3.4): hide the current "document ready" card. A
+   *  later reveal (even of the same document type) shows again. */
+  dismissReveal: () => void
   /** Jump the playhead to the start of the previous maturity pass (re-shows its intro). */
   prevPass: () => void
   /** Jump the playhead to the start of the next maturity pass (shows its intro). */
@@ -805,6 +813,9 @@ export function useSimAutoRunPlayer({
     // guard (SimulationView effect on `done`), so the next phase run re-opens it.
     setDone(false)
     setScenarioIntro(null)
+    // 09-28 (WP3.0): the pass intro was never cleared here, and desktop renders
+    // it whenever it's set — so stopping on a pass intro left the modal up.
+    setPassIntro(null)
     setPhaseIntro(null)
   }, [clearTimer])
   const cycleSpeed = useCallback(
@@ -847,6 +858,21 @@ export function useSimAutoRunPlayer({
     setScenarioIntro(null)
   }, [])
   const beginScenario = useCallback(() => advanceScenario(true), [advanceScenario])
+
+  // 09-28 (WP3/D7): close the active intro without advancing. Pausing first
+  // means the intros' own auto-advance effects (gated on !paused) and the step
+  // effect stay idle. Each advance* marks its intro consumed, so Resume carries
+  // on from here rather than re-showing the same card. Only the intro actually
+  // showing is consumed (advance* each no-op when theirs isn't up).
+  const pauseAndDismissIntro = useCallback(() => {
+    clearTimer()
+    stopSpeech()
+    setPaused(true)
+    advanceScenario(false)
+    advancePass(false)
+    advancePhase(false)
+  }, [clearTimer, advanceScenario, advancePass, advancePhase])
+  const dismissReveal = useCallback(() => setReveal(null), [])
 
   // Jump the playhead to an index and re-show the pass intro wherever we land.
   const jumpToIndex = useCallback(
@@ -1249,6 +1275,8 @@ export function useSimAutoRunPlayer({
     beginPass,
     beginPhase,
     beginScenario,
+    pauseAndDismissIntro,
+    dismissReveal,
     prevPass,
     nextPass,
   }

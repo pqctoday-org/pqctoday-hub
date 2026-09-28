@@ -13,6 +13,7 @@
  */
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { DecisionSection } from './sections'
 import { SIM_TREES } from '@/simulation'
 import type { MoveCtx } from '@/data/simMoves'
@@ -34,22 +35,26 @@ const renderDecision = (
   onTrapPicked: () => void,
   allowRetry = false
 ) =>
+  // MemoryRouter: since 09-28 (WP1) the pick-stands branch renders the sound
+  // move's deep link, so a wrong pick is never a dead end.
   render(
-    <DecisionSection
-      phaseId="p0"
-      ctx={ctx}
-      nextMove={nextMove}
-      level={0}
-      stepsDone={0}
-      stepsTotal={5}
-      pitfalls={p0.pitfalls}
-      onVisitRef={() => {}}
-      canEmbed={() => false}
-      onOpenStep={() => {}}
-      allowRetry={allowRetry}
-      onWrongPick={onWrongPick}
-      onTrapPicked={onTrapPicked}
-    />
+    <MemoryRouter>
+      <DecisionSection
+        phaseId="p0"
+        ctx={ctx}
+        nextMove={nextMove}
+        level={0}
+        stepsDone={0}
+        stepsTotal={5}
+        pitfalls={p0.pitfalls}
+        onVisitRef={() => {}}
+        canEmbed={() => false}
+        onOpenStep={() => {}}
+        allowRetry={allowRetry}
+        onWrongPick={onWrongPick}
+        onTrapPicked={onTrapPicked}
+      />
+    </MemoryRouter>
   )
 
 const options = () => screen.getAllByRole('button', { name: /^Option [A-Z]:/ })

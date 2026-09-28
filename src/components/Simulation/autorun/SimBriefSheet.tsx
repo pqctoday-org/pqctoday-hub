@@ -17,9 +17,10 @@
  * WS-0 to scroll + keep its action button reachable on a phone) for the
  * check itself rather than a second question-rendering UI.
  */
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { QuizGateModal } from '../QuizGateModal'
 import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
 
@@ -52,8 +53,24 @@ export function SimBriefSheet({
   onClose,
 }: SimBriefSheetProps) {
   const [checking, setChecking] = useState(false)
+  // 09-28 nav remediation (WP3.6): dialog semantics + Escape + focus return.
+  // The trap and Escape stand down while the nested check (QuizGateModal, its
+  // own trap + Escape) is open, so the two never fight over Tab or Escape.
+  const trapRef = useFocusTrap(!checking)
+  useEffect(() => {
+    if (checking) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [checking, onClose])
   return (
     <div
+      ref={trapRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sim-brief-sheet-heading"
       className="fixed inset-0 z-[72] flex flex-col bg-background text-foreground"
       data-testid="sim-brief-sheet"
     >
@@ -65,7 +82,9 @@ export function SimBriefSheet({
           <p className="text-[10.5px] font-bold uppercase leading-snug tracking-wide text-primary">
             {kicker}
           </p>
-          <h2 className="truncate text-sm font-bold text-foreground">{title}</h2>
+          <h2 id="sim-brief-sheet-heading" className="truncate text-sm font-bold text-foreground">
+            {title}
+          </h2>
         </div>
         <Button
           type="button"
