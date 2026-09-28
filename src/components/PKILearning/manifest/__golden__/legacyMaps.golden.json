@@ -244,6 +244,15 @@
       "difficulty": "beginner",
       "frameworkPhase": "p0"
     },
+    "fips-140-3-certification": {
+      "id": "fips-140-3-certification",
+      "lm_id": "LM-067",
+      "title": "FIPS 140-3 Certification",
+      "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
+    },
     "5g-security": {
       "id": "5g-security",
       "lm_id": "LM-046",
@@ -425,6 +434,15 @@
       "difficulty": "beginner",
       "frameworkPhase": "p0"
     },
+    "pqc-hw-acceleration": {
+      "id": "pqc-hw-acceleration",
+      "lm_id": "LM-072",
+      "title": "PQC Hardware Acceleration",
+      "description": "How post-quantum signatures are accelerated — scalar, SIMD, crypto instructions, GPU, FPGA, ASIC and NPU — explained in plain English and backed by PQC Today’s own measurements on an Apple M4 Pro, an NXP i.MX 95 (Cortex-A55) and an AMD Kria KV260 (Cortex-A53 + FPGA).",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p6"
+    },
     "pqc-risk-management": {
       "id": "pqc-risk-management",
       "lm_id": "LM-034",
@@ -442,6 +460,15 @@
       "duration": "120 min",
       "difficulty": "advanced",
       "frameworkPhase": "p6"
+    },
+    "pci-certification": {
+      "id": "pci-certification",
+      "lm_id": "LM-071",
+      "title": "PCI Certification",
+      "description": "PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what a device approval proves, how to read a PTS listing, what PTS HSM v5.0 changed, and what PCI does and does not require for PQC.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
     },
     "platform-eng-pqc": {
       "id": "platform-eng-pqc",
@@ -620,24 +647,6 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
-    },
-    "fips-140-3-certification": {
-      "id": "fips-140-3-certification",
-      "lm_id": "LM-067",
-      "title": "FIPS 140-3 Certification",
-      "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
-      "duration": "60 min",
-      "difficulty": "advanced",
-      "frameworkPhase": "p7"
-    },
-    "pci-certification": {
-      "id": "pci-certification",
-      "lm_id": "LM-071",
-      "title": "PCI Certification",
-      "description": "PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what a device approval proves, how to read a PTS listing, what PTS HSM v5.0 changed, and what PCI does and does not require for PQC.",
-      "duration": "60 min",
-      "difficulty": "advanced",
-      "frameworkPhase": "p7"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -668,6 +677,7 @@
     "energy-utilities-pqc": 6,
     "entropy-randomness": 6,
     "exec-quantum-impact": 4,
+    "fips-140-3-certification": 1,
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
@@ -688,8 +698,10 @@
     "pqc-business-case": 5,
     "pqc-candidates": 6,
     "pqc-governance": 4,
+    "pqc-hw-acceleration": 5,
     "pqc-risk-management": 4,
     "pqc-testing-validation": 7,
+    "pci-certification": 1,
     "platform-eng-pqc": 6,
     "pqc-grc": 2,
     "qkd": 5,
@@ -710,9 +722,7 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1,
-    "fips-140-3-certification": 1,
-    "pci-certification": 1
+    "assess": 1
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1389,6 +1399,37 @@
         "label": "How to Act"
       }
     ],
+    "fips-140-3-certification": [
+      {
+        "id": "fips-what-it-is",
+        "label": "FIPS 140-3 and the CMVP"
+      },
+      {
+        "id": "fips-requirement-areas",
+        "label": "The eleven requirement areas"
+      },
+      {
+        "id": "fips-levels",
+        "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-lifecycle",
+        "label": "Validation lifecycle and the MIP queue"
+      },
+      {
+        "id": "fips-acvp-bridge",
+        "label": "Algorithm validation is not the certificate"
+      },
+      {
+        "id": "fips-landscape",
+        "label": "Today’s landscape and the 2026 horizon"
+      },
+      {
+        "id": "fips-route-table",
+        "label": "CMVP submission routes (Manual v2.7)",
+        "optional": true
+      }
+    ],
     "5g-security": [
       {
         "id": "what-is-5g-security",
@@ -1793,6 +1834,48 @@
         "label": "Resources & Workshop"
       }
     ],
+    "pqc-hw-acceleration": [
+      {
+        "id": "where-time-goes",
+        "label": "Where the Time Goes"
+      },
+      {
+        "id": "building-blocks",
+        "label": "The Five Building Blocks"
+      },
+      {
+        "id": "acceleration-models",
+        "label": "Seven Models of Acceleration"
+      },
+      {
+        "id": "arm-generations",
+        "label": "Arm Across Three Generations"
+      },
+      {
+        "id": "our-arm-work",
+        "label": "What We Built on Arm"
+      },
+      {
+        "id": "mldsa-vs-slhdsa",
+        "label": "ML-DSA vs SLH-DSA"
+      },
+      {
+        "id": "fpga-limits",
+        "label": "FPGA Limits"
+      },
+      {
+        "id": "crypto-agility",
+        "label": "Crypto Agility: Many Algorithms"
+      },
+      {
+        "id": "gpu-asic-npu",
+        "label": "GPU, ASIC and NPU"
+      },
+      {
+        "id": "lessons",
+        "label": "Lessons"
+      }
+    ],
     "pqc-risk-management": [
       {
         "id": "crqc",
@@ -1831,6 +1914,39 @@
       {
         "id": "fips-acvp",
         "label": "FIPS 140-3 & ACVP Testing"
+      }
+    ],
+    "pci-certification": [
+      {
+        "id": "pci-pts-approval",
+        "label": "PTS HSM device approval"
+      },
+      {
+        "id": "pci-v5-changes",
+        "label": "What PTS HSM v5.0 changed"
+      },
+      {
+        "id": "pci-pqc-truth",
+        "label": "PQC and PCI: what is and isn’t required"
+      },
+      {
+        "id": "pci-operating-stack",
+        "label": "PIN, P2PE, KMO and key-injection: the boundary"
+      },
+      {
+        "id": "pci-pin-security",
+        "label": "PCI PIN Security v3.1",
+        "optional": true
+      },
+      {
+        "id": "pci-p2pe-kif",
+        "label": "P2PE and key-injection facilities",
+        "optional": true
+      },
+      {
+        "id": "pci-kmo",
+        "label": "PCI KMO v1.0",
+        "optional": true
       }
     ],
     "platform-eng-pqc": [
@@ -2181,70 +2297,6 @@
       {
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
-      }
-    ],
-    "fips-140-3-certification": [
-      {
-        "id": "fips-what-it-is",
-        "label": "FIPS 140-3 and the CMVP"
-      },
-      {
-        "id": "fips-requirement-areas",
-        "label": "The eleven requirement areas"
-      },
-      {
-        "id": "fips-levels",
-        "label": "Security Levels 1–4"
-      },
-      {
-        "id": "fips-lifecycle",
-        "label": "Validation lifecycle and the MIP queue"
-      },
-      {
-        "id": "fips-acvp-bridge",
-        "label": "Algorithm validation is not the certificate"
-      },
-      {
-        "id": "fips-landscape",
-        "label": "Today’s landscape and the 2026 horizon"
-      },
-      {
-        "id": "fips-route-table",
-        "label": "CMVP submission routes (Manual v2.7)",
-        "optional": true
-      }
-    ],
-    "pci-certification": [
-      {
-        "id": "pci-pts-approval",
-        "label": "PTS HSM device approval"
-      },
-      {
-        "id": "pci-v5-changes",
-        "label": "What PTS HSM v5.0 changed"
-      },
-      {
-        "id": "pci-pqc-truth",
-        "label": "PQC and PCI: what is and isn’t required"
-      },
-      {
-        "id": "pci-operating-stack",
-        "label": "PIN, P2PE, KMO and key-injection: the boundary"
-      },
-      {
-        "id": "pci-pin-security",
-        "label": "PCI PIN Security v3.1",
-        "optional": true
-      },
-      {
-        "id": "pci-p2pe-kif",
-        "label": "P2PE and key-injection facilities",
-        "optional": true
-      },
-      {
-        "id": "pci-kmo",
-        "label": "PCI KMO v1.0",
-        "optional": true
       }
     ]
   },
@@ -2855,6 +2907,12 @@
         "label": "Org Risk Self-Assessment"
       }
     ],
+    "fips-140-3-certification": [
+      {
+        "id": "fips-level-planner",
+        "label": "Level and boundary planner"
+      }
+    ],
     "5g-security": [
       {
         "id": "suci",
@@ -3287,6 +3345,28 @@
         "label": "Escalation Framework"
       }
     ],
+    "pqc-hw-acceleration": [
+      {
+        "id": "acceleration-models",
+        "label": "Acceleration Models, Explained"
+      },
+      {
+        "id": "building-blocks",
+        "label": "Building Blocks, Explained"
+      },
+      {
+        "id": "our-measurements",
+        "label": "Our Measurements"
+      },
+      {
+        "id": "fpga-limits",
+        "label": "FPGA Limits Lab"
+      },
+      {
+        "id": "offload-lab",
+        "label": "Offload, Sharing and Batching"
+      }
+    ],
     "pqc-risk-management": [
       {
         "id": "crqc-scenario-planner",
@@ -3333,6 +3413,12 @@
       {
         "id": "acvp-validator",
         "label": "ACVP Workflow & Validation Tests"
+      }
+    ],
+    "pci-certification": [
+      {
+        "id": "pci-evidence-review",
+        "label": "Payment HSM evidence review"
       }
     ],
     "platform-eng-pqc": [
@@ -3684,18 +3770,6 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
-    ],
-    "fips-140-3-certification": [
-      {
-        "id": "fips-level-planner",
-        "label": "Level and boundary planner"
-      }
-    ],
-    "pci-certification": [
-      {
-        "id": "pci-evidence-review",
-        "label": "Payment HSM evidence review"
-      }
     ]
   },
   "MODULE_TRACKS": [
@@ -4046,6 +4120,15 @@
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
+        },
+        {
+          "id": "pqc-hw-acceleration",
+          "lm_id": "LM-072",
+          "title": "PQC Hardware Acceleration",
+          "description": "How post-quantum signatures are accelerated — scalar, SIMD, crypto instructions, GPU, FPGA, ASIC and NPU — explained in plain English and backed by PQC Today’s own measurements on an Apple M4 Pro, an NXP i.MX 95 (Cortex-A55) and an AMD Kria KV260 (Cortex-A53 + FPGA).",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p6"
         }
       ]
     },
@@ -4507,6 +4590,10 @@
     "exec-quantum-impact": {
       "standards": ["EO 14306", "NSM-10", "NSA CNSA 2.0", "NIST IR 8547"]
     },
+    "fips-140-3-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["FIPS 140-3"]
+    },
     "5g-security": {
       "algorithms": ["ML-KEM", "ML-DSA"],
       "standards": ["X.509"]
@@ -4595,6 +4682,10 @@
         "NIST SP 800-208"
       ]
     },
+    "pqc-hw-acceleration": {
+      "algorithms": ["ML-DSA", "SLH-DSA", "ML-KEM", "RSA"],
+      "standards": ["FIPS 202", "FIPS 203", "FIPS 204", "FIPS 205"]
+    },
     "pqc-risk-management": {
       "algorithms": ["ML-DSA", "ML-KEM"],
       "standards": ["NIST SP 800-131A", "RFC 9370", "NIST CSWP 39", "NSA CNSA 2.0", "NIST IR 8547"]
@@ -4602,6 +4693,9 @@
     "pqc-testing-validation": {
       "algorithms": ["ML-DSA", "ML-KEM"],
       "standards": ["RFC 9794", "FIPS 186-5", "FIPS 140-3"]
+    },
+    "pci-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"]
     },
     "platform-eng-pqc": {
       "algorithms": ["ML-DSA", "ML-KEM", "SLH-DSA"],
@@ -4703,13 +4797,6 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
-    },
-    "fips-140-3-certification": {
-      "algorithms": ["ML-KEM", "ML-DSA"],
-      "standards": ["FIPS 140-3"]
-    },
-    "pci-certification": {
-      "algorithms": ["ML-KEM", "ML-DSA"]
     }
   }
 }

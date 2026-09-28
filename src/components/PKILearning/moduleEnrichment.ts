@@ -74,6 +74,7 @@ export type AlgorithmTaxon = (typeof ALGORITHM_TAXONOMY)[number]
  * (`FIPS 203`, `RFC 9421`, `IETF draft-ietf-...`).
  */
 export const STANDARD_TAXONOMY = [
+  'FIPS 202',
   'FIPS 203',
   'FIPS 204',
   'FIPS 205',
