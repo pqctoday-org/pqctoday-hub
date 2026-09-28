@@ -18,7 +18,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'cc-eucc-certification',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-068',
   title: 'Common Criteria, EUCC & eIDAS Certification',
   description:
@@ -35,6 +35,12 @@ const manifest: ModuleManifest = {
     { id: 'cc-eal-decoding', label: 'EALs and "EAL4+"' },
     { id: 'cc-lifecycle', label: 'Certification lifecycle and CC:2022 transition' },
     { id: 'cc-continuity', label: 'Assurance continuity (CCDB-014)', optional: true },
+    { id: 'cc-regional-schemes', label: 'One criteria, many schemes: the regional schemes' },
+    {
+      id: 'cc-regional-reference',
+      label: 'Regional schemes: per-scheme reference',
+      optional: true,
+    },
     { id: 'eucc-scheme', label: 'EUCC is a scheme, not a PP' },
     { id: 'eidas-chain', label: 'From eIDAS to a certified device' },
     { id: 'pp-en419221-5', label: 'PP case: EN 419221-5 HSM' },
@@ -46,8 +52,17 @@ const manifest: ModuleManifest = {
       id: 'cc',
       label: 'Common Criteria',
       entrySection: 'cc-model',
-      duration: '60 min',
-      sections: ['cc-model', 'cc-eal-decoding', 'cc-lifecycle', 'cc-continuity', 'pp-security-ic'],
+      // +10 min: the regional-schemes section (user request 2026-09-27)
+      duration: '70 min',
+      sections: [
+        'cc-model',
+        'cc-eal-decoding',
+        'cc-lifecycle',
+        'cc-continuity',
+        'cc-regional-schemes',
+        'cc-regional-reference',
+        'pp-security-ic',
+      ],
     },
     {
       id: 'eucc-eidas',

@@ -938,6 +938,15 @@
         "optional": true
       },
       {
+        "id": "cc-regional-schemes",
+        "label": "One criteria, many schemes: the regional schemes"
+      },
+      {
+        "id": "cc-regional-reference",
+        "label": "Regional schemes: per-scheme reference",
+        "optional": true
+      },
+      {
         "id": "eucc-scheme",
         "label": "EUCC is a scheme, not a PP"
       },

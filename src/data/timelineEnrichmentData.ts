@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import {
-  mergeEnrichmentFiles,
   hasSubstantiveEnrichment,
   type EnrichmentLookup,
   type LibraryEnrichment,
-} from './libraryEnrichmentData'
+} from './enrichmentParse'
 import { libraryData } from './libraryData'
 import { TIMELINE_LABEL_ALIASES } from './timelineLabelAliases.generated'
+import timelineEnrichmentsJson from './generated/timelineEnrichments.generated.json'
 
 export type { LibraryEnrichment, EnrichmentLookup }
 export { hasSubstantiveEnrichment }
@@ -20,40 +20,16 @@ export const timelineToLibraryRef: Record<string, string> = Object.fromEntries(
   libraryData.filter((item) => item.downloadUrl).map((item) => [item.downloadUrl, item.referenceId])
 )
 
-// Reads all three archive tiers this dataset has accumulated, not just the live
-// directory — same fix as src/data/maturityGovernanceData.ts (2026-08-07). This is a
-// merge-all source (mergeEnrichmentFiles reads every dated file's own filename date,
-// oldest to newest), so a file sitting in an archive dir was invisible to the glob
-// even though its content was never superseded. Confirmed real loss: 6 live,
-// non-deprecated timeline rows (Brazil:ITI, G7:G7 CEG, Germany:BSI, Hong Kong:HKMA,
-// Malaysia:NACSA, Singapore:CSA/GovTech/IMDA) had no enrichment without this.
-function loadTimelineEnrichments(): EnrichmentLookup {
-  const modules = {
-    ...import.meta.glob('./doc-enrichments/timeline_doc_enrichments_*.md', {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    }),
-    ...import.meta.glob('./archive/timeline_doc_enrichments_*.md', {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    }),
-    ...import.meta.glob('./doc-enrichments/archive/timeline_doc_enrichments_*.md', {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    }),
-    ...import.meta.glob('./doc-enrichments/archive_v1/timeline_doc_enrichments_*.md', {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    }),
-  } as Record<string, string>
-  return mergeEnrichmentFiles(modules)
-}
-
-export const timelineEnrichments: EnrichmentLookup = loadTimelineEnrichments()
+// The merged lookup over ALL timeline enrichment generations — the live
+// directory and all three archive tiers — precomputed at build time by
+// scripts/generate-timeline-enrichments.ts (27 Sep 2026). Reading the 40 raw
+// markdown files here (34.2 MB) made this module an 86 MB app chunk; the merged
+// result is 338 entries, 1.1 MB. The merge-all semantics are unchanged: the
+// archive tiers must stay in (excluding them once lost 6 live, non-deprecated
+// rows — Brazil:ITI, G7:G7 CEG, Germany:BSI, Hong Kong:HKMA, Malaysia:NACSA,
+// Singapore:CSA/GovTech/IMDA). timelineEnrichments.generated.test.ts proves the
+// file equals mergeEnrichmentFiles over the raw files, key for key.
+export const timelineEnrichments: EnrichmentLookup = timelineEnrichmentsJson as EnrichmentLookup
 
 /**
  * Build the enrichment lookup key for a timeline document row.

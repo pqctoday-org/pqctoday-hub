@@ -16,6 +16,8 @@ import {
   EidasChain,
   PpEn4192215,
   EuccPqcToday,
+  CcRegionalSchemes,
+  CcRegionalReference,
 } from './sections/CcEuSections'
 
 export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<string, SectionEntry>([
@@ -28,4 +30,6 @@ export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<str
   ['eidas-chain', { Component: EidasChain, group: 'cc-eu' }],
   ['pp-en419221-5', { Component: PpEn4192215, group: 'cc-eu' }],
   ['eucc-pqc-today', { Component: EuccPqcToday, group: 'cc-eu' }],
+  ['cc-regional-schemes', { Component: CcRegionalSchemes, group: 'cc-eu' }],
+  ['cc-regional-reference', { Component: CcRegionalReference, group: 'cc-eu' }],
 ])

@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.130.0] - 2026-09-27
+
+A new Learn chapter on the regional schemes built on Common Criteria, NIAP's CNSA 2.0 deadline in the data, a certification refresh, and a much lighter Timeline page.
+
+### Added
+
+- **"One criteria, many schemes": the regional schemes built on Common Criteria** [view:/learn] [persona:grc] [persona:architect] [persona:researcher]: the Common Criteria, EUCC & eIDAS module has a new chapter covering how the 36 countries in the Common Criteria Recognition Arrangement and the EU's EUCC scheme build on the same criteria. It includes a coverage map, what each national scheme adds (its own Protection Profiles, cryptography rules, lighter national methods, procurement mandates), and each scheme's published post-quantum position, every one linked to its official source. It also covers the countries that use the Common Criteria text outside the arrangement (China, Russia, Kazakhstan). One date stands out: from 1 January 2028, NIAP no longer accepts into evaluation products, including those certified by any CCRA partner, whose cryptography does not meet CNSA 2.0.
+
+### Data
+
+- **NIAP now requires CNSA 2.0 for certified products** [view:/compliance] [view:/timeline] [view:/library] [persona:grc] [persona:executive] [persona:architect]: NIAP Policy #33 (31 August 2026) takes effect on 1 January 2027. Products certified by NIAP or a CCRA partner that don't meet CNSA 2.0 for every cryptographic function won't be accepted into NIAP evaluation from 1 January 2028, and won't be listed on the NIAP Product Compliant List from 1 January 2029 (CNSA 1.0 cut-offs are 1 January and 1 July 2027). Added to the library, the compliance landscape and the timeline.
+- **Regional certification records corrected** [view:/compliance] [persona:grc] [persona:researcher]: the EU EUCC cryptography guideline recommends against standalone lattice-based PQC ("shouldn't"), it doesn't forbid it; France's ANSSI, the Netherlands' NSCIB, Türkiye's TSE, Singapore's Quantum-Safe Handbook and Korea's KCMVP now cite the right documents. TSE and the Singapore handbook are shown again, and the EU joint statement is correctly attributed to 18 member states.
+- **China's QKD standards, Russia's certification schemes and Kazakhstan's trusted-software registry are added or corrected** [view:/compliance] [view:/library] [persona:grc] [persona:researcher]: three Chinese quantum key distribution standards (GB/T 42829-2023, GB/T 43692-2024, GM/T 0108-2021) are shown again under their real titles as QKD standards, China's product certification (CNITSEC and Cybersecurity Law Art. 25), Russia's FSTEC certification and Kazakhstan's trusted-software registry are new, and the Russian TC26 entry now claims only what its sources say.
+- **Certification records refreshed** [view:/compliance] [persona:grc] [persona:ops]: 34 new Common Criteria certificates. 41 NIST algorithm validations are now confirmed against NIST's own listing, with their product page and tested capabilities.
+- **French (ANSSI) certificates show ANSSI's own product categories** [view:/compliance] [persona:grc]: categories such as "Cartes à puce et dispositifs similaires" replace fragments like "circuits" or "APPLE THALES Autres" that came from misreading the catalogue table.
+
+### Fixed
+
+- **The Timeline page downloads far less** [view:/timeline] [persona:curious] [persona:developer]: the Timeline page's document enrichments now ship as one precomputed 1.2 MB lookup instead of 40 raw files (an 86 MB download chunk), with a test that proves the result is identical; and the four new ACVP/CAVP library records now carry cited passages from their source documents.
+- **Verify-only algorithm validations are no longer at risk of being dropped** [view:/compliance] [persona:researcher]: the refresh's check against NIST asked for several algorithms at once, which NIST treats as "all of them", so validations covering only signature verification looked absent. It now asks for each algorithm separately. Nothing was removed from the live site.
+
 ## [4.129.0] - 2026-09-27
 
 FIPS 140-3 and PCI now each have their own certification module.

@@ -688,6 +688,15 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'united-states-microsoft-nist-pqc-algorithms-in-windows-platform': [
     'United States:Microsoft — NIST PQC Algorithms in Windows Platform',
   ],
+  'united-states-niap-no-new-evaluations-without-cnsa-2-0': [
+    'United States:NIAP — NIAP stops accepting non-CNSA 2.0 products into evaluation',
+  ],
+  'united-states-niap-non-cnsa-2-0-products-off-the-pcl': [
+    'United States:NIAP — Non-CNSA 2.0 products no longer posted to the NIAP PCL',
+  ],
+  'united-states-niap-policy-33-effective-cnsa-1-0-cutoff': [
+    'United States:NIAP — NIAP Policy #33 takes effect; CNSA 1.0 cut-offs begin',
+  ],
   'united-states-nist-112-bit-security-algorithms-fully-disallowed': [
     'United States:NIST — 112-bit Security Algorithms Fully Disallowed',
   ],
