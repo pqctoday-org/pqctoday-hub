@@ -520,6 +520,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT75M', 'Intermediate'),
   },
 
+  '/learn/pqc-hw-acceleration': {
+    title: 'PQC Hardware Acceleration — SIMD, FPGA, GPU, ASIC for ML-DSA & SLH-DSA | PQC Today',
+    description:
+      'How ML-DSA and SLH-DSA are accelerated with SIMD, crypto instructions, GPUs, FPGAs, ASICs and NPUs — explained in plain English and backed by measurements on Apple M4 Pro, Cortex-A55 and Cortex-A53 + FPGA.',
+    canonical: `${BASE_URL}/learn/pqc-hw-acceleration`,
+    structuredData: buildModuleSchema('PQC Hardware Acceleration', 'PT60M', 'Advanced'),
+  },
+
   '/learn/hsm-pqc': {
     title: 'HSM & PQC Operations — PKCS#11 v3.2, Firmware Migration & FIPS 140-3 | PQC Today',
     description:

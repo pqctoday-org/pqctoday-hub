@@ -26,6 +26,20 @@ import { getStandard } from '@/data/standardsRegistry'
 import { PathScopedContent } from '@/components/PKILearning/common/LearnPathPicker'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import { ASSURANCE_COMPONENTS, CC_EU_AS_OF } from '../../data/ccEuData'
+import {
+  ADDITION_KIND_LABEL,
+  CCRA_MEMBERS_SOURCE,
+  CCRA_SOURCE,
+  COVERAGE_MAP,
+  OUTSIDE_CCRA,
+  REGIONAL_AS_OF,
+  REGIONAL_AS_OF_LABEL,
+  REGIONAL_SCHEMES,
+  REGIONS,
+  type AdditionKind,
+  type MapEntry,
+  type SourceRef,
+} from '../../data/regionalSchemesData'
 
 // ── Shared presentational helpers (also used by the CC/EU workshop steps) ───
 
@@ -1564,6 +1578,301 @@ export const EuccPqcToday = () => (
       (lists ACM v2 as applicable and the v3 draft for public review).
     </Sources>
   </Section>
+)
+
+// ── Regional schemes built on Common Criteria ──────────────────────────────
+
+/** An official page with no library row yet, opened in a new tab. */
+const ExtLink = ({ href, children }: { href: string; children: ReactNode }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+  >
+    {children}
+  </a>
+)
+
+const Ref = ({ source }: { source: SourceRef }) =>
+  source.libraryId ? (
+    <SourceCite id={source.libraryId} label={source.label} />
+  ) : source.url ? (
+    <ExtLink href={source.url}>{source.label}</ExtLink>
+  ) : (
+    <PlainSource>{source.label}</PlainSource>
+  )
+
+const RefList = ({ sources }: { sources: readonly SourceRef[] }) => (
+  <>
+    {sources.map((s, i) => (
+      <span key={s.label}>
+        {i > 0 ? ', ' : ''}
+        <Ref source={s} />
+      </span>
+    ))}
+  </>
+)
+
+const ROLE_STYLE: Record<MapEntry['role'], string> = {
+  authorizing: 'border-primary/40 bg-primary/10 text-foreground',
+  consuming: 'border-border bg-muted text-foreground/90',
+  outside: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+}
+
+const ROLE_LABEL: Record<MapEntry['role'], string> = {
+  authorizing: 'CCRA authorizing — issues certificates',
+  consuming: 'CCRA consuming — recognises, does not issue',
+  outside: 'Uses the CC text outside the CCRA — no mutual recognition',
+}
+
+/** The coverage map: every CCRA participant and CC-based outsider, by region. */
+const CoverageMap = () => (
+  <div className="space-y-3" data-testid="cc-regional-map">
+    <div className="grid gap-3 sm:grid-cols-2">
+      {REGIONS.map((region) => {
+        const entries = COVERAGE_MAP.filter((e) => e.region === region)
+        return (
+          <div key={region} className="rounded-lg border border-border p-3">
+            <p className="mb-2 text-sm font-semibold text-foreground">
+              {region} <span className="font-normal text-muted-foreground">({entries.length})</span>
+            </p>
+            <ul className="flex flex-wrap gap-1.5">
+              {entries.map((e) => (
+                <li
+                  key={e.country}
+                  title={[ROLE_LABEL[e.role], e.eu ? 'EU — EUCC applies' : '', e.note ?? '']
+                    .filter(Boolean)
+                    .join(' · ')}
+                  className={`rounded-md border px-2 py-0.5 text-xs ${ROLE_STYLE[e.role]}`}
+                >
+                  {e.country}
+                  {e.eu ? <span className="ml-1 font-semibold text-primary">EU</span> : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      })}
+    </div>
+    <ul className="flex flex-wrap gap-3 text-xs text-muted-foreground" aria-label="Map legend">
+      {(Object.keys(ROLE_LABEL) as MapEntry['role'][]).map((r) => (
+        <li key={r} className="flex items-center gap-1.5">
+          <span className={`inline-block h-3 w-3 rounded-sm border ${ROLE_STYLE[r]}`} />
+          {ROLE_LABEL[r]}
+        </li>
+      ))}
+      <li className="flex items-center gap-1.5">
+        <span className="font-semibold text-primary">EU</span> EU member state — EUCC applies by law
+      </li>
+    </ul>
+  </div>
+)
+
+const kindsOf = (kinds: readonly { kind: AdditionKind }[]) =>
+  [...new Set(kinds.map((a) => ADDITION_KIND_LABEL[a.kind]))].join('; ') || '—'
+
+/** Learn section `cc-regional-schemes` */
+export const CcRegionalSchemes = () => (
+  <div className="space-y-4" data-as-of={REGIONAL_AS_OF}>
+    <P>
+      Common Criteria is one standard (ISO/IEC 15408, with ISO/IEC 18045 for the evaluation method),
+      but nobody is certified by “Common Criteria”. A certificate is always issued by a national
+      scheme, and what it is worth elsewhere depends on a recognition arrangement. Every scheme
+      starts from the same criteria and then adds its own requirements on top.
+    </P>
+
+    <H3>Three layers</H3>
+    <DataTable
+      caption="The three layers of a Common Criteria certificate"
+      head={['Layer', 'What it is', 'Who sets it']}
+      rows={[
+        [
+          '1. The criteria',
+          'Security functional and assurance requirements, the evaluation method, Protection Profiles',
+          <SourceCite key="cc" id="COMMON-CRITERIA" label="CC:2022 (ISO/IEC 15408)" />,
+        ],
+        [
+          '2. Recognition',
+          <>
+            <strong>CCRA</strong> (worldwide): mutual recognition only for a collaborative PP, or up
+            to EAL2 + ALC_FLR. <strong>EUCC</strong> (EU law): ‘substantial’ and ‘high’, up to
+            AVA_VAN.5 inside the technical domains.
+          </>,
+          <span key="r">
+            <Ref source={CCRA_SOURCE} />,{' '}
+            <SourceCite
+              id="CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme"
+              label="Regulation (EU) 2024/482"
+            />
+          </span>,
+        ],
+        [
+          '3. National additions',
+          'Own Protection Profiles or PP policy, cryptography rules and validation, lighter national methods, procurement mandates',
+          'Each national scheme',
+        ],
+      ]}
+    />
+
+    <Callout tone="key" title="The CCRA recognises the evaluation — never the cryptography">
+      <p>
+        The 2014 arrangement says collaborative PPs “shall not contain requirements that have a
+        dependency on national conformity assessment schemes” and should allow “other national
+        approved primitives/protocols so nations can provide their own refinements”. So no algorithm
+        or module validation travels with a CC certificate: the US asks for a CAVP certificate,
+        Canada for Cyber Centre-approved cryptography, Korea for KCMVP, Malaysia for MyCV, the EU
+        for the ECCG Agreed Cryptographic Mechanisms. That is exactly where post-quantum
+        requirements enter.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        <Ref source={CCRA_SOURCE} />, Annex K.1
+      </p>
+    </Callout>
+
+    <H3>Who takes part — the coverage map</H3>
+    <P>
+      36 countries take part in the CCRA: 18 issue certificates and 18 only recognise them. EU
+      member states are bound by EUCC whatever their CCRA role. China, Russia and Kazakhstan use the
+      Common Criteria text in their own national standards, outside the arrangement.
+    </P>
+    <CoverageMap />
+    <p className="text-xs text-muted-foreground">
+      Roles as listed by the <Ref source={CCRA_MEMBERS_SOURCE} /> on {REGIONAL_AS_OF_LABEL}. The
+      portal still lists Italy as authorizing although OCSI now works only under EUCC, and Sweden’s
+      CSEC no longer issues new CCRA certificates.
+    </p>
+
+    <H3>What each scheme adds on top</H3>
+    <DataTable
+      caption="Regional additions on top of Common Criteria"
+      head={['Scheme', 'Recognition', 'Adds']}
+      rows={REGIONAL_SCHEMES.filter((s) => s.additions.length > 0).map((s) => [
+        <span key="s">
+          <strong>{s.country}</strong> — {s.scheme}
+        </span>,
+        s.recognition,
+        kindsOf(s.additions),
+      ])}
+    />
+    <P>
+      Four patterns repeat: a <strong>PP policy</strong> (NIAP evaluates only against its own
+      approved PPs; Singapore and Korea add national PPs), <strong>cryptography rules</strong>{' '}
+      (validation or an approved-mechanism list), a <strong>lighter national method</strong>{' '}
+      (France’s CSPN, Germany’s BSZ, Spain’s LINCE, Japan’s ST confirmation), and a{' '}
+      <strong>procurement or legal mandate</strong> that turns a certificate into a condition of
+      sale (NIAP’s Product Compliant List, the EU regulation, Australia’s ISM, Spain’s CPSTIC
+      catalogue).
+    </P>
+
+    <H3>Post-quantum positions — where a scheme or its government has published one</H3>
+    <DataTable
+      caption="Published post-quantum positions by scheme"
+      head={['Country', 'Position', 'Source']}
+      rows={REGIONAL_SCHEMES.map((s) => [
+        <strong key="c">{s.country}</strong>,
+        s.pqc ?? (
+          <span key="n" className="text-muted-foreground">
+            No published position found
+          </span>
+        ),
+        <RefList key="r" sources={s.sources} />,
+      ])}
+    />
+    <Callout tone="warn" title="The NIAP date that reaches every CCRA certificate">
+      <p>
+        NIAP Policy #33 applies to products “certified by either NIAP or a CCRA partner”. From 1
+        January 2028 a product that does not meet CNSA 2.0 for every cryptographic function is not
+        accepted into NIAP evaluation, and from 1 January 2029 it is not posted to the Product
+        Compliant List — so a certificate from any CCRA scheme stops opening the US
+        national-security market unless its cryptography is CNSA 2.0.
+      </p>
+    </Callout>
+
+    <H3>Outside the CCRA</H3>
+    <DataTable
+      caption="Countries that use the Common Criteria text outside the CCRA"
+      head={['Country', 'Standard and body', 'Adds', 'Post-quantum']}
+      rows={OUTSIDE_CCRA.map((o) => [
+        <strong key="c">{o.country}</strong>,
+        <span key="b">
+          {o.standard}. {o.body}.
+        </span>,
+        o.additions,
+        o.pqc ?? (
+          <span key="n" className="text-muted-foreground">
+            No published position found
+          </span>
+        ),
+      ])}
+    />
+    <P>
+      The same criteria, no mutual recognition: a certificate from these schemes is not recognised
+      by CCRA members, and a CCRA certificate does not replace their national certification.
+    </P>
+
+    <OpenQuestion>
+      Some countries have adopted the Common Criteria text as a national standard (for example
+      Belarus, Vietnam and Taiwan) without an official source confirming a certification scheme;
+      they are left off the map. Korea’s national PQC migration year is reported in the press but
+      not yet in an official document.
+    </OpenQuestion>
+
+    <Sources>
+      <Ref source={CCRA_SOURCE} />, <Ref source={CCRA_MEMBERS_SOURCE} />, and the national sources
+      listed per scheme (read {REGIONAL_AS_OF_LABEL}).
+    </Sources>
+  </div>
+)
+
+/** Learn section `cc-regional-reference` (optional) */
+export const CcRegionalReference = () => (
+  <div className="space-y-4" data-as-of={REGIONAL_AS_OF}>
+    <P>
+      Per-scheme detail behind the regional-schemes section: what each scheme recognises, what it
+      adds on top of Common Criteria, and its post-quantum position, each with its source.
+    </P>
+    {REGIONS.map((region) => {
+      const schemes = REGIONAL_SCHEMES.filter((s) => s.region === region)
+      if (schemes.length === 0) return null
+      return (
+        <div key={region} className="space-y-3">
+          <H3>{region}</H3>
+          {schemes.map((s) => (
+            <div key={s.id} className="space-y-1 rounded-lg border border-border p-3 text-sm">
+              <p className="font-semibold text-foreground">
+                {s.country} — {s.scheme}{' '}
+                <span className="font-normal text-muted-foreground">({s.role})</span>
+              </p>
+              <p className="text-foreground/90">
+                <span className="font-medium">Recognition:</span> {s.recognition}
+              </p>
+              {s.additions.length > 0 ? (
+                <ul className="list-disc space-y-0.5 pl-5 text-foreground/90">
+                  {s.additions.map((a) => (
+                    <li key={a.text}>
+                      <span className="font-medium">{ADDITION_KIND_LABEL[a.kind]}:</span> {a.text}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">No national addition found beyond the CCRA.</p>
+              )}
+              <p className="text-foreground/90">
+                <span className="font-medium">Post-quantum:</span>{' '}
+                {s.pqc ?? (
+                  <span className="text-muted-foreground">no published position found</span>
+                )}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Sources: <RefList sources={s.sources} />
+              </p>
+            </div>
+          ))}
+        </div>
+      )
+    })}
+  </div>
 )
 
 /** Small inline marker used by the workshop steps when a record was checked. */

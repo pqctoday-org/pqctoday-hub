@@ -80,7 +80,14 @@ export const MERGE_ALL_SOURCES: {
     name: 'timeline doc enrichments',
     prefix: 'timeline_doc_enrichments_',
     ext: '.md',
-    loaderFile: 'src/data/timelineEnrichmentData.ts',
+    // Since 27 Sep 2026 the app imports a merged lookup precomputed by
+    // scripts/generate-timeline-enrichments.ts, so the app loader has no glob
+    // left. The globs that define WHICH files are merged now live in the
+    // identity test, which requires the generated lookup to equal
+    // mergeEnrichmentFiles over exactly those globs. A new archive tier
+    // therefore fails here until the test globs it, and then fails the test
+    // until the generator reads it: the same guarantee, one hop further.
+    loaderFile: 'src/data/timelineEnrichments.generated.test.ts',
   },
 ]
 

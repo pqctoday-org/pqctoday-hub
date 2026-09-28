@@ -343,6 +343,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.pqctoday.com/learn/pqc-hw-acceleration</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.pqctoday.com/learn/pqc-risk-management</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>

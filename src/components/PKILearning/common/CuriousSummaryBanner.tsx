@@ -49,6 +49,8 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
     'A three-column diagram separating Standards Bodies, Certification Bodies, and Compliance Frameworks, with arrows showing how algorithms flow from specification through validation to mandated use.',
   'migration-program':
     'A seven-phase roadmap from Discovery through Validation, with stakeholder coordination lines connecting executive sponsors, technical teams, and vendor dependencies.',
+  'pqc-hw-acceleration':
+    'Seven acceleration models drawn as everyday scenes — one cook with one knife, a wide blade chopping a row at once, an apple corer, a school bus, a custom assembly line in a warehouse, a factory cast in concrete, and a calculator that rounds — beside bar charts of measured signing speed on three Arm chips and an FPGA.',
   'dnssec-pqc':
     'A bar comparison showing a classical ECDSA signature as a small block next to a much larger ML-DSA-44 signature block, both measured against a dashed line marking the DNS UDP size limit; alongside it, a resolver icon labeled Cloudflare 1.1.1.1 checking a green checkmark against a signed test-zone icon labeled dnstest.dev, with a roadmap timeline below leading toward a 2029 target.',
 }
@@ -65,6 +67,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   PKIWorkshop: 'pki-workshop',
   KmsPqc: 'kms-pqc',
   HsmPqc: 'hsm-pqc',
+  PQCHardwareAcceleration: 'pqc-hw-acceleration',
   CryptoProductCertification: 'crypto-product-certification',
   Fips1403Certification: 'fips-140-3-certification',
   CcEuccCertification: 'cc-eucc-certification',

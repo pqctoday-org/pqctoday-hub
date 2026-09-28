@@ -73,6 +73,7 @@ const GOLDEN_ROUTE_PATHS = [
   'pqc-business-case',
   'pqc-candidates',
   'pqc-governance',
+  'pqc-hw-acceleration',
   'pqc-grc',
   'pqc-risk-management',
   'pqc-testing-validation',

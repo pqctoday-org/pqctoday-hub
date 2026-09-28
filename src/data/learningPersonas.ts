@@ -643,6 +643,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'platform-eng-pqc',
       'stateful-signatures',
       'slh-dsa',
+      'pqc-hw-acceleration',
       'pki-workshop',
       'pki-enrollment-protocols',
       'merkle-tree-certs',
@@ -729,6 +730,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'platform-eng-pqc' },
       { type: 'module', moduleId: 'stateful-signatures' },
       { type: 'module', moduleId: 'slh-dsa' },
+      { type: 'module', moduleId: 'pqc-hw-acceleration' },
       { type: 'module', moduleId: 'pki-workshop' },
       { type: 'module', moduleId: 'pki-enrollment-protocols' },
       { type: 'module', moduleId: 'merkle-tree-certs' },
@@ -743,6 +745,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'confidential-computing',
           'stateful-signatures',
           'slh-dsa',
+          'pqc-hw-acceleration',
           'pki-infrastructure',
           'merkle-tree-certs',
         ],
@@ -769,7 +772,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2160,
+    estimatedMinutes: 2220,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -812,6 +815,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'confidential-computing',
       'stateful-signatures',
       'slh-dsa',
+      'pqc-hw-acceleration',
       'pki-infrastructure',
       'merkle-tree-certs',
       'email-signing',
@@ -861,6 +865,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'secure-boot-pqc',
       'stateful-signatures',
       'slh-dsa',
+      'pqc-hw-acceleration',
       'merkle-tree-certs',
       'confidential-computing',
       'crypto-dev-apis',
@@ -959,6 +964,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'secure-boot-pqc' },
       { type: 'module', moduleId: 'stateful-signatures' },
       { type: 'module', moduleId: 'slh-dsa' },
+      { type: 'module', moduleId: 'pqc-hw-acceleration' },
       { type: 'module', moduleId: 'merkle-tree-certs' },
       { type: 'module', moduleId: 'confidential-computing' },
       { type: 'module', moduleId: 'crypto-dev-apis' },
@@ -976,6 +982,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'secure-boot-pqc',
           'stateful-signatures',
           'slh-dsa',
+          'pqc-hw-acceleration',
           'merkle-tree-certs',
           'confidential-computing',
           'crypto-dev-apis',
@@ -1047,7 +1054,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 2895,
+    estimatedMinutes: 2955,
     essentials: [
       'pqc-101',
       'research-quantum-impact',

@@ -197,6 +197,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: Data-at-Rest Strategy',
     why: 'This module belongs to phase 5 (Pilots & Migration); Data-at-Rest Strategy produces a deliverable of that phase in the Command Center.',
   },
+  '/learn/pqc-hw-acceleration': {
+    to: '/business/tools/infra-modernization-planner',
+    label: 'Produce the artifact: Infrastructure Modernization Planner',
+    why: 'This module belongs to phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase in the Command Center.',
+  },
   '/learn/hsm-pqc': {
     to: '/business/tools/infra-modernization-planner',
     label: 'Produce the artifact: Infrastructure Modernization Planner',
