@@ -45,7 +45,10 @@ function readModules(): Record<string, string> {
   for (const dir of TIMELINE_ENRICHMENT_DIRS) {
     const abs = path.join(DATA, dir)
     if (!fs.existsSync(abs)) continue
-    for (const f of fs.readdirSync(abs).filter((n) => FILE_RE.test(n)).sort()) {
+    for (const f of fs
+      .readdirSync(abs)
+      .filter((n) => FILE_RE.test(n))
+      .sort()) {
       modules[`./${dir}/${f}`] = fs.readFileSync(path.join(abs, f), 'utf-8')
     }
   }
@@ -71,7 +74,9 @@ function main() {
       )
       process.exit(1)
     }
-    console.log(`[gen:timeline-enrichments] OK — ${rel} current (${n} files, ${Object.keys(merged).length} entries)`)
+    console.log(
+      `[gen:timeline-enrichments] OK — ${rel} current (${n} files, ${Object.keys(merged).length} entries)`
+    )
     return
   }
   if (current !== text) fs.writeFileSync(OUT, text)
