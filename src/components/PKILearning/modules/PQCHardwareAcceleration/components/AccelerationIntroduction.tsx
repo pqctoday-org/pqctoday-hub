@@ -564,18 +564,19 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
             <strong className="text-foreground">
               Narrow, but powerful — that is what an FPGA is for.
             </strong>{' '}
-            On the same KV260, switching the FPGA on takes one SLH-DSA-SHAKE-128s signature from
-            about 2.2 seconds to 77 milliseconds (0.46 → 13.0 per second, 28×) — the difference
-            between a device that can sign on demand and one that cannot. A 4-core Cortex-A53 board
-            with a 4-lane Keccak engine in its fabric signs the SHAKE “s” sets 13–15× faster than
-            the 6-core Cortex-A55 i.MX 95, and reaches 84–97% of a whole Apple M4 Pro CPU (all 14
-            cores; about 80% once the M4’s SHA-3 instructions are used, which our engine does not do
-            yet — a measured +19% on this signing). This is one FPGA engine against a laptop
-            processor on one workload: for SHA-2 SLH-DSA and ML-DSA the M4 Pro is 20–25× faster.
-            Both halves are the lesson: pick the one workload that is actually stuck, build hardware
-            for exactly that, and a small, low-power board can stand next to a laptop processor.
-            Switching the FPGA off on the same board drops it 26–31× — the whole lead is the fabric.
-            SHA-2 sets and the fast “f” sets are not routed to the fabric and run on the CPU.{' '}
+            On the same KV260, switching the FPGA on raises SLH-DSA-SHAKE-128s signing from 0.46 to
+            13.0 signatures per second (28×, 4 workers); measured one at a time, a signature takes
+            2.12 seconds on the A53 and 69 milliseconds on the fabric — the difference between a
+            device that can sign on demand and one that cannot. A 4-core Cortex-A53 board with a
+            4-lane Keccak engine in its fabric signs the SHAKE “s” sets 13–15× faster than the
+            6-core Cortex-A55 i.MX 95, and reaches 84–97% of a whole Apple M4 Pro CPU (all 14 cores;
+            about 80% once the M4’s SHA-3 instructions are used, which our engine does not do yet —
+            a measured +19% on this signing). This is one FPGA engine against a laptop processor on
+            one workload: for SHA-2 SLH-DSA and ML-DSA the M4 Pro is 20–25× faster. Both halves are
+            the lesson: pick the one workload that is actually stuck, build hardware for exactly
+            that, and a small, low-power board can stand next to a laptop processor. Switching the
+            FPGA off on the same board drops it 26–31× — the whole lead is the fabric. SHA-2 sets
+            and the fast “f” sets are not routed to the fabric and run on the CPU.{' '}
             {SLH_FPGA_0927.note}
           </Ours>
           <Ours>
