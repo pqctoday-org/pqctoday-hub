@@ -24,7 +24,7 @@
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Pencil } from 'lucide-react'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -33,7 +33,9 @@ import {
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
   TOOL_LABELS_BY_ARTIFACT_TYPE,
+  MODULE_CATALOG,
 } from './resourceContract'
+import { OPEN_PARAM, decodeOpen, encodeOpen, resolveOpen } from '@/simulation/resourceUrl'
 import {
   canEmbedStep,
   isAssessStep,
@@ -154,6 +156,7 @@ import { canResolveDeepLink } from '@/simulation/deepLinks'
 import {
   ResCol,
   resLinks,
+  type ResItem,
   DecisionSection,
   QuarterReport,
   type QuarterReportData,
@@ -254,6 +257,30 @@ const SEATS: { id: PersonaId; label: string; fullLabel: string }[] = (
 
 // difficulty cycle order for the MODE dial (WS-14)
 const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
+
+// 09-28 nav remediation (WP5): the Resources tab's step for one listed item —
+// shared by the tab and the `?open=` resolver, so a resource link resolves to
+// exactly the step the tab would have opened.
+type ResLeg = 'learn' | 'activities' | 'reference'
+function resourceStep(leg: ResLeg, it: ResItem): TreeStep {
+  if (leg === 'learn') return { kind: 'learn', label: it.label, to: it.to, moduleId: it.id }
+  if (leg === 'reference') return { kind: 'reference', label: it.label, to: it.to, refId: it.id }
+  // Business tools embed via the ACTIVITY arm (they emit an artifact).
+  // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt …) live
+  // in WORKSHOP_TOOL_COMPONENTS — the same registry the journey workshops embed
+  // through — so route them via the WORKSHOP arm too, keeping them UNDER the
+  // "● Simulation mode" header instead of navigating out to /playground.
+  // eslint-disable-next-line security/detect-object-injection
+  return WORKSHOP_TOOL_COMPONENTS[it.id]
+    ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
+    : // eslint-disable-next-line security/detect-object-injection
+      { kind: 'activity', label: it.label, to: it.to, artifactType: TOOL_TO_ARTIFACT[it.id] }
+}
+function resourceStepsFor(phase: PhaseId, sector: string, seat: string): TreeStep[] {
+  return (['learn', 'activities', 'reference'] as const).flatMap((leg) =>
+    resLinks(leg, phase, sector, seat).map((it) => resourceStep(leg, it))
+  )
+}
 
 // The store's seed SEAT (useSimulationStore SEED.seat). SEAT defaults from the
 // user's persona only while it is still this seed value — once the player has
@@ -434,7 +461,6 @@ export function SimulationView() {
     setInsuranceAssumed,
     activeTab,
     setActiveTab,
-    openStepRef,
     setOpenStepRef,
     returnPathFailures,
     noteReturnPathFailure,
@@ -613,7 +639,11 @@ export function SimulationView() {
   // the pane closes. Without this, "Back to board" dropped focus to <body> and a
   // keyboard or screen-reader user lost their place in the step list entirely.
   const embedOpenerRef = useRef<HTMLElement | null>(null)
-  const openStep = (s: TreeStep) => {
+  // 09-28 nav remediation (WP5): `openStepPane` opens the pane only (the
+  // auto-run, restore and URL sync use it); `openStep` is a USER open, which
+  // also pushes one history entry so browser Back closes the pane instead of
+  // leaving /simulation. Returns whether a pane actually opened.
+  const openStepPane = (s: TreeStep): boolean => {
     if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
       embedOpenerRef.current = document.activeElement
     }
@@ -678,20 +708,44 @@ export function SimulationView() {
       // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
       // UI) so the player never hits a broken/unreachable panel and can't complete
       // a lab that didn't run.
-      if (sandboxAvail !== 'available') return
+      if (sandboxAvail !== 'available') return false
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
     } else if (s.kind === 'architecture') {
       clearAllEmbeds()
       setArchitectureEmbed({ title: s.label })
+    } else {
+      return false
     }
     // NOTE: opening an embed no longer auto-completes the step. Completion is an
     // explicit "Mark complete" click in the embed header (review steps), the
     // tool's own Save (activity), or the in-body Save (algorithm choice tabs) —
     // a step is never silently done just by being viewed. AI delegation (`auto`)
     // still bulk-completes via its own button + the quarter engine.
+    return true
   }
-  const closeEmbed = () => {
+  // The `?open=` value the open pane is tied to (null when it was opened
+  // without one — the auto-run's peeks). Lets the URL sync tell "the URL moved
+  // on (Back/Forward)" from "a pane the URL never knew about".
+  const urlOpenRef = useRef<string | null>(null)
+  // The value a close is removing. Closing clears the pane at once, but going
+  // Back is asynchronous — until the URL catches up, the sync effect must not
+  // read the still-present value as "reopen this".
+  const closingOpenRef = useRef<string | null>(null)
+  const location = useLocation()
+  const openStep = (s: TreeStep) => {
+    if (!openStepPane(s)) return
+    const value = encodeOpen(sel, s)
+    urlOpenRef.current = value
+    const next = new URLSearchParams(searchParams)
+    if (next.get(OPEN_PARAM) === value) return
+    next.set(OPEN_PARAM, value)
+    // The history state carries the whole step: this session created it, so
+    // Back/Forward can reopen exactly it; `simOpenOwned` marks the entry as
+    // ours, so closing can go Back rather than stack another entry.
+    navigate({ search: `?${next.toString()}` }, { state: { simOpen: s, simOpenOwned: true } })
+  }
+  const closeEmbedPane = () => {
     // A deliberate "Back to board" is not a resume point — forget the resource
     // so the next reload lands on the board the player chose to return to.
     setOpenStepRef(null)
@@ -700,16 +754,45 @@ export function SimulationView() {
     // re-rendered and the target is back in the document.
     const opener = embedOpenerRef.current
     embedOpenerRef.current = null
-    if (opener) {
-      requestAnimationFrame(() => {
-        if (opener.isConnected) opener.focus()
-      })
+    if (opener && opener !== document.body) {
+      // 09-28 (WP7a): the board (and the button that opened the pane) unmounts
+      // while a pane is open, so the saved element is usually a detached node
+      // by now — fall back to its re-rendered twin (same tag + text).
+      // The board re-mounts over the next frames, so retry briefly.
+      const tag = opener.tagName
+      const text = opener.textContent
+      let tries = 0
+      const refocus = () => {
+        const target = opener.isConnected
+          ? opener
+          : Array.from(document.querySelectorAll<HTMLElement>(tag)).find(
+              (el) => el.textContent === text
+            )
+        if (target) target.focus()
+        else if (++tries < 10) setTimeout(refocus, 50)
+      }
+      requestAnimationFrame(refocus)
+    }
+  }
+  const closeEmbed = () => {
+    closeEmbedPane()
+    const current = searchParams.get(OPEN_PARAM)
+    if (!current) return
+    urlOpenRef.current = null
+    closingOpenRef.current = current
+    // Our own entry → go Back (Forward reopens it). A bookmarked / restored
+    // URL → drop the param in place and stay on /simulation.
+    if ((location.state as { simOpenOwned?: boolean } | null)?.simOpenOwned) navigate(-1)
+    else {
+      const next = new URLSearchParams(searchParams)
+      next.delete(OPEN_PARAM)
+      setSearchParams(next, { replace: true })
     }
   }
   // Live auto-run playthrough (Play 0→7) — drives the real sim like manual play:
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
-  const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
+  const autoRunPlayer = useSimAutoRunPlayer({ openStep: openStepPane, closeEmbed })
 
   // W5.5 — RESUME THE RESOURCE. The tab already survives a reload; this restores
   // what was open inside it. Runs once on mount, re-opening through `openStep`
@@ -718,27 +801,57 @@ export function SimulationView() {
   // the current phase's tree is restored — a save referencing a resource this
   // build no longer ships is dropped rather than reopened as a broken pane.
   const restoredResourceRef = useRef(false)
+  // 09-28 nav remediation (WP7a / WP5.6): run the restore ONCE, after the
+  // persisted store has hydrated — even when there is nothing to restore. It
+  // used to key off the first non-null `openStepRef`, so when nothing was saved
+  // the player's own first click re-triggered it: a second open that
+  // overwrote the focus-return target and logged "Embed Open" twice.
+  const [hydrated, setHydrated] = useState(() => useSimulationStore.persist.hasHydrated())
   useEffect(() => {
-    if (restoredResourceRef.current) return
-    // Wait for the persisted store to rehydrate. Zustand's persist middleware
-    // restores asynchronously, so on the very first mount this is still null —
-    // latching the ref on mount meant the resume never fired at all (caught in
-    // the browser; the unit tests set the store synchronously and passed).
-    if (!openStepRef) return
+    if (hydrated) return
+    if (useSimulationStore.persist.hasHydrated()) {
+      setHydrated(true)
+      return
+    }
+    return useSimulationStore.persist.onFinishHydration(() => setHydrated(true))
+  }, [hydrated])
+  useEffect(() => {
+    if (restoredResourceRef.current || !hydrated) return
+    const st = useSimulationStore.getState()
+    const saved = st.openStepRef as unknown as TreeStep | null
+    // A sandbox lab can't be judged until the sandbox check settles — wait
+    // (without latching) rather than silently drop it.
+    if (saved && isScenarioStep(saved) && sandboxAvail === 'checking') return
     restoredResourceRef.current = true
+    if (!saved) return
+    // The URL wins: an explicit `?open=` is resolved by the URL sync below.
+    if (searchParams.get(OPEN_PARAM)) return
+    // A `?phase=` deep link to a different phase is a deliberate jump: don't
+    // reopen an unrelated resource from the old phase under the new label.
+    const phaseParam = searchParams.get('phase')
+    if (phaseParam && phaseParam !== st.sel) {
+      setOpenStepRef(null)
+      return
+    }
     // Replay the stored step directly. Re-deriving it from the trees cannot
     // work: the Resources tab builds steps from the phase RESOURCE MAP, which
     // surfaces resources no tree contains (e.g. /learn/quantum-threats).
-    const step = openStepRef as unknown as TreeStep
-    if (canEmbedStep(step)) openStep(step)
-    else {
+    if (canEmbedStep(saved) && openStepPane(saved)) {
+      // Tie the URL to it (replace — a reload is not a new history step), so
+      // closing it and copying the link behave the same as a fresh open.
+      const value = encodeOpen(st.sel, saved)
+      urlOpenRef.current = value
+      const next = new URLSearchParams(searchParams)
+      next.set(OPEN_PARAM, value)
+      setSearchParams(next, { replace: true })
+    } else {
       // W7.5: the run remembered a resource this build cannot reopen, so the
       // learner is silently dropped on the board instead of where they were.
       noteReturnPathFailure()
       logSimReturnPathFailure(sel, 'unresolvable-resume')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openStepRef])
+  }, [hydrated, sandboxAvail])
 
   // Deep link: /simulation?run=<mode> auto-starts a run directly, skipping the
   // PLAY modal entirely — a URL is a pre-committed choice already made by
@@ -768,6 +881,63 @@ export function SimulationView() {
     next.delete('run')
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, startRun])
+
+  // 09-28 nav remediation (WP5): the URL drives the pane. Back (param gone)
+  // closes a pane the URL opened; Forward or a pasted link reopens it. A value
+  // this session pushed carries its step in history state; anything else must
+  // resolve to one of that phase's real steps — it is never navigated to, and
+  // an unresolvable value is stripped and counted as a failed return path.
+  // Re-runs on the open resource too, not only the URL: if Back lands before
+  // React renders the pushed `?open=`, push + pop net out to the SAME search
+  // string, so `searchParams` never changes — comparing state here (URL has
+  // no value, yet the pane is tied to one) still closes it.
+  const openStepRefNow = useSimulationStore((s) => s.openStepRef)
+  useEffect(() => {
+    if (!hydrated) return
+    const value = searchParams.get(OPEN_PARAM)
+    if (value && value === closingOpenRef.current) return // a close in flight
+    closingOpenRef.current = null
+    if (!value) {
+      if (urlOpenRef.current) {
+        urlOpenRef.current = null
+        closeEmbedPane()
+      }
+      return
+    }
+    if (value === urlOpenRef.current) return
+    const decoded = decodeOpen(value, PHASE_ORDER)
+    const fromState = (location.state as { simOpen?: TreeStep } | null)?.simOpen
+    let step: TreeStep | null =
+      decoded && fromState && encodeOpen(decoded.phase, fromState) === value ? fromState : null
+    if (!step && decoded) {
+      const phaseId = decoded.phase as PhaseId
+      // eslint-disable-next-line security/detect-object-injection
+      const tree = SIM_TREES[phaseId]
+      step = resolveOpen(
+        decoded,
+        [...(tree ? flattenTree(tree) : []), ...resourceStepsFor(phaseId, sector, seat)],
+        {
+          isEmbeddable: isEmbeddableModule,
+          // eslint-disable-next-line security/detect-object-injection
+          label: (id) => `Learn: ${MODULE_CATALOG[id]?.title ?? id}`,
+        }
+      )
+    }
+    if (step && isScenarioStep(step) && sandboxAvail === 'checking') return // settle first
+    if (decoded && step && canEmbedStep(step)) {
+      if (decoded.phase !== sel) setSel(decoded.phase as PhaseId)
+      if (openStepPane(step)) {
+        urlOpenRef.current = value
+        return
+      }
+    }
+    const next = new URLSearchParams(searchParams)
+    next.delete(OPEN_PARAM)
+    setSearchParams(next, { replace: true })
+    noteReturnPathFailure()
+    logSimReturnPathFailure(sel, 'unresolvable-resume')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, hydrated, sandboxAvail, openStepRefNow])
 
   // Deep link: /simulation?phase=p3 jumps the board to that phase on load — e.g.
   // a Learn module's "practice this in the sim" CTA can target the exact phase it
@@ -4580,12 +4750,7 @@ export function SimulationView() {
                         <ResCol
                           title="Learn"
                           items={resLinks('learn', sel, sector, seat).map((it) => {
-                            const step: TreeStep = {
-                              kind: 'learn',
-                              label: it.label,
-                              to: it.to,
-                              moduleId: it.id,
-                            }
+                            const step = resourceStep('learn', it)
                             return {
                               ...it,
                               done: moduleDone(it.id),
@@ -4596,19 +4761,9 @@ export function SimulationView() {
                         <ResCol
                           title="Activities"
                           items={resLinks('activities', sel, sector, seat).map((it) => {
-                            // Business tools embed via the ACTIVITY arm (they emit an artifact).
-                            // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
-                            // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
-                            // workshops embed through — so route them via the WORKSHOP arm too,
-                            // keeping them UNDER the "● Simulation mode" header instead of
-                            // navigating out to /playground (where the player leaves the sim).
-
-                            const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
-
-                            const artifactType = TOOL_TO_ARTIFACT[it.id]
-                            const step: TreeStep = isWorkshopTool
-                              ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
-                              : { kind: 'activity', label: it.label, to: it.to, artifactType }
+                            const step = resourceStep('activities', it)
+                            const isWorkshopTool = step.kind === 'workshop'
+                            const artifactType = step.artifactType
                             return {
                               ...it,
                               done: isWorkshopTool
@@ -4621,12 +4776,7 @@ export function SimulationView() {
                         <ResCol
                           title="Reference"
                           items={resLinks('reference', sel, sector, seat).map((it) => {
-                            const step: TreeStep = {
-                              kind: 'reference',
-                              label: it.label,
-                              to: it.to,
-                              refId: it.id,
-                            }
+                            const step = resourceStep('reference', it)
                             // the assess-engine ref opens the wizard IN the sim (embed);
                             // every other reference navigates to its deep link as before.
                             return {

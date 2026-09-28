@@ -178,4 +178,83 @@ test.describe('Simulation navigation (desktop) — 09-28 remediation', () => {
     // a clean run: the decision is open again
     await expect(page.locator('button[aria-label^="Option A:"]').first()).toBeEnabled()
   })
+
+  test('WP5: browser Back closes an open resource and stays in the sim; Forward reopens it', async ({
+    page,
+  }) => {
+    await seed(page) // ends on /report — the page before the sim in history
+    await openBoard(page)
+    await page.getByRole('tab', { name: 'Progress' }).click()
+    await page
+      .getByRole('button', { name: /open here/i })
+      .first()
+      .click()
+    const back = page.getByRole('button', { name: /Back to board/i })
+    await expect(back).toBeVisible()
+    await expect(page).toHaveURL(/[?&]open=/)
+    const resourceUrl = page.url()
+
+    await page.goBack()
+    await expect(page).toHaveURL(/\/simulation(?!.*open=)/)
+    await expect(back).toHaveCount(0)
+    await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible()
+
+    await page.goForward()
+    await expect(back).toBeVisible()
+
+    // the close button behaves like Back: same entry, no stacking
+    await back.click()
+    await expect(back).toHaveCount(0)
+    await expect(page).toHaveURL(/\/simulation(?!.*open=)/)
+    await page.goBack()
+    await expect(page).toHaveURL(/\/report/)
+
+    // a copied resource link opens the resource; closing it stays on /simulation
+    await page.goto(resourceUrl, { waitUntil: 'domcontentloaded' })
+    await expect(back).toBeVisible({ timeout: 45_000 })
+    await back.click()
+    await expect(page).toHaveURL(/\/simulation(?!.*open=)/)
+    await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible()
+  })
+
+  test('WP5: an unresolvable ?open= value is stripped, never followed', async ({ page }) => {
+    await seed(page)
+    await page.goto('/simulation?open=1~p0~reference~/admin', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
+      timeout: 45_000,
+    })
+    await expect(page).toHaveURL(/\/simulation(?!.*open=)/)
+    await expect(page.getByRole('button', { name: /Back to board/i })).toHaveCount(0)
+  })
+
+  test('WP5/WP7a: a reload restores the open resource; the first open returns focus on close', async ({
+    page,
+  }) => {
+    await seed(page)
+    await openBoard(page)
+    await page.getByRole('tab', { name: 'Progress' }).click()
+    const opener = page.getByRole('button', { name: /open here/i }).first()
+    const openerLabel = (await opener.textContent()) ?? ''
+    await opener.click()
+    const back = page.getByRole('button', { name: /Back to board/i })
+    await expect(back).toBeVisible()
+
+    // WP7a: the first open after load used to be opened twice, losing the
+    // focus-return target — closing now returns focus to the button that opened it.
+    await back.click()
+    await expect(back).toHaveCount(0)
+    await expect
+      .poll(() => page.evaluate(() => document.activeElement?.textContent ?? ''))
+      .toBe(openerLabel)
+
+    // reload with the resource open → it is restored, tied to the URL
+    await opener.click()
+    await expect(back).toBeVisible()
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await expect(back).toBeVisible({ timeout: 45_000 })
+    await expect(page).toHaveURL(/[?&]open=/)
+    await back.click()
+    await expect(page).toHaveURL(/\/simulation(?!.*open=)/)
+    await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible()
+  })
 })
