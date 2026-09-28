@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
-  test.setTimeout(360000) // WASM load + autoInit + the workbench run (see the 180 s wait below)
+  test.setTimeout(420000) // WASM load + autoInit + the workbench run (see the 300 s wait below)
 
   test.beforeEach(async ({ page }) => {
     // Suppress the WhatsNew alertdialog (fixed inset-0 overlay) that intercepts
@@ -18,9 +18,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     })
   })
 
-  test('validates symmetric, hashing & MAC, KDF and ML-KEM via the direct ACVP execution trigger', async ({
-    page,
-  }) => {
+  test('validates KDF and ML-KEM via the direct ACVP execution trigger', async ({ page }) => {
     // Navigate to the playground sandbox route where ACVP testing mounts.
     // ACVP moved from its own top-level tab into a Developer sub-tab
     // (2026-08-31) — ?tab=developer&dtab=acvp selects both the top-level
@@ -64,18 +62,19 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // We dispatch custom E2E event periodically until the results state changes.
     //
     // 2026-09-27: a fixed, fast subset. The whole suite no longer fits a
-    // browser budget. Measured on the production build (Chromium, Rust engine):
-    // the full run had gone 18 minutes (1,592 rows, all passing) and was still
-    // inside the SLH-DSA "s" sets; every category except slh_stateful took
-    // 605 s for 2,991 rows, of which symmetric + hashing_mac + kdf finished
-    // inside the first 180 s and classical (RSA-heavy) and the ML-DSA depth
-    // sections took the rest. This spec now runs symmetric, hashing_mac, kdf
-    // and ml_kem, and asserts zero unexpected failures over all of them.
-    // classical, ml_dsa and slh_stateful are covered on BOTH engines by the
-    // Node run (useAcvpSuite.runResults.local, gate:local) and the nightly
-    // SLH-DSA suite. The "Run All" fallback click is gone for the same reason:
-    // racing the trigger, it would start the full suite.
-    const E2E_CATEGORIES = ['symmetric', 'hashing_mac', 'kdf', 'ml_kem']
+    // browser budget. Measured on the production build (Chromium, Rust engine,
+    // M5 Max): the full run had gone 18 minutes (1,592 rows, all passing) and
+    // was still inside the SLH-DSA "s" sets; every category except slh_stateful
+    // took 605 s for 2,991 rows. symmetric + hashing_mac + kdf + ml_kem took
+    // 90 s locally but did NOT finish in 180 s on GitHub's runner (main CI
+    // 23e4f3c38: 613 rows done, still in AES-KW Wycheproof) — the runner is
+    // ~4-5x slower. So the browser check runs kdf + ml_kem (KDF alone is ~3 s
+    // locally) and asserts zero unexpected failures over both. symmetric,
+    // hashing_mac, classical, ml_dsa and slh_stateful are covered on BOTH
+    // engines by the Node run (useAcvpSuite.runResults.local, gate:local) and
+    // the nightly SLH-DSA suite. The "Run All" fallback click is gone: racing
+    // the trigger, it would start the full suite.
+    const E2E_CATEGORIES = ['kdf', 'ml_kem']
     let testsRunning = false
     for (let i = 0; i < 20; i++) {
       // dispatch event
@@ -125,7 +124,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     const logSection = page
       .locator('div', { hasText: 'Cryptographic Validation Workbench run completed' })
       .last()
-    await expect(logSection).toBeVisible({ timeout: 180000 })
+    await expect(logSection).toBeVisible({ timeout: 300000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
     const mlkemRow = page.getByTestId('acvp-result-row').filter({ hasText: 'ML-KEM-512' }).first()
