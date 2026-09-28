@@ -21038,21 +21038,6 @@
       "replaceReason": "2026-09-27 regional-scheme remediation (d2): stub corrected to the real QKD standard; evidence is the official SAMR catalogue entry"
     },
     {
-      "refId": "NIST-CMVP-ESV-Program",
-      "title": "NIST CMVP — Entropy Source Validation (ESV) program page",
-      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/esv",
-      "status": "downloaded",
-      "filename": "NIST-CMVP-ESV-Program.html",
-      "sizeBytes": 62219,
-      "contentType": "text/html",
-      "sha256": "7a385ea3c5e3d7624e102986e88f5a1219eae46ae1db0c5bb24365ef815927bf",
-      "artefact": "LANDING",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-09-27T23:20:52.281632+00:00",
-      "admittedBy": "admit.py"
-    },
-    {
       "refId": "NIST-CMVP-ESV-Announcements",
       "title": "NIST CMVP — Entropy Validation announcements (ESV rollout 13 April 2022)",
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/announcements-1",
@@ -21065,21 +21050,6 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-09-27T23:21:11.898097+00:00",
-      "admittedBy": "admit.py"
-    },
-    {
-      "refId": "NIST-CMVP-MIS-SP800-140B",
-      "title": "NIST CMVP — SP 800-140B supplemental information: Module Information Structure (MIS) JSON",
-      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140b",
-      "status": "downloaded",
-      "filename": "NIST-CMVP-MIS-SP800-140B.html",
-      "sizeBytes": 106359,
-      "contentType": "text/html",
-      "sha256": "8eb04417e5de57dfb8b5f621137de4ea54241cca506fcb3da4524b2537ceca7a",
-      "artefact": "LANDING",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-09-27T23:21:24.171158+00:00",
       "admittedBy": "admit.py"
     },
     {
