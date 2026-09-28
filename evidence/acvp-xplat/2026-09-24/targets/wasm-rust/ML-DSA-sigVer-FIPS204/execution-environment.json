@@ -1,0 +1,94 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T03:10:14.422Z",
+  "target": {
+    "id": "wasm-rust",
+    "label": "WebAssembly (Node 22, host V8) — Rust engine",
+    "class": "wasm"
+  },
+  "os": {
+    "name": "macOS 26.6.2 (host running Node)",
+    "version": "26.6.2",
+    "kernel": "Darwin 25.6.0",
+    "image": {
+      "name": null,
+      "id": null
+    }
+  },
+  "arch": {
+    "machine": "wasm32",
+    "pointerBits": 32,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "Apple M5 Max",
+    "board": null,
+    "features": null
+  },
+  "emulation": {
+    "emulated": false,
+    "mechanism": null,
+    "hostMachine": "arm64",
+    "detection": "WebAssembly JIT-compiled by V8 (Node v22.23.1) on the host arm64 CPU — a VM, not ISA emulation"
+  },
+  "engine": {
+    "id": "rust",
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), wasm-bindgen WASM",
+    "artifactKind": "wasm",
+    "artifactPath": "src/wasm/softhsmrustv3_bg.wasm",
+    "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+    "sourceCommitEvidence": "public/wasm/wasm-provenance.json softhsmrustv3-engine.hsmCommit \"417c47a2\" resolved with git rev-parse in pqctoday-hsm",
+    "builtAt": "2026-09-23"
+  },
+  "build": {
+    "buildSystem": "hsm rust/build-wasm-bundle.sh (wasm-pack --target bundler --release)",
+    "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25), cargo 1.96.0 — pqc-rust container",
+    "flags": "RUSTFLAGS='-C link-arg=-zstack-size=8388608 -C link-arg=--export-table'",
+    "profile": "release (opt-level=\"s\", lto=true)",
+    "features": "acvp (build-wasm-bundle.sh; RNG-seeding hook via C_Initialize pReserved — not used: the CLI passes NULL)",
+    "location": "pqc-rust container (rust:1) — wasm-provenance.json softhsmrustv3-engine._rebuild20260923/_reanchor20260923"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": false,
+      "version": null,
+      "source": "wasm-bindgen module; the ML-KEM/ML-DSA path is pure Rust (no libcrypto in the crate graph for wasm32)"
+    },
+    "cryptoBackend": {
+      "name": "RustCrypto ml-kem (patched: rust/ml-kem-patched) + fips204 (patched: rust/fips204-patched)",
+      "version": "ml-kem 0.2.3, fips204 0.4.6 (rust/Cargo.lock @ 417c47a2)"
+    },
+    "runtime": [
+      {
+        "name": "node",
+        "version": "v22.23.1"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware accelerator: WebAssembly bytecode executed by the V8 JIT on the host CPU"
+  },
+  "entropy": {
+    "source": "getrandom (js feature) → crypto.getRandomValues (Node 22 webcrypto); not exercised by decapsulation/verification",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "acvp-respond (hub Node CLI, src/services/acvp/node/cli.ts)",
+    "version": "4.116.0+13ff20cb095e",
+    "language": "typescript (tsx)",
+    "languageVersion": "v22.23.1"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "b56c38a23ade68d7d0809986fa2e56f33a8b6fdc5b30abac229ef0045dfea91f",
+    "schemaId": "ML-DSA/sigVer/FIPS204",
+    "vsId": 42
+  },
+  "notes": [
+    "Provenance: built at hsm 7795799b, then rebuilt at 417c47a2 and proven byte-identical (sha256 a4582ff0…) — wasm-provenance.json _reanchor20260923.",
+    "hub commit 13ff20cb095e0408c8d0628016390fa87cea16be"
+  ],
+  "envId": "474b8628f835bd98fb164f7d8edfa21aa8400b708bac15b93f105796386dce91"
+}

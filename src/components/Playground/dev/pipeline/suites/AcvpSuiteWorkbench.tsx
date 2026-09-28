@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// AcvpSuiteWorkbench — the Build tab's ACVP suite inside the shared
+// AcvpSuiteWorkbench — the Build tab's Cryptographic Validation Workbench
+// (historically "the ACVP suite"; it mixes evidence classes, so the visible
+// heading no longer says ACVP — remediation plan WS-A, A-1) inside the shared
 // Builder/Code shell (design handoff design_handoff_kmip_pkcs11_playground
 // §3.6, D6). Palette = the 7 algorithm-family categories (checkbox each,
 // All/None), canvas = live progress + the streamed result rows, aside =
-// counts, evidence-tier legend and the execution log. Code = a generated
+// counts, evidence-class legend and the execution log. Code = a generated
 // Python driver that runs the same selection through the `acvp_native`
 // bridge. Execution is the untouched hsm/acvp/useAcvpSuite.ts runner —
 // e2e/acvp-validator.spec.ts's testids and its `e2e:trigger_acvp` window
 // event are preserved.
-import { useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import {
   Play,
   CheckCircle,
@@ -29,17 +31,107 @@ import {
   useAcvpSuite,
   CATEGORIES,
   ALL_CATEGORY_IDS,
-  EVIDENCE_TIER_META,
-  type EvidenceTier,
+  type TestResult,
 } from '../../../hsm/acvp/useAcvpSuite'
+import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
+import { CaseEvidenceBadge, coverageMatrixUrl } from '@/components/shared/CaseEvidenceBadge'
+import { evidenceForRowId, loadAcvpRowEvidence } from '@/data/validation/acvpRowEvidence'
+import { EVIDENCE_CLASSES, EVIDENCE_CLASS_SHORT } from '@/data/validation/evidenceClasses'
+import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitAcvpSuite } from './suiteCodegen'
 import { createAcvpBridge, runSuiteScript } from './suiteBridges'
+
+/**
+ * One streamed result row, memoized on the result object.
+ *
+ * Why memo (2026-09-25 slow-run fix): the runner streams ~1100 rows and
+ * commits them in batches, and without this every commit re-rendered every
+ * row's whole subtree — a CATEGORIES lookup, an `evidenceForRowId` lookup, a
+ * CaseEvidenceBadge and two lucide SVGs each. That is O(rows × commits) real
+ * render work and it dominated the full-suite wall time (measured 173.8 s →
+ * 122.5 s from batching alone, then 122.5 s → see the spec's timing comment
+ * from this memo). `res` objects are created once by pushResult and never
+ * mutated, so reference equality is a sound bail-out.
+ */
+// `evidenceReady` is part of the memo key: the evidence file loads on demand,
+// so a row rendered before it resolved must re-render once it has.
+const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }) => (
+  <tr
+    data-testid="acvp-result-row"
+    // The stable per-case id, so a test can address ONE row instead of
+    // text-filtering it. Text filters are ambiguous here: the evidence badge
+    // renders each record's limitations, and those quote the vector file's
+    // subset policy, which itself names every upstream negative reason — so
+    // filtering rows by e.g. 'invalid signature - too small' also matches the
+    // POSITIVE case of the same parameter set (found 2026-09-25).
+    data-row-id={res.id}
+    data-category={res.category}
+    data-status={res.status}
+    className="hover:bg-muted/30 transition-colors"
+  >
+    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
+      {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
+    </td>
+    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
+    <td className="p-2 text-muted-foreground">
+      {res.testCase}
+      <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
+    </td>
+    <td className="p-2">
+      <span
+        className={clsx(
+          'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
+          res.status === 'pass'
+            ? 'bg-status-success/20 text-status-success'
+            : res.status === 'skip'
+              ? 'bg-status-warning/20 text-status-warning'
+              : 'bg-destructive/20 text-destructive'
+        )}
+      >
+        {res.status === 'pass' ? (
+          <CheckCircle size={12} />
+        ) : res.status === 'skip' ? (
+          <MinusCircle size={12} />
+        ) : (
+          <XCircle size={12} />
+        )}
+        {res.status}
+      </span>
+    </td>
+    <td className="p-2 text-muted-foreground truncate max-w-[200px]" title={res.details}>
+      {res.details}
+    </td>
+    <td className="p-2">
+      <a
+        href={res.referenceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary hover:text-primary/70 transition-colors"
+        title={res.referenceUrl}
+      >
+        <ExternalLink size={12} />
+      </a>
+    </td>
+  </tr>
+))
+AcvpResultRow.displayName = 'AcvpResultRow'
 
 export const AcvpSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const { engineMode } = useHsmContext()
   const suite = useAcvpSuite()
+  // The per-case evidence file (10.8 MB) loads on demand, not with the app.
+  const [evidenceReady, setEvidenceReady] = useState(false)
+  useEffect(() => {
+    let live = true
+    loadAcvpRowEvidence()
+      .then(() => live && setEvidenceReady(true))
+      .catch((e: unknown) => console.error('[AcvpSuiteWorkbench] evidence load failed', e))
+    return () => {
+      live = false
+    }
+  }, [])
   const {
     results,
     loading,
@@ -65,6 +157,26 @@ export const AcvpSuiteWorkbench = () => {
     () => emitAcvpSuite(selectedCategories, engineMode),
     [selectedCategories, engineMode]
   )
+
+  // Per-category pass/fail counts in one pass over `results`, memoized.
+  // This used to be 3 full `results.filter()` scans per category (21 scans of a
+  // ~1100-row array) on every render, and the runner renders on every batched
+  // commit during a run — part of the same O(rows × commits) cost the memoized
+  // row above addresses.
+  const catCounts = useMemo(() => {
+    const acc = new Map<string, { total: number; passed: number; failed: number }>()
+    for (const r of results) {
+      let e = acc.get(r.category)
+      if (!e) {
+        e = { total: 0, passed: 0, failed: 0 }
+        acc.set(r.category, e)
+      }
+      e.total += 1
+      if (r.status === 'pass') e.passed += 1
+      else if (r.status === 'fail') e.failed += 1
+    }
+    return acc
+  }, [results])
 
   // Engineering-workbench surface — same gate as the suite trigger in
   // DeveloperTab; belt and braces for a stale/hand-crafted deep link.
@@ -112,9 +224,9 @@ export const AcvpSuiteWorkbench = () => {
       </div>
       <div className="space-y-1">
         {CATEGORIES.map((cat) => {
-          const catResults = results.filter((r) => r.category === cat.id)
-          const catPassed = catResults.filter((r) => r.status === 'pass').length
-          const catFailed = catResults.filter((r) => r.status === 'fail').length
+          const c = catCounts.get(cat.id)
+          const catPassed = c?.passed ?? 0
+          const catFailed = c?.failed ?? 0
           return (
             <label
               key={cat.id}
@@ -141,7 +253,7 @@ export const AcvpSuiteWorkbench = () => {
                   <span className="font-medium text-foreground">{cat.label}</span>
                   <span className="font-mono text-[10px] text-muted-foreground">{cat.groups}</span>
                 </span>
-                {catResults.length > 0 && (
+                {(c?.total ?? 0) > 0 && (
                   <span className="block text-[10.5px] text-muted-foreground">
                     <span className="text-status-success">{catPassed} ok</span>
                     {catFailed > 0 && (
@@ -170,21 +282,26 @@ export const AcvpSuiteWorkbench = () => {
     <div className="space-y-3 flex flex-col min-h-0 flex-1">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h3 className="text-base font-bold">ACVP Known-Answer Tests</h3>
+          <h3 className="text-base font-bold">Cryptographic Validation Workbench</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Validates deterministic operations across the WASM PKCS#11 FFI using NIST CAVP target
-            vectors.{' '}
+            Replays sampled test cases across the WASM PKCS#11 FFI. Evidence is mixed: selected
+            public{' '}
             <a
               href="https://github.com/usnistgov/ACVP-Server"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline text-primary"
             >
-              NIST ACVP JSON reference vectors
+              NIST ACVP-Server reference samples
             </a>
+            , published-standard KATs, OpenSSL-oracle comparisons and functional round-trips. Hover
+            a row&apos;s status badge for its evidence tier; rows without a tier icon are functional
+            or behavioral checks with no external expected value.
           </p>
         </div>
       </div>
+
+      <ValidationDisclaimer />
 
       {(loading || totalChecks > 0) && (
         <div className="space-y-1.5" aria-live="polite">
@@ -193,7 +310,7 @@ export const AcvpSuiteWorkbench = () => {
               {loading ? (
                 <>
                   <Loader2 size={13} className="animate-spin text-primary" aria-hidden="true" />
-                  Running ACVP validation…
+                  Running validation tests…
                   {progress ? ` ${progress.current} (${progress.done} done)` : ''}
                 </>
               ) : (
@@ -260,65 +377,7 @@ export const AcvpSuiteWorkbench = () => {
                 </tr>
               ) : (
                 results.map((res) => (
-                  <tr
-                    key={res.id}
-                    data-testid="acvp-result-row"
-                    data-category={res.category}
-                    data-status={res.status}
-                    className="hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
-                      {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
-                    </td>
-                    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
-                    <td className="p-2 text-muted-foreground">{res.testCase}</td>
-                    <td className="p-2">
-                      <span
-                        className={clsx(
-                          'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
-                          res.status === 'pass'
-                            ? 'bg-status-success/20 text-status-success'
-                            : res.status === 'skip'
-                              ? 'bg-status-warning/20 text-status-warning'
-                              : 'bg-destructive/20 text-destructive'
-                        )}
-                        title={
-                          res.evidenceTier ? EVIDENCE_TIER_META[res.evidenceTier].label : undefined
-                        }
-                      >
-                        {res.status === 'pass' ? (
-                          <CheckCircle size={12} />
-                        ) : res.status === 'skip' ? (
-                          <MinusCircle size={12} />
-                        ) : (
-                          <XCircle size={12} />
-                        )}
-                        {res.status}
-                        {res.evidenceTier &&
-                          (() => {
-                            const TierIcon = EVIDENCE_TIER_META[res.evidenceTier].icon
-                            return <TierIcon size={11} className="opacity-70" aria-hidden="true" />
-                          })()}
-                      </span>
-                    </td>
-                    <td
-                      className="p-2 text-muted-foreground truncate max-w-[200px]"
-                      title={res.details}
-                    >
-                      {res.details}
-                    </td>
-                    <td className="p-2">
-                      <a
-                        href={res.referenceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:text-primary/70 transition-colors"
-                        title={res.referenceUrl}
-                      >
-                        <ExternalLink size={12} />
-                      </a>
-                    </td>
-                  </tr>
+                  <AcvpResultRow key={res.id} res={res} evidenceReady={evidenceReady} />
                 ))
               )}
             </tbody>
@@ -361,19 +420,27 @@ export const AcvpSuiteWorkbench = () => {
       </Card>
       <Card className="p-3.5">
         <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-          Evidence tiers
+          Evidence classes
         </div>
-        <div className="flex flex-col gap-1 text-[11px]">
-          {(Object.keys(EVIDENCE_TIER_META) as EvidenceTier[]).map((t) => {
-            const Icon = EVIDENCE_TIER_META[t].icon
-            return (
-              <div key={t} className="flex items-start gap-1.5">
-                <Icon size={12} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-                <span className="text-muted-foreground">{EVIDENCE_TIER_META[t].label}</span>
-              </div>
-            )
-          })}
-        </div>
+        <p className="mb-1.5 text-[10.5px] text-muted-foreground">
+          Each row&apos;s class, case, parameters, source and limits come from the reviewed vector
+          manifest and test registry. Rows with no badge (skips, errors) are evidence of nothing.
+        </p>
+        <dl className="flex flex-col gap-1 text-[11px]" data-testid="acvp-evidence-legend">
+          {Object.values(EVIDENCE_CLASSES).map((c) => (
+            <div key={c.id}>
+              <dt className="font-medium text-foreground">{EVIDENCE_CLASS_SHORT[c.id]}</dt>
+              <dd className="text-muted-foreground">{c.permittedClaim}</dd>
+            </div>
+          ))}
+        </dl>
+        <a
+          href={coverageMatrixUrl()}
+          className="mt-2 inline-block text-[11px] text-primary hover:underline"
+          data-testid="acvp-coverage-link"
+        >
+          Full coverage matrix and open gaps →
+        </a>
       </Card>
       <Card className="p-3.5 flex-1 min-h-0 flex flex-col">
         <div className="flex items-center justify-between mb-2">
@@ -383,11 +450,13 @@ export const AcvpSuiteWorkbench = () => {
               variant="ghost"
               size="sm"
               onClick={() => {
-                void navigator.clipboard.writeText(logs.join('\n')).then(() => {
-                  setLogCopied(true)
-                  if (logCopyTimerRef.current) clearTimeout(logCopyTimerRef.current)
-                  logCopyTimerRef.current = setTimeout(() => setLogCopied(false), 2000)
-                })
+                void navigator.clipboard
+                  .writeText([VALIDATION_DISCLAIMER_TEXT, '', ...logs].join('\n'))
+                  .then(() => {
+                    setLogCopied(true)
+                    if (logCopyTimerRef.current) clearTimeout(logCopyTimerRef.current)
+                    logCopyTimerRef.current = setTimeout(() => setLogCopied(false), 2000)
+                  })
               }}
               className="h-6 gap-1 px-1.5 text-[10.5px] text-muted-foreground hover:text-foreground"
               title="Copy log to clipboard"
@@ -417,8 +486,8 @@ export const AcvpSuiteWorkbench = () => {
 
   return (
     <SuiteShell
-      title="ACVP Known-Answer Tests"
-      subtitle="NIST ACVP reference vectors + self-consistency oracles, replayed against the WASM engine"
+      title="Cryptographic Validation Workbench"
+      subtitle="Selected NIST ACVP-Server reference samples, standard KATs, oracle comparisons and functional round-trips, replayed against the WASM engine"
       actions={
         <Button
           variant="ghost"

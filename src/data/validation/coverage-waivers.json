@@ -1,0 +1,252 @@
+{
+  "$comment": [
+    "Reviewed coverage waivers (plan WS-C C-5). The coverage-diff gate (npm run gen:coverage-matrix:check) fails when an advertised capability cell (engine × mechanism × operation × parameter set × sign variant) has no registered test and no waiver here.",
+    "Cells are exact \"operation|parameterSet|variant\" strings (no wildcards), so a NEW mechanism, operation, parameter set or variant is never silently covered by an old waiver.",
+    "Every waiver needs reason, owner and an ISO date. status \"baseline-pending-review\" = recorded at the WS-C baseline so the gate can detect new gaps; it is NOT an approval and must be reviewed (plan J-5). Only status \"approved\" means a reviewer accepted the gap.",
+    "Regenerate the baseline (for review, never blindly): npx tsx scripts/generate-coverage-matrix.ts --print-baseline-waivers --date YYYY-MM-DD"
+  ],
+  "schema": "pqctoday.coverage-waivers/v1",
+  "waivers": [
+    {
+      "id": "baseline-CKM_HASH_SLH_DSA-cpp+rust",
+      "mechanism": "CKM_HASH_SLH_DSA",
+      "engines": ["cpp", "rust"],
+      "cells": [
+        "sign|SLH-DSA-SHA2-128s|hedged",
+        "sign|SLH-DSA-SHA2-128s|deterministic",
+        "sign|SLH-DSA-SHA2-192s|hedged",
+        "sign|SLH-DSA-SHA2-192s|deterministic",
+        "sign|SLH-DSA-SHA2-192f|hedged",
+        "sign|SLH-DSA-SHA2-192f|deterministic",
+        "sign|SLH-DSA-SHA2-256s|hedged",
+        "sign|SLH-DSA-SHA2-256s|deterministic",
+        "sign|SLH-DSA-SHA2-256f|hedged",
+        "sign|SLH-DSA-SHA2-256f|deterministic",
+        "sign|SLH-DSA-SHAKE-128s|hedged",
+        "sign|SLH-DSA-SHAKE-128s|deterministic",
+        "sign|SLH-DSA-SHAKE-192s|hedged",
+        "sign|SLH-DSA-SHAKE-192s|deterministic",
+        "sign|SLH-DSA-SHAKE-192f|hedged",
+        "sign|SLH-DSA-SHAKE-192f|deterministic",
+        "sign|SLH-DSA-SHAKE-256s|hedged",
+        "sign|SLH-DSA-SHAKE-256s|deterministic",
+        "sign|SLH-DSA-SHAKE-256f|hedged",
+        "sign|SLH-DSA-SHAKE-256f|deterministic"
+      ],
+      "reason": "Advertised and without any registered test. The 10 fixed-hash mechanisms this bare mechanism generalises are now covered by NIST ACVP vectors for all 120 (mechanism x parameter set) pairs (src/data/acvp/slhdsa_prehash_siggen_{sha2,shake}_test.json, registry 09e.prehash-siggen), but CKM_HASH_SLH_DSA itself is the caller-supplied-digest form: PKCS#11 v3.2 section 6.69.6 drives it through CK_HASH_SIGN_ADDITIONAL_CONTEXT, which carries the hash mechanism alongside hedgeVariant and context. The harness builds only CK_SIGN_ADDITIONAL_CONTEXT, and no vendored header in this repo defines the larger struct's field order, so a test for it would have to guess the memory layout. Left waived deliberately rather than covered by guesswork; closing it needs the struct layout confirmed against the engines first. Tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-26",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_ECDH1_DERIVE-cpp",
+      "mechanism": "CKM_ECDH1_DERIVE",
+      "engines": ["cpp"],
+      "cells": ["encapsulate|X25519|*", "decapsulate|X25519|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_ECDH1_DERIVE-cpp+rust",
+      "mechanism": "CKM_ECDH1_DERIVE",
+      "engines": ["cpp", "rust"],
+      "cells": ["encapsulate|X448|*", "decapsulate|X448|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_RSA_AES_KEY_WRAP",
+      "mechanism": "CKM_RSA_AES_KEY_WRAP",
+      "engines": ["cpp", "rust"],
+      "cells": ["wrap|*|*", "unwrap|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_XMSSMT_KEY_PAIR_GEN",
+      "mechanism": "CKM_XMSSMT_KEY_PAIR_GEN",
+      "engines": ["cpp", "rust"],
+      "cells": ["generate-key-pair|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_XMSSMT",
+      "mechanism": "CKM_XMSSMT",
+      "engines": ["cpp", "rust"],
+      "cells": ["sign|*|*", "verify|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_ML_DSA_EXTERNAL_MU_GEN",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU_GEN",
+      "engines": ["cpp", "rust"],
+      "cells": ["digest|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN",
+      "mechanism": "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN",
+      "engines": ["rust"],
+      "cells": ["generate-key-pair|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_PQCTODAY_FRODOKEM_ENCAPSULATE",
+      "mechanism": "CKM_PQCTODAY_FRODOKEM_ENCAPSULATE",
+      "engines": ["rust"],
+      "cells": ["encapsulate|*|*", "decapsulate|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN",
+      "mechanism": "CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN",
+      "engines": ["cpp", "rust"],
+      "cells": ["generate-key-pair|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE",
+      "mechanism": "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE",
+      "engines": ["cpp", "rust"],
+      "cells": ["encapsulate|*|*", "decapsulate|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_EC_MONTGOMERY_KEY_DERIVE",
+      "mechanism": "CKM_EC_MONTGOMERY_KEY_DERIVE",
+      "engines": ["rust"],
+      "cells": ["derive|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_KMAC_128",
+      "mechanism": "CKM_KMAC_128",
+      "engines": ["cpp", "rust"],
+      "cells": ["sign|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_KMAC_256",
+      "mechanism": "CKM_KMAC_256",
+      "engines": ["cpp", "rust"],
+      "cells": ["sign|*|*", "verify|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_EDDSA_PH-cpp+rust",
+      "mechanism": "CKM_EDDSA_PH",
+      "engines": ["cpp", "rust"],
+      "cells": ["sign|Ed25519|*", "verify|Ed25519|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_EDDSA_PH-rust",
+      "mechanism": "CKM_EDDSA_PH",
+      "engines": ["rust"],
+      "cells": ["sign|Ed448|*", "verify|Ed448|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_X25519",
+      "mechanism": "CKM_X25519",
+      "engines": ["cpp", "rust"],
+      "cells": ["derive|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_X448",
+      "mechanism": "CKM_X448",
+      "engines": ["cpp", "rust"],
+      "cells": ["derive|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_BIP32_MASTER_DERIVE",
+      "mechanism": "CKM_BIP32_MASTER_DERIVE",
+      "engines": ["cpp", "rust"],
+      "cells": ["derive|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_BIP32_CHILD_DERIVE",
+      "mechanism": "CKM_BIP32_CHILD_DERIVE",
+      "engines": ["cpp", "rust"],
+      "cells": ["derive|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "owner": "unassigned",
+      "date": "2026-09-24",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_HPKE_KEM_KEY_PAIR_GEN",
+      "mechanism": "CKM_HPKE_KEM_KEY_PAIR_GEN",
+      "engines": ["rust"],
+      "cells": ["generate-key-pair|*|*"],
+      "reason": "NEW as of the P3 combined rebuild (2026-09-25, hsm a22e6ca0, E19): the mechanism was dispatched but not advertised before this rebuild, so it fell outside every denominator and needed no waiver; E19 fixed advertise==dispatch, so it is now a visible, advertised, untested capability. hpkeCkmHpke.test.ts already carries 58 passing KAT-based tests for this mechanism family but is not yet wired into testRegistry.ts — registering it as real coverage (closing this waiver without a waiver) is the recommended next step, not a waiver approval. This entry only lets the gate keep functioning; per plan D3, waiver approval/registration is the user's call, flagged in the P3 report, not decided here.",
+      "owner": "unassigned",
+      "date": "2026-09-25",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_HPKE",
+      "mechanism": "CKM_HPKE",
+      "engines": ["rust"],
+      "cells": ["encapsulate|*|*", "decapsulate|*|*"],
+      "reason": "NEW as of the P3 combined rebuild (2026-09-25, hsm a22e6ca0, E19): the mechanism was dispatched but not advertised before this rebuild, so it fell outside every denominator and needed no waiver; E19 fixed advertise==dispatch, so it is now a visible, advertised, untested capability. hpkeCkmHpke.test.ts already carries 58 passing KAT-based tests for this mechanism family but is not yet wired into testRegistry.ts — registering it as real coverage (closing this waiver without a waiver) is the recommended next step, not a waiver approval. This entry only lets the gate keep functioning; per plan D3, waiver approval/registration is the user's call, flagged in the P3 report, not decided here.",
+      "owner": "unassigned",
+      "date": "2026-09-25",
+      "status": "baseline-pending-review"
+    }
+  ]
+}

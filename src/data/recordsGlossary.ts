@@ -20,6 +20,11 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
     def: 'NIST cryptographic module validation standard (supersedes 140-2). CMVP certifies the whole module. Required for US federal procurement.',
   },
   {
+    term: 'ACVP',
+    short: 'algorithm testing protocol',
+    def: 'Automated Cryptographic Validation Protocol — the JSON-over-HTTPS protocol NIST’s ACVTS uses for CAVP algorithm testing. ACVP itself issues no certificate; CAVP does.',
+  },
+  {
     term: 'NIST CAVP',
     short: 'algorithm validation',
     def: 'Cryptographic Algorithm Validation Program — validates individual algorithm implementations (tested through the ACVP protocol). A prerequisite for a FIPS 140-3 module certificate, not a module certificate itself.',

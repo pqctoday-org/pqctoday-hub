@@ -98,8 +98,11 @@ describe('useAcvpSuite ML-KEM Decapsulate KAT — real mismatch (285ca5d3f regre
 
     const results = await result.current.runTests(new Set(['ml_kem']))
 
+    // Section 7 row (D1-1 label: upstream encapsulation case run as decapsulation).
     const decapResult = results.find(
-      (r) => r.testCase === 'Decapsulate KAT' && r.algorithm.includes('ML-KEM-512')
+      (r) =>
+        r.testCase.startsWith('Decapsulate · upstream encapsulation AFT') &&
+        r.algorithm.includes('ML-KEM-512')
     )
     expect(decapResult, 'ML-KEM-512 Decapsulate KAT result must be present').toBeDefined()
 

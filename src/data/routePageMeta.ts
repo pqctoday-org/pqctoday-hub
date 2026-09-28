@@ -95,7 +95,7 @@ export const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string 
   },
   '/compliance': {
     title: 'PQC Compliance Tracker — Standards, Certifications, Frameworks',
-    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks.',
+    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3/CMVP, CAVP, Common Criteria), and regulatory frameworks.',
   },
   '/leaders': {
     title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',

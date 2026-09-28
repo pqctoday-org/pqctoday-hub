@@ -12,6 +12,7 @@
  * `is_sim_deadline` rows and `mandate_type`). SCHEME clocks are the scheme's
  * own published dates, from plan r2 §5.8, each cited to its library row.
  */
+import { EDUCATION_NOTICE_TEXT } from '@/data/educationNotice'
 import type { StepExercise } from '@/data/stepExercises'
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
 import {
@@ -1837,6 +1838,7 @@ export function capstoneJson(s: CapstoneState, generatedAt: string): string {
       factsAsOf: AS_OF_ISO,
       disclaimer:
         'Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body. Fictional product.',
+      notice: EDUCATION_NOTICE_TEXT,
       product: { name: ANCHOR_SCENARIO.name, fictional: true, releases: ANCHOR_RELEASES },
       chosenPath: s.path,
       artifacts: s,

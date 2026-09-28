@@ -6,6 +6,7 @@ const HSM_STUB = {
   isReady: true,
   moduleRef: { current: {} as unknown },
   hSessionRef: { current: 1 },
+  slotRef: { current: 0 },
   initialize: vi.fn().mockResolvedValue(undefined),
 }
 vi.mock('@/hooks/useHSM', () => ({
@@ -59,11 +60,44 @@ describe('MobileKATValidationView', () => {
     const tile = screen.getByText('ML-KEM-512').closest('div')!
     fireEvent.click(
       Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
-        b.textContent?.includes('Run NIST KAT')
+        b.textContent?.includes('Run validation tests')
       )!
     )
     await waitFor(() => expect(mockRunKAT).toHaveBeenCalled())
     expect(await screen.findByText('2/2 passed')).toBeInTheDocument()
+  })
+
+  it("a 'skip' (not tested) result is its own count, never a pass", async () => {
+    mockRunKAT.mockReset()
+    mockRunKAT
+      .mockResolvedValueOnce({
+        id: 'kat-algo-mlkem512-decap',
+        useCase: 'ML-KEM-512 decapsulation',
+        algorithm: 'ML-KEM-512',
+        standard: 'FIPS 203',
+        referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+        status: 'pass',
+        details: 'ok',
+      })
+      .mockResolvedValueOnce({
+        id: 'kat-algo-mlkem512-rt',
+        useCase: 'ML-KEM-512 encap+decap round-trip',
+        algorithm: 'ML-KEM-512',
+        standard: 'FIPS 203',
+        referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+        status: 'skip',
+        details: 'Not tested — this engine does not advertise CKM_ML_KEM',
+      })
+    render(<MobileKATValidationView />)
+    const tile = screen.getByText('ML-KEM-512').closest('div')!
+    fireEvent.click(
+      Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Run validation tests')
+      )!
+    )
+    const counts = await screen.findByTestId('kat-counts')
+    expect(counts).toHaveTextContent('1/1 passed · 1 not tested')
+    expect(screen.getByLabelText('not tested')).toBeInTheDocument()
   })
 
   it('SLH-DSA variant switcher changes the run spec (visible via the level badge)', () => {

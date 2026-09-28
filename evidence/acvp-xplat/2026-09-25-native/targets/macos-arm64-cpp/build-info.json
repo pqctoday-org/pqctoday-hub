@@ -1,0 +1,25 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native macOS shared library libsofthsmv3.dylib",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-mac-7795799b 7795799b…; `git submodule update --init` of hash-sigs @21294a0f and xmss-reference @171ccbd2 only; liboqs not needed with WITH_LIBOQS=OFF). `git status --porcelain` was empty before and after the build (CMake writes only the gitignored src/vendor/pkcs11-provider/src/config.h into the tree); the worktree was removed afterwards. Same commit as the C++ WASM bundle (wasm-provenance.json softhsm-cpp-engine).",
+    "builtAt": "2026-09-25T15:27Z"
+  },
+  "build": {
+    "buildSystem": "CMake 4.3.4 (Homebrew), out-of-tree, target softhsmv3",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2), target arm64-apple-darwin25.6.0; Xcode 27.0 (27A266a); macOS SDK 27.0 (Mach-O LC_BUILD_VERSION: platform macOS, minos 26.0, sdk 27.0)",
+    "flags": "-DCMAKE_BUILD_TYPE=Release (-O3 -DNDEBUG) -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DWITH_LIBOQS=OFF -DOPENSSL_ROOT_DIR=/opt/homebrew/opt/openssl@3; CMAKE_OSX_ARCHITECTURES/DEPLOYMENT_TARGET/SYSROOT unset (host defaults); environment reset to PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "profile": "Release",
+    "features": "WITH_LIBOQS=OFF (Classic McEliece only; matches the WASM and Linux builds)",
+    "location": "macOS host (Apple M5 Max, macOS 26.6.2 build 25G83), native arm64 with the Xcode toolchain — permitted for the macOS row only (acvp-gap-closure plan §P4); build directory in the session scratchpad, removed after the runs"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from the operating system entropy source (OpenSSL 'os' seed source on macOS)"
+  },
+  "notes": [
+    "OpenSSL: Homebrew openssl@3 3.6.3 (/opt/homebrew/Cellar/openssl@3/3.6.3, arm64 bottle); the dylib's load command references /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (and libssl.3.dylib). Homebrew's current stable is 3.6.4; it was NOT upgraded for this run, so the runtime OpenSSL recorded below is 3.6.3.",
+    "Reproducibility: a second build into a separate build directory (same host, same toolchain) produced the identical SHA-256 3fb20289df65daf81e8f8db93e633a63326fb79efdbf7914a78d206e978981c4.",
+    "Mach-O install name: @rpath/libsofthsmv3.dylib; other dependencies are /usr/lib/libc++.1.dylib and /usr/lib/libSystem.B.dylib."
+  ]
+}

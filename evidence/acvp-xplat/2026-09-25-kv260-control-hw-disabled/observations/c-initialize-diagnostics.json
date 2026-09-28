@@ -1,0 +1,8 @@
+{
+  "note": "NOT an evidence run. A separate process on the board loaded /usr/lib/softhsm/libsofthsmrustv3.so and called only C_Initialize(NULL) and C_Finalize(NULL), with this variant's environment plus PQC_HW_DIAGNOSTICS=1 (rust/src/hw_accel.rs:780-784 prints PQC_HW_DIAGNOSTIC lines to stderr only when it is 1). Captured stderr, verbatim.",
+  "environment": "env -u SOFTHSMRUST_STATE_FILE -u PQC_BEHAVIOUR_RING -u PQC_BEHAVIOUR_SRC -u PQC_AUTH_LOG -u SOFTHSM3_OP_LOG PQC_HW_DISABLE=1 PQC_HW_DIAGNOSTICS=1",
+  "stderr": [
+    "C_Initialize rv=0x0",
+    "C_Finalize rv=0x0"
+  ]
+}

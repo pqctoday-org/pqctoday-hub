@@ -197,6 +197,29 @@ export const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen
   return mech
 }
 
+/**
+ * DER OCTET STRING (tag 0x04) around `content`, with a definite length in
+ * short form (< 128 bytes) or long form (0x81 nn / 0x82 nn nn) — X.690 §8.1.3.
+ * CKA_EC_POINT is this encoding of the SEC 1 point (PKCS#11 v3.2 §6.3.3). A
+ * P-521 uncompressed point is 133 bytes, so it NEEDS the long form: writing
+ * the length as one byte (0x85) makes a parser read "5 length octets follow",
+ * which is what made the C++ engine reject the NIST P-521 sigVer sample.
+ */
+export const derOctetString = (content: Uint8Array): Uint8Array => {
+  const len = content.length
+  const lenBytes: number[] = []
+  if (len < 0x80) lenBytes.push(len)
+  else {
+    for (let v = len; v > 0; v >>>= 8) lenBytes.unshift(v & 0xff)
+    lenBytes.unshift(0x80 | lenBytes.length)
+  }
+  const out = new Uint8Array(1 + lenBytes.length + len)
+  out[0] = 0x04
+  out.set(lenBytes, 1)
+  out.set(content, 1 + lenBytes.length)
+  return out
+}
+
 /** Copy bytes into WASM heap; returns pointer. Caller must free. */
 export const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
   const ptr = M._malloc(bytes.length || 1)

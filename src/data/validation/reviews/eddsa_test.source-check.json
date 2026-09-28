@@ -1,0 +1,27 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:eddsa_test",
+  "subjectSha256": "e103c2b751b6ccf5e629c807f49226340e0639719024fff0cb5fcff1ef434086",
+  "fileSha256": "e8d4a30473f992ba89aee8320362f1ef1a16f62c5b90c65c8e921cbdb5999371",
+  "result": "match",
+  "tool": "scripts/acvp/check_rfc8032_ed25519.py",
+  "command": "python3 scripts/acvp/check_rfc8032_ed25519.py --check",
+  "upstream": {
+    "repository": "https://www.rfc-editor.org/rfc/rfc8032",
+    "revision": "ed63657ff389301282b169b0abde9b5dd2c7e4d524fdfa5da6ff3094fc93c4c3",
+    "files": [
+      {
+        "path": "RFC 8032 (text)",
+        "sha256": "ed63657ff389301282b169b0abde9b5dd2c7e4d524fdfa5da6ff3094fc93c4c3"
+      },
+      {
+        "path": "RFC 8032",
+        "sha256": "cde1974dbd72b6586515ae2363be89d9d499a1d2be52b136ed49bd8e3943f8b5"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 2
+  },
+  "checkedAt": "2026-09-27"
+}

@@ -2,10 +2,54 @@
 import { useEffect } from 'react'
 import { X, FlaskConical, ShieldCheck, GitCompare, BookOpen, Construction } from 'lucide-react'
 import { Button } from '../../ui/button'
+import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 
 interface HsmTestMethodologyModalProps {
   onClose: () => void
 }
+
+/**
+ * Layer 1 rows. `tested` must name only operations/modes that have a real
+ * test in hsm/acvp/useAcvpSuite.ts (section numbers in brackets); anything
+ * else belongs in `limits`. ACVP remediation plan WS-A, A-3 (2026-09-24).
+ */
+const METHODOLOGY_ROWS: { algo: string; tested: string; limits: string }[] = [
+  {
+    algo: 'ML-KEM',
+    tested:
+      'ML-KEM-512 / 768 / 1024: decapsulation of one NIST ACVP-Server AFT sample per parameter set (imported private key, shared secret compared byte-for-byte) [§7]; encapsulate + decapsulate round-trip with a freshly generated key pair, no external expected value [§8].',
+    limits:
+      'key generation and encapsulation against NIST expected values, more than one AFT case per set, invalid or modified ciphertext (implicit rejection).',
+  },
+  {
+    algo: 'ML-DSA',
+    tested:
+      "ML-DSA-44 / 65 / 87: dedicated NIST ACVP-Server sigVer cases in pure mode — per set one positive and four negatives (NIST's own modified-message / modified-signature cases), asserting CKR_OK or CKR_SIGNATURE_INVALID — plus two product-authored negatives (public-key and context bit flips, labelled as not NIST) [§5d]; deterministic signing with the NIST private key imported, byte-compared to the NIST signature (one pure and one pre-hash case per set) [§5d]; key generation from the NIST seed via CKA_SEED, public key byte-compared [§5d]; verification of sigGen-derived tuples, including one non-empty-context and one pre-hash case per set [§5, §5b]; sign + verify round-trips with fresh key pairs [§6, §28]. External Mu cases run only through the vendor-defined mechanism 0x403c (not a PKCS#11 v3.2 mechanism) and show as skip rows where an engine does not advertise it.",
+    limits:
+      'hedged (randomized) signing against expected values, the internal signing interface, pre-hash functions with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256 — shown as skip rows), more than one case per upstream group.',
+  },
+  {
+    algo: 'SLH-DSA',
+    tested:
+      'All 12 parameter sets: one positive verification per set of a NIST ACVP-Server sigGen output (pure mode, with context) [§9b]; sign + verify round-trip per set [§9]; for SHA2-128s only, context binding (a different or empty context must fail) and deterministic-mode repeatability, both self-checks with no external expected value [§21, §22].',
+    limits:
+      'pre-hash (HashSLH-DSA) modes, the separate NIST sigVer test set, negative verification from reference data, signature generation against expected values.',
+  },
+  {
+    algo: 'AES-GCM',
+    tested:
+      "AES-256-GCM decryption of a NIST CAVP published example (gcmDecrypt256.rsp: AES-256, 96-bit IV, no AAD, 128-bit tag) — a published-standard KAT from NIST's legacy CAVP test vectors, not an ACVP-Server sample [§1].",
+    limits:
+      'the published GCM Test Case 16 itself, ACVP AES-GCM vectors, encryption against expected values, other key / IV / tag lengths, authentication-failure cases.',
+  },
+  {
+    algo: 'AES-KW',
+    tested:
+      'AES-KW (CKM_AES_KEY_WRAP) wrap of the RFC 3394 §4.6 example (256-bit KEK) compared to the published output [§19]; AES-KWP wrap + unwrap round-trip, no external expected value [§20].',
+    limits:
+      'ACVP AES-KW/KWP vectors, unwrap against expected values, other KEK sizes, unaligned-length KWP expected values, integrity-failure cases.',
+  },
+]
 
 export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProps) => {
   useEffect(() => {
@@ -39,7 +83,7 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                PKCS#11 v3.2 emulation validated through multi-layer independent verification
+                PKCS#11 v3.2 emulation exercised through several evidence layers, each labelled
               </p>
             </div>
           </div>
@@ -53,63 +97,59 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
           {/* Intro */}
           <p className="text-muted-foreground leading-relaxed">
             This playground hosts a browser-native PKCS#11 v3.2 emulator (SoftHSMv3 compiled to
-            WebAssembly via Emscripten). The emulator is validated through four independent layers
-            before being exposed in the UI — the fourth (self-consistency) is disclosed separately
-            below rather than folded into the NIST-backed layers, since it rests on weaker evidence.
-            The PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) are defined in{' '}
+            WebAssembly via Emscripten). It is exercised through four layers of evidence, listed
+            below from strongest to weakest; the fourth (oracle comparison) is disclosed separately
+            rather than folded into the NIST-backed layer, since it rests on weaker evidence. The
+            PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) are defined in{' '}
             <span className="font-semibold text-foreground">
               OASIS PKCS#11 v3.2, an OASIS Standard since 3 June 2026
             </span>
             ; the preceding PKCS #11 v3.1 (23 July 2023) does not include these PQC mechanisms.
           </p>
 
-          {/* Layer 1: ACVP KAT */}
+          {/* Layer 1: reference samples + published KATs. Every row below maps to a
+              real section of hsm/acvp/useAcvpSuite.ts (numbers in brackets) —
+              keep it that way; list a limitation rather than an untested mode. */}
           <section>
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck size={15} className="text-primary shrink-0" />
               <h3 className="font-semibold text-foreground">
-                Layer 1 — NIST ACVP Known Answer Tests
+                Layer 1 — Sampled reference vectors and published KATs
               </h3>
             </div>
             <div className="pl-5 space-y-2 text-muted-foreground">
               <p className="leading-relaxed">
-                All PQC algorithms are tested against the{' '}
+                Selected cases are replayed from{' '}
                 <span className="font-medium text-foreground">
-                  NIST Automated Cryptographic Validation Protocol (ACVP)
+                  public NIST ACVP-Server reference samples
                 </span>{' '}
-                test vector suite. ACVP injects a deterministic DRBG seed so that randomised
-                operations produce reproducible outputs that can be verified against the NIST
-                published response files.
+                (copied from the public repository, not vectors issued to an ACVTS session) and, for
+                some algorithms, from a published standard&apos;s own example. Each result row is
+                tagged with its evidence tier. Coverage is a sample — typically one case per
+                parameter set — not the ACVP test matrix.
               </p>
-              <ul className="space-y-1.5 mt-2">
-                {[
-                  {
-                    algo: 'ML-KEM',
-                    detail:
-                      'ML-KEM-512 / 768 / 1024 — KeyGen, Encapsulation, Decapsulation (FIPS 203)',
-                  },
-                  {
-                    algo: 'ML-DSA',
-                    detail: 'ML-DSA-44 / 65 / 87 — KeyGen, Sign (det. & hedged), Verify (FIPS 204)',
-                  },
-                  {
-                    algo: 'SLH-DSA',
-                    detail:
-                      'All 12 parameter sets (SHA2 & SHAKE, small & fast) — Pure & pre-hash modes (FIPS 205)',
-                  },
-                  {
-                    algo: 'AES-KW / AES-GCM',
-                    detail: 'CAVS-style wrappers invoked through CKM_AES_KW and CKM_AES_GCM',
-                  },
-                ].map(({ algo, detail }) => (
+              <ul className="space-y-2 mt-2">
+                {METHODOLOGY_ROWS.map(({ algo, tested, limits }) => (
                   <li key={algo} className="flex gap-2">
                     <span className="text-xs font-mono font-bold text-primary shrink-0 mt-0.5 w-16">
                       {algo}
                     </span>
-                    <span className="text-xs leading-relaxed">{detail}</span>
+                    <span className="text-xs leading-relaxed">
+                      {tested}
+                      <span className="block text-status-warning">Not tested: {limits}</span>
+                    </span>
                   </li>
                 ))}
               </ul>
+              <p className="text-xs leading-relaxed pt-1">
+                <span className="font-medium text-foreground">Seeds and response files:</span> the
+                workbench asks each engine for a fixed test seed (the shipped C++ build rejects it
+                and runs unseeded), but no test compares seeded randomized output (encapsulation,
+                hedged signing) with a NIST expected value. The NIST-backed checks use imported
+                keys, NIST-supplied seeds (ML-DSA key generation via CKA_SEED) and deterministic
+                operations (decapsulation, verification, deterministic signing, digest, MAC,
+                decryption). No ACVP response file is generated or submitted.
+              </p>
             </div>
           </section>
 
@@ -141,7 +181,7 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                   {
                     src: 'IETF RFC 5649 / 3394',
                     detail:
-                      'AES Key Wrap (CKM_AES_KW / CKM_AES_KWP) — NIST CAVP vectors + RFC test vectors for cloud HSM compatibility',
+                      'AES Key Wrap (CKM_AES_KW / CKM_AES_KWP) — one RFC 3394 example wrap plus a KWP round-trip; no NIST CAVP/ACVP key-wrap vectors are used',
                   },
                   {
                     src: 'PKCS#11 v3.2 §4.10.2',
@@ -179,7 +219,11 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                 <span className="font-medium text-foreground">
                   entirely different crypto primitive libraries
                 </span>
-                , making agreement a meaningful independence check.
+                , which makes disagreement a finding worth investigating. Agreement is differential
+                evidence only — both engines share this page&apos;s vector adapters and test code,
+                so it is not independent validation. In the Validation workbench, Dual Parity runs
+                the same cases on each engine side by side; the cross-engine hand-offs below happen
+                in the Operate tab&apos;s KEM and Sign &amp; Verify rails.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -226,15 +270,17 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
           <section>
             <div className="flex items-center gap-2 mb-3">
               <FlaskConical size={15} className="text-muted-foreground shrink-0" />
-              <h3 className="font-semibold text-foreground">Layer 4 — Self-Consistency Checks</h3>
+              <h3 className="font-semibold text-foreground">
+                Layer 4 — Oracle Comparisons (Self-Consistency)
+              </h3>
             </div>
             <div className="pl-5 space-y-2 text-muted-foreground">
               <p className="leading-relaxed">
-                A small number of tests have no matching NIST ACVP reference vector or published
-                standard KAT to check against — either the algorithm has no ACVP registration at
-                all, or the specific parameters this emulator implements (a hash width, a PRF)
-                aren&apos;t among the ones NIST&apos;s reference vector sample covers. For these,
-                the expected value is instead computed independently with Node&apos;s{' '}
+                A small number of tests have no matching NIST ACVP-Server reference sample or
+                published standard KAT to check against — either the algorithm has no ACVP
+                registration at all, or the specific parameters this emulator implements (a hash
+                width, a PRF) aren&apos;t among the ones NIST&apos;s reference vector sample covers.
+                For these, the expected value is instead computed independently with Node&apos;s{' '}
                 <span className="font-mono text-xs">crypto</span> module (OpenSSL) and checked for
                 agreement — a real assertion (the emulator and an independent implementation must
                 still produce the same answer), but a weaker one than a citable published vector,
@@ -246,6 +292,11 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                   {
                     algo: 'RSA-OAEP',
                     detail: 'No ACVP registration exists for RSA-OAEP decryption at all',
+                  },
+                  {
+                    algo: 'AES-GCM',
+                    detail:
+                      'The bundled vector reuses GCM Test Case 16 inputs with the AAD dropped, so its tag was computed with OpenSSL — it is not the published Test Case 16',
                   },
                   {
                     algo: 'RSA-PSS',
@@ -298,6 +349,8 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
             </div>
           </section>
 
+          <ValidationDisclaimer />
+
           {/* WIP disclaimer */}
           <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 flex gap-3">
             <Construction size={15} className="text-warning shrink-0 mt-0.5" />
@@ -306,8 +359,8 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
               <p className="leading-relaxed">
                 This PKCS#11 emulator is under active development. Validation coverage is
                 continuously expanded. Some mechanisms (CKM_RSA_OAEP wrapping, ECDH key agreement
-                with PQC hybrids) are partially implemented. Cross-check parity testing is automated
-                in CI via the ACVP tab.
+                with PQC hybrids) are partially implemented. The PR smoke gate runs the Validation
+                workbench on the Rust engine only; dual-engine parity runs are manual.
               </p>
             </div>
           </div>

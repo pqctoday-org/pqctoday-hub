@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqctoday.com/schemas/acvp/ml-dsa-sigver-fips204.prompt.schema.json",
+  "title": "ML-DSA / sigVer / FIPS204 — ACVP test vector set (prompt)",
+  "$comment": "Pinned transcription of draft-celi-acvp-ml-dsa at usnistgov/ACVP commit 892fd14710f3a7edbea230d0aecc5511e0257f8e: src/ml-dsa/sections/06-ml-dsa-sigver-test-vectors.adoc [[ML-DSA_sigVer_vs_tg_table]] + [[ML-DSA_sigVer_vs_tc_table]] and their NOTEs (preHash only when signatureInterface=external; externalMu only when internal; message XOR mu by externalMu; context only for external; hashAlg only for preHash), 04-testtypes.adoc 'ML-DSA SigVer Test Types' (AFT only), 05-ml-dsa-sigver-capabilities.adoc (hashAlgs vocabulary). Validates the vector-set object only; the [{acvVersion},{…}] envelope is unwrapped by parser.ts first. isSample is emitted by ACVP-Server on every vector set and shown in the spec's own example, so it is accepted as an optional boolean.",
+  "type": "object",
+  "required": ["vsId", "algorithm", "mode", "revision", "testGroups"],
+  "additionalProperties": false,
+  "properties": {
+    "vsId": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "algorithm": {
+      "const": "ML-DSA"
+    },
+    "mode": {
+      "const": "sigVer"
+    },
+    "revision": {
+      "const": "FIPS204"
+    },
+    "isSample": {
+      "type": "boolean"
+    },
+    "testGroups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/testGroup"
+      }
+    }
+  },
+  "$defs": {
+    "hex": {
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2})*$"
+    },
+    "testGroup": {
+      "type": "object",
+      "required": ["tgId", "testType", "parameterSet", "signatureInterface", "tests"],
+      "additionalProperties": false,
+      "properties": {
+        "tgId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testType": {
+          "const": "AFT"
+        },
+        "parameterSet": {
+          "enum": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"]
+        },
+        "signatureInterface": {
+          "enum": ["external", "internal"]
+        },
+        "preHash": {
+          "enum": ["pure", "preHash"]
+        },
+        "externalMu": {
+          "type": "boolean"
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["signatureInterface"],
+            "properties": {
+              "signatureInterface": {
+                "const": "external"
+              }
+            }
+          },
+          "then": {
+            "required": ["preHash"],
+            "properties": {
+              "externalMu": false
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["signatureInterface"],
+            "properties": {
+              "signatureInterface": {
+                "const": "internal"
+              }
+            }
+          },
+          "then": {
+            "required": ["externalMu"],
+            "properties": {
+              "preHash": false
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["signatureInterface", "preHash"],
+            "properties": {
+              "signatureInterface": {
+                "const": "external"
+              },
+              "preHash": {
+                "const": "pure"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/externalPureTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["signatureInterface", "preHash"],
+            "properties": {
+              "signatureInterface": {
+                "const": "external"
+              },
+              "preHash": {
+                "const": "preHash"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/externalPreHashTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["signatureInterface", "externalMu"],
+            "properties": {
+              "signatureInterface": {
+                "const": "internal"
+              },
+              "externalMu": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/internalMessageTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["signatureInterface", "externalMu"],
+            "properties": {
+              "signatureInterface": {
+                "const": "internal"
+              },
+              "externalMu": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/internalMuTest"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "externalPureTest": {
+      "type": "object",
+      "required": ["tcId", "pk", "message", "context", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "context": {
+          "$ref": "#/$defs/hex",
+          "type": "string",
+          "maxLength": 510
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "externalPreHashTest": {
+      "type": "object",
+      "required": ["tcId", "pk", "message", "context", "hashAlg", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "context": {
+          "$ref": "#/$defs/hex",
+          "type": "string",
+          "maxLength": 510
+        },
+        "hashAlg": {
+          "enum": [
+            "SHA2-224",
+            "SHA2-256",
+            "SHA2-384",
+            "SHA2-512",
+            "SHA2-512/224",
+            "SHA2-512/256",
+            "SHA3-224",
+            "SHA3-256",
+            "SHA3-384",
+            "SHA3-512",
+            "SHAKE-128",
+            "SHAKE-256"
+          ]
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "internalMessageTest": {
+      "type": "object",
+      "required": ["tcId", "pk", "message", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "internalMuTest": {
+      "type": "object",
+      "required": ["tcId", "pk", "mu", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "mu": {
+          "$ref": "#/$defs/hex"
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    }
+  }
+}

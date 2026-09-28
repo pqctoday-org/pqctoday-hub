@@ -1,0 +1,27 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:hkdf_test",
+  "subjectSha256": "c82d66e58517951f999a1c18371bc7a8e6ae7e5133536324514c76ccf6cfa9c1",
+  "fileSha256": "256c14abcce082ddc4819742e0970b66b5cc09630e49ed416552c28f7650f937",
+  "result": "match",
+  "tool": "scripts/acvp/check_rfc5869_hkdf.py",
+  "command": "python3 scripts/acvp/check_rfc5869_hkdf.py --check",
+  "upstream": {
+    "repository": "https://www.rfc-editor.org/rfc/rfc5869",
+    "revision": "7a40eb3835b35fc947eb12a2ed614db079d43b26e50dbc537c31fba16397089c",
+    "files": [
+      {
+        "path": "RFC 5869 (text)",
+        "sha256": "7a40eb3835b35fc947eb12a2ed614db079d43b26e50dbc537c31fba16397089c"
+      },
+      {
+        "path": "RFC 5869",
+        "sha256": "7399e3b7f85078b2faff422964ab4560f67a2135a0b0fe1f5a4e8e96bdc94f45"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 3
+  },
+  "checkedAt": "2026-09-27"
+}

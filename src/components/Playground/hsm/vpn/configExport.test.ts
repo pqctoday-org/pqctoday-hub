@@ -59,10 +59,19 @@ describe('exportVpnConfigBundle', () => {
   it('always bundles README + both roles of strongswan.conf / ipsec.conf', async () => {
     await exportVpnConfigBundle(baseCfg)
     expect(zipState.files.has('README.md')).toBe(true)
-    expect(zipState.files.get('initiator/strongswan.conf')).toBe('# strongswan.conf (initiator)')
-    expect(zipState.files.get('initiator/ipsec.conf')).toBe('# ipsec.conf (initiator)')
-    expect(zipState.files.get('responder/strongswan.conf')).toBe('# strongswan.conf (responder)')
-    expect(zipState.files.get('responder/ipsec.conf')).toBe('# ipsec.conf (responder)')
+    // Each config file is prefixed with the status notice as comment lines
+    // (2026-09-26): these are the files someone copies to a host, so the
+    // notice must be in them and not only in the README they leave behind.
+    for (const [rel, body] of [
+      ['initiator/strongswan.conf', '# strongswan.conf (initiator)'],
+      ['initiator/ipsec.conf', '# ipsec.conf (initiator)'],
+      ['responder/strongswan.conf', '# strongswan.conf (responder)'],
+      ['responder/ipsec.conf', '# ipsec.conf (responder)'],
+    ] as const) {
+      const written = zipState.files.get(rel)
+      expect(written, rel).toContain(body)
+      expect(written, rel).toContain('# PQC Today is an educational and demonstration platform')
+    }
   })
 
   it('PSK mode writes ipsec.secrets for both sides and no certs', async () => {

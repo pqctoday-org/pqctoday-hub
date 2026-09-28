@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import type { Key } from '../../../types'
 import { bytesToHex } from '../../../utils/dataInputUtils'
 import { Button } from '@/components/ui/button'
+import { withEducationNoticeComment } from '@/data/educationNotice'
 
 interface KeyDetailsProps {
   selectedKey: Key
@@ -140,7 +141,10 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
 
   const copyToClipboard = async (text: string, type: 'raw' | 'pkcs8') => {
     try {
-      await navigator.clipboard.writeText(text)
+      // The notice travels with the key material: once these bytes are on a
+      // clipboard they are indistinguishable from a real key
+      // (education-notice remediation 2026-09-26).
+      await navigator.clipboard.writeText(withEducationNoticeComment(text, '#'))
       if (type === 'raw') {
         setCopiedRaw(true)
         setTimeout(() => setCopiedRaw(false), 2000)

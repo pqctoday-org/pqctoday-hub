@@ -1,0 +1,43 @@
+{
+  "algorithm": "PBKDF2",
+  "source": "RFC 7914 section 11, Test Vectors for PBKDF2 with HMAC-SHA-256",
+  "_provenance": {
+    "producer": "IETF RFC 7914 (The scrypt Password-Based Key Derivation Function), section 11",
+    "source_url": "https://www.rfc-editor.org/rfc/rfc7914.txt",
+    "source_sha256": "df55932f8b6a5d271f36a634d91a25903724e189ba6c120bf7257cd47f10b197",
+    "retrieved": "2026-09-26",
+    "generator": "python3 scripts/acvp/build_rfc7914_pbkdf2.py (re-verify with --check)",
+    "selection": "Both vectors the section prints. tcId 1 (c = 1) is below the Rust engine's 1000-iteration floor, which it refuses by policy (open gap pbkdf2-min-iterations-divergence); readers default to tcId 2 (c = 80000).",
+    "field_mapping": "password/salt are the RFC's ASCII strings hex-encoded (the text also kept as passwordText/saltText); iterations <- c; dkLen <- dkLen; dk <- the hex block, whitespace removed.",
+    "independent_check": "Both recomputed with Python hashlib.pbkdf2_hmac('sha256'); both reproduce the RFC's value.",
+    "correction": "REPLACES pbkdf2_test.json's three Node/OpenSSL-generated PBKDF2-HMAC-SHA-256 cases."
+  },
+  "testGroups": [
+    {
+      "prf": "HMAC-SHA256",
+      "keyLen": 512,
+      "tests": [
+        {
+          "tcId": 1,
+          "password": "706173737764",
+          "salt": "73616c74",
+          "iterations": 1,
+          "dkLen": 64,
+          "dk": "55ac046e56e3089fec1691c22544b605f94185216dde0465e68b9d57c20dacbc49ca9cccf179b645991664b39d77ef317c71b845b1e30bd509112041d3a19783",
+          "passwordText": "passwd",
+          "saltText": "salt"
+        },
+        {
+          "tcId": 2,
+          "password": "50617373776f7264",
+          "salt": "4e61436c",
+          "iterations": 80000,
+          "dkLen": 64,
+          "dk": "4ddcd8f60b98be21830cee5ef22701f9641a4418d04c0414aeff08876b34ab56a1d425a1225833549adb841b51c9b3176a272bdebba1d078478f62b397f33c8d",
+          "passwordText": "Password",
+          "saltText": "NaCl"
+        }
+      ]
+    }
+  ]
+}

@@ -73,7 +73,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records CAVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — an CAVP validation does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
+        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records CAVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — a CAVP validation does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
       config: { step: 1 },
     },
     {
@@ -84,14 +84,14 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware generally requires fresh ACVP algorithm validations and a FIPS 140-3 module re-validation — the existing certificate does not automatically cover the new firmware, so budget for the CMVP timeline.',
+        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware generally requires fresh CAVP algorithm validations and a FIPS 140-3 module re-validation — the existing certificate does not automatically cover the new firmware, so budget for the CMVP timeline.',
       config: { step: 2 },
     },
     {
       id: 'fips-readiness',
       title: '6. FIPS 140-3 Readiness Check — Walk through CMVP validation checklist',
       description:
-        'Open the FIPS Validation Tracker workshop. Filter by "Active" status to see which vendors have achieved PQC validation. Compare ACVP algorithm-level certifications vs FIPS 140-3 module-level certifications. Check which algorithms have the most validations across vendors.',
+        'Open the FIPS Validation Tracker workshop. Filter by "Active" status to see which vendors have achieved PQC validation. Compare CAVP algorithm-level certifications vs FIPS 140-3 module-level certifications. Check which algorithms have the most validations across vendors.',
       badge: 'FIPS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:

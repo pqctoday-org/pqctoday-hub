@@ -18,7 +18,7 @@ const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'ai-model-sigver',
     useCase: 'AI model weight authenticity (ML-DSA-65)',
-    standard: 'NIST AI 100-1 (AI RMF) + FIPS 204 ACVP',
+    standard: 'NIST AI 100-1 (AI RMF) + FIPS 204',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-functional', variant: 65 },

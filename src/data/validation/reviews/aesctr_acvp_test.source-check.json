@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:aesctr_acvp_test",
+  "subjectSha256": "a482310528301fa000423d69aedac3c8753aeac92dd96038fc57c115ebe94ddc",
+  "fileSha256": "a7bda9b3fa4a33b99992afcdee9f2893207d34c8f01125024f548dd8badf3ad5",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id aesctr_acvp_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "sha256": "22cd3bb1666cc14231e5435a2f0c163e83c70a65ba353284828975a983a46a59"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 6,
+    "values": 69
+  },
+  "checkedAt": "2026-09-27"
+}

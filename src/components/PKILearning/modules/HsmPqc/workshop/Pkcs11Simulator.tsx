@@ -58,14 +58,14 @@ const HSMPQC_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'hsm-aesgcm-decrypt',
     useCase: 'PKCS#11 AES-GCM mechanism test',
-    standard: 'PKCS#11 v3.2 + SP 800-38D ACVP',
+    standard: 'PKCS#11 v3.2 + SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-decrypt' },
   },
   {
     id: 'hsm-aeskw-wrap',
     useCase: 'PKCS#11 AES key wrap mechanism test',
-    standard: 'PKCS#11 v3.2 + RFC 3394 ACVP',
+    standard: 'PKCS#11 v3.2 + RFC 3394',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
     kind: { type: 'aeskw-wrap' },
   },

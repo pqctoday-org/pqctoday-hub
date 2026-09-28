@@ -233,6 +233,15 @@
     "category": "protocol"
   },
   {
+    "term": "ACVP",
+    "acronym": "Automated Cryptographic Validation Protocol",
+    "definition": "A protocol, not a program: JSON messages over HTTPS through which a client registers an algorithm implementation's capabilities with a NIST test server, downloads the generated test vector sets, and uploads its responses for checking. NIST's servers that speak it are the ACVTS (Automated Cryptographic Validation Test System), operated for CAVP; CAVP, not ACVP, issues algorithm validation certificates, and CMVP validates whole modules to FIPS 140-3.",
+    "technicalNote": "Source: ACVP JSON Specification, draft-ietf-acvp-spec-01 (Library: NIST-ACVP) §1 Abstract, §6 (JSON over HTTP[S]), §8 Encoding; NIST CAVP project page (csrc.nist.gov/projects/cryptographic-algorithm-validation-program) for ACVTS and certificates. A passed vector-set disposition is not itself a validation; running public ACVP-Server sample vectors is not one either. The .req/.rsp request and response files belong to ACVP's predecessor, the CAVS tool (e.g. SHAVS §6.2.1), which the CAVP page lists as deprecated by ACVTS.",
+    "relatedModule": "/library?ref=NIST-ACVP",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
     "term": "PQ3",
     "definition": "Apple's post-quantum secure messaging protocol for iMessage, providing Level 3 security with ML-KEM key exchange and periodic re-keying.",
     "technicalNote": "PQ3 uses a ratcheting design that regularly re-establishes quantum-safe shared secrets, protecting past and future messages.",

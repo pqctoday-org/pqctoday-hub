@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { FilterDropdown, type FilterDropdownItem } from '../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { withEducationNoticeComment } from '@/data/educationNotice'
 import { useAlgorithmStatusTiers, getPickerTier, PickerDraftBadge } from '../algorithmPickerStatus'
 
 // Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
@@ -128,7 +129,10 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
 
   const handleCopy = () => {
     if (!active) return
-    navigator.clipboard.writeText(active.code).then(() => {
+    // The notice travels with the snippet — a copied snippet is read far from
+    // the panel that produced it (education-notice remediation 2026-09-26).
+    const comment = active.lang === 'go' ? '//' : '#'
+    navigator.clipboard.writeText(withEducationNoticeComment(active.code, comment)).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 1800)
     })

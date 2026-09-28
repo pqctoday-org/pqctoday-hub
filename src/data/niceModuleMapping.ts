@@ -240,6 +240,18 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    // Added 2026-09-24 (ACVP remediation WS-I, draft module): algorithm
+    // validation testing and evidence classification — implementation and
+    // assessment work, so the same roles as pqc-testing-validation plus
+    // GOVCOMP for the CAVP/CMVP programme distinction. Expert tier: it assumes
+    // FIPS 203/204 and PKCS#11 fluency.
+    moduleId: 'acvp-lab-workflow',
+    competencyAreas: ['CA-CRYPTO', 'CA-SECPROG', 'CA-GOVCOMP'],
+    tier: 'expert',
+    workRoles: ['security-developer', 'systems-security-analyst'],
+    isCommonGround: false,
+  },
+  {
     // Added 2026-09-01 — was missing entirely (personas-nice review). SOC
     // detection engineering: hybrid downgrade / crypto drift / cert-lifecycle
     // / signature-integrity / HNDL detection use cases.

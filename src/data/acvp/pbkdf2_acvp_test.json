@@ -1,0 +1,70 @@
+{
+  "_provenance": {
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_repo": "https://github.com/usnistgov/ACVP-Server",
+    "source_commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_path": "gen-val/json-files/PBKDF-1.0/internalProjection.json",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_sha256": "09d0742e01e1ddfa484eeb1cbae3d2061620ebd6dc85fdabdbb2679713a6269f",
+    "source_git_blob_sha": "0804a675d5c7229f62f0a6f718b6a83acff1ab02",
+    "retrieved": "2026-09-25",
+    "upstream_operation": "PBKDF 1.0 AFT (SP 800-132 PBKDF2, HMAC-SHA2-224 PRF — the only hmacAlg in the pinned sample)",
+    "local_operation": "C_DeriveKey(CKM_PKCS5_PBKD2, CK_PKCS5_PBKD2_PARAMS2{CKZ_SALT_SPECIFIED salt, iterations, CKP_PKCS5_PBKD2_HMAC_SHA224, password}) into a generic secret with CKA_VALUE_LEN = keyLen/8, its CKA_VALUE byte-compared to derivedKey",
+    "transformation": "subset only; every retained field is byte-copied from the upstream file (password kept as the upstream ASCII string); no value is re-derived",
+    "subset_policy": "Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+    "retained_fields": "tcId, iterationCount, keyLen, password, salt, derivedKey (deferred dropped)"
+  },
+  "vsId": 0,
+  "algorithm": "PBKDF",
+  "revision": "1.0",
+  "testGroups": [
+    {
+      "tgId": 1,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "tests": [
+        {
+          "tcId": 4,
+          "iterationCount": 1612,
+          "keyLen": 2048,
+          "password": "psAyfaSqYLnaGcTDIHBSVcfZUVYWw",
+          "salt": "F586759DF41366E246AED2FD69B564F7BDA2F2",
+          "derivedKey": "8A3046857AB929EBED0CBBCAF6F60CA424DCFF5A27195379823A47309DC4354BFC3DA7929AD0EC72DFA327A77828862EF8E91780830D583CA7F4A7EB66B2520FEF2DA59F102D2C900D6B313DE328824974404417D9DE0AE7B3C5AF3C90DECB1358333D6EC5A85ECE1CF6A108C8369CF30973F95A6772588C19DABECEDD08DD3D4FE6B496983A2A548DA0260C5261D38427A59857F3A3839CE467734CA94DD7B4FE3C08780908BCFE76D375D05CE2C13AFE57D53F2456C68DC5EDDD998419342DAD80447F878100F3E735FBF5507ECE3B076FDE79B8D5327E79DAC71A3C1CF98B12BA596A1F196E41A2FEE9C0C94129C942D10C22B1E51E7B7F1F2581C162C2D1"
+        },
+        {
+          "tcId": 7,
+          "iterationCount": 1045,
+          "keyLen": 496,
+          "password": "uhrdDKLrKRxkrYZrjal",
+          "salt": "BC0F2ACAADF2049516878B1AF50AA1281E363E25277C695C422A1281111E10058CCF",
+          "derivedKey": "A74C12DB2C8157FAF61B83B95E9CD5CDA327DA62DBB6321C7729EA7DC89A6CE3BF498B8B0AB6F2A7031AE4F3D99AC22C3F1C782165CB9E396A40BD19F9A7"
+        },
+        {
+          "tcId": 17,
+          "iterationCount": 10000,
+          "keyLen": 1008,
+          "password": "fYNngoSRgSfFOjuBASObaebKprUVYQqBczVQjZmFIqyEWPdlxwBbqNNaW",
+          "salt": "20FB06FB7FA60C78EED204A1412AB2461124E2099FF7CBC8CDD51EE091DC5BB1B977300A128DC5A0C08E3276BE9EC21094CE0773122BD95006188944",
+          "derivedKey": "64F53CE9455796A53FE425F545079D5190DE5A29C76B2F4FC51920B26DCC53510F04A928EB0ED8666CD49D99ABDCF8CF6093A4A729985BD0331966822BC4E0D3F3F6D45C1676A5328BBDA37D7ABCFC062FCAB006E84C5FB929E8DA3223DE810A6D946E7A52A2493F65E90FF1A75EDB8B425DA18F1A0137EEC3EE975D193E"
+        },
+        {
+          "tcId": 20,
+          "iterationCount": 1,
+          "keyLen": 1432,
+          "password": "ggfktIvCVnTOrMgWJABpxykBlfxddOhIZHsUsbHgZlnA",
+          "salt": "B9E382CB4D5486C2A8210EF70C120FA6898C11D007E0E39BA529C9DCE4BB78B4159CC6F6819FAD0D2F66DA51BE8CE9544763C1845FE19A80DA046BFB62B528",
+          "derivedKey": "4AE376CACD42688E17D2221641CA255D109E803D5ADF8A1C7F6811F2862F2429332C3235C5E6B44446B1321041DFEF0E4EA40C196D32AF2F60B8FD4D6C5D0E35D5DDAAE4FFF40F16F34328318F29A8D558A19497779DD10E9BA6D3610AC84A0DDF4AF6BA0EF7A4AABC73C598BB72F41122A62F1A4FC211ADBA39F08B1734745C5C9E9AABD9211D477C0DBCB73E814A012BAD508B2966F5506241CAE08656603C279C2F982EE55243CE30874BA4D4918911BE12"
+        },
+        {
+          "tcId": 37,
+          "iterationCount": 8444,
+          "keyLen": 112,
+          "password": "azxMuoaGPkoDSEPzcfuGTMCLgqNUTrVqN",
+          "salt": "6B7E773ED89844835128BE617895AE1ED8619E311D8D5954F7E3C14BA1F0380DC64CCF82AFB57B",
+          "derivedKey": "A1234AC86A60E30A975DFC843269"
+        }
+      ]
+    }
+  ]
+}

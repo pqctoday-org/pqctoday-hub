@@ -1,0 +1,140 @@
+{
+  "vsId": 42,
+  "testGroups": [
+    {
+      "tgId": 4,
+      "tests": [
+        {
+          "tcId": 76,
+          "k": "1EB644EBFD75877D0CA481E1A3B95E7C461B81E0E3DF5A42699775C7BDA3B004"
+        },
+        {
+          "tcId": 77,
+          "k": "44BA0978BD22A393EFB1C4C8274DAAF31709D2A4DABB0256C0B533ED50EBC3E5"
+        },
+        {
+          "tcId": 78,
+          "k": "6EA0D495A7FF8AE695E4A3B99DCC16D53A74B99493C5EBDF24A5F93A112B7547"
+        },
+        {
+          "tcId": 79,
+          "k": "EA8067E693B368F1E0800DEB84DCF2E7304DB4EA439E05DDAC64AA2358376873"
+        },
+        {
+          "tcId": 80,
+          "k": "BE38DE64BD93E9F27087A16145DCD8089AB93B9FE5091D696AFDD812681AE2C2"
+        },
+        {
+          "tcId": 81,
+          "k": "C436D0FA77FFD3FB927C7FFEDD8841F1ED85CF0FE7BF79AD2704CAFF8DD064E4"
+        },
+        {
+          "tcId": 82,
+          "k": "B13E73F62D5B118318706117E6DF1F37567557DCCDC1394662C05FA41A47E018"
+        },
+        {
+          "tcId": 83,
+          "k": "C2F8C6507E237BA5F8DBC6A0E19B8C6DD8302F82CB847CF80622B487210D975C"
+        },
+        {
+          "tcId": 84,
+          "k": "1683170C848B37F991EA80A121E86656D8666BDEF6500613BB862BF6F4E2BC99"
+        },
+        {
+          "tcId": 85,
+          "k": "B8F611B324C18426FBD2A5B6323E70615FAFCA949326518C23D5FB0E0D1D4B94"
+        }
+      ]
+    },
+    {
+      "tgId": 5,
+      "tests": [
+        {
+          "tcId": 86,
+          "k": "34CFAE7F2CA3B0B9C3E06AFEED554C053F6E51D875D3BD3FF0EDA2086EE79F3A"
+        },
+        {
+          "tcId": 87,
+          "k": "14AB4268433FF8D0FF6036EB4057F04AAA3C282B45ED65A3F211E71F79A9457C"
+        },
+        {
+          "tcId": 88,
+          "k": "2CFB695710A6C4377F46C20C13480AEF7AC56030D47A0AB5AF07DDD6062C28F4"
+        },
+        {
+          "tcId": 89,
+          "k": "6C8C7AFC5B05F3AA94D30FED24A6FF89C5C84625B5792CADE7E89AF988F45447"
+        },
+        {
+          "tcId": 90,
+          "k": "D3DFD4F274195D4B54DF61BF6155F7B2E1C9AA4721201CC3F44C5167BEF4DDE2"
+        },
+        {
+          "tcId": 91,
+          "k": "BB3E6608364DCF4135DE42389467D4AF58785120A5B58CFA67867570DA9A6B10"
+        },
+        {
+          "tcId": 92,
+          "k": "8A0C2EB06E3E2C07B8CD39ACFC3D0C56A1FF25573EF853ACA438E543D3929352"
+        },
+        {
+          "tcId": 93,
+          "k": "92818AF863213E6C5CA6E0463B23D97C9B5D08EBA80BD8B747960324CD080DDF"
+        },
+        {
+          "tcId": 94,
+          "k": "07224454EADA42655247644B44DB66A0CF73A1D35B398FABE249B6BDD0EBDBA0"
+        },
+        {
+          "tcId": 95,
+          "k": "2D1C76A6AA0D1D47E13E5570DEBFC78A83EB9A8694C204E6AEAACD55BC23E7BE"
+        }
+      ]
+    },
+    {
+      "tgId": 6,
+      "tests": [
+        {
+          "tcId": 96,
+          "k": "5D1350C0937B6222662F3D0A6194B8F1B60D4AEAF94FB8426C91078B6C12041D"
+        },
+        {
+          "tcId": 97,
+          "k": "8D77E1681DFBEE67FF380AB5C5F66A0C5A6D30E34CCA71523B4ED7DFD51A1A56"
+        },
+        {
+          "tcId": 98,
+          "k": "AE84FEE1F4075E4CEEF6961D122E621C1380387FF0804B8B40230BD03A44AEE4"
+        },
+        {
+          "tcId": 99,
+          "k": "3F9581E18A3B18B15E7A2112528B1C28DD00D14B3FF55889E1F6DB6C9CF79274"
+        },
+        {
+          "tcId": 100,
+          "k": "6A8348F32429863588683CF653D2FFC757D19CE3E68213ED6B9B19D243530839"
+        },
+        {
+          "tcId": 101,
+          "k": "5E163575FA649D21A3CA7DD658F2D98E3C44723EAFB2CC1A2D448DC9A518C008"
+        },
+        {
+          "tcId": 102,
+          "k": "C0B84D09FFC1A9D965F567C5209283494ABF0D9C955BBFA7D62911E3C78B90AD"
+        },
+        {
+          "tcId": 103,
+          "k": "1474D1AAE293439F3F7B7904F1E53B5E67055125318E231B1B7788B787FEFE76"
+        },
+        {
+          "tcId": 104,
+          "k": "85841F5CBE05815BE5D8F3DA53D4BFB18FD02EA4F4BD0DB79653ABA1064E46A5"
+        },
+        {
+          "tcId": 105,
+          "k": "D4A7EC3C7F727429D7511A6C90D1AF5AC9B9550AD12A637DAC2930E6805FA425"
+        }
+      ]
+    }
+  ]
+}

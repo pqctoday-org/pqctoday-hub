@@ -1,14 +1,17 @@
 {
   "algorithm": "KMAC",
   "_provenance": {
-    "source_url": "https://csrc.nist.gov/pubs/sp/800/185/final",
-    "source_release": null,
-    "retrieved": null,
-    "producer": "NIST SP 800-185 (published KAT samples, not from ACVP)",
-    "source_sha256": null,
-    "note": "WS-8 (2026-08-28): backfilled provenance for evidence-tier derivation. Samples #1/#4 are NIST's own published KMAC test vectors from SP 800-185, not ACVP-Server-generated — a published-standard KAT, distinct from both the nist-acvp and self-consistency tiers."
+    "producer": "NIST CSRC Cryptographic Standards and Guidelines examples, KMAC_samples.pdf (the SP 800-185 example set; SP 800-185 itself prints no KMAC outputs)",
+    "source_url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/KMAC_samples.pdf",
+    "source_sha256": "445ee87689670da2bee611e88b765f22a43b4155295fd7f1cddea0ac671b24e1",
+    "retrieved": "2026-09-27",
+    "generator": "python3 scripts/acvp/build_kmac_samples.py (re-verify with --check)",
+    "selection": "Sample #4 (KMAC256, S = \"My Tagged Application\", 512-bit output) as testGroups[0]; Sample #1 (KMAC128, S empty, 256-bit output) as testGroups[1], the index readers use.",
+    "field_mapping": "key <- Key; msg <- Data; customization <- S as ASCII bytes, hex-encoded (Sample #1 prints \"(null)\": empty); mac <- Outval, upper case as printed; macLen <- requested output length.",
+    "independent_check": "Both recomputed with pycryptodome KMAC128/KMAC256; both reproduce NIST's Outval.",
+    "correction": "REPLACES a KMAC256 mac that was 63 bytes although macLen is 512 bits and diverged from NIST's Sample #4 after ...3F4F2487 (file tail ...1071145F460000, NIST tail ...1024D9C27773A8DD); that case had been quarantined. The previous _provenance cited SP 800-185 as the source of the values."
   },
-  "source": "NIST SP 800-185 KMAC test vectors (Samples #1 and #4)",
+  "source": "NIST CSRC KMAC_samples.pdf, Samples #4 (KMAC256) and #1 (KMAC128)",
   "testGroups": [
     {
       "variant": "KMAC256",
@@ -19,7 +22,7 @@
           "key": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
           "msg": "00010203",
           "customization": "4d7920546167676564204170706c69636174696f6e",
-          "mac": "20C570C31346F703C9AC36C61C03CB64C3970D0CFC787E9B79599D273A68D2F7F69D4CC3DE9D104A351689F27CF6F5951F0103F33F4F24871071145F460000"
+          "mac": "20C570C31346F703C9AC36C61C03CB64C3970D0CFC787E9B79599D273A68D2F7F69D4CC3DE9D104A351689F27CF6F5951F0103F33F4F24871024D9C27773A8DD"
         }
       ]
     },

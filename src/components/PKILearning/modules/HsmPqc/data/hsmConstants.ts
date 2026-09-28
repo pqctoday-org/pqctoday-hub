@@ -13,10 +13,10 @@ export interface PKCS11Mechanism {
 export interface FipsValidationEntry {
   vendorId: string
   vendorName: string
-  certType: 'FIPS 140-3' | 'FIPS 140-2' | 'ACVP' | 'CAVP' | 'Common Criteria'
+  certType: 'FIPS 140-3' | 'FIPS 140-2' | 'CAVP' | 'Common Criteria'
   certId: string
   /**
-   * For ACVP/CAVP: PQC algorithms on the algorithm certificate. For FIPS 140-x: PQC algorithms in
+   * For CAVP: PQC algorithms on the algorithm certificate. For FIPS 140-x: PQC algorithms in
    * the module certificate's Approved Algorithms list (empty when there are none).
    */
   algorithms: string[]
@@ -494,7 +494,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna K7 Cryptographic Library',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7358',
     algorithms: ['ML-KEM', 'ML-DSA', 'LMS'],
     status: 'Active',
@@ -505,7 +505,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna T7 Firmware Cryptographic Library',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7879',
     algorithms: ['ML-KEM', 'ML-DSA', 'LMS'],
     status: 'Active',
@@ -516,7 +516,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield 5 Algorithm Library - nCore',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7285',
     algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
     status: 'Active',
@@ -528,7 +528,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield PQSDK',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7990',
     algorithms: ['LMS'],
     status: 'Active',
@@ -540,7 +540,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'utimaco',
     vendorName: 'Utimaco Lattice Module - ML',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7400',
     algorithms: ['ML-KEM', 'ML-DSA'],
     status: 'Active',
@@ -552,7 +552,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'utimaco',
     vendorName: 'Utimaco Stateful hash based Module - HBS',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7401',
     algorithms: ['LMS'],
     status: 'Active',
@@ -563,19 +563,19 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'aws-cloudhsm',
     vendorName: 'AWS-LC Cryptographic Module (CloudHSM backend)',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7917',
     algorithms: ['ML-KEM', 'ML-DSA'],
     status: 'Active',
     date: '2026-01-21',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20709',
-    note: 'ACVP validation is for the AWS-LC software library used by CloudHSM SDK — not for the HSM firmware itself.',
+    note: 'CAVP validation is for the AWS-LC software library used by CloudHSM SDK — not for the HSM firmware itself.',
   },
   {
     vendorId: 'futurex-cryptohub',
     vendorName: 'Futurex GSP4000 Hardware Security Module',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A7998',
     algorithms: ['ML-KEM', 'ML-DSA'],
     status: 'Active',
@@ -586,7 +586,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   {
     vendorId: 'crypto4a-qxhsm',
     vendorName: 'Crypto4A QASM Cryptographic Module',
-    certType: 'ACVP',
+    certType: 'CAVP',
     certId: 'A5631',
     algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS'],
     status: 'Active',

@@ -1,0 +1,3513 @@
+{
+  "schema": "pqctoday.case-evidence/v1",
+  "inputs": {
+    "manifestSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
+    "registrySha256": "2fe5f154a20167ff4711bcd20398f3cb38207e7c3d22d2513b65ee4861bf4faa"
+  },
+  "records": {
+    "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
+      "id": "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1",
+      "test": "kat.aes-kwp-wrap",
+      "title": "AES-KWP-256 wrap + unwrap round-trip (20-byte generic secret)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.aes-kwp-wrap/1",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_AES_KEY_WRAP_KWP wrap AES-256",
+        "CKM_AES_KEY_WRAP_KWP unwrap AES-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.aescbc-decrypt#aescbc_test#/testGroups/0/tests/0": {
+      "id": "kat.aescbc-decrypt#aescbc_test#/testGroups/0/tests/0",
+      "test": "kat.aescbc-decrypt",
+      "title": "AES-CBC-256 decrypt (raw CKM_AES_CBC)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "aescbc_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 30,
+        "tcId": 2129
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 decrypt (MMT group) → executed here: decrypt",
+        "subset: 1 case (upstream tcId 2129) taken from upstream tgId 30 (10 cases in that group; 2156 in the upstream file)."
+      ]
+    },
+    "kat.aescmac-verify#aescmac_test#/testGroups/0/tests/0": {
+      "id": "kat.aescmac-verify#aescmac_test#/testGroups/0/tests/0",
+      "test": "kat.aescmac-verify",
+      "title": "AES-CMAC-256 generate vs SP 800-38B example (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "aescmac_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "AES-CMAC",
+      "operation": "mac-generate",
+      "testType": "published-example",
+      "parameters": {
+        "keyLen": 256,
+        "macLen": 128,
+        "messageBytes": 0
+      },
+      "upstream": {
+        "label": "CMAC-AES256 Example #1 (Mlen=0)"
+      },
+      "source": {
+        "citation": "NIST CSRC Cryptographic Standards and Guidelines examples: AES_CMAC.pdf, CMAC-AES256 Examples #1, #2, #4 (the example set NIST SP 800-38B Appendix D points to)",
+        "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/AES_CMAC.pdf"
+      },
+      "exercises": [
+        "CKM_AES_CMAC sign AES-256"
+      ],
+      "limitations": [
+        "Upstream: CMAC generation (published example) → executed here: mac-generate (C_Sign, compare to expected)",
+        "subset: Examples #1, #2 and #4 of the 4 CMAC-AES256 examples; Example #3 (Mlen=20) not carried.",
+        "renumber: Examples #1/#2/#4 -> local tcId 1/2/3.",
+        "field-drop: Intermediate subkeys K1/K2 and CIPHK(0^128) not carried."
+      ]
+    },
+    "kat.aesctr-roundtrip#aesctr_test#/testGroups/0/tests/0": {
+      "id": "kat.aesctr-roundtrip#aesctr_test#/testGroups/0/tests/0",
+      "test": "kat.aesctr-roundtrip",
+      "title": "AES-CTR-256 encrypt (expected ciphertext) + decrypt",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "aesctr_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "AES-CTR",
+      "operation": "decrypt",
+      "testType": "published-example",
+      "parameters": {
+        "counterBits": 128,
+        "keyLen": 256
+      },
+      "upstream": {
+        "label": "SP 800-38A F.5.6 CTR-AES256.Decrypt"
+      },
+      "source": {
+        "citation": "NIST SP 800-38A Appendix F.5.6 (CTR-AES256.Decrypt)",
+        "url": "https://csrc.nist.gov/pubs/sp/800/38/a/final",
+        "revision": "SP 800-38A (2001)"
+      },
+      "exercises": [
+        "CKM_AES_CTR encrypt AES-256",
+        "CKM_AES_CTR decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: CTR-AES256.Decrypt (published example) → executed here: decrypt",
+        "field-drop: Per-block counter/input/output blocks not carried; the 4 ciphertext and plaintext blocks are concatenated."
+      ]
+    },
+    "kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0": {
+      "id": "kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0",
+      "test": "kat.aesgcm-decrypt",
+      "title": "AES-GCM-256 decrypt (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "aesgcm_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "AES-GCM",
+      "operation": "decrypt",
+      "testType": "published-example",
+      "parameters": {
+        "aadLen": 0,
+        "ivLen": 96,
+        "keyLen": 256,
+        "ptLen": 128,
+        "tagLen": 128
+      },
+      "upstream": {
+        "label": "CAVP gcmDecrypt256.rsp [Keylen=256][IVlen=96][PTlen=128][AADlen=0][Taglen=128] Count=0"
+      },
+      "source": {
+        "citation": "NIST CAVP GCM test vectors (CAVS 14.0, 2012-08-31), gcmDecrypt256.rsp",
+        "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/mac/gcmtestvectors.zip",
+        "revision": "CAVS 14.0 (2012-08-31)"
+      },
+      "exercises": [
+        "CKM_AES_GCM decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: CAVP GCM decrypt (AES-256, 96-bit IV, no AAD, 128-bit tag) → executed here: C_Decrypt(CKM_AES_GCM) of CT||Tag, byte-compared with PT",
+        "subset: The first decrypting (not FAIL) case of each section with PTlen 128, 256 and 408 bits.",
+        "field-rename: Key -> key; IV -> iv; PT -> pt; CT -> ct; Tag -> tag",
+        "field-add: local-only fields: ptLen, count (identify the source section and case)"
+      ]
+    },
+    "kat.aesgcm-functional#local:kat.aesgcm-functional/1": {
+      "id": "kat.aesgcm-functional#local:kat.aesgcm-functional/1",
+      "test": "kat.aesgcm-functional",
+      "title": "AES-GCM encrypt + decrypt round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.aesgcm-functional/1",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_AES_KEY_GEN generate-key AES-256",
+        "CKM_AES_GCM encrypt AES-256",
+        "CKM_AES_GCM decrypt AES-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.aeskw-wrap#aeskw_test#/testGroups/0/tests/0": {
+      "id": "kat.aeskw-wrap#aeskw_test#/testGroups/0/tests/0",
+      "test": "kat.aeskw-wrap",
+      "title": "AES-KW-256 wrap (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "aeskw_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "AES-KW",
+      "operation": "wrap",
+      "testType": "published-example",
+      "parameters": {
+        "keyLen": 256
+      },
+      "upstream": {
+        "label": "RFC 3394 Section 4.6"
+      },
+      "source": {
+        "citation": "RFC 3394 Section 4.6 (256-bit key data with a 256-bit KEK)",
+        "url": "https://www.rfc-editor.org/rfc/rfc3394",
+        "revision": "RFC 3394"
+      },
+      "exercises": [
+        "CKM_AES_KEY_WRAP wrap AES-256"
+      ],
+      "limitations": [
+        "Upstream: AES Key Wrap (published example) → executed here: wrap (C_WrapKey, compare wrapped bytes)",
+        "field-drop: Intermediate wrap-step values not carried."
+      ]
+    },
+    "kat.digest-multipart#sha256_test#/testGroups/0/tests/0@multipart": {
+      "id": "kat.digest-multipart#sha256_test#/testGroups/0/tests/0@multipart",
+      "test": "kat.digest-multipart",
+      "title": "Multi-part digest (C_DigestUpdate) vs single-shot expected value",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha256_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-256 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 62
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-256 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 62) taken from upstream tgId 1 (512 cases in that group; 517 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 62; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.digest-multipart#sha384_test#/testGroups/0/tests/0@multipart": {
+      "id": "kat.digest-multipart#sha384_test#/testGroups/0/tests/0@multipart",
+      "test": "kat.digest-multipart",
+      "title": "Multi-part digest (C_DigestUpdate) vs single-shot expected value",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha384_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-384 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 0
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 134
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-384-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-384 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 134) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 134; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.digest-multipart#sha512_test#/testGroups/0/tests/0@multipart": {
+      "id": "kat.digest-multipart#sha512_test#/testGroups/0/tests/0@multipart",
+      "test": "kat.digest-multipart",
+      "title": "Multi-part digest (C_DigestUpdate) vs single-shot expected value",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha512_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-512 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 114
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-512 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 114) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 114; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.ecdh-derive#local:kat.ecdh-derive/P-256": {
+      "id": "kat.ecdh-derive#local:kat.ecdh-derive/P-256",
+      "test": "kat.ecdh-derive",
+      "title": "ECDH two-party round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.ecdh-derive/P-256",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_EC_KEY_PAIR_GEN generate-key-pair P-256",
+        "CKM_ECDH1_DERIVE derive P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.ecdh-derive#local:kat.ecdh-derive/P-384": {
+      "id": "kat.ecdh-derive#local:kat.ecdh-derive/P-384",
+      "test": "kat.ecdh-derive",
+      "title": "ECDH two-party round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.ecdh-derive/P-384",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_EC_KEY_PAIR_GEN generate-key-pair P-384",
+        "CKM_ECDH1_DERIVE derive P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.ecdsa-functional#local:kat.ecdsa-functional/P-256": {
+      "id": "kat.ecdsa-functional#local:kat.ecdsa-functional/P-256",
+      "test": "kat.ecdsa-functional",
+      "title": "ECDSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.ecdsa-functional/P-256",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_EC_KEY_PAIR_GEN generate-key-pair P-256",
+        "CKM_ECDSA_SHA256 sign P-256",
+        "CKM_ECDSA_SHA256 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.ecdsa-functional#local:kat.ecdsa-functional/P-384": {
+      "id": "kat.ecdsa-functional#local:kat.ecdsa-functional/P-384",
+      "test": "kat.ecdsa-functional",
+      "title": "ECDSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.ecdsa-functional/P-384",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_EC_KEY_PAIR_GEN generate-key-pair P-384",
+        "CKM_ECDSA_SHA384 sign P-384",
+        "CKM_ECDSA_SHA384 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.ecdsa-sigver#ecdsa_p384_test#/testGroups/0/tests/0": {
+      "id": "kat.ecdsa-sigver#ecdsa_p384_test#/testGroups/0/tests/0",
+      "test": "kat.ecdsa-sigver",
+      "title": "ECDSA verify (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "ecdsa_p384_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "ECDSA",
+      "operation": "sigVer",
+      "testType": "published-example",
+      "parameters": {
+        "curve": "P-384",
+        "hashAlg": "SHA-384",
+        "messageBytes": 6
+      },
+      "upstream": {
+        "label": "RFC 6979 Appendix A.2.6 (P-384), SHA-384, message \"sample\""
+      },
+      "source": {
+        "citation": "RFC 6979 Appendix A.2.6 (P-384)",
+        "url": "https://www.rfc-editor.org/rfc/rfc6979",
+        "revision": "RFC 6979"
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA384 verify P-384"
+      ],
+      "limitations": [
+        "Upstream: Deterministic ECDSA signature generation (published example) → executed here: sigVer (import public key, C_Verify)",
+        "operation-change: Published signing example (private key x, deterministic k) used as a positive verification tuple; signing is not reproduced.",
+        "subset: 1 of the 10 signatures given in A.2.6 (P-384) (the SHA-384 / \"sample\" one).",
+        "field-drop: Private key x and nonce k not carried."
+      ]
+    },
+    "kat.ecdsa-sigver#ecdsa_p521_test#/testGroups/0/tests/0": {
+      "id": "kat.ecdsa-sigver#ecdsa_p521_test#/testGroups/0/tests/0",
+      "test": "kat.ecdsa-sigver",
+      "title": "ECDSA verify (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "ecdsa_p521_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ECDSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "curve": "P-521",
+        "hashAlg": "SHA2-512",
+        "messageBytes": 128
+      },
+      "upstream": {
+        "tgId": 23,
+        "tcId": 156
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA512 verify P-521"
+      ],
+      "limitations": [
+        "Upstream: ECDSA SigVer FIPS186-5 → executed here: sigVer",
+        "subset: 1 case (upstream tcId 156) taken from upstream tgId 23 (7 cases in that group; 196 in the upstream file).",
+        "field-drop: upstream fields not carried: reason, d",
+        "value-normalize: group hashAlg: 'SHA2-512' -> 'SHA-512'"
+      ]
+    },
+    "kat.ecdsa-sigver#ecdsa_test#/testGroups/0/tests/0": {
+      "id": "kat.ecdsa-sigver#ecdsa_test#/testGroups/0/tests/0",
+      "test": "kat.ecdsa-sigver",
+      "title": "ECDSA verify (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "ecdsa_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "ECDSA",
+      "operation": "sigVer",
+      "testType": "published-example",
+      "parameters": {
+        "curve": "P-256",
+        "hashAlg": "SHA-256",
+        "messageBytes": 6
+      },
+      "upstream": {
+        "label": "RFC 6979 Appendix A.2.5 (P-256), SHA-256, message \"sample\""
+      },
+      "source": {
+        "citation": "RFC 6979 Appendix A.2.5 (P-256)",
+        "url": "https://www.rfc-editor.org/rfc/rfc6979",
+        "revision": "RFC 6979"
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA256 verify P-256"
+      ],
+      "limitations": [
+        "Upstream: Deterministic ECDSA signature generation (published example) → executed here: sigVer (import public key, C_Verify)",
+        "operation-change: Published signing example (private key x, deterministic k) used as a positive verification tuple; signing is not reproduced.",
+        "subset: 1 of the 10 signatures given in A.2.5 (P-256) (the SHA-256 / \"sample\" one).",
+        "field-drop: Private key x and nonce k not carried."
+      ]
+    },
+    "kat.eddsa-functional#local:kat.eddsa-functional/Ed25519": {
+      "id": "kat.eddsa-functional#local:kat.eddsa-functional/Ed25519",
+      "test": "kat.eddsa-functional",
+      "title": "Ed25519 sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.eddsa-functional/Ed25519",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_EC_EDWARDS_KEY_PAIR_GEN generate-key-pair Ed25519",
+        "CKM_EDDSA sign Ed25519",
+        "CKM_EDDSA verify Ed25519"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.eddsa-sigver#eddsa_ed448_test#/testGroups/0/tests/0": {
+      "id": "kat.eddsa-sigver#eddsa_ed448_test#/testGroups/0/tests/0",
+      "test": "kat.eddsa-sigver",
+      "title": "EdDSA verify (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "eddsa_ed448_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "EdDSA 1.0",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "curve": "ED-448",
+        "messageBytes": 128,
+        "preHash": false
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 14
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_EDDSA verify Ed448"
+      ],
+      "limitations": [
+        "Upstream: EdDSA SigVer 1.0 → executed here: sigVer",
+        "subset: 1 case (upstream tcId 14) taken from upstream tgId 3 (5 cases in that group; 20 in the upstream file).",
+        "field-rename: q -> pk",
+        "field-drop: upstream fields not carried: reason, d",
+        "value-normalize: group curve: 'ED-448' -> 'Ed448'"
+      ]
+    },
+    "kat.eddsa-sigver#eddsa_test#/testGroups/0/tests/0": {
+      "id": "kat.eddsa-sigver#eddsa_test#/testGroups/0/tests/0",
+      "test": "kat.eddsa-sigver",
+      "title": "EdDSA verify (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "eddsa_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "EdDSA",
+      "operation": "sigVer",
+      "testType": "published-example",
+      "parameters": {
+        "curve": "Ed25519",
+        "messageBytes": 1
+      },
+      "upstream": {
+        "label": "RFC 8032 Section 7.1 TEST 2"
+      },
+      "source": {
+        "citation": "RFC 8032 Section 7.1 (Ed25519 TEST 1, TEST 2)",
+        "url": "https://www.rfc-editor.org/rfc/rfc8032",
+        "revision": "RFC 8032"
+      },
+      "exercises": [
+        "CKM_EDDSA verify Ed25519"
+      ],
+      "limitations": [
+        "Upstream: Ed25519 sign (published example) → executed here: sigVer (import public key, C_Verify)",
+        "operation-change: Published signing examples used as positive verification tuples.",
+        "subset: TEST 1 and TEST 2 of the Section 7.1 Ed25519 examples.",
+        "renumber: tests[0] = TEST 2, tests[1] = TEST 1 (file source field).",
+        "field-drop: SECRET KEY not carried."
+      ]
+    },
+    "kat.hkdf-derive#hkdf_test#/testGroups/0/tests/0": {
+      "id": "kat.hkdf-derive#hkdf_test#/testGroups/0/tests/0",
+      "test": "kat.hkdf-derive",
+      "title": "HKDF-SHA256 derive (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hkdf_test#/testGroups/0/tests/0",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "HKDF",
+      "operation": "derive",
+      "testType": "published-example",
+      "parameters": {
+        "hashAlg": "SHA-256",
+        "okmLen": 42
+      },
+      "upstream": {
+        "label": "RFC 5869 Appendix A.1 (Test Case 1)"
+      },
+      "source": {
+        "citation": "RFC 5869 Appendix A.1-A.3 (HKDF-SHA256 test cases 1-3)",
+        "url": "https://www.rfc-editor.org/rfc/rfc5869",
+        "revision": "RFC 5869"
+      },
+      "exercises": [
+        "CKM_HKDF_DERIVE derive"
+      ],
+      "limitations": [
+        "Upstream: HKDF extract-and-expand (published test case) → executed here: derive (CKM_HKDF_DERIVE, compare OKM)",
+        "subset: Test Cases 1-3 (the SHA-256 cases); Test Cases 4-7 (SHA-1) not carried.",
+        "field-drop: Intermediate PRK not carried."
+      ]
+    },
+    "kat.hmac-generate#hmac_sha384_test#/testGroups/0/tests/0@generate": {
+      "id": "kat.hmac-generate#hmac_sha384_test#/testGroups/0/tests/0@generate",
+      "test": "kat.hmac-generate",
+      "title": "HMAC-SHA2 generation at the NIST truncated macLen (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_sha384_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-384 2.0",
+      "operation": "mac-generate",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 91
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384_HMAC_GENERAL sign"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-384 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-generate (the workbench runs this case as mac-verify)",
+        "subset: 1 case (upstream tcId 5) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple.",
+        "Runs the upstream AFT's own operation (MAC generation) on the manifest case whose recorded local operation is verification."
+      ]
+    },
+    "kat.hmac-generate#hmac_sha512_test#/testGroups/0/tests/0@generate": {
+      "id": "kat.hmac-generate#hmac_sha512_test#/testGroups/0/tests/0@generate",
+      "test": "kat.hmac-generate",
+      "title": "HMAC-SHA2 generation at the NIST truncated macLen (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_sha512_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-512 2.0",
+      "operation": "mac-generate",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 72
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 12
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512_HMAC_GENERAL sign"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-512 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-generate (the workbench runs this case as mac-verify)",
+        "subset: 1 case (upstream tcId 12) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple.",
+        "Runs the upstream AFT's own operation (MAC generation) on the manifest case whose recorded local operation is verification."
+      ]
+    },
+    "kat.hmac-generate#hmac_test#/testGroups/0/tests/0@generate": {
+      "id": "kat.hmac-generate#hmac_test#/testGroups/0/tests/0@generate",
+      "test": "kat.hmac-generate",
+      "title": "HMAC-SHA2 generation at the NIST truncated macLen (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-256 2.0",
+      "operation": "mac-generate",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 49
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 3
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_HMAC_GENERAL sign"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-256 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-generate (the workbench runs this case as mac-verify)",
+        "subset: 1 case (upstream tcId 3) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple.",
+        "Runs the upstream AFT's own operation (MAC generation) on the manifest case whose recorded local operation is verification."
+      ]
+    },
+    "kat.hmac-verify#hmac_sha384_test#/testGroups/0/tests/0": {
+      "id": "kat.hmac-verify#hmac_sha384_test#/testGroups/0/tests/0",
+      "test": "kat.hmac-verify",
+      "title": "HMAC-SHA2 verify of the NIST truncated MAC (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_sha384_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-384 2.0",
+      "operation": "mac-verify",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 91
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384_HMAC_GENERAL verify"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-384 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-verify",
+        "subset: 1 case (upstream tcId 5) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple."
+      ]
+    },
+    "kat.hmac-verify#hmac_sha512_test#/testGroups/0/tests/0": {
+      "id": "kat.hmac-verify#hmac_sha512_test#/testGroups/0/tests/0",
+      "test": "kat.hmac-verify",
+      "title": "HMAC-SHA2 verify of the NIST truncated MAC (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_sha512_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-512 2.0",
+      "operation": "mac-verify",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 72
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 12
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512_HMAC_GENERAL verify"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-512 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-verify",
+        "subset: 1 case (upstream tcId 12) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple."
+      ]
+    },
+    "kat.hmac-verify#hmac_test#/testGroups/0/tests/0": {
+      "id": "kat.hmac-verify#hmac_test#/testGroups/0/tests/0",
+      "test": "kat.hmac-verify",
+      "title": "HMAC-SHA2 verify of the NIST truncated MAC (_GENERAL mechanism)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "hmac_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "HMAC-SHA2-256 2.0",
+      "operation": "mac-verify",
+      "testType": "AFT",
+      "parameters": {
+        "macLen": 160,
+        "messageBytes": 49
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 3
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_HMAC_GENERAL verify"
+      ],
+      "limitations": [
+        "Upstream: HMAC-SHA2-256 2.0 AFT (MAC generation: key+msg -> mac) → executed here: mac-verify",
+        "subset: 1 case (upstream tcId 3) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
+        "field-drop: upstream fields not carried: keyLen, msgLen",
+        "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple."
+      ]
+    },
+    "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44": {
+      "id": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44",
+      "test": "kat.mldsa-functional",
+      "title": "ML-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mldsa-functional/ML-DSA-44",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_DSA_KEY_PAIR_GEN generate-key-pair ML-DSA-44",
+        "CKM_ML_DSA sign ML-DSA-44 hedged",
+        "CKM_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-65": {
+      "id": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-65",
+      "test": "kat.mldsa-functional",
+      "title": "ML-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mldsa-functional/ML-DSA-65",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_DSA_KEY_PAIR_GEN generate-key-pair ML-DSA-65",
+        "CKM_ML_DSA sign ML-DSA-65 hedged",
+        "CKM_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-87": {
+      "id": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-87",
+      "test": "kat.mldsa-functional",
+      "title": "ML-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mldsa-functional/ML-DSA-87",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_DSA_KEY_PAIR_GEN generate-key-pair ML-DSA-87",
+        "CKM_ML_DSA sign ML-DSA-87 hedged",
+        "CKM_ML_DSA verify ML-DSA-87"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/0": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/0",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 99,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 567,
+        "parameterSet": "ML-DSA-44",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 11
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 11) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/1": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/1",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 77,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 3127,
+        "parameterSet": "ML-DSA-44",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 14
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 14) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/0": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/0",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 149,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 166,
+        "parameterSet": "ML-DSA-65",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 43
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 43) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/1": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/1",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/1/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 181,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 2091,
+        "parameterSet": "ML-DSA-65",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 35
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 35) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/0": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/0",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 58,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 2725,
+        "parameterSet": "ML-DSA-87",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 70
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-87"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 70) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/1": {
+      "id": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/1",
+      "test": "kat.mldsa-sigver-nist",
+      "title": "ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_sigver_test#/testGroups/2/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 113,
+        "externalMu": false,
+        "hashAlg": "none",
+        "messageBytes": 1,
+        "parameterSet": "ML-DSA-87",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 66
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-87"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+        "subset: 1 case (upstream tcId 66) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+        "Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1."
+      ]
+    },
+    "kat.mldsa-sigver#mldsa_test#/testGroups/0/tests/0": {
+      "id": "kat.mldsa-sigver#mldsa_test#/testGroups/0/tests/0",
+      "test": "kat.mldsa-sigver",
+      "title": "ML-DSA verify of NIST sigGen output (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "deterministic": true,
+        "externalMu": false,
+        "messageBytes": 2934,
+        "parameterSet": "ML-DSA-44",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigGen FIPS204 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 5) taken from upstream tgId 1 (15 cases in that group; 360 in the upstream file).",
+        "field-rename: message -> msg; signature -> sig",
+        "field-drop: upstream fields not carried: deferred, context, hashAlg",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream is a sigGen AFT case; the hub imports the public key and verifies the upstream signature (positive SigVer tuple). No signing is compared."
+      ]
+    },
+    "kat.mldsa-sigver#mldsa_test#/testGroups/1/tests/0": {
+      "id": "kat.mldsa-sigver#mldsa_test#/testGroups/1/tests/0",
+      "test": "kat.mldsa-sigver",
+      "title": "ML-DSA verify of NIST sigGen output (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "deterministic": true,
+        "externalMu": false,
+        "messageBytes": 8192,
+        "parameterSet": "ML-DSA-65",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 44
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigGen FIPS204 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 44) taken from upstream tgId 3 (15 cases in that group; 360 in the upstream file).",
+        "renumber: local group tgId 2 = upstream tgId 3.",
+        "field-rename: message -> msg; signature -> sig",
+        "field-drop: upstream fields not carried: deferred, context, hashAlg",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream is a sigGen AFT case; the hub imports the public key and verifies the upstream signature (positive SigVer tuple). No signing is compared."
+      ]
+    },
+    "kat.mldsa-sigver#mldsa_test#/testGroups/2/tests/0": {
+      "id": "kat.mldsa-sigver#mldsa_test#/testGroups/2/tests/0",
+      "test": "kat.mldsa-sigver",
+      "title": "ML-DSA verify of NIST sigGen output (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mldsa_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-DSA FIPS204",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "deterministic": true,
+        "externalMu": false,
+        "messageBytes": 5416,
+        "parameterSet": "ML-DSA-87",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 63
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_DSA verify ML-DSA-87"
+      ],
+      "limitations": [
+        "Upstream: ML-DSA sigGen FIPS204 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 63) taken from upstream tgId 5 (15 cases in that group; 360 in the upstream file).",
+        "renumber: local group tgId 3 = upstream tgId 5.",
+        "field-rename: message -> msg; signature -> sig",
+        "field-drop: upstream fields not carried: deferred, context, hashAlg",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream is a sigGen AFT case; the hub imports the public key and verifies the upstream signature (positive SigVer tuple). No signing is compared."
+      ]
+    },
+    "kat.mlkem-decap#mlkem_test#/testGroups/0/tests/0": {
+      "id": "kat.mlkem-decap#mlkem_test#/testGroups/0/tests/0",
+      "test": "kat.mlkem-decap",
+      "title": "ML-KEM decapsulation (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mlkem_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-KEM FIPS203",
+      "operation": "decapsulation",
+      "testType": "AFT",
+      "parameters": {
+        "function": "encapsulation",
+        "parameterSet": "ML-KEM-512"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_KEM decapsulate ML-KEM-512"
+      ],
+      "limitations": [
+        "Upstream: ML-KEM encapDecap FIPS203 AFT encapsulation (ek, m -> c, k) → executed here: decapsulation",
+        "subset: 1 case (upstream tcId 1) taken from upstream tgId 1 (25 cases in that group; 165 in the upstream file).",
+        "field-rename: ek -> pk; dk -> sk; c -> ct; k -> ss",
+        "field-drop: upstream fields not carried: deferred, m",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream group is function='encapsulation' AFT (ek, m -> c, k); the hub imports dk and runs C_DecapsulateKey on c, comparing against k. The encapsulation itself (m -> c) is not executed."
+      ]
+    },
+    "kat.mlkem-decap#mlkem_test#/testGroups/1/tests/0": {
+      "id": "kat.mlkem-decap#mlkem_test#/testGroups/1/tests/0",
+      "test": "kat.mlkem-decap",
+      "title": "ML-KEM decapsulation (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mlkem_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-KEM FIPS203",
+      "operation": "decapsulation",
+      "testType": "AFT",
+      "parameters": {
+        "function": "encapsulation",
+        "parameterSet": "ML-KEM-768"
+      },
+      "upstream": {
+        "tgId": 2,
+        "tcId": 26
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_KEM decapsulate ML-KEM-768"
+      ],
+      "limitations": [
+        "Upstream: ML-KEM encapDecap FIPS203 AFT encapsulation (ek, m -> c, k) → executed here: decapsulation",
+        "subset: 1 case (upstream tcId 26) taken from upstream tgId 2 (25 cases in that group; 165 in the upstream file).",
+        "field-rename: ek -> pk; dk -> sk; c -> ct; k -> ss",
+        "field-drop: upstream fields not carried: deferred, m",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream group is function='encapsulation' AFT (ek, m -> c, k); the hub imports dk and runs C_DecapsulateKey on c, comparing against k. The encapsulation itself (m -> c) is not executed."
+      ]
+    },
+    "kat.mlkem-decap#mlkem_test#/testGroups/2/tests/0": {
+      "id": "kat.mlkem-decap#mlkem_test#/testGroups/2/tests/0",
+      "test": "kat.mlkem-decap",
+      "title": "ML-KEM decapsulation (testIndex 0)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "mlkem_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ML-KEM FIPS203",
+      "operation": "decapsulation",
+      "testType": "AFT",
+      "parameters": {
+        "function": "encapsulation",
+        "parameterSet": "ML-KEM-1024"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 51
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_ML_KEM decapsulate ML-KEM-1024"
+      ],
+      "limitations": [
+        "Upstream: ML-KEM encapDecap FIPS203 AFT encapsulation (ek, m -> c, k) → executed here: decapsulation",
+        "subset: 1 case (upstream tcId 51) taken from upstream tgId 3 (25 cases in that group; 165 in the upstream file).",
+        "field-rename: ek -> pk; dk -> sk; c -> ct; k -> ss",
+        "field-drop: upstream fields not carried: deferred, m",
+        "field-add: local-only fields: comment",
+        "operation-change: Upstream group is function='encapsulation' AFT (ek, m -> c, k); the hub imports dk and runs C_DecapsulateKey on c, comparing against k. The encapsulation itself (m -> c) is not executed."
+      ]
+    },
+    "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-1024": {
+      "id": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-1024",
+      "test": "kat.mlkem-encap-roundtrip",
+      "title": "ML-KEM encapsulate + decapsulate round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mlkem-encap-roundtrip/ML-KEM-1024",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_KEM_KEY_PAIR_GEN generate-key-pair ML-KEM-1024",
+        "CKM_ML_KEM encapsulate ML-KEM-1024",
+        "CKM_ML_KEM decapsulate ML-KEM-1024"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-512": {
+      "id": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-512",
+      "test": "kat.mlkem-encap-roundtrip",
+      "title": "ML-KEM encapsulate + decapsulate round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mlkem-encap-roundtrip/ML-KEM-512",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_KEM_KEY_PAIR_GEN generate-key-pair ML-KEM-512",
+        "CKM_ML_KEM encapsulate ML-KEM-512",
+        "CKM_ML_KEM decapsulate ML-KEM-512"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-768": {
+      "id": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-768",
+      "test": "kat.mlkem-encap-roundtrip",
+      "title": "ML-KEM encapsulate + decapsulate round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.mlkem-encap-roundtrip/ML-KEM-768",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_ML_KEM_KEY_PAIR_GEN generate-key-pair ML-KEM-768",
+        "CKM_ML_KEM encapsulate ML-KEM-768",
+        "CKM_ML_KEM decapsulate ML-KEM-768"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1": {
+      "id": "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1",
+      "test": "kat.pbkdf2-derive",
+      "title": "PBKDF2 derive: SHA-256 from RFC 7914 §11 (c = 80000, the case the workbench §17 also runs); SHA-512 from the self-generated file, since no standard publishes one (c = 4096)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "pbkdf2_rfc7914_test#/testGroups/0/tests/1",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "algorithm": "PBKDF2",
+      "operation": "derive",
+      "testType": "published-example",
+      "parameters": {
+        "dkLen": 64,
+        "iterations": 80000,
+        "prf": "HMAC-SHA256"
+      },
+      "upstream": {
+        "label": "RFC 7914 section 11: P=\"Password\", S=\"NaCl\", c=80000, dkLen=64"
+      },
+      "source": {
+        "citation": "RFC 7914 section 11, Test Vectors for PBKDF2 with HMAC-SHA-256",
+        "url": "https://www.rfc-editor.org/rfc/rfc7914",
+        "revision": "RFC 7914 (August 2016)"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF2-HMAC-SHA-256 (published example) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2, CKP_PKCS5_PBKD2_HMAC_SHA256), CKA_VALUE byte-compared",
+        "field-rename: P -> passwordText; S -> saltText; c -> iterations; dkLen -> dkLen",
+        "field-add: local-only fields: password, salt (the ASCII strings hex-encoded), tcId",
+        "The c = 1 cases (tests/0) are not run: the Rust engine refuses iterations < 1000 (open-gaps pbkdf2-min-iterations-divergence)."
+      ]
+    },
+    "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1": {
+      "id": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
+      "test": "kat.pbkdf2-derive",
+      "title": "PBKDF2 derive: SHA-256 from RFC 7914 §11 (c = 80000, the case the workbench §17 also runs); SHA-512 from the self-generated file, since no standard publishes one (c = 4096)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "pbkdf2_test#/testGroups/0/tests/1",
+      "evidenceClass": "independent-oracle",
+      "polarity": "positive",
+      "algorithm": "PBKDF2",
+      "operation": "derive",
+      "testType": "oracle-generated",
+      "parameters": {
+        "dkLen": 64,
+        "iterations": 4096,
+        "keyLen": 512,
+        "prf": "HMAC-SHA512"
+      },
+      "source": {
+        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA512"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: none (no NIST ACVP or published vector used; see file _provenance.note) → executed here: derive",
+        "locally-generated: Computed with self-generated, oracle=OpenSSL (Node crypto) (file _provenance).",
+        "The oracle version that produced the expected value is not recorded.",
+        "Oracle: Node.js crypto (OpenSSL backend) (version not recorded)",
+        "The c = 1 cases (tests/0) are not run: the Rust engine refuses iterations < 1000 (open-gaps pbkdf2-min-iterations-divergence)."
+      ]
+    },
+    "kat.rsa-functional#local:kat.rsa-functional/2048": {
+      "id": "kat.rsa-functional#local:kat.rsa-functional/2048",
+      "test": "kat.rsa-functional",
+      "title": "RSA key generation + RSA-PSS SHA-256 sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.rsa-functional/2048",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "modulusBits": 2048
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_KEY_PAIR_GEN generate-key-pair",
+        "CKM_SHA256_RSA_PKCS_PSS sign",
+        "CKM_SHA256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Only the 2048- and 3072-bit variants are instantiated by a product surface (grep of KatKind uses)."
+      ]
+    },
+    "kat.rsa-functional#local:kat.rsa-functional/3072": {
+      "id": "kat.rsa-functional#local:kat.rsa-functional/3072",
+      "test": "kat.rsa-functional",
+      "title": "RSA key generation + RSA-PSS SHA-256 sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.rsa-functional/3072",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "modulusBits": 3072
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_KEY_PAIR_GEN generate-key-pair",
+        "CKM_SHA256_RSA_PKCS_PSS sign",
+        "CKM_SHA256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Only the 2048- and 3072-bit variants are instantiated by a product surface (grep of KatKind uses)."
+      ]
+    },
+    "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0": {
+      "id": "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0",
+      "test": "kat.rsapss-sigver",
+      "title": "RSA-PSS SHA-256 verify (Wycheproof tc1)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0",
+      "evidenceClass": "independent-oracle",
+      "polarity": "positive",
+      "algorithm": "RSASSA-PSS",
+      "operation": "sigVer",
+      "testType": "RsassaPssVerify",
+      "parameters": {
+        "flags": "Normal",
+        "hashAlg": "SHA-256",
+        "mgf": "MGF1-SHA-256",
+        "modulo": 2048,
+        "msgBytes": 0,
+        "saltLen": 32,
+        "wycheproofResult": "valid"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1,
+        "label": "valid signature"
+      },
+      "source": {
+        "citation": "Project Wycheproof, maintained by Google / C2SP — testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0",
+        "url": "https://raw.githubusercontent.com/C2SP/wycheproof/3fa63dd0344abb611f1fb1d77e119938603ea230/testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json",
+        "revision": "3fa63dd0344abb611f1fb1d77e119938603ea230"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RsassaPssVerify (publicKey.modulus/publicExponent, msg, sig -> result) → executed here: C_CreateObject(CKO_PUBLIC_KEY, CKK_RSA, CKA_MODULUS = modulus without the ASN.1 sign byte, CKA_PUBLIC_EXPONENT) then C_VerifyInit/C_Verify(CKM_SHA256_RSA_PKCS_PSS, hashAlg/MGF/sLen from the group) over msg with sig.",
+        "field-add: ONE top-level `_provenance` key added (attribution, pinned commit, upstream path + sha256, Apache-2.0 licence, evidence class and result policy). Everything else is the pinned upstream file byte-for-byte: no case dropped, no tcId renumbered, no value re-derived or normalized.",
+        "Oracle: Project Wycheproof, maintained by Google / C2SP — adversarial test-vector corpus 3fa63dd0344abb611f1fb1d77e119938603ea230"
+      ]
+    },
+    "kat.sha256-hash#sha256_test#/testGroups/0/tests/0": {
+      "id": "kat.sha256-hash#sha256_test#/testGroups/0/tests/0",
+      "test": "kat.sha256-hash",
+      "title": "SHA2-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha256_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-256 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 62
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-256 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 62) taken from upstream tgId 1 (512 cases in that group; 517 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 62; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha256-hash#sha256_test#/testGroups/0/tests/1": {
+      "id": "kat.sha256-hash#sha256_test#/testGroups/0/tests/1",
+      "test": "kat.sha256-hash",
+      "title": "SHA2-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha256_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-256 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 136
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-256 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 136) taken from upstream tgId 1 (512 cases in that group; 517 in the upstream file).",
+        "renumber: local tcId 2 != upstream tcId 136; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha256-hash#sha256_test#/testGroups/0/tests/2": {
+      "id": "kat.sha256-hash#sha256_test#/testGroups/0/tests/2",
+      "test": "kat.sha256-hash",
+      "title": "SHA2-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha256_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-256 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 222
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 75
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-256 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 75) taken from upstream tgId 1 (512 cases in that group; 517 in the upstream file).",
+        "renumber: local tcId 3 != upstream tcId 75; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/0": {
+      "id": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/0",
+      "test": "kat.sha3-256-hash",
+      "title": "SHA3-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_256_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-256 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 0
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 221
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-256-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-256 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 221) taken from upstream tgId 1 (1194 cases in that group; 1199 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 221; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/1": {
+      "id": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/1",
+      "test": "kat.sha3-256-hash",
+      "title": "SHA3-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_256_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-256 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 1
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 87
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-256-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-256 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 87) taken from upstream tgId 1 (1194 cases in that group; 1199 in the upstream file).",
+        "renumber: local tcId 2 != upstream tcId 87; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/2": {
+      "id": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/2",
+      "test": "kat.sha3-256-hash",
+      "title": "SHA3-256 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_256_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-256 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 48
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1068
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-256-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-256 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 1068) taken from upstream tgId 1 (1194 cases in that group; 1199 in the upstream file).",
+        "renumber: local tcId 3 != upstream tcId 1068; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/0": {
+      "id": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/0",
+      "test": "kat.sha3-512-hash",
+      "title": "SHA3-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_512_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-512 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 0
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 384
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-512-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-512 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 384) taken from upstream tgId 1 (682 cases in that group; 687 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 384; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/1": {
+      "id": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/1",
+      "test": "kat.sha3-512-hash",
+      "title": "SHA3-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_512_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-512 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 1
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 118
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-512-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-512 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 118) taken from upstream tgId 1 (682 cases in that group; 687 in the upstream file).",
+        "renumber: local tcId 2 != upstream tcId 118; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/2": {
+      "id": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/2",
+      "test": "kat.sha3-512-hash",
+      "title": "SHA3-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha3_512_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA3-512 2.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "messageBytes": 48
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 333
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA3-512-2.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA3-512 2.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 333) taken from upstream tgId 1 (682 cases in that group; 687 in the upstream file).",
+        "renumber: local tcId 3 != upstream tcId 333; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha384-hash#sha384_test#/testGroups/0/tests/0": {
+      "id": "kat.sha384-hash#sha384_test#/testGroups/0/tests/0",
+      "test": "kat.sha384-hash",
+      "title": "SHA2-384 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha384_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-384 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 0
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 134
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-384-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-384 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 134) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 134; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha384-hash#sha384_test#/testGroups/0/tests/1": {
+      "id": "kat.sha384-hash#sha384_test#/testGroups/0/tests/1",
+      "test": "kat.sha384-hash",
+      "title": "SHA2-384 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha384_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-384 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 1
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 886
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-384-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-384 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 886) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 2 != upstream tcId 886; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha384-hash#sha384_test#/testGroups/0/tests/2": {
+      "id": "kat.sha384-hash#sha384_test#/testGroups/0/tests/2",
+      "test": "kat.sha384-hash",
+      "title": "SHA2-384 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha384_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-384 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 49
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 498
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-384-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA384 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-384 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 498) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 3 != upstream tcId 498; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha512-hash#sha512_test#/testGroups/0/tests/0": {
+      "id": "kat.sha512-hash#sha512_test#/testGroups/0/tests/0",
+      "test": "kat.sha512-hash",
+      "title": "SHA2-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha512_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-512 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 114
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-512 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 114) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 1 != upstream tcId 114; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha512-hash#sha512_test#/testGroups/0/tests/1": {
+      "id": "kat.sha512-hash#sha512_test#/testGroups/0/tests/1",
+      "test": "kat.sha512-hash",
+      "title": "SHA2-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha512_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-512 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 792
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-512 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 792) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 2 != upstream tcId 792; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.sha512-hash#sha512_test#/testGroups/0/tests/2": {
+      "id": "kat.sha512-hash#sha512_test#/testGroups/0/tests/2",
+      "test": "kat.sha512-hash",
+      "title": "SHA2-512 digest (testIndex 0-2: the file's three NIST cases)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "sha512_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SHA2-512 1.0",
+      "operation": "hash",
+      "testType": "AFT",
+      "parameters": {
+        "function": "SHA2",
+        "messageBytes": 215
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 864
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA512 digest"
+      ],
+      "limitations": [
+        "Upstream: SHA2-512 1.0 AFT hash → executed here: hash",
+        "subset: 1 case (upstream tcId 864) taken from upstream tgId 1 (1024 cases in that group; 1029 in the upstream file).",
+        "renumber: local tcId 3 != upstream tcId 864; upstream id kept in the case comment.",
+        "field-drop: upstream fields not carried: len",
+        "field-add: local-only fields: comment"
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-128f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-128f",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-128f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-128f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-128s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-128s",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-128s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-128s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-192f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-192f",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-192f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-192f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-192s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-192s",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-192s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-192s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-256f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-256f",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-256f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-256f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHA2-256s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHA2-256s",
+        "CKM_SLH_DSA sign SLH-DSA-SHA2-256s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-256s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-128f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-128f",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-128f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-128f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-128s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-128s",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-128s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-128s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-192f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-192f",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-192f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-192f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-192s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-192s",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-192s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-192s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256f": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256f",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-256f",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-256f",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-256f hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-256f"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256s": {
+      "id": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256s",
+      "test": "kat.slhdsa-functional",
+      "title": "SLH-DSA sign + verify round-trip",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.slhdsa-functional/SLH-DSA-SHAKE-256s",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_SLH_DSA_KEY_PAIR_GEN generate-key-pair SLH-DSA-SHAKE-256s",
+        "CKM_SLH_DSA sign SLH-DSA-SHAKE-256s hedged",
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-256s"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 3513,
+        "parameterSet": "SLH-DSA-SHA2-128f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-128f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 5) taken from upstream tgId 1 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-128f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 1,
+        "parameterSet": "SLH-DSA-SHA2-128s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 19,
+        "tcId": 161
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-128s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 161) taken from upstream tgId 19 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-128s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 208,
+        "parameterSet": "SLH-DSA-SHA2-192f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 21
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-192f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 21) taken from upstream tgId 3 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-192f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 119,
+        "parameterSet": "SLH-DSA-SHA2-192s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 21,
+        "tcId": 182
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-192s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 182) taken from upstream tgId 21 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-192s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 506,
+        "parameterSet": "SLH-DSA-SHA2-256f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 39
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-256f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 39) taken from upstream tgId 5 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-256f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 8192,
+        "parameterSet": "SLH-DSA-SHA2-256s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 23,
+        "tcId": 201
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHA2-256s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 201) taken from upstream tgId 23 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHA2-256s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 6760,
+        "parameterSet": "SLH-DSA-SHAKE-128f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 60
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-128f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 60) taken from upstream tgId 7 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-128f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 4857,
+        "parameterSet": "SLH-DSA-SHAKE-128s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 219
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-128s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 219) taken from upstream tgId 25 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-128s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 243,
+        "parameterSet": "SLH-DSA-SHAKE-192f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 9,
+        "tcId": 83
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-192f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 83) taken from upstream tgId 9 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-192f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 7999,
+        "parameterSet": "SLH-DSA-SHAKE-192s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 27,
+        "tcId": 238
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-192s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 238) taken from upstream tgId 27 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-192s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 1,
+        "parameterSet": "SLH-DSA-SHAKE-256f",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 11,
+        "tcId": 100
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-256f"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 100) taken from upstream tgId 11 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-256f entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s": {
+      "id": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s",
+      "test": "kat.slhdsa-sigver",
+      "title": "SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "SLH-DSA FIPS205",
+      "operation": "sigVer",
+      "testType": "AFT",
+      "parameters": {
+        "contextBytes": 255,
+        "deterministic": true,
+        "messageBytes": 1477,
+        "parameterSet": "SLH-DSA-SHAKE-256s",
+        "preHash": "pure",
+        "signatureInterface": "external"
+      },
+      "upstream": {
+        "tgId": 29,
+        "tcId": 253
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SLH_DSA verify SLH-DSA-SHAKE-256s"
+      ],
+      "limitations": [
+        "Upstream: SLH-DSA sigGen FIPS205 AFT (deterministic, external interface, pure) → executed here: sigVer",
+        "subset: 1 case (upstream tcId 253) taken from upstream tgId 29 (7 cases in that group; 624 in the upstream file).",
+        "field-drop: upstream fields not carried: deferred, sk, hashAlg",
+        "field-add: local-only fields: comment, testPassed",
+        "derived-within-file: Copied from this file's /sigGen/SLH-DSA-SHAKE-256s entry (same pk/message/context/signature).",
+        "operation-change: Upstream sigGen output used as a positive SigVer tuple (file field sigver_derivation); not drawn from the separate SLH-DSA-sigVer-FIPS205 set, so no negative cases.",
+        "Same cases as the workbench §9b."
+      ]
+    },
+    "kat.suci-profile-b#local:kat.suci-profile-b/3-ecdh": {
+      "id": "kat.suci-profile-b#local:kat.suci-profile-b/3-ecdh",
+      "test": "kat.suci-profile-b",
+      "title": "5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.suci-profile-b/3-ecdh",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+      },
+      "exercises": [
+        "CKM_ECDH1_DERIVE derive P-256"
+      ],
+      "limitations": [
+        "Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest.",
+        "Steps 1-2 (key import only) exercise no mechanism and are not registered."
+      ]
+    },
+    "kat.suci-profile-b#local:kat.suci-profile-b/4-kdf": {
+      "id": "kat.suci-profile-b#local:kat.suci-profile-b/4-kdf",
+      "test": "kat.suci-profile-b",
+      "title": "5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.suci-profile-b/4-kdf",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+      },
+      "exercises": [
+        "CKM_ECDH1_DERIVE derive P-256"
+      ],
+      "limitations": [
+        "Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest. ECDH with CKD_SHA256_KDF (ANSI X9.63), SharedInfo = compressed ephemeral key.",
+        "Steps 1-2 (key import only) exercise no mechanism and are not registered."
+      ]
+    },
+    "kat.suci-profile-b#local:kat.suci-profile-b/5-encrypt": {
+      "id": "kat.suci-profile-b#local:kat.suci-profile-b/5-encrypt",
+      "test": "kat.suci-profile-b",
+      "title": "5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.suci-profile-b/5-encrypt",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+      },
+      "exercises": [
+        "CKM_AES_CTR encrypt AES-128"
+      ],
+      "limitations": [
+        "Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest.",
+        "Steps 1-2 (key import only) exercise no mechanism and are not registered."
+      ]
+    },
+    "kat.suci-profile-b#local:kat.suci-profile-b/6-mac": {
+      "id": "kat.suci-profile-b#local:kat.suci-profile-b/6-mac",
+      "test": "kat.suci-profile-b",
+      "title": "5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.suci-profile-b/6-mac",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+      },
+      "exercises": [
+        "CKM_SHA256_HMAC_GENERAL sign"
+      ],
+      "limitations": [
+        "Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest.",
+        "Steps 1-2 (key import only) exercise no mechanism and are not registered."
+      ]
+    },
+    "kat.suci-profile-b#local:kat.suci-profile-b/7-e2e": {
+      "id": "kat.suci-profile-b#local:kat.suci-profile-b/7-e2e",
+      "test": "kat.suci-profile-b",
+      "title": "5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.suci-profile-b/7-e2e",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+      },
+      "exercises": [
+        "CKM_ECDH1_DERIVE derive P-256",
+        "CKM_AES_CTR encrypt AES-128",
+        "CKM_SHA256_HMAC_GENERAL sign"
+      ],
+      "limitations": [
+        "Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest. Compares the Scheme Output; no full SUCI string is published.",
+        "Steps 1-2 (key import only) exercise no mechanism and are not registered."
+      ]
+    }
+  },
+  "index": {
+    "aes-kwp-wrap": [
+      "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1"
+    ],
+    "aescbc-decrypt": [
+      "kat.aescbc-decrypt#aescbc_test#/testGroups/0/tests/0"
+    ],
+    "aescmac-verify": [
+      "kat.aescmac-verify#aescmac_test#/testGroups/0/tests/0"
+    ],
+    "aesctr-roundtrip": [
+      "kat.aesctr-roundtrip#aesctr_test#/testGroups/0/tests/0"
+    ],
+    "aesgcm-decrypt": [
+      "kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0"
+    ],
+    "aesgcm-functional": [
+      "kat.aesgcm-functional#local:kat.aesgcm-functional/1"
+    ],
+    "aeskw-wrap": [
+      "kat.aeskw-wrap#aeskw_test#/testGroups/0/tests/0"
+    ],
+    "digest-multipart;hashAlg=SHA-256": [
+      "kat.digest-multipart#sha256_test#/testGroups/0/tests/0@multipart"
+    ],
+    "digest-multipart;hashAlg=SHA-384": [
+      "kat.digest-multipart#sha384_test#/testGroups/0/tests/0@multipart"
+    ],
+    "digest-multipart;hashAlg=SHA-512": [
+      "kat.digest-multipart#sha512_test#/testGroups/0/tests/0@multipart"
+    ],
+    "ecdh-derive;curve=P-256": [
+      "kat.ecdh-derive#local:kat.ecdh-derive/P-256"
+    ],
+    "ecdh-derive;curve=P-384": [
+      "kat.ecdh-derive#local:kat.ecdh-derive/P-384"
+    ],
+    "ecdsa-functional;curve=P-256": [
+      "kat.ecdsa-functional#local:kat.ecdsa-functional/P-256"
+    ],
+    "ecdsa-functional;curve=P-384": [
+      "kat.ecdsa-functional#local:kat.ecdsa-functional/P-384"
+    ],
+    "ecdsa-sigver;curve=P-256": [
+      "kat.ecdsa-sigver#ecdsa_test#/testGroups/0/tests/0"
+    ],
+    "ecdsa-sigver;curve=P-384": [
+      "kat.ecdsa-sigver#ecdsa_p384_test#/testGroups/0/tests/0"
+    ],
+    "ecdsa-sigver;curve=P-521": [
+      "kat.ecdsa-sigver#ecdsa_p521_test#/testGroups/0/tests/0"
+    ],
+    "eddsa-functional": [
+      "kat.eddsa-functional#local:kat.eddsa-functional/Ed25519"
+    ],
+    "eddsa-sigver": [
+      "kat.eddsa-sigver#eddsa_test#/testGroups/0/tests/0"
+    ],
+    "eddsa-sigver;curve=Ed448": [
+      "kat.eddsa-sigver#eddsa_ed448_test#/testGroups/0/tests/0"
+    ],
+    "hkdf-derive": [
+      "kat.hkdf-derive#hkdf_test#/testGroups/0/tests/0"
+    ],
+    "hmac-generate;hashAlg=SHA-256": [
+      "kat.hmac-generate#hmac_test#/testGroups/0/tests/0@generate"
+    ],
+    "hmac-generate;hashAlg=SHA-384": [
+      "kat.hmac-generate#hmac_sha384_test#/testGroups/0/tests/0@generate"
+    ],
+    "hmac-generate;hashAlg=SHA-512": [
+      "kat.hmac-generate#hmac_sha512_test#/testGroups/0/tests/0@generate"
+    ],
+    "hmac-verify;hashAlg=SHA-256": [
+      "kat.hmac-verify#hmac_test#/testGroups/0/tests/0"
+    ],
+    "hmac-verify;hashAlg=SHA-384": [
+      "kat.hmac-verify#hmac_sha384_test#/testGroups/0/tests/0"
+    ],
+    "hmac-verify;hashAlg=SHA-512": [
+      "kat.hmac-verify#hmac_sha512_test#/testGroups/0/tests/0"
+    ],
+    "mldsa-functional;variant=44": [
+      "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44"
+    ],
+    "mldsa-functional;variant=65": [
+      "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-65"
+    ],
+    "mldsa-functional;variant=87": [
+      "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-87"
+    ],
+    "mldsa-sigver-nist;expect=invalid;variant=44": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/1"
+    ],
+    "mldsa-sigver-nist;expect=invalid;variant=65": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/1"
+    ],
+    "mldsa-sigver-nist;expect=invalid;variant=87": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/1"
+    ],
+    "mldsa-sigver-nist;expect=valid;variant=44": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/0"
+    ],
+    "mldsa-sigver-nist;expect=valid;variant=65": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/0"
+    ],
+    "mldsa-sigver-nist;expect=valid;variant=87": [
+      "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/0"
+    ],
+    "mldsa-sigver;variant=44": [
+      "kat.mldsa-sigver#mldsa_test#/testGroups/0/tests/0"
+    ],
+    "mldsa-sigver;variant=65": [
+      "kat.mldsa-sigver#mldsa_test#/testGroups/1/tests/0"
+    ],
+    "mldsa-sigver;variant=87": [
+      "kat.mldsa-sigver#mldsa_test#/testGroups/2/tests/0"
+    ],
+    "mlkem-decap;variant=1024": [
+      "kat.mlkem-decap#mlkem_test#/testGroups/2/tests/0"
+    ],
+    "mlkem-decap;variant=512": [
+      "kat.mlkem-decap#mlkem_test#/testGroups/0/tests/0"
+    ],
+    "mlkem-decap;variant=768": [
+      "kat.mlkem-decap#mlkem_test#/testGroups/1/tests/0"
+    ],
+    "mlkem-encap-roundtrip;variant=1024": [
+      "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-1024"
+    ],
+    "mlkem-encap-roundtrip;variant=512": [
+      "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-512"
+    ],
+    "mlkem-encap-roundtrip;variant=768": [
+      "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-768"
+    ],
+    "pbkdf2-derive;prf=SHA-256": [
+      "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1"
+    ],
+    "pbkdf2-derive;prf=SHA-512": [
+      "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1"
+    ],
+    "rsa-functional;bits=2048": [
+      "kat.rsa-functional#local:kat.rsa-functional/2048"
+    ],
+    "rsa-functional;bits=3072": [
+      "kat.rsa-functional#local:kat.rsa-functional/3072"
+    ],
+    "rsapss-sigver": [
+      "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0"
+    ],
+    "sha256-hash": [
+      "kat.sha256-hash#sha256_test#/testGroups/0/tests/0"
+    ],
+    "sha256-hash;testIndex=1": [
+      "kat.sha256-hash#sha256_test#/testGroups/0/tests/1"
+    ],
+    "sha256-hash;testIndex=2": [
+      "kat.sha256-hash#sha256_test#/testGroups/0/tests/2"
+    ],
+    "sha3-256-hash": [
+      "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/0"
+    ],
+    "sha3-256-hash;testIndex=1": [
+      "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/1"
+    ],
+    "sha3-256-hash;testIndex=2": [
+      "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/2"
+    ],
+    "sha3-512-hash": [
+      "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/0"
+    ],
+    "sha3-512-hash;testIndex=1": [
+      "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/1"
+    ],
+    "sha3-512-hash;testIndex=2": [
+      "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/2"
+    ],
+    "sha384-hash": [
+      "kat.sha384-hash#sha384_test#/testGroups/0/tests/0"
+    ],
+    "sha384-hash;testIndex=1": [
+      "kat.sha384-hash#sha384_test#/testGroups/0/tests/1"
+    ],
+    "sha384-hash;testIndex=2": [
+      "kat.sha384-hash#sha384_test#/testGroups/0/tests/2"
+    ],
+    "sha512-hash": [
+      "kat.sha512-hash#sha512_test#/testGroups/0/tests/0"
+    ],
+    "sha512-hash;testIndex=1": [
+      "kat.sha512-hash#sha512_test#/testGroups/0/tests/1"
+    ],
+    "sha512-hash;testIndex=2": [
+      "kat.sha512-hash#sha512_test#/testGroups/0/tests/2"
+    ],
+    "slhdsa-functional;variant=SHA2-128f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128f"
+    ],
+    "slhdsa-functional;variant=SHA2-128s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128s"
+    ],
+    "slhdsa-functional;variant=SHA2-192f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192f"
+    ],
+    "slhdsa-functional;variant=SHA2-192s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192s"
+    ],
+    "slhdsa-functional;variant=SHA2-256f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256f"
+    ],
+    "slhdsa-functional;variant=SHA2-256s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256s"
+    ],
+    "slhdsa-functional;variant=SHAKE-128f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128f"
+    ],
+    "slhdsa-functional;variant=SHAKE-128s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128s"
+    ],
+    "slhdsa-functional;variant=SHAKE-192f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192f"
+    ],
+    "slhdsa-functional;variant=SHAKE-192s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192s"
+    ],
+    "slhdsa-functional;variant=SHAKE-256f": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256f"
+    ],
+    "slhdsa-functional;variant=SHAKE-256s": [
+      "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256s"
+    ],
+    "slhdsa-sigver;variant=SHA2-128f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f"
+    ],
+    "slhdsa-sigver;variant=SHA2-128s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s"
+    ],
+    "slhdsa-sigver;variant=SHA2-192f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f"
+    ],
+    "slhdsa-sigver;variant=SHA2-192s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s"
+    ],
+    "slhdsa-sigver;variant=SHA2-256f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f"
+    ],
+    "slhdsa-sigver;variant=SHA2-256s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s"
+    ],
+    "slhdsa-sigver;variant=SHAKE-128f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f"
+    ],
+    "slhdsa-sigver;variant=SHAKE-128s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s"
+    ],
+    "slhdsa-sigver;variant=SHAKE-192f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f"
+    ],
+    "slhdsa-sigver;variant=SHAKE-192s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s"
+    ],
+    "slhdsa-sigver;variant=SHAKE-256f": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f"
+    ],
+    "slhdsa-sigver;variant=SHAKE-256s": [
+      "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s"
+    ],
+    "suci-profile-b;step=3-ecdh": [
+      "kat.suci-profile-b#local:kat.suci-profile-b/3-ecdh"
+    ],
+    "suci-profile-b;step=4-kdf": [
+      "kat.suci-profile-b#local:kat.suci-profile-b/4-kdf"
+    ],
+    "suci-profile-b;step=5-encrypt": [
+      "kat.suci-profile-b#local:kat.suci-profile-b/5-encrypt"
+    ],
+    "suci-profile-b;step=6-mac": [
+      "kat.suci-profile-b#local:kat.suci-profile-b/6-mac"
+    ],
+    "suci-profile-b;step=7-e2e": [
+      "kat.suci-profile-b#local:kat.suci-profile-b/7-e2e"
+    ]
+  },
+  "files": {
+    "acvp/aescbc_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/aescbc_mct_full_test.json": "nist-acvp-reference-sample",
+    "acvp/aescbc_test.json": "nist-acvp-reference-sample",
+    "acvp/aescmac_test.json": "published-standard-kat",
+    "acvp/aesctr_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/aesctr_test.json": "published-standard-kat",
+    "acvp/aesgcm_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/aesgcm_test.json": "published-standard-kat",
+    "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/aeskw_test.json": "published-standard-kat",
+    "acvp/composite-sigs-jose-kat.json": "functional-round-trip",
+    "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
+    "acvp/ecdsa_keyver_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/ecdsa_p384_test.json": "published-standard-kat",
+    "acvp/ecdsa_p521_test.json": "nist-acvp-reference-sample",
+    "acvp/ecdsa_siggen_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/ecdsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/ecdsa_test.json": "published-standard-kat",
+    "acvp/eddsa_ed448_test.json": "nist-acvp-reference-sample",
+    "acvp/eddsa_keyver_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/eddsa_siggen_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/eddsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/eddsa_test.json": "published-standard-kat",
+    "acvp/hkdf_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/hkdf_test.json": "published-standard-kat",
+    "acvp/hmac_acvp_matrix_test.json": "nist-acvp-reference-sample",
+    "acvp/hmac_sha384_test.json": "nist-acvp-reference-sample",
+    "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
+    "acvp/hmac_test.json": "nist-acvp-reference-sample",
+    "acvp/jose-pqc-kem-jwe-kat.json": "functional-round-trip",
+    "acvp/kbkdf_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/kmac_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/kmac_test.json": "published-standard-kat",
+    "acvp/mldsa_extended_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_keygen_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_siggen_ctxmsg_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_siggen_det_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_siggen_prehash_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_sigver_depth_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_sigver_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_test.json": "nist-acvp-reference-sample",
+    "acvp/mlkem_ekcheck_depth_test.json": "nist-acvp-reference-sample",
+    "acvp/mlkem_encapdecap_val_test.json": "nist-acvp-reference-sample",
+    "acvp/mlkem_keygen_test.json": "nist-acvp-reference-sample",
+    "acvp/mlkem_test.json": "nist-acvp-reference-sample",
+    "acvp/pbkdf2_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/pbkdf2_rfc7914_test.json": "published-standard-kat",
+    "acvp/pbkdf2_test.json": "independent-oracle",
+    "acvp/rsa_oaep_test.json": "nist-acvp-reference-sample",
+    "acvp/rsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/sha_acvp_boundary_test.json": "nist-acvp-reference-sample",
+    "acvp/sha_mct_full_test.json": "nist-acvp-reference-sample",
+    "acvp/sha256_test.json": "nist-acvp-reference-sample",
+    "acvp/sha3_256_test.json": "nist-acvp-reference-sample",
+    "acvp/sha3_512_test.json": "nist-acvp-reference-sample",
+    "acvp/sha384_test.json": "nist-acvp-reference-sample",
+    "acvp/sha512_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_ctx_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_keygen_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_siggen_sha2_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_siggen_shake_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_sigver_sha2_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_sigver_shake_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_siggen_ctx0_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_siggen_det_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_sigver_sha2_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_sigver_shake_test.json": "nist-acvp-reference-sample",
+    "acvp/wycheproof_aes_kwp_test.json": "independent-oracle",
+    "acvp/wycheproof_aes_wrap_test.json": "independent-oracle",
+    "acvp/wycheproof_ed25519_test.json": "independent-oracle",
+    "acvp/wycheproof_ed448_test.json": "independent-oracle",
+    "acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json": "independent-oracle",
+    "acvp/wycheproof_x25519_test.json": "independent-oracle",
+    "acvp/wycheproof_x448_test.json": "independent-oracle"
+  }
+}

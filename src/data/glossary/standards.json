@@ -381,8 +381,8 @@
   {
     "term": "CAVP",
     "acronym": "CAVP",
-    "definition": "Cryptographic Algorithm Validation Program — the NIST/CCCS program that tests algorithm-level correctness of cryptographic implementations using the ACVP protocol. CAVP validation is a prerequisite for FIPS 140-3 module validation under CMVP.",
-    "technicalNote": "ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) algorithm test vectors are available via ACVP since 2024. Vendors must pass CAVP algorithm tests before submitting a module for full CMVP evaluation.",
+    "definition": "Cryptographic Algorithm Validation Program — the NIST/CCCS program that validates implementations of Approved algorithms and their components. Testing runs black-box through NIST's ACVTS, which speaks the ACVP protocol; implementations that complete it get an algorithm validation certificate on the CAVP validation list. Algorithm validation is a prerequisite of FIPS 140-3 module validation under CMVP.",
+    "technicalNote": "Source: NIST CAVP project page (csrc.nist.gov/projects/cryptographic-algorithm-validation-program): an algorithm is listed on a module certificate as an Approved security function only after it completes the algorithm validation process. ACVP sub-specifications and ACVTS testing exist for ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205). Only the ACVTS production environment, used by accredited labs, creates CAVP certificates; passing public sample vectors does not.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
     "category": "standard"

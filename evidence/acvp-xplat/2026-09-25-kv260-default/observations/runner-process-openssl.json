@@ -1,0 +1,131 @@
+{
+  "note": "Written by a wrapper running in the runner's own process immediately before it execv()ed into acvp_native_runner.py (same pid, same environment); SOFTHSM2_CONF is null here because the runner sets its private one itself after start. phase1 = the same probe with no engine loaded, taken before the runs.",
+  "opensslVersionD": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+  "perRun": {
+    "cpp-ML-DSA-sigVer-FIPS204": {
+      "CONF_get1_default_config_file": "/usr/lib/ssl-3/openssl.cnf",
+      "OPENSSLDIR": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+      "OpenSSL_version": "OpenSSL 3.6.3 9 Jun 2026",
+      "effectiveConfigFile": "/usr/lib/ssl-3/openssl.cnf",
+      "effectiveConfigRealpath": "/etc/ssl/openssl.cnf",
+      "effectiveConfigSha256": "4af7b0057963f18c3a08da9f557b3b7e4b95a34e7ab466c1eb615eb0c70dd499",
+      "env": {
+        "OPENSSL_CONF": null,
+        "OPENSSL_MODULES": null,
+        "OPENSSL_armcap": null,
+        "PQC_AUTH_LOG": null,
+        "PQC_AWSLC_PQ_DISABLE": null,
+        "PQC_BEHAVIOUR_RING": null,
+        "PQC_BEHAVIOUR_SRC": null,
+        "PQC_HW_DIAGNOSTICS": null,
+        "PQC_HW_DISABLE": null,
+        "SOFTHSM2_CONF": null,
+        "SOFTHSM3_OP_LOG": null,
+        "SOFTHSMRUST_STATE_FILE": null
+      },
+      "libcrypto": "/usr/lib/libcrypto.so.3",
+      "openssl.cnf.d entries": [],
+      "pid": 37053
+    },
+    "cpp-ML-KEM-encapDecap-FIPS203": {
+      "CONF_get1_default_config_file": "/usr/lib/ssl-3/openssl.cnf",
+      "OPENSSLDIR": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+      "OpenSSL_version": "OpenSSL 3.6.3 9 Jun 2026",
+      "effectiveConfigFile": "/usr/lib/ssl-3/openssl.cnf",
+      "effectiveConfigRealpath": "/etc/ssl/openssl.cnf",
+      "effectiveConfigSha256": "4af7b0057963f18c3a08da9f557b3b7e4b95a34e7ab466c1eb615eb0c70dd499",
+      "env": {
+        "OPENSSL_CONF": null,
+        "OPENSSL_MODULES": null,
+        "OPENSSL_armcap": null,
+        "PQC_AUTH_LOG": null,
+        "PQC_AWSLC_PQ_DISABLE": null,
+        "PQC_BEHAVIOUR_RING": null,
+        "PQC_BEHAVIOUR_SRC": null,
+        "PQC_HW_DIAGNOSTICS": null,
+        "PQC_HW_DISABLE": null,
+        "SOFTHSM2_CONF": null,
+        "SOFTHSM3_OP_LOG": null,
+        "SOFTHSMRUST_STATE_FILE": null
+      },
+      "libcrypto": "/usr/lib/libcrypto.so.3",
+      "openssl.cnf.d entries": [],
+      "pid": 37046
+    },
+    "rust-ML-DSA-sigVer-FIPS204": {
+      "CONF_get1_default_config_file": "/usr/lib/ssl-3/openssl.cnf",
+      "OPENSSLDIR": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+      "OpenSSL_version": "OpenSSL 3.6.3 9 Jun 2026",
+      "effectiveConfigFile": "/usr/lib/ssl-3/openssl.cnf",
+      "effectiveConfigRealpath": "/etc/ssl/openssl.cnf",
+      "effectiveConfigSha256": "4af7b0057963f18c3a08da9f557b3b7e4b95a34e7ab466c1eb615eb0c70dd499",
+      "env": {
+        "OPENSSL_CONF": null,
+        "OPENSSL_MODULES": null,
+        "OPENSSL_armcap": null,
+        "PQC_AUTH_LOG": null,
+        "PQC_AWSLC_PQ_DISABLE": null,
+        "PQC_BEHAVIOUR_RING": null,
+        "PQC_BEHAVIOUR_SRC": null,
+        "PQC_HW_DIAGNOSTICS": null,
+        "PQC_HW_DISABLE": null,
+        "SOFTHSM2_CONF": null,
+        "SOFTHSM3_OP_LOG": null,
+        "SOFTHSMRUST_STATE_FILE": null
+      },
+      "libcrypto": "/usr/lib/libcrypto.so.3",
+      "openssl.cnf.d entries": [],
+      "pid": 37064
+    },
+    "rust-ML-KEM-encapDecap-FIPS203": {
+      "CONF_get1_default_config_file": "/usr/lib/ssl-3/openssl.cnf",
+      "OPENSSLDIR": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+      "OpenSSL_version": "OpenSSL 3.6.3 9 Jun 2026",
+      "effectiveConfigFile": "/usr/lib/ssl-3/openssl.cnf",
+      "effectiveConfigRealpath": "/etc/ssl/openssl.cnf",
+      "effectiveConfigSha256": "4af7b0057963f18c3a08da9f557b3b7e4b95a34e7ab466c1eb615eb0c70dd499",
+      "env": {
+        "OPENSSL_CONF": null,
+        "OPENSSL_MODULES": null,
+        "OPENSSL_armcap": null,
+        "PQC_AUTH_LOG": null,
+        "PQC_AWSLC_PQ_DISABLE": null,
+        "PQC_BEHAVIOUR_RING": null,
+        "PQC_BEHAVIOUR_SRC": null,
+        "PQC_HW_DIAGNOSTICS": null,
+        "PQC_HW_DISABLE": null,
+        "SOFTHSM2_CONF": null,
+        "SOFTHSM3_OP_LOG": null,
+        "SOFTHSMRUST_STATE_FILE": null
+      },
+      "libcrypto": "/usr/lib/libcrypto.so.3",
+      "openssl.cnf.d entries": [],
+      "pid": 37056
+    }
+  },
+  "phase1": {
+    "CONF_get1_default_config_file": "/usr/lib/ssl-3/openssl.cnf",
+    "OPENSSLDIR": "OPENSSLDIR: \"/usr/lib/ssl-3\"",
+    "OpenSSL_version": "OpenSSL 3.6.3 9 Jun 2026",
+    "effectiveConfigFile": "/usr/lib/ssl-3/openssl.cnf",
+    "effectiveConfigRealpath": "/etc/ssl/openssl.cnf",
+    "effectiveConfigSha256": "4af7b0057963f18c3a08da9f557b3b7e4b95a34e7ab466c1eb615eb0c70dd499",
+    "env": {
+      "OPENSSL_CONF": null,
+      "OPENSSL_MODULES": null,
+      "OPENSSL_armcap": null,
+      "PQC_AUTH_LOG": null,
+      "PQC_AWSLC_PQ_DISABLE": null,
+      "PQC_BEHAVIOUR_RING": null,
+      "PQC_BEHAVIOUR_SRC": null,
+      "PQC_HW_DIAGNOSTICS": null,
+      "PQC_HW_DISABLE": null,
+      "SOFTHSM2_CONF": null,
+      "SOFTHSM3_OP_LOG": null,
+      "SOFTHSMRUST_STATE_FILE": null
+    },
+    "libcrypto": "/usr/lib/libcrypto.so.3",
+    "openssl.cnf.d entries": [],
+    "pid": 36795
+  }
+}

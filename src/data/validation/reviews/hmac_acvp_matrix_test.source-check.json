@@ -1,0 +1,64 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:hmac_acvp_matrix_test",
+  "subjectSha256": "2291bfed6df00276285dc54c6d4b71d9496d065816157ae574dfc0f9f7d5838a",
+  "fileSha256": "ab2306a2a1ce446b4d939a67eda54c490812a2a0447652d929682c5a47a427b4",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id hmac_acvp_matrix_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/HMAC-SHA-1-2.0/internalProjection.json",
+        "sha256": "6e96eb5f53065219c437a99fedec7299c916c76e170d6b74507dc5409ed9cd6b"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-224-2.0/internalProjection.json",
+        "sha256": "d67857c153e8005418171e06a32e10c28432f76d70ab291eb4a60b3bb39c3b79"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json",
+        "sha256": "a9d0734b93aee71bc6f30b47daab782fd96b39688afe4fbddb009e99402ec989"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json",
+        "sha256": "0ffa9332b9430ae94cfac0f23b3843293903fa34a3ac9c11a8af2bfdf7276ed3"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json",
+        "sha256": "ea6e03f012d5237b95421b7d50c504f8ab010c4f7f18cd46fe61d8912d3442a0"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-512-224-2.0/internalProjection.json",
+        "sha256": "9b7a5d1c950183c3c5fc34c98ec696213468a012a57412b5439adccb39e97a49"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-512-256-2.0/internalProjection.json",
+        "sha256": "1e18e04d48d8b82c9bba86a451f8a4243c4101ca8b54102906e64e3c8000f0db"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA3-224-2.0/internalProjection.json",
+        "sha256": "c09afee59b84df114ae9e4ec75ea880ab52cfad24a0225c8f4809a904d188409"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA3-256-2.0/internalProjection.json",
+        "sha256": "a13ad967cf3752a11d5cb9bcb3e8eb10ea808f7c9087b768e434ccc6bbed4c89"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA3-384-2.0/internalProjection.json",
+        "sha256": "3d4746555e0b50e8ffad167f93d42460499dcb5590eae76d7d4fcfb73a77e71d"
+      },
+      {
+        "path": "gen-val/json-files/HMAC-SHA3-512-2.0/internalProjection.json",
+        "sha256": "d80da2085d5f2fcaabf96282b9d20737af4184de1aa749efa93b262612f6fced"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 63,
+    "values": 463
+  },
+  "checkedAt": "2026-09-27"
+}

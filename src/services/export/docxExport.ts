@@ -12,6 +12,7 @@ import {
   WidthType,
   ShadingType,
 } from 'docx'
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 
 /**
  * Convert an artifact's markdown export into a DOCX document.
@@ -292,10 +293,15 @@ export async function markdownToDocx(
   filename: string,
   title?: string
 ): Promise<void> {
+  // Injected here, not only at the call sites: a .docx is the format most
+  // likely to be forwarded to someone who never saw the tool that made it, and
+  // this function is the single choke point for every docx export in the app
+  // (education-notice remediation 2026-09-26). Idempotent, so a caller that
+  // already carries the notice does not repeat it.
   const doc = new Document({
     title: title ?? filename,
     creator: 'PQC Today Hub',
-    sections: [{ children: markdownToDocxChildren(markdown) }],
+    sections: [{ children: markdownToDocxChildren(withEducationNoticeMarkdown(markdown)) }],
   })
 
   const blob = await Packer.toBlob(doc)

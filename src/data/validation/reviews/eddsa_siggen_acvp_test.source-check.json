@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:eddsa_siggen_acvp_test",
+  "subjectSha256": "1a397f14c0dfa5c892b21ada6b5a6867c9278c3515230a134b61bbb7bdd35f2b",
+  "fileSha256": "4d4ea799faba2ab5400157dd01ee44ffac676718f535ea64bad9b47573668848",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id eddsa_siggen_acvp_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/EDDSA-SigGen-1.0/internalProjection.json",
+        "sha256": "794d58fb39f08de4f852d63cb98b95c39bcc38ea42c7d42d09e92c15dadd5d81"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 16,
+    "values": 132
+  },
+  "checkedAt": "2026-09-27"
+}

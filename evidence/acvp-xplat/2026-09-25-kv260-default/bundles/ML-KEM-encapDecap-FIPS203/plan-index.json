@@ -1,0 +1,1217 @@
+[
+  {
+    "tgId": 1,
+    "tcId": 1,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 2,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 3,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 4,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 5,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 6,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 7,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 8,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 9,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 10,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 11,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 12,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 13,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 14,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 15,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 16,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 17,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 18,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 19,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 20,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 21,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 22,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 23,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 24,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 1,
+    "tcId": 25,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 26,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 27,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 28,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 29,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 30,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 31,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 32,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 33,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 34,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 35,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 36,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 37,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 38,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 39,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 40,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 41,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 42,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 43,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 44,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 45,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 46,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 47,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 48,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 49,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 2,
+    "tcId": 50,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 51,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 52,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 53,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 54,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 55,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 56,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 57,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 58,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 59,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 60,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 61,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 62,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 63,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 64,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 65,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 66,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 67,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 68,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 69,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 70,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 71,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 72,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 73,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 74,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 3,
+    "tcId": 75,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam."
+  },
+  {
+    "tgId": 4,
+    "tcId": 76,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 77,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 78,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 79,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 80,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 81,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 82,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 83,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 84,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 4,
+    "tcId": 85,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-512",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 86,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 87,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 88,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 89,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 90,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 91,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 92,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 93,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 94,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 5,
+    "tcId": 95,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-768",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 96,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 97,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 98,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 99,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 100,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 101,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 102,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 103,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 104,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 6,
+    "tcId": 105,
+    "kind": "execute",
+    "operation": "ml-kem.decapsulate",
+    "mechanism": "CKM_ML_KEM",
+    "parameterSet": "ML-KEM-1024",
+    "responseField": "k"
+  },
+  {
+    "tgId": 7,
+    "tcId": 106,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 107,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 108,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 109,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 110,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 111,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 112,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 113,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 114,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 115,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 116,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 117,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 118,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 119,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 120,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 121,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 122,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 123,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 124,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 125,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 126,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 127,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 128,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 129,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 130,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 131,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 132,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 133,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 134,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 135,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 136,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 137,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 138,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 139,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 140,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 141,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 142,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 143,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 144,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 145,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 146,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 147,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 148,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 149,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 150,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 151,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 152,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 153,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 154,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 155,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 156,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 157,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 158,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 159,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 160,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 161,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 162,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 163,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 164,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 165,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation)."
+  }
+]

@@ -20,6 +20,7 @@
  * to any CBOM consumer. See cbom-cyclonedx17-registry-report-section-plan-07092026.md.
  */
 import cryptoDefs from './registry/cryptography-defs.json'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
 
 // ── Cryptography Registry lookup (family name → standard citations) ─────────
 // The registry is a live, periodically-updated external document (vendored
@@ -79,7 +80,7 @@ export interface CbomAlgorithm {
   hybridRole?: 'classical' | 'post-quantum'
 }
 
-/** A FIPS/ACVP certification surfaced as component evidence. */
+/** A FIPS 140-3 (CMVP) or CAVP algorithm certificate surfaced as component evidence (the catalog's certType "ACVP" is a CAVP record). */
 export interface CbomCertification {
   certType: string
   certId: string
@@ -457,7 +458,15 @@ export function buildCbomDocument(
     metadata: {
       timestamp: now,
       tools: [{ vendor: 'PQCToday', name: meta.toolName ?? 'PQC Today CBOM Export' }],
-      properties: meta.properties ?? [],
+      // The status notice leads the property list on every CBOM this emitter
+      // produces (Migrate, the Library CBOM Builder, the Supply-Chain Risk
+      // Matrix): a CBOM is a machine-readable artefact that leaves the browser
+      // and is read by people who never saw the UI that made it
+      // (education-notice remediation 2026-09-26).
+      properties: [
+        { name: 'pqctoday:status', value: EDUCATION_NOTICE },
+        ...(meta.properties ?? []),
+      ],
     },
     components,
   }

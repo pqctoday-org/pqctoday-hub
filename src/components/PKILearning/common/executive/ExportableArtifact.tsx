@@ -7,6 +7,7 @@ import { markdownToPptx } from '@/services/export/pptxExport'
 import { markdownToDocx } from '@/services/export/docxExport'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { copyToClipboard } from '@/utils/clipboard'
+import { withEducationNoticeCsv, withEducationNoticeMarkdown } from '@/data/educationNotice'
 
 type ExportFormat = 'markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf'
 
@@ -198,7 +199,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   }, [cancelPendingAutoSave, triggerSave])
 
   const handleCopy = useCallback(async () => {
-    const ok = await copyToClipboard(exportData)
+    const ok = await copyToClipboard(withEducationNoticeMarkdown(exportData))
     if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -207,18 +208,24 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
 
   const handleDownload = useCallback(
     async (format: ExportFormat) => {
+      // Every format leaves the browser, so every format carries the status
+      // notice — not just the markdown one. This component is the shared export
+      // engine for ~40 GRC/policy/contract/roadmap tools, so injecting here is
+      // what makes "covered" the default for all of them
+      // (education-notice remediation 2026-09-26).
+      const noticed = withEducationNoticeMarkdown(exportData)
       if (format === 'pptx') {
-        await markdownToPptx(exportData, filename)
+        await markdownToPptx(noticed, filename)
         triggerSave()
         return
       }
       if (format === 'docx') {
-        await markdownToDocx(exportData, filename, title)
+        await markdownToDocx(noticed, filename, title)
         triggerSave()
         return
       }
       if (format === 'pdf') {
-        await markdownToPdf(exportData, filename, title, { wideTable })
+        await markdownToPdf(noticed, filename, title, { wideTable })
         triggerSave()
         return
       }
@@ -230,7 +237,8 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       }
       // For `.csv`, prefer the tool's structured CSV; fall back to the markdown
       // body only if the tool didn't provide one (avoids pipe-text-in-Excel).
-      const payload = format === 'csv' && csvData != null ? csvData : exportData
+      const payload =
+        format === 'csv' && csvData != null ? withEducationNoticeCsv(csvData) : noticed
       // eslint-disable-next-line security/detect-object-injection
       const blob = new Blob([payload], { type: mimeMap[format] || 'text/plain' })
       const url = URL.createObjectURL(blob)

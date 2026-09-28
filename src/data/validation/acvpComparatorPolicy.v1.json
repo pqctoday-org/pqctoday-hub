@@ -1,0 +1,43 @@
+{
+  "$comment": "Plan WS-H H-4: how each ACVP operation's output is compared ACROSS targets (WASM C++/Rust, native Linux x86-64/Arm64, macOS, i.MX95, KV260). One entry per plan operation (src/services/acvp/dispatch.ts). 'byte-equal' = the response field must be identical to the reference (hex compared case-insensitively, as ACVP hex is); 'semantic' = outputs legitimately differ between correct implementations (randomised), so a target passes only through the named semanticCheck, and without a recorded semantic verdict the case is 'not comparable' — never 'pass'. Consumed by src/services/acvp-xplat/compare.ts; an operation with no entry here makes the comparator throw.",
+  "policyVersion": "pqctoday.acvp-comparator-policy/1",
+  "operations": {
+    "ml-kem.decapsulate": {
+      "responseField": "k",
+      "comparator": "byte-equal",
+      "normalize": "hex-uppercase",
+      "rationale": "ML-KEM.Decaps (FIPS 203 Alg. 18) is deterministic in (dk, c), including the implicit-rejection path: every conforming implementation returns the identical 32-byte shared secret, so any byte difference is a divergence.",
+      "inScope": true
+    },
+    "ml-dsa.verify": {
+      "responseField": "testPassed",
+      "comparator": "byte-equal",
+      "normalize": "none",
+      "rationale": "ML-DSA.Verify / HashML-DSA.Verify (FIPS 204 Alg. 3/5) returns a deterministic boolean for (pk, M, ctx, sigma[, PH]); the verdict must be identical on every target.",
+      "inScope": true
+    },
+    "ml-kem.encapsulate": {
+      "responseField": "c+k",
+      "comparator": "semantic",
+      "normalize": "hex-uppercase",
+      "semanticCheck": "Decapsulate the target's ciphertext c with the matching dk (reference engine) and require the recovered secret to equal the target's k; byte equality with another target is NOT expected because m is drawn from the token RNG.",
+      "rationale": "PKCS#11 v3.2 C_EncapsulateKey draws m from the RNG, so two correct targets produce different (c, k).",
+      "inScope": false
+    },
+    "ml-dsa.sign.hedged": {
+      "responseField": "signature",
+      "comparator": "semantic",
+      "normalize": "hex-uppercase",
+      "semanticCheck": "Verify the target's signature under the prompt's pk (and cross-verify on the reference engine); byte equality is NOT expected because rnd is fresh per signature.",
+      "rationale": "Hedged ML-DSA (FIPS 204 Alg. 2, rnd from the RNG) is randomised; PKCS#11 exposes no rnd-injection seam (plan Q6 / D2-4).",
+      "inScope": false
+    },
+    "ml-dsa.sign.deterministic": {
+      "responseField": "signature",
+      "comparator": "byte-equal",
+      "normalize": "hex-uppercase",
+      "rationale": "Deterministic ML-DSA (rnd = 0^32, CKH_DETERMINISTIC_REQUIRED) is a function of (sk, M, ctx); every target must produce the identical signature.",
+      "inScope": false
+    }
+  }
+}

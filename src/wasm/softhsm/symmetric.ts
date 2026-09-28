@@ -44,6 +44,7 @@ import {
   buildMech,
   buildTemplate,
   checkRV,
+  derOctetString,
   freeTemplate,
   readUlong,
   writeBytes,
@@ -263,22 +264,17 @@ export const hsm_importECPublicKey = (
   const oid = ecCurveOID(curve)
   const oidPtr = writeBytes(M, oid)
 
-  // Build DER-encoded uncompressed EC point: OCTET STRING { 04 || x || y }
-  const pointLen = 1 + qx.length + qy.length // 04 prefix + coordinates
-  const derPoint = new Uint8Array(2 + pointLen)
-  derPoint[0] = 0x04 // OCTET STRING tag
-  derPoint[1] = pointLen
-  derPoint[2] = 0x04 // uncompressed point prefix
-  derPoint.set(qx, 3)
-  derPoint.set(qy, 3 + qx.length)
-  const pointPtr = writeBytes(M, derPoint)
-
-  // Build CKA_VALUE as raw SEC1 uncompressed point for Rust engine: 04 || x || y
+  // Raw SEC 1 uncompressed point 04 || x || y — CKA_VALUE for the Rust engine
   const sec1Point = new Uint8Array(1 + qx.length + qy.length)
   sec1Point[0] = 0x04
   sec1Point.set(qx, 1)
   sec1Point.set(qy, 1 + qx.length)
   const valPtr = writeBytes(M, sec1Point)
+
+  // CKA_EC_POINT: DER OCTET STRING { 04 || x || y }. P-521's 133-byte point
+  // needs the long-form length (0x81 0x85); the old one-byte length broke it.
+  const derPoint = derOctetString(sec1Point)
+  const pointPtr = writeBytes(M, derPoint)
 
   const baseAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },

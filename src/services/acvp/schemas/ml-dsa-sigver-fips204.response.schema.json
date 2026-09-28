@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqctoday.com/schemas/acvp/ml-dsa-sigver-fips204.response.schema.json",
+  "title": "ML-DSA / sigVer / FIPS204 — ACVP test vector response (vector-set object)",
+  "$comment": "Pinned transcription of draft-celi-acvp-ml-dsa at usnistgov/ACVP commit 892fd14710f3a7edbea230d0aecc5511e0257f8e: src/ml-dsa/sections/07-responses.adoc (vsId + testGroups[tgId, tests]) and 07-ml-dsa-sigver-responses.adoc [[ML-DSA_sigVer_vs_tr_table]] (tcId + testPassed, nothing else). acvVersion lives in the [{acvVersion},{…}] envelope element, not in this object.",
+  "type": "object",
+  "required": ["vsId", "testGroups"],
+  "additionalProperties": false,
+  "properties": {
+    "vsId": { "type": "integer", "minimum": 0 },
+    "testGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tgId", "tests"],
+        "additionalProperties": false,
+        "properties": {
+          "tgId": { "type": "integer", "minimum": 0 },
+          "tests": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["tcId", "testPassed"],
+              "additionalProperties": false,
+              "properties": {
+                "tcId": { "type": "integer", "minimum": 0 },
+                "testPassed": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

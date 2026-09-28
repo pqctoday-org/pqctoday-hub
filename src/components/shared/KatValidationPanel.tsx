@@ -2,20 +2,32 @@
 /**
  * KatValidationPanel — Inline KAT validation panel for learn module workshop steps.
  *
- * Self-manages its own HSM lifecycle via useHSM(). Runs use-case-specific KATs
- * against NIST FIPS 203/204 ACVP test vectors and displays results inline.
+ * Self-manages its own HSM lifecycle via useHSM(). Runs use-case-specific
+ * tests and displays results inline. Each row carries the evidence class of
+ * its expected value (derived from the vector file's provenance by
+ * katEvidence.ts), and the run button names that class only when every spec
+ * shares it — a mixed set gets the neutral "Run validation tests".
  */
 import { useState } from 'react'
-import { ShieldCheck, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { ShieldCheck, Loader2, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHSM } from '@/hooks/useHSM'
-import { runKAT } from '@/utils/katRunner'
+import { runKAT, advertisedMechanisms, summarizeKatResults } from '@/utils/katRunner'
 import type { KATResult, KatTestSpec } from '@/utils/katRunner'
 import {
   WorkshopOperationLog,
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import { KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
+import {
+  KAT_EVIDENCE_META,
+  evidenceClassesFor,
+  evidenceRecordsForKind,
+  katActionLabel,
+} from '@/utils/katEvidence'
+import { CaseEvidenceBadge } from '@/components/shared/CaseEvidenceBadge'
+import { KatStatusBadge } from '@/components/shared/KatStatusBadge'
 
 interface KatValidationPanelProps {
   specs: KatTestSpec[]
@@ -82,17 +94,20 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       }
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of specs) {
         const op = beginOp(`Running ${spec.useCase || spec.id} via PKCS#11…`)
         try {
-          const r = await runKAT(M, hSession, spec)
+          const r = await runKAT(M, hSession, spec, { advertised })
           out.push(r)
           setResults([...out])
           op.done(
             r.status === 'pass'
               ? `Passed ${r.algorithm || spec.id} — ${r.details || 'all vectors validated'}`
-              : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
+              : r.status === 'skip'
+                ? `NOT TESTED ${r.algorithm || spec.id} — ${r.details}`
+                : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
           )
         } catch (e) {
           op.fail(`${spec.useCase || spec.id} — ${e instanceof Error ? e.message : String(e)}`)
@@ -106,9 +121,14 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
     }
   }
 
-  const passCount = results.filter((r) => r.status === 'pass').length
-  const failCount = results.filter((r) => r.status !== 'pass').length
+  const counts = summarizeKatResults(results)
+  const passCount = counts.pass
+  // Skips are their own count: not a pass, not a failure.
+  const failCount = counts.fail + counts.error
   const done = results.length === specs.length && !running
+  const actionLabel = katActionLabel(specs)
+  const evidenceClasses = evidenceClassesFor(specs)
+  const hasReferenceSample = evidenceClasses.includes('nist-acvp-reference-sample')
 
   return (
     <div className="glass-panel p-5 space-y-4 border border-border">
@@ -136,7 +156,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
           ) : (
             <>
               <ShieldCheck size={14} />
-              Run NIST KAT
+              {actionLabel}
             </>
           )}
         </Button>
@@ -161,6 +181,15 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
               {failCount} failed
             </span>
           )}
+          {counts.skip > 0 && (
+            <span
+              data-testid="kat-skip-count"
+              className="flex items-center gap-1 text-status-warning font-medium"
+            >
+              <MinusCircle size={13} />
+              {counts.skip} not tested
+            </span>
+          )}
         </div>
       )}
 
@@ -173,6 +202,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                 <th className="px-3 py-2 font-semibold">Use Case</th>
                 <th className="px-3 py-2 font-semibold">Algorithm</th>
                 <th className="px-3 py-2 font-semibold">Standard</th>
+                <th className="px-3 py-2 font-semibold">Evidence</th>
                 <th className="px-3 py-2 font-semibold">Status</th>
                 <th className="px-3 py-2 font-semibold">Details</th>
               </tr>
@@ -206,17 +236,19 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                       )}
                     </span>
                   </td>
+                  <td className="px-3 py-2 min-w-[9rem]">
+                    {(() => {
+                      const spec = specs.find((s) => s.id === r.id)
+                      const records = spec ? evidenceRecordsForKind(spec.kind) : []
+                      return records.length > 0 ? (
+                        <CaseEvidenceBadge records={records} />
+                      ) : (
+                        <KatEvidenceChip evidence={r.evidence} />
+                      )
+                    })()}
+                  </td>
                   <td className="px-3 py-2">
-                    <span
-                      className={
-                        r.status === 'pass'
-                          ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-success/10 text-status-success'
-                          : 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-error/10 text-status-error'
-                      }
-                    >
-                      {r.status === 'pass' ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                      {r.status}
-                    </span>
+                    <KatStatusBadge status={r.status} />
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">{r.details}</td>
                 </tr>
@@ -229,23 +261,29 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       {/* Empty state */}
       {results.length === 0 && !running && !error && (
         <p className="text-xs text-muted-foreground italic">
-          Click <strong>Run NIST KAT</strong> to validate {specs.length} use-case scenario
-          {specs.length !== 1 ? 's' : ''} against NIST ACVP test vectors.
+          Click <strong>{actionLabel}</strong> to run {specs.length} use-case scenario
+          {specs.length !== 1 ? 's' : ''}. Evidence in this set:{' '}
+          {evidenceClasses.map((c) => KAT_EVIDENCE_META[c].label).join('; ')}.
         </p>
       )}
 
       {/* Authority footnote */}
       <p className="text-[10px] text-muted-foreground border-t border-border pt-3">
-        Test vectors from{' '}
-        <a
-          href="https://github.com/usnistgov/ACVP-Server"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline"
-        >
-          NIST ACVP Server
-        </a>{' '}
-        · {authorityNote} · Generated keys are for educational use only.
+        {hasReferenceSample && (
+          <>
+            Reference samples from the public{' '}
+            <a
+              href="https://github.com/usnistgov/ACVP-Server"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              NIST ACVP-Server
+            </a>{' '}
+            repository ·{' '}
+          </>
+        )}
+        {authorityNote} · Generated keys are for educational use only.
       </p>
     </div>
   )

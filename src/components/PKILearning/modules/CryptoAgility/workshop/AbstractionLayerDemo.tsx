@@ -31,7 +31,7 @@ const AGILITY_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'agility-classical-ecdsa',
     useCase: 'Classical baseline (ECDSA P-256)',
-    standard: 'FIPS 186-5 ACVP',
+    standard: 'FIPS 186-5',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
     kind: { type: 'ecdsa-functional', curve: 'P-256' },
     message: 'CryptoAgility classical baseline: algorithm=ECDSA-P256',

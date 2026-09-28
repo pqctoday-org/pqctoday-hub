@@ -1,0 +1,23 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:pbkdf2_rfc7914_test",
+  "subjectSha256": "d313c9293e81283e6048dd37c288310576c053d6cdbaaf036da094cdd591dbbd",
+  "fileSha256": "67f88f02117ae25eb8ce719ff109be2c534246b3529c2b7929a8cf75603b108e",
+  "result": "match",
+  "tool": "scripts/acvp/build_rfc7914_pbkdf2.py",
+  "command": "python3 scripts/acvp/build_rfc7914_pbkdf2.py --check",
+  "upstream": {
+    "repository": "https://www.rfc-editor.org/rfc/rfc7914",
+    "revision": "df55932f8b6a5d271f36a634d91a25903724e189ba6c120bf7257cd47f10b197",
+    "files": [
+      {
+        "path": "RFC 7914 (text)",
+        "sha256": "df55932f8b6a5d271f36a634d91a25903724e189ba6c120bf7257cd47f10b197"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 2
+  },
+  "checkedAt": "2026-09-27"
+}

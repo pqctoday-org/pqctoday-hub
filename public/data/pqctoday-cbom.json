@@ -14,8 +14,14 @@
     "component": {
       "type": "application",
       "name": "PQC Today Hub",
-      "description": "PQC algorithm and product registry for post-quantum migration planning"
-    }
+      "description": "PQC Today is an educational and demonstration platform, not a production system. Nothing it produces — keys, certificates, configurations, reports, or test results — is fit to protect real data, and none of it may be deployed or relied upon in production. PQC algorithm and product registry for post-quantum migration planning."
+    },
+    "properties": [
+      {
+        "name": "pqctoday:status",
+        "value": "PQC Today is an educational and demonstration platform, not a production system. Nothing it produces — keys, certificates, configurations, reports, or test results — is fit to protect real data, and none of it may be deployed or relied upon in production."
+      }
+    ]
   },
   "components": [
     {

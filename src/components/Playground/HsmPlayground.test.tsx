@@ -101,26 +101,26 @@ function renderHsmPlayground() {
  * a slow import first, not for whatever the failing assertion claims.
  */
 describe('HsmPlayground persona gating', () => {
-  it('shows the ACVP suite (under Build) and engine selector for a non-gated persona', () => {
+  it('shows the Validation (formerly ACVP) suite (under Build) and engine selector for a non-gated persona', () => {
     mockPersona = 'developer'
     renderHsmPlayground()
     expect(screen.getByRole('radio', { name: /rust/i })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
-    expect(screen.getByRole('tab', { name: /^acvp$/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /^validation$/i })).toBeInTheDocument()
   })
 
-  it('hides the ACVP sub-tab and engine selector for curious, but still opens Build > Standard', () => {
+  it('hides the Validation (formerly ACVP) sub-tab and engine selector for curious, but still opens Build > Standard', () => {
     mockPersona = 'curious'
     renderHsmPlayground()
     expect(screen.queryByRole('radio', { name: /rust/i })).not.toBeInTheDocument()
     const buildTab = screen.getByRole('tab', { name: /^build$/i })
     fireEvent.click(buildTab)
     expect(screen.getByRole('tab', { name: /^standard$/i })).toBeInTheDocument()
-    expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /^validation$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
   })
 
-  it('hides the ACVP sub-tab and engine selector for executive, alongside the existing advisory banner', () => {
+  it('hides the Validation (formerly ACVP) sub-tab and engine selector for executive, alongside the existing advisory banner', () => {
     mockPersona = 'executive'
     renderHsmPlayground()
     expect(screen.queryByRole('radio', { name: /rust/i })).not.toBeInTheDocument()
@@ -130,11 +130,11 @@ describe('HsmPlayground persona gating', () => {
       screen.getByText(/^PKCS#11 HSM Playground is a hands-on engineering workbench\.$/i)
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
-    expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /^validation$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
   })
 
-  it('hides the ACVP sub-tab and engine selector for grc too, alongside the same advisory banner', () => {
+  it('hides the Validation (formerly ACVP) sub-tab and engine selector for grc too, alongside the same advisory banner', () => {
     // The Executive/GRC split (2026-09-07) left this gate checking only
     // 'curious'/'executive' — grc is equally non-technical and belongs in
     // the same excluded bucket, but was missed since a plain === chain isn't
@@ -149,7 +149,7 @@ describe('HsmPlayground persona gating', () => {
       screen.getByText(/^PKCS#11 HSM Playground is a hands-on engineering workbench\.$/i)
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
-    expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /^validation$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
   })
 })

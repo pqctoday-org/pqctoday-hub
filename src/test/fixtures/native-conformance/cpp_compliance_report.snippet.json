@@ -1,0 +1,51 @@
+{
+  "AES-CTR": [
+    {
+      "details": "RV=0",
+      "status": "PASS",
+      "test": "EncryptInit"
+    }
+  ],
+  "AesKwp": [
+    {
+      "details": "20-byte (non-multiple-of-8) key wraps to the same blob as an independent OpenSSL AES-256-wrap-pad oracle AND unwraps back byte-identical",
+      "status": "PASS",
+      "test": "KWP_roundtrip"
+    },
+    {
+      "details": "CKM_AES_KEY_WRAP_KWP and CKM_AES_KEY_WRAP_PAD produce identical output",
+      "status": "PASS",
+      "test": "KWP_matches_deprecated_PAD"
+    },
+    {
+      "details": "RV=7 (want CKR_ARGUMENTS_BAD=0x7)",
+      "status": "PASS",
+      "test": "KWP_rejects_unsupported_iv_param"
+    }
+  ],
+  "Invariant": [
+    {
+      "details": "C_EncryptInit RV=113",
+      "status": "PASS",
+      "test": "Encrypt_0x00001082"
+    },
+    {
+      "details": "no DIGEST/SIGN/VERIFY/ENCRYPT/DECRYPT flag -- derive/generate/wrap-only mechanism, out of this invariant's documented forward-direction scope; covered by this file's per-mechanism round-trip tests instead",
+      "status": "SKIP",
+      "test": "OutOfScope_0x00001105"
+    },
+    {
+      "details": "no DIGEST/SIGN/VERIFY/ENCRYPT/DECRYPT flag -- derive/generate/wrap-only mechanism, out of this invariant's documented forward-direction scope; covered by this file's per-mechanism round-trip tests instead",
+      "status": "SKIP",
+      "test": "OutOfScope_0x00001104"
+    }
+  ],
+  "_summary": {
+    "engine": "./build/src/lib/libsofthsmv3.so",
+    "engine_commit": "808fc95cd97049e6410489ed6daf879e381cdc26",
+    "fail": 0,
+    "pass": 5,
+    "skip": 2,
+    "xfail_known_engine_bugs": 0
+  }
+}

@@ -92,7 +92,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
     suggestedQuestions: [
       'What FIPS 140-3 validated modules support PQC?',
       'Which compliance frameworks require PQC adoption?',
-      'Show ACVP-validated PQC implementations',
+      'Show CAVP-validated PQC algorithm implementations',
     ],
   },
   '/migrate': {

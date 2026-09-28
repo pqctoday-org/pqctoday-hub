@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.128.0] - 2026-09-27
+
+The validation workbench now says exactly what each test proves, runs trusted public test vectors, and publishes its full coverage and known gaps.
+
+### Added
+
+- **Every test result states its evidence** [view:/playground] [view:/algorithms] [persona:developer] [persona:grc] [persona:researcher]: each workbench and Algorithms test now shows where its expected value comes from (a NIST ACVP-Server sample, Google's Project Wycheproof, a published standard, or a PQC Today round-trip) and what that does and does not prove. None of it is presented as a certification.
+- **Coverage matrix and open gaps, published** [view:/algorithms] [persona:grc] [persona:architect]: the Validation tab shows, for every mechanism, operation and parameter set both HSM engines advertise, whether a test covers it and how, plus the register of known engine gaps and accepted limitations.
+- **More NIST and Wycheproof vectors** [view:/playground] [persona:developer] [persona:researcher]: ML-KEM, ML-DSA and SLH-DSA depth (negatives, boundaries, pre-hash, external mu), classical, symmetric, MAC and KDF families, RSA-OAEP from NIST's key-transport sample, and RSA-PSS, EdDSA, X25519/X448 and AES key-wrap attack cases from Wycheproof.
+- **ECDSA signatures checked against NIST byte for byte** [view:/playground] [persona:developer]: with NIST's own nonce, both engines now reproduce NIST's signatures exactly.
+- **Multi-part message signing tested** [view:/playground] [persona:developer]: signing and verifying a message in parts is now exercised on every signing mechanism both engines offer.
+- **New draft module: ACVP Lab Workflow** [view:/learn] [persona:developer] [persona:grc]: how algorithm validation testing actually runs, from capability registration to evidence. Marked as a draft awaiting review by a lab practitioner.
+- **ACVP-format practice tool** [view:/playground] [persona:developer]: import an ACVP-format test prompt and export a response, entirely in the browser.
+
+### Fixed
+
+- **"ACVP certificate" wording corrected** [view:/learn] [persona:grc] [persona:curious]: learning modules, the quiz and the data now say what ACVP, CAVP and CMVP actually are. ACVP is the testing protocol, CAVP issues algorithm certificates and CMVP validates modules.
+- **Test vectors corrected** [view:/algorithms] [persona:researcher]: an AES-GCM, an RSA-OAEP, a PBKDF2 and an RSA-PSS vector that had been generated locally are replaced with NIST or Wycheproof originals, and a wrong KMAC256 value is corrected from NIST's published sample.
+
 ## [4.127.1] - 2026-09-27
 
 French (ANSSI) certificates now carry the product name their own certification report states, and a few certification verdicts are corrected.

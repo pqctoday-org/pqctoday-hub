@@ -1,0 +1,1508 @@
+[
+  {
+    "tgId": 1,
+    "tcId": 1,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 2,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 3,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 4,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 5,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 6,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 7,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 8,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 9,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 10,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 11,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 12,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 13,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 14,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 1,
+    "tcId": 15,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 16,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHAKE-128",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 17,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA3-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 18,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA3-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 19,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA512",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA2-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 20,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA512",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA2-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 21,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 2,
+    "tcId": 22,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA256",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA2-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 23,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 2,
+    "tcId": 24,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA3-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 25,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA224",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA2-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 26,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHAKE-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 27,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA3-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 28,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA384",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHA2-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 2,
+    "tcId": 29,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 2,
+    "tcId": 30,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+    "parameterSet": "ML-DSA-44",
+    "hashAlg": "SHAKE-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 31,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 32,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 33,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 34,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 35,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 36,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 37,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 38,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 39,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 40,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 41,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 42,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 43,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 44,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 3,
+    "tcId": 45,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 46,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA3-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 47,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA512",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 48,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA224",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 49,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA224",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 50,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 4,
+    "tcId": 51,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHAKE-128",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 52,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA384",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 53,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA3-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 54,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA3-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 55,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 4,
+    "tcId": 56,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA256",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 57,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHAKE-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 58,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 4,
+    "tcId": 59,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA384",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA2-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 4,
+    "tcId": 60,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+    "parameterSet": "ML-DSA-65",
+    "hashAlg": "SHA3-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 61,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 62,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 63,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 64,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 65,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 66,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 67,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 68,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 69,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 70,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 71,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 72,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 73,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 74,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 5,
+    "tcId": 75,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_ML_DSA",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": null,
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 76,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA3-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 77,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA3-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 78,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA384",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 79,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA256",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 80,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHAKE-128",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 81,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA512",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-512",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 82,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA224",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 83,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 6,
+    "tcId": 84,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA3-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 85,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHAKE-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 86,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA256",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 87,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA384",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA2-384",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 88,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA3-256",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 89,
+    "kind": "execute",
+    "operation": "ml-dsa.verify",
+    "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+    "parameterSet": "ML-DSA-87",
+    "hashAlg": "SHA3-224",
+    "responseField": "testPassed"
+  },
+  {
+    "tgId": 6,
+    "tcId": 90,
+    "kind": "unsupported",
+    "scope": "test",
+    "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 91,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 92,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 93,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 94,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 95,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 96,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 97,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 98,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 99,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 100,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 101,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 102,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 103,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 104,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 7,
+    "tcId": 105,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 106,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 107,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 108,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 109,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 110,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 111,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 112,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 113,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 114,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 115,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 116,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 117,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 118,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 119,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 8,
+    "tcId": 120,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 121,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 122,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 123,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 124,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 125,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 126,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 127,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 128,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 129,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 130,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 131,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 132,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 133,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 134,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 9,
+    "tcId": 135,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 136,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 137,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 138,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 139,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 140,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 141,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 142,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 143,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 144,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 145,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 146,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 147,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 148,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 149,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 10,
+    "tcId": 150,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 151,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 152,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 153,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 154,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 155,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 156,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 157,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 158,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 159,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 160,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 161,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 162,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 163,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 164,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 11,
+    "tcId": 165,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 166,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 167,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 168,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 169,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 170,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 171,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 172,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 173,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 174,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 175,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 176,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 177,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 178,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 179,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  },
+  {
+    "tgId": 12,
+    "tcId": 180,
+    "kind": "unsupported",
+    "scope": "group",
+    "reason": "signatureInterface \"internal\" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5)."
+  }
+]

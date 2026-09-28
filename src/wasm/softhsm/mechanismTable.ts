@@ -675,6 +675,11 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HMAC with RIPEMD-160 (historical)',
     family: 'hash',
   },
+  0x00000242: {
+    name: 'CKM_RIPEMD160_HMAC_GENERAL',
+    description: 'HMAC with RIPEMD-160, truncated output length (historical)',
+    family: 'hash',
+  },
   0x00000252: {
     name: 'CKM_SHA256_HMAC_GENERAL',
     description: 'HMAC-SHA-256 with truncated output length',
@@ -850,6 +855,27 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     name: 'CKM_EC_MONTGOMERY_KEY_DERIVE',
     description: 'ECDH derive for Montgomery-curve (X25519) keys (vendor alias)',
     family: 'kdf',
+  },
+  // E19 (ACVP gap-closure, hsm PR #260, 2026-09-25): Rust now advertises what
+  // it already dispatched — advertise == dispatch. RFC 9180 HPKE (all 4
+  // modes) plus draft-ietf-hpke-pq PQ/T hybrid KEMs.
+  0x80000013: {
+    name: 'CKM_HPKE_KEM_KEY_PAIR_GEN',
+    description: 'HPKE KEM key-pair generation (RFC 9180 / draft-ietf-hpke-pq, vendor)',
+    family: 'kdf',
+  },
+  0x80000014: {
+    name: 'CKM_HPKE',
+    description: 'HPKE seal/open via C_EncapsulateKey/C_DecapsulateKey (RFC 9180, vendor)',
+    family: 'kdf',
+  },
+  // hsm #281 (47bba6c4): ECDSA with a caller-supplied nonce. pParameter = k,
+  // big-endian, the order's byte length; input is the digest; sign only.
+  0x80000015: {
+    name: 'CKM_PQCTODAY_ECDSA_EXPLICIT_K',
+    description:
+      'ECDSA sign with a caller-supplied nonce k (FIPS 186-5 sigGen KAT; teaching key-recovery primitive, vendor)',
+    family: 'asymmetric',
   },
   0x80001057: {
     name: 'CKM_EDDSA_PH',

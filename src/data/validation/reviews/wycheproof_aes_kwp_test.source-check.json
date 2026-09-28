@@ -1,0 +1,23 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:wycheproof_aes_kwp_test",
+  "subjectSha256": "09f4ffa71a6ae07f218a058f8ecb20ee7805a4e167432b3e5c5198a68684b9c9",
+  "fileSha256": "53006942fa0ba09b99c09c7120e3d4a847938579a8f4e533fa8ded3617c790a7",
+  "result": "match",
+  "tool": "scripts/acvp/vendor_wycheproof.py",
+  "command": "python3 scripts/acvp/vendor_wycheproof.py --clone <clone of C2SP/wycheproof at the pinned commit> --check",
+  "upstream": {
+    "repository": "https://github.com/C2SP/wycheproof",
+    "revision": "3fa63dd0344abb611f1fb1d77e119938603ea230",
+    "files": [
+      {
+        "path": "testvectors_v1/aes_kwp_test.json",
+        "sha256": "e89624734deeba8bb937acba5381a5cb137c7050bf8bfd0bd70bd8438170b436"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 254
+  },
+  "checkedAt": "2026-09-27"
+}
