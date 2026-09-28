@@ -12,6 +12,7 @@ import {
   FipsLevels,
   FipsLifecycle,
   FipsAcvpBridge,
+  FipsAutomation,
   FipsLandscape,
   FipsRouteTable,
 } from './sections/FipsSections'
@@ -22,6 +23,7 @@ export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<str
   ['fips-levels', { Component: FipsLevels, group: 'fips' }],
   ['fips-lifecycle', { Component: FipsLifecycle, group: 'fips' }],
   ['fips-acvp-bridge', { Component: FipsAcvpBridge, group: 'fips' }],
+  ['fips-automation', { Component: FipsAutomation, group: 'fips' }],
   ['fips-landscape', { Component: FipsLandscape, group: 'fips' }],
   ['fips-route-table', { Component: FipsRouteTable, group: 'fips' }],
 ])

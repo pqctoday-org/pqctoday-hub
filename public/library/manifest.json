@@ -21036,6 +21036,51 @@
       "replacedAt": "2026-09-27T22:47:14.113367+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "2026-09-27 regional-scheme remediation (d2): stub corrected to the real QKD standard; evidence is the official SAMR catalogue entry"
+    },
+    {
+      "refId": "NIST-CMVP-ESV-Announcements",
+      "title": "NIST CMVP — Entropy Validation announcements (ESV rollout 13 April 2022)",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/announcements-1",
+      "status": "downloaded",
+      "filename": "NIST-CMVP-ESV-Announcements.html",
+      "sizeBytes": 78609,
+      "contentType": "text/html",
+      "sha256": "621cc5952dd8b3c85802765a6cdb0a0f229d981988281ed483842a7f783be627",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T23:21:11.898097+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "NIST-ACMVP-Protocol-Workstream",
+      "title": "NIST ACMVP — Protocol Workstream: Automated Module Validation Protocol (AMVP), demonstration",
+      "url": "https://pages.nist.gov/ACMVPDocs/protocol-workstream.html",
+      "status": "downloaded",
+      "filename": "NIST-ACMVP-Protocol-Workstream.html",
+      "sizeBytes": 162992,
+      "contentType": "text/html",
+      "sha256": "8172d8eefeb3411a337af2da329663e101f79cc04bda9296e9e8ca2c9b7e84a8",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T23:21:35.353173+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "NCCoE-Automation-of-the-CMVP",
+      "title": "NCCoE — Automation of the NIST Cryptographic Module Validation Program (project page)",
+      "url": "https://www.nccoe.nist.gov/automation-nist-cryptographic-module-validation-program",
+      "status": "downloaded",
+      "filename": "NCCoE-Automation-of-the-CMVP.html",
+      "sizeBytes": 104053,
+      "contentType": "text/html",
+      "sha256": "61314a32abe86637f2a54651befcc0edaa6ffdb56fad6047559886b0dcd1f70e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T23:21:48.149433+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [

@@ -19,7 +19,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'fips-140-3-certification',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-067',
   title: 'FIPS 140-3 Certification',
   description:
@@ -37,6 +37,7 @@ const manifest: ModuleManifest = {
     { id: 'fips-levels', label: 'Security Levels 1–4' },
     { id: 'fips-lifecycle', label: 'Validation lifecycle and the MIP queue' },
     { id: 'fips-acvp-bridge', label: 'Algorithm validation is not the certificate' },
+    { id: 'fips-automation', label: 'Automating validation: algorithms, entropy, then the module' },
     { id: 'fips-landscape', label: 'Today’s landscape and the 2026 horizon' },
     { id: 'fips-route-table', label: 'CMVP submission routes (Manual v2.7)', optional: true },
   ],

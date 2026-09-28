@@ -24,7 +24,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:

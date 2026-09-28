@@ -301,6 +301,30 @@ export const FourQuestions = () => (
       <strong>Which scheme answers the question?</strong> workshop step lets you practise this with
       real procurement claims.
     </p>
+    <p>
+      Go deeper, one scheme at a time:{' '}
+      <Link
+        to="/learn/fips-140-3-certification"
+        className="text-primary underline-offset-2 hover:underline"
+      >
+        FIPS 140-3 Certification
+      </Link>
+      ,{' '}
+      <Link
+        to="/learn/cc-eucc-certification"
+        className="text-primary underline-offset-2 hover:underline"
+      >
+        Common Criteria, EUCC &amp; eIDAS Certification
+      </Link>{' '}
+      and{' '}
+      <Link
+        to="/learn/pci-certification"
+        className="text-primary underline-offset-2 hover:underline"
+      >
+        PCI Certification
+      </Link>
+      .
+    </p>
   </Prose>
 )
 
