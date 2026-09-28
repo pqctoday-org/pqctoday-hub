@@ -81,7 +81,7 @@ describe('CryptoProductCertification render parity', () => {
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
     expect(heading('Four schemes, four questions')).toBeInTheDocument()
     expect(heading('What PQC changes in certification')).toBeInTheDocument()
-    // the scheme deep dives moved to LM-067 / LM-068
+    // the scheme deep dives moved to LM-067 / LM-068 / LM-071
     expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()
     expect(heading('The Common Criteria model')).not.toBeInTheDocument()
   })

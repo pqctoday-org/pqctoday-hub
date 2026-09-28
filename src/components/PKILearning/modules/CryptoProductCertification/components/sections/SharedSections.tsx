@@ -717,10 +717,10 @@ export const ChangeRoutesDetail = () => (
       §7.1) defines the submission scenarios; the full table is in <em>CMVP submission routes</em>{' '}
       in the{' '}
       <Link
-        to="/learn/fips-pci-certification?path=fips"
+        to="/learn/fips-140-3-certification"
         className="text-primary underline-offset-2 hover:underline"
       >
-        FIPS 140-3 &amp; PCI Certification
+        FIPS 140-3 Certification
       </Link>{' '}
       module. For a PQC addition, five are decisive:
     </p>

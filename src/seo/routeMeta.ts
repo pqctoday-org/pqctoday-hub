@@ -541,12 +541,20 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     ),
   },
 
-  '/learn/fips-pci-certification': {
-    title: 'FIPS 140-3 & PCI Certification — CMVP, PTS HSM, PIN & P2PE | PQC Today',
+  '/learn/fips-140-3-certification': {
+    title: 'FIPS 140-3 Certification — CMVP, Security Levels & PQC | PQC Today',
     description:
-      'FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack: what each certificate proves, how to read one, and what adding PQC means for each.',
-    canonical: `${BASE_URL}/learn/fips-pci-certification`,
-    structuredData: buildModuleSchema('FIPS 140-3 & PCI Certification', 'PT60M', 'Advanced'),
+      'FIPS 140-3 and the CMVP in depth: what a certificate proves, security levels, the validation queue, and what adding post-quantum cryptography means for a validated module.',
+    canonical: `${BASE_URL}/learn/fips-140-3-certification`,
+    structuredData: buildModuleSchema('FIPS 140-3 Certification', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/pci-certification': {
+    title: 'PCI Certification — PTS HSM, PIN, P2PE & KMO | PQC Today',
+    description:
+      'PCI PTS HSM with the payment operating stack: what a device approval proves, how to read a PTS listing, and what PCI does and does not require for PQC.',
+    canonical: `${BASE_URL}/learn/pci-certification`,
+    structuredData: buildModuleSchema('PCI Certification', 'PT60M', 'Advanced'),
   },
 
   '/learn/cc-eucc-certification': {

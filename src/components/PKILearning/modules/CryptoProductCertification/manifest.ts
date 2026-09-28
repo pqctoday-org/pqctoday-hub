@@ -10,9 +10,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  * what every scheme shares: the four questions, scope before level, what PQC
  * changes in certification, crypto agility vs certification latency, the
  * deadlines, and the capstone that plans one product across four markets.
- * The scheme deep dives moved out, each with its own learn paths:
- *   - LM-067 fips-pci-certification  — FIPS 140-3 / CMVP and PCI
- *   - LM-068 cc-eucc-certification   — Common Criteria, EUCC and eIDAS
+ * The scheme deep dives moved out (the FIPS/PCI one was split again the
+ * same day, user decision):
+ *   - LM-067 fips-140-3-certification — FIPS 140-3 / CMVP
+ *   - LM-068 cc-eucc-certification   — Common Criteria, EUCC and eIDAS (cc / eucc-eidas paths)
+ *   - LM-071 pci-certification        — PCI PTS HSM and the payment operating stack
  * Section and step ids are unchanged from the build spec
  * (pqctoday-priv/nextfeature/cryptographic-certification-module-build-spec-09242026.md).
  *
@@ -22,11 +24,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 4,
+  contentVersion: 6,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:
-    'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3 & PCI) and LM-068 (Common Criteria, EUCC & eIDAS).',
+    'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).',
   whyThisMatters:
     'A certificate proves something narrow — a defined module, target or device, at a version and configuration, against one scheme’s requirements. Adding PQC changes the product, and each scheme has its own route for that change: a market deadline creates urgency, but no shortcut.',
   duration: '60 min',

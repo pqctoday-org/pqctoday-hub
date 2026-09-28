@@ -2,7 +2,7 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-065) teaches what a cryptographic product certificate proves under four schemes — FIPS 140-3 (CMVP), Common Criteria, EUCC (with eIDAS), and PCI — why scope comes before level, and what adding post-quantum cryptography changes in a certified product. It is the shared foundation for two scheme deep dives: LM-067 _FIPS 140-3 & PCI Certification_ and LM-068 _Common Criteria, EUCC & eIDAS Certification_. It is written for product vendors and product-assurance leads; it also serves buyers and evaluators. Version 1 is labelled "Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body." Facts are as of 24 September 2026.
+This advanced Hardware Infrastructure module (LM-065) teaches what a cryptographic product certificate proves under four schemes — FIPS 140-3 (CMVP), Common Criteria, EUCC (with eIDAS), and PCI — why scope comes before level, and what adding post-quantum cryptography changes in a certified product. It is the shared foundation for three scheme deep dives: LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors and product-assurance leads; it also serves buyers and evaluators. Version 1 is labelled "Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body." Facts are as of 24 September 2026.
 
 The module is a single ~60-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
 

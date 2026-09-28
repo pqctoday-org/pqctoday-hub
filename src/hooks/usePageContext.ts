@@ -182,8 +182,9 @@ const MODULE_NAMES: Record<string, string> = {
   'kms-pqc': 'KMS & PQC Key Management',
   'hsm-pqc': 'HSM & PQC Operations',
   'crypto-product-certification': 'Cryptographic Product Certification: Fundamentals',
-  'fips-pci-certification': 'FIPS 140-3 & PCI Certification',
+  'fips-140-3-certification': 'FIPS 140-3 Certification',
   'cc-eucc-certification': 'Common Criteria, EUCC & eIDAS Certification',
+  'pci-certification': 'PCI Certification',
   'stateful-signatures': 'Stateful Signatures',
   'digital-assets': 'Digital Assets',
   '5g-security': '5G Security',
@@ -277,10 +278,15 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'Why does the certification scope matter more than the level?',
     'Does adding PQC to a certified product mean recertifying it?',
   ],
-  'fips-pci-certification': [
+  'fips-140-3-certification': [
     'What is the difference between ACVP algorithm validation and a FIPS 140-3 certificate?',
     'How do I read a FIPS 140-3 Security Policy for PQC algorithms?',
+    'Which CMVP route applies when a validated HSM adds ML-KEM?',
+  ],
+  'pci-certification': [
     'Does a PQC flag on a PCI PTS HSM listing approve a specific algorithm?',
+    'What is the difference between a PTS HSM approval and a PIN or P2PE assessment?',
+    'Does a FIPS 140-3 Level 3 certificate make an HSM PCI approved?',
   ],
   'cc-eucc-certification': [
     'Why does "EAL4+" mean nothing without its augmentations?',

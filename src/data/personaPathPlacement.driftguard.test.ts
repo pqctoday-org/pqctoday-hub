@@ -178,9 +178,11 @@ const SINGLE_PATH_MODULES = new Set([
   'crypto-product-certification',
   // Split out of crypto-product-certification on 27 Sep 2026 (user: the
   // module was too large). Same GRC-only decision carries over; this is the
-  // one module split in three, not a new single-persona module.
-  'fips-pci-certification',
+  // one module split in three, not a new single-persona module. The FIPS/PCI
+  // deep dive was split again the same day (user); the same decision carries.
+  'fips-140-3-certification',
   'cc-eucc-certification',
+  'pci-certification',
 ])
 
 /**

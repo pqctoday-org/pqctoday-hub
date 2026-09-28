@@ -82,8 +82,9 @@ export const QUIZ_CATEGORIES = [
   'soc-implementation-pqc',
   'dnssec-pqc',
   'crypto-product-certification',
-  'fips-pci-certification',
+  'fips-140-3-certification',
   'cc-eucc-certification',
+  'pci-certification',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

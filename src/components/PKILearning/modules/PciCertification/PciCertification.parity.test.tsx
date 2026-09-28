@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 /**
- * Render parity + scaffold contract (build spec §4) for FIPS 140-3 & PCI Certification. Four authors fill owner files in parallel;
+ * Render parity + scaffold contract (build spec §4) for PCI Certification. Four authors fill owner files in parallel;
  * these assertions keep their parts wired to the fixed manifest ids.
  */
 import { afterEach, describe, it, expect } from 'vitest'
@@ -11,15 +11,13 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { STEP_EXERCISES } from '@/data/stepExercises'
 import { useModuleStore } from '@/store/useModuleStore'
-import { FipsPciCertificationModule } from './index'
+import { PciCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
 import { PRACTITIONER_DISCLAIMER } from '@/components/PKILearning/modules/CryptoProductCertification/components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
-import * as FipsSections from './components/sections/FipsSections'
 import * as PciSections from './components/sections/PciSections'
-import * as fipsData from './data/fipsData'
 import * as pciData from './data/pciData'
 
 const pascal = (id: string) =>
@@ -35,21 +33,21 @@ const pathIds = (manifest.learnPaths ?? []).map((p) => p.id)
 const renderModule = (search = '') =>
   render(
     <EmbedProvider>
-      <MemoryRouter initialEntries={[`/learn/fips-pci-certification${search}`]}>
-        <FipsPciCertificationModule />
+      <MemoryRouter initialEntries={[`/learn/pci-certification${search}`]}>
+        <PciCertificationModule />
       </MemoryRouter>
     </EmbedProvider>
   )
 
-describe('FipsPciCertification render parity', () => {
+describe('PciCertification render parity', () => {
   afterEach(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
 
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     renderModule()
+    expect(screen.getByRole('heading', { name: 'PCI Certification' })).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: 'FIPS 140-3 & PCI Certification' })
+      screen.getByText(/PCI PTS HSM and the payment operating stack in depth/)
     ).toBeInTheDocument()
-    expect(screen.getByText(/FIPS 140-3 \/ CMVP and PCI PTS HSM in depth/)).toBeInTheDocument()
     for (const name of [
       'Learn',
       'Visual',
@@ -69,30 +67,27 @@ describe('FipsPciCertification render parity', () => {
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
+  it('renders only its own scheme’s sections (the other scheme moved to its own module)', () => {
+    renderModule()
+    const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
+    expect(heading('PTS HSM device approval')).toBeInTheDocument()
+    expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()
+  })
+
   it('ships no draft placeholder — every owner file has real content', () => {
     renderModule()
     expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
     expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })
-
-  it('hides the other path’s sections on a chosen path (offPathSections: hide)', () => {
-    renderModule('?path=pci')
-    const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
-    expect(heading('PTS HSM device approval')).toBeInTheDocument()
-    expect(heading('PCI KMO v1.0')).toBeInTheDocument()
-    expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()
-  })
 })
 
-describe('FipsPciCertification scaffold contract (build spec §4)', () => {
+describe('PciCertification scaffold contract (build spec §4)', () => {
   it('every Learn section id has exactly one owner component, and nothing else does', () => {
     expect([...SECTION_COMPONENTS.keys()].sort()).toEqual([...sectionIds].sort())
   })
 
   it('section files export one component per section id, named in PascalCase from the id', () => {
-    const exported = new Map<string, unknown>(
-      [FipsSections, PciSections].flatMap((m) => Object.entries(m))
-    )
+    const exported = new Map<string, unknown>([PciSections].flatMap((m) => Object.entries(m)))
     for (const id of sectionIds) {
       expect(exported.has(pascal(id)), `${id} → ${pascal(id)}`).toBe(true)
       expect(SECTION_COMPONENTS.get(id)?.Component, id).toBe(exported.get(pascal(id)))
@@ -133,7 +128,6 @@ describe('FipsPciCertification scaffold contract (build spec §4)', () => {
 
   it('owner stepExercises are keyed to this module’s steps and match src/data/stepExercises.ts', () => {
     const owned = {
-      ...fipsData.stepExercises,
       ...pciData.stepExercises,
     }
     const shared = new Map(Object.entries(STEP_EXERCISES))

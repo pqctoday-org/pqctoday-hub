@@ -191,6 +191,12 @@ function main(): void {
     if (!f.startsWith(MODULES_PREFIX)) continue
     if (!(f.endsWith('/content.ts') || f.endsWith('/manifest.ts'))) continue
     const dirName = f.slice(MODULES_PREFIX.length).split('/')[0]
+    // A module directory that no longer exists was renamed or split away
+    // (e.g. FipsPciCertification → Fips1403Certification + PciCertification,
+    // 2026-09-27). Its content now lives in its successor directories, which
+    // appear in this same diff and are checked on their own; the gone directory
+    // has no manifest.ts to resolve an id from, so it can never be "covered".
+    if (dirName && !fs.existsSync(path.resolve(REPO_ROOT, MODULES_PREFIX, dirName))) continue
     if (dirName) modulesTouchedDirs.add(dirName)
   }
 

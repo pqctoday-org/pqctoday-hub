@@ -11,6 +11,7 @@ import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
 import { MANIFESTS } from './manifest/registry'
+import { SPLIT_MODULE_REDIRECTS, resolveSplitRedirect } from './manifest/moduleRedirects'
 import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
@@ -44,6 +45,12 @@ const ROUTE_ALIASES: Record<string, string> = { mls: 'mls-group-messaging' }
 const ROUTE_ALIAS_ENTRIES = Object.entries(ROUTE_ALIASES)
   .map(([alias, target]) => ({ alias, Component: MODULE_COMPONENTS.get(target) }))
   .filter((e): e is { alias: string; Component: ComponentType } => Boolean(e.Component))
+
+/** An old URL of a module that was split: redirect to the successor its `?path=` picks. */
+const SplitModuleRedirect = ({ from }: { from: string }) => {
+  const { search, hash } = useLocation()
+  return <Navigate to={resolveSplitRedirect(from, search, hash) ?? '/learn'} replace />
+}
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -207,6 +214,10 @@ export const PKILearningView: React.FC = () => {
                 {/* Legacy/short aliases that resolve to a canonical module. */}
                 {ROUTE_ALIAS_ENTRIES.map(({ alias, Component }) => (
                   <Route key={alias} path={alias} element={<Component />} />
+                ))}
+                {/* Old URLs of modules that were split into several. */}
+                {[...SPLIT_MODULE_REDIRECTS.keys()].map((from) => (
+                  <Route key={from} path={from} element={<SplitModuleRedirect from={from} />} />
                 ))}
                 {/* Non-module journey path (no manifest). */}
                 <Route path="common-ground" element={<CommonGroundPath />} />

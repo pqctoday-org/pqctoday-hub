@@ -6,8 +6,9 @@
  * that it covers exactly the manifest's sections.
  *
  * Since the 2026-09-27 split this registry holds LM-065's own core + shared
- * sections. The FIPS/PCI and CC/EUCC blocks live in LM-067
- * (FipsPciCertification) and LM-068 (CcEuccCertification), whose registries
+ * sections. The FIPS, CC/EUCC and PCI blocks live in LM-067
+ * (Fips1403Certification), LM-068 (CcEuccCertification) and LM-071
+ * (PciCertification), whose registries
  * reuse SectionGroup / SectionEntry / PRACTITIONER_DISCLAIMER from here.
  */
 import type { FC } from 'react'

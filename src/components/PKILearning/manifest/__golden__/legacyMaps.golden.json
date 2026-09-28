@@ -131,7 +131,7 @@
       "id": "crypto-product-certification",
       "lm_id": "LM-065",
       "title": "Cryptographic Product Certification: Fundamentals",
-      "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3 & PCI) and LM-068 (Common Criteria, EUCC & eIDAS).",
+      "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
       "duration": "60 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
@@ -243,15 +243,6 @@
       "duration": "30 min",
       "difficulty": "beginner",
       "frameworkPhase": "p0"
-    },
-    "fips-pci-certification": {
-      "id": "fips-pci-certification",
-      "lm_id": "LM-067",
-      "title": "FIPS 140-3 & PCI Certification",
-      "description": "FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what each certificate proves, how to read one, and what adding PQC means for each.",
-      "duration": "60 min",
-      "difficulty": "advanced",
-      "frameworkPhase": "p7"
     },
     "5g-security": {
       "id": "5g-security",
@@ -629,6 +620,24 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "fips-140-3-certification": {
+      "id": "fips-140-3-certification",
+      "lm_id": "LM-067",
+      "title": "FIPS 140-3 Certification",
+      "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
+    },
+    "pci-certification": {
+      "id": "pci-certification",
+      "lm_id": "LM-071",
+      "title": "PCI Certification",
+      "description": "PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what a device approval proves, how to read a PTS listing, what PTS HSM v5.0 changed, and what PCI does and does not require for PQC.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -659,7 +668,6 @@
     "energy-utilities-pqc": 6,
     "entropy-randomness": 6,
     "exec-quantum-impact": 4,
-    "fips-pci-certification": 2,
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
@@ -702,7 +710,9 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1
+    "assess": 1,
+    "fips-140-3-certification": 1,
+    "pci-certification": 1
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1377,68 +1387,6 @@
       {
         "id": "how-to-act",
         "label": "How to Act"
-      }
-    ],
-    "fips-pci-certification": [
-      {
-        "id": "fips-what-it-is",
-        "label": "FIPS 140-3 and the CMVP"
-      },
-      {
-        "id": "fips-requirement-areas",
-        "label": "The eleven requirement areas"
-      },
-      {
-        "id": "fips-levels",
-        "label": "Security Levels 1–4"
-      },
-      {
-        "id": "fips-lifecycle",
-        "label": "Validation lifecycle and the MIP queue"
-      },
-      {
-        "id": "fips-acvp-bridge",
-        "label": "Algorithm validation is not the certificate"
-      },
-      {
-        "id": "fips-landscape",
-        "label": "Today’s landscape and the 2026 horizon"
-      },
-      {
-        "id": "fips-route-table",
-        "label": "CMVP submission routes (Manual v2.7)",
-        "optional": true
-      },
-      {
-        "id": "pci-pts-approval",
-        "label": "PTS HSM device approval"
-      },
-      {
-        "id": "pci-v5-changes",
-        "label": "What PTS HSM v5.0 changed"
-      },
-      {
-        "id": "pci-pqc-truth",
-        "label": "PQC and PCI: what is and isn’t required"
-      },
-      {
-        "id": "pci-operating-stack",
-        "label": "PIN, P2PE, KMO and key-injection: the boundary"
-      },
-      {
-        "id": "pci-pin-security",
-        "label": "PCI PIN Security v3.1",
-        "optional": true
-      },
-      {
-        "id": "pci-p2pe-kif",
-        "label": "P2PE and key-injection facilities",
-        "optional": true
-      },
-      {
-        "id": "pci-kmo",
-        "label": "PCI KMO v1.0",
-        "optional": true
       }
     ],
     "5g-security": [
@@ -2234,6 +2182,70 @@
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
       }
+    ],
+    "fips-140-3-certification": [
+      {
+        "id": "fips-what-it-is",
+        "label": "FIPS 140-3 and the CMVP"
+      },
+      {
+        "id": "fips-requirement-areas",
+        "label": "The eleven requirement areas"
+      },
+      {
+        "id": "fips-levels",
+        "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-lifecycle",
+        "label": "Validation lifecycle and the MIP queue"
+      },
+      {
+        "id": "fips-acvp-bridge",
+        "label": "Algorithm validation is not the certificate"
+      },
+      {
+        "id": "fips-landscape",
+        "label": "Today’s landscape and the 2026 horizon"
+      },
+      {
+        "id": "fips-route-table",
+        "label": "CMVP submission routes (Manual v2.7)",
+        "optional": true
+      }
+    ],
+    "pci-certification": [
+      {
+        "id": "pci-pts-approval",
+        "label": "PTS HSM device approval"
+      },
+      {
+        "id": "pci-v5-changes",
+        "label": "What PTS HSM v5.0 changed"
+      },
+      {
+        "id": "pci-pqc-truth",
+        "label": "PQC and PCI: what is and isn’t required"
+      },
+      {
+        "id": "pci-operating-stack",
+        "label": "PIN, P2PE, KMO and key-injection: the boundary"
+      },
+      {
+        "id": "pci-pin-security",
+        "label": "PCI PIN Security v3.1",
+        "optional": true
+      },
+      {
+        "id": "pci-p2pe-kif",
+        "label": "P2PE and key-injection facilities",
+        "optional": true
+      },
+      {
+        "id": "pci-kmo",
+        "label": "PCI KMO v1.0",
+        "optional": true
+      }
     ]
   },
   "WORKSHOP_STEPS": {
@@ -2841,18 +2853,6 @@
       {
         "id": "self-assessment",
         "label": "Org Risk Self-Assessment"
-      }
-    ],
-    "fips-pci-certification": [
-      {
-        "id": "fips-level-planner",
-        "label": "Level and boundary planner",
-        "paths": ["fips"]
-      },
-      {
-        "id": "pci-evidence-review",
-        "label": "Payment HSM evidence review",
-        "paths": ["pci"]
       }
     ],
     "5g-security": [
@@ -3684,6 +3684,18 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
+    ],
+    "fips-140-3-certification": [
+      {
+        "id": "fips-level-planner",
+        "label": "Level and boundary planner"
+      }
+    ],
+    "pci-certification": [
+      {
+        "id": "pci-evidence-review",
+        "label": "Payment HSM evidence review"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -4003,16 +4015,16 @@
           "id": "crypto-product-certification",
           "lm_id": "LM-065",
           "title": "Cryptographic Product Certification: Fundamentals",
-          "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3 & PCI) and LM-068 (Common Criteria, EUCC & eIDAS).",
+          "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },
         {
-          "id": "fips-pci-certification",
+          "id": "fips-140-3-certification",
           "lm_id": "LM-067",
-          "title": "FIPS 140-3 & PCI Certification",
-          "description": "FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what each certificate proves, how to read one, and what adding PQC means for each.",
+          "title": "FIPS 140-3 Certification",
+          "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
@@ -4022,6 +4034,15 @@
           "lm_id": "LM-068",
           "title": "Common Criteria, EUCC & eIDAS Certification",
           "description": "Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p7"
+        },
+        {
+          "id": "pci-certification",
+          "lm_id": "LM-071",
+          "title": "PCI Certification",
+          "description": "PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what a device approval proves, how to read a PTS listing, what PTS HSM v5.0 changed, and what PCI does and does not require for PQC.",
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
@@ -4486,10 +4507,6 @@
     "exec-quantum-impact": {
       "standards": ["EO 14306", "NSM-10", "NSA CNSA 2.0", "NIST IR 8547"]
     },
-    "fips-pci-certification": {
-      "algorithms": ["ML-KEM", "ML-DSA"],
-      "standards": ["FIPS 140-3"]
-    },
     "5g-security": {
       "algorithms": ["ML-KEM", "ML-DSA"],
       "standards": ["X.509"]
@@ -4686,6 +4703,13 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
+    },
+    "fips-140-3-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["FIPS 140-3"]
+    },
+    "pci-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"]
     }
   }
 }

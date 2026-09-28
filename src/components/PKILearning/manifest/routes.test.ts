@@ -12,6 +12,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { MANIFESTS } from './registry'
+import { SPLIT_MODULE_REDIRECTS } from './moduleRedirects'
 
 // Aliases + non-module paths PKILearningView adds on top of the derived modules.
 const ROUTE_ALIASES = ['mls']
@@ -47,7 +48,10 @@ const GOLDEN_ROUTE_PATHS = [
   'energy-utilities-pqc',
   'entropy-randomness',
   'exec-quantum-impact',
+  // Redirect only since 2026-09-27 (split into fips-140-3-certification + pci-certification).
   'fips-pci-certification',
+  'fips-140-3-certification',
+  'pci-certification',
   'government-defense-pqc',
   'healthcare-pqc',
   'hsm-pqc',
@@ -95,7 +99,12 @@ const GOLDEN_ROUTE_PATHS = [
 describe('learn route derivation (single source = manifests)', () => {
   it('derived module routes + aliases + specials reproduce the legacy route set', () => {
     const modulePaths = MANIFESTS.filter((m) => m.load).map((m) => m.id)
-    const derived = [...modulePaths, ...ROUTE_ALIASES, ...SPECIAL_PATHS].sort()
+    const derived = [
+      ...modulePaths,
+      ...ROUTE_ALIASES,
+      ...SPECIAL_PATHS,
+      ...SPLIT_MODULE_REDIRECTS.keys(),
+    ].sort()
     expect(derived).toEqual(GOLDEN_ROUTE_PATHS)
   })
 

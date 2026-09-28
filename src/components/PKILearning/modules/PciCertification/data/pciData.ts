@@ -797,7 +797,6 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
 export const exercises: ExerciseItem[] = [
   {
     id: 'pci-pqc-flag-is-existence',
-    paths: ['pci'],
     title: 'What a PQC notation proves',
     description:
       'Open the appliance scenario and judge the claim that the listing’s PQC notation makes ML-KEM-768 a PCI-approved algorithm for PIN processing.',
@@ -808,7 +807,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'pci-fips-l3-accepted-not-approved',
-    paths: ['pci'],
     title: 'FIPS Level 3 counts for PIN — but only if it matches',
     description:
       'In the appliance scenario, decide whether the FIPS 140-3 Level 3 certificate alone satisfies PIN Req 1-3 for the firmware Northgate runs.',
@@ -819,7 +817,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'pci-pqc-firmware-route',
-    paths: ['pci'],
     title: 'Adding PQC firmware to an approved HSM',
     description:
       'Review the firmware 4.0.0 scenario: which claims about coverage, major versions and deadlines survive the packet?',
@@ -830,7 +827,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'pci-cloud-operator-is-an-entity',
-    paths: ['pci'],
     title: 'The cloud operator is assessed, not listed',
     description:
       'In the multi-tenant scenario, separate what the device listing shows from what only an assessment of the operator can show.',
@@ -841,7 +837,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'pci-read-real-listing',
-    paths: ['pci'],
     title: 'Read a real, expired PTS HSM listing',
     description:
       'Open the real listing 4-40069 (payShield 9000, captured 24 September 2026) and read its version and expiry against the read date.',
@@ -855,7 +850,7 @@ export const exercises: ExerciseItem[] = [
 // ── One step question (append the SAME entry to src/data/stepExercises.ts) ──
 
 export const stepExercises: Record<string, StepExercise> = {
-  'fips-pci-certification/pci-evidence-review': {
+  'pci-certification/pci-evidence-review': {
     prompt:
       'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
     options: [

@@ -586,7 +586,8 @@ export const FipsLevels = () => (
         is a separate device approval by a PCI-recognised lab. But PCI PIN Security v3.1 (Req 1-3)
         accepts HSMs that are “FIPS140-2 or FIPS 140-3 Level 3 or higher certified, or PCI
         approved”, and P2PE v3.1 (4A-1.1) sets a similar bar (<Cite std={PCI_PIN}>PIN v3.1</Cite>,{' '}
-        <Cite std={PCI_P2PE}>P2PE v3.1</Cite> — P2PE v3.2 is current; check it for changes).
+        <Cite std={PCI_P2PE}>P2PE v3.1</Cite> — superseded by P2PE v3.2 in June 2025; check it for
+        changes).
       </p>
       <p>
         And a FIPS level is not an EAL: “FIPS Level 4 = EAL4+” compares two different schemes’
@@ -819,6 +820,10 @@ export const FipsAcvpBridge = () => (
       Going deeper: the algorithm-testing workflow is taught in{' '}
       <Link to="/learn/pqc-testing-validation" className="text-primary underline">
         PQC Testing &amp; Validation
+      </Link>
+      , the lab's side of it (vector sets, prompts and responses, and the evidence they produce) in{' '}
+      <Link to="/learn/acvp-lab-workflow" className="text-primary underline">
+        ACVP Lab Workflow
       </Link>
       , and ESV in{' '}
       <Link to="/learn/entropy-randomness" className="text-primary underline">

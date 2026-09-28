@@ -26,18 +26,25 @@ type ModuleEntry = LearningProgress['modules'][string]
 type Modules = LearningProgress['modules']
 
 /** Bump when the catalog's module set changes (drives drift detection). */
-export const LEARN_CONTENT_VERSION = 1
+export const LEARN_CONTENT_VERSION = 2
 
 /** Canonical module ids — the single source is the manifest collection. */
 export const MODULE_IDS: ReadonlySet<string> = new Set(MANIFESTS.map((m) => m.id))
 
 /**
  * Declarative id renames: `{ 'old-id': 'current-id' }`. Add a line + bump
- * LEARN_CONTENT_VERSION when a module id changes, so persisted progress carries
- * over. (Empty today — no 1→1 rename has occurred yet; the key-management SPLIT
- * is handled in the store migrate.)
+ * LEARN_CONTENT_VERSION (and MODULE_STORE_VERSION, so persist re-runs migrate)
+ * when a module id changes, so persisted progress carries over. The
+ * key-management SPLIT is handled in the store migrate.
+ *
+ * fips-pci-certification (2026-09-27): the FIPS 140-3 & PCI deep dive was
+ * split into fips-140-3-certification (LM-067) and pci-certification (LM-071).
+ * A 1→1 map can only send its progress one way; it goes to LM-067 (user
+ * decision), and PCI step/section ids left in it are ignored there.
  */
-export const MODULE_ID_RENAMES: Readonly<Record<string, string>> = {}
+export const MODULE_ID_RENAMES: Readonly<Record<string, string>> = {
+  'fips-pci-certification': 'fips-140-3-certification',
+}
 
 /** Lossless carry-over when both old and new ids hold progress (rare). */
 function mergeEntry(current: ModuleEntry, incoming: ModuleEntry): ModuleEntry {

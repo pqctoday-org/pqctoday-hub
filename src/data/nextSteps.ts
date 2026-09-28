@@ -99,12 +99,17 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: Vendor Scorecard Builder',
     why: 'This module belongs to phase 7 (Vendor & Supply Chain); Vendor Scorecard Builder produces a deliverable of that phase in the Command Center.',
   },
-  '/learn/fips-pci-certification': {
+  '/learn/fips-140-3-certification': {
     to: '/business/tools/vendor-scorecard',
     label: 'Produce the artifact: Vendor Scorecard Builder',
     why: 'This module belongs to phase 7 (Vendor & Supply Chain); Vendor Scorecard Builder produces a deliverable of that phase in the Command Center.',
   },
   '/learn/cc-eucc-certification': {
+    to: '/business/tools/vendor-scorecard',
+    label: 'Produce the artifact: Vendor Scorecard Builder',
+    why: 'This module belongs to phase 7 (Vendor & Supply Chain); Vendor Scorecard Builder produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/pci-certification': {
     to: '/business/tools/vendor-scorecard',
     label: 'Produce the artifact: Vendor Scorecard Builder',
     why: 'This module belongs to phase 7 (Vendor & Supply Chain); Vendor Scorecard Builder produces a deliverable of that phase in the Command Center.',
