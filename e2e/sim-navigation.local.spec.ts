@@ -151,4 +151,31 @@ test.describe('Simulation navigation (desktop) — 09-28 remediation', () => {
     await page.getByRole('button', { name: /■ Stop/ }).click()
     await expect(page.getByRole('button', { name: /■ Stop/ })).toHaveCount(0, { timeout: 10_000 })
   })
+
+  test('WP2: once the run has started, the Mode dial asks before starting a new run', async ({
+    page,
+  }) => {
+    await seed(page)
+    await openBoard(page)
+    const mode = page.getByRole('button', { name: /^Mode:/i }).first()
+    await expect(mode).toContainText(/Realistic/)
+
+    // make a decision — the run has now started
+    await page.locator('button[aria-label^="Option A:"]').first().click()
+
+    await mode.click()
+    const confirm = page.getByRole('alertdialog', { name: /Start a new run on Hard/i })
+    await expect(confirm).toBeVisible()
+    await confirm.getByRole('button', { name: /cancel/i }).click()
+    await expect(mode).toContainText(/Realistic/)
+
+    await mode.click()
+    await page
+      .getByRole('alertdialog', { name: /Start a new run on Hard/i })
+      .getByRole('button', { name: /Start new run/i })
+      .click()
+    await expect(mode).toContainText(/Hard/)
+    // a clean run: the decision is open again
+    await expect(page.locator('button[aria-label^="Option A:"]').first()).toBeEnabled()
+  })
 })

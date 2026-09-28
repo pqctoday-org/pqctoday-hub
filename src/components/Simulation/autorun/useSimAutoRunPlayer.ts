@@ -661,6 +661,15 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     scenarioIntroRef.current = scenarioIntro != null
   }, [scenarioIntro])
+  // 09-28 nav remediation (WP4.5): is a run actually loaded (running, or
+  // finished but its "Close" band still up)? stop() is now also called from
+  // Reset, Start over and the exits, where the player is often idle — an idle
+  // stop() must not overwrite the saved resume playhead with a stale index or
+  // close a resource the player opened by hand.
+  const liveRef = useRef(false)
+  useEffect(() => {
+    liveRef.current = running || done
+  }, [running, done])
 
   // Warm the voice list (loads async) + HARD speech safety: cancel any speech if
   // the tab is hidden, navigated, or closed so it can never keep speaking after the
@@ -783,6 +792,7 @@ export function useSimAutoRunPlayer({
       setPaused(false)
       setLabel('')
       setCaption('Starting the migration playthrough…')
+      liveRef.current = true
       setRunning(true)
     },
     [clearTimer]
@@ -796,13 +806,19 @@ export function useSimAutoRunPlayer({
   const stop = useCallback(() => {
     clearTimer()
     stopSpeech()
+    const wasLive = liveRef.current
+    liveRef.current = false
     // Remember WHERE we stopped so the play button resumes from here (not the
     // top) — climb-family only. A walkthrough or single-phase run's index is
     // meaningless against the climb queue's shape and must never overwrite its
     // saved playhead.
-    if (usesSharedResumeIndex(modeRef.current)) {
+    if (wasLive && usesSharedResumeIndex(modeRef.current)) {
       useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
     }
+    // 09-28 (WP4.2): close the resource the run had open, so a stopped run
+    // doesn't leave its pane up (and re-open it on the next load via the
+    // persisted openStepRef, which closeEmbed clears).
+    if (wasLive) closeEmbedRef.current()
     setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
@@ -1238,11 +1254,15 @@ export function useSimAutoRunPlayer({
   const resumeMode: RunMode =
     resumeModeRaw === 'climb' || resumeModeRaw === 'climb-deep' ? resumeModeRaw : 'climb'
 
-  // Stop the timer + any speech if the sim unmounts mid-run.
+  // Stop the timer + any speech if the sim unmounts mid-run — and switch demo
+  // fill off (09-28, WP4.1): leaving mid-run (Back, a nav link) used to leave
+  // it on, so tools opened elsewhere in the hub came up pre-filled with demo
+  // content.
   useEffect(
     () => () => {
       clearTimer()
       stopSpeech()
+      setAutoRunFill(false)
     },
     [clearTimer]
   )

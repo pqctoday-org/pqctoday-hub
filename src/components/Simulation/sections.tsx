@@ -261,6 +261,16 @@ export function DecisionSection({
   // consequence once per click is wrong on its own terms.
   const [localPick, setLocalPick] = useState<{ key: string; index: number } | null>(null)
 
+  // 09-28 nav remediation: when the persisted attempt is CLEARED (Reset run,
+  // a difficulty restart), drop the local pick too. The step's key is the same
+  // in the new run, so the stale local pick used to keep the cards locked on a
+  // decision the store no longer has.
+  const [prevAttempt, setPrevAttempt] = useState(attempt)
+  if (prevAttempt !== attempt) {
+    setPrevAttempt(attempt)
+    if (prevAttempt && !attempt) setLocalPick(null)
+  }
+
   // wrong-move pool: context-aware traps (SIM_MOVES) + framework Common Failures.
   const ctxTraps = (SIM_MOVES[phaseId] ?? [])
     .map((m) => ({ m, res: m.evaluate(ctx) }))

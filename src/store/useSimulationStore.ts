@@ -13,6 +13,7 @@ import type { SimEvent } from '@/data/simEvents'
 import type { SimulationData } from '@/services/storage/snapshotTypes'
 import type { DifficultyId } from '@/data/simBalance'
 import { newSeed } from '@/simulation/rng'
+import { hasRunStarted } from '@/simulation/runState'
 import type { QuarterEffects } from '@/simulation/quarterEngine'
 import { upsertEvidence, type SimEvidenceRecord } from '@/simulation/evidence'
 import { validateSave, SAVE_SCHEMA_VERSION, SAVE_KIND } from '@/simulation/saveSchema'
@@ -274,6 +275,14 @@ export interface SimulationState {
   recordEvidence: (record: SimEvidenceRecord) => void
   /** Select a difficulty preset (WS-14). */
   setDifficulty: (d: DifficultyId) => void
+  /** 09-28 nav remediation (WP2/D6): the ONLY way to change difficulty once
+   *  the run has started — a new run on the chosen difficulty, in one
+   *  transition. Clears the simulation-run state only; keeps the profile
+   *  (size/country/sector/seat), onboarding prefs and lifetime achievements.
+   *  (Learn progress and Command Center documents live in other stores and are
+   *  untouched — unlike RESET, the view deletes nothing for this.) Callers
+   *  stop a live auto-run first. */
+  restartWithDifficulty: (d: DifficultyId) => void
   /** Wave 4 (WP4.6) — set the run's deterministic seed. Callers gate this to a
    *  fresh run (never mutates a run in progress) — the store applies it as given. */
   setSeed: (n: number) => void
@@ -641,7 +650,29 @@ export const useSimulationStore = create<SimulationState>()(
       spendBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM + m) })),
       creditBudget: (m) => set((s) => ({ spentBudgetM: Math.max(0, s.spentBudgetM - m) })),
       incrementTrapsThisRun: () => set((s) => ({ trapsThisRun: s.trapsThisRun + 1 })),
-      setDifficulty: (difficulty) => set({ difficulty }),
+      // 09-28 (WP2): only a FRESH run changes difficulty in place. Mid-run the
+      // Mode dial doubled as a hidden undo (Easy's free retry on a stuck pick)
+      // and could game the difficulty the run score reads.
+      setDifficulty: (difficulty) => set((s) => (hasRunStarted(s, RUN_START) ? s : { difficulty })),
+      restartWithDifficulty: (difficulty) =>
+        set((s) => ({
+          ...SEED,
+          seed: newSeed(),
+          difficulty,
+          size: s.size,
+          country: s.country,
+          sector: s.sector,
+          seat: s.seat,
+          sel: s.sel,
+          mobilePlayOpen: s.mobilePlayOpen,
+          tourSeen: s.tourSeen,
+          seenConceptPeeks: s.seenConceptPeeks,
+          simRunsCompleted: s.simRunsCompleted,
+          simZeroTrapPhases: s.simZeroTrapPhases,
+          simHardWin: s.simHardWin,
+          simOnTimeObjectives: s.simOnTimeObjectives,
+          simJurisdictionsPlayed: s.simJurisdictionsPlayed,
+        })),
       setSeed: (seed) => set({ seed }),
       markTourSeen: () => set({ tourSeen: true }),
       markConceptPeekSeen: (id) =>

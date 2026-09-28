@@ -142,6 +142,54 @@ describe('DecisionSection — wrong pick stays actionable (WP1)', () => {
   })
 })
 
+describe('a cleared attempt re-opens the decision (Reset run / difficulty restart)', () => {
+  it('drops the stale local pick when the persisted attempt goes away', () => {
+    const base = {
+      phaseId: 'p0' as const,
+      ctx,
+      nextMove,
+      level: 0,
+      stepsDone: 0,
+      stepsTotal: 5,
+      pitfalls: p0.pitfalls,
+      onVisitRef: () => {},
+      canEmbed: () => true,
+      onOpenStep: () => {},
+      onDecide: () => {},
+      allowRetry: false,
+    }
+    const { rerender } = render(
+      <MemoryRouter>
+        <DecisionSection {...base} />
+      </MemoryRouter>
+    )
+    pickWrong()
+    const options = screen.getAllByRole('button', { name: /^Option [A-Z]:/ })
+    const idx = options.findIndex(
+      (el) => el.hasAttribute('disabled') && el.className.includes('destructive')
+    )
+    // the parent persists the attempt …
+    rerender(
+      <MemoryRouter>
+        <DecisionSection
+          {...base}
+          attempt={{ index: Math.max(0, idx), correct: false, at: 'Q1 2026' }}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getAllByRole('button', { name: /^Option [A-Z]:/ })[0]).toBeDisabled()
+    // … then a reset clears it: the decision must be open again
+    rerender(
+      <MemoryRouter>
+        <DecisionSection {...base} />
+      </MemoryRouter>
+    )
+    for (const el of screen.getAllByRole('button', { name: /^Option [A-Z]:/ })) {
+      expect(el).toBeEnabled()
+    }
+  })
+})
+
 describe('every gating tree step has a viable action path (WP1.4)', () => {
   it('each step resolves to a real route (so the wrong-branch action is never "resource moved")', () => {
     const broken: string[] = []

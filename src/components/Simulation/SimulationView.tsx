@@ -191,6 +191,7 @@ import { ArchitecturePanel } from './ArchitecturePanel'
 import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
+import { hasRunStarted } from '@/simulation/runState'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
 import { readRunMetric, type RunMetricInputs } from '@/simulation/runMetrics'
 import { runQualityIndicators, indicatorsLabel } from '@/simulation/qualityIndicators'
@@ -444,6 +445,7 @@ export function SimulationView() {
     importSave,
     difficulty,
     setDifficulty,
+    restartWithDifficulty,
     tourSeen,
     markTourSeen,
     runCompleteSeen,
@@ -485,6 +487,16 @@ export function SimulationView() {
     setActivePhaseTab('decide')
   }, [sel])
   const [report, setReport] = useState<QuarterReportData | null>(null)
+  // 09-28 nav remediation (WP2): once the run has started, the Mode dial asks
+  // before starting a new run on the next difficulty instead of mutating the
+  // run in place (it was a hidden undo for a stuck wrong pick).
+  const runStarted = useSimulationStore((s) => hasRunStarted(s, RUN_START))
+  const [pendingDifficulty, setPendingDifficulty] = useState<DifficultyId | null>(null)
+  const cycleDifficulty = () => {
+    const next = DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length]!
+    if (runStarted) setPendingDifficulty(next)
+    else setDifficulty(next)
+  }
   // re-opened the sim from the top nav → start a clean excursion (clears both the
   // "peek" resume flag and any prior HUB-quit marker the hub header reads)
   useEffect(() => {
@@ -795,7 +807,9 @@ export function SimulationView() {
     if (!seedParam) return
     ranSeedDeepLink.current = true
     const n = Number(seedParam)
-    const isFreshRun = year === RUN_START.year && q === RUN_START.q
+    // 09-28 (WP2): the same "fresh run" definition the Mode dial and the store
+    // guard use — not just "no quarter elapsed yet".
+    const isFreshRun = !hasRunStarted(useSimulationStore.getState(), RUN_START)
     if (Number.isInteger(n) && n > 0 && isFreshRun) {
       setSeed(n)
       // W5.4: apply the rest of the scenario configuration the link carries, so
@@ -1080,6 +1094,10 @@ export function SimulationView() {
   )
   const resetAll = () => setPendingConfirm('reset')
   const runResetAll = () => {
+    // 09-28 (WP4.4): stop a live auto-run first — it would otherwise keep
+    // driving (and demo-filling) the run being wiped. stop() owns closing its
+    // resource; it is a no-op on an idle player.
+    autoRunPlayer.stop()
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -1091,6 +1109,7 @@ export function SimulationView() {
   // (proxy: form.reset() + result.reset()) clears both.
   const startOver = () => setPendingConfirm('start-over')
   const runStartOver = () => {
+    autoRunPlayer.stop()
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -1944,7 +1963,10 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
-            onClick={() => markSimExited()}
+            onClick={() => {
+              autoRunPlayer.stop()
+              markSimExited()
+            }}
             className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
@@ -2853,7 +2875,10 @@ export function SimulationView() {
           )}
           <Link
             to="/"
-            onClick={() => markSimExited()}
+            onClick={() => {
+              autoRunPlayer.stop()
+              markSimExited()
+            }}
             className="text-sm text-primary underline underline-offset-4"
           >
             Back to hub
@@ -2953,10 +2978,8 @@ export function SimulationView() {
               label="Mode"
               value={difficulty[0].toUpperCase() + difficulty.slice(1)}
               hint="clock + budget + stakes"
-              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run."
-              onClick={() =>
-                setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
-              }
+              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run. Once a run has started, changing difficulty starts a new run."
+              onClick={cycleDifficulty}
             />
           </div>
           {/* KPI cluster (2026-08-02) — one bordered strip with internal dividers,
@@ -3192,6 +3215,7 @@ export function SimulationView() {
             type="button"
             variant="ghost"
             onClick={() => {
+              autoRunPlayer.stop()
               markSimExited()
               navigate('/')
             }}
@@ -5308,6 +5332,22 @@ export function SimulationView() {
           is already `grid-cols-1 sm:grid-cols-2`, so no responsive changes
           were needed inside sections.tsx — only its position in this tree. */}
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* 09-28 (WP2 / D6): outside the desktop-only wrapper so the phone's Mode
+          control can use it too. */}
+      {pendingDifficulty && (
+        <SimConfirmDialog
+          title={`Start a new run on ${pendingDifficulty[0]!.toUpperCase()}${pendingDifficulty.slice(1)}?`}
+          description="Difficulty is fixed for a run once it has started. Changing it starts a new run: this run's quarters, decisions, budget and run evidence are cleared. KEPT: your organisation profile, your assessment, your Learn progress and documents, and your lifetime achievements."
+          confirmLabel="Start new run"
+          onCancel={() => setPendingDifficulty(null)}
+          onConfirm={() => {
+            autoRunPlayer.stop()
+            closeEmbed() // a resource the player opened by hand, too
+            restartWithDifficulty(pendingDifficulty)
+            setPendingDifficulty(null)
+          }}
+        />
+      )}
       {/* mobile-ux-layer (WS-5): the two ceremonies that used to fire only
           inside the desktop-only wrapper — completion was recorded correctly
           either way (fullyMature/runCompleteSeen and the phase-run "done"
