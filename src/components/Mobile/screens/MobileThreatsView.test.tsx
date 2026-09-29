@@ -190,7 +190,7 @@ describe('MobileThreatsView', () => {
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/Protocol lens, trust-tier filter, and the CRQC capability strip/i)
+      screen.getByText(/Protocol-lens picker, trust-tier filter, and the CRQC capability strip/i)
     ).toBeInTheDocument()
   })
 
