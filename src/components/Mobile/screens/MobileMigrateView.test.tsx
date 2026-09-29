@@ -5,7 +5,7 @@ import { MemoryRouter, useLocation } from 'react-router'
 import { MobileMigrateView } from './MobileMigrateView'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { REPLACE_ASSETS, DECISIONS, DOMAINS, classifyProductDomain } from '@/data/migrationAssets'
-import { softwareData, vendorMap } from '@/data/migrateData'
+import { softwareData, vendorMap, retiredProductSuccessors } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import {
   productsForDomain,
@@ -771,6 +771,97 @@ describe('MobileMigrateView', () => {
       expect(search()).toContain(`product=${encodeURIComponent(tlsProduct.productId)}`)
       fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
       expect(search()).not.toContain('product=')
+    })
+  })
+  describe('deep links (PR 2)', () => {
+    const search = () => screen.getByTestId('location-search').textContent ?? ''
+    const chip = (label: RegExp) =>
+      screen.getAllByRole('button').find((b) => label.test(b.textContent ?? ''))!
+
+    it('?domain= selects that domain chip; tapping a chip writes it', () => {
+      renderMobile('/migrate?domain=hsm')
+      expect(chip(/^HSM-protected keys/)).toHaveAttribute('aria-pressed', 'true')
+      fireEvent.click(chip(/^IPsec \/ IKEv2 VPN/))
+      expect(search()).toContain('domain=vpn')
+    })
+
+    it('an unknown ?domain= shows a not-found notice', () => {
+      renderMobile('/migrate?domain=bogus')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('bogus')
+    })
+
+    it('?q=<exact product name> opens its sheet; ?q=<text> pre-fills the filter', () => {
+      const [hsm] = productsForDomain('hsm')
+      const { unmount } = renderMobile(`/migrate?q=${encodeURIComponent(hsm.softwareName)}`)
+      expect(screen.getByTestId('migrate-product-detail-sheet')).toBeInTheDocument()
+      unmount()
+      renderMobile('/migrate?q=IBM')
+      expect(screen.getByLabelText('Filter products')).toHaveValue('IBM')
+    })
+
+    it('?layer= maps to a domain; ?industry= lands on Replace without a notice', () => {
+      const { unmount } = renderMobile('/migrate?layer=Libraries')
+      expect(chip(/^Crypto libraries & frameworks/)).toHaveAttribute('aria-pressed', 'true')
+      unmount()
+      renderMobile('/migrate?tab=plan&industry=Finance')
+      expect(screen.getByRole('button', { name: 'Replace' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      )
+      expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+    })
+
+    it('a retired product id opens its successor with a "replaced by" notice', () => {
+      const [retiredId, successorId] = [...retiredProductSuccessors][0]
+      const successor = softwareData.find((p) => p.productId === successorId)!
+      renderMobile(`/migrate?product=${encodeURIComponent(retiredId)}`)
+      const sheet = screen.getByTestId('migrate-product-detail-sheet')
+      expect(within(sheet).getAllByText(successor.softwareName).length).toBeGreaterThan(0)
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('replaced by')
+    })
+
+    it('?productIds= spanning domains lists the other domains', () => {
+      const [tls] = productsForDomain('tls')
+      const [hsm] = productsForDomain('hsm')
+      renderMobile(`/migrate?productIds=${tls.productId},${hsm.productId}`)
+      expect(screen.getByTestId('deeplink-elsewhere')).toHaveTextContent(hsm.softwareName)
+    })
+
+    describe('?vendor=', () => {
+      const vendorId = [...roadmapByVendorId.keys()][0]
+      const vendorName = roadmapByVendorId.get(vendorId)![0].vendorName
+
+      it("opens the Vendors tab with that vendor's roadmap sheet; closing drops it", () => {
+        renderMobile(`/migrate?vendor=${encodeURIComponent(vendorId)}`)
+        expect(screen.getByRole('button', { name: 'Vendors' })).toHaveAttribute(
+          'aria-pressed',
+          'true'
+        )
+        expect(screen.getByTestId('vendor-roadmap-sheet')).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
+        expect(search()).not.toContain('vendor=')
+      })
+
+      it('tapping a vendor card writes ?vendor=', () => {
+        renderMobile('/migrate?tab=roadmaps')
+        const card = screen.getAllByText(vendorName)[0].closest<HTMLElement>('div.rounded-xl')!
+        fireEvent.click(within(card).getAllByRole('button')[0])
+        expect(search()).toContain(`vendor=${vendorId}`)
+      })
+
+      it('an unknown vendor shows a not-found notice', () => {
+        renderMobile('/migrate?vendor=no-such-vendor-zz')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+          'no-such-vendor-zz'
+        )
+      })
+    })
+
+    it('?tab=plan&open=<productId> opens that product sheet', () => {
+      const [lib] = productsForDomain('foundations')
+      renderMobile(`/migrate?tab=plan&open=${encodeURIComponent(lib.productId)}`)
+      const sheet = screen.getByTestId('migrate-product-detail-sheet')
+      expect(within(sheet).getAllByText(lib.softwareName).length).toBeGreaterThan(0)
     })
   })
 })

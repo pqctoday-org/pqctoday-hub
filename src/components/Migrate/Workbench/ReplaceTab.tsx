@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigationType } from 'react-router'
 import { ArrowRight, Clock, Search, AlertTriangle, Check, Plus } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
@@ -57,9 +58,18 @@ interface ReplaceTabProps {
   deepLinkKey?: string
   /** The single deep-linked product to auto-expand, scroll to and highlight. */
   expandProductId?: string
-  /** The reader moved on from the deep-linked view (collapsed the row, changed
-   *  domain, filter or facets) — the parent drops ?product=/?productIds=. */
-  onDeepLinkConsumed?: () => void
+  /** The reader changed the view themselves — picked a domain (always), or
+   *  collapsed the linked row / edited the filter or facets while a link was
+   *  active. The parent drops the one-off link params and writes ?domain=
+   *  (null = reset to the default, which clears it). Deep-link PR 2. */
+  onViewChange?: (domain: DomainId | null) => void
+  /** The product named by the URL's ?product= right now (resolved id) — a
+   *  Back that removes it collapses the row that was opened. */
+  openProductId?: string
+  /** A row expanded by hand (parent pushes ?product=<id>). */
+  onProductOpen?: (productId: string, domain: DomainId) => void
+  /** A row collapsed by hand (parent drops ?product= if it names it). */
+  onProductClose?: (productId: string) => void
 }
 
 export function ReplaceTab({
@@ -70,7 +80,10 @@ export function ReplaceTab({
   onGoToRoadmaps,
   deepLinkKey,
   expandProductId,
-  onDeepLinkConsumed,
+  onViewChange,
+  openProductId,
+  onProductOpen,
+  onProductClose,
 }: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
@@ -94,10 +107,22 @@ export function ReplaceTab({
   // render later, so useState's initial value never saw them — a
   // useState(initialFilter ?? '') initializer only runs on first mount.
   // Sync explicitly instead, once these actually arrive.
+  // Domain on its own dependency (PR 2): it also follows ?domain=, and a link
+  // being consumed must not re-apply the URL's previous domain for the one
+  // render in which the router has not committed the new URL yet.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync when a linked/URL domain arrives
+    if (initialDomain) setSelectedDomain(initialDomain)
+  }, [initialDomain])
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- one-time sync when the deep-link values arrive, not on every parent re-render (same pattern as the ?share=/?product= effects in MigrationWorkbench.tsx) */
-    if (initialDomain) setSelectedDomain(initialDomain)
     if (initialFilter) setFilter(initialFilter)
+    // PR 2: a link that carries no id set (?q=, ?layer=, ?domain=) must not
+    // inherit the previous link's exact-id filter or text.
+    if (deepLinkKey && !initialProductIds) {
+      setProductIdFilter(undefined)
+      if (!initialFilter) setFilter('')
+    }
     if (initialProductIds) {
       setProductIdFilter(initialProductIds)
       setFilter('')
@@ -115,7 +140,7 @@ export function ReplaceTab({
       }
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [initialDomain, initialFilter, initialProductIds])
+  }, [initialDomain, initialFilter, initialProductIds, deepLinkKey])
 
   useScrollToDeepLinkTarget(
     expandProductId && deepLinkKey ? deepLinkKey : null,
@@ -124,14 +149,26 @@ export function ReplaceTab({
 
   // Any reader-driven change of domain / filter / facets ends the deep-linked view.
   const consumeDeepLink = () => {
-    if (deepLinkKey) onDeepLinkConsumed?.()
+    if (deepLinkKey) onViewChange?.(selectedDomain)
   }
+
+  // Back (a POP) that drops ?product=<id> closes the row that push opened:
+  // re-key it so it remounts collapsed. A fresh push never collapses others.
+  const navigationType = useNavigationType()
+  const [rowEpoch, setRowEpoch] = useState<ReadonlyMap<string, number>>(new Map())
+  const prevOpenProductIdRef = useRef(openProductId)
+  useEffect(() => {
+    const prev = prevOpenProductIdRef.current
+    prevOpenProductIdRef.current = openProductId
+    if (navigationType !== 'POP' || !prev || prev === openProductId) return
+    setRowEpoch((e) => new Map(e).set(prev, (e.get(prev) ?? 0) + 1))
+  }, [openProductId, navigationType])
 
   const onSelect = (d: DomainId) => {
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter(undefined)
-    consumeDeepLink()
+    onViewChange?.(d)
   }
 
   // A catalog-wide product search (AssetList's top-level search box) jumping
@@ -141,7 +178,7 @@ export function ReplaceTab({
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter([productId])
-    consumeDeepLink()
+    onViewChange?.(d)
   }
 
   const setFacet = (next: (f: ProductFacets) => ProductFacets) => {
@@ -197,7 +234,13 @@ export function ReplaceTab({
             />
           }
           activeFilterCount={activeFilterCount}
-          onClearAll={() => onSelect('tls')}
+          onClearAll={() => {
+            // Reset to the default domain and clear ?domain= (one URL write).
+            setSelectedDomain('tls')
+            setFilter('')
+            setProductIdFilter(undefined)
+            onViewChange?.(null)
+          }}
         />
       </div>
 
@@ -362,11 +405,22 @@ export function ReplaceTab({
                   return (
                     <ProductRow
                       // Re-key the linked row per link so it mounts expanded even if
-                      // it was already on screen collapsed.
-                      key={`${p.productId || p.softwareName}${isLinked ? `:${deepLinkKey}` : ''}`}
+                      // it was already on screen collapsed (and per Back, below).
+                      key={`${p.productId || p.softwareName}${isLinked ? `:${deepLinkKey}` : ''}:${rowEpoch.get(p.productId) ?? 0}`}
                       product={p}
                       defaultExpanded={isLinked}
-                      onCollapse={isLinked ? consumeDeepLink : undefined}
+                      onExpand={
+                        onProductOpen && p.productId
+                          ? () => onProductOpen(p.productId, selectedDomain)
+                          : undefined
+                      }
+                      onCollapse={
+                        isLinked
+                          ? consumeDeepLink
+                          : onProductClose && p.productId
+                            ? () => onProductClose(p.productId)
+                            : undefined
+                      }
                       // Key the choice on the domain id, not the replace-asset id:
                       // foundation/infrastructure domains have no ReplaceAsset, so
                       // gating on `asset` left their Choose button dead. For replace

@@ -6,7 +6,7 @@
 // embedded in the Simulation page.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import {
   TrendingUp,
   ArrowRightLeft,
@@ -27,7 +27,7 @@ import {
 } from '@/store/useMigrateSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { encodeMigrateShareToken, decodeMigrateShareToken } from '@/utils/migrateShareToken'
-import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
+import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { useMigrationPlan } from './useMigrationPlan'
 import { PostureCommandCenter } from './PostureCommandCenter'
@@ -43,7 +43,16 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '../../common/DeepLinkNotice'
-import { resolveProductLink, productLinkNoticeMessage } from './workbenchCatalog'
+import {
+  resolveMigrateLink,
+  resolveProductRef,
+  resolveDomainRef,
+  resolveVendorRef,
+  migrateLinkKey,
+  MIGRATE_LINK_PARAMS,
+  MIGRATE_TRANSIENT_LINK_PARAMS,
+  type MigrateLinkIntent,
+} from './workbenchCatalog'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -125,7 +134,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     setPriorSelection(null)
   }, [priorSelection, applySharedSelection])
 
-  // ── Product deep links (?product=<id|name> / ?productIds=<id1>,<id2>) ──
+  // ── Deep links (?product=, ?productIds=, ?domain=, ?vendor=, ?q= …) ─────
   // ?product= is emitted by ProductDetail's Endorse/Flag buttons (2026-07-16,
   // U8) and ?productIds= by the leader-detail "view N open-source projects"
   // link (2026-07-30). Deep-link remediation PR 1 (2026-09-28) reworked both:
@@ -139,77 +148,160 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   //    facets, another tab);
   //  - hydration re-runs whenever the param VALUE changes, so a second link
   //    while the page is mounted works (was a one-shot ref).
-  // Domain comes from the first resolved product; ?productIds= spanning
-  // several domains still shows only that domain's subset.
+  // PR 2 (2026-09-29) widened this to every param other pages already emit
+  // (resolveMigrateLink): ?domain= (Replace-tab domain, written when the
+  // reader picks one), ?vendor= (Roadmaps tab, that vendor's card opened),
+  // ?q=/?search=/?highlight=, ?layer=/?cat=/?category=/?subcat= and
+  // ?industry= (ignored). A retired product id resolves to its successor.
+  // ?productIds= spanning several domains shows the first product's domain
+  // plus a notice linking to the others. Our own URL writes set
+  // productLinkKeyRef first, so they never re-hydrate as a new link.
   // On the phone shell MobileMigrateView reads these params itself.
-  const productParam = searchParams.get('product')
-  const productIdsParam = searchParams.get('productIds')
+  const linkKey = migrateLinkKey((k) => searchParams.get(k))
+  const hasLinkParams = MIGRATE_LINK_PARAMS.some((k) => searchParams.has(k))
   const [productLink, setProductLink] = useState<{
     key: string
     domain: DomainId
-    productIds: string[]
+    filter?: string
+    productIds?: string[]
     expandId?: string
   } | null>(null)
+  const [vendorLink, setVendorLink] = useState<{ key: string; vendorId: string } | null>(null)
+  const [elsewhereProducts, setElsewhereProducts] = useState<MigrateLinkIntent['elsewhere']>([])
   const [productLinkNotice, setProductLinkNotice] = useState<string | null>(null)
   const productLinkKeyRef = useRef<string | null>(null)
   useEffect(() => {
     if (embedded || isMobileShell) return
-    if (!productParam && !productIdsParam) {
+    if (!hasLinkParams) {
       productLinkKeyRef.current = null
       return
     }
-    const key = `${productParam ?? ''}|${productIdsParam ?? ''}`
-    if (productLinkKeyRef.current === key) return
-    productLinkKeyRef.current = key
-    const res = resolveProductLink(productParam, productIdsParam)
-    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from the ?product=/?productIds= link, once per distinct param value */
-    setProductLinkNotice(productLinkNoticeMessage(res))
-    const first = res.products[0]
-    const domain = first
-      ? classifyProductDomain(first.categoryName, first.infrastructureLayer)
-      : null
-    if (!domain) {
-      setProductLink(null)
-      return
-    }
-    setTabStore('replace')
-    setProductLink({
-      key,
-      domain,
-      productIds: res.products.map((p) => p.productId),
-      expandId: res.products.length === 1 ? first.productId : undefined,
-    })
+    if (productLinkKeyRef.current === linkKey) return
+    productLinkKeyRef.current = linkKey
+    const intent = resolveMigrateLink((k) => searchParams.get(k))
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from the link params, once per distinct param value */
+    setProductLinkNotice(intent.notice)
+    setElsewhereProducts(intent.elsewhere)
+    setVendorLink(intent.vendorId ? { key: linkKey, vendorId: intent.vendorId } : null)
+    setProductLink(
+      intent.domain
+        ? {
+            key: linkKey,
+            domain: intent.domain,
+            filter: intent.filter,
+            productIds: intent.productIds,
+            expandId: intent.expandId,
+          }
+        : null
+    )
+    if (!intent.tab) return
+    setTabStore(intent.tab)
     /* eslint-enable react-hooks/set-state-in-effect */
-    if (searchParams.get('tab') !== 'replace') {
+    if (searchParams.get('tab') !== intent.tab) {
       const sp = new URLSearchParams(searchParams)
-      sp.set('tab', 'replace')
+      sp.set('tab', intent.tab)
+      productLinkKeyRef.current = migrateLinkKey((k) => sp.get(k))
       setSearchParams(sp, { replace: true })
     }
-  }, [
-    embedded,
-    isMobileShell,
-    productParam,
-    productIdsParam,
-    searchParams,
-    setSearchParams,
-    setTabStore,
-  ])
+  }, [embedded, isMobileShell, hasLinkParams, linkKey, searchParams, setSearchParams, setTabStore])
 
-  /** The reader moved on from the linked product: forget it and drop the
-   *  params (replace — a filter-style change, not a new history entry). */
-  const clearProductLink = useCallback(() => {
-    setProductLink(null)
-    productLinkKeyRef.current = null
-    setSearchParams(
-      (prev) => {
-        const sp = new URLSearchParams(prev)
-        sp.delete('product')
-        sp.delete('productIds')
-        return sp
-      },
-      { replace: true }
-    )
-  }, [setSearchParams])
+  /** One URL write that never re-hydrates as a link (the key is recorded
+   *  first). react-router doesn't queue functional updates, so every change
+   *  a click makes goes through a single call. */
+  const writeLinkParams = useCallback(
+    (mutate: (sp: URLSearchParams) => void, replace: boolean) => {
+      if (embedded) return
+      setSearchParams(
+        (prev) => {
+          const sp = new URLSearchParams(prev)
+          mutate(sp)
+          productLinkKeyRef.current = migrateLinkKey((k) => sp.get(k))
+          return sp
+        },
+        { replace }
+      )
+    },
+    [embedded, setSearchParams]
+  )
+
+  /** The reader moved on from the linked view (collapsed the row, changed
+   *  domain, filter or facets): forget the link and drop its params (replace —
+   *  a filter-style change, not a new history entry). The domain they are
+   *  now on is written as ?domain= (null = reset to the default: cleared). */
+  const onReplaceViewChange = useCallback(
+    (domain: DomainId | null) => {
+      setProductLink(null)
+      setElsewhereProducts([])
+      writeLinkParams((sp) => {
+        for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+        if (domain) sp.set('domain', domain)
+        else sp.delete('domain')
+      }, true)
+    },
+    [writeLinkParams]
+  )
+
+  /** A Replace-tab row expanded by hand: opening a resource pushes history. */
+  const onProductOpen = useCallback(
+    (productId: string, domain: DomainId) =>
+      writeLinkParams((sp) => {
+        for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+        sp.set('domain', domain)
+        sp.set('product', productId)
+      }, false),
+    [writeLinkParams]
+  )
+
+  /** …and collapsed: drop ?product= if it names that row (replace). */
+  const onProductClose = useCallback(
+    (productId: string) => {
+      const current = searchParams.get('product')
+      if (!current || resolveProductRef(current)?.product.productId !== productId) return
+      writeLinkParams((sp) => sp.delete('product'), true)
+    },
+    [searchParams, writeLinkParams]
+  )
+
+  /** Roadmaps tab: a vendor card's products opened (push) / closed or the
+   *  vendor filter edited (replace). */
+  const onVendorChange = useCallback(
+    (vendorId: string | null, open: boolean) => {
+      if (open && vendorId) {
+        writeLinkParams((sp) => {
+          for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+          sp.set('vendor', vendorId)
+        }, false)
+        return
+      }
+      const current = searchParams.get('vendor')
+      if (!current || (vendorId && resolveVendorRef(current) !== vendorId)) return
+      writeLinkParams((sp) => sp.delete('vendor'), true)
+    },
+    [searchParams, writeLinkParams]
+  )
+
+  /** Plan / Roadmaps / Vendor-risk ?open=<productId|domainId>: written when a
+   *  Plan row is expanded (push), cleared when it is collapsed (replace). */
+  const openParam = embedded ? null : searchParams.get('open')
+  const onOpenChange = useCallback(
+    (ref: string | null) => {
+      if (!ref && !searchParams.get('open')) return
+      writeLinkParams((sp) => {
+        if (ref) sp.set('open', ref)
+        else sp.delete('open')
+      }, !ref)
+    },
+    [searchParams, writeLinkParams]
+  )
+
+  // The Replace tab's domain survives a tab switch and a reload via ?domain=
+  // (ReplaceTab remounts when its tab is re-selected).
+  const domainParam = embedded ? null : searchParams.get('domain')
+  const urlDomain = domainParam ? resolveDomainRef(domainParam) : null
+  const urlProductId = useMemo(() => {
+    const v = embedded ? null : searchParams.get('product')
+    return v ? resolveProductRef(v)?.product.productId : undefined
+  }, [embedded, searchParams])
 
   const shareUrl = useMemo(
     () =>
@@ -238,14 +330,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       setTabStore(t)
       const sp = new URLSearchParams(searchParams)
       sp.set('tab', t)
-      // Leaving Replace ends a product deep link — otherwise returning to the
+      // Leaving a tab ends a product deep link — otherwise returning to the
       // tab would silently re-apply a stale filter.
-      if (t !== 'replace') {
-        sp.delete('product')
-        sp.delete('productIds')
-        setProductLink(null)
-        productLinkKeyRef.current = null
-      }
+      // PR 2: the same goes for every one-off link param (?vendor=, ?q=, ?open=
+      // …) on any tab switch; ?domain= is view state and stays.
+      for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+      sp.delete('open')
+      setProductLink(null)
+      setVendorLink(null)
+      setElsewhereProducts([])
+      productLinkKeyRef.current = migrateLinkKey((k) => sp.get(k))
       setSearchParams(sp, { replace: true })
     },
     [embedded, searchParams, setSearchParams, setTabStore]
@@ -356,6 +450,32 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         </div>
       )}
 
+      {!embedded && elsewhereProducts.length > 0 && (
+        <div
+          role="status"
+          data-testid="deeplink-elsewhere"
+          className="mt-3 rounded-lg border border-border bg-muted/30 p-3 text-sm"
+        >
+          <p>Some linked products are in other categories:</p>
+          <ul className="mt-1 list-disc pl-5">
+            {elsewhereProducts.map((g) => (
+              <li key={g.domain}>
+                <Link
+                  to={`/migrate?tab=replace&productIds=${g.products
+                    .map((p) => encodeURIComponent(p.productId))
+                    .join(',')}`}
+                  className="text-primary underline underline-offset-2"
+                >
+                  {DOMAINS[g.domain].label}
+                </Link>
+                {' — '}
+                {g.products.map((p) => p.softwareName).join(', ')}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="mt-2">
         <PostureCommandCenter posture={posture} onGoToReplace={() => setTab('replace')} />
       </div>
@@ -392,22 +512,36 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <TabsContent value="replace" className="mt-4">
           <ReplaceTab
             persona={persona}
-            initialDomain={productLink?.domain ?? focus?.domain}
+            initialDomain={productLink?.domain ?? urlDomain ?? focus?.domain}
+            initialFilter={productLink?.filter}
             initialProductIds={productLink?.productIds}
             deepLinkKey={productLink?.key}
             expandProductId={productLink?.expandId}
-            onDeepLinkConsumed={clearProductLink}
+            openProductId={urlProductId}
+            onViewChange={embedded ? undefined : onReplaceViewChange}
+            onProductOpen={embedded ? undefined : onProductOpen}
+            onProductClose={embedded ? undefined : onProductClose}
             onGoToRoadmaps={() => setTab('roadmaps')}
           />
         </TabsContent>
         <TabsContent value="plan" className="mt-4">
-          <PlanTab posture={posture} onGoToReplace={() => setTab('replace')} />
+          <PlanTab
+            posture={posture}
+            onGoToReplace={() => setTab('replace')}
+            openRef={openParam ?? undefined}
+            onOpenChange={embedded ? undefined : onOpenChange}
+          />
         </TabsContent>
         <TabsContent value="roadmaps" className="mt-4">
-          <RoadmapsTab />
+          <RoadmapsTab
+            focusVendorId={vendorLink?.vendorId}
+            focusKey={vendorLink?.key}
+            openRef={openParam ?? undefined}
+            onVendorChange={embedded ? undefined : onVendorChange}
+          />
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
-          <VendorConcentrationRiskPanel />
+          <VendorConcentrationRiskPanel openRef={openParam ?? undefined} />
           <SupplyChainRiskMatrix variant="flat" />
         </TabsContent>
       </Tabs>

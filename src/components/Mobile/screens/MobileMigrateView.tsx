@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import {
   ArrowRight,
   Calendar,
@@ -34,8 +34,13 @@ import {
   productsForVendor,
   domainProductCount,
   filterProducts,
-  resolveProductLink,
-  productLinkNoticeMessage,
+  resolveMigrateLink,
+  resolveProductRef,
+  vendorHasRoadmapCard,
+  migrateLinkKey,
+  MIGRATE_LINK_PARAMS,
+  MIGRATE_TRANSIENT_LINK_PARAMS,
+  type MigrateLinkIntent,
 } from '@/components/Migrate/Workbench/workbenchCatalog'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
@@ -209,16 +214,25 @@ export function MobileMigrateView() {
   // (resolveProductLink: id → exact name → former name). A single resolved
   // product opens its detail sheet; opening a product pushes ?product=<id>,
   // closing the sheet removes it with replace.
+  // PR 2 (2026-09-29): the same resolver as desktop (resolveMigrateLink) now
+  // also reads ?domain= (written when a domain chip is picked), ?vendor=
+  // (opens that vendor's roadmap sheet; tapping a vendor pushes it, closing
+  // the sheet drops it), ?q=/?search=/?highlight=, ?layer=/?cat=/?category=/
+  // ?subcat= and ?industry=, a retired product id (→ its successor), and
+  // ?open=<productId> on the Plan (product sheet) and Vendors (the product's
+  // vendor sheet) tabs. Our own URL writes record their key first so they
+  // never re-hydrate as a new link.
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
   const productParam = searchParams.get('product')
   const productIdsParam = searchParams.get('productIds')
+  const openParam = searchParams.get('open')
+  const linkKey = migrateLinkKey((k) => searchParams.get(k))
+  const hasLinkParams = MIGRATE_LINK_PARAMS.some((k) => searchParams.has(k))
+  const linkKeyRef = useRef<string | null>(null)
   const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(undefined)
   const [linkNotice, setLinkNotice] = useState<string | null>(null)
-  const selectedProductRef = useRef<SoftwareItem | null>(null)
-  useEffect(() => {
-    selectedProductRef.current = selectedProduct
-  }, [selectedProduct])
+  const [elsewhere, setElsewhere] = useState<MigrateLinkIntent['elsewhere']>([])
 
   const updateParams = useCallback(
     (mutate: (sp: URLSearchParams) => void, replace: boolean) => {
@@ -226,6 +240,7 @@ export function MobileMigrateView() {
         (prev) => {
           const sp = new URLSearchParams(prev)
           mutate(sp)
+          linkKeyRef.current = migrateLinkKey((k) => sp.get(k))
           return sp
         },
         { replace }
@@ -240,39 +255,62 @@ export function MobileMigrateView() {
   }, [tabParam])
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from ?product=/?productIds= whenever their value changes (initial load, a second link, back/forward) */
-    if (!productParam && !productIdsParam) {
-      // Back from an opened product (or the params were cleared) closes the sheet.
-      setSelectedProduct(null)
-      return
-    }
-    const res = resolveProductLink(productParam, productIdsParam)
-    const first = res.products[0]
-    // Our own openProduct() push — the sheet is already showing it.
-    if (res.products.length === 1 && selectedProductRef.current?.productId === first.productId) {
-      return
-    }
-    setLinkNotice(productLinkNoticeMessage(res))
-    const domain = first
-      ? classifyProductDomain(first.categoryName, first.infrastructureLayer)
-      : null
-    if (!first || !domain) return
-    setTab('replace')
-    setSelectedDomain(domain)
-    setFilter('')
-    setCatalogQuery('')
-    setProductIdFilter(res.products.map((p) => p.productId))
-    setSelectedProduct(res.products.length === 1 ? first : null)
-    /* eslint-enable react-hooks/set-state-in-effect */
+    // Back from an opened product (or the params were cleared) closes the sheet.
+    if (!productParam && !productIdsParam) setSelectedProduct(null)
   }, [productParam, productIdsParam])
+
+  useEffect(() => {
+    if (!hasLinkParams) {
+      linkKeyRef.current = null
+      return
+    }
+    if (linkKeyRef.current === linkKey) return
+    linkKeyRef.current = linkKey
+    const intent = resolveMigrateLink((k) => searchParams.get(k))
+    setLinkNotice(intent.notice)
+    setElsewhere(intent.elsewhere)
+    if (intent.tab) setTab(intent.tab)
+    if (intent.vendorId) setPendingVendorId(intent.vendorId)
+    if (intent.domain) {
+      setSelectedDomain(intent.domain)
+      setFilter(intent.filter ?? '')
+      setCatalogQuery('')
+      setProductIdFilter(intent.productIds)
+    }
+    const expand = intent.expandId ? resolveProductRef(intent.expandId)?.product : undefined
+    if (intent.productIds) setSelectedProduct(expand ?? null)
+    if (intent.tab && searchParams.get('tab') !== intent.tab) {
+      const tabNext = intent.tab
+      updateParams((sp) => sp.set('tab', tabNext), true)
+    }
+  }, [hasLinkParams, linkKey, searchParams, updateParams])
+
+  // ?open=<productId>: Plan → that product's sheet; Vendors → its vendor's
+  // roadmap sheet. The Vendor-risk tab has no per-item view on the phone.
+  useEffect(() => {
+    if (!openParam) return
+    const product = resolveProductRef(openParam)?.product
+    if (!product) {
+      setLinkNotice(`No product matching “${openParam}” is in the catalog.`)
+    } else if (tabParam === 'plan') {
+      setSelectedProduct(product)
+    } else if (
+      tabParam === 'roadmaps' &&
+      product.vendorId &&
+      vendorHasRoadmapCard(product.vendorId)
+    ) {
+      setPendingVendorId(product.vendorId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per ?open= value
+  }, [openParam])
 
   const openProduct = useCallback(
     (p: SoftwareItem) => {
-      selectedProductRef.current = p
       setSelectedProduct(p)
       if (!p.productId) return
       updateParams((sp) => {
         sp.delete('productIds')
+        sp.delete('open')
         sp.set('product', p.productId)
       }, false)
     },
@@ -280,23 +318,51 @@ export function MobileMigrateView() {
   )
 
   const closeProduct = useCallback(() => {
-    selectedProductRef.current = null
     setSelectedProduct(null)
     updateParams((sp) => {
       sp.delete('product')
       sp.delete('productIds')
+      sp.delete('open')
     }, true)
   }, [updateParams])
 
   const selectTab = (t: Tab) => {
     setTab(t)
-    updateParams((sp) => sp.set('tab', t), true)
+    setElsewhere([])
+    updateParams((sp) => {
+      for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+      sp.delete('open')
+      sp.set('tab', t)
+    }, true)
   }
 
-  /** Reader narrowed/changed the list themselves: drop a lingering productIds link. */
-  const dropProductIdsLink = () => {
+  /** Reader narrowed/changed the list themselves: drop a lingering link and
+   *  record the domain they are on (?domain=, replace). */
+  const leaveLink = (domain: DomainId) => {
     setProductIdFilter(undefined)
-    if (productIdsParam) updateParams((sp) => sp.delete('productIds'), true)
+    setElsewhere([])
+    const hasTransient = MIGRATE_TRANSIENT_LINK_PARAMS.some((k) => searchParams.has(k))
+    if (!hasTransient && searchParams.get('domain') === domain) return
+    updateParams((sp) => {
+      for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+      sp.set('domain', domain)
+    }, true)
+  }
+
+  /** Vendors tab: a vendor's roadmap sheet opened by tap (push ?vendor=) or
+   *  closed (drop it, replace). */
+  const onVendorSheetChange = (vendorId: string | null) => {
+    if (vendorId) {
+      updateParams((sp) => {
+        for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+        sp.set('vendor', vendorId)
+      }, false)
+    } else if (searchParams.get('vendor') || openParam) {
+      updateParams((sp) => {
+        sp.delete('vendor')
+        sp.delete('open')
+      }, true)
+    }
   }
 
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -332,7 +398,7 @@ export function MobileMigrateView() {
   const handleSelectDomain = (id: DomainId) => {
     setSelectedDomain(id)
     setFilter('')
-    dropProductIdsLink()
+    leaveLink(id)
   }
 
   // Catalog-wide search results (all ~1,011 products, not just one domain's
@@ -406,6 +472,32 @@ export function MobileMigrateView() {
           message={linkNotice}
           onDismiss={() => setLinkNotice(null)}
         />
+      )}
+
+      {elsewhere.length > 0 && (
+        <div
+          role="status"
+          data-testid="deeplink-elsewhere"
+          className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-[12px]"
+        >
+          <p>Some linked products are in other categories:</p>
+          <ul className="mt-1 list-disc pl-5">
+            {elsewhere.map((g) => (
+              <li key={g.domain}>
+                <Link
+                  to={`/migrate?tab=replace&productIds=${g.products
+                    .map((p) => encodeURIComponent(p.productId))
+                    .join(',')}`}
+                  className="text-primary underline underline-offset-2"
+                >
+                  {DOMAINS[g.domain].label}
+                </Link>
+                {' — '}
+                {g.products.map((p) => p.softwareName).join(', ')}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {tab === 'replace' && (
@@ -627,7 +719,7 @@ export function MobileMigrateView() {
                     value={filter}
                     onChange={(e) => {
                       setFilter(e.target.value)
-                      dropProductIdsLink()
+                      if (productIdFilter || hasLinkParams) leaveLink(selectedDomain)
                     }}
                     placeholder="Filter products…"
                     aria-label="Filter products"
@@ -690,6 +782,7 @@ export function MobileMigrateView() {
           onSelectProduct={openProduct}
           openVendorId={pendingVendorId}
           onOpenedVendor={() => setPendingVendorId(null)}
+          onVendorSheetChange={onVendorSheetChange}
         />
       )}
 
@@ -699,14 +792,14 @@ export function MobileMigrateView() {
         product={selectedProduct}
         onClose={closeProduct}
         onViewVendorRoadmap={(vendorId) => {
-          selectedProductRef.current = null
           setSelectedProduct(null)
           setPendingVendorId(vendorId)
           setTab('roadmaps')
           updateParams((sp) => {
-            sp.delete('product')
-            sp.delete('productIds')
+            for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+            sp.delete('open')
             sp.set('tab', 'roadmaps')
+            sp.set('vendor', vendorId)
           }, true)
         }}
       />
@@ -1284,6 +1377,7 @@ function MobileRoadmapsTab({
   onSelectProduct,
   openVendorId,
   onOpenedVendor,
+  onVendorSheetChange,
 }: {
   query: string
   onQueryChange: (q: string) => void
@@ -1294,6 +1388,9 @@ function MobileRoadmapsTab({
    *  again in the list below. */
   openVendorId: string | null
   onOpenedVendor: () => void
+  /** A vendor sheet opened by tap (id) or closed (null) — the parent keeps
+   *  ?vendor= in step (deep-link PR 2). */
+  onVendorSheetChange?: (vendorId: string | null) => void
 }) {
   const selectedProductIds = useSelectedProductIds()
   const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null)
@@ -1392,7 +1489,10 @@ function MobileRoadmapsTab({
                 key={v.vendorId}
                 vendorId={v.vendorId}
                 vendorName={v.vendorName}
-                onSelect={() => setSelectedVendorId(v.vendorId)}
+                onSelect={() => {
+                  setSelectedVendorId(v.vendorId)
+                  onVendorSheetChange?.(v.vendorId)
+                }}
                 onViewProducts={() => setViewingVendorId(v.vendorId)}
               />
             ))}
@@ -1411,7 +1511,10 @@ function MobileRoadmapsTab({
               key={v.vendorId}
               vendorId={v.vendorId}
               vendorName={v.vendorName}
-              onSelect={() => setSelectedVendorId(v.vendorId)}
+              onSelect={() => {
+                setSelectedVendorId(v.vendorId)
+                onVendorSheetChange?.(v.vendorId)
+              }}
               onViewProducts={() => setViewingVendorId(v.vendorId)}
             />
           ))}
@@ -1425,7 +1528,10 @@ function MobileRoadmapsTab({
 
       <MobileSheet
         open={!!selectedVendorId}
-        onClose={() => setSelectedVendorId(null)}
+        onClose={() => {
+          setSelectedVendorId(null)
+          onVendorSheetChange?.(null)
+        }}
         title={
           selectedVendorId
             ? roadmapByVendorId.get(selectedVendorId)?.[0]?.vendorName ||
