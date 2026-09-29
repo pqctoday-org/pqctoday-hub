@@ -2800,11 +2800,15 @@ export function SimulationView() {
               const steps = acts.flatMap((a) =>
                 a.steps.filter((st) => isGatingStep(st)).map((st) => ({ st, act: a }))
               )
-              if (!band || steps.length === 0) return null
+              // 09-28: sector-track steps (optional) were desktop-only — they
+              // render in the desktop Progress tab, so on a phone the government,
+              // PCI, healthcare … sector modules never appeared at all.
+              const sectorSteps = sectorStepsForPhase(sector, sel)
+              if ((!band || steps.length === 0) && sectorSteps.length === 0) return null
               return (
                 <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
                   <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
-                    Resources for this phase · L{band.level} in any order
+                    Resources for this phase{band ? ` · L${band.level} in any order` : ''}
                   </summary>
                   <div className="space-y-1.5 border-t border-border px-3 py-2">
                     {steps.map(({ st, act }, i) => {
@@ -2843,6 +2847,47 @@ export function SimulationView() {
                         </div>
                       )
                     })}
+                    {sectorSteps.length > 0 && (
+                      <div className="pt-1" data-testid="phone-sector-steps">
+                        <div className="mb-1 font-mono text-sim-micro font-bold uppercase tracking-wide text-muted-foreground">
+                          For your sector · optional
+                        </div>
+                        {sectorSteps.map((ss) => {
+                          const done = moduleDone(ss.moduleId)
+                          const step: TreeStep = {
+                            kind: 'learn',
+                            label: ss.label,
+                            to: ss.to,
+                            moduleId: ss.moduleId,
+                          }
+                          return (
+                            <div
+                              key={ss.moduleId}
+                              className="mb-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-bold text-foreground">{ss.label}</span>
+                                <span
+                                  className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                                >
+                                  {done ? 'done' : 'open'}
+                                </span>
+                              </div>
+                              {!done && (
+                                <Link
+                                  to={ss.to}
+                                  onClick={() => markSimResume()}
+                                  className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                                >
+                                  Open →
+                                </Link>
+                              )}
+                              {!done && renderPhoneCompletion(step, undefined)}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 </details>
               )
