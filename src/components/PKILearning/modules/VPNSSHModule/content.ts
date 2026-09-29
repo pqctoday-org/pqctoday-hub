@@ -35,7 +35,9 @@ export const content: ModuleContent = {
     // submission, whose own capture reads "Expired Internet-Draft (individual) Expired &
     // archived".
     getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
-    getStandard('draft-ietf-ipsecme-ikev2-mlkem-06'),
+    getStandard('draft-ietf-ipsecme-ikev2-mlkem-09'),
+    // RFC 9329 (obsoletes RFC 8229): the reliable-transport route the limits section names
+    getStandard('RFC-9329'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('OpenSSH-9-9'), // m-vpn-ssh-pqc: September 2024
     getStandard('Multiple-Authentication-Exchanges-in-the-Internet-Key-Exchan'), // pt-vpn-sim: RFC 4739

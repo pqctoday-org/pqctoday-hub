@@ -104,13 +104,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;The initiator sends an ML-KEM encapsulation key in an Additional Key Exchange
-              payload during IKE_INTERMEDIATE. The responder encapsulates against this key and
-              returns the ciphertext. The resulting shared secret is combined with the classical DH
-              secret using the IKEv2 key hierarchy.&rdquo;
+              &ldquo;The initiator generates an ML-KEM keypair (pk, sk) using KeyGen(), and sends
+              the public key (pk) to the responder inside a KEi(1) payload. The responder will
+              encapsulate a shared secret ss using Encaps(pk) and the resulting ciphertext (ct) is
+              sent to initiator using the KEr(1).&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; draft-ietf-ipsecme-ikev2-mlkem-06
+              &mdash; draft-ietf-ipsecme-ikev2-mlkem-09, Appendix A
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

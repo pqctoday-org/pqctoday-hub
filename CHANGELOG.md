@@ -43,6 +43,8 @@ The VPN/IPsec & SSH module now explains where pure post-quantum IKEv2 runs into 
 
 ### Data
 
+- **Two IPsec standards added to the library, and one marked as replaced** [view:/library] [persona:researcher] [persona:architect]: the current ML-KEM in IKEv2 draft (version 09) and RFC 9329 (IKE and IPsec over TCP) are now in the library with their summaries. RFC 8229 is marked as replaced by RFC 9329. The VPN/IPsec & SSH module now cites these instead of the older draft, and its quoted passage was replaced with the draft's exact wording.
+
 - **The IKE / IPsec row in the Protocol Matrix notes the pure ML-KEM limit** [view:/algorithms] [persona:architect] [persona:researcher]: a short note on the pure-KEM entry explains the first-message size restriction and the hybrid alternative.
 
 ## [4.131.0] - 2026-09-27
