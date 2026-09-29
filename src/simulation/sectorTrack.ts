@@ -52,6 +52,11 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         label: 'Vendor & third-party PQC risk for financial services',
         to: '/learn/vendor-risk',
       },
+      {
+        moduleId: 'pci-certification',
+        label: 'PCI certification — PIN, P2PE & payment HSMs, and what PQC changes',
+        to: '/learn/pci-certification',
+      },
     ],
   },
   healthcare: {
@@ -73,9 +78,12 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
   government: {
     p0: [
       {
-        moduleId: 'aerospace-pqc',
+        // 09-28 content integration (WP-C): this step was labelled "government
+        // & defense" but linked to aerospace-pqc; the real Government & Defense
+        // module has existed since 2026-07-30.
+        moduleId: 'government-defense-pqc',
         label: 'PQC migration for government & defense',
-        to: '/learn/aerospace-pqc',
+        to: '/learn/government-defense-pqc',
       },
     ],
     p3: [
@@ -158,6 +166,11 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         moduleId: 'database-encryption-pqc',
         label: 'Database & data-at-rest PQC for retail & e-commerce',
         to: '/learn/database-encryption-pqc',
+      },
+      {
+        moduleId: 'pci-certification',
+        label: 'PCI certification — PIN, P2PE & payment HSMs, and what PQC changes',
+        to: '/learn/pci-certification',
       },
     ],
   },

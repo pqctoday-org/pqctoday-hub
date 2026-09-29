@@ -423,4 +423,30 @@ test.describe('Simulation — phone play (iPhone 13)', () => {
     await expect(decide).toHaveCount(0)
     await expect(page.getByText('Q1 2026', { exact: true })).toBeVisible()
   })
+
+  test('phone: sector-track steps appear in Resources and can be completed (09-28)', async ({
+    page,
+  }) => {
+    await seedUnlockedAssessment(page)
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
+    const group = page.getByRole('group', { name: /Choose a playable phase/i })
+    await expect(group).toBeVisible({ timeout: 20_000 })
+    // play as the government sector
+    await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem('pqc-simulation') ?? '{"state":{}}')
+      s.state.sector = 'government'
+      localStorage.setItem('pqc-simulation', JSON.stringify(s))
+    })
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await expect(group).toBeVisible({ timeout: 20_000 })
+    await group.getByRole('button', { name: /Executive Mandate/ }).click()
+    await page.getByText(/Resources for this phase/).click()
+    const sector = page.getByTestId('phone-sector-steps')
+    await expect(sector).toContainText(/government & defense/i)
+    await sector
+      .getByRole('button', { name: /Mark complete/i })
+      .first()
+      .click()
+    await expect(page.getByRole('dialog').last()).toBeVisible()
+  })
 })

@@ -86,6 +86,11 @@ export const QUIZ_CATEGORIES = [
   'fips-140-3-certification',
   'cc-eucc-certification',
   'pci-certification',
+  // 09-28 (sim content integration): the Simulation's comprehension check for
+  // these modules needs questions, and questions need a category.
+  'government-defense-pqc',
+  'pki-enrollment-protocols',
+  'acvp-lab-workflow',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

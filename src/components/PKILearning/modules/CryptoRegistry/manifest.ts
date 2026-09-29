@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-registry',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-062',
   title: 'CycloneDX Cryptography Registry',
   description:
@@ -30,7 +30,8 @@ const manifest: ModuleManifest = {
     step: 'algorithm-normalizer',
     text: 'Paste a messy identifier such as CKM_ECDSA_SHA256 into the Algorithm Name Normalizer: it resolves the HSM, JWT or scanner name to its one canonical family.',
   },
-  embeddable: false,
+  // Sim-embeddable since 2026-09-28 (user decision D1): a P2 tree step.
+  embeddable: true,
   taxonomy: {
     standards: ['CycloneDX Cryptography Registry'],
   },

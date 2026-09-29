@@ -18,6 +18,10 @@ export const VERTICAL_BY_SECTOR: Record<string, string[]> = {
   'digital-assets': ['financial'],
   'automotive-pqc': [], // no sim sector → never relevant
   'aerospace-pqc': [],
+  'government-defense-pqc': ['government'],
+  // 09-28 content integration: payment-scheme certification is a
+  // financial/retail concern (its sim home is those sectors' P7 track).
+  'pci-certification': ['financial', 'retail'],
   // playground tools
   'suci-flow': ['telecom'],
   'bitcoin-flow': ['financial'],

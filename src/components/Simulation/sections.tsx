@@ -37,6 +37,16 @@ import {
 } from './simChrome'
 
 // ---- resources -----------------------------------------------------------
+/** Sim sector → the Industry Landscape's own industry label (`general` has no
+ *  single industry, so its landscape link stays unfiltered). */
+export const LANDSCAPE_INDUSTRY: Record<string, string> = {
+  financial: 'Finance & Banking',
+  retail: 'Retail & E-Commerce',
+  telecom: 'Telecommunications',
+  energy: 'Critical Infrastructure / Energy',
+  healthcare: 'Healthcare / Pharmaceutical',
+  government: 'Government & Defense',
+}
 export interface ResItem {
   id: string
   label: string
@@ -64,11 +74,16 @@ export function resLinks(
         to: `/learn/${id}`,
       }))
   if (leg === 'reference')
-    return resourcesForPhase('reference', phase).map((id) => ({
-      id,
-      label: REF_LABELS[id] ?? id,
-      to: REFERENCE_PHASES[id]?.deepUrl ?? '/',
-    }))
+    return resourcesForPhase('reference', phase).map((id) => {
+      const base = REFERENCE_PHASES[id]?.deepUrl ?? '/'
+      // 09-28 (WP-E / Q3): the Industry Landscape opens on the run's sector.
+      const industry = id === 'industry-landscape' ? LANDSCAPE_INDUSTRY[sector] : undefined
+      return {
+        id,
+        label: REF_LABELS[id] ?? id,
+        to: industry ? `${base}&industry=${encodeURIComponent(industry)}` : base,
+      }
+    })
   const biz = resourcesForPhase('business', phase, 'practice')
     .filter(relevant)
     .map((id) => ({
@@ -201,6 +216,7 @@ export function DecisionSection({
   onDecide,
   onClearAttempt,
   onShowProgress,
+  note,
 }: {
   phaseId: PhaseId
   ctx: MoveCtx
@@ -254,6 +270,9 @@ export function DecisionSection({
    *  Progress tab, where every step of the active level can be opened in any
    *  order. Omitted on the phone, which has no such tab. */
   onShowProgress?: () => void
+  /** 09-28 (content plan P5): a context note for the next move (e.g. the
+   *  architecture step needs more decisions than are unlocked yet). */
+  note?: ReactNode
 }) {
   // W3: the persisted attempt is the source of truth, but the component also
   // holds its own submitted-pick so single-attempt semantics survive even
@@ -415,6 +434,11 @@ export function DecisionSection({
           scripted walkthrough. */}
       {nextMove.act.do && (
         <p className="mb-2 text-[11px] leading-snug text-muted-foreground">{nextMove.act.do}</p>
+      )}
+      {note && (
+        <div className="mb-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 text-[11px] leading-snug text-foreground">
+          {note}
+        </div>
       )}
       <div className="grid gap-2 sm:grid-cols-3">
         {cards.map((c, i) => {

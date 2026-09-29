@@ -39,10 +39,11 @@ const STATIC_ROUTES = new Set<string>([
   '/patents',
   '/revisions',
   '/simulation',
+  '/navigate',
 ])
 
 /** Valid `?tab=` values on /algorithms (AlgorithmsView). */
-const ALGORITHMS_TABS = new Set(['transition', 'detailed', 'support'])
+const ALGORITHMS_TABS = new Set(['transition', 'detailed', 'support', 'landscape', 'validation'])
 
 export interface DeepLinkResolution {
   ok: boolean
@@ -67,9 +68,11 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
   const keys = [...params.keys()]
   if (keys.length === 0) return { ok: true }
   if (path === '/algorithms') {
-    const bad = keys.find((k) => k !== 'tab')
-    if (bad) return { ok: false, reason: `/algorithms: unknown param "${bad}"` }
     const tab = params.get('tab')
+    // `industry` / `mechanism` pick a lens on the Industry Landscape tab only.
+    const allowed = tab === 'landscape' ? ['tab', 'industry', 'mechanism'] : ['tab']
+    const bad = keys.find((k) => !allowed.includes(k))
+    if (bad) return { ok: false, reason: `/algorithms: unknown param "${bad}"` }
     if (tab && !ALGORITHMS_TABS.has(tab))
       return { ok: false, reason: `/algorithms: unknown tab "${tab}"` }
     return { ok: true }

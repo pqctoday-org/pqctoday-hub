@@ -153,4 +153,9 @@ export const REF_LABELS: Record<string, string> = {
   library: 'Library',
   'assess-engine': 'Assessment Engine',
   report: 'Executive Report',
+  'industry-landscape': 'Industry Landscape (your sector)',
+  'algorithms-validation': 'Algorithm Validation (ACVP)',
+  leaders: 'PQC Leaders — who is migrating',
+  patents: 'PQC Patent Landscape',
+  explore: 'Explore the hub',
 }

@@ -195,6 +195,7 @@ import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
 import { hasRunStarted } from '@/simulation/runState'
+import { archStepShortfall } from '@/simulation/archCapacity'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
 import { readRunMetric, type RunMetricInputs } from '@/simulation/runMetrics'
 import { runQualityIndicators, indicatorsLabel } from '@/simulation/qualityIndicators'
@@ -270,11 +271,10 @@ function resourceStep(leg: ResLeg, it: ResItem): TreeStep {
   // in WORKSHOP_TOOL_COMPONENTS — the same registry the journey workshops embed
   // through — so route them via the WORKSHOP arm too, keeping them UNDER the
   // "● Simulation mode" header instead of navigating out to /playground.
-  // eslint-disable-next-line security/detect-object-injection
+
   return WORKSHOP_TOOL_COMPONENTS[it.id]
     ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
-    : // eslint-disable-next-line security/detect-object-injection
-      { kind: 'activity', label: it.label, to: it.to, artifactType: TOOL_TO_ARTIFACT[it.id] }
+    : { kind: 'activity', label: it.label, to: it.to, artifactType: TOOL_TO_ARTIFACT[it.id] }
 }
 function resourceStepsFor(phase: PhaseId, sector: string, seat: string): TreeStep[] {
   return (['learn', 'activities', 'reference'] as const).flatMap((leg) =>
@@ -587,7 +587,10 @@ export function SimulationView() {
   // decision step, reachable from the ladder in every mode (not just the Expert
   // rail). No id to track beyond the label: completion is the cumulative
   // edge-decision count against the step's minDecisions (see embedContract.ts).
-  const [architectureEmbed, setArchitectureEmbed] = useState<{ title: string } | null>(null)
+  const [architectureEmbed, setArchitectureEmbed] = useState<{
+    title: string
+    minDecisions?: number
+  } | null>(null)
   // WP2.5: the comprehension check gating a Learn module's "Mark complete" —
   // null when no gate is currently open. Un-marking an already-complete module
   // (the toggle's "undo" path) never opens this; only the FIRST completion does.
@@ -713,7 +716,7 @@ export function SimulationView() {
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
     } else if (s.kind === 'architecture') {
       clearAllEmbeds()
-      setArchitectureEmbed({ title: s.label })
+      setArchitectureEmbed({ title: s.label, minDecisions: s.minDecisions })
     } else {
       return false
     }
@@ -1050,12 +1053,15 @@ export function SimulationView() {
   // fixed-position slot (walkthroughConcepts owns it then).
   const interactiveConceptPeeks = useMemo<TourConcept[]>(() => {
     if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.running) return []
+    // 09-28: not while a resource is open — the card sat over the embedded
+    // module's own content. It comes back (unseen) on the board.
+    if (openStepRefNow) return []
     const ids: TourConcept['id'][] = []
     if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
     if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
-  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
+  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks, openStepRefNow])
   // The two sets are mutually exclusive by construction (each requires the other's
   // running/not-running gate), so a single combined list is always unambiguous.
   const conceptPeeks =
@@ -1958,6 +1964,17 @@ export function SimulationView() {
     )
     .filter((m) => isGatingStep(m.step))
   const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
+  // 09-28 (content plan P5): an architecture next move can need more migration
+  // decisions than the P5 effort gate has unlocked yet — say so on the card.
+  const archShortfall =
+    nextMove?.step.kind === 'architecture' && nextMove.step.minDecisions
+      ? archStepShortfall(
+          size as 'small' | 'mid' | 'large' | 'global',
+          p5Frac,
+          edgeDecisions,
+          nextMove.step.minDecisions
+        )
+      : null
   // W3: the attempt already recorded for this exact step (run/phase/activity/
   // step), so a reload or rerender re-renders the decision the player made
   // rather than reopening it.
@@ -2783,11 +2800,15 @@ export function SimulationView() {
               const steps = acts.flatMap((a) =>
                 a.steps.filter((st) => isGatingStep(st)).map((st) => ({ st, act: a }))
               )
-              if (!band || steps.length === 0) return null
+              // 09-28: sector-track steps (optional) were desktop-only — they
+              // render in the desktop Progress tab, so on a phone the government,
+              // PCI, healthcare … sector modules never appeared at all.
+              const sectorSteps = sectorStepsForPhase(sector, sel)
+              if ((!band || steps.length === 0) && sectorSteps.length === 0) return null
               return (
                 <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
                   <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
-                    Resources for this phase · L{band.level} in any order
+                    Resources for this phase{band ? ` · L${band.level} in any order` : ''}
                   </summary>
                   <div className="space-y-1.5 border-t border-border px-3 py-2">
                     {steps.map(({ st, act }, i) => {
@@ -2826,6 +2847,47 @@ export function SimulationView() {
                         </div>
                       )
                     })}
+                    {sectorSteps.length > 0 && (
+                      <div className="pt-1" data-testid="phone-sector-steps">
+                        <div className="mb-1 font-mono text-sim-micro font-bold uppercase tracking-wide text-muted-foreground">
+                          For your sector · optional
+                        </div>
+                        {sectorSteps.map((ss) => {
+                          const done = moduleDone(ss.moduleId)
+                          const step: TreeStep = {
+                            kind: 'learn',
+                            label: ss.label,
+                            to: ss.to,
+                            moduleId: ss.moduleId,
+                          }
+                          return (
+                            <div
+                              key={ss.moduleId}
+                              className="mb-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-bold text-foreground">{ss.label}</span>
+                                <span
+                                  className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                                >
+                                  {done ? 'done' : 'open'}
+                                </span>
+                              </div>
+                              {!done && (
+                                <Link
+                                  to={ss.to}
+                                  onClick={() => markSimResume()}
+                                  className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                                >
+                                  Open →
+                                </Link>
+                              )}
+                              {!done && renderPhoneCompletion(step, undefined)}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 </details>
               )
@@ -3895,6 +3957,11 @@ export function SimulationView() {
                         size={size as 'small' | 'mid' | 'large' | 'global'}
                         country={country}
                         p5Frac={p5Frac}
+                        target={architectureEmbed.minDecisions}
+                        onGoToProgress={() => {
+                          closeEmbed()
+                          setActivePhaseTab('progress')
+                        }}
                       />
                     </div>
                   ) : null}
@@ -4260,6 +4327,23 @@ export function SimulationView() {
                         onDecide={recordAttempt}
                         onClearAttempt={clearAttempt}
                         onShowProgress={() => setActivePhaseTab('progress')}
+                        note={
+                          archShortfall ? (
+                            <span data-testid="arch-shortfall-note">
+                              This task needs {archShortfall.target} migration decisions, and
+                              you&apos;ve unlocked {archShortfall.unlocked} so far — links unlock as
+                              you finish other Pilots tasks.{' '}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setActivePhaseTab('progress')}
+                                className="h-auto p-0 font-bold text-primary underline hover:bg-transparent"
+                              >
+                                Do some of those first →
+                              </Button>
+                            </span>
+                          ) : undefined
+                        }
                         wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
                         onWrongPick={(label) => {
                           // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on

@@ -233,6 +233,12 @@ const TREE: PhaseTree = {
               moduleId: 'pqc-testing-validation',
             },
             {
+              kind: 'learn',
+              label: 'Learn: ACVP lab workflow — from vector set to validation evidence',
+              to: '/learn/acvp-lab-workflow',
+              moduleId: 'acvp-lab-workflow',
+            },
+            {
               kind: 'reference',
               label: 'Reference: algorithm sizes & FIPS/CC certs',
               to: '/compliance?cert=A7285',

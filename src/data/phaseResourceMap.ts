@@ -250,6 +250,21 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
     deepUrl: '/assess',
   },
   report: { phasesServed: ['foundations', 'p3', 'p4'], legs: ['output'], deepUrl: '/report' },
+  // 09-28 content integration (WP-E / Q3, Q5): optional references. The
+  // landscape link is narrowed to the run's sector by resLinks().
+  'industry-landscape': {
+    phasesServed: ['p1', 'p3'],
+    legs: ['reference'],
+    deepUrl: '/algorithms?tab=landscape',
+  },
+  'algorithms-validation': {
+    phasesServed: ['p6'],
+    legs: ['reference'],
+    deepUrl: '/algorithms?tab=validation',
+  },
+  leaders: { phasesServed: ['p0', 'p7'], legs: ['reference'], deepUrl: '/leaders' },
+  patents: { phasesServed: ['p7'], legs: ['reference'], deepUrl: '/patents' },
+  explore: { phasesServed: ['foundations'], legs: ['reference'], deepUrl: '/explore' },
 }
 
 export type ResourceKind = 'learn' | 'business' | 'playground' | 'reference'

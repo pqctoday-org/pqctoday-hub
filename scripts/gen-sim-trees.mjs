@@ -620,6 +620,12 @@ const FRAMEWORK = {
       steps: [
         L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
+        // 09-28 content integration (WP-D): the record structure needs ONE
+        // canonical name per algorithm (CKM_ECDSA_SHA256 vs ES256 vs ecdsa-with-SHA256).
+        L(
+          'crypto-registry',
+          'Learn: CycloneDX Cryptography Registry — one canonical name per algorithm'
+        ),
         R(
           'library',
           'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
@@ -640,6 +646,9 @@ const FRAMEWORK = {
           'cbom',
           'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)'
         ),
+        // 09-28 content integration (WP-D): the activity requires records
+        // "linked to the SBOM" — until now only a Library search pointed there.
+        L('sbom', 'Learn: SBOM — the software inventory your CBOM links to (CycloneDX & SPDX)'),
         A('crypto-cbom', 'Build a CycloneDX CBOM'),
         // Added 07082026 (audit remediation): the real CycloneDX exporter
         // (Migrate workbench) was previously reachable only via a non-gating
@@ -970,6 +979,9 @@ const FRAMEWORK = {
           'Learn: TLS 1.3 hybrid — the recommended first pilot (X25519+ML-KEM-768, downgrade attack mitigations)'
         ),
         L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
+        // 09-28: folded in from the 09-13 hand edit of the dated snapshot
+        // (919306fb6) — regenerating used to drop it.
+        L('dnssec-pqc', 'Learn: DNSSEC & post-quantum signatures (ML-DSA-44, algorithm 18)'),
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
         // Moved from 5.4 07082026: MTI (minimum-interop) negotiation is
@@ -1152,6 +1164,9 @@ const FRAMEWORK = {
       steps: [
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
         L('kms-pqc', 'Learn: KMS & PQC'),
+        // 09-28: folded in from the 09-27 hand edit of the dated snapshot
+        // (5e61ec2e9) — regenerating used to drop it.
+        L('pqc-hw-acceleration', 'Learn: PQC hardware acceleration (SIMD, FPGA, GPU, ASIC)'),
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
@@ -1198,6 +1213,9 @@ const FRAMEWORK = {
       // tool saves a performance-baseline document.
       steps: [
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
+        // 09-28 content integration (WP-E): the hands-on half — how a lab turns
+        // ACVP vector sets into the validation evidence the cert step below reads.
+        L('acvp-lab-workflow', 'Learn: ACVP lab workflow — from vector set to validation evidence'),
         // toOverride: a real ACVP cert (Entrust nShield 5, ML-DSA/ML-KEM/SLH-DSA —
         // matches simArchitecture.ts's mid-size 'Entrust nShield' node) so the step
         // opens on real algorithm/size data, not an empty ?cert= (WP5.5).
@@ -1307,6 +1325,13 @@ const FRAMEWORK = {
       do: 'Send PQC readiness questionnaires to strategic vendors and track responses.',
       output: 'Vendor questionnaire responses',
       steps: [
+        // 09-28 content integration (WP-B): how product certification works,
+        // before looking a vendor's certificate up — the fundamentals gate this
+        // activity; the scheme deep dives are optional (user decision Q1).
+        L(
+          'crypto-product-certification',
+          'Learn: how cryptographic product certification works (FIPS 140-3, CC/EUCC, PCI)'
+        ),
         // toOverride: a real ACVP cert (Thales Luna G7, ML-DSA/ML-KEM — matches
         // simArchitecture.ts's large-size 'Thales Luna HSM' node) so the step opens
         // on a real vendor's actual cert status, not an empty ?cert= (WP5.5).
@@ -1317,6 +1342,13 @@ const FRAMEWORK = {
         ),
         R('algorithms-protocol-matrix', 'Reference: which vendor protocols have a PQC path'),
         A('vendor-scorecard', 'Score vendors (Vendor Scorecard)'),
+      ],
+      deepDive: [
+        L('fips-140-3-certification', 'Deep dive — Learn: FIPS 140-3 certification'),
+        L(
+          'cc-eucc-certification',
+          'Deep dive — Learn: Common Criteria, EUCC & eIDAS certification'
+        ),
       ],
     },
     {
