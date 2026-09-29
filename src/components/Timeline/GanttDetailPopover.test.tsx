@@ -282,4 +282,30 @@ describe('GanttDetailPopover', () => {
       expect(popover?.className).toContain('rounded-xl')
     })
   })
+
+  describe('focusEvent (deep-linked non-first event)', () => {
+    const second = {
+      ...mockPhase.events[0],
+      eventId: 'TL-SECOND',
+      title: 'Second Event In Row',
+      description: 'The event a link actually named',
+      startYear: 2027,
+      endYear: 2027,
+    }
+    const grouped: TimelinePhase = { ...mockPhase, events: [mockPhase.events[0], second] }
+
+    it('shows the focused event instead of the row title', () => {
+      render(
+        <GanttDetailPopover isOpen onClose={mockOnClose} phase={grouped} focusEvent={second} />
+      )
+      expect(screen.getByRole('heading', { name: 'Second Event In Row' })).toBeInTheDocument()
+      expect(screen.getByText('The event a link actually named')).toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: 'Quantum-Safe Discovery' })).toBeNull()
+    })
+
+    it('falls back to the row when no event is focused', () => {
+      render(<GanttDetailPopover isOpen onClose={mockOnClose} phase={grouped} />)
+      expect(screen.getByRole('heading', { name: 'Quantum-Safe Discovery' })).toBeInTheDocument()
+    })
+  })
 })

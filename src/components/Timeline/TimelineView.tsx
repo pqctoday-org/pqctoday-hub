@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   Globe,
@@ -12,7 +12,14 @@ import {
   CalendarPlus,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
+import {
+  timelineData,
+  timelineMetadata,
+  transformToGanttData,
+  eventLinkKey,
+  findTimelineEvent,
+  resolveCountryParam,
+} from '../../data/timelineData'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
 import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
@@ -22,7 +29,6 @@ import {
   REGION_COUNTRY_MAP,
   PERSONA_TIMELINE_REGION,
 } from '../../data/personaConfig'
-import { COUNTRY_ALIASES } from '../../data/countryAliases'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { TimelineExecutiveDeadline } from './TimelineExecutiveDeadline'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
@@ -34,7 +40,7 @@ import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { useTrustTierFilter } from '../common/TrustTierFilter'
+import { useTrustTierFilter, matchesTrustTierFilter } from '../common/TrustTierFilter'
 import { CategoryFilter, useCategoryFilter } from './CategoryFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -48,6 +54,7 @@ import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -55,28 +62,6 @@ const REGION_LABELS: Record<string, string> = {
   mena: 'MENA',
   apac: 'APAC',
   global: 'Global',
-}
-
-interface ResolvedCountry {
-  resolved: string
-  wasUnknown: boolean
-}
-
-function resolveCountryParam(param: string | null, knownCountries: string[]): ResolvedCountry {
-  if (!param) return { resolved: 'All', wasUnknown: false }
-  if (knownCountries.includes(param)) return { resolved: param, wasUnknown: false }
-  // COUNTRY_ALIASES is `as const`; index access with arbitrary string needs a widened view.
-  const aliasMap = COUNTRY_ALIASES as Readonly<Record<string, string>>
-  // eslint-disable-next-line security/detect-object-injection
-  const aliased = aliasMap[param]
-  if (aliased && knownCountries.includes(aliased)) {
-    return { resolved: aliased, wasUnknown: false }
-  }
-  // Case-insensitive fallback
-  const ci = knownCountries.find((c) => c.toLowerCase() === param.toLowerCase())
-  if (ci) return { resolved: ci, wasUnknown: false }
-  // Literal "All" param is a valid request, not an unknown country
-  return { resolved: 'All', wasUnknown: param.toLowerCase() !== 'all' }
 }
 
 export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
@@ -251,6 +236,129 @@ export const TimelineView = () => {
   const tierFilter = useTrustTierFilter()
   const categoryFilter = useCategoryFilter()
   const categoryKey = categoryFilter.join('|')
+
+  // ?event= deep link — resolved against the UNSCOPED data, so ?cat / ?tier /
+  // region / country / search / "My countries only" can never make it fail.
+  // If the event is hidden by any of those, widen just enough to show it
+  // (add its category, clear tier, switch to its country, clear the search,
+  // turn off "My countries only"), say so, and offer Undo. Unknown ids get a
+  // not-found notice and the param is dropped. A title-keyed link is
+  // rewritten to the event's stable event_id. The Gantt then opens the
+  // containing row with that event focused and scrolls to it.
+  const [eventNotice, setEventNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+    undo?: () => void
+  } | null>(null)
+  const handledEventParamRef = useRef<string | null>(null)
+  const eventParam = searchParams.get('event')
+  useEffect(() => {
+    if (isMobileShell) return // MobileTimelineView resolves ?event itself
+    if (!eventParam || handledEventParamRef.current === eventParam) return
+    handledEventParamRef.current = eventParam
+    const event = findTimelineEvent(timelineData ?? [], eventParam)
+    if (!event) {
+      setEventNotice({
+        kind: 'not-found',
+        message: `The timeline event "${eventParam}" linked here was not found — it may have been retired or renamed.`,
+      })
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('event')
+          return next
+        },
+        { replace: true }
+      )
+      return
+    }
+
+    const reasons: string[] = []
+    const cats = categoryFilter
+    const tiers = tierFilter
+    const hiddenByCategory = !cats.includes(event.entityType)
+    const hiddenByTier = tiers.length > 0 && !matchesTrustTierFilter(tiers, 'timeline', event.title)
+    // Effective country/region straight from the URL + stores (same precedence
+    // as the URL-sync effect above), not from state that effect may not have
+    // committed yet on first mount.
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    const effCountry = resolveCountryParam(searchParams.get('country'), known).resolved
+    let effRegion: string = searchParams.get('region') ?? 'All'
+    if (!searchParams.get('region') && searchParams.get('prefs') !== 'off') {
+      effRegion =
+        storeSelectedRegion ??
+        // eslint-disable-next-line security/detect-object-injection
+        (selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null) ??
+        'All'
+    }
+    const hiddenByCountry =
+      (effCountry !== 'All' && effCountry !== event.countryName) ||
+      (effCountry === 'All' &&
+        effRegion !== 'All' &&
+        !(REGION_COUNTRIES_MAP[effRegion as keyof typeof REGION_COUNTRIES_MAP] ?? []).includes(
+          event.countryName
+        ))
+    const q = searchParams.get('q') ?? ''
+    const qLc = q.toLowerCase()
+    const hiddenBySearch =
+      !!q &&
+      !event.countryName.toLowerCase().includes(qLc) &&
+      !(timelineData ?? [])
+        .find((c) => c.countryName === event.countryName)
+        ?.bodies.some((b) => b.name.toLowerCase().includes(qLc))
+    const hiddenByMyCountries =
+      showOnlyTimelineCountries && !myTimelineCountries.includes(event.countryName)
+
+    if (hiddenByCategory) reasons.push('added its category')
+    if (hiddenByTier) reasons.push('cleared the trust-tier filter')
+    if (hiddenByCountry) reasons.push(`switched to ${event.countryName}`)
+    if (hiddenBySearch) reasons.push('cleared the search')
+    if (hiddenByMyCountries) reasons.push('turned off "My countries only"')
+
+    const canonical = eventLinkKey(event)
+    if (reasons.length === 0 && canonical === eventParam) return
+
+    // Snapshot for Undo before touching anything.
+    const before = new URLSearchParams(searchParams)
+    const wasShowOnly = showOnlyTimelineCountries
+
+    handledEventParamRef.current = canonical
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (hiddenByCategory) {
+          next.delete('cat')
+          for (const c of [...cats, event.entityType]) next.append('cat', c)
+        }
+        if (hiddenByTier) next.delete('tier')
+        if (hiddenByCountry) {
+          next.set('country', event.countryName)
+          next.delete('region')
+        }
+        if (hiddenBySearch) next.delete('q')
+        next.set('event', canonical)
+        return next
+      },
+      { replace: true }
+    )
+    if (hiddenByMyCountries) setShowOnlyTimelineCountries(false)
+
+    if (reasons.length > 0) {
+      setEventNotice({
+        kind: 'widened',
+        message: `"${event.title}" was hidden by your filters, so we ${reasons.join(', ')} to show it.`,
+        undo: () => {
+          handledEventParamRef.current = null
+          const restored = new URLSearchParams(before)
+          restored.delete('event')
+          setSearchParams(restored, { replace: true })
+          if (wasShowOnly) setShowOnlyTimelineCountries(true)
+          setEventNotice(null)
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ?event value
+  }, [eventParam, isMobileShell])
 
   // Always call hooks first (React rules). Filter events at the leaf level by
   // org category (always — default hides vendor) and trust tier (when active),
@@ -518,6 +626,15 @@ export const TimelineView = () => {
       />
 
       <PersonaPageNote route="/timeline" className="mb-4" />
+
+      {eventNotice && (
+        <DeepLinkNotice
+          kind={eventNotice.kind}
+          message={eventNotice.message}
+          onUndo={eventNotice.undo}
+          onDismiss={() => setEventNotice(null)}
+        />
+      )}
 
       {/* eslint-disable-next-line security/detect-object-injection */}
       {selectedPersona && TIMELINE_PERSONA_HINTS[selectedPersona] && (

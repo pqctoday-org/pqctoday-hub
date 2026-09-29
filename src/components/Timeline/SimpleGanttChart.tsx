@@ -17,7 +17,14 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
-import { phaseColors, getCountryLastVerified } from '../../data/timelineData'
+import {
+  phaseColors,
+  getCountryLastVerified,
+  eventLinkKey,
+  findEventInGantt,
+  phaseRowKey,
+  type ResolvedTimelineEvent,
+} from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { DocumentTable } from './DocumentTable'
 import { logEvent } from '../../utils/analytics'
@@ -32,6 +39,7 @@ import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { FilterChip } from '../common/FilterChip'
 import { Button } from '@/components/ui/button'
 import { OPEN_ENDED_NOTE } from '@/utils/timelinePeriod'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -107,31 +115,34 @@ export const SimpleGanttChart = ({
   const [countryCopied, setCountryCopied] = useState(false)
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  // ?event=<title> deep-links the milestone/phase detail popover so it can be
-  // shared/bookmarked. Disabled when embedded in the sim so it never writes the
-  // /simulation route (the popover then stays pure local state).
+  // ?event=<event_id> deep-links the milestone/phase detail popover so it can be
+  // shared/bookmarked. Resolved by event_id first, then by ANY event's title
+  // (old title links keep working), so events that aren't first in their
+  // grouped row are reachable too, and the popover shows the linked event.
+  // Disabled when embedded in the sim so it never writes the /simulation route
+  // (the popover then stays pure local state).
   const [searchParams, setSearchParams] = useSearchParams()
   const resolveEventPhase = useCallback(
-    (title: string | null): TimelinePhase | null => {
-      if (!title) return null
-      for (const country of data) {
-        const match = country.phases.find((p) => p.title === title)
-        if (match) return match
-      }
-      return null
-    },
+    (param: string | null): ResolvedTimelineEvent | null => findEventInGantt(data, param),
     [data]
   )
-  const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(() =>
+  const [selection, setSelection] = useState<ResolvedTimelineEvent | null>(() =>
     embedded ? null : resolveEventPhase(searchParams.get('event'))
   )
+  const selectedPhase = selection?.phase ?? null
+  // Last ?event value this component wrote itself — anything else arriving in
+  // the URL is a deep link (or back/forward) and gets scrolled to.
+  const lastWrittenEventRef = useRef<string | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
   const writeEventParam = useCallback(
-    (title: string | null, { push }: { push: boolean }) => {
+    (key: string | null, { push }: { push: boolean }) => {
       if (embedded) return
+      lastWrittenEventRef.current = key
       setSearchParams(
         (sp) => {
           const params = new URLSearchParams(sp)
-          if (title) params.set('event', title)
+          if (key) params.set('event', key)
           else params.delete('event')
           return params
         },
@@ -182,13 +193,14 @@ export const SimpleGanttChart = ({
 
   const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
     e.stopPropagation()
-    setSelectedPhase(phase)
-    writeEventParam(phase.title, { push: true })
+    const first = phase.events[0] ?? null
+    setSelection({ phase, event: first })
+    writeEventParam(first ? eventLinkKey(first) : phase.title, { push: true })
     logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
   }
 
   const handleClosePopover = () => {
-    setSelectedPhase(null)
+    setSelection(null)
     writeEventParam(null, { push: false })
   }
 
@@ -197,7 +209,17 @@ export const SimpleGanttChart = ({
   useEffect(() => {
     if (embedded) return
     const next = resolveEventPhase(eventParam)
-    setSelectedPhase((prev) => (prev?.title === next?.title ? prev : next))
+    const keyOf = (s: ResolvedTimelineEvent | null) =>
+      s ? `${phaseRowKey(s.phase)}|${s.event ? eventLinkKey(s.event) : ''}` : ''
+    setSelection((prev) => (keyOf(prev) === keyOf(next) ? prev : next))
+    if (next && eventParam !== lastWrittenEventRef.current) {
+      // Arrived by link: make sure the local phase/event-type filters don't hide
+      // the row, then scroll to and highlight it.
+      lastWrittenEventRef.current = eventParam
+      setSelectedPhaseType((prev) => (prev === 'All' || prev === next.phase.phase ? prev : 'All'))
+      setSelectedEventType((prev) => (prev === 'All' || prev === next.phase.type ? prev : 'All'))
+      setScrollTarget(phaseRowKey(next.phase))
+    }
   }, [embedded, eventParam, resolveEventPhase])
 
   const handleFilterBlur = () => {
@@ -834,6 +856,7 @@ export const SimpleGanttChart = ({
                               ? `timeline-row-${country.countryName.toLowerCase().replace(/\s+/g, '-')}`
                               : undefined
                           }
+                          data-deeplink-id={phaseRowKey(phaseData)}
                           className="hover:bg-muted/50 transition-colors"
                           style={
                             isLastRow
@@ -966,6 +989,7 @@ export const SimpleGanttChart = ({
         isOpen={!!selectedPhase}
         onClose={handleClosePopover}
         phase={selectedPhase}
+        focusEvent={selection?.event}
       />
     </div>
   )
