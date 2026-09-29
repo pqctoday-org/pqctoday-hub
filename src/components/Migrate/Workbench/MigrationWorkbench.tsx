@@ -42,6 +42,8 @@ import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmen
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { DeepLinkNotice } from '../../common/DeepLinkNotice'
+import { resolveProductLink, productLinkNoticeMessage } from './workbenchCatalog'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -123,73 +125,91 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     setPriorSelection(null)
   }, [priorSelection, applySharedSelection])
 
-  // ── Product feedback deep link (?product=<softwareName>) ─────────────────
-  // FIXED 2026-07-16 (migrate-process remediation Phase 5, U8): ProductDetail's
-  // Endorse/Flag buttons emit /migrate?product=<name>, but until now nothing
-  // here read that param — the trust-feedback loop landed on whatever tab was
-  // last active with nothing highlighted. Switches to Replace, resolves the
-  // product's domain, and pre-fills the domain filter with its name.
-  const [productDeepLink, setProductDeepLink] = useState<{
-    domain: DomainId
-    filter: string
-  } | null>(null)
-  const productHydratedRef = useRef(false)
-  useEffect(() => {
-    if (embedded || productHydratedRef.current) return
-    const name = searchParams.get('product')
-    if (!name) return
-    productHydratedRef.current = true
-    const sp = new URLSearchParams(searchParams)
-    sp.delete('product')
-    sp.set('tab', 'replace')
-    setSearchParams(sp, { replace: true })
-    const product = softwareData.find((p) => p.softwareName === name)
-    const domain = product
-      ? classifyProductDomain(product.categoryName, product.infrastructureLayer)
-      : null
-    /* eslint-disable react-hooks/set-state-in-effect -- one-time hydrate from the ?product= link, same as the ?share= effect above */
-    setTabStore('replace')
-    if (domain) setProductDeepLink({ domain, filter: name })
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, [embedded, searchParams, setSearchParams, setTabStore])
-
-  // ── Product-id-set deep link (?productIds=<id1>,<id2>,...) ───────────────
-  // ADDED 2026-07-30 for the leader-detail "view N open-source projects" link
-  // (migrate-catalog↔leaders cross-check). Same shape as ?product= above, but
-  // id-based (not name-based, so it doesn't depend on softwareName staying
-  // stable) and supports multiple products at once. Domain is resolved from
-  // the FIRST matched product — like ?product=, this page shows one domain's
-  // list at a time, so a leader whose credited products span multiple domains
-  // will only see the first domain's subset highlighted; the rest remain
-  // reachable by switching domains manually.
-  const [productIdsDeepLink, setProductIdsDeepLink] = useState<{
+  // ── Product deep links (?product=<id|name> / ?productIds=<id1>,<id2>) ──
+  // ?product= is emitted by ProductDetail's Endorse/Flag buttons (2026-07-16,
+  // U8) and ?productIds= by the leader-detail "view N open-source projects"
+  // link (2026-07-30). Deep-link remediation PR 1 (2026-09-28) reworked both:
+  //  - each token resolves by product_id, exact name (case-insensitive) or a
+  //    former name (resolveProductLink), then filters by EXACT id — never the
+  //    old substring name filter that also showed sibling products;
+  //  - a single resolved product is auto-expanded, scrolled to and ringed;
+  //  - unknown/retired tokens show a "not found" notice instead of nothing;
+  //  - the params stay in the URL (reload/share keep working) and are dropped
+  //    only when the reader collapses the row or moves on (domain, filter,
+  //    facets, another tab);
+  //  - hydration re-runs whenever the param VALUE changes, so a second link
+  //    while the page is mounted works (was a one-shot ref).
+  // Domain comes from the first resolved product; ?productIds= spanning
+  // several domains still shows only that domain's subset.
+  // On the phone shell MobileMigrateView reads these params itself.
+  const productParam = searchParams.get('product')
+  const productIdsParam = searchParams.get('productIds')
+  const [productLink, setProductLink] = useState<{
+    key: string
     domain: DomainId
     productIds: string[]
+    expandId?: string
   } | null>(null)
-  const productIdsHydratedRef = useRef(false)
+  const [productLinkNotice, setProductLinkNotice] = useState<string | null>(null)
+  const productLinkKeyRef = useRef<string | null>(null)
   useEffect(() => {
-    if (embedded || productIdsHydratedRef.current) return
-    const raw = searchParams.get('productIds')
-    if (!raw) return
-    productIdsHydratedRef.current = true
-    const ids = raw
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-    const sp = new URLSearchParams(searchParams)
-    sp.delete('productIds')
-    sp.set('tab', 'replace')
-    setSearchParams(sp, { replace: true })
-    const idSet = new Set(ids)
-    const matched = softwareData.filter((p) => idSet.has(p.productId))
-    const domain = matched[0]
-      ? classifyProductDomain(matched[0].categoryName, matched[0].infrastructureLayer)
+    if (embedded || isMobileShell) return
+    if (!productParam && !productIdsParam) {
+      productLinkKeyRef.current = null
+      return
+    }
+    const key = `${productParam ?? ''}|${productIdsParam ?? ''}`
+    if (productLinkKeyRef.current === key) return
+    productLinkKeyRef.current = key
+    const res = resolveProductLink(productParam, productIdsParam)
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from the ?product=/?productIds= link, once per distinct param value */
+    setProductLinkNotice(productLinkNoticeMessage(res))
+    const first = res.products[0]
+    const domain = first
+      ? classifyProductDomain(first.categoryName, first.infrastructureLayer)
       : null
-    /* eslint-disable react-hooks/set-state-in-effect -- one-time hydrate from the ?productIds= link, same as ?share=/?product= above */
+    if (!domain) {
+      setProductLink(null)
+      return
+    }
     setTabStore('replace')
-    if (domain) setProductIdsDeepLink({ domain, productIds: ids })
+    setProductLink({
+      key,
+      domain,
+      productIds: res.products.map((p) => p.productId),
+      expandId: res.products.length === 1 ? first.productId : undefined,
+    })
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [embedded, searchParams, setSearchParams, setTabStore])
+    if (searchParams.get('tab') !== 'replace') {
+      const sp = new URLSearchParams(searchParams)
+      sp.set('tab', 'replace')
+      setSearchParams(sp, { replace: true })
+    }
+  }, [
+    embedded,
+    isMobileShell,
+    productParam,
+    productIdsParam,
+    searchParams,
+    setSearchParams,
+    setTabStore,
+  ])
+
+  /** The reader moved on from the linked product: forget it and drop the
+   *  params (replace — a filter-style change, not a new history entry). */
+  const clearProductLink = useCallback(() => {
+    setProductLink(null)
+    productLinkKeyRef.current = null
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev)
+        sp.delete('product')
+        sp.delete('productIds')
+        return sp
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
 
   const shareUrl = useMemo(
     () =>
@@ -218,6 +238,14 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       setTabStore(t)
       const sp = new URLSearchParams(searchParams)
       sp.set('tab', t)
+      // Leaving Replace ends a product deep link — otherwise returning to the
+      // tab would silently re-apply a stale filter.
+      if (t !== 'replace') {
+        sp.delete('product')
+        sp.delete('productIds')
+        setProductLink(null)
+        productLinkKeyRef.current = null
+      }
       setSearchParams(sp, { replace: true })
     },
     [embedded, searchParams, setSearchParams, setTabStore]
@@ -318,6 +346,16 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         </div>
       )}
 
+      {!embedded && productLinkNotice && (
+        <div className="mt-3">
+          <DeepLinkNotice
+            kind="not-found"
+            message={productLinkNotice}
+            onDismiss={() => setProductLinkNotice(null)}
+          />
+        </div>
+      )}
+
       <div className="mt-2">
         <PostureCommandCenter posture={posture} onGoToReplace={() => setTab('replace')} />
       </div>
@@ -354,9 +392,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <TabsContent value="replace" className="mt-4">
           <ReplaceTab
             persona={persona}
-            initialDomain={productDeepLink?.domain ?? productIdsDeepLink?.domain ?? focus?.domain}
-            initialFilter={productDeepLink?.filter}
-            initialProductIds={productIdsDeepLink?.productIds}
+            initialDomain={productLink?.domain ?? focus?.domain}
+            initialProductIds={productLink?.productIds}
+            deepLinkKey={productLink?.key}
+            expandProductId={productLink?.expandId}
+            onDeepLinkConsumed={clearProductLink}
             onGoToRoadmaps={() => setTab('roadmaps')}
           />
         </TabsContent>

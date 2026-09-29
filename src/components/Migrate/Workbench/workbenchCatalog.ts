@@ -164,3 +164,96 @@ export function searchProducts(query: string, limit = 6): ProductSearchHit[] {
   hits.sort((a, b) => a.product.softwareName.localeCompare(b.product.softwareName))
   return hits.slice(0, limit)
 }
+
+// ── Product deep links (?product= / ?productIds=) ─────────────────────────
+// Deep-link remediation PR 1 (2026-09-28): a link may name a product by its
+// product_id, by its exact display name (case-insensitive), or by a former
+// name — migrateData already folds deprecated-duplicate rows' names into the
+// kept row's formerNames, so an old name resolves to its successor here.
+
+const lc = (s: string) => s.trim().toLowerCase()
+const BY_ID = new Map<string, SoftwareItem>()
+const BY_NAME = new Map<string, SoftwareItem>()
+const BY_FORMER_NAME = new Map<string, SoftwareItem>()
+for (const item of softwareData) {
+  if (item.productId && !BY_ID.has(lc(item.productId))) BY_ID.set(lc(item.productId), item)
+  if (item.softwareName && !BY_NAME.has(lc(item.softwareName))) {
+    BY_NAME.set(lc(item.softwareName), item)
+  }
+  for (const n of item.formerNames ?? []) {
+    if (n && !BY_FORMER_NAME.has(lc(n))) BY_FORMER_NAME.set(lc(n), item)
+  }
+}
+
+/** Resolve one link token: product_id first, then exact name, then former name. */
+export function resolveProductRef(
+  token: string
+): { product: SoftwareItem; viaFormerName: boolean } | null {
+  const key = lc(token)
+  if (!key) return null
+  const direct = BY_ID.get(key) ?? BY_NAME.get(key)
+  if (direct) return { product: direct, viaFormerName: false }
+  const former = BY_FORMER_NAME.get(key)
+  return former ? { product: former, viaFormerName: true } : null
+}
+
+export interface ProductLinkResolution {
+  /** Resolved products, de-duplicated, in link order. */
+  products: SoftwareItem[]
+  /** Tokens that matched nothing in the active catalog (retired, draft, mistyped). */
+  missing: string[]
+  /** Tokens that only matched a former name — shown with their successor. */
+  renamed: Array<{ from: string; to: SoftwareItem }>
+}
+
+/** Resolve the raw `?product=` (one id or name — names may contain commas, so
+ *  never split) and `?productIds=` (comma-separated) values together. */
+export function resolveProductLink(
+  product: string | null,
+  productIds: string | null
+): ProductLinkResolution {
+  const tokens = [
+    ...(product?.trim() ? [product.trim()] : []),
+    ...(productIds ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  ]
+  const seen = new Set<string>()
+  const out: ProductLinkResolution = { products: [], missing: [], renamed: [] }
+  for (const token of tokens) {
+    const hit = resolveProductRef(token)
+    if (!hit) {
+      out.missing.push(token)
+      continue
+    }
+    if (hit.viaFormerName) out.renamed.push({ from: token, to: hit.product })
+    if (seen.has(hit.product.productId)) continue
+    seen.add(hit.product.productId)
+    out.products.push(hit.product)
+  }
+  return out
+}
+
+/** Reader-facing "not found" text for a resolution, or null when every token
+ *  resolved under its current name. */
+export function productLinkNoticeMessage(res: ProductLinkResolution): string | null {
+  const parts: string[] = []
+  if (res.missing.length === 1) {
+    parts.push(
+      `No product matching “${res.missing[0]}” is in the catalog — it may have been retired, renamed or mistyped.`
+    )
+  } else if (res.missing.length > 1) {
+    parts.push(
+      `${res.missing.length} linked products aren’t in the catalog (${res.missing
+        .map((m) => `“${m}”`)
+        .join(', ')}) — they may have been retired, renamed or mistyped.`
+    )
+  }
+  for (const { from, to } of res.renamed) {
+    parts.push(
+      `“${from}” is no longer listed under that name — showing its successor, ${to.softwareName}.`
+    )
+  }
+  return parts.length ? parts.join(' ') : null
+}

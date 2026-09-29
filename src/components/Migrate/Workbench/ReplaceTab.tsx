@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Clock, Search, AlertTriangle, Check, Plus } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
@@ -24,11 +24,16 @@ import {
   NO_FACETS,
   type ProductFacets,
 } from './workbenchCatalog'
+import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { MobileFilterDrawer } from '../MobileFilterDrawer'
+import { DeepLinkNotice } from '../../common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
+
+const hasCertLink = (p: SoftwareItem) => getCertsForProduct(p.productId, p.softwareName).length > 0
 
 interface ReplaceTabProps {
   persona: PersonaId | null
@@ -47,6 +52,14 @@ interface ReplaceTabProps {
   /** Empty-domain dead end (fix #6) routes here — MigrationWorkbench wires this
    *  to its own "Vendor roadmaps" tab. */
   onGoToRoadmaps?: () => void
+  /** Identity of the active ?product=/?productIds= deep link (changes per link,
+   *  so the same product linked twice still re-expands and re-scrolls). */
+  deepLinkKey?: string
+  /** The single deep-linked product to auto-expand, scroll to and highlight. */
+  expandProductId?: string
+  /** The reader moved on from the deep-linked view (collapsed the row, changed
+   *  domain, filter or facets) — the parent drops ?product=/?productIds=. */
+  onDeepLinkConsumed?: () => void
 }
 
 export function ReplaceTab({
@@ -55,6 +68,9 @@ export function ReplaceTab({
   initialFilter,
   initialProductIds,
   onGoToRoadmaps,
+  deepLinkKey,
+  expandProductId,
+  onDeepLinkConsumed,
 }: ReplaceTabProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
@@ -65,6 +81,12 @@ export function ReplaceTab({
   const [filter, setFilter] = useState(initialFilter ?? '')
   const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(initialProductIds)
   const [facets, setFacets] = useState<ProductFacets>(NO_FACETS)
+  // Facets the reader had before a deep link widened them (Undo restores them).
+  const [facetsBeforeLink, setFacetsBeforeLink] = useState<ProductFacets | null>(null)
+  const facetsRef = useRef(facets)
+  useEffect(() => {
+    facetsRef.current = facets
+  }, [facets])
 
   // FIXED 2026-07-16 (Phase 5, U8 — caught by a failing regression test):
   // ReplaceTab is already mounted (tab defaults to 'replace') by the time
@@ -76,14 +98,40 @@ export function ReplaceTab({
     /* eslint-disable react-hooks/set-state-in-effect -- one-time sync when the deep-link values arrive, not on every parent re-render (same pattern as the ?share=/?product= effects in MigrationWorkbench.tsx) */
     if (initialDomain) setSelectedDomain(initialDomain)
     if (initialFilter) setFilter(initialFilter)
-    if (initialProductIds) setProductIdFilter(initialProductIds)
+    if (initialProductIds) {
+      setProductIdFilter(initialProductIds)
+      setFilter('')
+      // Deep-link remediation PR 1: a linked product hidden by the reader's
+      // own facet picks is revealed by clearing the facets (the only thing
+      // that can hide an exact-id match), with an Undo to restore them.
+      const current = facetsRef.current
+      if (initialDomain && Object.values(current).some((v) => v !== 'all')) {
+        const wanted = new Set(initialProductIds)
+        const targets = productsForDomain(initialDomain).filter((p) => wanted.has(p.productId))
+        if (applyProductFacets(targets, current, hasCertLink).length < targets.length) {
+          setFacetsBeforeLink(current)
+          setFacets(NO_FACETS)
+        }
+      }
+    }
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [initialDomain, initialFilter, initialProductIds])
+
+  useScrollToDeepLinkTarget(
+    expandProductId && deepLinkKey ? deepLinkKey : null,
+    expandProductId ? deepLinkSelector(expandProductId) : null
+  )
+
+  // Any reader-driven change of domain / filter / facets ends the deep-linked view.
+  const consumeDeepLink = () => {
+    if (deepLinkKey) onDeepLinkConsumed?.()
+  }
 
   const onSelect = (d: DomainId) => {
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter(undefined)
+    consumeDeepLink()
   }
 
   // A catalog-wide product search (AssetList's top-level search box) jumping
@@ -93,6 +141,13 @@ export function ReplaceTab({
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter([productId])
+    consumeDeepLink()
+  }
+
+  const setFacet = (next: (f: ProductFacets) => ProductFacets) => {
+    setFacets(next)
+    setFacetsBeforeLink(null)
+    consumeDeepLink()
   }
 
   const asset = selectedDomain ? (ASSET_BY_ID.get(selectedDomain) ?? null) : null
@@ -102,11 +157,7 @@ export function ReplaceTab({
   )
   const filtered = useMemo(
     () =>
-      applyProductFacets(
-        filterProducts(products, filter, productIdFilter),
-        facets,
-        (p) => getCertsForProduct(p.productId, p.softwareName).length > 0
-      ),
+      applyProductFacets(filterProducts(products, filter, productIdFilter), facets, hasCertLink),
     [products, filter, productIdFilter, facets]
   )
 
@@ -193,6 +244,7 @@ export function ReplaceTab({
                     // Typing a fresh search must win over a stale deep-link id set —
                     // filterProducts() would otherwise keep ignoring it.
                     setProductIdFilter(undefined)
+                    consumeDeepLink()
                   }}
                   placeholder="Filter products…"
                   aria-label="Filter products"
@@ -211,7 +263,7 @@ export function ReplaceTab({
                 ]}
                 selectedId={facets.population === 'all' ? 'All' : facets.population}
                 onSelect={(id) =>
-                  setFacets((f) => ({
+                  setFacet((f) => ({
                     ...f,
                     population: (id === 'All' || !id ? 'all' : id) as ProductFacets['population'],
                   }))
@@ -230,7 +282,7 @@ export function ReplaceTab({
                 ]}
                 selectedId={facets.pqc === 'all' ? 'All' : facets.pqc}
                 onSelect={(id) =>
-                  setFacets((f) => ({
+                  setFacet((f) => ({
                     ...f,
                     pqc: (id === 'All' || !id ? 'all' : id) as ProductFacets['pqc'],
                   }))
@@ -246,7 +298,7 @@ export function ReplaceTab({
                 ]}
                 selectedId={facets.certified === 'all' ? 'All' : facets.certified}
                 onSelect={(id) =>
-                  setFacets((f) => ({
+                  setFacet((f) => ({
                     ...f,
                     certified: (id === 'All' || !id ? 'all' : id) as ProductFacets['certified'],
                   }))
@@ -258,6 +310,19 @@ export function ReplaceTab({
                 </span>
               )}
             </div>
+            {facetsBeforeLink && (
+              <div className="mt-2">
+                <DeepLinkNotice
+                  kind="widened"
+                  message="The linked product was hidden by your filters, so they were cleared to show it."
+                  onUndo={() => {
+                    setFacets(facetsBeforeLink)
+                    setFacetsBeforeLink(null)
+                  }}
+                  onDismiss={() => setFacetsBeforeLink(null)}
+                />
+              </div>
+            )}
             {deprecatedProductCount > 0 && (
               <p className="mt-1 text-[11px] text-muted-foreground">
                 {deprecatedProductCount} additional catalog{' '}
@@ -292,18 +357,25 @@ export function ReplaceTab({
                   No products match “{filter}”.
                 </p>
               ) : (
-                filtered.map((p) => (
-                  <ProductRow
-                    key={p.productId || p.softwareName}
-                    product={p}
-                    // Key the choice on the domain id, not the replace-asset id:
-                    // foundation/infrastructure domains have no ReplaceAsset, so
-                    // gating on `asset` left their Choose button dead. For replace
-                    // domains selectedDomain === asset.id, so behavior is unchanged.
-                    chosen={(choice[selectedDomain] ?? []).includes(p.softwareName)}
-                    onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
-                  />
-                ))
+                filtered.map((p) => {
+                  const isLinked = !!expandProductId && p.productId === expandProductId
+                  return (
+                    <ProductRow
+                      // Re-key the linked row per link so it mounts expanded even if
+                      // it was already on screen collapsed.
+                      key={`${p.productId || p.softwareName}${isLinked ? `:${deepLinkKey}` : ''}`}
+                      product={p}
+                      defaultExpanded={isLinked}
+                      onCollapse={isLinked ? consumeDeepLink : undefined}
+                      // Key the choice on the domain id, not the replace-asset id:
+                      // foundation/infrastructure domains have no ReplaceAsset, so
+                      // gating on `asset` left their Choose button dead. For replace
+                      // domains selectedDomain === asset.id, so behavior is unchanged.
+                      chosen={(choice[selectedDomain] ?? []).includes(p.softwareName)}
+                      onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
+                    />
+                  )
+                })
               )}
             </div>
           </>
