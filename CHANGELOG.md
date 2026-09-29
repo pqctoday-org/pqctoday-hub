@@ -31,7 +31,13 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.132.0] - 2026-09-28
 
-The Simulation no longer strands you: a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; and phones get the controls they were missing.
+The Simulation no longer strands you — a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; phones get the controls they were missing — and it now includes the hub's newest Learn modules and references.
+
+### Added
+
+- **The newest Learn modules are now part of the Simulation** [view:/simulation] [persona:grc] [persona:architect] [persona:executive]: Verify & Close teaches how cryptographic product certification works before you look up a vendor's certificate, with FIPS 140-3 and Common Criteria / EUCC as optional deep dives and PCI certification for financial and retail runs. The CBOM phase now teaches the CycloneDX Cryptography Registry and SBOM, the Infrastructure phase teaches the ACVP lab workflow, and the government sector plays the Government & Defense module (it used to link to the aerospace module by mistake).
+- **More references in the Simulation's Resources tab** [view:/simulation] [view:/algorithms] [persona:architect] [persona:researcher]: the Industry Landscape, opened on your run's own sector, in Discovery and Risk; Algorithm Validation in Infrastructure; PQC Leaders; the Patent landscape; and Explore.
+- **18 new comprehension-check questions** [view:/simulation] [view:/learn] [persona:grc] [persona:architect] [persona:developer]: Government & Defense, PKI Enrollment and ACVP Lab Workflow get their first quiz questions and product certification gets three more, so completing these modules in the Simulation asks one real question.
 
 ### Fixed
 
@@ -44,8 +50,28 @@ The Simulation no longer strands you: a wrong answer still costs you, but you ca
 
 ### Changed
 
-- **The Simulation on a phone** [view:/simulation] [persona:executive] [persona:curious]: a menu with Difficulty, Reset run and Terms; "End quarter" on the Decide screen; a Resources list that shows the current level's tasks with the same completion buttons as Decide, and reading a reference there now counts; Undo for a hybrid/pure migration choice (also on a laptop). The phone home screen could not be scrolled to its top (the heading and part of the phase buttons were out of reach) and the phase buttons were squashed; the Decide screen could open already scrolled down, hiding "← Overview". All fixed.
-- **Smaller fixes** [view:/simulation] [persona:curious]: Escape closes the first-run tour and the quarter report; closing a resource returns focus to the button that opened it; the "Resume simulation" bar comes back the next time you leave the Simulation; a wrong call in Pilots now undoes your most recent migrated link rather than your oldest.
+- **The Simulation on a phone** [view:/simulation] [persona:executive] [persona:curious]: a menu with Difficulty, Reset run and Terms; "End quarter" on the Decide screen; a Resources list that shows the current level's tasks with the same completion buttons as Decide, and reading a reference there now counts; Undo for a hybrid/pure migration choice (also on a laptop); and your sector's optional modules (government, PCI, healthcare and more), which used to appear only on a laptop. The phone home screen could not be scrolled to its top (the heading and part of the phase buttons were out of reach) and the phase buttons were squashed; the Decide screen could open already scrolled down, hiding "← Overview". All fixed.
+- **Pilots explains its migration limit** [view:/simulation] [persona:executive] [persona:architect]: when the architecture task needs more migration decisions than you have unlocked so far, it now says so and points you to the other Pilots tasks that unlock more links.
+- **Industry Landscape inside modules opened in the Simulation** [view:/simulation] [view:/learn] [persona:architect]: the panel showing which industries rely on a module now also appears when the module is opened inside the Simulation.
+- **Smaller fixes** [view:/simulation] [persona:curious]: Escape closes the first-run tour and the quarter report; closing a resource returns focus to the button that opened it; the "Resume simulation" bar comes back the next time you leave the Simulation; a wrong call in Pilots now undoes your most recent migrated link rather than your oldest; tip cards no longer float over a resource you have open.
+
+## [4.131.1] - 2026-09-28
+
+The VPN/IPsec & SSH module now explains where pure post-quantum IKEv2 runs into trouble, and why the standard's hybrid route avoids it.
+
+### Added
+
+- **Why pure post-quantum IKEv2 is hard over UDP** [view:/learn/vpn-ssh-pqc] [persona:architect] [persona:ops] [persona:developer]: a new section in VPN/IPsec & SSH covers the known limits of running ML-KEM on its own in IKEv2. The key has to travel in the very first message, which IKEv2 cannot split into fragments, so the draft standard allows only the smallest size (ML-KEM-512) there over UDP. ML-KEM-768 and ML-KEM-1024, the size CNSA 2.0 requires, need a known path size or IKE over TCP; otherwise they fall back to IP fragments that firewalls often drop. The section also shows the standard's hybrid workaround and what it gives up.
+
+### Fixed
+
+- **The protocol size section no longer overstates IKEv2 fragmentation** [view:/learn/vpn-ssh-pqc] [persona:architect]: it now says IKEv2's built-in fragmentation covers only encrypted messages, not the first key-exchange message.
+
+### Data
+
+- **Two IPsec standards added to the library, and one marked as replaced** [view:/library] [persona:researcher] [persona:architect]: the current ML-KEM in IKEv2 draft (version 09) and RFC 9329 (IKE and IPsec over TCP) are now in the library with their summaries. RFC 8229 is marked as replaced by RFC 9329. The VPN/IPsec & SSH module now cites these instead of the older draft, and its quoted passage was replaced with the draft's exact wording.
+
+- **The IKE / IPsec row in the Protocol Matrix notes the pure ML-KEM limit** [view:/algorithms] [persona:architect] [persona:researcher]: a short note on the pure-KEM entry explains the first-message size restriction and the hybrid alternative.
 
 ## [4.131.0] - 2026-09-27
 
