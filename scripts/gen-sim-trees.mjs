@@ -620,6 +620,12 @@ const FRAMEWORK = {
       steps: [
         L('cbom', 'Learn: Cryptography Bill of Materials'),
         L('crypto-mgmt-modernization', 'Learn: CBOM in Cryptographic Management'),
+        // 09-28 content integration (WP-D): the record structure needs ONE
+        // canonical name per algorithm (CKM_ECDSA_SHA256 vs ES256 vs ecdsa-with-SHA256).
+        L(
+          'crypto-registry',
+          'Learn: CycloneDX Cryptography Registry — one canonical name per algorithm'
+        ),
         R(
           'library',
           'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
@@ -640,6 +646,9 @@ const FRAMEWORK = {
           'cbom',
           'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)'
         ),
+        // 09-28 content integration (WP-D): the activity requires records
+        // "linked to the SBOM" — until now only a Library search pointed there.
+        L('sbom', 'Learn: SBOM — the software inventory your CBOM links to (CycloneDX & SPDX)'),
         A('crypto-cbom', 'Build a CycloneDX CBOM'),
         // Added 07082026 (audit remediation): the real CycloneDX exporter
         // (Migrate workbench) was previously reachable only via a non-gating

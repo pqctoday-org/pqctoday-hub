@@ -40,9 +40,8 @@ const manifest: ModuleManifest = {
     { value: 'references', label: 'References' },
     { value: 'tools', label: 'Tools & Products' },
   ],
-  // Not sim-embeddable: SIM_LEARN_MODULES is a curated set and the conformance
-  // test asserts `embeddable` matches it exactly. Adding this module to the
-  // simulation is a separate decision, not a side effect of authoring it.
+  // Sim-embeddable since 2026-09-28 (user decision D1, simulation content
+  // integration plan): it is the government sector track's P0 module.
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
@@ -51,7 +50,7 @@ const manifest: ModuleManifest = {
     algorithms: ['ML-DSA', 'ML-KEM'],
     standards: ['X.509', 'EO 14306', 'OMB M-23-02', 'NSM-10', 'NIST SP 800-208'],
   },
-  embeddable: false,
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.GovernmentDefensePQCModule })),
 }
 

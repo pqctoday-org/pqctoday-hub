@@ -33,7 +33,8 @@ const manifest: ModuleManifest = {
     step: 'sbom-format-explorer',
     text: "Pick a sample component in the SBOM Format Explorer: the same package is shown as a CycloneDX entry and an SPDX package side by side, with the nine minimum elements mapped to each format's fields.",
   },
-  embeddable: false,
+  // Sim-embeddable since 2026-09-28 (user decision D1): a P2 tree step.
+  embeddable: true,
   taxonomy: {
     standards: [
       'SPDX / ISO 5962',

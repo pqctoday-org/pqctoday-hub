@@ -27,13 +27,12 @@ const NOT_IN_SIM: Record<string, string> = {
   'automotive-pqc': 'the sim has no automotive sector (simRelevance: never relevant)',
   qkd: 'quantum key distribution is not a PQC migration activity (separate QKD/QRNG category)',
   quiz: 'the question bank itself — the sim uses it through the per-step comprehension check',
+  'aerospace-pqc':
+    'the sim has no aerospace sector — the government track uses government-defense-pqc (09-28)',
   'trust-services-pqc': 'Resources list only — user decision 2026-09-28 (content plan Q2)',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.
-  'government-defense-pqc': 'scheduled: WP-C (government sector track)',
-  sbom: 'scheduled: WP-D (P2 SBOM link)',
-  'crypto-registry': 'scheduled: WP-D (P2 CBOM naming)',
   'acvp-lab-workflow': 'scheduled: WP-E (P6 testing methodology)',
 }
 
