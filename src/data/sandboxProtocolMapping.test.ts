@@ -15,7 +15,7 @@ describe('sandbox → protocol matrix cross-reference overlay', () => {
         matrixIds.has(ref.protocolId),
         `scenario '${s.id}' → unknown protocol '${ref.protocolId}'`
       ).toBe(true)
-      expect(protocolMatrixHref(ref)).toBe(`/algorithms?protocol=${ref.protocolId}`)
+      expect(protocolMatrixHref(ref)).toBe(`/algorithms?tab=support&protocol=${ref.protocolId}`)
     }
   })
 

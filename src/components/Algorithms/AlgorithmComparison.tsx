@@ -21,6 +21,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
 import { MobileTransitionWizard } from './MobileTransitionWizard'
+import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
@@ -486,11 +487,8 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     // check both columns, not just classical.
                     const isHighlighted =
                       highlightAlgorithms &&
-                      Array.from(highlightAlgorithms).some(
-                        (h) =>
-                          algo.classical.toLowerCase().includes(h.toLowerCase()) ||
-                          h.toLowerCase().includes(algo.classical.toLowerCase()) ||
-                          pqcName.toLowerCase() === h.toLowerCase()
+                      Array.from(highlightAlgorithms).some((h) =>
+                        transitionMatchesHighlight(algo, h)
                       )
                     const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
                     const isCompared = compareSet.has(pqcName)
@@ -512,6 +510,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
+                        data-deeplink-id={transitionRowId(algo)}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         // Cap the stagger so a ~40-row table doesn't animate for

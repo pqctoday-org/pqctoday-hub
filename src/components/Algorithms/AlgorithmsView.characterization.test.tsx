@@ -82,13 +82,15 @@ describe('AlgorithmsView — URL-sync characterization (pre-refactor net)', () =
     expect(urlSearch()).not.toContain('family=')
   })
 
-  it('the Everything quick view clears all filter + quickview params', async () => {
+  // 2026-09-28 deep-link remediation: "Everything" now writes quickview=none
+  // so it survives reload/share (absent quickview means the 'nist-picks' default).
+  it('the Everything quick view clears all filter params and writes quickview=none', async () => {
     renderAt('/algorithms?family=Lattice&status=Certified&level=5&quickview=nist-picks')
     fireEvent.click(await screen.findByRole('button', { name: /^Everything/i }))
     await waitFor(() => expect(urlSearch()).not.toContain('family='))
     expect(urlSearch()).not.toContain('status=')
     expect(urlSearch()).not.toContain('level=')
-    expect(urlSearch()).not.toContain('quickview=')
+    expect(urlSearch()).toContain('quickview=none')
   })
 
   it('honours a deep-linked tab (?tab=detailed) over the persona default', async () => {

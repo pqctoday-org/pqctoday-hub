@@ -21,6 +21,7 @@ import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaConfig'
+import { algoMatchesHighlight, parseHighlight, transitionMatchesHighlight } from './highlightMatch'
 
 export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
@@ -69,6 +70,160 @@ function resolveClassicalAlgoName(
   const ecdsaMatch = classical.match(/^ECDSA\s*\(([^)]+)\)$/)
   if (ecdsaMatch) return algos.find((a) => a.name === `ECDSA ${ecdsaMatch[1]}`)?.name ?? null
   return algos.find((a) => a.name === classical)?.name ?? null
+}
+
+export type QuickViewId = 'none' | 'nist-picks' | 'fips-validated'
+
+/** Every filter that can hide an algorithm/transition row. */
+export interface ExplorerFilterState {
+  quickView: QuickViewId
+  family: string
+  fn: string
+  level: string
+  region: string
+  status: string
+  cnsa: boolean
+  gap: boolean
+  q: string
+}
+
+/** Everything cleared — what "Everything" / ?from_search=1 show. */
+export const WIDE_OPEN_FILTERS: ExplorerFilterState = {
+  quickView: 'none',
+  family: 'All',
+  fn: 'All',
+  level: 'All',
+  region: 'All',
+  status: 'All',
+  cnsa: false,
+  gap: false,
+  q: '',
+}
+
+// Status filter helper. "Certified" reads the normalized status-maturity
+// enum (WORKSTREAMS.md §WS-A) instead of comparing the raw status string —
+// the whitelist is ['final', 'regional', 'fips-draft'] (isStatusFilterTier,
+// algorithmStatusTier.ts). The 'Candidate' / 'To Be Checked' dropdown
+// options remain raw-string matches since those are literal values the
+// CSVs still use verbatim.
+//
+// NOTE: 'regional' means "final within its own jurisdiction (KpqC/BSI
+// winners), not FIPS-Certified" (algorithmStatusTier.ts) — e.g. AIMer,
+// HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1).
+// 'fips-draft' means "NIST-selected, FIPS text not yet published" — e.g.
+// HQC, FN-DSA — included here so the default view doesn't hide NIST's own
+// picks, even though they're not final. This "Certified" bucket is
+// deliberately broader than FIPS and is fine for a plain Status dropdown
+// labeled "Certified" — but it must never back anything claiming to be
+// "FIPS-validated" (see isFipsValidated() below) or suppress the "Draft"
+// badge (isCertifiedTier/isDraftTier stay strict — see
+// algorithmStatusTier.ts).
+function matchesStatus(filterStatus: string, status: string, tier: AlgorithmStatusTier): boolean {
+  if (filterStatus === 'All') return true
+  if (filterStatus === 'Certified') return isStatusFilterTier(tier)
+  return status === filterStatus
+}
+
+/**
+ * Detailed-Comparison filter predicate for a given filter state. `applyLevel`
+ * off lets availableLevels ignore the level filter itself.
+ */
+export function passesAlgoFilterState(
+  algo: AlgorithmDetail,
+  f: ExplorerFilterState,
+  semanticAlgoNameSet: Set<string> | null,
+  applyLevel = true
+): boolean {
+  if (f.cnsa && !passesCnsa20Filter(algo)) return false
+  if (f.gap && !algo.hasResearchGap) return false
+  if (f.quickView === 'nist-picks' && !isNistPick(algo.fipsStandard)) return false
+  if (f.quickView === 'fips-validated' && !isFipsValidated(algo.fipsStandard)) return false
+  if (f.family !== 'All' && algo.cryptoFamily !== f.family) return false
+  if (f.fn !== 'All') {
+    const group = getFunctionGroup(algo)
+    if (group !== f.fn) return false
+  }
+  if (applyLevel && f.level !== 'All' && algo.securityLevel !== parseInt(f.level)) return false
+  if (f.region !== 'All' && algo.region !== f.region) return false
+  if (!matchesStatus(f.status, algo.status, algo.statusTier)) return false
+  if (f.q) {
+    const q = f.q.toLowerCase()
+    const lexicalMatch =
+      algo.name.toLowerCase().includes(q) ||
+      algo.family.toLowerCase().includes(q) ||
+      algo.cryptoFamily.toLowerCase().includes(q) ||
+      algo.fipsStandard.toLowerCase().includes(q)
+    if (!lexicalMatch) {
+      if (semanticAlgoNameSet && semanticAlgoNameSet.has(algo.name.toLowerCase())) return true
+      return false
+    }
+  }
+  return true
+}
+
+/** Transition-Guide filter predicate for a given filter state. */
+export function passesTransitionFilterState(
+  t: AlgorithmTransition,
+  f: ExplorerFilterState,
+  semanticAlgoNameSet: Set<string> | null
+): boolean {
+  if (f.cnsa && !passesCnsa20Filter({ name: t.pqc, family: '' })) return false
+  if (f.quickView === 'nist-picks' && !isNistPick(t.status)) return false
+  if (f.quickView === 'fips-validated' && !isFipsValidated(t.status)) return false
+  if (f.fn !== 'All') {
+    const group = getTransitionFunctionGroup(t.function)
+    if (group !== f.fn) return false
+  }
+  if (f.family !== 'All') {
+    const family = getCryptoFamilyFromPQCName(t.pqc)
+    if (family !== f.family) return false
+  }
+  if (f.region !== 'All' && t.region !== f.region) return false
+  if (!matchesStatus(f.status, t.status, t.statusTier)) return false
+  if (f.q) {
+    const q = f.q.toLowerCase()
+    const lexicalMatch = t.classical.toLowerCase().includes(q) || t.pqc.toLowerCase().includes(q)
+    if (!lexicalMatch) {
+      // Transition rows aren't in the embeddings index directly; we
+      // accept them when the PQC algorithm name appears in the
+      // semantic hit set (which IS encoded for the algorithms collection).
+      if (semanticAlgoNameSet && semanticAlgoNameSet.has(t.pqc.toLowerCase())) return true
+      return false
+    }
+  }
+  return true
+}
+
+export interface HighlightWideningPlan {
+  /** Highlight names that match no row in the whole dataset. */
+  unknown: string[]
+  /** Filter state to switch to, or null when every known name is already visible. */
+  widenTo: ExplorerFilterState | null
+}
+
+/**
+ * Decide how far to widen the filters so every highlighted name that exists
+ * in the dataset has at least one visible row. Widens the least it can:
+ * first only drops the quick view (the usual culprit — the 'nist-picks'
+ * default hides FrodoKEM/HQC/RSA/3DES…), then clears every filter.
+ */
+export function planHighlightWidening<Row>(
+  names: string[],
+  rows: Row[],
+  current: ExplorerFilterState,
+  passes: (row: Row, f: ExplorerFilterState) => boolean,
+  matches: (row: Row, name: string) => boolean
+): HighlightWideningPlan {
+  const known = names.filter((n) => rows.some((r) => matches(r, n)))
+  const unknown = names.filter((n) => !known.includes(n))
+  const allVisible = (f: ExplorerFilterState) =>
+    known.every((n) => rows.some((r) => matches(r, n) && passes(r, f)))
+  if (known.length === 0 || allVisible(current)) return { unknown, widenTo: null }
+  const noQuickView: ExplorerFilterState = { ...current, quickView: 'none' }
+  if (current.quickView !== 'none' && allVisible(noQuickView)) {
+    return { unknown, widenTo: noQuickView }
+  }
+  return { unknown, widenTo: WIDE_OPEN_FILTERS }
 }
 
 /** Determine baseline algorithm name based on the function type of compared algorithms */
@@ -123,6 +278,9 @@ export function useAlgorithmExplorer(
   const [activeTab, setActiveTab] = useState<AlgorithmTabId>(() => {
     const tab = searchParams.get('tab')
     if (isAlgorithmTab(tab)) return tab
+    // ?protocol=<id> only means something on Protocol Support (its detail
+    // modal lives there), so a link carrying it without ?tab lands there.
+    if (searchParams.get('protocol')) return 'support'
     if (searchParams.get('highlight')) return 'detailed'
     return personaDefaults.tab
   })
@@ -131,7 +289,20 @@ export function useAlgorithmExplorer(
     const tab = searchParams.get('tab')
     if (isAlgorithmTab(tab)) {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
+    } else if (!tab && searchParams.get('protocol')) {
+      setActiveTab((prev) => (prev !== 'support' ? 'support' : prev))
+      // Pin the tab in the URL so closing the protocol (which strips
+      // ?protocol) keeps the reader on Protocol Support on reload/share.
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('tab', 'support')
+          return next
+        },
+        { replace: true }
+      )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   // Reset all filters when arriving from command palette search so the highlighted
@@ -228,9 +399,11 @@ export function useAlgorithmExplorer(
   // algorithms) rather than 'none' — that's the set almost every visitor
   // actually wants first; ?quickview=fips-validated or an explicit click on
   // "Everything" still override it for the rest of the session.
-  const [quickView, setQuickView] = useState<'none' | 'nist-picks' | 'fips-validated'>(() => {
+  // ?quickview=none is "Everything", written explicitly so it survives a
+  // reload/share instead of snapping back to the 'nist-picks' default.
+  const [quickView, setQuickView] = useState<QuickViewId>(() => {
     const qv = searchParams.get('quickview')
-    return qv === 'nist-picks' || qv === 'fips-validated' ? qv : 'nist-picks'
+    return qv === 'nist-picks' || qv === 'fips-validated' || qv === 'none' ? qv : 'nist-picks'
   })
 
   // --- Comparison state (synced to URL) ---
@@ -413,7 +586,7 @@ export function useAlgorithmExplorer(
         setFilterRegion('All')
         setFilterStatus('All')
         updateSearchParams({
-          quickview: null,
+          quickview: 'none',
           family: null,
           fn: null,
           level: null,
@@ -484,30 +657,8 @@ export function useAlgorithmExplorer(
     }, 100)
   }, [])
 
-  // Status filter helper. "Certified" reads the normalized status-maturity
-  // enum (WORKSTREAMS.md §WS-A) instead of comparing the raw status string —
-  // the whitelist is ['final', 'regional', 'fips-draft'] (isStatusFilterTier,
-  // algorithmStatusTier.ts). The 'Candidate' / 'To Be Checked' dropdown
-  // options remain raw-string matches since those are literal values the
-  // CSVs still use verbatim.
-  //
-  // NOTE: 'regional' means "final within its own jurisdiction (KpqC/BSI
-  // winners), not FIPS-Certified" (algorithmStatusTier.ts) — e.g. AIMer,
-  // HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1).
-  // 'fips-draft' means "NIST-selected, FIPS text not yet published" — e.g.
-  // HQC, FN-DSA — included here so the default view doesn't hide NIST's own
-  // picks, even though they're not final. This "Certified" bucket is
-  // deliberately broader than FIPS and is fine for a plain Status dropdown
-  // labeled "Certified" — but it must never back anything claiming to be
-  // "FIPS-validated" (see isFipsValidated() below) or suppress the "Draft"
-  // badge (isCertifiedTier/isDraftTier stay strict — see
-  // algorithmStatusTier.ts).
   const matchesStatusFilter = useCallback(
-    (status: string, tier: AlgorithmStatusTier) => {
-      if (filterStatus === 'All') return true
-      if (filterStatus === 'Certified') return isStatusFilterTier(tier)
-      return status === filterStatus
-    },
+    (status: string, tier: AlgorithmStatusTier) => matchesStatus(filterStatus, status, tier),
     [filterStatus]
   )
 
@@ -521,54 +672,38 @@ export function useAlgorithmExplorer(
     [semantic.mode, semantic.hits]
   )
 
-  // Algorithm filter predicate, parameterised on whether the security-level
-  // filter participates. `availableLevels` reuses this with the level filter
-  // OFF so picking a level never narrows the set of levels you can switch to.
-  const passesAlgoFilters = useCallback(
-    (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) => {
-      if (cnsaLens && !passesCnsa20Filter(algo)) return false
-      if (researchGapOnly && !algo.hasResearchGap) return false
-      if (quickView === 'nist-picks' && !isNistPick(algo.fipsStandard)) return false
-      if (quickView === 'fips-validated' && !isFipsValidated(algo.fipsStandard)) return false
-      if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
-      if (filterFunction !== 'All') {
-        const group = getFunctionGroup(algo)
-        if (group !== filterFunction) return false
-      }
-      if (
-        opts.applyLevel &&
-        filterSecurityLevel !== 'All' &&
-        algo.securityLevel !== parseInt(filterSecurityLevel)
-      )
-        return false
-      if (filterRegion !== 'All' && algo.region !== filterRegion) return false
-      if (!matchesStatusFilter(algo.status, algo.statusTier)) return false
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
-        const lexicalMatch =
-          algo.name.toLowerCase().includes(q) ||
-          algo.family.toLowerCase().includes(q) ||
-          algo.cryptoFamily.toLowerCase().includes(q) ||
-          algo.fipsStandard.toLowerCase().includes(q)
-        if (!lexicalMatch) {
-          if (semanticAlgoNameSet && semanticAlgoNameSet.has(algo.name.toLowerCase())) return true
-          return false
-        }
-      }
-      return true
-    },
+  const filterState = useMemo<ExplorerFilterState>(
+    () => ({
+      quickView,
+      family: filterCryptoFamily,
+      fn: filterFunction,
+      level: filterSecurityLevel,
+      region: filterRegion,
+      status: filterStatus,
+      cnsa: cnsaLens,
+      gap: researchGapOnly,
+      q: searchQuery,
+    }),
     [
-      cnsaLens,
-      researchGapOnly,
       quickView,
       filterCryptoFamily,
       filterFunction,
       filterSecurityLevel,
       filterRegion,
-      matchesStatusFilter,
+      filterStatus,
+      cnsaLens,
+      researchGapOnly,
       searchQuery,
-      semanticAlgoNameSet,
     ]
+  )
+
+  // Algorithm filter predicate, parameterised on whether the security-level
+  // filter participates. `availableLevels` reuses this with the level filter
+  // OFF so picking a level never narrows the set of levels you can switch to.
+  const passesAlgoFilters = useCallback(
+    (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) =>
+      passesAlgoFilterState(algo, filterState, semanticAlgoNameSet, opts.applyLevel),
+    [filterState, semanticAlgoNameSet]
   )
 
   // --- Filtered data (Detailed Comparison) ---
@@ -578,46 +713,130 @@ export function useAlgorithmExplorer(
   )
 
   // --- Filtered data (Transition Guide) ---
-  const filteredTransitions = useMemo(() => {
-    return transitionData.filter((t) => {
-      if (cnsaLens && !passesCnsa20Filter({ name: t.pqc, family: '' })) return false
-      if (quickView === 'nist-picks' && !isNistPick(t.status)) return false
-      if (quickView === 'fips-validated' && !isFipsValidated(t.status)) return false
-      if (filterFunction !== 'All') {
-        const group = getTransitionFunctionGroup(t.function)
-        if (group !== filterFunction) return false
+  // Transition rows ignore the level and research-gap filters (no such
+  // columns), exactly as before the predicate moved to module scope.
+  const filteredTransitions = useMemo(
+    () =>
+      transitionData.filter((t) =>
+        passesTransitionFilterState(t, filterState, semanticAlgoNameSet)
+      ),
+    [transitionData, filterState, semanticAlgoNameSet]
+  )
+
+  // --- ?highlight deep links ---
+  // A highlighted row hidden by the default 'nist-picks' quick view (or by
+  // saved/persona filters) used to leave the reader on a table without it.
+  // Now: widen just enough to show it, say so with an Undo, and say so when
+  // the name matches no row at all. Runs once per (tab, highlight) pair so
+  // Undo — which hides the row again — doesn't immediately re-widen.
+  const [highlightNotice, setHighlightNotice] = useState<{
+    widened: {
+      message: string
+      prev: ExplorerFilterState
+      prevParams: Record<string, string | null>
+    } | null
+    notFound: string | null
+  } | null>(null)
+  const handledHighlightKeyRef = useRef<string | null>(null)
+  const highlightRaw = searchParams.get('highlight')
+
+  const applyFilterState = useCallback((f: ExplorerFilterState) => {
+    setQuickView(f.quickView)
+    setFilterCryptoFamily(f.family)
+    setFilterFunction(f.fn)
+    setFilterSecurityLevel(f.level)
+    setFilterRegion(f.region)
+    setFilterStatus(f.status)
+    setCnsaLens(f.cnsa)
+    setResearchGapOnly(f.gap)
+    setSearchQuery(f.q)
+  }, [])
+
+  useEffect(() => {
+    if (isLoading) return
+    if (activeTab !== 'detailed' && activeTab !== 'transition') return
+    const names = parseHighlight(highlightRaw)
+    if (names.length === 0) return
+    const key = `${activeTab}|${highlightRaw}`
+    if (handledHighlightKeyRef.current === key) return
+    handledHighlightKeyRef.current = key
+
+    const plan =
+      activeTab === 'detailed'
+        ? planHighlightWidening(
+            names,
+            algorithmData,
+            filterState,
+            (r, f) => passesAlgoFilterState(r, f, semanticAlgoNameSet),
+            (r, n) => algoMatchesHighlight(r.name, n)
+          )
+        : planHighlightWidening(
+            names,
+            transitionData,
+            filterState,
+            (r, f) => passesTransitionFilterState(r, f, semanticAlgoNameSet),
+            transitionMatchesHighlight
+          )
+
+    const known = names.filter((n) => !plan.unknown.includes(n))
+    const notFound =
+      plan.unknown.length > 0
+        ? `No algorithm on this tab matches ${plan.unknown.map((n) => `"${n}"`).join(', ')} — it may have been renamed or retired.`
+        : null
+    let widened: NonNullable<typeof highlightNotice>['widened'] = null
+    if (plan.widenTo) {
+      const onlyQuickView =
+        plan.widenTo.quickView === 'none' &&
+        JSON.stringify({ ...filterState, quickView: 'none' }) === JSON.stringify(plan.widenTo)
+      const label = known.join(', ')
+      widened = {
+        message: onlyQuickView
+          ? `Switched the quick view to "Everything" so the linked ${label} is visible.`
+          : `Filters were cleared so the linked ${label} is visible.`,
+        prev: filterState,
+        prevParams: Object.fromEntries(
+          ['quickview', 'family', 'fn', 'level', 'region', 'status', 'cnsa', 'gap', 'q'].map(
+            (k) => [k, searchParams.get(k)]
+          )
+        ),
       }
-      if (filterCryptoFamily !== 'All') {
-        const family = getCryptoFamilyFromPQCName(t.pqc)
-        if (family !== filterCryptoFamily) return false
-      }
-      if (filterRegion !== 'All' && t.region !== filterRegion) return false
-      if (!matchesStatusFilter(t.status, t.statusTier)) return false
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
-        const lexicalMatch =
-          t.classical.toLowerCase().includes(q) || t.pqc.toLowerCase().includes(q)
-        if (!lexicalMatch) {
-          // Transition rows aren't in the embeddings index directly; we
-          // accept them when the PQC algorithm name appears in the
-          // semantic hit set (which IS encoded for the algorithms collection).
-          if (semanticAlgoNameSet && semanticAlgoNameSet.has(t.pqc.toLowerCase())) return true
-          return false
+      applyFilterState(plan.widenTo)
+      updateSearchParams({
+        quickview: 'none',
+        family: plan.widenTo.family,
+        fn: plan.widenTo.fn,
+        level: plan.widenTo.level,
+        region: plan.widenTo.region,
+        status: plan.widenTo.status,
+        cnsa: plan.widenTo.cnsa ? '1' : null,
+        gap: plan.widenTo.gap ? '1' : null,
+        q: plan.widenTo.q || null,
+      })
+    }
+    setHighlightNotice(widened || notFound ? { widened, notFound } : null)
+    // Only the (tab, highlight) pair triggers this; filter state is read, not tracked.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, activeTab, highlightRaw, algorithmData, transitionData])
+
+  const undoHighlightWidening = useCallback(() => {
+    const widened = highlightNotice?.widened
+    if (!widened) return
+    applyFilterState(widened.prev)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        for (const [k, v] of Object.entries(widened.prevParams)) {
+          if (v === null) next.delete(k)
+          else next.set(k, v)
         }
-      }
-      return true
-    })
-  }, [
-    transitionData,
-    filterFunction,
-    filterCryptoFamily,
-    filterRegion,
-    matchesStatusFilter,
-    searchQuery,
-    semanticAlgoNameSet,
-    cnsaLens,
-    quickView,
-  ])
+        return next
+      },
+      { replace: true }
+    )
+    setHighlightNotice((n) => (n?.notFound ? { widened: null, notFound: n.notFound } : null))
+  }, [highlightNotice, applyFilterState, setSearchParams])
+
+  const dismissHighlightNotice = useCallback(() => setHighlightNotice(null), [])
 
   // --- Available security levels ---
   // Derived from the dataset filtered by everything EXCEPT the active level
@@ -701,6 +920,10 @@ export function useAlgorithmExplorer(
     filteredAlgorithms,
     filteredTransitions,
     availableLevels,
+    // ?highlight deep-link notice (widened filters / unknown name)
+    highlightNotice,
+    undoHighlightWidening,
+    dismissHighlightNotice,
     // tab
     activeTab,
     setActiveTab,
