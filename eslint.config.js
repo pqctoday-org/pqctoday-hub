@@ -366,6 +366,9 @@ export default defineConfig([
                 // Every mobile screen that honours a resource deep link shows
                 // the same "widened / not found" notice desktop does.
                 '!@/components/common/DeepLinkNotice',
+                // ItemShareButton.tsx (common, 2026-09-29) — the per-item Share
+                // control every item overlay carries; mobile sheets use it too.
+                '!@/components/common/ItemShareButton',
                 // TopThreeActions.tsx (common) — same category: explicitly
                 // generic ("so dense pages... can offer a 'do this now'
                 // hero"), no baked-in desktop-only layout (grid-cols-1
