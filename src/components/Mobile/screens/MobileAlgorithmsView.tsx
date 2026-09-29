@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { ChevronRight, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ALGORITHM_REGISTRY, type AlgorithmProps } from '@/data/algorithmProperties'
@@ -11,9 +11,37 @@ import {
   getPerformanceMultiplier,
   getPerformanceCategory,
   isResearchNeeded,
+  algorithmIdFromName,
+  findAlgorithmByRef,
   type AlgorithmDetail,
 } from '@/data/pqcAlgorithmsData'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { MobileSheet } from '../primitives/Sheet'
+
+/** What the detail sheet shows — the registry's fields, from either source. */
+interface SheetAlgo {
+  name: string
+  family: string
+  fipsStandard: string | null
+  securityLevel: number | null
+  publicKeyBytes: number
+  privateKeyBytes: number
+  signatureOrCiphertextBytes: number | null
+  sharedSecretBytes?: number | null
+}
+
+function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
+  return {
+    name: d.name,
+    family: d.family,
+    fipsStandard: d.fipsStandard || null,
+    securityLevel: d.securityLevel,
+    publicKeyBytes: d.publicKeySize,
+    privateKeyBytes: d.privateKeySize,
+    signatureOrCiphertextBytes: d.signatureCiphertextSize,
+    sharedSecretBytes: d.sharedSecretSize,
+  }
+}
 
 function intentHref(params: Intent['params']): string {
   const query = Object.entries(params)
@@ -224,7 +252,7 @@ function PerfBar({
  */
 export function MobileAlgorithmsView() {
   const navigate = useNavigate()
-  const [selected, setSelected] = useState<AlgorithmProps | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const publicKeyRows: ByteRow[] = [
     byteRow('RSA-2048', 'RSA-2048', 'publicKeyBytes'),
@@ -290,6 +318,43 @@ export function MobileAlgorithmsView() {
     }
   }, [])
 
+  // The detail sheet is ?algo=<algorithm_id> (same param as desktop's
+  // drawer): tapping a bar pushes it (Back closes the sheet), closing strips
+  // it in place. Resolved against the full reference data once loaded — so a
+  // link to any algorithm opens, not just the handful charted here — and
+  // against the registry until then.
+  const algoParam = searchParams.get('algo')
+  const selected: SheetAlgo | null = (() => {
+    if (!algoParam) return null
+    const detail = perfDetails ? findAlgorithmByRef([...perfDetails.values()], algoParam) : null
+    if (detail) return sheetFromDetail(detail)
+    const q = algoParam.trim().toLowerCase()
+    return (
+      Object.values(ALGORITHM_REGISTRY).find(
+        (a) => algorithmIdFromName(a.name) === q || a.name.toLowerCase() === q
+      ) ?? null
+    )
+  })()
+  const algoNotFound = !!algoParam && !!perfDetails && !selected
+  const setSelected = (algo: AlgorithmProps) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('algo', algorithmIdFromName(algo.name))
+        return next
+      },
+      { replace: false }
+    )
+  const closeSheet = () =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('algo')
+        return next
+      },
+      { replace: true }
+    )
+
   const perfRows: PerfRow[] = [
     'RSA-2048',
     'ML-KEM-768',
@@ -324,6 +389,14 @@ export function MobileAlgorithmsView() {
           </p>
         </div>
       </div>
+
+      {algoNotFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No algorithm matches "${algoParam}" — it may have been renamed or retired.`}
+          onDismiss={closeSheet}
+        />
+      )}
 
       <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
         What brings you here?
@@ -431,7 +504,7 @@ export function MobileAlgorithmsView() {
 
       <MobileSheet
         open={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={closeSheet}
         title={selected?.name}
         testId="algorithm-detail-sheet"
       >
@@ -480,7 +553,9 @@ export function MobileAlgorithmsView() {
                 Signature / ciphertext
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {selected.signatureOrCiphertextBytes.toLocaleString()} B
+                {selected.signatureOrCiphertextBytes != null
+                  ? `${selected.signatureOrCiphertextBytes.toLocaleString()} B`
+                  : '—'}
               </dd>
             </div>
             {selected.sharedSecretBytes != null && (

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   CheckCircle2,
   ChevronDown,
@@ -21,6 +21,8 @@ import {
   type SlhDsaVariant,
 } from '@/utils/katRunner'
 import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import { KAT_EVIDENCE_META, evidenceForKind, katActionLabel } from '@/utils/katEvidence'
 
@@ -455,9 +457,39 @@ const SEVERITY_TONE: Record<string, string> = {
  * drops classical crypto plus the PKCS#11 diagnostics/HSM-key-inspector
  * panel (debug surface, not the pass/fail answer a reader taps in for).
  */
-export function MobileKATValidationView() {
+interface MobileKATValidationViewProps {
+  /** `?section=` — `attacks` opens the Implementation Attacks list. */
+  sectionParam?: string | null
+  /** `?attack=` as linked, and the profile it resolved to (AlgorithmsView
+   *  resolves it with the same matcher desktop uses; null = no match). */
+  attackParam?: string | null
+  attackProfile?: string | null
+  /** URL writer (replace) — the list's open state is mirrored to ?section. */
+  onUpdateParams?: (updates: Record<string, string | null>) => void
+}
+
+export function MobileKATValidationView({
+  sectionParam,
+  attackParam,
+  attackProfile,
+  onUpdateParams,
+}: MobileKATValidationViewProps = {}) {
   const hsm = useHSM('rust')
-  const [attacksOpen, setAttacksOpen] = useState(false)
+  const linkedOpen = sectionParam === 'attacks' || !!attackParam
+  const [attacksOpen, setAttacksOpen] = useState(linkedOpen)
+  // Re-read on same-route navigation (Back/Forward, in-app links).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    if (linkedOpen) setAttacksOpen(true)
+  }, [linkedOpen])
+  const toggleAttacks = () => {
+    const next = !attacksOpen
+    setAttacksOpen(next)
+    if (next) onUpdateParams?.({ section: 'attacks' })
+    else onUpdateParams?.({ section: null, attack: null })
+  }
+  const attackTarget = attacksOpen && attackProfile ? `attack-${attackProfile}` : null
+  useScrollToDeepLinkTarget(attackTarget, attackTarget ? deepLinkSelector(attackTarget) : null)
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -501,7 +533,7 @@ export function MobileKATValidationView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setAttacksOpen((v) => !v)}
+          onClick={toggleAttacks}
           aria-expanded={attacksOpen}
           className="flex h-auto w-full items-center justify-between gap-2 whitespace-normal rounded-lg border border-border bg-card px-3 py-2.5 text-left"
         >
@@ -520,10 +552,26 @@ export function MobileKATValidationView() {
             aria-hidden="true"
           />
         </Button>
+        {attacksOpen && attackParam && !attackProfile && (
+          <div className="mt-2">
+            <DeepLinkNotice
+              kind="not-found"
+              message={`No implementation-attack profile matches "${attackParam}".`}
+              onDismiss={() => onUpdateParams?.({ attack: null })}
+            />
+          </div>
+        )}
         {attacksOpen && (
           <div className="mt-2 flex flex-col gap-2">
             {ATTACK_PROFILES.map((p) => (
-              <div key={p.algorithm} className="rounded-lg border border-border bg-card p-3">
+              <div
+                key={p.algorithm}
+                data-deeplink-id={`attack-${p.algorithm}`}
+                className={cn(
+                  'rounded-lg border bg-card p-3',
+                  p.algorithm === attackProfile ? 'border-primary/60' : 'border-border'
+                )}
+              >
                 <p className="text-[12px] font-bold text-foreground">{p.algorithm}</p>
                 <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
                   {p.summary}

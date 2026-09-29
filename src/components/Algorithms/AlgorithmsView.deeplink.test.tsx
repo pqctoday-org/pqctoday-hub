@@ -14,6 +14,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 
 const { algo } = vi.hoisted(() => ({
   algo: (name: string, fipsStandard: string, statusTier: string, status = 'Standardized') => ({
+    id: name.toLowerCase(),
     name,
     fipsStandard,
     status,
@@ -23,6 +24,19 @@ const { algo } = vi.hoisted(() => ({
     region: 'USA',
     securityLevel: 3,
     hasResearchGap: false,
+    aesEquivalent: 'AES-192',
+    publicKeySize: 1184,
+    privateKeySize: 2400,
+    signatureCiphertextSize: 1088,
+    sharedSecretSize: 32,
+    keyGenCycles: '1x',
+    signEncapsCycles: '1x',
+    verifyDecapsCycles: '1x',
+    stackRAM: 6000,
+    optimizationTarget: 'Balanced',
+    useCaseNotes: '',
+    sizesUnknown: false,
+    perfUnknown: false,
   }),
 }))
 
@@ -48,7 +62,8 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
 vi.mock('./PQCProtocolMatrix', () => ({
   PQCProtocolMatrix: () => <div data-testid="protocol-matrix" />,
 }))
-vi.mock('../../data/pqcAlgorithmsData', () => ({
+vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/pqcAlgorithmsData')>()),
   loadPQCAlgorithmsData: vi
     .fn()
     .mockResolvedValue([

@@ -17,6 +17,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import {
   ENGINES,
   ENGINE_LABEL,
@@ -75,15 +77,42 @@ const StatusBadge = ({ status }: { status: MatrixStatus }) => (
 
 const PAGE = 60
 
+const DEFAULT_ENGINE: EngineId = 'cpp'
+const toEngine = (v: string | null | undefined): EngineId =>
+  (ENGINES as readonly string[]).includes(v ?? '') ? (v as EngineId) : DEFAULT_ENGINE
+
+/**
+ * `?case=` → the (mechanism × operation) groups it names. The full group key
+ * `<mechanism>|<operation>` (e.g. `CKM_ML_KEM|encapsulate`) names one row; a
+ * bare mechanism names every operation row of it. Case-insensitive.
+ */
+export function coverageGroupsForCase(groups: CoverageGroup[], raw: string | null | undefined) {
+  const q = raw?.trim().toLowerCase()
+  if (!q) return []
+  const exact = groups.filter((g) => g.key.toLowerCase() === q)
+  if (exact.length > 0) return exact
+  return groups.filter((g) => (g.mechanism ?? '').toLowerCase() === q)
+}
+
 interface CoverageMatrixViewProps {
   /** Injected in tests; defaults to fetching the public JSON. */
   loader?: () => Promise<CoverageMatrixFile>
+  /** `?engine=` (cpp | rust) and `?case=` (group key or mechanism) from the URL. */
+  engineParam?: string | null
+  caseParam?: string | null
+  /** URL writer (replace). Omitted → engine/expansion stay local state. */
+  onUpdateParams?: (updates: Record<string, string | null>) => void
 }
 
-export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatrixViewProps = {}) {
+export function CoverageMatrixView({
+  loader = loadCoverageMatrix,
+  engineParam,
+  caseParam,
+  onUpdateParams,
+}: CoverageMatrixViewProps = {}) {
   const [matrix, setMatrix] = useState<CoverageMatrix | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [engine, setEngine] = useState<EngineId>('cpp')
+  const [engine, setEngine] = useState<EngineId>(() => toEngine(engineParam))
   const [polarity, setPolarity] = useState<Polarity>('positive')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [query, setQuery] = useState('')
@@ -110,6 +139,28 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
 
   const groups = useMemo(() => (matrix ? groupByMechanismOperation(matrix) : []), [matrix])
 
+  // ?engine: re-read on same-route navigation.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setEngine(toEngine(engineParam))
+  }, [engineParam])
+
+  // ?case: expand the named row(s) once the matrix is in, page far enough to
+  // show them, and scroll to the first. A key that names no row says so.
+  const caseGroups = useMemo(() => coverageGroupsForCase(groups, caseParam), [groups, caseParam])
+  const caseKeys = caseGroups.map((g) => g.key).join('\n')
+  useEffect(() => {
+    if (!caseKeys) return
+    const keys = caseKeys.split('\n')
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setExpanded((prev) => new Set([...prev, ...keys]))
+    const lastIndex = Math.max(...keys.map((k) => groups.findIndex((g) => g.key === k)))
+    setLimit((l) => Math.max(l, Math.ceil((lastIndex + 1) / PAGE) * PAGE))
+  }, [caseKeys, groups])
+  const caseTarget = caseGroups[0] ? `coverage-${caseGroups[0].key}` : null
+  useScrollToDeepLinkTarget(caseTarget, caseTarget ? deepLinkSelector(caseTarget) : null)
+  const caseNotFound = !!matrix && !!caseParam && caseGroups.length === 0
+
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
     return groups.filter((g) => {
@@ -135,13 +186,18 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
     )
   }
 
-  const toggle = (key: string) =>
+  const toggle = (key: string) => {
+    const opening = !expanded.has(key)
     setExpanded((prev) => {
       const next = new Set(prev)
       if (next.has(key)) next.delete(key)
       else next.add(key)
       return next
     })
+    // ?case follows the row last expanded; collapsing a linked row clears it.
+    if (opening) onUpdateParams?.({ case: key })
+    else if (caseGroups.some((g) => g.key === key)) onUpdateParams?.({ case: null })
+  }
 
   const gaps = showAllGaps
     ? matrix.openGaps
@@ -151,6 +207,13 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
   return (
     <div className="space-y-4" data-testid="coverage-matrix-view">
       <ValidationDisclaimer />
+      {caseNotFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No coverage row matches "${caseParam}".`}
+          onDismiss={() => onUpdateParams?.({ case: null })}
+        />
+      )}
 
       <div className="space-y-1">
         <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
@@ -311,7 +374,10 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
           label="Engine"
           items={ENGINES.map((e) => ({ id: e, label: ENGINE_LABEL[e] }))} // eslint-disable-line security/detect-object-injection
           selectedId={engine}
-          onSelect={(id) => setEngine(id as EngineId)}
+          onSelect={(id) => {
+            setEngine(id as EngineId)
+            onUpdateParams?.({ engine: id === DEFAULT_ENGINE ? null : id })
+          }}
           size="sm"
         />
         <FilterDropdown
@@ -465,7 +531,7 @@ function GroupRows({
   const detailId = `coverage-detail-${group.key.replace(/[^A-Za-z0-9_-]/g, '_')}`
   return (
     <>
-      <tr className="border-b border-border align-top">
+      <tr className="border-b border-border align-top" data-deeplink-id={`coverage-${group.key}`}>
         <th scope="row" className="px-3 py-2 text-left font-normal">
           <span className="font-mono text-[11px] text-foreground">
             {group.mechanism ?? '(no PKCS#11 mechanism)'}

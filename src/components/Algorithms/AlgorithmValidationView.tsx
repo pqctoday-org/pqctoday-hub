@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { ShieldAlert, FlaskConical, ChevronDown, Grid3x3 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,9 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
 import { getAlgorithmDefaults, type AlgorithmSectionId } from '@/data/personaConfig'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { matchAttackProfile } from './attackDeepLink'
 
 // WS-C C-6: the public coverage matrix + open-gaps register. Lazy — it fetches
 // its own generated JSON and only mounts when the section is opened.
@@ -16,9 +19,19 @@ const CoverageMatrixView = lazy(() =>
 
 type ValidationSection = AlgorithmSectionId | 'coverage'
 
+const isSection = (v: string | null | undefined): v is ValidationSection =>
+  v === 'attacks' || v === 'kat' || v === 'coverage'
+
 interface AlgorithmValidationViewProps {
   /** `?section=` value from the URL — deep-link wins over the persona default. */
   sectionParam?: string | null
+  /** `?attack=` — an algorithm name/id; opens Implementation Attacks at its profile. */
+  attackParam?: string | null
+  /** `?engine=` / `?case=` — passed through to the coverage matrix. */
+  engineParam?: string | null
+  caseParam?: string | null
+  /** URL writer (replace). Omitted → the view keeps its state locally. */
+  onUpdateParams?: (updates: Record<string, string | null>) => void
 }
 
 /**
@@ -30,23 +43,69 @@ interface AlgorithmValidationViewProps {
  * comes from ALGORITHM_PERSONA_DEFAULTS.openSections (researcher: both), plus
  * the `?section=kat` deep link (e.g. the Entry Strip's "Run a live test" CTA).
  */
-export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationViewProps = {}) {
+export function AlgorithmValidationView({
+  sectionParam,
+  attackParam,
+  engineParam,
+  caseParam,
+  onUpdateParams,
+}: AlgorithmValidationViewProps = {}) {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const attackProfile = matchAttackProfile(attackParam)
   const [open, setOpen] = useState<Set<ValidationSection>>(() => {
     const defaults = new Set<ValidationSection>(getAlgorithmDefaults(selectedPersona).openSections)
-    if (sectionParam === 'attacks' || sectionParam === 'kat' || sectionParam === 'coverage') {
-      defaults.add(sectionParam)
-    }
+    if (isSection(sectionParam)) defaults.add(sectionParam)
+    if (attackParam) defaults.add('attacks')
     return defaults
   })
 
-  const toggle = (id: ValidationSection) =>
-    setOpen((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
+  // Same-route navigation (Back/Forward, an in-app link) changes ?section /
+  // ?attack without remounting — open the named section then too.
+  useEffect(() => {
+    const want: ValidationSection | null = isSection(sectionParam)
+      ? sectionParam
+      : attackParam
+        ? 'attacks'
+        : null
+    if (!want) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setOpen((prev) => (prev.has(want) ? prev : new Set(prev).add(want)))
+  }, [sectionParam, attackParam])
+
+  // Scroll to the linked section — but not when the reader just toggled it
+  // here (their click already put it where they are looking).
+  const [selfWrittenSection, setSelfWrittenSection] = useState<string | null>(null)
+  const scrollSection =
+    isSection(sectionParam) && !attackParam && selfWrittenSection !== sectionParam
+      ? sectionParam
+      : null
+  useScrollToDeepLinkTarget(
+    scrollSection ? `section|${scrollSection}` : null,
+    scrollSection ? deepLinkSelector(`validation-${scrollSection}`) : null
+  )
+
+  const toggle = (id: ValidationSection) => {
+    const willOpen = !open.has(id)
+    const next = new Set(open)
+    if (willOpen) next.add(id)
+    else next.delete(id)
+    setOpen(next)
+    if (!onUpdateParams) return
+    // ?section names the section last opened; closing it falls back to
+    // another open one, or clears the param. Closing Implementation Attacks
+    // also clears ?attack (its profile is no longer on screen).
+    const section = willOpen
+      ? id
+      : sectionParam === id || !isSection(sectionParam)
+        ? ((['attacks', 'kat', 'coverage'] as const).find((s) => next.has(s)) ?? null)
+        : sectionParam
+    setSelfWrittenSection(section)
+    onUpdateParams({
+      section,
+      ...(id === 'attacks' && !willOpen ? { attack: null } : {}),
+      ...(id === 'coverage' && !willOpen ? { case: null } : {}),
     })
+  }
 
   const sections: Array<{
     id: ValidationSection
@@ -60,7 +119,18 @@ export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationVie
       icon: <ShieldAlert size={16} />,
       label: 'Implementation Attacks',
       caption: 'Side-channel and fault-injection considerations per algorithm family.',
-      content: <ImplementationAttacksView />,
+      content: (
+        <>
+          {attackParam && !attackProfile && (
+            <DeepLinkNotice
+              kind="not-found"
+              message={`No implementation-attack profile matches "${attackParam}".`}
+              onDismiss={() => onUpdateParams?.({ attack: null })}
+            />
+          )}
+          <ImplementationAttacksView highlightProfile={attackProfile?.algorithm ?? null} />
+        </>
+      ),
     },
     {
       id: 'kat',
@@ -77,7 +147,11 @@ export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationVie
         'Every advertised PKCS#11 capability per engine vs. the registered tests, with open gaps.',
       content: (
         <Suspense fallback={<p className="text-xs text-muted-foreground">Loading…</p>}>
-          <CoverageMatrixView />
+          <CoverageMatrixView
+            engineParam={engineParam}
+            caseParam={caseParam}
+            onUpdateParams={onUpdateParams}
+          />
         </Suspense>
       ),
     },
@@ -92,6 +166,7 @@ export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationVie
             key={id}
             className="glass-panel overflow-hidden"
             data-workshop-target={`section-validation-${id}`}
+            data-deeplink-id={`validation-${id}`}
           >
             <Button
               variant="ghost"

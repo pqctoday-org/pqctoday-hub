@@ -23,7 +23,8 @@ vi.mock('./AlgorithmComparison', () => ({
 vi.mock('./AlgorithmDetailedComparison', () => ({
   AlgorithmDetailedComparison: () => <div data-testid="detailed-body" />,
 }))
-vi.mock('../../data/pqcAlgorithmsData', () => ({
+vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/pqcAlgorithmsData')>()),
   loadPQCAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedFileMetadata: { filename: 'x.csv', date: null },
   getFunctionGroup: () => 'KEM',

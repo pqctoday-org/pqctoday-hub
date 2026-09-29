@@ -16,6 +16,8 @@ import {
   type AttackCategory,
   type AttackSeverity,
 } from '@/data/implementationAttackProfiles'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { attackProfileId } from './attackDeepLink'
 
 const ATTACK_CATEGORY_META: Record<
   AttackCategory,
@@ -108,7 +110,19 @@ function StatusBadge({
   )
 }
 
-export const ImplementationAttacksView: React.FC = () => {
+interface ImplementationAttacksViewProps {
+  /** `algorithm` of the profile a `?attack=` link names — scrolled to and ringed. */
+  highlightProfile?: string | null
+}
+
+export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps> = ({
+  highlightProfile,
+}) => {
+  const targetId = highlightProfile
+    ? `attack-${attackProfileId({ algorithm: highlightProfile })}`
+    : null
+  useScrollToDeepLinkTarget(targetId, targetId ? deepLinkSelector(targetId) : null)
+
   return (
     <div className="space-y-6">
       {/* Introductory context */}
@@ -175,7 +189,11 @@ export const ImplementationAttacksView: React.FC = () => {
         {ATTACK_PROFILES.map((profile) => (
           <div
             key={profile.algorithm}
-            className="glass-panel p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors border border-border rounded-lg"
+            data-deeplink-id={`attack-${attackProfileId(profile)}`}
+            className={clsx(
+              'glass-panel p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors border rounded-lg',
+              profile.algorithm === highlightProfile ? 'border-primary/60' : 'border-border'
+            )}
           >
             {/* Header */}
             <div>

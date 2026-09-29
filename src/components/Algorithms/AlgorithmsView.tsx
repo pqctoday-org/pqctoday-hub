@@ -17,6 +17,8 @@ import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
+import { AlgorithmDetailDrawer } from './AlgorithmDetailDrawer'
+import { matchAttackProfile } from './attackDeepLink'
 import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { Cnsa20Panel } from './Cnsa20Panel'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -121,6 +123,10 @@ export function AlgorithmsView() {
     highlightNotice,
     undoHighlightWidening,
     dismissHighlightNotice,
+    selectedAlgo,
+    algoNotFound,
+    openAlgorithm,
+    closeAlgorithm,
   } = useAlgorithmExplorer(personaDefaults)
 
   // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
@@ -159,10 +165,25 @@ export function AlgorithmsView() {
   // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
   // tab=support into the URL right after first paint).
   const protocolParam = searchParams.get('protocol')
-  const isMobileShell = isMobile && !tabParam && !searchParams.get('highlight') && !protocolParam
+  // ?usecase / ?attack imply their tab the same way (pinned right after
+  // first paint), so they skip the landing shell too. ?algo does not: the
+  // landing shell opens it in its own detail sheet.
+  const isMobileShell =
+    isMobile &&
+    !tabParam &&
+    !searchParams.get('highlight') &&
+    !protocolParam &&
+    !searchParams.get('usecase') &&
+    !searchParams.get('attack')
   const isMobileProtocolMatrix =
     isMobile && (tabParam === 'support' || (!tabParam && !!protocolParam))
-  const isMobileValidation = isMobile && tabParam === 'validation'
+  const sectionParam = searchParams.get('section')
+  const attackParam = searchParams.get('attack')
+  // The coverage matrix has no distilled phone screen: ?section=coverage on a
+  // phone falls through to the real Validation view (below, page chrome
+  // stripped) — its tables already scroll horizontally.
+  const isMobileCoverage = isMobile && tabParam === 'validation' && sectionParam === 'coverage'
+  const isMobileValidation = isMobile && tabParam === 'validation' && !isMobileCoverage
   const isMobileTransition = isMobile && tabParam === 'transition'
   const isMobileDetailed = isMobile && tabParam === 'detailed'
 
@@ -181,9 +202,20 @@ export function AlgorithmsView() {
   // A link to a specific resource or sub-view bypasses the Curious preview
   // card — otherwise it swallows the very thing the link points at.
   const hasResourceParams =
-    ['protocol', 'industry', 'mechanism', 'section', 'compare', 'highlight'].some((k) =>
-      searchParams.has(k)
-    ) || searchParams.get('mode') === 'compare'
+    [
+      'protocol',
+      'industry',
+      'mechanism',
+      'usecase',
+      'section',
+      'attack',
+      'engine',
+      'case',
+      'compare',
+      'highlight',
+      'algo',
+      'matrixHighlight',
+    ].some((k) => searchParams.has(k)) || searchParams.get('mode') === 'compare'
   const isCuriousPreview =
     selectedPersona === 'curious' && viewAccess === 'preview' && !hasResourceParams
 
@@ -210,6 +242,12 @@ export function AlgorithmsView() {
       'matrixStatus',
       'matrixAvailability',
       'matrixSort',
+      'matrixHighlight',
+      'algo',
+      'usecase',
+      'attack',
+      'engine',
+      'case',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -258,6 +296,40 @@ export function AlgorithmsView() {
   useScrollToDeepLinkTarget(
     highlightTargetId ? `${activeTab}|${highlightTargetId}` : null,
     highlightTargetId ? highlightRowSelector(deepLinkSelector(highlightTargetId)) : null
+  )
+
+  // ?algo: scroll to (and ring) the linked row on Detailed once it's visible
+  // (useAlgorithmExplorer widens the filters first when it's hidden).
+  const algoRowVisible =
+    !!selectedAlgo &&
+    activeTab === 'detailed' &&
+    filteredAlgorithms.some((a) => a.id === selectedAlgo.id)
+  useScrollToDeepLinkTarget(
+    algoRowVisible ? `algo|${selectedAlgo.id}` : null,
+    algoRowVisible ? highlightRowSelector(deepLinkSelector(selectedAlgo.name)) : null
+  )
+
+  const algoNotFoundEl = algoNotFound ? (
+    <DeepLinkNotice
+      kind="not-found"
+      message={`No algorithm matches "${algoNotFound}" — it may have been renamed or retired.`}
+      onDismiss={closeAlgorithm}
+    />
+  ) : null
+
+  const algoDrawerEl = <AlgorithmDetailDrawer algo={selectedAlgo} onClose={closeAlgorithm} />
+
+  // Validation tab URL state: accordions write ?section, profiles ?attack,
+  // the coverage matrix ?engine / ?case (all replace — view state).
+  const attackProfile = matchAttackProfile(attackParam)
+  const validationEl = (
+    <AlgorithmValidationView
+      sectionParam={sectionParam}
+      attackParam={attackParam}
+      engineParam={searchParams.get('engine')}
+      caseParam={searchParams.get('case')}
+      onUpdateParams={updateSearchParams}
+    />
   )
 
   const highlightNoticeEl = highlightNotice ? (
@@ -341,7 +413,17 @@ export function AlgorithmsView() {
     return <MobileProtocolMatrixView />
   }
   if (isMobileValidation) {
-    return <MobileKATValidationView />
+    return (
+      <MobileKATValidationView
+        sectionParam={sectionParam}
+        attackParam={attackParam}
+        attackProfile={attackProfile?.algorithm ?? null}
+        onUpdateParams={updateSearchParams}
+      />
+    )
+  }
+  if (isMobileCoverage) {
+    return <div className="px-4 pb-4 pt-4">{validationEl}</div>
   }
   if (isMobileTransition) {
     return (
@@ -355,6 +437,7 @@ export function AlgorithmsView() {
           maxCompareReached={compareKeys.length >= MAX_COMPARE - 1}
           onToggleTransitionRow={handleToggleTransitionRow}
         />
+        {algoDrawerEl}
       </div>
     )
   }
@@ -368,6 +451,7 @@ export function AlgorithmsView() {
           Key sizes, performance, and standardization status for every algorithm.
         </p>
         <div className="mt-3">
+          {algoNotFoundEl}
           {highlightNoticeEl}
           <AlgorithmDetailedComparison
             highlightAlgorithms={highlightAlgorithms}
@@ -382,9 +466,12 @@ export function AlgorithmsView() {
             comparisonAlgos={comparisonAlgos}
             baselineAlgo={baselineAlgo}
             hideCompareToggle
+            selectedAlgoId={selectedAlgo?.id ?? null}
+            onOpenAlgorithm={openAlgorithm}
           />
         </div>
         <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
+        {algoDrawerEl}
       </div>
     )
   }
@@ -584,6 +671,7 @@ export function AlgorithmsView() {
             </>
           )}
 
+          {algoNotFoundEl && <div className="mt-4">{algoNotFoundEl}</div>}
           {(activeTab === 'detailed' || activeTab === 'transition') && highlightNoticeEl && (
             <div className="mt-4">{highlightNoticeEl}</div>
           )}
@@ -662,6 +750,8 @@ export function AlgorithmsView() {
                   onDetailModeChange={handleDetailModeChange}
                   comparisonAlgos={comparisonAlgos}
                   baselineAlgo={baselineAlgo}
+                  selectedAlgoId={selectedAlgo?.id ?? null}
+                  onOpenAlgorithm={openAlgorithm}
                 />
               </motion.div>
             </TabsContent>
@@ -695,7 +785,7 @@ export function AlgorithmsView() {
                 transition={{ duration: 0.3 }}
                 data-workshop-target="section-algorithm-validation"
               >
-                <AlgorithmValidationView sectionParam={searchParams.get('section')} />
+                {validationEl}
               </motion.div>
             </TabsContent>
           </Tabs>
@@ -729,6 +819,7 @@ export function AlgorithmsView() {
       )}
 
       <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
+      {algoDrawerEl}
     </div>
   )
 }

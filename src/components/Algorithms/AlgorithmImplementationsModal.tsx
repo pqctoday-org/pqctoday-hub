@@ -186,7 +186,7 @@ function ImplCard({ xref, onClose }: { xref: AlgoProductXref; onClose: () => voi
         )}
         {xref.softwareName && (
           <Link
-            to={`/migrate?search=${encodeURIComponent(xref.softwareName)}`}
+            to={`/migrate?product=${encodeURIComponent(xref.productId || xref.softwareName)}`}
             onClick={onClose}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground whitespace-nowrap"
           >

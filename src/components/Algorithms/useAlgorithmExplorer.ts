@@ -5,6 +5,7 @@ import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
   type AlgorithmDetail,
+  findAlgorithmByRef,
   getFunctionGroup,
   isClassical,
 } from '../../data/pqcAlgorithmsData'
@@ -24,6 +25,26 @@ import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaCon
 import { algoMatchesHighlight, parseHighlight, transitionMatchesHighlight } from './highlightMatch'
 
 export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
+
+/**
+ * Params that only mean something on one tab. Whenever one of them is in the
+ * URL, `tab` is written too — even when it equals the sharer's persona
+ * default — so a recipient with a different persona lands on the same tab.
+ */
+const TAB_BOUND_PARAMS = ['mode', 'compare', 'section', 'algo'] as const
+
+/**
+ * A link carrying one of these without `?tab` implies the tab its resource
+ * lives on (and the tab is pinned into the URL right after first paint).
+ * `?algo` is deliberately absent: it opens a page-level drawer (and, on the
+ * phone landing screen, a sheet that must not be pushed off that screen), so
+ * it only seeds the initial tab and is never pinned.
+ */
+const IMPLIED_TAB_PARAMS: ReadonlyArray<[string, AlgorithmTabId]> = [
+  ['protocol', 'support'],
+  ['usecase', 'landscape'],
+  ['attack', 'validation'],
+]
 
 // True FIPS validation, grounded in the literal NIST FIPS numbering
 // convention: the algorithm's own standards-document field (`fipsStandard` on
@@ -280,23 +301,29 @@ export function useAlgorithmExplorer(
     if (isAlgorithmTab(tab)) return tab
     // ?protocol=<id> only means something on Protocol Support (its detail
     // modal lives there), so a link carrying it without ?tab lands there.
-    if (searchParams.get('protocol')) return 'support'
-    if (searchParams.get('highlight')) return 'detailed'
+    // Same for ?usecase (Industry Landscape) and ?attack (Validation).
+    for (const [param, impliedTab] of IMPLIED_TAB_PARAMS) {
+      if (searchParams.get(param)) return impliedTab
+    }
+    if (searchParams.get('highlight') || searchParams.get('algo')) return 'detailed'
     return personaDefaults.tab
   })
 
   useEffect(() => {
     const tab = searchParams.get('tab')
+    const implied = tab
+      ? undefined
+      : IMPLIED_TAB_PARAMS.find(([param]) => searchParams.get(param))?.[1]
     if (isAlgorithmTab(tab)) {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
-    } else if (!tab && searchParams.get('protocol')) {
-      setActiveTab((prev) => (prev !== 'support' ? 'support' : prev))
-      // Pin the tab in the URL so closing the protocol (which strips
-      // ?protocol) keeps the reader on Protocol Support on reload/share.
+    } else if (implied) {
+      setActiveTab((prev) => (prev !== implied ? implied : prev))
+      // Pin the tab in the URL so closing the resource (which strips its
+      // param) keeps the reader on that tab on reload/share.
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
-          next.set('tab', 'support')
+          next.set('tab', implied)
           return next
         },
         { replace: true }
@@ -453,8 +480,12 @@ export function useAlgorithmExplorer(
   const compareSet = useMemo(() => new Set(compareKeys), [compareKeys])
 
   // --- URL sync ---
+  // Read through a ref so updateSearchParams keeps a stable identity.
+  const activeTabRef = useRef(activeTab)
+  activeTabRef.current = activeTab
+
   const updateSearchParams = useCallback(
-    (updates: Record<string, string | null>) => {
+    (updates: Record<string, string | null>, opts: { push?: boolean } = {}) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
@@ -465,9 +496,12 @@ export function useAlgorithmExplorer(
               next.set(key, value)
             }
           }
+          if (!next.has('tab') && TAB_BOUND_PARAMS.some((k) => next.has(k))) {
+            next.set('tab', activeTabRef.current)
+          }
           return next
         },
-        { replace: true }
+        { replace: !opts.push }
       )
     },
     [setSearchParams]
@@ -549,11 +583,15 @@ export function useAlgorithmExplorer(
     (t: string) => {
       const tab = t as AlgorithmTabId
       setActiveTab(tab)
+      activeTabRef.current = tab
       // Persist tabs that differ from the persona default; clear the param
-      // when the user returns to their default so the URL stays clean.
-      updateSearchParams({ tab: tab !== personaDefaults.tab ? tab : null })
+      // when the user returns to their default so the URL stays clean —
+      // unless a tab-bound param (mode/compare/section/algo) is set, which
+      // always pins the tab (a recipient's persona default may differ).
+      const pinned = TAB_BOUND_PARAMS.some((k) => searchParams.has(k))
+      updateSearchParams({ tab: tab !== personaDefaults.tab || pinned ? tab : null })
     },
-    [updateSearchParams, personaDefaults.tab]
+    [updateSearchParams, personaDefaults.tab, searchParams]
   )
 
   // QuickView preset → multi-field filter writes (P1.2). NIST picks pins
@@ -838,6 +876,72 @@ export function useAlgorithmExplorer(
 
   const dismissHighlightNotice = useCallback(() => setHighlightNotice(null), [])
 
+  // --- ?algo=<algorithm_id> detail drawer ---
+  // Accepts the stable id or (for links minted before the id column) an
+  // exact, case-insensitive algorithm name. Opening pushes a history entry
+  // (Back closes the drawer); closing strips the param in place.
+  const algoParam = searchParams.get('algo')
+  const selectedAlgo = useMemo(
+    () => findAlgorithmByRef(algorithmData, algoParam) ?? null,
+    [algorithmData, algoParam]
+  )
+  const algoNotFound = !isLoading && !!algoParam && !selectedAlgo ? algoParam : null
+
+  const openAlgorithm = useCallback(
+    (algo: AlgorithmDetail) => updateSearchParams({ algo: algo.id }, { push: true }),
+    [updateSearchParams]
+  )
+  const closeAlgorithm = useCallback(() => updateSearchParams({ algo: null }), [updateSearchParams])
+
+  // The linked algorithm hidden by the quick view / filters on Detailed:
+  // widen exactly like ?highlight does (same plan, same Undo notice), once
+  // per (tab, algo) pair so Undo doesn't immediately re-widen.
+  const handledAlgoKeyRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!selectedAlgo || activeTab !== 'detailed') return
+    const key = `${activeTab}|${selectedAlgo.id}`
+    if (handledAlgoKeyRef.current === key) return
+    handledAlgoKeyRef.current = key
+    const plan = planHighlightWidening(
+      [selectedAlgo.name],
+      algorithmData,
+      filterState,
+      (r, f) => passesAlgoFilterState(r, f, semanticAlgoNameSet),
+      (r, n) => r.name === n
+    )
+    if (!plan.widenTo) return
+    const onlyQuickView =
+      JSON.stringify({ ...filterState, quickView: 'none' }) === JSON.stringify(plan.widenTo)
+    setHighlightNotice((n) => ({
+      notFound: n?.notFound ?? null,
+      widened: {
+        message: onlyQuickView
+          ? `Switched the quick view to "Everything" so the linked ${selectedAlgo.name} is visible.`
+          : `Filters were cleared so the linked ${selectedAlgo.name} is visible.`,
+        prev: filterState,
+        prevParams: Object.fromEntries(
+          ['quickview', 'family', 'fn', 'level', 'region', 'status', 'cnsa', 'gap', 'q'].map(
+            (k) => [k, searchParams.get(k)]
+          )
+        ),
+      },
+    }))
+    applyFilterState(plan.widenTo)
+    updateSearchParams({
+      quickview: 'none',
+      family: plan.widenTo.family,
+      fn: plan.widenTo.fn,
+      level: plan.widenTo.level,
+      region: plan.widenTo.region,
+      status: plan.widenTo.status,
+      cnsa: plan.widenTo.cnsa ? '1' : null,
+      gap: plan.widenTo.gap ? '1' : null,
+      q: plan.widenTo.q || null,
+    })
+    // Only the (tab, algo) pair triggers this; filter state is read, not tracked.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAlgo, activeTab, algorithmData])
+
   // --- Available security levels ---
   // Derived from the dataset filtered by everything EXCEPT the active level
   // filter, so selecting a level never hides the other levels you could switch
@@ -924,6 +1028,12 @@ export function useAlgorithmExplorer(
     highlightNotice,
     undoHighlightWidening,
     dismissHighlightNotice,
+    // ?algo detail drawer
+    algoParam,
+    selectedAlgo,
+    algoNotFound,
+    openAlgorithm,
+    closeAlgorithm,
     // tab
     activeTab,
     setActiveTab,

@@ -33,4 +33,15 @@ describe('PQCProtocolMatrix — ?protocol deep links', () => {
     expect(container.querySelector(`[data-deeplink-id="${row.id}"]`)).not.toBeNull()
     expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
   })
+
+  it('?matrixHighlight=recommended tints the recommended rows (old ?highlight form still read)', () => {
+    const rec = PROTOCOL_MATRIX.find((r) => r.recommended && !r.historical)!
+    for (const q of ['matrixHighlight=recommended', 'highlight=recommended']) {
+      const { container, unmount } = renderAt(`/algorithms?tab=support&${q}`)
+      // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
+      const row = container.querySelector(`tr[data-deeplink-id="${rec.id}"]`)
+      expect(row?.className, q).toContain('bg-status-warning/5')
+      unmount()
+    }
+  })
 })

@@ -5,6 +5,7 @@ import { getAlgoCtasWithFallback } from '@/data/algorithmCtaMap'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { algorithmIdFromName } from '@/data/pqcAlgorithmsData'
 
 interface AlgoCtaStripProps {
   algoName: string
@@ -19,6 +20,8 @@ interface AlgoCtaStripProps {
 export function AlgoCtaStrip({ algoName, className = '', trailing }: AlgoCtaStripProps) {
   const ctas = getAlgoCtasWithFallback(algoName)
   const location = useLocation()
+  // Endorse/Flag cite the algorithm's own detail drawer (?algo=<algorithm_id>).
+  const algoPageUrl = `/algorithms?algo=${algorithmIdFromName(algoName)}`
 
   // Spec stays a real anchor (copy/share/middle-click all work) but points at
   // the current page with `?spec=` added — SpecDrawerHost turns that into an
@@ -79,7 +82,7 @@ export function AlgoCtaStrip({ algoName, className = '', trailing }: AlgoCtaStri
           resourceType: 'Algorithm',
           resourceId: algoName,
           resourceDetails: `**Algorithm:** ${algoName}`,
-          pageUrl: `/algorithms?algorithm=${encodeURIComponent(algoName)}`,
+          pageUrl: algoPageUrl,
         })}
         resourceLabel={algoName}
         resourceType="Algorithm"
@@ -91,7 +94,7 @@ export function AlgoCtaStrip({ algoName, className = '', trailing }: AlgoCtaStri
           resourceType: 'Algorithm',
           resourceId: algoName,
           resourceDetails: `**Algorithm:** ${algoName}`,
-          pageUrl: `/algorithms?algorithm=${encodeURIComponent(algoName)}`,
+          pageUrl: algoPageUrl,
         })}
         resourceLabel={algoName}
         resourceType="Algorithm"

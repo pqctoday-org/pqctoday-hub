@@ -18,7 +18,7 @@
 // renderer. There is deliberately NO deadlines row — see that file's header for
 // the measurement that killed it.
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   ArrowLeft,
@@ -58,6 +58,8 @@ import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
 import { threatsData } from '../../data/threatsData'
 import { threatsIndustryHref } from '../Threats/threatsUrlParams'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { learnHref } from './learnHref'
 import { MANIFEST_BY_ID } from '../PKILearning/manifest/registry'
 import { softwareData } from '../../data/migrateData'
@@ -560,7 +562,11 @@ function UseCaseCard({
       (uc.relatedStandards.includes(s.standardId) || s.useCaseIds.includes(uc.useCaseId))
   )
   return (
-    <div className="rounded-lg border border-border bg-card p-4" data-use-case={uc.useCaseId}>
+    <div
+      className="rounded-lg border border-border bg-card p-4"
+      data-use-case={uc.useCaseId}
+      data-deeplink-id={`usecase-${uc.useCaseId}`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           <Icon size={18} className="shrink-0 text-primary" />
@@ -720,7 +726,11 @@ function UseCaseCard({
         </span>
         {uc.migrateProductRefs.length > 0 && (
           <Link
-            to={`/migrate?productIds=${uc.migrateProductRefs.map(encodeURIComponent).join(',')}`}
+            to={
+              uc.migrateProductRefs.length === 1
+                ? `/migrate?product=${encodeURIComponent(uc.migrateProductRefs[0])}`
+                : `/migrate?productIds=${uc.migrateProductRefs.map(encodeURIComponent).join(',')}`
+            }
             className="inline-flex shrink-0 items-center gap-1 hover:text-primary"
             title={`Open in the migrate catalog: ${uc.migrateProductRefs
               .map((id) => softwareData.find((p) => p.productId === id)?.softwareName ?? id)
@@ -1039,8 +1049,39 @@ export function IndustryLandscapeView() {
     )
   }
 
-  const pickIndustry = (industry: string | null) => update({ industry, mechanism: null })
-  const pickMechanism = (mechanism: string | null) => update({ mechanism, industry: null })
+  // Picking another industry or mechanism moves off the linked use case.
+  const pickIndustry = (industry: string | null) =>
+    update({ industry, mechanism: null, usecase: null })
+  const pickMechanism = (mechanism: string | null) =>
+    update({ mechanism, industry: null, usecase: null })
+
+  // ?usecase=<useCaseId>: open its industry (unless the mechanism lens
+  // already lists it), then scroll to and ring its card. Case-insensitive.
+  const usecaseParam = searchParams.get('usecase')
+  const linkedUseCase = useMemo(() => {
+    const q = usecaseParam?.trim().toLowerCase()
+    return q ? (useCases.find((u) => u.useCaseId.toLowerCase() === q) ?? null) : null
+  }, [useCases, usecaseParam])
+  const linkedUseCaseShown =
+    !!linkedUseCase &&
+    (mode === 'mechanism'
+      ? linkedUseCase.classicalMechanisms.includes(selectedMechanism ?? '') ||
+        linkedUseCase.pqcMechanisms.includes(selectedMechanism ?? '')
+      : selectedIndustry === linkedUseCase.industry)
+  useEffect(() => {
+    if (!linkedUseCase || linkedUseCaseShown) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('industry', linkedUseCase.industry)
+        next.delete('mechanism')
+        return next
+      },
+      { replace: true }
+    )
+  }, [linkedUseCase, linkedUseCaseShown, setSearchParams])
+  const usecaseTarget = linkedUseCaseShown ? `usecase-${linkedUseCase.useCaseId}` : null
+  useScrollToDeepLinkTarget(usecaseTarget, usecaseTarget ? deepLinkSelector(usecaseTarget) : null)
 
   const mechanismDef = selectedMechanism ? getMechanismFamily(selectedMechanism) : undefined
   const mechanismHits = useMemo(() => {
@@ -1058,6 +1099,13 @@ export function IndustryLandscapeView() {
 
   return (
     <div data-workshop-target="section-algorithm-industry-landscape">
+      {usecaseParam && !linkedUseCase && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No industry use case matches "${usecaseParam}" — it may have been renamed or retired.`}
+          onDismiss={() => update({ usecase: null })}
+        />
+      )}
       {/* Mode toggle */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="text-sm text-muted-foreground">Explore by</span>
@@ -1065,7 +1113,7 @@ export function IndustryLandscapeView() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => update({ mechanism: null })}
+            onClick={() => update({ mechanism: null, usecase: null })}
             className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Industry

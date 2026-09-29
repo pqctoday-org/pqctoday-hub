@@ -30,7 +30,8 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
 }))
 
 // Mock async data loaders so the component resolves immediately in tests
-vi.mock('../../data/pqcAlgorithmsData', () => ({
+vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/pqcAlgorithmsData')>()),
   loadPQCAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedFileMetadata: { filename: 'pqc_complete_algorithm_reference.csv', date: null },
 }))
