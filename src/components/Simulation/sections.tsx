@@ -37,6 +37,16 @@ import {
 } from './simChrome'
 
 // ---- resources -----------------------------------------------------------
+/** Sim sector → the Industry Landscape's own industry label (`general` has no
+ *  single industry, so its landscape link stays unfiltered). */
+export const LANDSCAPE_INDUSTRY: Record<string, string> = {
+  financial: 'Finance & Banking',
+  retail: 'Retail & E-Commerce',
+  telecom: 'Telecommunications',
+  energy: 'Critical Infrastructure / Energy',
+  healthcare: 'Healthcare / Pharmaceutical',
+  government: 'Government & Defense',
+}
 export interface ResItem {
   id: string
   label: string
@@ -64,11 +74,16 @@ export function resLinks(
         to: `/learn/${id}`,
       }))
   if (leg === 'reference')
-    return resourcesForPhase('reference', phase).map((id) => ({
-      id,
-      label: REF_LABELS[id] ?? id,
-      to: REFERENCE_PHASES[id]?.deepUrl ?? '/',
-    }))
+    return resourcesForPhase('reference', phase).map((id) => {
+      const base = REFERENCE_PHASES[id]?.deepUrl ?? '/'
+      // 09-28 (WP-E / Q3): the Industry Landscape opens on the run's sector.
+      const industry = id === 'industry-landscape' ? LANDSCAPE_INDUSTRY[sector] : undefined
+      return {
+        id,
+        label: REF_LABELS[id] ?? id,
+        to: industry ? `${base}&industry=${encodeURIComponent(industry)}` : base,
+      }
+    })
   const biz = resourcesForPhase('business', phase, 'practice')
     .filter(relevant)
     .map((id) => ({
