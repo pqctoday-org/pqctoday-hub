@@ -766,3 +766,82 @@ export function resolveCountryParam(
   // Literal "All" param is a valid request, not an unknown country
   return { resolved: 'All', wasUnknown: param.toLowerCase() !== 'all' }
 }
+
+/*
+ * Gantt view state in the URL (all written with replace, all optional):
+ *   ?phase=<Phase>        one phase type (single-select, like the dropdown);
+ *                          matched case-insensitively, unknown values ignored
+ *   ?deadlines=1          the Deadlines quick toggle — the canonical form of
+ *                          phase=Deadline (a Deadline selection is always
+ *                          written this way; ?phase=Deadline is still read)
+ *   ?etype=Phase|Milestone
+ *   ?gsort=organization   Gantt row sort (default `country`, omitted)
+ *   ?gdir=desc            sort direction (default `asc`, omitted)
+ * A repeated key uses its first recognised value. Defaults are never written.
+ */
+export const GANTT_PHASE_TYPES: Phase[] = [
+  'Discovery',
+  'Testing',
+  'POC',
+  'Migration',
+  'Standardization',
+  'Guidance',
+  'Policy',
+  'Regulation',
+  'Research',
+  'Deadline',
+]
+export const GANTT_EVENT_TYPES: EventType[] = ['Phase', 'Milestone']
+export const GANTT_VIEW_PARAM_KEYS = ['phase', 'deadlines', 'etype', 'gsort', 'gdir'] as const
+
+export interface GanttViewState {
+  /** A Phase, or 'All'. */
+  phase: string
+  /** 'Phase' | 'Milestone', or 'All'. */
+  etype: string
+  sort: 'country' | 'organization'
+  dir: 'asc' | 'desc'
+}
+
+export const DEFAULT_GANTT_VIEW: GanttViewState = {
+  phase: 'All',
+  etype: 'All',
+  sort: 'country',
+  dir: 'asc',
+}
+
+function firstKnown<T extends string>(values: string[], known: readonly T[]): T | undefined {
+  for (const v of values) {
+    const hit = known.find((k) => k.toLowerCase() === v.trim().toLowerCase())
+    if (hit) return hit
+  }
+  return undefined
+}
+
+/** Read the Gantt filters/sort from the URL; unknown values fall back to defaults. */
+export function readGanttViewParams(sp: URLSearchParams): GanttViewState {
+  const deadlines = sp.get('deadlines') === '1'
+  return {
+    phase: deadlines ? 'Deadline' : (firstKnown(sp.getAll('phase'), GANTT_PHASE_TYPES) ?? 'All'),
+    etype: firstKnown(sp.getAll('etype'), GANTT_EVENT_TYPES) ?? 'All',
+    sort: firstKnown(sp.getAll('gsort'), ['country', 'organization'] as const) ?? 'country',
+    dir: firstKnown(sp.getAll('gdir'), ['asc', 'desc'] as const) ?? 'asc',
+  }
+}
+
+/** Write `view` into a copy of `sp` (defaults removed). */
+export function writeGanttViewParams(sp: URLSearchParams, view: GanttViewState): URLSearchParams {
+  const next = new URLSearchParams(sp)
+  for (const k of GANTT_VIEW_PARAM_KEYS) next.delete(k)
+  if (view.phase === 'Deadline') next.set('deadlines', '1')
+  else if (view.phase !== 'All') next.set('phase', view.phase)
+  if (view.etype !== 'All') next.set('etype', view.etype)
+  if (view.sort !== 'country') next.set('gsort', view.sort)
+  if (view.dir !== 'asc') next.set('gdir', view.dir)
+  return next
+}
+
+/** `?docview=cards|table` — the Documents panel layout; anything else is 'cards'. */
+export function readDocViewParam(value: string | null): 'cards' | 'table' {
+  return value === 'table' ? 'table' : 'cards'
+}
