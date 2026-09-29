@@ -16,6 +16,7 @@ import {
   FlaskConical,
   Layers,
   Key,
+  AlertTriangle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -103,13 +104,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;The initiator sends an ML-KEM encapsulation key in an Additional Key Exchange
-              payload during IKE_INTERMEDIATE. The responder encapsulates against this key and
-              returns the ciphertext. The resulting shared secret is combined with the classical DH
-              secret using the IKEv2 key hierarchy.&rdquo;
+              &ldquo;The initiator generates an ML-KEM keypair (pk, sk) using KeyGen(), and sends
+              the public key (pk) to the responder inside a KEi(1) payload. The responder will
+              encapsulate a shared secret ss using Encaps(pk) and the resulting ciphertext (ct) is
+              sent to initiator using the KEr(1).&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; draft-ietf-ipsecme-ikev2-mlkem-06
+              &mdash; draft-ietf-ipsecme-ikev2-mlkem-09, Appendix A
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -133,6 +134,103 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Section 2b: Pure ML-KEM in IKEv2 — known limits (draft-ietf-ipsecme-ikev2-mlkem-09 §2.1, Appendix A) */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-warning/10">
+            <AlertTriangle size={24} className="text-warning" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Pure ML-KEM in IKEv2: Known Limits</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            A <strong>pure</strong> (quantum-resistant-only) IKEv2 handshake has no classical key
+            exchange to fall back on, so ML-KEM must travel in the very first message,{' '}
+            <strong>IKE_SA_INIT</strong>. That is where the draft&apos;s main restriction sits:
+            IKEv2 fragmentation (RFC 7383) only works on encrypted messages, and IKE_SA_INIT is sent
+            before any keys exist. In the draft&apos;s words, these messages &ldquo;could not be
+            IKEv2 fragmented&rdquo;. A payload bigger than the path MTU falls back to IP
+            fragmentation, which NATs and firewalls often drop and which is a known
+            denial-of-service target.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-2 text-muted-foreground font-bold">Parameter set</th>
+                  <th className="text-right p-2 text-muted-foreground font-bold">
+                    KE payload (key / ciphertext)
+                  </th>
+                  <th className="text-left p-2 text-muted-foreground font-bold">
+                    Pure PQC in IKE_SA_INIT over UDP
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: 'ML-KEM-512 (35)',
+                    size: '808 / 776 B',
+                    rule: 'MAY be used',
+                    color: 'text-success',
+                  },
+                  {
+                    name: 'ML-KEM-768 (36)',
+                    size: '1,192 / 1,096 B',
+                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    color: 'text-warning',
+                  },
+                  {
+                    name: 'ML-KEM-1024 (37)',
+                    size: '1,576 / 1,576 B',
+                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    color: 'text-warning',
+                  },
+                ].map((row) => (
+                  <tr key={row.name} className="border-b border-border/50">
+                    <td className="p-2 font-medium text-foreground">{row.name}</td>
+                    <td className="p-2 text-right text-muted-foreground">{row.size}</td>
+                    <td className={`p-2 font-bold ${row.color}`}>{row.rule}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">The CNSA 2.0 squeeze</div>
+              <p className="text-xs text-muted-foreground">
+                CNSA 2.0 requires ML-KEM-1024, but ML-KEM-512 is the only size the draft allows in a
+                pure UDP IKE_SA_INIT without conditions. A pure CNSA 2.0 IKEv2 deployment therefore
+                has to run IKE over TCP (RFC 9329), guarantee the path MTU, or accept IP
+                fragmentation.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                The draft&apos;s own way round
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Appendix A runs a classical exchange in IKE_SA_INIT and carries ML-KEM-768/1024 in
+                IKE_INTERMEDIATE (RFC 9242 / RFC 9370). Those messages are encrypted, so RFC 7383
+                fragmentation applies. The cost: the first exchange is no longer quantum-resistant
+                on its own. That makes this a hybrid design, not pure PQC.
+              </p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            The draft also requires a fresh ML-KEM key pair and fresh encapsulation randomness for
+            every exchange. The responder must check the initiator&apos;s encapsulation key (FIPS
+            203 §7.2) before encapsulating, and should reject a bad key with INVALID_SYNTAX to limit
+            resource-exhaustion attacks. The draft further warns that an on-path attacker with a
+            quantum computer could steer peers onto a classical-only group unless local policy
+            forbids one. None of this makes the draft a dead end. It sits in the RFC Editor queue,
+            and several firewall vendors already ship hybrid ML-KEM IKEv2. Only pure-PQC IKEv2 at
+            the higher security levels over plain UDP remains an open engineering problem.
+          </p>
         </div>
       </section>
 
@@ -314,8 +412,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           </div>
           <p className="text-xs text-muted-foreground">
             WireGuard sees the largest relative increase (22x) because its classical handshake is
-            extremely compact. IKEv2 handles fragmentation explicitly (RFC 7383) over UDP, while SSH
-            handles larger payloads natively because it relies on TCP transport.
+            extremely compact. IKEv2 handles fragmentation explicitly (RFC 7383) over UDP, but only
+            for encrypted messages, so it cannot help IKE_SA_INIT. SSH handles larger payloads
+            natively because it relies on TCP transport.
           </p>
         </div>
       </section>
