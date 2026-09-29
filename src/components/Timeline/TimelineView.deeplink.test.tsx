@@ -84,10 +84,8 @@ describe('TimelineView ?event= deep link', () => {
   })
 
   it('a stored region that hides the event switches to its country', () => {
-    const outside = ALL.find(
-      (e) => !['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'].includes(e.countryName)
-    )!
-    usePersonaStore.getState().setRegion('global')
+    const outside = ALL.find((e) => e.countryName === 'France')!
+    usePersonaStore.getState().setRegion('apac')
     renderAt(`?event=${encodeURIComponent(eventLinkKey(outside))}`)
     expect(screen.getByTestId('deeplink-notice-widened')).toBeInTheDocument()
     expect(params().get('country')).toBe(outside.countryName)
@@ -98,5 +96,22 @@ describe('TimelineView ?event= deep link', () => {
     expect(screen.queryByTestId('deeplink-notice-widened')).toBeNull()
     expect(screen.queryByTestId('deeplink-notice-not-found')).toBeNull()
     expect(params().get('event')).toBe(eventLinkKey(GOV))
+  })
+})
+
+describe('storedRegionDefault', () => {
+  it("a stored 'global' region does not hide a country event", () => {
+    const france = ALL.find((e) => e.countryName === 'France')!
+    usePersonaStore.getState().setRegion('global')
+    renderAt(`?event=${encodeURIComponent(eventLinkKey(france))}`)
+    expect(screen.queryByTestId('deeplink-notice-widened')).toBeNull()
+  })
+
+  it("treats the persona store's 'global' default as no region filter", async () => {
+    const { storedRegionDefault } = await import('./TimelineView')
+    expect(storedRegionDefault('global')).toBeNull()
+    expect(storedRegionDefault(null)).toBeNull()
+    expect(storedRegionDefault(undefined)).toBeNull()
+    expect(storedRegionDefault('eu')).toBe('eu')
   })
 })

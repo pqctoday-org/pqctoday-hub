@@ -78,6 +78,18 @@ export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
     'Each row is one country/region; bars show how far it has moved through the PQC migration phases shown in the legend.',
 }
 
+/**
+ * A STORED region preference ('global' is the persona store's default for
+ * every new visitor) means "no region filter" on the timeline — the reader
+ * never asked for anything narrower. Only an explicit `?region=global` (the
+ * GLOBAL coverage tile) narrows the Gantt to the international bodies. Before
+ * 2026-09-28 the default was applied verbatim, so every first-time desktop
+ * visitor saw 7 rows (G7, OASIS, ITU, BIS, NATO) instead of 36 countries.
+ */
+export function storedRegionDefault(region: string | null | undefined): string | null {
+  return region && region !== 'global' ? region : null
+}
+
 export const TimelineView = () => {
   const isMobileShell = useIsMobileShell()
   useWorkflowPhaseTracker('timeline')
@@ -103,9 +115,7 @@ export const TimelineView = () => {
     const urlRegion = searchParams.get('region')
     if (urlRegion) return urlRegion
     if (searchParams.get('prefs') === 'off') return 'All'
-    const storeRegion = usePersonaStore.getState().selectedRegion
-    if (storeRegion) return storeRegion
-    return 'All'
+    return storedRegionDefault(usePersonaStore.getState().selectedRegion) ?? 'All'
   })
 
   // Persona-default region is applied inside the URL-sync useEffect below
@@ -213,10 +223,11 @@ export const TimelineView = () => {
     //   6. 'All'
     let nextRegion = searchParams.get('region') ?? 'All'
     if (!searchParams.get('region') && !paramCountry && searchParams.get('prefs') !== 'off') {
-      if (storeSelectedRegion) nextRegion = storeSelectedRegion
-      else if (selectedPersona) {
+      const storedDefault = storedRegionDefault(storeSelectedRegion)
+      if (storedDefault) nextRegion = storedDefault
+      else if (!storeSelectedRegion && selectedPersona) {
         const personaDefault = PERSONA_TIMELINE_REGION[selectedPersona] // eslint-disable-line security/detect-object-injection
-        if (personaDefault) nextRegion = personaDefault
+        if (personaDefault) nextRegion = storedRegionDefault(personaDefault) ?? 'All'
       }
     }
     const nextQ = searchParams.get('q') ?? ''
@@ -286,9 +297,13 @@ export const TimelineView = () => {
     let effRegion: string = searchParams.get('region') ?? 'All'
     if (!searchParams.get('region') && searchParams.get('prefs') !== 'off') {
       effRegion =
-        storeSelectedRegion ??
-        // eslint-disable-next-line security/detect-object-injection
-        (selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null) ??
+        storedRegionDefault(storeSelectedRegion) ??
+        (storeSelectedRegion
+          ? null
+          : // eslint-disable-next-line security/detect-object-injection
+            storedRegionDefault(
+              selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null
+            )) ??
         'All'
     }
     const hiddenByCountry =
