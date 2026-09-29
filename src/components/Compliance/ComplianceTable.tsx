@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   X,
@@ -16,7 +16,7 @@ import {
   Info,
   FileText,
 } from 'lucide-react'
-import type { ComplianceMeta, ComplianceRecord, ComplianceSource } from './types'
+import type { ComplianceMeta, ComplianceRecord } from './types'
 import { getMigrateCategory, type MigrateCategoryRef } from './migrateCategories'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -24,7 +24,8 @@ import clsx from 'clsx'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
-import { matchesTrustTierFilter } from '../common/TrustTierFilter'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { recordFilterExclusions } from './recordFilters'
 import type { TrustTier } from '@/data/trustScore'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { buildComplianceCsv } from './recordsExport'
@@ -49,20 +50,6 @@ const RECORD_SCOPE_OPTIONS = [
   { id: 'all', label: 'Include historical / archived' },
 ]
 
-/**
- * Maps a cert record's `source` to the framework ID used to look up
- * trust scores. Records whose source has no corresponding scored framework
- * (e.g. 'Other') return null and are excluded when a tier filter is active.
- */
-const SOURCE_TO_FRAMEWORK_ID: Record<ComplianceSource, string | null> = {
-  NIST: 'NIST',
-  'Common Criteria': 'COMMON-CRITERIA',
-  'BSI Germany': 'BSI',
-  ANSSI: 'ANSSI',
-  ENISA: 'ENISA',
-  Other: null,
-}
-
 interface ComplianceTableProps {
   data: ComplianceRecord[]
   onRefresh?: () => void
@@ -84,7 +71,12 @@ interface ComplianceTableProps {
   sortColumn?: SortColumn
   sortDirection?: SortDirection
   currentPage?: number
+  /** The open record (`?cert=`). Resolved against the full `data`, so it opens
+   *  even when the row is outside the virtualised window or filtered out. */
   selectedRecordId?: string
+  /** Controlled open/close — the page writes `?cert=` (push) / clears it (replace). */
+  onSelectRecord?: (id: string) => void
+  onCloseRecord?: () => void
   onFilterTextChange?: (text: string) => void
   migrateCatFilters?: string[]
   onPqcFiltersChange?: (filters: string[]) => void
@@ -115,10 +107,14 @@ export const ComplianceRow = ({
   record,
   index,
   autoOpen,
+  onOpenDetails,
 }: {
   record: ComplianceRecord
   index: number
   autoOpen?: boolean
+  /** When set, the details button defers to the table-level popover (which
+   *  survives virtualisation) instead of opening one owned by this row. */
+  onOpenDetails?: (record: ComplianceRecord) => void
 }) => {
   const [showDetailsPopup, setShowDetailsPopup] = useState(autoOpen === true)
   const [showPqcTooltip, setShowPqcTooltip] = useState(false)
@@ -129,7 +125,10 @@ export const ComplianceRow = ({
   const pqcFromSt = isSecurityTargetType(record.type)
 
   return (
-    <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+    <tr
+      data-deeplink-id={record.id}
+      className="border-b border-border hover:bg-muted/50 transition-colors"
+    >
       {/* Source Column */}
       <td
         className="px-4 py-3 font-medium flex items-center gap-2 w-24 truncate"
@@ -354,16 +353,18 @@ export const ComplianceRow = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setShowDetailsPopup(true)}
+          onClick={() => (onOpenDetails ? onOpenDetails(record) : setShowDetailsPopup(true))}
           aria-label="View details"
         >
           <Info size={16} />
         </Button>
-        <ComplianceDetailPopover
-          isOpen={showDetailsPopup}
-          onClose={() => setShowDetailsPopup(false)}
-          record={record}
-        />
+        {!onOpenDetails && (
+          <ComplianceDetailPopover
+            isOpen={showDetailsPopup}
+            onClose={() => setShowDetailsPopup(false)}
+            record={record}
+          />
+        )}
       </td>
     </tr>
   )
@@ -386,6 +387,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   sortColumn: sortColumnProp,
   sortDirection: sortDirectionProp,
   selectedRecordId,
+  onSelectRecord,
+  onCloseRecord,
   onFilterTextChange,
   onPqcFiltersChange,
   onCategoryFiltersChange,
@@ -421,7 +424,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const migrateCatFilters = migrateCatFiltersProp ?? localMigrateCatFilters
   const sortColumn = sortColumnProp ?? localSortColumn
   const sortDirection = sortDirectionProp ?? localSortDirection
-  const autoOpenId = selectedRecordId ?? initialSelectedId
+  // Uncontrolled fallback (no onSelectRecord): the table owns which record is open.
+  const [localOpenId, setLocalOpenId] = useState<string | undefined>(initialSelectedId)
+  const openRecordId = onSelectRecord ? selectedRecordId : (selectedRecordId ?? localOpenId)
 
   const setFilterText = onFilterTextChange ?? setLocalFilterText
   const setPqcFilters = onPqcFiltersChange ?? ((f: string[]) => setLocalPqcFilters(f))
@@ -601,84 +606,24 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const filteredAndSortedData = useMemo(() => {
     // Filter
     const processed = scopedData.filter((record) => {
-      // 0. Tab/CertType matching
-      if (certType && certType !== 'all' && certType !== 'All') {
-        const ct = certType.toLowerCase()
-        if (ct === 'fips' && record.type !== 'FIPS 140-3') return false
-        if (ct === 'acvp' && record.type !== 'ACVP') return false
-        if (ct === 'cc' && record.type !== 'Common Criteria') return false
-        if (ct === 'cspn' && record.type !== 'CSPN') return false
-        if (ct === 'fips 140-3' && record.type !== 'FIPS 140-3') return false
-      }
-
-      const searchStr = activeFilters.text.toLowerCase()
-      const matchesText =
-        record.productName.toLowerCase().includes(searchStr) ||
-        record.vendor.toLowerCase().includes(searchStr) ||
-        record.source.toLowerCase().includes(searchStr) ||
-        recordTypeLabel(record.type).toLowerCase().includes(searchStr) ||
-        record.id.toLowerCase().includes(searchStr)
-
-      // PQC Filter Logic
-      const matchesPQC =
-        activeFilters.pqc.length === 0 ||
-        (typeof record.pqcCoverage === 'string' &&
-          activeFilters.pqc.some((filter) => record.pqcCoverage.toString().includes(filter)))
-
-      // Category Filter Logic
-      const matchesCategory =
-        activeFilters.category.length === 0 ||
-        activeFilters.category.includes(record.productCategory)
-
-      // Source Filter Logic
-      const matchesSource =
-        activeFilters.source.length === 0 || activeFilters.source.includes(record.source)
-
-      // Trust tier filter — derives a record's tier from its source's
-      // corresponding compliance framework entry.
-      const matchesTier =
-        !tierFiltersProp || tierFiltersProp.length === 0
-          ? true
-          : (() => {
-              const frameworkId = SOURCE_TO_FRAMEWORK_ID[record.source]
-              if (!frameworkId) return false
-              return matchesTrustTierFilter(tierFiltersProp, 'compliance', frameworkId)
-            })()
-
-      // Vendor Filter Logic
-      const matchesVendor =
-        activeFilters.vendor.length === 0 ||
-        activeFilters.vendor.some((v) => record.vendor.includes(v))
-
-      const matchesVendorSearch =
+      // Scope was applied above (scopedData); every other filter is the shared
+      // predicate the `?cert=` deep-link widening also uses (recordFilters.ts).
+      const excluded = recordFilterExclusions(record, {
+        scope: 'all',
+        certType,
+        text: activeFilters.text,
+        pqc: activeFilters.pqc,
+        category: activeFilters.category,
+        source: activeFilters.source,
+        vendor: activeFilters.vendor,
+        migrateCat: activeFilters.migrateCat,
+        tiers: tierFiltersProp,
+      })
+      if (excluded.length > 0) return false
+      // Vendor search box inside the vendor dropdown — ephemeral, not in the URL.
+      return (
         !activeFilters.vendorSearch ||
         record.vendor.toLowerCase().includes(activeFilters.vendorSearch.toLowerCase())
-
-      // Migrate Category Filter Logic
-      const matchesMigrateCat =
-        activeFilters.migrateCat.length === 0 ||
-        activeFilters.migrateCat.includes(
-          getMigrateCategory(record.productCategory)?.categoryId ?? ''
-        )
-
-      const matchesCertType =
-        !certType ||
-        certType === 'all' ||
-        (certType === 'fips' && record.type === 'FIPS 140-3') ||
-        (certType === 'acvp' && record.type === 'ACVP') ||
-        (certType === 'cc' && record.type === 'Common Criteria') ||
-        (certType === 'cspn' && record.type === 'CSPN')
-
-      return (
-        matchesText &&
-        matchesPQC &&
-        matchesCategory &&
-        matchesSource &&
-        matchesTier &&
-        matchesVendor &&
-        matchesVendorSearch &&
-        matchesMigrateCat &&
-        matchesCertType
       )
     })
 
@@ -731,6 +676,55 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
       : 0
   const mobileVirtualRows = mobileRowVirtualizer.getVirtualItems()
+
+  // ── Open record (`?cert=`) ────────────────────────────────────────────
+  // One popover for the whole table, resolved against the FULL dataset. It
+  // used to live in each row behind a mount-time `useState(autoOpen)`, so a
+  // deep-linked record opened only if its row happened to be among the ~25
+  // rows the virtualiser mounts first (browser-verified: 5528 opened; 5332,
+  // 4389, A8481, A7285 never did). Visible rows win when an id repeats across
+  // sources.
+  const openRecord = useMemo(() => {
+    if (!openRecordId) return undefined
+    return (
+      filteredAndSortedData.find((r) => r.id === openRecordId) ??
+      data.find((r) => r.id === openRecordId)
+    )
+  }, [openRecordId, filteredAndSortedData, data])
+  const openRecordIndex = useMemo(
+    () => (openRecordId ? filteredAndSortedData.findIndex((r) => r.id === openRecordId) : -1),
+    [openRecordId, filteredAndSortedData]
+  )
+  // Set when the reader opens a row by clicking it: that row is already on
+  // screen, so it is neither scrolled to nor ringed.
+  const [clickOpenedId, setClickOpenedId] = useState<string | null>(null)
+  const isArrival = !!openRecordId && openRecordId !== clickOpenedId
+  // Bring the row into the virtual window. Re-runs when the filtered list
+  // settles (the 400 ms filter debounce scrolls the container to the top when
+  // it applies), so a widened deep link still ends on its row.
+  useEffect(() => {
+    if (!isArrival || openRecordIndex < 0 || isFiltering) return
+    const v = isMobile ? mobileRowVirtualizer : rowVirtualizer
+    v.scrollToIndex(openRecordIndex, { align: 'center' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- virtualiser instances are stable
+  }, [isArrival, openRecordIndex, isFiltering, isMobile, filteredAndSortedData])
+  // Ring the row once it renders — only for arrivals (links, back/forward).
+  const highlightId = isArrival ? openRecordId : null
+  useScrollToDeepLinkTarget(highlightId, highlightId ? deepLinkSelector(highlightId) : null)
+
+  const handleOpenDetails = useCallback(
+    (record: ComplianceRecord) => {
+      setClickOpenedId(record.id)
+      if (onSelectRecord) onSelectRecord(record.id)
+      else setLocalOpenId(record.id)
+    },
+    [onSelectRecord]
+  )
+  const handleCloseDetails = useCallback(() => {
+    setClickOpenedId(null)
+    if (onCloseRecord) onCloseRecord()
+    else setLocalOpenId(undefined)
+  }, [onCloseRecord])
 
   const handleExport = () => {
     if (filteredAndSortedData.length === 0) return
@@ -1611,7 +1605,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     key={record.id}
                     record={record}
                     index={virtualRow.index}
-                    autoOpen={record.id === autoOpenId}
+                    onOpenDetails={handleOpenDetails}
                   />
                 )
               })}
@@ -1645,6 +1639,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     key={`${record.id}-${record.source}`}
                     ref={mobileRowVirtualizer.measureElement}
                     data-index={virtualRow.index}
+                    data-deeplink-id={record.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`View details for ${record.productName}`}
+                    onClick={() => handleOpenDetails(record)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        handleOpenDetails(record)
+                      }
+                    }}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -1652,7 +1657,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       width: '100%',
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
-                    className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors"
+                    className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -1743,6 +1748,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           </span>
         )}
       </div>
+      <ComplianceDetailPopover
+        isOpen={!!openRecord}
+        onClose={handleCloseDetails}
+        record={openRecord ?? null}
+      />
     </div>
   )
 }
