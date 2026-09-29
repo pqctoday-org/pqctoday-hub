@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.131.1] - 2026-09-29
+
+The VPN/IPsec & SSH module now explains where pure post-quantum IKEv2 runs into trouble, and why the standard's hybrid route avoids it.
+
+### Added
+
+- **Why pure post-quantum IKEv2 is hard over UDP** [view:/learn/vpn-ssh-pqc] [persona:architect] [persona:ops] [persona:developer]: a new section in VPN/IPsec & SSH covers the known limits of running ML-KEM on its own in IKEv2. The key has to travel in the very first message, which IKEv2 cannot split into fragments, so the draft standard allows only the smallest size (ML-KEM-512) there over UDP. ML-KEM-768 and ML-KEM-1024, the size CNSA 2.0 requires, need a known path size or IKE over TCP; otherwise they fall back to IP fragments that firewalls often drop. The section also shows the standard's hybrid workaround and what it gives up.
+
+### Fixed
+
+- **The protocol size section no longer overstates IKEv2 fragmentation** [view:/learn/vpn-ssh-pqc] [persona:architect]: it now says IKEv2's built-in fragmentation covers only encrypted messages, not the first key-exchange message.
+
+### Data
+
+- **The IKE / IPsec row in the Protocol Matrix notes the pure ML-KEM limit** [view:/algorithms] [persona:architect] [persona:researcher]: a short note on the pure-KEM entry explains the first-message size restriction and the hybrid alternative.
+
 ## [4.131.0] - 2026-09-27
 
 The FIPS 140-3 module now explains how NIST is automating validation — algorithms, then entropy, then the module — and what is and is not in production.

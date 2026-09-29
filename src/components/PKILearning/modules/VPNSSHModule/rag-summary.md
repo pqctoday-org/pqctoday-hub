@@ -15,7 +15,8 @@ The VPN/IPsec and SSH PQC module explores how post-quantum key exchange is being
 - **Rosenpass** — a companion daemon that runs a separate PQC key exchange (ML-KEM-768 + Classic McEliece) and injects the resulting PSK into WireGuard's pre-shared key slot; preserves WireGuard's simplicity while adding quantum resistance
 - **Protocol size impact**: IKEv2 classical 1,400 B to hybrid 3,768 B (+169%); SSH 984 B to 3,296 B (+235%); WireGuard 304 B to 6,800 B (+2,137%); TLS 1.3 1,200 B to 3,500 B (+192%)
 - **Control plane vs data plane** — PQC migration applies only to the control plane (key exchange and authentication); the data plane already uses quantum-resistant symmetric algorithms (AES-GCM, ChaCha20-Poly1305) that only need standard 256-bit key lengths for Grover resistance
-- **IKEv2 fragmentation** — handled explicitly via RFC 7383 over UDP; SSH handles larger payloads natively via TCP transport
+- **IKEv2 fragmentation** — handled explicitly via RFC 7383 over UDP, but only for encrypted messages (not IKE_SA_INIT); SSH handles larger payloads natively via TCP transport
+- **Pure ML-KEM in IKEv2 limits** (draft-ietf-ipsecme-ikev2-mlkem-09 §2.1) — pure PQC puts ML-KEM in IKE_SA_INIT, which cannot be IKEv2-fragmented; over UDP only ML-KEM-512 MAY be used there, ML-KEM-768/1024 SHOULD NOT unless the PMTU is known or IKE runs over TCP (RFC 9329). CNSA 2.0's ML-KEM-1024 therefore needs TCP, a guaranteed PMTU, or IP fragmentation; the hybrid route (Appendix A) carries ML-KEM in IKE_INTERMEDIATE where RFC 7383 applies
 
 ## Workshop / Interactive Activities
 
