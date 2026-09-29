@@ -524,6 +524,9 @@ function buildTree(items: LibraryItem[]): LibraryItem[] {
 // ── Load and parse ──────────────────────────────────────────────────────
 
 let currentItems: LibraryItem[] = []
+/** Deprecated/obsolete reference_id → its CSV `superseded_by`, so a stale deep
+ *  link can be forwarded to the document that replaced it (findLibrarySuccessor). */
+let supersededByRef = new Map<string, string>()
 let previousItems: LibraryItem[] = []
 let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
 
@@ -592,6 +595,7 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
 
   // Keep currentItems FLAT + enriched; buildTree runs last (in the export below).
   currentItems = attachPriorRevisions(result.data, priorResult.data)
+  supersededByRef = new Map(priorResult.data.map((p) => [p.referenceId, p.supersededBy]))
   previousItems = result.previousData ? result.previousData : []
   parsedMetadata = result.metadata
   libraryCorpusHealth = {
@@ -713,4 +717,23 @@ export const REFERENCE_ID_ALIASES: Record<string, string> = {
 export function findLibraryItemByRef(ref: string): LibraryItem | undefined {
   const resolved = REFERENCE_ID_ALIASES[ref] ?? ref
   return libraryData.find((item) => item.referenceId === resolved)
+}
+
+/**
+ * Resolve a retired `?ref=` (a deprecated/obsolete row) to the live document
+ * that superseded it, following `superseded_by` hops until one is active.
+ * Returns undefined when the ref has no successor chain that ends in the corpus.
+ */
+export function findLibrarySuccessor(ref: string): LibraryItem | undefined {
+  let current = REFERENCE_ID_ALIASES[ref] ?? ref
+  const seen = new Set<string>()
+  while (!seen.has(current)) {
+    seen.add(current)
+    const next = supersededByRef.get(current)
+    if (!next) return undefined
+    const hit = libraryData.find((item) => item.referenceId === next)
+    if (hit) return hit
+    current = next
+  }
+  return undefined
 }

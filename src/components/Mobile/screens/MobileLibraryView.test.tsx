@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, useLocation, useNavigationType } from 'react-router'
 import { MobileLibraryView } from './MobileLibraryView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -128,5 +128,64 @@ describe('MobileLibraryView', () => {
     expect(screen.getAllByText(titleText).length).toBeGreaterThan(0)
     fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  describe('?ref deep link (same param as desktop)', () => {
+    function LocationProbe() {
+      const loc = useLocation()
+      const type = useNavigationType()
+      return (
+        <output data-testid="loc" data-nav={type}>
+          {loc.search}
+        </output>
+      )
+    }
+    function renderAt(url: string) {
+      return render(
+        <MemoryRouter initialEntries={[url]}>
+          <MobileLibraryView />
+          <LocationProbe />
+        </MemoryRouter>
+      )
+    }
+    const refParam = () =>
+      new URLSearchParams(screen.getByTestId('loc').textContent ?? '').get('ref')
+
+    it('opens the linked document sheet on load, and Close clears ?ref with replace', () => {
+      renderAt('/library?ref=FIPS%20203')
+      const sheet = screen.getByTestId('library-detail-sheet')
+      expect(within(sheet).getAllByText(/FIPS 203/).length).toBeGreaterThan(0)
+      fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }))
+      expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
+      expect(refParam()).toBeNull()
+      expect(screen.getByTestId('loc').dataset.nav).toBe('REPLACE')
+    })
+
+    it('tapping a card writes ?ref with a push (Back closes the sheet)', () => {
+      renderAt('/library')
+      const first = document.querySelector('article')!
+      const ref = first.getAttribute('data-deeplink-id')
+      fireEvent.click(first.querySelector('h2')!.closest('button')!)
+      expect(refParam()).toBe(ref)
+      expect(screen.getByTestId('loc').dataset.nav).toBe('PUSH')
+    })
+
+    it('forwards a retired ref to its successor with a notice', () => {
+      renderAt('/library?ref=PKCS11-V32-OASIS')
+      expect(refParam()).toBe('PKCS11-V32-OS-OASIS')
+      expect(screen.getByTestId('library-detail-sheet')).toBeInTheDocument()
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(/superseded/)
+    })
+
+    it('shows a not-found notice for an unknown ref instead of failing silently', () => {
+      renderAt('/library?ref=NO-SUCH-DOC-XYZ')
+      expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('NO-SUCH-DOC-XYZ')
+    })
+
+    it('seeds the search box and purpose door from ?q / ?purpose', () => {
+      renderAt('/library?q=ML-KEM&purpose=reference')
+      expect(screen.getByPlaceholderText(/Search — try/i)).toHaveValue('ML-KEM')
+    })
   })
 })

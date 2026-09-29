@@ -39,8 +39,10 @@ export function SpecDrawerHost() {
       return
     }
     let cancelled = false
-    // Unknown or unloadable reference: fall back to the full library page
-    // rather than leaving the reader with an empty overlay.
+    // Unknown, retired or unloadable reference: fall back to the full library
+    // page rather than leaving the reader with an empty overlay. /library then
+    // forwards a retired ref to its successor or shows a "not found" notice
+    // (LibraryViewRedesign's deep-link arrival handling), so this never fails silently.
     const fallback = () => {
       if (!cancelled) navigate(`/library?ref=${encodeURIComponent(specRef)}`, { replace: true })
     }
