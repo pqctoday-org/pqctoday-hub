@@ -37,6 +37,7 @@ import {
 import {
   citationIndex,
   documentsFor,
+  resolveRequirementsPick,
   totalFor,
 } from '@/components/Compliance/requirements/requirementsModel'
 import { CSWP39_STEPS, CSWP39_SOURCE_METADATA } from '@/components/Compliance/cswp39Data'
@@ -65,8 +66,19 @@ const SECTIONS: { id: Section; label: string }[] = [
 
 const SECTION_IDS = new Set<string>(SECTIONS.map((s) => s.id))
 
-/** Desktop's Landscape pillar values (plus the legacy 'technical'). */
-const LANDSCAPE_TAB_VALUES = new Set(['standards', 'technical', 'certification', 'compliance'])
+/**
+ * Desktop's Landscape pillar values (plus the legacy 'technical', and the
+ * older page models' 'landscape' / 'frameworks', which desktop normalises to
+ * the Standardize pillar).
+ */
+const LANDSCAPE_TAB_VALUES = new Set([
+  'standards',
+  'technical',
+  'certification',
+  'compliance',
+  'landscape',
+  'frameworks',
+])
 
 /**
  * Desktop's `?tab=` values include several this screen has no matching
@@ -80,7 +92,9 @@ const LANDSCAPE_TAB_VALUES = new Set(['standards', 'technical', 'certification',
 function sectionFromTabParam(
   tab: string | null,
   cert?: string | null,
-  evref?: string | null
+  evref?: string | null,
+  reqfw?: string | null,
+  cswp?: string | null
 ): Section | null {
   if (tab) {
     if (SECTION_IDS.has(tab)) return tab as Section
@@ -89,6 +103,9 @@ function sectionFromTabParam(
   }
   if (cert) return 'records'
   if (evref) return 'cswp39'
+  // Same implied tabs as desktop's impliedTabFor() (deep-link PR 2).
+  if (reqfw) return 'requirements'
+  if (cswp) return 'cswp39'
   return null
 }
 
@@ -166,11 +183,22 @@ export function MobileComplianceView({
   const certParam = searchParams.get('cert')
   const evrefParam = searchParams.get('evref')
   const frameworkParam = searchParams.get('framework')
+  // `?reqfw=` (Requirements pick) and `?step=` (CSWP.39 step) — the same
+  // params desktop reads (deep-link PR 2). `cswpview` / `mtier` / `dossier`
+  // only pick the CSWP.39 section here: this screen has the steps alone.
+  const reqfwParam = searchParams.get('reqfw')
+  const stepParam = searchParams.get('step')
+  const cswpParam =
+    searchParams.get('cswpview') ??
+    stepParam ??
+    searchParams.get('mtier') ??
+    searchParams.get('dossier')
   // Lazy-initialize from `?tab=` (e.g. a GRC board's `/compliance?tab=records`
   // link) so a deep link lands on the right section on first paint, not just
   // the 'obligations' default.
   const [section, setSection] = useState<Section>(
-    () => sectionFromTabParam(tabParam, certParam, evrefParam) ?? 'obligations'
+    () =>
+      sectionFromTabParam(tabParam, certParam, evrefParam, reqfwParam, cswpParam) ?? 'obligations'
   )
   // Adjust `section` when `?tab=` itself changes on the SAME mounted route
   // (e.g. tapping a second board link without navigating away first) — a
@@ -179,16 +207,16 @@ export function MobileComplianceView({
   // React-recommended way to sync state from a changed prop/external value —
   // see "You Might Not Need an Effect") rather than a `useEffect`, which
   // would cascade an extra render on every mount.
-  const tabKey = `${tabParam ?? ''}|${certParam ?? ''}|${evrefParam ?? ''}`
+  const tabKey = `${tabParam ?? ''}|${certParam ?? ''}|${evrefParam ?? ''}|${reqfwParam ?? ''}|${cswpParam ?? ''}`
   const [lastTabKey, setLastTabKey] = useState(tabKey)
   if (tabKey !== lastTabKey) {
     setLastTabKey(tabKey)
-    const next = sectionFromTabParam(tabParam, certParam, evrefParam)
+    const next = sectionFromTabParam(tabParam, certParam, evrefParam, reqfwParam, cswpParam)
     if (next) setSection(next)
   }
-  const [requirementsFrameworkId, setRequirementsFrameworkId] = useState<string | null>(null)
   const [expandedTier, setExpandedTier] = useState<Record<string, boolean>>({})
-  const [openStep, setOpenStep] = useState<string | null>(null)
+  // The open step IS `?step=` — derived, never a stale copy.
+  const openStep = CSWP39_STEPS.some((s) => s.id === stepParam) ? stepParam : null
   // The detail sheet IS `?framework=` — same param desktop's drawer uses, so a
   // shared link opens it here too. Opening pushes, closing replaces.
   const detailFramework = useMemo(
@@ -205,6 +233,20 @@ export function MobileComplianceView({
         return next
       },
       { replace }
+    )
+  /** Set params together with the tab they belong to (always a replace). */
+  const setSectionParams = (tab: Section, patch: Record<string, string | null>) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('tab', tab)
+        for (const [key, value] of Object.entries(patch)) {
+          if (value === null) next.delete(key)
+          else next.set(key, value)
+        }
+        return next
+      },
+      { replace: true }
     )
   const openFramework = (fw: ComplianceFramework) => setParam('framework', fw.id, false)
   const closeFramework = () => setParam('framework', null, true)
@@ -224,8 +266,10 @@ export function MobileComplianceView({
   const framing = roleFramingFor(persona)
 
   const index = useMemo(() => citationIndex(rows.map((r) => r.framework)), [rows])
-  const selectedRow =
-    rows.find((r) => r.framework.id === requirementsFrameworkId) ?? rows[0] ?? null
+  const { selected: selectedRow, status: reqfwStatus } = useMemo(
+    () => resolveRequirementsPick(rows, reqfwParam, complianceFrameworks),
+    [rows, reqfwParam]
+  )
   const docs = useMemo(
     () => (selectedRow ? documentsFor(selectedRow.framework, index) : []),
     [selectedRow, index]
@@ -242,9 +286,9 @@ export function MobileComplianceView({
     emphasisSet.length > 0 && emphasisSet.length < complianceFrameworks.length
 
   const jumpToRequirements = (frameworkId: string) => {
-    setRequirementsFrameworkId(frameworkId)
     setSection('requirements')
-    closeFramework()
+    // One write: two setSearchParams calls in one tick — the second wins.
+    setSectionParams('requirements', { reqfw: frameworkId, framework: null })
   }
 
   const isTierOpen = (tier: ApplicabilityTier) =>
@@ -372,9 +416,17 @@ export function MobileComplianceView({
         </div>
       )}
 
+      {section === 'requirements' && reqfwStatus === 'unknown' && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No tracked framework has the ID “${reqfwParam}” — it may have been renamed or retired.`}
+          onDismiss={() => setSectionParams('requirements', { reqfw: null })}
+        />
+      )}
+
       {section === 'requirements' && !isEmpty && (
         <div className="flex flex-col gap-3">
-          {rows.length === 0 ? (
+          {!selectedRow ? (
             <p className="text-[12.5px] text-muted-foreground">Nothing in scope yet.</p>
           ) : (
             <>
@@ -384,7 +436,7 @@ export function MobileComplianceView({
                     key={r.framework.id}
                     type="button"
                     variant="ghost"
-                    onClick={() => setRequirementsFrameworkId(r.framework.id)}
+                    onClick={() => setSectionParams('requirements', { reqfw: r.framework.id })}
                     aria-pressed={selectedRow?.framework.id === r.framework.id}
                     className={cn(
                       'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
@@ -531,7 +583,7 @@ export function MobileComplianceView({
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => setOpenStep((cur) => (cur === step.id ? null : step.id))}
+                  onClick={() => setSectionParams('cswp39', { step: open ? null : step.id })}
                   aria-expanded={open}
                   className="flex h-auto w-full items-center justify-start gap-2.5 rounded-none px-3.5 py-2.5 text-left"
                 >

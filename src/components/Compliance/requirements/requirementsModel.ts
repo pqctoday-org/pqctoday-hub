@@ -133,3 +133,38 @@ export function citationIndex(frameworks: ComplianceFramework[]): Map<string, st
 export function totalFor(docs: SourceDocument[]): number {
   return docs.reduce((sum, d) => sum + d.total, 0)
 }
+
+/** What the reading pane shows for an obligation: the instrument and why. */
+export interface RequirementsPick {
+  framework: ComplianceFramework
+  reason: string
+}
+
+export const OUT_OF_SCOPE_REASON = 'Outside your current country and sector — opened from a link.'
+
+/**
+ * Resolve `?reqfw=<framework id>` against the in-scope obligations (ADDED
+ * 2026-09-29, deep-link PR 2).
+ *
+ * A shared link usually reaches someone whose country or sector differs from
+ * the sender's, so a tracked framework outside the reader's scope is still
+ * shown ('out-of-scope') rather than silently swapped for the first row. Only
+ * an id no tracked framework has is 'unknown'; that falls back to the first
+ * in-scope row and the caller says so.
+ */
+export function resolveRequirementsPick(
+  rows: readonly RequirementsPick[],
+  id: string | null | undefined,
+  tracked: readonly ComplianceFramework[]
+): {
+  selected: RequirementsPick | undefined
+  status: 'none' | 'in-scope' | 'out-of-scope' | 'unknown'
+} {
+  if (!id) return { selected: rows[0], status: 'none' }
+  const row = rows.find((r) => r.framework.id === id)
+  if (row) return { selected: row, status: 'in-scope' }
+  const framework = tracked.find((f) => f.id === id)
+  if (framework)
+    return { selected: { framework, reason: OUT_OF_SCOPE_REASON }, status: 'out-of-scope' }
+  return { selected: rows[0], status: 'unknown' }
+}

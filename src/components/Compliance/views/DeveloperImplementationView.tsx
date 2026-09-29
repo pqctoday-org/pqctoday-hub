@@ -145,14 +145,18 @@ function CIGateSnippet() {
   )
 }
 
-const ALG_HIGHLIGHT: Record<string, string> = {
-  'ML-KEM': 'ML-KEM-768',
-  'ML-DSA': 'ML-DSA-65',
-  'SLH-DSA': 'SLH-DSA-SHA2-128s',
-  Falcon: 'Falcon-512',
-  XMSS: 'XMSS',
-  'LMS/HSS': 'LMS',
-  HQC: 'HQC',
+// Family chip → /algorithms target. A family with one representative
+// parameter set opens it directly via `?algo=<algorithm_id>` (ids verified
+// against pqc_complete_algorithm_reference_09292026.csv); families whose
+// chip stands for several sets keep the `highlight` family filter.
+const ALG_LINK: Record<string, { algo: string } | { highlight: string }> = {
+  'ML-KEM': { algo: 'ml-kem-768' },
+  'ML-DSA': { algo: 'ml-dsa-65' },
+  'SLH-DSA': { algo: 'slh-dsa-sha2-128s' },
+  Falcon: { algo: 'fn-dsa-512' },
+  XMSS: { highlight: 'XMSS' },
+  'LMS/HSS': { highlight: 'LMS' },
+  HQC: { highlight: 'HQC' },
 }
 
 const IMPLEMENTATION_LINKS = [
@@ -288,10 +292,12 @@ export function DeveloperImplementationView({
         ) : (
           <div className="flex flex-wrap gap-2">
             {familyEntries.slice(0, 12).map(({ family, items }) => {
-              const highlight = ALG_HIGHLIGHT[family] // eslint-disable-line security/detect-object-injection
-              const href = highlight
-                ? `/algorithms?tab=detailed&highlight=${encodeURIComponent(highlight)}`
-                : '/algorithms'
+              const target = ALG_LINK[family] // eslint-disable-line security/detect-object-injection
+              const href = !target
+                ? '/algorithms'
+                : 'algo' in target
+                  ? `/algorithms?algo=${encodeURIComponent(target.algo)}`
+                  : `/algorithms?tab=detailed&highlight=${encodeURIComponent(target.highlight)}`
               return (
                 <Link
                   key={family}

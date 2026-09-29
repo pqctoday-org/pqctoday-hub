@@ -12,6 +12,8 @@
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, ExternalLink, PackageSearch } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { deepLinkSelector, useScrollToDeepLinkTarget } from '@/hooks/useScrollToDeepLinkTarget'
 import { certsByProduct } from '@/data/certificationXrefData'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import type { CertificationXref } from '@/types/MigrateTypes'
@@ -19,6 +21,7 @@ import { recordTypeLabel } from '../recordSemantics'
 import {
   buildProductRows,
   isPqcCertificate,
+  productKey,
   summarizeCoverage,
   type Coverage,
   type ProductCertification,
@@ -38,7 +41,22 @@ const COVERAGE_TONE: Record<Coverage, string> = {
   none: 'text-muted-foreground',
 }
 
-export function ProductsTab() {
+interface ProductsTabProps {
+  /**
+   * `?prod=<productId>` (ADDED 2026-09-29, deep-link PR 2): the product row a
+   * link expands. Expanding a row pushes it (`onOpenProduct`); collapsing
+   * that row replaces it away (`onCloseProduct`).
+   */
+  openProductId?: string | null
+  onOpenProduct?: (id: string) => void
+  onCloseProduct?: () => void
+}
+
+export function ProductsTab({
+  openProductId = null,
+  onOpenProduct,
+  onCloseProduct,
+}: ProductsTabProps = {}) {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const [showAll, setShowAll] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -56,6 +74,74 @@ export function ProductsTab() {
     [rows, pqcOnly]
   )
   const totals = useMemo(() => summarizeCoverage(rows), [rows])
+
+  // ── `?prod=` ──────────────────────────────────────────────────────────
+  // Every catalogue row, unfiltered — to tell "hidden by the inventory or
+  // PQC-only view" (widen it) from "no such product" (say so).
+  const allRows = useMemo(() => buildProductRows(certsByProduct), [])
+  const [notice, setNotice] = useState<
+    | { kind: 'widened'; message: string; before: { showAll: boolean; pqcOnly: boolean } }
+    | { kind: 'not-found'; message: string }
+    | null
+  >(null)
+  // The row the reader expanded by hand is already on screen — no scroll.
+  const [selfOpened, setSelfOpened] = useState<string | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  // React to each NEW param value during render (the same pattern
+  // useComplianceUrlState uses for `?framework=`), so a second link on the
+  // mounted route is honoured too.
+  const [lastProd, setLastProd] = useState<string | null>(null)
+  if (openProductId !== lastProd) {
+    setLastProd(openProductId)
+    // Back / Forward (not a click on this page) moved off a row: collapse it,
+    // so Back closes what the link or the click opened.
+    if (lastProd && (!openProductId || openProductId !== selfOpened)) {
+      setExpanded((prev) => ({ ...prev, [lastProd]: false }))
+    }
+    if (openProductId) {
+      const target = allRows.find((r) => productKey(r) === openProductId)
+      if (!target) {
+        setNotice({
+          kind: 'not-found',
+          message: `No product with the ID “${openProductId}” has certification records here — it may have been renamed or removed from the catalogue.`,
+        })
+      } else {
+        setExpanded((prev) => ({ ...prev, [openProductId]: true }))
+        const hiddenByInventory = !rows.some((r) => productKey(r) === openProductId)
+        const hiddenByPqc = pqcOnly && target.coverage !== 'pqc' && target.coverage !== 'mixed'
+        if (hiddenByInventory || hiddenByPqc) {
+          const why = [
+            hiddenByInventory ? 'your inventory view' : null,
+            hiddenByPqc ? 'the PQC-validated-only filter' : null,
+          ]
+            .filter(Boolean)
+            .join(' and ')
+          setNotice({
+            kind: 'widened',
+            message: `Showing ${target.softwareName} — it was hidden by ${why}, so that was relaxed to show it.`,
+            before: { showAll, pqcOnly },
+          })
+          if (hiddenByInventory) setShowAll(true)
+          if (hiddenByPqc) setPqcOnly(false)
+        } else {
+          setNotice(null)
+        }
+        if (openProductId !== selfOpened) setScrollTarget(openProductId)
+      }
+    }
+  }
+  useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
+
+  const toggleRow = (key: string, wasOpen: boolean) => {
+    const open = !wasOpen
+    setExpanded((prev) => ({ ...prev, [key]: open }))
+    if (open) {
+      setSelfOpened(key)
+      onOpenProduct?.(key)
+    } else if (key === openProductId) {
+      onCloseProduct?.()
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -105,6 +191,26 @@ export function ProductsTab() {
         )}
       </div>
 
+      {notice && (
+        <DeepLinkNotice
+          kind={notice.kind}
+          message={notice.message}
+          onUndo={
+            notice.kind === 'widened'
+              ? () => {
+                  setShowAll(notice.before.showAll)
+                  setPqcOnly(notice.before.pqcOnly)
+                  setNotice(null)
+                }
+              : undefined
+          }
+          onDismiss={() => {
+            if (notice.kind === 'not-found') onCloseProduct?.()
+            setNotice(null)
+          }}
+        />
+      )}
+
       {visible.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-6 text-center">
           <PackageSearch size={24} className="mx-auto text-muted-foreground" />
@@ -119,15 +225,10 @@ export function ProductsTab() {
         <ul className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
           {visible.map((row) => (
             <ProductRow
-              key={row.productId + row.softwareName}
+              key={productKey(row)}
               row={row}
-              open={!!expanded[row.productId + row.softwareName]}
-              onToggle={() =>
-                setExpanded((prev) => ({
-                  ...prev,
-                  [row.productId + row.softwareName]: !prev[row.productId + row.softwareName],
-                }))
-              }
+              open={!!expanded[productKey(row)]}
+              onToggle={() => toggleRow(productKey(row), !!expanded[productKey(row)])}
             />
           ))}
         </ul>
@@ -146,7 +247,7 @@ function ProductRow({
   onToggle: () => void
 }) {
   return (
-    <li>
+    <li data-deeplink-id={productKey(row)}>
       {/* The caret owns expand/collapse — the row is not a second button, which
           is the nested-interactive pattern FrameworkCard was refactored away
           from (see ComplianceLandscape.tsx:476). */}
