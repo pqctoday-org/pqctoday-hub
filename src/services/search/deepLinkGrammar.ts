@@ -42,21 +42,46 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   { path: exact('/'), queryKeys: ['scroll', 'persona', 'ind'], description: 'Landing' },
 
   // Top-level pages
+  //
+  // Each list below is EXACTLY the set of params the page reads (canonical
+  // forms only — legacy aliases a page still tolerates, e.g. Migrate's `q` or
+  // Compliance's `industry`/`geo`, are deliberately left out so the Assistant
+  // never emits them). `spec` is allowed on every route via GLOBAL_QUERY_KEYS.
+  // deepLinkGrammar.test.ts pins these sets and checks each key is referenced
+  // in the page's own source folder.
   {
     path: exact('/timeline'),
-    queryKeys: ['country', 'region', 'q', 'evref', 'event'],
+    // `event` = timeline_*.csv event_id (titles still accepted by the page).
+    queryKeys: [
+      'event',
+      'country',
+      'region',
+      'q',
+      'cat',
+      'tier',
+      'prefs',
+      'docview',
+      'phase',
+      'etype',
+      'deadlines',
+      'gsort',
+      'gdir',
+    ],
     description: 'Timeline',
   },
   {
     path: exact('/algorithms'),
-    // `protocol` opens a Protocol Support matrix row's detail (tab=support).
-    // `mode=compare` is the Detailed tab's Browse↔Compare toggle. `section`
-    // is the Validation tab's accordion preset (attacks|kat only — NOT a
-    // general sub-tab; see personaConfig.ts AlgorithmSectionId). The
-    // `matrix*` keys are Protocol Support's own view/filter/sort state.
+    // `algo` opens an algorithm's detail drawer (algorithm_id; exact names
+    // accepted). `protocol` opens a Protocol Support matrix row (implies
+    // tab=support). `mode=compare` is the Detailed tab's Browse↔Compare
+    // toggle. `section` is the Validation tab's accordion preset
+    // (attacks|kat|coverage). `industry`/`mechanism`/`usecase` drive the
+    // Landscape tab. The `matrix*` keys are Protocol Support's own state.
     queryKeys: [
-      'highlight',
       'tab',
+      'algo',
+      'highlight',
+      'quickview',
       'compare',
       'family',
       'level',
@@ -68,24 +93,48 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'cnsa',
       'gap',
       'section',
+      'attack',
+      'engine',
+      'case',
       'protocol',
       'matrixView',
       'matrixQ',
       'matrixStatus',
       'matrixAvailability',
       'matrixSort',
+      'matrixHighlight',
+      'industry',
+      'mechanism',
+      'usecase',
     ],
     description: 'Algorithms',
   },
   {
     path: exact('/library'),
-    queryKeys: ['ref', 'cat', 'org', 'ind', 'view', 'sort', 'q'],
+    queryKeys: [
+      'ref',
+      'purpose',
+      'cat',
+      'org',
+      'q',
+      'lifecycle',
+      'cswp39',
+      'qv',
+      'prefs',
+      'view',
+      'sort',
+      'geo',
+      'sector',
+      'tier',
+      'algo',
+    ],
     description: 'Library',
   },
   {
     path: exact('/threats'),
     // Every parameter ThreatsDashboard reads (threatsUrlParams + the trust-tier
-    // filter), so the Assistant's links to them are not stripped.
+    // filter + the shared ?prefs=off opt-out), so the Assistant's links to
+    // them are not stripped.
     queryKeys: [
       'id',
       'industry',
@@ -96,49 +145,76 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'dir',
       'mode',
       'tier',
+      'prefs',
       'view',
+      'protocol',
+      'threattab',
     ],
     description: 'Threats',
   },
   {
     path: exact('/leaders'),
-    queryKeys: ['leader', 'sector', 'country', 'cat', 'region', 'q', 'view'],
+    // `mode=cards|table|stack` (NOT `view`); `cat` takes singular category
+    // values ("Algorithm Inventor").
+    queryKeys: [
+      'leader',
+      'cat',
+      'region',
+      'country',
+      'sector',
+      'q',
+      'sort',
+      'mode',
+      'all',
+      'layer',
+      'tsort',
+      'tdir',
+    ],
     description: 'Leaders',
   },
   {
     path: exact('/compliance'),
+    // `framework` opens a framework drawer, `cert` a certification record,
+    // `evref` a CSWP.39 evidence reference. `pqc` is an algorithm-name
+    // multi-select, not a boolean.
     queryKeys: [
       'tab',
-      'q',
+      'framework',
       'cert',
-      'mcat',
-      'org',
-      'ind',
-      'vendor',
+      'evref',
+      'req',
+      'rtab',
+      'rstatus',
+      'q',
       'pqc',
       'cat',
       'src',
-      'rtab',
-      'evref',
+      'vendor',
+      'mcat',
+      'sort',
+      'dir',
+      'org',
+      'ind',
+      'region',
+      'country',
+      'phase',
+      'view',
+      'reqfw',
+      'prod',
+      'cswpview',
+      'step',
+      'mtier',
+      'dossier',
+      'lsort',
+      'lq',
     ],
     description: 'Compliance',
   },
   {
     path: exact('/migrate'),
-    queryKeys: [
-      'q',
-      'layer',
-      'cat',
-      'subcat',
-      'vendor',
-      'verification',
-      'industry',
-      'step',
-      'mode',
-      'software',
-      'tab',
-      'share',
-    ],
+    // New links use product ids — never the legacy q/layer/cat/industry
+    // forms the page merely tolerates.
+    queryKeys: ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share'],
     description: 'Migrate catalog',
   },
   {
@@ -157,11 +233,15 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Patents
   {
     path: exact('/patents'),
+    // `patent=US<number>`; `tab=insights|explore|search`; `sq` = Search-tab query.
     queryKeys: [
-      'tab',
       'patent',
+      'tab',
+      'scope',
       'search',
       'assignee',
+      'inventor',
+      'patentIds',
       'agility',
       'domain',
       'impact',
@@ -172,6 +252,15 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'classicalAlgorithm',
       'hardwareComponent',
       'nistStatus',
+      'pqc',
+      'fips',
+      'filingYear',
+      'sort',
+      'dir',
+      'preset',
+      'columns',
+      'from',
+      'sq',
     ],
     description: 'Patents',
   },
@@ -222,6 +311,12 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   },
 ]
 
+/**
+ * Query keys valid on EVERY internal route. `spec=<reference_id>` opens the
+ * global library document drawer (SpecDrawerHost) in place on any page.
+ */
+export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec']
+
 export type ValidationFailure = {
   url: string
   reason: string
@@ -268,7 +363,7 @@ export function validateDeepLink(url: string): ValidationFailure | null {
     if (pat.queryKeys === '*') return null
     if (search === '') return null
     const params = new URLSearchParams(search)
-    const allowed = new Set(pat.queryKeys)
+    const allowed = new Set([...pat.queryKeys, ...GLOBAL_QUERY_KEYS])
     for (const key of params.keys()) {
       if (!allowed.has(key)) {
         return {
@@ -327,7 +422,7 @@ export function sanitizeDeepLink(url: string): { url: string; strippedKeys: stri
   const pattern = ROUTE_PATTERNS.find((pat) => pat.path.test(pathname))
   if (!pattern || pattern.queryKeys === '*') return { url, strippedKeys: [] }
 
-  const allowed = new Set(pattern.queryKeys)
+  const allowed = new Set([...pattern.queryKeys, ...GLOBAL_QUERY_KEYS])
   const params = new URLSearchParams(search)
   const strippedKeys: string[] = []
   for (const key of [...params.keys()]) {

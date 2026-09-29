@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { buildLocalSystemPrompt, buildGeminiSystemPrompt } from './promptBuilder'
 import type { RAGChunk } from '@/types/ChatTypes'
+import { validateDeepLink } from '@/services/search/deepLinkGrammar'
 
 let structuredCitationsEnabled = false
 vi.mock('@/services/featureFlags', () => ({
@@ -131,5 +132,55 @@ describe('structured citations (useStructuredCitations flag)', () => {
     expect(result).toMatch(/chunkId/)
     // Instructed to appear before the follow-ups fence, not after.
     expect(result.indexOf('```citations')).toBeLessThan(result.indexOf('FOLLOW-UP SUGGESTIONS'))
+  })
+})
+
+// Every `/<route>?key=` the prompts advertise must be a key the target page
+// reads (per deepLinkGrammar) — otherwise sanitizeDeepLink strips it at click
+// time and the link silently lands on the bare page.
+describe('advertised deep-link params match the grammar', () => {
+  const PAGE_ROUTES = [
+    'algorithms',
+    'timeline',
+    'library',
+    'migrate',
+    'leaders',
+    'compliance',
+    'threats',
+    'patents',
+  ]
+  function advertisedKeys(prompt: string): Array<{ route: string; key: string }> {
+    const out: Array<{ route: string; key: string }> = []
+    const re = new RegExp(`/(${PAGE_ROUTES.join('|')})\\?([^\\s)\`,]+)`, 'g')
+    for (const m of prompt.matchAll(re)) {
+      for (const part of m[2].split('&')) {
+        const key = part.split('=')[0]
+        if (key) out.push({ route: `/${m[1]}`, key })
+      }
+    }
+    return out
+  }
+
+  it.each([
+    ['gemini', () => buildGeminiSystemPrompt([])],
+    ['local', () => buildLocalSystemPrompt([])],
+  ])('%s prompt advertises only grammar-valid keys', (_name, build) => {
+    const pairs = advertisedKeys(build())
+    expect(pairs.length).toBeGreaterThan(10)
+    const bad = pairs.filter(({ route, key }) => validateDeepLink(`${route}?${key}=x`) !== null)
+    expect(bad).toEqual([])
+  })
+
+  it('no longer advertises the dead forms', () => {
+    const prompt = buildGeminiSystemPrompt([])
+    for (const dead of [
+      '/migrate?q=',
+      '/library?ind=',
+      '/leaders?view=',
+      'tab=<insights|patents>',
+      'pqc=<true|false>',
+      '/timeline?event=<title>',
+    ])
+      expect(prompt).not.toContain(dead)
   })
 })

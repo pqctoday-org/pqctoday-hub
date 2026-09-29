@@ -76,7 +76,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Deep link to specific views: ?tab=transition|detailed|support|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?mode=compare for the Detailed tab, ?section=attacks|kat for the Validation tab, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [
@@ -111,7 +111,7 @@ export const pageManuals: Record<PageId, PageManual> = {
     tips: [
       'Use the URL parameter ?ref=REFERENCE_ID to deep-link directly to a specific document.',
       'Export the full library as CSV for offline analysis or reporting.',
-      'URL params: ?cat=, ?org=, ?ind=, ?sort=, ?view=cards|table are all combinable for shareable filtered views.',
+      'URL params: ?ref= opens a document; ?cat=, ?org=, ?sector=, ?q=, ?sort=, ?view=cards|table are all combinable for shareable filtered views.',
     ],
   },
 
@@ -254,7 +254,7 @@ export const pageManuals: Record<PageId, PageManual> = {
     tips: [
       'Compliance data is automatically updated daily via the compliance scraper.',
       'Framework entries cross-reference both Library documents and Timeline milestones.',
-      'URL params: ?tab=standards|technical|certification|compliance|records, ?org=, ?ind=, ?q=, ?cert=, ?mcat=.',
+      'URL params: ?framework=<id> opens a framework, ?cert=<id> a certification record; ?tab=obligations|requirements|progress|products|standards|certification|compliance|records|cswp39, ?org=, ?ind=, ?q=, ?mcat=.',
     ],
   },
 
@@ -269,7 +269,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Product Search & Filters',
-        body: 'Search by product name or vendor. Filter by infrastructure layer, category, sub-category, vendor, verification status, and migration step. Persona-based recommendations highlight relevant layers. URL params: ?q=, ?layer=, ?cat=, ?vendor=, ?verification=, ?sort=, ?mode=stack|cards|table, ?subcat=, ?step=, ?industry=.',
+        body: 'Search by product name or vendor. Filter by infrastructure layer, category, sub-category, vendor, verification status, and migration step. Persona-based recommendations highlight relevant layers. URL params: ?product=<product id> opens one product, ?productIds= lists several, ?tab=replace|plan|roadmaps|vendorrisk picks a tab, and ?tab=roadmaps&vendor=<vendor id> opens a vendor roadmap.',
       },
       {
         heading: 'Product Details',

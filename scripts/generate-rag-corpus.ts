@@ -15,6 +15,16 @@ import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
 import {
+  algorithmDeepLink,
+  complianceFrameworkDeepLink,
+  leaderDeepLink,
+  migrateProductDeepLink,
+  migrateVendorDeepLink,
+  optionalColumn,
+  patentDeepLink,
+  timelineEventDeepLink,
+} from './lib/corpusDeepLinks'
+import {
   NICE_COMPETENCY_AREAS,
   NICE_WORK_ROLES,
 } from '../src/data/niceFramework'
@@ -364,6 +374,27 @@ function getPublishedThreatIds(): Set<string> {
 function findLibraryRef(text: string): string | undefined {
   const refs = getLibraryRefIds()
   return [...refs].find((ref) => text.includes(ref))
+}
+
+/** product_id for a Migrate product name (current or former), from the latest
+ *  catalog — so name-keyed chunks can still link `/migrate?product=<id>`. */
+let _productIdByName: Map<string, string> | null = null
+function findProductId(name: string): string {
+  if (!_productIdByName) {
+    _productIdByName = new Map()
+    const file = findLatestCSV('pqc_product_catalog_')
+    if (file) {
+      for (const r of readCSVWithHeaders(file)) {
+        if (isInactiveRecord(r)) continue
+        const id = sanitize(r.product_id)
+        if (!id) continue
+        const names = [sanitize(r.software_name), ...sanitize(r.former_names).split(';')]
+        for (const n of names.map((x) => x.trim().toLowerCase()).filter(Boolean))
+          if (!_productIdByName.has(n)) _productIdByName.set(n, id)
+      }
+    }
+  }
+  return _productIdByName.get(name.trim().toLowerCase()) ?? ''
 }
 
 /** URL-encode a parameter value for deep links */
@@ -760,12 +791,13 @@ function processTimeline(): RAGChunk[] {
       if (sectorVal && !skip.has(sectorVal)) enrichMetadata['sectorApplicability'] = sectorVal
     }
 
-    // Cross-link: if timeline event title matches a library referenceId,
-    // deep link to /library?ref= instead of generic /timeline?country=
-    const matchedRef = findLibraryRef(sanitize(title))
+    // Link the event itself (`?event=<event_id>` opens its row). Rows with no
+    // event_id fall back to the library record when the title names a
+    // document, else to the event's country.
+    const matchedRef = eventId ? undefined : findLibraryRef(sanitize(title))
     const deepLink = matchedRef
       ? `/library?ref=${encodeParam(matchedRef)}`
-      : `/timeline?country=${encodeParam(country)}`
+      : timelineEventDeepLink(eventId, sanitize(country))
 
     // Cross-reference field (col 15: trusted_source_id)
     const trustedSourceId = sanitize(row[14] ?? '')
@@ -780,6 +812,7 @@ function processTimeline(): RAGChunk[] {
         country: sanitize(country),
         org: sanitize(orgName),
         sourceUrl: sanitize(sourceUrl),
+        ...(eventId ? { eventId } : {}),
         ...(trustedSourceId ? { trustedSourceId } : {}),
         ...enrichMetadata,
       },
@@ -947,10 +980,15 @@ function processAlgorithms(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  // Prefer a stable `algorithm_id` column when the CSV carries one; it is
+  // removed from the row before the positional read below so its position in
+  // the header can't shift the other columns.
+  const algoIdIdx = rows[0].indexOf('algorithm_id')
 
   for (let i = 1; i < rows.length; i++) {
     if (isInactiveRow(rows, i)) continue
-    const row = rows[i]
+    const algorithmId = optionalColumn(rows[0], rows[i], 'algorithm_id')
+    const row = algoIdIdx === -1 ? rows[i] : rows[i].filter((_, j) => j !== algoIdIdx)
     if (row.length < 16) continue
 
     const [
@@ -1004,7 +1042,7 @@ function processAlgorithms(): RAGChunk[] {
         fipsStandard: sanitize(fipsStandard),
         securityLevel: sanitize(securityLevel),
       },
-      deepLink: `/algorithms?highlight=${algoSlug(name)}`,
+      deepLink: algorithmDeepLink(sanitize(algorithmId), sanitize(name)),
     })
   }
 
@@ -1168,7 +1206,7 @@ function processCompliance(): RAGChunk[] {
         ...(countriesField ? { countries: countriesField } : {}),
         ...(trustedSourceId ? { trustedSourceId } : {}),
       },
-      deepLink: `/compliance?tab=standards&q=${encodeParam(label)}`,
+      deepLink: complianceFrameworkDeepLink(sanitize(id)),
       prov: buildChunkProv({ csvFile: path.basename(file), csvRow: i, attributedTo: 'human' }),
     })
   }
@@ -1219,27 +1257,9 @@ function processMigrateSoftware(): RAGChunk[] {
       .filter(Boolean)
       .join('\n')
 
-    // Use the first valid infrastructure layer for deep-link context
-    const VALID_LAYERS = new Set([
-      'Cloud',
-      'Network',
-      'AppServers',
-      'Libraries',
-      'SecSoftware',
-      'Database',
-      'Security Stack',
-      'OS',
-      'Hardware',
-    ])
-    const primaryLayer = sanitize(r.infrastructure_layer)
-      .split(',')
-      .map((l) => l.trim())
-      .find((l) => VALID_LAYERS.has(l))
-    const migrateDeepLink = primaryLayer
-      ? `/migrate?q=${encodeParam(name)}&layer=${encodeParam(primaryLayer)}`
-      : `/migrate?q=${encodeParam(name)}`
-
     const productId = sanitize(r.product_id)
+    // Opens and expands this exact product (by product_id, name fallback).
+    const migrateDeepLink = migrateProductDeepLink(productId, name)
     const chunkId = productId
       ? `software-${productId}`
       : `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
@@ -1253,6 +1273,7 @@ function processMigrateSoftware(): RAGChunk[] {
       content,
       category: sanitize(r.infrastructure_layer) || sanitize(r.category_name) || 'Software',
       metadata: {
+        ...(productId ? { productId } : {}),
         categoryName: sanitize(r.category_name),
         fipsValidated: sanitize(r.fips_validated),
         repositoryUrl: sanitize(r.repository_url),
@@ -1280,10 +1301,15 @@ function processLeaders(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  // Prefer a stable `leader_id` column when the CSV carries one (names are
+  // still accepted by the page). Dropped from the row before the positional
+  // read so its header position can't shift the other columns.
+  const leaderIdIdx = rows[0].indexOf('leader_id')
 
   for (let i = 1; i < rows.length; i++) {
     if (isInactiveRow(rows, i)) continue
-    const row = rows[i]
+    const leaderId = optionalColumn(rows[0], rows[i], 'leader_id')
+    const row = leaderIdIdx === -1 ? rows[i] : rows[i].filter((_, j) => j !== leaderIdIdx)
     if (row.length < 7) continue
 
     const [name, country, role, organizations, type, category, contribution] = row
@@ -1309,9 +1335,10 @@ function processLeaders(): RAGChunk[] {
       metadata: {
         country: sanitize(country),
         type: sanitize(type),
+        ...(sanitize(leaderId) ? { leaderId: sanitize(leaderId) } : {}),
         ...(trustedSourceId ? { trustedSourceId } : {}),
       },
-      deepLink: `/leaders?leader=${encodeParam(name)}`,
+      deepLink: leaderDeepLink(sanitize(leaderId), sanitize(name)),
     })
   }
 
@@ -1495,7 +1522,7 @@ function processPatents(): RAGChunk[] {
           ? { complianceTargets: sanitize(r.compliance_targets) }
           : {}),
       },
-      deepLink: `/patents?patent=${encodeParam(patentNum)}`,
+      deepLink: patentDeepLink(patentNum),
     })
   }
 
@@ -3681,7 +3708,7 @@ function processCertificationXref(): RAGChunk[] {
       ...(firstCertId
         ? { deepLink: `/compliance?cert=${encodeParam(firstCertId)}` }
         : softwareName
-          ? { deepLink: `/migrate?q=${encodeParam(softwareName)}` }
+          ? { deepLink: migrateProductDeepLink(findProductId(softwareName), softwareName) }
           : {}),
     })
   }
@@ -3858,7 +3885,7 @@ function processDocumentEnrichments(): RAGChunk[] {
           : collection === 'threats' && refId
             ? { deepLink: threatDeepLink(refId) }
             : collection === 'catalog' && refId
-              ? { deepLink: `/migrate?q=${encodeParam(refId)}` }
+              ? { deepLink: migrateProductDeepLink(findProductId(refId), refId) }
               : collection === 'timeline' && refId
                 ? (() => {
                     // Cross-reference: if enrichment title matches a library referenceId,
@@ -3999,7 +4026,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Timeline Page — Global PQC Migration Milestones',
       content:
-        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.\n\nURL filter parameters:\n- ?region=<region> — filter by region: americas | eu | apac | global (omit for All Regions)\n- ?country=<countryName> — filter to a specific country (e.g., /timeline?country=United+States); when present, region defaults to All\n- ?q=<text> — search/filter within the Gantt chart\n\nExample links: /timeline?region=eu (EU countries only), /timeline?country=Germany (Germany timeline only), /timeline?region=apac&country=Japan (Japan within APAC view), /timeline?q=FIPS (search for FIPS events).",
+        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.\n\nURL filter parameters:\n- ?event=<event_id> — open one specific milestone/phase (its stable event_id; event titles are still accepted)\n- ?region=<region> — filter by region: americas | eu | apac | global (omit for All Regions)\n- ?country=<countryName> — filter to a specific country (e.g., /timeline?country=United+States); when present, region defaults to All\n- ?q=<text> — search/filter within the Gantt chart\n- ?cat=<phase type> — filter by phase type\n\nExample links: /timeline?region=eu (EU countries only), /timeline?country=Germany (Germany timeline only), /timeline?region=apac&country=Japan (Japan within APAC view), /timeline?q=FIPS (search for FIPS events).",
       category: 'page-guide',
       metadata: { page: 'timeline' },
       deepLink: '/timeline',
@@ -4010,7 +4037,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Algorithms Page — Transition Guide & Detailed Comparison',
       content:
-        "Algorithms Page Overview\n\nThe Algorithms page has four tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65); Detailed Comparison is a flat, sortable table with full specs for every algorithm, with a Browse ↔ Compare toggle; Protocol Support (the PQC Protocol Matrix) tracks IETF/TCG/OASIS/3GPP/IEEE/UEFI protocol standardization across 4 PQC dimensions (pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig) in a Heatmap or Detailed card view; Validation runs live in-browser KAT (known-answer-test) vectors and documents implementation-level attacks (side-channel, fault injection, RNG). A baseline algorithm is auto-selected for Detailed-tab comparisons: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition|detailed|support|validation (default: transition); ?family=, ?fn=, ?level=, ?region=, ?status=, ?q= to filter (Transition & Detailed tabs); ?mode=compare for the Detailed tab's Compare view; ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?section=attacks|kat opens a Validation-tab accordion; ?protocol=<id> opens one Protocol Support row's detail. On Protocol Support: ?matrixView=detailed for the card view (default: heatmap), ?matrixQ= to search, ?matrixStatus=<rfc|draft|experimental|none|na> (comma-separated) and ?matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment> to filter, ?matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc> to sort. Example: /algorithms?tab=support&matrixView=detailed&matrixStatus=rfc.",
+        "Algorithms Page Overview\n\nThe Algorithms page has four tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65); Detailed Comparison is a flat, sortable table with full specs for every algorithm, with a Browse ↔ Compare toggle; Protocol Support (the PQC Protocol Matrix) tracks IETF/TCG/OASIS/3GPP/IEEE/UEFI protocol standardization across 4 PQC dimensions (pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig) in a Heatmap or Detailed card view; Validation runs live in-browser KAT (known-answer-test) vectors and documents implementation-level attacks (side-channel, fault injection, RNG). A baseline algorithm is auto-selected for Detailed-tab comparisons: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition|detailed|support|landscape|validation (default: transition); ?algo=<algorithm id or exact name> opens one algorithm's detail; ?quickview=nist-picks|fips-validated|none sets the quick-view preset (a ?highlight= link widens it automatically); ?family=, ?fn=, ?level=, ?region=, ?status=, ?q= to filter (Transition & Detailed tabs); ?mode=compare for the Detailed tab's Compare view; ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?section=attacks|kat|coverage opens a Validation-tab section; ?protocol=<id> opens one Protocol Support row's detail (implies tab=support); ?industry=<label> and ?mechanism= filter the Landscape tab. On Protocol Support: ?matrixView=detailed for the card view (default: heatmap), ?matrixQ= to search, ?matrixStatus=<rfc|draft|experimental|none|na> (comma-separated) and ?matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment> to filter, ?matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc> to sort. Example: /algorithms?tab=support&matrixView=detailed&matrixStatus=rfc.",
       category: 'page-guide',
       metadata: { page: 'algorithms' },
       deepLink: '/algorithms',
@@ -4021,7 +4048,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Library Page — Standards, RFCs & Reference Documents',
       content:
-        'Library Page Overview\n\nThe Library catalogs 680+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research) and filterable by organization and industry. Persona-aware category boosting surfaces the most relevant categories for your role.\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?ref=<referenceId> — open a specific document detail panel (e.g., /library?ref=FIPS-203)\n- ?cat=<category> — filter by category: Digital Signature | KEM | PKI Certificate Management | Protocols | Government & Policy | NIST Standards | International Frameworks | Migration Guidance | Algorithm Specifications | Industry & Research\n- ?org=<organization> — filter by standardization body: NIST, IETF, ETSI, 3GPP, ENISA, NSA, CISA/NSA, ANSSI France, BSI Germany, UK NCSC, CCCS Canada, ASD Australia, CA/Browser Forum, Cloud Security Alliance, CRYPTREC Japan, Open Quantum Safe\n- ?ind=<industry> — filter by industry: Finance & Banking | Government & Defense | Healthcare | Telecommunications | Technology | Energy & Utilities | Education\n- ?sort=<order> — sort: newest (default) | name | referenceId | urgency\n- ?view=<mode> — layout: cards (default) | table\n\nExample shareable links: /library?cat=KEM&org=NIST (NIST KEM standards), /library?cat=Digital+Signature&sort=urgency (signature docs by urgency), /library?ind=Finance+%26+Banking&cat=Protocols (finance protocol standards), /library?ref=FIPS-203&cat=KEM (open ML-KEM doc with KEM filter active).',
+        'Library Page Overview\n\nThe Library catalogs 680+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research) and filterable by organization and sector. Persona-aware category boosting surfaces the most relevant categories for your role.\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?ref=<referenceId> — open a specific document detail panel (e.g., /library?ref=FIPS-203)\n- ?cat=<category> — filter by category: Digital Signature | KEM | PKI Certificate Management | Protocols | Government & Policy | NIST Standards | International Frameworks | Migration Guidance | Algorithm Specifications | Industry & Research\n- ?org=<organization> — filter by standardization body: NIST, IETF, ETSI, 3GPP, ENISA, NSA, CISA/NSA, ANSSI France, BSI Germany, UK NCSC, CCCS Canada, ASD Australia, CA/Browser Forum, Cloud Security Alliance, CRYPTREC Japan, Open Quantum Safe\n- ?sector=<NAICS code> — filter by sector (repeatable): 52 Finance & Insurance | 92 Public Administration | 54 Professional & Technical Services | 51 Information Technology | 62 Healthcare & Life Sciences | 22 Energy & Utilities | 48 Transportation | 91 Government & Defense\n- ?sort=<order> — sort: newest (default) | name | referenceId | urgency\n- ?view=<mode> — layout: cards (default) | table\n\nExample shareable links: /library?cat=KEM&org=NIST (NIST KEM standards), /library?cat=Digital+Signature&sort=urgency (signature docs by urgency), /library?sector=52&cat=Protocols (finance protocol standards), /library?ref=FIPS-203&cat=KEM (open ML-KEM doc with KEM filter active).',
       category: 'page-guide',
       metadata: { page: 'library' },
       deepLink: '/library',
@@ -4044,7 +4071,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Compliance Page — Regulatory Frameworks & Deadline Tracking',
       content:
-        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.\n\nURL deep links: ?tab=standards (default, standardization bodies) | ?tab=technical (technical standards) | ?tab=certification (FIPS/ACVP/CC schemes) | ?tab=compliance (regulatory frameworks) | ?tab=records (FIPS/ACVP/CC product certification records); ?cert=<recordId> opens a specific certification record directly (e.g., /compliance?cert=FIPS-140-3-A123&tab=records); ?q=<text> filters certification records; ?mcat=<category> filters cert records by module category (comma-separated for multiple); ?org=, ?ind= filter landscape tabs.',
+        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.\n\nURL deep links: ?framework=<id> opens one framework\'s detail drawer (e.g., /compliance?framework=CNSA-2); ?tab=obligations | requirements | progress | products | foryou | standards (standardization bodies) | certification (FIPS/ACVP/CC schemes) | compliance (regulatory frameworks) | records (FIPS/ACVP/CC product certification records) | cswp39 (CSWP.39 maturity evidence); ?cert=<recordId> opens a specific certification record directly (implies tab=records); ?evref=<library ref> opens a CSWP.39 evidence reference (implies tab=cswp39); ?q=<text> filters certification records; ?pqc=<algorithm name> filters records by PQC algorithm (e.g., ML-KEM); ?mcat=<category> filters cert records by module category (comma-separated for multiple); ?org=, ?ind=, ?region=, ?country= filter landscape tabs.',
       category: 'page-guide',
       metadata: { page: 'compliance' },
       deepLink: '/compliance',
@@ -4055,7 +4082,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Migrate Page — 7-Phase Framework & Software Catalog',
       content:
-        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 830+ PQC-ready products organized across 9 infrastructure layers (Cloud, Network, Application Servers, Libraries & SDKs, Security Software, Database, Security Stack, Operating Systems, Hardware & Secure Elements).\n\nThree view modes: Stack (default, grouped by infrastructure layer with expandable rows), Cards (flat grid), and Table (sortable columns). Three-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications. Community members can submit product update requests via contribution cards.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?q=<text> — text search across product names, descriptions, PQC support status\n- ?industry=<name> — filter by target industry\n- ?layer=<id> — infrastructure layer (e.g., CSC-001 through CSC-061)\n- ?step=<id> — migration phase filter\n- ?cat=<category> — product category within the selected layer\n- ?vendor=<vendorId> — filter by vendor\n- ?verification=<status> — filter by verification status\n- ?sort=<field> — sort order: name (default) | pqcSupport | pqcMigrationPriority | fipsValidated\n- ?mode=<view> — display mode: stack (default, layered infrastructure view) | cards | table\n- ?subcat=<name> — sub-category filter within the active layer',
+        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 830+ PQC-ready products organized across 9 infrastructure layers (Cloud, Network, Application Servers, Libraries & SDKs, Security Software, Database, Security Stack, Operating Systems, Hardware & Secure Elements).\n\nThree view modes: Stack (default, grouped by infrastructure layer with expandable rows), Cards (flat grid), and Table (sortable columns). Three-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications. Community members can submit product update requests via contribution cards.\n\nURL parameters (produce shareable links):\n- ?tab=<replace|plan|roadmaps|vendorrisk> — workbench tab: Replace what you own | Plan & sequence | Vendor roadmaps | Vendor risk\n- ?product=<product_id> — open and expand one product (exact product name also accepted), e.g. /migrate?product=btq-bitcoin-quantum\n- ?productIds=<id,id> — show exactly these products\n- ?domain=<domain id> — Replace-tab infrastructure domain\n- ?vendor=<VND id> — with tab=roadmaps, open one vendor\'s PQC roadmap (e.g., /migrate?tab=roadmaps&vendor=VND-089)',
       category: 'page-guide',
       metadata: { page: 'migrate' },
       deepLink: '/migrate',
@@ -4077,7 +4104,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Leaders Page — Global PQC Visionaries & Organizations',
       content:
-        'Leaders Page Overview\n\nThe Leaders page profiles 330+ global PQC leaders — visionaries, algorithm inventors, government officials, and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nURL filter parameters (all combinable):\n- ?leader=<name> — scroll to and highlight a specific person (e.g., /leaders?leader=Dustin+Moody)\n- ?region=<region> — filter by region: americas | eu | apac (omit for All)\n- ?country=<country> — filter by country (scoped by region when both are set)\n- ?sector=<sector> — filter by sector: Public | Private | Academic\n- ?cat=<category> — filter by leader category: Government Leaders | Algorithm Inventors | Industry Vendors | Standards Bodies | Industry Adopters | Academic Researchers\n- ?q=<text> — search across name, organization, and bio\n- ?sort=<order> — sort leaders: name (default) | country | category\n- ?view=<mode> — layout: cards (default) | table\n\nExample links: /leaders?sector=Public&region=eu (European government leaders), /leaders?cat=Algorithm+Inventors&sort=country (algorithm inventors by country), /leaders?q=NIST&sector=Public (NIST public sector leaders), /leaders?leader=Dustin+Moody (highlight Dustin Moody), /leaders?cat=Industry+Adopters&view=table (adopters in table view).',
+        'Leaders Page Overview\n\nThe Leaders page profiles 330+ global PQC leaders — visionaries, algorithm inventors, government officials, and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nURL filter parameters (all combinable):\n- ?leader=<leader id or name> — scroll to and highlight a specific person (e.g., /leaders?leader=Dustin+Moody)\n- ?region=<region> — filter by region: americas | eu | apac (omit for All)\n- ?country=<country> — filter by country (scoped by region when both are set)\n- ?sector=<sector> — filter by sector: Public | Private | Academic\n- ?cat=<category> — filter by leader category: Standards | Algorithm Inventor | Industry Adopter | Industry Vendor | Government | Open Source Maintainer | Patent Inventor | Skeptic/Critic\n- ?q=<text> — search across name, organization, and bio\n- ?sort=<order> — sort leaders: name (default) | country | category\n- ?mode=<mode> — layout: cards (default) | table | stack\n\nExample links: /leaders?sector=Public&region=eu (European government leaders), /leaders?cat=Algorithm+Inventor&sort=country (algorithm inventors by country), /leaders?q=NIST&sector=Public (NIST public sector leaders), /leaders?leader=Dustin+Moody (highlight Dustin Moody), /leaders?cat=Industry+Adopter&mode=table (adopters in table view).',
       category: 'page-guide',
       metadata: { page: 'leaders' },
       deepLink: '/leaders',
@@ -4144,7 +4171,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Patents Page — PQC Patent Landscape Overview',
       content:
-        "Patents Page Overview\n\nThe Patents page (/patents) catalogs the global PQC patent landscape with 310+ patents indexed and analysed. The page has two tabs: Insights (aggregate landscape view, default) and Patents (searchable patents table). CSWP.39 maturity-evidence linkage: each patent is mapped to one of the 5 CSWP.39 steps (Govern, Inventory, Identify Gaps, Prioritise, Implement) so the Command Center can surface patent evidence when assessing maturity tiers.\n\nIf someone asks about 'patent landscape', 'PQC patents', 'who holds patents', or 'patent overview' — direct them to /patents.",
+        "Patents Page Overview\n\nThe Patents page (/patents) catalogs the global PQC patent landscape with 310+ patents indexed and analysed. The page has three tabs: Insights (aggregate landscape view, default), Explore (filterable patents table, /patents?tab=explore) and Search (/patents?tab=search). Open one patent with /patents?patent=US<number>. CSWP.39 maturity-evidence linkage: each patent is mapped to one of the 5 CSWP.39 steps (Govern, Inventory, Identify Gaps, Prioritise, Implement) so the Command Center can surface patent evidence when assessing maturity tiers.\n\nIf someone asks about 'patent landscape', 'PQC patents', 'who holds patents', or 'patent overview' — direct them to /patents.",
       category: 'page-guide',
       metadata: { page: 'patents' },
       deepLink: '/patents',
@@ -4164,12 +4191,12 @@ function processPageGuides(): RAGChunk[] {
     {
       id: 'page-guide-patents-table',
       source: 'documentation',
-      title: 'Patents — Patents Tab (Searchable Table & Filters)',
+      title: 'Patents — Explore Tab (Filterable Table & Filters)',
       content:
-        "Patents Table Tab Overview (/patents?tab=patents)\n\nThe Patents tab is the searchable table view at /patents?tab=patents. Use it to find specific patent records and filter the patent corpus.\n\nFilter parameters (all on /patents, all combinable):\n- ?patent=<id> — open a specific patent record by patent number\n- ?search=<text> — full-text search across title, abstract, assignee\n- ?assignee=<name> — filter by patent assignee/holder (e.g. IBM, Wells Fargo, Samsung)\n- ?agility=<level> — crypto-agility maturity tag\n- ?domain=<name> — application domain (cloud, IoT, payments, etc.)\n- ?impact=<level> — quantum-impact severity\n- ?quantumTech=<family> — quantum technology family (lattice-based, hash-based, code-based, isogeny, multivariate)\n- ?quantumRelevance=<level> — relevance score for PQC research\n- ?region=<name> — filing region (US, EU, China, Japan, Korea)\n- ?protocol=<name> — protocol covered (TLS, IKE, S/MIME, VPN, etc.)\n- ?classicalAlgorithm=<name> — replaced classical algorithm (RSA, ECDSA, ECDH, etc.)\n- ?hardwareComponent=<name> — hardware component referenced (HSM, TPM, smart card, accelerator)\n- ?nistStatus=<status> — NIST standardization track status\n\nIf someone asks 'show me patents', 'find a specific patent', 'filter patents by assignee', 'patents about TLS', 'patents replacing RSA', or 'patents from China' — direct them to /patents?tab=patents and use the appropriate filter param (e.g. /patents?tab=patents&assignee=IBM, /patents?tab=patents&classicalAlgorithm=RSA).",
+        "Patents Explore Tab Overview (/patents?tab=explore)\n\nThe Explore tab is the filterable patents table at /patents?tab=explore. Use it to find specific patent records and filter the patent corpus.\n\nFilter parameters (all on /patents, all combinable):\n- ?patent=US<number> — open a specific patent record (e.g., /patents?patent=US12676741)\n- ?search=<text> — full-text search across title, abstract, assignee\n- ?assignee=<name> — filter by patent assignee/holder (e.g. IBM, Wells Fargo, Samsung)\n- ?agility=<level> — crypto-agility maturity tag\n- ?domain=<name> — application domain (cloud, IoT, payments, etc.)\n- ?impact=<level> — quantum-impact severity\n- ?quantumTech=<family> — quantum technology family (lattice-based, hash-based, code-based, isogeny, multivariate)\n- ?quantumRelevance=<level> — relevance score for PQC research\n- ?region=<name> — filing region (US, EU, China, Japan, Korea)\n- ?protocol=<name> — protocol covered (TLS, IKE, S/MIME, VPN, etc.)\n- ?classicalAlgorithm=<name> — replaced classical algorithm (RSA, ECDSA, ECDH, etc.)\n- ?hardwareComponent=<name> — hardware component referenced (HSM, TPM, smart card, accelerator)\n- ?nistStatus=<status> — NIST standardization track status\n\nIf someone asks 'show me patents', 'find a specific patent', 'filter patents by assignee', 'patents about TLS', 'patents replacing RSA', or 'patents from China' — direct them to /patents?tab=explore and use the appropriate filter param (e.g. /patents?tab=explore&assignee=IBM, /patents?tab=explore&classicalAlgorithm=RSA).",
       category: 'page-guide',
       metadata: { page: 'patents', tab: 'patents' },
-      deepLink: '/patents?tab=patents',
+      deepLink: '/patents?tab=explore',
     },
     // --- Report Page ---
     {
@@ -4288,7 +4315,8 @@ function enrichWithCrossReferences(corpus: RAGChunk[]): number {
       const links = matches
         .map((t) => {
           const country = t.metadata?.country ?? 'Unknown'
-          return `[${country} Timeline](${t.deepLink ?? `/timeline?country=${country}`})`
+          // A per-country link: the chunk's own deepLink now names one event.
+          return `[${country} Timeline](/timeline?country=${encodeParam(String(country))})`
         })
         .join(', ')
       comp.content += `\nRelated Timeline: ${links}`
@@ -4734,7 +4762,7 @@ function processVendorRoadmap(): RAGChunk[] {
         .join('\n'),
       category: 'vendor-roadmap',
       metadata: { vendorId, vendorName, roadmapType, publishDate, lastVerified },
-      deepLink: `/migrate?vendor=${encodeParam(vendorId)}`,
+      deepLink: migrateVendorDeepLink(vendorId),
       prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
     })
   }
@@ -4886,7 +4914,7 @@ function processRegulatoryTimelines(): RAGChunk[] {
     ].join('\n'),
     category: 'regulatory-deadline',
     metadata: { framework: 'CNSA-2.0', authority: 'NSA', country: 'USA' },
-    deepLink: '/compliance?tab=frameworks',
+    deepLink: complianceFrameworkDeepLink('CNSA-2'),
     prov: buildChunkProv({
       attributedTo: 'human',
       enrichmentFile: 'src/data/regulatoryTimelines.ts:CNSA_2_0',

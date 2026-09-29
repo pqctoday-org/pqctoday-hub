@@ -599,6 +599,15 @@ const ALGORITHMS_STATE_KEYS = [
   'matrixStatus',
   'matrixAvailability',
   'matrixSort',
+  'matrixHighlight',
+  'quickview',
+  'algo',
+  'attack',
+  'engine',
+  'case',
+  'industry',
+  'mechanism',
+  'usecase',
 ] as const
 
 /** Compact `key=value` summary of the Algorithms page's current URL state,
