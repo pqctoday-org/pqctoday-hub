@@ -28,6 +28,28 @@ describe('leadersData', () => {
     }
   })
 
+  it('carries a unique kebab-case leader_id on every row, used as the identity', () => {
+    const ids = leadersData.map((l) => l.leaderId)
+    for (const l of leadersData) {
+      expect(l.leaderId).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+      expect(l.id).toBe(l.leaderId)
+    }
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('mints leader_id from the name without honorifics (org suffix only on a name clash)', () => {
+    const byName = (n: string) => leadersData.find((l) => l.name === n)
+    expect(byName('Jérôme Notin')?.leaderId).toBe('jerome-notin')
+    expect(byName('Prof. Dr. Léo Ducas')?.leaderId).toBe('leo-ducas')
+    expect(byName('Dr. Dustin Moody')?.leaderId).toBe('dustin-moody-nist')
+    expect(byName('Dustin Moody')?.leaderId).toBe('dustin-moody-nist-2')
+  })
+
+  it('does not flag rows Updated just because the previous snapshot lacks leader_id', () => {
+    const updated = leadersData.filter((l) => l.status === 'Updated')
+    expect(updated.length).toBeLessThan(leadersData.length / 2)
+  })
+
   it('classifies every row as curated or auto-imported', () => {
     for (const item of leadersData) {
       expect(['curated', 'auto-imported']).toContain(item.sourceKind)

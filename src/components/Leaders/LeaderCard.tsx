@@ -156,7 +156,7 @@ export const LeaderCard = ({
               `**Country:** ${leader.country}`,
               `**Sector:** ${leader.type}`,
             ].join('\n'),
-            pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+            pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
           })}
           resourceLabel={leader.name}
           resourceType="Leader"
@@ -174,7 +174,7 @@ export const LeaderCard = ({
               `**Country:** ${leader.country}`,
               `**Sector:** ${leader.type}`,
             ].join('\n'),
-            pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+            pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
           })}
           resourceLabel={leader.name}
           resourceType="Leader"

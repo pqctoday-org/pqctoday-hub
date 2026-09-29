@@ -8,7 +8,7 @@ import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
-import { findLeaderByName } from '@/components/Leaders/leaderDeepLink'
+import { findLeaderByParam } from '@/components/Leaders/leaderDeepLink'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -61,14 +61,15 @@ function humanizeDate(iso: string): string {
  */
 export function MobileCommunityView() {
   const [category, setCategory] = useState<string | null>(null)
-  // The open profile lives in ?leader=<name>, the same param desktop reads, so
+  // The open profile lives in ?leader=<leader_id> (old name links still resolve),
+  // the same param desktop reads, so
   // shared links, Assistant citations and cross-page links open it on a phone
   // too. Resolved against ALL rows (not just the curated list below), so a
   // linked document-contributor stub still opens. Open pushes; close replaces.
   const [searchParams, setSearchParams] = useSearchParams()
   const leaderParam = searchParams.get('leader')?.trim() || null
   const selected: Leader | null = useMemo(
-    () => (leaderParam ? (findLeaderByName(leadersData, leaderParam) ?? null) : null),
+    () => (leaderParam ? (findLeaderByParam(leadersData, leaderParam) ?? null) : null),
     [leaderParam]
   )
   const [dismissedNotFound, setDismissedNotFound] = useState<string | null>(null)
@@ -79,7 +80,7 @@ export function MobileCommunityView() {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
-          if (leader) next.set('leader', leader.name)
+          if (leader) next.set('leader', leader.leaderId)
           else next.delete('leader')
           return next
         },

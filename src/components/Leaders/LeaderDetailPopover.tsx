@@ -11,10 +11,11 @@ import {
   ShieldCheck,
   Award,
   FolderGit2,
+  Users,
 } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import FocusLock from 'react-focus-lock'
 import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
@@ -28,6 +29,7 @@ import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
+import { leaderPatentsHref } from './leaderDeepLink'
 
 interface LeaderDetailPopoverProps {
   isOpen: boolean
@@ -37,6 +39,7 @@ interface LeaderDetailPopoverProps {
 
 export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const { pathname } = useLocation()
   const [imgError, setImgError] = useState(false)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
@@ -136,7 +139,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
                   `**Country:** ${leader.country}`,
                   `**Sector:** ${leader.type}`,
                 ].join('\n'),
-                pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+                pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
               })}
               resourceLabel={leader.name}
               resourceType="Leader"
@@ -154,7 +157,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
                   `**Country:** ${leader.country}`,
                   `**Sector:** ${leader.type}`,
                 ].join('\n'),
-                pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+                pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
               })}
               resourceLabel={leader.name}
               resourceType="Leader"
@@ -207,6 +210,16 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
 
           {/* Cross-links — related views filtered to this leader's context */}
           <div className="flex flex-wrap gap-2">
+            {pathname !== '/leaders' && (
+              <Link
+                to={`/leaders?leader=${encodeURIComponent(leader.leaderId || leader.name)}`}
+                onClick={onClose}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+                title={`Open ${leader.name} in Community`}
+              >
+                <Users size={12} aria-hidden="true" /> Open in Community
+              </Link>
+            )}
             <Link
               to={`/timeline?country=${encodeURIComponent(leader.country)}`}
               onClick={onClose}
@@ -227,7 +240,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             </Link>
             {leader.patentRefs && leader.patentRefs.length > 0 && (
               <Link
-                to={`/patents?patentIds=${encodeURIComponent(leader.patentRefs.join(','))}&tab=explore`}
+                to={leaderPatentsHref(leader.patentRefs)}
                 onClick={onClose}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
                 title={`View ${leader.name}'s patents`}
@@ -250,7 +263,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
                 {leader.migrateCatalogRefs.map((productId) => (
                   <Link
                     key={productId}
-                    to={`/migrate?productIds=${encodeURIComponent(productId)}&tab=replace`}
+                    to={`/migrate?product=${encodeURIComponent(productId)}&tab=replace`}
                     onClick={onClose}
                     className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
                     title={`View ${productId} in the Migrate catalog`}

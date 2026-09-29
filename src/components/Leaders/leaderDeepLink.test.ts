@@ -1,11 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import type { Leader } from '@/data/leadersData'
-import { findLeaderByName, normalizeLeaderName, planLeaderDeepLink } from './leaderDeepLink'
+import {
+  leaderPatentsHref,
+  findLeaderByName,
+  findLeaderByParam,
+  leaderNameSlug,
+  normalizeLeaderName,
+  planLeaderDeepLink,
+} from './leaderDeepLink'
+import { leadersData } from '@/data/leadersData'
 
 const L = (over: Partial<Leader>): Leader =>
   ({
     id: 'x',
+    leaderId: over.id ?? 'x',
     name: 'X',
     country: 'USA',
     title: '',
@@ -53,11 +62,55 @@ describe('normalizeLeaderName / findLeaderByName', () => {
   })
 })
 
+describe('findLeaderByParam (leader_id first, then name)', () => {
+  it('resolves the stable leader_id before any name match', () => {
+    expect(findLeaderByParam(leaders, 'moody-dr')?.name).toBe('Dr. Dustin Moody')
+    expect(findLeaderByParam(leaders, ' ANA ')?.id).toBe('ana')
+  })
+  it('keeps old display-name links working (exact, then tolerant)', () => {
+    expect(findLeaderByParam(leaders, 'Dustin Moody')?.id).toBe('moody')
+    expect(findLeaderByParam(leaders, 'prof. dr. ana lee')?.id).toBe('ana')
+  })
+  it('accepts a bare name slug, preferring a curated profile over a stub', () => {
+    expect(findLeaderByParam(leaders, 'ana-lee')?.id).toBe('ana')
+    const dup = [
+      L({ id: 'stub-x', name: 'Zed Roe', sourceKind: 'auto-imported' }),
+      L({ id: 'cur-x', name: 'Dr. Zed Roe' }),
+    ]
+    expect(findLeaderByParam(dup, 'zed-roe')?.id).toBe('cur-x')
+  })
+  it('returns undefined for blank or unknown values', () => {
+    expect(findLeaderByParam(leaders, '  ')).toBeUndefined()
+    expect(findLeaderByParam(leaders, 'no-such-person')).toBeUndefined()
+  })
+})
+
+describe('leader_id values in the shipped CSV', () => {
+  it('each id starts with the name slug the resolver computes (minting stays in step)', () => {
+    for (const l of leadersData) {
+      expect(l.leaderId.startsWith(leaderNameSlug(l.name))).toBe(true)
+    }
+  })
+  it('every row resolves from its own id and from its display name', () => {
+    for (const l of leadersData) {
+      expect(findLeaderByParam(leadersData, l.leaderId)).toBe(l)
+      expect(findLeaderByParam(leadersData, l.name)).toBe(l)
+    }
+  })
+  it('folds accents, ß and honorifics like the minting script', () => {
+    expect(leaderNameSlug('Prof. Dr. Thomas Pöppelmann')).toBe('thomas-poppelmann')
+    expect(leaderNameSlug('John Preuß Mattsson')).toBe('john-preuss-mattsson')
+  })
+})
+
 describe('planLeaderDeepLink', () => {
   const plan = (qs: string) => planLeaderDeepLink(leaders, new URLSearchParams(qs))
 
   it('returns null without a leader param', () => {
     expect(plan('cat=Government')).toBeNull()
+  })
+  it('resolves a leader_id link', () => {
+    expect(plan('leader=ana')).toMatchObject({ kind: 'found', leader: { name: 'Ana Lee' } })
   })
   it('reports unknown names as not-found', () => {
     expect(plan('leader=Nobody')).toEqual({ kind: 'not-found', name: 'Nobody' })
@@ -91,5 +144,19 @@ describe('planLeaderDeepLink', () => {
     if (c?.kind !== 'found') throw new Error('expected found')
     expect(c.nextParams?.get('country')).toBeNull()
     expect(c.nextParams?.get('region')).toBeNull()
+  })
+})
+
+describe('leaderPatentsHref', () => {
+  it('opens a single patent directly with the US-prefixed number', () => {
+    expect(leaderPatentsHref(['10742413'])).toBe(
+      '/patents?patentIds=10742413&tab=explore&patent=US10742413'
+    )
+    expect(leaderPatentsHref(['US10742413'])).toContain('&patent=US10742413')
+  })
+  it('keeps only the patentIds scope for several patents', () => {
+    expect(leaderPatentsHref(['20200358619', '10764042'])).toBe(
+      '/patents?patentIds=20200358619%2C10764042&tab=explore'
+    )
   })
 })

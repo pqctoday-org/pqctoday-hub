@@ -17,6 +17,7 @@ import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
 import { Button } from '@/components/ui/button'
+import { leaderPatentsHref } from './leaderDeepLink'
 
 interface LeaderDetailSectionProps {
   leader: Leader
@@ -102,7 +103,7 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
         {leader.patentRefs && leader.patentRefs.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <Link
-              to={`/patents?patentIds=${encodeURIComponent(leader.patentRefs.join(','))}&tab=explore`}
+              to={leaderPatentsHref(leader.patentRefs)}
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
               title={`View ${leader.name}'s patents`}
             >
@@ -123,7 +124,7 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
               {leader.migrateCatalogRefs.map((productId) => (
                 <Link
                   key={productId}
-                  to={`/migrate?productIds=${encodeURIComponent(productId)}&tab=replace`}
+                  to={`/migrate?product=${encodeURIComponent(productId)}&tab=replace`}
                   className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
                   title={`View ${productId} in the Migrate catalog`}
                 >
