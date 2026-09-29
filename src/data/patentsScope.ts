@@ -14,6 +14,9 @@
  * usePatentKpis() rather than re-filtering itself.
  */
 
+import { patentsData } from '@/data/patentsData'
+import type { PatentItem } from '@/types/PatentTypes'
+
 export const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
 export const SCOPE_PARAM = 'scope'
 
@@ -32,4 +35,30 @@ export function readScopeParam(params: URLSearchParams): boolean | null {
   if (s === 'all') return false
   if (s === 'pqc') return true
   return null
+}
+
+// ── ?patent deep-link resolution (shared by desktop and mobile) ───────────
+// `?patent=` arrives in two forms: `US12676741` (the page's own links) and a
+// bare `12676741` (the RAG corpus, search and the Assistant). Both resolve
+// against the FULL patentsData — never the scoped list — so a link to a
+// patent outside the reader's current scope can still be found (and the
+// scope widened to show it) instead of opening nothing.
+
+/** `12676741`, `us12676741`, ` US 12,676,741 ` → `US12676741`. Empty → null. */
+export function normalizePatentNumber(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  const compact = raw.replace(/[\s,]/g, '').toUpperCase()
+  if (!compact) return null
+  return compact.startsWith('US') ? compact : `US${compact}`
+}
+
+const BY_NUMBER = new Map<string, PatentItem>(patentsData.map((p) => [p.patentNumber, p]))
+
+/** The patent a `?patent=` value names, in either form, or null if unknown/retired. */
+export function findPatentByNumber(
+  raw: string | null | undefined,
+  corpus: Map<string, PatentItem> = BY_NUMBER
+): PatentItem | null {
+  const id = normalizePatentNumber(raw)
+  return id ? (corpus.get(id) ?? null) : null
 }

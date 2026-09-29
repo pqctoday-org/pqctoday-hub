@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect } from 'react'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { MobilePatentsView } from './MobilePatentsView'
 import { patentsData } from '@/data/patentsData'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
@@ -11,8 +13,22 @@ import { PQC_ONLY_LS_KEY } from '@/data/patentsScope'
 // CSV at module load. Assertions are structural (derived at test time), not
 // hardcoded counts, since the underlying corpus changes over time and the
 // mockup's own "1,185"/"214"/"Huawei · 63" figures are already known-stale.
-function renderView() {
-  return render(<MobilePatentsView />)
+let lastSearch = ''
+function LocationProbe() {
+  const { search } = useLocation()
+  useEffect(() => {
+    lastSearch = search
+  }, [search])
+  return null
+}
+
+function renderView(initial = '/patents') {
+  return render(
+    <MemoryRouter initialEntries={[initial]}>
+      <MobilePatentsView />
+      <LocationProbe />
+    </MemoryRouter>
+  )
 }
 
 describe('MobilePatentsView', () => {
@@ -91,5 +107,48 @@ describe('MobilePatentsView', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('patent-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  it('opens the detail sheet from ?patent in the US-prefixed form', () => {
+    const p = patentsData.filter(isPqcPatent)[0]
+    renderView(`/patents?patent=${p.patentNumber}`)
+    expect(screen.getByTestId('patent-detail-sheet')).toBeInTheDocument()
+    expect(screen.getAllByText(p.title).length).toBeGreaterThan(1)
+  })
+
+  it('opens the detail sheet from a bare-number ?patent, even outside the PQC scope', () => {
+    const p = patentsData.find((x) => !isPqcPatent(x))!
+    renderView(`/patents?patent=${p.patentNumber.replace(/^US/, '')}`)
+    expect(screen.getByTestId('patent-detail-sheet')).toBeInTheDocument()
+    expect(screen.getByText(p.title)).toBeInTheDocument()
+  })
+
+  it('shows a not-found notice for an unknown ?patent', () => {
+    renderView('/patents?patent=US00000000')
+    expect(screen.getByTestId('deeplink-notice-not-found')).toBeInTheDocument()
+    expect(screen.queryByTestId('patent-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  it('writes ?patent on open and clears it on close', () => {
+    renderView()
+    const first = patentsData.filter(isPqcPatent)[0]
+    fireEvent.click(screen.getByText(first.title).closest('button')!)
+    expect(new URLSearchParams(lastSearch).get('patent')).toBe(first.patentNumber)
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(new URLSearchParams(lastSearch).get('patent')).toBeNull()
+  })
+
+  it('honours ?scope=all over the saved PQC-only scope', () => {
+    renderView('/patents?scope=all')
+    expect(screen.getByText(`${patentsData.length} patents`)).toBeInTheDocument()
+  })
+
+  it('search matches a patent number', () => {
+    renderView()
+    const p = patentsData.filter(isPqcPatent)[0]
+    fireEvent.change(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i), {
+      target: { value: p.patentNumber.replace(/^US/, '') },
+    })
+    expect(screen.getByText(p.title)).toBeInTheDocument()
   })
 })

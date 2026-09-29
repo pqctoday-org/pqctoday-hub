@@ -9,7 +9,7 @@
  * the live PatentsView state: pqcOnly (LS), columns (LS), sort (LS + executive
  * default), tab/patent/filter URL params, CSV export, persona.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ScrollText } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -42,10 +42,19 @@ import { PatentsDrillBanner } from './PatentsDrillBanner'
 import { PatentDetailDrawer } from './PatentDetailDrawer'
 import { PatentsRecentlyAdded } from './PatentsRecentlyAdded'
 import { PatentsRoleLens } from '../PatentsRoleLens'
-import { PQC_ONLY_LS_KEY, SCOPE_PARAM, readPqcOnly, readScopeParam } from '@/data/patentsScope'
+import {
+  PQC_ONLY_LS_KEY,
+  SCOPE_PARAM,
+  findPatentByNumber,
+  readPqcOnly,
+  readScopeParam,
+} from '@/data/patentsScope'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobilePatentsView } from '@/components/Mobile/screens/MobilePatentsView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { resolvePatentTab } from '@/components/Patents/patentDeepLink'
 
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
@@ -137,7 +146,7 @@ export function PatentsViewRedesign() {
   const isMobileShell = useIsMobileShell()
   const [params, setParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const activeTab = params.get('tab') ?? 'insights'
+  const activeTab = resolvePatentTab(params, FILTER_PARAMS)
   const selectedPatent = params.get('patent')
 
   const [pqcOnly, setPqcOnly] = useState<boolean>(() => readScopeParam(params) ?? readPqcOnly())
@@ -298,11 +307,92 @@ export function PatentsViewRedesign() {
     },
     [params, setParams]
   )
+  // Deep-link arrival state: a notice when the link's patent had to be
+  // widened into scope (with Undo) or could not be found, and a scroll/ring
+  // target for its Explore row.
+  const [deepLinkNotice, setDeepLinkNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+    /** Scope param value before widening (null = absent), restored by Undo. */
+    priorScopeParam?: string | null
+  } | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  const handledPatentRef = useRef<string | null>(null)
+  const arrivalPatentRef = useRef<string | null>(null)
+
+  // Resolve ?patent (US-prefixed or bare) against the FULL corpus: canonicalise
+  // the param, widen the scope if the patent is hidden by it, or say it is not
+  // found. Runs once per distinct ?patent value. The mobile screen does its own
+  // handling, so this is desktop-only.
+  useEffect(() => {
+    if (isMobileShell) return
+    if (!selectedPatent) {
+      handledPatentRef.current = null
+      return
+    }
+    if (handledPatentRef.current === selectedPatent) return
+    handledPatentRef.current = selectedPatent
+    const match = findPatentByNumber(selectedPatent)
+    const next = new URLSearchParams(params)
+    if (!match) {
+      setDeepLinkNotice({
+        kind: 'not-found',
+        message: `Patent ${selectedPatent} isn't in the catalog — it may have been retired or the link is mistyped.`,
+      })
+      next.delete('patent')
+      setParams(next, { replace: true })
+      return
+    }
+    let changed = false
+    if (match.patentNumber !== selectedPatent) {
+      next.set('patent', match.patentNumber)
+      changed = true
+    }
+    if (pqcOnly && !isPqcPatent(match)) {
+      setDeepLinkNotice({
+        kind: 'widened',
+        message: `Showing all patents to include ${match.patentNumber}.`,
+        priorScopeParam: params.get(SCOPE_PARAM),
+      })
+      setPqcOnly(false)
+      next.set(SCOPE_PARAM, 'all')
+      changed = true
+    }
+    if (arrivalPatentRef.current === null) {
+      arrivalPatentRef.current = match.patentNumber
+      setScrollTarget(`${match.patentNumber}#arrive`)
+    }
+    if (changed) setParams(next, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per ?patent value
+  }, [selectedPatent, isMobileShell])
+
+  useScrollToDeepLinkTarget(
+    scrollTarget,
+    scrollTarget ? deepLinkSelector(scrollTarget.split('#')[0]) : null
+  )
+
+  const undoWiden = useCallback(() => {
+    const prior = deepLinkNotice?.priorScopeParam
+    setPqcOnly(true)
+    const next = new URLSearchParams(params)
+    if (prior) next.set(SCOPE_PARAM, prior)
+    else next.delete(SCOPE_PARAM)
+    // The linked patent is outside the restored scope, so close it too.
+    next.delete('patent')
+    setParams(next, { replace: true })
+    setDeepLinkNotice(null)
+  }, [deepLinkNotice, params, setParams])
+
+  // Close replaces history (house rule) so Back doesn't reopen the drawer.
   const closeDrawer = useCallback(() => {
     const next = new URLSearchParams(params)
     next.delete('patent')
-    setParams(next)
-  }, [params, setParams])
+    setParams(next, { replace: true })
+    // Closing the patent a link opened: bring its Explore row back into view.
+    if (selectedPatent && selectedPatent === arrivalPatentRef.current) {
+      setScrollTarget(`${selectedPatent}#close`)
+    }
+  }, [params, setParams, selectedPatent])
 
   // Dashboard drill-down: apply the filter AND switch to Explore (no tab-hunting).
   const applyDrill = useCallback(
@@ -349,13 +439,9 @@ export function PatentsViewRedesign() {
     downloadCsv(generateCsv(displayPatents, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
   }, [displayPatents])
 
-  const drawerPatent = useMemo(
-    () =>
-      selectedPatent
-        ? (displayPatents.find((p) => p.patentNumber === selectedPatent) ?? null)
-        : null,
-    [selectedPatent, displayPatents]
-  )
+  // Resolved against the full corpus (either ID form), not the scoped list —
+  // an out-of-scope link is widened into scope by the effect above.
+  const drawerPatent = useMemo(() => findPatentByNumber(selectedPatent), [selectedPatent])
   const drawerList = drawerFromSearch ? searchResults : exploreResults
   const fromDashboard = params.get('from') === 'dashboard'
 
@@ -416,6 +502,15 @@ export function PatentsViewRedesign() {
       />
 
       <PersonaPageNote route="/patents" />
+
+      {deepLinkNotice && (
+        <DeepLinkNotice
+          kind={deepLinkNotice.kind}
+          message={deepLinkNotice.message}
+          onUndo={deepLinkNotice.kind === 'widened' ? undoWiden : undefined}
+          onDismiss={() => setDeepLinkNotice(null)}
+        />
+      )}
 
       {/* Control deck */}
       <div className="glass-panel space-y-3 rounded-2xl p-3 sm:p-4">

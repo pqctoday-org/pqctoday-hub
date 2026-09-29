@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { patentsData } from '@/data/patentsData'
-import { readPqcOnly } from '@/data/patentsScope'
+import { findPatentByNumber, readPqcOnly, readScopeParam } from '@/data/patentsScope'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { usePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/PatentTypes'
@@ -64,9 +66,33 @@ export function MobilePatentsView() {
   const [highImpactOnly, setHighImpactOnly] = useState(false)
   const [agilityFilter, setAgilityFilter] = useState<CryptoAgilityMode | null>(null)
   const [searchText, setSearchText] = useState('')
-  const [selected, setSelected] = useState<PatentItem | null>(null)
+  const [params, setParams] = useSearchParams()
+  const patentParam = params.get('patent')
+  // Same ?patent param as desktop, either `US…` or bare-number form, resolved
+  // against the full corpus so an out-of-scope patent still opens its sheet.
+  const selected = useMemo(() => findPatentByNumber(patentParam), [patentParam])
+  // Unknown/retired ID: say so. Dismissing drops the stale param.
+  const notFound = patentParam && !selected ? patentParam : null
 
-  const scoped = useMemo(() => (readPqcOnly() ? patentsData.filter(isPqcPatent) : patentsData), [])
+  // Opening a patent pushes history; closing replaces (house rule).
+  const openPatent = useCallback(
+    (p: PatentItem) => {
+      const next = new URLSearchParams(params)
+      next.set('patent', p.patentNumber)
+      setParams(next)
+    },
+    [params, setParams]
+  )
+  const closePatent = useCallback(() => {
+    const next = new URLSearchParams(params)
+    next.delete('patent')
+    setParams(next, { replace: true })
+  }, [params, setParams])
+
+  // An explicit ?scope (shared link) wins over the saved scope, as on desktop.
+  const scopeParam = readScopeParam(params)
+  const pqcOnly = scopeParam ?? readPqcOnly()
+  const scoped = useMemo(() => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData), [pqcOnly])
   const kpis = usePatentKpis(scoped)
 
   const agilityCounts = useMemo(() => {
@@ -84,6 +110,7 @@ export function MobilePatentsView() {
       const q = searchText.toLowerCase()
       data = data.filter(
         (p) =>
+          p.patentNumber.toLowerCase().includes(q) ||
           p.assignee.toLowerCase().includes(q) ||
           p.title.toLowerCase().includes(q) ||
           p.classicalAlgorithms.some((a) => a.toLowerCase().includes(q)) ||
@@ -103,6 +130,14 @@ export function MobilePatentsView() {
         Three figures worth carrying. Tap High migration impact to narrow the list below.
       </p>
       <MobilePersonaPageNote route="/patents" className="mb-3" />
+
+      {notFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`Patent ${notFound} isn't in the catalog — it may have been retired or the link is mistyped.`}
+          onDismiss={closePatent}
+        />
+      )}
 
       <div className="mb-3 grid grid-cols-2 gap-2.5">
         <div className="glass-panel p-3">
@@ -190,7 +225,7 @@ export function MobilePatentsView() {
               type="button"
               variant="ghost"
               key={p.patentNumber}
-              onClick={() => setSelected(p)}
+              onClick={() => openPatent(p)}
               // Button's own base classes hard-code whitespace-nowrap for
               // typical short labels; this button wraps a real patent title
               // instead. white-space is CSS-inherited, so without overriding
@@ -240,7 +275,7 @@ export function MobilePatentsView() {
 
       <MobileSheet
         open={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={closePatent}
         title={selected?.patentNumber}
         large
         testId="patent-detail-sheet"

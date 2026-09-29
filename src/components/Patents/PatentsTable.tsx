@@ -671,6 +671,7 @@ export function PatentsTable({
                   return (
                     <tr
                       key={p.patentNumber}
+                      data-deeplink-id={p.patentNumber}
                       onClick={() => {
                         if (!isSelected) logPatentView(p.patentNumber)
                         onSelect(isSelected ? null : p.patentNumber)
