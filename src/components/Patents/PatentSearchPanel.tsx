@@ -38,6 +38,12 @@ interface PatentSearchPanelProps {
   /** Redesign: expose the current ranked results (in order) so a host can drive
    *  prev/next through the search hits from a detail drawer. */
   onResults?: (patents: PatentItem[]) => void
+  /** The query held in the host's URL (`?sq`). Seeds the box on load and
+   *  re-syncs it when the URL changes underneath (Back/Forward, a new link). */
+  urlQuery?: string
+  /** Called with each settled (debounced) query so the host can write `?sq`;
+   *  '' when the box is cleared. */
+  onQueryChange?: (query: string) => void
 }
 
 // ── MiniSearch index (built once per patent array reference) ──────────────────
@@ -136,9 +142,25 @@ function highlight(text: string, query: string): string {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function PatentSearchPanel({ patents, onSelectPatent, onResults }: PatentSearchPanelProps) {
-  const [query, setQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+export function PatentSearchPanel({
+  patents,
+  onSelectPatent,
+  onResults,
+  urlQuery = '',
+  onQueryChange,
+}: PatentSearchPanelProps) {
+  const [query, setQuery] = useState(urlQuery)
+  // Seeded too, so a reloaded `?sq` link has its results (and the drawer's
+  // prev/next list) on the first render instead of after the debounce.
+  const [debouncedQuery, setDebouncedQuery] = useState(urlQuery)
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
+  if (prevUrlQuery !== urlQuery) {
+    setPrevUrlQuery(urlQuery)
+    if (urlQuery.trim() !== debouncedQuery.trim()) {
+      setQuery(urlQuery)
+      setDebouncedQuery(urlQuery)
+    }
+  }
   const [isBuilding, setIsBuilding] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -166,6 +188,11 @@ export function PatentSearchPanel({ patents, onSelectPatent, onResults }: Patent
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
   }, [query])
+
+  // Settled query → host URL (`?sq`, replace). The host ignores no-op writes.
+  useEffect(() => {
+    onQueryChange?.(debouncedQuery)
+  }, [debouncedQuery, onQueryChange])
 
   // Analytics: fire 600ms after last keystroke (same cadence as PatentsTable)
   useEffect(() => {
@@ -249,6 +276,10 @@ export function PatentSearchPanel({ patents, onSelectPatent, onResults }: Patent
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          // Enter submits at once instead of waiting out the debounce.
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') setDebouncedQuery(query)
+          }}
           placeholder={'Search patents — e.g. “ML-KEM key management” or “IBM lattice hybrid”'}
           className="pl-9 pr-9"
           aria-label="Patent natural-language search"
@@ -261,7 +292,9 @@ export function PatentSearchPanel({ patents, onSelectPatent, onResults }: Patent
             variant="ghost"
             size="sm"
             onClick={() => {
+              // Reset clears at once (no debounce), so `?sq` goes with it.
               setQuery('')
+              setDebouncedQuery('')
               inputRef.current?.focus()
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1 text-muted-foreground hover:text-foreground"

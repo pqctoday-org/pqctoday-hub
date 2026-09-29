@@ -38,6 +38,13 @@ const AGILITY_LABEL_TO_ID: Record<string, string> = {
   Unclear: 'unclear',
 }
 
+const RELEVANCE_LABEL_TO_ID: Record<string, string> = {
+  'Core invention': 'core_invention',
+  'Dependent claim': 'dependent_claim_only',
+  'Background only': 'background_only',
+  None: 'none',
+}
+
 const REGION_COLORS: Record<string, string> = {
   Americas: 'hsl(var(--primary))',
   Europe: 'hsl(var(--secondary))',
@@ -130,7 +137,9 @@ function Leaderboard({
   title: string
   rows: { label: string; value: number }[]
   colorClass?: string
-  onClick: (label: string) => void
+  /** Omitted when the Explore filter has no param for this field — rows then
+   *  render as plain bars instead of dead buttons. */
+  onClick?: (label: string) => void
   labelTransform?: (l: string) => string
 }) {
   return (
@@ -264,7 +273,12 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
           segments={agility}
           onClick={(l) => onFilter({ agility: AGILITY_LABEL_TO_ID[l] ?? l })}
         />
-        <DonutCard title="Quantum relevance in claims" segments={relevance} />
+        <DonutCard
+          title="Quantum relevance in claims"
+          segments={relevance}
+          // eslint-disable-next-line security/detect-object-injection
+          onClick={(l) => onFilter({ quantumRelevance: RELEVANCE_LABEL_TO_ID[l] ?? l })}
+        />
         <PieCard
           title="Patents by region"
           data={regionRows}
@@ -328,15 +342,17 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
               rows={protocols}
               onClick={(l) => onFilter({ protocol: l })}
             />
-            <Leaderboard title="Threat models" rows={threats} onClick={() => undefined} />
-            <Leaderboard title="Standards referenced" rows={standards} onClick={() => undefined} />
+            {/* Threat models, standards and migration strategy have no Explore
+                filter param, so these three are read-only. */}
+            <Leaderboard title="Threat models" rows={threats} />
+            <Leaderboard title="Standards referenced" rows={standards} />
             <Leaderboard
               title="Hardware components"
               rows={hardware}
               onClick={(l) => onFilter({ hardwareComponent: l })}
               labelTransform={(l) => l.replace(/_/g, ' ')}
             />
-            <Leaderboard title="Migration strategy" rows={strategies} onClick={() => undefined} />
+            <Leaderboard title="Migration strategy" rows={strategies} />
             <Leaderboard
               title="NIST round status"
               rows={nistStatus}

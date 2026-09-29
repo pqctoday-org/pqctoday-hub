@@ -55,12 +55,25 @@ const QUICK_VIEWS: { id: QuickView; label: string }[] = [
  * allowlist (`LIBRARY_OPS_PICKS`), not a computed corpus-wide flag.
  *
  * Distilled: no geo/sector/trust-tier/algorithm-family filters, no sort
- * picker (fixed at 'published', matching every persona's real current
- * default), no semantic-search supplement (lexical only) — stated below.
+ * picker ('published', matching every persona's real current default, unless
+ * a shared link carries desktop's `?sort`), no semantic-search supplement
+ * (lexical only) — stated below.
  * Sort/category/org/tier/geo/sector/algoFamily inputs are fixed to their
  * "off" values rather than exposed as controls; the pipeline itself is the
  * real one every desktop Library surface uses, not a re-derivation.
  */
+type LibrarySort = Parameters<typeof useLibraryPipeline>[0]['sortBy']
+// Desktop's sort options (SortControl.tsx) — a `?sort` from a shared desktop
+// link orders the phone list the same way; anything else keeps the default.
+const SORT_OPTIONS: readonly LibrarySort[] = [
+  'newest',
+  'published',
+  'name',
+  'referenceId',
+  'urgency',
+  'mostCited',
+]
+
 export function MobileLibraryView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
@@ -77,6 +90,8 @@ export function MobileLibraryView() {
   const [quickView, setQuickView] = useState<QuickView>('all')
   const [searchText, setSearchText] = useState(() => params.get('q') ?? '')
   const detailRef = params.get('ref')
+  const sortParam = params.get('sort')
+  const sortBy = SORT_OPTIONS.find((o) => o === sortParam)
   // Same resolution as desktop's resolveLibraryDeepLink (live ref, else the
   // document that superseded it), read straight from libraryData.
   const selected: LibraryItem | null = useMemo(
@@ -140,8 +155,8 @@ export function MobileLibraryView() {
     certRelevantOnly: quickView === 'cert',
     certRelevantIdSet,
     lifecycleBucket: 'All',
-    sortBy: 'published',
-    sortExplicit: false,
+    sortBy: sortBy ?? 'published',
+    sortExplicit: sortBy !== undefined,
     selectedPersona,
     prefsOff: false,
     semanticIdSet: null,

@@ -32,6 +32,9 @@ interface LibraryControlDeckProps {
   authOnly: boolean
   onAuthOnly: (v: boolean) => void
   onReset: () => void
+  /** Any Advanced-row filter (org, cswp39, algo, geo, sector) is set — the
+   *  disclosure opens so an active filter is never hidden behind it. */
+  advancedActive?: boolean
   /** geo / sector / trust-tier multiselects, rendered inside the Advanced row. */
   advancedExtra?: ReactNode
 }
@@ -52,9 +55,17 @@ export function LibraryControlDeck({
   authOnly,
   onAuthOnly,
   onReset,
+  advancedActive = false,
   advancedExtra,
 }: LibraryControlDeckProps) {
-  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [advancedOpen, setAdvancedOpen] = useState(advancedActive)
+  // A filter that turns on later (a link on the same route, Back/Forward)
+  // opens it too; turning filters off leaves the reader's choice alone.
+  const [prevActive, setPrevActive] = useState(advancedActive)
+  if (prevActive !== advancedActive) {
+    setPrevActive(advancedActive)
+    if (advancedActive) setAdvancedOpen(true)
+  }
 
   return (
     <div className="glass-panel rounded-2xl p-3">

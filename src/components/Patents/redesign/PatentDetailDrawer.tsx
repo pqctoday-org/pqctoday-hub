@@ -20,7 +20,10 @@ interface PatentDetailDrawerProps {
    *  vs external citation links. */
   inCorpusIds: Set<string>
   onClose: () => void
+  /** Prev/next within the list (replaces `?patent`). */
   onNavigate: (patentNumber: string) => void
+  /** Prior-art citation → another patent (pushes, so Back returns here). */
+  onOpenCitation?: (patentNumber: string) => void
 }
 
 export function PatentDetailDrawer(props: PatentDetailDrawerProps) {
@@ -34,6 +37,7 @@ function DrawerPanel({
   inCorpusIds,
   onClose,
   onNavigate,
+  onOpenCitation,
 }: PatentDetailDrawerProps & { patent: PatentItem }) {
   const [entered, setEntered] = useState(false)
   useEffect(() => {
@@ -121,6 +125,7 @@ function DrawerPanel({
             onClose={onClose}
             inCorpusIds={inCorpusIds}
             onNavigate={onNavigate}
+            onOpenCitation={onOpenCitation}
           />
         </div>
       </div>

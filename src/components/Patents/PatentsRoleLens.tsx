@@ -113,7 +113,7 @@ export function PatentsRoleLens({
                     catalog": if this holder also supplies something you run,
                     that is a single conversation, not two. */}
                 <Link
-                  to={`/migrate?q=${encodeURIComponent(assignee)}`}
+                  to={`/migrate?tab=roadmaps&vendor=${encodeURIComponent(assignee)}`}
                   className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline"
                 >
                   do they supply you?
