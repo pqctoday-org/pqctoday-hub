@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.132.0] - 2026-09-28
 
-The Simulation no longer strands you — a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; phones get the controls they were missing — and it now includes the hub's newest Learn modules and references.
+The Simulation no longer strands you — a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; phones get the controls they were missing — and it now includes the hub's newest Learn modules and references. Across the hub, shared links now open exactly the item they point to, on phones too.
 
 ### Added
 
@@ -47,6 +47,15 @@ The Simulation no longer strands you — a wrong answer still costs you, but you
 - **Browser Back closes what you opened** [view:/simulation] [persona:executive] [persona:curious]: Back used to take you out of the Simulation instead of closing the resource you had open. Now Back closes it and keeps you in the game, Forward reopens it, and each open resource has its own link you can bookmark or share.
 - **Difficulty can't be switched mid-run** [view:/simulation] [persona:executive] [persona:curious]: changing Easy/Realistic/Hard halfway through was a hidden way to undo a mistake. Once a run has started, changing difficulty now asks to start a new run and keeps your organisation profile, Learn progress and documents. After Reset run, the decision buttons also no longer stay locked on your old answer.
 - **Leaving a played-through run cleans up** [view:/simulation] [view:/business] [persona:executive]: stopping or leaving mid-run left demo content switched on, so tools you then opened elsewhere in the hub came up pre-filled with demo text.
+- **Shared links now open the item they point to — on phones too** [view:/library] [view:/patents] [view:/leaders] [view:/compliance] [view:/timeline] [view:/migrate] [view:/algorithms] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: a link to a specific document, patent, person, framework, certificate, timeline event, product or protocol now opens it directly on a phone, instead of landing on the page with nothing selected. First-time visitors who follow such a link go straight to it rather than being asked "Who's asking?" first.
+- **Links no longer disappear behind your filters** [view:/library] [view:/patents] [view:/algorithms] [view:/timeline] [view:/threats] [view:/leaders] [view:/compliance] [persona:executive] [persona:grc] [persona:developer] [persona:researcher]: when the page's default view or your saved filters would hide the linked item (for example the "NIST picks" view on Algorithms or "PQC only" on Patents), the filters are widened just enough to show it, the row is scrolled into view and highlighted, and a note tells you what changed, with an Undo.
+- **Old and mistyped links explain themselves** [view:/library] [view:/compliance] [view:/threats] [view:/migrate] [view:/patents] [persona:grc] [persona:researcher]: a link to a document that has been replaced now opens its successor and says so; a link to something retired, unpublished or unknown shows a short "not found" note instead of silently opening nothing.
+- **Compliance landscape no longer empty for readers with a saved region** [view:/compliance] [persona:grc] [persona:executive]: if you had picked a region (for example Europe), the landscape showed "0 entries". It now shows your region's frameworks, with a "Your region · Show all" chip to widen it.
+- **Timeline shows every country again on first visit** [view:/timeline] [persona:executive] [persona:grc] [persona:researcher]: a first-time desktop visit showed only seven international bodies (G7, NATO, ITU and others) instead of all 36 countries.
+- **Every timeline event can be linked** [view:/timeline] [persona:grc] [persona:researcher]: about a third of events (those grouped behind another event in the same row) could not be opened from a link; now every event can, and the pop-up shows the event you linked to.
+- **Product and certificate links open the right entry** [view:/migrate] [view:/compliance] [persona:ops] [persona:developer] [persona:grc]: a product link now opens that product's details in the migration catalogue (by name or ID), and a certification-record link opens the record even when it sits far down the list or among historical records.
+- **Standards view stays put** [view:/compliance] [persona:grc] [persona:architect]: choosing the Standards view on Compliance, or changing one of its filters, no longer jumps you back to Rules & Standards, and it can now be shared as a link.
+- **Search and Assistant links to patents open the patent** [view:/patents] [persona:researcher] [persona:grc]: patent links from search and the PQC Assistant (which used the number without its "US" prefix) now open the patent.
 
 ### Changed
 
