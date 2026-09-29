@@ -30,6 +30,7 @@ import {
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildRecordEndorsementUrl, buildRecordFlagUrl, recordLabel } from './complianceEndorsement'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -341,6 +342,10 @@ export const ComplianceDetailPopover = ({
                       flagUrl={buildRecordFlagUrl(record)}
                       resourceLabel={recordLabel(record)}
                       resourceType="Compliance Record"
+                    />
+                    <ItemShareButton
+                      title={itemShareTitle(record.productName || record.id)}
+                      path={`/compliance?cert=${encodeURIComponent(record.id)}`}
                     />
                     <Button
                       variant="ghost"

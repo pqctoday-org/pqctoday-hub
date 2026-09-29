@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { Network, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { FrameworkConceptGraph } from './FrameworkConceptGraph'
 
 interface FrameworkConceptGraphModalProps {
@@ -13,6 +14,9 @@ interface FrameworkConceptGraphModalProps {
   centerConceptId: string
   /** Human-readable title for the modal header. */
   title: string
+  /** The framework the graph belongs to — Share links to its drawer
+   *  (`/compliance?framework=<id>`); the graph itself has no URL. */
+  frameworkId: string
 }
 
 /**
@@ -25,6 +29,7 @@ export function FrameworkConceptGraphModal({
   onClose,
   centerConceptId,
   title,
+  frameworkId,
 }: FrameworkConceptGraphModalProps) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -73,15 +78,21 @@ export function FrameworkConceptGraphModal({
                   algorithm leaves.
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="flex-shrink-0"
-                aria-label="Close concept graph"
-              >
-                <X size={16} />
-              </Button>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <ItemShareButton
+                  title={itemShareTitle(title)}
+                  path={`/compliance?framework=${encodeURIComponent(frameworkId)}`}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                  className="flex-shrink-0"
+                  aria-label="Close concept graph"
+                >
+                  <X size={16} />
+                </Button>
+              </div>
             </div>
             <div className="flex-1 overflow-hidden">
               <FrameworkConceptGraph

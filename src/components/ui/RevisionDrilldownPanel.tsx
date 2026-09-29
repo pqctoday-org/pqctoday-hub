@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { X, GitMerge, Bot, UserCheck } from 'lucide-react'
+import FocusLock from 'react-focus-lock'
 import { byRecord, type RevisionEntry, type FieldChange } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'
@@ -217,47 +218,55 @@ export function RevisionDrilldownPanel({
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  // aria-modal promises focus stays inside; FocusLock keeps that promise.
+  // It is opened from inside other focus-locked overlays (framework drawer /
+  // pop-ups): react-focus-lock hands focus to the most recently activated
+  // lock and gives it back to the parent's lock when this one unmounts.
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end"
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Revision history for ${entityLabel}`}
-    >
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-      {/* panel */}
+    <FocusLock returnFocus>
       <div
-        ref={panelRef}
-        className="relative z-10 w-full max-w-md bg-card border-l border-border flex flex-col h-full shadow-xl"
+        className="fixed inset-0 z-50 flex justify-end"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Revision history for ${entityLabel}`}
       >
-        <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
-          <div className="min-w-0">
-            <p className="text-xs text-muted-foreground capitalize">{domain} · revision history</p>
-            <h2 className="text-sm font-semibold text-foreground truncate">{entityLabel}</h2>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close panel">
-            <X className="w-4 h-4" />
-          </Button>
-        </header>
-
-        <div className="flex-1 overflow-y-auto px-4 py-2">
-          {matches.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              No revision records found.
-            </p>
-          ) : (
-            <>
-              <p className="text-xs text-muted-foreground pb-2">
-                {matches.length} revision{matches.length !== 1 ? 's' : ''} · sorted newest first
+        {/* backdrop */}
+        <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+        {/* panel */}
+        <div
+          ref={panelRef}
+          className="relative z-10 w-full max-w-md bg-card border-l border-border flex flex-col h-full shadow-xl"
+        >
+          <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground capitalize">
+                {domain} · revision history
               </p>
-              {matches.map((r, i) => (
-                <RevisionRow key={`${r.pr_number}-${i}`} r={r} entityId={entityId} />
-              ))}
-            </>
-          )}
+              <h2 className="text-sm font-semibold text-foreground truncate">{entityLabel}</h2>
+            </div>
+            <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close panel">
+              <X className="w-4 h-4" />
+            </Button>
+          </header>
+
+          <div className="flex-1 overflow-y-auto px-4 py-2">
+            {matches.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                No revision records found.
+              </p>
+            ) : (
+              <>
+                <p className="text-xs text-muted-foreground pb-2">
+                  {matches.length} revision{matches.length !== 1 ? 's' : ''} · sorted newest first
+                </p>
+                {matches.map((r, i) => (
+                  <RevisionRow key={`${r.pr_number}-${i}`} r={r} entityId={entityId} />
+                ))}
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </FocusLock>
   )
 }

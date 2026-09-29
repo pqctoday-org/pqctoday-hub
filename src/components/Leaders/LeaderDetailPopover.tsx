@@ -22,6 +22,7 @@ import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
@@ -164,6 +165,10 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             />
             <AskAssistantButton
               question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
+            />
+            <ItemShareButton
+              title={itemShareTitle(leader.name)}
+              path={`/leaders?leader=${encodeURIComponent(leader.leaderId || leader.name)}`}
             />
             <Button
               variant="ghost"

@@ -29,6 +29,7 @@ import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
@@ -136,14 +137,20 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               </h2>
               <p className="text-sm text-muted-foreground mt-1">{threat.industry}</p>
             </div>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px] p-2.5 md:min-h-0 md:min-w-0 md:p-1"
-              aria-label="Close details"
-            >
-              <X size={20} />
-            </Button>
+            <div className="flex items-center gap-1 shrink-0">
+              <ItemShareButton
+                title={itemShareTitle(threat.threatId)}
+                path={`/threats?id=${encodeURIComponent(threat.threatId)}`}
+              />
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px] p-2.5 md:min-h-0 md:min-w-0 md:p-1"
+                aria-label="Close details"
+              >
+                <X size={20} />
+              </Button>
+            </div>
           </div>
 
           <div className="p-6 space-y-6 flex-1 overflow-y-auto">

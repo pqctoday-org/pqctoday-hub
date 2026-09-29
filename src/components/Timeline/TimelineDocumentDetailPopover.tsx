@@ -8,6 +8,7 @@ import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
@@ -192,6 +193,10 @@ export const TimelineDocumentDetailPopover = ({
                 />
                 <AskAssistantButton
                   question={`Explain the "${row.title}" ${row.type.toLowerCase()} for ${row.org} (${row.countryName}) in the context of PQC migration.${row.description ? ` Context: ${row.description}` : ''}`}
+                />
+                <ItemShareButton
+                  title={itemShareTitle(row.title)}
+                  path={`/timeline?event=${encodeURIComponent(row.eventId || row.title)}`}
                 />
                 <Button
                   variant="ghost"

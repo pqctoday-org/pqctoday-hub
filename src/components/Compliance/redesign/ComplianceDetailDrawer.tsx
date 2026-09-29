@@ -30,6 +30,7 @@ import { buildDrawerDetail, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
@@ -171,16 +172,22 @@ export function ComplianceDetailDrawer({
                 {d.juris}
               </p>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              aria-label="Close"
-              className="h-8 w-8 shrink-0 border border-input bg-muted/40"
-            >
-              <X size={16} />
-            </Button>
+            <div className="flex shrink-0 items-center gap-1">
+              <ItemShareButton
+                title={itemShareTitle(d.name)}
+                path={`/compliance?framework=${encodeURIComponent(framework.id)}`}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Close"
+                className="h-8 w-8 shrink-0 border border-input bg-muted/40"
+              >
+                <X size={16} />
+              </Button>
+            </div>
           </div>
 
           {/* Scroll body */}

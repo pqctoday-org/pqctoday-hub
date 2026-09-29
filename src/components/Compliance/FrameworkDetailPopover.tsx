@@ -20,6 +20,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
@@ -188,6 +189,10 @@ export const FrameworkDetailPopover = ({
                     <Network size={18} aria-hidden="true" />
                   </Button>
                 )}
+                <ItemShareButton
+                  title={itemShareTitle(framework.label)}
+                  path={`/compliance?framework=${encodeURIComponent(framework.id)}`}
+                />
                 <Button
                   variant="ghost"
                   onClick={onClose}
@@ -413,6 +418,7 @@ export const FrameworkDetailPopover = ({
           onClose={() => setGraphOpen(false)}
           centerConceptId={graphConceptId}
           title={framework.label}
+          frameworkId={framework.id}
         />
       )}
       {drilldownOpen && (
