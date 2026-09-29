@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.134.0] - 2026-09-29
+
+Every item's panel now has its own Share button, so you can share a document, threat, algorithm, product or record while it is open — on desktop and on phones.
+
+### Added
+
+- **Share an item from its own panel** [view:/library] [view:/threats] [view:/algorithms] [view:/timeline] [view:/migrate] [view:/patents] [view:/leaders] [view:/compliance] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: every document, threat, algorithm, protocol, timeline event, product, vendor roadmap, patent, Community profile, framework and certification record now has a Share button right in its panel or sheet, next to Close. It shares a clean link to that one item (without your filters or sort), with the same options as the main Share button; before, the open panel covered the Share button so nothing could be shared.
+
+### Fixed
+
+- **Compliance toolbar no longer disappears** [view:/compliance] [persona:grc]: closing a document pop-up on the For You tab no longer removed the page's Export, Endorse and Flag buttons.
+- **Migrate shares the product you are looking at** [view:/migrate] [persona:ops] [persona:architect]: with a migration plan started, Share used to send the plan even while a specific product or vendor was open; it now shares the open item.
+- **Timeline event pop-up has a Close button** [view:/timeline] [persona:grc] [persona:researcher]: the event details pop-up now has a visible Close button, and keyboard focus stays inside open panels across the Library, Algorithms and Patents pages.
+- **On phones, document and "try it" panels are no longer hidden under the header** [persona:developer] [persona:curious]: their Close and Share buttons were covered by the top header on phones.
+
 ## [4.133.0] - 2026-09-29
 
 Shared links now reach much further into the hub: you can link to a single algorithm, vendor roadmap, Compliance requirement, Community profile and more, and links from Learn modules, search and the PQC Assistant open the exact item they mention.
