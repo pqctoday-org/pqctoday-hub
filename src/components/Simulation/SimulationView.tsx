@@ -1053,12 +1053,15 @@ export function SimulationView() {
   // fixed-position slot (walkthroughConcepts owns it then).
   const interactiveConceptPeeks = useMemo<TourConcept[]>(() => {
     if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.running) return []
+    // 09-28: not while a resource is open — the card sat over the embedded
+    // module's own content. It comes back (unseen) on the board.
+    if (openStepRefNow) return []
     const ids: TourConcept['id'][] = []
     if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
     if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
-  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
+  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks, openStepRefNow])
   // The two sets are mutually exclusive by construction (each requires the other's
   // running/not-running gate), so a single combined list is always unambiguous.
   const conceptPeeks =
