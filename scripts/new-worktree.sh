@@ -14,12 +14,19 @@
 #   exist yet). Symlinks the gitignored project-config files (CLAUDE.md,
 #   .claude/, .cursorrules, sync-private.sh, tasks/) into the new worktree so
 #   a fresh Claude Code session opened there inherits the same rules and
-#   tooling. node_modules is NOT symlinked — run `npm ci` in the new worktree.
+#   tooling. By default node_modules is NOT symlinked — run `npm ci` in the new
+#   worktree (its `prepare` step installs the pre-push hook).
+#
+#   With --link-deps, node_modules is symlinked from the source tree instead
+#   (fast, no install) AND the pre-push hook is installed here, because a
+#   symlinked node_modules never ran `prepare`: without `.husky/_/pre-push`,
+#   `git push` runs NO hook and gives no warning (found 2026-09-27: 15 of 36
+#   worktrees had this gap). The script fails loudly if the hook is missing.
 #
 # Usage:
-#   ./scripts/new-worktree.sh <branch>
+#   ./scripts/new-worktree.sh <branch> [--link-deps]
 #   ./scripts/new-worktree.sh feat/learn-persona-path
-#   ./scripts/new-worktree.sh compliance/persona-overwhelm-p0
+#   ./scripts/new-worktree.sh compliance/persona-overwhelm-p0 --link-deps
 #
 # Slug:
 #   The directory suffix is derived from the part after the last `/` in the
@@ -28,13 +35,22 @@
 
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <branch-name>" >&2
-  echo "Example: $0 feat/learn-persona-path" >&2
+LINK_DEPS=0
+ARGS=()
+for arg in "$@"; do
+  case "$arg" in
+    --link-deps) LINK_DEPS=1 ;;
+    *) ARGS+=("$arg") ;;
+  esac
+done
+
+if [[ ${#ARGS[@]} -ne 1 ]]; then
+  echo "Usage: $0 <branch-name> [--link-deps]" >&2
+  echo "Example: $0 feat/learn-persona-path --link-deps" >&2
   exit 2
 fi
 
-BRANCH="$1"
+BRANCH="${ARGS[0]}"
 SRC="$(cd "$(dirname "$0")/.." && pwd)"
 PARENT="$(cd "${SRC}/.." && pwd)"
 
@@ -42,6 +58,11 @@ PARENT="$(cd "${SRC}/.." && pwd)"
 SLUG="${BRANCH##*/}"
 SLUG="$(echo "$SLUG" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')"
 TARGET="${PARENT}/pqctoday-hub-${SLUG}"
+
+if [[ "$LINK_DEPS" -eq 1 && ! -d "${SRC}/node_modules" ]]; then
+  echo "--link-deps: ${SRC}/node_modules not found — run \`npm ci\` there first." >&2
+  exit 1
+fi
 
 if [[ -e "$TARGET" ]]; then
   echo "Target already exists: $TARGET" >&2
@@ -83,9 +104,28 @@ link_if_present ".cursorrules"
 link_if_present "sync-private.sh"
 link_if_present "tasks"
 
-# node_modules is intentionally NOT symlinked — Vite + pnpm/npm can behave
+# node_modules is NOT symlinked by default — Vite + pnpm/npm can behave
 # strangely with shared node_modules across worktrees, and the new worktree
 # may target a branch that bumps deps. Run `npm ci` in the new worktree.
+#
+# --link-deps opts in to the shared install, and must then install the hook
+# itself (see header). Only use it when the branch does not change dependencies.
+if [[ "$LINK_DEPS" -eq 1 ]]; then
+  ln -s "${SRC}/node_modules" "${TARGET}/node_modules"
+  echo "  linked node_modules"
+  (cd "$TARGET" && npx --no-install husky)
+  if [[ ! -e "${TARGET}/.husky/_/pre-push" ]]; then
+    echo "ERROR: pre-push hook was not installed in ${TARGET} — pushes would run no checks." >&2
+    exit 1
+  fi
+  echo "  installed pre-push hook (.husky/_/pre-push)"
+fi
+
+if [[ "$LINK_DEPS" -eq 1 ]]; then
+  DEPS_STEP="# deps linked and pre-push hook installed — nothing to install"
+else
+  DEPS_STEP="npm ci                         # install deps + pre-push hook for this worktree (one-time)"
+fi
 
 cat <<EOF
 
@@ -96,8 +136,10 @@ Worktree ready.
 
 Next steps:
   cd "$TARGET"
-  npm ci                         # install deps for this worktree (one-time)
+  $DEPS_STEP
   # ...edit, commit, push as usual — fully isolated from $SRC
+  # Pushes run the full local gate; if a push prints no hook output, the hook is
+  # missing — check that .husky/_/pre-push exists before trusting it.
 
 To remove this worktree when done:
   git worktree remove "$TARGET"
