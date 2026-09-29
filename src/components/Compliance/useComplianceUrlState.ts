@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { useEmbedRunContext } from '@/components/shared/embedRunContext'
-import { complianceRegionForCountry } from '@/data/jurisdictionsData'
+import { complianceBlocsForRegion, complianceRegionForCountry } from '@/data/jurisdictionsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { defaultTabForPersona } from './obligations/roleLens'
@@ -231,10 +231,21 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // multi-value label in the top-bar chip is a persona DEFAULT for display, not
   // an assertion the reader made, so it must not become a sector here.
   const scopeIndustry = selectedIndustries[0] ?? 'All'
-  const scopeRegion: RegionBloc | 'All' =
-    selectedRegion && selectedRegion !== 'global' ? (selectedRegion as RegionBloc) : 'All'
+  // The persona/sim region is a DEFAULT scope, possibly several blocs (see
+  // complianceBlocsForRegion). It narrows the landscape only while the reader
+  // has not picked a region themselves and has not dismissed it, and it is
+  // never written to the URL — a shared link must not carry the sharer's
+  // persona scope.
+  const [regionScopeDismissed, setRegionScopeDismissed] = useState(false)
+  const personaRegionBlocs = useMemo(
+    () => complianceBlocsForRegion(selectedRegion) as RegionBloc[],
+    [selectedRegion]
+  )
+  const lsRegionScope: RegionBloc[] =
+    lsRegionOverride !== null || regionScopeDismissed ? [] : personaRegionBlocs
+  const dismissRegionScope = useCallback(() => setRegionScopeDismissed(true), [])
   const lsIndustry = lsIndustryOverride ?? scopeIndustry
-  const lsRegion = lsRegionOverride ?? scopeRegion
+  const lsRegion: RegionBloc | 'All' = lsRegionOverride ?? 'All'
   const setLsIndustry = setLsIndustryOverride
   const setLsRegion = setLsRegionOverride as (r: RegionBloc | 'All') => void
   const [lsCountry, setLsCountry] = useState<string>(() => searchParams.get('country') ?? 'All')
@@ -697,6 +708,9 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     lsOrg,
     lsIndustry,
     lsRegion,
+    /** Persona-default region blocs (empty once the reader picks or dismisses). */
+    lsRegionScope,
+    dismissRegionScope,
     lsCountry,
     lsDeadline,
     lsSearch,
