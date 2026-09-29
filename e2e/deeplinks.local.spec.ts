@@ -365,7 +365,10 @@ test.describe('share from inside an open item overlay', () => {
           await context.grantPermissions(['clipboard-read', 'clipboard-write'])
           // Force the Copy-link menu path (no OS share sheet in the test browser).
           await page.addInitScript(() => {
-            Object.defineProperty(navigator, 'share', { value: undefined, configurable: true })
+            // ShareButton tests `'share' in navigator`, so the method must be gone,
+            // not just undefined.
+            delete (Navigator.prototype as { share?: unknown }).share
+            delete (navigator as { share?: unknown }).share
           })
           await seed(page, 'returning')
           await page.goto(c.url)
