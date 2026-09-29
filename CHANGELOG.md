@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.132.0] - 2026-09-28
+
+The Simulation no longer strands you: a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; and phones get the controls they were missing.
+
+### Fixed
+
+- **A wrong answer is never a dead end** [view:/simulation] [persona:executive] [persona:grc] [persona:curious]: on Realistic and Hard, picking the wrong "next move" locked every option and offered no way forward, so the phase could not continue (on a phone, for good). The wrong pick still costs you quarters and counts against your score, but the explanation now includes the button to do the right step, and on a laptop a shortcut to the Progress tab. Easy still gives you a free retry.
+- **Play-mode pop-ups can be closed** [view:/simulation] [persona:executive] [persona:curious]: the "what to expect" screens during a played-through run could only be dismissed by starting the next part, Escape did the same, and they covered the Stop button. Now ✕, Escape or a click outside closes them and pauses, and a separate "Stop play" ends the run. The "document ready" card can be closed too.
+- **Tip cards no longer cover the board** [view:/simulation] [persona:curious]: the concept tips all appeared at once, stacked taller than the screen, hiding the Play button and pushing the top tip's close button off-screen; during the Executive Overview they could not be closed at all. Tips now show one at a time with "Next tip" and "Hide tips", and sit above the play bar.
+- **Browser Back closes what you opened** [view:/simulation] [persona:executive] [persona:curious]: Back used to take you out of the Simulation instead of closing the resource you had open. Now Back closes it and keeps you in the game, Forward reopens it, and each open resource has its own link you can bookmark or share.
+- **Difficulty can't be switched mid-run** [view:/simulation] [persona:executive] [persona:curious]: changing Easy/Realistic/Hard halfway through was a hidden way to undo a mistake. Once a run has started, changing difficulty now asks to start a new run and keeps your organisation profile, Learn progress and documents. After Reset run, the decision buttons also no longer stay locked on your old answer.
+- **Leaving a played-through run cleans up** [view:/simulation] [view:/business] [persona:executive]: stopping or leaving mid-run left demo content switched on, so tools you then opened elsewhere in the hub came up pre-filled with demo text.
+
+### Changed
+
+- **The Simulation on a phone** [view:/simulation] [persona:executive] [persona:curious]: a menu with Difficulty, Reset run and Terms; "End quarter" on the Decide screen; a Resources list that shows the current level's tasks with the same completion buttons as Decide, and reading a reference there now counts; Undo for a hybrid/pure migration choice (also on a laptop). The phone home screen could not be scrolled to its top (the heading and part of the phase buttons were out of reach) and the phase buttons were squashed; the Decide screen could open already scrolled down, hiding "← Overview". All fixed.
+- **Smaller fixes** [view:/simulation] [persona:curious]: Escape closes the first-run tour and the quarter report; closing a resource returns focus to the button that opened it; the "Resume simulation" bar comes back the next time you leave the Simulation; a wrong call in Pilots now undoes your most recent migrated link rather than your oldest.
+
 ## [4.131.0] - 2026-09-27
 
 The FIPS 140-3 module now explains how NIST is automating validation — algorithms, then entropy, then the module — and what is and is not in production.
