@@ -19,7 +19,7 @@ import {
   ChevronDown,
   HelpCircle,
 } from 'lucide-react'
-import { useSearchParams } from 'react-router'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   draftThreatIndustries,
   evidenceStrength,
@@ -96,11 +96,17 @@ import {
   type ThreatExclusion,
 } from './threatDeepLink'
 import {
+  industryAnchorFromHash,
+  industryAnchorSlug,
   isShortThreatQuery,
   matchesThreatQuery,
+  protocolLensSlug,
   resolveIndustryParam,
+  resolveProtocolParam,
+  threatDetailTabParam,
   threatIdParam,
   wantsHorizonView,
+  type ThreatDetailTab,
 } from './threatsUrlParams'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
@@ -206,6 +212,11 @@ export const ThreatsDashboard: React.FC<{
     }
     return null
   })
+  // B+ remediation 4.3 (2026-08-10): the developer protocol lens. Null = off.
+  // Backed by `?protocol=<slug>` (deep-link PR 2); an unknown value leaves it off.
+  const [protocolLens, setProtocolLens] = useState<string | null>(() =>
+    resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
+  )
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
   const tierFilter = useTrustTierFilter()
@@ -241,6 +252,7 @@ export const ThreatsDashboard: React.FC<{
     const modeParam = searchParams.get('mode')
     const nextMode: ThreatsViewMode =
       modeParam === 'cards' || modeParam === 'table' ? modeParam : 'table'
+    const nextLens = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
 
     if (indParam) {
       const matches = resolveIndustryParam(indParam, threatsData)
@@ -264,6 +276,7 @@ export const ThreatsDashboard: React.FC<{
     setSortField((prev) => (prev !== nextSort ? nextSort : prev))
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
+    setProtocolLens((prev) => (prev !== nextLens ? nextLens : prev))
   }, [searchParams])
 
   /** Write all current filter state back to URL. Call with overrides for the value that just
@@ -279,6 +292,7 @@ export const ThreatsDashboard: React.FC<{
         dir?: SortDirection
         id?: string | null
         mode?: ThreatsViewMode
+        protocol?: string | null
       },
       { push = false }: { push?: boolean } = {}
     ) => {
@@ -293,6 +307,7 @@ export const ThreatsDashboard: React.FC<{
           const dir = overrides.dir ?? sortDirection
           const id = overrides.id !== undefined ? overrides.id : (selectedThreat?.threatId ?? null)
           const mode = overrides.mode ?? viewMode
+          const protocol = overrides.protocol !== undefined ? overrides.protocol : protocolLens
 
           if (inds.length > 0) next.set('industry', inds.join(','))
           else next.delete('industry')
@@ -310,6 +325,11 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('id')
           // Legacy alias (old Endorse/Flag links) — `id` is the one we write.
           next.delete('threat')
+          // The dialog's inner tab belongs to the threat it was picked on:
+          // opening another threat or closing the dialog drops it.
+          if (overrides.id !== undefined || !id) next.delete('threattab')
+          if (protocol) next.set('protocol', protocolLensSlug(protocol))
+          else next.delete('protocol')
           if (mode !== 'table') next.set('mode', mode)
           else next.delete('mode')
           return next
@@ -327,6 +347,7 @@ export const ThreatsDashboard: React.FC<{
       sortDirection,
       selectedThreat,
       viewMode,
+      protocolLens,
       setSearchParams,
     ]
   )
@@ -415,8 +436,6 @@ export const ThreatsDashboard: React.FC<{
   // INDUSTRY_TO_THREATS_MAP to threat-industry strings, which then act as
   // a filter on the threats corpus. Researcher + curious have empty default
   // sets → no narrowing.
-  // B+ remediation 4.3 (2026-08-10): the developer protocol lens. Null = off.
-  const [protocolLens, setProtocolLens] = useState<string | null>(null)
 
   /**
    * How the active lens's matches were arrived at. Shown as a count rather than
@@ -686,6 +705,7 @@ export const ThreatsDashboard: React.FC<{
     // URL→state sync above has queued, not yet applied, its updates.
     const urlIndustries = resolveIndustryParam(searchParams.get('industry'), threatsData)
     const industries = urlIndustries.length > 0 ? urlIndustries : selectedIndustries
+    const urlLens = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
     const exclusions: ThreatExclusion[] = threatExclusions(threat, {
       industries,
       personaScope: industries.length > 0 ? [] : personaDefaultThreatIndustries,
@@ -695,7 +715,7 @@ export const ThreatsDashboard: React.FC<{
       onlyMine: showOnlyThreats ? myThreats : null,
       tierExcludes:
         tierFilter.length > 0 && !matchesTrustTierFilter(tierFilter, 'threats', threat.threatId),
-      lensExcludes: !!protocolLens && !threatTouchesProtocol(threat, protocolLens),
+      lensExcludes: !!urlLens && !threatTouchesProtocol(threat, urlLens),
     })
     if (exclusions.length === 0) {
       setDeepLinkNotice(null)
@@ -726,7 +746,10 @@ export const ThreatsDashboard: React.FC<{
         next.delete('q')
       } else if (ex === 'mine') setShowOnlyThreats(false)
       else if (ex === 'tier') next.delete('tier')
-      else if (ex === 'lens') setProtocolLens(null)
+      else if (ex === 'lens') {
+        setProtocolLens(null)
+        next.delete('protocol')
+      }
     }
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
     setDeepLinkNotice({
@@ -767,8 +790,52 @@ export const ThreatsDashboard: React.FC<{
     const restored = new URLSearchParams(snap.params)
     restored.delete('id')
     restored.delete('threat')
+    restored.delete('threattab')
     setSearchParams(restored, { replace: true })
   }, [setSearchParams, setShowOnlyThreats])
+
+  // ── ?threattab= — the dialog's Detection / Response tab (deep-link PR 2) ──
+  // Read from the URL on every render (unknown → detection); a tab click
+  // replaces it; closing or opening another threat drops it (syncFiltersToUrl).
+  const detailTab = threatDetailTabParam(searchParams)
+  const handleDetailTabChange = (tab: ThreatDetailTab) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('threattab', tab)
+        return next
+      },
+      { replace: true }
+    )
+
+  // ── #industry-<slug> — scroll to an industry section (deep-link PR 2) ──
+  // The anchors are the section/row ids ThreatsTable and ThreatsCardGrid
+  // render; the Industries TOC writes the hash (replace), and an arriving hash
+  // is scrolled to once the section renders (a no-op if it never does — e.g.
+  // the industry is filtered out). setSearchParams drops the hash, so it only
+  // lives until the next filter change.
+  const location = useLocation()
+  const navigate = useNavigate()
+  const selfWrittenHashRef = useRef<string | null>(null)
+  const [industryHashTarget, setIndustryHashTarget] = useState<{
+    slug: string
+    nonce: number
+  } | null>(null)
+  useEffect(() => {
+    if (simEmbed || isMobileShell) return
+    if (location.hash === selfWrittenHashRef.current) {
+      selfWrittenHashRef.current = null
+      return
+    }
+    const slug = industryAnchorFromHash(location.hash, threatsData)
+    if (!slug) return
+    setActiveNavIndustry(slug)
+    setIndustryHashTarget((t) => ({ slug, nonce: (t?.nonce ?? 0) + 1 }))
+  }, [location.hash, simEmbed, isMobileShell])
+  useScrollToDeepLinkTarget(
+    industryHashTarget ? `${industryHashTarget.slug}#${industryHashTarget.nonce}` : null,
+    industryHashTarget ? `[id="industry-${industryHashTarget.slug}"]` : null
+  )
 
   const openThreat = (item: ThreatItem) => {
     selfWrittenIdRef.current = item.threatId
@@ -875,7 +942,9 @@ export const ThreatsDashboard: React.FC<{
             are shown, and which is which is stated — a lens that silently mixed
             quotation with inference would hand a developer a confident list
             partly assembled from records that never mentioned their protocol. */}
-        {selectedPersona === 'developer' && (
+        {/* Also shown whenever a lens is on (a shared ?protocol= link), so a
+            non-developer is never filtered by a lens they cannot see or clear. */}
+        {(selectedPersona === 'developer' || protocolLens) && (
           <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
               <Network size={14} className="shrink-0 text-primary" aria-hidden="true" />
@@ -885,7 +954,11 @@ export const ThreatsDashboard: React.FC<{
                   key={p}
                   variant="ghost"
                   size="sm"
-                  onClick={() => setProtocolLens(protocolLens === p ? null : p)}
+                  onClick={() => {
+                    const next = protocolLens === p ? null : p
+                    setProtocolLens(next)
+                    syncFiltersToUrl({ protocol: next })
+                  }}
                   aria-pressed={protocolLens === p}
                   className={`h-auto rounded-full border px-2 py-0.5 text-[11px] ${
                     protocolLens === p
@@ -900,7 +973,10 @@ export const ThreatsDashboard: React.FC<{
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setProtocolLens(null)}
+                  onClick={() => {
+                    setProtocolLens(null)
+                    syncFiltersToUrl({ protocol: null })
+                  }}
                   className="h-auto px-2 py-0.5 text-[11px] text-muted-foreground"
                 >
                   clear
@@ -1191,6 +1267,13 @@ export const ThreatsDashboard: React.FC<{
                     document
                       .getElementById(`industry-${slug}`)
                       ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    if (!simEmbed) {
+                      selfWrittenHashRef.current = `#industry-${slug}`
+                      navigate(
+                        { search: location.search, hash: `industry-${slug}` },
+                        { replace: true }
+                      )
+                    }
                   }}
                   groups={[
                     {
@@ -1201,7 +1284,7 @@ export const ThreatsDashboard: React.FC<{
                           filteredAndSortedData.map((t) => [
                             t.industry,
                             {
-                              id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                              id: industryAnchorSlug(t.industry),
                               label: t.industry,
                               hint: threatCountLabel(
                                 filteredAndSortedData.filter((x) => x.industry === t.industry)
@@ -1269,6 +1352,8 @@ export const ThreatsDashboard: React.FC<{
           <Suspense fallback={null}>
             <ThreatDetailDialog
               threat={selectedThreat}
+              detailTab={detailTab}
+              onDetailTabChange={handleDetailTabChange}
               onClose={() => {
                 setSelectedThreat(null)
                 syncFiltersToUrl({ id: null })

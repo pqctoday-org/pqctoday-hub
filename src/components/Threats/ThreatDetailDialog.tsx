@@ -39,6 +39,7 @@ import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { getSocUseCases, getIrPlaybooks, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
+import { attackProfileId } from '@/components/Algorithms/attackDeepLink'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
 import {
   claimsCheckedText,
@@ -49,6 +50,7 @@ import {
   sourceFactLines,
   sourceIdentityText,
 } from '@/data/threatClaimStatus'
+import type { ThreatDetailTab } from './threatsUrlParams'
 
 /** An at-risk / PQC field, or an honest "not yet specified" when blank. */
 const SpecifiedOrNot = ({ value }: { value: string }) =>
@@ -61,9 +63,18 @@ const SpecifiedOrNot = ({ value }: { value: string }) =>
 interface ThreatDetailDialogProps {
   threat: ThreatItem
   onClose: () => void
+  /** Controlled Detection / Response tab (the Threats page backs it with
+   *  `?threattab=`). Omitted → the dialog keeps its own tab state. */
+  detailTab?: ThreatDetailTab
+  onDetailTabChange?: (tab: ThreatDetailTab) => void
 }
 
-export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, onClose }) => {
+export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
+  threat,
+  onClose,
+  detailTab,
+  onDetailTabChange,
+}) => {
   // Implementation-attack surface of the recommended PQC replacement(s) — cross-linked
   // from the single-source attack-profile data (no duplication of the Algorithms tab).
   const replacementAttackProfiles = useMemo(
@@ -187,7 +198,13 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   })}
                 </div>
                 <Link
-                  to="/algorithms?tab=validation&section=attacks"
+                  to={
+                    // One replacement → open its profile directly (?attack= takes the
+                    // profile id); several → the attacks section unfiltered.
+                    replacementAttackProfiles.length === 1
+                      ? `/algorithms?tab=validation&section=attacks&attack=${encodeURIComponent(attackProfileId(replacementAttackProfiles[0]))}`
+                      : '/algorithms?tab=validation&section=attacks'
+                  }
                   className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
                 >
                   Full attack profiles &amp; countermeasures <ArrowRight size={12} />
@@ -322,7 +339,11 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Radar size={14} className="text-primary" /> Detection &amp; Response
               </h3>
-              <Tabs defaultValue="detection">
+              <Tabs
+                defaultValue="detection"
+                value={detailTab}
+                onValueChange={(v) => onDetailTabChange?.(v as ThreatDetailTab)}
+              >
                 <TabsList>
                   <TabsTrigger value="detection" className="gap-1.5">
                     <Radar size={13} aria-hidden="true" /> Detection / SOC

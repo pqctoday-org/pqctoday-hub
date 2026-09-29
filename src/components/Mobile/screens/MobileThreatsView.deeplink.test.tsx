@@ -7,6 +7,8 @@ import '@testing-library/jest-dom'
 import { draftThreatIndustries, threatsData } from '@/data/threatsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { lensProtocolsFor, threatTouchesProtocol } from '@/data/threatProtocolLens'
+import { protocolLensSlug } from '@/components/Threats/threatsUrlParams'
 import { MobileThreatsView } from './MobileThreatsView'
 
 function LocationProbe() {
@@ -51,5 +53,28 @@ describe('MobileThreatsView ?id= deep links', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
     await waitFor(() => expect(param('q')).toBe('zzzzzz'))
     expect(param('id')).toBeNull()
+  })
+})
+
+describe('MobileThreatsView ?protocol= (deep-link PR 2)', () => {
+  const [lens] = lensProtocolsFor(threatsData)
+
+  it('applies a desktop protocol-lens link and says so; "Show all" clears it', async () => {
+    renderView(`/threats?protocol=${protocolLensSlug(lens)}`)
+    expect(screen.getByText(`Protocol: ${lens}`)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Show all' }))
+    await waitFor(() => expect(param('protocol')).toBeNull())
+  })
+
+  it('ignores an unknown protocol', () => {
+    renderView('/threats?protocol=carrier-pigeon')
+    expect(screen.queryByText(/From your link:/)).not.toBeInTheDocument()
+  })
+
+  it('a linked threat outside the lens clears ?protocol=', async () => {
+    const outside = threatsData.find((t) => !threatTouchesProtocol(t, lens))!
+    renderView(`/threats?id=${outside.threatId}&protocol=${protocolLensSlug(lens)}`)
+    await waitFor(() => expect(param('protocol')).toBeNull())
+    expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(/protocol lens/)
   })
 })

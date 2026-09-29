@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  industryAnchorFromHash,
+  industryAnchorSlug,
   isShortThreatQuery,
   isThreatsDeepLink,
   matchesThreatQuery,
+  protocolLensSlug,
   resolveIndustryParam,
+  resolveProtocolParam,
   threatClassParam,
+  threatDetailTabParam,
   threatIdParam,
   threatsIndustryHref,
   wantsHorizonView,
@@ -150,8 +155,49 @@ describe('threatsUrlParams', () => {
     expect(isThreatsDeepLink('/threats', '?industry=Insurance')).toBe(true)
     expect(isThreatsDeepLink('/threats', '?q=hndl')).toBe(true)
     expect(isThreatsDeepLink('/threats', '?class=hnfl')).toBe(true)
+    expect(isThreatsDeepLink('/threats', '?protocol=tls-https')).toBe(true)
     expect(isThreatsDeepLink('/threats', '')).toBe(false)
     expect(isThreatsDeepLink('/threats', '?mode=cards')).toBe(false)
     expect(isThreatsDeepLink('/timeline', '?id=FIN-001')).toBe(false)
+  })
+})
+
+describe('deep-link PR 2 params', () => {
+  const lens = ['TLS / HTTPS', 'S/MIME & email', 'Network auth (EAP, 802.1X)']
+
+  it('slugs protocol-lens labels for ?protocol=', () => {
+    expect(protocolLensSlug('TLS / HTTPS')).toBe('tls-https')
+    expect(protocolLensSlug('S/MIME & email')).toBe('s-mime-email')
+    expect(protocolLensSlug('Network auth (EAP, 802.1X)')).toBe('network-auth-eap-802-1x')
+  })
+
+  it('resolves ?protocol= by slug or label; unknown/absent → null', () => {
+    expect(resolveProtocolParam('tls-https', lens)).toBe('TLS / HTTPS')
+    expect(resolveProtocolParam('s/mime & email', lens)).toBe('S/MIME & email')
+    expect(resolveProtocolParam('network-auth-eap-802-1x', lens)).toBe('Network auth (EAP, 802.1X)')
+    expect(resolveProtocolParam('carrier-pigeon', lens)).toBeNull()
+    expect(resolveProtocolParam('', lens)).toBeNull()
+    expect(resolveProtocolParam(null, lens)).toBeNull()
+  })
+
+  it('reads ?threattab=, defaulting to detection', () => {
+    expect(threatDetailTabParam(p('threattab=response'))).toBe('response')
+    expect(threatDetailTabParam(p('threattab=Detection'))).toBe('detection')
+    expect(threatDetailTabParam(p('threattab=bogus'))).toBe('detection')
+    expect(threatDetailTabParam(p(''))).toBe('detection')
+  })
+
+  it('maps an #industry-<slug> hash to the anchor slug', () => {
+    const rows = [{ industry: 'Finance & Banking' }, { industry: 'Critical Infrastructure / OT' }]
+    expect(industryAnchorSlug('Finance & Banking')).toBe('finance-banking')
+    expect(industryAnchorFromHash('#industry-finance-banking', rows)).toBe('finance-banking')
+    expect(industryAnchorFromHash('#industry-critical-infrastructure-ot', rows)).toBe(
+      'critical-infrastructure-ot'
+    )
+    // An unknown slug passes through (the scroll is then a no-op).
+    expect(industryAnchorFromHash('#industry-no-such', rows)).toBe('no-such')
+    expect(industryAnchorFromHash('#crqc-threat-horizon', rows)).toBeNull()
+    expect(industryAnchorFromHash('', rows)).toBeNull()
+    expect(industryAnchorFromHash('#industry-%E0%A4%A', rows)).toBeNull()
   })
 })

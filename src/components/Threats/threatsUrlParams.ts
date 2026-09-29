@@ -124,8 +124,75 @@ export function wantsHorizonView(params: URLSearchParams): boolean {
   return params.get('view') === 'horizon'
 }
 
+/** The `?protocol=` value for a protocol-lens label: its slug, e.g.
+ *  "TLS / HTTPS" → `tls-https`, "S/MIME & email" → `s-mime-email`. */
+export function protocolLensSlug(label: string): string {
+  return threatIndustrySlug(label)
+}
+
+/**
+ * `?protocol=` → one of `protocols` (the lens labels the page offers), matched
+ * by slug or by label (case-insensitive). Null for absent or unknown values —
+ * a stale or mistyped protocol leaves the lens off rather than filtering the
+ * list to nothing. `protocols` is passed in so this module stays data-free.
+ */
+export function resolveProtocolParam(
+  param: string | null,
+  protocols: readonly string[]
+): string | null {
+  const raw = param?.trim()
+  if (!raw) return null
+  const slug = threatIndustrySlug(raw)
+  return (
+    protocols.find((p) => p.toLowerCase() === raw.toLowerCase() || protocolLensSlug(p) === slug) ??
+    null
+  )
+}
+
+/** The slug in an industry section's anchor id (`industry-<slug>`), exactly as
+ *  ThreatsTable / ThreatsCardGrid / the Industries TOC build it. */
+export function industryAnchorSlug(industry: string): string {
+  return industry.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+}
+
+/**
+ * A `#industry-<slug>` URL hash → the anchor slug to scroll to, or null when
+ * the hash is not an industry anchor. The slug may also be an old label's or
+ * an alias's slug (as `?industry=` accepts); it is mapped to the current
+ * label's anchor when it resolves, else passed through as-is (the scroll is
+ * then a no-op if no such section renders).
+ */
+export function industryAnchorFromHash(
+  hash: string,
+  rows: readonly Pick<ThreatItem, 'industry'>[]
+): string | null {
+  let raw: string
+  try {
+    raw = decodeURIComponent(hash.replace(/^#/, ''))
+  } catch {
+    return null
+  }
+  const m = /^industry-([a-z0-9-]+)$/i.exec(raw)
+  if (!m) return null
+  const slug = m[1].toLowerCase()
+  const [label] = resolveIndustryParam(slug, rows)
+  return label ? industryAnchorSlug(label) : slug
+}
+
+/** The threat dialog's Detection / Response inner tabs. */
+export type ThreatDetailTab = 'detection' | 'response'
+const DETAIL_TAB_VALUES: readonly ThreatDetailTab[] = ['detection', 'response']
+
+/** `?threattab=` → the dialog's inner tab; unknown or absent → `detection`. */
+export function threatDetailTabParam(params: URLSearchParams): ThreatDetailTab {
+  const v = params.get('threattab')?.toLowerCase()
+  return (DETAIL_TAB_VALUES as readonly string[]).includes(v ?? '')
+    ? (v as ThreatDetailTab)
+    : 'detection'
+}
+
 /** Parameters that make a /threats URL a link to specific content. */
-const DEEP_LINK_PARAMS = ['id', 'threat', 'industry', 'q', 'class'] as const
+const DEEP_LINK_PARAMS = ['id', 'threat', 'industry', 'q', 'class', 'protocol'] as const
 
 /** Is this a link into specific Threats content (a threat, a filtered set)?
  *  The mobile first-run role picker must not stand in front of one. */
