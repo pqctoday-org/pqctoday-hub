@@ -292,6 +292,9 @@ export function MobilePatentsView() {
         onClose={closePatent}
         title={selected?.patentNumber}
         large
+        shareUrl={
+          selected ? `/patents?patent=${encodeURIComponent(selected.patentNumber)}` : undefined
+        }
         testId="patent-detail-sheet"
       >
         {selected && (

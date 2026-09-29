@@ -63,6 +63,9 @@ interface MigrationWorkbenchProps {
   focus?: { tab?: MigrateTab; domain?: DomainId }
 }
 
+/** URL params that mean ONE item (product row, vendor card, Plan row) is open. */
+const ITEM_VIEW_PARAMS = ['product', 'productIds', 'vendor', 'open'] as const
+
 const isTab = (v: string | null): v is MigrateTab =>
   v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
 
@@ -309,6 +312,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     [plan, choice]
   )
   const hasSelection = plan.length > 0 || Object.keys(choice).length > 0
+  // While ONE item is open (a ?product= row, a ?vendor= card, a ?productIds=
+  // link or a Plan ?open= row) the top-bar Share must share that item view,
+  // not the plan token — so the plan URL is registered only when no item is
+  // open. Phones included: the phone header reads the same page actions.
+  const itemOpen = !embedded && ITEM_VIEW_PARAMS.some((k) => searchParams.has(k))
 
   // Embedded-from-a-catalog-step tab is LOCAL state seeded once from focus.tab, so
   // opening the embed never mutates the shared store that standalone /migrate reads.
@@ -369,7 +377,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       // worth sharing, register its self-contained token URL here instead,
       // same pattern ReportView.tsx uses. No selection -> url stays
       // undefined -> top bar falls back to its normal bare-URL share.
-      ...(hasSelection
+      ...(hasSelection && !itemOpen
         ? {
             url: shareUrl,
             shareTitle: 'PQC Migration plan',
@@ -378,7 +386,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         : null),
     })
     return () => clearPageActions()
-  }, [embedded, hasSelection, shareUrl])
+  }, [embedded, hasSelection, itemOpen, shareUrl])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return

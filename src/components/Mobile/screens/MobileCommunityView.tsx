@@ -242,6 +242,11 @@ export function MobileCommunityView() {
         onClose={() => setSelected(null)}
         title={selected?.name}
         large
+        shareUrl={
+          selected
+            ? `/leaders?leader=${encodeURIComponent(selected.leaderId || selected.name)}`
+            : undefined
+        }
         testId="leader-detail-sheet"
       >
         {selected && (

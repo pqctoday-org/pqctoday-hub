@@ -939,6 +939,7 @@ function MobileProductDetailSheet({
       onClose={onClose}
       title={product?.softwareName}
       large
+      shareUrl={product ? `/migrate?product=${encodeURIComponent(product.productId)}` : undefined}
       testId="migrate-product-detail-sheet"
     >
       {product && (
@@ -1540,6 +1541,11 @@ function MobileRoadmapsTab({
             : undefined
         }
         large
+        shareUrl={
+          selectedVendorId
+            ? `/migrate?tab=roadmaps&vendor=${encodeURIComponent(selectedVendorId)}`
+            : undefined
+        }
         testId="vendor-roadmap-sheet"
       >
         {selectedVendorId &&
@@ -1614,6 +1620,9 @@ function MobileVendorProductsSheet({
       }}
       title={vendorName}
       large
+      shareUrl={
+        vendorId ? `/migrate?tab=roadmaps&vendor=${encodeURIComponent(vendorId)}` : undefined
+      }
       testId="vendor-products-sheet"
     >
       {vendorId && (
