@@ -33,7 +33,6 @@ const NOT_IN_SIM: Record<string, string> = {
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.
-  'acvp-lab-workflow': 'scheduled: WP-E (P6 testing methodology)',
 }
 
 function placedModuleIds(): Set<string> {

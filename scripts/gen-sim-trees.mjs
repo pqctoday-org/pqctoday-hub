@@ -1213,6 +1213,9 @@ const FRAMEWORK = {
       // tool saves a performance-baseline document.
       steps: [
         L('pqc-testing-validation', 'Learn: PQC Testing & Validation'),
+        // 09-28 content integration (WP-E): the hands-on half — how a lab turns
+        // ACVP vector sets into the validation evidence the cert step below reads.
+        L('acvp-lab-workflow', 'Learn: ACVP lab workflow — from vector set to validation evidence'),
         // toOverride: a real ACVP cert (Entrust nShield 5, ML-DSA/ML-KEM/SLH-DSA —
         // matches simArchitecture.ts's mid-size 'Entrust nShield' node) so the step
         // opens on real algorithm/size data, not an empty ?cert= (WP5.5).
