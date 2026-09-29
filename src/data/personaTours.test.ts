@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { PERSONA_TOURS } from './personaTours'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 
 /** Top-level route paths declared in App.tsx, normalised to '/x' form. */
 function routesFromApp(): Set<string> {
@@ -24,13 +25,16 @@ function routesFromApp(): Set<string> {
 describe('PERSONA_TOURS — B+ remediation 4.2', () => {
   const routes = routesFromApp()
   const toolIds = new Set(WORKSHOP_TOOLS.map((t) => t.id))
+  const moduleIds = new Set(MANIFESTS.map((m) => m.id))
 
   it('covers exactly the roles that had no tour of their own', () => {
     // executive has EXEC_TOUR_STAGES; curious has CuriousGuide. Giving either a
     // second tour here would be two onboarding flows fighting each other. grc
     // is new as of the 2026-09-07 Executive/GRC split and had no tour at all.
+    // cert-engineer is new as of 2026-09-29 and gets its own from the start.
     expect(Object.keys(PERSONA_TOURS).sort()).toEqual([
       'architect',
+      'cert-engineer',
       'developer',
       'grc',
       'ops',
@@ -53,10 +57,23 @@ describe('PERSONA_TOURS — B+ remediation 4.2', () => {
         const playgroundTool = base.startsWith('/playground/')
           ? base.slice('/playground/'.length)
           : null
+        const learnModule = base.startsWith('/learn/') ? base.slice('/learn/'.length) : null
+        if (learnModule) {
+          // /learn/:moduleId resolves through the module manifests, the same way
+          // /playground/:toolId resolves through the workshop registry.
+          expect(moduleIds.has(learnModule), `${persona}: module "${learnModule}"`).toBe(true)
+          continue
+        }
         if (playgroundTool) {
           // /playground/:toolId resolves through the workshop registry, so the
           // tool id itself is what has to exist.
-          expect(toolIds.has(playgroundTool), `${persona}: tool "${playgroundTool}"`).toBe(true)
+          // The full playgrounds (hsm, cacp, interactive, docker) are nested
+          // <Route path="…"> children of "playground" rather than registry
+          // tools; routesFromApp flattens them to "/hsm" etc., so check that too.
+          expect(
+            toolIds.has(playgroundTool) || routes.has(`/${playgroundTool}`),
+            `${persona}: tool "${playgroundTool}"`
+          ).toBe(true)
           continue
         }
         expect(routes.has(base), `${persona}: route "${base}"`).toBe(true)

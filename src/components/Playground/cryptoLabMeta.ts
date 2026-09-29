@@ -74,6 +74,7 @@ export const ROLE_OPTIONS: readonly RoleOption[] = [
   { id: 'executive', label: 'Executive / Business Leader' },
   { id: 'grc', label: 'GRC / Risk & Compliance' },
   { id: 'researcher', label: 'Researcher' },
+  { id: 'cert-engineer', label: 'Certification & Validation Engineer' },
   { id: 'curious', label: 'Curious Explorer' },
 ]
 
@@ -88,6 +89,7 @@ export const PERSONA_CHIP_LABEL: Record<PersonaId, string> = {
   developer: 'Developer',
   architect: 'Security Architect',
   researcher: 'Researcher',
+  'cert-engineer': 'Certification & Validation Engineer',
   ops: 'IT Ops / DevOps',
   curious: 'Curious Explorer',
 }
@@ -178,6 +180,7 @@ export const PERSONA_FEATURED_TOOL_IDS: Record<PersonaId | 'none', readonly stri
   developer: ['hybrid-sigs', 'tpm-playground', 'email-signing', 'solana-flow'],
   architect: ['tee-channel', 'kdf-derivation', 'hsm-capacity'],
   researcher: ['source-combining', 'lms-hss', 'suci-flow', 'hd-wallet'],
+  'cert-engineer': ['entropy-test', 'drbg-demo', 'firmware-signing'],
   ops: ['vpn-sim', 'hsm-capacity', 'hybrid-certs'],
   curious: ['merkle-proof', 'pki-workshop', 'qrng-demo'],
 }

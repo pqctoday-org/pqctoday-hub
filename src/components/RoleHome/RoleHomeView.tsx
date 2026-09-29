@@ -7,6 +7,7 @@ import {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
   LayoutGrid,
@@ -27,6 +28,7 @@ const PERSONA_ICONS: Record<LearningPersona['icon'], LucideIcon> = {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
 }
@@ -79,6 +81,12 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
     firstWin: 'First win — size your HSM fleet · 10 min',
     track: 'essentials',
   },
+  'cert-engineer': {
+    urgency:
+      'A certificate covers one module, one boundary, one algorithm list. Know exactly what yours will prove.',
+    firstWin: 'First win — run the ACVP vectors yourself · 5 min',
+    track: 'essentials',
+  },
   researcher: {
     urgency: 'FIPS 203/204/205 are out and ACVP vectors are live. Trace it end to end.',
     firstWin: 'No funnel — open the evidence workspace',
@@ -99,6 +107,7 @@ const ROLE_ORDER: PersonaId[] = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
   'curious',
 ]
 

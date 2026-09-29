@@ -95,6 +95,12 @@ export function generateFollowUps(
           'How does this compare to alternative approaches?'
         )
         break
+      case 'cert-engineer':
+        followUps.push(
+          'How is this tested for FIPS 140-3 or Common Criteria?',
+          'What evidence would a validation lab need for this?'
+        )
+        break
       case 'ops':
         followUps.push(
           'What are the operational deployment steps?',

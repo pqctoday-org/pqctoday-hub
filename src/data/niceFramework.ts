@@ -48,6 +48,7 @@ export type NiceWorkRoleId =
   | 'iam-specialist'
   | 'systems-security-analyst'
   | 'is-security-manager'
+  | 'validation-engineer'
 
 /** Official NICE Framework v2.2.0 work-role category. */
 export type NiceWorkRoleCategory = 'DD' | 'IO' | 'PD' | 'IN' | 'OG'
@@ -145,8 +146,9 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
       'security-developer',
       'systems-security-analyst',
       'network-security-specialist',
+      'validation-engineer',
     ],
-    targetPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    targetPersonas: ['developer', 'architect', 'researcher', 'cert-engineer', 'ops'],
   },
 
   'CA-RISK': {
@@ -267,7 +269,7 @@ export const NICE_COMPETENCY_AREAS: Record<NiceCompetencyAreaId, NiceCompetencyA
       { type: 'T', id: 'T0116', label: 'Identify organizational policy stakeholders' },
     ],
     primaryWorkRoles: ['is-security-manager', 'risk-manager'],
-    targetPersonas: ['executive', 'grc', 'architect', 'ops'],
+    targetPersonas: ['executive', 'grc', 'architect', 'cert-engineer', 'ops'],
   },
 }
 
@@ -359,6 +361,20 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
     description:
       'Oversees the cybersecurity of a program, organization, system, or enclave and establishes and maintains governance for cybersecurity risk.',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
+  },
+  // Added 2026-09-29 with the cert-engineer persona. officialName and the
+  // DD-WRL-007 code are verbatim from pqc-references/NICE-Framework-Components-v2.2.0.json.
+  'validation-engineer': {
+    id: 'validation-engineer',
+    niceCode: 'DD-WRL-007',
+    officialName: 'Systems Testing and Evaluation',
+    category: 'DD',
+    title: 'Cryptographic Validation Engineer',
+    description:
+      'Tests cryptographic modules and their algorithms against published specifications and known-answer vectors, and prepares or reviews the evidence a certification scheme requires.',
+    nearestMatchNote:
+      'Nearest v2.2.0 match: no work role is specific to cryptographic-module validation; Systems Testing and Evaluation (DD-WRL-007) covers planning and executing tests and evaluating results against specifications.',
+    competencyAreas: ['CA-CRYPTO', 'CA-GOVCOMP'],
   },
 }
 

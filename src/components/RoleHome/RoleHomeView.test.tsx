@@ -27,6 +27,7 @@ const FIRST_WIN_COPY: Record<PersonaId, string> = {
   architect: 'First win — flip a policy, watch it rekey · 15 min',
   ops: 'First win — size your HSM fleet · 10 min',
   researcher: 'No funnel — open the evidence workspace',
+  'cert-engineer': 'First win — run the ACVP vectors yourself · 5 min',
   curious: 'First win — see what breaks · 6 min',
 }
 

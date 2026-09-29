@@ -56,7 +56,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'entropy-randomness',
     competencyAreas: ['CA-CRYPTO'],
     tier: 'practitioner',
-    workRoles: ['security-developer', 'security-architect'],
+    workRoles: ['security-developer', 'security-architect', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -236,7 +236,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-testing-validation',
     competencyAreas: ['CA-CRYPTO', 'CA-SECPROG'],
     tier: 'practitioner',
-    workRoles: ['security-developer', 'systems-security-analyst'],
+    workRoles: ['security-developer', 'systems-security-analyst', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -248,7 +248,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'acvp-lab-workflow',
     competencyAreas: ['CA-CRYPTO', 'CA-SECPROG', 'CA-GOVCOMP'],
     tier: 'expert',
-    workRoles: ['security-developer', 'systems-security-analyst'],
+    workRoles: ['security-developer', 'systems-security-analyst', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -426,7 +426,12 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'hsm-pqc',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'system-administrator', 'iam-specialist'],
+    workRoles: [
+      'security-architect',
+      'system-administrator',
+      'iam-specialist',
+      'validation-engineer',
+    ],
     isCommonGround: false,
   },
   {
@@ -436,7 +441,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-hw-acceleration',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'system-administrator'],
+    workRoles: ['security-architect', 'system-administrator', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -446,7 +451,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'crypto-product-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -455,7 +460,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'fips-140-3-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
     isCommonGround: false,
   },
   {
@@ -464,7 +469,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'cc-eucc-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
     isCommonGround: false,
   },
   {

@@ -15,6 +15,7 @@ const PERSONA_DEFAULT_TIER: Record<string, NiceProficiencyTier> = {
   developer: 'practitioner',
   architect: 'practitioner',
   researcher: 'expert',
+  'cert-engineer': 'expert',
   grc: 'practitioner',
 }
 

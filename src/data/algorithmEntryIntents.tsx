@@ -8,7 +8,7 @@
  * depending on a component file. AlgorithmEntryStrip.tsx re-imports all three
  * from here under the same names.
  */
-import { ArrowRight, FlaskConical, Network, Shuffle } from 'lucide-react'
+import { ArrowRight, FlaskConical, Network, ShieldAlert, Shuffle } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 
 export interface Intent {
@@ -76,6 +76,14 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     description: 'Execute ACVP-style vectors and cross-validate against WASM implementations',
     icon: <FlaskConical size={15} />,
     params: { tab: 'validation', section: 'kat' },
+  },
+  // cert-engineer already lands on the Validation tab (ALGORITHM_PERSONA_DEFAULTS),
+  // so its entry intent is the other Validation section.
+  'cert-engineer': {
+    label: 'Review implementation attacks',
+    description: 'Side-channel and fault-injection notes for each algorithm family',
+    icon: <ShieldAlert size={15} />,
+    params: { tab: 'validation', section: 'attacks' },
   },
 }
 

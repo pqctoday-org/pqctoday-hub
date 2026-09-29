@@ -895,6 +895,11 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     'What are the four FIPS standards for PQC?',
     'Is PQC Today open source?',
   ],
+  'cert-engineer': [
+    'What is FIPS 140-3 and why does the validation backlog matter?',
+    "What is Common Criteria's role in PQC?",
+    'What HSMs support ML-KEM and ML-DSA?',
+  ],
   ops: [
     'What PQC operations tasks should IT teams plan?',
     'What HSMs support ML-KEM and ML-DSA?',

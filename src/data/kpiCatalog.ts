@@ -25,6 +25,10 @@ import { getFrameworkMaxFine } from './frameworkFines'
 // Only personas who can reach the Business Center get a KPI variant.
 // (curious is nav-blocked from /business — see personaConfig.ts). `grc` added
 // 2026-09-07 — the split gave it the same /business reach as executive.
+// `cert-engineer` (2026-09-29) is deliberately NOT a KPI persona: the tracker
+// measures a migration programme, and this role owns no programme seat
+// (personaToRoles → []). It gets the tracker's executive fallback and can
+// switch lens with the selector, like any visitor.
 export type KpiPersonaId = Extract<
   PersonaId,
   'executive' | 'grc' | 'architect' | 'ops' | 'researcher' | 'developer'

@@ -31,6 +31,7 @@ const PERSONA_ORDER: PersonaId[] = [
   'developer',
   'architect',
   'researcher',
+  'cert-engineer',
   'ops',
   'curious',
 ]

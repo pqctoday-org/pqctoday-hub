@@ -18,6 +18,8 @@ export function personaLabel(persona: PersonaId | null): string {
       return 'Operations'
     case 'researcher':
       return 'Researcher'
+    case 'cert-engineer':
+      return 'Certification & Validation Engineer'
     case 'curious':
       return 'Curious Explorer'
     default:

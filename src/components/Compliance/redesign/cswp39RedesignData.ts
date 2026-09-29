@@ -190,6 +190,7 @@ const PERSONA_LABEL: Record<PersonaId, string> = {
   ops: 'Ops',
   developer: 'Developer',
   researcher: 'Researcher',
+  'cert-engineer': 'Certification',
   curious: 'Curious',
 }
 

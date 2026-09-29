@@ -376,7 +376,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
     startHere: ['ops'],
     intro: {
       whatYouWillDo:
@@ -401,7 +401,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -426,7 +426,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'sp 800-208'],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Choose an SP 800-208 LMS/HSS parameter set (hash, height, W, levels), Sign Message to advance the one-time key counter, Simulate State Loss, then verify a Rust-signed signature with the C++ engine.',
@@ -466,7 +466,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign the message and Verify to see whether the EC-Schnorr and ML-DSA-65 halves still verify once stripped apart.',
@@ -504,7 +504,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Retrieve a QKD key over ETSI QKD 014, import it into the HSM, and derive a session key from it with SP 800-108 counter-mode KDF over PKCS#11.',
@@ -791,7 +791,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
-    recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
+    recommendedPersonas: ['researcher', 'developer', 'architect', 'ops', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
@@ -865,7 +865,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/entropy-randomness?tab=workshop&step=1',
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['researcher', 'architect', 'developer'],
+    recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -899,7 +899,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['architect', 'developer', 'researcher'],
+    recommendedPersonas: ['architect', 'developer', 'researcher', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -939,7 +939,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['researcher', 'architect', 'developer'],
+    recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Health-test two simulated raw sources, assemble their samples with SP 800-90C concatenation, condition the result, then state the assumptions the combined construction rests on.',
@@ -1220,7 +1220,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
     startHere: ['ops'],
     intro: {
       whatYouWillDo:

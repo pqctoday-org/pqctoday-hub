@@ -15,6 +15,7 @@ describe('PERSONA_HERO_TAGLINE', () => {
   it('has a tagline for every persona', () => {
     expect(Object.keys(PERSONA_HERO_TAGLINE).sort()).toEqual([
       'architect',
+      'cert-engineer',
       'curious',
       'developer',
       'executive',

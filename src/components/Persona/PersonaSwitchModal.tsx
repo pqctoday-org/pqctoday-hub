@@ -11,6 +11,7 @@ import {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
   Globe,
@@ -49,6 +50,7 @@ const PERSONA_ICONS = {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
 } as const
@@ -61,6 +63,7 @@ const PERSONA_ORDER: PersonaId[] = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
 ]
 
 interface Props {

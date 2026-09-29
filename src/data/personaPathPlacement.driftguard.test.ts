@@ -198,7 +198,7 @@ const MLS_EXEMPT_PERSONAS: PersonaId[] = ['developer', 'architect', 'researcher'
 describe('persona-path placement driftguard (WS8)', () => {
   it('finds a non-trivial catalogue and every persona (no vacuous pass)', () => {
     expect(learnModuleIds.length).toBeGreaterThan(50)
-    expect(personaEntries).toHaveLength(7)
+    expect(personaEntries).toHaveLength(8)
     expect(reachByModule.size).toBeGreaterThan(50)
   })
 
