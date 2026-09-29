@@ -27,10 +27,13 @@ export function useScrollToDeepLinkTarget(
 
     const tick = () => {
       if (cancelled) return
-      const el = document.querySelector<HTMLElement>(selector)
-      // An element hidden via display:none (e.g. a mobile-only duplicate) has
-      // no box; keep looking for the visible one until the timeout.
-      if (el && el.getClientRects().length > 0) {
+      // A page may render the same target twice (a desktop row plus a
+      // display:none mobile card, or vice versa); take the first one that
+      // actually has a box, and keep polling until one does.
+      const el = Array.from(document.querySelectorAll<HTMLElement>(selector)).find(
+        (candidate) => candidate.getClientRects().length > 0
+      )
+      if (el) {
         el.scrollIntoView({ block: 'center', behavior: 'smooth' })
         el.classList.add(...HIGHLIGHT_CLASSES)
         clearHighlight = setTimeout(() => el.classList.remove(...HIGHLIGHT_CLASSES), highlightMs)
