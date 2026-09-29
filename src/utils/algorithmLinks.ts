@@ -9,11 +9,16 @@
 
 /** Stable algorithm id for a reference-CSV algorithm name. */
 export function algorithmSlug(name: string): string {
+  // Same rule as the CSV's `algorithm_id` column (algorithmIdFromName in
+  // src/data/pqcAlgorithmsData.ts) — duplicated rather than imported so a
+  // link builder never pulls the reference CSV into the caller's bundle;
+  // algorithmLinks.test.ts pins the two together over every row.
   return name
     .trim()
     .toLowerCase()
+    .replace(/\+/g, '-plus-')
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    .replace(/^-+|-+$/g, '')
 }
 
 /** `/algorithms?algo=<id>` for one algorithm, by its reference-CSV name. */

@@ -286,7 +286,8 @@ describe('deep-link grammar per-route key sets', () => {
 const ROOT = path.resolve(__dirname, '../../..')
 
 const PAGE_SOURCES: Record<string, readonly string[]> = {
-  '/timeline': ['src/components/Timeline'],
+  // The Gantt view params (gsort/gdir/…) are parsed by helpers in timelineData.ts.
+  '/timeline': ['src/components/Timeline', 'src/data/timelineData.ts'],
   '/algorithms': ['src/components/Algorithms'],
   '/library': ['src/components/Library'],
   // ?prefs=off is read by the shared persona-defaults hook ThreatsDashboard uses.
@@ -297,21 +298,7 @@ const PAGE_SOURCES: Record<string, readonly string[]> = {
   '/patents': ['src/components/Patents'],
 }
 
-/**
- * Keys the page does not reference YET because the page-side deep-link PR
- * (PR 2) adds them. Delete an entry once the page references the key, so
- * the guard covers it again.
- */
-const PENDING_PAGE_KEYS: Record<string, readonly string[]> = {
-  '/timeline': ['docview', 'etype', 'deadlines', 'gsort', 'gdir'],
-  '/algorithms': ['algo', 'usecase', 'attack', 'engine', 'case', 'matrixHighlight'],
-  '/library': [],
-  '/threats': ['protocol', 'threattab'],
-  '/leaders': ['tsort', 'tdir'],
-  '/compliance': ['reqfw', 'prod', 'cswpview', 'step', 'mtier', 'dossier', 'lsort', 'lq'],
-  '/migrate': ['domain', 'vendor', 'open'],
-  '/patents': ['sq'],
-}
+const PENDING_PAGE_KEYS: Record<string, readonly string[]> = {}
 
 function collectSource(rel: string): string {
   const abs = path.join(ROOT, rel)
@@ -334,7 +321,7 @@ function referencesKey(src: string, key: string): boolean {
 describe('deep-link grammar ↔ page source guard', () => {
   it.each(Object.keys(PAGE_SOURCES))('every %s grammar key is read by the page', (route) => {
     const src = PAGE_SOURCES[route].map(collectSource).join('\n')
-    const pending = new Set(PENDING_PAGE_KEYS[route])
+    const pending = new Set(PENDING_PAGE_KEYS[route] ?? [])
     const missing = keysFor(route).filter((k) => !pending.has(k) && !referencesKey(src, k))
     expect(missing, `${route}: grammar keys the page never references`).toEqual([])
   })
