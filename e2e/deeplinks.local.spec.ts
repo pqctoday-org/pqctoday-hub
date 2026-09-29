@@ -159,6 +159,46 @@ test.describe('desktop — resource links open the resource', () => {
     },
   ]
 
+  // PR 2 — resources that had no URL before.
+  cases.push(
+    {
+      name: 'algorithms ?algo by id opens the detail drawer',
+      url: '/algorithms?algo=ml-kem-768',
+      open: 'ML-KEM-768',
+    },
+    {
+      name: 'algorithms ?algo by old exact name',
+      url: '/algorithms?algo=FN-DSA-512',
+      open: 'FN-DSA-512',
+    },
+    {
+      name: 'library table view opens the drawer',
+      url: '/library?view=table&ref=KpqC-Competition-Results',
+      open: 'Korean Post-Quantum',
+    },
+    {
+      name: 'community ?leader by leader_id',
+      url: '/leaders?leader=stavros-kousidis',
+      visible: 'Stavros Kousidis',
+    },
+    {
+      name: 'migrate ?vendor opens its roadmap',
+      url: '/migrate?vendor=VND-001',
+      visible: 'AWS post-quantum cryptography migration plan',
+    },
+    { name: 'migrate ?domain selects the domain', url: '/migrate?domain=hsm', visible: 'SoftHSM2' },
+    {
+      name: 'migrate legacy ?q= from search resolves the product',
+      url: '/migrate?q=SoftHSM2',
+      visible: 'SoftHSM2',
+    },
+    {
+      name: 'compliance ?reqfw preselects the requirements framework',
+      url: '/compliance?reqfw=CNSA-2',
+      visible: 'CNSA 2.0',
+    }
+  )
+
   for (const c of cases) {
     test(c.name, async ({ page }) => {
       await seed(page, 'returning', c.storage)
@@ -169,6 +209,19 @@ test.describe('desktop — resource links open the resource', () => {
       if (c.notice) await expect(notice(page, c.notice)).toBeVisible({ timeout: 30_000 })
     })
   }
+
+  test('patents ?sq opens the Search tab with the query', async ({ page }) => {
+    await seed(page, 'returning')
+    await page.goto('/patents?sq=lattice')
+    await expect(page.getByRole('tab', { name: 'Search' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+      {
+        timeout: 30_000,
+      }
+    )
+    await expect(page.locator('input[value="lattice"]').first()).toBeVisible()
+  })
 
   test('compliance evref without a tab lands on CSWP.39', async ({ page }) => {
     await seed(page, 'returning')
