@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Search,
   AlertTriangle,
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
 import {
+  draftThreatIndustries,
   evidenceStrength,
   retiredThreats,
   threatsData,
@@ -86,6 +87,14 @@ import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
+import { DeepLinkNotice } from '../common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import {
+  threatExclusions,
+  threatNotFoundMessage,
+  threatWidenedMessage,
+  type ThreatExclusion,
+} from './threatDeepLink'
 import {
   isShortThreatQuery,
   matchesThreatQuery,
@@ -236,7 +245,6 @@ export const ThreatsDashboard: React.FC<{
     if (indParam) {
       const matches = resolveIndustryParam(indParam, threatsData)
       if (matches.length > 0) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- same-route URL→state sync; the functional setter is a no-op when unchanged
         setSelectedIndustries((prev) =>
           JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
         )
@@ -245,6 +253,10 @@ export const ThreatsDashboard: React.FC<{
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
       if (found) setSelectedThreat(found)
+    } else {
+      // Removing ?id on the same route (Back after opening, a link without it)
+      // closes the dialog — it used to stay open with the URL no longer saying so.
+      setSelectedThreat((prev) => (prev ? null : prev))
     }
     setSelectedCriticality((prev) => (prev !== nextCrit ? nextCrit : prev))
     setSelectedClass((prev) => (prev !== nextClass ? nextClass : prev))
@@ -257,16 +269,19 @@ export const ThreatsDashboard: React.FC<{
   /** Write all current filter state back to URL. Call with overrides for the value that just
    *  changed so the URL reflects it immediately. Uses replace:true to avoid history spam. */
   const syncFiltersToUrl = useCallback(
-    (overrides: {
-      industry?: string[]
-      criticality?: string
-      threatClass?: string
-      q?: string
-      sort?: SortField
-      dir?: SortDirection
-      id?: string | null
-      mode?: ThreatsViewMode
-    }) => {
+    (
+      overrides: {
+        industry?: string[]
+        criticality?: string
+        threatClass?: string
+        q?: string
+        sort?: SortField
+        dir?: SortDirection
+        id?: string | null
+        mode?: ThreatsViewMode
+      },
+      { push = false }: { push?: boolean } = {}
+    ) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
@@ -299,7 +314,8 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('mode')
           return next
         },
-        { replace: true }
+        // Filter changes replace; opening a threat pushes, so Back closes it.
+        { replace: !push }
       )
     },
     [
@@ -422,16 +438,29 @@ export const ThreatsDashboard: React.FC<{
   }, [protocolLens])
 
   const personaDefaults = usePersonaDefaults()
+  // A deep-linked threat outside the persona-default scope adds its own
+  // industry to that scope (rather than dropping the scope), so the row behind
+  // the dialog is there when it closes. Undo clears it.
+  const [personaScopeExtra, setPersonaScopeExtra] = useState<string | null>(null)
   const personaDefaultThreatIndustries = useMemo<string[]>(() => {
     if (personaDefaults.prefsOff) return []
     if (!selectedPersona) return []
     if (selectedIndustries.length > 0) return []
     if (storeIndustries.length > 0) return []
     const personaIndustryKeys = PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
-    return personaIndustryKeys
+    const scope = personaIndustryKeys
       .flatMap((key) => INDUSTRY_TO_THREATS_MAP[key] ?? []) // eslint-disable-line security/detect-object-injection
       .filter((ind) => threatsData.some((d) => d.industry === ind))
-  }, [selectedPersona, selectedIndustries, storeIndustries, personaDefaults.prefsOff])
+    return personaScopeExtra && scope.length > 0 && !scope.includes(personaScopeExtra)
+      ? [...scope, personaScopeExtra]
+      : scope
+  }, [
+    selectedPersona,
+    selectedIndustries,
+    storeIndustries,
+    personaDefaults.prefsOff,
+    personaScopeExtra,
+  ])
   const personaDefaultActive = personaDefaultThreatIndustries.length > 0
 
   const filteredAndSortedData = useMemo(() => {
@@ -611,6 +640,142 @@ export const ThreatsDashboard: React.FC<{
     return () => clearPageActions()
   }, [simEmbed])
 
+  // ── ?id= deep-link arrival (deep-link remediation PR 1, 2026-09-28) ──────
+  // Runs once per arriving id. A draft/unknown id gets a not-found notice
+  // (retired ids keep RetiredThreatNotice below). A published threat hidden by
+  // the page's scoping gets exactly the excluding filters widened, with Undo,
+  // and its row is scrolled to and ringed once the dialog closes. Clicks in the
+  // page write ?id= themselves and are skipped via selfWrittenIdRef.
+  const [deepLinkNotice, setDeepLinkNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+  } | null>(null)
+  const undoWidenRef = useRef<{
+    params: string
+    selectedIndustries: string[]
+    personaScopeExtra: string | null
+    showOnlyThreats: boolean
+    protocolLens: string | null
+  } | null>(null)
+  const resolvedIdRef = useRef<string | null>(null)
+  const selfWrittenIdRef = useRef<string | null>(null)
+  const deepLinkArrivalRef = useRef<string | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<{ id: string; nonce: number } | null>(null)
+  useEffect(() => {
+    if (isMobileShell) return // MobileThreatsView resolves ?id= itself
+    const id = threatIdParam(searchParams)
+    if (id === resolvedIdRef.current) return
+    resolvedIdRef.current = id
+    if (!id) return
+    if (id === selfWrittenIdRef.current) {
+      selfWrittenIdRef.current = null
+      return
+    }
+    const threat = threatsData.find((t) => t.threatId === id)
+    if (!threat) {
+      if (!retiredThreats.has(id)) {
+        setDeepLinkNotice({
+          kind: 'not-found',
+          message: threatNotFoundMessage(id, draftThreatIndustries),
+        })
+      }
+      return
+    }
+    deepLinkArrivalRef.current = threat.threatId
+    // Read URL-backed filters from the URL itself: on a same-route link the
+    // URL→state sync above has queued, not yet applied, its updates.
+    const urlIndustries = resolveIndustryParam(searchParams.get('industry'), threatsData)
+    const industries = urlIndustries.length > 0 ? urlIndustries : selectedIndustries
+    const exclusions: ThreatExclusion[] = threatExclusions(threat, {
+      industries,
+      personaScope: industries.length > 0 ? [] : personaDefaultThreatIndustries,
+      criticality: searchParams.get('criticality'),
+      threatClass: searchParams.get('class'),
+      query: searchParams.get('q') ?? '',
+      onlyMine: showOnlyThreats ? myThreats : null,
+      tierExcludes:
+        tierFilter.length > 0 && !matchesTrustTierFilter(tierFilter, 'threats', threat.threatId),
+      lensExcludes: !!protocolLens && !threatTouchesProtocol(threat, protocolLens),
+    })
+    if (exclusions.length === 0) {
+      setDeepLinkNotice(null)
+      return
+    }
+    undoWidenRef.current = {
+      params: searchParams.toString(),
+      selectedIndustries,
+      personaScopeExtra,
+      showOnlyThreats,
+      protocolLens,
+    }
+    const next = new URLSearchParams(searchParams)
+    for (const ex of exclusions) {
+      if (ex === 'industry') {
+        const widened = [...industries, threat.industry]
+        setSelectedIndustries(widened)
+        next.set('industry', widened.join(','))
+      } else if (ex === 'persona-scope') setPersonaScopeExtra(threat.industry)
+      else if (ex === 'criticality') {
+        setSelectedCriticality('All')
+        next.delete('criticality')
+      } else if (ex === 'class') {
+        setSelectedClass('All')
+        next.delete('class')
+      } else if (ex === 'q') {
+        setSearchQuery('')
+        next.delete('q')
+      } else if (ex === 'mine') setShowOnlyThreats(false)
+      else if (ex === 'tier') next.delete('tier')
+      else if (ex === 'lens') setProtocolLens(null)
+    }
+    if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+    setDeepLinkNotice({
+      kind: 'widened',
+      message: threatWidenedMessage(threat.threatId, exclusions),
+    })
+    // Keyed on the URL only — the filter state is read at arrival time; re-running
+    // on every filter change would fight the reader's own later picks.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, isMobileShell])
+
+  // Scroll to / ring the deep-linked row once its dialog closes.
+  const prevSelectedIdRef = useRef<string | null>(selectedThreat?.threatId ?? null)
+  useEffect(() => {
+    const prev = prevSelectedIdRef.current
+    prevSelectedIdRef.current = selectedThreat?.threatId ?? null
+    if (prev && !selectedThreat && prev === deepLinkArrivalRef.current) {
+      deepLinkArrivalRef.current = null
+      setScrollTarget((t) => ({ id: prev, nonce: (t?.nonce ?? 0) + 1 }))
+    }
+  }, [selectedThreat])
+  useScrollToDeepLinkTarget(
+    scrollTarget ? `${scrollTarget.id}#${scrollTarget.nonce}` : null,
+    scrollTarget ? deepLinkSelector(scrollTarget.id) : null
+  )
+
+  const handleUndoWiden = useCallback(() => {
+    const snap = undoWidenRef.current
+    undoWidenRef.current = null
+    setDeepLinkNotice(null)
+    if (!snap) return
+    setSelectedIndustries(snap.selectedIndustries)
+    setPersonaScopeExtra(snap.personaScopeExtra)
+    setShowOnlyThreats(snap.showOnlyThreats)
+    setProtocolLens(snap.protocolLens)
+    deepLinkArrivalRef.current = null
+    // Restore the reader's URL filters; the threat they hid is closed with them.
+    const restored = new URLSearchParams(snap.params)
+    restored.delete('id')
+    restored.delete('threat')
+    setSearchParams(restored, { replace: true })
+  }, [setSearchParams, setShowOnlyThreats])
+
+  const openThreat = (item: ThreatItem) => {
+    selfWrittenIdRef.current = item.threatId
+    setSelectedThreat(item)
+    syncFiltersToUrl({ id: item.threatId }, { push: true })
+  }
+
   // An old link to a threat that has since been retired: say so, rather than
   // opening nothing.
   const linkedId = threatIdParam(searchParams)
@@ -637,6 +802,18 @@ export const ThreatsDashboard: React.FC<{
       )}
 
       {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
+
+      {deepLinkNotice && (
+        <DeepLinkNotice
+          kind={deepLinkNotice.kind}
+          message={deepLinkNotice.message}
+          onUndo={deepLinkNotice.kind === 'widened' ? handleUndoWiden : undefined}
+          onDismiss={() => {
+            setDeepLinkNotice(null)
+            if (deepLinkNotice.kind === 'not-found') syncFiltersToUrl({ id: null })
+          }}
+        />
+      )}
 
       {retiredLinked && (
         <RetiredThreatNotice
@@ -1046,10 +1223,7 @@ export const ThreatsDashboard: React.FC<{
                 <div className="mb-8">
                   <ThreatsCardGrid
                     items={filteredAndSortedData}
-                    onItemClick={(item) => {
-                      setSelectedThreat(item)
-                      syncFiltersToUrl({ id: item.threatId })
-                    }}
+                    onItemClick={openThreat}
                     relevantIndustries={personaRelevantIndustries}
                     personaLabel={
                       selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection
@@ -1069,19 +1243,13 @@ export const ThreatsDashboard: React.FC<{
                       sortDirection={sortDirection}
                       showEvidence={selectedPersona === 'researcher'}
                       onSort={handleSort}
-                      onItemClick={(item) => {
-                        setSelectedThreat(item)
-                        syncFiltersToUrl({ id: item.threatId })
-                      }}
+                      onItemClick={openThreat}
                     />
                   </div>
                   <div className="mb-8 md:hidden">
                     <ThreatsCardGrid
                       items={filteredAndSortedData}
-                      onItemClick={(item) => {
-                        setSelectedThreat(item)
-                        syncFiltersToUrl({ id: item.threatId })
-                      }}
+                      onItemClick={openThreat}
                       relevantIndustries={personaRelevantIndustries}
                       personaLabel={
                         selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection

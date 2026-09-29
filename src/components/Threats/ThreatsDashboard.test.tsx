@@ -61,6 +61,7 @@ vi.mock('../../data/threatsData', () => ({
       mainSource: 'Stub Source',
     },
   ] as ThreatData[],
+  draftThreatIndustries: new Map([['DRAFT-001', 'Healthcare']]),
   retiredThreats: new Map([
     [
       'OLD-001',
