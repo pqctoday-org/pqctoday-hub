@@ -668,7 +668,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
           overhead, and plan SCADA migration.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Hardware" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hardware" />
 
       <LearnSection
         sectionId="rail-transit"

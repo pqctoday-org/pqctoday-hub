@@ -98,7 +98,21 @@ const Ext = ({ href, children }: { href: string; children: ReactNode }) => (
   </a>
 )
 
-const CertLink = ({ cert }: { cert: string }) => <Ext href={cmvpCertificateUrl(cert)}>#{cert}</Ext>
+/** A certificate number: opens the hub's record, with NIST's own page as a secondary link. */
+const CertLink = ({ cert }: { cert: string }) => (
+  <span className="inline-flex items-center gap-1">
+    <Link
+      to={`/compliance?cert=${encodeURIComponent(cert)}`}
+      className="text-primary underline"
+      title={`Open certificate #${cert} in the hub's compliance records`}
+    >
+      #{cert}
+    </Link>
+    <Ext href={cmvpCertificateUrl(cert)}>
+      <span className="sr-only">NIST certificate page for #{cert}</span>
+    </Ext>
+  </span>
+)
 
 const AsOf = () => (
   <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">

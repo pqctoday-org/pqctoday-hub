@@ -156,7 +156,7 @@ export const TEEArchitectureExplorer: React.FC = () => {
           to view platforms side by side.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hardware" className="mb-2" />
 
       {/* Filter Bar */}
       <div className="glass-panel p-4">

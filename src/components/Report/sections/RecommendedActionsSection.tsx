@@ -10,6 +10,7 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 import { formatDriver } from '../../../data/driverLabels'
 import { AskAssistantButton } from '../../ui/AskAssistantButton'
 import { CollapsibleSection, effortConfig } from './reportContentShared'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 export const RecommendedActionsSection = ({
   recommendedActions,
@@ -89,8 +90,10 @@ export const RecommendedActionsSection = ({
               {isPathVisible(action.relatedModule) && (
                 <Link
                   to={
-                    action.relatedModule.startsWith('/migrate') && industry
-                      ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
+                    // /migrate has no industry filter: point a bare /migrate
+                    // action at this report's industry-relevant products instead.
+                    action.relatedModule === '/migrate' && relevantSoftware.length > 0
+                      ? `/migrate?productIds=${encodeURIComponent(relevantSoftware.map((sw) => sw.productId).join(','))}`
                       : action.relatedModule
                   }
                   className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
@@ -105,7 +108,7 @@ export const RecommendedActionsSection = ({
                 <span className="text-[10px] text-muted-foreground">Tools:</span>
                 {relevantSoftware.slice(0, 2).map((sw) => (
                   <Link
-                    to={`/migrate?industry=${encodeURIComponent(industry)}`}
+                    to={migrateProductHref(sw.productId)}
                     key={sw.softwareName}
                     className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
                   >

@@ -110,9 +110,9 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
     inApp: [
       {
         label: '/migrate — Cryptographic Discovery Platforms',
-        href: '/migrate?cat=Cryptographic%20Discovery%20Platforms',
+        href: '/migrate?domain=discovery',
       },
-      { label: '/migrate — SASE & Zero Trust', href: '/migrate?cat=SASE%20%26%20Zero%20Trust' },
+      { label: '/migrate — SASE & Zero Trust', href: '/migrate?domain=network' },
       { label: '/threats — quantum threat landscape', href: '/threats' },
       {
         label: '/assess — data classification step',
@@ -189,11 +189,14 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
     inApp: [
       { label: '/report — algorithm migration priority', href: '/report' },
       { label: '/report — migration roadmap', href: '/report' },
-      { label: '/algorithms — ML-KEM, ML-DSA, SLH-DSA', href: '/algorithms' },
-      { label: '/migrate — PQC TLS Gateway products', href: '/migrate?cat=PQC%20TLS%20Gateway' },
+      {
+        label: '/algorithms — ML-KEM, ML-DSA, SLH-DSA',
+        href: '/algorithms?highlight=ML-KEM,ML-DSA,SLH-DSA',
+      },
+      { label: '/migrate — PQC TLS Gateway products', href: '/migrate?domain=tls' },
       {
         label: '/migrate — Cloud Encryption Gateways',
-        href: '/migrate?cat=Cloud%20Encryption%20Gateways',
+        href: '/migrate?domain=platform',
       },
     ],
     external: [

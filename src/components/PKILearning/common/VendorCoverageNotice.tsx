@@ -1,22 +1,25 @@
 import { Info } from 'lucide-react'
 import { Link } from 'react-router'
+import type { DomainId } from '@/data/migrationAssets'
+import { migrateDomainForLayer, migrateDomainHref } from '@/utils/migrateLinks'
 
 interface VendorCoverageNoticeProps {
   /** Migrate catalog layer ID — e.g., 'Hardware', 'Network', 'Security Stack', 'AppServers', 'Libraries', 'SecSoftware', 'Database', 'OS' */
   migrateLayer: string
-  /** Optional search term to pre-filter the Migrate catalog */
-  migrateQuery?: string
+  /**
+   * Migrate workbench domain to open (`/migrate?domain=`). When omitted it is
+   * derived from `migrateLayer` via the catalog's own layer fallback.
+   */
+  migrateDomain?: DomainId
   className?: string
 }
 
 export function VendorCoverageNotice({
   migrateLayer,
-  migrateQuery,
+  migrateDomain,
   className,
 }: VendorCoverageNoticeProps) {
-  const href =
-    `/migrate?layer=${encodeURIComponent(migrateLayer)}` +
-    (migrateQuery ? `&q=${encodeURIComponent(migrateQuery)}` : '')
+  const href = migrateDomainHref(migrateDomain ?? migrateDomainForLayer(migrateLayer))
 
   return (
     <div

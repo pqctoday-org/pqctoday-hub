@@ -606,7 +606,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Security Stack" />
+      <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" />
 
       {/* CTA */}
       <div className="text-center">

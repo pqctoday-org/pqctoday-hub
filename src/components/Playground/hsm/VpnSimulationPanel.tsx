@@ -5106,7 +5106,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             RFC 7296 (IKEv2) →
           </Link>
           <Link
-            to="/library?ref=IETF%20RFC%209370"
+            to="/library?ref=RFC%209370"
             className="text-primary hover:underline font-medium"
             target="_blank"
             rel="noopener noreferrer"
@@ -5122,7 +5122,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             RFC 9242 (IKE_INTERMEDIATE) →
           </Link>
           <Link
-            to="/library?ref=draft-ietf-ipsecme-ikev2-mlkem"
+            to="/library?ref=draft-ietf-ipsecme-ikev2-mlkem-05"
             className="text-primary hover:underline font-medium"
             target="_blank"
             rel="noopener noreferrer"

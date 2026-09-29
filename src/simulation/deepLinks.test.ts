@@ -30,6 +30,7 @@ describe('resolveDeepLink (WS-06 drift guard)', () => {
     expect(resolveDeepLink('/algorithms?foo=1').ok).toBe(false) // unknown param
     expect(canResolveDeepLink('/compliance?cert=')).toBe(true)
     expect(canResolveDeepLink('/compliance?cert=A7285')).toBe(true)
+    expect(canResolveDeepLink('/compliance?tab=records')).toBe(true) // records view (rail entry)
     expect(resolveDeepLink('/compliance?foo=1').ok).toBe(false) // unknown param
     // WP5.5 — generator-emitted library topic scope, replacing the old title-regex.
     expect(canResolveDeepLink('/library?topic=CycloneDX')).toBe(true)

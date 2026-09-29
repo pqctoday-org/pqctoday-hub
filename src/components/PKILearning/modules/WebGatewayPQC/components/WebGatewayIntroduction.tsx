@@ -468,7 +468,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Network" />
+      <VendorCoverageNotice migrateLayer="Network" migrateDomain="tls" />
 
       {/* Workshop CTA */}
       <div className="glass-panel p-6 border-l-4 border-l-primary">

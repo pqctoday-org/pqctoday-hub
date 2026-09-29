@@ -168,7 +168,10 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
           </div>
           <p className="text-xs text-muted-foreground">
             See the{' '}
-            <Link to="/algorithms" className="text-primary hover:underline">
+            <Link
+              to="/algorithms?tab=support&protocol=dnssec"
+              className="text-primary hover:underline"
+            >
               Protocol Support matrix&apos;s DNSSEC row
             </Link>{' '}
             for the full, continuously-tracked deployment record behind this claim.
@@ -239,7 +242,7 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
-            to="/algorithms"
+            to="/algorithms?tab=support&protocol=dnssec"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Network size={18} className="text-primary shrink-0" />

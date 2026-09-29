@@ -362,7 +362,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             </div>
           </Link>
           <Link
-            to="/threats"
+            to="/threats?industry=Telecommunications"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <Shield size={16} className="text-primary shrink-0" />

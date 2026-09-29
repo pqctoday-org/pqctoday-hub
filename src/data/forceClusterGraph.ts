@@ -31,6 +31,8 @@ import { patentsData } from './patentsData'
 import { leadersData } from './leadersData'
 import { expandAlgorithmAliases } from './algorithmNameAliases'
 import { vendors } from './vendorData'
+import { algorithmHref } from '@/utils/algorithmLinks'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 export type ForceClusterNodeType =
   | 'certbody'
@@ -164,14 +166,9 @@ function buildNodes(
       sub: algo.type,
       description: `${algo.type} (${algo.family}) — ${algo.status}`,
       degree: 0,
-      // status=All is required, not decorative — AlgorithmsView defaults the
-      // status filter to "Certified" (persona default), which hides every
-      // Draft/Candidate/Research-tier algorithm from the Detailed Comparison
-      // view entirely. Without this, highlight= has nothing to highlight for
-      // any non-Certified algorithm — confirmed via direct browser testing
-      // with a real Candidate-status algorithm (SecP384r1MLKEM1024), whose
-      // deep link rendered a page with no trace of it anywhere.
-      href: `/algorithms?tab=detailed&status=All&highlight=${encodeURIComponent(algo.name)}`,
+      // ?algo= opens this one algorithm's detail, whatever the visitor's
+      // default status / quick-view filters would otherwise hide.
+      href: algorithmHref(algo.name),
     })
   }
 
@@ -201,7 +198,7 @@ function buildNodes(
       sub: uc.industry,
       description: uc.summary || uc.useCaseLabel,
       degree: 0,
-      href: `/algorithms?tab=landscape&industry=${encodeURIComponent(uc.industry)}`,
+      href: `/algorithms?tab=landscape&industry=${encodeURIComponent(uc.industry)}&usecase=${encodeURIComponent(uc.useCaseId)}`,
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
@@ -216,7 +213,7 @@ function buildNodes(
       sub: fw.bodyType,
       description: fw.description || fw.label,
       degree: 0,
-      href: '/compliance',
+      href: `/compliance?framework=${encodeURIComponent(fw.id)}`,
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
@@ -279,7 +276,7 @@ function buildNodes(
       description: enrichProductDescription(xref.productId, xref.softwareName, base),
       degree: 0,
       href: xref.softwareName
-        ? `/migrate?product=${encodeURIComponent(xref.softwareName)}`
+        ? migrateProductHref(matchingSoftware?.productId ?? xref.softwareName)
         : undefined,
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
@@ -301,7 +298,7 @@ function buildNodes(
       sub: 'Vendor product',
       description: enrichProductDescription(sw.productId, sw.softwareName, sw.softwareName),
       degree: 0,
-      href: `/migrate?product=${encodeURIComponent(sw.softwareName)}`,
+      href: migrateProductHref(sw.productId),
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }

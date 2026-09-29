@@ -52,7 +52,7 @@ export const CloudSecretsComparator: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" className="mb-2" />
       {/* Filter buttons */}
       <div className="flex flex-wrap gap-2">
         {filterBtns.map(({ id, label }) => (

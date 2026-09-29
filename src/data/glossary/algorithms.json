@@ -4,7 +4,7 @@
     "acronym": "DH",
     "definition": "The original public-key key exchange protocol, allowing two parties to establish a shared secret over an insecure channel. Quantum-vulnerable.",
     "technicalNote": "Broken by quantum computers via Shor's algorithm. Being replaced by Key Encapsulation Mechanisms (KEMs) such as ML-KEM.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?algo=dh-diffie-hellman",
     "complexity": "beginner",
     "category": "algorithm"
   },
@@ -12,7 +12,7 @@
     "term": "RSA",
     "definition": "A widely used classical public-key algorithm based on the difficulty of factoring large numbers. Vulnerable to quantum attacks via Shor's algorithm.",
     "technicalNote": "Common key sizes: 2048, 3072, 4096 bits. Being replaced by ML-DSA for signatures and ML-KEM for key exchange.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=RSA",
     "complexity": "beginner",
     "category": "algorithm"
   },
@@ -30,7 +30,7 @@
     "acronym": "ECC",
     "definition": "A classical public-key algorithm using the mathematics of elliptic curves. More efficient than RSA but equally vulnerable to quantum attacks.",
     "technicalNote": "Common curves: P-256, P-384, P-521, secp256k1 (Bitcoin), Curve25519.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=ECDH,ECDSA",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -54,7 +54,7 @@
     "term": "SLH-DSA",
     "definition": "Stateless Hash-Based Digital Signature Algorithm, a conservative NIST-standardized hash-based PQC signature scheme (formerly SPHINCS+). Defined in FIPS 205.",
     "technicalNote": "12 variants: combinations of SHA-256/SHAKE, 128/192/256-bit security, and fast/small trade-offs.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -62,14 +62,14 @@
     "term": "FN-DSA",
     "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in the draft FIPS 206 (still in draft, not yet published).",
     "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "advanced",
     "category": "algorithm"
   },
   {
     "term": "FrodoKEM",
     "definition": "A conservative lattice-based KEM algorithm based on the \"plain\" Learning With Errors problem, offering strong security guarantees at the cost of larger key sizes.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=FrodoKEM",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -148,14 +148,14 @@
     "term": "X25519",
     "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve25519. Widely used in TLS 1.3 and the basis for hybrid PQC key exchange.",
     "technicalNote": "Combined with ML-KEM-768 to form the X25519MLKEM768 hybrid key exchange, now deployed by major browsers and cloud providers.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?algo=x25519",
     "complexity": "intermediate",
     "category": "algorithm"
   },
   {
     "term": "X448",
     "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve448, providing higher security than X25519. Quantum-vulnerable.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?algo=x448",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -169,7 +169,7 @@
   {
     "term": "Ed448",
     "definition": "An EdDSA signature algorithm using the Edwards curve Curve448, providing 224-bit security. Quantum-vulnerable.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?algo=ed448",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -206,7 +206,7 @@
     "term": "Kyber",
     "definition": "The original name (CRYSTALS-Kyber) for the lattice-based KEM standardized by NIST as ML-KEM in FIPS 203. Often still referenced in older documents and libraries.",
     "technicalNote": "Kyber was selected from the NIST PQC competition Round 3. It was renamed to ML-KEM for the final standard.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=ML-KEM",
     "complexity": "beginner",
     "category": "algorithm"
   },
@@ -214,7 +214,7 @@
     "term": "Dilithium",
     "definition": "The original name (CRYSTALS-Dilithium) for the lattice-based signature scheme standardized by NIST as ML-DSA in FIPS 204.",
     "technicalNote": "Dilithium was selected from the NIST PQC competition Round 3. It was renamed to ML-DSA for the final standard.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=ML-DSA",
     "complexity": "beginner",
     "category": "algorithm"
   },
@@ -222,7 +222,7 @@
     "term": "Falcon",
     "definition": "The original name for the NTRU-lattice-based signature scheme standardized by NIST as FN-DSA in the draft FIPS 206. Known for compact signatures.",
     "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. Renamed to FN-DSA for the final standard.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -230,7 +230,7 @@
     "term": "SPHINCS+",
     "definition": "The original name for the stateless hash-based signature scheme standardized by NIST as SLH-DSA in FIPS 205. Very conservative security assumptions.",
     "technicalNote": "SPHINCS+ relies only on the security of its underlying hash function, making it a strong fallback if lattice assumptions are broken.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -238,7 +238,7 @@
     "term": "BIKE",
     "acronym": "BIKE",
     "definition": "Bit Flipping Key Encapsulation, a code-based KEM that was a NIST PQC Round 4 candidate. Uses quasi-cyclic moderate-density parity-check codes.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=BIKE",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -262,7 +262,7 @@
     "term": "EdDSA",
     "definition": "Edwards-curve Digital Signature Algorithm, the family of signature schemes including Ed25519 and Ed448. Offers high performance and resistance to side-channel attacks.",
     "technicalNote": "EdDSA is deterministic (no random nonce), reducing implementation risks. Quantum-vulnerable via Shor's algorithm.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=Ed25519,Ed448",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -287,7 +287,7 @@
     "term": "P-256",
     "definition": "A NIST standard elliptic curve (also called secp256r1 or prime256v1) widely used in TLS, FIDO2, and government systems. Quantum-vulnerable.",
     "technicalNote": "Part of the Suite B / CNSA 1.0 algorithms. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=P-256",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -295,7 +295,7 @@
     "term": "P-384",
     "definition": "A NIST standard elliptic curve (secp384r1) offering 192-bit security. Used in high-security TLS configurations and government systems. Quantum-vulnerable.",
     "technicalNote": "Combined with ML-KEM-1024 in the SecP384r1MLKEM1024 hybrid key exchange for NIST Level 5 security.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=P-384",
     "complexity": "intermediate",
     "category": "algorithm"
   },

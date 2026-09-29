@@ -118,7 +118,11 @@ export const VendorReadinessScorer: React.FC = () => {
           Select a vendor to see published status and roadmap details.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
+      <VendorCoverageNotice
+        migrateLayer="Security Stack"
+        migrateDomain="identity"
+        className="mb-2"
+      />
 
       {/* Vendor Selector */}
       <div className="glass-panel p-5">

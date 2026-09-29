@@ -466,10 +466,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
           <p className="text-xs text-muted-foreground leading-relaxed">
             Hardware entropy sources and HSMs that provide NIST-validated entropy for production use
             are tracked in the{' '}
-            <a
-              href="/migrate?category=Hardware+Security+Modules"
-              className="text-primary underline"
-            >
+            <a href="/migrate?domain=hsm" className="text-primary underline">
               Migrate catalog → Hardware Security Modules
             </a>
             . No standalone entropy-source products are currently cataloged; contributions welcome

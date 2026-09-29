@@ -8,7 +8,7 @@
  *   3. Industry + country  — chips under Business Requirements.
  */
 import React, { useMemo } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { ArrowRight, Briefcase, Calendar, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
@@ -131,7 +131,7 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
         <Button
           variant="link"
           size="sm"
-          onClick={() => navigate('/threats')}
+          onClick={() => navigate(`/threats?industry=${encodeURIComponent(matched[0].industry)}`)}
           className="h-auto p-0 text-xs"
         >
           Open Threats <ArrowRight size={12} className="ml-0.5" />
@@ -139,9 +139,10 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
       </div>
       <div className="space-y-1.5">
         {matched.map((t) => (
-          <div
+          <Link
             key={t.threatId}
-            className="flex items-start gap-2 p-2 rounded border border-border bg-card/50"
+            to={`/threats?id=${encodeURIComponent(t.threatId)}`}
+            className="flex items-start gap-2 p-2 rounded border border-border bg-card/50 hover:border-primary/40 transition-colors"
           >
             <span
               className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${CRITICALITY_STYLE[t.criticality]}`}
@@ -151,7 +152,7 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
             <p className="text-xs text-foreground/85 leading-relaxed flex-1 min-w-0">
               {t.description}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

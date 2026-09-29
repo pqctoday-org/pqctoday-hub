@@ -64,7 +64,7 @@ describe('AboutNextStepCTA', () => {
     expect(screen.getByText(/Map the standards landscape/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Explore the landscape/ })).toHaveAttribute(
       'href',
-      '/compliance?tab=landscape'
+      '/compliance?tab=standards'
     )
   })
 

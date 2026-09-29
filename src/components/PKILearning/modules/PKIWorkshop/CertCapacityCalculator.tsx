@@ -582,7 +582,7 @@ export function CertCapacityCalculator() {
 
       <div className="flex justify-between items-center">
         <a
-          href="/migrate?category=Hardware+Security+Modules"
+          href="/migrate?domain=hsm"
           className="text-[11px] text-primary hover:underline flex items-center gap-1"
         >
           <HardDrive size={11} />

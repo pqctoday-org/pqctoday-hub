@@ -514,7 +514,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Security Stack" />
+      <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="identity" />
 
       {/* CTA */}
       <div className="text-center">

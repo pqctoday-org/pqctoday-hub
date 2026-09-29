@@ -235,7 +235,9 @@ export const REFERENCE_PHASES: Record<string, ReferenceResource> = {
   'compliance-cert-check': {
     phasesServed: ['p6', 'p7'],
     legs: ['reference'],
-    deepUrl: '/compliance?cert=',
+    // The certificate records view; a step that knows the record deep-links
+    // it with `?cert=<id>` itself (simTree p6/p7).
+    deepUrl: '/compliance?tab=records',
   },
   threats: { phasesServed: ['p3', 'p4'], legs: ['reference'], deepUrl: '/threats' },
   migrate: {

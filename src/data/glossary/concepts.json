@@ -97,7 +97,7 @@
     "term": "Lattice-Based Cryptography",
     "definition": "A family of PQC algorithms based on the hardness of problems involving mathematical lattices. The basis for ML-KEM and ML-DSA.",
     "technicalNote": "Key problems: Learning With Errors (LWE), Module-LWE, Ring-LWE. Offer good performance and key sizes.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?tab=detailed&quickview=none&family=Lattice",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -112,7 +112,7 @@
   {
     "term": "Code-Based Cryptography",
     "definition": "PQC algorithms based on the hardness of decoding random linear error-correcting codes. Used by Classic McEliece and HQC.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?tab=detailed&quickview=none&family=Code-based",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -150,7 +150,7 @@
     "term": "HSM",
     "acronym": "HSM",
     "definition": "Hardware Security Module, a dedicated physical device for managing and protecting cryptographic keys. Must be updated for PQC support.",
-    "relatedModule": "/threats",
+    "relatedModule": "/threats?industry=Hardware%20Security%20Modules",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -219,7 +219,7 @@
     "term": "NTRU Lattice",
     "acronym": "NTRU",
     "definition": "A lattice-based cryptographic family using polynomial rings, providing the mathematical basis for FN-DSA (Falcon). One of the earliest PQC proposals (1996).",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?highlight=NTRU",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -283,7 +283,7 @@
   {
     "term": "Hybrid Certificate",
     "definition": "An X.509 certificate using both classical and PQC algorithms during the transition period, maintaining interoperability with legacy systems.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=certs",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -307,7 +307,7 @@
     "term": "CBDC",
     "acronym": "CBDC",
     "definition": "Central Bank Digital Currency, a digital form of fiat money issued by central banks. Requires quantum-safe cryptography for long-term trust.",
-    "relatedModule": "/threats",
+    "relatedModule": "/threats?industry=Finance%20%26%20Banking",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -315,7 +315,7 @@
     "term": "DRM",
     "acronym": "DRM",
     "definition": "Digital Rights Management, technology protecting copyrighted content through encryption. Systems like Widevine, PlayReady, and FairPlay face quantum threats to their key hierarchies.",
-    "relatedModule": "/threats",
+    "relatedModule": "/threats?industry=Media%20%2F%20Entertainment%20%2F%20DRM",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -323,7 +323,7 @@
     "term": "KMS",
     "acronym": "KMS",
     "definition": "Key Management System, software for generating, storing, rotating, and auditing cryptographic keys. Must be upgraded to support PQC key sizes and algorithms.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=kms",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -331,7 +331,7 @@
     "term": "TPM",
     "acronym": "TPM",
     "definition": "Trusted Platform Module, a hardware chip providing secure key storage, platform integrity measurement, and cryptographic operations. PQC support being added via TCG specifications.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=hsm",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -461,7 +461,7 @@
     "term": "EHR",
     "acronym": "EHR",
     "definition": "Electronic Health Records, digital patient medical records that require long-term confidentiality. Prime targets for Harvest Now, Decrypt Later attacks.",
-    "relatedModule": "/threats",
+    "relatedModule": "/threats?industry=Healthcare%20%2F%20Pharmaceutical",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -574,7 +574,7 @@
     "term": "Side-Channel Attack",
     "definition": "An attack that exploits physical characteristics of a cryptographic implementation (timing, power consumption, electromagnetic emissions) rather than mathematical weaknesses.",
     "technicalNote": "PQC algorithms like FN-DSA require careful floating-point implementation to resist side-channel attacks. Constant-time implementations are essential.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?tab=validation&section=attacks",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -2672,7 +2672,7 @@
     "term": "Fault Injection",
     "definition": "An active implementation attack that deliberately induces a physical fault — voltage or clock glitching, laser pulses, electromagnetic pulses — during a cryptographic operation to force an incorrect computation and leak secret material.",
     "technicalNote": "Distinct from a Side-Channel Attack, which passively observes normal operation rather than disturbing it.",
-    "relatedModule": "/algorithms",
+    "relatedModule": "/algorithms?tab=validation&section=attacks",
     "complexity": "advanced",
     "category": "concept"
   },

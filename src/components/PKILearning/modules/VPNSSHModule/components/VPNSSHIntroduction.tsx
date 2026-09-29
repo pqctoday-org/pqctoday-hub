@@ -487,7 +487,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </div>
           </Link>
           <Link
-            to="/algorithms"
+            to="/algorithms?highlight=ML-KEM,ML-DSA"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Key size={18} className="text-primary shrink-0" />
@@ -552,7 +552,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           Step through IKEv2 and SSH handshakes, compare classical vs hybrid vs pure PQC modes.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Network" />
+      <VendorCoverageNotice migrateLayer="Network" migrateDomain="vpn" />
       <ReadingCompleteButton />
     </div>
   )

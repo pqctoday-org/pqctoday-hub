@@ -84,7 +84,7 @@ export const DeploymentRoadmapTracker: React.FC = () => {
       </div>
 
       <Link
-        to="/algorithms"
+        to="/algorithms?tab=support&protocol=dnssec"
         className="flex items-center gap-2 text-xs text-primary hover:underline"
       >
         See the live, continuously-tracked deployment record on the Protocol Support matrix{' '}

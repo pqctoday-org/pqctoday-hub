@@ -78,7 +78,9 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     return { ok: true }
   }
   if (path === '/compliance') {
-    const bad = keys.find((k) => k !== 'cert')
+    // ?cert=<record id> opens one certificate record; ?tab= picks the pillar
+    // (e.g. tab=records for the certificate records view).
+    const bad = keys.find((k) => k !== 'cert' && k !== 'tab')
     if (bad) return { ok: false, reason: `/compliance: unknown param "${bad}"` }
     return { ok: true }
   }

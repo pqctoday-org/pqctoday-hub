@@ -207,7 +207,7 @@ export const BookmarksPanel = () => {
                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                   >
                     <Link
-                      to={getHref('/migrate', `?q=${encodeURIComponent(name)}`)}
+                      to={getHref('/migrate', `?product=${encodeURIComponent(key)}`)}
                       className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                     >
                       <span className="truncate">{name}</span>

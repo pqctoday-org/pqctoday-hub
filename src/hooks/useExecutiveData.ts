@@ -96,7 +96,7 @@ export function useExecutiveData(
           action: 'Address critical quantum threats in your infrastructure',
           affectedSystems: topThreat?.industry || 'Multiple sectors',
           deadline: 'Immediate',
-          link: '/threats',
+          link: '/threats?criticality=Critical',
         })
       }
 

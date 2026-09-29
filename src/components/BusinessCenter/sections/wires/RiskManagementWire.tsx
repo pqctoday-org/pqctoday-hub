@@ -9,7 +9,7 @@
  *      links to /compliance.
  */
 import React from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import {
   ArrowRight,
   Activity,
@@ -291,13 +291,14 @@ function TrackedThreatsBlock() {
       </div>
       <div className="flex flex-wrap gap-1.5">
         {tracked.slice(0, 8).map((t) => (
-          <span
+          <Link
             key={t.threatId}
-            className="text-[10px] px-2 py-0.5 rounded bg-muted text-foreground border border-border"
+            to={`/threats?id=${encodeURIComponent(t.threatId)}`}
+            className="text-[10px] px-2 py-0.5 rounded bg-muted text-foreground border border-border hover:border-primary/40 transition-colors"
             title={t.description}
           >
             {t.threatId}
-          </span>
+          </Link>
         ))}
         {tracked.length > 8 && (
           <span className="text-[10px] text-muted-foreground">+{tracked.length - 8} more</span>
