@@ -1313,6 +1313,13 @@ const FRAMEWORK = {
       do: 'Send PQC readiness questionnaires to strategic vendors and track responses.',
       output: 'Vendor questionnaire responses',
       steps: [
+        // 09-28 content integration (WP-B): how product certification works,
+        // before looking a vendor's certificate up — the fundamentals gate this
+        // activity; the scheme deep dives are optional (user decision Q1).
+        L(
+          'crypto-product-certification',
+          'Learn: how cryptographic product certification works (FIPS 140-3, CC/EUCC, PCI)'
+        ),
         // toOverride: a real ACVP cert (Thales Luna G7, ML-DSA/ML-KEM — matches
         // simArchitecture.ts's large-size 'Thales Luna HSM' node) so the step opens
         // on a real vendor's actual cert status, not an empty ?cert= (WP5.5).
@@ -1323,6 +1330,13 @@ const FRAMEWORK = {
         ),
         R('algorithms-protocol-matrix', 'Reference: which vendor protocols have a PQC path'),
         A('vendor-scorecard', 'Score vendors (Vendor Scorecard)'),
+      ],
+      deepDive: [
+        L('fips-140-3-certification', 'Deep dive — Learn: FIPS 140-3 certification'),
+        L(
+          'cc-eucc-certification',
+          'Deep dive — Learn: Common Criteria, EUCC & eIDAS certification'
+        ),
       ],
     },
     {

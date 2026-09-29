@@ -51,6 +51,13 @@ const TREE: PhaseTree = {
           output: 'Vendor questionnaire responses',
           steps: [
             {
+              kind: 'learn',
+              label:
+                'Learn: how cryptographic product certification works (FIPS 140-3, CC/EUCC, PCI)',
+              to: '/learn/crypto-product-certification',
+              moduleId: 'crypto-product-certification',
+            },
+            {
               kind: 'reference',
               label: 'Reference: vendor FIPS/CC cert status',
               to: '/compliance?cert=A8273',
@@ -67,6 +74,20 @@ const TREE: PhaseTree = {
               label: 'Score vendors (Vendor Scorecard)',
               to: '/business/tools/vendor-scorecard',
               artifactType: 'vendor-scorecard',
+            },
+          ],
+          deepDive: [
+            {
+              kind: 'learn',
+              label: 'Deep dive — Learn: FIPS 140-3 certification',
+              to: '/learn/fips-140-3-certification',
+              moduleId: 'fips-140-3-certification',
+            },
+            {
+              kind: 'learn',
+              label: 'Deep dive — Learn: Common Criteria, EUCC & eIDAS certification',
+              to: '/learn/cc-eucc-certification',
+              moduleId: 'cc-eucc-certification',
             },
           ],
         },

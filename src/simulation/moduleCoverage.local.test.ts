@@ -31,10 +31,6 @@ const NOT_IN_SIM: Record<string, string> = {
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.
-  'crypto-product-certification': 'scheduled: WP-B (P7 certification activity)',
-  'fips-140-3-certification': 'scheduled: WP-B (optional deep dive)',
-  'cc-eucc-certification': 'scheduled: WP-B (optional deep dive)',
-  'pci-certification': 'scheduled: WP-B (financial/retail track)',
   'government-defense-pqc': 'scheduled: WP-C (government sector track)',
   sbom: 'scheduled: WP-D (P2 SBOM link)',
   'crypto-registry': 'scheduled: WP-D (P2 CBOM naming)',
