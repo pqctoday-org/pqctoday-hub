@@ -47,6 +47,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { libraryHref } from './libraryRef'
 
@@ -593,6 +595,7 @@ function ProtocolCard({
 
   return (
     <div
+      data-deeplink-id={p.id}
       className={`glass-panel overflow-hidden transition-colors ${
         expanded ? 'border-primary/40' : ''
       } ${p.recommended ? 'ring-1 ring-inset ring-status-warning/20' : ''}`}
@@ -838,6 +841,15 @@ export function PQCProtocolMatrix() {
     return p ? (PROTOCOL_MATRIX.find((r) => r.id === p) ?? null) : null
   })
   const firstRecommendedRef = useRef<HTMLTableRowElement | null>(null)
+  // The protocol a deep link arrived on. When its modal is closed, scroll to
+  // (and ring) its row so the reader keeps their place in the matrix. A
+  // hidden historical row simply isn't found — the scroll hook times out.
+  const arrivedProtocolIdRef = useRef<string | null>(searchParams.get('protocol'))
+  const [scrollTarget, setScrollTarget] = useState<{ id: string; seq: number } | null>(null)
+  useScrollToDeepLinkTarget(
+    scrollTarget ? `${scrollTarget.id}:${scrollTarget.seq}` : null,
+    scrollTarget ? deepLinkSelector(scrollTarget.id) : null
+  )
   // Single-open accordion for the detailed-mode protocol cards.
   const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
   // WS12: deprecated migration-source rows, off by default. Not a URL param —
@@ -931,6 +943,11 @@ export function PQCProtocolMatrix() {
     [setSearchParams]
   )
   const closeProtocol = useCallback(() => {
+    const closingId = selectedProtocol?.id ?? null
+    if (closingId && closingId === arrivedProtocolIdRef.current) {
+      arrivedProtocolIdRef.current = null
+      setScrollTarget((prev) => ({ id: closingId, seq: (prev?.seq ?? 0) + 1 }))
+    }
     setSelectedProtocol(null)
     setSearchParams(
       (sp) => {
@@ -940,7 +957,7 @@ export function PQCProtocolMatrix() {
       },
       { replace: true }
     )
-  }, [setSearchParams])
+  }, [setSearchParams, selectedProtocol])
 
   // Reconcile the open modal with ?protocol= on back/forward / external nav.
   const protocolParam = searchParams.get('protocol')
@@ -949,6 +966,21 @@ export function PQCProtocolMatrix() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
     setSelectedProtocol((prev) => (prev?.id === row?.id ? prev : row))
   }, [protocolParam])
+
+  // ?protocol=<id> that matches no row (retired, renamed or mistyped) — say so
+  // instead of silently opening nothing. Dismissing strips the dead param.
+  const unknownProtocolId =
+    protocolParam && !PROTOCOL_MATRIX.some((r) => r.id === protocolParam) ? protocolParam : null
+  const dismissUnknownProtocol = useCallback(() => {
+    setSearchParams(
+      (sp) => {
+        const params = new URLSearchParams(sp)
+        params.delete('protocol')
+        return params
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
 
   // ?highlight=recommended — scroll to first recommended row on mount
   const highlightRecommended = searchParams.get('highlight') === 'recommended'
@@ -1035,6 +1067,13 @@ export function PQCProtocolMatrix() {
 
   return (
     <div className="space-y-6">
+      {unknownProtocolId && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`The linked protocol "${unknownProtocolId}" isn't in the matrix — it may have been renamed or retired. Showing all protocols instead.`}
+          onDismiss={dismissUnknownProtocol}
+        />
+      )}
       {/* Recommended for production — detailed view only */}
       {!isHeatmap && RECOMMENDED_ROWS.length > 0 && (
         <div className="glass-panel p-4 space-y-3">
@@ -1445,6 +1484,7 @@ export function PQCProtocolMatrix() {
                 return (
                   <tr
                     key={p.id}
+                    data-deeplink-id={p.id}
                     ref={isFirstRecommended ? firstRecommendedRef : undefined}
                     className={`border-b border-border/50 align-top transition-colors ${
                       isRecommended && highlightRecommended

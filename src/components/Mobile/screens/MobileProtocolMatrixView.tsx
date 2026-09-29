@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { ExternalLink, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -10,6 +11,7 @@ import {
 } from '@/data/pqcProtocolMatrix'
 import { libraryHref } from '@/components/Algorithms/libraryRef'
 import { MobileSheet } from '../primitives/Sheet'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 
 const STATUS_ORDER: DimensionStatusValue[] = ['rfc', 'draft', 'experimental', 'none', 'na']
 
@@ -64,7 +66,40 @@ const DIMENSION_LABELS: { key: keyof ProtocolMatrixRow['dimensions']; label: str
 export function MobileProtocolMatrixView() {
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<DimensionStatusValue | null>(null)
-  const [selected, setSelected] = useState<ProtocolMatrixRow | null>(null)
+  // The open detail sheet IS ?protocol=<id> — same param desktop's
+  // PQCProtocolMatrix reads, so a shared link opens the same protocol on a
+  // phone. Opening pushes (Back closes the sheet); closing replaces.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const protocolParam = searchParams.get('protocol')
+  const selected = useMemo<ProtocolMatrixRow | null>(
+    () => (protocolParam ? (PROTOCOL_MATRIX.find((r) => r.id === protocolParam) ?? null) : null),
+    [protocolParam]
+  )
+  const unknownProtocolId = protocolParam && !selected ? protocolParam : null
+  const openProtocol = useCallback(
+    (row: ProtocolMatrixRow) =>
+      setSearchParams(
+        (sp) => {
+          const next = new URLSearchParams(sp)
+          next.set('protocol', row.id)
+          return next
+        },
+        { replace: false }
+      ),
+    [setSearchParams]
+  )
+  const clearProtocol = useCallback(
+    () =>
+      setSearchParams(
+        (sp) => {
+          const next = new URLSearchParams(sp)
+          next.delete('protocol')
+          return next
+        },
+        { replace: true }
+      ),
+    [setSearchParams]
+  )
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -89,6 +124,16 @@ export function MobileProtocolMatrixView() {
       <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
         Which IETF/vendor protocols have a real post-quantum path today.
       </p>
+
+      {unknownProtocolId && (
+        <div className="mt-3">
+          <DeepLinkNotice
+            kind="not-found"
+            message={`The linked protocol "${unknownProtocolId}" isn't in the matrix — it may have been renamed or retired.`}
+            onDismiss={clearProtocol}
+          />
+        </div>
+      )}
 
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2">
         <Search size={14} className="shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -130,7 +175,7 @@ export function MobileProtocolMatrixView() {
             key={row.id}
             type="button"
             variant="ghost"
-            onClick={() => setSelected(row)}
+            onClick={() => openProtocol(row)}
             className="h-auto flex-col items-start gap-1.5 whitespace-normal rounded-lg border border-border bg-card p-3 text-left"
           >
             <span className="text-[12.5px] font-bold text-foreground">{row.name}</span>
@@ -168,7 +213,7 @@ export function MobileProtocolMatrixView() {
 
       <MobileSheet
         open={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={clearProtocol}
         title={selected?.name}
         large
         testId="protocol-matrix-detail-sheet"

@@ -1,16 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { MobileProtocolMatrixView } from './MobileProtocolMatrixView'
 import { PROTOCOL_MATRIX } from '@/data/pqcProtocolMatrix'
 
 // Real data throughout — every assertion derives from the SAME PROTOCOL_MATRIX
 // PQCProtocolMatrix.tsx (desktop) renders from, not invented counts.
+function Probe() {
+  return <span data-testid="url-search">{useLocation().search}</span>
+}
+const renderAt = (entry = '/algorithms?tab=support') =>
+  render(
+    <MemoryRouter initialEntries={[entry]}>
+      <MobileProtocolMatrixView />
+      <Probe />
+    </MemoryRouter>
+  )
+const urlSearch = () => screen.getByTestId('url-search').textContent ?? ''
+
 describe('MobileProtocolMatrixView', () => {
   const visibleRows = PROTOCOL_MATRIX.filter((r) => !r.historical)
 
   it('shows the real default-visible protocol count, historical rows hidden', () => {
-    render(<MobileProtocolMatrixView />)
+    renderAt()
     expect(
       screen.getByText(`${visibleRows.length} of ${visibleRows.length} protocols`)
     ).toBeInTheDocument()
@@ -21,12 +34,12 @@ describe('MobileProtocolMatrixView', () => {
   })
 
   it('renders a real protocol row with its real name', () => {
-    render(<MobileProtocolMatrixView />)
+    renderAt()
     expect(screen.getByText(visibleRows[0].name)).toBeInTheDocument()
   })
 
   it('search filters to matching protocols only', () => {
-    render(<MobileProtocolMatrixView />)
+    renderAt()
     const target = visibleRows.find((r) => r.name.toLowerCase().includes('tls'))
     expect(target).toBeTruthy()
     fireEvent.change(screen.getByPlaceholderText('Search protocols'), {
@@ -42,7 +55,7 @@ describe('MobileProtocolMatrixView', () => {
   })
 
   it('tapping a row opens the detail sheet with the real description and dimensions', () => {
-    render(<MobileProtocolMatrixView />)
+    renderAt()
     const row = visibleRows[0]
     fireEvent.click(screen.getByText(row.name).closest('button')!)
     expect(screen.getByText(row.description)).toBeInTheDocument()
@@ -51,9 +64,30 @@ describe('MobileProtocolMatrixView', () => {
   })
 
   it('states the real desktop-only cuts honestly', () => {
-    render(<MobileProtocolMatrixView />)
+    renderAt()
     expect(
       screen.getByText(/Availability and sort filters, the heatmap-table view/i)
     ).toBeInTheDocument()
+  })
+
+  it('opens the detail sheet for ?protocol=<id> on load (same param as desktop)', () => {
+    const row = visibleRows[0]
+    renderAt(`/algorithms?tab=support&protocol=${row.id}`)
+    expect(screen.getByText(row.description)).toBeInTheDocument()
+  })
+
+  it('writes ?protocol=<id> when a row is tapped', () => {
+    const row = visibleRows[0]
+    renderAt()
+    fireEvent.click(screen.getByText(row.name).closest('button')!)
+    expect(urlSearch()).toContain(`protocol=${row.id}`)
+  })
+
+  it('shows a not-found notice for an unknown ?protocol id', () => {
+    renderAt('/algorithms?tab=support&protocol=no-such-protocol')
+    expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('no-such-protocol')
+    fireEvent.click(screen.getByRole('button', { name: /dismiss notice/i }))
+    expect(urlSearch()).not.toContain('protocol=')
+    expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
   })
 })

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { Search, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import type { LibraryItem } from '@/data/libraryData'
+import { findLibraryItemByRef, findLibrarySuccessor, type LibraryItem } from '@/data/libraryData'
 import {
   LIBRARY_DOORS as DOORS,
   type LibraryPurposeSelection as PurposeSelection,
@@ -15,6 +16,8 @@ import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/lib
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { cn } from '@/lib/utils'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { MobileSheet } from '../primitives/Sheet'
 
 type QuickView = 'all' | 'new' | 'cert' | 'bookmarked'
@@ -63,10 +66,62 @@ export function MobileLibraryView() {
   const libraryBookmarks = useBookmarkStore((s) => s.libraryBookmarks)
   const toggleLibraryBookmark = useBookmarkStore((s) => s.toggleLibraryBookmark)
 
-  const [purpose, setPurpose] = useState<PurposeSelection>('all')
+  // The open document lives in ?ref — the same param desktop reads — so a
+  // shared /library?ref= link opens its sheet on a phone too, and Back closes it.
+  // ?q and ?purpose seed the search box and door once, on arrival.
+  const [params, setParams] = useSearchParams()
+  const [purpose, setPurpose] = useState<PurposeSelection>(() => {
+    const p = params.get('purpose')
+    return DOORS.some((d) => d.id === p) ? (p as PurposeSelection) : 'all'
+  })
   const [quickView, setQuickView] = useState<QuickView>('all')
-  const [searchText, setSearchText] = useState('')
-  const [selected, setSelected] = useState<LibraryItem | null>(null)
+  const [searchText, setSearchText] = useState(() => params.get('q') ?? '')
+  const detailRef = params.get('ref')
+  // Same resolution as desktop's resolveLibraryDeepLink (live ref, else the
+  // document that superseded it), read straight from libraryData.
+  const selected: LibraryItem | null = useMemo(
+    () =>
+      detailRef
+        ? (findLibraryItemByRef(detailRef) ?? findLibrarySuccessor(detailRef) ?? null)
+        : null,
+    [detailRef]
+  )
+  const setDetailRef = useCallback(
+    (ref: string | null) => {
+      const next = new URLSearchParams(params)
+      if (ref) next.set('ref', ref)
+      else next.delete('ref')
+      // Opening pushes (Back closes the sheet); closing replaces.
+      setParams(next, { replace: !ref })
+    },
+    [params, setParams]
+  )
+
+  // Retired ref → swap to its successor and say so; unknown ref → say so,
+  // rather than opening nothing. Scroll the list to the linked card.
+  const [notice, setNotice] = useState<string | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
+  useEffect(() => {
+    if (!detailRef) return
+    if (!selected) {
+      setNotice(
+        `No library document matches “${detailRef}”. It may have been retired, renamed or mistyped.`
+      )
+      return
+    }
+    if (selected.referenceId !== detailRef && !findLibraryItemByRef(detailRef)) {
+      setNotice(
+        `“${detailRef}” has been superseded by ${selected.referenceId}. Showing it instead.`
+      )
+      const next = new URLSearchParams(params)
+      next.set('ref', selected.referenceId)
+      setParams(next, { replace: true })
+      return
+    }
+    setScrollTarget(selected.referenceId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ref
+  }, [detailRef])
 
   const certRelevantIdSet = useMemo(() => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)), [])
 
@@ -105,6 +160,18 @@ export function MobileLibraryView() {
           {displayedItems.length} documents
         </p>
       </div>
+
+      {notice && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={notice}
+          onDismiss={() => {
+            // An unknown ref is still in the URL; drop it along with the notice.
+            if (detailRef && !selected) setDetailRef(null)
+            setNotice(null)
+          }}
+        />
+      )}
 
       <div className="-mx-4 mb-3 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
         {DOORS.map((door) => {
@@ -183,7 +250,11 @@ export function MobileLibraryView() {
               ? `updated ${formatLibDate(item.lastUpdateDate)}`
               : formatLibDate(item.initialPublicationDate)
           return (
-            <article key={item.referenceId} className="glass-panel relative flex flex-col p-3.5">
+            <article
+              key={item.referenceId}
+              data-deeplink-id={item.referenceId}
+              className="glass-panel relative flex flex-col p-3.5"
+            >
               <Button
                 type="button"
                 variant="ghost"
@@ -206,7 +277,7 @@ export function MobileLibraryView() {
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setSelected(item)}
+                onClick={() => setDetailRef(item.referenceId)}
                 // Button's own base classes hard-code whitespace-nowrap; this
                 // button wraps item.documentTitle (a real document title),
                 // which inherited nowrap and would run off the right edge
@@ -251,7 +322,7 @@ export function MobileLibraryView() {
 
       <MobileSheet
         open={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={() => setDetailRef(null)}
         title={selected?.referenceId}
         large
         testId="library-detail-sheet"

@@ -703,8 +703,10 @@ export const ModuleShell = ({
           the same reason the back link is. See src/data/moduleRelations.ts. */}
         {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
         {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
-          which industries' use cases point at THIS module. Same embed rules. */}
-        {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
+          which industries' use cases point at THIS module. 2026-09-28 (sim
+          content integration, user decision Q4): shown inside the Simulation's
+          embed too — only the external /embed iframe still hides it. */}
+        {!iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
         {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
           rendered whether or not the module is completed. Same embed rules. */}
         {/* Round 9, wave 2 — the quiz handoff, visible before completion. */}

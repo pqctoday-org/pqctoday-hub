@@ -139,6 +139,14 @@ export interface SimAutoRunPlayer {
   beginPhase: () => void
   /** Dismiss the one-time scenario-framing card and continue to the first pass. */
   beginScenario: () => void
+  /** 09-28 nav remediation (WP3/D7): close whichever intro is up WITHOUT
+   *  advancing — the run stays loaded but paused, so the board is usable and the
+   *  transport's Resume / Stop are reachable. Backs the intros' ✕, Escape and
+   *  backdrop. (The intros' explicit "Stop play" calls `stop` instead.) */
+  pauseAndDismissIntro: () => void
+  /** 09-28 nav remediation (WP3.4): hide the current "document ready" card. A
+   *  later reveal (even of the same document type) shows again. */
+  dismissReveal: () => void
   /** Jump the playhead to the start of the previous maturity pass (re-shows its intro). */
   prevPass: () => void
   /** Jump the playhead to the start of the next maturity pass (shows its intro). */
@@ -653,6 +661,15 @@ export function useSimAutoRunPlayer({
   useEffect(() => {
     scenarioIntroRef.current = scenarioIntro != null
   }, [scenarioIntro])
+  // 09-28 nav remediation (WP4.5): is a run actually loaded (running, or
+  // finished but its "Close" band still up)? stop() is now also called from
+  // Reset, Start over and the exits, where the player is often idle — an idle
+  // stop() must not overwrite the saved resume playhead with a stale index or
+  // close a resource the player opened by hand.
+  const liveRef = useRef(false)
+  useEffect(() => {
+    liveRef.current = running || done
+  }, [running, done])
 
   // Warm the voice list (loads async) + HARD speech safety: cancel any speech if
   // the tab is hidden, navigated, or closed so it can never keep speaking after the
@@ -775,6 +792,7 @@ export function useSimAutoRunPlayer({
       setPaused(false)
       setLabel('')
       setCaption('Starting the migration playthrough…')
+      liveRef.current = true
       setRunning(true)
     },
     [clearTimer]
@@ -788,13 +806,19 @@ export function useSimAutoRunPlayer({
   const stop = useCallback(() => {
     clearTimer()
     stopSpeech()
+    const wasLive = liveRef.current
+    liveRef.current = false
     // Remember WHERE we stopped so the play button resumes from here (not the
     // top) — climb-family only. A walkthrough or single-phase run's index is
     // meaningless against the climb queue's shape and must never overwrite its
     // saved playhead.
-    if (usesSharedResumeIndex(modeRef.current)) {
+    if (wasLive && usesSharedResumeIndex(modeRef.current)) {
       useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
     }
+    // 09-28 (WP4.2): close the resource the run had open, so a stopped run
+    // doesn't leave its pane up (and re-open it on the next load via the
+    // persisted openStepRef, which closeEmbed clears).
+    if (wasLive) closeEmbedRef.current()
     setAutoRunFill(false)
     setRunning(false)
     setPaused(false)
@@ -805,6 +829,9 @@ export function useSimAutoRunPlayer({
     // guard (SimulationView effect on `done`), so the next phase run re-opens it.
     setDone(false)
     setScenarioIntro(null)
+    // 09-28 (WP3.0): the pass intro was never cleared here, and desktop renders
+    // it whenever it's set — so stopping on a pass intro left the modal up.
+    setPassIntro(null)
     setPhaseIntro(null)
   }, [clearTimer])
   const cycleSpeed = useCallback(
@@ -847,6 +874,21 @@ export function useSimAutoRunPlayer({
     setScenarioIntro(null)
   }, [])
   const beginScenario = useCallback(() => advanceScenario(true), [advanceScenario])
+
+  // 09-28 (WP3/D7): close the active intro without advancing. Pausing first
+  // means the intros' own auto-advance effects (gated on !paused) and the step
+  // effect stay idle. Each advance* marks its intro consumed, so Resume carries
+  // on from here rather than re-showing the same card. Only the intro actually
+  // showing is consumed (advance* each no-op when theirs isn't up).
+  const pauseAndDismissIntro = useCallback(() => {
+    clearTimer()
+    stopSpeech()
+    setPaused(true)
+    advanceScenario(false)
+    advancePass(false)
+    advancePhase(false)
+  }, [clearTimer, advanceScenario, advancePass, advancePhase])
+  const dismissReveal = useCallback(() => setReveal(null), [])
 
   // Jump the playhead to an index and re-show the pass intro wherever we land.
   const jumpToIndex = useCallback(
@@ -1212,11 +1254,15 @@ export function useSimAutoRunPlayer({
   const resumeMode: RunMode =
     resumeModeRaw === 'climb' || resumeModeRaw === 'climb-deep' ? resumeModeRaw : 'climb'
 
-  // Stop the timer + any speech if the sim unmounts mid-run.
+  // Stop the timer + any speech if the sim unmounts mid-run — and switch demo
+  // fill off (09-28, WP4.1): leaving mid-run (Back, a nav link) used to leave
+  // it on, so tools opened elsewhere in the hub came up pre-filled with demo
+  // content.
   useEffect(
     () => () => {
       clearTimer()
       stopSpeech()
+      setAutoRunFill(false)
     },
     [clearTimer]
   )
@@ -1249,6 +1295,8 @@ export function useSimAutoRunPlayer({
     beginPass,
     beginPhase,
     beginScenario,
+    pauseAndDismissIntro,
+    dismissReveal,
     prevPass,
     nextPass,
   }

@@ -39,6 +39,12 @@ const TREE: PhaseTree = {
               moduleId: 'crypto-mgmt-modernization',
             },
             {
+              kind: 'learn',
+              label: 'Learn: CycloneDX Cryptography Registry — one canonical name per algorithm',
+              to: '/learn/crypto-registry',
+              moduleId: 'crypto-registry',
+            },
+            {
               kind: 'reference',
               label: 'Reference: CycloneDX in the Library (1.7, cryptoProperties)',
               to: '/library?topic=CycloneDX',
@@ -67,6 +73,12 @@ const TREE: PhaseTree = {
                 'Learn: CBOM population — six-step transformation (import → enrich → SBOM link → certs → classify → vendor flags)',
               to: '/learn/cbom',
               moduleId: 'cbom',
+            },
+            {
+              kind: 'learn',
+              label: 'Learn: SBOM — the software inventory your CBOM links to (CycloneDX & SPDX)',
+              to: '/learn/sbom',
+              moduleId: 'sbom',
             },
             {
               kind: 'activity',

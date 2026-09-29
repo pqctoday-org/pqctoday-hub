@@ -54,6 +54,7 @@ export function LibraryDocumentCard({
     // named button. The badge is then a sibling control, not a nested one.
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: this click is a REDUNDANT mouse convenience (click anywhere on the card), not the card's only affordance. Full keyboard and screen-reader access is the title <Button> below, which is a real, named control. Giving this container a role + tabIndex instead is exactly what caused the nested-interactive violation this change fixes.
     <div
+      data-deeplink-id={item.referenceId}
       onClick={() => onOpen(item.referenceId)}
       className="glass-panel flex min-h-[172px] cursor-pointer flex-col rounded-2xl p-3.5 transition-colors hover:border-primary/40 hover:bg-card focus-within:border-primary/40"
     >

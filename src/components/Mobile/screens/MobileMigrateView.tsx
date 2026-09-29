@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useSearchParams } from 'react-router'
 import {
   ArrowRight,
   Calendar,
@@ -33,7 +34,10 @@ import {
   productsForVendor,
   domainProductCount,
   filterProducts,
+  resolveProductLink,
+  productLinkNoticeMessage,
 } from '@/components/Migrate/Workbench/workbenchCatalog'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
@@ -69,6 +73,9 @@ const FOUNDATION_DOMAINS: DomainId[] = Object.values(DOMAINS)
   .map((d) => d.id)
 
 type Tab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
+
+const isTab = (v: string | null): v is Tab =>
+  v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'replace', label: 'Replace' },
@@ -195,6 +202,103 @@ export function MobileMigrateView() {
   // only, not duplicated into the product sheet).
   const [pendingVendorId, setPendingVendorId] = useState<string | null>(null)
 
+  // ── Deep links (?tab=, ?product=<id|name>, ?productIds=<id1>,<id2>) ──────
+  // Deep-link remediation PR 1 (2026-09-28): the phone view used to ignore
+  // these entirely (and MigrationWorkbench's desktop effects erased them before
+  // this screen could read them). Same resolution as desktop
+  // (resolveProductLink: id → exact name → former name). A single resolved
+  // product opens its detail sheet; opening a product pushes ?product=<id>,
+  // closing the sheet removes it with replace.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const productParam = searchParams.get('product')
+  const productIdsParam = searchParams.get('productIds')
+  const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(undefined)
+  const [linkNotice, setLinkNotice] = useState<string | null>(null)
+  const selectedProductRef = useRef<SoftwareItem | null>(null)
+  useEffect(() => {
+    selectedProductRef.current = selectedProduct
+  }, [selectedProduct])
+
+  const updateParams = useCallback(
+    (mutate: (sp: URLSearchParams) => void, replace: boolean) => {
+      setSearchParams(
+        (prev) => {
+          const sp = new URLSearchParams(prev)
+          mutate(sp)
+          return sp
+        },
+        { replace }
+      )
+    },
+    [setSearchParams]
+  )
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- follow ?tab= from the URL (initial load and back/forward)
+    if (isTab(tabParam)) setTab(tabParam)
+  }, [tabParam])
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from ?product=/?productIds= whenever their value changes (initial load, a second link, back/forward) */
+    if (!productParam && !productIdsParam) {
+      // Back from an opened product (or the params were cleared) closes the sheet.
+      setSelectedProduct(null)
+      return
+    }
+    const res = resolveProductLink(productParam, productIdsParam)
+    const first = res.products[0]
+    // Our own openProduct() push — the sheet is already showing it.
+    if (res.products.length === 1 && selectedProductRef.current?.productId === first.productId) {
+      return
+    }
+    setLinkNotice(productLinkNoticeMessage(res))
+    const domain = first
+      ? classifyProductDomain(first.categoryName, first.infrastructureLayer)
+      : null
+    if (!first || !domain) return
+    setTab('replace')
+    setSelectedDomain(domain)
+    setFilter('')
+    setCatalogQuery('')
+    setProductIdFilter(res.products.map((p) => p.productId))
+    setSelectedProduct(res.products.length === 1 ? first : null)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [productParam, productIdsParam])
+
+  const openProduct = useCallback(
+    (p: SoftwareItem) => {
+      selectedProductRef.current = p
+      setSelectedProduct(p)
+      if (!p.productId) return
+      updateParams((sp) => {
+        sp.delete('productIds')
+        sp.set('product', p.productId)
+      }, false)
+    },
+    [updateParams]
+  )
+
+  const closeProduct = useCallback(() => {
+    selectedProductRef.current = null
+    setSelectedProduct(null)
+    updateParams((sp) => {
+      sp.delete('product')
+      sp.delete('productIds')
+    }, true)
+  }, [updateParams])
+
+  const selectTab = (t: Tab) => {
+    setTab(t)
+    updateParams((sp) => sp.set('tab', t), true)
+  }
+
+  /** Reader narrowed/changed the list themselves: drop a lingering productIds link. */
+  const dropProductIdsLink = () => {
+    setProductIdFilter(undefined)
+    if (productIdsParam) updateParams((sp) => sp.delete('productIds'), true)
+  }
+
   const persona = usePersonaStore((s) => s.selectedPersona)
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
@@ -217,7 +321,10 @@ export function MobileMigrateView() {
   )
 
   const products = useMemo(() => productsForDomain(selectedDomain), [selectedDomain])
-  const filteredProducts = useMemo(() => filterProducts(products, filter), [products, filter])
+  const filteredProducts = useMemo(
+    () => filterProducts(products, filter, productIdFilter),
+    [products, filter, productIdFilter]
+  )
 
   // Shared by both chip rows (the 10 replace assets and the 8 foundation
   // domains below) so switching domains always clears a stale filter —
@@ -225,6 +332,7 @@ export function MobileMigrateView() {
   const handleSelectDomain = (id: DomainId) => {
     setSelectedDomain(id)
     setFilter('')
+    dropProductIdsLink()
   }
 
   // Catalog-wide search results (all ~1,011 products, not just one domain's
@@ -273,7 +381,7 @@ export function MobileMigrateView() {
             key={t.id}
             type="button"
             variant="ghost"
-            onClick={() => setTab(t.id)}
+            onClick={() => selectTab(t.id)}
             aria-pressed={tab === t.id}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
@@ -291,6 +399,14 @@ export function MobileMigrateView() {
           </Button>
         ))}
       </div>
+
+      {linkNotice && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={linkNotice}
+          onDismiss={() => setLinkNotice(null)}
+        />
+      )}
 
       {tab === 'replace' && (
         <div className="flex flex-col gap-3">
@@ -354,7 +470,7 @@ export function MobileMigrateView() {
                       product={p}
                       chosen={(choice[domain] ?? []).includes(p.softwareName)}
                       onChoose={() => chooseProduct(domain, p.softwareName)}
-                      onSelect={() => setSelectedProduct(p)}
+                      onSelect={() => openProduct(p)}
                     />
                   )
                 })
@@ -509,7 +625,10 @@ export function MobileMigrateView() {
                   />
                   <input
                     value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
+                    onChange={(e) => {
+                      setFilter(e.target.value)
+                      dropProductIdsLink()
+                    }}
                     placeholder="Filter products…"
                     aria-label="Filter products"
                     className="h-9 w-full rounded-lg border border-border bg-card pl-8 pr-3 text-[12px] text-foreground focus:outline-none"
@@ -542,7 +661,7 @@ export function MobileMigrateView() {
                       product={p}
                       chosen={(choice[selectedDomain] ?? []).includes(p.softwareName)}
                       onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
-                      onSelect={() => setSelectedProduct(p)}
+                      onSelect={() => openProduct(p)}
                     />
                   ))
                 )}
@@ -559,8 +678,8 @@ export function MobileMigrateView() {
           chooseProduct={chooseProduct}
           removeFromPlan={removeFromPlan}
           clearPlan={clearPlan}
-          onGoToReplace={() => setTab('replace')}
-          onSelectProduct={setSelectedProduct}
+          onGoToReplace={() => selectTab('replace')}
+          onSelectProduct={openProduct}
         />
       )}
 
@@ -568,7 +687,7 @@ export function MobileMigrateView() {
         <MobileRoadmapsTab
           query={roadmapQuery}
           onQueryChange={setRoadmapQuery}
-          onSelectProduct={setSelectedProduct}
+          onSelectProduct={openProduct}
           openVendorId={pendingVendorId}
           onOpenedVendor={() => setPendingVendorId(null)}
         />
@@ -578,11 +697,17 @@ export function MobileMigrateView() {
 
       <MobileProductDetailSheet
         product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
+        onClose={closeProduct}
         onViewVendorRoadmap={(vendorId) => {
+          selectedProductRef.current = null
           setSelectedProduct(null)
           setPendingVendorId(vendorId)
           setTab('roadmaps')
+          updateParams((sp) => {
+            sp.delete('product')
+            sp.delete('productIds')
+            sp.set('tab', 'roadmaps')
+          }, true)
         }}
       />
 

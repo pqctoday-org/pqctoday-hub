@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import { useEffect } from 'react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { MobileCommunityView } from './MobileCommunityView'
 import { leadersData } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
@@ -9,8 +11,22 @@ import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 // CSV at module load. Assertions are structural, not hardcoded counts.
 const CURATED = leadersData.filter((l) => l.sourceKind === 'curated')
 
-function renderView() {
-  return render(<MobileCommunityView />)
+const probe = { search: '' }
+function LocationProbe() {
+  const { search } = useLocation()
+  useEffect(() => {
+    probe.search = search
+  }, [search])
+  return null
+}
+
+function renderView(initialEntry = '/leaders') {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <MobileCommunityView />
+      <LocationProbe />
+    </MemoryRouter>
+  )
 }
 
 describe('MobileCommunityView', () => {
@@ -107,5 +123,43 @@ describe('MobileCommunityView', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('leader-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  describe('?leader= deep link (deep-link remediation PR 1)', () => {
+    it('opens the linked profile on load', () => {
+      const target = CURATED[0]
+      renderView(`/leaders?leader=${encodeURIComponent(target.name)}`)
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).getAllByText(target.name).length).toBeGreaterThan(0)
+    })
+
+    it('opens a document-contributor stub that the curated list does not show', () => {
+      const stub = leadersData.find((l) => l.sourceKind === 'auto-imported')
+      if (!stub) return
+      renderView(`/leaders?leader=${encodeURIComponent(stub.name)}`)
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).getAllByText(stub.name).length).toBeGreaterThan(0)
+    })
+
+    it('matches case-insensitively', () => {
+      const target = CURATED[0]
+      renderView(`/leaders?leader=${encodeURIComponent(`  ${target.name.toUpperCase()} `)}`)
+      expect(screen.getByTestId('leader-detail-sheet')).toBeInTheDocument()
+    })
+
+    it('writes ?leader= on open and clears it on close', () => {
+      renderView()
+      const first = CURATED[0]
+      fireEvent.click(screen.getAllByText(first.name)[0].closest('button')!)
+      expect(new URLSearchParams(probe.search).get('leader')).toBe(first.name)
+      fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+      expect(new URLSearchParams(probe.search).get('leader')).toBeNull()
+    })
+
+    it('shows a not-found notice for an unknown name instead of failing silently', () => {
+      renderView('/leaders?leader=Nobody%20Atall')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('Nobody Atall')
+      expect(screen.queryByTestId('leader-detail-sheet')).not.toBeInTheDocument()
+    })
   })
 })

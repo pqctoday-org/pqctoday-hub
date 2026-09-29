@@ -408,7 +408,10 @@ describe('SimulationView (Mission Control)', () => {
   it('"Challenge a colleague" copies a ?seed= link for THIS run\'s seed', async () => {
     useSimulationStore.setState({ seed: 999888 })
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /More run actions/i }))
+    // Since 09-28 the phone Overview has its own "More run actions" menu too;
+    // jsdom renders both (CSS hides one per viewport). The desktop header's is
+    // later in the DOM.
+    fireEvent.click(screen.getAllByRole('button', { name: /More run actions/i }).at(-1)!)
     fireEvent.click(screen.getByRole('menuitem', { name: /challenge a colleague/i }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining('/simulation?seed=999888')

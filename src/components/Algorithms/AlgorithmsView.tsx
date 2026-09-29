@@ -29,6 +29,15 @@ import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorith
 import { MobileProtocolMatrixView } from '@/components/Mobile/screens/MobileProtocolMatrixView'
 import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATValidationView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import {
+  algoMatchesHighlight,
+  highlightRowSelector,
+  parseHighlight,
+  transitionMatchesHighlight,
+  transitionRowId,
+} from './highlightMatch'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -109,6 +118,9 @@ export function AlgorithmsView() {
     activeTab,
     totalAlgoCount,
     filteredCount,
+    highlightNotice,
+    undoHighlightWidening,
+    dismissHighlightNotice,
   } = useAlgorithmExplorer(personaDefaults)
 
   // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
@@ -144,8 +156,12 @@ export function AlgorithmsView() {
   // mobile entry-strip intent, so no real phone user hits it.
   const isMobile = useIsMobileShell()
   const tabParam = searchParams.get('tab')
-  const isMobileShell = isMobile && !tabParam && !searchParams.get('highlight')
-  const isMobileProtocolMatrix = isMobile && tabParam === 'support'
+  // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
+  // tab=support into the URL right after first paint).
+  const protocolParam = searchParams.get('protocol')
+  const isMobileShell = isMobile && !tabParam && !searchParams.get('highlight') && !protocolParam
+  const isMobileProtocolMatrix =
+    isMobile && (tabParam === 'support' || (!tabParam && !!protocolParam))
   const isMobileValidation = isMobile && tabParam === 'validation'
   const isMobileTransition = isMobile && tabParam === 'transition'
   const isMobileDetailed = isMobile && tabParam === 'detailed'
@@ -162,8 +178,14 @@ export function AlgorithmsView() {
     handleSearchChange('')
   }
 
+  // A link to a specific resource or sub-view bypasses the Curious preview
+  // card — otherwise it swallows the very thing the link points at.
+  const hasResourceParams =
+    ['protocol', 'industry', 'mechanism', 'section', 'compare', 'highlight'].some((k) =>
+      searchParams.has(k)
+    ) || searchParams.get('mode') === 'compare'
   const isCuriousPreview =
-    selectedPersona === 'curious' && viewAccess === 'preview' && !searchParams.get('highlight')
+    selectedPersona === 'curious' && viewAccess === 'preview' && !hasResourceParams
 
   // Strip is hidden when the page has any pre-set filter/tab/search state
   const hasActiveParams = useMemo(() => {
@@ -210,6 +232,53 @@ export function AlgorithmsView() {
     }
     return undefined
   }, [searchParams, personaDefaults.highlight, hasActiveParams])
+
+  // Scroll to (and ring) the first visible row a ?highlight link names, on
+  // Detailed and Transition. Persona-default highlights don't scroll.
+  const urlHighlightNames = useMemo(
+    () => parseHighlight(searchParams.get('highlight')),
+    [searchParams]
+  )
+  const highlightTargetId = useMemo(() => {
+    if (isLoading || urlHighlightNames.length === 0) return null
+    if (activeTab === 'detailed') {
+      const row = filteredAlgorithms.find((a) =>
+        urlHighlightNames.some((h) => algoMatchesHighlight(a.name, h))
+      )
+      return row ? row.name : null
+    }
+    if (activeTab === 'transition') {
+      const row = filteredTransitions.find((t) =>
+        urlHighlightNames.some((h) => transitionMatchesHighlight(t, h))
+      )
+      return row ? transitionRowId(row) : null
+    }
+    return null
+  }, [isLoading, urlHighlightNames, activeTab, filteredAlgorithms, filteredTransitions])
+  useScrollToDeepLinkTarget(
+    highlightTargetId ? `${activeTab}|${highlightTargetId}` : null,
+    highlightTargetId ? highlightRowSelector(deepLinkSelector(highlightTargetId)) : null
+  )
+
+  const highlightNoticeEl = highlightNotice ? (
+    <>
+      {highlightNotice.widened && (
+        <DeepLinkNotice
+          kind="widened"
+          message={highlightNotice.widened.message}
+          onUndo={undoHighlightWidening}
+          onDismiss={dismissHighlightNotice}
+        />
+      )}
+      {highlightNotice.notFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={highlightNotice.notFound}
+          onDismiss={dismissHighlightNotice}
+        />
+      )}
+    </>
+  ) : null
 
   // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-ALGORITHMS-
   // 2026-08-01.md §3.2): the curious-only Protocol Support lock (P2.3,
@@ -277,6 +346,7 @@ export function AlgorithmsView() {
   if (isMobileTransition) {
     return (
       <div className="px-4 pb-4 pt-4">
+        {highlightNoticeEl}
         <AlgorithmComparison
           highlightAlgorithms={highlightAlgorithms}
           filteredData={filteredTransitions}
@@ -298,6 +368,7 @@ export function AlgorithmsView() {
           Key sizes, performance, and standardization status for every algorithm.
         </p>
         <div className="mt-3">
+          {highlightNoticeEl}
           <AlgorithmDetailedComparison
             highlightAlgorithms={highlightAlgorithms}
             onInfoOpen={() => setInfoOpen(true)}
@@ -511,6 +582,10 @@ export function AlgorithmsView() {
                 </div>
               )}
             </>
+          )}
+
+          {(activeTab === 'detailed' || activeTab === 'transition') && highlightNoticeEl && (
+            <div className="mt-4">{highlightNoticeEl}</div>
           )}
 
           {/* View Tabs */}

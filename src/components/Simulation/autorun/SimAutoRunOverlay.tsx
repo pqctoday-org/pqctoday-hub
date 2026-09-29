@@ -20,6 +20,7 @@ export function SimAutoRunOverlay({
   player,
   defaultCollapsed = false,
   publishHeightVar = false,
+  heightVarName = '--sim-transport-h',
 }: {
   player: SimAutoRunPlayer
   /** mobile-ux-layer (WS-B3): the mobile call site passes true so the caption
@@ -41,6 +42,12 @@ export function SimAutoRunOverlay({
    *  fire (mounted, just display:none) and report a bogus 0px height,
    *  fighting the visible instance's real one for the same global property. */
   publishHeightVar?: boolean
+  /** 09-28 nav remediation (WP3.7): which CSS var to publish. The desktop
+   *  instance publishes its own `--sim-transport-h-md` so the two instances
+   *  (one always display:none, reporting 0px) never fight over one property;
+   *  the desktop tip card + document card use it to sit above the bar instead
+   *  of underneath it. Defaults to the mobile var. */
+  heightVarName?: string
 }) {
   const focus = player.phaseFocus
   const [expanded, setExpanded] = useState(!defaultCollapsed)
@@ -111,12 +118,12 @@ export function SimAutoRunOverlay({
     if (!publishHeightVar) return
     const el = rootRef.current
     if (!el) {
-      document.documentElement.style.removeProperty('--sim-transport-h')
+      document.documentElement.style.removeProperty(heightVarName)
       return
     }
     const update = () => {
       document.documentElement.style.setProperty(
-        '--sim-transport-h',
+        heightVarName,
         `${Math.ceil(el.getBoundingClientRect().height)}px`
       )
     }
@@ -125,9 +132,9 @@ export function SimAutoRunOverlay({
     ro.observe(el)
     return () => {
       ro.disconnect()
-      document.documentElement.style.removeProperty('--sim-transport-h')
+      document.documentElement.style.removeProperty(heightVarName)
     }
-  }, [publishHeightVar, player.running, player.done, expanded])
+  }, [publishHeightVar, heightVarName, player.running, player.done, expanded])
 
   // Manual toggle cancels the auto-collapse so it stays where the user put it.
   const toggle = () => {

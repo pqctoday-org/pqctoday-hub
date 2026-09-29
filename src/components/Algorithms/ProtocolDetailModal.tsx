@@ -521,7 +521,7 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                     ]
                       .filter(Boolean)
                       .join('\n'),
-                    pageUrl: `/algorithms?protocol=${encodeURIComponent(protocol.name)}`,
+                    pageUrl: `/algorithms?tab=support&protocol=${encodeURIComponent(protocol.id)}`,
                   })}
                   resourceLabel={protocol.name}
                   resourceType="Protocol"
@@ -538,7 +538,7 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                     ]
                       .filter(Boolean)
                       .join('\n'),
-                    pageUrl: `/algorithms?protocol=${encodeURIComponent(protocol.name)}`,
+                    pageUrl: `/algorithms?tab=support&protocol=${encodeURIComponent(protocol.id)}`,
                   })}
                   resourceLabel={protocol.name}
                   resourceType="Protocol"

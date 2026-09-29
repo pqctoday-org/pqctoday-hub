@@ -30,6 +30,7 @@ import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { getCatalogStatus } from '@/data/catalogStatus'
 import { MermaidDiagram } from './MermaidDiagram'
+import { archCapacity } from '@/simulation/archCapacity'
 
 const STATUS_CHIP: Record<PqcStatus, string> = {
   available: 'bg-status-success/15 text-status-success',
@@ -49,11 +50,19 @@ export function ArchitecturePanel({
   size,
   country,
   p5Frac,
+  target,
+  onGoToProgress,
 }: {
   size: SimSize
   country: string
   /** Fraction (0–1) of P5 activities completed — the effort gate that unlocks links. */
   p5Frac: number
+  /** 09-28 (content plan P5): the migration decisions the open architecture
+   *  STEP needs, so the panel can say when the effort gate is short of it. */
+  target?: number
+  /** Leave the panel for the board's Progress tab (where the other P5 tasks
+   *  that unlock more links can be opened). */
+  onGoToProgress?: () => void
 }) {
   const arch = ARCHITECTURES[size]
   const byId = new Map(arch.nodes.map((n) => [n.id, n]))
@@ -83,10 +92,11 @@ export function ArchitecturePanel({
   const vulnerable = arch.edges.filter((e) => e.vulnerable)
   const migratable = vulnerable.filter((e) => edgeState(arch, e) === 'migratable')
   const isMigrated = (e: ProtocolEdge) => Boolean(edgeDecisions[edgeKey(e)])
-  const done = migratable.filter(isMigrated).length
-  // Effort gate: completed P5 activities unlock the right to migrate this many links.
-  const unlocked = Math.floor(Math.max(0, Math.min(1, p5Frac)) * migratable.length)
-  const capacity = Math.max(0, unlocked - done) // links you may still migrate now
+  // Effort gate: completed P5 activities unlock the right to migrate this many
+  // links — one shared derivation (archCapacity) with the Decide card's note.
+  const { done, unlocked, capacity } = archCapacity(size, p5Frac, edgeDecisions)
+  const stepTarget = target != null ? Math.min(target, migratable.length) : null
+  const shortOfTarget = stepTarget != null && done < stepTarget && unlocked < stepTarget
   const readinessPct = vulnerable.length
     ? Math.round((Math.min(done, unlocked) / vulnerable.length) * 100)
     : 100
@@ -217,9 +227,27 @@ export function ArchitecturePanel({
           </div>
 
           {capacity <= 0 && done < migratable.length && (
-            <p className="mb-3 text-xs text-status-warning">
-              Complete more P5 (Execute) activities to unlock the next link.
-            </p>
+            <div className="mb-3 text-xs text-status-warning" data-testid="arch-capacity-note">
+              {shortOfTarget ? (
+                <>
+                  This task needs {stepTarget} migration decisions — you&apos;ve unlocked {unlocked}{' '}
+                  so far. Links unlock as you finish other Pilots (P5) tasks: do some of those
+                  first, then come back here.
+                </>
+              ) : (
+                <>Complete more P5 (Execute) activities to unlock the next link.</>
+              )}
+              {shortOfTarget && onGoToProgress && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={onGoToProgress}
+                  className="ml-1 h-auto p-0 text-xs font-bold text-primary underline hover:bg-transparent"
+                >
+                  Open the other P5 tasks →
+                </Button>
+              )}
+            </div>
           )}
 
           <div className="mb-3">
@@ -264,8 +292,22 @@ export function ArchitecturePanel({
                     >
                       {label}
                       {migratedChoice ? (
-                        <span className="shrink-0 rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
-                          ✓ {migratedChoice}
+                        <span className="flex shrink-0 items-center gap-1">
+                          <span className="rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
+                            ✓ {migratedChoice}
+                          </span>
+                          {/* 09-28 nav remediation (WP6.5): a migration decision
+                              could never be taken back (the store already
+                              accepted null; nothing in the UI sent it). */}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setEdgeDecision(edgeKey(e), null)}
+                            aria-label={`Undo migration of ${byId.get(e.from)?.label ?? e.from} to ${byId.get(e.to)?.label ?? e.to}`}
+                            className="h-auto rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                          >
+                            Undo
+                          </Button>
                         </span>
                       ) : (
                         <Button

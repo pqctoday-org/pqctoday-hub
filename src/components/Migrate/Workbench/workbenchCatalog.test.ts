@@ -5,9 +5,12 @@ import {
   filterProducts,
   NO_FACETS,
   searchProducts,
+  resolveProductLink,
+  productLinkNoticeMessage,
   type ProductFacets,
 } from './workbenchCatalog'
 import type { SoftwareItem } from '../../../types/MigrateTypes'
+import { softwareData } from '@/data/migrateData'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
   return {
@@ -143,5 +146,45 @@ describe('applyProductFacets', () => {
     expect(run({ pqc: 'unknown' })).toEqual(['d'])
     expect(run({ certified: 'none' })).toEqual(['b', 'd'])
     expect(run({ population: 'pqc_relevant', certified: 'linked' })).toEqual(['a'])
+  })
+})
+
+describe('resolveProductLink (deep-link remediation PR 1)', () => {
+  const real = softwareData.find((p) => p.productId && p.softwareName)!
+  const renamed = softwareData.find((p) => (p.formerNames ?? []).length > 0)
+
+  it('resolves by product_id, by exact name in any case, and de-duplicates', () => {
+    const res = resolveProductLink(real.softwareName.toUpperCase(), real.productId)
+    expect(res.products.map((p) => p.productId)).toEqual([real.productId])
+    expect(res.missing).toEqual([])
+    expect(productLinkNoticeMessage(res)).toBeNull()
+  })
+
+  it('never splits ?product= on commas; splits ?productIds= on commas', () => {
+    const res = resolveProductLink('a, b', `${real.productId}, nope-1`)
+    expect(res.missing).toEqual(['a, b', 'nope-1'])
+    expect(res.products).toHaveLength(1)
+    expect(productLinkNoticeMessage(res)).toMatch(/2 linked products/)
+  })
+
+  it('reports unknown tokens with a not-found message', () => {
+    const res = resolveProductLink('no-such-product-xyz', null)
+    expect(res.products).toEqual([])
+    expect(productLinkNoticeMessage(res)).toMatch(/No product matching “no-such-product-xyz”/)
+  })
+
+  it('a former name resolves to its successor and says so', () => {
+    if (!renamed) return // catalog currently has no former names
+    const former = renamed.formerNames![0]
+    const res = resolveProductLink(former, null)
+    expect(res.products[0].productId).toBe(renamed.productId)
+    expect(productLinkNoticeMessage(res)).toContain(renamed.softwareName)
+  })
+
+  it('does not substring-match (a prefix of a name is not a hit)', () => {
+    const res = resolveProductLink(real.softwareName.slice(0, 3), null)
+    expect(res.products.every((p) => p.softwareName.length === 3 || p.productId.length === 3)).toBe(
+      true
+    )
   })
 })

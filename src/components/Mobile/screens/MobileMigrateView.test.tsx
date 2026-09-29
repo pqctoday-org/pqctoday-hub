@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { MobileMigrateView } from './MobileMigrateView'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { REPLACE_ASSETS, DECISIONS, DOMAINS, classifyProductDomain } from '@/data/migrationAssets'
@@ -23,6 +24,22 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 // SAME real modules the component reads (migrationAssets.ts, migrateData.ts,
 // vendorRoadmapData.ts), not from that stale prose or the mockup's 2 known-
 // wrong numbers (TLS's real cnsaYear is 2025, not the screenshot's 2035).
+// Deep-link remediation PR 1: the view now reads/writes ?tab=/?product=, so it
+// needs a router. LocationProbe exposes the live query string to assertions.
+function LocationProbe() {
+  const loc = useLocation()
+  return <output data-testid="location-search">{loc.search}</output>
+}
+
+function renderMobile(path = '/migrate') {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <MobileMigrateView />
+      <LocationProbe />
+    </MemoryRouter>
+  )
+}
+
 function resetStore() {
   window.localStorage.clear()
   useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
@@ -70,7 +87,7 @@ function foundationChipText(id: (typeof FOUNDATION_DOMAIN_IDS)[number]): string 
 }
 
 function openProductSheet(domainLabel: string, product: SoftwareItem) {
-  render(<MobileMigrateView />)
+  renderMobile()
   // domainLabel can collide with the selected asset's own <h2> heading
   // below the chip strip (both render the same string when a domain is
   // already selected — 'tls' is the default). The chip is first in DOM
@@ -86,14 +103,14 @@ describe('MobileMigrateView', () => {
   })
 
   it('renders all 4 real tabs', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     for (const label of ['Replace', 'Plan', 'Vendors', 'Risk']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
   })
 
   it("defaults to TLS with the real classical/target pair and cnsaYear, not the mockup's stale 2035", () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     const tls = REPLACE_ASSETS.find((a) => a.id === 'tls')!
     expect(screen.getByText(tls.classical)).toBeInTheDocument()
     expect(screen.getByText(tls.target)).toBeInTheDocument()
@@ -104,7 +121,7 @@ describe('MobileMigrateView', () => {
   })
 
   it('Secure email shows the real "Mitigate" decision, not the mockup\'s "Track roadmap"', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     const email = REPLACE_ASSETS.find((a) => a.id === 'email')!
     fireEvent.click(screen.getByText(email.label).closest('button')!)
     expect(email.decision).toBe('mitigate')
@@ -112,19 +129,19 @@ describe('MobileMigrateView', () => {
   })
 
   it('tapping "Add to plan" writes the real asset id into useMigrateSelectionStore', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Add to plan').closest('button')!)
     expect(useMigrateSelectionStore.getState().plan).toContain('tls')
   })
 
   it('shows the real in-catalog product count for the selected domain', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     const count = productsForDomain('tls').length
     expect(screen.getByText(new RegExp(`${count} in catalog`))).toBeInTheDocument()
   })
 
   it('choosing a product writes into the real store and the Plan tab badge reflects it', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     const products = productsForDomain('tls')
     if (products.length === 0) return
     fireEvent.click(screen.getAllByText('Choose')[0].closest('button')!)
@@ -132,26 +149,26 @@ describe('MobileMigrateView', () => {
   })
 
   it('Plan tab shows the real empty state when nothing is planned', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Plan').closest('button')!)
     expect(screen.getByText('Nothing in your plan yet')).toBeInTheDocument()
   })
 
   it('Plan tab shows the real wave grouping once an asset is planned', () => {
     useMigrateSelectionStore.setState({ plan: ['tls'] })
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Plan').closest('button')!)
     expect(screen.getByText('External-facing live traffic')).toBeInTheDocument()
   })
 
   it('Vendors tab shows the real published-roadmap count, not a typed figure', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Vendors').closest('button')!)
     expect(screen.getByText(new RegExp(`${roadmapByVendorId.size}`))).toBeInTheDocument()
   })
 
   it('Risk tab shows all 4 real risk signals, live-computed from the catalog', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Risk').closest('button')!)
     for (const title of [
       'Single-source domains',
@@ -171,20 +188,20 @@ describe('MobileMigrateView', () => {
   // now the ONLY real stated cut, and the old claim must be gone, not just
   // superseded, so a reader is never told two different things at once.
   it('states what was cut rather than silently dropping it', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     expect(screen.getByText(/The Supply Chain Risk Matrix is on a laptop/i)).toBeInTheDocument()
     expect(screen.queryByText(/8 foundation\/infrastructure domains/i)).not.toBeInTheDocument()
   })
 
   it('Plan tab shows no foundation section when nothing but replace assets are planned', () => {
     useMigrateSelectionStore.setState({ plan: ['tls'], choice: {} })
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Plan').closest('button')!)
     expect(screen.queryByText(/Foundations & infrastructure/i)).not.toBeInTheDocument()
   })
 
   it('Vendors tab shows a real dated roadmap milestone line when the vendor has one', () => {
-    render(<MobileMigrateView />)
+    renderMobile()
     fireEvent.click(screen.getByText('Vendors').closest('button')!)
     const withDates = [...enrichmentByVendorId.entries()].find(
       ([, list]) =>
@@ -280,7 +297,7 @@ describe('MobileMigrateView', () => {
   // was unreachable for them no matter how correct the sheet itself was.
   describe('Foundation domain reach', () => {
     it('renders a chip per foundation domain with its real product count', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       for (const id of FOUNDATION_DOMAIN_IDS) {
         expect(screen.getByText(foundationChipText(id))).toBeInTheDocument()
       }
@@ -295,7 +312,7 @@ describe('MobileMigrateView', () => {
 
     it('shows a named domain, not a blank panel, when a foundation domain has no seeded asset card', () => {
       const domain = FOUNDATION_DOMAIN_IDS.find((id) => productsForDomain(id).length > 0)!
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText(foundationChipText(domain)).closest('button')!)
       // "Foundational building blocks..." only appears once REPLACE_ASSETS.find()
       // fails to match the id — proves the fallback panel (not the asset card)
@@ -328,7 +345,7 @@ describe('MobileMigrateView', () => {
 
   describe('Product list filter', () => {
     it('narrows the rendered list without changing the "N in catalog" domain total', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       const products = productsForDomain('tls')
       if (products.length < 2) return
       const target = products[0]
@@ -345,7 +362,7 @@ describe('MobileMigrateView', () => {
     })
 
     it("clears on domain switch, so a stale filter never hides an unrelated domain's products", () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       const tlsProducts = productsForDomain('tls')
       const vpn = REPLACE_ASSETS.find((a) => a.id === 'vpn')!
       const vpnProducts = productsForDomain('vpn')
@@ -364,7 +381,7 @@ describe('MobileMigrateView', () => {
     // as filter feedback. This sr-only line is the only thing that reports
     // the filtered count to a screen reader.
     it('reports the filtered count via an aria-live region, not just visually', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       const products = productsForDomain('tls')
       if (products.length < 2) return
       expect(screen.queryByText(/products? match "/)).not.toBeInTheDocument()
@@ -390,7 +407,7 @@ describe('MobileMigrateView', () => {
       if (products.length === 0) return
       useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
       useMigrateSelectionStore.getState().chooseProduct('identity', products[0].softwareName)
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       expect(screen.getByText(DOMAINS.identity.label)).toBeInTheDocument()
       expect(screen.getByText(products[0].softwareName)).toBeInTheDocument()
@@ -402,7 +419,7 @@ describe('MobileMigrateView', () => {
       if (products.length === 0) return
       useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
       useMigrateSelectionStore.getState().chooseProduct('identity', products[0].softwareName)
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       fireEvent.click(screen.getByText(products[0].softwareName).closest('button')!)
       const sheet = screen.getByTestId('migrate-product-detail-sheet')
@@ -414,7 +431,7 @@ describe('MobileMigrateView', () => {
       if (products.length === 0) return
       useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
       useMigrateSelectionStore.getState().chooseProduct('identity', products[0].softwareName)
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       fireEvent.click(screen.getByLabelText(`Remove ${products[0].softwareName} from plan`))
       expect(useMigrateSelectionStore.getState().choice.identity ?? []).not.toContain(
@@ -427,7 +444,7 @@ describe('MobileMigrateView', () => {
       useMigrateSelectionStore
         .getState()
         .chooseProduct('identity', 'A Name Not In The Current Catalog')
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       expect(screen.getByText('A Name Not In The Current Catalog')).toBeInTheDocument()
       expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
@@ -445,7 +462,7 @@ describe('MobileMigrateView', () => {
       useMigrateSelectionStore.setState((s) => ({
         nameToProductId: { ...s.nameToProductId, 'Old Renamed Product': fallbackProduct.productId },
       }))
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       expect(screen.queryByText('No longer in catalog')).not.toBeInTheDocument()
       fireEvent.click(screen.getByText('Old Renamed Product').closest('button')!)
@@ -479,7 +496,7 @@ describe('MobileMigrateView', () => {
     }
 
     function openVendorProductsSheet(vendorId: string) {
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Vendors').closest('button')!)
       const card = screen
         .getByText(vendorDisplayName(vendorId))
@@ -564,7 +581,7 @@ describe('MobileMigrateView', () => {
         (p) => p.softwareName === 'Qualcomm Snapdragon SPU'
       )
       if (!product) return
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.change(screen.getByPlaceholderText('Search all products…'), {
         target: { value: 'Qualcomm Snapdragon' },
       })
@@ -579,7 +596,7 @@ describe('MobileMigrateView', () => {
         (p) => p.softwareName === 'Qualcomm Snapdragon SPU'
       )
       if (!product) return
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.change(screen.getByPlaceholderText('Search all products…'), {
         target: { value: 'Qualcomm Snapdragon' },
       })
@@ -589,7 +606,7 @@ describe('MobileMigrateView', () => {
     })
 
     it('clearing the search restores the default domain-chip browsing UI', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       const searchInput = screen.getByPlaceholderText('Search all products…')
       fireEvent.change(searchInput, { target: { value: 'Qualcomm' } })
       fireEvent.change(searchInput, { target: { value: '' } })
@@ -603,7 +620,7 @@ describe('MobileMigrateView', () => {
     // a single letter matches 872-899 of 906 active products (near the
     // whole catalog), which is why a minimum length exists at all.
     it('shows a hint instead of near-whole-catalog noise below the minimum query length', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.change(screen.getByPlaceholderText('Search all products…'), {
         target: { value: 'a' },
       })
@@ -614,7 +631,7 @@ describe('MobileMigrateView', () => {
     })
 
     it('shows real results once the minimum length is met', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       const input = screen.getByPlaceholderText('Search all products…')
       fireEvent.change(input, { target: { value: 'a' } })
       fireEvent.change(input, { target: { value: 'as' } })
@@ -643,7 +660,7 @@ describe('MobileMigrateView', () => {
         return
       }
 
-      render(<MobileMigrateView />)
+      renderMobile()
       const input = screen.getByPlaceholderText('Search all products…')
 
       fireEvent.change(input, { target: { value: moderateQuery } })
@@ -660,7 +677,7 @@ describe('MobileMigrateView', () => {
     })
 
     it('announces the results count via an aria-live region', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.change(screen.getByPlaceholderText('Search all products…'), {
         target: { value: 'Qualcomm Snapdragon' },
       })
@@ -669,7 +686,7 @@ describe('MobileMigrateView', () => {
     })
 
     it('keeps the "no matches" message inside its own live region, not a separate silent one', () => {
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.change(screen.getByPlaceholderText('Search all products…'), {
         target: { value: 'zzzznonexistentproductzzzz' },
       })
@@ -689,7 +706,7 @@ describe('MobileMigrateView', () => {
       if (products.length === 0) return
       useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
       useMigrateSelectionStore.getState().chooseProduct('tls', products[0].softwareName)
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       fireEvent.click(screen.getByText(products[0].softwareName).closest('button')!)
       const sheet = screen.getByTestId('migrate-product-detail-sheet')
@@ -699,10 +716,61 @@ describe('MobileMigrateView', () => {
     it('shows "No longer in catalog" for an unresolvable chosen name, same as the foundation section', () => {
       useMigrateSelectionStore.setState({ plan: [], choice: {}, nameToProductId: {} })
       useMigrateSelectionStore.getState().chooseProduct('tls', 'A Name Not In The Current Catalog')
-      render(<MobileMigrateView />)
+      renderMobile()
       fireEvent.click(screen.getByText('Plan').closest('button')!)
       expect(screen.getByText('A Name Not In The Current Catalog')).toBeInTheDocument()
       expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
+    })
+  })
+
+  describe('deep links (PR 1)', () => {
+    const [tlsProduct] = productsForDomain('tls')
+    const search = () => screen.getByTestId('location-search').textContent ?? ''
+
+    it("?product=<product_id> opens that product's detail sheet", () => {
+      renderMobile(`/migrate?product=${encodeURIComponent(tlsProduct.productId)}`)
+      const sheet = screen.getByTestId('migrate-product-detail-sheet')
+      expect(within(sheet).getAllByText(tlsProduct.softwareName).length).toBeGreaterThan(0)
+      // the param survives (not erased) so reload/share keep working
+      expect(search()).toContain(`product=${encodeURIComponent(tlsProduct.productId)}`)
+    })
+
+    it('?product=<exact name, any case> resolves too', () => {
+      renderMobile(`/migrate?product=${encodeURIComponent(tlsProduct.softwareName.toUpperCase())}`)
+      expect(screen.getByTestId('migrate-product-detail-sheet')).toBeInTheDocument()
+    })
+
+    it('?productIds=<one id> on a non-default tab switches to Replace and opens the sheet', () => {
+      renderMobile(`/migrate?tab=plan&productIds=${encodeURIComponent(tlsProduct.productId)}`)
+      expect(screen.getByTestId('migrate-product-detail-sheet')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Replace' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      )
+    })
+
+    it('?tab= selects the tab', () => {
+      renderMobile('/migrate?tab=roadmaps')
+      expect(screen.getByRole('button', { name: 'Vendors' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      )
+    })
+
+    it('an unknown product shows a not-found notice', () => {
+      renderMobile('/migrate?product=no-such-product-xyz')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+        'no-such-product-xyz'
+      )
+      expect(screen.queryByTestId('migrate-product-detail-sheet')).not.toBeInTheDocument()
+    })
+
+    it('opening a product writes ?product=<id>; closing removes it', () => {
+      renderMobile()
+      fireEvent.click(screen.getByText(tlsProduct.softwareName).closest('button')!)
+      expect(search()).toContain(`product=${encodeURIComponent(tlsProduct.productId)}`)
+      fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
+      expect(search()).not.toContain('product=')
     })
   })
 })

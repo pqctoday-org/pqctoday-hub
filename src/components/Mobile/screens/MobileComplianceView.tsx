@@ -11,10 +11,12 @@ import {
   Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { cn } from '@/lib/utils'
 import { useApplicability } from '@/hooks/useApplicability'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
+  allComplianceFrameworks,
   complianceFrameworks,
   PQC_REQUIREMENT_LABEL as PQC_LABEL,
   type ComplianceFramework,
@@ -63,17 +65,49 @@ const SECTIONS: { id: Section; label: string }[] = [
 
 const SECTION_IDS = new Set<string>(SECTIONS.map((s) => s.id))
 
+/** Desktop's Landscape pillar values (plus the legacy 'technical'). */
+const LANDSCAPE_TAB_VALUES = new Set(['standards', 'technical', 'certification', 'compliance'])
+
 /**
  * Desktop's `?tab=` values include several this screen has no matching
- * section for (landscape sub-tabs like 'compliance'/'standards'/'technical',
- * 'foryou', 'progress'). Map the ones with a real narrow-mobile equivalent;
- * an unmapped or unknown value falls through to the 'obligations' default
- * rather than a blank section.
+ * section for ('foryou', 'progress', 'products'). Map the ones with a real
+ * narrow-mobile equivalent — the Landscape pillar values land on Landscape
+ * (they used to fall through to Rules & Standards) — and an unmapped or
+ * unknown value falls through to the 'obligations' default rather than a
+ * blank section. Without a `tab`, a `cert` or `evref` link picks its own
+ * section, the same way desktop's defaultTabFor() does.
  */
-function sectionFromTabParam(tab: string | null): Section | null {
-  if (!tab) return null
-  if (SECTION_IDS.has(tab)) return tab as Section
+function sectionFromTabParam(
+  tab: string | null,
+  cert?: string | null,
+  evref?: string | null
+): Section | null {
+  if (tab) {
+    if (SECTION_IDS.has(tab)) return tab as Section
+    if (LANDSCAPE_TAB_VALUES.has(tab)) return 'landscape'
+    return null
+  }
+  if (cert) return 'records'
+  if (evref) return 'cswp39'
   return null
+}
+
+/**
+ * The record fields this screen shows for a `?cert=` link — structurally a
+ * subset of Compliance's ComplianceRecord (the desktop record popover and the
+ * record type live behind the mobile import boundary).
+ */
+export interface MobileCertRecord {
+  id: string
+  source: string
+  date: string
+  link: string
+  type: string
+  status: string
+  productName: string
+  productCategory: string
+  vendor: string
+  certificationLevel?: string
 }
 
 const TIER_TONE: Record<ApplicabilityTier, string> = {
@@ -119,14 +153,24 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
  * CSWP39_SOURCE_METADATA as a sentence — verified), but every field in it is
  * real, not invented.
  */
-export function MobileComplianceView() {
-  const [searchParams] = useSearchParams()
+export function MobileComplianceView({
+  records,
+  recordsLoaded = false,
+}: {
+  /** The certification records ComplianceView already loaded (for `?cert=`). */
+  records?: readonly MobileCertRecord[]
+  recordsLoaded?: boolean
+} = {}) {
+  const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
+  const certParam = searchParams.get('cert')
+  const evrefParam = searchParams.get('evref')
+  const frameworkParam = searchParams.get('framework')
   // Lazy-initialize from `?tab=` (e.g. a GRC board's `/compliance?tab=records`
   // link) so a deep link lands on the right section on first paint, not just
   // the 'obligations' default.
   const [section, setSection] = useState<Section>(
-    () => sectionFromTabParam(tabParam) ?? 'obligations'
+    () => sectionFromTabParam(tabParam, certParam, evrefParam) ?? 'obligations'
   )
   // Adjust `section` when `?tab=` itself changes on the SAME mounted route
   // (e.g. tapping a second board link without navigating away first) — a
@@ -135,16 +179,39 @@ export function MobileComplianceView() {
   // React-recommended way to sync state from a changed prop/external value —
   // see "You Might Not Need an Effect") rather than a `useEffect`, which
   // would cascade an extra render on every mount.
-  const [lastTabParam, setLastTabParam] = useState(tabParam)
-  if (tabParam !== lastTabParam) {
-    setLastTabParam(tabParam)
-    const next = sectionFromTabParam(tabParam)
+  const tabKey = `${tabParam ?? ''}|${certParam ?? ''}|${evrefParam ?? ''}`
+  const [lastTabKey, setLastTabKey] = useState(tabKey)
+  if (tabKey !== lastTabKey) {
+    setLastTabKey(tabKey)
+    const next = sectionFromTabParam(tabParam, certParam, evrefParam)
     if (next) setSection(next)
   }
   const [requirementsFrameworkId, setRequirementsFrameworkId] = useState<string | null>(null)
   const [expandedTier, setExpandedTier] = useState<Record<string, boolean>>({})
   const [openStep, setOpenStep] = useState<string | null>(null)
-  const [detailFramework, setDetailFramework] = useState<ComplianceFramework | null>(null)
+  // The detail sheet IS `?framework=` — same param desktop's drawer uses, so a
+  // shared link opens it here too. Opening pushes, closing replaces.
+  const detailFramework = useMemo(
+    () =>
+      frameworkParam ? (complianceFrameworks.find((f) => f.id === frameworkParam) ?? null) : null,
+    [frameworkParam]
+  )
+  const setParam = (key: string, value: string | null, replace: boolean) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (value === null) next.delete(key)
+        else next.set(key, value)
+        return next
+      },
+      { replace }
+    )
+  const openFramework = (fw: ComplianceFramework) => setParam('framework', fw.id, false)
+  const closeFramework = () => setParam('framework', null, true)
+  const closeRecord = () => setParam('cert', null, true)
+
+  const certRecord = certParam ? (records?.find((r) => r.id === certParam) ?? null) : null
+  const certNotFound = !!certParam && recordsLoaded && !certRecord
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const { profile, isEmpty } = useApplicability()
@@ -177,7 +244,7 @@ export function MobileComplianceView() {
   const jumpToRequirements = (frameworkId: string) => {
     setRequirementsFrameworkId(frameworkId)
     setSection('requirements')
-    setDetailFramework(null)
+    closeFramework()
   }
 
   const isTierOpen = (tier: ApplicabilityTier) =>
@@ -208,6 +275,25 @@ export function MobileComplianceView() {
           </Button>
         ))}
       </div>
+
+      {frameworkParam && !detailFramework && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={
+            allComplianceFrameworks.some((f) => f.id === frameworkParam)
+              ? `The framework “${frameworkParam}” has been retired from the tracked frameworks.`
+              : `No framework with the ID “${frameworkParam}” is tracked here — it may have been renamed or removed.`
+          }
+          onDismiss={closeFramework}
+        />
+      )}
+      {certNotFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No certification record with the ID “${certParam}” is in this snapshot — it may have been withdrawn, renumbered or not yet published.`}
+          onDismiss={closeRecord}
+        />
+      )}
 
       {isEmpty && (section === 'obligations' || section === 'requirements') && (
         <div className="glass-panel p-4 text-center">
@@ -255,7 +341,7 @@ export function MobileComplianceView() {
                           key={row.framework.id}
                           type="button"
                           variant="ghost"
-                          onClick={() => setDetailFramework(row.framework)}
+                          onClick={() => openFramework(row.framework)}
                           // Button's own base classes hard-code whitespace-nowrap;
                           // this button wraps row.reason (a real sentence), which
                           // inherited nowrap and would run off the right edge
@@ -394,7 +480,7 @@ export function MobileComplianceView() {
                   key={fw.id}
                   type="button"
                   variant="ghost"
-                  onClick={() => setDetailFramework(fw)}
+                  onClick={() => openFramework(fw)}
                   className="glass-panel h-auto w-full flex-col items-start gap-0 whitespace-normal rounded-xl p-3 text-left"
                 >
                   <h3 className="text-[12.5px] font-bold text-foreground">{fw.label}</h3>
@@ -492,10 +578,76 @@ export function MobileComplianceView() {
 
       <MobileFrameworkDetailSheet
         framework={detailFramework}
-        onClose={() => setDetailFramework(null)}
+        onClose={closeFramework}
         onViewRequirements={jumpToRequirements}
       />
+      <MobileRecordDetailSheet record={certRecord} onClose={closeRecord} />
     </div>
+  )
+}
+
+/**
+ * A `?cert=` record on a phone. Desktop opens its full record popover; this
+ * screen has no record list (only the glossary), so it shows the record's
+ * identifying facts and links to the source — the link used to be ignored.
+ */
+function MobileRecordDetailSheet({
+  record,
+  onClose,
+}: {
+  record: MobileCertRecord | null
+  onClose: () => void
+}) {
+  const rows: [string, string | undefined][] = record
+    ? [
+        ['Certificate', record.id],
+        ['Type', record.type],
+        ['Status', record.status || 'No status'],
+        ['Vendor', record.vendor],
+        ['Category', record.productCategory],
+        ['Level', record.certificationLevel],
+        ['Source', record.source],
+        ['Date', record.date],
+      ]
+    : []
+  return (
+    <MobileSheet
+      open={!!record}
+      onClose={onClose}
+      title={record?.productName}
+      testId="compliance-record-detail-sheet"
+    >
+      {record && (
+        <div className="flex flex-col gap-3">
+          <dl className="flex flex-col gap-1 text-[11px]">
+            {rows
+              .filter(([, v]) => !!v)
+              .map(([k, v]) => (
+                <div key={k} className="flex items-start justify-between gap-2">
+                  <dt className="shrink-0 text-muted-foreground">{k}</dt>
+                  <dd className="min-w-0 break-words text-right font-semibold text-foreground">
+                    {v}
+                  </dd>
+                </div>
+              ))}
+          </dl>
+          {record.link && (
+            <a
+              href={record.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary"
+            >
+              View on {safeHostname(record.link)} <ExternalLink size={10} aria-hidden="true" />
+            </a>
+          )}
+          <p className="text-[10.5px] leading-relaxed text-muted-foreground">
+            The full record — algorithms, evidence and the searchable record list — is on a larger
+            screen.
+          </p>
+        </div>
+      )}
+    </MobileSheet>
   )
 }
 

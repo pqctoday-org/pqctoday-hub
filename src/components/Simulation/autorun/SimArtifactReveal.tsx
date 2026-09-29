@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { FileText } from 'lucide-react'
+import { FileText, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { revealText } from './revealText'
 
@@ -12,6 +13,7 @@ import { revealText } from './revealText'
 export function SimArtifactReveal({
   type,
   variant,
+  onDismiss,
 }: {
   type: ExecutiveDocumentType | null
   /** mobile-ux-layer (WS-B1): the mobile call site passes 'mobile' — the card
@@ -22,6 +24,9 @@ export function SimArtifactReveal({
    *  longer body is actually readable. The desktop call site passes nothing,
    *  keeping its exact original classes. */
   variant?: 'mobile'
+  /** 09-28 nav remediation (WP3.4): the card had no way to close it — on a
+   *  phone it covers up to 40vh of the board until the run moves on. */
+  onDismiss?: () => void
 }) {
   if (!type) return null
   const r = revealText(type)
@@ -32,16 +37,32 @@ export function SimArtifactReveal({
       className={
         mobile
           ? 'pointer-events-auto fixed right-4 z-[70] max-h-[40vh] max-w-xs overflow-y-auto rounded-lg border border-secondary/40 bg-card/95 p-3 shadow-lg backdrop-blur'
-          : 'pointer-events-auto fixed bottom-24 right-4 z-[55] max-w-xs rounded-lg border border-secondary/40 bg-card/95 p-3 shadow-lg backdrop-blur'
+          : 'pointer-events-auto fixed right-4 z-[55] max-w-xs rounded-lg border border-secondary/40 bg-card/95 p-3 shadow-lg backdrop-blur'
       }
-      style={mobile ? { bottom: 'calc(var(--sim-transport-h, 96px) + 0.75rem)' } : undefined}
+      style={
+        mobile
+          ? { bottom: 'calc(var(--sim-transport-h, 96px) + 0.75rem)' }
+          : // 09-28 (WP3.7): above the desktop play bar, not under it.
+            { bottom: 'max(6rem, calc(var(--sim-transport-h-md, 0px) + 0.75rem))' }
+      }
       data-testid="artifact-reveal"
     >
       <div className="mb-1 flex items-center gap-1.5">
         <FileText size={13} className="shrink-0 text-secondary" aria-hidden="true" />
-        <span className="text-[11px] font-bold uppercase tracking-wide text-secondary">
+        <span className="min-w-0 flex-1 text-[11px] font-bold uppercase tracking-wide text-secondary">
           Document ready · {r.title}
         </span>
+        {onDismiss && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onDismiss}
+            aria-label="Dismiss document card"
+            className="h-auto shrink-0 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <X size={12} aria-hidden="true" />
+          </Button>
+        )}
       </div>
       <p className="text-xs leading-relaxed text-muted-foreground">{r.body}</p>
     </div>

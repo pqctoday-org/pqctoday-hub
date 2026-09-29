@@ -62,7 +62,19 @@ import { buildComplianceCsv } from './recordsExport'
 import { applyRecordScope } from './recordSemantics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
+import {
+  allComplianceFrameworks,
+  complianceFrameworks,
+  complianceMetadata,
+} from '@/data/complianceData'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import {
+  describeExclusions,
+  recordFilterExclusions,
+  restoreRecordParams,
+  widenRecordParams,
+  type RecordFilterKey,
+} from './recordFilters'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
@@ -267,11 +279,6 @@ export const ComplianceView = ({
   const isMobileShell = useIsMobileShell()
   useWorkflowPhaseTracker('comply')
 
-  // Drawer state — selected framework + the pillar it was opened from (drives
-  // the traceability chain). Replaces FrameworkDetailPopover on Landscape.
-  const [drawerFramework, setDrawerFramework] = useState<ComplianceFramework | null>(null)
-  const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
-
   const tierFilter = useTrustTierFilter()
   const { data, loading, error, refresh, lastUpdated, meta } = useComplianceRefresh()
   // Page-wide loading/error state — shared across every tab (Landscape,
@@ -311,16 +318,22 @@ export const ComplianceView = ({
   // ── URL-synced filter state ──────────────────────────────────────────
 
   const {
+    searchParams,
     setSearchParams,
     certParam,
     evref,
     activeTab,
     setActiveTab,
     highlightFrameworkId,
+    frameworkParam,
+    openFrameworkParam,
+    clearFrameworkParam,
     reqFilter,
     lsOrg,
     lsIndustry,
     lsRegion,
+    lsRegionScope,
+    dismissRegionScope,
     lsCountry,
     lsDeadline,
     lsSearch,
@@ -330,6 +343,7 @@ export const ComplianceView = ({
     lsSort,
     lsView,
     rtab,
+    recSearch,
     recSearchInput,
     recPqc,
     recCat,
@@ -397,29 +411,158 @@ export const ComplianceView = ({
     if (isLandscapeTab(activeTab)) setPillar(tabToPillar(activeTab))
   }, [activeTab])
 
-  // Deep-link reachability: `?framework=<id>` used to only drive
-  // highlightFrameworkId, which scrolls to and rings the card grid's entry
-  // for 3s (ComplianceLandscape) — it never actually opened the traceability
-  // drawer, so a shared "/compliance?framework=NIST-IR-8547" link landed on a
-  // page that visually flashed and then looked like nothing happened,
-  // especially in table view where there's no card to ring at all. Opening
-  // the drawer here makes the URL a real deep link into the drawer itself,
-  // matching what onSelectRelated already does for in-drawer navigation.
-  const didOpenDrawerFromUrlRef = useRef<string | null>(null)
+  // ── Framework drawer (`?framework=`) ─────────────────────────────────
+  // The drawer IS the URL param (CHANGED 2026-09-28): opening pushes
+  // `?framework=<id>`, closing replaces it away, and a second framework link
+  // while already on /compliance opens that one. Before, the param was read
+  // once at mount, never written, and never cleared.
+  const drawerFramework = useMemo(
+    () =>
+      frameworkParam ? (complianceFrameworks.find((f) => f.id === frameworkParam) ?? null) : null,
+    [frameworkParam]
+  )
+  // The pillar the drawer was opened from (drives the traceability chain).
+  // A link carries no pillar, so an arrival falls back to the framework's own.
+  const [drawerPillarChoice, setDrawerPillarChoice] = useState<{
+    id: string
+    pillar: PillarId
+  } | null>(null)
+  const drawerPillar: PillarId = drawerFramework
+    ? drawerPillarChoice?.id === drawerFramework.id
+      ? drawerPillarChoice.pillar
+      : pillarForBodyType(drawerFramework.bodyType)
+    : 'comply'
+  const openDrawer = useCallback(
+    (fw: ComplianceFramework, fromPillar?: PillarId) => {
+      setDrawerPillarChoice({ id: fw.id, pillar: fromPillar ?? pillarForBodyType(fw.bodyType) })
+      if (fw.id !== frameworkParam) openFrameworkParam(fw.id)
+    },
+    [frameworkParam, openFrameworkParam]
+  )
+  // Unknown or retired `?framework=` ids used to fail silently.
+  const frameworkNotFoundMessage = useMemo(() => {
+    if (!frameworkParam || drawerFramework) return null
+    const retired = allComplianceFrameworks.find((f) => f.id === frameworkParam)
+    if (retired) {
+      return `“${retired.label}” (${frameworkParam}) has been retired from the tracked frameworks${
+        retired.deprecatedReason ? `: ${retired.deprecatedReason}` : '.'
+      }`
+    }
+    return `No framework with the ID “${frameworkParam}” is tracked here — it may have been renamed or removed.`
+  }, [frameworkParam, drawerFramework])
 
-  // opening the drawer from `?framework=` is a deliberate deep-link effect that
-  // predates this commit.
+  // ── Record popover (`?cert=`) ─────────────────────────────────────────
+  // Opening a record pushes `?cert=`; closing replaces it away. ComplianceTable
+  // renders one popover for the whole table from this param.
+  const handledCertRef = useRef<string | null>(null)
+  const handleSelectRecord = useCallback(
+    (id: string) => {
+      // A row the reader clicked is on screen already — nothing to widen.
+      handledCertRef.current = id
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('cert', id)
+          return next
+        },
+        { replace: false }
+      )
+    },
+    [setSearchParams]
+  )
+  const handleCloseRecord = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('cert')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  // A linked record hidden by the default "current" scope (historical /
+  // archived certificates) or by a filter in the same URL used to open nothing
+  // and say nothing. Widen just the excluding filters, say so, offer Undo.
+  const [certNotice, setCertNotice] = useState<
+    | { kind: 'widened'; message: string; keys: RecordFilterKey[]; before: string }
+    | { kind: 'not-found'; message: string }
+    | null
+  >(null)
   useEffect(() => {
-    if (!highlightFrameworkId) return
-    if (didOpenDrawerFromUrlRef.current === highlightFrameworkId) return
-    didOpenDrawerFromUrlRef.current = highlightFrameworkId
-    const fw = complianceFrameworks.find((f) => f.id === highlightFrameworkId)
-    if (!fw) return
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setDrawerPillar(pillarForBodyType(fw.bodyType))
-    setDrawerFramework(fw)
+    if (!certParam) {
+      handledCertRef.current = null
+      return
+    }
+    // The phone layout has no records table to widen; it handles `cert` itself.
+    if (isMobileShell && !simEmbed) return
+    if (activeTab !== 'records' || data.length === 0) return
+    if (handledCertRef.current === certParam) return
+    handledCertRef.current = certParam
+    const record = data.find((r) => r.id === certParam)
+    /* eslint-disable react-hooks/set-state-in-effect -- one-shot reaction to a deep link */
+    if (!record) {
+      setCertNotice({
+        kind: 'not-found',
+        message: `No certification record with the ID “${certParam}” is in this snapshot — it may have been withdrawn, renumbered or not yet published.`,
+      })
+      return
+    }
+    const keys = recordFilterExclusions(record, {
+      scope: recScope,
+      certType: rtab,
+      text: recSearch,
+      pqc: recPqc,
+      category: recCat,
+      source: recSrc,
+      vendor: recVendor,
+      migrateCat: recMcat,
+      tiers: tierFilter,
+    })
+    if (keys.length === 0) {
+      setCertNotice(null)
+      return
+    }
+    setCertNotice({
+      kind: 'widened',
+      message: `Showing ${record.productName} (${record.id}) — it was hidden by ${describeExclusions(keys)}, so ${
+        keys.length === 1 ? 'that was' : 'those were'
+      } relaxed to show it.`,
+      keys,
+      before: searchParams.toString(),
+    })
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [highlightFrameworkId])
+    setSearchParams((prev) => widenRecordParams(prev, keys), { replace: true })
+  }, [
+    certParam,
+    isMobileShell,
+    simEmbed,
+    activeTab,
+    data,
+    recScope,
+    rtab,
+    recSearch,
+    recPqc,
+    recCat,
+    recSrc,
+    recVendor,
+    recMcat,
+    tierFilter,
+    searchParams,
+    setSearchParams,
+  ])
+  const handleUndoCertWiden = useCallback(() => {
+    if (certNotice?.kind !== 'widened') return
+    const { keys, before } = certNotice
+    setSearchParams((prev) => restoreRecordParams(prev, new URLSearchParams(before), keys), {
+      replace: true,
+    })
+    setCertNotice(null)
+  }, [certNotice, setSearchParams])
+  const handleDismissCertNotice = useCallback(() => {
+    if (certNotice?.kind === 'not-found') handleCloseRecord()
+    setCertNotice(null)
+  }, [certNotice, handleCloseRecord])
 
   // CSWP.39 jump-back marker + query (ephemeral UI state).
   const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
@@ -514,6 +657,9 @@ export const ComplianceView = ({
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
+          // One write: also closes the framework drawer this may be called
+          // from (two setSearchParams calls in one tick — the second wins).
+          next.delete('framework')
           next.set('tab', 'cswp39')
           next.set('evref', refId)
           return next
@@ -540,6 +686,8 @@ export const ComplianceView = ({
     orgFilter: lsOrg,
     industryFilter: lsIndustry,
     regionFilter: lsRegion,
+    regionScope: lsRegionScope,
+    onDismissRegionScope: dismissRegionScope,
     countryFilter: lsCountry,
     deadlineFilter: lsDeadline,
     searchText: lsSearch,
@@ -556,10 +704,7 @@ export const ComplianceView = ({
     onViewModeChange: handleLsViewChange,
     onNavigateToCswp39: handleNavigateToCswp39,
     highlightFrameworkId,
-    onSelectFramework: (fw: ComplianceFramework) => {
-      setDrawerPillar(pillar)
-      setDrawerFramework(fw)
-    },
+    onSelectFramework: (fw: ComplianceFramework) => openDrawer(fw, pillar),
   }
 
   const activeStableTab = stableTabFor(activeTab)
@@ -613,7 +758,7 @@ export const ComplianceView = ({
   // win over isMobileShell regardless of viewport width, same as Threats/
   // Library.
   if (isMobileShell && !simEmbed) {
-    return <MobileComplianceView />
+    return <MobileComplianceView records={data} recordsLoaded={!loading && data.length > 0} />
   }
 
   return (
@@ -627,6 +772,22 @@ export const ComplianceView = ({
       )}
 
       {!simEmbed && <PersonaPageNote route="/compliance" />}
+
+      {frameworkNotFoundMessage && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={frameworkNotFoundMessage}
+          onDismiss={clearFrameworkParam}
+        />
+      )}
+      {certNotice && (
+        <DeepLinkNotice
+          kind={certNotice.kind}
+          message={certNotice.message}
+          onUndo={certNotice.kind === 'widened' ? handleUndoCertWiden : undefined}
+          onDismiss={handleDismissCertNotice}
+        />
+      )}
 
       {/* The learning frame, glossary strip, revisions feed, persona hint,
           control deck and deadline dot-plot used to stack here — five blocks
@@ -767,10 +928,7 @@ export const ComplianceView = ({
               onCountryChange={handleLsCountryChange}
               sectorValue={lsIndustry}
               persona={personaForLens}
-              onOpenDetail={(fw) => {
-                setDrawerPillar(pillarForBodyType(fw.bodyType))
-                setDrawerFramework(fw)
-              }}
+              onOpenDetail={(fw) => openDrawer(fw)}
             />
           </div>
         )}
@@ -795,13 +953,7 @@ export const ComplianceView = ({
               title="Progress"
               description="Every date the instruments in your scope actually state, in one ordered list — replacing the three separate timelines this page used to draw."
             />
-            <ProgressTab
-              profile={forYouProfile}
-              onOpenDetail={(fw) => {
-                setDrawerPillar(pillarForBodyType(fw.bodyType))
-                setDrawerFramework(fw)
-              }}
-            />
+            <ProgressTab profile={forYouProfile} onOpenDetail={(fw) => openDrawer(fw)} />
           </div>
         )}
 
@@ -859,6 +1011,8 @@ export const ComplianceView = ({
               sortDirection={recSortDir}
               currentPage={recPage}
               selectedRecordId={certParam}
+              onSelectRecord={handleSelectRecord}
+              onCloseRecord={handleCloseRecord}
               onFilterTextChange={handleRecSearchChange}
               onPqcFiltersChange={handleRecPqcChange}
               onCategoryFiltersChange={handleRecCatChange}
@@ -901,11 +1055,8 @@ export const ComplianceView = ({
       <ComplianceDetailDrawer
         framework={drawerFramework}
         pillar={drawerPillar}
-        onClose={() => setDrawerFramework(null)}
-        onOpenCswp39={(refId) => {
-          setDrawerFramework(null)
-          handleNavigateToCswp39(refId)
-        }}
+        onClose={clearFrameworkParam}
+        onOpenCswp39={handleNavigateToCswp39}
         onTrack={(fw) => toggleMyFramework(fw.id)}
         isTracked={drawerFramework ? myFrameworks.includes(drawerFramework.id) : false}
         onSelectRelated={(name) => {
@@ -916,10 +1067,7 @@ export const ComplianceView = ({
               f.label.toLowerCase().includes(lower) ||
               lower.includes(f.label.toLowerCase())
           )
-          if (match) {
-            setDrawerPillar(pillarForBodyType(match.bodyType))
-            setDrawerFramework(match)
-          }
+          if (match) openDrawer(match)
         }}
       />
     </div>

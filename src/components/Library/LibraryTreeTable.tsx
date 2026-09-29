@@ -158,6 +158,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       const rows = [
         <tr
           key={`${item.referenceId}-${level}`} // Unique key for duplicates in tree
+          data-deeplink-id={item.referenceId}
           className="border-b border-border hover:bg-muted/50 transition-colors group cursor-pointer"
           tabIndex={0}
           onKeyDown={(e) => {

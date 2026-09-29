@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { useEmbedRunContext } from '@/components/shared/embedRunContext'
-import { complianceRegionForCountry } from '@/data/jurisdictionsData'
+import { complianceBlocsForRegion, complianceRegionForCountry } from '@/data/jurisdictionsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { defaultTabForPersona } from './obligations/roleLens'
@@ -55,9 +55,16 @@ export function isLandscapeTab(tab: MobileSection): boolean {
  * `deepLinks.test.ts` only asserts the route resolves, not what it renders,
  * so nothing caught it.
  */
-function defaultTabFor(certParam: string | undefined, persona: PersonaId | null): MobileSection {
+export function defaultTabFor(
+  certParam: string | undefined,
+  persona: PersonaId | null,
+  evref?: string
+): MobileSection {
   // A cert deep link is a request for one record and outranks any default.
   if (certParam) return 'records'
+  // Same for `?evref=` — a CSWP.39 cross-walk reference. The Assistant is
+  // taught the bare form (no `?tab=`), which used to land on Rules & Standards.
+  if (evref) return 'cswp39'
   // Otherwise the register — it answers "which rules bind me, and why" directly,
   // where every other tab asks the visitor to filter a 197-row catalogue until
   // relevance falls out. The role lens moves an ops reader to the calendar,
@@ -105,17 +112,21 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     return p
   })
   const searchParams = simEmbed ? embedSearchParams : realSearchParams
-  const setSearchParams: typeof realSetSearchParams = simEmbed
-    ? (nextInit) =>
-        setEmbedSearchParamsState((prev) => {
-          const next = new URLSearchParams(
-            typeof nextInit === 'function'
-              ? (nextInit(prev) as URLSearchParams)
-              : (nextInit as URLSearchParams)
-          )
-          return next.toString() === prev.toString() ? prev : next
-        })
-    : realSetSearchParams
+  const setSearchParams: typeof realSetSearchParams = useMemo(
+    () =>
+      simEmbed
+        ? (nextInit) =>
+            setEmbedSearchParamsState((prev) => {
+              const next = new URLSearchParams(
+                typeof nextInit === 'function'
+                  ? (nextInit(prev) as URLSearchParams)
+                  : (nextInit as URLSearchParams)
+              )
+              return next.toString() === prev.toString() ? prev : next
+            })
+        : realSetSearchParams,
+    [simEmbed, realSetSearchParams]
+  )
   const {
     selectedIndustries: personaIndustries,
     selectedPersona,
@@ -151,7 +162,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     // Supersedes two earlier defaults: the developer persona's jump to Product
     // Records, and the industry/region hint that picked a Landscape pillar.
     // Both were compensating for the register not existing.
-    return defaultTabFor(certParam, selectedPersona)
+    return defaultTabFor(certParam, selectedPersona, evref)
   })
 
   /**
@@ -186,9 +197,47 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     [rawReq]
   )
 
-  const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
-    () => searchParams.get('framework') ?? null
+  // `?framework=<id>` — the open framework drawer. Derived from the URL on
+  // every render (CHANGED 2026-09-28): it used to be read once in a useState
+  // initializer and never written, so a second framework link while already on
+  // /compliance did nothing, closing the drawer left the param behind, and
+  // opening one from the page never produced a shareable URL.
+  const frameworkParam = searchParams.get('framework')
+  /** Open a framework's drawer — a new history entry, like any resource open. */
+  const openFrameworkParam = useCallback(
+    (id: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('framework', id)
+          return next
+        },
+        { replace: false }
+      )
+    },
+    [setSearchParams]
   )
+  /** Close the drawer (or dismiss a not-found notice) — replaces, never pushes. */
+  const clearFrameworkParam = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('framework')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  // The 3 s scroll-and-ring on the Landscape card follows each NEW framework
+  // param (set-state-during-render: the React-recommended way to react to a
+  // changed external value without an extra effect pass).
+  const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(frameworkParam)
+  const [lastFrameworkParam, setLastFrameworkParam] = useState(frameworkParam)
+  if (frameworkParam !== lastFrameworkParam) {
+    setLastFrameworkParam(frameworkParam)
+    if (frameworkParam) setHighlightFrameworkId(frameworkParam)
+  }
   useEffect(() => {
     if (!highlightFrameworkId) return
     const timer = setTimeout(() => setHighlightFrameworkId(null), 3000)
@@ -231,10 +280,21 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // multi-value label in the top-bar chip is a persona DEFAULT for display, not
   // an assertion the reader made, so it must not become a sector here.
   const scopeIndustry = selectedIndustries[0] ?? 'All'
-  const scopeRegion: RegionBloc | 'All' =
-    selectedRegion && selectedRegion !== 'global' ? (selectedRegion as RegionBloc) : 'All'
+  // The persona/sim region is a DEFAULT scope, possibly several blocs (see
+  // complianceBlocsForRegion). It narrows the landscape only while the reader
+  // has not picked a region themselves and has not dismissed it, and it is
+  // never written to the URL — a shared link must not carry the sharer's
+  // persona scope.
+  const [regionScopeDismissed, setRegionScopeDismissed] = useState(false)
+  const personaRegionBlocs = useMemo(
+    () => complianceBlocsForRegion(selectedRegion) as RegionBloc[],
+    [selectedRegion]
+  )
+  const lsRegionScope: RegionBloc[] =
+    lsRegionOverride !== null || regionScopeDismissed ? [] : personaRegionBlocs
+  const dismissRegionScope = useCallback(() => setRegionScopeDismissed(true), [])
   const lsIndustry = lsIndustryOverride ?? scopeIndustry
-  const lsRegion = lsRegionOverride ?? scopeRegion
+  const lsRegion: RegionBloc | 'All' = lsRegionOverride ?? 'All'
   const setLsIndustry = setLsIndustryOverride
   const setLsRegion = setLsRegionOverride as (r: RegionBloc | 'All') => void
   const [lsCountry, setLsCountry] = useState<string>(() => searchParams.get('country') ?? 'All')
@@ -323,8 +383,13 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           const next = new URLSearchParams(prev)
           const tab = overrides.tab ?? activeTab
 
-          if (tab !== 'standards') next.set('tab', tab)
-          else next.delete('tab')
+          // Always written (CHANGED 2026-09-28). 'standards' used to be
+          // deleted as "the default", but the default is defaultTabFor()
+          // (Rules & Standards / Progress), so the URL→state effect below
+          // bounced every Landscape / Standardize-pillar selection — and every
+          // change to its filters — back off the tab. Old links without `tab`
+          // still resolve through defaultTabFor().
+          next.set('tab', tab)
 
           for (const key of [
             'org',
@@ -435,7 +500,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
 
   useEffect(() => {
     const tab =
-      (searchParams.get('tab') as MobileSection | null) ?? defaultTabFor(certParam, selectedPersona)
+      (searchParams.get('tab') as MobileSection | null) ??
+      defaultTabFor(certParam, selectedPersona, evref)
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
@@ -496,7 +562,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     // `certParam` is derived from `searchParams` in the same render, so it can
     // never be stale here — it is listed to keep exhaustive-deps quiet rather
     // than to change when this runs.
-  }, [searchParams, selectedIndustries, certParam, selectedPersona])
+  }, [searchParams, selectedIndustries, certParam, evref, selectedPersona])
 
   // ── Debounced search callbacks ─────────────────────────────────────────
 
@@ -691,12 +757,19 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     activeTab,
     setActiveTab,
     highlightFrameworkId,
+    /** `?framework=` as it is in the URL right now (null when absent). */
+    frameworkParam,
+    openFrameworkParam,
+    clearFrameworkParam,
     /** `?req=` — requires_pqc values to keep, or [] for "no narrowing". */
     reqFilter,
     // Landscape filter state
     lsOrg,
     lsIndustry,
     lsRegion,
+    /** Persona-default region blocs (empty once the reader picks or dismisses). */
+    lsRegionScope,
+    dismissRegionScope,
     lsCountry,
     lsDeadline,
     lsSearch,

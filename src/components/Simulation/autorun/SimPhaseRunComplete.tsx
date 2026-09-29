@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { CheckCircle2, LayoutDashboard, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import type { PhaseFocus } from './useSimAutoRunPlayer'
 
 /**
@@ -18,12 +20,28 @@ export function SimPhaseRunComplete({
   phaseFocus: PhaseFocus | null
   onClose: () => void
 }) {
+  // 09-28 nav remediation (WP3.5): same modal contract as the rest of the sim —
+  // dialog semantics, focus trapped and returned, Escape closes.
+  const trapRef = useFocusTrap(true)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   return (
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
       data-testid="phase-run-complete"
     >
-      <div className="relative w-full max-w-lg rounded-xl border border-primary/30 bg-card p-6 shadow-2xl">
+      <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sim-phase-run-complete-heading"
+        className="relative w-full max-w-lg rounded-xl border border-primary/30 bg-card p-6 shadow-2xl"
+      >
         <Button
           type="button"
           variant="ghost"
@@ -39,7 +57,10 @@ export function SimPhaseRunComplete({
             <CheckCircle2 className="text-primary" size={24} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2
+              id="sim-phase-run-complete-heading"
+              className="text-lg font-semibold text-foreground"
+            >
               {phaseFocus?.name ?? 'Phase'} complete
             </h2>
             <p className="text-xs text-muted-foreground">You’ve seen this phase end to end.</p>

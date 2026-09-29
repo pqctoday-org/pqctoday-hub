@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { MobileTimelineView } from './MobileTimelineView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { timelineData, transformToGanttData } from '@/data/timelineData'
@@ -11,6 +12,14 @@ import { applyTimelineScope } from '@/data/timelineScope'
 // own approach). Assertions are structural (derived from the real data at
 // test time) rather than hardcoded counts, since the underlying CSV changes
 // over time.
+// MobileTimelineView reads/writes ?country= and ?event=, so it needs a Router.
+const renderView = (url = '/timeline') =>
+  render(
+    <MemoryRouter initialEntries={[url]}>
+      <MobileTimelineView />
+    </MemoryRouter>
+  )
+
 const REAL_GANTT_DATA = transformToGanttData(applyTimelineScope(timelineData, {}))
 
 // Same "next imminent phase" logic as the component's own nextTwoPhases(),
@@ -42,7 +51,7 @@ describe('MobileTimelineView', () => {
 
   it("scopes the country list to the reader's region, matching REGION_COUNTRIES_MAP exactly", () => {
     usePersonaStore.getState().setRegion('americas')
-    render(<MobileTimelineView />)
+    renderView()
     const expected = REAL_GANTT_DATA.filter((d) =>
       ['United States', 'Canada'].includes(d.country.countryName)
     )
@@ -54,7 +63,7 @@ describe('MobileTimelineView', () => {
 
   it('shows every tracked country when the region is global — matches the full real dataset', () => {
     usePersonaStore.getState().setRegion('global')
-    render(<MobileTimelineView />)
+    renderView()
     expect(screen.getByText('Global PQC timeline')).toBeInTheDocument()
     expect(
       screen.getByText(`${REAL_GANTT_DATA.length} countries tracked`, { exact: false })
@@ -63,18 +72,18 @@ describe('MobileTimelineView', () => {
 
   it("shows the reader's-country panel for a region with a real representative country (americas -> United States)", () => {
     usePersonaStore.getState().setRegion('americas')
-    render(<MobileTimelineView />)
+    renderView()
     expect(screen.getByText(/When does this reach me, in United States\?/i)).toBeInTheDocument()
   })
 
   it("renders no reader's-country panel for a region with no single representative country (eu)", () => {
     usePersonaStore.getState().setRegion('eu')
-    render(<MobileTimelineView />)
+    renderView()
     expect(screen.queryByText(/When does this reach me/i)).not.toBeInTheDocument()
   })
 
   it('states what was cut rather than silently dropping it', () => {
-    render(<MobileTimelineView />)
+    renderView()
     expect(
       screen.getByText(/Switching region, a deadlines-only filter, phase-type color coding/i)
     ).toBeInTheDocument()
@@ -82,7 +91,7 @@ describe('MobileTimelineView', () => {
 
   it('defaults to compact view (design handoff §17) when the reader has no stored preference', () => {
     usePersonaStore.getState().setRegion('americas')
-    render(<MobileTimelineView />)
+    renderView()
     expect(screen.getByRole('button', { name: 'All phases' })).toHaveAttribute(
       'aria-pressed',
       'true'
@@ -93,13 +102,13 @@ describe('MobileTimelineView', () => {
   it("honors a reader's own stored view-mode choice over the compact default", () => {
     localStorage.setItem('timeline-mobile-view-mode', 'swipe')
     usePersonaStore.getState().setRegion('americas')
-    render(<MobileTimelineView />)
+    renderView()
     expect(screen.getByRole('button', { name: 'Swipe' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('the "Next 12 months" banner matches the real data — present only when the reader\'s next phase is this year or next, and never otherwise', () => {
     usePersonaStore.getState().setRegion('americas')
-    render(<MobileTimelineView />)
+    renderView()
     const expected = expectedNextUp('United States')
     const banner = screen.queryByText('Next 12 months')
     if (expected) {
@@ -112,5 +121,36 @@ describe('MobileTimelineView', () => {
     } else {
       expect(banner).not.toBeInTheDocument()
     }
+  })
+
+  describe('deep links', () => {
+    const grouped = REAL_GANTT_DATA.flatMap((c) => c.phases).find(
+      (p) => p.events.length > 1 && p.events[1].title !== p.events[0].title
+    )!
+    const target = grouped.events[1]
+
+    it("?event=<event_id> opens that event (not its row's first) and shows its country", () => {
+      usePersonaStore.getState().setRegion('americas')
+      renderView(`/timeline?event=${encodeURIComponent(target.eventId ?? target.title)}`)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: target.title })).toBeInTheDocument()
+      if (!['United States', 'Canada'].includes(target.countryName)) {
+        expect(screen.getByTestId('deeplink-notice-widened')).toBeInTheDocument()
+        expect(screen.getByText(`${target.countryName} PQC timeline`)).toBeInTheDocument()
+      }
+    })
+
+    it('unknown ?event shows a not-found notice', () => {
+      renderView('/timeline?event=no-such-event-xyz')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('no-such-event-xyz')
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+
+    it('?country= shows just that country', () => {
+      const name = REAL_GANTT_DATA[0].country.countryName
+      renderView(`/timeline?country=${encodeURIComponent(name)}`)
+      expect(screen.getByText(`${name} PQC timeline`)).toBeInTheDocument()
+      expect(screen.getByText('1 country tracked', { exact: false })).toBeInTheDocument()
+    })
   })
 })

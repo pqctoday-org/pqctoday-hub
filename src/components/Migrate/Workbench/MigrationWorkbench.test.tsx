@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
 import { MigrationWorkbench } from './MigrationWorkbench'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { productsForDomain } from './workbenchCatalog'
+import { Button } from '../../ui/button'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -22,12 +23,31 @@ function renderWorkbench() {
 
 /** Standalone (non-embedded) render at a given path — the ?product= deep
  *  link only hydrates when standalone (embedded skips it deliberately). */
+function LinkButton({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(to)}>
+      follow link
+    </Button>
+  )
+}
+
+function LocationProbe() {
+  const loc = useLocation()
+  return <output data-testid="location-search">{loc.search}</output>
+}
+
 function renderStandaloneAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <MigrationWorkbench />
+      <LocationProbe />
     </MemoryRouter>
   )
+}
+
+function escapeRe(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 describe('MigrationWorkbench (integration)', () => {
@@ -192,15 +212,76 @@ describe('MigrationWorkbench (integration)', () => {
 
   // Regression: migrate-process remediation Phase 5 (U8) — ProductDetail's
   // Endorse/Flag buttons emit /migrate?product=<name>, which used to land
-  // nowhere (the workbench only read ?share= and ?tab=).
-  it('?product= deep link switches to Replace and pre-fills the domain filter (regression)', () => {
+  // nowhere (the workbench only read ?share= and ?tab=). Deep-link
+  // remediation PR 1: it now filters by EXACT id (not a substring name
+  // filter), auto-expands the row and keeps the param in the URL.
+  describe('product deep links', () => {
     const [sample] = productsForDomain('tls')
-    expect(sample).toBeDefined()
-    renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.softwareName)}`)
-    // The Replace tab's filter input only renders when that tab is active —
-    // finding it with the right value proves both the tab switch and the
-    // filter pre-fill happened.
-    expect(screen.getByLabelText(/Filter products/i)).toHaveValue(sample.softwareName)
+    const search = () => screen.getByTestId('location-search').textContent ?? ''
+    const rowToggle = (name: string) =>
+      screen.getByRole('button', { name: new RegExp(`details for ${escapeRe(name)}$`) })
+
+    it('?product=<name> switches to Replace, shows only that product, expanded', () => {
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.softwareName)}`)
+      // filter box stays empty — exact-id filtering, not a substring pre-fill
+      expect(screen.getByLabelText(/Filter products/i)).toHaveValue('')
+      expect(screen.getAllByRole('button', { name: /details for / })).toHaveLength(1)
+      expect(rowToggle(sample.softwareName)).toHaveAttribute('aria-expanded', 'true')
+      expect(document.querySelector(`[data-deeplink-id="${sample.productId}"]`)).toBeInTheDocument()
+      expect(search()).toContain('product=')
+      expect(search()).toContain('tab=replace')
+    })
+
+    it('?product=<product_id> resolves the same product', () => {
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.productId)}`)
+      expect(rowToggle(sample.softwareName)).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    it('collapsing the linked row drops ?product= from the URL', () => {
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.productId)}`)
+      fireEvent.click(rowToggle(sample.softwareName))
+      expect(search()).not.toContain('product=')
+    })
+
+    it('an unknown product shows a not-found notice', () => {
+      renderStandaloneAt('/migrate?product=no-such-product-xyz')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+        'no-such-product-xyz'
+      )
+    })
+
+    it('?productIds=a,b filters to exactly those ids with nothing auto-expanded', () => {
+      const [a, b] = productsForDomain('tls')
+      renderStandaloneAt(`/migrate?productIds=${a.productId},${b.productId}`)
+      expect(screen.getAllByRole('button', { name: /details for / })).toHaveLength(2)
+      expect(rowToggle(a.softwareName)).toHaveAttribute('aria-expanded', 'false')
+      expect(search()).toContain('productIds=')
+    })
+
+    it('a second link while mounted re-hydrates, widening facets that hide it (with Undo)', () => {
+      const target = productsForDomain('tls').find(
+        (p) => (p.pqcStatusCanonical || '').toLowerCase() !== 'available'
+      )!
+      expect(target).toBeDefined()
+      render(
+        <MemoryRouter initialEntries={['/migrate']}>
+          <MigrationWorkbench />
+          <LinkButton to={`/migrate?product=${encodeURIComponent(target.productId)}`} />
+          <LocationProbe />
+        </MemoryRouter>
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Filter by PQC status' }))
+      fireEvent.click(screen.getByRole('option', { name: 'Available' }))
+      expect(screen.queryByText(target.softwareName)).not.toBeInTheDocument()
+
+      fireEvent.click(screen.getByRole('button', { name: 'follow link' }))
+      expect(screen.getByTestId('deeplink-notice-widened')).toBeInTheDocument()
+      expect(rowToggle(target.softwareName)).toHaveAttribute('aria-expanded', 'true')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+      expect(screen.queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
+      expect(screen.queryByText(target.softwareName)).not.toBeInTheDocument()
+    })
   })
 
   // Mobile UX layer (Phase 8). MigrateWorkbenchEmbed.tsx renders this same

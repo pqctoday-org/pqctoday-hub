@@ -24,7 +24,7 @@
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Pencil } from 'lucide-react'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
   WORKSHOP_TOOL_COMPONENTS,
@@ -33,7 +33,9 @@ import {
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
   TOOL_LABELS_BY_ARTIFACT_TYPE,
+  MODULE_CATALOG,
 } from './resourceContract'
+import { OPEN_PARAM, decodeOpen, encodeOpen, resolveOpen } from '@/simulation/resourceUrl'
 import {
   canEmbedStep,
   isAssessStep,
@@ -154,6 +156,7 @@ import { canResolveDeepLink } from '@/simulation/deepLinks'
 import {
   ResCol,
   resLinks,
+  type ResItem,
   DecisionSection,
   QuarterReport,
   type QuarterReportData,
@@ -191,6 +194,8 @@ import { ArchitecturePanel } from './ArchitecturePanel'
 import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
+import { hasRunStarted } from '@/simulation/runState'
+import { archStepShortfall } from '@/simulation/archCapacity'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
 import { readRunMetric, type RunMetricInputs } from '@/simulation/runMetrics'
 import { runQualityIndicators, indicatorsLabel } from '@/simulation/qualityIndicators'
@@ -253,6 +258,29 @@ const SEATS: { id: PersonaId; label: string; fullLabel: string }[] = (
 
 // difficulty cycle order for the MODE dial (WS-14)
 const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
+
+// 09-28 nav remediation (WP5): the Resources tab's step for one listed item —
+// shared by the tab and the `?open=` resolver, so a resource link resolves to
+// exactly the step the tab would have opened.
+type ResLeg = 'learn' | 'activities' | 'reference'
+function resourceStep(leg: ResLeg, it: ResItem): TreeStep {
+  if (leg === 'learn') return { kind: 'learn', label: it.label, to: it.to, moduleId: it.id }
+  if (leg === 'reference') return { kind: 'reference', label: it.label, to: it.to, refId: it.id }
+  // Business tools embed via the ACTIVITY arm (they emit an artifact).
+  // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt …) live
+  // in WORKSHOP_TOOL_COMPONENTS — the same registry the journey workshops embed
+  // through — so route them via the WORKSHOP arm too, keeping them UNDER the
+  // "● Simulation mode" header instead of navigating out to /playground.
+
+  return WORKSHOP_TOOL_COMPONENTS[it.id]
+    ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
+    : { kind: 'activity', label: it.label, to: it.to, artifactType: TOOL_TO_ARTIFACT[it.id] }
+}
+function resourceStepsFor(phase: PhaseId, sector: string, seat: string): TreeStep[] {
+  return (['learn', 'activities', 'reference'] as const).flatMap((leg) =>
+    resLinks(leg, phase, sector, seat).map((it) => resourceStep(leg, it))
+  )
+}
 
 // The store's seed SEAT (useSimulationStore SEED.seat). SEAT defaults from the
 // user's persona only while it is still this seed value — once the player has
@@ -433,7 +461,6 @@ export function SimulationView() {
     setInsuranceAssumed,
     activeTab,
     setActiveTab,
-    openStepRef,
     setOpenStepRef,
     returnPathFailures,
     noteReturnPathFailure,
@@ -444,6 +471,7 @@ export function SimulationView() {
     importSave,
     difficulty,
     setDifficulty,
+    restartWithDifficulty,
     tourSeen,
     markTourSeen,
     runCompleteSeen,
@@ -485,6 +513,16 @@ export function SimulationView() {
     setActivePhaseTab('decide')
   }, [sel])
   const [report, setReport] = useState<QuarterReportData | null>(null)
+  // 09-28 nav remediation (WP2): once the run has started, the Mode dial asks
+  // before starting a new run on the next difficulty instead of mutating the
+  // run in place (it was a hidden undo for a stuck wrong pick).
+  const runStarted = useSimulationStore((s) => hasRunStarted(s, RUN_START))
+  const [pendingDifficulty, setPendingDifficulty] = useState<DifficultyId | null>(null)
+  const cycleDifficulty = () => {
+    const next = DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length]!
+    if (runStarted) setPendingDifficulty(next)
+    else setDifficulty(next)
+  }
   // re-opened the sim from the top nav → start a clean excursion (clears both the
   // "peek" resume flag and any prior HUB-quit marker the hub header reads)
   useEffect(() => {
@@ -549,7 +587,10 @@ export function SimulationView() {
   // decision step, reachable from the ladder in every mode (not just the Expert
   // rail). No id to track beyond the label: completion is the cumulative
   // edge-decision count against the step's minDecisions (see embedContract.ts).
-  const [architectureEmbed, setArchitectureEmbed] = useState<{ title: string } | null>(null)
+  const [architectureEmbed, setArchitectureEmbed] = useState<{
+    title: string
+    minDecisions?: number
+  } | null>(null)
   // WP2.5: the comprehension check gating a Learn module's "Mark complete" —
   // null when no gate is currently open. Un-marking an already-complete module
   // (the toggle's "undo" path) never opens this; only the FIRST completion does.
@@ -601,7 +642,11 @@ export function SimulationView() {
   // the pane closes. Without this, "Back to board" dropped focus to <body> and a
   // keyboard or screen-reader user lost their place in the step list entirely.
   const embedOpenerRef = useRef<HTMLElement | null>(null)
-  const openStep = (s: TreeStep) => {
+  // 09-28 nav remediation (WP5): `openStepPane` opens the pane only (the
+  // auto-run, restore and URL sync use it); `openStep` is a USER open, which
+  // also pushes one history entry so browser Back closes the pane instead of
+  // leaving /simulation. Returns whether a pane actually opened.
+  const openStepPane = (s: TreeStep): boolean => {
     if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
       embedOpenerRef.current = document.activeElement
     }
@@ -666,20 +711,44 @@ export function SimulationView() {
       // actually reachable. Otherwise it stays a LOCKED bonus step (see the ladder
       // UI) so the player never hits a broken/unreachable panel and can't complete
       // a lab that didn't run.
-      if (sandboxAvail !== 'available') return
+      if (sandboxAvail !== 'available') return false
       clearAllEmbeds()
       setScenarioEmbed({ scenarioId: s.scenarioId, title: s.label })
     } else if (s.kind === 'architecture') {
       clearAllEmbeds()
-      setArchitectureEmbed({ title: s.label })
+      setArchitectureEmbed({ title: s.label, minDecisions: s.minDecisions })
+    } else {
+      return false
     }
     // NOTE: opening an embed no longer auto-completes the step. Completion is an
     // explicit "Mark complete" click in the embed header (review steps), the
     // tool's own Save (activity), or the in-body Save (algorithm choice tabs) —
     // a step is never silently done just by being viewed. AI delegation (`auto`)
     // still bulk-completes via its own button + the quarter engine.
+    return true
   }
-  const closeEmbed = () => {
+  // The `?open=` value the open pane is tied to (null when it was opened
+  // without one — the auto-run's peeks). Lets the URL sync tell "the URL moved
+  // on (Back/Forward)" from "a pane the URL never knew about".
+  const urlOpenRef = useRef<string | null>(null)
+  // The value a close is removing. Closing clears the pane at once, but going
+  // Back is asynchronous — until the URL catches up, the sync effect must not
+  // read the still-present value as "reopen this".
+  const closingOpenRef = useRef<string | null>(null)
+  const location = useLocation()
+  const openStep = (s: TreeStep) => {
+    if (!openStepPane(s)) return
+    const value = encodeOpen(sel, s)
+    urlOpenRef.current = value
+    const next = new URLSearchParams(searchParams)
+    if (next.get(OPEN_PARAM) === value) return
+    next.set(OPEN_PARAM, value)
+    // The history state carries the whole step: this session created it, so
+    // Back/Forward can reopen exactly it; `simOpenOwned` marks the entry as
+    // ours, so closing can go Back rather than stack another entry.
+    navigate({ search: `?${next.toString()}` }, { state: { simOpen: s, simOpenOwned: true } })
+  }
+  const closeEmbedPane = () => {
     // A deliberate "Back to board" is not a resume point — forget the resource
     // so the next reload lands on the board the player chose to return to.
     setOpenStepRef(null)
@@ -688,16 +757,45 @@ export function SimulationView() {
     // re-rendered and the target is back in the document.
     const opener = embedOpenerRef.current
     embedOpenerRef.current = null
-    if (opener) {
-      requestAnimationFrame(() => {
-        if (opener.isConnected) opener.focus()
-      })
+    if (opener && opener !== document.body) {
+      // 09-28 (WP7a): the board (and the button that opened the pane) unmounts
+      // while a pane is open, so the saved element is usually a detached node
+      // by now — fall back to its re-rendered twin (same tag + text).
+      // The board re-mounts over the next frames, so retry briefly.
+      const tag = opener.tagName
+      const text = opener.textContent
+      let tries = 0
+      const refocus = () => {
+        const target = opener.isConnected
+          ? opener
+          : Array.from(document.querySelectorAll<HTMLElement>(tag)).find(
+              (el) => el.textContent === text
+            )
+        if (target) target.focus()
+        else if (++tries < 10) setTimeout(refocus, 50)
+      }
+      requestAnimationFrame(refocus)
+    }
+  }
+  const closeEmbed = () => {
+    closeEmbedPane()
+    const current = searchParams.get(OPEN_PARAM)
+    if (!current) return
+    urlOpenRef.current = null
+    closingOpenRef.current = current
+    // Our own entry → go Back (Forward reopens it). A bookmarked / restored
+    // URL → drop the param in place and stay on /simulation.
+    if ((location.state as { simOpenOwned?: boolean } | null)?.simOpenOwned) navigate(-1)
+    else {
+      const next = new URLSearchParams(searchParams)
+      next.delete(OPEN_PARAM)
+      setSearchParams(next, { replace: true })
     }
   }
   // Live auto-run playthrough (Play 0→7) — drives the real sim like manual play:
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
-  const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
+  const autoRunPlayer = useSimAutoRunPlayer({ openStep: openStepPane, closeEmbed })
 
   // W5.5 — RESUME THE RESOURCE. The tab already survives a reload; this restores
   // what was open inside it. Runs once on mount, re-opening through `openStep`
@@ -706,27 +804,57 @@ export function SimulationView() {
   // the current phase's tree is restored — a save referencing a resource this
   // build no longer ships is dropped rather than reopened as a broken pane.
   const restoredResourceRef = useRef(false)
+  // 09-28 nav remediation (WP7a / WP5.6): run the restore ONCE, after the
+  // persisted store has hydrated — even when there is nothing to restore. It
+  // used to key off the first non-null `openStepRef`, so when nothing was saved
+  // the player's own first click re-triggered it: a second open that
+  // overwrote the focus-return target and logged "Embed Open" twice.
+  const [hydrated, setHydrated] = useState(() => useSimulationStore.persist.hasHydrated())
   useEffect(() => {
-    if (restoredResourceRef.current) return
-    // Wait for the persisted store to rehydrate. Zustand's persist middleware
-    // restores asynchronously, so on the very first mount this is still null —
-    // latching the ref on mount meant the resume never fired at all (caught in
-    // the browser; the unit tests set the store synchronously and passed).
-    if (!openStepRef) return
+    if (hydrated) return
+    if (useSimulationStore.persist.hasHydrated()) {
+      setHydrated(true)
+      return
+    }
+    return useSimulationStore.persist.onFinishHydration(() => setHydrated(true))
+  }, [hydrated])
+  useEffect(() => {
+    if (restoredResourceRef.current || !hydrated) return
+    const st = useSimulationStore.getState()
+    const saved = st.openStepRef as unknown as TreeStep | null
+    // A sandbox lab can't be judged until the sandbox check settles — wait
+    // (without latching) rather than silently drop it.
+    if (saved && isScenarioStep(saved) && sandboxAvail === 'checking') return
     restoredResourceRef.current = true
+    if (!saved) return
+    // The URL wins: an explicit `?open=` is resolved by the URL sync below.
+    if (searchParams.get(OPEN_PARAM)) return
+    // A `?phase=` deep link to a different phase is a deliberate jump: don't
+    // reopen an unrelated resource from the old phase under the new label.
+    const phaseParam = searchParams.get('phase')
+    if (phaseParam && phaseParam !== st.sel) {
+      setOpenStepRef(null)
+      return
+    }
     // Replay the stored step directly. Re-deriving it from the trees cannot
     // work: the Resources tab builds steps from the phase RESOURCE MAP, which
     // surfaces resources no tree contains (e.g. /learn/quantum-threats).
-    const step = openStepRef as unknown as TreeStep
-    if (canEmbedStep(step)) openStep(step)
-    else {
+    if (canEmbedStep(saved) && openStepPane(saved)) {
+      // Tie the URL to it (replace — a reload is not a new history step), so
+      // closing it and copying the link behave the same as a fresh open.
+      const value = encodeOpen(st.sel, saved)
+      urlOpenRef.current = value
+      const next = new URLSearchParams(searchParams)
+      next.set(OPEN_PARAM, value)
+      setSearchParams(next, { replace: true })
+    } else {
       // W7.5: the run remembered a resource this build cannot reopen, so the
       // learner is silently dropped on the board instead of where they were.
       noteReturnPathFailure()
       logSimReturnPathFailure(sel, 'unresolvable-resume')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openStepRef])
+  }, [hydrated, sandboxAvail])
 
   // Deep link: /simulation?run=<mode> auto-starts a run directly, skipping the
   // PLAY modal entirely — a URL is a pre-committed choice already made by
@@ -756,6 +884,63 @@ export function SimulationView() {
     next.delete('run')
     setSearchParams(next, { replace: true })
   }, [searchParams, setSearchParams, startRun])
+
+  // 09-28 nav remediation (WP5): the URL drives the pane. Back (param gone)
+  // closes a pane the URL opened; Forward or a pasted link reopens it. A value
+  // this session pushed carries its step in history state; anything else must
+  // resolve to one of that phase's real steps — it is never navigated to, and
+  // an unresolvable value is stripped and counted as a failed return path.
+  // Re-runs on the open resource too, not only the URL: if Back lands before
+  // React renders the pushed `?open=`, push + pop net out to the SAME search
+  // string, so `searchParams` never changes — comparing state here (URL has
+  // no value, yet the pane is tied to one) still closes it.
+  const openStepRefNow = useSimulationStore((s) => s.openStepRef)
+  useEffect(() => {
+    if (!hydrated) return
+    const value = searchParams.get(OPEN_PARAM)
+    if (value && value === closingOpenRef.current) return // a close in flight
+    closingOpenRef.current = null
+    if (!value) {
+      if (urlOpenRef.current) {
+        urlOpenRef.current = null
+        closeEmbedPane()
+      }
+      return
+    }
+    if (value === urlOpenRef.current) return
+    const decoded = decodeOpen(value, PHASE_ORDER)
+    const fromState = (location.state as { simOpen?: TreeStep } | null)?.simOpen
+    let step: TreeStep | null =
+      decoded && fromState && encodeOpen(decoded.phase, fromState) === value ? fromState : null
+    if (!step && decoded) {
+      const phaseId = decoded.phase as PhaseId
+      // eslint-disable-next-line security/detect-object-injection
+      const tree = SIM_TREES[phaseId]
+      step = resolveOpen(
+        decoded,
+        [...(tree ? flattenTree(tree) : []), ...resourceStepsFor(phaseId, sector, seat)],
+        {
+          isEmbeddable: isEmbeddableModule,
+          // eslint-disable-next-line security/detect-object-injection
+          label: (id) => `Learn: ${MODULE_CATALOG[id]?.title ?? id}`,
+        }
+      )
+    }
+    if (step && isScenarioStep(step) && sandboxAvail === 'checking') return // settle first
+    if (decoded && step && canEmbedStep(step)) {
+      if (decoded.phase !== sel) setSel(decoded.phase as PhaseId)
+      if (openStepPane(step)) {
+        urlOpenRef.current = value
+        return
+      }
+    }
+    const next = new URLSearchParams(searchParams)
+    next.delete(OPEN_PARAM)
+    setSearchParams(next, { replace: true })
+    noteReturnPathFailure()
+    logSimReturnPathFailure(sel, 'unresolvable-resume')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, hydrated, sandboxAvail, openStepRefNow])
 
   // Deep link: /simulation?phase=p3 jumps the board to that phase on load — e.g.
   // a Learn module's "practice this in the sim" CTA can target the exact phase it
@@ -795,7 +980,9 @@ export function SimulationView() {
     if (!seedParam) return
     ranSeedDeepLink.current = true
     const n = Number(seedParam)
-    const isFreshRun = year === RUN_START.year && q === RUN_START.q
+    // 09-28 (WP2): the same "fresh run" definition the Mode dial and the store
+    // guard use — not just "no quarter elapsed yet".
+    const isFreshRun = !hasRunStarted(useSimulationStore.getState(), RUN_START)
     if (Number.isInteger(n) && n > 0 && isFreshRun) {
       setSeed(n)
       // W5.4: apply the rest of the scenario configuration the link carries, so
@@ -836,6 +1023,14 @@ export function SimulationView() {
   // Concept peeks (non-blocking) surfaced during the walkthrough, keyed to the current
   // phase: HNDL + Mosca at the open (p0), the two-track model at the roadmap, hybrid at
   // pilots. Empty outside a running walkthrough.
+  // 09-28 nav remediation (WP3.7): the walkthrough's cards ignored ✕ — its list
+  // never filtered anything, and ✕ only wrote the interactive `seenConceptPeeks`.
+  // Dismissals during a tour live here and clear when the run ends, so a
+  // re-watched tour shows its cards again.
+  const [dismissedTourPeeks, setDismissedTourPeeks] = useState<string[]>([])
+  useEffect(() => {
+    if (!autoRunPlayer.running) setDismissedTourPeeks([])
+  }, [autoRunPlayer.running])
   const walkthroughConcepts = useMemo<TourConcept[]>(() => {
     if (!isWalkthroughMode(autoRunPlayer.mode) || !autoRunPlayer.running) return []
     const phase = autoRunPlayer.phaseFocus?.phase
@@ -844,8 +1039,13 @@ export function SimulationView() {
     if (phase === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === phase)
     if (stage?.conceptCards) ids.push(...stage.conceptCards)
-    return ids.map((id) => EXEC_TOUR_CONCEPTS[id])
-  }, [autoRunPlayer.mode, autoRunPlayer.running, autoRunPlayer.phaseFocus?.phase])
+    return ids.filter((id) => !dismissedTourPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
+  }, [
+    autoRunPlayer.mode,
+    autoRunPlayer.running,
+    autoRunPlayer.phaseFocus?.phase,
+    dismissedTourPeeks,
+  ])
 
   // WP2.3: the same concept peeks, brought to INTERACTIVE play — first entry to the
   // phase they're keyed to, then never again (seenConceptPeeks). Suppressed while a
@@ -853,12 +1053,15 @@ export function SimulationView() {
   // fixed-position slot (walkthroughConcepts owns it then).
   const interactiveConceptPeeks = useMemo<TourConcept[]>(() => {
     if (isWalkthroughMode(autoRunPlayer.mode) && autoRunPlayer.running) return []
+    // 09-28: not while a resource is open — the card sat over the embedded
+    // module's own content. It comes back (unseen) on the board.
+    if (openStepRefNow) return []
     const ids: TourConcept['id'][] = []
     if (sel === EXEC_TOUR_STAGES[0]?.phase) ids.push(...EXEC_TOUR_OPENING_CONCEPTS)
     const stage = EXEC_TOUR_STAGES.find((s) => s.phase === sel)
     if (stage?.conceptCards) ids.push(...stage.conceptCards)
     return ids.filter((id) => !seenConceptPeeks.includes(id)).map((id) => EXEC_TOUR_CONCEPTS[id])
-  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks])
+  }, [sel, autoRunPlayer.mode, autoRunPlayer.running, seenConceptPeeks, openStepRefNow])
   // The two sets are mutually exclusive by construction (each requires the other's
   // running/not-running gate), so a single combined list is always unambiguous.
   const conceptPeeks =
@@ -1067,6 +1270,10 @@ export function SimulationView() {
   )
   const resetAll = () => setPendingConfirm('reset')
   const runResetAll = () => {
+    // 09-28 (WP4.4): stop a live auto-run first — it would otherwise keep
+    // driving (and demo-filling) the run being wiped. stop() owns closing its
+    // resource; it is a no-op on an idle player.
+    autoRunPlayer.stop()
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -1078,6 +1285,7 @@ export function SimulationView() {
   // (proxy: form.reset() + result.reset()) clears both.
   const startOver = () => setPendingConfirm('start-over')
   const runStartOver = () => {
+    autoRunPlayer.stop()
     for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
     for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
     reset()
@@ -1756,6 +1964,17 @@ export function SimulationView() {
     )
     .filter((m) => isGatingStep(m.step))
   const nextMove = firstOpenIdx < 0 ? null : (stepMeta[firstOpenIdx] ?? null)
+  // 09-28 (content plan P5): an architecture next move can need more migration
+  // decisions than the P5 effort gate has unlocked yet — say so on the card.
+  const archShortfall =
+    nextMove?.step.kind === 'architecture' && nextMove.step.minDecisions
+      ? archStepShortfall(
+          size as 'small' | 'mid' | 'large' | 'global',
+          p5Frac,
+          edgeDecisions,
+          nextMove.step.minDecisions
+        )
+      : null
   // W3: the attempt already recorded for this exact step (run/phase/activity/
   // step), so a reload or rerender re-renders the decision the player made
   // rather than reopening it.
@@ -1931,7 +2150,10 @@ export function SimulationView() {
           <Link
             to="/"
             aria-label="Exit to hub"
-            onClick={() => markSimExited()}
+            onClick={() => {
+              autoRunPlayer.stop()
+              markSimExited()
+            }}
             className="ml-auto flex h-auto items-center rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
           >
             ← HUB
@@ -2042,6 +2264,215 @@ export function SimulationView() {
   ].filter(Boolean).length
   const hasAssessmentSignals = assessmentSignalCount > 0
 
+  // 09-28 nav remediation (WP6.3): the phone had no Reset, no Mode and no
+  // Terms — the desktop "More" menu lives in the desktop-only header.
+  const phoneMenuItems: RunActionItem[] = [
+    {
+      key: 'mode',
+      label: `Mode: ${difficulty[0]!.toUpperCase()}${difficulty.slice(1)}`,
+      description: runStarted
+        ? 'Easy / Realistic / Hard. Changing it starts a new run.'
+        : 'Easy / Realistic / Hard — tap to cycle.',
+      onSelect: cycleDifficulty,
+    },
+    {
+      key: 'reset',
+      label: 'Reset run',
+      description: 'Start this run again — your assessment is kept.',
+      onSelect: resetAll,
+    },
+    {
+      key: 'terms',
+      label: 'Terms & glossary',
+      description: 'Plain-English sim vocabulary + the full PQC glossary.',
+      onSelect: () => setTermsOpen(true),
+    },
+  ]
+  const phoneMenuTrigger =
+    'h-auto rounded-md border border-border px-2.5 py-1 font-mono text-sim-chip font-bold text-foreground hover:bg-muted'
+
+  // 09-28 nav remediation (WP6.2): the phone's per-kind completion control for
+  // a step — ONE implementation shared by the Decide view (the next move) and
+  // the Overview's Resources list (any step of the current level), so the two
+  // can never drift. `act` is the step's framework activity (the Brief/result
+  // sheets draw their check from it); without one the sheet can't open.
+  const renderPhoneCompletion = (step: TreeStep, act: TreeActivity | undefined) => {
+    if (step.kind === 'learn' && step.moduleId) {
+      const moduleId = step.moduleId
+      if (moduleDone(moduleId)) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Module completed
+          </div>
+        )
+      }
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            const q = pickQuizQuestion(moduleId, seed)
+            if (q) {
+              setQuizGate({ moduleId, title: step.label, question: q })
+            } else {
+              // No check exists for this module: record it as read,
+              // self-reported. Never claim it was comprehension-checked.
+              recordLearnerEvidence('learn', moduleId, 'viewed')
+            }
+          }}
+          className="mt-2 h-auto w-full rounded-md border border-success/50 bg-success/10 px-3 py-2 text-[11px] font-bold text-success hover:bg-success/20"
+        >
+          Mark complete
+        </Button>
+      )
+    }
+    if (step.kind === 'catalog' && step.catalogId) {
+      const catalogId = step.catalogId
+      return (
+        <div className="mt-2">
+          <CompleteStepAction
+            recordsArtifact={false}
+            saved={catalogCompleted.includes(catalogId)}
+            onClick={() => markCatalogStepDone(catalogId)}
+          />
+        </div>
+      )
+    }
+    if (step.kind === 'activity') {
+      const done = !!step.artifactType && artifactDone(step.artifactType)
+      if (done) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Artifact on file — this step is credited.
+          </div>
+        )
+      }
+      const toolLabel = step.artifactType
+        ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
+        : undefined
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => act && setSheetFor({ step, act })}
+          className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
+        >
+          Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
+        </Button>
+      )
+    }
+    if (step.kind === 'workshop' && step.workshopId) {
+      const workshopId = step.workshopId
+      const done = visitedWorkshops.includes(workshopId)
+      if (done) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Result reviewed — this step is credited.
+          </div>
+        )
+      }
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => act && setSheetFor({ step, act })}
+          className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
+        >
+          See the result
+        </Button>
+      )
+    }
+    if (step.kind === 'architecture' && step.minDecisions) {
+      // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
+      // needed. Same judging logic as desktop's ArchitecturePanel
+      // (checkChoice against jurisdiction) and the same store action
+      // (setEdgeDecision); completion is the cumulative decision
+      // count vs this step's threshold (embedContract.ts), exactly
+      // like the desktop instance below.
+      const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+      const migratable = arch.edges.filter(
+        (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+      )
+      const decidedCount = Object.keys(edgeDecisions).length
+      const target = Math.min(step.minDecisions, migratable.length)
+      const decided = migratable.filter((e) => edgeDecisions[edgeKey(e)])
+      // 09-28 (WP6.5): a decided link can be taken back.
+      const undoList = decided.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {decided.map((e) => (
+            <Button
+              key={edgeKey(e)}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEdgeDecision(edgeKey(e), null)}
+              aria-label={`Undo ${e.from} to ${e.to} (${e.protocol})`}
+              className="h-auto px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground"
+            >
+              ↺ {e.from} → {e.to}
+            </Button>
+          ))}
+        </div>
+      )
+      if (decidedCount >= target) {
+        return (
+          <div className="mt-2 space-y-1.5">
+            <div className="rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+              ✓ {decidedCount}/{target} migration decisions made — this step is credited.
+            </div>
+            {undoList}
+          </div>
+        )
+      }
+      const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
+      return (
+        <div className="mt-2 space-y-1.5">
+          {undoList}
+          <div className="text-[10.5px] font-bold text-muted-foreground">
+            {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
+          </div>
+          {undecided.slice(0, 4).map((e) => {
+            const key = edgeKey(e)
+            return (
+              <div
+                key={key}
+                className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
+              >
+                <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
+                  {e.from} → {e.to} ({e.protocol})
+                </span>
+                <div className="flex shrink-0 gap-1">
+                  {(['hybrid', 'pure'] as const).map((choice) => {
+                    const verdict = checkChoice(country, choice)
+                    return (
+                      <Button
+                        key={choice}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        title={verdict.reason}
+                        onClick={() => setEdgeDecision(key, choice)}
+                        className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
+                          verdict.level === 'fail'
+                            ? 'border-destructive/40 text-destructive'
+                            : verdict.level === 'warn'
+                              ? 'border-warning/40 text-warning'
+                              : 'border-success/40 text-success'
+                        }`}
+                      >
+                        {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+    return null
+  }
   return (
     <>
       {/* mobile-ux-layer (WS-1, sim-mobile-full-play): real interactive play
@@ -2058,6 +2489,11 @@ export function SimulationView() {
           below. */}
       {isMobileShell && mobilePlayOpen ? (
         <div
+          // 09-28 nav remediation: distinct keys on the two phone screens. They
+          // were the same element type at the same tree position, so React
+          // reused ONE scrolled <div> — scroll the Overview down to tap Play and
+          // Decide opened scrolled too, with "← Overview" hidden above the fold.
+          key="sim-mobile-decide"
           className="flex md:hidden fixed inset-0 z-50 flex-col overflow-auto bg-background px-4 py-6 text-foreground"
           data-testid="sim-mobile-decide"
         >
@@ -2070,9 +2506,24 @@ export function SimulationView() {
             >
               ← Overview
             </Button>
-            <span className="font-mono text-sim-micro font-bold text-muted-foreground">
-              Turn · Q{q} {year}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sim-micro font-bold text-muted-foreground">
+                Q{q} {year}
+              </span>
+              {/* 09-28 (WP6.6): End quarter was only on the phone Overview. */}
+              {!autoRunPlayer.running && !autoRunPlayer.done && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={endQuarter}
+                  className="h-auto px-2 py-1 text-[11px] font-bold text-foreground"
+                >
+                  End quarter →
+                </Button>
+              )}
+              <RunActionsMenu items={phoneMenuItems} triggerClassName={phoneMenuTrigger} />
+            </div>
           </div>
           <div className="mb-3">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
@@ -2113,160 +2564,7 @@ export function SimulationView() {
             // comes from a Business tool (out of mobile scope for now), so it
             // auto-credits from the same artifactDone() signal desktop uses
             // and is labeled a "laptop step" rather than faked done.
-            renderCompletion={(step) => {
-              if (step.kind === 'learn' && step.moduleId) {
-                const moduleId = step.moduleId
-                if (moduleDone(moduleId)) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Module completed
-                    </div>
-                  )
-                }
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      const q = pickQuizQuestion(moduleId, seed)
-                      if (q) {
-                        setQuizGate({ moduleId, title: step.label, question: q })
-                      } else {
-                        // No check exists for this module: record it as read,
-                        // self-reported. Never claim it was comprehension-checked.
-                        recordLearnerEvidence('learn', moduleId, 'viewed')
-                      }
-                    }}
-                    className="mt-2 h-auto w-full rounded-md border border-success/50 bg-success/10 px-3 py-2 text-[11px] font-bold text-success hover:bg-success/20"
-                  >
-                    Mark complete
-                  </Button>
-                )
-              }
-              if (step.kind === 'catalog' && step.catalogId) {
-                const catalogId = step.catalogId
-                return (
-                  <div className="mt-2">
-                    <CompleteStepAction
-                      recordsArtifact={false}
-                      saved={catalogCompleted.includes(catalogId)}
-                      onClick={() => markCatalogStepDone(catalogId)}
-                    />
-                  </div>
-                )
-              }
-              if (step.kind === 'activity') {
-                const done = !!step.artifactType && artifactDone(step.artifactType)
-                if (done) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Artifact on file — this step is credited.
-                    </div>
-                  )
-                }
-                const toolLabel = step.artifactType
-                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
-                  : undefined
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
-                    className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
-                  >
-                    Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
-                  </Button>
-                )
-              }
-              if (step.kind === 'workshop' && step.workshopId) {
-                const workshopId = step.workshopId
-                const done = visitedWorkshops.includes(workshopId)
-                if (done) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Result reviewed — this step is credited.
-                    </div>
-                  )
-                }
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
-                    className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
-                  >
-                    See the result
-                  </Button>
-                )
-              }
-              if (step.kind === 'architecture' && step.minDecisions) {
-                // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
-                // needed. Same judging logic as desktop's ArchitecturePanel
-                // (checkChoice against jurisdiction) and the same store action
-                // (setEdgeDecision); completion is the cumulative decision
-                // count vs this step's threshold (embedContract.ts), exactly
-                // like the desktop instance below.
-                const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
-                const migratable = arch.edges.filter(
-                  (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
-                )
-                const decidedCount = Object.keys(edgeDecisions).length
-                const target = Math.min(step.minDecisions, migratable.length)
-                if (decidedCount >= target) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ {decidedCount}/{target} migration decisions made — this step is credited.
-                    </div>
-                  )
-                }
-                const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
-                return (
-                  <div className="mt-2 space-y-1.5">
-                    <div className="text-[10.5px] font-bold text-muted-foreground">
-                      {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
-                    </div>
-                    {undecided.slice(0, 4).map((e) => {
-                      const key = edgeKey(e)
-                      return (
-                        <div
-                          key={key}
-                          className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
-                        >
-                          <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
-                            {e.from} → {e.to} ({e.protocol})
-                          </span>
-                          <div className="flex shrink-0 gap-1">
-                            {(['hybrid', 'pure'] as const).map((choice) => {
-                              const verdict = checkChoice(country, choice)
-                              return (
-                                <Button
-                                  key={choice}
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  title={verdict.reason}
-                                  onClick={() => setEdgeDecision(key, choice)}
-                                  className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
-                                    verdict.level === 'fail'
-                                      ? 'border-destructive/40 text-destructive'
-                                      : verdict.level === 'warn'
-                                        ? 'border-warning/40 text-warning'
-                                        : 'border-success/40 text-success'
-                                  }`}
-                                >
-                                  {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
-                                </Button>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )
-              }
-              return null
-            }}
+            renderCompletion={(step) => renderPhoneCompletion(step, nextMove?.act)}
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
@@ -2286,7 +2584,9 @@ export function SimulationView() {
               const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
               // On Pilots (p5) a wrong call also rolls back a migrated estate
               // link, exactly like the desktop instance.
-              const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+              // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
+              // order) — `[0]` rolled back the oldest.
+              const revertId = sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
               const extra = revertId ? ` — rolled back link ${revertId}` : ''
               pendingWrongPickRef.current = { quarters, yearsBefore: clock.yearsToHorizon }
               applyDecisionSetback(
@@ -2307,100 +2607,6 @@ export function SimulationView() {
             </div>
           )}
           <TrapInsightsPanel />
-          {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
-              above can open. A second instance of the same quizGate/setQuizGate
-              state the desktop embed header uses — that one is unreachable here
-              (inside the `hidden md:flex` wrapper, now guarded !isMobileShell to
-              avoid a double mount). This is a plain fixed-position overlay with
-              its own z-[80], so it renders correctly regardless of viewport. */}
-          {quizGate && (
-            <QuizGateModal
-              question={quizGate.question}
-              moduleTitle={quizGate.title}
-              onCancel={() => setQuizGate(null)}
-              onPass={() => {
-                recordLearnerEvidence('learn', quizGate.moduleId, 'comprehension-checked')
-                setQuizGate(null)
-              }}
-            />
-          )}
-          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
-              reads the SAME generated document the narrated auto-run files
-              (autorun/simAutoRun.ts docFor), answers one check drawn from a
-              sibling learn module, then credits through the exact same
-              addExecutiveDocument call the auto-run uses (no parallel
-              completion mechanism). Labeled "(Generated brief)" in the
-              artifact title — the 08-27 honesty rule: a desktop user can
-              later replace it by building the real one in the tool. */}
-          {sheetFor && sheetFor.step.kind === 'activity' && (
-            <>
-              {(() => {
-                const artifactType = sheetFor.step.artifactType
-                const doc = artifactType ? docFor(artifactType, sector) : undefined
-                const toolLabel = artifactType
-                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
-                  : undefined
-                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
-                return (
-                  <SimBriefSheet
-                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
-                      toolLabel
-                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
-                        : ''
-                    }`}
-                    title={doc?.title ?? sheetFor.step.label}
-                    checkTitle={sheetFor.step.label}
-                    question={checkPick?.question ?? null}
-                    fileLabel="File this brief"
-                    onFile={() => {
-                      if (doc && artifactType) {
-                        addExecutiveDocument({
-                          id: `sim-mobile-brief-${artifactType}`,
-                          moduleId: 'sim-mobile-brief',
-                          type: artifactType,
-                          title: `${doc.title} (Generated brief)`,
-                          data: doc.data,
-                          createdAt: nowMs(),
-                        })
-                      }
-                      setSheetFor(null)
-                    }}
-                    onClose={() => setSheetFor(null)}
-                  >
-                    <MarkdownView content={doc?.data ?? '_No content available._'} />
-                  </SimBriefSheet>
-                )
-              })()}
-            </>
-          )}
-          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
-              a pre-computed, cited result card (the live playground tool
-              can't run on a phone), same check-then-credit shape, credited
-              via the same markWorkshopVisited() the desktop embed uses. */}
-          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
-            <>
-              {(() => {
-                const workshopId = sheetFor.step.workshopId!
-                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
-                return (
-                  <SimBriefSheet
-                    kicker="Workshop result — practice on a laptop for the interactive version"
-                    title={sheetFor.step.label}
-                    checkTitle={sheetFor.step.label}
-                    question={checkPick?.question ?? null}
-                    fileLabel="Log this result"
-                    onFile={() => {
-                      markWorkshopVisited(workshopId)
-                      setSheetFor(null)
-                    }}
-                    onClose={() => setSheetFor(null)}
-                  >
-                    <WorkshopResultCard workshopId={workshopId} />
-                  </SimBriefSheet>
-                )
-              })()}
-            </>
-          )}
           {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
             <div
               className={`mb-4 rounded-lg border p-3 ${
@@ -2433,13 +2639,22 @@ export function SimulationView() {
             </div>
           )}
           <p className="mt-1 text-[10.5px] leading-snug text-muted-foreground">
-            Delegating a phase to your AI team, the Progress/Resources/Signals tabs, and in-sim
-            resource embedding are on a laptop — resources here open in a new page instead.
+            Delegating a phase to your AI team, the Signals tab, and in-sim resource embedding are
+            on a laptop — resources here open in a new page instead. Progress and Resources are on
+            the Overview.
           </p>
         </div>
       ) : (
         <div
-          className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5"
+          key="sim-mobile-overview"
+          // 09-28 nav remediation: NOT justify-center — when the content is
+          // taller than the screen, centring pushes its top above the scroll
+          // origin, where it can never be scrolled to (the menu, heading and
+          // part of the phase chips were unreachable on a 13-mini-sized phone).
+          // first/last-child auto margins still centre short content. And no
+          // child may shrink: the phase-chip row (overflow-x-auto, so min-height
+          // 0) was being squashed to half height, clipping every chip.
+          className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-start overflow-auto bg-background px-6 py-10 text-center gap-5 [&>*]:shrink-0 [&>:first-child]:mt-auto [&>:last-child]:mb-auto"
           // mobile-ux-layer (WS-B2): the +2.5rem baseline matches this
           // container's own py-10 bottom padding exactly (so idle state, no
           // run active, --sim-transport-h unset, is pixel-identical to
@@ -2449,6 +2664,9 @@ export function SimulationView() {
           // way to reach the last ~325px of content.
           style={{ paddingBottom: 'calc(var(--sim-transport-h, 0px) + 2.5rem)' }}
         >
+          <div className="flex w-full max-w-[340px] justify-end">
+            <RunActionsMenu items={phoneMenuItems} triggerClassName={phoneMenuTrigger} />
+          </div>
           <div className="space-y-1">
             <h2 className="text-lg font-bold">Your migration</h2>
             {/* WS-1 (sim-mobile-full-play): the board itself stays a
@@ -2567,56 +2785,113 @@ export function SimulationView() {
               </div>
             </details>
           )}
-          {/* W6.4 — compact phone RESOURCES. Each entry says WHY this phase
-              opens it and what evidence it can produce, which the desktop
-              Resources tab did not state either. Large editors are marked as
-              desktop work rather than opened into a shell that cannot run
-              them (W6.5 handoff). */}
-          {isMobileShell && (
-            <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
-              <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
-                Resources for this phase
-              </summary>
-              <div className="space-y-1.5 border-t border-border px-3 py-2">
-                {(SIM_TREES[sel] ? flattenTree(SIM_TREES[sel]!) : [])
-                  .filter((st) => isGatingStep(st))
-                  .slice(0, 8)
-                  .map((st, i) => {
-                    const done = stepDone(st, sel)
-                    const desktopOnly = st.kind === 'activity' || st.kind === 'architecture'
-                    return (
-                      <div
-                        key={`${st.to}-${i}`}
-                        className="rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="font-bold text-foreground">{st.label}</span>
-                          <span
-                            className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
-                          >
-                            {done ? 'done' : desktopOnly ? 'desktop' : 'open'}
-                          </span>
+          {/* W6.4 — compact phone RESOURCES. 09-28 nav remediation (WP6.2): it
+              listed the tree's first 8 steps (almost all Level 1), flagged
+              activity/architecture as "desktop" although the phone completes
+              both, and its "Open →" never marked a reference visited. It now
+              lists the CURRENT level's steps — the phone's "do these in any
+              order" (desktop's Progress tab) — each with the same completion
+              control the Decide view uses. */}
+          {isMobileShell &&
+            (() => {
+              const tree = SIM_TREES[sel]
+              const band = tree?.levels.find((b) => levelOf(sel) < b.level)
+              const acts = band?.activities ?? []
+              const steps = acts.flatMap((a) =>
+                a.steps.filter((st) => isGatingStep(st)).map((st) => ({ st, act: a }))
+              )
+              // 09-28: sector-track steps (optional) were desktop-only — they
+              // render in the desktop Progress tab, so on a phone the government,
+              // PCI, healthcare … sector modules never appeared at all.
+              const sectorSteps = sectorStepsForPhase(sector, sel)
+              if ((!band || steps.length === 0) && sectorSteps.length === 0) return null
+              return (
+                <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
+                  <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
+                    Resources for this phase{band ? ` · L${band.level} in any order` : ''}
+                  </summary>
+                  <div className="space-y-1.5 border-t border-border px-3 py-2">
+                    {steps.map(({ st, act }, i) => {
+                      const done = stepDone(st, sel)
+                      const opensInHub =
+                        st.kind !== 'activity' &&
+                        st.kind !== 'workshop' &&
+                        st.kind !== 'architecture' &&
+                        canResolveDeepLink(st.to)
+                      return (
+                        <div
+                          key={`${st.to}-${i}`}
+                          className="rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="font-bold text-foreground">{st.label}</span>
+                            <span
+                              className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                            >
+                              {done ? 'done' : 'open'}
+                            </span>
+                          </div>
+                          {!done && opensInHub && (
+                            <Link
+                              to={st.to}
+                              onClick={() => {
+                                markSimResume()
+                                if (st.kind === 'reference' && st.refId) markRefVisited(st.refId)
+                              }}
+                              className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                            >
+                              Open →
+                            </Link>
+                          )}
+                          {!done && renderPhoneCompletion(st, act)}
                         </div>
-                        <div className="text-muted-foreground">
-                          {desktopOnly
-                            ? 'Produces an artifact — continue this task on desktop; your run travels with you.'
-                            : 'Opens in the hub; returns you here.'}
+                      )
+                    })}
+                    {sectorSteps.length > 0 && (
+                      <div className="pt-1" data-testid="phone-sector-steps">
+                        <div className="mb-1 font-mono text-sim-micro font-bold uppercase tracking-wide text-muted-foreground">
+                          For your sector · optional
                         </div>
-                        {!desktopOnly && (
-                          <Link
-                            to={st.to}
-                            onClick={() => markSimResume()}
-                            className="font-bold text-primary underline decoration-dotted underline-offset-2"
-                          >
-                            Open →
-                          </Link>
-                        )}
+                        {sectorSteps.map((ss) => {
+                          const done = moduleDone(ss.moduleId)
+                          const step: TreeStep = {
+                            kind: 'learn',
+                            label: ss.label,
+                            to: ss.to,
+                            moduleId: ss.moduleId,
+                          }
+                          return (
+                            <div
+                              key={ss.moduleId}
+                              className="mb-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-bold text-foreground">{ss.label}</span>
+                                <span
+                                  className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                                >
+                                  {done ? 'done' : 'open'}
+                                </span>
+                              </div>
+                              {!done && (
+                                <Link
+                                  to={ss.to}
+                                  onClick={() => markSimResume()}
+                                  className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                                >
+                                  Open →
+                                </Link>
+                              )}
+                              {!done && renderPhoneCompletion(step, undefined)}
+                            </div>
+                          )
+                        })}
                       </div>
-                    )
-                  })}
-              </div>
-            </details>
-          )}
+                    )}
+                  </div>
+                </details>
+              )
+            })()}
           <dl className="w-full max-w-[320px] space-y-2 text-left">
             {[
               {
@@ -2791,21 +3066,31 @@ export function SimulationView() {
                 <SimScenarioIntroCard
                   scenario={autoRunPlayer.scenarioIntro}
                   onBegin={autoRunPlayer.beginScenario}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
               {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
                 <SimPassIntroModal
                   pass={autoRunPlayer.passIntro}
                   onBegin={autoRunPlayer.beginPass}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
               {autoRunPlayer.phaseIntro && (
                 <SimPhaseIntroModal
                   phase={autoRunPlayer.phaseIntro.phase}
                   onBegin={autoRunPlayer.beginPhase}
+                  onDismiss={autoRunPlayer.pauseAndDismissIntro}
+                  onStop={autoRunPlayer.stop}
                 />
               )}
-              <SimArtifactReveal type={autoRunPlayer.reveal} variant="mobile" />
+              <SimArtifactReveal
+                type={autoRunPlayer.reveal}
+                variant="mobile"
+                onDismiss={autoRunPlayer.dismissReveal}
+              />
             </>
           )}
           {walkthroughDoneOpen && (
@@ -2830,11 +3115,117 @@ export function SimulationView() {
           )}
           <Link
             to="/"
-            onClick={() => markSimExited()}
+            onClick={() => {
+              autoRunPlayer.stop()
+              markSimExited()
+            }}
             className="text-sm text-primary underline underline-offset-4"
           >
             Back to hub
           </Link>
+        </div>
+      )}
+      {/* 09-28 nav remediation (WP6.2): the phone's quiz gate and Brief/result
+          sheets, hoisted out of the Decide-only branch so the phone Overview's
+          Resources list can open the same completion flows. `md:hidden` keeps
+          the same CSS guard they had inside the phone containers — at tablet
+          widths the desktop instances own these (no double mount). */}
+      {isMobileShell && (
+        <div className="md:hidden">
+          {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
+              above can open. A second instance of the same quizGate/setQuizGate
+              state the desktop embed header uses — that one is unreachable here
+              (inside the `hidden md:flex` wrapper, now guarded !isMobileShell to
+              avoid a double mount). This is a plain fixed-position overlay with
+              its own z-[80], so it renders correctly regardless of viewport. */}
+          {quizGate && (
+            <QuizGateModal
+              question={quizGate.question}
+              moduleTitle={quizGate.title}
+              onCancel={() => setQuizGate(null)}
+              onPass={() => {
+                recordLearnerEvidence('learn', quizGate.moduleId, 'comprehension-checked')
+                setQuizGate(null)
+              }}
+            />
+          )}
+          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
+              reads the SAME generated document the narrated auto-run files
+              (autorun/simAutoRun.ts docFor), answers one check drawn from a
+              sibling learn module, then credits through the exact same
+              addExecutiveDocument call the auto-run uses (no parallel
+              completion mechanism). Labeled "(Generated brief)" in the
+              artifact title — the 08-27 honesty rule: a desktop user can
+              later replace it by building the real one in the tool. */}
+          {sheetFor && sheetFor.step.kind === 'activity' && (
+            <>
+              {(() => {
+                const artifactType = sheetFor.step.artifactType
+                const doc = artifactType ? docFor(artifactType, sector) : undefined
+                const toolLabel = artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
+                  : undefined
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
+                      toolLabel
+                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
+                        : ''
+                    }`}
+                    title={doc?.title ?? sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="File this brief"
+                    onFile={() => {
+                      if (doc && artifactType) {
+                        addExecutiveDocument({
+                          id: `sim-mobile-brief-${artifactType}`,
+                          moduleId: 'sim-mobile-brief',
+                          type: artifactType,
+                          title: `${doc.title} (Generated brief)`,
+                          data: doc.data,
+                          createdAt: nowMs(),
+                        })
+                      }
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <MarkdownView content={doc?.data ?? '_No content available._'} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
+          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
+              a pre-computed, cited result card (the live playground tool
+              can't run on a phone), same check-then-credit shape, credited
+              via the same markWorkshopVisited() the desktop embed uses. */}
+          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
+            <>
+              {(() => {
+                const workshopId = sheetFor.step.workshopId!
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker="Workshop result — practice on a laptop for the interactive version"
+                    title={sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="Log this result"
+                    onFile={() => {
+                      markWorkshopVisited(workshopId)
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <WorkshopResultCard workshopId={workshopId} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
         </div>
       )}
 
@@ -2930,10 +3321,8 @@ export function SimulationView() {
               label="Mode"
               value={difficulty[0].toUpperCase() + difficulty.slice(1)}
               hint="clock + budget + stakes"
-              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run."
-              onClick={() =>
-                setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
-              }
+              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run. Once a run has started, changing difficulty starts a new run."
+              onClick={cycleDifficulty}
             />
           </div>
           {/* KPI cluster (2026-08-02) — one bordered strip with internal dividers,
@@ -3089,10 +3478,18 @@ export function SimulationView() {
               ▶ Play
             </Button>
           )}
-          <SimAutoRunOverlay player={autoRunPlayer} />
+          <SimAutoRunOverlay
+            player={autoRunPlayer}
+            publishHeightVar
+            heightVarName="--sim-transport-h-md"
+          />
           <SimConceptPeek
             concepts={conceptPeeks}
-            onDismiss={markConceptPeekSeen}
+            onDismiss={(id) =>
+              walkthroughConcepts.length > 0
+                ? setDismissedTourPeeks((d) => (d.includes(id) ? d : [...d, id]))
+                : markConceptPeekSeen(id)
+            }
             onLearnMore={(moduleId) =>
               openStep({
                 kind: 'learn',
@@ -3102,20 +3499,29 @@ export function SimulationView() {
               })
             }
           />
-          <SimArtifactReveal type={autoRunPlayer.reveal} />
+          <SimArtifactReveal type={autoRunPlayer.reveal} onDismiss={autoRunPlayer.dismissReveal} />
           {autoRunPlayer.scenarioIntro && (
             <SimScenarioIntroCard
               scenario={autoRunPlayer.scenarioIntro}
               onBegin={autoRunPlayer.beginScenario}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
             />
           )}
           {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
-            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+            <SimPassIntroModal
+              pass={autoRunPlayer.passIntro}
+              onBegin={autoRunPlayer.beginPass}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
+            />
           )}
           {autoRunPlayer.phaseIntro && (
             <SimPhaseIntroModal
               phase={autoRunPlayer.phaseIntro.phase}
               onBegin={autoRunPlayer.beginPhase}
+              onDismiss={autoRunPlayer.pauseAndDismissIntro}
+              onStop={autoRunPlayer.stop}
             />
           )}
           {viewDoc && (
@@ -3152,6 +3558,7 @@ export function SimulationView() {
             type="button"
             variant="ghost"
             onClick={() => {
+              autoRunPlayer.stop()
               markSimExited()
               navigate('/')
             }}
@@ -3550,6 +3957,11 @@ export function SimulationView() {
                         size={size as 'small' | 'mid' | 'large' | 'global'}
                         country={country}
                         p5Frac={p5Frac}
+                        target={architectureEmbed.minDecisions}
+                        onGoToProgress={() => {
+                          closeEmbed()
+                          setActivePhaseTab('progress')
+                        }}
                       />
                     </div>
                   ) : null}
@@ -3914,6 +4326,24 @@ export function SimulationView() {
                         attempt={nextMoveAttempt}
                         onDecide={recordAttempt}
                         onClearAttempt={clearAttempt}
+                        onShowProgress={() => setActivePhaseTab('progress')}
+                        note={
+                          archShortfall ? (
+                            <span data-testid="arch-shortfall-note">
+                              This task needs {archShortfall.target} migration decisions, and
+                              you&apos;ve unlocked {archShortfall.unlocked} so far — links unlock as
+                              you finish other Pilots tasks.{' '}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setActivePhaseTab('progress')}
+                                className="h-auto p-0 font-bold text-primary underline hover:bg-transparent"
+                              >
+                                Do some of those first →
+                              </Button>
+                            </span>
+                          ) : undefined
+                        }
                         wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
                         onWrongPick={(label) => {
                           // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
@@ -3922,7 +4352,10 @@ export function SimulationView() {
                           const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
                           // On Pilots (p5) a wrong call also rolls back a migrated estate link,
                           // so readiness visibly drops on a specific edge (re-doable).
-                          const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                          // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
+                          // order) — `[0]` rolled back the oldest.
+                          const revertId =
+                            sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
                           const extra = revertId ? ` — rolled back link ${revertId}` : ''
                           applyDecisionSetback(
                             quarters,
@@ -4515,12 +4948,7 @@ export function SimulationView() {
                         <ResCol
                           title="Learn"
                           items={resLinks('learn', sel, sector, seat).map((it) => {
-                            const step: TreeStep = {
-                              kind: 'learn',
-                              label: it.label,
-                              to: it.to,
-                              moduleId: it.id,
-                            }
+                            const step = resourceStep('learn', it)
                             return {
                               ...it,
                               done: moduleDone(it.id),
@@ -4531,19 +4959,9 @@ export function SimulationView() {
                         <ResCol
                           title="Activities"
                           items={resLinks('activities', sel, sector, seat).map((it) => {
-                            // Business tools embed via the ACTIVITY arm (they emit an artifact).
-                            // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
-                            // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
-                            // workshops embed through — so route them via the WORKSHOP arm too,
-                            // keeping them UNDER the "● Simulation mode" header instead of
-                            // navigating out to /playground (where the player leaves the sim).
-
-                            const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
-
-                            const artifactType = TOOL_TO_ARTIFACT[it.id]
-                            const step: TreeStep = isWorkshopTool
-                              ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
-                              : { kind: 'activity', label: it.label, to: it.to, artifactType }
+                            const step = resourceStep('activities', it)
+                            const isWorkshopTool = step.kind === 'workshop'
+                            const artifactType = step.artifactType
                             return {
                               ...it,
                               done: isWorkshopTool
@@ -4556,12 +4974,7 @@ export function SimulationView() {
                         <ResCol
                           title="Reference"
                           items={resLinks('reference', sel, sector, seat).map((it) => {
-                            const step: TreeStep = {
-                              kind: 'reference',
-                              label: it.label,
-                              to: it.to,
-                              refId: it.id,
-                            }
+                            const step = resourceStep('reference', it)
                             // the assess-engine ref opens the wizard IN the sim (embed);
                             // every other reference navigates to its deep link as before.
                             return {
@@ -5178,43 +5591,6 @@ export function SimulationView() {
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
         )}
-        {pendingConfirm === 'reset' && (
-          <SimConfirmDialog
-            title="Reset the run?"
-            description="Clears this run: decisions and attempts, quarters and budget, run evidence, and the simulation-tracked module progress and documents it created. KEPT: your assessment, your own Learn progress and documents from outside the simulation, and your lifetime achievements. This starts a clean practice replay — it does not erase your learning history."
-            confirmLabel="Reset run"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              runResetAll()
-              setPendingConfirm(null)
-            }}
-          />
-        )}
-        {pendingConfirm === 'start-over' && (
-          <SimConfirmDialog
-            title="Start over completely?"
-            description="This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks."
-            confirmLabel="Start over"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              runStartOver()
-              setPendingConfirm(null)
-            }}
-          />
-        )}
-        {pendingConfirm === 'delegate' && (
-          <SimConfirmDialog
-            title={`Delegate ${phase.name} to your AI team?`}
-            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
-            confirmLabel="Auto-complete"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              autoCompleteSteps(phaseAutoKeys)
-              if (delegationCostM > 0) spendBudget(delegationCostM)
-              setPendingConfirm(null)
-            }}
-          />
-        )}
         {/* mobile-ux-layer (WS-0, D8): SimPlayChoiceModal never becomes VISIBLE
             below 768px (this whole wrapper is `hidden md:flex`), but it still
             MOUNTED there — its focus trap + a global `window` Escape-keydown
@@ -5233,7 +5609,6 @@ export function SimulationView() {
             sectorLabel={sectorOpt.label}
           />
         )}
-        {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
       </div>
       {/* mobile-ux-layer (WS-0, D2): moved OUTSIDE the desktop-only `hidden
           md:flex` wrapper above — this confirm can be triggered by the phone
@@ -5267,6 +5642,62 @@ export function SimulationView() {
           is already `grid-cols-1 sm:grid-cols-2`, so no responsive changes
           were needed inside sections.tsx — only its position in this tree. */}
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* 09-28 (WP6.3): the run confirms + Terms, hoisted out of the
+          desktop-only wrapper so the phone menu can open them too. */}
+      {pendingConfirm === 'reset' && (
+        <SimConfirmDialog
+          title="Reset the run?"
+          description="Clears this run: decisions and attempts, quarters and budget, run evidence, and the simulation-tracked module progress and documents it created. KEPT: your assessment, your own Learn progress and documents from outside the simulation, and your lifetime achievements. This starts a clean practice replay — it does not erase your learning history."
+          confirmLabel="Reset run"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            runResetAll()
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {pendingConfirm === 'start-over' && (
+        <SimConfirmDialog
+          title="Start over completely?"
+          description="This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks."
+          confirmLabel="Start over"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            runStartOver()
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {pendingConfirm === 'delegate' && (
+        <SimConfirmDialog
+          title={`Delegate ${phase.name} to your AI team?`}
+          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
+          confirmLabel="Auto-complete"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            autoCompleteSteps(phaseAutoKeys)
+            if (delegationCostM > 0) spendBudget(delegationCostM)
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
+      {/* 09-28 (WP2 / D6): outside the desktop-only wrapper so the phone's Mode
+          control can use it too. */}
+      {pendingDifficulty && (
+        <SimConfirmDialog
+          title={`Start a new run on ${pendingDifficulty[0]!.toUpperCase()}${pendingDifficulty.slice(1)}?`}
+          description="Difficulty is fixed for a run once it has started. Changing it starts a new run: this run's quarters, decisions, budget and run evidence are cleared. KEPT: your organisation profile, your assessment, your Learn progress and documents, and your lifetime achievements."
+          confirmLabel="Start new run"
+          onCancel={() => setPendingDifficulty(null)}
+          onConfirm={() => {
+            autoRunPlayer.stop()
+            closeEmbed() // a resource the player opened by hand, too
+            restartWithDifficulty(pendingDifficulty)
+            setPendingDifficulty(null)
+          }}
+        />
+      )}
       {/* mobile-ux-layer (WS-5): the two ceremonies that used to fire only
           inside the desktop-only wrapper — completion was recorded correctly
           either way (fullyMature/runCompleteSeen and the phase-run "done"

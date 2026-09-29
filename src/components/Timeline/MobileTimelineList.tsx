@@ -2,7 +2,12 @@
 /* eslint-disable security/detect-object-injection */
 import type { GanttCountryData, Phase } from '../../types/timeline'
 import { CountryFlag } from '../common/CountryFlag'
-import { phaseColors, getCountryLastVerified } from '../../data/timelineData'
+import {
+  phaseColors,
+  getCountryLastVerified,
+  phaseRowKey,
+  type ResolvedTimelineEvent,
+} from '../../data/timelineData'
 import { ChevronRight, ChevronLeft, Flag, Rows3, GalleryHorizontal } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { GanttDetailPopover } from './GanttDetailPopover'
@@ -19,6 +24,16 @@ interface MobileTimelineListProps {
    *  'compact' explicitly. A reader's own past choice, once made, still wins
    *  either way — this only affects the very first render. */
   defaultMode?: MobileViewMode
+  /**
+   * Controlled selection, for a parent that syncs `?event=` (the mobile
+   * shell's MobileTimelineView). When `onSelectEvent` is given the list holds
+   * no popover state of its own: a tap calls it with the row's first event,
+   * closing calls it with null, and a `selected` set from outside (a deep
+   * link) is brought into view — the swipe carousel jumps to that phase.
+   * Rows carry `data-deeplink-id` for the parent's scroll-to-target.
+   */
+  selected?: ResolvedTimelineEvent | null
+  onSelectEvent?: (selection: ResolvedTimelineEvent | null) => void
 }
 
 // Alongside the existing one-phase-at-a-time swipe carousel, "compact" shows every
@@ -53,11 +68,35 @@ function proximityLabel(startYear: number, currentYear: number): string {
   return `in ${delta} years`
 }
 
-export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimelineListProps) => {
+export const MobileTimelineList = ({
+  data,
+  defaultMode = 'swipe',
+  selected,
+  onSelectEvent,
+}: MobileTimelineListProps) => {
   const currentYear = new Date().getFullYear()
-  const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
+  const [localSelection, setLocalSelection] = useState<ResolvedTimelineEvent | null>(null)
+  const selection = onSelectEvent ? (selected ?? null) : localSelection
+  const selectedPhase = selection?.phase ?? null
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
+
+  // A selection arriving from outside (deep link): show that phase in its
+  // country's swipe carousel so the row it names is actually on screen.
+  // (Adjusted during render, not in an effect — React's "storing information
+  // from previous renders" pattern.)
+  const selectedRowKey = selected ? phaseRowKey(selected.phase) : null
+  const [syncedRowKey, setSyncedRowKey] = useState<string | null>(null)
+  if (selectedRowKey !== syncedRowKey) {
+    setSyncedRowKey(selectedRowKey)
+    for (const { country, phases } of selectedRowKey ? data : []) {
+      const idx = phases.findIndex((p) => phaseRowKey(p) === selectedRowKey)
+      if (idx >= 0) {
+        setPhaseIndices((prev) => ({ ...prev, [country.countryName]: idx }))
+        break
+      }
+    }
+  }
   const [viewMode, setViewModeState] = useState<MobileViewMode>(() =>
     readStoredViewMode(defaultMode)
   )
@@ -93,11 +132,14 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
   }
 
   const handleCardClick = (phase: TimelinePhase) => {
-    setSelectedPhase(phase)
+    const next = { phase, event: phase.events[0] ?? null }
+    if (onSelectEvent) onSelectEvent(next)
+    else setLocalSelection(next)
   }
 
   const handleClosePopover = () => {
-    setSelectedPhase(null)
+    if (onSelectEvent) onSelectEvent(null)
+    else setLocalSelection(null)
   }
 
   const getCurrentPhaseIndex = (countryName: string) => {
@@ -199,6 +241,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                       variant="ghost"
                       type="button"
                       key={i}
+                      data-deeplink-id={phaseRowKey(phase)}
                       onClick={() => handleCardClick(phase)}
                       className="w-full flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left hover:bg-muted/30 transition-colors"
                     >
@@ -307,6 +350,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                       variant="ghost"
                       type="button"
                       className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors relative"
+                      data-deeplink-id={phaseRowKey(currentPhase)}
                       onClick={() => handleCardClick(currentPhase)}
                     >
                       {/* Swipe Hint overlay */}
@@ -415,6 +459,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
         isOpen={!!selectedPhase}
         onClose={handleClosePopover}
         phase={selectedPhase}
+        focusEvent={selection?.event}
       />
     </div>
   )

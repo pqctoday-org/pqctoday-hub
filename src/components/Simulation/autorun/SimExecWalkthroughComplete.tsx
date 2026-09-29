@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { CheckCircle2, LayoutDashboard, CalendarClock, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 /**
  * SimExecWalkthroughComplete — the honest end screen for the Executive Overview
@@ -10,12 +12,28 @@ import { Button } from '@/components/ui/button'
  * to run it for real. No dates, no maturity score.
  */
 export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void }) {
+  // 09-28 nav remediation (WP3.5): same modal contract as the rest of the sim —
+  // dialog semantics, focus trapped and returned, Escape closes.
+  const trapRef = useFocusTrap(true)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   return (
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
       data-testid="exec-walkthrough-complete"
     >
-      <div className="relative w-full max-w-lg rounded-xl border border-primary/30 bg-card p-6 shadow-2xl">
+      <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sim-exec-walkthrough-complete-heading"
+        className="relative w-full max-w-lg rounded-xl border border-primary/30 bg-card p-6 shadow-2xl"
+      >
         <Button
           type="button"
           variant="ghost"
@@ -31,7 +49,12 @@ export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void })
             <CheckCircle2 className="text-primary" size={24} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-foreground">You’ve seen the full program</h2>
+            <h2
+              id="sim-exec-walkthrough-complete-heading"
+              className="text-lg font-semibold text-foreground"
+            >
+              You’ve seen the full program
+            </h2>
             <p className="text-xs text-muted-foreground">
               Executive overview complete — end to end, from mandate to closure.
             </p>

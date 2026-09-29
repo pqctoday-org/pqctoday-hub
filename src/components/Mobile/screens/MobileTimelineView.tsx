@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { Globe, CalendarClock } from 'lucide-react'
-import { timelineData, transformToGanttData } from '@/data/timelineData'
+import {
+  timelineData,
+  transformToGanttData,
+  eventLinkKey,
+  findEventInGantt,
+  findTimelineEvent,
+  phaseRowKey,
+  resolveCountryParam,
+  type ResolvedTimelineEvent,
+} from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
 import {
   REGION_COUNTRIES_MAP,
@@ -14,6 +24,9 @@ import type { Region } from '@/store/usePersonaStore'
 import type { GanttCountryData } from '@/types/timeline'
 import { WhenDoesThisReachMe } from '@/components/Timeline/WhenDoesThisReachMe'
 import { MobileTimelineList } from '@/components/Timeline/MobileTimelineList'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { Button } from '@/components/ui/button'
 
 // ACCEPTED duplication (2026-08-24 audit R3.7 — extraction ruled
 // disproportionate for a 2-value Set): verified copy of
@@ -80,8 +93,15 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  * Region scope: reader's stored region if set, else their persona's default
  * (`PERSONA_TIMELINE_REGION`), else every country — same precedence chain
  * TimelineView.tsx uses for its own regionFilter initial state, minus the
- * URL-param branches (no deep-linking UI on this screen). 'global' is
- * treated as "no region filter," matching TimelineView's own check.
+ * URL-param branches. 'global' is treated as "no region filter," matching
+ * TimelineView's own check.
+ *
+ * Deep links (same params as desktop): `?country=` shows just that country;
+ * `?event=<event_id|title>` is resolved against the unscoped data, widened
+ * into view if the region/country/default category hides it (with a notice
+ * and Undo), opened in the detail popover, and scrolled to. Unknown events
+ * get a not-found notice and the param is dropped. Opening a phase writes
+ * `?event=` (push); closing clears it (replace).
  */
 export function MobileTimelineView() {
   const storeSelectedRegion = usePersonaStore((s) => s.selectedRegion)
@@ -92,13 +112,103 @@ export function MobileTimelineView() {
     (selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null) ??
     'All'
 
-  const ganttData = useMemo(() => transformToGanttData(applyTimelineScope(timelineData, {})), [])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const eventParam = searchParams.get('event')
+  const countryParam = searchParams.get('country')
+  const linkedCountry = useMemo(() => {
+    const { resolved } = resolveCountryParam(
+      countryParam,
+      timelineData.map((d) => d.countryName)
+    )
+    return resolved === 'All' ? null : resolved
+  }, [countryParam])
+
+  // Resolved against the unscoped data so the default scope can't fail it.
+  const targetEvent = useMemo(() => findTimelineEvent(timelineData, eventParam), [eventParam])
+  const [notFound, setNotFound] = useState<string | null>(null)
+  const [widenDismissed, setWidenDismissed] = useState<string | null>(null)
+  // Unknown ?event: remember it for the notice (render-time adjustment), then
+  // drop the param from the URL.
+  const unknownEvent = eventParam && !targetEvent ? eventParam : null
+  if (unknownEvent && notFound !== unknownEvent) setNotFound(unknownEvent)
+  useEffect(() => {
+    if (!unknownEvent) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('event')
+        return next
+      },
+      { replace: true }
+    )
+  }, [unknownEvent, setSearchParams])
+
+  // Default scope (government + standards, as desktop starts from); widened
+  // by the linked event's own category if that scope hides it.
+  const defaultScoped = useMemo(() => applyTimelineScope(timelineData, {}), [])
+  const widenCategory =
+    !!targetEvent &&
+    !defaultScoped.some((c) => c.bodies.some((b) => b.events.includes(targetEvent)))
+  const ganttData = useMemo(() => {
+    if (!widenCategory || !targetEvent) return transformToGanttData(defaultScoped)
+    const cats = new Set(
+      defaultScoped.flatMap((c) => c.bodies.flatMap((b) => b.events.map((e) => e.entityType)))
+    )
+    cats.add(targetEvent.entityType)
+    return transformToGanttData(applyTimelineScope(timelineData, { categories: [...cats] }))
+  }, [defaultScoped, widenCategory, targetEvent])
 
   const regionData = useMemo(() => {
     if (region === 'All' || region === 'global') return ganttData
     const allowed = new Set(REGION_COUNTRIES_MAP[region])
     return ganttData.filter((d) => allowed.has(d.country.countryName))
   }, [ganttData, region])
+
+  const eventCountryHidden =
+    !!targetEvent &&
+    (linkedCountry
+      ? linkedCountry !== targetEvent.countryName
+      : !regionData.some((d) => d.country.countryName === targetEvent.countryName))
+  const displayCountry = targetEvent && eventCountryHidden ? targetEvent.countryName : linkedCountry
+  const listData = useMemo(
+    () =>
+      displayCountry
+        ? ganttData.filter((d) => d.country.countryName === displayCountry)
+        : regionData,
+    [ganttData, regionData, displayCountry]
+  )
+
+  const selection = useMemo(() => findEventInGantt(listData, eventParam), [listData, eventParam])
+  // The ?event value this screen wrote itself; any other value is an arrival.
+  const [lastWritten, setLastWritten] = useState<string | null>(null)
+  const scrollTarget = selection && eventParam !== lastWritten ? phaseRowKey(selection.phase) : null
+  useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
+
+  const handleSelectEvent = (next: ResolvedTimelineEvent | null) => {
+    const key = next ? (next.event ? eventLinkKey(next.event) : next.phase.title) : null
+    setLastWritten(key)
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev)
+        if (key) params.set('event', key)
+        else params.delete('event')
+        return params
+      },
+      { replace: !key }
+    )
+  }
+
+  const widened = !!targetEvent && (widenCategory || eventCountryHidden)
+  const showWidenNotice = widened && widenDismissed !== eventParam
+  const clearCountry = () =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('country')
+        return next
+      },
+      { replace: true }
+    )
 
   const readerCountry = storeSelectedRegion
     ? (REGION_COUNTRY_MAP[storeSelectedRegion] ?? null)
@@ -109,7 +219,7 @@ export function MobileTimelineView() {
     [ganttData, readerCountry]
   )
 
-  const migrationPlusCount = regionData.filter((d) =>
+  const migrationPlusCount = listData.filter((d) =>
     d.phases.some((p) => MIGRATION_PLUS_PHASES.has(p.phase))
   ).length
 
@@ -119,17 +229,45 @@ export function MobileTimelineView() {
         <Globe size={18} className="shrink-0 text-primary" aria-hidden="true" />
         <div>
           <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
-            {region === 'All' || region === 'global'
-              ? 'Global PQC timeline'
-              : `${REGION_LABELS[region]} PQC timeline`}
+            {displayCountry
+              ? `${displayCountry} PQC timeline`
+              : region === 'All' || region === 'global'
+                ? 'Global PQC timeline'
+                : `${REGION_LABELS[region]} PQC timeline`}
           </h1>
           <p className="text-[11.5px] text-muted-foreground">
-            {regionData.length} countr{regionData.length === 1 ? 'y' : 'ies'} tracked
-            {regionData.length > 0 &&
-              ` · ${migrationPlusCount} of ${regionData.length} already at Migration+`}
+            {listData.length} countr{listData.length === 1 ? 'y' : 'ies'} tracked
+            {listData.length > 0 &&
+              ` · ${migrationPlusCount} of ${listData.length} already at Migration+`}
           </p>
         </div>
+        {linkedCountry && !widened && (
+          <Button variant="ghost" size="sm" onClick={clearCountry} className="ml-auto text-xs">
+            All countries
+          </Button>
+        )}
       </div>
+
+      {notFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`The timeline event "${notFound}" linked here was not found — it may have been retired or renamed.`}
+          onDismiss={() => setNotFound(null)}
+        />
+      )}
+      {showWidenNotice && targetEvent && (
+        <DeepLinkNotice
+          kind="widened"
+          message={`"${targetEvent.title}" was outside this view, so we ${[
+            eventCountryHidden && `switched to ${targetEvent.countryName}`,
+            widenCategory && 'added its category',
+          ]
+            .filter(Boolean)
+            .join(' and ')} to show it.`}
+          onUndo={() => handleSelectEvent(null)}
+          onDismiss={() => setWidenDismissed(eventParam)}
+        />
+      )}
 
       {nextUp && (
         <section className="mb-4 rounded-xl border border-destructive/25 bg-destructive/5 p-4">
@@ -152,10 +290,15 @@ export function MobileTimelineView() {
 
       <WhenDoesThisReachMe data={ganttData} countryName={readerCountry} />
 
-      {regionData.length === 0 ? (
+      {listData.length === 0 ? (
         <p className="text-[12.5px] text-muted-foreground">No countries tracked for this region.</p>
       ) : (
-        <MobileTimelineList data={regionData} defaultMode="compact" />
+        <MobileTimelineList
+          data={listData}
+          defaultMode="compact"
+          selected={selection}
+          onSelectEvent={handleSelectEvent}
+        />
       )}
 
       <p className="mt-2 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">

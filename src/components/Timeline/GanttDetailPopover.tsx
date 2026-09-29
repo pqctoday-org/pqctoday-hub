@@ -3,8 +3,8 @@ import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
-import type { TimelinePhase, Phase } from '../../types/timeline'
-import { phaseColors } from '../../data/timelineData'
+import type { TimelinePhase, TimelineEvent, Phase } from '../../types/timeline'
+import { phaseColors, eventLinkKey, timelineEventPageUrl } from '../../data/timelineData'
 import {
   TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
   type DeadlineMandate,
@@ -31,9 +31,21 @@ interface GanttDetailPopoverProps {
   isOpen: boolean
   onClose: () => void
   phase: TimelinePhase | null
+  /**
+   * The event a `?event=` deep link named. A phase row groups several events
+   * and is titled after its first one; when the link targets a later event,
+   * the popover shows THAT event (title, description, period, source)
+   * instead of the row's first. Defaults to the row's first event.
+   */
+  focusEvent?: TimelineEvent | null
 }
 
-export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopoverProps) => {
+export const GanttDetailPopover = ({
+  isOpen,
+  onClose,
+  phase,
+  focusEvent,
+}: GanttDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
@@ -80,7 +92,25 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
     glow: 'hsl(var(--ring))',
   }
 
-  const primaryEvent = phase.events[0]
+  const focusKey = focusEvent ? eventLinkKey(focusEvent) : null
+  const primaryEvent =
+    (focusKey && phase.events.find((e) => eventLinkKey(e) === focusKey)) || phase.events[0]
+  // Row-level fields describe the row's first event (plus the row's full span);
+  // a focused later event shows its own.
+  const focused = primaryEvent !== undefined && primaryEvent !== phase.events[0]
+  const shown = focused
+    ? {
+        title: primaryEvent.title,
+        description: primaryEvent.description,
+        startYear: primaryEvent.startYear,
+        endYear: primaryEvent.endYear,
+        openEnded: primaryEvent.openEnded,
+      }
+    : phase
+  const pageUrl = timelineEventPageUrl(
+    primaryEvent?.countryName ?? '',
+    primaryEvent ? eventLinkKey(primaryEvent) : null
+  )
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
@@ -99,7 +129,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
   }
 
   const enrichmentKey = primaryEvent
-    ? getTimelineEnrichmentKey(primaryEvent.countryName, primaryEvent.orgName, phase.title)
+    ? getTimelineEnrichmentKey(primaryEvent.countryName, primaryEvent.orgName, shown.title)
     : null
   const enrichment = enrichmentKey ? timelineEnrichments[enrichmentKey] : null
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
@@ -145,7 +175,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                   id="gantt-phase-popover-title"
                   className="text-xs font-bold text-foreground leading-tight"
                 >
-                  {phase.title}
+                  {shown.title}
                 </h3>
                 <StatusBadge status={phase.status} size="sm" />
                 {deadlineMandate && (
@@ -180,7 +210,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             <div className="p-4 space-y-3 overflow-y-auto max-h-[70dvh]">
               <div>
                 <p className="text-xs text-muted-foreground leading-relaxed break-words">
-                  {phase.description}
+                  {shown.description}
                 </p>
               </div>
 
@@ -201,14 +231,14 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                     <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
                       Start
                     </span>
-                    <span className="font-mono text-foreground">{phase.startYear}</span>
+                    <span className="font-mono text-foreground">{shown.startYear}</span>
                   </div>
                   <div>
                     <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
                       End
                     </span>
                     <span className="font-mono text-foreground">
-                      {phase.openEnded ? 'Not stated by source' : phase.endYear}
+                      {shown.openEnded ? 'Not stated by source' : shown.endYear}
                     </span>
                   </div>
                   {/* Source/Date cells are dropped entirely rather than shown as
@@ -273,21 +303,21 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 <EndorseButton
                   endorseUrl={buildEndorsementUrl({
                     category: 'timeline-endorsement',
-                    title: `Endorse: ${primaryEvent?.countryName ?? 'Unknown'} — ${phase.title}`,
+                    title: `Endorse: ${primaryEvent?.countryName ?? 'Unknown'} — ${shown.title}`,
                     resourceType: 'Timeline Event',
-                    resourceId: `${primaryEvent?.countryName ?? 'Unknown'} / ${phase.title}`,
+                    resourceId: `${primaryEvent?.countryName ?? 'Unknown'} / ${shown.title}`,
                     resourceDetails: [
                       `**Country:** ${primaryEvent?.countryName ?? 'Unknown'}`,
                       `**Phase:** ${phase.phase}`,
-                      `**Title:** ${phase.title}`,
-                      `**Period:** ${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}`,
-                      phase.description ? `**Description:** ${phase.description}` : '',
+                      `**Title:** ${shown.title}`,
+                      `**Period:** ${periodLabel(shown.startYear, shown.endYear, shown.openEnded)}`,
+                      shown.description ? `**Description:** ${shown.description}` : '',
                     ]
                       .filter(Boolean)
                       .join('\n'),
-                    pageUrl: `/timeline?country=${encodeURIComponent(primaryEvent?.countryName ?? '')}`,
+                    pageUrl,
                   })}
-                  resourceLabel={phase.title}
+                  resourceLabel={shown.title}
                   resourceType="Timeline"
                   variant="text"
                   label="Endorse"
@@ -295,21 +325,21 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 <FlagButton
                   flagUrl={buildFlagUrl({
                     category: 'timeline-endorsement',
-                    title: `Flag: ${primaryEvent?.countryName ?? 'Unknown'} — ${phase.title}`,
+                    title: `Flag: ${primaryEvent?.countryName ?? 'Unknown'} — ${shown.title}`,
                     resourceType: 'Timeline Event',
-                    resourceId: `${primaryEvent?.countryName ?? 'Unknown'} / ${phase.title}`,
+                    resourceId: `${primaryEvent?.countryName ?? 'Unknown'} / ${shown.title}`,
                     resourceDetails: [
                       `**Country:** ${primaryEvent?.countryName ?? 'Unknown'}`,
                       `**Phase:** ${phase.phase}`,
-                      `**Title:** ${phase.title}`,
-                      `**Period:** ${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}`,
-                      phase.description ? `**Description:** ${phase.description}` : '',
+                      `**Title:** ${shown.title}`,
+                      `**Period:** ${periodLabel(shown.startYear, shown.endYear, shown.openEnded)}`,
+                      shown.description ? `**Description:** ${shown.description}` : '',
                     ]
                       .filter(Boolean)
                       .join('\n'),
-                    pageUrl: `/timeline?country=${encodeURIComponent(primaryEvent?.countryName ?? '')}`,
+                    pageUrl,
                   })}
-                  resourceLabel={phase.title}
+                  resourceLabel={shown.title}
                   resourceType="Timeline"
                   variant="text"
                   label="Flag"
@@ -317,7 +347,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 <AskAssistantButton
                   variant="text"
                   label="Ask about this"
-                  question={`How did the "${phase.title}" ${phase.phase} phase (${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}) advance PQC adoption?${phase.description ? ` Context: ${phase.description}` : ''}`}
+                  question={`How did the "${shown.title}" ${phase.phase} phase (${periodLabel(shown.startYear, shown.endYear, shown.openEnded)}) advance PQC adoption?${shown.description ? ` Context: ${shown.description}` : ''}`}
                 />
               </div>
             </div>

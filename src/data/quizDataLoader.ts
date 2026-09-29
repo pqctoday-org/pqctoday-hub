@@ -271,6 +271,24 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'PCI PTS HSM device approval, what v5.0 changed, and the payment operating stack (PIN, P2PE, KMO).',
       icon: 'Award',
     },
+    'government-defense-pqc': {
+      label: 'Government & Defense PQC',
+      description:
+        'CNSA 2.0 and what it replaces, the CNSSP 15 dates, NSS vs federal civilian mandates, and NSA’s position on hybrids.',
+      icon: 'Building2',
+    },
+    'pki-enrollment-protocols': {
+      label: 'PKI Enrollment (EST & CMP)',
+      description:
+        'EST and CMP enrollment, proof-of-possession for KEM keys (RFC 9810 encrCert), and the ML-DSA / ML-KEM X.509 identifiers.',
+      icon: 'KeyRound',
+    },
+    'acvp-lab-workflow': {
+      label: 'ACVP Lab Workflow',
+      description:
+        'CAVP vs CMVP, the ACVP vector-set lifecycle, what a PKCS#11 adapter can and cannot test, and evidence levels.',
+      icon: 'Microscope',
+    },
     'cc-eucc-certification': {
       label: 'Common Criteria, EUCC & eIDAS',
       description:
