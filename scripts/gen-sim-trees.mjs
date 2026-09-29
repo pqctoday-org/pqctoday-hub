@@ -970,6 +970,9 @@ const FRAMEWORK = {
           'Learn: TLS 1.3 hybrid — the recommended first pilot (X25519+ML-KEM-768, downgrade attack mitigations)'
         ),
         L('vpn-ssh-pqc', 'Learn: VPN/IPsec & SSH PQC patterns'),
+        // 09-28: folded in from the 09-13 hand edit of the dated snapshot
+        // (919306fb6) — regenerating used to drop it.
+        L('dnssec-pqc', 'Learn: DNSSEC & post-quantum signatures (ML-DSA-44, algorithm 18)'),
         L('code-signing', 'Learn: code & firmware signing (Track B — integrity)'),
         A('hybrid-transition', 'Plan the hybrid transition'),
         // Moved from 5.4 07082026: MTI (minimum-interop) negotiation is
@@ -1152,6 +1155,9 @@ const FRAMEWORK = {
       steps: [
         L('hsm-pqc', 'Learn: HSM & PQC Operations'),
         L('kms-pqc', 'Learn: KMS & PQC'),
+        // 09-28: folded in from the 09-27 hand edit of the dated snapshot
+        // (5e61ec2e9) — regenerating used to drop it.
+        L('pqc-hw-acceleration', 'Learn: PQC hardware acceleration (SIMD, FPGA, GPU, ASIC)'),
         W('hsm-capacity', 'Practice: HSM capacity calculator'),
         W('envelope-encrypt', 'Practice: PQC key-wrapping — bridge for HSMs not yet upgradeable'),
       ],
