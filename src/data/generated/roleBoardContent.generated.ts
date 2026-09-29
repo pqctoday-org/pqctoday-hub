@@ -2751,7 +2751,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
         trackNote:
-          "Eight essentials against the full 16-module path plus the quiz, 970 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          "Eight essentials against the full 16-module path plus the quiz, 980 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
           'Product certification',
           'FIPS 140-3',

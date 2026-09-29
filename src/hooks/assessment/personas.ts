@@ -193,6 +193,8 @@ export const PERSONA_UNKNOWN_WEIGHTS: Record<
   developer: { agility: 1.0, infra: 0.9, compliance: 0.8, migration: 0.9 },
   architect: { agility: 1.0, infra: 1.0, compliance: 0.9, migration: 1.0 },
   researcher: { agility: 0.85, infra: 0.8, compliance: 0.75, migration: 0.85 },
+  // cert-engineer: the standard baseline, as for GRC — an unknown answer is not softened.
+  'cert-engineer': { agility: 1.0, infra: 1.0, compliance: 1.0, migration: 1.0 },
   ops: { agility: 0.9, infra: 1.0, compliance: 0.85, migration: 1.0 },
   curious: { agility: 0.7, infra: 0.7, compliance: 0.8, migration: 0.7 },
 }

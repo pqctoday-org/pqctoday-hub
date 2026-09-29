@@ -17,6 +17,7 @@ import {
   Code2,
   Network,
   FlaskConical,
+  BadgeCheck,
   Wrench,
   Compass,
   Calendar,
@@ -106,6 +107,7 @@ const PERSONA_CONFIG: Record<string, { label: string; Icon: IconComponent }> = {
   developer: { label: 'Developer', Icon: Code2 },
   architect: { label: 'Architect', Icon: Network },
   researcher: { label: 'Researcher', Icon: FlaskConical },
+  'cert-engineer': { label: 'Certification', Icon: BadgeCheck },
   ops: { label: 'Ops', Icon: Wrench },
   curious: { label: 'Curious', Icon: Compass },
 }
@@ -247,6 +249,8 @@ export const PERSONA_KEYWORDS: Record<string, RegExp> = {
     /\b(PKI|certificate|hybrid|agility|architecture|design|HSM|TPM|protocol|hierarchy|enrollment|composite|X\.509|PKCS#?11|module structure|provider|crypto-agility|key management|KMS|root of trust)\b/i,
   researcher:
     /\b(spec|RFC|draft|KAT|ACVP|FIPS 203|FIPS 204|FIPS 205|test vector|cryptanalysis|attack|paper|PROV-DM|provenance|corpus|RAG|embeddings|attestation|trust score|trust engine|trust-engine|trust tier|OSCAL|CBOM|enrichment|xwalk|crosswalk|concept registry)\b/i,
+  'cert-engineer':
+    /\b(FIPS 140-3|CMVP|CAVP|ACVP|ACVTS|Common Criteria|EUCC|certification|validation|self-test|known-answer|KAT|entropy|SP 800-90B|conformance)\b/i,
   ops: /\b(deploy|deployment|runtime|infrastructure|operations|rotate|monitoring|telemetry|incident|migration|CSV|scrape|catalog refresh|data refresh|fleet|cert rotation|HSM firmware|ETL)\b/i,
   curious:
     /\b(landing|explore|intro|overview|basics|simplified|story|getting started|learn|persona|plain.language|three[- ]?step|teaser|orientation|on.ramp)\b/i,
