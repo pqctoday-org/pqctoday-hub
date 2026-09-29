@@ -303,3 +303,87 @@ test.describe('phone — resource links open the resource, even on a first visit
     }
   }
 })
+
+// PR 4 — while an item drawer / modal / sheet is open, the overlay covers the
+// top-bar Share, so each item overlay carries its own. It must copy the CLEAN
+// item link (page + item param, no filters) and leave the overlay open.
+test.describe('share from inside an open item overlay', () => {
+  const cases: { name: string; url: string; open: string; expected: string }[] = [
+    {
+      name: 'library drawer',
+      url: '/library?ref=KpqC-Competition-Results&sort=newest',
+      open: 'Korean Post-Quantum',
+      expected: '/library?ref=KpqC-Competition-Results',
+    },
+    {
+      name: 'threat dialog',
+      url: '/threats?id=FIN-001&mode=cards',
+      open: 'Project Leap',
+      expected: '/threats?id=FIN-001',
+    },
+    {
+      name: 'patent drawer',
+      url: '/patents?patent=US12676741',
+      open: 'Key exchange system',
+      expected: '/patents?patent=US12676741',
+    },
+    {
+      name: 'algorithm drawer',
+      url: '/algorithms?algo=ml-kem-768',
+      open: 'ML-KEM-768',
+      expected: '/algorithms?algo=ml-kem-768',
+    },
+    {
+      name: 'protocol modal',
+      url: '/algorithms?tab=support&protocol=ssh&matrixView=detailed',
+      open: 'SSH',
+      expected: '/algorithms?tab=support&protocol=ssh',
+    },
+    {
+      name: 'compliance framework drawer',
+      url: '/compliance?framework=CNSA-2',
+      open: 'CNSA 2.0',
+      expected: '/compliance?framework=CNSA-2',
+    },
+    {
+      name: 'compliance record',
+      url: '/compliance?cert=5528',
+      open: '5528',
+      expected: '/compliance?cert=5528',
+    },
+  ]
+
+  for (const viewport of ['desktop', 'phone'] as const) {
+    test.describe(viewport, () => {
+      test.use(
+        viewport === 'phone'
+          ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
+          : { viewport: { width: 1440, height: 900 } }
+      )
+      for (const c of cases) {
+        test(c.name, async ({ page, context }) => {
+          await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+          // Force the Copy-link menu path (no OS share sheet in the test browser).
+          await page.addInitScript(() => {
+            Object.defineProperty(navigator, 'share', { value: undefined, configurable: true })
+          })
+          await seed(page, 'returning')
+          await page.goto(c.url)
+          const overlay = opened(page, c.open)
+          await expect(overlay).toBeVisible({ timeout: 30_000 })
+          await overlay
+            .getByRole('button', { name: /^Share / })
+            .first()
+            .click()
+          await page
+            .getByRole('menu')
+            .getByRole('button', { name: /Copy link/ })
+            .click()
+          await expect(overlay).toBeVisible()
+          const copied = await page.evaluate(() => navigator.clipboard.readText())
+          expect(new URL(copied).pathname + new URL(copied).search).toBe(c.expected)
+        })
+      }
+    })
+  }
+})
