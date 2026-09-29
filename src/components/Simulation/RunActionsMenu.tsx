@@ -19,7 +19,15 @@ export interface RunActionItem {
   tone?: 'default' | 'destructive'
 }
 
-export function RunActionsMenu({ items }: { items: RunActionItem[] }) {
+export function RunActionsMenu({
+  items,
+  triggerClassName,
+}: {
+  items: RunActionItem[]
+  /** 09-28 nav remediation (WP6.3): the default trigger is styled for the dark
+   *  desktop header; the phone's light screens pass their own. */
+  triggerClassName?: string
+}) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -57,7 +65,10 @@ export function RunActionsMenu({ items }: { items: RunActionItem[] }) {
         title="More run actions"
         aria-label="More run actions"
         onClick={() => setOpen((v) => !v)}
-        className="h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10"
+        className={
+          triggerClassName ??
+          'h-auto rounded-md border border-background/20 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background/70 hover:bg-background/10'
+        }
       >
         ⋯
       </Button>

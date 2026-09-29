@@ -12,6 +12,8 @@ import { BUSINESS_TOOLS, WORKSHOP_TOOLS } from './resourceContract'
 
 const RESUME_FLAG = 'sim:resume'
 const EXITED_FLAG = 'sim:exited'
+/** ResumeSimBar's session "dismissed" flag (same key, see ResumeSimBar.tsx). */
+const RESUME_DISMISSED_FLAG = 'sim:resume:dismissed'
 const OPENED_FLAG = 'sim:opened'
 
 /** Flag an outbound navigation as a RESOURCE PEEK so the hub shows the
@@ -21,6 +23,11 @@ export const markSimResume = () => {
   try {
     sessionStorage.setItem(RESUME_FLAG, '1')
     sessionStorage.removeItem(EXITED_FLAG)
+    // 09-28 nav remediation (WP7e): a NEW excursion out of the sim brings the
+    // Resume strip back — one dismissal used to hide it for the whole session
+    // (in an installed PWA with no Back button, the top nav was then the only
+    // way back).
+    sessionStorage.removeItem(RESUME_DISMISSED_FLAG)
   } catch {
     /* ignore */
   }

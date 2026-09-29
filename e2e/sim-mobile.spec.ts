@@ -379,4 +379,48 @@ test.describe('Simulation — phone play (iPhone 13)', () => {
     }
     expect(sawWrong).toBe(true)
   })
+
+  test('phone: More menu (Mode, Reset, Terms), End quarter from Decide, Resources lists the current level (09-28 WP6)', async ({
+    page,
+  }) => {
+    await seedUnlockedAssessment(page)
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
+    const group = page.getByRole('group', { name: /Choose a playable phase/i })
+    await expect(group).toBeVisible({ timeout: 20_000 })
+
+    // Overview: the menu exists and Terms opens + closes
+    await page.getByRole('button', { name: 'More run actions' }).click()
+    const menu = page.getByRole('menu', { name: 'More run actions' })
+    await expect(menu.getByRole('menuitem', { name: /Mode: Realistic/ })).toBeVisible()
+    await expect(menu.getByRole('menuitem', { name: /Reset run/ })).toBeVisible()
+    await menu.getByRole('menuitem', { name: /Terms/ }).click()
+    await page.keyboard.press('Escape')
+
+    // Resources lists the CURRENT level, with no "desktop" dead labels
+    await page.getByText(/Resources for this phase · L1 in any order/).click()
+    await expect(page.getByText(/continue this task on desktop/i)).toHaveCount(0)
+
+    // Decide: End quarter advances the turn without leaving Decide
+    await group.getByRole('button', { name: /Executive Mandate/ }).click()
+    await page.getByRole('button', { name: /(Play|Resume) Executive Mandate/i }).click()
+    const decide = page.locator('[data-testid="sim-mobile-decide"]')
+    await expect(decide).toBeVisible({ timeout: 10_000 })
+    await expect(decide.getByText('Q1 2026')).toBeVisible()
+    await decide.getByRole('button', { name: /End quarter/ }).click()
+    // the quarter report opens over Decide; close it and the turn has moved
+    await page.keyboard.press('Escape')
+    // (a quarter's events can add a setback, so assert "moved on", not "Q2")
+    await expect(decide.getByText('Q1 2026')).toHaveCount(0)
+
+    // Decide: Reset from the menu, confirmed, brings the run back to Q1
+    await decide.getByRole('button', { name: 'More run actions' }).click()
+    await page.getByRole('menuitem', { name: /Reset run/ }).click()
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: /Reset run/ })
+      .click()
+    // a reset lands on the Overview (a fresh run starts there), back at Q1
+    await expect(decide).toHaveCount(0)
+    await expect(page.getByText('Q1 2026', { exact: true })).toBeVisible()
+  })
 })

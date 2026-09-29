@@ -6,7 +6,7 @@
  * useSimulationStore.tourSeen; the view renders this only when !tourSeen and
  * calls onClose (markTourSeen) on Skip / Done.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
@@ -83,6 +83,15 @@ export function SimTour({ onClose }: { onClose: () => void }) {
   const steps = [...TOUR_STEPS, ...GUIDED_DEFS]
   const [i, setI] = useState(0)
   const trapRef = useFocusTrap(true)
+  // 09-28 nav remediation (WP7b): Escape = Skip (it was focus-trapped with no
+  // keyboard way out but tabbing to Skip).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   const idx = Math.min(i, steps.length - 1)
   const step = steps[idx]
   const last = idx === steps.length - 1

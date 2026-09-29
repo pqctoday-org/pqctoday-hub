@@ -264,8 +264,22 @@ export function ArchitecturePanel({
                     >
                       {label}
                       {migratedChoice ? (
-                        <span className="shrink-0 rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
-                          ✓ {migratedChoice}
+                        <span className="flex shrink-0 items-center gap-1">
+                          <span className="rounded bg-status-success/15 px-1.5 py-0.5 font-semibold text-status-success">
+                            ✓ {migratedChoice}
+                          </span>
+                          {/* 09-28 nav remediation (WP6.5): a migration decision
+                              could never be taken back (the store already
+                              accepted null; nothing in the UI sent it). */}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setEdgeDecision(edgeKey(e), null)}
+                            aria-label={`Undo migration of ${byId.get(e.from)?.label ?? e.from} to ${byId.get(e.to)?.label ?? e.to}`}
+                            className="h-auto rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                          >
+                            Undo
+                          </Button>
                         </span>
                       ) : (
                         <Button

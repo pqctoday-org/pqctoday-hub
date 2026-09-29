@@ -5,7 +5,7 @@
  * columns, the "next move" decision card, and the End-Quarter report modal.
  * No store access — everything arrives via props.
  */
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
@@ -586,6 +586,14 @@ export function QuarterReport({
 }) {
   const drift = +(report.clockFrom - report.clockTo).toFixed(2)
   const trapRef = useFocusTrap(true)
+  // 09-28 nav remediation (WP7b): Escape closes, like the sim's other modals.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center bg-foreground/40 p-4 backdrop-blur-sm">
       <Button

@@ -2247,6 +2247,215 @@ export function SimulationView() {
   ].filter(Boolean).length
   const hasAssessmentSignals = assessmentSignalCount > 0
 
+  // 09-28 nav remediation (WP6.3): the phone had no Reset, no Mode and no
+  // Terms — the desktop "More" menu lives in the desktop-only header.
+  const phoneMenuItems: RunActionItem[] = [
+    {
+      key: 'mode',
+      label: `Mode: ${difficulty[0]!.toUpperCase()}${difficulty.slice(1)}`,
+      description: runStarted
+        ? 'Easy / Realistic / Hard. Changing it starts a new run.'
+        : 'Easy / Realistic / Hard — tap to cycle.',
+      onSelect: cycleDifficulty,
+    },
+    {
+      key: 'reset',
+      label: 'Reset run',
+      description: 'Start this run again — your assessment is kept.',
+      onSelect: resetAll,
+    },
+    {
+      key: 'terms',
+      label: 'Terms & glossary',
+      description: 'Plain-English sim vocabulary + the full PQC glossary.',
+      onSelect: () => setTermsOpen(true),
+    },
+  ]
+  const phoneMenuTrigger =
+    'h-auto rounded-md border border-border px-2.5 py-1 font-mono text-sim-chip font-bold text-foreground hover:bg-muted'
+
+  // 09-28 nav remediation (WP6.2): the phone's per-kind completion control for
+  // a step — ONE implementation shared by the Decide view (the next move) and
+  // the Overview's Resources list (any step of the current level), so the two
+  // can never drift. `act` is the step's framework activity (the Brief/result
+  // sheets draw their check from it); without one the sheet can't open.
+  const renderPhoneCompletion = (step: TreeStep, act: TreeActivity | undefined) => {
+    if (step.kind === 'learn' && step.moduleId) {
+      const moduleId = step.moduleId
+      if (moduleDone(moduleId)) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Module completed
+          </div>
+        )
+      }
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            const q = pickQuizQuestion(moduleId, seed)
+            if (q) {
+              setQuizGate({ moduleId, title: step.label, question: q })
+            } else {
+              // No check exists for this module: record it as read,
+              // self-reported. Never claim it was comprehension-checked.
+              recordLearnerEvidence('learn', moduleId, 'viewed')
+            }
+          }}
+          className="mt-2 h-auto w-full rounded-md border border-success/50 bg-success/10 px-3 py-2 text-[11px] font-bold text-success hover:bg-success/20"
+        >
+          Mark complete
+        </Button>
+      )
+    }
+    if (step.kind === 'catalog' && step.catalogId) {
+      const catalogId = step.catalogId
+      return (
+        <div className="mt-2">
+          <CompleteStepAction
+            recordsArtifact={false}
+            saved={catalogCompleted.includes(catalogId)}
+            onClick={() => markCatalogStepDone(catalogId)}
+          />
+        </div>
+      )
+    }
+    if (step.kind === 'activity') {
+      const done = !!step.artifactType && artifactDone(step.artifactType)
+      if (done) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Artifact on file — this step is credited.
+          </div>
+        )
+      }
+      const toolLabel = step.artifactType
+        ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
+        : undefined
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => act && setSheetFor({ step, act })}
+          className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
+        >
+          Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
+        </Button>
+      )
+    }
+    if (step.kind === 'workshop' && step.workshopId) {
+      const workshopId = step.workshopId
+      const done = visitedWorkshops.includes(workshopId)
+      if (done) {
+        return (
+          <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+            ✓ Result reviewed — this step is credited.
+          </div>
+        )
+      }
+      return (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => act && setSheetFor({ step, act })}
+          className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
+        >
+          See the result
+        </Button>
+      )
+    }
+    if (step.kind === 'architecture' && step.minDecisions) {
+      // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
+      // needed. Same judging logic as desktop's ArchitecturePanel
+      // (checkChoice against jurisdiction) and the same store action
+      // (setEdgeDecision); completion is the cumulative decision
+      // count vs this step's threshold (embedContract.ts), exactly
+      // like the desktop instance below.
+      const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+      const migratable = arch.edges.filter(
+        (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+      )
+      const decidedCount = Object.keys(edgeDecisions).length
+      const target = Math.min(step.minDecisions, migratable.length)
+      const decided = migratable.filter((e) => edgeDecisions[edgeKey(e)])
+      // 09-28 (WP6.5): a decided link can be taken back.
+      const undoList = decided.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {decided.map((e) => (
+            <Button
+              key={edgeKey(e)}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEdgeDecision(edgeKey(e), null)}
+              aria-label={`Undo ${e.from} to ${e.to} (${e.protocol})`}
+              className="h-auto px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground"
+            >
+              ↺ {e.from} → {e.to}
+            </Button>
+          ))}
+        </div>
+      )
+      if (decidedCount >= target) {
+        return (
+          <div className="mt-2 space-y-1.5">
+            <div className="rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+              ✓ {decidedCount}/{target} migration decisions made — this step is credited.
+            </div>
+            {undoList}
+          </div>
+        )
+      }
+      const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
+      return (
+        <div className="mt-2 space-y-1.5">
+          {undoList}
+          <div className="text-[10.5px] font-bold text-muted-foreground">
+            {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
+          </div>
+          {undecided.slice(0, 4).map((e) => {
+            const key = edgeKey(e)
+            return (
+              <div
+                key={key}
+                className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
+              >
+                <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
+                  {e.from} → {e.to} ({e.protocol})
+                </span>
+                <div className="flex shrink-0 gap-1">
+                  {(['hybrid', 'pure'] as const).map((choice) => {
+                    const verdict = checkChoice(country, choice)
+                    return (
+                      <Button
+                        key={choice}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        title={verdict.reason}
+                        onClick={() => setEdgeDecision(key, choice)}
+                        className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
+                          verdict.level === 'fail'
+                            ? 'border-destructive/40 text-destructive'
+                            : verdict.level === 'warn'
+                              ? 'border-warning/40 text-warning'
+                              : 'border-success/40 text-success'
+                        }`}
+                      >
+                        {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+    return null
+  }
   return (
     <>
       {/* mobile-ux-layer (WS-1, sim-mobile-full-play): real interactive play
@@ -2263,6 +2472,11 @@ export function SimulationView() {
           below. */}
       {isMobileShell && mobilePlayOpen ? (
         <div
+          // 09-28 nav remediation: distinct keys on the two phone screens. They
+          // were the same element type at the same tree position, so React
+          // reused ONE scrolled <div> — scroll the Overview down to tap Play and
+          // Decide opened scrolled too, with "← Overview" hidden above the fold.
+          key="sim-mobile-decide"
           className="flex md:hidden fixed inset-0 z-50 flex-col overflow-auto bg-background px-4 py-6 text-foreground"
           data-testid="sim-mobile-decide"
         >
@@ -2275,9 +2489,24 @@ export function SimulationView() {
             >
               ← Overview
             </Button>
-            <span className="font-mono text-sim-micro font-bold text-muted-foreground">
-              Turn · Q{q} {year}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sim-micro font-bold text-muted-foreground">
+                Q{q} {year}
+              </span>
+              {/* 09-28 (WP6.6): End quarter was only on the phone Overview. */}
+              {!autoRunPlayer.running && !autoRunPlayer.done && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={endQuarter}
+                  className="h-auto px-2 py-1 text-[11px] font-bold text-foreground"
+                >
+                  End quarter →
+                </Button>
+              )}
+              <RunActionsMenu items={phoneMenuItems} triggerClassName={phoneMenuTrigger} />
+            </div>
           </div>
           <div className="mb-3">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
@@ -2318,160 +2547,7 @@ export function SimulationView() {
             // comes from a Business tool (out of mobile scope for now), so it
             // auto-credits from the same artifactDone() signal desktop uses
             // and is labeled a "laptop step" rather than faked done.
-            renderCompletion={(step) => {
-              if (step.kind === 'learn' && step.moduleId) {
-                const moduleId = step.moduleId
-                if (moduleDone(moduleId)) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Module completed
-                    </div>
-                  )
-                }
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      const q = pickQuizQuestion(moduleId, seed)
-                      if (q) {
-                        setQuizGate({ moduleId, title: step.label, question: q })
-                      } else {
-                        // No check exists for this module: record it as read,
-                        // self-reported. Never claim it was comprehension-checked.
-                        recordLearnerEvidence('learn', moduleId, 'viewed')
-                      }
-                    }}
-                    className="mt-2 h-auto w-full rounded-md border border-success/50 bg-success/10 px-3 py-2 text-[11px] font-bold text-success hover:bg-success/20"
-                  >
-                    Mark complete
-                  </Button>
-                )
-              }
-              if (step.kind === 'catalog' && step.catalogId) {
-                const catalogId = step.catalogId
-                return (
-                  <div className="mt-2">
-                    <CompleteStepAction
-                      recordsArtifact={false}
-                      saved={catalogCompleted.includes(catalogId)}
-                      onClick={() => markCatalogStepDone(catalogId)}
-                    />
-                  </div>
-                )
-              }
-              if (step.kind === 'activity') {
-                const done = !!step.artifactType && artifactDone(step.artifactType)
-                if (done) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Artifact on file — this step is credited.
-                    </div>
-                  )
-                }
-                const toolLabel = step.artifactType
-                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
-                  : undefined
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
-                    className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
-                  >
-                    Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
-                  </Button>
-                )
-              }
-              if (step.kind === 'workshop' && step.workshopId) {
-                const workshopId = step.workshopId
-                const done = visitedWorkshops.includes(workshopId)
-                if (done) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ Result reviewed — this step is credited.
-                    </div>
-                  )
-                }
-                return (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
-                    className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
-                  >
-                    See the result
-                  </Button>
-                )
-              }
-              if (step.kind === 'architecture' && step.minDecisions) {
-                // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
-                // needed. Same judging logic as desktop's ArchitecturePanel
-                // (checkChoice against jurisdiction) and the same store action
-                // (setEdgeDecision); completion is the cumulative decision
-                // count vs this step's threshold (embedContract.ts), exactly
-                // like the desktop instance below.
-                const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
-                const migratable = arch.edges.filter(
-                  (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
-                )
-                const decidedCount = Object.keys(edgeDecisions).length
-                const target = Math.min(step.minDecisions, migratable.length)
-                if (decidedCount >= target) {
-                  return (
-                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
-                      ✓ {decidedCount}/{target} migration decisions made — this step is credited.
-                    </div>
-                  )
-                }
-                const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
-                return (
-                  <div className="mt-2 space-y-1.5">
-                    <div className="text-[10.5px] font-bold text-muted-foreground">
-                      {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
-                    </div>
-                    {undecided.slice(0, 4).map((e) => {
-                      const key = edgeKey(e)
-                      return (
-                        <div
-                          key={key}
-                          className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
-                        >
-                          <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
-                            {e.from} → {e.to} ({e.protocol})
-                          </span>
-                          <div className="flex shrink-0 gap-1">
-                            {(['hybrid', 'pure'] as const).map((choice) => {
-                              const verdict = checkChoice(country, choice)
-                              return (
-                                <Button
-                                  key={choice}
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  title={verdict.reason}
-                                  onClick={() => setEdgeDecision(key, choice)}
-                                  className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
-                                    verdict.level === 'fail'
-                                      ? 'border-destructive/40 text-destructive'
-                                      : verdict.level === 'warn'
-                                        ? 'border-warning/40 text-warning'
-                                        : 'border-success/40 text-success'
-                                  }`}
-                                >
-                                  {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
-                                </Button>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )
-              }
-              return null
-            }}
+            renderCompletion={(step) => renderPhoneCompletion(step, nextMove?.act)}
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
@@ -2491,7 +2567,9 @@ export function SimulationView() {
               const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
               // On Pilots (p5) a wrong call also rolls back a migrated estate
               // link, exactly like the desktop instance.
-              const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+              // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
+              // order) — `[0]` rolled back the oldest.
+              const revertId = sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
               const extra = revertId ? ` — rolled back link ${revertId}` : ''
               pendingWrongPickRef.current = { quarters, yearsBefore: clock.yearsToHorizon }
               applyDecisionSetback(
@@ -2512,100 +2590,6 @@ export function SimulationView() {
             </div>
           )}
           <TrapInsightsPanel />
-          {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
-              above can open. A second instance of the same quizGate/setQuizGate
-              state the desktop embed header uses — that one is unreachable here
-              (inside the `hidden md:flex` wrapper, now guarded !isMobileShell to
-              avoid a double mount). This is a plain fixed-position overlay with
-              its own z-[80], so it renders correctly regardless of viewport. */}
-          {quizGate && (
-            <QuizGateModal
-              question={quizGate.question}
-              moduleTitle={quizGate.title}
-              onCancel={() => setQuizGate(null)}
-              onPass={() => {
-                recordLearnerEvidence('learn', quizGate.moduleId, 'comprehension-checked')
-                setQuizGate(null)
-              }}
-            />
-          )}
-          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
-              reads the SAME generated document the narrated auto-run files
-              (autorun/simAutoRun.ts docFor), answers one check drawn from a
-              sibling learn module, then credits through the exact same
-              addExecutiveDocument call the auto-run uses (no parallel
-              completion mechanism). Labeled "(Generated brief)" in the
-              artifact title — the 08-27 honesty rule: a desktop user can
-              later replace it by building the real one in the tool. */}
-          {sheetFor && sheetFor.step.kind === 'activity' && (
-            <>
-              {(() => {
-                const artifactType = sheetFor.step.artifactType
-                const doc = artifactType ? docFor(artifactType, sector) : undefined
-                const toolLabel = artifactType
-                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
-                  : undefined
-                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
-                return (
-                  <SimBriefSheet
-                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
-                      toolLabel
-                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
-                        : ''
-                    }`}
-                    title={doc?.title ?? sheetFor.step.label}
-                    checkTitle={sheetFor.step.label}
-                    question={checkPick?.question ?? null}
-                    fileLabel="File this brief"
-                    onFile={() => {
-                      if (doc && artifactType) {
-                        addExecutiveDocument({
-                          id: `sim-mobile-brief-${artifactType}`,
-                          moduleId: 'sim-mobile-brief',
-                          type: artifactType,
-                          title: `${doc.title} (Generated brief)`,
-                          data: doc.data,
-                          createdAt: nowMs(),
-                        })
-                      }
-                      setSheetFor(null)
-                    }}
-                    onClose={() => setSheetFor(null)}
-                  >
-                    <MarkdownView content={doc?.data ?? '_No content available._'} />
-                  </SimBriefSheet>
-                )
-              })()}
-            </>
-          )}
-          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
-              a pre-computed, cited result card (the live playground tool
-              can't run on a phone), same check-then-credit shape, credited
-              via the same markWorkshopVisited() the desktop embed uses. */}
-          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
-            <>
-              {(() => {
-                const workshopId = sheetFor.step.workshopId!
-                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
-                return (
-                  <SimBriefSheet
-                    kicker="Workshop result — practice on a laptop for the interactive version"
-                    title={sheetFor.step.label}
-                    checkTitle={sheetFor.step.label}
-                    question={checkPick?.question ?? null}
-                    fileLabel="Log this result"
-                    onFile={() => {
-                      markWorkshopVisited(workshopId)
-                      setSheetFor(null)
-                    }}
-                    onClose={() => setSheetFor(null)}
-                  >
-                    <WorkshopResultCard workshopId={workshopId} />
-                  </SimBriefSheet>
-                )
-              })()}
-            </>
-          )}
           {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
             <div
               className={`mb-4 rounded-lg border p-3 ${
@@ -2638,13 +2622,22 @@ export function SimulationView() {
             </div>
           )}
           <p className="mt-1 text-[10.5px] leading-snug text-muted-foreground">
-            Delegating a phase to your AI team, the Progress/Resources/Signals tabs, and in-sim
-            resource embedding are on a laptop — resources here open in a new page instead.
+            Delegating a phase to your AI team, the Signals tab, and in-sim resource embedding are
+            on a laptop — resources here open in a new page instead. Progress and Resources are on
+            the Overview.
           </p>
         </div>
       ) : (
         <div
-          className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5"
+          key="sim-mobile-overview"
+          // 09-28 nav remediation: NOT justify-center — when the content is
+          // taller than the screen, centring pushes its top above the scroll
+          // origin, where it can never be scrolled to (the menu, heading and
+          // part of the phase chips were unreachable on a 13-mini-sized phone).
+          // first/last-child auto margins still centre short content. And no
+          // child may shrink: the phase-chip row (overflow-x-auto, so min-height
+          // 0) was being squashed to half height, clipping every chip.
+          className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-start overflow-auto bg-background px-6 py-10 text-center gap-5 [&>*]:shrink-0 [&>:first-child]:mt-auto [&>:last-child]:mb-auto"
           // mobile-ux-layer (WS-B2): the +2.5rem baseline matches this
           // container's own py-10 bottom padding exactly (so idle state, no
           // run active, --sim-transport-h unset, is pixel-identical to
@@ -2654,6 +2647,9 @@ export function SimulationView() {
           // way to reach the last ~325px of content.
           style={{ paddingBottom: 'calc(var(--sim-transport-h, 0px) + 2.5rem)' }}
         >
+          <div className="flex w-full max-w-[340px] justify-end">
+            <RunActionsMenu items={phoneMenuItems} triggerClassName={phoneMenuTrigger} />
+          </div>
           <div className="space-y-1">
             <h2 className="text-lg font-bold">Your migration</h2>
             {/* WS-1 (sim-mobile-full-play): the board itself stays a
@@ -2772,56 +2768,68 @@ export function SimulationView() {
               </div>
             </details>
           )}
-          {/* W6.4 — compact phone RESOURCES. Each entry says WHY this phase
-              opens it and what evidence it can produce, which the desktop
-              Resources tab did not state either. Large editors are marked as
-              desktop work rather than opened into a shell that cannot run
-              them (W6.5 handoff). */}
-          {isMobileShell && (
-            <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
-              <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
-                Resources for this phase
-              </summary>
-              <div className="space-y-1.5 border-t border-border px-3 py-2">
-                {(SIM_TREES[sel] ? flattenTree(SIM_TREES[sel]!) : [])
-                  .filter((st) => isGatingStep(st))
-                  .slice(0, 8)
-                  .map((st, i) => {
-                    const done = stepDone(st, sel)
-                    const desktopOnly = st.kind === 'activity' || st.kind === 'architecture'
-                    return (
-                      <div
-                        key={`${st.to}-${i}`}
-                        className="rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="font-bold text-foreground">{st.label}</span>
-                          <span
-                            className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
-                          >
-                            {done ? 'done' : desktopOnly ? 'desktop' : 'open'}
-                          </span>
+          {/* W6.4 — compact phone RESOURCES. 09-28 nav remediation (WP6.2): it
+              listed the tree's first 8 steps (almost all Level 1), flagged
+              activity/architecture as "desktop" although the phone completes
+              both, and its "Open →" never marked a reference visited. It now
+              lists the CURRENT level's steps — the phone's "do these in any
+              order" (desktop's Progress tab) — each with the same completion
+              control the Decide view uses. */}
+          {isMobileShell &&
+            (() => {
+              const tree = SIM_TREES[sel]
+              const band = tree?.levels.find((b) => levelOf(sel) < b.level)
+              const acts = band?.activities ?? []
+              const steps = acts.flatMap((a) =>
+                a.steps.filter((st) => isGatingStep(st)).map((st) => ({ st, act: a }))
+              )
+              if (!band || steps.length === 0) return null
+              return (
+                <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
+                  <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
+                    Resources for this phase · L{band.level} in any order
+                  </summary>
+                  <div className="space-y-1.5 border-t border-border px-3 py-2">
+                    {steps.map(({ st, act }, i) => {
+                      const done = stepDone(st, sel)
+                      const opensInHub =
+                        st.kind !== 'activity' &&
+                        st.kind !== 'workshop' &&
+                        st.kind !== 'architecture' &&
+                        canResolveDeepLink(st.to)
+                      return (
+                        <div
+                          key={`${st.to}-${i}`}
+                          className="rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="font-bold text-foreground">{st.label}</span>
+                            <span
+                              className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                            >
+                              {done ? 'done' : 'open'}
+                            </span>
+                          </div>
+                          {!done && opensInHub && (
+                            <Link
+                              to={st.to}
+                              onClick={() => {
+                                markSimResume()
+                                if (st.kind === 'reference' && st.refId) markRefVisited(st.refId)
+                              }}
+                              className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                            >
+                              Open →
+                            </Link>
+                          )}
+                          {!done && renderPhoneCompletion(st, act)}
                         </div>
-                        <div className="text-muted-foreground">
-                          {desktopOnly
-                            ? 'Produces an artifact — continue this task on desktop; your run travels with you.'
-                            : 'Opens in the hub; returns you here.'}
-                        </div>
-                        {!desktopOnly && (
-                          <Link
-                            to={st.to}
-                            onClick={() => markSimResume()}
-                            className="font-bold text-primary underline decoration-dotted underline-offset-2"
-                          >
-                            Open →
-                          </Link>
-                        )}
-                      </div>
-                    )
-                  })}
-              </div>
-            </details>
-          )}
+                      )
+                    })}
+                  </div>
+                </details>
+              )
+            })()}
           <dl className="w-full max-w-[320px] space-y-2 text-left">
             {[
               {
@@ -3053,6 +3061,109 @@ export function SimulationView() {
           >
             Back to hub
           </Link>
+        </div>
+      )}
+      {/* 09-28 nav remediation (WP6.2): the phone's quiz gate and Brief/result
+          sheets, hoisted out of the Decide-only branch so the phone Overview's
+          Resources list can open the same completion flows. `md:hidden` keeps
+          the same CSS guard they had inside the phone containers — at tablet
+          widths the desktop instances own these (no double mount). */}
+      {isMobileShell && (
+        <div className="md:hidden">
+          {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
+              above can open. A second instance of the same quizGate/setQuizGate
+              state the desktop embed header uses — that one is unreachable here
+              (inside the `hidden md:flex` wrapper, now guarded !isMobileShell to
+              avoid a double mount). This is a plain fixed-position overlay with
+              its own z-[80], so it renders correctly regardless of viewport. */}
+          {quizGate && (
+            <QuizGateModal
+              question={quizGate.question}
+              moduleTitle={quizGate.title}
+              onCancel={() => setQuizGate(null)}
+              onPass={() => {
+                recordLearnerEvidence('learn', quizGate.moduleId, 'comprehension-checked')
+                setQuizGate(null)
+              }}
+            />
+          )}
+          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
+              reads the SAME generated document the narrated auto-run files
+              (autorun/simAutoRun.ts docFor), answers one check drawn from a
+              sibling learn module, then credits through the exact same
+              addExecutiveDocument call the auto-run uses (no parallel
+              completion mechanism). Labeled "(Generated brief)" in the
+              artifact title — the 08-27 honesty rule: a desktop user can
+              later replace it by building the real one in the tool. */}
+          {sheetFor && sheetFor.step.kind === 'activity' && (
+            <>
+              {(() => {
+                const artifactType = sheetFor.step.artifactType
+                const doc = artifactType ? docFor(artifactType, sector) : undefined
+                const toolLabel = artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
+                  : undefined
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
+                      toolLabel
+                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
+                        : ''
+                    }`}
+                    title={doc?.title ?? sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="File this brief"
+                    onFile={() => {
+                      if (doc && artifactType) {
+                        addExecutiveDocument({
+                          id: `sim-mobile-brief-${artifactType}`,
+                          moduleId: 'sim-mobile-brief',
+                          type: artifactType,
+                          title: `${doc.title} (Generated brief)`,
+                          data: doc.data,
+                          createdAt: nowMs(),
+                        })
+                      }
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <MarkdownView content={doc?.data ?? '_No content available._'} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
+          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
+              a pre-computed, cited result card (the live playground tool
+              can't run on a phone), same check-then-credit shape, credited
+              via the same markWorkshopVisited() the desktop embed uses. */}
+          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
+            <>
+              {(() => {
+                const workshopId = sheetFor.step.workshopId!
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker="Workshop result — practice on a laptop for the interactive version"
+                    title={sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="Log this result"
+                    onFile={() => {
+                      markWorkshopVisited(workshopId)
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <WorkshopResultCard workshopId={workshopId} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
         </div>
       )}
 
@@ -4157,7 +4268,10 @@ export function SimulationView() {
                           const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
                           // On Pilots (p5) a wrong call also rolls back a migrated estate link,
                           // so readiness visibly drops on a specific edge (re-doable).
-                          const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                          // 09-28 (WP7c): the MOST RECENT decision (string keys keep insertion
+                          // order) — `[0]` rolled back the oldest.
+                          const revertId =
+                            sel === 'p5' ? Object.keys(edgeDecisions).at(-1) : undefined
                           const extra = revertId ? ` — rolled back link ${revertId}` : ''
                           applyDecisionSetback(
                             quarters,
@@ -5393,43 +5507,6 @@ export function SimulationView() {
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
         )}
-        {pendingConfirm === 'reset' && (
-          <SimConfirmDialog
-            title="Reset the run?"
-            description="Clears this run: decisions and attempts, quarters and budget, run evidence, and the simulation-tracked module progress and documents it created. KEPT: your assessment, your own Learn progress and documents from outside the simulation, and your lifetime achievements. This starts a clean practice replay — it does not erase your learning history."
-            confirmLabel="Reset run"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              runResetAll()
-              setPendingConfirm(null)
-            }}
-          />
-        )}
-        {pendingConfirm === 'start-over' && (
-          <SimConfirmDialog
-            title="Start over completely?"
-            description="This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks."
-            confirmLabel="Start over"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              runStartOver()
-              setPendingConfirm(null)
-            }}
-          />
-        )}
-        {pendingConfirm === 'delegate' && (
-          <SimConfirmDialog
-            title={`Delegate ${phase.name} to your AI team?`}
-            description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
-            confirmLabel="Auto-complete"
-            onCancel={() => setPendingConfirm(null)}
-            onConfirm={() => {
-              autoCompleteSteps(phaseAutoKeys)
-              if (delegationCostM > 0) spendBudget(delegationCostM)
-              setPendingConfirm(null)
-            }}
-          />
-        )}
         {/* mobile-ux-layer (WS-0, D8): SimPlayChoiceModal never becomes VISIBLE
             below 768px (this whole wrapper is `hidden md:flex`), but it still
             MOUNTED there — its focus trap + a global `window` Escape-keydown
@@ -5448,7 +5525,6 @@ export function SimulationView() {
             sectorLabel={sectorOpt.label}
           />
         )}
-        {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
       </div>
       {/* mobile-ux-layer (WS-0, D2): moved OUTSIDE the desktop-only `hidden
           md:flex` wrapper above — this confirm can be triggered by the phone
@@ -5482,6 +5558,46 @@ export function SimulationView() {
           is already `grid-cols-1 sm:grid-cols-2`, so no responsive changes
           were needed inside sections.tsx — only its position in this tree. */}
       {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* 09-28 (WP6.3): the run confirms + Terms, hoisted out of the
+          desktop-only wrapper so the phone menu can open them too. */}
+      {pendingConfirm === 'reset' && (
+        <SimConfirmDialog
+          title="Reset the run?"
+          description="Clears this run: decisions and attempts, quarters and budget, run evidence, and the simulation-tracked module progress and documents it created. KEPT: your assessment, your own Learn progress and documents from outside the simulation, and your lifetime achievements. This starts a clean practice replay — it does not erase your learning history."
+          confirmLabel="Reset run"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            runResetAll()
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {pendingConfirm === 'start-over' && (
+        <SimConfirmDialog
+          title="Start over completely?"
+          description="This clears your simulation run AND your assessment — you will run the assessment again before the simulation unlocks."
+          confirmLabel="Start over"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            runStartOver()
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {pendingConfirm === 'delegate' && (
+        <SimConfirmDialog
+          title={`Delegate ${phase.name} to your AI team?`}
+          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
+          confirmLabel="Auto-complete"
+          onCancel={() => setPendingConfirm(null)}
+          onConfirm={() => {
+            autoCompleteSteps(phaseAutoKeys)
+            if (delegationCostM > 0) spendBudget(delegationCostM)
+            setPendingConfirm(null)
+          }}
+        />
+      )}
+      {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
       {/* 09-28 (WP2 / D6): outside the desktop-only wrapper so the phone's Mode
           control can use it too. */}
       {pendingDifficulty && (
