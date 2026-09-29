@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Minus, Plus, Bookmark, BookmarkCheck, BookOpen, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData'
+import {
+  draftThreatIndustries,
+  retiredThreats,
+  threatsData,
+  type ThreatItem,
+} from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -39,6 +44,13 @@ import {
   threatClassParam,
   threatIdParam,
 } from '@/components/Threats/threatsUrlParams'
+import {
+  threatExclusions,
+  threatNotFoundMessage,
+  threatWidenedMessage,
+} from '@/components/Threats/threatDeepLink'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
@@ -182,21 +194,126 @@ export function MobileThreatsView() {
   const selectedSecondSources = selected ? secondSourceLines(selected.secondarySources) : []
   const selectedLineage = selected ? getThreatLineage(selected.threatId) : null
   const selectedClaimsLine = selectedLineage ? claimsCheckedText(selectedLineage) : null
-  const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
+  // Opening a threat pushes a history entry (Back closes the sheet); closing
+  // replaces, like every filter change on this screen.
+  const selfWrittenIdRef = useRef<string | null>(null)
+  const setSelected = (t: ThreatItem | null) => {
+    if (!t) {
+      setParam({ id: null, threat: null })
+      return
+    }
+    selfWrittenIdRef.current = t.threatId
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      next.set('id', t.threatId)
+      next.delete('threat')
+      return next
+    })
+  }
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
   const hnflDeadline = crqcYear - CREDENTIAL_VALIDITY - MIGRATION_TIME
   const worstDeadline = Math.min(hndlDeadline, hnflDeadline)
   const urgency = urgencyFor(worstDeadline)
 
+  // A deep-linked threat outside the persona scope adds its industry to it
+  // (deep-link remediation PR 1), so the card is in the list behind the sheet.
+  const [personaScopeExtra, setPersonaScopeExtra] = useState<string | null>(null)
   const personaIndustries = useMemo(() => {
     if (!selectedPersona) return null
     const keys = PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona] ?? []
     const industries = keys
       .flatMap((k) => INDUSTRY_TO_THREATS_MAP[k] ?? [])
       .filter((ind) => threatsData.some((d) => d.industry === ind))
-    return industries.length > 0 ? industries : null
-  }, [selectedPersona])
+    if (industries.length === 0) return null
+    return personaScopeExtra && !industries.includes(personaScopeExtra)
+      ? [...industries, personaScopeExtra]
+      : industries
+  }, [selectedPersona, personaScopeExtra])
+
+  // ── ?id= arrival: not-found notice, or widen whatever hides the card ──
+  const [deepLinkNotice, setDeepLinkNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+  } | null>(null)
+  const undoRef = useRef<{ params: string; personaScopeExtra: string | null } | null>(null)
+  const resolvedIdRef = useRef<string | null>(null)
+  const arrivalIdRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (linkedId === resolvedIdRef.current) return
+    resolvedIdRef.current = linkedId
+    if (!linkedId) return
+    if (linkedId === selfWrittenIdRef.current) {
+      selfWrittenIdRef.current = null
+      return
+    }
+    if (!selected) {
+      if (!retiredThreats.has(linkedId)) {
+        setDeepLinkNotice({
+          kind: 'not-found',
+          message: threatNotFoundMessage(linkedId, draftThreatIndustries),
+        })
+      }
+      return
+    }
+    arrivalIdRef.current = selected.threatId
+    const exclusions = threatExclusions(selected, {
+      industries: urlIndustries,
+      personaScope: urlIndustries.length === 0 ? (personaIndustries ?? []) : [],
+      criticality,
+      threatClass: classFilter,
+      query: urlQuery,
+    })
+    if (exclusions.length === 0) {
+      setDeepLinkNotice(null)
+      return
+    }
+    undoRef.current = { params: searchParams.toString(), personaScopeExtra }
+    const updates: Record<string, string | null> = {}
+    for (const ex of exclusions) {
+      if (ex === 'industry') updates.industry = [...urlIndustries, selected.industry].join(',')
+      else if (ex === 'persona-scope') setPersonaScopeExtra(selected.industry)
+      else if (ex === 'criticality') updates.criticality = null
+      else if (ex === 'class') updates.class = null
+      else if (ex === 'q') updates.q = null
+    }
+    if (Object.keys(updates).length > 0) setParam(updates)
+    setDeepLinkNotice({
+      kind: 'widened',
+      message: threatWidenedMessage(selected.threatId, exclusions),
+    })
+    // Keyed on the arriving id only; the filters are read at arrival time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkedId])
+
+  const undoWiden = () => {
+    const snap = undoRef.current
+    undoRef.current = null
+    setDeepLinkNotice(null)
+    if (!snap) return
+    arrivalIdRef.current = null
+    setPersonaScopeExtra(snap.personaScopeExtra)
+    const restored = new URLSearchParams(snap.params)
+    restored.delete('id')
+    restored.delete('threat')
+    setSearchParams(restored, { replace: true })
+  }
+
+  // Once the linked threat's sheet closes, scroll to and ring its card.
+  const [scrollTarget, setScrollTarget] = useState<{ id: string; nonce: number } | null>(null)
+  const prevSelectedIdRef = useRef<string | null>(selected?.threatId ?? null)
+  useEffect(() => {
+    const prev = prevSelectedIdRef.current
+    prevSelectedIdRef.current = selected?.threatId ?? null
+    if (prev && !selected && prev === arrivalIdRef.current) {
+      arrivalIdRef.current = null
+      setScrollTarget((t) => ({ id: prev, nonce: (t?.nonce ?? 0) + 1 }))
+    }
+  }, [selected])
+  useScrollToDeepLinkTarget(
+    scrollTarget ? `${scrollTarget.id}#${scrollTarget.nonce}` : null,
+    scrollTarget ? deepLinkSelector(scrollTarget.id) : null
+  )
 
   // An explicit ?industry= wins over the persona default, as on desktop.
   const scopedData = useMemo(
@@ -233,6 +350,18 @@ export function MobileThreatsView() {
             ` · ${scopedData.length} in your focus areas`}
         </p>
       </div>
+
+      {deepLinkNotice && (
+        <DeepLinkNotice
+          kind={deepLinkNotice.kind}
+          message={deepLinkNotice.message}
+          onUndo={deepLinkNotice.kind === 'widened' ? undoWiden : undefined}
+          onDismiss={() => {
+            setDeepLinkNotice(null)
+            if (deepLinkNotice.kind === 'not-found') setParam({ id: null, threat: null })
+          }}
+        />
+      )}
 
       {retiredLinked && (
         <div
@@ -571,7 +700,7 @@ function ThreatCardMobile({
   const clsDef = THREAT_CLASS_DEFS[cls]
 
   return (
-    <article className="glass-panel flex flex-col gap-2 p-3.5">
+    <article data-deeplink-id={threat.threatId} className="glass-panel flex flex-col gap-2 p-3.5">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
         {/* Compact tier chip (UX-19): the short name in sentence case, the

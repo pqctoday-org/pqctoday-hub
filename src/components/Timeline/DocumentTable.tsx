@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Flag, Info, Sparkles } from 'lucide-react'
 import clsx from 'clsx'
 import type { GanttCountryData, Phase } from '../../types/timeline'
-import { phaseColors } from '../../data/timelineData'
+import { phaseColors, timelineEventPageUrl } from '../../data/timelineData'
 import {
   timelineEnrichments,
   hasSubstantiveEnrichment,
@@ -304,7 +304,10 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                                 `**Title:** ${row.title}`,
                                 `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                               ].join('\n'),
-                              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                              pageUrl: timelineEventPageUrl(
+                                row.countryName,
+                                row.eventId || row.title
+                              ),
                             })}
                             resourceLabel={row.title}
                             resourceType="Timeline"
@@ -322,7 +325,10 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                                 `**Title:** ${row.title}`,
                                 `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                               ].join('\n'),
-                              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                              pageUrl: timelineEventPageUrl(
+                                row.countryName,
+                                row.eventId || row.title
+                              ),
                             })}
                             resourceLabel={row.title}
                             resourceType="Timeline"

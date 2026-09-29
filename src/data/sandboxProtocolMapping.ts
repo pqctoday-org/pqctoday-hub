@@ -76,5 +76,5 @@ export function getSandboxProtocolRef(scenarioId: string): SandboxProtocolRef | 
 
 /** Deep-link to the Protocol Matrix page with the row's detail modal preselected. */
 export function protocolMatrixHref(ref: SandboxProtocolRef): string {
-  return `/algorithms?protocol=${encodeURIComponent(ref.protocolId)}`
+  return `/algorithms?tab=support&protocol=${encodeURIComponent(ref.protocolId)}`
 }

@@ -179,6 +179,116 @@ export interface LibraryPipelineResult {
   personaPreferredActive: boolean
 }
 
+/** The filters that apply after the purpose door, category and persona
+ *  narrowing — i.e. everything except the "narrow" step. */
+export type LibraryFilterState = Pick<
+  LibraryPipelineInput,
+  | 'activeOrg'
+  | 'filterText'
+  | 'geoFilter'
+  | 'sectorFilter'
+  | 'tierFilter'
+  | 'algoFamilyFilter'
+  | 'showOnlyLibraryBookmarks'
+  | 'libraryBookmarks'
+  | 'cswp39Only'
+  | 'certRelevantOnly'
+  | 'certRelevantIdSet'
+  | 'lifecycleBucket'
+  | 'semanticIdSet'
+>
+
+/** Pure form of the pipeline's post-narrow filter step. Exported so a deep link
+ *  can test which single filter hides its target (libraryDeepLink.ts). */
+export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState): boolean {
+  const {
+    activeOrg,
+    filterText,
+    geoFilter,
+    sectorFilter,
+    tierFilter,
+    algoFamilyFilter,
+    showOnlyLibraryBookmarks,
+    libraryBookmarks,
+    cswp39Only,
+    certRelevantOnly,
+    certRelevantIdSet,
+    lifecycleBucket,
+    semanticIdSet,
+  } = f
+  if (activeOrg !== 'All') {
+    const itemCanonicalOrgs = item.authorsOrOrganization
+      ? item.authorsOrOrganization
+          .split(';')
+          .map((s) => ORG_CANONICAL_MAP[s.trim()])
+          .filter(Boolean)
+      : []
+    if (activeOrg === ORG_OTHER) {
+      // "Other": authored, but by no canonically-mapped organization.
+      if (!item.authorsOrOrganization || itemCanonicalOrgs.length > 0) return false
+    } else if (!itemCanonicalOrgs.includes(activeOrg)) {
+      return false
+    }
+  }
+  if (geoFilter.length > 0) {
+    const regionValues = item.regionScope
+      ? item.regionScope
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : []
+    if (!matchesGeoFilter(geoFilter, regionValues)) return false
+  }
+  if (sectorFilter.length > 0) {
+    if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false
+  }
+  if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+  if (algoFamilyFilter.length > 0) {
+    const famValues = item.algorithmFamily
+      ? item.algorithmFamily
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : []
+    if (!matchesAlgorithmFamilyFilter(algoFamilyFilter, famValues)) return false
+  }
+  if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
+  if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
+  if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
+  if (
+    lifecycleBucket !== 'All' &&
+    item.documentStatusBucket !== (lifecycleBucket as DocumentStatusBucket)
+  )
+    return false
+  if (!filterText) return true
+  const searchLower = filterText.toLowerCase()
+  const lexicalMatch =
+    item.documentTitle.toLowerCase().includes(searchLower) ||
+    item.referenceId.toLowerCase().includes(searchLower) ||
+    item.shortDescription?.toLowerCase().includes(searchLower) ||
+    item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
+  if (lexicalMatch) return true
+  // Separator-insensitive fallback: "PKCS #11" (title), "PKCS-11" (reference_id),
+  // and "PKCS#11" (prose) never contain the literal substring "pkcs11", so a
+  // one-word query for a standard's number silently missed every one of those
+  // three real spellings — the exact match above only ever passed by accident,
+  // when a document's own text happened to also quote a no-separator form (an
+  // "as PKCS11-UG" citation). Stripping spaces/hyphens/# from both sides before
+  // comparing makes all four spellings equivalent, without touching the exact
+  // match above (still tried first, so it never changes behavior it already had).
+  const normalizedQuery = normalizeSearchText(searchLower)
+  if (normalizedQuery) {
+    const normalizedMatch =
+      normalizeSearchText(item.documentTitle.toLowerCase()).includes(normalizedQuery) ||
+      normalizeSearchText(item.referenceId.toLowerCase()).includes(normalizedQuery) ||
+      (item.shortDescription &&
+        normalizeSearchText(item.shortDescription.toLowerCase()).includes(normalizedQuery))
+    if (normalizedMatch) return true
+  }
+  if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) return true
+  return false
+}
+
 export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipelineResult {
   const {
     activePurpose,
@@ -245,79 +355,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
 
   const personaPreferredActive = personaPreferredCategories.length > 0 && activeCategory === 'All'
 
-  const matchesAllButNarrow = (item: LibraryItem): boolean => {
-    if (activeOrg !== 'All') {
-      const itemCanonicalOrgs = item.authorsOrOrganization
-        ? item.authorsOrOrganization
-            .split(';')
-            .map((s) => ORG_CANONICAL_MAP[s.trim()])
-            .filter(Boolean)
-        : []
-      if (activeOrg === ORG_OTHER) {
-        // "Other": authored, but by no canonically-mapped organization.
-        if (!item.authorsOrOrganization || itemCanonicalOrgs.length > 0) return false
-      } else if (!itemCanonicalOrgs.includes(activeOrg)) {
-        return false
-      }
-    }
-    if (geoFilter.length > 0) {
-      const regionValues = item.regionScope
-        ? item.regionScope
-            .split(';')
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : []
-      if (!matchesGeoFilter(geoFilter, regionValues)) return false
-    }
-    if (sectorFilter.length > 0) {
-      if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false
-    }
-    if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
-    if (algoFamilyFilter.length > 0) {
-      const famValues = item.algorithmFamily
-        ? item.algorithmFamily
-            .split(';')
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : []
-      if (!matchesAlgorithmFamilyFilter(algoFamilyFilter, famValues)) return false
-    }
-    if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
-    if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
-    if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
-    if (
-      lifecycleBucket !== 'All' &&
-      item.documentStatusBucket !== (lifecycleBucket as DocumentStatusBucket)
-    )
-      return false
-    if (!filterText) return true
-    const searchLower = filterText.toLowerCase()
-    const lexicalMatch =
-      item.documentTitle.toLowerCase().includes(searchLower) ||
-      item.referenceId.toLowerCase().includes(searchLower) ||
-      item.shortDescription?.toLowerCase().includes(searchLower) ||
-      item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
-    if (lexicalMatch) return true
-    // Separator-insensitive fallback: "PKCS #11" (title), "PKCS-11" (reference_id),
-    // and "PKCS#11" (prose) never contain the literal substring "pkcs11", so a
-    // one-word query for a standard's number silently missed every one of those
-    // three real spellings — the exact match above only ever passed by accident,
-    // when a document's own text happened to also quote a no-separator form (an
-    // "as PKCS11-UG" citation). Stripping spaces/hyphens/# from both sides before
-    // comparing makes all four spellings equivalent, without touching the exact
-    // match above (still tried first, so it never changes behavior it already had).
-    const normalizedQuery = normalizeSearchText(searchLower)
-    if (normalizedQuery) {
-      const normalizedMatch =
-        normalizeSearchText(item.documentTitle.toLowerCase()).includes(normalizedQuery) ||
-        normalizeSearchText(item.referenceId.toLowerCase()).includes(normalizedQuery) ||
-        (item.shortDescription &&
-          normalizeSearchText(item.shortDescription.toLowerCase()).includes(normalizedQuery))
-      if (normalizedMatch) return true
-    }
-    if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) return true
-    return false
-  }
+  const matchesAllButNarrow = (item: LibraryItem): boolean => matchesLibraryFilters(item, input)
 
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {

@@ -13,11 +13,13 @@
  * in the URL (?cat/org/q/sort/view/lifecycle/cswp39/qv/ref/prefs plus the
  * geo[]/sector[]/tier params the shared filters own).
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { BookOpen, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '@/components/ui/button'
@@ -25,7 +27,6 @@ import {
   libraryData,
   libraryMetadata,
   libraryCorpusHealth,
-  findLibraryItemByRef,
   type LibraryItem,
   type LibraryPurpose,
 } from '@/data/libraryData'
@@ -54,6 +55,7 @@ import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryStartHere } from './LibraryStartHere'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
+import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
@@ -328,7 +330,7 @@ export function LibraryViewRedesign({
   }, [])
 
   const detailItem: LibraryItem | null = useMemo(
-    () => (detailRef ? (findLibraryItemByRef(detailRef) ?? null) : null),
+    () => (detailRef ? (resolveLibraryDeepLink(detailRef)?.item ?? null) : null),
     [detailRef]
   )
 
@@ -346,8 +348,111 @@ export function LibraryViewRedesign({
     setParams(next, { replace: true })
   }, [params, setParams])
 
-  const openDetail = useCallback((ref: string) => setParam('ref', ref), [setParam])
-  const closeDetail = useCallback(() => setParam('ref', null), [setParam])
+  // A ref opened from this page's own list is already visible; only refs that
+  // ARRIVE (link, reload, Back/Forward) go through the deep-link handling below.
+  const inPageOpenRef = useRef<string | null>(null)
+  const openDetail = useCallback(
+    (ref: string) => {
+      inPageOpenRef.current = ref
+      setParam('ref', ref)
+    },
+    [setParam]
+  )
+  // replace, not push: Back should leave the page, not reopen the drawer.
+  const closeDetail = useCallback(() => setParam('ref', null, { replace: true }), [setParam])
+
+  // ── Deep-link arrival: successor / not-found / filter widening ─────────────
+  const [deepLinkNotice, setDeepLinkNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+    /** Params before widening, for Undo. */
+    undoParams?: string
+    /** Unknown ref: dismissing the notice also drops it from the URL. */
+    dropRef?: boolean
+  } | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  // Carries "X was superseded by Y" across the ref swap into the successor's pass.
+  const supersededNoteRef = useRef<string | null>(null)
+  useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
+
+  useEffect(() => {
+    // The phone view (MobileLibraryView) handles its own ?ref arrival.
+    if (!detailRef || isMobileShell) return
+    if (inPageOpenRef.current === detailRef) {
+      inPageOpenRef.current = null
+      return
+    }
+    const resolved = resolveLibraryDeepLink(detailRef)
+    if (!resolved) {
+      setDeepLinkNotice({
+        kind: 'not-found',
+        message: `No library document matches “${detailRef}”. It may have been retired, renamed or mistyped.`,
+        dropRef: true,
+      })
+      return
+    }
+    if (resolved.supersededRef) {
+      // Swap the URL to the successor; this effect runs again for it below.
+      supersededNoteRef.current = `“${resolved.supersededRef}” has been superseded by ${resolved.item.referenceId}.`
+      setParam('ref', resolved.item.referenceId, { replace: true })
+      return
+    }
+    const item = resolved.item
+    const supersededNote = supersededNoteRef.current
+    supersededNoteRef.current = null
+    const widening = libraryWideningFor(item, {
+      activePurpose,
+      activeCategory,
+      selectedPersona,
+      prefsOff,
+      activeOrg,
+      filterText,
+      geoFilter,
+      sectorFilter,
+      tierFilter,
+      algoFamilyFilter,
+      showOnlyLibraryBookmarks,
+      libraryBookmarks,
+      cswp39Only,
+      certRelevantOnly,
+      certRelevantIdSet,
+      lifecycleBucket,
+      semanticIdSet,
+      newOnly,
+    })
+    if (widening) {
+      const next = new URLSearchParams(params)
+      for (const key of widening.drop) next.delete(key)
+      if (widening.prefsOff) next.set('prefs', 'off')
+      setParams(next, { replace: true })
+      const widened = `Filters widened to show ${item.referenceId}.`
+      setDeepLinkNotice({
+        kind: 'widened',
+        message: supersededNote ? `${supersededNote} ${widened}` : widened,
+        undoParams: params.toString(),
+      })
+    } else if (supersededNote) {
+      setDeepLinkNotice({ kind: 'not-found', message: `${supersededNote} Showing it instead.` })
+    }
+    setScrollTarget(item.referenceId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per arriving ref
+  }, [detailRef])
+
+  const undoWidening = useCallback(() => {
+    if (!deepLinkNotice?.undoParams) return
+    // Restore the reader's filters but keep whatever document is open now.
+    const restored = new URLSearchParams(deepLinkNotice.undoParams)
+    const currentRef = params.get('ref')
+    if (currentRef) restored.set('ref', currentRef)
+    else restored.delete('ref')
+    setParams(restored, { replace: true })
+    setDeepLinkNotice(null)
+  }, [deepLinkNotice, params, setParams])
+
+  const dismissDeepLinkNotice = useCallback(() => {
+    if (deepLinkNotice?.dropRef) setParam('ref', null, { replace: true })
+    setDeepLinkNotice(null)
+  }, [deepLinkNotice, setParam])
 
   // Clear a single value of a repeated-key (multi-select) filter param.
   const clearMulti = useCallback(
@@ -506,6 +611,15 @@ export function LibraryViewRedesign({
       )}
 
       {!simEmbed && <PersonaPageNote route="/library" />}
+
+      {deepLinkNotice && (
+        <DeepLinkNotice
+          kind={deepLinkNotice.kind}
+          message={deepLinkNotice.message}
+          onUndo={deepLinkNotice.undoParams ? undoWidening : undefined}
+          onDismiss={dismissDeepLinkNotice}
+        />
+      )}
 
       <LibraryRecentlyChanged items={pipeline.activityItems} onOpen={openDetail} />
 

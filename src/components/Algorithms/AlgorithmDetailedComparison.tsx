@@ -30,6 +30,7 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 import { MAX_COMPARE } from './useAlgorithmExplorer'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
+import { algoMatchesHighlight } from './highlightMatch'
 
 /**
  * What the RAM column can and cannot tell a reader.
@@ -318,11 +319,7 @@ function CompareCheckbox({
 
 function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean {
   if (!highlights) return false
-  return Array.from(highlights).some(
-    (h) =>
-      algo.name.toLowerCase().includes(h.toLowerCase()) ||
-      h.toLowerCase().includes(algo.name.toLowerCase())
-  )
+  return Array.from(highlights).some((h) => algoMatchesHighlight(algo.name, h))
 }
 
 function isDraftCandidate(algo: AlgorithmDetail): boolean {
@@ -591,6 +588,7 @@ function BrowseTable({
               return (
                 <tr
                   key={`${algo.name}-${index}`}
+                  data-deeplink-id={algo.name}
                   className={clsx(
                     'transition-colors hover:bg-primary/10',
                     checked
@@ -721,7 +719,13 @@ function BrowseTable({
           return (
             <div
               key={`${algo.name}-${index}`}
-              className={clsx('p-4 space-y-2', checked && 'bg-secondary/10')}
+              data-deeplink-id={algo.name}
+              className={clsx(
+                'p-4 space-y-2',
+                checked
+                  ? 'bg-secondary/10'
+                  : isHighlighted(algo, highlightAlgorithms) && 'bg-primary/15'
+              )}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { ShieldCheck, Building2, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { leadersData, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { findLeaderByName } from '@/components/Leaders/leaderDeepLink'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -58,7 +61,33 @@ function humanizeDate(iso: string): string {
  */
 export function MobileCommunityView() {
   const [category, setCategory] = useState<string | null>(null)
-  const [selected, setSelected] = useState<Leader | null>(null)
+  // The open profile lives in ?leader=<name>, the same param desktop reads, so
+  // shared links, Assistant citations and cross-page links open it on a phone
+  // too. Resolved against ALL rows (not just the curated list below), so a
+  // linked document-contributor stub still opens. Open pushes; close replaces.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const leaderParam = searchParams.get('leader')?.trim() || null
+  const selected: Leader | null = useMemo(
+    () => (leaderParam ? (findLeaderByName(leadersData, leaderParam) ?? null) : null),
+    [leaderParam]
+  )
+  const [dismissedNotFound, setDismissedNotFound] = useState<string | null>(null)
+  const notFound =
+    leaderParam && !selected && dismissedNotFound !== leaderParam ? leaderParam : null
+  const setSelected = useCallback(
+    (leader: Leader | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (leader) next.set('leader', leader.name)
+          else next.delete('leader')
+          return next
+        },
+        { replace: !leader }
+      )
+    },
+    [setSearchParams]
+  )
 
   const curated = useMemo(() => leadersData.filter((l) => l.sourceKind === 'curated'), [])
   const filtered = useMemo(
@@ -79,6 +108,14 @@ export function MobileCommunityView() {
         People contributing to the advances of post-quantum cryptography. Community members are
         listed <span className="font-semibold text-foreground">only with written consent</span>.
       </p>
+
+      {notFound && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`"${notFound}" was not found in the Community list.`}
+          onDismiss={() => setDismissedNotFound(notFound)}
+        />
+      )}
 
       <div className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
         <Button

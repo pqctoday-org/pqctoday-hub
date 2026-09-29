@@ -26,6 +26,10 @@ interface ProductRowProps {
    *  set, for context-specific badges (e.g. a Hybrid-support badge in the
    *  Vendor risk tab) that don't belong in every ProductRow caller. */
   extraBadges?: ReactNode
+  /** Start expanded — a deep link (/migrate?product=<id>) opening this row. */
+  defaultExpanded?: boolean
+  /** Called when the reader collapses the row (e.g. to drop ?product= from the URL). */
+  onCollapse?: () => void
 }
 
 /** A candidate replacement product. Expands to the full detail (roadmap, certs,
@@ -36,8 +40,14 @@ export function ProductRow({
   onChoose,
   compact = false,
   extraBadges,
+  defaultExpanded = false,
+  onCollapse,
 }: ProductRowProps) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(defaultExpanded)
+  const toggle = () => {
+    if (expanded) onCollapse?.()
+    setExpanded(!expanded)
+  }
   const pqc = productPqcStatus(product)
   const fips = productFipsBadge(product)
   const verification = productVerificationBadge(product)
@@ -51,6 +61,7 @@ export function ProductRow({
 
   return (
     <div
+      data-deeplink-id={product.productId || undefined}
       className={
         compact
           ? ''
@@ -65,11 +76,11 @@ export function ProductRow({
           tabIndex={0}
           aria-expanded={expanded}
           aria-label={`${expanded ? 'Collapse' : 'Expand'} details for ${product.softwareName}`}
-          onClick={() => setExpanded((v) => !v)}
+          onClick={toggle}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              setExpanded((v) => !v)
+              toggle()
             }
           }}
           className="min-w-0 flex-1 cursor-pointer"

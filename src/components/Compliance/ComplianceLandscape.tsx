@@ -1132,6 +1132,10 @@ interface ComplianceLandscapeProps {
   orgFilter?: string
   industryFilter?: string
   regionFilter?: RegionBloc | 'All'
+  /** Persona-default region blocs, applied only while `regionFilter` is 'All'.
+   *  Shown as a dismissible chip; a deep-linked framework outside it still shows. */
+  regionScope?: readonly RegionBloc[]
+  onDismissRegionScope?: () => void
   countryFilter?: string
   deadlineFilter?: 'All' | DeadlinePhase
   searchText?: string
@@ -1152,6 +1156,8 @@ interface ComplianceLandscapeProps {
   onSelectFramework?: (fw: ComplianceFramework) => void
 }
 
+const NO_REGION_SCOPE: readonly RegionBloc[] = []
+
 export function ComplianceLandscape({
   frameworks: frameworksProp,
   showDeadlineTimeline = true,
@@ -1160,6 +1166,8 @@ export function ComplianceLandscape({
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
   regionFilter: regionFilterProp,
+  regionScope = NO_REGION_SCOPE,
+  onDismissRegionScope,
   countryFilter: countryFilterProp,
   deadlineFilter: deadlineFilterProp,
   searchText: searchTextProp,
@@ -1401,6 +1409,14 @@ export function ComplianceLandscape({
     }
     if (regionFilter !== 'All') {
       result = result.filter((fw) => fw.countries.some((c) => regionForCountry(c) === regionFilter))
+    } else if (regionScope.length > 0) {
+      // A deep-linked framework outside the reader's default region stays
+      // visible — the link asked for it.
+      result = result.filter(
+        (fw) =>
+          fw.id === highlightFrameworkId ||
+          fw.countries.some((c) => regionScope.includes(regionForCountry(c)))
+      )
     }
     if (countryFilter !== 'All') {
       result = result.filter((fw) => fw.countries.some((c) => c.trim() === countryFilter))
@@ -1434,6 +1450,8 @@ export function ComplianceLandscape({
     orgFilter,
     industryFilter,
     regionFilter,
+    regionScope,
+    highlightFrameworkId,
     countryFilter,
     deadlineFilter,
     searchFilterText,
@@ -1620,6 +1638,18 @@ export function ComplianceLandscape({
                 aria-label="Clear region filter"
               >
                 All
+              </Button>
+            )}
+            {regionFilter === 'All' && regionScope.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDismissRegionScope?.()}
+                className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                aria-label="Show all regions"
+                title="Narrowed to your region from your profile — click to show every region"
+              >
+                Your region: {regionScope.join(' + ')} · Show all
               </Button>
             )}
           </div>

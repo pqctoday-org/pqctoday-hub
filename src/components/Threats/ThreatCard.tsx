@@ -101,6 +101,7 @@ export const ThreatCard = ({
   return (
     <motion.article
       id={`threat-${item.threatId}`}
+      data-deeplink-id={item.threatId}
       data-workshop-target={`threats-card-${item.threatId}`}
       title={dimmed ? dimmedReason : undefined}
       initial={{ opacity: 0, y: 10 }}

@@ -18,7 +18,7 @@ import {
   timelineToLibraryRef,
 } from '../../data/timelineEnrichmentData'
 import type { Phase } from '../../types/timeline'
-import { phaseColors } from '../../data/timelineData'
+import { phaseColors, timelineEventPageUrl } from '../../data/timelineData'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
@@ -167,7 +167,7 @@ export const TimelineDocumentDetailPopover = ({
                       `**Title:** ${row.title}`,
                       `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                     ].join('\n'),
-                    pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                    pageUrl: timelineEventPageUrl(row.countryName, row.eventId || row.title),
                   })}
                   resourceLabel={row.title}
                   resourceType="Timeline"
@@ -185,7 +185,7 @@ export const TimelineDocumentDetailPopover = ({
                       `**Title:** ${row.title}`,
                       `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                     ].join('\n'),
-                    pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                    pageUrl: timelineEventPageUrl(row.countryName, row.eventId || row.title),
                   })}
                   resourceLabel={row.title}
                   resourceType="Timeline"

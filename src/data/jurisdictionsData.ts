@@ -348,8 +348,33 @@ export const COUNTRY_NAME_TO_COMPLIANCE_BLOC: Record<string, string> = Object.fr
  * CODE, so this is the code-keyed counterpart rather than a second hand-written
  * map — both derive from the same rows.
  */
+const BLOC_NAMES: ReadonlySet<string> = new Set(
+  ACTIVE_ALL.map((j) => j.complianceBloc).filter((b): b is string => !!b)
+)
+
 export const complianceRegionForCountry = (code: string): string | null =>
   JURISDICTION_BY_CODE[code]?.complianceBloc || null
+
+/**
+ * The /compliance region blocs a persona REGION covers, derived from the same
+ * jurisdiction rows (`region` → `compliance_bloc`). A persona region is a
+ * picker grouping, not a bloc: 'americas' spans North + Latin America, 'eu'
+ * spans the EU plus the UK, 'mena' includes one African jurisdiction. Casting
+ * the region code straight to a bloc (the pre-2026-09-28 behaviour) matched no
+ * framework at all, so every reader with a saved region saw an empty landscape.
+ * An input that is already a bloc name (the embedded-sim path) is returned as-is.
+ */
+export function complianceBlocsForRegion(region: string | null | undefined): string[] {
+  if (!region || region === 'global') return []
+  if (BLOC_NAMES.has(region)) return [region]
+  return [
+    ...new Set(
+      ACTIVE_ALL.filter((j) => j.region === region && j.complianceBloc).map(
+        (j) => j.complianceBloc as string
+      )
+    ),
+  ].sort()
+}
 
 export const EU_MEMBER_CODES: ReadonlySet<string> = new Set(
   ACTIVE_ALL.filter((j) => j.euMember).map((j) => j.code)

@@ -61,7 +61,7 @@ import { useIsMobileShell } from '../../hooks/useIsMobileShell'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
-import { isThreatsDeepLink } from '../Threats/threatsUrlParams'
+import { isResourceDeepLink, isSameRoute, resourceDeepLinkRoute } from '@/utils/resourceDeepLink'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
@@ -471,18 +471,19 @@ export const MainLayout = () => {
   // state (Rule 2 — one source of truth for "has this user chosen or
   // explicitly skipped personalization yet").
   //
-  // A visit that ARRIVED on a deep link into Threats content (a shared
-  // /threats?id=…) is not blocked behind the picker: the reader asked for that
-  // threat, not for a role quiz. The bypass holds for /threats for the rest of
-  // the visit — closing the threat (which drops ?id) must not swap the page
-  // for the picker — and the picker still shows on any other page.
-  const [enteredOnThreatsDeepLink] = React.useState(() =>
-    isThreatsDeepLink(location.pathname, location.search)
+  // A visit that ARRIVED on a deep link to a specific resource (a shared
+  // /threats?id=…, /library?ref=…, /patents?patent=…, …) is not blocked behind
+  // the picker: the reader asked for that resource, not for a role quiz. The
+  // bypass holds for that page for the rest of the visit — closing the
+  // resource (which drops its param) must not swap the page for the picker —
+  // and the picker still shows on any other page.
+  const [enteredOnDeepLinkRoute] = React.useState(() =>
+    resourceDeepLinkRoute(location.pathname, location.search)
   )
-  const threatsDeepLinkBypass =
-    isThreatsDeepLink(location.pathname, location.search) ||
-    (enteredOnThreatsDeepLink && location.pathname.replace(/\/+$/, '') === '/threats')
-  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization && !threatsDeepLinkBypass
+  const deepLinkBypass =
+    isResourceDeepLink(location.pathname, location.search) ||
+    (enteredOnDeepLinkRoute !== null && isSameRoute(location.pathname, enteredOnDeepLinkRoute))
+  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization && !deepLinkBypass
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {

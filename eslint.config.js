@@ -361,6 +361,11 @@ export default defineConfig([
                 // lets the mobile screens render the exact same component
                 // rather than a re-derived one that could drift.
                 '!@/components/common/DocumentAnalysis',
+                // DeepLinkNotice.tsx (common, 2026-09-28) — same category: a
+                // self-contained status line with no desktop-only layout.
+                // Every mobile screen that honours a resource deep link shows
+                // the same "widened / not found" notice desktop does.
+                '!@/components/common/DeepLinkNotice',
                 // TopThreeActions.tsx (common) — same category: explicitly
                 // generic ("so dense pages... can offer a 'do this now'
                 // hero"), no baked-in desktop-only layout (grid-cols-1
@@ -395,6 +400,10 @@ export default defineConfig([
                 // dashboard reads, so a shared link opens the same threat and
                 // filters on a phone as on desktop.
                 '!@/components/Threats/threatsUrlParams',
+                // threatDeepLink.ts (2026-09-28) — pure helper, no JSX: which
+                // filters hide a ?id threat + the notice text, shared by
+                // ThreatsDashboard and MobileThreatsView so they cannot drift.
+                '!@/components/Threats/threatDeepLink',
                 // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
                 // — the real filter/sort pipeline and pill-formatting
                 // helpers every desktop Library surface already reads (no
@@ -416,6 +425,10 @@ export default defineConfig([
                 '!@/components/Leaders',
                 '@/components/Leaders/*',
                 '!@/components/Leaders/LeaderCategorySidebar',
+                // leaderDeepLink.ts (2026-09-28) — pure helper, no JSX: tolerant
+                // ?leader= name matching shared by LeadersGrid and
+                // MobileCommunityView.
+                '!@/components/Leaders/leaderDeepLink',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board

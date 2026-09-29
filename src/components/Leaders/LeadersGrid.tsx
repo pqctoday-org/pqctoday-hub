@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import clsx from 'clsx'
 import { useSearchParams } from 'react-router'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Briefcase,
   Building2,
   School,
-  AlertCircle,
   Users,
   Award,
   ShieldX,
@@ -47,6 +44,9 @@ import { LeaderRemovalModal } from './LeaderRemovalModal'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { findLeaderByName, planLeaderDeepLink } from './leaderDeepLink'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -183,10 +183,12 @@ export const LeadersGrid = () => {
   const activeCategory = filters.values.category
   const activeLayer = filters.values.layer
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
-  const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
-    searchParams.get('leader')
-  )
-  const [notFoundMessage, setNotFoundMessage] = useState<string | null>(null)
+  const [deepLinkNotice, setDeepLinkNotice] = useState<{
+    kind: 'widened' | 'not-found'
+    message: string
+    undoParams?: string
+  } | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<{ id: string; nonce: number } | null>(null)
   const [viewMode, setViewMode] = useState<LeadersViewMode>(
     () => (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
   )
@@ -247,116 +249,80 @@ export const LeadersGrid = () => {
     const nextShowAll = searchParams.get('all') === '1'
     const nextLeader = searchParams.get('leader')
     // ?leader=<name> is the shareable "open this leader" deep link. Resolve the
-    // name to its id so the matching card expands (open), in addition to the
-    // scroll-to highlight handled by the effect below.
-    const nextLeaderId = nextLeader
-      ? (leadersData.find((l) => l.name === nextLeader)?.id ?? null)
-      : null
+    // name (tolerantly — case, whitespace, "Dr." prefix) to its id so the
+    // matching card expands; widening/scroll is handled by the effect below.
+    const nextLeaderId = nextLeader ? (findLeaderByName(leadersData, nextLeader)?.id ?? null) : null
 
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
     setShowAllContributors((prev) => (prev !== nextShowAll ? nextShowAll : prev))
     setExpandedLeaderId((prev) => (prev !== nextLeaderId ? nextLeaderId : prev))
-    if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
   }, [searchParams, selectedPersona])
 
-  // Keeps the LATEST filter values available inside the delayed callback
-  // below without making the effect itself depend on them (see that effect's
-  // own comment for why depending on them directly re-created the bug it
-  // fixes). Runs every render, no dependency array.
-  const liveFiltersRef = useRef({
-    selectedRegion,
-    selectedCountry,
-    selectedSector,
-    activeCategory,
-    searchQuery,
-  })
+  // ?leader=<name> deep-link resolution (deep-link remediation PR 1, 2026-09-28).
+  // Runs once per arriving leader param. Resolves the name against the FULL
+  // dataset, then widens only the filters that hide the person — including the
+  // curated-only default (`all=1`) — in ONE replace-navigation, so the URL→state
+  // sync above can't revert the reveal. (The old version flipped
+  // showAllContributors as local state only; the follow-up filter navigation
+  // re-synced it from a URL without `all=1`, so `?leader=Aaron%20Voisine`
+  // showed nothing.) Clicks inside the page write ?leader= themselves and are
+  // skipped via selfWrittenLeaderRef — the card is already on screen.
+  const resolvedLeaderParamRef = useRef<string | null>(null)
+  const selfWrittenLeaderRef = useRef<string | null>(null)
   useEffect(() => {
-    liveFiltersRef.current = {
-      selectedRegion,
-      selectedCountry,
-      selectedSector,
-      activeCategory,
-      searchQuery,
+    if (isMobileShell) return // MobileCommunityView resolves ?leader= itself
+    const leaderParam = searchParams.get('leader')
+    if (leaderParam === resolvedLeaderParamRef.current) return
+    resolvedLeaderParamRef.current = leaderParam
+    if (!leaderParam) return
+    if (leaderParam === selfWrittenLeaderRef.current) {
+      selfWrittenLeaderRef.current = null
+      return
     }
-  })
+    const plan = planLeaderDeepLink(leadersData, searchParams)
+    if (!plan) return
+    if (plan.kind === 'not-found') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL-driven notice
+      setDeepLinkNotice({
+        kind: 'not-found',
+        message: `"${plan.name}" was not found in the Community list.`,
+      })
+      return
+    }
+    if (plan.nextParams) {
+      setDeepLinkNotice({
+        kind: 'widened',
+        message: `Filters widened to show ${plan.leader.name} (cleared ${plan.widened.join(', ')}).`,
+        undoParams: searchParams.toString(),
+      })
+      setSearchParams(plan.nextParams, { replace: true })
+    } else {
+      setDeepLinkNotice(null)
+    }
+    // Stack view only renders cards inside the selected sector layer.
+    if (viewMode === 'stack') setFilters({ layer: plan.leader.type })
+    setScrollTarget((prev) => ({ id: plan.leader.id, nonce: (prev?.nonce ?? 0) + 1 }))
+    // Deliberately keyed on the URL only: viewMode/setFilters/isMobileShell are
+    // read at arrival time, and setFilters' identity churns (see useLeaderFilters).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
-  // Scroll to highlighted leader after render
-  useEffect(() => {
-    if (!highlightedLeader || !gridRef.current) return
-    // Snapshot filters as they were the moment this deep link was requested —
-    // compared against liveFiltersRef.current below to detect a filter change
-    // that happens WHILE the 300ms lookup is in flight (see next comment).
-    const filtersAtStart = { ...liveFiltersRef.current }
-    const timer = setTimeout(() => {
-      const id = `leader-${highlightedLeader.replace(/\s+/g, '-')}`
-      const el = document.getElementById(id)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        setTimeout(() => setHighlightedLeader(null), 3000)
-        return
-      }
-      // FIXED 2026-07-31: this branch used to always assume "not found" meant
-      // "hidden by stale filters from before the deep link landed" and reset
-      // them all to reveal the target. But this timer is still scheduled from
-      // when highlightedLeader first became truthy — if the user picks a
-      // DIFFERENT filter in the ~300ms before it fires (a real, reproducible
-      // race, not a corner case: it's exactly what "click a leader card, then
-      // immediately click a category pill" does), that's a deliberate choice
-      // made after the deep link landed, not a stale pre-existing filter. The
-      // old code couldn't tell the two apart and clobbered the user's own
-      // filter pick every time. Comparing against the live ref (not the
-      // snapshot at effect-creation time, which never changes since this
-      // effect deliberately no longer depends on the filters — see above)
-      // detects the difference.
-      const live = liveFiltersRef.current
-      const filtersChangedSinceHighlight =
-        filtersAtStart.selectedRegion !== live.selectedRegion ||
-        filtersAtStart.selectedCountry !== live.selectedCountry ||
-        filtersAtStart.selectedSector !== live.selectedSector ||
-        filtersAtStart.activeCategory !== live.activeCategory ||
-        filtersAtStart.searchQuery !== live.searchQuery
-      if (filtersChangedSinceHighlight) {
-        // Respect the user's own filter choice — just drop the pending
-        // highlight quietly instead of fighting it.
-        setHighlightedLeader(null)
-        return
-      }
-      // Check if leader exists in unfiltered data but is hidden by filters
-      const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
-      if (existsUnfiltered) {
-        // Clear filters so the card becomes visible, then re-trigger scroll.
-        // Also reveal auto-imported stubs if that's what's hiding this leader —
-        // a deep link should always be able to resolve to its target.
-        setFilters({ region: 'All', country: 'All', sector: 'All', category: 'All' })
-        setSearchQuery('')
-        const target = leadersData.find((l) => l.name === highlightedLeader)
-        if (target?.sourceKind === 'auto-imported') setShowAllContributors(true)
-      } else {
-        // Leader doesn't exist in database at all
-        setNotFoundMessage(`"${highlightedLeader}" was not found in the Community list.`)
-        setHighlightedLeader(null)
-        setTimeout(() => setNotFoundMessage(null), 4000)
-      }
-    }, 300)
-    return () => clearTimeout(timer)
-    // Deliberately depends ONLY on highlightedLeader — this effect resolves a
-    // fresh ?leader= deep link exactly once. selectedCountry/selectedSector/
-    // searchQuery/activeCategory used to be listed here despite never being
-    // read in the body, which re-ran this "hidden by filters?" check on every
-    // unrelated filter change: picking a new category while a leader card was
-    // still highlighted (open within the last ~3s) made this effect fail to
-    // find that leader under the new filter and silently reset every filter
-    // back to 'All' ~300ms later. setFilters was ALSO removed 2026-07-31
-    // (found live: it is not referentially stable across renders — `filters.set`
-    // is a useCallback wrapping setSearchParams, which itself churns identity —
-    // so leaving it here reintroduced the exact same re-fire-on-every-filter-
-    // change bug through a second path even after the first fix). Safe to
-    // call a "stale" closure over it: it only ever dispatches through the
-    // stable useState/useSearchParams setters underneath, so its BEHAVIOR
-    // doesn't depend on which render captured it, only its identity does.
-  }, [highlightedLeader])
+  useScrollToDeepLinkTarget(
+    scrollTarget ? `${scrollTarget.id}#${scrollTarget.nonce}` : null,
+    scrollTarget ? deepLinkSelector(scrollTarget.id) : null
+  )
+
+  const handleUndoWiden = useCallback(() => {
+    const undo = deepLinkNotice?.undoParams
+    setDeepLinkNotice(null)
+    if (undo === undefined) return
+    // Restore the reader's filters; the person they hid is closed with them.
+    const restored = new URLSearchParams(undo)
+    restored.delete('leader')
+    setSearchParams(restored, { replace: true })
+  }, [deepLinkNotice, setSearchParams])
 
   // Region items
   const regionItems = useMemo(
@@ -597,8 +563,10 @@ export const LeadersGrid = () => {
       setSearchParams(
         (sp) => {
           const params = new URLSearchParams(sp)
-          if (name) params.set('leader', name)
-          else params.delete('leader')
+          if (name) {
+            selfWrittenLeaderRef.current = name
+            params.set('leader', name)
+          } else params.delete('leader')
           return params
         },
         { replace: !push }
@@ -941,20 +909,14 @@ export const LeadersGrid = () => {
         </p>
       )}
 
-      {/* Not found toast */}
-      <AnimatePresence>
-        {notFoundMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="glass-panel border-l-4 border-l-status-warning p-3 flex items-center gap-3 mb-4"
-          >
-            <AlertCircle size={18} className="text-status-warning shrink-0" />
-            <p className="text-sm text-muted-foreground">{notFoundMessage}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {deepLinkNotice && (
+        <DeepLinkNotice
+          kind={deepLinkNotice.kind}
+          message={deepLinkNotice.message}
+          onUndo={deepLinkNotice.undoParams !== undefined ? handleUndoWiden : undefined}
+          onDismiss={() => setDeepLinkNotice(null)}
+        />
+      )}
 
       {/* Empty state */}
       {filteredLeaders.length === 0 && (
@@ -983,11 +945,8 @@ export const LeadersGrid = () => {
                     .map((leader) => (
                       <div
                         key={leader.id}
-                        id={`leader-${leader.name.replace(/\s+/g, '-')}`}
-                        className={clsx(
-                          highlightedLeader === leader.name &&
-                            'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                        )}
+                        data-deeplink-id={leader.id}
+                        className="rounded-xl transition-shadow"
                       >
                         <LeaderCard
                           leader={leader}
@@ -1011,11 +970,8 @@ export const LeadersGrid = () => {
           {sortedLeaders.map((leader) => (
             <div
               key={leader.id}
-              id={`leader-${leader.name.replace(/\s+/g, '-')}`}
-              className={clsx(
-                highlightedLeader === leader.name &&
-                  'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-              )}
+              data-deeplink-id={leader.id}
+              className="rounded-xl transition-shadow"
             >
               <LeaderCard
                 leader={leader}
@@ -1042,11 +998,8 @@ export const LeadersGrid = () => {
             {sortedLeaders.map((leader) => (
               <div
                 key={leader.id}
-                id={`leader-${leader.name.replace(/\s+/g, '-')}`}
-                className={clsx(
-                  highlightedLeader === leader.name &&
-                    'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                )}
+                data-deeplink-id={leader.id}
+                className="rounded-xl transition-shadow"
               >
                 <LeaderCard
                   leader={leader}

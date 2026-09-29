@@ -655,3 +655,114 @@ export function getCountryLastVerified(country: CountryData): string | undefined
   }
   return latest
 }
+
+// ── ?event= deep-link resolution ─────────────────────────────────────────────
+/*
+ * `?event=` deep-link resolution for /timeline (desktop Gantt + mobile shell).
+ *
+ * A Gantt phase row groups several events and is titled after its FIRST event,
+ * so matching `?event=` against the row title left ~65 of 188 events
+ * unreachable. Links now name the event itself: its stable `event_id` first,
+ * then any event's title (old links and hand-written links keep working).
+ */
+import { COUNTRY_ALIASES } from './countryAliases'
+
+/** The value written to `?event=` for an event: its event_id, else its title. */
+export function eventLinkKey(event: Pick<TimelineEvent, 'eventId' | 'title'>): string {
+  return event.eventId || event.title
+}
+
+/** Stable `data-deeplink-id` for a phase row (keyed on its first event). */
+export function phaseRowKey(phase: TimelinePhase): string {
+  const first = phase.events[0]
+  return first ? eventLinkKey(first) : phase.title
+}
+
+type Matcher = (e: TimelineEvent) => boolean
+
+function matchers(param: string): Matcher[] {
+  const lc = param.trim().toLowerCase()
+  return [
+    (e) => !!e.eventId && e.eventId === param,
+    (e) => e.title === param,
+    (e) => e.title.trim().toLowerCase() === lc,
+  ]
+}
+
+/** Find an event in (unscoped) country data by event_id, then by title. */
+export function findTimelineEvent(
+  countries: CountryData[],
+  param: string | null | undefined
+): TimelineEvent | null {
+  if (!param) return null
+  const all = countries.flatMap((c) => c.bodies.flatMap((b) => b.events))
+  for (const match of matchers(param)) {
+    const hit = all.find(match)
+    if (hit) return hit
+  }
+  return null
+}
+
+export interface ResolvedTimelineEvent {
+  phase: TimelinePhase
+  /** The linked event; null only for a legacy event-less row matched by title. */
+  event: TimelineEvent | null
+}
+
+/**
+ * Find the Gantt phase row containing the linked event (any position in the
+ * row, not just the first), by event_id then title. Returns null when the
+ * event is not in `data` (unknown, or hidden by the current scope).
+ */
+export function findEventInGantt(
+  data: GanttCountryData[],
+  param: string | null | undefined
+): ResolvedTimelineEvent | null {
+  if (!param) return null
+  for (const match of matchers(param)) {
+    for (const country of data) {
+      for (const phase of country.phases) {
+        const event = phase.events.find(match)
+        if (event) return { phase, event }
+      }
+    }
+  }
+  // Legacy: a row with no events (test fixtures, synthetic rows) by its title.
+  for (const country of data) {
+    const phase = country.phases.find((p) => p.events.length === 0 && p.title === param)
+    if (phase) return { phase, event: null }
+  }
+  return null
+}
+
+/** Endorse/Flag/copy page URL for one event: its country plus `&event=`. */
+export function timelineEventPageUrl(countryName: string, eventKey?: string | null): string {
+  const base = `/timeline?country=${encodeURIComponent(countryName)}`
+  return eventKey ? `${base}&event=${encodeURIComponent(eventKey)}` : base
+}
+
+export interface ResolvedCountry {
+  resolved: string
+  wasUnknown: boolean
+}
+
+/** Resolve a `?country=` value (exact, alias, case-insensitive) against known names. */
+export function resolveCountryParam(
+  param: string | null,
+  knownCountries: string[]
+): ResolvedCountry {
+  if (!param) return { resolved: 'All', wasUnknown: false }
+  if (knownCountries.includes(param)) return { resolved: param, wasUnknown: false }
+  // COUNTRY_ALIASES is `as const`; index access with arbitrary string needs a widened view.
+  const aliasMap = COUNTRY_ALIASES as Readonly<Record<string, string>>
+  // eslint-disable-next-line security/detect-object-injection
+  const aliased = aliasMap[param]
+  if (aliased && knownCountries.includes(aliased)) {
+    return { resolved: aliased, wasUnknown: false }
+  }
+  // Case-insensitive fallback
+  const ci = knownCountries.find((c) => c.toLowerCase() === param.toLowerCase())
+  if (ci) return { resolved: ci, wasUnknown: false }
+  // Literal "All" param is a valid request, not an unknown country
+  return { resolved: 'All', wasUnknown: param.toLowerCase() !== 'all' }
+}

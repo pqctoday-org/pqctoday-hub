@@ -160,7 +160,10 @@ const LeaderRow = ({
   const flagCode = FLAG_CODE_MAP[leader.country] ?? 'un'
 
   return (
-    <tr className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+    <tr
+      data-deeplink-id={leader.id}
+      className="border-b border-border/50 hover:bg-muted/30 transition-colors"
+    >
       {/* Name with avatar */}
       <td className="px-3 py-3">
         <div className="flex items-center gap-3">
