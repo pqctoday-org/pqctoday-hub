@@ -166,7 +166,18 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  * (driven by the control deck); each branch consumes the same `useApplicability`
  * output and only the rendering differs.
  */
-function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
+function ForYouSection({
+  onExportCsv,
+  framework,
+  onOpenFramework,
+  onCloseFramework,
+}: {
+  onExportCsv?: () => void
+  /** The `?framework=` framework — the popover IS the URL param (see below). */
+  framework: ComplianceFramework | null
+  onOpenFramework: (fw: ComplianceFramework) => void
+  onCloseFramework: () => void
+}) {
   const persona = usePersonaStore((s) => s.selectedPersona)
   const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
   const storeCountry = useAssessmentFormStore((s) => s.country)
@@ -200,13 +211,16 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
   const [selectedLibrary, setSelectedLibrary] = useState<LibraryItem | null>(null)
   const [selectedThreat, setSelectedThreat] = useState<ThreatData | null>(null)
   const [selectedTimeline, setSelectedTimeline] = useState<TimelineDocumentRow | null>(null)
-  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
-
+  // The framework pop-up is `?framework=` (CHANGED 2026-09-29, deep-link PR 2):
+  // opening pushes it, closing replaces it away, so a For You framework view
+  // is shareable and Back closes it. The library / timeline / threat pop-ups
+  // stay local; the framework pop-up links each cross-reference to its own
+  // page's param instead (Library `?ref=`, Timeline `?event=`).
   const callbacks = {
     onSelectLibrary: setSelectedLibrary,
     onSelectThreat: setSelectedThreat,
     onSelectTimeline: (ev: TimelineEvent) => setSelectedTimeline(timelineEventToRow(ev)),
-    onSelectFramework: setSelectedFramework,
+    onSelectFramework: onOpenFramework,
   }
 
   return (
@@ -244,15 +258,15 @@ function ForYouSection({ onExportCsv }: { onExportCsv?: () => void }) {
         row={selectedTimeline}
       />
       <FrameworkDetailPopover
-        isOpen={!!selectedFramework}
-        onClose={() => setSelectedFramework(null)}
-        framework={selectedFramework}
+        isOpen={!!framework}
+        onClose={onCloseFramework}
+        framework={framework}
         onSelectLibrary={(doc) => {
-          setSelectedFramework(null)
+          onCloseFramework()
           setSelectedLibrary(doc)
         }}
         onSelectTimeline={(ev) => {
-          setSelectedFramework(null)
+          onCloseFramework()
           setSelectedTimeline(timelineEventToRow(ev))
         }}
       />
@@ -329,6 +343,13 @@ export const ComplianceView = ({
     openFrameworkParam,
     clearFrameworkParam,
     reqFilter,
+    reqfwParam,
+    setReqfwParam,
+    prodParam,
+    openProdParam,
+    clearProdParam,
+    cswp39Params,
+    setCswp39Params,
     lsOrg,
     lsIndustry,
     lsRegion,
@@ -624,7 +645,7 @@ export const ComplianceView = ({
       setLsSearchInput(searchQuery)
       setLsSearch(searchQuery)
       setActiveTab(targetTab)
-      syncFiltersToUrl({ tab: targetTab, q: searchQuery })
+      syncFiltersToUrl({ tab: targetTab, lq: searchQuery })
       logComplianceFilter('Tab', targetTab)
       setCswp39JumpActive(true)
       setCswp39JumpQuery(searchQuery)
@@ -662,6 +683,8 @@ export const ComplianceView = ({
           next.delete('framework')
           next.set('tab', 'cswp39')
           next.set('evref', refId)
+          // A new evref shows the evidence view — drop an explicit sub-view.
+          next.delete('cswpview')
           return next
         },
         { replace: false }
@@ -941,7 +964,11 @@ export const ComplianceView = ({
               title="Requirements"
               description="What each obligation requires, taken from the documents it cites — with the verbatim quote, where it appears, and which model extracted it. A reading list, not a checklist."
             />
-            <RequirementsTab profile={forYouProfile} />
+            <RequirementsTab
+              profile={forYouProfile}
+              selectedId={reqfwParam}
+              onSelect={setReqfwParam}
+            />
           </div>
         )}
 
@@ -965,7 +992,11 @@ export const ComplianceView = ({
               title="Products"
               description="Which of the things you run hold a certificate, under which scheme, and whether it covers post-quantum algorithms or only classical ones. Inventory comes from the list you keep on Migrate."
             />
-            <ProductsTab />
+            <ProductsTab
+              openProductId={prodParam}
+              onOpenProduct={openProdParam}
+              onCloseProduct={clearProdParam}
+            />
           </div>
         )}
 
@@ -1035,7 +1066,14 @@ export const ComplianceView = ({
               title="For You"
               description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by your role (top bar) and your assessment profile."
             />
-            <ForYouSection onExportCsv={handleExportCsv} />
+            <ForYouSection
+              onExportCsv={handleExportCsv}
+              framework={drawerFramework}
+              onOpenFramework={(fw) => {
+                if (fw.id !== frameworkParam) openFrameworkParam(fw.id)
+              }}
+              onCloseFramework={clearFrameworkParam}
+            />
           </div>
         )}
 
@@ -1046,14 +1084,17 @@ export const ComplianceView = ({
               onNavigateToFramework={handleCswp39Jump}
               evref={evref}
               onClearEvref={handleClearEvref}
+              params={cswp39Params}
+              onParamsChange={setCswp39Params}
             />
           </div>
         )}
       </div>
 
       {/* Drill-down traceability drawer (Landscape rows). */}
+      {/* For You shows `?framework=` in its own pop-up (above), not the drawer. */}
       <ComplianceDetailDrawer
-        framework={drawerFramework}
+        framework={activeStableTab === 'foryou' ? null : drawerFramework}
         pillar={drawerPillar}
         onClose={clearFrameworkParam}
         onOpenCswp39={handleNavigateToCswp39}

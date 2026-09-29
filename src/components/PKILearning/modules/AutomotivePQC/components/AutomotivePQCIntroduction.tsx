@@ -1335,7 +1335,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </CollapsibleSection>
 
-      <VendorCoverageNotice migrateLayer="AppServers" />
+      <VendorCoverageNotice migrateLayer="AppServers" migrateDomain="network" />
 
       {/* -- Reading Complete + Workshop CTA ----------------------------------- */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-panel p-6">

@@ -626,7 +626,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           <Radio size={18} /> Try the BB84 Simulator
         </Button>
       </div>
-      <VendorCoverageNotice migrateLayer="Hardware" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="foundations" />
       <ReadingCompleteButton />
     </div>
   )

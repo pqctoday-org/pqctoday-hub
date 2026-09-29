@@ -127,7 +127,7 @@ describe('useExecutiveData', () => {
     const { result } = renderHook(() => useExecutiveData())
 
     expect(result.current.topActions).toHaveLength(5)
-    expect(result.current.topActions[0].link).toBe('/threats')
+    expect(result.current.topActions[0].link).toBe('/threats?criticality=Critical')
     expect(result.current.topActions[1].action).toContain('2 classical algorithms')
   })
 

@@ -7,10 +7,18 @@ import {
   searchProducts,
   resolveProductLink,
   productLinkNoticeMessage,
+  resolveDomainRef,
+  resolveTaxonomyRef,
+  resolveVendorRef,
+  resolveMigrateLink,
+  migrateLinkKey,
+  productsForDomain,
+  vendorHasRoadmapCard,
   type ProductFacets,
 } from './workbenchCatalog'
 import type { SoftwareItem } from '../../../types/MigrateTypes'
-import { softwareData } from '@/data/migrateData'
+import { softwareData, vendorMap, retiredProductSuccessors } from '@/data/migrateData'
+import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
   return {
@@ -186,5 +194,146 @@ describe('resolveProductLink (deep-link remediation PR 1)', () => {
     expect(res.products.every((p) => p.softwareName.length === 3 || p.productId.length === 3)).toBe(
       true
     )
+  })
+})
+
+describe('retired product ids (deep-link PR 2)', () => {
+  const [retiredId, successorId] = [...retiredProductSuccessors][0] ?? []
+
+  it('maps retired ids only to active successors, never to an active id', () => {
+    const active = new Set(softwareData.map((p) => p.productId.toLowerCase()))
+    expect(retiredProductSuccessors.size).toBeGreaterThan(0)
+    for (const [retired, successor] of retiredProductSuccessors) {
+      expect(active.has(retired)).toBe(false)
+      expect(softwareData.some((p) => p.productId === successor)).toBe(true)
+    }
+  })
+
+  it('a retired id resolves to its successor with a "replaced by" notice', () => {
+    const res = resolveProductLink(retiredId, null)
+    expect(res.products.map((p) => p.productId)).toEqual([successorId])
+    const successor = softwareData.find((p) => p.productId === successorId)!
+    expect(productLinkNoticeMessage(res)).toBe(
+      `“${retiredId}” was retired from the catalog — replaced by ${successor.softwareName}.`
+    )
+  })
+})
+
+describe('migrate link params (deep-link PR 2)', () => {
+  const link = (o: Record<string, string>) =>
+    resolveMigrateLink((k) => (Object.prototype.hasOwnProperty.call(o, k) ? o[k] : null))
+  const [tls] = productsForDomain('tls')
+  const [hsmA, hsmB] = productsForDomain('hsm')
+  const roadmapVendorId = [...roadmapByVendorId.keys()][0]
+  const roadmapVendorName = roadmapByVendorId.get(roadmapVendorId)![0].vendorName
+
+  it('resolveDomainRef accepts a domain id or label in any case, else null', () => {
+    expect(resolveDomainRef('HSM')).toBe('hsm')
+    expect(resolveDomainRef('crypto libraries & frameworks')).toBe('foundations')
+    expect(resolveDomainRef('not-a-domain')).toBeNull()
+  })
+
+  it('resolveTaxonomyRef maps layers, category names and domain ids', () => {
+    expect(resolveTaxonomyRef('hsm')).toBe('hsm')
+    expect(resolveTaxonomyRef('Libraries')).toBe('foundations')
+    expect(resolveTaxonomyRef('Hardware')).toBe('hardware')
+    // mixed layer with no majority → migrationAssets' curated layer fallback
+    expect(resolveTaxonomyRef('AppServers')).toBe('platform')
+    expect(resolveTaxonomyRef('Hardware Security Modules')).toBe('hsm')
+    expect(resolveTaxonomyRef('Cryptographic Discovery Platforms')).toBe('discovery')
+    expect(resolveTaxonomyRef('SASE & Zero Trust')).toBe('network')
+    expect(resolveTaxonomyRef('zzz-nope')).toBeNull()
+  })
+
+  it('resolveVendorRef accepts a VND id or a vendor name, any case', () => {
+    expect(resolveVendorRef(roadmapVendorId.toLowerCase())).toBe(roadmapVendorId)
+    expect(resolveVendorRef(roadmapVendorName.toUpperCase())).toBe(roadmapVendorId)
+    expect(resolveVendorRef('no such vendor zz')).toBeNull()
+  })
+
+  it('?q= naming one product behaves like ?product= (all three aliases)', () => {
+    for (const k of ['q', 'search', 'highlight']) {
+      const r = link({ [k]: tls.softwareName })
+      expect(r).toMatchObject({ tab: 'replace', domain: 'tls', expandId: tls.productId })
+      expect(r.productIds).toEqual([tls.productId])
+      expect(r.notice).toBeNull()
+    }
+  })
+
+  it('?q= free text picks the domain with the most matches and pre-fills the filter', () => {
+    const r = link({ q: 'IBM' })
+    expect(r.tab).toBe('replace')
+    expect(r.filter).toBe('IBM')
+    expect(r.domain).toBeTruthy()
+    expect(r.expandId).toBeUndefined()
+  })
+
+  it('?q= plus a taxonomy param uses the taxonomy domain and the text as filter', () => {
+    expect(link({ layer: 'Hardware', q: 'Thales' })).toMatchObject({
+      tab: 'replace',
+      domain: 'hardware',
+      filter: 'Thales',
+      notice: null,
+    })
+  })
+
+  it('?layer= / ?cat= / ?category= / ?subcat= each land on Replace with a domain', () => {
+    expect(link({ layer: 'hsm' })).toMatchObject({ tab: 'replace', domain: 'hsm' })
+    expect(link({ cat: 'SASE & Zero Trust' })).toMatchObject({ domain: 'network' })
+    expect(link({ category: 'Hardware Security Modules' })).toMatchObject({ domain: 'hsm' })
+    expect(link({ subcat: 'Libraries' })).toMatchObject({ domain: 'foundations' })
+  })
+
+  it('unknown values give a not-found notice, never a silent TLS default', () => {
+    const tax = link({ layer: 'zzz-nope' })
+    expect(tax.domain).toBeUndefined()
+    expect(tax.notice).toMatch(/zzz-nope/)
+    const q = link({ q: 'zzqqxx-no-match' })
+    expect(q.domain).toBeUndefined()
+    expect(q.notice).toMatch(/zzqqxx-no-match/)
+    expect(link({ domain: 'bogus' }).notice).toMatch(/bogus/)
+  })
+
+  it('?domain= alone selects the domain without forcing a tab', () => {
+    const r = link({ domain: 'kms' })
+    expect(r.domain).toBe('kms')
+    expect(r.tab).toBeUndefined()
+    expect(r.notice).toBeNull()
+  })
+
+  it('?industry= is ignored gracefully but still lands on Replace', () => {
+    expect(link({ industry: 'Finance' })).toEqual({ tab: 'replace', elsewhere: [], notice: null })
+  })
+
+  it('?vendor= opens Roadmaps for a vendor with a card; others get a notice', () => {
+    expect(link({ vendor: roadmapVendorName })).toMatchObject({
+      tab: 'roadmaps',
+      vendorId: roadmapVendorId,
+      notice: null,
+    })
+    expect(link({ vendor: 'no such vendor zz' })).toMatchObject({ tab: 'roadmaps' })
+    expect(link({ vendor: 'no such vendor zz' }).notice).toMatch(/no such vendor zz/)
+    const noCard = [...vendorMap.keys()].find((id) => !vendorHasRoadmapCard(id))
+    if (noCard) {
+      const r = link({ vendor: noCard })
+      expect(r.vendorId).toBeUndefined()
+      expect(r.notice).toMatch(/no published PQC roadmap/)
+    }
+  })
+
+  it('?productIds= spanning domains keeps the first domain and groups the rest', () => {
+    const r = link({ productIds: `${tls.productId},${hsmA.productId},${hsmB.productId}` })
+    expect(r.domain).toBe('tls')
+    expect(r.productIds).toEqual([tls.productId])
+    expect(r.expandId).toBeUndefined()
+    expect(r.elsewhere.map((g) => [g.domain, g.products.map((p) => p.productId)])).toEqual([
+      ['hsm', [hsmA.productId, hsmB.productId]],
+    ])
+  })
+
+  it('migrateLinkKey is order-independent and ignores unrelated params', () => {
+    const a = new URLSearchParams('q=x&domain=tls&tab=plan')
+    const b = new URLSearchParams('domain=tls&q=x&share=zz')
+    expect(migrateLinkKey((k) => a.get(k))).toBe(migrateLinkKey((k) => b.get(k)))
   })
 })

@@ -288,3 +288,39 @@ describe('ThreatDetailDialog — footer and CTA (UX-19)', () => {
     expect(body).toContainElement(links[0])
   })
 })
+
+describe('ThreatDetailDialog — controlled Detection / Response tab (?threattab=)', () => {
+  it('opens on the tab it is given and reports tab clicks', () => {
+    const onDetailTabChange = vi.fn()
+    render(
+      <MemoryRouter>
+        <ThreatDetailDialog
+          threat={threat({})}
+          onClose={vi.fn()}
+          detailTab="response"
+          onDetailTabChange={onDetailTabChange}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('tab', { name: /Incident Response/ })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+    expect(screen.queryByText('Hybrid Downgrade Detection')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /Detection \/ SOC/ }))
+    expect(onDetailTabChange).toHaveBeenCalledWith('detection')
+  })
+
+  it('without the prop, keeps its own tab state starting on Detection', () => {
+    renderDialog(threat({}))
+    expect(screen.getByRole('tab', { name: /Detection \/ SOC/ })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+    fireEvent.click(screen.getByRole('tab', { name: /Incident Response/ }))
+    expect(screen.getByRole('tab', { name: /Incident Response/ })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+  })
+})

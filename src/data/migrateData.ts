@@ -161,6 +161,21 @@ let deprecatedRowCount = 0
 const duplicateSuccessors: Array<[string, string]> = []
 const DUPLICATE_OF = /^(?:duplicate of|re-issued as) ([A-Za-z0-9._-]+)/
 
+// Retired product_id → the product_id that replaced it, for deep links that
+// still carry the old id (deep-link remediation PR 2, 2026-09-29). The catalog
+// has no superseded_by / merged_into column — the only successor data is the
+// free-text deprecated_reason, so this reads the two phrasings curators
+// actually use: "duplicate of <id>" / "re-issued as <id>" (optionally
+// "existing row '<id>'"), and "Duplicate: … already tracked as '<id>'".
+// Anything else (hedged "likely duplicate", "strict subset of …", retired
+// with no successor) is left unmapped rather than guessed. Rows whose named
+// successor is not itself active are dropped below.
+const retiredIdCandidates: Array<[string, string]> = []
+const RETIRED_SUCCESSOR = [
+  /^(?:duplicate of|re-issued as) (?:existing row )?'?([A-Za-z0-9._-]+)/i,
+  /already tracked as (?:the existing )?'([A-Za-z0-9._-]+)'/i,
+]
+
 const {
   data: currentItems,
   previousData: previousItems,
@@ -174,6 +189,14 @@ const {
       const successor = DUPLICATE_OF.exec((row.deprecated_reason || '').trim())?.[1]
       if (successor && row.software_name) {
         duplicateSuccessors.push([row.software_name, successor.replace(/[:.,]+$/, '')])
+      }
+      const reason = (row.deprecated_reason || '').trim()
+      for (const re of RETIRED_SUCCESSOR) {
+        const id = re.exec(reason)?.[1]
+        if (id && row.product_id) {
+          retiredIdCandidates.push([row.product_id, id.replace(/[:.,]+$/, '')])
+          break
+        }
       }
       return null
     }
@@ -279,6 +302,22 @@ for (const [name, successorId] of duplicateSuccessors) {
     kept.formerNames = [...(kept.formerNames ?? []), name]
   }
 }
+
+/** Retired product_id (lower-cased) → its active successor's product_id. Only
+ *  successors that are themselves active are kept; a retired id that differs
+ *  from an active id only by case is left out (the id lookup is already
+ *  case-insensitive, so it resolves directly). */
+export const retiredProductSuccessors: ReadonlyMap<string, string> = (() => {
+  const activeIds = new Set(softwareData.map((p) => p.productId))
+  const activeLc = new Set(softwareData.map((p) => p.productId.toLowerCase()))
+  const map = new Map<string, string>()
+  for (const [retired, successor] of retiredIdCandidates) {
+    const key = retired.toLowerCase()
+    if (activeLc.has(key) || !activeIds.has(successor) || map.has(key)) continue
+    map.set(key, successor)
+  }
+  return map
+})()
 
 // Compute productCount for each vendor
 softwareData.forEach((item) => {

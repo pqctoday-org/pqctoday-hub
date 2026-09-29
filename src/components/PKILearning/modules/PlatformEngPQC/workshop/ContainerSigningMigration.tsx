@@ -147,7 +147,7 @@ export const ContainerSigningMigration: React.FC = () => {
           ML-DSA before CRQC arrival.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Libraries" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Libraries" migrateDomain="codesign" className="mb-2" />
 
       {/* Filters + Compare toggle */}
       <div className="glass-panel p-4 flex flex-wrap items-center gap-3">

@@ -487,14 +487,14 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             </div>
           </Link>
           <Link
-            to="/algorithms"
+            to="/algorithms?tab=support&protocol=tls-1-3"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <BarChart3 size={16} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
+              <div className="text-sm font-medium text-foreground">Protocol Support Matrix</div>
               <div className="text-xs text-muted-foreground">
-                Compare key sizes, security levels &amp; performance
+                TLS 1.3 PQC key exchange &amp; signature support, drafts and stage
               </div>
             </div>
           </Link>
@@ -572,7 +572,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </Link>
         </div>
       </section>
-      <VendorCoverageNotice migrateLayer="Network" />
+      <VendorCoverageNotice migrateLayer="Network" migrateDomain="tls" />
       <ReadingCompleteButton />
     </div>
   )

@@ -210,7 +210,9 @@ export function TimelineItem({
     )
   return (
     <Link
-      to={`/timeline?country=${encodeURIComponent(ev.countryName)}`}
+      // Same shape as timelineEventPageUrl(); `event=` resolves by event_id
+      // (title fallback), so the link opens this event, not just its country.
+      to={`/timeline?country=${encodeURIComponent(ev.countryName)}&event=${encodeURIComponent(ev.eventId || ev.title)}`}
       className={cls}
       title={result.reason}
     >

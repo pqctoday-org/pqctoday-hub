@@ -81,7 +81,7 @@
     "term": "SSH",
     "acronym": "SSH",
     "definition": "Secure Shell, a protocol for encrypted remote login and command execution. PQC integration adds ML-KEM hybrid key exchange.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=ssh",
     "complexity": "beginner",
     "category": "protocol"
   },
@@ -90,7 +90,7 @@
     "acronym": "IPsec",
     "definition": "Internet Protocol Security, a protocol suite for encrypting and authenticating IP traffic. Used in VPNs and site-to-site connections.",
     "technicalNote": "PQC integration via IKEv2 multiple key exchange (RFC 9370) adds ML-KEM alongside classical DH.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=vpn",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -138,7 +138,7 @@
   {
     "term": "Signal Protocol",
     "definition": "The encryption protocol used by Signal, WhatsApp, and other messengers. Updated with PQXDH to add ML-KEM-1024 for post-quantum security.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=msg",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -147,14 +147,14 @@
     "acronym": "PQXDH",
     "definition": "Post-Quantum Extended Diffie-Hellman, the post-quantum key agreement protocol used by Signal (and optionally WhatsApp). Combines X25519 with ML-KEM-1024 to establish session keys.",
     "technicalNote": "Deployed by Signal in September 2023. The shared secret is derived from both the classical X25519 exchange and an ML-KEM-1024 encapsulation, ensuring security if either algorithm is broken.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=msg",
     "complexity": "intermediate",
     "category": "protocol"
   },
   {
     "term": "FIDO2 / WebAuthn",
     "definition": "Web authentication standards enabling passwordless login using public-key cryptography. Currently relies on quantum-vulnerable ECDSA/EdDSA.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=identity",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -186,7 +186,7 @@
     "term": "WireGuard",
     "definition": "A modern, high-performance VPN protocol using state-of-the-art cryptography (ChaCha20, Curve25519). PQC integration is being developed.",
     "technicalNote": "PQC migration involves adding ML-KEM hybrid key exchange to the Noise protocol framework used by WireGuard.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=vpn",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -219,7 +219,7 @@
     "acronym": "DNSSEC",
     "definition": "DNS Security Extensions, a suite of protocols that add cryptographic authentication to DNS responses. Uses digital signatures to prevent DNS spoofing.",
     "technicalNote": "PQC migration is challenging due to DNS packet size limits. Larger PQC signatures may require protocol changes or new transport mechanisms.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=network",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -245,7 +245,7 @@
     "term": "PQ3",
     "definition": "Apple's post-quantum secure messaging protocol for iMessage, providing Level 3 security with ML-KEM key exchange and periodic re-keying.",
     "technicalNote": "PQ3 uses a ratcheting design that regularly re-establishes quantum-safe shared secrets, protecting past and future messages.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=msg",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -254,7 +254,7 @@
     "acronym": "MACsec",
     "definition": "IEEE 802.1AE Media Access Control Security, providing Layer 2 encryption for Ethernet frames. Used to secure LAN traffic between switches and endpoints.",
     "technicalNote": "MACsec relies on AES-GCM (quantum-safe) for encryption but uses ECDH/ECDSA for key agreement, requiring PQC migration for the key exchange.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=network",
     "complexity": "advanced",
     "category": "protocol"
   },
@@ -263,7 +263,7 @@
     "acronym": "KMIP",
     "definition": "Key Management Interoperability Protocol, an OASIS standard for communication between key management systems and cryptographic clients.",
     "technicalNote": "KMIP 2.1+ includes support for post-quantum key types and algorithms.",
-    "relatedModule": "/migrate",
+    "relatedModule": "/migrate?domain=kms",
     "complexity": "advanced",
     "category": "protocol"
   },

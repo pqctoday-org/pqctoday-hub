@@ -15,7 +15,7 @@ import {
   Bookmark,
   BookmarkCheck,
 } from 'lucide-react'
-import { LibraryDetailPopover } from './LibraryDetailPopover'
+import type { SortOption } from './SortControl'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
@@ -27,13 +27,32 @@ import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { Button } from '@/components/ui/button'
 
 interface LibraryTreeTableProps {
+  /** Rows in the page pipeline's order (`?sort`); kept as-is unless a header
+   *  sort that has no page equivalent (Status) or a reversal is active. */
   data: LibraryItem[]
-  defaultSort?: { key: SortKey; direction: SortDirection }
+  /** Opens a document in the page's detail drawer (pushes `?ref`). */
+  onOpen: (referenceId: string) => void
+  /** The page sort (`?sort`), so the matching header shows as active. */
+  sortBy?: SortOption
+  /** Header sorts that map to a page sort write it back (`?sort`, replace). */
+  onSortChange?: (sort: SortOption) => void
   defaultExpandAll?: boolean
 }
 
 type SortDirection = 'asc' | 'desc' | null
 type SortKey = keyof LibraryItem
+
+// Table columns ↔ page sort options, and the direction each option sorts in.
+const COLUMN_SORT: Partial<Record<SortKey, SortOption>> = {
+  referenceId: 'referenceId',
+  documentTitle: 'name',
+  lastUpdateDate: 'newest',
+}
+const SORT_DIRECTION: Partial<Record<SortOption, 'asc' | 'desc'>> = {
+  referenceId: 'asc',
+  name: 'asc',
+  newest: 'desc',
+}
 
 const getAllExpandedIds = (items: LibraryItem[]): Set<string> => {
   const ids = new Set<string>()
@@ -57,7 +76,9 @@ const getAllExpandedIds = (items: LibraryItem[]): Set<string> => {
 
 export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   data,
-  defaultSort,
+  onOpen,
+  sortBy,
+  onSortChange,
   defaultExpandAll = false,
 }) => {
   const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
@@ -85,10 +106,27 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     }
   }, [defaultExpandAll, data])
 
-  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
-    defaultSort || { key: 'referenceId', direction: 'asc' }
+  // Local-only header sort: a column with no page sort option (Status), or a
+  // reversal of the active page sort. null = the pipeline's own order.
+  const [localSort, setLocalSort] = useState<{ key: SortKey; direction: SortDirection } | null>(
+    null
   )
-  const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)
+  // A new page sort (sort control, Back/Forward) replaces any local override.
+  const [prevSortBy, setPrevSortBy] = useState(sortBy)
+  if (prevSortBy !== sortBy) {
+    setPrevSortBy(sortBy)
+    setLocalSort(null)
+  }
+  const pageSortKey = (Object.keys(COLUMN_SORT) as SortKey[]).find(
+    // eslint-disable-next-line security/detect-object-injection
+    (k) => COLUMN_SORT[k] === sortBy
+  )
+  // The header shown as active: a local sort wins, else the page sort's column.
+  const sortConfig: { key: SortKey | null; direction: SortDirection } = localSort ?? {
+    key: pageSortKey ?? null,
+    // eslint-disable-next-line security/detect-object-injection
+    direction: sortBy ? (SORT_DIRECTION[sortBy] ?? null) : null,
+  }
 
   const toggleExpand = (id: string) => {
     const newExpanded = new Set(expandedIds)
@@ -101,24 +139,35 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   }
 
   const handleSort = (key: SortKey) => {
+    // eslint-disable-next-line security/detect-object-injection
+    const option = COLUMN_SORT[key]
+    if (option && onSortChange && sortConfig.key !== key) {
+      // A column the page can sort by: write `?sort` and show the pipeline order.
+      setLocalSort(null)
+      onSortChange(option)
+      return
+    }
     let direction: SortDirection = 'asc'
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc'
     }
-    setSortConfig({ key, direction })
+    setLocalSort({ key, direction })
   }
 
   const handleDetailsClick = (item: LibraryItem, e: React.MouseEvent) => {
     e.stopPropagation()
-    setSelectedItem(item)
+    onOpen(item.referenceId)
   }
 
   const sortItems = (items: LibraryItem[]): LibraryItem[] => {
-    if (!sortConfig.direction) return items
+    const key = sortConfig.key
+    if (!sortConfig.direction || !key) return items
 
     const sorted = [...items].sort((a, b) => {
-      const aValue = a[sortConfig.key]
-      const bValue = b[sortConfig.key]
+      // eslint-disable-next-line security/detect-object-injection
+      const aValue = a[key]
+      // eslint-disable-next-line security/detect-object-injection
+      const bValue = b[key]
 
       if (aValue === undefined || bValue === undefined) return 0
 
@@ -132,9 +181,14 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     return sortConfig.direction === 'asc' ? sorted : sorted.reverse()
   }
 
+  // Root rows keep the pipeline order (`?sort`) unless a local header sort is
+  // active; the pipeline's own sort already matches the page sort's column.
   // R-003: Memoize sorted data to prevent unnecessary re-renders
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sortedData = React.useMemo(() => sortItems(data), [data, sortConfig])
+  const sortedData = React.useMemo(
+    () => (localSort ? sortItems(data) : data),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, localSort]
+  )
 
   // Recursive render function - uses sortedData at root level
   const renderRows = (
@@ -164,10 +218,10 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              setSelectedItem(item)
+              onOpen(item.referenceId)
             }
           }}
-          onClick={() => setSelectedItem(item)}
+          onClick={() => onOpen(item.referenceId)}
         >
           <td
             className="p-4 text-sm font-medium text-foreground max-w-0"
@@ -402,12 +456,6 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           </table>
         </div>
       </div>
-
-      <LibraryDetailPopover
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        item={selectedItem}
-      />
     </>
   )
 }

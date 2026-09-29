@@ -46,7 +46,9 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { findLeaderByName, planLeaderDeepLink } from './leaderDeepLink'
+import { findLeaderByParam, planLeaderDeepLink } from './leaderDeepLink'
+import { readLeadersTableSort, writeLeadersTableSort } from './leadersTableSort'
+import type { LeadersTableSort } from './leadersTableSort'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -60,17 +62,24 @@ const LEADER_FILTERS: Record<FilterKey, FilterSpec> = {
   country: { defaultValue: 'All', urlParam: 'country' },
   sector: { defaultValue: 'All', urlParam: 'sector' },
   category: { defaultValue: 'All', urlParam: 'cat' },
-  layer: { defaultValue: 'All', urlParam: '' },
+  // Stack-view sector layer (Leader.type). Written with replace like the others;
+  // unknown values render as 'All' (see activeLayer).
+  layer: { defaultValue: 'All', urlParam: 'layer' },
 }
 
 const FILTER_KEYS = Object.keys(LEADER_FILTERS) as FilterKey[]
+const STACK_LAYERS = new Set<string>(['Public', 'Private', 'Academic'])
 type FilterValues = Record<FilterKey, string>
 type SetSearchParams = ReturnType<typeof useSearchParams>[1]
 
 function useLeaderFilters(
   searchParams: URLSearchParams,
   setSearchParams: SetSearchParams
-): { values: FilterValues; set: (changes: Partial<FilterValues>) => void; reset: () => void } {
+): {
+  values: FilterValues
+  set: (changes: Partial<FilterValues>) => void
+  reset: (opts?: { alsoDelete?: string[] }) => void
+} {
   const [values, setValues] = useState<FilterValues>(
     () =>
       Object.fromEntries(
@@ -119,24 +128,28 @@ function useLeaderFilters(
     [setSearchParams]
   )
 
-  const reset = useCallback(() => {
-    setValues(
-      Object.fromEntries(
-        FILTER_KEYS.map((k) => [k, LEADER_FILTERS[k].defaultValue])
-      ) as FilterValues
-    )
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        for (const k of FILTER_KEYS) {
-          const { urlParam } = LEADER_FILTERS[k]
-          if (urlParam) next.delete(urlParam)
-        }
-        return next
-      },
-      { replace: true }
-    )
-  }, [setSearchParams])
+  const reset = useCallback(
+    ({ alsoDelete = [] }: { alsoDelete?: string[] } = {}) => {
+      setValues(
+        Object.fromEntries(
+          FILTER_KEYS.map((k) => [k, LEADER_FILTERS[k].defaultValue])
+        ) as FilterValues
+      )
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const k of FILTER_KEYS) {
+            const { urlParam } = LEADER_FILTERS[k]
+            if (urlParam) next.delete(urlParam)
+          }
+          for (const p of alsoDelete) next.delete(p)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
 
   return { values, set, reset }
 }
@@ -176,12 +189,11 @@ export const LeadersGrid = () => {
   const isMobileShell = useIsMobileShell()
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = useLeaderFilters(searchParams, setSearchParams)
-  const { set: setFilters } = filters
   const selectedRegion = filters.values.region
   const selectedCountry = filters.values.country
   const selectedSector = filters.values.sector
   const activeCategory = filters.values.category
-  const activeLayer = filters.values.layer
+  const activeLayer = STACK_LAYERS.has(filters.values.layer) ? filters.values.layer : 'All'
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
     kind: 'widened' | 'not-found'
@@ -225,18 +237,13 @@ export const LeadersGrid = () => {
     FILTER_KEYS.filter((k) => filters.values[k] !== LEADER_FILTERS[k].defaultValue).length +
     (searchQuery ? 1 : 0)
 
+  // ONE navigation: filters.reset() and a second functional setSearchParams in
+  // the same tick would each start from this render's URL, and the second
+  // would restore the filter params the first removed.
   const handleClearAll = useCallback(() => {
-    filters.reset()
+    filters.reset({ alsoDelete: ['q'] })
     setSearchQuery('')
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        next.delete('q')
-        return next
-      },
-      { replace: true }
-    )
-  }, [filters, setSearchParams])
+  }, [filters])
 
   // Sync non-filter URL params on same-route navigations (e.g. chatbot deep links).
   // Filter params (region/country/sector/cat/layer) are synced by useLeaderFilters internally.
@@ -248,10 +255,12 @@ export const LeadersGrid = () => {
     const nextMode = (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
     const nextShowAll = searchParams.get('all') === '1'
     const nextLeader = searchParams.get('leader')
-    // ?leader=<name> is the shareable "open this leader" deep link. Resolve the
-    // name (tolerantly — case, whitespace, "Dr." prefix) to its id so the
-    // matching card expands; widening/scroll is handled by the effect below.
-    const nextLeaderId = nextLeader ? (findLeaderByName(leadersData, nextLeader)?.id ?? null) : null
+    // ?leader=<leader_id> is the shareable "open this leader" deep link; old
+    // name links still resolve (tolerantly — case, whitespace, honorifics) so
+    // the matching card expands; widening/scroll is handled by the effect below.
+    const nextLeaderId = nextLeader
+      ? (findLeaderByParam(leadersData, nextLeader)?.id ?? null)
+      : null
 
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
@@ -291,21 +300,27 @@ export const LeadersGrid = () => {
       })
       return
     }
+    // Stack view only renders cards inside the selected sector layer, so open
+    // the person's layer — in the SAME navigation as any widening (two
+    // functional updates in one tick would each start from this render's URL).
+    const needsLayer = viewMode === 'stack' && searchParams.get('layer') !== plan.leader.type
     if (plan.nextParams) {
       setDeepLinkNotice({
         kind: 'widened',
         message: `Filters widened to show ${plan.leader.name} (cleared ${plan.widened.join(', ')}).`,
         undoParams: searchParams.toString(),
       })
-      setSearchParams(plan.nextParams, { replace: true })
     } else {
       setDeepLinkNotice(null)
     }
-    // Stack view only renders cards inside the selected sector layer.
-    if (viewMode === 'stack') setFilters({ layer: plan.leader.type })
+    if (plan.nextParams || needsLayer) {
+      const next = plan.nextParams ?? new URLSearchParams(searchParams)
+      if (needsLayer) next.set('layer', plan.leader.type)
+      setSearchParams(next, { replace: true })
+    }
     setScrollTarget((prev) => ({ id: plan.leader.id, nonce: (prev?.nonce ?? 0) + 1 }))
-    // Deliberately keyed on the URL only: viewMode/setFilters/isMobileShell are
-    // read at arrival time, and setFilters' identity churns (see useLeaderFilters).
+    // Deliberately keyed on the URL only: viewMode/isMobileShell are read at
+    // arrival time.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
@@ -530,6 +545,17 @@ export const LeadersGrid = () => {
     return items
   }, [filteredLeaders, sortBy, industryRelevant])
 
+  // Table-view column sort lives in the URL: ?sort when it matches a card sort
+  // (name / country ascending), otherwise ?tsort (+ tdir) — see leadersTableSort.
+  const tableSort = useMemo(() => readLeadersTableSort(searchParams), [searchParams])
+  const handleTableSortChange = useCallback(
+    (next: LeadersTableSort) => {
+      setSearchParams((prev) => writeLeadersTableSort(prev, next), { replace: true })
+      logEvent('Leaders', 'Table Sort', `${next.key}:${next.dir}`)
+    },
+    [setSearchParams]
+  )
+
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-leaders'))
@@ -555,17 +581,17 @@ export const LeadersGrid = () => {
     logEvent('Leaders', 'Filter Category', category)
   }
 
-  // Writing ?leader=<name> makes the open card a shareable/bookmarkable deep
-  // link. Opening pushes a history entry (so Back closes it); closing strips the
+  // Writing ?leader=<leader_id> makes the open card a shareable/bookmarkable
+  // deep link (the stable id, not the editable display name). Opening pushes a history entry (so Back closes it); closing strips the
   // param in place. The URL→state effect above reconciles expandedLeaderId.
   const writeLeaderParam = useCallback(
-    (name: string | null, { push }: { push: boolean }) => {
+    (leaderId: string | null, { push }: { push: boolean }) => {
       setSearchParams(
         (sp) => {
           const params = new URLSearchParams(sp)
-          if (name) {
-            selfWrittenLeaderRef.current = name
-            params.set('leader', name)
+          if (leaderId) {
+            selfWrittenLeaderRef.current = leaderId
+            params.set('leader', leaderId)
           } else params.delete('leader')
           return params
         },
@@ -579,7 +605,7 @@ export const LeadersGrid = () => {
     const next = expandedLeaderId === leader.id ? null : leader.id
     setExpandedLeaderId(next)
     logEvent('Leaders', next ? 'Card Open' : 'Card Close', personaLabel(leader.id))
-    writeLeaderParam(next ? leader.name : null, { push: Boolean(next) })
+    writeLeaderParam(next ? leader.leaderId : null, { push: Boolean(next) })
   }
   const closeDetail = () => {
     setExpandedLeaderId(null)
@@ -850,6 +876,8 @@ export const LeadersGrid = () => {
                     const next = new URLSearchParams(prev)
                     if (mode !== 'cards') next.set('mode', mode)
                     else next.delete('mode')
+                    // ?layer only means something in stack view.
+                    if (mode !== 'stack') next.delete('layer')
                     return next
                   },
                   { replace: true }
@@ -991,6 +1019,8 @@ export const LeadersGrid = () => {
               expandedLeaderId={expandedLeaderId}
               onToggleDetails={toggleDetail}
               onCloseDetails={closeDetail}
+              sort={tableSort}
+              onSortChange={handleTableSortChange}
             />
           </div>
           {/* Mobile fallback to cards */}

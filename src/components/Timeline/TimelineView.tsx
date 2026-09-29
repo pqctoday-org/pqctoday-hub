@@ -18,7 +18,10 @@ import {
   transformToGanttData,
   eventLinkKey,
   findTimelineEvent,
+  findEventInGantt,
   resolveCountryParam,
+  readGanttViewParams,
+  GANTT_VIEW_PARAM_KEYS,
 } from '../../data/timelineData'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
 import type { GanttCountryData } from '../../types/timeline'
@@ -96,8 +99,21 @@ export const TimelineView = () => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   const toggleMyTimelineCountry = useBookmarkStore((s) => s.toggleMyTimelineCountry)
-  const showOnlyTimelineCountries = useBookmarkStore((s) => s.showOnlyTimelineCountries)
+  const savedShowOnlyTimelineCountries = useBookmarkStore((s) => s.showOnlyTimelineCountries)
   const setShowOnlyTimelineCountries = useBookmarkStore((s) => s.setShowOnlyTimelineCountries)
+  // "My countries only" is a SAVED preference. A deep link (?country / ?event)
+  // to a country outside the list turns it off for this visit only — the saved
+  // value is left alone, so the reader's preference is back next time. An
+  // explicit toggle (or Clear all) is a real choice and is saved.
+  const [myCountriesSessionOff, setMyCountriesSessionOff] = useState(false)
+  const showOnlyTimelineCountries = savedShowOnlyTimelineCountries && !myCountriesSessionOff
+  const setShowOnlyMyCountries = useCallback(
+    (val: boolean) => {
+      setMyCountriesSessionOff(false)
+      setShowOnlyTimelineCountries(val)
+    },
+    [setShowOnlyTimelineCountries]
+  )
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -189,11 +205,17 @@ export const TimelineView = () => {
     syncFiltersToUrl({ q })
   }
 
-  /** Reset all filters in one click — used by zero-results EmptyState. */
+  /**
+   * Reset all filters in one click (one URL write) — used by the zero-results
+   * EmptyState and the Gantt's own Clear all: region, country, search, tier,
+   * category, the Gantt's phase/type/deadlines/sort params, and "My countries
+   * only" (turned off and saved off — it is a filter like the rest).
+   */
   const clearAllFilters = useCallback(() => {
     setRegionFilter('All')
     setCountryFilter('All')
     setSearchText('')
+    setShowOnlyMyCountries(false)
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
@@ -202,11 +224,12 @@ export const TimelineView = () => {
         next.delete('q')
         next.delete('tier')
         next.delete('cat')
+        for (const k of GANTT_VIEW_PARAM_KEYS) next.delete(k)
         return next
       },
       { replace: true }
     )
-  }, [setSearchParams])
+  }, [setSearchParams, setShowOnlyMyCountries])
 
   // Sync ?region= and ?country= params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent cascade loops.
@@ -323,19 +346,31 @@ export const TimelineView = () => {
         ?.bodies.some((b) => b.name.toLowerCase().includes(qLc))
     const hiddenByMyCountries =
       showOnlyTimelineCountries && !myTimelineCountries.includes(event.countryName)
+    // The Gantt's phase-type / event-type filters (?phase, ?deadlines, ?etype),
+    // checked against the event's grouped row, the unit those filters apply to.
+    const ganttView = readGanttViewParams(searchParams)
+    const row = findEventInGantt(
+      transformToGanttData((timelineData ?? []).filter((c) => c.countryName === event.countryName)),
+      eventLinkKey(event)
+    )?.phase
+    const hiddenByPhaseType =
+      !!row &&
+      ((ganttView.phase !== 'All' && ganttView.phase !== row.phase) ||
+        (ganttView.etype !== 'All' && ganttView.etype !== row.type))
 
     if (hiddenByCategory) reasons.push('added its category')
     if (hiddenByTier) reasons.push('cleared the trust-tier filter')
     if (hiddenByCountry) reasons.push(`switched to ${event.countryName}`)
     if (hiddenBySearch) reasons.push('cleared the search')
-    if (hiddenByMyCountries) reasons.push('turned off "My countries only"')
+    if (hiddenByMyCountries) reasons.push('turned off "My countries only" for this visit')
+    if (hiddenByPhaseType) reasons.push('cleared the phase/type filter')
 
     const canonical = eventLinkKey(event)
     if (reasons.length === 0 && canonical === eventParam) return
 
     // Snapshot for Undo before touching anything.
     const before = new URLSearchParams(searchParams)
-    const wasShowOnly = showOnlyTimelineCountries
+    const wasSessionOff = myCountriesSessionOff
 
     handledEventParamRef.current = canonical
     setSearchParams(
@@ -351,12 +386,17 @@ export const TimelineView = () => {
           next.delete('region')
         }
         if (hiddenBySearch) next.delete('q')
+        if (hiddenByPhaseType) {
+          next.delete('phase')
+          next.delete('deadlines')
+          next.delete('etype')
+        }
         next.set('event', canonical)
         return next
       },
       { replace: true }
     )
-    if (hiddenByMyCountries) setShowOnlyTimelineCountries(false)
+    if (hiddenByMyCountries) setMyCountriesSessionOff(true)
 
     if (reasons.length > 0) {
       setEventNotice({
@@ -367,13 +407,43 @@ export const TimelineView = () => {
           const restored = new URLSearchParams(before)
           restored.delete('event')
           setSearchParams(restored, { replace: true })
-          if (wasShowOnly) setShowOnlyTimelineCountries(true)
+          setMyCountriesSessionOff(wasSessionOff)
           setEventNotice(null)
         },
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ?event value
   }, [eventParam, isMobileShell])
+
+  // ?country= deep link to a country the saved "My countries only" filter
+  // hides: turn that filter off for this visit (saved preference untouched),
+  // say so, and offer Undo (filter back on, ?country dropped). An ?event link
+  // is handled by the effect above, which widens for its country itself.
+  const countryParam = searchParams.get('country')
+  const handledCountryParamRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (isMobileShell || eventParam) return
+    if (!countryParam || handledCountryParamRef.current === countryParam) return
+    handledCountryParamRef.current = countryParam
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    const { resolved } = resolveCountryParam(countryParam, known)
+    if (resolved === 'All') return
+    if (!showOnlyTimelineCountries || myTimelineCountries.includes(resolved)) return
+    const before = new URLSearchParams(searchParams)
+    setMyCountriesSessionOff(true)
+    setEventNotice({
+      kind: 'widened',
+      message: `${resolved} is not in "My countries", so we turned off "My countries only" for this visit to show it.`,
+      undo: () => {
+        const restored = new URLSearchParams(before)
+        restored.delete('country')
+        setSearchParams(restored, { replace: true })
+        setMyCountriesSessionOff(false)
+        setEventNotice(null)
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ?country value
+  }, [countryParam, eventParam, isMobileShell])
 
   // Always call hooks first (React rules). Filter events at the leaf level by
   // org category (always — default hides vendor) and trust tier (when active),
@@ -626,6 +696,7 @@ export const TimelineView = () => {
   if (regionFilter !== 'All')
     activeFilterLabels.push(`Region: ${REGION_LABELS[regionFilter] ?? regionFilter}`)
   if (countryFilter !== 'All') activeFilterLabels.push(`Country: ${countryFilter}`)
+  if (showOnlyTimelineCountries) activeFilterLabels.push('My countries only')
   if (searchText) activeFilterLabels.push(`Query: "${searchText}"`)
   const noResultsDescription = activeFilterLabels.length
     ? `Active filters → ${activeFilterLabels.join(' · ')}`
@@ -760,7 +831,8 @@ export const TimelineView = () => {
                 myCountries={myTimelineCountries}
                 onToggleMyCountry={toggleMyTimelineCountry}
                 showOnlyMyCountries={showOnlyTimelineCountries}
-                onSetShowOnlyMyCountries={setShowOnlyTimelineCountries}
+                onSetShowOnlyMyCountries={setShowOnlyMyCountries}
+                onClearAll={clearAllFilters}
               />
             )}
           </div>

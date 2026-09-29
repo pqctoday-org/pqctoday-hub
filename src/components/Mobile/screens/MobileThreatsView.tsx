@@ -41,9 +41,11 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import {
   matchesThreatQuery,
   resolveIndustryParam,
+  resolveProtocolParam,
   threatClassParam,
   threatIdParam,
 } from '@/components/Threats/threatsUrlParams'
+import { lensProtocolsFor, threatTouchesProtocol } from '@/data/threatProtocolLens'
 import {
   threatExclusions,
   threatNotFoundMessage,
@@ -107,6 +109,9 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
 const CRITICALITY_LEVELS = criticalityLevelsPresent(threatsData)
 // The same two class filters as desktop, with the same meaning (UX-15):
 // HNDL shows hndl + both, HNFL shows hnfl + both (threatMatchesClass).
+/** The protocol-lens values a desktop `?protocol=` link can carry. */
+const lensProtocols = lensProtocolsFor(threatsData)
+
 const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
   { id: 'hndl', label: THREAT_CLASS_DEFS.hndl.label },
   { id: 'hnfl', label: THREAT_CLASS_DEFS.hnfl.label },
@@ -117,7 +122,8 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * Source: ThreatEconomicsHeader.tsx, threatClassification.ts — same real
  * functions/data every desktop Threats-page component reads, not
  * re-derived. Distilled, not a port of ThreatsDashboard.tsx's ~4,300-line
- * component tree: no protocol-lens filter, no trust-tier filter, no
+ * component tree: no protocol-lens picker (a shared `?protocol=` link is
+ * still applied, shown in the "From your link" strip), no trust-tier filter, no
  * CRQC capability strip / trajectory chart, no CSV/related-modules detail,
  * and only ONE working calculator control (the CRQC year) rather than
  * desktop's four sliders — stated below, not silently dropped.
@@ -182,6 +188,8 @@ export function MobileThreatsView() {
     [searchParams]
   )
   const urlQuery = searchParams.get('q')?.trim() ?? ''
+  // Desktop's developer protocol lens (deep-link PR 2): unknown values are ignored.
+  const urlProtocol = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
   const linkedId = threatIdParam(searchParams)
   const selected = useMemo(
     () => (linkedId ? (threatsData.find((t) => t.threatId === linkedId) ?? null) : null),
@@ -263,6 +271,7 @@ export function MobileThreatsView() {
       criticality,
       threatClass: classFilter,
       query: urlQuery,
+      lensExcludes: !!urlProtocol && !threatTouchesProtocol(selected, urlProtocol),
     })
     if (exclusions.length === 0) {
       setDeepLinkNotice(null)
@@ -276,6 +285,7 @@ export function MobileThreatsView() {
       else if (ex === 'criticality') updates.criticality = null
       else if (ex === 'class') updates.class = null
       else if (ex === 'q') updates.q = null
+      else if (ex === 'lens') updates.protocol = null
     }
     if (Object.keys(updates).length > 0) setParam(updates)
     setDeepLinkNotice({
@@ -331,8 +341,9 @@ export function MobileThreatsView() {
     if (urlQuery) data = data.filter((t) => matchesThreatQuery(t, urlQuery))
     if (criticality) data = data.filter((t) => t.criticality === criticality)
     if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
+    if (urlProtocol) data = data.filter((t) => threatTouchesProtocol(t, urlProtocol))
     return data
-  }, [scopedData, urlQuery, criticality, classFilter])
+  }, [scopedData, urlQuery, criticality, classFilter, urlProtocol])
 
   const urgencyStyle = URGENCY_CONFIG[urgency]
 
@@ -384,16 +395,20 @@ export function MobileThreatsView() {
       {/* A shared link's industry / search scope — there is no picker or
           search box for these on this screen, so say what is applied and
           offer the way out. */}
-      {(urlIndustries.length > 0 || urlQuery) && (
+      {(urlIndustries.length > 0 || urlQuery || urlProtocol) && (
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[11.5px] text-foreground">
           <span className="font-semibold">From your link:</span>
           <span className="flex-1">
-            {[...urlIndustries, ...(urlQuery ? [`“${urlQuery}”`] : [])].join(' · ')}
+            {[
+              ...urlIndustries,
+              ...(urlQuery ? [`“${urlQuery}”`] : []),
+              ...(urlProtocol ? [`Protocol: ${urlProtocol}`] : []),
+            ].join(' · ')}
           </span>
           <Button
             type="button"
             variant="ghost"
-            onClick={() => setParam({ industry: null, q: null })}
+            onClick={() => setParam({ industry: null, q: null, protocol: null })}
             className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
           >
             Show all
@@ -542,8 +557,8 @@ export function MobileThreatsView() {
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Protocol lens, trust-tier filter, and the CRQC capability strip and trajectory chart are on
-        a laptop.
+        Protocol-lens picker, trust-tier filter, and the CRQC capability strip and trajectory chart
+        are on a laptop.
       </p>
 
       <MobileSheet

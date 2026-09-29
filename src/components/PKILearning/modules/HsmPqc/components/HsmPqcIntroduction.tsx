@@ -908,7 +908,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
           </Link>
         </div>
       </section>
-      <VendorCoverageNotice migrateLayer="Hardware" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hsm" />
       <ReadingCompleteButton />
     </div>
   )

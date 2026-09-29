@@ -3,7 +3,7 @@ import { libraryData, type LibraryItem } from '../data/libraryData'
 import { softwareData } from '../data/migrateData'
 import { threatsData } from '../data/threatsData'
 import { leadersData } from '../data/leadersData'
-import { timelineData } from '../data/timelineData'
+import { timelineData, timelineEventPageUrl, eventLinkKey } from '../data/timelineData'
 import { complianceFrameworks, complianceMetadata } from '../data/complianceData'
 import { algorithmsData, loadedTransitionMetadata } from '../data/algorithmsData'
 import { authoritativeSources, sourcesMetadata } from '../data/authoritativeSourcesData'
@@ -136,7 +136,7 @@ function getMigrateSummary(): DataSourceSummary {
       id: i.softwareName,
       label: i.softwareName,
       status: i.status as 'New' | 'Updated',
-      deepLink: `/migrate?q=${encodeURIComponent(i.softwareName)}`,
+      deepLink: `/migrate?product=${encodeURIComponent(i.productId || i.softwareName)}`,
       description: i.pqcCapabilityDescription
         ? i.pqcCapabilityDescription.length > 100
           ? i.pqcCapabilityDescription.slice(0, 97) + '...'
@@ -208,7 +208,7 @@ function getTimelineSummary(): DataSourceSummary {
       id: `${e.countryName}:${e.orgName}:${e.phase}:${e.title}`,
       label: `${e.countryName} — ${e.title}`,
       status: e.status as 'New' | 'Updated',
-      deepLink: `/timeline?country=${encodeURIComponent(e.countryName)}`,
+      deepLink: timelineEventPageUrl(e.countryName, eventLinkKey(e)),
       description: e.description
         ? e.description.length > 100
           ? e.description.slice(0, 97) + '...'

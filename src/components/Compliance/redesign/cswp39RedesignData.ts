@@ -6,7 +6,8 @@
 // evidence dossiers. Derived from NIST CSWP.39 and the cited regulations.
 
 import type { PersonaId } from '@/data/learningPersonas'
-import type { CSWP39Step } from '../cswp39Data'
+import { CSWP39_STEPS, CSWP39_TIERS, type CSWP39Step } from '../cswp39Data'
+import type { Cswp39Params } from '../useComplianceUrlState'
 import type { Tone } from './tones'
 
 /**
@@ -195,4 +196,35 @@ const PERSONA_LABEL: Record<PersonaId, string> = {
 export function personaLabel(persona: PersonaId): string {
   // eslint-disable-next-line security/detect-object-injection
   return PERSONA_LABEL[persona]
+}
+
+// ── URL state (deep-link PR 2, 2026-09-29) ──────────────────────────────────
+
+export type Cswp39SubView = 'cycle' | 'maturity' | 'evidence'
+
+function isSubView(v: string | null | undefined): v is Cswp39SubView {
+  return v === 'cycle' || v === 'maturity' || v === 'evidence'
+}
+
+/**
+ * Resolve the explorer's URL params to what it shows. Unknown values fall
+ * back to the defaults rather than blanking a view. Without an explicit
+ * `cswpview`, the param a link carries picks the view: `evref` / `dossier`
+ * → evidence, `mtier` → maturity, otherwise the cycle.
+ */
+export function resolveCswp39View(params: Cswp39Params, evref?: string) {
+  const step = CSWP39_STEPS.find((s) => s.id === params.step)?.id ?? 'govern'
+  const tierNum = Number(params.mtier)
+  const tier = CSWP39_TIERS.some((t) => t.level === tierNum) ? tierNum : 2
+  const dossier = DOSSIER_DEFS.some((d) => d.id === params.dossier)
+    ? (params.dossier as string)
+    : null
+  const view: Cswp39SubView = isSubView(params.cswpview)
+    ? params.cswpview
+    : evref || dossier
+      ? 'evidence'
+      : params.mtier && tier === tierNum
+        ? 'maturity'
+        : 'cycle'
+  return { view, step, tier, dossier }
 }

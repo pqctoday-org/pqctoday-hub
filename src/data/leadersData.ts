@@ -3,7 +3,12 @@ import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
 
 export interface Leader {
+  /** Same value as `leaderId` — the React key / expand / scroll identity. */
   id: string
+  /** Stable `leader_id` column (added leaders_09292026.csv): kebab slug of the
+   *  name without honorifics, suffixed with the organisation slug (then -2, -3)
+   *  only where two rows share a name. Frozen once minted — `?leader=` links use it. */
+  leaderId: string
   name: string
   country: string
   title: string
@@ -64,6 +69,7 @@ interface RawLeaderRow {
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
+  leader_id?: string
 }
 
 // Distinguishes the 124 single-sentence, library-authorship-derived stub rows
@@ -89,6 +95,7 @@ const {
   (row) => {
     if (row.status && row.status !== 'active') return null
     return {
+      leaderId: row.leader_id?.trim() ?? '',
       name: row.Name,
       country: row.Country,
       title: row.Role,
@@ -122,16 +129,25 @@ const {
   true // withPrevious for status badges
 )
 
+// `leaderId` is left out of the comparison: a previous snapshot minted before
+// the column existed would otherwise flag every row as Updated.
+const withoutLeaderId = (item: LeaderCore): Omit<LeaderCore, 'leaderId'> => {
+  const rest: Partial<LeaderCore> = { ...item }
+  delete rest.leaderId
+  return rest as Omit<LeaderCore, 'leaderId'>
+}
+
 // Compute status map if previous data exists
 const statusMap = previousItems
-  ? compareDatasets(currentItems, previousItems, 'name')
+  ? compareDatasets(currentItems.map(withoutLeaderId), previousItems.map(withoutLeaderId), 'name')
   : new Map<string, ItemStatus>()
 
-// Inject status into current items and export
-export const leadersData: Leader[] = currentItems.map((item, index) => ({
-  ...item,
-  id: `${item.name}-${index}`,
-  status: statusMap.get(item.name),
-}))
+// Inject status into current items and export. The `${name}-${index}` fallback
+// only covers a snapshot without the column; leadersData.test.ts asserts the
+// shipped one has a unique leader_id on every row.
+export const leadersData: Leader[] = currentItems.map((item, index) => {
+  const leaderId = item.leaderId || `${item.name}-${index}`
+  return { ...item, id: leaderId, leaderId, status: statusMap.get(item.name) }
+})
 
 export const leadersMetadata = metadata

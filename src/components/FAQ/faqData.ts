@@ -89,13 +89,13 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
         answer:
           'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (FIPS 206, pending) is preferred when compact signatures are critical, such as for smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
-        deepLink: '/algorithms',
+        deepLink: '/algorithms?highlight=ML-KEM,ML-DSA,SLH-DSA',
       },
       {
         question: 'What are LMS and XMSS, and how do they differ from SLH-DSA?',
         answer:
           'LMS (Leighton-Micali Signature) and XMSS (eXtended Merkle Signature Scheme) are stateful hash-based signature schemes standardized in NIST SP 800-208. They are highly efficient but require the signer to maintain reliable state — each private key can only be used a fixed number of times, and reusing a state breaks security. This makes them well-suited for controlled environments like firmware signing where state tracking is manageable. SLH-DSA (FIPS 205), by contrast, is stateless — it derives one-time keys internally and has no reuse risk, making it safer for general-purpose use at the cost of larger signatures. The Reference Library includes SP 800-208 alongside the FIPS 205 specification.',
-        deepLink: '/library',
+        deepLink: '/algorithms?highlight=LMS,XMSS,SLH-DSA',
       },
     ],
   },
@@ -181,49 +181,49 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is NIST IR 8547?',
         answer:
           'NIST IR 8547 (Interagency Report) provides transition guidance for migrating federal cryptographic systems to post-quantum algorithms, recommending that classical algorithms like RSA and ECDSA be deprecated by 2030 and disallowed by 2035. Note: it is still an Initial Public Draft (published Nov 2024, not yet finalized), so its 2030/2035 dates are draft guidance rather than settled policy. It is the most widely referenced US government transition timeline and complements the FIPS algorithm standards. The Reference Library links to the full document with implementation details.',
-        deepLink: '/library',
+        deepLink: '/library?ref=NIST%20IR%208547',
       },
       {
         question: 'What is CNSA 2.0?',
         answer:
           'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) is NSA guidance for protecting National Security Systems. It sets support-and-prefer milestones by category from 2025 to 2027 (starting with software/firmware signing via LMS/XMSS and web/cloud services in 2025), then requires exclusive use of CNSA 2.0 algorithms by 2030 for signing and networking and by 2033 for web/cloud, operating systems, and large PKI (NSM-10 targets all NSS by 2035). It is more aggressive than civilian timelines and applies to defense, intelligence, and classified environments. The Compliance Tracker shows CNSA 2.0 milestones alongside other frameworks.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=CNSA-2',
       },
       {
         question: 'What is SP 800-208?',
         answer:
           'NIST Special Publication 800-208 standardizes the use of LMS (Leighton-Micali Signature) and XMSS (eXtended Merkle Signature Scheme) stateful hash-based signature algorithms. These schemes are suitable for firmware signing and other use cases where the signer can reliably maintain state to prevent key reuse. The Reference Library provides the full SP 800-208 text and related implementation guidance.',
-        deepLink: '/library',
+        deepLink: '/library?ref=NIST%20SP%20800-208',
       },
       {
         question: 'What does RFC 9629 cover?',
         answer:
           'RFC 9629 defines the generic KEMRecipientInfo mechanism for using any KEM within the Cryptographic Message Syntax (CMS); the ML-KEM-specific CMS profile is RFC 9936, enabling PQC-protected S/MIME email encryption. ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes these RFCs alongside related email security standards.',
-        deepLink: '/library',
+        deepLink: '/library?ref=RFC%209629',
       },
       {
         question: 'What is ETSI TS 103 744?',
         answer:
           'ETSI TS 103 744 is a European Telecommunications Standards Institute specification providing migration guidance for adopting post-quantum cryptography in telecom networks. It addresses the specific challenges of network function virtualization, 5G infrastructure, and subscriber identity protection during the PQC transition. The Reference Library catalogs this alongside other ETSI PQC publications.',
-        deepLink: '/library',
+        deepLink: '/library?ref=ETSI%20TS%20103%20744',
       },
       {
         question: 'What does BSI TR-02102 recommend?',
         answer:
           "BSI Technical Guideline TR-02102 is the German Federal Office for Information Security's cryptographic recommendations, which include PQC algorithm guidance and transition timelines for German government and critical infrastructure systems. It recommends hybrid classical-plus-PQC approaches during the transition and specifies minimum key sizes for each security level. The Reference Library provides the guideline alongside BSI's broader PQC program.",
-        deepLink: '/library',
+        deepLink: '/library?ref=BSI%20TR-02102-1',
       },
       {
         question: 'What is the ANSSI PQC position?',
         answer:
           "France's ANSSI (Agence nationale de la securite des systemes d'information) requires hybrid classical-plus-PQC deployment for all lattice-based algorithms as a transitional security measure, reflecting caution about the maturity of lattice hardness assumptions. ANSSI has set some of the most aggressive European timelines, requiring PQC support in qualified products. The Reference Library links to ANSSI's published position papers and technical guidance.",
-        deepLink: '/library',
+        deepLink: '/library?ref=ANSSI%20PQC%20Position%20Paper',
       },
       {
         question: 'What is NIST CSWP 39?',
         answer:
           'NIST Cybersecurity White Paper 39 provides practical guidance for organizations preparing their migration to post-quantum cryptography, covering cryptographic inventory, risk assessment, and phased transition planning. It complements the FIPS algorithm standards by addressing organizational and operational readiness. The Reference Library includes CSWP 39 with cross-references to related NIST publications.',
-        deepLink: '/library',
+        deepLink: '/library?ref=NIST%20CSWP%2039',
       },
       {
         question: 'What are RFC 9881 and RFC 9882?',
@@ -321,55 +321,55 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is FIPS 140-3 and why does the validation backlog matter?',
         answer:
           "FIPS 140-3 is the US standard for cryptographic module security certification, required for federal procurement and widely adopted in regulated industries. The validation backlog at NIST's CMVP (Cryptographic Module Validation Program) means that PQC module certifications can take 18 months or longer, creating a gap between algorithm standardization and deployable certified products. The Compliance Tracker shows validation status across PQC products.",
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=FIPS-140-3',
       },
       {
         question: "What is eIDAS 2.0's PQC requirement?",
         answer:
           'eIDAS 2.0 is the updated EU regulation governing electronic identification and trust services, including the European Digital Identity Wallet (EUDI Wallet). While it does not mandate specific PQC algorithms yet, it requires crypto agility and quantum-readiness in qualified trust services to ensure long-term signature validity. The Compliance Tracker details eIDAS 2.0 requirements alongside other EU frameworks.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=EIDAS',
       },
       {
         question: 'What is DORA and when did it take effect?',
         answer:
           'The Digital Operational Resilience Act (DORA) is an EU regulation that took effect in January 2025, requiring financial institutions to address ICT risk management including cryptographic resilience. DORA mandates that organizations assess and mitigate risks from emerging technologies, which includes the quantum computing threat to current encryption. The Compliance Tracker maps DORA requirements to PQC migration actions.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=DORA',
       },
       {
         question: 'What does NIS2 require for PQC?',
         answer:
           'The EU NIS2 Directive (Network and Information Security Directive 2) mandates comprehensive risk management for essential and important entities, requiring them to adopt appropriate and proportionate technical measures — which increasingly includes quantum-resilient cryptography. NIS2 applies to energy, transport, health, digital infrastructure, and other critical sectors. The Compliance Tracker shows how NIS2 intersects with PQC migration requirements.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=NIS2',
       },
       {
         question: 'What is Executive Order 14306?',
         answer:
           "Executive Order 14306 (June 2025) streamlined its predecessor EO 14144 and removed the binding PQC procurement requirement for federal agencies. CISA's PQC product-category list (January 2026) remains advisory, while National Security System acquisitions must be CNSA 2.0-compliant from January 1, 2027 under CNSSP-15. Binding civilian deadlines now come from the June 2026 PQC Executive Order: post-quantum key establishment by 2030 and signatures by 2031. The Compliance Tracker tracks these US federal requirements and their intersection with NIST IR 8547 migration timelines.",
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=EO-14306-TLS-1-3-AGENCY-SUPPOR',
       },
       {
         question: "What is NERC-CIP's relevance to PQC?",
         answer:
           'NERC-CIP (North American Electric Reliability Corporation — Critical Infrastructure Protection) standards mandate security controls for the bulk electric system, including the protection of electronic security perimeters and communications. As quantum computing threatens the cryptographic foundations of these protections, NERC-CIP compliance will require PQC upgrades to encryption and authentication. The Compliance Tracker shows energy sector requirements.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=NERC-CIP',
       },
       {
         question: "What is Common Criteria's role in PQC?",
         answer:
           'Common Criteria (ISO/IEC 15408) is the international framework for evaluating IT product security, and the Common Criteria Recognition Arrangement (CCRA) enables mutual recognition across 31 member nations. Protection profiles for PQC-capable products are under development, and future evaluations will require demonstrating quantum resilience. The Compliance Tracker includes Common Criteria PQC developments.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=COMMON-CRITERIA',
       },
       {
         question: 'What is ISO/SAE 21434?',
         answer:
           'ISO/SAE 21434 is the international standard for automotive cybersecurity engineering, requiring threat analysis and risk assessment throughout the vehicle lifecycle including cryptographic components. It mandates crypto agility — the ability to update algorithms without hardware replacement — which is critical given 15-year vehicle lifetimes spanning the quantum transition. The Compliance Tracker maps ISO 21434 to PQC requirements.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=ISO-SAE-21434',
       },
       {
         question: 'What does PCI DSS 4.0 require for PQC?',
         answer:
           'PCI DSS 4.0 (mandatory compliance as of March 2025) introduced Requirement 12.3.3, which mandates that organizations maintain a documented inventory of all cryptographic cipher suites and protocols in use and have a plan to address algorithm weaknesses — effectively requiring cryptographic agility planning. While PCI DSS 4.0 does not yet mandate specific PQC algorithms, the PCI Security Standards Council is actively monitoring NIST standards and is expected to incorporate PQC requirements in a future version. Organizations subject to PCI DSS should treat the Req 12.3.3 inventory as the foundation for their eventual PQC migration. The Compliance Tracker cross-references PCI DSS requirements with NIST migration guidance.',
-        deepLink: '/compliance',
+        deepLink: '/compliance?framework=PCI-DSS',
       },
     ],
   },
@@ -525,7 +525,7 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What HSMs support ML-KEM and ML-DSA?',
         answer:
           'Major HSM vendors including Thales (Luna), Entrust (nShield), Utimaco, and AWS CloudHSM have announced or delivered PQC algorithm support including ML-KEM and ML-DSA, with varying levels of FIPS 140-3 validation status. Some vendors offer firmware upgrades for existing hardware while others require new PQC-capable models. The Migrate catalog tracks HSM PQC support and FIPS validation status.',
-        deepLink: '/migrate?layer=hsm',
+        deepLink: '/migrate?domain=hsm',
       },
       {
         question: 'What is the OpenSSL provider architecture for PQC?',

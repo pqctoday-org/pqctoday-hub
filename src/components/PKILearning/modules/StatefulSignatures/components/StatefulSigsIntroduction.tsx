@@ -574,7 +574,7 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
           </div>
         </Link>
         <Link
-          to="/algorithms"
+          to="/algorithms?tab=detailed&highlight=LMS,XMSS"
           className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
         >
           <BookOpen size={18} className="text-primary shrink-0" />

@@ -607,7 +607,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Hardware" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="codesign" />
 
       {/* CTA */}
       <div className="text-center">

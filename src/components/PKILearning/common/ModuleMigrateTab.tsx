@@ -7,6 +7,7 @@ import { CertBadges } from '@/components/Migrate/migrateHelpers'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { EmptyState } from '@/components/ui/empty-state'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 interface ModuleMigrateTabProps {
   moduleId: string
@@ -168,7 +169,7 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
                     {product.licenseType}
                   </span>
                   <Link
-                    to={`/migrate?layer=${encodeURIComponent(layerId)}`}
+                    to={migrateProductHref(product.productId)}
                     className="text-xs text-primary hover:underline"
                   >
                     View in Migrate &rarr;

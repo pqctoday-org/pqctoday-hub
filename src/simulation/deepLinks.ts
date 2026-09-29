@@ -78,7 +78,9 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     return { ok: true }
   }
   if (path === '/compliance') {
-    const bad = keys.find((k) => k !== 'cert')
+    // ?cert=<record id> opens one certificate record; ?tab= picks the pillar
+    // (e.g. tab=records for the certificate records view).
+    const bad = keys.find((k) => k !== 'cert' && k !== 'tab')
     if (bad) return { ok: false, reason: `/compliance: unknown param "${bad}"` }
     return { ok: true }
   }
@@ -105,7 +107,20 @@ function checkParams(path: string, params: URLSearchParams): DeepLinkResolution 
     // C6: sim tree steps can carry a scope query (e.g. ?country=Germany) so the
     // timeline opens pre-scoped inside the simulation pane. Mirrors TimelineView's
     // real URL API so the same `to` is also a valid navigate-away deep-link.
-    const TIMELINE_PARAMS = new Set(['country', 'region', 'q', 'tier', 'cat'])
+    const TIMELINE_PARAMS = new Set([
+      'country',
+      'region',
+      'q',
+      'tier',
+      'cat',
+      'event',
+      'phase',
+      'deadlines',
+      'etype',
+      'gsort',
+      'gdir',
+      'docview',
+    ])
     const bad = keys.find((k) => !TIMELINE_PARAMS.has(k))
     if (bad) return { ok: false, reason: `/timeline: unknown param "${bad}"` }
     return { ok: true }

@@ -4,16 +4,33 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
 import { TimelineView } from './TimelineView'
-import { timelineData, eventLinkKey } from '../../data/timelineData'
+import {
+  timelineData,
+  eventLinkKey,
+  findEventInGantt,
+  transformToGanttData,
+} from '../../data/timelineData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { Button } from '@/components/ui/button'
 
 vi.mock('@/services/search/useSemanticSearch', () => ({
   useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
 }))
 vi.mock('./SimpleGanttChart', () => ({
-  SimpleGanttChart: ({ selectedCountry }: { selectedCountry: string }) => (
-    <div data-testid="simple-gantt-chart">Selected: {selectedCountry}</div>
+  SimpleGanttChart: ({
+    selectedCountry,
+    showOnlyMyCountries,
+    onClearAll,
+  }: {
+    selectedCountry: string
+    showOnlyMyCountries?: boolean
+    onClearAll?: () => void
+  }) => (
+    <div data-testid="simple-gantt-chart" data-show-only={String(!!showOnlyMyCountries)}>
+      Selected: {selectedCountry}
+      <Button onClick={onClearAll}>gantt-clear-all</Button>
+    </div>
   ),
 }))
 vi.mock('./MobileTimelineList', () => ({
@@ -32,6 +49,7 @@ const renderAt = (search: string) =>
     </MemoryRouter>
   )
 const params = () => new URLSearchParams(screen.getByTestId('location-search').textContent ?? '')
+const showOnly = () => screen.getByTestId('simple-gantt-chart').getAttribute('data-show-only')
 
 const ALL = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events))
 const GOV = ALL.find((e) => e.entityType === 'government')!
@@ -73,14 +91,29 @@ describe('TimelineView ?event= deep link', () => {
     expect(p.has('event')).toBe(false)
   })
 
-  it('"My countries only" hiding the event is turned off, and Undo turns it back on', () => {
+  it('"My countries only" hiding the event is turned off for the visit, and Undo turns it back on', () => {
     const other = timelineData.find((c) => c.countryName !== GOV.countryName)!.countryName
     useBookmarkStore.setState({ myTimelineCountries: [other] })
     useBookmarkStore.getState().setShowOnlyTimelineCountries(true)
     renderAt(`?event=${encodeURIComponent(eventLinkKey(GOV))}`)
-    expect(useBookmarkStore.getState().showOnlyTimelineCountries).toBe(false)
-    fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+    expect(showOnly()).toBe('false')
+    // The saved preference is not overwritten by a deep link.
     expect(useBookmarkStore.getState().showOnlyTimelineCountries).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+    expect(showOnly()).toBe('true')
+  })
+
+  it('an event hidden by the Gantt ?deadlines / ?etype filters clears them, with a notice', () => {
+    const row = findEventInGantt(
+      transformToGanttData(timelineData.filter((c) => c.countryName === GOV.countryName)),
+      eventLinkKey(GOV)
+    )!.phase
+    const otherEtype = row.type === 'Phase' ? 'Milestone' : 'Phase'
+    renderAt(`?etype=${otherEtype}&event=${encodeURIComponent(eventLinkKey(GOV))}`)
+    expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(
+      'cleared the phase/type filter'
+    )
+    expect(params().has('etype')).toBe(false)
   })
 
   it('a stored region that hides the event switches to its country', () => {
@@ -96,6 +129,48 @@ describe('TimelineView ?event= deep link', () => {
     expect(screen.queryByTestId('deeplink-notice-widened')).toBeNull()
     expect(screen.queryByTestId('deeplink-notice-not-found')).toBeNull()
     expect(params().get('event')).toBe(eventLinkKey(GOV))
+  })
+})
+
+describe('TimelineView ?country= vs saved "My countries only"', () => {
+  const [A, B] = timelineData.map((c) => c.countryName)
+  beforeEach(() => {
+    usePersonaStore.getState().setRegion(null)
+    usePersonaStore.setState({ selectedPersona: null })
+    useBookmarkStore.setState({ myTimelineCountries: [A] })
+    useBookmarkStore.getState().setShowOnlyTimelineCountries(true)
+  })
+
+  it('a country outside My countries widens for the visit, with a notice; saved pref kept', () => {
+    renderAt(`?country=${encodeURIComponent(B)}`)
+    expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(B)
+    expect(showOnly()).toBe('false')
+    expect(useBookmarkStore.getState().showOnlyTimelineCountries).toBe(true)
+  })
+
+  it('Undo restores the filter and drops ?country', () => {
+    renderAt(`?country=${encodeURIComponent(B)}`)
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+    expect(showOnly()).toBe('true')
+    expect(params().has('country')).toBe(false)
+  })
+
+  it('a country inside My countries needs no notice', () => {
+    renderAt(`?country=${encodeURIComponent(A)}`)
+    expect(screen.queryByTestId('deeplink-notice-widened')).toBeNull()
+    expect(showOnly()).toBe('true')
+  })
+
+  it('Clear all removes the Gantt params and turns "My countries only" off (saved)', () => {
+    renderAt(
+      `?country=${encodeURIComponent(A)}&phase=Migration&deadlines=1&etype=Phase&gsort=organization&gdir=desc&q=x`
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'gantt-clear-all' }))
+    const p = params()
+    for (const k of ['country', 'q', 'phase', 'deadlines', 'etype', 'gsort', 'gdir'])
+      expect(p.has(k)).toBe(false)
+    expect(showOnly()).toBe('false')
+    expect(useBookmarkStore.getState().showOnlyTimelineCountries).toBe(false)
   })
 })
 

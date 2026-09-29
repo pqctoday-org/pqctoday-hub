@@ -58,18 +58,63 @@ export function isLandscapeTab(tab: MobileSection): boolean {
 export function defaultTabFor(
   certParam: string | undefined,
   persona: PersonaId | null,
-  evref?: string
+  evref?: string,
+  implied?: MobileSection | null
 ): MobileSection {
   // A cert deep link is a request for one record and outranks any default.
   if (certParam) return 'records'
   // Same for `?evref=` — a CSWP.39 cross-walk reference. The Assistant is
   // taught the bare form (no `?tab=`), which used to land on Rules & Standards.
   if (evref) return 'cswp39'
+  // A tab-scoped item param (`?reqfw=`, `?prod=`, the CSWP.39 sub-view params)
+  // names its own tab — see impliedTabFor().
+  if (implied) return implied
   // Otherwise the register — it answers "which rules bind me, and why" directly,
   // where every other tab asks the visitor to filter a 197-row catalogue until
   // relevance falls out. The role lens moves an ops reader to the calendar,
   // which is the same question asked in date order.
   return defaultTabForPersona(persona)
+}
+
+/** The CSWP.39 explorer's own URL params (ADDED 2026-09-29, deep-link PR 2). */
+export const CSWP39_PARAM_KEYS = ['cswpview', 'step', 'mtier', 'dossier'] as const
+export type Cswp39ParamKey = (typeof CSWP39_PARAM_KEYS)[number]
+export type Cswp39Params = Partial<Record<Cswp39ParamKey, string | null>>
+
+/**
+ * The tab a tab-scoped item param belongs to, for links that carry the item
+ * but no `?tab=` (ADDED 2026-09-29): `?reqfw=` → Requirements, `?prod=` →
+ * Products, `?cswpview=` / `?step=` / `?mtier=` / `?dossier=` → CSWP.39.
+ */
+export function impliedTabFor(params: URLSearchParams): MobileSection | null {
+  if (params.get('reqfw')) return 'requirements'
+  if (params.get('prod')) return 'products'
+  if (CSWP39_PARAM_KEYS.some((k) => params.get(k))) return 'cswp39'
+  return null
+}
+
+/**
+ * Tab names from earlier page models that old links still carry. They used to
+ * fall through `stableTabFor()` to the Landscape tab on screen while
+ * `syncFiltersToUrl` treated them as a Records-branch tab, so the next filter
+ * change wrote Records params onto a Landscape view.
+ */
+const LEGACY_TAB_ALIASES = new Map<string, MobileSection>([
+  ['landscape', 'standards'],
+  ['frameworks', 'standards'],
+])
+
+/** `?tab=` as a real tab — legacy aliases mapped, unknown values → null. */
+export function normalizeTab(raw: string | null): MobileSection | null {
+  if (!raw) return null
+  return LEGACY_TAB_ALIASES.get(raw) ?? parseTabFromHash(raw)
+}
+
+const LANDSCAPE_SORTS: readonly FrameworkSortOption[] = ['name', 'deadline', 'finish']
+function parseLandscapeSort(raw: string | null): FrameworkSortOption {
+  return LANDSCAPE_SORTS.includes(raw as FrameworkSortOption)
+    ? (raw as FrameworkSortOption)
+    : 'deadline'
 }
 
 function parseTabFromHash(hash: string): MobileSection | null {
@@ -155,15 +200,18 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── Tab state ──────────────────────────────────────────────────────────
 
   const [activeTab, setActiveTab] = useState<MobileSection>(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
+    const tab = normalizeTab(searchParams.get('tab'))
     if (tab) return tab
     const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
     if (hashTab) return hashTab
     // Supersedes two earlier defaults: the developer persona's jump to Product
     // Records, and the industry/region hint that picked a Landscape pillar.
     // Both were compensating for the register not existing.
-    return defaultTabFor(certParam, selectedPersona, evref)
+    return defaultTabFor(certParam, selectedPersona, evref, impliedTabFor(searchParams))
   })
+  // Which filter family the URL's shared legacy names (`q`, `sort`) belong to
+  // on this first render — see the `lq` / `lsort` note below.
+  const initialOnLandscape = isLandscapeTab(activeTab) || activeTab === 'foryou'
 
   /**
    * `?req=yes,expected,partial` — narrow the register to instruments that
@@ -244,6 +292,61 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     return () => clearTimeout(timer)
   }, [highlightFrameworkId])
 
+  // ── Tab-scoped item params (ADDED 2026-09-29, deep-link PR 2) ───────────
+  // `?reqfw=` (Requirements framework), `?prod=` (expanded Products row) and
+  // the CSWP.39 sub-view params. Derived from the URL on every render, like
+  // `?framework=`, so a second link on the same mounted route is honoured.
+  // `syncFiltersToUrl` drops each one when the tab it belongs to is left.
+  const reqfwParam = searchParams.get('reqfw')
+  const prodParam = searchParams.get('prod')
+  const cswpView = searchParams.get('cswpview')
+  const cswpStep = searchParams.get('step')
+  const cswpTier = searchParams.get('mtier')
+  const cswpDossier = searchParams.get('dossier')
+  const cswp39Params: Cswp39Params = useMemo(
+    () => ({ cswpview: cswpView, step: cswpStep, mtier: cswpTier, dossier: cswpDossier }),
+    [cswpView, cswpStep, cswpTier, cswpDossier]
+  )
+  /**
+   * Write tab-scoped params together with the tab they belong to (so a link
+   * copied afterwards is self-describing). `null` deletes. Opening a resource
+   * pushes; selection / view changes and closes replace.
+   */
+  const setTabParams = useCallback(
+    (tab: MobileSection, patch: Record<string, string | null>, replace: boolean) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('tab', tab)
+          for (const [key, value] of Object.entries(patch)) {
+            if (value === null) next.delete(key)
+            else next.set(key, value)
+          }
+          return next
+        },
+        { replace }
+      )
+    },
+    [setSearchParams]
+  )
+  const setReqfwParam = useCallback(
+    (id: string | null) => setTabParams('requirements', { reqfw: id }, true),
+    [setTabParams]
+  )
+  const openProdParam = useCallback(
+    (id: string) => setTabParams('products', { prod: id }, false),
+    [setTabParams]
+  )
+  const clearProdParam = useCallback(
+    () => setTabParams('products', { prod: null }, true),
+    [setTabParams]
+  )
+  const setCswp39Params = useCallback(
+    (patch: Cswp39Params, { push = false }: { push?: boolean } = {}) =>
+      setTabParams('cswp39', patch as Record<string, string | null>, !push),
+    [setTabParams]
+  )
+
   // ── Landscape filter state ─────────────────────────────────────────────
 
   const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
@@ -301,10 +404,21 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
     () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
   )
-  const [lsSearch, setLsSearch] = useState(() => searchParams.get('q') ?? '')
-  const [lsSearchInput, setLsSearchInput] = useState(() => searchParams.get('q') ?? '')
-  const [lsSort, setLsSort] = useState<FrameworkSortOption>(
-    () => (searchParams.get('sort') as FrameworkSortOption | null) ?? 'deadline'
+  // `?lq=` / `?lsort=` (CHANGED 2026-09-29): Landscape used to share `q` and
+  // `sort` with Product Records, so a Records sort column (`sort=vendor`)
+  // became an invalid Landscape sort on the next tab switch and vice versa.
+  // The old shared names are still READ, but only when the link opens on a
+  // Landscape / For You tab — that is what old links meant by them.
+  const [lsSearch, setLsSearch] = useState(
+    () => searchParams.get('lq') ?? (initialOnLandscape ? searchParams.get('q') : null) ?? ''
+  )
+  const [lsSearchInput, setLsSearchInput] = useState(
+    () => searchParams.get('lq') ?? (initialOnLandscape ? searchParams.get('q') : null) ?? ''
+  )
+  const [lsSort, setLsSort] = useState<FrameworkSortOption>(() =>
+    parseLandscapeSort(
+      searchParams.get('lsort') ?? (initialOnLandscape ? searchParams.get('sort') : null)
+    )
   )
   const [lsView, setLsView] = useState<ViewMode>(
     () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
@@ -313,14 +427,12 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── Records filter state ───────────────────────────────────────────────
 
   const [rtab, setRtab] = useState(() => searchParams.get('rtab') ?? 'all')
-  const [recSearch, setRecSearch] = useState(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
-  })
-  const [recSearchInput, setRecSearchInput] = useState(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
-  })
+  const [recSearch, setRecSearch] = useState(() =>
+    initialOnLandscape ? '' : (searchParams.get('q') ?? '')
+  )
+  const [recSearchInput, setRecSearchInput] = useState(() =>
+    initialOnLandscape ? '' : (searchParams.get('q') ?? '')
+  )
   const [recPqc, setRecPqc] = useState<string[]>(
     () => searchParams.get('pqc')?.split(',').filter(Boolean) ?? []
   )
@@ -337,12 +449,16 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     () => searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
   )
   const [recSortCol, setRecSortCol] = useState<SortColumn>(
-    () => (searchParams.get('sort') as SortColumn | null) ?? 'date'
+    () => ((initialOnLandscape ? null : searchParams.get('sort')) as SortColumn | null) ?? 'date'
   )
   const [recSortDir, setRecSortDir] = useState<SortDirection>(
     () => (searchParams.get('dir') as SortDirection | null) ?? 'desc'
   )
-  const [recPage, setRecPage] = useState(() => parseInt(searchParams.get('page') ?? '1', 10) || 1)
+  // `?page=` is dead (CHANGED 2026-09-29): the records table is virtualised
+  // and ignores `currentPage`. The value is kept in memory for the table's
+  // prop, but never read from or written to the URL; old links' `page` is
+  // dropped by the next URL write.
+  const [recPage, setRecPage] = useState(1)
   const [recCertId, setRecCertId] = useState<string | undefined>(
     () => searchParams.get('cert') ?? undefined
   )
@@ -362,8 +478,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       region?: RegionBloc | 'All'
       country?: string
       phase?: 'All' | DeadlinePhase
-      q?: string
-      sort?: string
+      lq?: string
+      lsort?: string
       view?: ViewMode
       rtab?: string
       rq?: string
@@ -374,7 +490,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       mcat?: string[]
       rsort?: string
       dir?: SortDirection
-      page?: number
       cert?: string
       rstatus?: RecordScope
     }) => {
@@ -391,14 +506,28 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           // still resolve through defaultTabFor().
           next.set('tab', tab)
 
+          // Item params scoped to one tab go when that tab is left — the
+          // component that read them unmounts and its state resets.
+          if (tab !== 'requirements') next.delete('reqfw')
+          if (tab !== 'products') next.delete('prod')
+          if (tab !== 'cswp39') for (const key of CSWP39_PARAM_KEYS) next.delete(key)
+
           for (const key of [
             'org',
             'ind',
+            // Inbound-only aliases of `ind` / `country` (CHANGED 2026-09-29).
+            // They were never deleted, and the readers prefer `industry` over
+            // `ind`, so one inbound `?industry=` overrode every later pick.
+            'industry',
+            'sector',
+            'geo',
             'region',
             'country',
             'phase',
             'q',
             'sort',
+            'lq',
+            'lsort',
             'view',
             'rtab',
             'pqc',
@@ -420,8 +549,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             const region = overrides.region ?? lsRegion
             const country = overrides.country ?? lsCountry
             const phase = overrides.phase ?? lsDeadline
-            const q = overrides.q ?? lsSearch
-            const sort = overrides.sort ?? lsSort
+            const q = overrides.lq ?? lsSearch
+            const sort = overrides.lsort ?? lsSort
             const view = overrides.view ?? lsView
 
             if (org !== 'All') next.set('org', org)
@@ -429,8 +558,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             if (region !== 'All') next.set('region', region)
             if (country !== 'All') next.set('country', country)
             if (phase !== 'All') next.set('phase', phase)
-            if (q) next.set('q', q)
-            if (sort !== 'deadline') next.set('sort', sort)
+            if (q) next.set('lq', q)
+            if (sort !== 'deadline') next.set('lsort', sort)
             if (view !== 'cards') next.set('view', view)
             // Cross-tab pre-selection: honor an explicit rtab override even
             // on landscape destinations so persona-hint sub-facets
@@ -447,7 +576,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             const mcat = overrides.mcat ?? recMcat
             const sort = overrides.rsort ?? recSortCol
             const dir = overrides.dir ?? recSortDir
-            const page = overrides.page ?? recPage
             const cert = overrides.cert ?? recCertId
             const rstatus = overrides.rstatus ?? recScope
 
@@ -460,7 +588,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             if (mcat.length > 0) next.set('mcat', mcat.join(','))
             if (sort !== 'date') next.set('sort', sort)
             if (dir !== 'desc') next.set('dir', dir)
-            if (page > 1) next.set('page', String(page))
             if (cert) next.set('cert', cert)
             if (rstatus === 'all') next.set('rstatus', 'all')
           }
@@ -489,7 +616,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       recMcat,
       recSortCol,
       recSortDir,
-      recPage,
       recCertId,
       recScope,
       setSearchParams,
@@ -500,8 +626,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
 
   useEffect(() => {
     const tab =
-      (searchParams.get('tab') as MobileSection | null) ??
-      defaultTabFor(certParam, selectedPersona, evref)
+      normalizeTab(searchParams.get('tab')) ??
+      defaultTabFor(certParam, selectedPersona, evref, impliedTabFor(searchParams))
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
@@ -516,8 +642,9 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       const nextRegion = searchParams.get('region') as RegionBloc | null
       const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
-      const nextQ = searchParams.get('q') ?? ''
-      const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
+      // `lq` / `lsort`, falling back to the old shared names on this branch.
+      const nextQ = searchParams.get('lq') ?? searchParams.get('q') ?? ''
+      const nextSort = parseLandscapeSort(searchParams.get('lsort') ?? searchParams.get('sort'))
       const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'
 
       setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
@@ -539,7 +666,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       const nextMcat = searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
       const nextSort = (searchParams.get('sort') as SortColumn) ?? 'date'
       const nextDir = (searchParams.get('dir') as SortDirection) ?? 'desc'
-      const nextPage = parseInt(searchParams.get('page') ?? '1', 10) || 1
 
       setRtab((prev) => (prev !== nextRtab ? nextRtab : prev))
       setRecSearch((prev) => (prev !== nextQ ? nextQ : prev))
@@ -553,7 +679,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       setRecMcat((prev) => (JSON.stringify(prev) !== JSON.stringify(nextMcat) ? nextMcat : prev))
       setRecSortCol((prev) => (prev !== nextSort ? nextSort : prev))
       setRecSortDir((prev) => (prev !== nextDir ? nextDir : prev))
-      setRecPage((prev) => (prev !== nextPage ? nextPage : prev))
       const nextCert = searchParams.get('cert') ?? undefined
       setRecCertId((prev) => (prev !== nextCert ? nextCert : prev))
       const nextScope: RecordScope = searchParams.get('rstatus') === 'all' ? 'all' : 'current'
@@ -570,7 +695,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   const debouncedLsSearch = useCallback(
     debounce((value: string) => {
       setLsSearch(value)
-      syncFiltersToUrl({ q: value })
+      syncFiltersToUrl({ lq: value })
     }, 200),
     [syncFiltersToUrl]
   )
@@ -580,7 +705,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     debounce((value: string) => {
       setRecSearch(value)
       setRecPage(1)
-      syncFiltersToUrl({ rq: value, page: 1 })
+      syncFiltersToUrl({ rq: value })
     }, 200),
     [syncFiltersToUrl]
   )
@@ -638,7 +763,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   const handleLsSortChange = useCallback(
     (sort: FrameworkSortOption) => {
       setLsSort(sort)
-      syncFiltersToUrl({ sort })
+      syncFiltersToUrl({ lsort: sort })
     },
     [syncFiltersToUrl]
   )
@@ -673,7 +798,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     (filters: string[]) => {
       setRecPqc(filters)
       setRecPage(1)
-      syncFiltersToUrl({ pqc: filters, page: 1 })
+      syncFiltersToUrl({ pqc: filters })
     },
     [syncFiltersToUrl]
   )
@@ -682,7 +807,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     (filters: string[]) => {
       setRecCat(filters)
       setRecPage(1)
-      syncFiltersToUrl({ cat: filters, page: 1 })
+      syncFiltersToUrl({ cat: filters })
     },
     [syncFiltersToUrl]
   )
@@ -691,7 +816,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     (filters: string[]) => {
       setRecSrc(filters)
       setRecPage(1)
-      syncFiltersToUrl({ src: filters, page: 1 })
+      syncFiltersToUrl({ src: filters })
     },
     [syncFiltersToUrl]
   )
@@ -700,7 +825,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     (filters: string[]) => {
       setRecVendor(filters)
       setRecPage(1)
-      syncFiltersToUrl({ vendor: filters, page: 1 })
+      syncFiltersToUrl({ vendor: filters })
     },
     [syncFiltersToUrl]
   )
@@ -709,7 +834,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     (filters: string[]) => {
       setRecMcat(filters)
       setRecPage(1)
-      syncFiltersToUrl({ mcat: filters, page: 1 })
+      syncFiltersToUrl({ mcat: filters })
     },
     [syncFiltersToUrl]
   )
@@ -730,19 +855,13 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     [syncFiltersToUrl]
   )
 
-  const handleRecPageChange = useCallback(
-    (page: number) => {
-      setRecPage(page)
-      syncFiltersToUrl({ page })
-    },
-    [syncFiltersToUrl]
-  )
+  const handleRecPageChange = useCallback((page: number) => setRecPage(page), [])
 
   const handleRecScopeChange = useCallback(
     (scope: RecordScope) => {
       setRecScope(scope)
       setRecPage(1)
-      syncFiltersToUrl({ rstatus: scope, page: 1 })
+      syncFiltersToUrl({ rstatus: scope })
     },
     [syncFiltersToUrl]
   )
@@ -763,6 +882,14 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     clearFrameworkParam,
     /** `?req=` — requires_pqc values to keep, or [] for "no narrowing". */
     reqFilter,
+    // Tab-scoped item params (deep-link PR 2)
+    reqfwParam,
+    setReqfwParam,
+    prodParam,
+    openProdParam,
+    clearProdParam,
+    cswp39Params,
+    setCswp39Params,
     // Landscape filter state
     lsOrg,
     lsIndustry,

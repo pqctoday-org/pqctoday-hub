@@ -30,6 +30,8 @@ interface ProductRowProps {
   defaultExpanded?: boolean
   /** Called when the reader collapses the row (e.g. to drop ?product= from the URL). */
   onCollapse?: () => void
+  /** Called when the reader expands the row (e.g. to push ?product=<id>). */
+  onExpand?: () => void
 }
 
 /** A candidate replacement product. Expands to the full detail (roadmap, certs,
@@ -42,10 +44,12 @@ export function ProductRow({
   extraBadges,
   defaultExpanded = false,
   onCollapse,
+  onExpand,
 }: ProductRowProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
   const toggle = () => {
     if (expanded) onCollapse?.()
+    else onExpand?.()
     setExpanded(!expanded)
   }
   const pqc = productPqcStatus(product)

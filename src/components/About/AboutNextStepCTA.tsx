@@ -54,7 +54,7 @@ const PERSONA_CTAS: Record<PersonaId, CtaSpec> = {
     icon: <Layers size={20} className="text-primary" />,
     title: 'Map the standards landscape',
     body: 'Walk the active PQC standards — NIST, BSI, ANSSI, ETSI — and their implementation timelines so you can sequence your migration plan.',
-    to: '/compliance?tab=landscape',
+    to: '/compliance?tab=standards',
     destination: 'compliance-landscape',
     cta: 'Explore the landscape',
   },

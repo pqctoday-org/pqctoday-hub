@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileTimelineView } from './MobileTimelineView'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { timelineData, transformToGanttData } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
 
@@ -151,6 +152,24 @@ describe('MobileTimelineView', () => {
       renderView(`/timeline?country=${encodeURIComponent(name)}`)
       expect(screen.getByText(`${name} PQC timeline`)).toBeInTheDocument()
       expect(screen.getByText('1 country tracked', { exact: false })).toBeInTheDocument()
+    })
+
+    // The phone screen has no phase/type/deadlines filters, sort, Documents
+    // panel or "My countries only" (stated in its footer), so a desktop link
+    // carrying those params still lands on the linked country, and a saved
+    // "My countries only" never hides it.
+    it('desktop-only params and a saved "My countries only" never hide ?country', () => {
+      const name = REAL_GANTT_DATA[0].country.countryName
+      useBookmarkStore.setState({
+        myTimelineCountries: ['__none__'],
+        showOnlyTimelineCountries: true,
+      })
+      renderView(
+        `/timeline?country=${encodeURIComponent(name)}&deadlines=1&etype=Milestone&gsort=organization&docview=table`
+      )
+      expect(screen.getByText(`${name} PQC timeline`)).toBeInTheDocument()
+      expect(screen.getByText('1 country tracked', { exact: false })).toBeInTheDocument()
+      useBookmarkStore.setState({ myTimelineCountries: [], showOnlyTimelineCountries: false })
     })
   })
 })

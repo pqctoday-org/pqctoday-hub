@@ -363,7 +363,7 @@ function LibraryChip({ lib, tone }: { lib: OssLibrary; tone: 'oss' | 'commercial
       : 'bg-accent/10 text-accent border-accent/20 hover:bg-accent/20'
   return (
     <Link
-      to={`/migrate?productIds=${encodeURIComponent(lib.productId)}`}
+      to={`/migrate?product=${encodeURIComponent(lib.productId)}`}
       className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] transition-colors ${toneClass}`}
       title={lib.versionNote ? `${lib.name} — ${lib.versionNote}` : lib.name}
     >
@@ -982,8 +982,13 @@ export function PQCProtocolMatrix() {
     )
   }, [setSearchParams])
 
-  // ?highlight=recommended — scroll to first recommended row on mount
-  const highlightRecommended = searchParams.get('highlight') === 'recommended'
+  // ?matrixHighlight=recommended — scroll to first recommended row on mount.
+  // Renamed from ?highlight=recommended, which collided with the Detailed /
+  // Transition tabs' algorithm ?highlight; the old form is still honoured
+  // here (this matrix only renders on Protocol Support).
+  const highlightRecommended =
+    searchParams.get('matrixHighlight') === 'recommended' ||
+    searchParams.get('highlight') === 'recommended'
   useEffect(() => {
     if (!highlightRecommended) return
     const frame = requestAnimationFrame(() => {

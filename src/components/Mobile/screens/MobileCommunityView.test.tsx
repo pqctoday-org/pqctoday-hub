@@ -147,11 +147,18 @@ describe('MobileCommunityView', () => {
       expect(screen.getByTestId('leader-detail-sheet')).toBeInTheDocument()
     })
 
-    it('writes ?leader= on open and clears it on close', () => {
+    it('opens the linked profile from its stable leader_id', () => {
+      const target = CURATED[0]
+      renderView(`/leaders?leader=${encodeURIComponent(target.leaderId)}`)
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).getAllByText(target.name).length).toBeGreaterThan(0)
+    })
+
+    it('writes ?leader=<leader_id> on open and clears it on close', () => {
       renderView()
       const first = CURATED[0]
       fireEvent.click(screen.getAllByText(first.name)[0].closest('button')!)
-      expect(new URLSearchParams(probe.search).get('leader')).toBe(first.name)
+      expect(new URLSearchParams(probe.search).get('leader')).toBe(first.leaderId)
       fireEvent.click(screen.getByRole('button', { name: 'Close' }))
       expect(new URLSearchParams(probe.search).get('leader')).toBeNull()
     })

@@ -789,7 +789,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Hardware" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hardware" />
 
       {/* ── Reading Complete ─────────────────────────────────────────────── */}
       <ReadingCompleteButton />

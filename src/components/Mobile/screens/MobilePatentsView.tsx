@@ -65,8 +65,22 @@ function fipsMappedAlgorithms(p: PatentItem): string[] {
 export function MobilePatentsView() {
   const [highImpactOnly, setHighImpactOnly] = useState(false)
   const [agilityFilter, setAgilityFilter] = useState<CryptoAgilityMode | null>(null)
-  const [searchText, setSearchText] = useState('')
   const [params, setParams] = useSearchParams()
+  // The search box reads desktop's Search-tab query (?sq), else its Explore
+  // text filter (?search), and writes ?sq back (replace), so a phone link
+  // opens desktop on the same query and vice versa.
+  const [searchText, setSearchText] = useState(() => params.get('sq') ?? params.get('search') ?? '')
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchText(value)
+      const next = new URLSearchParams(params)
+      if (value.trim()) next.set('sq', value.trim())
+      else next.delete('sq')
+      next.delete('search')
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
   const patentParam = params.get('patent')
   // Same ?patent param as desktop, either `US…` or bare-number form, resolved
   // against the full corpus so an out-of-scope patent still opens its sheet.
@@ -206,7 +220,7 @@ export function MobilePatentsView() {
         <input
           type="text"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search assignee, algorithm or protocol"
           className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
         />

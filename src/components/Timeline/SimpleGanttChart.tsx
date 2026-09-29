@@ -23,10 +23,16 @@ import {
   eventLinkKey,
   findEventInGantt,
   phaseRowKey,
+  GANTT_PHASE_TYPES,
+  DEFAULT_GANTT_VIEW,
+  readGanttViewParams,
+  writeGanttViewParams,
+  type GanttViewState,
   type ResolvedTimelineEvent,
 } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { DocumentTable } from './DocumentTable'
+import type { TimelineDocumentRow } from './TimelineDocumentDetailPopover'
 import { logEvent } from '../../utils/analytics'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -55,6 +61,11 @@ interface SimpleGanttChartProps {
   onToggleMyCountry?: (name: string) => void
   showOnlyMyCountries?: boolean
   onSetShowOnlyMyCountries?: (val: boolean) => void
+  /**
+   * Resets every filter in ONE URL write (the page's own Clear-all). Without
+   * it, Clear-all falls back to the individual callbacks above.
+   */
+  onClearAll?: () => void
   /** When true, renders headless inside the simulation (Controls toolbar hidden). */
   embedded?: boolean
   /** Label shown in the scope chip when `embedded` (e.g. "Germany"). */
@@ -96,6 +107,7 @@ export const SimpleGanttChart = ({
   onToggleMyCountry,
   showOnlyMyCountries = false,
   onSetShowOnlyMyCountries,
+  onClearAll,
   embedded = false,
   scopeLabel,
   asOfYear,
@@ -113,8 +125,6 @@ export const SimpleGanttChart = ({
     }
   }
   const [countryCopied, setCountryCopied] = useState(false)
-  const [sortField, setSortField] = useState<'country' | 'organization'>('country')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   // ?event=<event_id> deep-links the milestone/phase detail popover so it can be
   // shared/bookmarked. Resolved by event_id first, then by ANY event's title
   // (old title links keep working), so events that aren't first in their
@@ -151,25 +161,38 @@ export const SimpleGanttChart = ({
     },
     [embedded, setSearchParams]
   )
-  const [selectedPhaseType, setSelectedPhaseType] = useState('All')
-  const [selectedEventType, setSelectedEventType] = useState('All')
-
-  const phaseTypeItems = useMemo(
-    () =>
-      [
-        'Discovery',
-        'Testing',
-        'POC',
-        'Migration',
-        'Standardization',
-        'Guidance',
-        'Policy',
-        'Regulation',
-        'Research',
-        'Deadline',
-      ].map((p) => ({ id: p, label: p })),
-    []
+  // Phase-type / event-type filters, the Deadlines toggle and the row sort live
+  // in the URL (?phase / ?deadlines=1 / ?etype / ?gsort / ?gdir, all replace —
+  // format documented next to readGanttViewParams), so they are read on load,
+  // follow back/forward and same-route links, and are shareable. Inside the sim
+  // embed they stay local state and never touch the URL.
+  const [localView, setLocalView] = useState<GanttViewState>(DEFAULT_GANTT_VIEW)
+  const urlView = useMemo(() => readGanttViewParams(searchParams), [searchParams])
+  const view = embedded ? localView : urlView
+  const {
+    phase: selectedPhaseType,
+    etype: selectedEventType,
+    sort: sortField,
+    dir: sortDirection,
+  } = view
+  const viewRef = useRef(view)
+  viewRef.current = view
+  const updateView = useCallback(
+    (patch: Partial<GanttViewState>) => {
+      if (embedded) {
+        setLocalView((prev) => ({ ...prev, ...patch }))
+        return
+      }
+      setSearchParams((sp) => writeGanttViewParams(sp, { ...readGanttViewParams(sp), ...patch }), {
+        replace: true,
+      })
+    },
+    [embedded, setSearchParams]
   )
+  const setSelectedPhaseType = (phase: string) => updateView({ phase })
+  const setSelectedEventType = (etype: string) => updateView({ etype })
+
+  const phaseTypeItems = useMemo(() => GANTT_PHASE_TYPES.map((p) => ({ id: p, label: p })), [])
 
   const eventTypeItems = useMemo(
     () => [
@@ -182,11 +205,10 @@ export const SimpleGanttChart = ({
   const handleSort = (field: 'country' | 'organization') => {
     if (sortField === field) {
       const newDirection = sortDirection === 'asc' ? 'desc' : 'asc'
-      setSortDirection(newDirection)
+      updateView({ dir: newDirection })
       logEvent('Timeline', `Sort ${field}`, newDirection)
     } else {
-      setSortField(field)
-      setSortDirection('asc')
+      updateView({ sort: field, dir: 'asc' })
       logEvent('Timeline', `Sort ${field}`, 'asc')
     }
   }
@@ -204,23 +226,63 @@ export const SimpleGanttChart = ({
     writeEventParam(null, { push: false })
   }
 
+  // Document detail popover (the Documents panel under the chart). Which
+  // surface a `?event=` opens: the Gantt popover is THE target for every
+  // arriving ?event (cold link, reload, back/forward, same-route link) because
+  // the chart is always rendered wherever the Documents panel is. The document
+  // popover opens only from a click in the Documents panel; that click still
+  // writes ?event=<event_id> (push) so Back closes it and the URL is shareable,
+  // and closing it removes ?event (replace). docKeyRef remembers which ?event
+  // value belongs to the document popover so the reconcile effect below does
+  // not also open the Gantt popover for it.
+  const [docRow, setDocRow] = useState<TimelineDocumentRow | null>(null)
+  const docKeyRef = useRef<string | null>(null)
+  const handleSelectDocRow = (row: TimelineDocumentRow | null) => {
+    if (!row) {
+      docKeyRef.current = null
+      setDocRow(null)
+      writeEventParam(null, { push: false })
+      return
+    }
+    setDocRow(row)
+    setSelection(null)
+    if (embedded) return
+    const key = row.eventId || row.title
+    docKeyRef.current = key
+    writeEventParam(key, { push: true })
+    logEvent('Timeline', 'View Document Details', `${row.phase}: ${row.title}`)
+  }
+
   // Reconcile the popover with ?event= on back/forward / external navigation.
   const eventParam = embedded ? null : searchParams.get('event')
   useEffect(() => {
     if (embedded) return
+    if (docKeyRef.current) {
+      if (docKeyRef.current === eventParam) {
+        setSelection(null)
+        return
+      }
+      // ?event moved on (Back, another link): the document popover closes.
+      docKeyRef.current = null
+      setDocRow(null)
+    }
     const next = resolveEventPhase(eventParam)
     const keyOf = (s: ResolvedTimelineEvent | null) =>
       s ? `${phaseRowKey(s.phase)}|${s.event ? eventLinkKey(s.event) : ''}` : ''
     setSelection((prev) => (keyOf(prev) === keyOf(next) ? prev : next))
     if (next && eventParam !== lastWrittenEventRef.current) {
-      // Arrived by link: make sure the local phase/event-type filters don't hide
-      // the row, then scroll to and highlight it.
+      // Arrived by link: make sure the phase/event-type filters don't hide the
+      // row (TimelineView's ?event handler clears them too, with a notice), then
+      // scroll to and highlight it.
       lastWrittenEventRef.current = eventParam
-      setSelectedPhaseType((prev) => (prev === 'All' || prev === next.phase.phase ? prev : 'All'))
-      setSelectedEventType((prev) => (prev === 'All' || prev === next.phase.type ? prev : 'All'))
+      const cur = viewRef.current
+      const patch: Partial<GanttViewState> = {}
+      if (cur.phase !== 'All' && cur.phase !== next.phase.phase) patch.phase = 'All'
+      if (cur.etype !== 'All' && cur.etype !== next.phase.type) patch.etype = 'All'
+      if (patch.phase || patch.etype) updateView(patch)
       setScrollTarget(phaseRowKey(next.phase))
     }
-  }, [embedded, eventParam, resolveEventPhase])
+  }, [embedded, eventParam, resolveEventPhase, updateView])
 
   const handleFilterBlur = () => {
     if (filterText) logEvent('Timeline', 'Filter Text', filterText)
@@ -337,17 +399,31 @@ export const SimpleGanttChart = ({
     selectedCountry !== 'All' ||
     selectedPhaseType !== 'All' ||
     selectedEventType !== 'All' ||
+    showOnlyMyCountries ||
     filterText !== ''
 
   const clearAllFilters = useCallback(() => {
+    setLocalSearchText('')
+    if (onClearAll) {
+      // One URL write for region/country/search/phase/etype/deadlines/sort and
+      // "My countries only" — separate setSearchParams calls in one tick would
+      // overwrite each other.
+      onClearAll()
+      return
+    }
     if (onSearchChange) onSearchChange('')
-    else setLocalSearchText('')
-
-    setSelectedPhaseType('All')
-    setSelectedEventType('All')
+    updateView(DEFAULT_GANTT_VIEW)
+    onSetShowOnlyMyCountries?.(false)
     onRegionSelect('All')
     onCountrySelect('All')
-  }, [onRegionSelect, onCountrySelect])
+  }, [
+    onClearAll,
+    onSearchChange,
+    updateView,
+    onSetShowOnlyMyCountries,
+    onRegionSelect,
+    onCountrySelect,
+  ])
 
   const handleExportCSV = useCallback(() => {
     if (processedData.length === 0) return
@@ -685,6 +761,7 @@ export const SimpleGanttChart = ({
                   : 'bg-muted/30 hover:bg-muted/50 border-border text-foreground'
               }`}
               aria-label="Show deadlines only"
+              aria-pressed={selectedPhaseType === 'Deadline'}
             >
               <Flag size={16} />
               <span className="hidden md:inline">Deadlines</span>
@@ -716,6 +793,12 @@ export const SimpleGanttChart = ({
                 <FilterChip
                   label={selectedEventType === 'Phase' ? 'Phases only' : 'Milestones only'}
                   onClear={() => setSelectedEventType('All')}
+                />
+              )}
+              {showOnlyMyCountries && (
+                <FilterChip
+                  label="My countries only"
+                  onClear={() => onSetShowOnlyMyCountries?.(false)}
                 />
               )}
               {filterText && (
@@ -982,7 +1065,13 @@ export const SimpleGanttChart = ({
 
       {/* Document Table — appears below Gantt when a country filter is active */}
       {selectedCountry !== 'All' && processedData.length > 0 && (
-        <DocumentTable data={processedData} title={`Documents · ${selectedCountry}`} />
+        <DocumentTable
+          data={processedData}
+          title={`Documents · ${selectedCountry}`}
+          selectedRow={docRow}
+          onSelectRow={handleSelectDocRow}
+          syncViewToUrl={!embedded}
+        />
       )}
 
       <GanttDetailPopover

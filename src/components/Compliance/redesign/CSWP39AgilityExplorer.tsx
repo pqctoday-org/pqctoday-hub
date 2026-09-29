@@ -19,6 +19,7 @@ import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { deepLinkSelector, useScrollToDeepLinkTarget } from '@/hooks/useScrollToDeepLinkTarget'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
 import { complianceFrameworks } from '@/data/complianceData'
@@ -37,10 +38,11 @@ import {
   HYBRID_ROWS,
   DOSSIER_DEFS,
   personaLabel,
+  resolveCswp39View,
+  type Cswp39SubView as SubView,
 } from './cswp39RedesignData'
 import { TONES, pillClasses, type Tone } from './tones'
-
-type SubView = 'cycle' | 'maturity' | 'evidence'
+import type { Cswp39Params } from '../useComplianceUrlState'
 
 const SUB_VIEWS: { id: SubView; label: string }[] = [
   { id: 'cycle', label: 'Agility cycle' },
@@ -64,26 +66,52 @@ interface CSWP39AgilityExplorerProps {
   /** Deep-link into the authoritative-evidence grid, filtered to a source refId. */
   evref?: string
   onClearEvref?: () => void
+  /**
+   * URL state (ADDED 2026-09-29, deep-link PR 2): `?cswpview=cycle|maturity|
+   * evidence`, `?step=<step id>`, `?mtier=<1-4>` (not `tier` — that is the
+   * page-wide trust-tier filter) and `?dossier=<dossier id>`. When
+   * `onParamsChange` is omitted the explorer keeps the same state locally.
+   */
+  params?: Cswp39Params
+  /** Selection / view changes replace; opening a dossier passes `push`. */
+  onParamsChange?: (patch: Cswp39Params, opts?: { push?: boolean }) => void
 }
 
 export function CSWP39AgilityExplorer({
   onNavigateToFramework,
   evref,
   onClearEvref,
+  params: urlParams,
+  onParamsChange,
 }: CSWP39AgilityExplorerProps) {
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const [view, setView] = useState<SubView>(evref ? 'evidence' : 'cycle')
-  const [stepId, setStepId] = useState<CSWP39Step['id']>('govern')
-  const [tier, setTier] = useState(2)
-  const [openDossier, setOpenDossier] = useState<string | null>(null)
+  const [localParams, setLocalParams] = useState<Cswp39Params>({})
+  const params = onParamsChange ? (urlParams ?? {}) : localParams
+  const update = (patch: Cswp39Params, opts?: { push?: boolean }) =>
+    onParamsChange ? onParamsChange(patch, opts) : setLocalParams((prev) => ({ ...prev, ...patch }))
+  // A fresh evref deep-link (e.g. from a Landscape drawer crosswalk) shows the
+  // evidence view unless the URL names another one explicitly; the page's
+  // cross-walk handler drops `cswpview` when it sets a new `evref`.
+  const { view, step: stepId, tier, dossier: openDossier } = resolveCswp39View(params, evref)
+  const setView = (v: SubView) => update({ cswpview: v })
+  const setStepId = (id: CSWP39Step['id']) => update({ step: id })
+  const setTier = (t: number) => update({ mtier: String(t) })
+  // Opening a dossier is opening a resource (push, Back closes it); closing
+  // replaces.
+  const setOpenDossier = (id: string | null) =>
+    update({ dossier: id, ...(id ? { cswpview: 'evidence' } : {}) }, { push: !!id })
 
-  // A fresh evref deep-link (e.g. from a Landscape drawer crosswalk) snaps to
-  // the evidence view so the filtered grid is visible. Adjusting state during
-  // render on a prop change is the React-recommended pattern (vs. an effect).
-  const [prevEvref, setPrevEvref] = useState(evref)
-  if (evref !== prevEvref) {
-    setPrevEvref(evref)
-    if (evref) setView('evidence')
+  // A linked dossier is far down the evidence view — bring it on screen. A
+  // dossier the reader opened by hand is already there.
+  const [selfOpenedDossier, setSelfOpenedDossier] = useState<string | null>(null)
+  const dossierScrollKey = openDossier && openDossier !== selfOpenedDossier ? openDossier : null
+  useScrollToDeepLinkTarget(
+    dossierScrollKey,
+    dossierScrollKey ? deepLinkSelector(`dossier-${dossierScrollKey}`) : null
+  )
+  const toggleDossier = (id: string | null) => {
+    setSelfOpenedDossier(id)
+    setOpenDossier(id)
   }
 
   const ownedSteps = useMemo(
@@ -185,7 +213,7 @@ export function CSWP39AgilityExplorer({
       {view === 'evidence' && (
         <EvidenceView
           openDossier={openDossier}
-          onToggleDossier={setOpenDossier}
+          onToggleDossier={toggleDossier}
           evref={evref}
           onClearEvref={onClearEvref}
         />
@@ -612,6 +640,7 @@ function EvidenceView({
             return (
               <div
                 key={d.id}
+                data-deeplink-id={`dossier-${d.id}`}
                 className={`overflow-hidden rounded-xl border bg-card ${
                   open ? 'border-status-success/40' : 'border-border'
                 }`}

@@ -4,7 +4,7 @@
 // vendor that publishes a roadmap (or has enrichment data), each rendered with
 // the same VendorRoadmapPanel used in the product detail.
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Search, Map as MapIcon, ChevronDown } from 'lucide-react'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
@@ -14,7 +14,14 @@ import { Input } from '../../ui/input'
 import { Button } from '../../ui/button'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { ProductRow } from './ProductRow'
-import { productsForVendor } from './workbenchCatalog'
+import {
+  productsForVendor,
+  resolveProductRef,
+  roadmapVendorName,
+  vendorHasRoadmapCard,
+} from './workbenchCatalog'
+import { DeepLinkNotice } from '../../common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 /** productId → vendorId, to resolve the user's cross-page product selection
  *  (see {@link useSelectedProductIds}) back to the vendors that own them. */
@@ -70,9 +77,54 @@ const enrichmentOnlyCount = [...enrichmentByVendorId.keys()].filter(
   (id) => !roadmapByVendorId.has(id)
 ).length
 
-export function RoadmapsTab() {
-  const [query, setQuery] = useState('')
+interface RoadmapsTabProps {
+  /** ?vendor= deep link (PR 2): this vendor's card is filtered to, opened
+   *  (its products shown), scrolled to and ringed. */
+  focusVendorId?: string
+  /** Identity of that link — a second link to the same vendor re-applies. */
+  focusKey?: string
+  /** ?open=<productId>: open the card of the product's vendor with that
+   *  product's row expanded. */
+  openRef?: string
+  /** The reader opened a vendor card's products (open → push ?vendor=<id>),
+   *  closed them, or edited the vendor filter (vendorId null) — the parent
+   *  drops ?vendor= (replace) when it names that vendor, or on a filter edit. */
+  onVendorChange?: (vendorId: string | null, open: boolean) => void
+}
+
+export function RoadmapsTab({
+  focusVendorId,
+  focusKey,
+  openRef,
+  onVendorChange,
+}: RoadmapsTabProps = {}) {
   const selectedProductIds = useSelectedProductIds()
+
+  // ?open=<productId> → that product's vendor card (only when it has one).
+  const openTarget = useMemo(() => {
+    if (!openRef) return null
+    const product = resolveProductRef(openRef)?.product
+    if (!product?.vendorId || !vendorHasRoadmapCard(product.vendorId)) return null
+    return { vendorId: product.vendorId, productId: product.productId }
+  }, [openRef])
+  const openNotFound = !!openRef && !openTarget
+  const [openNoticeDismissed, setOpenNoticeDismissed] = useState<string | null>(null)
+
+  const target = focusVendorId
+    ? { vendorId: focusVendorId, key: focusKey ?? focusVendorId, productId: undefined }
+    : openTarget
+      ? { ...openTarget, key: `open:${openRef}` }
+      : null
+  const [query, setQuery] = useState(target ? roadmapVendorName(target.vendorId) : '')
+  // A link arriving while the tab is mounted re-filters to its vendor.
+  useEffect(() => {
+    if (target) setQuery(roadmapVendorName(target.vendorId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per link identity
+  }, [target?.key])
+  useScrollToDeepLinkTarget(
+    target?.key ?? null,
+    target ? deepLinkSelector(target.productId ?? target.vendorId) : null
+  )
 
   const myVendorIds = useMemo(() => {
     const ids = new Set<string>()
@@ -164,13 +216,24 @@ export function RoadmapsTab() {
           />
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              onVendorChange?.(null, false)
+            }}
             placeholder="Filter vendors…"
             aria-label="Filter vendor roadmaps"
             className="pl-8"
           />
         </div>
       </div>
+
+      {openNotFound && openNoticeDismissed !== openRef && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No vendor roadmap matching “${openRef}” — it may not be a product with a published vendor roadmap.`}
+          onDismiss={() => setOpenNoticeDismissed(openRef ?? null)}
+        />
+      )}
 
       {/* FIXED 2026-07-16 (Phase 5, U5): rendered independent of the
           roadmap-entries search/empty state below — these vendors aren't in
@@ -212,7 +275,14 @@ export function RoadmapsTab() {
               </p>
               <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
                 {myVendors.map((e) => (
-                  <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
+                  <RoadmapCard
+                    key={`${e.vendorId}${target?.vendorId === e.vendorId ? `:${target.key}` : ''}`}
+                    vendorId={e.vendorId}
+                    vendorName={e.vendorName}
+                    defaultShowProducts={target?.vendorId === e.vendorId}
+                    expandProductId={target?.vendorId === e.vendorId ? target.productId : undefined}
+                    onToggleProducts={onVendorChange}
+                  />
                 ))}
               </div>
             </div>
@@ -225,7 +295,14 @@ export function RoadmapsTab() {
             )}
             <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
               {otherVendors.map((e) => (
-                <RoadmapCard key={e.vendorId} vendorId={e.vendorId} vendorName={e.vendorName} />
+                <RoadmapCard
+                  key={`${e.vendorId}${target?.vendorId === e.vendorId ? `:${target.key}` : ''}`}
+                  vendorId={e.vendorId}
+                  vendorName={e.vendorName}
+                  defaultShowProducts={target?.vendorId === e.vendorId}
+                  expandProductId={target?.vendorId === e.vendorId ? target.productId : undefined}
+                  onToggleProducts={onVendorChange}
+                />
               ))}
             </div>
           </div>
@@ -235,14 +312,26 @@ export function RoadmapsTab() {
   )
 }
 
-function RoadmapCard({ vendorId, vendorName }: { vendorId: string; vendorName: string }) {
-  const [showProducts, setShowProducts] = useState(false)
+function RoadmapCard({
+  vendorId,
+  vendorName,
+  defaultShowProducts = false,
+  expandProductId,
+  onToggleProducts,
+}: {
+  vendorId: string
+  vendorName: string
+  defaultShowProducts?: boolean
+  expandProductId?: string
+  onToggleProducts?: (vendorId: string, open: boolean) => void
+}) {
+  const [showProducts, setShowProducts] = useState(defaultShowProducts)
   const products = useMemo(() => productsForVendor(vendorId), [vendorId])
   const roadmaps = roadmapByVendorId.get(vendorId) ?? []
   const vendorEnrichments = enrichmentByVendorId.get(vendorId) ?? []
 
   return (
-    <div className="rounded-xl border border-border bg-card p-3">
+    <div data-deeplink-id={vendorId} className="rounded-xl border border-border bg-card p-3">
       <p className="mb-2 text-sm font-semibold text-foreground">{vendorName}</p>
       {roadmaps.length > 0 ? (
         <div className="space-y-4">
@@ -263,7 +352,10 @@ function RoadmapCard({ vendorId, vendorName }: { vendorId: string; vendorName: s
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowProducts((v) => !v)}
+            onClick={() => {
+              onToggleProducts?.(vendorId, !showProducts)
+              setShowProducts((v) => !v)
+            }}
             aria-expanded={showProducts}
             className="h-7 px-2 text-xs text-primary"
           >
@@ -278,7 +370,11 @@ function RoadmapCard({ vendorId, vendorName }: { vendorId: string; vendorName: s
           {showProducts && (
             <div className="mt-2 flex flex-col gap-2">
               {products.map((p) => (
-                <ProductRow key={p.productId || p.softwareName} product={p} />
+                <ProductRow
+                  key={p.productId || p.softwareName}
+                  product={p}
+                  defaultExpanded={!!expandProductId && p.productId === expandProductId}
+                />
               ))}
             </div>
           )}

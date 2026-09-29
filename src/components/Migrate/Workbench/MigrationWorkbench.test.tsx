@@ -5,8 +5,10 @@ import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
 import { MigrationWorkbench } from './MigrationWorkbench'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
-import { productsForDomain } from './workbenchCatalog'
+import { productsForDomain, productsForVendor } from './workbenchCatalog'
 import { Button } from '../../ui/button'
+import { retiredProductSuccessors, softwareData } from '@/data/migrateData'
+import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -28,6 +30,15 @@ function LinkButton({ to }: { to: string }) {
   return (
     <Button type="button" onClick={() => navigate(to)}>
       follow link
+    </Button>
+  )
+}
+
+function BackButton() {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(-1)}>
+      go back
     </Button>
   )
 }
@@ -281,6 +292,249 @@ describe('MigrationWorkbench (integration)', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
       expect(screen.queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
       expect(screen.queryByText(target.softwareName)).not.toBeInTheDocument()
+    })
+  })
+
+  describe('deep links (PR 2)', () => {
+    const search = () => screen.getByTestId('location-search').textContent ?? ''
+    const rowToggle = (name: string) =>
+      screen.getByRole('button', { name: new RegExp(`details for ${escapeRe(name)}$`) })
+
+    describe('?domain=', () => {
+      it('selects the Replace-tab domain on load without changing the tab', () => {
+        renderStandaloneAt('/migrate?domain=hsm')
+        expect(screen.getByRole('heading', { name: 'HSM-protected keys' })).toBeInTheDocument()
+        expect(search()).not.toContain('tab=')
+      })
+
+      it('follows a second ?domain= link while mounted', () => {
+        render(
+          <MemoryRouter initialEntries={['/migrate?domain=hsm']}>
+            <MigrationWorkbench />
+            <LinkButton to="/migrate?domain=vpn" />
+            <LocationProbe />
+          </MemoryRouter>
+        )
+        fireEvent.click(screen.getByRole('button', { name: 'follow link' }))
+        expect(screen.getByRole('heading', { name: 'IPsec / IKEv2 VPN' })).toBeInTheDocument()
+      })
+
+      it('is written when the reader picks a domain', () => {
+        renderStandaloneAt('/migrate')
+        fireEvent.click(screen.getAllByRole('button', { name: /IPsec \/ IKEv2 VPN/i })[0])
+        expect(search()).toContain('domain=vpn')
+      })
+
+      it('survives a tab switch (Replace remounts on the same domain)', () => {
+        renderStandaloneAt('/migrate?domain=hsm')
+        fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
+        expect(search()).toContain('domain=hsm')
+        fireEvent.click(screen.getByRole('tab', { name: /Replace what you own/i }))
+        expect(screen.getByRole('heading', { name: 'HSM-protected keys' })).toBeInTheDocument()
+      })
+
+      it('is cleared by Clear (reset to the default domain)', () => {
+        renderStandaloneAt('/migrate?domain=hsm')
+        fireEvent.click(screen.getByText('Clear'))
+        expect(search()).not.toContain('domain=')
+        expect(screen.getByRole('heading', { name: 'TLS key exchange' })).toBeInTheDocument()
+      })
+
+      it('an unknown domain shows a not-found notice', () => {
+        renderStandaloneAt('/migrate?domain=bogus')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('bogus')
+      })
+    })
+
+    describe('emitted aliases (?q=, ?layer=, ?cat=, ?industry=)', () => {
+      const [hsmProduct] = productsForDomain('hsm')
+
+      it('?q=<exact product name> opens that product like ?product=', () => {
+        renderStandaloneAt(`/migrate?tab=plan&q=${encodeURIComponent(hsmProduct.softwareName)}`)
+        expect(rowToggle(hsmProduct.softwareName)).toHaveAttribute('aria-expanded', 'true')
+        expect(search()).toContain('tab=replace')
+      })
+
+      it('?search= / ?highlight= are aliases of ?q=', () => {
+        renderStandaloneAt(`/migrate?highlight=${encodeURIComponent(hsmProduct.productId)}`)
+        expect(rowToggle(hsmProduct.softwareName)).toHaveAttribute('aria-expanded', 'true')
+      })
+
+      it('?q=<free text> pre-fills the Replace filter in the best-matching domain', () => {
+        renderStandaloneAt('/migrate?q=IBM')
+        expect(screen.getByLabelText(/Filter products/i)).toHaveValue('IBM')
+      })
+
+      it('?layer= picks the mapped domain; with ?q= the text becomes the filter', () => {
+        renderStandaloneAt('/migrate?layer=Libraries&q=open')
+        expect(
+          screen.getByRole('heading', { name: 'Crypto libraries & frameworks' })
+        ).toBeInTheDocument()
+        expect(screen.getByLabelText(/Filter products/i)).toHaveValue('open')
+      })
+
+      it('?cat=<category name> picks the mapped domain', () => {
+        renderStandaloneAt('/migrate?cat=Hardware%20Security%20Modules')
+        expect(screen.getByRole('heading', { name: 'HSM-protected keys' })).toBeInTheDocument()
+      })
+
+      it('?industry= is ignored gracefully and lands on Replace', () => {
+        renderStandaloneAt('/migrate?tab=plan&industry=Finance')
+        expect(screen.getByRole('tab', { name: /Replace what you own/i })).toHaveAttribute(
+          'aria-selected',
+          'true'
+        )
+        expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+      })
+
+      it('an unknown ?q= / ?layer= shows a not-found notice', () => {
+        renderStandaloneAt('/migrate?layer=zzz-nope')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('zzz-nope')
+      })
+
+      it('typing in the filter drops the link params but records the domain', () => {
+        renderStandaloneAt('/migrate?layer=Libraries')
+        fireEvent.change(screen.getByLabelText(/Filter products/i), { target: { value: 'x' } })
+        expect(search()).not.toContain('layer=')
+        expect(search()).toContain('domain=foundations')
+      })
+    })
+
+    describe('row expand writes ?product=', () => {
+      const [a, b] = productsForDomain('tls')
+
+      it('expanding pushes ?product=<id>; collapsing clears it', () => {
+        renderStandaloneAt('/migrate')
+        fireEvent.click(rowToggle(a.softwareName))
+        expect(search()).toContain(`product=${encodeURIComponent(a.productId)}`)
+        // our own write does not re-hydrate as a link (the list is not narrowed)
+        expect(screen.getAllByRole('button', { name: /details for / }).length).toBeGreaterThan(1)
+        fireEvent.click(rowToggle(a.softwareName))
+        expect(search()).not.toContain('product=')
+      })
+
+      it('Back closes the row that was opened', () => {
+        render(
+          <MemoryRouter initialEntries={['/migrate']}>
+            <MigrationWorkbench />
+            <BackButton />
+            <LocationProbe />
+          </MemoryRouter>
+        )
+        fireEvent.click(rowToggle(b.softwareName))
+        expect(rowToggle(b.softwareName)).toHaveAttribute('aria-expanded', 'true')
+        fireEvent.click(screen.getByRole('button', { name: 'go back' }))
+        expect(search()).not.toContain('product=')
+        expect(rowToggle(b.softwareName)).toHaveAttribute('aria-expanded', 'false')
+      })
+    })
+
+    it('a retired product id opens its successor with a "replaced by" notice', () => {
+      const [retiredId, successorId] = [...retiredProductSuccessors][0]
+      const successor = softwareData.find((p) => p.productId === successorId)!
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(retiredId)}`)
+      expect(rowToggle(successor.softwareName)).toHaveAttribute('aria-expanded', 'true')
+      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+        `replaced by ${successor.softwareName}`
+      )
+    })
+
+    it('?productIds= spanning domains lists the other domains with links', () => {
+      const [tls] = productsForDomain('tls')
+      const [hsm] = productsForDomain('hsm')
+      renderStandaloneAt(`/migrate?productIds=${tls.productId},${hsm.productId}`)
+      expect(screen.getAllByRole('button', { name: /details for / })).toHaveLength(1)
+      const note = screen.getByTestId('deeplink-elsewhere')
+      expect(note).toHaveTextContent(hsm.softwareName)
+      expect(within(note).getByRole('link', { name: 'HSM-protected keys' })).toHaveAttribute(
+        'href',
+        `/migrate?tab=replace&productIds=${hsm.productId}`
+      )
+    })
+
+    describe('?vendor=', () => {
+      const vendorId = [...roadmapByVendorId.keys()].find((id) => productsForVendor(id).length > 0)!
+      const vendorName = roadmapByVendorId.get(vendorId)![0].vendorName
+      const card = () => document.querySelector(`[data-deeplink-id="${vendorId}"]`)!
+
+      it('opens Roadmaps filtered to that vendor with its card expanded', () => {
+        renderStandaloneAt(`/migrate?vendor=${encodeURIComponent(vendorName)}`)
+        expect(screen.getByRole('tab', { name: /Vendor roadmaps/i })).toHaveAttribute(
+          'aria-selected',
+          'true'
+        )
+        expect(screen.getByLabelText('Filter vendor roadmaps')).toHaveValue(vendorName)
+        expect(
+          within(card() as HTMLElement).getByRole('button', { name: /^Hide \d+ products?/ })
+        ).toBeInTheDocument()
+        expect(search()).toContain('tab=roadmaps')
+      })
+
+      it('an unknown vendor shows a not-found notice', () => {
+        renderStandaloneAt('/migrate?vendor=no-such-vendor-zz')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+          'no-such-vendor-zz'
+        )
+      })
+
+      it("opening a vendor card's products writes ?vendor=; closing clears it", () => {
+        renderStandaloneAt('/migrate?tab=roadmaps')
+        fireEvent.change(screen.getByLabelText('Filter vendor roadmaps'), {
+          target: { value: vendorName },
+        })
+        fireEvent.click(
+          within(card() as HTMLElement).getByRole('button', { name: /^View \d+ products?/ })
+        )
+        expect(search()).toContain(`vendor=${vendorId}`)
+        fireEvent.click(
+          within(card() as HTMLElement).getByRole('button', { name: /^Hide \d+ products?/ })
+        )
+        expect(search()).not.toContain('vendor=')
+      })
+    })
+
+    describe('?open= on Plan / Vendor risk', () => {
+      const [lib] = productsForDomain('foundations')
+
+      it('Plan: expands the planned product; collapsing clears ?open=', () => {
+        useMigrateSelectionStore.setState({
+          plan: ['foundations'],
+          choice: { foundations: [lib.softwareName] },
+        })
+        renderStandaloneAt(`/migrate?tab=plan&open=${encodeURIComponent(lib.productId)}`)
+        const toggle = screen.getByRole('button', {
+          name: new RegExp(`Hide details for ${escapeRe(lib.softwareName)}`),
+        })
+        expect(toggle).toHaveAttribute('aria-expanded', 'true')
+        fireEvent.click(toggle)
+        expect(search()).not.toContain('open=')
+      })
+
+      it('Plan: expanding a row by hand writes ?open=<productId>', () => {
+        useMigrateSelectionStore.setState({
+          plan: ['foundations'],
+          choice: { foundations: [lib.softwareName] },
+        })
+        renderStandaloneAt('/migrate?tab=plan')
+        fireEvent.click(
+          screen.getByRole('button', {
+            name: new RegExp(`Show details for ${escapeRe(lib.softwareName)}`),
+          })
+        )
+        expect(search()).toContain(`open=${encodeURIComponent(lib.productId)}`)
+      })
+
+      it('Plan: a product not in the plan gets a notice', () => {
+        renderStandaloneAt(`/migrate?tab=plan&open=${encodeURIComponent(lib.productId)}`)
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+          'isn’t in your plan'
+        )
+      })
+
+      it('Vendor risk: an unknown ref gets a notice', () => {
+        renderStandaloneAt('/migrate?tab=vendorrisk&open=zz-nope')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('zz-nope')
+      })
     })
   })
 

@@ -290,7 +290,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
                 Run the ACVP vectors
               </Button>
             </Link>
-            <Link to="/library?q=ACVP">
+            <Link to="/library?ref=usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets">
               <Button variant="outline" size="sm">
                 Find the published vectors
               </Button>

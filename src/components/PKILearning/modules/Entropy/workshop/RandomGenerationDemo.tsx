@@ -38,6 +38,7 @@ import {
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 interface GenerationResult {
   hex: string
@@ -737,7 +738,7 @@ export const RandomGenerationDemo: React.FC = () => {
           ).map(({ name, desc }) => (
             <a
               key={name}
-              href={`/migrate?q=${encodeURIComponent(name)}`}
+              href={migrateProductHref(name)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col gap-0.5 px-3 py-2 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors"

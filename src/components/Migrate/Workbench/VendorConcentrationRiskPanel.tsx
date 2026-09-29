@@ -13,9 +13,14 @@
 // SupplyChainRiskMatrix (a real, working, different-shaped view of the same
 // tab), rather than replacing it — the design program's own stated
 // invariant across all 10 pages is that no existing coverage gets dropped.
+import { useMemo, useState } from 'react'
 import { AlertTriangle, Users, ShieldOff, Globe2 } from 'lucide-react'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
+import { classifyProductDomain } from '@/data/migrationAssets'
+import { useScrollToDeepLinkTarget } from '@/hooks/useScrollToDeepLinkTarget'
+import { DeepLinkNotice } from '../../common/DeepLinkNotice'
 import { useVendorConcentrationRisks, type RiskCard } from './vendorConcentrationRisk'
+import { resolveDomainRef, resolveProductRef } from './workbenchCatalog'
 
 // Icons are this panel's own presentational concern (the shared hook only
 // knows about numbers), keyed by the same `key` the hook emits.
@@ -26,12 +31,37 @@ const RISK_ICON: Record<RiskCard['key'], typeof Users> = {
   geographic: Globe2,
 }
 
-export function VendorConcentrationRiskPanel() {
+export function VendorConcentrationRiskPanel({ openRef }: { openRef?: string } = {}) {
   const risks = useVendorConcentrationRisks()
   const selectedCount = useSelectedProductIds().length
 
+  // ?open=<domainId|productId> (deep-link PR 2): scroll to and ring the
+  // Supply Chain Risk Matrix layer card for that domain (a product → the
+  // domain it lives in). The matrix renders those cards with
+  // data-testid="layer-card-<domainId>"; opening a single product row inside
+  // one would need a change to SupplyChainRiskMatrix itself.
+  const openDomain = useMemo(() => {
+    if (!openRef) return null
+    const product = resolveProductRef(openRef)?.product
+    return product
+      ? classifyProductDomain(product.categoryName, product.infrastructureLayer)
+      : resolveDomainRef(openRef)
+  }, [openRef])
+  const [dismissed, setDismissed] = useState<string | null>(null)
+  useScrollToDeepLinkTarget(
+    openDomain ? `open:${openRef}` : null,
+    openDomain ? `[data-testid="layer-card-${openDomain}"]` : null
+  )
+
   return (
     <div className="mb-4 space-y-3">
+      {openRef && !openDomain && dismissed !== openRef && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No product or category matching “${openRef}”.`}
+          onDismiss={() => setDismissed(openRef)}
+        />
+      )}
       <div>
         <h3 className="text-sm font-semibold text-foreground">Concentration &amp; coverage risk</h3>
         <p className="text-xs text-muted-foreground">

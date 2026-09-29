@@ -88,9 +88,12 @@ const STRIP_OUTCOMES: Record<string, string> = {
 const RESEARCHER_LINKS = [
   { label: 'ML-KEM', to: '/algorithms?highlight=ML-KEM-768&tab=detailed' },
   { label: 'ML-DSA', to: '/algorithms?highlight=ML-DSA-65&tab=detailed' },
-  { label: 'TLS 1.3', to: '/library?q=TLS+1.3' },
+  {
+    label: 'TLS 1.3',
+    to: '/library?ref=RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1',
+  },
   { label: 'PKCS#12', to: '/library?q=PKCS12' },
-  { label: 'X.509', to: '/library?q=X.509' },
+  { label: 'X.509', to: '/library?ref=RFC%205280' },
 ]
 
 /** Alias map for user-friendly ?cmd= values */

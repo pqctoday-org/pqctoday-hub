@@ -158,7 +158,7 @@ export const VendorReadinessMatrix: React.FC = () => {
             </Button>
           </div>
         </div>
-        <VendorCoverageNotice migrateLayer="Network" className="mb-2" />
+        <VendorCoverageNotice migrateLayer="Network" migrateDomain="tls" className="mb-2" />
 
         {Object.entries(grouped).map(([category, vendors]) => (
           <div key={category}>

@@ -690,6 +690,13 @@ export function LibraryViewRedesign({
             authOnly={cswp39Only}
             onAuthOnly={(v) => setParam('cswp39', v ? '1' : null)}
             onReset={resetFilters}
+            advancedActive={
+              activeOrg !== 'All' ||
+              cswp39Only ||
+              algoFamilyFilter.length > 0 ||
+              geoFilter.length > 0 ||
+              sectorFilter.length > 0
+            }
             advancedExtra={
               <>
                 <AlgorithmFamilyFilter params={params} setParams={setParams} />
@@ -763,7 +770,12 @@ export function LibraryViewRedesign({
                 Table view is only available on wider screens.
               </div>
               <div className="hidden md:block">
-                <LibraryTreeTable data={displayedItems} />
+                <LibraryTreeTable
+                  data={displayedItems}
+                  onOpen={openDetail}
+                  sortBy={sortBy}
+                  onSortChange={(s) => setParam('sort', s, { replace: true })}
+                />
               </div>
             </>
           ) : (
@@ -787,6 +799,7 @@ export function LibraryViewRedesign({
         bookmarked={detailItem ? libraryBookmarks.includes(detailItem.referenceId) : false}
         onToggleBookmark={toggleLibraryBookmark}
         onClose={closeDetail}
+        onOpenRef={openDetail}
       />
     </div>
   )

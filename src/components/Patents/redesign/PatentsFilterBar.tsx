@@ -21,6 +21,9 @@ import type { ColumnId, PresetKey } from '@/components/Patents/patentColumns'
 const PRIMARY = ['region', 'agility', 'impact', 'domain'] as const
 const SECONDARY = [
   'assignee',
+  // Set by Community links (a leader's "View N patents" / inventor search).
+  'inventor',
+  'patentIds',
   'quantumTech',
   'quantumRelevance',
   'protocol',
@@ -41,6 +44,8 @@ const AGILITY_LABELS: Record<string, string> = {
 }
 const SECONDARY_LABEL: Record<string, string> = {
   assignee: 'Assignee',
+  inventor: 'Inventor',
+  patentIds: 'Patents',
   quantumTech: 'Quantum tech',
   quantumRelevance: 'Q. relevance',
   protocol: 'Protocol',
@@ -50,6 +55,15 @@ const SECONDARY_LABEL: Record<string, string> = {
   pqc: 'PQC algo',
   fips: 'FIPS',
   filingYear: 'Filed',
+}
+
+/** `US1,US2,US3` → "3 selected"; a single id is shown as-is. */
+function patentIdsLabel(value: string): string {
+  const ids = value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return ids.length === 1 ? ids[0] : `${ids.length} selected`
 }
 
 interface PatentsFilterBarProps {
@@ -237,7 +251,11 @@ export function PatentsFilterBar({
                     (NIST_STATUS_LABELS[value] ?? value)
                   : key === 'fips'
                     ? 'FIPS 203/4/5'
-                    : value}
+                    : key === 'patentIds'
+                      ? patentIdsLabel(value)
+                      : key === 'quantumRelevance'
+                        ? value.replace(/_/g, ' ')
+                        : value}
               </span>
               <Button
                 type="button"

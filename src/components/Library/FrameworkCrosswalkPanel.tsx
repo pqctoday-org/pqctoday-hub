@@ -202,7 +202,7 @@ export function FrameworkCrosswalkPanel({ item }: FrameworkCrosswalkPanelProps) 
 
             <Button
               variant="outline"
-              onClick={() => navigate('/compliance?tab=cswp39#appendix-g-crosswalk')}
+              onClick={() => navigate('/compliance?tab=cswp39&cswpview=evidence')}
               className="mt-3 h-auto py-1.5 px-2.5 text-xs"
             >
               <ExternalLink size={13} className="mr-1.5" aria-hidden="true" />

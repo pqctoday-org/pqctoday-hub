@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.133.0] - 2026-09-29
+
+Shared links now reach much further into the hub: you can link to a single algorithm, vendor roadmap, Compliance requirement, Community profile and more, and links from Learn modules, search and the PQC Assistant open the exact item they mention.
+
+### Added
+
+- **Share a link to one algorithm** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: every algorithm now has its own detail panel and a stable link, so you can send someone straight to ML-KEM-768 or FN-DSA-512 instead of the whole table.
+- **Links into more of the Algorithms page** [view:/algorithms] [persona:architect] [persona:researcher] [persona:developer]: industry use cases, implementation-attack profiles, the validation sections and a single coverage-matrix case can now be linked directly, and shared links keep the tab you were on.
+- **Links to Migrate domains and vendor roadmaps** [view:/migrate] [persona:ops] [persona:architect] [persona:executive]: link straight to a category (for example HSMs) or to one vendor's PQC roadmap; opening a product's details updates the address bar so it can be shared.
+- **Links to Compliance requirements, products and CSWP.39 views** [view:/compliance] [persona:grc] [persona:architect]: the Requirements framework, a product row, and each CSWP.39 view, step, maturity tier and auditor dossier can be shared as links; For You framework pop-ups are linkable too.
+- **Stable links to Community profiles** [view:/leaders] [persona:researcher] [persona:executive]: each person now has a permanent link that survives name edits; the stack and table views keep their layer and sort in the link.
+- **More of Timeline, Threats and Patents fits in a link** [view:/timeline] [view:/threats] [view:/patents] [persona:grc] [persona:researcher] [persona:developer]: timeline documents, chart filters and sort; the Threats protocol lens and a threat's Detection/Response tab; and a Patents search query can all be shared.
+
+### Fixed
+
+- **Links from around the site open the right item** [view:/learn] [view:/business] [view:/assess] [view:/report] [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: about 175 links in Learn modules, the Business Center, your assessment and report, the FAQ, the glossary and the Explore graph now open the specific product, document, threat, framework, algorithm or timeline event they mention — instead of a page with nothing selected or a filter that matched nothing (for example, assessment links to Threats now filter to your industry).
+- **Site search and the PQC Assistant link to the exact item** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: search results and Assistant answers now open the patent, product, vendor roadmap, framework, timeline event, person or algorithm itself; the search index was rebuilt so every one of its links points at a real item.
+- **Library table view opens the full document panel** [view:/library] [persona:researcher] [persona:grc]: clicking a row in table view now opens the same shareable panel as the cards, including the framework crosswalk and related Community members; "Builds on" documents are clickable.
+- **Old Migrate links from search keep working** [view:/migrate] [persona:ops]: links that used a search word or category now land on the matching product or category instead of the default TLS view, and retired products point to their replacement.
+
 ## [4.132.0] - 2026-09-28
 
 The Simulation no longer strands you — a wrong answer still costs you, but you can always carry on; play-mode pop-ups close; browser Back behaves; phones get the controls they were missing — and it now includes the hub's newest Learn modules and references. Across the hub, shared links now open exactly the item they point to, on phones too.

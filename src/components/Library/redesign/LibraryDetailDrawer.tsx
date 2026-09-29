@@ -3,19 +3,23 @@
  * LibraryDetailDrawer — the drill-down home for the dense per-document data the
  * medium-density card drops. Right-anchored overlay with a transform-only
  * entrance (no opacity animation, resting opacity 1 — see the handoff note).
- * Supersedes LibraryDetailPopover; reuses DocumentAnalysis for the enrichment
- * sections and replicates the CSWP-39 pillar rollup.
+ * Supersedes LibraryDetailPopover (card AND table view open it via `?ref`);
+ * reuses DocumentAnalysis for the enrichment sections (with the related
+ * Community leaders), the App. G/H FrameworkCrosswalkPanel, and replicates the
+ * CSWP-39 pillar rollup.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { LibraryItem } from '@/data/libraryData'
+import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { getTrustScore } from '@/data/trustScore'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
+import { FrameworkCrosswalkPanel } from '@/components/Library/FrameworkCrosswalkPanel'
+import { relatedLeadersFor } from '@/components/Library/relatedLeaders'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import {
@@ -32,6 +36,47 @@ interface LibraryDetailDrawerProps {
   bookmarked: boolean
   onToggleBookmark: (referenceId: string) => void
   onClose: () => void
+  /** Open another library document (pushes `?ref`, so Back returns here).
+   *  Without it, "Builds on" / revision ids render as plain text. */
+  onOpenRef?: (referenceId: string) => void
+}
+
+/**
+ * True when another modal dialog sits above `root` — a nested pop-up (the
+ * Community leader card, the revision drill-down) that is portalled to <body>
+ * or rendered inside the drawer. The last aria-modal dialog in document order
+ * is the top one. Esc and scrim clicks belong to that overlay, not the drawer.
+ */
+function hasOverlayAbove(root: HTMLElement | null): boolean {
+  if (!root) return false
+  const dialogs = document.querySelectorAll('[role="dialog"][aria-modal="true"]')
+  const top = dialogs[dialogs.length - 1]
+  return Boolean(top) && top !== root
+}
+
+/** A reference id as a link when it resolves to a live library document. */
+function RefLink({
+  refId,
+  onOpenRef,
+  className,
+}: {
+  refId: string
+  onOpenRef?: (referenceId: string) => void
+  className: string
+}) {
+  const target = onOpenRef ? findLibraryItemByRef(refId) : undefined
+  if (!target || !onOpenRef) return <span className={className}>{refId}</span>
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={() => onOpenRef(target.referenceId)}
+      title={`Open ${target.referenceId} — ${target.documentTitle}`}
+      className={`h-auto font-normal text-primary hover:bg-primary/10 hover:text-primary hover:underline ${className}`}
+    >
+      {refId}
+    </Button>
+  )
 }
 
 /** Outer guard — remounts the panel per document so the entrance animation and
@@ -71,7 +116,12 @@ function DrawerPanel({
   bookmarked,
   onToggleBookmark,
   onClose,
+  onOpenRef,
 }: LibraryDetailDrawerProps & { item: LibraryItem }) {
+  const rootRef = useRef<HTMLDivElement>(null)
+  // Set on scrim pointer-down when a nested pop-up was on top: that click
+  // dismisses the pop-up (its own outside-click handler), not the drawer.
+  const scrimBlockedRef = useRef(false)
   // Transform-only entrance: mount at translateX(26px), flip to 0 next frame.
   const [entered, setEntered] = useState(false)
   const [drilldownOpen, setDrilldownOpen] = useState(false)
@@ -81,13 +131,15 @@ function DrawerPanel({
     return () => cancelAnimationFrame(id)
   }, [])
 
-  // Esc to close.
+  // Esc closes only the top overlay. Capture phase, so this runs before a
+  // nested pop-up's own (document, bubble) Esc handler has removed it.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key !== 'Escape' || hasOverlayAbove(rootRef.current)) return
+      onClose()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
   }, [onClose])
 
   const reqs = maturityByRefId.get(item.referenceId) ?? []
@@ -98,9 +150,11 @@ function DrawerPanel({
   const enrichment = libraryEnrichments[item.referenceId]
   const ts = getTrustScore('library', item.referenceId)
   const trust = trustInfo(item.referenceId)
+  const relatedLeaders = relatedLeadersFor(item)
 
   return (
     <div
+      ref={rootRef}
       className="fixed inset-0 z-50 print:hidden"
       role="dialog"
       aria-modal="true"
@@ -111,7 +165,14 @@ function DrawerPanel({
         type="button"
         variant="ghost"
         aria-label="Close detail"
-        onClick={onClose}
+        onPointerDown={() => {
+          scrimBlockedRef.current = hasOverlayAbove(rootRef.current)
+        }}
+        onClick={() => {
+          const blocked = scrimBlockedRef.current
+          scrimBlockedRef.current = false
+          if (!blocked) onClose()
+        }}
         className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
       />
       <span className="sr-only" aria-live="polite" />
@@ -241,12 +302,12 @@ function DrawerPanel({
                   .map((d) => d.trim())
                   .filter(Boolean)
                   .map((d) => (
-                    <span
+                    <RefLink
                       key={d}
+                      refId={d}
+                      onOpenRef={onOpenRef}
                       className="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
-                    >
-                      {d}
-                    </span>
+                    />
                   ))}
               </div>
             </Section>
@@ -275,9 +336,11 @@ function DrawerPanel({
                         >
                           {lifecycleLabel(rev.documentStatusBucket)}
                         </span>
-                        <span className="truncate font-mono text-[11px] text-muted-foreground">
-                          {rev.referenceId}
-                        </span>
+                        <RefLink
+                          refId={rev.referenceId}
+                          onOpenRef={onOpenRef}
+                          className="truncate p-0 font-mono text-[11px] text-muted-foreground"
+                        />
                       </div>
                     </div>
                     {rev.downloadUrl && (
@@ -371,9 +434,14 @@ function DrawerPanel({
 
           {enrichment && (
             <Section title="Analysis">
-              <DocumentAnalysis enrichment={enrichment} />
+              <DocumentAnalysis enrichment={enrichment} relatedLeaders={relatedLeaders} />
             </Section>
           )}
+
+          {/* Framework crosswalk (App. G) + protocol coverage (App. H) — renders
+              only for the Applied Quantum framework entry. Ported from the
+              table-view popover so `?ref` shows it in every view. */}
+          <FrameworkCrosswalkPanel item={item} />
 
           <Section title="Trust & evidence">
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3">

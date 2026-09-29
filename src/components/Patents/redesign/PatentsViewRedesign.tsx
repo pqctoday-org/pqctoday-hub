@@ -68,6 +68,7 @@ const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
 // extraction E-4, IMPLEMENTATION-PLAN.md §5.4) so the mobile Patents screen
 // reads/writes the same scope state this page does.
 const COLUMNS_PARAM = 'columns'
+const SEARCH_QUERY_PARAM = 'sq'
 const PRESET_PARAM = 'preset'
 const FILTER_PARAMS = [
   'search',
@@ -157,7 +158,9 @@ export function PatentsViewRedesign() {
     () => readColumnsParam(params)?.columns ?? readSavedColumns().columns
   )
   const [searchResults, setSearchResults] = useState<PatentItem[]>([])
-  const [drawerFromSearch, setDrawerFromSearch] = useState(false)
+  // Search-tab query (?sq). The drawer's prev/next list follows the active tab,
+  // so a reload of a Search-tab link steps through the same hits.
+  const searchQuery = params.get(SEARCH_QUERY_PARAM) ?? ''
 
   const handlePqcOnlyChange = useCallback(
     (value: boolean) => {
@@ -278,7 +281,6 @@ export function PatentsViewRedesign() {
   // Explore row select → open drawer from the Explore list.
   const handleSelect = useCallback(
     (id: string | null) => {
-      setDrawerFromSearch(false)
       const next = new URLSearchParams(params)
       if (id) next.set('patent', id)
       else next.delete('patent')
@@ -290,7 +292,30 @@ export function PatentsViewRedesign() {
   // Search result select → open drawer from the Search list (stay on Search tab).
   const handleSearchSelect = useCallback(
     (id: string) => {
-      setDrawerFromSearch(true)
+      const next = new URLSearchParams(params)
+      next.set('tab', 'search')
+      next.set('patent', id)
+      setParams(next)
+    },
+    [params, setParams]
+  )
+
+  // Settled Search-tab query → ?sq (replace); an empty query clears it.
+  const handleSearchQueryChange = useCallback(
+    (q: string) => {
+      const value = q.trim()
+      if ((params.get(SEARCH_QUERY_PARAM) ?? '') === value) return
+      const next = new URLSearchParams(params)
+      if (value) next.set(SEARCH_QUERY_PARAM, value)
+      else next.delete(SEARCH_QUERY_PARAM)
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+
+  // Prior-art citation → another patent: push, so Back returns to the citing one.
+  const handleOpenCitation = useCallback(
+    (id: string) => {
       const next = new URLSearchParams(params)
       next.set('patent', id)
       setParams(next)
@@ -442,7 +467,7 @@ export function PatentsViewRedesign() {
   // Resolved against the full corpus (either ID form), not the scoped list —
   // an out-of-scope link is widened into scope by the effect above.
   const drawerPatent = useMemo(() => findPatentByNumber(selectedPatent), [selectedPatent])
-  const drawerList = drawerFromSearch ? searchResults : exploreResults
+  const drawerList = activeTab === 'search' ? searchResults : exploreResults
   const fromDashboard = params.get('from') === 'dashboard'
 
   const dataSource = patentsMetadata
@@ -583,6 +608,8 @@ export function PatentsViewRedesign() {
               patents={displayPatents}
               onSelectPatent={handleSearchSelect}
               onResults={setSearchResults}
+              urlQuery={searchQuery}
+              onQueryChange={handleSearchQueryChange}
             />
           </div>
         </TabsContent>
@@ -594,6 +621,7 @@ export function PatentsViewRedesign() {
         inCorpusIds={inCorpusIds}
         onClose={closeDrawer}
         onNavigate={handleDrawerNavigate}
+        onOpenCitation={handleOpenCitation}
       />
     </div>
   )

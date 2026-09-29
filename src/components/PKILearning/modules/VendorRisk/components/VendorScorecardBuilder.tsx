@@ -817,17 +817,11 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
           <p className="text-xs text-muted-foreground mt-1">
             Document which observability tooling this vendor relationship relies on. Educational —
             these notes export with the scorecard. Browse{' '}
-            <a
-              href="/migrate?cat=Cryptographic%20Discovery%20Platforms"
-              className="text-primary hover:underline"
-            >
+            <a href="/migrate?domain=discovery" className="text-primary hover:underline">
               Cryptographic Discovery Platforms
             </a>{' '}
             and{' '}
-            <a
-              href="/migrate?cat=SASE%20%26%20Zero%20Trust"
-              className="text-primary hover:underline"
-            >
+            <a href="/migrate?domain=network" className="text-primary hover:underline">
               SASE &amp; Zero Trust
             </a>{' '}
             for examples.

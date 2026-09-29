@@ -31,15 +31,25 @@ export function chunkToRoute(chunk: SearchChunk): string {
       return ref ? `/library?ref=${encodeURIComponent(ref)}` : '/library'
     }
 
-    case 'compliance':
+    case 'compliance': {
+      // Framework chunks carry the compliance row id → open its drawer.
+      const framework = (metadata?.id as string | undefined) ?? ''
+      return framework ? `/compliance?framework=${encodeURIComponent(framework)}` : '/compliance'
+    }
+
     case 'certifications': {
       const cert = (metadata?.certId as string | undefined) ?? ''
       return cert ? `/compliance?cert=${encodeURIComponent(cert)}` : '/compliance'
     }
 
     case 'migrate': {
-      const sw = (metadata?.softwareName as string | undefined) ?? ''
-      return sw ? `/migrate?q=${encodeURIComponent(sw)}&from_search=1` : '/migrate'
+      // `?product=` opens and expands the exact product (product_id, or the
+      // exact name the page also accepts) — never the legacy `?q=` filter.
+      const product =
+        (metadata?.productId as string | undefined) ||
+        (metadata?.softwareName as string | undefined) ||
+        chunk.title
+      return product ? `/migrate?product=${encodeURIComponent(product)}` : '/migrate'
     }
 
     case 'algorithms': {
@@ -55,8 +65,10 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'threats':
       return '/threats'
 
-    case 'leaders':
-      return '/leaders'
+    case 'leaders': {
+      const leader = (metadata?.leaderId as string | undefined) || chunk.title
+      return leader ? `/leaders?leader=${encodeURIComponent(leader)}` : '/leaders'
+    }
 
     case 'modules':
     case 'module-content':
@@ -116,7 +128,7 @@ export function chunkToRoute(chunk: SearchChunk): string {
       if (collection === 'library' && refId) return `/library?ref=${encodeURIComponent(refId)}`
       if (collection === 'threats' && refId) return `/threats?id=${encodeURIComponent(refId)}`
       if (collection === 'timeline') return '/timeline'
-      if (collection === 'catalog' && refId) return `/migrate?q=${encodeURIComponent(refId)}`
+      if (collection === 'catalog' && refId) return `/migrate?product=${encodeURIComponent(refId)}`
       return '/library'
     }
 
@@ -128,8 +140,14 @@ export function chunkToRoute(chunk: SearchChunk): string {
     }
 
     case 'patents': {
-      const patent = (metadata?.patentNum as string | undefined) ?? ''
-      return patent ? `/patents?patent=${encodeURIComponent(patent)}` : '/patents'
+      // The corpus key is `patentNumber` (bare digits); the drawer keys on the
+      // US-prefixed form. `patentNum` is the pre-2026-09 key, kept as a fallback.
+      const raw =
+        (metadata?.patentNumber as string | undefined) ??
+        (metadata?.patentNum as string | undefined) ??
+        ''
+      const bare = raw.trim().replace(/^US\s*/i, '')
+      return bare ? `/patents?patent=US${encodeURIComponent(bare)}` : '/patents'
     }
 
     case 'personas':
@@ -141,16 +159,20 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'trusted-sources':
       return '/compliance'
 
-    case 'vendors': {
-      const vendor = (metadata?.vendorName as string | undefined) ?? chunk.title
-      return `/migrate?vendor=${encodeURIComponent(vendor)}`
+    case 'vendors':
+    case 'vendor-roadmap': {
+      // Vendor-roadmaps tab, opened on this vendor (VND id, name accepted).
+      const vendor =
+        (metadata?.vendorId as string | undefined) ||
+        (metadata?.vendorName as string | undefined) ||
+        ''
+      return vendor
+        ? `/migrate?tab=roadmaps&vendor=${encodeURIComponent(vendor)}`
+        : '/migrate?tab=roadmaps'
     }
 
     case 'nice':
       return '/learn'
-
-    case 'protocol-matrix':
-      return '/algorithms?tab=protocol'
 
     case 'concept-registry':
       return '/library'
@@ -164,9 +186,6 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'implementation-attacks':
     case 'standard-algo-xref':
       return '/algorithms'
-
-    case 'vendor-roadmap':
-      return '/migrate'
 
     // WS6a — registry-derived tool entries. These always carry an explicit
     // `deepLink`, so the fallthrough above normally handles them; these cases

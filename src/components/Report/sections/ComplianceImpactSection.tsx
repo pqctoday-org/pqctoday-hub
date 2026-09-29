@@ -50,7 +50,19 @@ export const ComplianceImpactSection = ({
           )}
         >
           <div className="flex items-center justify-between mb-1">
-            <span className="font-semibold text-foreground">{c.framework}</span>
+            {(() => {
+              const fw = complianceFrameworks.find((f) => f.label === c.framework)
+              return fw ? (
+                <Link
+                  to={`/compliance?framework=${encodeURIComponent(fw.id)}`}
+                  className="font-semibold text-foreground hover:text-primary hover:underline"
+                >
+                  {c.framework}
+                </Link>
+              ) : (
+                <span className="font-semibold text-foreground">{c.framework}</span>
+              )
+            })()}
             <span
               className={clsx(
                 'text-xs font-bold px-2 py-0.5 rounded-full',
@@ -81,7 +93,7 @@ export const ComplianceImpactSection = ({
               <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
                 {fullFw.libraryRefs.map((ref) => (
                   <Link
-                    to={`/library?q=${encodeURIComponent(ref)}`}
+                    to={`/library?ref=${encodeURIComponent(ref)}`}
                     key={ref}
                     className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
                     title={`View ${ref} in Library`}
@@ -92,7 +104,8 @@ export const ComplianceImpactSection = ({
                 ))}
                 {fullFw.timelineRefs.map((ref) => (
                   <Link
-                    to="/timeline"
+                    // timeline_refs are "Country:Org" — open that country's timeline.
+                    to={`/timeline?country=${encodeURIComponent(ref.split(':')[0].trim())}`}
                     key={ref}
                     className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
                     title={`${ref} in Timeline`}

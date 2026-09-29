@@ -706,7 +706,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
         </div>
       </section>
 
-      <VendorCoverageNotice migrateLayer="Security Stack" />
+      <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" />
 
       {/* CTA */}
       <div className="text-center">

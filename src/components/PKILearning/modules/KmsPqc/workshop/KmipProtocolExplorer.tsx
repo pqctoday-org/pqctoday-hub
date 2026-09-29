@@ -64,7 +64,7 @@ const OperationSimulator: React.FC = () => {
         <Globe size={18} className="text-primary" />
         <h3 className="text-lg font-bold text-foreground">KMIP Operation Simulator</h3>
       </div>
-      <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" className="mb-2" />
       <p className="text-sm text-muted-foreground">
         Compare the same key operation expressed as KMIP v3.0 XML vs. provider-specific API calls.
         KMIP provides a single vendor-neutral interface — each provider translates it into their

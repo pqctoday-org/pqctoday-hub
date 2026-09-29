@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { AnimatePresence } from 'framer-motion'
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Flag, Info, Sparkles } from 'lucide-react'
 import clsx from 'clsx'
 import type { GanttCountryData, Phase } from '../../types/timeline'
-import { phaseColors, timelineEventPageUrl } from '../../data/timelineData'
+import { phaseColors, timelineEventPageUrl, readDocViewParam } from '../../data/timelineData'
 import {
   timelineEnrichments,
   hasSubstantiveEnrichment,
@@ -28,6 +29,15 @@ import { periodLabel } from '@/utils/timelinePeriod'
 interface DocumentTableProps {
   data: GanttCountryData[]
   title?: string
+  /**
+   * Controlled detail popover, for a parent that syncs `?event=` (the Gantt
+   * chart). When `onSelectRow` is given the table holds no popover state of
+   * its own: opening a row calls it with the row, closing calls it with null.
+   */
+  selectedRow?: TimelineDocumentRow | null
+  onSelectRow?: (row: TimelineDocumentRow | null) => void
+  /** Read/write the cards↔table toggle as `?docview=` (off inside the sim embed). */
+  syncViewToUrl?: boolean
 }
 
 type SortKey = keyof Pick<TimelineDocumentRow, 'phase' | 'title' | 'type' | 'org' | 'startYear'>
@@ -41,9 +51,35 @@ const SORT_HEADERS: { key: SortKey; label: string }[] = [
   { key: 'startYear', label: 'Period' },
 ]
 
-export const DocumentTable = ({ data, title }: DocumentTableProps) => {
-  const [viewMode, setViewMode] = useState<ViewMode>('cards')
-  const [selectedRow, setSelectedRow] = useState<TimelineDocumentRow | null>(null)
+export const DocumentTable = ({
+  data,
+  title,
+  selectedRow: controlledRow,
+  onSelectRow,
+  syncViewToUrl = false,
+}: DocumentTableProps) => {
+  // ?docview=cards|table (replace) — unknown values fall back to cards.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [localViewMode, setLocalViewMode] = useState<ViewMode>('cards')
+  const viewMode: ViewMode = syncViewToUrl
+    ? readDocViewParam(searchParams.get('docview'))
+    : localViewMode
+  const setViewMode = (mode: ViewMode) => {
+    if (!syncViewToUrl) return setLocalViewMode(mode)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        // 'cards' is the default and is not written.
+        if (mode === 'table') next.set('docview', 'table')
+        else next.delete('docview')
+        return next
+      },
+      { replace: true }
+    )
+  }
+  const [localRow, setLocalRow] = useState<TimelineDocumentRow | null>(null)
+  const selectedRow = onSelectRow ? (controlledRow ?? null) : localRow
+  const setSelectedRow = onSelectRow ?? setLocalRow
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'startYear',
     direction: 'asc',
@@ -129,7 +165,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
       {viewMode === 'cards' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           <AnimatePresence mode="popLayout">
-            {rows.map((row, i) => (
+            {sortedRows.map((row, i) => (
               <TimelineDocumentCard
                 key={`${row.org}-${row.phase}-${row.title}-${i}`}
                 row={row}

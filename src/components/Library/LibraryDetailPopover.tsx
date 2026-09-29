@@ -19,7 +19,7 @@ import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from './FrameworkCrosswalkPanel'
 import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
-import { leadersData } from '../../data/leadersData'
+import { relatedLeadersFor } from './relatedLeaders'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -59,18 +59,6 @@ const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
   Reference:
     'A tool, dataset, registry or documentation site rather than a document. Cite it for what it contains today, not as a fixed text.',
 }
-
-/** Strip parenthetical annotations and honorific prefixes, then lowercase. */
-function normalizeLeaderName(raw: string): string {
-  return raw
-    .replace(/\s*\(.*?\)/g, '')
-    .replace(/^(Dr\.|Prof\.|Dr |Prof )\s*/i, '')
-    .trim()
-    .toLowerCase()
-}
-
-/** Built once at module load: normalized name → Leader. */
-const leaderByNormalizedName = new Map(leadersData.map((l) => [normalizeLeaderName(l.name), l]))
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -146,28 +134,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
   if (!isOpen || !item) return null
 
-  // Pass 1: reverse keyResourceRefs lookup (authoritative). `keyResourceUrl`
-  // contains URLs, not library reference IDs — use the dedicated refs field.
-  const seen = new Set<string>()
-  const relatedLeaders = []
-  for (const l of leadersData) {
-    if (l.keyResourceRefs?.includes(item.referenceId)) {
-      relatedLeaders.push(l)
-      seen.add(l.id)
-    }
-  }
-
-  // Pass 2: name-match from enrichment leadersContributions (additive, deduplicated)
-  const enrichment = libraryEnrichments[item.referenceId]
-  if (enrichment) {
-    for (const contrib of enrichment.leadersContributions) {
-      const leader = leaderByNormalizedName.get(normalizeLeaderName(contrib))
-      if (leader && !seen.has(leader.id)) {
-        relatedLeaders.push(leader)
-        seen.add(leader.id)
-      }
-    }
-  }
+  const relatedLeaders = relatedLeadersFor(item)
 
   const content = (
     <>

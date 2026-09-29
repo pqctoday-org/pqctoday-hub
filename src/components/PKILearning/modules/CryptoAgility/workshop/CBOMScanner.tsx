@@ -6,6 +6,7 @@ import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbom
 import { LAYERS } from '@/data/infrastructureLayers'
 import type { InfrastructureLayerType } from '@/data/infrastructureLayers'
 import { softwareData } from '@/data/migrateData'
+import { migrateLayerHref } from '@/utils/migrateLinks'
 import { Button } from '@/components/ui/button'
 
 type LayerFilter = Exclude<InfrastructureLayerType, 'All'> | 'all'
@@ -70,7 +71,7 @@ const EntryCard: React.FC<{ entry: CBOMEntry; pqcToolCount?: number }> = ({
         </div>
         {(pqcToolCount ?? 0) > 0 && (
           <Link
-            to={`/migrate?layer=${encodeURIComponent(entry.infrastructureLayer)}`}
+            to={migrateLayerHref(entry.infrastructureLayer)}
             className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
           >
             <ArrowRight size={10} />
@@ -320,7 +321,7 @@ export const CBOMScanner: React.FC = () => {
                   </span>
                   {(pqcCountsByLayer.get(layer.id) ?? 0) > 0 && (
                     <Link
-                      to={`/migrate?layer=${encodeURIComponent(layer.id)}`}
+                      to={migrateLayerHref(layer.id)}
                       className="ml-2 text-[10px] font-medium text-primary hover:underline flex items-center gap-0.5 shrink-0"
                     >
                       {pqcCountsByLayer.get(layer.id)} tools

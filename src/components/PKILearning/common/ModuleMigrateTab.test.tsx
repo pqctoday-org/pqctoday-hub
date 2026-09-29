@@ -133,11 +133,14 @@ describe('ModuleMigrateTab', () => {
     expect(screen.queryByRole('link', { name: /FIPSProduct/ })).not.toBeInTheDocument()
   })
 
-  it('shows View in Migrate link with correct layer param', () => {
+  it('shows View in Migrate links that open the product by id', () => {
     renderTab('tls-basics')
     const migrateLinks = screen.getAllByRole('link', { name: /View in Migrate/ })
     expect(migrateLinks.length).toBeGreaterThanOrEqual(3)
-    expect(migrateLinks[0]).toHaveAttribute('href', expect.stringContaining('/migrate?layer='))
+    expect(migrateLinks[0]).toHaveAttribute(
+      'href',
+      expect.stringMatching(/^\/migrate\?product=[^&]+$/)
+    )
   })
 
   it('shows multi-layer products in all matching layers', () => {

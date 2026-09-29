@@ -224,7 +224,7 @@ export const Pkcs11Config: React.FC<Pkcs11ConfigProps> = ({
         </p>
         <p className="pl-6 mt-2">
           <Link
-            to="/library?q=PKCS%2311"
+            to="/library?ref=PKCS11-V32-OS-OASIS"
             className="text-[10px] text-primary hover:underline font-medium"
             target="_blank"
             rel="noopener noreferrer"

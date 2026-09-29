@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { CalendarClock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
 import type { GanttCountryData, TimelineEvent } from '@/types/timeline'
+import { readGanttViewParams, writeGanttViewParams } from '@/data/timelineData'
 
 // "Binding" is single-sourced from the curated timeline CSV `mandate_type` label —
 // the SAME field GanttDetailPopover.tsx reads — instead of the phase category. The
@@ -98,6 +99,14 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
   const scope =
     regionFilter === 'All' || regionFilter === 'global' ? 'globally' : `in ${regionLabel}`
   const yearsOut = next ? next.year - CURRENT_YEAR : null
+  // Same-route link that flips the Gantt below to its Deadlines view
+  // (canonical `?deadlines=1`), keeping the reader's region/country/sort.
+  const { search } = useLocation()
+  const currentParams = new URLSearchParams(search)
+  const deadlinesSearch = writeGanttViewParams(currentParams, {
+    ...readGanttViewParams(currentParams),
+    phase: 'Deadline',
+  }).toString()
 
   return (
     <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
@@ -144,6 +153,11 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
             <Link to="/compliance">
               <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
                 Binding compliance deadlines →
+              </Button>
+            </Link>
+            <Link to={`/timeline?${deadlinesSearch}`}>
+              <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                Show all deadlines
               </Button>
             </Link>
           </div>

@@ -519,7 +519,7 @@ export const SourceCombiningDemo: React.FC = () => {
               <ExternalLink size={12} />
             </a>{' '}
             PKCS#11 (pqctoday fork of{' '}
-            <Link to="/migrate?highlight=SoftHSM2" className="text-primary underline">
+            <Link to="/migrate?product=softhsm2" className="text-primary underline">
               SoftHSM2
             </Link>
             ).

@@ -876,7 +876,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </div>
           </Link>
           <Link
-            to="/threats?industry=Financial%20Services%20%2F%20Banking"
+            to="/threats?industry=Finance%20%26%20Banking"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Landmark size={18} className="text-primary shrink-0" aria-hidden="true" />

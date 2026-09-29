@@ -65,7 +65,7 @@ export const VendorComparison: React.FC = () => {
           Click a row to expand vendor details.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hsm" className="mb-2" />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -119,7 +119,7 @@ function OrgDetail({ org }: { org: OrgEntry }) {
             {org.libraryRefs.map((ref) => (
               <Link
                 key={ref}
-                to={`/library?search=${encodeURIComponent(ref)}`}
+                to={`/library?ref=${encodeURIComponent(ref)}`}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
               >
                 <BookOpen size={11} />

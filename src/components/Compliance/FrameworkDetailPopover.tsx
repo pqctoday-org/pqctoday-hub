@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { Link } from 'react-router'
 import { useState } from 'react'
 import {
   ShieldCheck,
@@ -14,6 +15,7 @@ import {
   ListChecks,
   Tag,
   Sparkles,
+  ArrowUpRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -281,13 +283,13 @@ export const FrameworkDetailPopover = ({
                   </h4>
                   <ul className="space-y-1">
                     {linkedLibrary.map((doc) => (
-                      <li key={doc.referenceId}>
+                      <li key={doc.referenceId} className="flex items-start gap-1">
                         <Button
                           type="button"
                           variant="ghost"
                           onClick={() => onSelectLibrary?.(doc)}
                           disabled={!onSelectLibrary}
-                          className="w-full h-auto text-left flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors disabled:opacity-60 disabled:cursor-default"
+                          className="min-w-0 flex-1 h-auto text-left flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors disabled:opacity-60 disabled:cursor-default"
                         >
                           <BookOpen
                             size={12}
@@ -298,6 +300,13 @@ export const FrameworkDetailPopover = ({
                             {doc.documentTitle}
                           </span>
                         </Button>
+                        {/* The pop-up above is local; this is the shareable
+                            page link (deep-link PR 2). */}
+                        <OpenInPageLink
+                          to={`/library?ref=${encodeURIComponent(doc.referenceId)}`}
+                          label={`Open ${doc.documentTitle} in Library`}
+                          page="Library"
+                        />
                       </li>
                     ))}
                   </ul>
@@ -312,13 +321,13 @@ export const FrameworkDetailPopover = ({
                   </h4>
                   <ul className="space-y-1">
                     {linkedTimeline.map((ev, i) => (
-                      <li key={`${ev.title}-${i}`}>
+                      <li key={`${ev.title}-${i}`} className="flex items-start gap-1">
                         <Button
                           type="button"
                           variant="ghost"
                           onClick={() => onSelectTimeline?.(ev)}
                           disabled={!onSelectTimeline}
-                          className="w-full h-auto text-left flex items-baseline gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors disabled:opacity-60 disabled:cursor-default"
+                          className="min-w-0 flex-1 h-auto text-left flex items-baseline gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors disabled:opacity-60 disabled:cursor-default"
                         >
                           <span className="tabular-nums text-foreground/80 text-xs">
                             {ev.startYear}
@@ -327,6 +336,13 @@ export const FrameworkDetailPopover = ({
                             {ev.title}
                           </span>
                         </Button>
+                        {ev.eventId && (
+                          <OpenInPageLink
+                            to={`/timeline?event=${encodeURIComponent(ev.eventId)}`}
+                            label={`Open ${ev.title} in Timeline`}
+                            page="Timeline"
+                          />
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -416,4 +432,19 @@ export const FrameworkDetailPopover = ({
   )
 
   return createPortal(content, document.body)
+}
+
+/** "Open in <page>" — the cross-referenced item on its own page, by its param. */
+function OpenInPageLink({ to, label, page }: { to: string; label: string; page: string }) {
+  return (
+    <Link
+      to={to}
+      aria-label={label}
+      title={`Open in ${page}`}
+      className="mt-0.5 inline-flex shrink-0 items-center gap-0.5 rounded px-1.5 py-1 text-[11px] text-primary hover:bg-muted/40 hover:underline"
+    >
+      {page}
+      <ArrowUpRight size={11} aria-hidden="true" />
+    </Link>
+  )
 }

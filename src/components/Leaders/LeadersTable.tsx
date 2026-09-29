@@ -12,15 +12,21 @@ import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { LeaderDetailSection } from './LeaderDetailSection'
-
-type SortKey = 'name' | 'title' | 'organization' | 'country' | 'type'
-type SortDirection = 'asc' | 'desc'
+import {
+  DEFAULT_LEADERS_TABLE_SORT,
+  type LeadersTableSort,
+  type LeadersTableSortDir as SortDirection,
+  type LeadersTableSortKey as SortKey,
+} from './leadersTableSort'
 
 interface LeadersTableProps {
   data: Leader[]
   expandedLeaderId: string | null
   onToggleDetails: (leader: Leader) => void
   onCloseDetails: () => void
+  /** Controlled sort (URL-backed by LeadersGrid via ?sort / ?tsort). Omit for local state. */
+  sort?: LeadersTableSort
+  onSortChange?: (sort: LeadersTableSort) => void
 }
 
 export const LeadersTable = ({
@@ -28,17 +34,16 @@ export const LeadersTable = ({
   expandedLeaderId,
   onToggleDetails,
   onCloseDetails,
+  sort,
+  onSortChange,
 }: LeadersTableProps) => {
-  const [sortKey, setSortKey] = useState<SortKey>('name')
-  const [sortDir, setSortDir] = useState<SortDirection>('asc')
+  const [localSort, setLocalSort] = useState<LeadersTableSort>(DEFAULT_LEADERS_TABLE_SORT)
+  const { key: sortKey, dir: sortDir } = sort ?? localSort
 
   const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortKey(key)
-      setSortDir('asc')
-    }
+    const dir: SortDirection = sortKey === key && sortDir === 'asc' ? 'desc' : 'asc'
+    if (onSortChange) onSortChange({ key, dir })
+    else setLocalSort({ key, dir })
   }
 
   const sortedData = useMemo(() => {
@@ -241,7 +246,7 @@ const LeaderRow = ({
                 `**Country:** ${leader.country}`,
                 `**Sector:** ${leader.type}`,
               ].join('\n'),
-              pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+              pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
             })}
             resourceLabel={leader.name}
             resourceType="Leader"
@@ -259,7 +264,7 @@ const LeaderRow = ({
                 `**Country:** ${leader.country}`,
                 `**Sector:** ${leader.type}`,
               ].join('\n'),
-              pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+              pageUrl: `/leaders?leader=${encodeURIComponent(leader.leaderId)}`,
             })}
             resourceLabel={leader.name}
             resourceType="Leader"

@@ -716,10 +716,14 @@ function FrameworkCard({
           )}
           {fw.libraryRefs.length > 0 && (
             <Link
-              to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
+              to={`/library?ref=${encodeURIComponent(fw.libraryRefs[0])}`}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
-              title={`Library: ${fw.libraryRefs.join(', ')}`}
+              title={
+                fw.libraryRefs.length > 1
+                  ? `Open ${fw.libraryRefs[0]} in Library (all ${fw.libraryRefs.length}: ${fw.libraryRefs.join(', ')})`
+                  : `Open ${fw.libraryRefs[0]} in Library`
+              }
             >
               <BookOpen size={8} />
               {fw.libraryRefs.length} ref{fw.libraryRefs.length > 1 ? 's' : ''}
@@ -1030,9 +1034,14 @@ function FrameworkTableRow({
         <div className="flex gap-1.5">
           {fw.libraryRefs.length > 0 && (
             <Link
-              to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
+              to={`/library?ref=${encodeURIComponent(fw.libraryRefs[0])}`}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
+              title={
+                fw.libraryRefs.length > 1
+                  ? `Open ${fw.libraryRefs[0]} in Library (all ${fw.libraryRefs.length}: ${fw.libraryRefs.join(', ')})`
+                  : `Open ${fw.libraryRefs[0]} in Library`
+              }
             >
               <BookOpen size={8} />
               {fw.libraryRefs.length}

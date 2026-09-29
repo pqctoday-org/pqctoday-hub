@@ -23,6 +23,7 @@ import { CollapsibleSection } from './reportContentShared'
 import { DefaultsUsedChip } from '../DefaultsUsedChip'
 import { vendorMap } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 type VendorModel = 'heavy-vendor' | 'open-source' | 'mixed' | 'in-house'
 
@@ -137,7 +138,12 @@ export function VendorRiskSection({
                     return (
                       <tr key={item.productId} className="border-b border-border/50">
                         <td className="py-2.5 pr-3 font-medium text-foreground">
-                          {item.softwareName}
+                          <Link
+                            to={migrateProductHref(item.productId)}
+                            className="hover:text-primary hover:underline"
+                          >
+                            {item.softwareName}
+                          </Link>
                         </td>
                         <td className="py-2.5 pr-3 text-muted-foreground">
                           {vendor?.vendorDisplayName ?? '—'}

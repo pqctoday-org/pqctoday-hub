@@ -10,6 +10,7 @@ import {
   Maximize2,
   Minimize2,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
@@ -19,12 +20,18 @@ import { FlagButton } from '@/components/ui/FlagButton'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
+import { inventorLeadersFor } from './patentInventorLeaders'
+import { findAlgorithmByRef, loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
+import { standardRefHref } from '@/utils/standardRef'
 
 interface Props {
   patent: PatentItem
   inCorpusIds: Set<string>
   onClose: () => void
   onNavigate: (patentNumber: string) => void
+  /** Prior-art citation click. Hosts that keep `?patent` in the URL push here so
+   *  Back returns to the citing patent; defaults to onNavigate. */
+  onOpenCitation?: (patentNumber: string) => void
   isExpanded?: boolean
   onToggleExpand?: () => void
 }
@@ -197,6 +204,7 @@ export function PatentDetail({
   inCorpusIds,
   onClose,
   onNavigate,
+  onOpenCitation = onNavigate,
   isExpanded,
   onToggleExpand,
 }: Props) {
@@ -218,6 +226,57 @@ export function PatentDetail({
     ...highlightedAlgorithms,
     ...expandAlgorithmAliases(highlightedAlgorithms),
   ].join(',')
+
+  // A patent naming exactly one algorithm that /algorithms actually carries
+  // (e.g. "Rainbow", "SABER") opens its detail drawer via `?algo=<id>`; the
+  // family names most patents use ("Kyber", "XMSS") don't resolve to one row
+  // and keep the multi-name highlight filter. Resolution is against the loaded
+  // algorithm data, so an id is only emitted when the drawer will find it.
+  const singleAlgorithm = patent.pqcAlgorithms.length === 1 ? patent.pqcAlgorithms[0] : null
+  const [resolvedAlgo, setResolvedAlgo] = useState<{ ref: string; id: string | null } | null>(null)
+  useEffect(() => {
+    if (!singleAlgorithm) return
+    let live = true
+    loadPQCAlgorithmsData()
+      .then((data) => {
+        if (live)
+          setResolvedAlgo({
+            ref: singleAlgorithm,
+            id: findAlgorithmByRef(data, singleAlgorithm)?.id ?? null,
+          })
+      })
+      .catch(() => {
+        /* keep the highlight fallback */
+      })
+    return () => {
+      live = false
+    }
+  }, [singleAlgorithm])
+  const singleAlgoId =
+    singleAlgorithm && resolvedAlgo?.ref === singleAlgorithm ? resolvedAlgo.id : null
+  const algorithmsHref = singleAlgoId
+    ? `/algorithms?algo=${encodeURIComponent(singleAlgoId)}`
+    : `/algorithms?highlight=${encodeURIComponent(algorithmsHighlightParam)}&tab=detailed`
+
+  // Library: the first cited standard that resolves to a real library
+  // reference_id opens that document (`?ref=`); a free-text search is only the
+  // fallback when none of the citations resolve.
+  const firstStandard = patent.standardsReferenced[0]
+  const resolvedStandard = patent.standardsReferenced
+    .map((ref) => ({ ref, href: standardRefHref(ref) }))
+    .find((r) => r.href !== null)
+  const libraryHref =
+    resolvedStandard?.href ??
+    (firstStandard ? `/library?q=${encodeURIComponent(firstStandard)}` : '/library')
+  const libraryTitle = resolvedStandard
+    ? `Open ${resolvedStandard.ref} in Library`
+    : `Search for ${firstStandard} in Library`
+
+  const inventorLeaders = patent.inventors ? inventorLeadersFor(patent) : null
+  const leaderLinkClass = 'text-primary hover:underline'
+  // `?leader=` takes the stable leader_id first, the display name as fallback.
+  const leaderHref = (l: { leaderId?: string; name: string }) =>
+    `/leaders?leader=${encodeURIComponent(l.leaderId || l.name)}`
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -256,10 +315,34 @@ export function PatentDetail({
           ) : (
             <p className="mt-0.5 text-xs italic text-muted-foreground">Assignee not available</p>
           )}
-          {patent.inventors && (
+          {patent.inventors && inventorLeaders && (
             <p className="mt-0.5 text-xs text-muted-foreground truncate" title={patent.inventors}>
               <span className="text-muted-foreground">Inventor(s): </span>
-              {patent.inventors}
+              {/* Inventors who are Community leaders link to their card. */}
+              {inventorLeaders.primary ? (
+                <Link
+                  to={leaderHref(inventorLeaders.primary)}
+                  className={leaderLinkClass}
+                  title={`Open ${inventorLeaders.primary.name} in Community`}
+                >
+                  {inventorLeaders.firstInventor}
+                </Link>
+              ) : (
+                inventorLeaders.firstInventor
+              )}
+              {inventorLeaders.suffix}
+              {inventorLeaders.others.map((l) => (
+                <span key={l.id}>
+                  {' · '}
+                  <Link
+                    to={leaderHref(l)}
+                    className={leaderLinkClass}
+                    title={`Open ${l.name} in Community`}
+                  >
+                    {l.name}
+                  </Link>
+                </span>
+              ))}
             </p>
           )}
           {patent.cpcCodes && (
@@ -508,7 +591,7 @@ export function PatentDetail({
                     key={num}
                     variant="ghost"
                     size="sm"
-                    onClick={() => onNavigate(num)}
+                    onClick={() => onOpenCitation(num)}
                     className="h-auto rounded border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-xs font-mono text-primary hover:bg-primary/20 transition-colors"
                   >
                     {num}
@@ -532,7 +615,9 @@ export function PatentDetail({
           </div>
         )}
 
-        {/* Explore related — cross-links to Algorithms and Library */}
+        {/* Explore related — cross-links to Algorithms and Library. No onClose:
+            leaving the page unmounts the drawer anyway, and closing first
+            wrote a closed-drawer history entry, so Back lost the patent. */}
         {(patent.pqcAlgorithms.length > 0 || patent.standardsReferenced.length > 0) && (
           <div className="border-t border-border pt-4 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -541,8 +626,7 @@ export function PatentDetail({
             <div className="flex flex-wrap gap-2">
               {patent.pqcAlgorithms.length > 0 && (
                 <Link
-                  to={`/algorithms?highlight=${encodeURIComponent(algorithmsHighlightParam)}&tab=detailed`}
-                  onClick={onClose}
+                  to={algorithmsHref}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
                   title={`View ${patent.pqcAlgorithms.join(', ')} in Algorithms`}
                 >
@@ -553,10 +637,9 @@ export function PatentDetail({
               )}
               {patent.standardsReferenced.length > 0 && (
                 <Link
-                  to={`/library?q=${encodeURIComponent(patent.standardsReferenced[0])}`}
-                  onClick={onClose}
+                  to={libraryHref}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
-                  title={`Search for ${patent.standardsReferenced[0]} in Library`}
+                  title={libraryTitle}
                 >
                   <BookOpen size={12} aria-hidden="true" />
                   Library ↗

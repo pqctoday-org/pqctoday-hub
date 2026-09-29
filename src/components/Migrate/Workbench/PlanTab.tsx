@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FileText, AlertTriangle, RotateCcw, X, ChevronDown } from 'lucide-react'
 import { WAVES_FALLBACK } from './waves'
 import { DECISIONS, type DomainId } from '@/data/migrationAssets'
@@ -10,12 +10,19 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 import { Pill, DECISION_ICON, TONE_DOT, ConfirmButton } from './workbenchUi'
 import type { MigrationPosture } from './useMigrationPlan'
 import { downloadPlanCbom } from './cbomExport'
-import { productsForDomain } from './workbenchCatalog'
+import { productsForDomain, resolveProductRef, resolveDomainRef } from './workbenchCatalog'
 import { ProductDetail } from './ProductDetail'
+import { DeepLinkNotice } from '../../common/DeepLinkNotice'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 interface PlanTabProps {
   posture: MigrationPosture
   onGoToReplace: () => void
+  /** ?open=<productId|domainId> (deep-link PR 2): expand that planned product,
+   *  or scroll to that asset / foundation group, and ring it. */
+  openRef?: string
+  /** A planned product expanded (id → push ?open=) or collapsed (null). */
+  onOpenChange?: (ref: string | null) => void
 }
 
 /**
@@ -28,12 +35,16 @@ function PlanProductRow({
   domainId,
   productName,
   onRemove,
+  defaultOpen = false,
+  onToggle,
 }: {
   domainId: string
   productName: string
   onRemove: () => void
+  defaultOpen?: boolean
+  onToggle?: (productId: string, open: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   const cachedId = useMigrateSelectionStore((s) => s.nameToProductId[productName])
   const product = useMemo(() => {
     const byName = productsForDomain(domainId as DomainId).find(
@@ -49,13 +60,16 @@ function PlanProductRow({
     return cachedId ? softwareData.find((p) => p.productId === cachedId) : undefined
   }, [domainId, productName, cachedId])
   return (
-    <div>
+    <div data-deeplink-id={product?.productId || undefined}>
       <div className="flex items-center gap-2 py-2 pl-6 pr-3">
         {product ? (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => {
+              if (product.productId) onToggle?.(product.productId, !open)
+              setOpen((v) => !v)
+            }}
             aria-expanded={open}
             aria-label={`${open ? 'Hide' : 'Show'} details for ${productName}`}
             className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-foreground"
@@ -101,8 +115,9 @@ function PlanProductRow({
   )
 }
 
-export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
+export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanTabProps) {
   const choice = useMigrateSelectionStore((s) => s.choice)
+  const nameToProductId = useMigrateSelectionStore((s) => s.nameToProductId)
   const removeFromPlan = useMigrateSelectionStore((s) => s.removeFromPlan)
   const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
   const plan = useMigrateSelectionStore((s) => s.plan)
@@ -113,22 +128,97 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
     (choice[f.id] ?? []).map((product) => ({ id: f.id, product }))
   )
 
+  // ── ?open= (deep-link PR 2) ──
+  // A product id/name → its plan row (expanded); a domain id → its asset or
+  // foundation group. Our own writes (a row expanded by hand) are remembered
+  // so they don't re-scroll as if they were a new link.
+  const selfOpenRef = useRef<string | null>(null)
+  const [dismissedOpen, setDismissedOpen] = useState<string | null>(null)
+  // The last ?open= that came from a link (not from our own row toggles).
+  const [linkedOpen, setLinkedOpen] = useState<string | null>(openRef ?? null)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- follow a new ?open= link
+    if (openRef && selfOpenRef.current !== openRef) setLinkedOpen(openRef)
+  }, [openRef])
+  const openTarget = useMemo(() => {
+    if (!linkedOpen) return null
+    const product = resolveProductRef(linkedOpen)?.product
+    if (product) {
+      const planned = Object.values(choice).some((names) =>
+        names.some(
+          (n) =>
+            n === product.softwareName ||
+            (nameToProductId[n] && nameToProductId[n] === product.productId)
+        )
+      )
+      return {
+        kind: 'product' as const,
+        id: product.productId,
+        label: product.softwareName,
+        planned,
+      }
+    }
+    const domain = resolveDomainRef(linkedOpen)
+    if (domain) {
+      const planned =
+        posture.waves.some((w) => w.assets.some((a) => a.id === domain)) ||
+        (choice[domain] ?? []).length > 0
+      return { kind: 'domain' as const, id: domain, label: domain, planned }
+    }
+    return { kind: 'unknown' as const, id: linkedOpen, label: linkedOpen, planned: false }
+  }, [linkedOpen, choice, nameToProductId, posture.waves])
+  useScrollToDeepLinkTarget(
+    openTarget?.planned ? `open:${linkedOpen}` : null,
+    openTarget?.planned ? deepLinkSelector(openTarget.id) : null
+  )
+  const toggleRow = (productId: string, open: boolean) => {
+    selfOpenRef.current = open ? productId : null
+    if (open) onOpenChange?.(productId)
+    else if (openRef && resolveProductRef(openRef)?.product.productId === productId) {
+      onOpenChange?.(null)
+    }
+  }
+  const rowKeySuffix = (productName: string, domainId: string) => {
+    if (openTarget?.kind !== 'product') return ''
+    const byName = productsForDomain(domainId as DomainId).find(
+      (p) => p.softwareName === productName
+    )
+    const id = byName?.productId ?? nameToProductId[productName]
+    return id === openTarget.id ? `:open:${linkedOpen}` : ''
+  }
+  const openNotice =
+    openTarget && !openTarget.planned && dismissedOpen !== linkedOpen ? (
+      <DeepLinkNotice
+        kind="not-found"
+        message={
+          openTarget.kind === 'unknown'
+            ? `No product or category matching “${openTarget.label}”.`
+            : `${openTarget.label} isn’t in your plan yet — add it from the Replace tab.`
+        }
+        onDismiss={() => setDismissedOpen(linkedOpen)}
+      />
+    ) : null
+
   if (posture.plannedAssets.length === 0 && foundationItems.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-        <p className="text-sm font-semibold text-foreground">Nothing in your plan yet</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Pick the cryptography you run to build a sequenced migration plan.
-        </p>
-        <Button variant="outline" size="sm" className="mt-3" onClick={onGoToReplace}>
-          ← Add what you run
-        </Button>
-      </div>
+      <>
+        {openNotice}
+        <div className="rounded-2xl border border-dashed border-border p-8 text-center">
+          <p className="text-sm font-semibold text-foreground">Nothing in your plan yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Pick the cryptography you run to build a sequenced migration plan.
+          </p>
+          <Button variant="outline" size="sm" className="mt-3" onClick={onGoToReplace}>
+            ← Add what you run
+          </Button>
+        </div>
+      </>
     )
   }
 
   return (
     <div className="flex flex-col gap-4">
+      {openNotice}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
           Your assets, sequenced by exposure — <strong>external-facing traffic first</strong>. Open
@@ -199,7 +289,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                 const decision = DECISIONS[asset.decision]
                 const chosen = choice[asset.id] ?? []
                 return (
-                  <div key={asset.id}>
+                  <div key={asset.id} data-deeplink-id={asset.id}>
                     {/* Asset header — decision + deadline + remove-whole-asset */}
                     <div className="flex flex-wrap items-center gap-2.5 px-3 py-2.5">
                       <span
@@ -251,10 +341,12 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                       <div className="flex flex-col divide-y divide-border/50 border-t border-border/50">
                         {chosen.map((product) => (
                           <PlanProductRow
-                            key={`${asset.id}::${product}`}
+                            key={`${asset.id}::${product}${rowKeySuffix(product, asset.id)}`}
                             domainId={asset.id}
                             productName={product}
                             onRemove={() => chooseProduct(asset.id, product)}
+                            defaultOpen={!!rowKeySuffix(product, asset.id)}
+                            onToggle={toggleRow}
                           />
                         ))}
                       </div>
@@ -294,7 +386,7 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
               const products = choice[f.id] ?? []
               if (products.length === 0) return null
               return (
-                <div key={f.id}>
+                <div key={f.id} data-deeplink-id={f.id}>
                   <div className="flex items-center justify-between bg-muted/20 px-3 py-1.5">
                     <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       {f.label}
@@ -306,10 +398,12 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
                   <div className="flex flex-col divide-y divide-border/50">
                     {products.map((product) => (
                       <PlanProductRow
-                        key={`${f.id}::${product}`}
+                        key={`${f.id}::${product}${rowKeySuffix(product, f.id)}`}
                         domainId={f.id}
                         productName={product}
                         onRemove={() => chooseProduct(f.id, product)}
+                        defaultOpen={!!rowKeySuffix(product, f.id)}
+                        onToggle={toggleRow}
                       />
                     ))}
                   </div>

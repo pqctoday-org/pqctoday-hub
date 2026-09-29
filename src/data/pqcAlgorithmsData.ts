@@ -5,6 +5,9 @@ import type { AlgorithmStatusTier } from './algorithmStatusTier'
 export const RESEARCH_NEEDED = 'Research needed'
 
 export interface AlgorithmDetail {
+  /** Stable kebab-case slug of `name` (CSV `algorithm_id`, e.g. 'ml-kem-768') —
+   *  the key `?algo=` deep links use, so a link survives a display-name tweak. */
+  id: string
   family: string
   name: string
   cryptoFamily: string
@@ -79,6 +82,37 @@ interface RawAlgorithmRow {
   status_url: string
   status_url_quality: string
   confidence_score?: string
+  algorithm_id?: string
+}
+
+/**
+ * Deterministic `algorithm_id` slug for an algorithm name — the scheme the
+ * CSV's `algorithm_id` column was generated with (09292026): lowercase, `+`
+ * spelled out as `-plus-` (so NTRU+-768 doesn't collapse onto a plain NTRU
+ * id), every other run of non-alphanumerics → one `-`, trimmed.
+ * 'ML-KEM-768' → 'ml-kem-768', 'LMS-SHA256 (H20/W8)' → 'lms-sha256-h20-w8'.
+ * Used as the loader's fallback for snapshots predating the column and by
+ * screens that only hold a name (the mobile registry).
+ */
+export function algorithmIdFromName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\+/g, '-plus-')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+/**
+ * Resolve a `?algo=` value: the stable `algorithm_id` first, then an exact
+ * case-insensitive algorithm name (links minted before the id column).
+ */
+export function findAlgorithmByRef<T extends { id: string; name: string }>(
+  algorithms: T[],
+  ref: string | null | undefined
+): T | undefined {
+  const q = ref?.trim().toLowerCase()
+  if (!q) return undefined
+  return algorithms.find((a) => a.id === q) ?? algorithms.find((a) => a.name.toLowerCase() === q)
 }
 
 /**
@@ -341,6 +375,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         isResearchNeeded(row.shared_secret_bytes)
 
       return {
+        id: row.algorithm_id?.trim() || algorithmIdFromName(row.algorithm),
         family: row.algorithm_family,
         name: row.algorithm,
         // P2.1 (2026-05-22): bare 'Hybrid' was renamed to 'Composite' to

@@ -13,6 +13,7 @@ import type {
 
 import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
+import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 
 /**
  * Names the deadline the exposure window is measured against WITHOUT conflating a
@@ -56,9 +57,21 @@ export function buildAlgorithmHighlightUrl(algorithms: string[]): string {
   return `/algorithms?highlight=${encodeURIComponent(algorithms.join(','))}`
 }
 
+/**
+ * `/threats?industry=…` for an assessment industry. Assessment industries
+ * ("Healthcare", "Technology", …) are not Threats-page labels, so they are
+ * mapped through INDUSTRY_TO_THREATS_MAP (the same map the Threats dashboard
+ * uses for the persona store) and joined comma-separated. A value that is
+ * already a Threats label passes through; one that maps to nothing ("Other")
+ * links to the unfiltered page rather than an empty filter.
+ */
 export function buildThreatsUrl(industry?: string): string {
   if (!industry) return '/threats'
-  return `/threats?industry=${encodeURIComponent(industry)}`
+  const labels = Object.prototype.hasOwnProperty.call(INDUSTRY_TO_THREATS_MAP, industry)
+    ? (INDUSTRY_TO_THREATS_MAP[industry] ?? []) // eslint-disable-line security/detect-object-injection
+    : [industry]
+  if (labels.length === 0) return '/threats'
+  return `/threats?industry=${encodeURIComponent(labels.join(','))}`
 }
 
 export function generateCategoryDrivers(
@@ -167,7 +180,7 @@ export function generateExtendedActions(
       action:
         'Conduct a data classification exercise to identify the sensitivity levels of data protected by cryptography — this determines Harvest-Now-Decrypt-Later exposure and appropriate encryption requirements.',
       category: 'immediate',
-      relatedModule: '/threats',
+      relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
     })
   }
@@ -178,7 +191,7 @@ export function generateExtendedActions(
       action:
         'Establish a data classification and retention policy to quantify HNDL exposure for long-lived sensitive data.',
       category: 'immediate',
-      relatedModule: '/threats',
+      relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
       drivers: ['dataRetention:unknown'],
     })

@@ -59,7 +59,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
           products matching your infrastructure. Click any vendor for detailed migration guidance.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="codesign" className="mb-2" />
 
       {/* Summary stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

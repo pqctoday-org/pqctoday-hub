@@ -547,7 +547,7 @@
     "term": "CSWP 39",
     "acronym": "NIST Cybersecurity White Paper 39",
     "definition": "NIST CSWP 39 — Considerations for Achieving Crypto Agility — Strategies and Practices (final, December 2025). Defines a 5-pillar crypto-agility model (inventory, governance, lifecycle, observability, assurance) across a 4-tier maturity ladder (Partial → Risk-Informed → Repeatable → Adaptive).",
-    "relatedModule": "/library?ref=NIST-CSWP-39",
+    "relatedModule": "/library?ref=NIST CSWP 39",
     "complexity": "advanced",
     "category": "standard"
   },
@@ -610,7 +610,7 @@
   {
     "term": "NIST IR 8528",
     "definition": "NIST Internal Report (October 2024) that down-selected the PQC signature on-ramp to 14 second-round candidates across four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice. Superseded by NIST IR 8610 (May 2026), which closed the second round and advanced nine candidates to the third round.",
-    "relatedModule": "/library?ref=NIST IR 8528",
+    "relatedModule": "/library?ref=NIST-IR-8528",
     "complexity": "advanced",
     "category": "standard"
   },

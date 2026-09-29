@@ -153,3 +153,12 @@ export function summarizeCoverage(rows: ProductCertification[]): {
   }
   return { products: rows.length, certificates, byCoverage }
 }
+
+/**
+ * A row's `?prod=` value — the same identity buildProductRows de-duplicates
+ * on, so it is unique per row: the catalogue product id, or the name for a
+ * certificate with no catalogue product.
+ */
+export function productKey(row: Pick<ProductCertification, 'productId' | 'softwareName'>): string {
+  return row.productId || row.softwareName
+}

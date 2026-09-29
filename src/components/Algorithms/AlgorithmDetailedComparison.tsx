@@ -76,6 +76,11 @@ interface AlgorithmDetailedComparisonProps {
    * rather than exposing a toggle that leads to an unusable view.
    */
   hideCompareToggle?: boolean
+  /** `algorithm_id` of the algorithm whose detail drawer is open (?algo). */
+  selectedAlgoId?: string | null
+  /** Opens the detail drawer. Omitted by hosts without one (the sim embed),
+   *  where the algorithm name stays plain text. */
+  onOpenAlgorithm?: (algo: AlgorithmDetail) => void
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
@@ -91,6 +96,8 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   comparisonAlgos,
   baselineAlgo,
   hideCompareToggle,
+  selectedAlgoId,
+  onOpenAlgorithm,
 }) => {
   const selectedCount = compareSet.size
 
@@ -168,6 +175,8 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             compareType={compareType}
             maxCompareReached={maxCompareReached}
             onToggleCompare={onToggleCompare}
+            selectedAlgoId={selectedAlgoId}
+            onOpenAlgorithm={onOpenAlgorithm}
           />
           <SelectionBar
             count={selectedCount}
@@ -280,6 +289,30 @@ interface BrowseTableProps {
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
   onToggleCompare: (name: string) => void
+  selectedAlgoId?: string | null
+  onOpenAlgorithm?: (algo: AlgorithmDetail) => void
+}
+
+/** The algorithm name — a button opening its detail drawer when the host has one. */
+function AlgoName({
+  algo,
+  onOpenAlgorithm,
+}: {
+  algo: AlgorithmDetail
+  onOpenAlgorithm?: (algo: AlgorithmDetail) => void
+}) {
+  if (!onOpenAlgorithm) return <span className="font-semibold text-foreground">{algo.name}</span>
+  return (
+    <Button
+      type="button"
+      variant="link"
+      onClick={() => onOpenAlgorithm(algo)}
+      title={`Open ${algo.name} details`}
+      className="h-auto p-0 text-left text-base font-semibold text-foreground underline-offset-2 hover:text-primary hover:underline"
+    >
+      {algo.name}
+    </Button>
+  )
 }
 
 /** Checkbox that toggles comparison membership, honoring the type-lock + cap. */
@@ -428,6 +461,8 @@ function BrowseTable({
   compareType,
   maxCompareReached,
   onToggleCompare,
+  selectedAlgoId,
+  onOpenAlgorithm,
 }: BrowseTableProps) {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
@@ -582,7 +617,8 @@ function BrowseTable({
               const keyGenPerf = getPerformanceCategory(algo.keyGenCycles)
               const signPerf = getPerformanceCategory(algo.signEncapsCycles)
               const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
-              const highlighted = isHighlighted(algo, highlightAlgorithms)
+              const highlighted =
+                algo.id === selectedAlgoId || isHighlighted(algo, highlightAlgorithms)
               const checked = compareSet.has(algo.name)
 
               return (
@@ -618,7 +654,7 @@ function BrowseTable({
                   <td className="p-3 align-top min-w-[19.5rem]">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-semibold text-foreground">{algo.name}</span>
+                        <AlgoName algo={algo} onOpenAlgorithm={onOpenAlgorithm} />
                         <DraftBadge algo={algo} />
                         <Cnsa20Badge algo={algo} />
                         <ResearchNeededBadge algo={algo} />
@@ -724,7 +760,8 @@ function BrowseTable({
                 'p-4 space-y-2',
                 checked
                   ? 'bg-secondary/10'
-                  : isHighlighted(algo, highlightAlgorithms) && 'bg-primary/15'
+                  : (algo.id === selectedAlgoId || isHighlighted(algo, highlightAlgorithms)) &&
+                      'bg-primary/15'
               )}
             >
               <div className="flex items-start justify-between gap-2">
@@ -741,7 +778,7 @@ function BrowseTable({
                       onToggleCompare={onToggleCompare}
                     />
                   </label>
-                  <span className="font-semibold text-foreground">{algo.name}</span>
+                  <AlgoName algo={algo} onOpenAlgorithm={onOpenAlgorithm} />
                   <DraftBadge algo={algo} />
                   <Cnsa20Badge algo={algo} />
                   <ResearchNeededBadge algo={algo} />
