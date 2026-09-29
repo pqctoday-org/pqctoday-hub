@@ -180,13 +180,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                   {
                     name: 'ML-KEM-768 (36)',
                     size: '1,192 / 1,096 B',
-                    rule: 'SHOULD NOT, unless PMTU is known or IKE runs over TCP',
+                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                   {
                     name: 'ML-KEM-1024 (37)',
                     size: '1,576 / 1,576 B',
-                    rule: 'SHOULD NOT, unless PMTU is known or IKE runs over TCP',
+                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                 ].map((row) => (

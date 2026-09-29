@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.131.1] - 2026-09-29
+## [4.131.1] - 2026-09-28
 
 The VPN/IPsec & SSH module now explains where pure post-quantum IKEv2 runs into trouble, and why the standard's hybrid route avoids it.
 

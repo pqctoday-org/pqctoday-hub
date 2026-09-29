@@ -2279,7 +2279,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-editor-queue',
         stageNote:
           'DISCUSS cleared after the 2026-07-02 telechat — now in RFC Editor queue (draft-09); same draft covers Pure + Hybrid KEM',
-        note: 'IKEv2 multi-KE framework (RFC 9370) carries either pure or hybrid ML-KEM. There is NO RFC for IKEv2 hybrid KEM yet — both modes ride the same draft. Known limit (draft-09 §2.1): pure ML-KEM must travel in IKE_SA_INIT, which IKEv2 fragmentation cannot split, so over UDP only ML-KEM-512 is unconditionally allowed. ML-KEM-768/1024 (CNSA 2.0) need a known PMTU or IKE over TCP, else IP fragmentation. The hybrid route (Appendix A) moves ML-KEM to IKE_INTERMEDIATE to avoid this.',
+        note: 'IKEv2 multi-KE framework (RFC 9370) carries either pure or hybrid ML-KEM. There is NO RFC for IKEv2 hybrid KEM yet — both modes ride the same draft. Known limit (draft-09 §2.1): pure ML-KEM must travel in IKE_SA_INIT, which IKEv2 fragmentation cannot split, so over UDP only ML-KEM-512 is unconditionally allowed. ML-KEM-768/1024 (CNSA 2.0) need a guaranteed sufficient PMTU or IKE over TCP, else IP fragmentation. The hybrid route (Appendix A) moves ML-KEM to IKE_INTERMEDIATE to avoid this.',
         refs: [
           {
             kind: 'draft',
