@@ -100,10 +100,10 @@ describe('AlgorithmsView — deep links', () => {
     renderAt('/algorithms?highlight=HQC-128')
     expect(await screen.findByTestId('deeplink-notice-widened')).toHaveTextContent('HQC-128')
     expect(await screen.findByText('HQC-128')).toBeInTheDocument()
-    expect(urlSearch()).toContain('quickview=none')
+    await waitFor(() => expect(urlSearch()).toContain('quickview=none'))
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
     await waitFor(() => expect(screen.queryByText('HQC-128')).not.toBeInTheDocument())
-    expect(urlSearch()).not.toContain('quickview=')
+    await waitFor(() => expect(urlSearch()).not.toContain('quickview='))
     expect(screen.queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
   })
 
