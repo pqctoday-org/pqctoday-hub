@@ -10,8 +10,10 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import FocusLock from 'react-focus-lock'
 import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
@@ -29,6 +31,7 @@ import {
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
 
 interface LibraryDetailDrawerProps {
@@ -49,6 +52,9 @@ interface LibraryDetailDrawerProps {
  */
 function hasOverlayAbove(root: HTMLElement | null): boolean {
   if (!root) return false
+  // The header Share menu is portalled to <body> and owns Esc / outside clicks
+  // while it is open.
+  if (document.querySelector('[role="menu"]')) return true
   const dialogs = document.querySelectorAll('[role="dialog"][aria-modal="true"]')
   const top = dialogs[dialogs.length - 1]
   return Boolean(top) && top !== root
@@ -126,6 +132,10 @@ function DrawerPanel({
   const [entered, setEntered] = useState(false)
   const [drilldownOpen, setDrilldownOpen] = useState(false)
   const { revisions } = useRevisions()
+  // Phone shell: the sticky MobileHeader and bottom nav sit at z-nav (70), so
+  // at z-50 they paint over the drawer's top edge — its Share and Close. Use
+  // the sheet layer (z-dialog, 101) there, like MobileSheet; desktop keeps z-50.
+  const mobileShell = useIsMobileShell()
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
@@ -153,392 +163,404 @@ function DrawerPanel({
   const relatedLeaders = relatedLeadersFor(item)
 
   return (
-    <div
-      ref={rootRef}
-      className="fixed inset-0 z-50 print:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label={item.documentTitle}
-    >
-      {/* scrim */}
-      <Button
-        type="button"
-        variant="ghost"
-        aria-label="Close detail"
-        onPointerDown={() => {
-          scrimBlockedRef.current = hasOverlayAbove(rootRef.current)
-        }}
-        onClick={() => {
-          const blocked = scrimBlockedRef.current
-          scrimBlockedRef.current = false
-          if (!blocked) onClose()
-        }}
-        className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
-      />
-      <span className="sr-only" aria-live="polite" />
-
-      {/* panel */}
+    // Focus stays inside the drawer. Nested pop-ups keep working: the revision
+    // drill-down renders inside this lock, and the Community leader card
+    // (portalled to <body>) has its own FocusLock, which takes over while it
+    // is open (react-focus-lock activates the most recently mounted lock).
+    <FocusLock returnFocus>
       <div
-        className="absolute right-0 top-0 flex h-full w-[540px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
-        style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
+        ref={rootRef}
+        className={`fixed inset-0 print:hidden ${mobileShell ? 'z-dialog' : 'z-50'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={item.documentTitle}
       >
-        {/* header */}
-        <div className="flex items-start gap-3 border-b border-border p-4">
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[12px] font-semibold text-primary">
-                {item.referenceId}
-              </span>
-              <span
-                className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-                  item.groupStatusBucket ?? item.documentStatusBucket
-                )}`}
-              >
-                {lifecycleLabel(item.groupStatusBucket ?? item.documentStatusBucket)}
-              </span>
-              {item.status && (
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                    item.status === 'New'
-                      ? 'bg-success/15 text-success'
-                      : 'bg-primary/15 text-primary'
-                  }`}
-                >
-                  {item.status}
+        {/* scrim */}
+        <Button
+          type="button"
+          variant="ghost"
+          aria-label="Close detail"
+          onPointerDown={() => {
+            scrimBlockedRef.current = hasOverlayAbove(rootRef.current)
+          }}
+          onClick={() => {
+            const blocked = scrimBlockedRef.current
+            scrimBlockedRef.current = false
+            if (!blocked) onClose()
+          }}
+          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
+        />
+        <span className="sr-only" aria-live="polite" />
+
+        {/* panel */}
+        <div
+          className="absolute right-0 top-0 flex h-full w-[540px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
+          style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
+        >
+          {/* header */}
+          <div className="flex items-start gap-3 border-b border-border p-4">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[12px] font-semibold text-primary">
+                  {item.referenceId}
                 </span>
-              )}
-              <ReviewedBadge
-                domain="library"
-                entityId={item.referenceId}
-                onOpenDrilldown={() => setDrilldownOpen(true)}
-              />
-            </div>
-            <h2 className="mt-1.5 text-[18px] font-bold leading-snug text-foreground">
-              {item.documentTitle}
-            </h2>
-            <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
-              <Building2 size={13} aria-hidden="true" />
-              <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
-              {/* The document's own publication date is the primary signal here;
+                <span
+                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
+                    item.groupStatusBucket ?? item.documentStatusBucket
+                  )}`}
+                >
+                  {lifecycleLabel(item.groupStatusBucket ?? item.documentStatusBucket)}
+                </span>
+                {item.status && (
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                      item.status === 'New'
+                        ? 'bg-success/15 text-success'
+                        : 'bg-primary/15 text-primary'
+                    }`}
+                  >
+                    {item.status}
+                  </span>
+                )}
+                <ReviewedBadge
+                  domain="library"
+                  entityId={item.referenceId}
+                  onOpenDrilldown={() => setDrilldownOpen(true)}
+                />
+              </div>
+              <h2 className="mt-1.5 text-[18px] font-bold leading-snug text-foreground">
+                {item.documentTitle}
+              </h2>
+              <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <Building2 size={13} aria-hidden="true" />
+                <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
+                {/* The document's own publication date is the primary signal here;
                   lastUpdateDate (catalog activity) is the fallback, matching the card. */}
-              {(item.initialPublicationDate || item.lastUpdateDate) && (
-                <span
-                  className="font-mono text-[11px]"
-                  title={
-                    item.initialPublicationDate
-                      ? `Published ${formatLibDate(item.initialPublicationDate)}`
-                      : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
-                  }
-                >
-                  ·{' '}
-                  {item.initialPublicationDate
-                    ? formatLibDate(item.initialPublicationDate)
-                    : formatLibDate(item.lastUpdateDate)}
-                </span>
-              )}
-              {/* Sparse by design (most rows have never been re-checked) — shown
+                {(item.initialPublicationDate || item.lastUpdateDate) && (
+                  <span
+                    className="font-mono text-[11px]"
+                    title={
+                      item.initialPublicationDate
+                        ? `Published ${formatLibDate(item.initialPublicationDate)}`
+                        : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
+                    }
+                  >
+                    ·{' '}
+                    {item.initialPublicationDate
+                      ? formatLibDate(item.initialPublicationDate)
+                      : formatLibDate(item.lastUpdateDate)}
+                  </span>
+                )}
+                {/* Sparse by design (most rows have never been re-checked) — shown
                   only when present, so it never implies false precision. */}
-              {item.lastVerified && (
-                <span
-                  className="font-mono text-[11px] text-muted-foreground/70"
-                  title={`Last verified against the source document ${formatLibDate(item.lastVerified)}`}
-                >
-                  · verified {formatLibDate(item.lastVerified)}
-                </span>
-              )}
+                {item.lastVerified && (
+                  <span
+                    className="font-mono text-[11px] text-muted-foreground/70"
+                    title={`Last verified against the source document ${formatLibDate(item.lastVerified)}`}
+                  >
+                    · verified {formatLibDate(item.lastVerified)}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <ItemShareButton
+                title={itemShareTitle(item.documentTitle)}
+                path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label="Close"
+                onClick={onClose}
+                className="h-auto shrink-0 min-h-[44px] min-w-[44px] p-2.5 md:min-h-0 md:min-w-0 md:p-1.5"
+              >
+                <X size={18} aria-hidden="true" />
+              </Button>
             </div>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            aria-label="Close"
-            onClick={onClose}
-            className="h-auto shrink-0 min-h-[44px] min-w-[44px] p-2.5 md:min-h-0 md:min-w-0 md:p-1.5"
-          >
-            <X size={18} aria-hidden="true" />
-          </Button>
-        </div>
 
-        {/* body */}
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {item.shortDescription && (
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              {item.shortDescription}
-            </p>
-          )}
+          {/* body */}
+          <div className="flex-1 space-y-4 overflow-y-auto p-4">
+            {item.shortDescription && (
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {item.shortDescription}
+              </p>
+            )}
 
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
-            <KeyFact label="Type" value={item.documentType} />
-            <KeyFact label="Algorithm family" value={item.algorithmFamily} />
-            <KeyFact label="Security levels" value={item.securityLevels} />
-            <KeyFact label="Region" value={item.regionScope} />
-            <KeyFact label="Migration urgency" value={item.migrationUrgency} />
-            <KeyFact
-              label="Citations"
-              value={item.citationCount != null ? String(item.citationCount) : undefined}
-            />
-          </dl>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
+              <KeyFact label="Type" value={item.documentType} />
+              <KeyFact label="Algorithm family" value={item.algorithmFamily} />
+              <KeyFact label="Security levels" value={item.securityLevels} />
+              <KeyFact label="Region" value={item.regionScope} />
+              <KeyFact label="Migration urgency" value={item.migrationUrgency} />
+              <KeyFact
+                label="Citations"
+                value={item.citationCount != null ? String(item.citationCount) : undefined}
+              />
+            </dl>
 
-          {item.categories?.length > 0 && (
-            <Section title="Categories">
-              <div className="flex flex-wrap gap-1.5">
-                {item.categories.map((c) => (
-                  <span
-                    key={c}
-                    className="rounded-md bg-muted/60 px-2 py-0.5 text-[11.5px] text-foreground"
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {item.dependencies && (
-            <Section title="Builds on">
-              <div className="flex flex-wrap gap-1.5">
-                {item.dependencies
-                  .split(';')
-                  .map((d) => d.trim())
-                  .filter(Boolean)
-                  .map((d) => (
-                    <RefLink
-                      key={d}
-                      refId={d}
-                      onOpenRef={onOpenRef}
-                      className="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
-                    />
+            {item.categories?.length > 0 && (
+              <Section title="Categories">
+                <div className="flex flex-wrap gap-1.5">
+                  {item.categories.map((c) => (
+                    <span
+                      key={c}
+                      className="rounded-md bg-muted/60 px-2 py-0.5 text-[11.5px] text-foreground"
+                    >
+                      {c}
+                    </span>
                   ))}
-              </div>
-            </Section>
-          )}
+                </div>
+              </Section>
+            )}
 
-          {item.priorRevisions && item.priorRevisions.length > 0 && (
-            <Section title={`Previous revisions (${item.priorRevisions.length})`}>
-              <ul className="space-y-2">
-                {item.priorRevisions.map((rev) => (
-                  <li
-                    key={rev.referenceId}
-                    className="flex items-start justify-between gap-2 rounded-lg border border-border p-2.5"
-                  >
-                    <div className="min-w-0">
-                      <p
-                        className="truncate text-[12.5px] text-foreground"
-                        title={rev.documentTitle}
-                      >
-                        {rev.documentTitle}
-                      </p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <span
-                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${lifecyclePillClass(
-                            rev.documentStatusBucket
-                          )}`}
+            {item.dependencies && (
+              <Section title="Builds on">
+                <div className="flex flex-wrap gap-1.5">
+                  {item.dependencies
+                    .split(';')
+                    .map((d) => d.trim())
+                    .filter(Boolean)
+                    .map((d) => (
+                      <RefLink
+                        key={d}
+                        refId={d}
+                        onOpenRef={onOpenRef}
+                        className="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
+                      />
+                    ))}
+                </div>
+              </Section>
+            )}
+
+            {item.priorRevisions && item.priorRevisions.length > 0 && (
+              <Section title={`Previous revisions (${item.priorRevisions.length})`}>
+                <ul className="space-y-2">
+                  {item.priorRevisions.map((rev) => (
+                    <li
+                      key={rev.referenceId}
+                      className="flex items-start justify-between gap-2 rounded-lg border border-border p-2.5"
+                    >
+                      <div className="min-w-0">
+                        <p
+                          className="truncate text-[12.5px] text-foreground"
+                          title={rev.documentTitle}
                         >
-                          {lifecycleLabel(rev.documentStatusBucket)}
-                        </span>
-                        <RefLink
-                          refId={rev.referenceId}
-                          onOpenRef={onOpenRef}
-                          className="truncate p-0 font-mono text-[11px] text-muted-foreground"
-                        />
+                          {rev.documentTitle}
+                        </p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span
+                            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${lifecyclePillClass(
+                              rev.documentStatusBucket
+                            )}`}
+                          >
+                            {lifecycleLabel(rev.documentStatusBucket)}
+                          </span>
+                          <RefLink
+                            refId={rev.referenceId}
+                            onOpenRef={onOpenRef}
+                            className="truncate p-0 font-mono text-[11px] text-muted-foreground"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    {rev.downloadUrl && (
-                      <a
-                        href={rev.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex shrink-0 items-center gap-1 text-[12px] text-secondary hover:text-primary"
-                        title={`Open source for ${rev.referenceId}`}
-                      >
-                        <ExternalLink size={13} aria-hidden="true" />
-                        Source
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
+                      {rev.downloadUrl && (
+                        <a
+                          href={rev.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex shrink-0 items-center gap-1 text-[12px] text-secondary hover:text-primary"
+                          title={`Open source for ${rev.referenceId}`}
+                        >
+                          <ExternalLink size={13} aria-hidden="true" />
+                          Source
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
 
-          {groupedMaturity.length > 0 && (
-            <Section title="CSWP-39 requirements">
-              <div className="space-y-3">
-                {groupedMaturity.map((g) => {
-                  const zone = PILLAR_TO_ZONE[g.pillar]
-                  return (
-                    <div key={g.pillar}>
-                      <div className="mb-1 flex items-center gap-1.5">
-                        {/* Pillar badge restored as a click-through to its
+            {groupedMaturity.length > 0 && (
+              <Section title="CSWP-39 requirements">
+                <div className="space-y-3">
+                  {groupedMaturity.map((g) => {
+                    const zone = PILLAR_TO_ZONE[g.pillar]
+                    return (
+                      <div key={g.pillar}>
+                        <div className="mb-1 flex items-center gap-1.5">
+                          {/* Pillar badge restored as a click-through to its
                             Command Center zone (design_handoff_2026_pages/
                             IMPLEMENTATION-PLAN-LIBRARY-2026-08-01.md §3.2) —
                             was removed with no replacement in this drawer. */}
-                        <Link
-                          to={`/business#zone-${zone}`}
-                          className="text-[12px] font-semibold capitalize text-foreground hover:text-primary hover:underline"
-                          title={`Open the ${zone} zone in Command Center`}
-                        >
-                          {g.pillar}
-                        </Link>
-                        <div className="flex gap-0.5" aria-hidden="true">
-                          {[1, 2, 3, 4].map((tier) => (
-                            <span
-                              key={tier}
-                              className={`h-1.5 w-1.5 rounded-full ${
-                                g.reqs.some((r) => r.maturityLevel === tier)
-                                  ? 'bg-primary'
-                                  : 'bg-muted'
-                              }`}
-                            />
-                          ))}
+                          <Link
+                            to={`/business#zone-${zone}`}
+                            className="text-[12px] font-semibold capitalize text-foreground hover:text-primary hover:underline"
+                            title={`Open the ${zone} zone in Command Center`}
+                          >
+                            {g.pillar}
+                          </Link>
+                          <div className="flex gap-0.5" aria-hidden="true">
+                            {[1, 2, 3, 4].map((tier) => (
+                              <span
+                                key={tier}
+                                className={`h-1.5 w-1.5 rounded-full ${
+                                  g.reqs.some((r) => r.maturityLevel === tier)
+                                    ? 'bg-primary'
+                                    : 'bg-muted'
+                                }`}
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      <ul className="space-y-1.5">
-                        {g.reqs.map((r, i) => (
-                          <li key={i} className="text-[12px] text-muted-foreground">
-                            <span className="font-mono text-[10.5px] text-primary">
-                              L{r.maturityLevel}
-                            </span>{' '}
-                            {r.requirement}
-                            {/* Evidence quote/location/confidence — present in
+                        <ul className="space-y-1.5">
+                          {g.reqs.map((r, i) => (
+                            <li key={i} className="text-[12px] text-muted-foreground">
+                              <span className="font-mono text-[10.5px] text-primary">
+                                L{r.maturityLevel}
+                              </span>{' '}
+                              {r.requirement}
+                              {/* Evidence quote/location/confidence — present in
                                 the legacy table-view popover but never ported
                                 to this drawer (a real regression, not just a
                                 missing link). */}
-                            {r.evidenceQuote && (
-                              <blockquote className="mt-0.5 text-[11px] text-muted-foreground/80 border-l-2 border-border pl-2 italic line-clamp-3">
-                                {r.evidenceQuote}
-                              </blockquote>
-                            )}
-                            <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
-                              {r.evidenceLocation && <span>{r.evidenceLocation}</span>}
-                              {r.confidence && <span>· {r.confidence} confidence</span>}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )
-                })}
-              </div>
-              {/* Evidence-reference deep link, restored (same plan §3.2) —
+                              {r.evidenceQuote && (
+                                <blockquote className="mt-0.5 text-[11px] text-muted-foreground/80 border-l-2 border-border pl-2 italic line-clamp-3">
+                                  {r.evidenceQuote}
+                                </blockquote>
+                              )}
+                              <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
+                                {r.evidenceLocation && <span>{r.evidenceLocation}</span>}
+                                {r.confidence && <span>· {r.confidence} confidence</span>}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })}
+                </div>
+                {/* Evidence-reference deep link, restored (same plan §3.2) —
                   jumps to this document's own governance evidence inside the
                   CSWP.39 Agility explorer. */}
-              <Link
-                to={`/compliance?tab=cswp39&evref=${encodeURIComponent(item.referenceId)}`}
-                className="mt-2 inline-block text-[11px] font-medium text-primary hover:underline"
-              >
-                Open in CSWP.39 evidence map →
-              </Link>
-            </Section>
-          )}
+                <Link
+                  to={`/compliance?tab=cswp39&evref=${encodeURIComponent(item.referenceId)}`}
+                  className="mt-2 inline-block text-[11px] font-medium text-primary hover:underline"
+                >
+                  Open in CSWP.39 evidence map →
+                </Link>
+              </Section>
+            )}
 
-          {enrichment && (
-            <Section title="Analysis">
-              <DocumentAnalysis enrichment={enrichment} relatedLeaders={relatedLeaders} />
-            </Section>
-          )}
+            {enrichment && (
+              <Section title="Analysis">
+                <DocumentAnalysis enrichment={enrichment} relatedLeaders={relatedLeaders} />
+              </Section>
+            )}
 
-          {/* Framework crosswalk (App. G) + protocol coverage (App. H) — renders
+            {/* Framework crosswalk (App. G) + protocol coverage (App. H) — renders
               only for the Applied Quantum framework entry. Ported from the
               table-view popover so `?ref` shows it in every view. */}
-          <FrameworkCrosswalkPanel item={item} />
+            <FrameworkCrosswalkPanel item={item} />
 
-          <Section title="Trust & evidence">
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-              <KeyFact
-                label="Trust score"
-                value={trust.score != null ? `${trust.score} (${ts?.tier})` : undefined}
-              />
-              <KeyFact label="Source quality" value={item.downloadUrlQuality} />
-              <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
-              <KeyFact label="Peer reviewed" value={item.peerReviewed} />
-              <KeyFact
-                label="Confidence score"
-                value={item.confidenceScore != null ? `${item.confidenceScore}/100` : undefined}
-              />
-            </dl>
-          </Section>
-
-          {item.applicableIndustries?.length > 0 && (
-            <Section title="Applicable industries">
-              <div className="flex flex-wrap gap-1.5">
-                {item.applicableIndustries.map((ind) => (
-                  <span
-                    key={ind}
-                    className="rounded-md bg-muted/60 px-2 py-0.5 text-[11.5px] text-muted-foreground"
-                  >
-                    {ind}
-                  </span>
-                ))}
-              </div>
+            <Section title="Trust & evidence">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <KeyFact
+                  label="Trust score"
+                  value={trust.score != null ? `${trust.score} (${ts?.tier})` : undefined}
+                />
+                <KeyFact label="Source quality" value={item.downloadUrlQuality} />
+                <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
+                <KeyFact label="Peer reviewed" value={item.peerReviewed} />
+                <KeyFact
+                  label="Confidence score"
+                  value={item.confidenceScore != null ? `${item.confidenceScore}/100` : undefined}
+                />
+              </dl>
             </Section>
-          )}
-        </div>
 
-        {/* footer */}
-        <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background p-3">
-          {item.downloadUrl ? (
-            <a
-              href={item.downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
+            {item.applicableIndustries?.length > 0 && (
+              <Section title="Applicable industries">
+                <div className="flex flex-wrap gap-1.5">
+                  {item.applicableIndustries.map((ind) => (
+                    <span
+                      key={ind}
+                      className="rounded-md bg-muted/60 px-2 py-0.5 text-[11.5px] text-muted-foreground"
+                    >
+                      {ind}
+                    </span>
+                  ))}
+                </div>
+              </Section>
+            )}
+          </div>
+
+          {/* footer */}
+          <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background p-3">
+            {item.downloadUrl ? (
+              <a
+                href={item.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
+              >
+                Open document
+                <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            ) : (
+              <span
+                className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
+                title="No public source link is available for this document yet."
+              >
+                Source not available
+              </span>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onToggleBookmark(item.referenceId)}
+              aria-pressed={bookmarked}
+              className="h-auto gap-1.5 px-3 py-2 text-[13px]"
             >
-              Open document
-              <ExternalLink size={13} aria-hidden="true" />
-            </a>
-          ) : (
-            <span
-              className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
-              title="No public source link is available for this document yet."
-            >
-              Source not available
-            </span>
-          )}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onToggleBookmark(item.referenceId)}
-            aria-pressed={bookmarked}
-            className="h-auto gap-1.5 px-3 py-2 text-[13px]"
-          >
-            <Bookmark
-              size={14}
-              className={bookmarked ? 'fill-primary text-primary' : ''}
-              aria-hidden="true"
+              <Bookmark
+                size={14}
+                className={bookmarked ? 'fill-primary text-primary' : ''}
+                aria-hidden="true"
+              />
+              {bookmarked ? 'Bookmarked' : 'Bookmark'}
+            </Button>
+            <EndorseButton
+              endorseUrl={buildLibraryEndorsementUrl(item, true)}
+              resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
+              resourceType="Library Resource"
             />
-            {bookmarked ? 'Bookmarked' : 'Bookmark'}
-          </Button>
-          <EndorseButton
-            endorseUrl={buildLibraryEndorsementUrl(item, true)}
-            resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
-            resourceType="Library Resource"
-          />
-          <FlagButton
-            flagUrl={buildLibraryFlagUrl(item, true)}
-            resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
-            resourceType="Library Resource"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={onClose}
-            className="ml-auto h-auto px-3 py-2 text-[13px] text-muted-foreground"
-          >
-            Close
-          </Button>
+            <FlagButton
+              flagUrl={buildLibraryFlagUrl(item, true)}
+              resourceLabel={`${item.referenceId} — ${item.documentTitle}`}
+              resourceType="Library Resource"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              className="ml-auto h-auto px-3 py-2 text-[13px] text-muted-foreground"
+            >
+              Close
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {drilldownOpen && (
-        <RevisionDrilldownPanel
-          domain="library"
-          entityId={item.referenceId}
-          entityLabel={item.documentTitle}
-          revisions={byRecord(revisions, 'library', item.referenceId)}
-          onClose={() => setDrilldownOpen(false)}
-        />
-      )}
-    </div>
+        {drilldownOpen && (
+          <RevisionDrilldownPanel
+            domain="library"
+            entityId={item.referenceId}
+            entityLabel={item.documentTitle}
+            revisions={byRecord(revisions, 'library', item.referenceId)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        )}
+      </div>
+    </FocusLock>
   )
 }

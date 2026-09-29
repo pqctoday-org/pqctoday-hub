@@ -20,8 +20,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 
 interface LoadedTool {
   id: string
@@ -36,6 +38,10 @@ export function TryToolModalHost() {
   const navigate = useNavigate()
   const toolId = params.get('try')
   const [loaded, setLoaded] = useState<LoadedTool | null>(null)
+  // Phone shell: the sticky MobileHeader / bottom nav are z-nav (70) and would
+  // paint over a z-50 modal's header (Share, Close). Use the sheet layers
+  // there (z-overlay scrim, z-dialog panel), like MobileSheet; desktop keeps z-50.
+  const mobileShell = useIsMobileShell()
 
   const close = () => {
     const next = new URLSearchParams(params)
@@ -96,9 +102,12 @@ export function TryToolModalHost() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+            className={`fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm print:hidden ${mobileShell ? 'z-overlay' : 'z-50'}`}
           />
-          <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
+          <div
+            data-testid="try-tool-modal-layer"
+            className={`fixed inset-0 embed-backdrop flex items-center justify-center p-4 print:hidden ${mobileShell ? 'z-dialog' : 'z-50'}`}
+          >
             <FocusLock returnFocus>
               <motion.div
                 initial={{ opacity: 0, scale: 0.97, y: 16 }}
@@ -123,6 +132,10 @@ export function TryToolModalHost() {
                       <ExternalLink size={12} />
                       Open full tool
                     </Link>
+                    <ItemShareButton
+                      title={itemShareTitle(loaded.name)}
+                      path={`/playground/${encodeURIComponent(loaded.id)}`}
+                    />
                     <Button variant="ghost" size="sm" onClick={close} aria-label="Close tool">
                       <X size={16} />
                     </Button>
