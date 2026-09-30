@@ -60,7 +60,7 @@
   },
   {
     "term": "FN-DSA",
-    "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in the draft FIPS 206 (still in draft, not yet published).",
+    "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm, based on Falcon, and planned for FIPS 206. FIPS 206 remains in development; no Initial Public Draft or final standard has been published.",
     "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
     "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "advanced",
@@ -220,8 +220,8 @@
   },
   {
     "term": "Falcon",
-    "definition": "The original name for the NTRU-lattice-based signature scheme standardized by NIST as FN-DSA in the draft FIPS 206. Known for compact signatures.",
-    "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. Renamed to FN-DSA for the final standard.",
+    "definition": "The NTRU-lattice-based signature scheme selected by NIST as the basis for the planned FN-DSA standard. FIPS 206 remains in development with no published Initial Public Draft or final standard.",
+    "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. NIST plans to use the FN-DSA name when FIPS 206 is published.",
     "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "intermediate",
     "category": "algorithm"

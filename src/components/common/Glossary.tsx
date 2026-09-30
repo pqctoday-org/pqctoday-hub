@@ -10,6 +10,7 @@ import { CategoryBadge } from '../ui/category-badge'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -79,14 +80,8 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     }
   }, [isOpen])
 
-  // Close on Escape
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 

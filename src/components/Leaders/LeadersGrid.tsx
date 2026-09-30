@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { leadersData, leadersMetadata } from '../../data/leadersData'
+import { leadersData, leadersMetadata, deprecatedLeaderSuccessors } from '../../data/leadersData'
 import type { Leader } from '../../data/leadersData'
 import { logEvent, personaLabel } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -46,7 +46,7 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { findLeaderByParam, planLeaderDeepLink } from './leaderDeepLink'
+import { findLeaderByParam, leaderForwardedMessage, planLeaderDeepLink } from './leaderDeepLink'
 import { readLeadersTableSort, writeLeadersTableSort } from './leadersTableSort'
 import type { LeadersTableSort } from './leadersTableSort'
 
@@ -196,7 +196,7 @@ export const LeadersGrid = () => {
   const activeLayer = STACK_LAYERS.has(filters.values.layer) ? filters.values.layer : 'All'
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
-    kind: 'widened' | 'not-found'
+    kind: 'widened' | 'not-found' | 'moved'
     message: string
     undoParams?: string
   } | null>(null)
@@ -259,7 +259,7 @@ export const LeadersGrid = () => {
     // name links still resolve (tolerantly — case, whitespace, honorifics) so
     // the matching card expands; widening/scroll is handled by the effect below.
     const nextLeaderId = nextLeader
-      ? (findLeaderByParam(leadersData, nextLeader)?.id ?? null)
+      ? (findLeaderByParam(leadersData, nextLeader, deprecatedLeaderSuccessors)?.id ?? null)
       : null
 
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
@@ -290,10 +290,9 @@ export const LeadersGrid = () => {
       selfWrittenLeaderRef.current = null
       return
     }
-    const plan = planLeaderDeepLink(leadersData, searchParams)
+    const plan = planLeaderDeepLink(leadersData, searchParams, deprecatedLeaderSuccessors)
     if (!plan) return
     if (plan.kind === 'not-found') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL-driven notice
       setDeepLinkNotice({
         kind: 'not-found',
         message: `"${plan.name}" was not found in the Community list.`,
@@ -304,12 +303,18 @@ export const LeadersGrid = () => {
     // the person's layer — in the SAME navigation as any widening (two
     // functional updates in one tick would each start from this render's URL).
     const needsLayer = viewMode === 'stack' && searchParams.get('layer') !== plan.leader.type
+    // A link to a merged duplicate's leader_id opens the kept profile — say so.
+    const forwarded = plan.forwardedFrom
+      ? `${leaderForwardedMessage(plan.forwardedFrom, plan.leader)} `
+      : ''
     if (plan.nextParams) {
       setDeepLinkNotice({
         kind: 'widened',
-        message: `Filters widened to show ${plan.leader.name} (cleared ${plan.widened.join(', ')}).`,
+        message: `${forwarded}Filters widened to show ${plan.leader.name} (cleared ${plan.widened.join(', ')}).`,
         undoParams: searchParams.toString(),
       })
+    } else if (forwarded) {
+      setDeepLinkNotice({ kind: 'moved', message: forwarded.trim() })
     } else {
       setDeepLinkNotice(null)
     }

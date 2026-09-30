@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import {
@@ -16,6 +16,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface LeaderConsentModalProps {
   isOpen: boolean
@@ -81,14 +82,8 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
     setTimeout(() => setCopied(false), 2000)
   }, [])
 
-  useEffect(() => {
-    if (!isOpen) return
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   if (!isOpen) return null
 

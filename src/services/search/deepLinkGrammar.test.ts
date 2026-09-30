@@ -109,6 +109,7 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'matrixAvailability',
     'matrixSort',
     'matrixHighlight',
+    'cmp',
     'industry',
     'mechanism',
     'usecase',

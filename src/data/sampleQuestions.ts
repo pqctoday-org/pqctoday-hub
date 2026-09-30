@@ -122,7 +122,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   Migrate: [
     'What are the seven phases of the PQC migration framework?',
     'What infrastructure layers does the Migrate catalog organize products by?',
-    'What do the three FIPS badge tiers mean?',
+    'What do the FIPS badges in the Migrate catalog mean?',
     "What phase should you start if you haven't begun PQC migration?",
     'What does the "Prepare" migration phase involve?',
     'What happens in the "Test" migration phase?',

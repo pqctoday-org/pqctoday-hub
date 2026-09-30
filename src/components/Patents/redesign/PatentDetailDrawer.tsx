@@ -6,9 +6,13 @@
  * through the active result list, plus keyboard control (←/→ step, Esc close).
  * Transform-only entrance (resting opacity 1, per the handoff).
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { PatentDetail } from '@/components/Patents/PatentDetail'
 import type { PatentItem } from '@/types/PatentTypes'
 
@@ -50,85 +54,97 @@ function DrawerPanel({
   const prev = hasList && index > 0 ? resultList[index - 1] : null
   const next = hasList && index < resultList.length - 1 ? resultList[index + 1] : null
 
-  // Keyboard: ←/→ step through the list, Esc closes.
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(true, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(true)
+
+  // Keyboard: ←/→ step through the list.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowLeft' && prev) onNavigate(prev.patentNumber)
+      if (e.key === 'ArrowLeft' && prev) onNavigate(prev.patentNumber)
       else if (e.key === 'ArrowRight' && next) onNavigate(next.patentNumber)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [prev, next, onClose, onNavigate])
+  }, [prev, next, onNavigate])
 
   return (
-    <div
-      className="fixed inset-0 z-50 print:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label={patent.title}
-    >
-      <Button
-        type="button"
-        variant="ghost"
-        aria-label="Close detail"
-        onClick={onClose}
-        className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
-      />
+    <FocusLock returnFocus>
       <div
-        className="absolute right-0 top-0 flex h-full w-[680px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
-        style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
+        className="fixed inset-0 z-50 print:hidden"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={patent.title}
       >
-        {/* prev/next bar */}
-        <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 py-2">
-          {hasList && (
-            <>
-              <Button
-                type="button"
-                variant="ghost"
-                aria-label="Previous patent"
-                disabled={!prev}
-                onClick={() => prev && onNavigate(prev.patentNumber)}
-                className="h-auto p-1 disabled:opacity-40"
-              >
-                <ChevronLeft size={16} aria-hidden="true" />
-              </Button>
-              <span className="font-mono text-[11.5px] tabular-nums text-muted-foreground">
-                {index + 1} / {resultList.length}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                aria-label="Next patent"
-                disabled={!next}
-                onClick={() => next && onNavigate(next.patentNumber)}
-                className="h-auto p-1 disabled:opacity-40"
-              >
-                <ChevronRight size={16} aria-hidden="true" />
-              </Button>
-            </>
-          )}
-          <Button
-            type="button"
-            variant="ghost"
-            aria-label="Close"
-            onClick={onClose}
-            className="ml-auto h-auto p-1.5"
-          >
-            <X size={18} aria-hidden="true" />
-          </Button>
-        </div>
-        {/* existing PatentDetail body (its own onClose also closes the drawer) */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <PatentDetail
-            patent={patent}
-            onClose={onClose}
-            inCorpusIds={inCorpusIds}
-            onNavigate={onNavigate}
-            onOpenCitation={onOpenCitation}
-          />
+        <Button
+          type="button"
+          variant="ghost"
+          aria-label="Close detail"
+          onClick={onClose}
+          className="absolute inset-0 h-full w-full cursor-default rounded-none bg-black/60 hover:bg-black/60"
+        />
+        <div
+          className="absolute right-0 top-0 flex h-full w-[680px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
+          style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
+        >
+          {/* prev/next bar */}
+          <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 py-2">
+            {hasList && (
+              <>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  aria-label="Previous patent"
+                  disabled={!prev}
+                  onClick={() => prev && onNavigate(prev.patentNumber)}
+                  className="h-auto p-1 disabled:opacity-40"
+                >
+                  <ChevronLeft size={16} aria-hidden="true" />
+                </Button>
+                <span className="font-mono text-[11.5px] tabular-nums text-muted-foreground">
+                  {index + 1} / {resultList.length}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  aria-label="Next patent"
+                  disabled={!next}
+                  onClick={() => next && onNavigate(next.patentNumber)}
+                  className="h-auto p-1 disabled:opacity-40"
+                >
+                  <ChevronRight size={16} aria-hidden="true" />
+                </Button>
+              </>
+            )}
+            <ItemShareButton
+              className="ml-auto"
+              title={itemShareTitle(`${patent.patentNumber} — ${patent.title}`)}
+              path={`/patents?patent=${encodeURIComponent(patent.patentNumber)}`}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label="Close"
+              onClick={onClose}
+              className="h-auto p-1.5"
+            >
+              <X size={18} aria-hidden="true" />
+            </Button>
+          </div>
+          {/* existing PatentDetail body (its own onClose also closes the drawer) */}
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <PatentDetail
+              patent={patent}
+              onClose={onClose}
+              inCorpusIds={inCorpusIds}
+              onNavigate={onNavigate}
+              onOpenCitation={onOpenCitation}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </FocusLock>
   )
 }

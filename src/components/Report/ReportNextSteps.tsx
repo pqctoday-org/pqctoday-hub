@@ -61,6 +61,7 @@ const ORDER: Record<PersonaId, StepKey[]> = {
   architect: ['migrate', 'simulation', 'business'],
   developer: ['migrate', 'simulation', 'business'],
   researcher: ['simulation', 'migrate', 'business'],
+  'cert-engineer': ['migrate', 'business', 'simulation'],
   curious: ['simulation', 'migrate', 'business'],
 }
 

@@ -33,6 +33,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -96,3 +98,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+
+  # After the site is live, confirm it serves what this commit's SBOM describes: byte-identical
+  # WebAssembly, the complete SBOM file, and an About page carrying this build's data. The deploy
+  # above has already succeeded, so this job only reports (a red run here means the live site and
+  # its SBOM disagree); it never blocks or undoes a deploy. It waits because GitHub's edge can keep
+  # serving the previous build for several minutes.
+  verify-sbom:
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
+        run: npm ci
+
+      - name: Check the live site against the SBOM
+        run: npx tsx scripts/sbom/check-production.ts --base='${{ needs.deploy.outputs.page_url }}' --wait=15

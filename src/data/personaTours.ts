@@ -216,4 +216,38 @@ export const PERSONA_TOURS: Partial<Record<PersonaId, PersonaTour>> = {
       },
     ],
   },
+  // Added 2026-09-29 with the persona (certification-engineer-persona-plan r2).
+  'cert-engineer': {
+    promise: 'Four steps from what a certificate proves to the records behind it.',
+    steps: [
+      {
+        title: 'Scope before level',
+        description:
+          'A certificate covers one boundary, at one version, in one configuration. The first module has you draw that boundary before you read any grade.',
+        route: '/learn/crypto-product-certification',
+        cta: 'Open the module',
+      },
+      {
+        title: 'Run the vectors yourself',
+        description:
+          'Selected NIST ACVP-Server reference samples and published known-answer tests, run against the in-browser PKCS#11 engine. Every result carries its evidence tier.',
+        route: '/playground/hsm?tab=build&dtab=acvp',
+        cta: 'Open the ACVP suite',
+      },
+      {
+        title: 'Read the records, not the claims',
+        description:
+          'Product Records lists NIST CMVP, CAVP and Common Criteria entries. A CAVP algorithm validation is the prerequisite stage, not a module certificate.',
+        route: '/compliance?tab=records',
+        cta: 'Open Product Records',
+      },
+      {
+        title: 'What changed, and when',
+        description:
+          'Every correction to the certificate data is logged with its evidence. Check a record you know, and tell us when we have it wrong.',
+        route: '/revisions',
+        cta: 'Open Revisions',
+      },
+    ],
+  },
 }

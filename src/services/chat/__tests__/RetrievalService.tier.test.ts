@@ -88,4 +88,17 @@ describe('C6 / C10 — topAvailableTier', () => {
     const chunks = [makeLibraryChunk('does-not-exist-in-csv-zzz-1234')]
     expect(topAvailableTier(chunks)).toBe('unknown')
   })
+
+  it('accepts direct provenance from an authoritative trusted-source record', () => {
+    const chunks = [
+      makeChunk({
+        source: 'glossary',
+        title: 'FIPS 206',
+        metadata: { trustedSourceId: 'nist-csrc' },
+      }),
+    ]
+
+    expect(topAvailableTier(chunks)).toBe('Authoritative')
+    expect(buildTrustRefusal('Has NIST published FIPS 206?', chunks)).toBeNull()
+  })
 })

@@ -21,6 +21,7 @@ import {
   vendorHasRoadmapCard,
 } from './workbenchCatalog'
 import { DeepLinkNotice } from '../../common/DeepLinkNotice'
+import { ItemShareButton, itemShareTitle } from '../../common/ItemShareButton'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 
 /** productId → vendorId, to resolve the user's cross-page product selection
@@ -332,7 +333,13 @@ function RoadmapCard({
 
   return (
     <div data-deeplink-id={vendorId} className="rounded-xl border border-border bg-card p-3">
-      <p className="mb-2 text-sm font-semibold text-foreground">{vendorName}</p>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-foreground">{vendorName}</p>
+        <ItemShareButton
+          title={itemShareTitle(vendorName)}
+          path={`/migrate?tab=roadmaps&vendor=${encodeURIComponent(vendorId)}`}
+        />
+      </div>
       {roadmaps.length > 0 ? (
         <div className="space-y-4">
           {roadmaps.map((r) => (

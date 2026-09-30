@@ -25,6 +25,10 @@ import { getFrameworkMaxFine } from './frameworkFines'
 // Only personas who can reach the Business Center get a KPI variant.
 // (curious is nav-blocked from /business — see personaConfig.ts). `grc` added
 // 2026-09-07 — the split gave it the same /business reach as executive.
+// `cert-engineer` (2026-09-29) is deliberately NOT a KPI persona: the tracker
+// measures a migration programme, and this role owns no programme seat
+// (personaToRoles → []). It gets the tracker's executive fallback and can
+// switch lens with the selector, like any visitor.
 export type KpiPersonaId = Extract<
   PersonaId,
   'executive' | 'grc' | 'architect' | 'ops' | 'researcher' | 'developer'
@@ -134,6 +138,55 @@ export function isFips1403Validated(fipsValidated: string | undefined | null): b
   if (s.includes('140-3')) return true // explicit 140-3 wins, even if 140-2 is also mentioned
   if (s.includes('140-2')) return false // 140-2 alone is NOT 140-3
   return s.startsWith('yes') || s === 'validated'
+}
+
+/**
+ * FIPS 140-3 track stage of a catalogue product, read from the source-backed
+ * `hasCertification` field first (2026-09-26 stage rule: CAVP is the
+ * prerequisite, "in process" only when NIST lists the module on MIP/IUT, a
+ * certificate only when one exists). The free-text `fipsValidated` field is
+ * used only to confirm that a `yes` row's certificate is FIPS 140-3 rather
+ * than FIPS 140-2 or a Common Criteria record, and a qualified claim
+ * ("pending", "in process", "under review") is not counted — under-assert.
+ *
+ * Added 2026-09-29: the text-only check above showed a green FIPS 140-3 badge
+ * for rows reading "Yes (FIPS 140-2)", "Yes (FedRAMP)", "Yes (Trusted)",
+ * CAVP-only records and several "No (…)" values.
+ */
+export type Fips1403Stage = 'certified' | 'in_process' | 'cavp' | 'none'
+
+const QUALIFIED_CLAIM = /\b(in process|in progress|pending|under review)\b/
+/** A cited CMVP certificate number, e.g. "#4745". */
+const CMVP_CERT_NUMBER = /#\d{3,5}\b/
+
+export function fips1403Stage(item: {
+  hasCertification?: string | null
+  fipsValidated?: string | null
+}): Fips1403Stage {
+  switch (item.hasCertification) {
+    case 'in_progress':
+      return 'in_process'
+    case 'cavp':
+      return 'cavp'
+    case 'yes': {
+      const s = (item.fipsValidated || '').toLowerCase().trim()
+      if (s.startsWith('no') || !s.includes('140-3')) return 'none'
+      // A cited certificate number is the claim; a later qualifier ("PQC
+      // resubmission pending") is about a future certificate, not this one.
+      if (CMVP_CERT_NUMBER.test(s)) return 'certified'
+      return QUALIFIED_CLAIM.test(s) ? 'none' : 'certified'
+    }
+    default:
+      return 'none'
+  }
+}
+
+/** A catalogue product holds a FIPS 140-3 module certificate (see fips1403Stage). */
+export function isFips1403Certified(item: {
+  hasCertification?: string | null
+  fipsValidated?: string | null
+}): boolean {
+  return fips1403Stage(item) === 'certified'
 }
 
 // ── Shared auto-score helpers ────────────────────────────────────────────

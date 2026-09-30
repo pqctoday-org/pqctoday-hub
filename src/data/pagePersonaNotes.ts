@@ -27,6 +27,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Pick Architect and choose the question: the control-plane board changes one KMIP policy line and rekeys the estate live; the others cover inventory, key stores, protocols, sequencing and defending the design.',
     researcher:
       "Pick Researcher and choose the question: provenance, reproducing the tests, the standards' dates and states, the threat model, the field, or the command line — every figure carries its source.",
+    'cert-engineer':
+      'Pick Certification & Validation and choose the question — test the algorithms, the entropy source or the module interface, place a product on the certificate stages, sign firmware, or review the drafts — every result states the evidence level it reached.',
     ops: 'Pick IT Ops and choose the question: capacity, cutover rehearsal, cipher-suite config, supplier timelines, closeout or your standing — sized before renewal day.',
     curious:
       'You do not need a role: skip the question and the site opens by topic, or pick Curious for what breaks and when, where it touches you, and a thirty-second version.',
@@ -41,6 +43,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Use "Map to FIPS 203/4/5" to see which patents touch the standards you are designing against; hybrid schemes have their own filter.',
     researcher:
       'The "Corpus scope" control switches between all filings and the core-invention set; each patent opens with its claims, not just its abstract.',
+    'cert-engineer':
+      'Use "Map to FIPS 203/4/5" to see which filings touch the algorithms a module implements; licensing is a question for the vendor, not for the lab.',
     ops: 'Patents change nothing you operate today; the licensing angle you need rides on the vendors in the migration catalogue.',
     curious:
       'A patent is a public description of an invention with a date on it — this is where the post-quantum ideas were first written down, searchable by title, assignee or number.',
@@ -55,6 +59,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Interoperability questions have owners: the Standards category tells you who edits the PKCS#11 and KMIP specifications you design against.',
     researcher:
       'Entries carry their key resources and a verified date; a name that is missing means no public proof was found, not that the person is unknown.',
+    'cert-engineer':
+      'Your guidance points at Government and Industry Vendor — the bodies behind the schemes and the vendors taking modules through validation; a missing name means no public proof was found.',
     ops: 'Skip the biographies: sort "By relevance to you" or filter to the Standards category to see who maintains the documents your configuration references.',
     curious:
       'Post-quantum cryptography is being built by a few hundred people you can name — this is who they are, in cards or a table, and what each one did.',
@@ -69,6 +75,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Compare PQC Algorithms" and "Migration Workbench" are the two cards a design decision rests on; read them in that order.',
     researcher:
       '"Reference Library" is the read-only record behind the claims on the site; the Revisions page beside it holds the corrections.',
+    'cert-engineer':
+      'The "Reference Library" and "Compliance Landscape" cards hold the standards a module is tested against and the schemes that certify it.',
     ops: '"Migration Workbench" and "Command Center" are the shortest route to a cutover plan you can hand to a change board.',
     curious:
       'This page exists for you: every topic on the site, in plain words, with a first stop for each.',
@@ -83,6 +91,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Algorithm and protocol records carry their revision history; a design decision made on an old value can be re-checked here.',
     researcher:
       "This is the site's own errata: what was wrong, what it was corrected to, and when.",
+    'cert-engineer':
+      'Every correction to a certification record is dated and attributed here — the audit trail behind each status on Product Records.',
     ops: 'Use the Migrate chip to see which product support claims were corrected — those are the ones to re-verify before a cutover.',
     curious: 'Facts on this site get corrected in public; this page is the list of corrections.',
   },
@@ -95,6 +105,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Architecture-relevant changes carry the Algorithms and Library tags; the Architect persona filter narrows to them.',
     researcher:
       'Data Updates entries say which dataset changed; the Revisions page has the row-level detail.',
+    'cert-engineer':
+      'Data Updates entries say which dataset changed and when; the Revisions page has the row-level detail for any certificate record.',
     ops: 'The Ops persona filter covers deployment, certificate lifecycle and TLS configuration changes.',
     curious:
       'Each entry starts with what changed for you, in plain words; the version number is the least important part.',
@@ -109,6 +121,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"What is a hybrid cryptographic approach?" and "How do PQC certificates affect TLS chain size?" link to the comparisons the answers were taken from.',
     researcher:
       'Questions are grouped by category and searchable; answers name the standard or report they come from, which the Library holds.',
+    'cert-engineer':
+      "Three questions lead for your role: FIPS 140-3 and the validation backlog, Common Criteria's role in PQC, and which HSMs support ML-KEM and ML-DSA.",
     ops: '"How do you configure PQC TLS on Linux?", "What OpenSSH version supports PQC?" and "How do I safely retire legacy cryptography?" are the ones to read before scheduling a cutover.',
     curious:
       'Start with "What is post-quantum cryptography?" and "Where should I start if I\'m new to PQC?"; each answer links to the module that explains it fully.',
@@ -123,6 +137,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The Platform Data section names each data file with its date — the provenance of every table you design from.',
     researcher:
       'The Trust Score Methodology and Trust Tiers are published in full; use them to judge any figure on the site.',
+    'cert-engineer':
+      'The Trust Score Methodology and Trust Tiers say how each record and source is weighed; the Transparency & Disclaimer section says how corrections are handled.',
     ops: "Your progress and settings live in your browser's localStorage; the Data Privacy section says exactly what is and is not collected.",
     curious:
       'The Transparency & Disclaimer section says who builds this site, why, and what is and is not tracked.',
@@ -137,6 +153,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The policy is why a "PQC-ready" claim on this site links to its proof; the assessment criteria are stated here.',
     researcher:
       '"Funding sources" and "How to flag a violation" are the sections to cite when you rely on the site\'s data.',
+    'cert-engineer':
+      '"Conflict-of-interest disclosure" states how vendors are handled — worth reading when the module under test is a vendor\'s product this site also lists.',
     ops: 'Product rows you plan a cutover on are assessed by these criteria; the row shows the proof and its date.',
     curious: 'Nobody can buy a better rating here; this page explains how that is kept true.',
   },
@@ -149,6 +167,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     architect: 'Sponsorship does not change catalogue positions or algorithm assessments.',
     researcher:
       'The tiers and what each funds are listed here, so a reader can judge any perceived conflict.',
+    'cert-engineer':
+      'Sponsorship is disclosed, and "Where your sponsorship goes" lists what it funds — check it before you cite a vendor comparison from this site.',
     ops: 'Nothing operational changes with sponsorship; the tools stay free.',
     curious: 'If the site helped you, this is how to help it keep running.',
   },
@@ -162,6 +182,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Simulations and tools are educational; the Cryptographic Disclaimer says production designs need your own validation.',
     researcher:
       'Reuse of text and data is governed by the License and Third-Party Content sections; cite the site when you reuse it.',
+    'cert-engineer':
+      'The License and Third-Party Content sections say what you may reuse; for a certificate itself, cite the NIST or scheme record, not this site.',
     ops: 'The playground runs real cryptography in your browser; the Cryptographic Disclaimer says keys made here must never protect production systems.',
     curious:
       'Plain summary: free to use, no account, and the Privacy and Analytics section says what is collected.',
@@ -177,6 +199,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Your view opens "Assessment Profile" and the "Industry Threat Landscape" by default; "HNDL / HNFL Risk Windows" shows how long your data and certificates must outlast the threat.',
     researcher:
       'Under "Risk Score", "How this was calculated" lists each category\'s score, weight and points; the info button "How this report works" opens the methodology behind every section.',
+    'cert-engineer':
+      'Your view opens Assessment Profile and CBOM — the algorithm inventory — beside Algorithm Migration Priority and Compliance Impact; programme sections are collapsed, not removed.',
     ops: 'Your view opens "Migration Roadmap" (Phase 1: Immediate, Phase 2: Short-term, Phase 3: Long-term), "Migration Toolkit" — products from the Migrate catalog matching your infrastructure — and "Algorithm Migration Priority".',
     curious:
       'With no assessment yet, "See an example report" shows a finished one before you start; your own report shows "Recommended Actions (Top 3)" and a three-step roadmap rather than the full plan.',
@@ -191,6 +215,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The "Infrastructure" step flags HSMs and on-prem as hardest to migrate and its "Synced" toggle pulls your Migrate product selections in; "Crypto agility" decides whether the roadmap recommends a one-off swap or the ability to swap again.',
     researcher:
       '"No estate to describe? Use a reference one" — "Mid-size retail bank" or "Hospital group" — answers every question and jumps straight to "Review your answers"; the report then says it came from a reference estate.',
+    'cert-engineer':
+      'The Full track is recommended for your role, and the first step asks which sector the product is sold into — answer for the product line; every step states "In your report:" what the answer changes.',
     ops: 'The "Data retention" and "Credential lifetime" steps set the HNDL and HNFL windows; "Timeline pressure" asks whether you have a migration deadline; "Save link" copies a link to resume from the step you are on.',
     curious:
       'The Fast track is recommended for you; each step has a "Why we ask" disclosure, optional steps show "Skip", and the flow ends with "Review your answers" then "Generate my report".',
@@ -205,6 +231,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'On Operate, "Plane 2 · KMIP Lifecycle" sends a real KMIP 3.0 request per button, with the algorithm set to "Auto — let the policy decide" or a named set; the Policy tab\'s Compare and Timeline ("As of" slider) show rules over time.',
     researcher:
       'The "CSD02" chip states that KMIP 3.0 is an OASIS committee draft, not a ratified standard; in expert view the Policy tab adds a YAML view of the exact rules and Inspect adds the raw "KMIP Wire" response.',
+    'cert-engineer':
+      'On the Policy tab, "Which regime governs you?" includes US · FIPS 140-3; KMIP 3.0 is an OASIS committee draft (the "CSD02" chip), so nothing here is a validated configuration.',
     ops: 'The "Migration Estate" tab asks for keys by business label and lets the policy pick the algorithm; move from classical to hybrid to full PQC and "Key objects on this engine" shows rekeyed successors linked to deactivated predecessors.',
     curious:
       'Keep View on "guided" and press "Guided Tour" for step-by-step lessons; everything runs in this tab — no server, no Docker.',
@@ -219,6 +247,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
     researcher:
       'Your path ends not in a quiz but in "Your capstone: reproduce a known-answer test" — "Run the ACVP vectors" and "Find the published vectors"; the "Advanced" tray adds a browse-by-Algorithms / Standards filter for your role.',
+    'cert-engineer':
+      'Your path starts at the certificate: eight essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.',
     ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',
     curious:
       '"Pick a role in the top bar for a guided path — or" browse every module; "New here? Start with the right module" includes "Not sure — assess me", and the "Quiz" button sits beside the page title.',
@@ -233,6 +263,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Operate walks "1. Initialize HSM", "2. Create Token", "3. Open Session & Login", then a Primitives rail — KEM, Symmetric Encrypt, Key Wrap / Unwrap, Hashing, Sign & Verify, Key Agreement, KDF; Inspect › Keys lists what the token holds.',
     researcher:
       'Build › Validation is the "Cryptographic Validation Workbench": NIST ACVP-Server reference samples, standard KATs, oracle and functional tests, each row tagged with its evidence tier; Build › Conformance is a "PKCS#11 v3.2 Conformance Runner"; the WIP badge opens the methodology.',
+    'cert-engineer':
+      'Build › Validation is the "Cryptographic Validation Workbench" — NIST ACVP-Server reference samples, standard KATs, oracle and functional tests, each row tagged with its evidence tier; Build › Conformance replays PKCS#11 v3.2 profile cases.',
     ops: 'The Learn lessons "The Cryptoki model — slots, tokens, sessions, login" and "Mechanism discovery" cover token setup; Inspect › Mechanisms\' "Query Slot" enumerates what the token supports, and the Log filters by origin.',
     curious:
       'Open the Learn tab, pick a lesson and press "Run all" to watch each step run; the "New to PKCS#11?" strip explains the terms on hover, and the engine is preset to Rust.',
@@ -247,6 +279,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The Protocol Support tab tracks 28 protocols across pure-KEM, hybrid-KEM, pure-Sig and hybrid-Sig, each marked RFC, Draft, Experimental or None, with filters for OSS, commercial and live deployment.',
     researcher:
       'The "Research needed" toggle narrows to algorithms with an incomplete data row; Validation › "Implementation Attacks" gives side-channel and fault-injection notes per family; the Region filter includes KpqC, CACR and CRYPTREC.',
+    'cert-engineer':
+      'The page opens on the Validation tab: "Implementation Attacks" gives side-channel and fault-injection notes per family, and the known-answer tests run in the browser; the hint keeps a CAVP validation apart from a module certificate.',
     ops: 'The "FIPS-validated" quick preset shows only algorithms that completed FIPS validation; on Protocol Support each row carries a Production, Pilot or Experimental deployment posture and a "Has OSS" filter.',
     curious:
       'You get a short preview — "three you actually need to know": ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s — then "Show full algorithm comparison" or "Learn the basics first".',
@@ -261,6 +295,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Drop-in, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
+    'cert-engineer':
+      "Product rows carry a PQC status, a FIPS 140-3 badge and a verification badge; a product's detail names the stage and flags PQC that is CAVP-validated but outside the module certificate.",
     ops: 'The readiness panel shows the share of your assets with a GA path, the "HNDL-urgent" count, the "Nearest CNSA deadline" and your "Next move" with its wave; "Export plan + CBOM" on "Plan & sequence" downloads the plan.',
     curious:
       '"Who has already moved" says how many tracked products support post-quantum cryptography with a document proving it, and where it landed first; "Add what you run" starts a plan of your own.',
@@ -275,6 +311,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"For You" has a "Crypto-Agility Maturity" panel, a "Jurisdiction map" and "Standards to read"; the "Landscape" tab lays out Standardization Bodies, Certification Schemes and Compliance Frameworks as one pipeline.',
     researcher:
       '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Requirements" names the model that extracted each quote; "Product Records" are live NIST CMVP, CAVP and Common Criteria records.',
+    'cert-engineer':
+      '"Product Records" lists NIST CMVP, CAVP and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification; "For You" lists the schemes that expect PQC and the tests to run first.',
     ops: '"For You" has a "Rotation clock" bucketing frameworks by how soon they bind, "Toolchain quick jumps" and "Framework deadlines"; "Products" shows whether each certificate is PQC validated, mixed or classical only.',
     curious:
       '"For You" opens with "Does this affect me?"; the "Landscape" tab shows who defines algorithms (Standardization Bodies), who validates products (Certification Schemes) and who mandates adoption (Compliance Frameworks).',
@@ -289,6 +327,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Your lens opens on the Governance zone with Crypto Architecture, RACI Matrix, Vendor Scorecard and Supply Chain Matrix cards first; the Migration zone holds the Hybrid Transition Plan and MTI Recommendation, reached from the Zones rail.',
     researcher:
       'Your lens opens on Data-Centric Risk Management with the Risk Register and Risk Treatment Plan cards; "NIST CSWP.39 — by document section" lists the plan by section, and the accordion at the bottom quotes NIST CSWP 39\'s definition.',
+    'cert-engineer':
+      "The Command Center plans a migration programme, which this role does not run; the Vendor Scorecard is the tool that touches certificates — a supplier's claims scored against what they can prove.",
     ops: 'Your lens opens on the Migration zone with the Migration Roadmap card first, the Deployment Playbook under Mitigation and the KPI Tracker under Data-Centric Risk Management; "Your next steps" at the top ranks what to do next.',
     curious:
       'This page is a worked example of a migration programme; a banner names the roles it is built for, and the "How does NIST CSWP 39 define crypto agility?" accordion at the bottom is the plain definition to start from.',
@@ -303,6 +343,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Use the "All Phases" dropdown to show only Testing, POC or Migration and see which countries have reached them; the Countries list on the left jumps to a row, and the "Phase Color Code" legend at the bottom decodes the bars.',
     researcher:
       'Switch the region filter to compare migration pace across blocs; country rows show their Verified date, and the "Documents" table under a selected country lists the source documents with sortable phase, type, organisation and period.',
+    'cert-engineer':
+      'Pick a country and a "Documents" table lists its policy documents by phase, type, organisation and period — the dates a certificate will have to list PQC by.',
     ops: 'Watch the Migration and Deadline phases — they set the certificate-rotation clock; the "Export ... matching as .ics" button puts the filtered phases into your calendar as all-day windows, and the CSV export is next to the search box.',
     curious:
       '"When does this reach me" above the chart shows your own country\'s track and what comes next; each row below is one country, and the "Phase Color Code" legend at the bottom explains what each coloured bar means.',
@@ -317,6 +359,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The "Reference" door holds standards, specs and policy; a document\'s panel lists what it "Builds on", its "Previous revisions" and the "CSWP-39 requirements" it satisfies, each linking to the matching Command Center zone.',
     researcher:
       'Sort by Publication date or Most cited; every document panel shows its type, region, last-verified date, Trust score, Peer reviewed status and "Previous revisions", with "Open document" going to the original source.',
+    'cert-engineer':
+      'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; your categories lead with Compliance & Certification, NIST Standards and Algorithm Specifications.',
     ops: '"Start here — picked for" your role sits above the doors; the "Cert-relevant" quick view is FIPS 203–205, SP 800-208 and the CMVP manual, and Lifecycle status filters to Published so you are not configuring against a draft.',
     curious:
       'Pick the "Learn" door for research, analysis and explainers; "Recently changed" at the top shows what was just added or updated, and the search box takes plain words like "hybrid TLS".',
@@ -331,6 +375,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'On KEM & Encrypt, tick "Hybrid Mode" and choose the key derivation — HKDF-Extract or raw concatenation — to see how a PQC and a classical shared secret combine; the Key Store table has a Size column for every key.',
     researcher:
       'Every operation is logged with its timing: the strip under the heading shows the last result in milliseconds, and the Logs tab lists timestamp, key, operation and execution time, with "Copy Logs" for the whole run.',
+    'cert-engineer':
+      'Every operation is logged with its timing in the Logs tab; these are educational WebAssembly builds, not a validated module, so a result here is a demonstration, not evidence.',
     ops: 'Key Store\'s "Backup All" exports every key as a ZIP and "Import ZIP" restores it, so a rehearsal survives a reload; Sign & Verify has a "Deterministic signing" option, and Key Store also generates classical keys for comparison.',
     curious:
       'Follow the Quick Start: generate a key pair on the Key Store tab, then create and check a signature on Sign & Verify; everything runs in your browser and the Logs tab shows each step.',
@@ -345,6 +391,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'The Learn tab walks from a first keypair through certificates, key establishment without classical exchange, and packaging keys for the real world; the Workbench tab then runs each step against real files.',
     researcher:
       'The "Related specs" strip links ML-KEM, ML-DSA, TLS 1.3, PKCS#12 and X.509 to their source documents; on the Explore tab, "Query this build" lists the algorithms and providers this exact binary reports.',
+    'cert-engineer':
+      'The header states that this build is educational and not FIPS-validated; on the Explore tab, "Query this build" lists which providers are self-reported and which are actually verified.',
     ops: 'The "Rotation & inspection" strip is a rotation rehearsal — genpkey to mint the new key, req for the CSR, x509 to inspect issuer, expiry and algorithm, pkcs12 to bundle key and chain; nothing touches your estate.',
     curious:
       'A banner names the roles this page is built for; the Learn tab starts with "Your first keypair — classical, then post-quantum", and the Workbench terminal offers one-click starters such as "Check OpenSSL version".',
@@ -359,6 +407,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Each threat names its At-Risk Cryptography, its PQC Mitigation and the implementation pitfalls of the replacement (side-channel, fault, RNG); the Class chips split HNDL from HNFL so you know whether the exposure is data or signatures.',
     researcher:
       '"CRQC Threat Horizon" lists the CRQC arrival estimates by source and logical-qubit progress per machine, with a Mosca calculator; the Evidence column sorts records by peer review, source and confidence.',
+    'cert-engineer':
+      'Each threat opens with its Data Provenance (peer review, vetting body, last verified); where a replacement algorithm has attack notes, the detail links to Implementation Attacks on /algorithms.',
     ops: 'Each threat\'s Detection & Response section has a "Detection / SOC" tab and an "Incident Response" tab; use the Industry filter for your sector and the Severity chips to work Critical first.',
     curious:
       'A line above the catalog tells you how many known threats there are and what one is; pick an industry in the list on the left to see the ones closest to you, and "Your Exposure" at the top sums it up.',
@@ -373,6 +423,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Your featured cards are TEE-HSM Secure Channel, key derivation and the HSM Capacity Calculator; the KMIP Control Plane card at the bottom flips a crypto-agility policy and shows the same operations switch to PQC.',
     researcher:
       'Your featured cards are Source Combining, Stateful Hash Signatures and more; "Size / benchmark" under "I want to…" collects the measurement tools, and the "Sandbox" chip shows which tools run in a container rather than the browser.',
+    'cert-engineer':
+      'Your featured cards are Entropy Testing, SP 800-90A DRBG and Firmware Signing; the PKCS#11 HSM card is where the ACVP validation suite lives.',
     ops: 'Your featured cards are the PQC VPN Simulator, HSM Capacity Calculator and Hybrid Certificates; "Runs on this device" hides tools that need the sandbox, and "Sandbox runtime" in the left rail shows whether you have container access.',
     curious:
       'Your featured cards are the Merkle Tree Workshop and PKI Workshop; a notice explains that advanced controls are folded away but everything still runs real cryptography in your browser, and the Beginner chip keeps the list gentle.',

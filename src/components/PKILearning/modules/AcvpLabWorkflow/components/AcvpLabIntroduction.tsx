@@ -912,6 +912,19 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           </ul>
         </Callout>
         <p>
+          Propose the test with the{' '}
+          <a
+            href="https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=validation_contribution.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            validation contribution issue template
+          </a>
+          : it asks for the algorithm and parameters, the immutable source, the licence note and the
+          expected behaviour, which is what a reviewer checks above.
+        </p>
+        <p>
           Not a coder? Open a{' '}
           <a
             href="https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml"

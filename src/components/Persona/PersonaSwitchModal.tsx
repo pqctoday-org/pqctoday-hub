@@ -11,6 +11,7 @@ import {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
   Globe,
@@ -32,6 +33,7 @@ import {
 import { REGIONS, INDUSTRY_ICONS } from '@/data/regionIndustryOptions'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { logPersonaSelected, logRegionSelected, logIndustrySelected } from '@/utils/analytics'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 const REGION_ITEMS: FilterDropdownItem[] = REGIONS.map((r) => ({
   id: r.id,
@@ -49,6 +51,7 @@ const PERSONA_ICONS = {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
 } as const
@@ -61,6 +64,7 @@ const PERSONA_ORDER: PersonaId[] = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
 ]
 
 interface Props {
@@ -127,14 +131,8 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
     }
   }, [])
 
-  // Esc to close
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(true, onClose)
 
   // B+ remediation 1.2 (2026-08-10). "Choosing a role shrinks the navigation,
   // and the shrink is never explained at the moment of choosing — the reward

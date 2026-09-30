@@ -82,6 +82,7 @@ const ROLES = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
   'curious',
 ] as const
 const REQUIRED_GRID_CARDS = 3
@@ -458,7 +459,10 @@ async function main() {
       variantEntries.push(obj)
     }
 
-    boardEntries.push(`  ${role}: [\n${variantEntries.join('\n')}\n  ],`)
+    // Quote non-identifier keys: 'cert-engineer' (2026-09-29) is the first
+    // persona id with a hyphen, and a bare `cert-engineer:` key is a syntax error.
+    const roleKey = /^[A-Za-z_$][\w$]*$/.test(role) ? role : jsString(role)
+    boardEntries.push(`  ${roleKey}: [\n${variantEntries.join('\n')}\n  ],`)
   }
 
   const generated = `// SPDX-License-Identifier: GPL-3.0-only

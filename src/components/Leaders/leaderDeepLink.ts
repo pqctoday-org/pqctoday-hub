@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { Leader } from '@/data/leadersData'
+import type { Leader, LeaderSuccessor } from '@/data/leadersData'
 import { LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
 
 /** Honorifics carried by some rows ("Dr.", "Prof. Dr.") and often dropped by links. */
@@ -52,23 +52,69 @@ export function leaderNameSlug(name: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+export type LeaderSuccessors = ReadonlyMap<string, LeaderSuccessor>
+const NO_SUCCESSORS: LeaderSuccessors = new Map()
+
+export interface LeaderParamMatch {
+  leader: Leader
+  /** Set when the link named a deprecated duplicate's `leader_id` and was
+   *  forwarded to the kept profile: that duplicate row's display name. */
+  forwardedFrom?: string
+}
+
 /**
- * Resolve a `?leader=` value: the stable `leader_id` first, then the display
- * name (old links — kept working forever), then a bare name slug such as
+ * Resolve a `?leader=` value: the stable `leader_id` first, then a deprecated
+ * duplicate's `leader_id` forwarded to its kept profile (ids are frozen and
+ * never deleted, so old shared links keep working), then the display name
+ * (old links — kept working forever), then a bare name slug such as
  * `dustin-moody` for a person whose id carries an organisation suffix
  * (curated profile preferred over an auto-imported stub).
  */
-export function findLeaderByParam(leaders: readonly Leader[], raw: string): Leader | undefined {
+export function resolveLeaderParam(
+  leaders: readonly Leader[],
+  raw: string,
+  successors: LeaderSuccessors = NO_SUCCESSORS
+): LeaderParamMatch | undefined {
   const value = raw.trim()
   if (!value) return undefined
-  const byId = leaders.find((l) => l.leaderId === value || l.leaderId === value.toLowerCase())
-  if (byId) return byId
+  const byId = findActiveId(leaders, value)
+  if (byId) return { leader: byId }
+  const forwarded = successors.get(value) ?? successors.get(value.toLowerCase())
+  if (forwarded) {
+    // Follow a short chain (a kept row may itself be merged later); bounded so
+    // a bad cycle in the data can't loop.
+    let next: LeaderSuccessor | undefined = forwarded
+    for (let hop = 0; next && hop < 5; hop++) {
+      const kept = findActiveId(leaders, next.successorId)
+      if (kept) return { leader: kept, forwardedFrom: forwarded.name }
+      next = successors.get(next.successorId)
+    }
+  }
   const byName = findLeaderByName(leaders, raw)
-  if (byName) return byName
+  if (byName) return { leader: byName }
   const slug = leaderNameSlug(value)
   if (!slug) return undefined
   const matches = leaders.filter((l) => leaderNameSlug(l.name) === slug)
-  return matches.find((l) => l.sourceKind === 'curated') ?? matches[0]
+  const leader = matches.find((l) => l.sourceKind === 'curated') ?? matches[0]
+  return leader ? { leader } : undefined
+}
+
+function findActiveId(leaders: readonly Leader[], value: string): Leader | undefined {
+  return leaders.find((l) => l.leaderId === value || l.leaderId === value.toLowerCase())
+}
+
+/** `resolveLeaderParam` without the forwarding detail. */
+export function findLeaderByParam(
+  leaders: readonly Leader[],
+  raw: string,
+  successors: LeaderSuccessors = NO_SUCCESSORS
+): Leader | undefined {
+  return resolveLeaderParam(leaders, raw, successors)?.leader
+}
+
+/** The notice shown when a link to a merged duplicate was forwarded. */
+export function leaderForwardedMessage(forwardedFrom: string, leader: Leader): string {
+  return `${forwardedFrom} is now listed under ${leader.name} (duplicate profiles were merged).`
 }
 
 /** Lexical half of the page's search filter (the semantic supplement is async). */
@@ -88,6 +134,8 @@ export type LeaderDeepLinkPlan =
   | {
       kind: 'found'
       leader: Leader
+      /** Deprecated duplicate's name when the link was forwarded to `leader`. */
+      forwardedFrom?: string
       /** Human labels of what had to be cleared/revealed; empty = nothing hidden it. */
       widened: string[]
       /** Params with just the excluding filters removed (null when nothing changed). */
@@ -102,12 +150,14 @@ export type LeaderDeepLinkPlan =
  */
 export function planLeaderDeepLink(
   leaders: readonly Leader[],
-  params: URLSearchParams
+  params: URLSearchParams,
+  successors: LeaderSuccessors = NO_SUCCESSORS
 ): LeaderDeepLinkPlan | null {
   const raw = params.get('leader')
   if (!raw || !raw.trim()) return null
-  const leader = findLeaderByParam(leaders, raw)
-  if (!leader) return { kind: 'not-found', name: raw.trim() }
+  const match = resolveLeaderParam(leaders, raw, successors)
+  if (!match) return { kind: 'not-found', name: raw.trim() }
+  const { leader, forwardedFrom } = match
 
   const next = new URLSearchParams(params)
   const widened: string[] = []
@@ -148,7 +198,13 @@ export function planLeaderDeepLink(
     widened.push(`search "${q}"`)
   }
 
-  return { kind: 'found', leader, widened, nextParams: widened.length > 0 ? next : null }
+  return {
+    kind: 'found',
+    leader,
+    ...(forwardedFrom ? { forwardedFrom } : {}),
+    widened,
+    nextParams: widened.length > 0 ? next : null,
+  }
 }
 
 function regionIncludes(region: string, country: string): boolean {

@@ -16,9 +16,8 @@ import {
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { parseCitations } from '@/services/chat/parseCitations'
-import { verifyCitations } from '@/services/chat/citationVerification'
-import { checkGrounding } from '@/services/chat/groundingCheck'
-import { verifyFacts } from '@/services/chat/factVerification'
+import { buildRetrievedEvidenceResponse } from '@/services/chat/groundingPolicy'
+import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
 import { getCached, setCache } from '@/services/chat/responseCache'
@@ -91,7 +90,6 @@ export function useChatSend() {
     isStreaming,
     setStreaming,
     setStreamingContent,
-    appendStreamingContent,
     setError,
     model,
     deleteMessagesFrom,
@@ -141,7 +139,9 @@ export function useChatSend() {
         industry: pageContext.industry,
         region: pageContext.region,
       }
-      const cached = getCached(trimmed, pageContext.page, personaDims, provider ?? undefined)
+      const cacheProvider =
+        provider === 'gemini' ? `gemini:${model}` : `local:${localModel}:${localContextWindow}`
+      const cached = getCached(trimmed, pageContext.page, personaDims, cacheProvider)
       if (cached) {
         logChatCacheHit(pageContext.page)
         const cachedMessage: ChatMessage = {
@@ -162,6 +162,7 @@ export function useChatSend() {
       let timedOut = false
       let fullContent = ''
       let sourceIds: string[] = []
+      let retrievedChunks: RAGChunk[] = []
       const sourceRefs: ChatSourceRef[] = []
       const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
 
@@ -215,6 +216,7 @@ export function useChatSend() {
           industry: pageContext.industry,
           region: pageContext.region,
         })
+        retrievedChunks = chunks
 
         // Dynamically inject persona-curated "What's New" chunk for changelog queries
         if (classifyIntent(trimmed) === 'whats_new') {
@@ -230,6 +232,23 @@ export function useChatSend() {
           if (whatsNewChunk) {
             chunks.unshift(whatsNewChunk)
           }
+        }
+
+        // No evidence means no model call. This prevents either provider
+        // from answering from training memory when retrieval found nothing.
+        if (chunks.length === 0) {
+          addMessage({
+            id: nextMsgId('assistant'),
+            role: 'assistant',
+            content:
+              "Based on the PQC Today database, I don't have enough information about this topic.",
+            timestamp: Date.now(),
+            sources: [],
+            sourceRefs: [],
+            followUps: [],
+          })
+          setLoading(false)
+          return
         }
 
         // T10 — Trust-aware refusal gate. For audit/regulatory queries with
@@ -273,8 +292,67 @@ export function useChatSend() {
           chunks.length
         )
 
-        // Build deduplicated source references for attribution
-        const tierForChunk = await loadTierResolver()
+        // Resolve source trust tiers concurrently with generation. Importing
+        // the trust data used to block the model on every cold first query.
+        const tierResolverPromise = loadTierResolver()
+
+        const runGeneration = async (attemptMessages: ChatMessage[]): Promise<string> => {
+          const streamGen =
+            provider === 'local'
+              ? localStreamResponse(
+                  attemptMessages,
+                  chunks,
+                  controller.signal,
+                  pageContext,
+                  localContextWindow
+                )
+              : geminiStreamResponse(
+                  apiKey!,
+                  attemptMessages,
+                  chunks,
+                  model,
+                  controller.signal,
+                  pageContext
+                )
+          let raw = ''
+          for await (const chunk of streamGen) {
+            raw += chunk
+            // Restore the original immediate-feedback UX while keeping hidden
+            // citation/follow-up metadata out of the visible draft.
+            const metadataStart = raw.search(/```[ \t]*(?:citations|followups)\b/i)
+            setStreamingContent(metadataStart === -1 ? raw : raw.slice(0, metadataStart).trimEnd())
+          }
+          fullContent = raw
+          return raw
+        }
+
+        const parseAndVerify = (raw: string) => {
+          const { cleanContent: contentAfterCitations, citations } = parseCitations(raw)
+          const { cleanContent } = parseFollowUps(contentAfterCitations)
+          return finalizeGroundedResponse(cleanContent, citations, chunks)
+        }
+
+        // One generation only. The former automatic retry doubled latency and
+        // commonly returned the same rejection for both Gemini and Qwen.
+        const verified = parseAndVerify(await runGeneration(allMessages))
+
+        if (verified.mode !== 'verified') {
+          console.warn('[Chat grounding] Model draft did not fully verify', {
+            reasons: verified.decision.reasons,
+            resolution: verified.mode,
+            provider,
+            model: provider === 'gemini' ? model : localModel,
+          })
+        }
+        const finalContent = verified.content
+        // Do not display model-authored follow-ups: they are outside the
+        // claim/evidence map. ChatMessage derives safe question-only prompts
+        // from the verified answer instead.
+        const followUps: string[] = []
+
+        // Build deduplicated source references after generation, reusing the
+        // trust-data import that ran in parallel with the model.
+        const tierForChunk = await tierResolverPromise
         const seenTitles = new Map<string, number>()
         for (const c of chunks) {
           const existingIdx = seenTitles.get(c.title)
@@ -312,99 +390,6 @@ export function useChatSend() {
           })
         }
 
-        // Dispatch to the correct provider
-        const streamGen =
-          provider === 'local'
-            ? localStreamResponse(
-                allMessages,
-                chunks,
-                controller.signal,
-                pageContext,
-                localContextWindow
-              )
-            : geminiStreamResponse(
-                apiKey!,
-                allMessages,
-                chunks,
-                model,
-                controller.signal,
-                pageContext
-              )
-
-        for await (const chunk of streamGen) {
-          fullContent += chunk
-          appendStreamingContent(chunk)
-        }
-
-        // Parse citations first (parseCitations is not anchored to the end
-        // of the string — the citations fence is instructed to appear
-        // BEFORE the follow-ups fence, see promptBuilder.ts §7.1), then
-        // follow-ups from what remains and strip both blocks from the
-        // displayed content.
-        const { cleanContent: contentAfterCitations, citations } = parseCitations(fullContent)
-        const { cleanContent, followUps } = parseFollowUps(contentAfterCitations)
-
-        // Three checks, cheapest/most-specific first in priority:
-        // 1. Citation check (exact chunk-id + text-containment match) — only
-        //    populated when the model actually emitted a ```citations block
-        //    (useStructuredCitations flag, off by default); the strongest
-        //    signal of the three since it names the EXACT chunk a claim
-        //    came from, so "is this claim in that chunk" is exact-match,
-        //    not a heuristic guess.
-        // 2. Fact violation check — specific, mechanically-confirmed
-        //    contradictions against known ground truth (FIPS↔algorithm
-        //    attribution, security levels, standard dates, non-PQC
-        //    misattribution, product certification claims).
-        // 3. Grounding check — entity-presence only, catches fabricated
-        //    names/products/standards but not wrong RELATIONSHIPS between
-        //    entities that are each individually grounded (e.g. "Product X
-        //    is FIPS 140-3 certified" when both "Product X" and "FIPS
-        //    140-3" appear in the retrieved chunks but not together) —
-        //    which (1) and (2) exist specifically to catch.
-        const citationViolations = verifyCitations(citations, chunks)
-        const grounding = checkGrounding(cleanContent, chunks)
-        const factViolations = verifyFacts(cleanContent, chunks)
-
-        let finalContent = cleanContent
-        if (citationViolations.length > 0) {
-          const violationLines = citationViolations
-            .map((v) =>
-              v.reason === 'unknown-chunk'
-                ? `- Cited a source not among this answer's retrieved evidence: "${v.claimExcerpt}"`
-                : `- Cited source doesn't contain this claim: "${v.claimExcerpt}"`
-            )
-            .join('\n')
-          finalContent =
-            finalContent.trimEnd() +
-            `\n\n> **Citation notice:** This response cited a source for a claim that doesn't check out:\n${violationLines}`
-        } else if (factViolations.length > 0) {
-          // A fact violation is a specific, mechanically-confirmed
-          // contradiction — surface it distinctly and more prominently
-          // than the generic entity-presence notice below, naming what
-          // was actually wrong instead of just urging a cross-check.
-          const violationLines = factViolations
-            .map((v) => `- **${v.expected}** — the response said: "${v.found}"`)
-            .join('\n')
-          finalContent =
-            finalContent.trimEnd() +
-            `\n\n> **Fact-check notice:** This response contains a claim that contradicts the PQC Today database:\n${violationLines}`
-        } else if (grounding.hasWarning) {
-          finalContent =
-            finalContent.trimEnd() +
-            '\n\n> **Accuracy notice:** This response may reference items not verified in the PQC Today database. Please cross-check specific names, dates, or claims against the source pages linked above.'
-        }
-
-        // Graceful degradation hint for local mode: suggest Flash for thin answers
-        if (
-          provider === 'local' &&
-          finalContent.length < 200 &&
-          ['comparison', 'catalog_lookup', 'recommendation'].includes(classifyIntent(trimmed))
-        ) {
-          finalContent =
-            finalContent.trimEnd() +
-            '\n\n> *For more detailed answers, try Flash mode which can reference more sources.*'
-        }
-
         // Finalize message
         const assistantMessage: ChatMessage = {
           id: nextMsgId('assistant'),
@@ -423,7 +408,7 @@ export function useChatSend() {
           pageContext.page,
           { content: finalContent, sourceIds, sourceRefs, followUps },
           personaDims,
-          provider ?? undefined
+          cacheProvider
         )
       } catch (err) {
         // Local model's GPU session died mid-request (commonly: the tab was
@@ -442,18 +427,16 @@ export function useChatSend() {
         if (err instanceof Error && err.name === 'AbortError') {
           if (timedOut) {
             if (fullContent.trim()) {
-              // Save partial content instead of discarding on timeout
-              const { cleanContent, followUps } = parseFollowUps(fullContent)
+              // A partial draft has not passed grounding verification. Never
+              // display it; return the deterministic corpus-only fallback.
               const assistantMessage: ChatMessage = {
                 id: nextMsgId('assistant'),
                 role: 'assistant',
-                content:
-                  cleanContent.trimEnd() +
-                  '\n\n*(Response timed out — the above may be incomplete.)*',
+                content: buildRetrievedEvidenceResponse(retrievedChunks),
                 timestamp: Date.now(),
                 sources: sourceIds,
                 sourceRefs,
-                followUps,
+                followUps: [],
               }
               addMessage(assistantMessage)
             } else {
@@ -463,19 +446,16 @@ export function useChatSend() {
           return
         }
 
-        // If content was streamed before the error, save it rather than discarding it
+        // Never display an interrupted draft: it did not reach the grounding gate.
         if (fullContent.trim()) {
-          const { cleanContent, followUps } = parseFollowUps(fullContent)
           const assistantMessage: ChatMessage = {
             id: nextMsgId('assistant'),
             role: 'assistant',
-            content:
-              cleanContent.trimEnd() +
-              '\n\n*(Connection interrupted — response may be incomplete.)*',
+            content: buildRetrievedEvidenceResponse(retrievedChunks),
             timestamp: Date.now(),
             sources: sourceIds,
             sourceRefs,
-            followUps,
+            followUps: [],
           }
           addMessage(assistantMessage)
           return
@@ -517,7 +497,6 @@ export function useChatSend() {
       setError,
       setStreaming,
       setStreamingContent,
-      appendStreamingContent,
       setApiKey,
       setWebLLMStatus,
       setWebLLMProgress,

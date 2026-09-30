@@ -17,7 +17,7 @@ first time (don't ship dev-speak and reformat later):
   plain-language title: `- **What changed, in plain words** [view:/page]: …`.
 - **Keep the `[view:/page]` and `[persona:id]` tags** — they drive the page's
   filters and "For me" view. Valid persona ids: `executive`, `grc`,
-  `developer`, `architect`, `researcher`, `ops`, `curious`. Tag every entry with the
+  `developer`, `architect`, `researcher`, `cert-engineer`, `ops`, `curious`. Tag every entry with the
   surface(s) it affects. `persona:ops` in particular is under-used relative to
   how often ops-relevant work actually ships (07-19 audit finding) — tag it
   explicitly whenever an entry touches deployment, certificate lifecycle, TLS
@@ -28,6 +28,63 @@ first time (don't ship dev-speak and reformat later):
   cares about (page names, feature names, what was broken, counts).
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
+
+## [4.136.0] - 2026-09-29
+
+The About page's list of the software this site is built from is now accurate and complete: it shows what the site really ships, with real versions and licenses, says plainly where something is not recorded, and can be downloaded in full.
+
+### Added
+
+- **Download the complete software bill of materials** [view:/about] [persona:grc] [persona:architect] [persona:ops] [persona:executive]: the About page now links a machine-readable list (CycloneDX) of every package and component the site ships or downloads — 368 in all, including the 178 supporting packages that come along with the ones shown on the page — each with its version, license and how that was established.
+- **AI models are listed too** [view:/about] [persona:grc] [persona:architect] [persona:executive]: the in-browser assistant's models — Qwen 3.5 9B, now its default, and Qwen 3 8B, still available — with their compiled libraries, plus the search-embedding model your browser downloads, are named with their licenses, with a note that the site does not pin a revision for them.
+- **Fonts, the Python runtime and other parts that were missing** [view:/about] [persona:ops] [persona:architect]: the Inter typeface, the Python runtime that runs in your browser, the OpenSSH and strongSwan demo components, the randomness-testing tools and about 60 cryptography libraries built into the PQC engines now appear.
+
+### Changed
+
+- **Every version and license on the About page now comes from the shipped files** [view:/about] [persona:grc] [persona:ops] [persona:architect]: versions are read from the packages, the served WebAssembly programs and their build records, and licenses from each package's own record. Where a program carries no release number the page shows the source commit it was built from, or says the commit is not recorded, instead of a made-up version. The build now stops if the page and the shipped files disagree.
+
+### Fixed
+
+- **Wrong entries on the About page corrected** [view:/about] [persona:grc] [persona:developer] [persona:architect]: OpenSSL is shown as 3.6.3 (the version actually served), the post-quantum signature libraries are named as the ones the engine really uses, the search model is bge-base (not bge-small), and a library that is available under either MIT or GPL now shows both options.
+
+## [4.135.0] - 2026-09-29
+
+Every item's panel now has its own Share button, so you can share a document, threat, algorithm, product or record while it is open — on desktop and on phones.
+
+### Added
+
+- **Share an item from its own panel** [view:/library] [view:/threats] [view:/algorithms] [view:/timeline] [view:/migrate] [view:/patents] [view:/leaders] [view:/compliance] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: every document, threat, algorithm, protocol, timeline event, product, vendor roadmap, patent, Community profile, framework and certification record now has a Share button right in its panel or sheet, next to Close. It shares a clean link to that one item (without your filters or sort), with the same options as the main Share button; before, the open panel covered the Share button so nothing could be shared.
+- **Share an industry use case or an open comparison** [view:/algorithms] [persona:architect] [persona:executive] [persona:developer]: each use case on the Industry Landscape tab has its own Share button, and a shared Transition-tab comparison now reopens with the comparison panel showing (or stays closed if you closed it).
+- **More links work on phones** [view:/migrate] [view:/patents] [persona:ops] [persona:researcher]: a Vendor-risk link to a product opens that product on a phone, and Patents links filtered by inventor or a list of patents apply the same filter on a phone, with removable chips.
+
+### Fixed
+
+- **Compliance toolbar no longer disappears** [view:/compliance] [persona:grc]: closing a document pop-up on the For You tab no longer removed the page's Export, Endorse and Flag buttons.
+- **Migrate shares the product you are looking at** [view:/migrate] [persona:ops] [persona:architect]: with a migration plan started, Share used to send the plan even while a specific product or vendor was open; it now shares the open item.
+- **Timeline event pop-up has a Close button** [view:/timeline] [persona:grc] [persona:researcher]: the event details pop-up now has a visible Close button, and keyboard focus stays inside open panels across the Library, Algorithms and Patents pages.
+- **On phones, document and "try it" panels are no longer hidden under the header** [persona:developer] [persona:curious]: their Close and Share buttons were covered by the top header on phones.
+- **Escape closes only the panel on top** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: with one panel open over another (for example a revision history over a framework, or search over a document), Escape now closes just the top one instead of both, and the page behind an open panel no longer scrolls.
+- **Community lists each person once** [view:/leaders] [persona:researcher] [persona:executive]: 14 people who appeared twice (for example Tanja Lange and Oded Regev) now have a single profile that carries all of their references; old links to the duplicate profiles open the kept one and say so.
+
+## [4.134.0] - 2026-09-29
+
+A new role for the people who test and certify cryptographic modules — validation-lab testers, module vendor engineers and scheme reviewers — with its own learning path, home boards and the validation tools up front.
+
+### Added
+
+- **New role: Certification & Validation Engineer** [view:/] [view:/learn] [persona:cert-engineer]: pick it on the home page for a path that starts at the certificate instead of the basics — what a certificate proves, FIPS 140-3, the ACVP lab workflow, entropy, HSMs, PQC testing, Common Criteria and EUCC, and hardware acceleration — then eight deeper modules, with three checkpoint quizzes along the way.
+- **Validation tools open first for this role** [view:/algorithms] [view:/playground] [persona:cert-engineer]: the Algorithms page opens on the Validation tab, and the Playground features Entropy Testing, the SP 800-90A DRBG and Firmware Signing next to the ACVP validation suite.
+- **Six home boards built on test evidence** [view:/] [view:/compliance] [persona:cert-engineer]: test the algorithms, the entropy source or the module interface, place a product on the FIPS 140-3 stages, sign firmware, or review the drafts — every board says what a result is evidence of, and a CAVP algorithm validation is never counted as a certificate.
+- **Guidance written for this role across the site** [view:/learn] [view:/faq] [view:/leaders] [persona:cert-engineer]: a short tour, "What this means for you" notes on every reference page, "For your role" notes on the related modules and tools, and a NICE workforce mapping to Systems Testing and Evaluation (DD-WRL-007).
+- **176 existing quiz questions now count for this role** [view:/learn/quiz] [persona:cert-engineer]: every question in the role's sixteen topics is eligible for its checkpoints and capstone; no new questions were written.
+- **A Compliance view and a report summary for this role** [view:/compliance] [view:/report] [persona:cert-engineer]: "For You" on Compliance lists the certification schemes that already expect post-quantum cryptography and links the tests to run first; the assessment report adds a summary written for someone taking a module through certification.
+- **Propose a test vector from where you spot the gap** [view:/playground] [view:/learn] [persona:cert-engineer] [persona:developer]: the ACVP validation workbench and the ACVP Lab Workflow module now link the validation contribution form.
+- **GRC entries are easier to find on this page** [view:/changelog] [persona:grc]: the role filter and "For me" view now recognise GRC, which they had missed since the role was added.
+
+### Fixed
+
+- **FIPS badges in the Migrate catalog now match the certificate record** [view:/migrate] [view:/business] [persona:grc] [persona:ops] [persona:architect] [persona:executive] [persona:cert-engineer]: the green FIPS 140-3 badge now appears only when a product holds a FIPS 140-3 module certificate; "FIPS 140-3 in process" and "CAVP only" show the earlier stages, and FIPS 140-2, FedRAMP or vendor "FIPS mode" claims no longer earn it. The vendor scorecard, supply-chain matrix and Command Center FIPS counts follow the same rule, so their figures are lower and now match the records. The FAQ answer on these badges is rewritten to match.
+- **An entropy quiz question shows again** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: since 25 September a formatting slip had hidden the question on what NIST SP 800-90B specifies from the roles it was written for.
 
 ## [4.133.1] - 2026-09-29
 

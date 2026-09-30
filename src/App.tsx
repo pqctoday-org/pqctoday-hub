@@ -533,8 +533,10 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      {/* After <Routes> on purpose: the drawer and the page header are both
-          z-50, so DOM order decides which paints on top. */}
+      {/* After <Routes> on purpose: on desktop the drawer and the page header
+          are both z-50, so DOM order decides which paints on top. In the phone
+          shell the sticky header / bottom nav are z-nav (70), so both hosts
+          switch to the sheet layers (z-overlay / z-dialog) there instead. */}
       <SpecDrawerHost />
       <TryToolModalHost />
     </BrowserRouter>

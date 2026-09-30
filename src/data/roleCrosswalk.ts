@@ -316,8 +316,8 @@ export const INSTANCES_PER_PRODUCT_ESTIMATE = 12
  * is an educational-recommendation change, not a change to the framework's
  * role definitions, FTEs or gate authority — see the `ROLE_CROSSWALK` entries
  * above for the actual per-role `persona` field. Personas that hold no
- * program-role ownership (Researcher, Curious — audience segments, not team
- * jobs) map to `[]` and see the full neutral phase rail with no "≈ your view"
+ * program-role ownership (Researcher, Certification & Validation Engineer,
+ * Curious — audience segments, not team jobs) map to `[]` and see the full neutral phase rail with no "≈ your view"
  * marker (spec §4 orphan-personas decision).
  */
 export const personaToRoles: Record<PersonaId, FrameworkRoleId[]> = (() => {
@@ -328,6 +328,7 @@ export const personaToRoles: Record<PersonaId, FrameworkRoleId[]> = (() => {
     developer: [],
     architect: [],
     researcher: [],
+    'cert-engineer': [],
     ops: [],
     curious: [],
   }

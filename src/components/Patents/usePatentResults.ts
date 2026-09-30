@@ -12,32 +12,14 @@ import { useMemo } from 'react'
 import type { PatentItem } from '@/types/PatentTypes'
 import type { SortKey, SortDir } from './PatentsTable'
 import { inferRegion } from './PatentsInsights'
-
-/** patents.inventors is raw USPTO/Google-Patents format — "Surname; Givenname
- * et al." — inverted order from a leader's "Givenname Surname" and truncated
- * to the first-named inventor. An exact-equality match (like assignee uses)
- * can never work here, so this compares normalized word sets instead: every
- * word in the filter name must appear among the record's inventor-field
- * words, order-independent. Mirrors leaders_patents_xref.py's normalization
- * on the Python side (lowercase, strip "et al.", strip punctuation). */
-function inventorMatches(inventorsField: string, filterName: string): boolean {
-  const normalize = (s: string): string[] =>
-    s
-      .replace(/\bet\s+al\.?\s*$/i, '')
-      .toLowerCase()
-      .replace(/[^a-z\s]/g, ' ')
-      .split(/\s+/)
-      .filter(Boolean)
-  const recordWords = new Set(normalize(inventorsField))
-  const filterWords = normalize(filterName)
-  return filterWords.length > 0 && filterWords.every((w) => recordWords.has(w))
-}
+import { inventorMatches, parsePatentIds, patentIdMatches } from '@/data/patentFilters'
 
 export function filterPatents(patents: PatentItem[], params: URLSearchParams): PatentItem[] {
   const q = (params.get('search') ?? '').toLowerCase()
   const assigneeF = params.get('assignee') ?? ''
   const inventorF = params.get('inventor') ?? ''
   const patentIdsF = params.get('patentIds') ?? ''
+  const wantedIds = parsePatentIds(patentIdsF)
   const agilityF = params.get('agility') ?? ''
   const domainF = params.get('domain') ?? ''
   const impactF = params.get('impact') ?? ''
@@ -64,16 +46,7 @@ export function filterPatents(patents: PatentItem[], params: URLSearchParams): P
       return false
     if (assigneeF && p.assignee !== assigneeF) return false
     if (inventorF && !inventorMatches(p.inventors, inventorF)) return false
-    if (patentIdsF) {
-      const wanted = new Set(
-        patentIdsF
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean)
-      )
-      const bare = p.patentNumber.replace(/^US/i, '')
-      if (!wanted.has(p.patentNumber) && !wanted.has(bare)) return false
-    }
+    if (patentIdsF && !patentIdMatches(p.patentNumber, wantedIds)) return false
     if (agilityF && p.cryptoAgilityMode !== agilityF) return false
     if (domainF && !p.applicationDomain.includes(domainF)) return false
     if (impactF && p.impactLevel !== impactF) return false

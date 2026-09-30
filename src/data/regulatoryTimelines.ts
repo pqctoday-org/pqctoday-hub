@@ -172,7 +172,7 @@ export const FIPS_STANDARDS = {
   206: {
     algorithm: 'FN-DSA',
     name: 'FFT over NTRU-Lattice-Based Digital Signature Algorithm',
-    status: 'draft',
+    status: 'in development — no public draft or final publication',
   },
 } as const
 

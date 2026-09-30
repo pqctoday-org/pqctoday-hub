@@ -9,6 +9,7 @@ import { productsForDomain, productsForVendor } from './workbenchCatalog'
 import { Button } from '../../ui/button'
 import { retiredProductSuccessors, softwareData } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -535,6 +536,61 @@ describe('MigrationWorkbench (integration)', () => {
         renderStandaloneAt('/migrate?tab=vendorrisk&open=zz-nope')
         expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('zz-nope')
       })
+    })
+  })
+
+  // PR 4 (2026-09-29): with a plan/choice in the store the workbench used to
+  // register the plan ?share=<token> URL with the top bar unconditionally —
+  // so a reader looking at one product row / vendor card shared their whole
+  // plan instead of the item. While an item is open the top bar now shares
+  // the current item view (no url override); with nothing open, the plan.
+  describe('top-bar share URL vs. an open item', () => {
+    const [sample] = productsForDomain('tls')
+    const shareUrl = () => usePageActionsStore.getState().current?.url
+    beforeEach(() => {
+      useMigrateSelectionStore.setState({ plan: ['tls'], choice: {}, tab: 'replace' })
+    })
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('shares the plan token when no item is open', () => {
+      renderStandaloneAt('/migrate?tab=plan')
+      expect(shareUrl()).toMatch(/\?share=/)
+    })
+
+    it('does not override the share URL while a ?product= row is open', () => {
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.productId)}`)
+      expect(usePageActionsStore.getState().current?.title).toBe('PQC Migration Workbench')
+      expect(shareUrl()).toBeUndefined()
+    })
+
+    it('does not override the share URL while a ?vendor= card is open', () => {
+      const [vendorId] = [...roadmapByVendorId.keys()]
+      renderStandaloneAt(`/migrate?tab=roadmaps&vendor=${encodeURIComponent(vendorId)}`)
+      expect(shareUrl()).toBeUndefined()
+    })
+
+    it('restores the plan share once the linked row is collapsed', () => {
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.productId)}`)
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: new RegExp(`details for ${escapeRe(sample.softwareName)}$`),
+        })
+      )
+      expect(shareUrl()).toMatch(/\?share=/)
+    })
+
+    it('phone shell: an open ?product= sheet is not overridden by the plan token', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderStandaloneAt(`/migrate?product=${encodeURIComponent(sample.productId)}`)
+      expect(shareUrl()).toBeUndefined()
+    })
+
+    it('phone shell: with nothing open the plan token is still shared', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderStandaloneAt('/migrate')
+      expect(shareUrl()).toMatch(/\?share=/)
     })
   })
 

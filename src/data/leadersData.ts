@@ -83,6 +83,8 @@ const modules = import.meta.glob('./leaders_*.csv', {
   eager: true,
 })
 
+const LEADERS_FILE = /leaders_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
 type LeaderCore = Omit<Leader, 'id' | 'status'>
 
 const {
@@ -91,7 +93,7 @@ const {
   metadata,
 } = loadLatestCSV<RawLeaderRow, LeaderCore>(
   modules,
-  /leaders_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  LEADERS_FILE,
   (row) => {
     if (row.status && row.status !== 'active') return null
     return {
@@ -151,3 +153,46 @@ export const leadersData: Leader[] = currentItems.map((item, index) => {
 })
 
 export const leadersMetadata = metadata
+
+/** Where a deprecated row's `?leader=` links now point. */
+export interface LeaderSuccessor {
+  /** `leader_id` of the kept profile. */
+  successorId: string
+  /** The deprecated row's display name, for the "now listed under" notice. */
+  name: string
+}
+
+const DUPLICATE_OF = /^duplicate of (\S+)$/i
+
+/**
+ * Deprecated `leader_id` → the profile it was merged into. Duplicate rows are
+ * never deleted (their ids are frozen and may sit in shared links); they are
+ * deprecated with `deprecated_reason = "duplicate of <kept leader_id>"`, which
+ * is what this map is parsed from. Other deprecations (no successor) are left
+ * out. Read from the same latest snapshot as `leadersData`.
+ */
+export const deprecatedLeaderSuccessors: ReadonlyMap<string, LeaderSuccessor> = new Map(
+  loadLatestCSV<RawLeaderRow, [string, LeaderSuccessor]>(modules, LEADERS_FILE, (row) => {
+    if (!row.status || row.status === 'active') return null
+    const id = row.leader_id?.trim()
+    const successorId = DUPLICATE_OF.exec(row.deprecated_reason?.trim() ?? '')?.[1]
+    if (!id || !successorId || successorId === id) return null
+    return [id, { successorId: successorId.toLowerCase(), name: row.Name }]
+  }).data
+)
+
+/**
+ * Names a kept profile was ALSO listed under before its duplicate rows were
+ * merged into it (keyed by the kept leader_id). Joins keyed by a leader's
+ * NAME — trusted_source_xref's `leaders` rows, trust scores — use this so a
+ * merged-away row's data still lands on the kept profile.
+ */
+export const formerLeaderNames: ReadonlyMap<string, readonly string[]> = (() => {
+  const byKept = new Map<string, string[]>()
+  for (const { successorId, name } of deprecatedLeaderSuccessors.values()) {
+    const list = byKept.get(successorId) ?? []
+    if (name && !list.includes(name)) list.push(name)
+    byKept.set(successorId, list)
+  }
+  return byKept
+})()

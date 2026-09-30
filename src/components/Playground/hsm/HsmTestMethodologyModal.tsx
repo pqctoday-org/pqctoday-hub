@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { X, FlaskConical, ShieldCheck, GitCompare, BookOpen, Construction } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface HsmTestMethodologyModalProps {
   onClose: () => void
@@ -52,13 +52,8 @@ const METHODOLOGY_ROWS: { algo: string; tested: string; limits: string }[] = [
 ]
 
 export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProps) => {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(true, onClose)
 
   return (
     <div className="fixed inset-0 embed-backdrop z-50 flex items-start justify-center p-4 overflow-y-auto">

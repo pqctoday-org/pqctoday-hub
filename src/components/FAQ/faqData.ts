@@ -52,7 +52,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is FN-DSA (Falcon)?',
         answer:
-          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm), formerly known as Falcon, is expected to be standardized as FIPS 206 in late 2026 or early 2027, pending final NIST clearance — the initial public draft was submitted for internal NIST review in August 2025. It produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares FN-DSA-512 and FN-DSA-1024 parameters.',
+          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm) is the name NIST plans to use for a standard based on Falcon. FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard. Falcon produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares the Falcon-512 and Falcon-1024 candidate parameters.',
         deepLink: '/algorithms?highlight=fn-dsa',
       },
       {
@@ -174,7 +174,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What are the four FIPS standards for PQC?',
         answer:
-          'NIST has published three PQC FIPS standards and is finalizing a fourth: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), FIPS 205 (SLH-DSA, stateless hash-based signatures), and the forthcoming FIPS 206 (FN-DSA, NTRU-lattice signatures). FIPS 203, 204, and 205 were all published in August 2024. The Reference Library has the full text and cross-references for each standard.',
+          'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth, planned FIPS 206 for FN-DSA, remains in development with no published Initial Public Draft or final text. The Reference Library has the published standards and related source material.',
         deepLink: '/library',
       },
       {
@@ -394,9 +394,9 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/migrate',
       },
       {
-        question: 'What do the three FIPS badge tiers mean?',
+        question: 'What do the FIPS badges in the Migrate catalog mean?',
         answer:
-          'The Migrate catalog uses three FIPS badge tiers: Validated (green) means the product has achieved FIPS 140-3 certification with PQC algorithms; Partial (amber) means the vendor claims FIPS-mode operation, FedRAMP authorization, or WebTrust audit but full PQC validation is pending; No (gray) means no FIPS validation is available. The catalog shows these badges on every product entry.',
+          'A badge appears only where a certification record backs it. "FIPS 140-3" means the product holds a FIPS 140-3 module certificate; "FIPS 140-3 in process" means NIST lists the module as in process; "CAVP only" means its algorithms are CAVP-validated — the prerequisite for a certificate, not a certificate. No badge means no FIPS 140-3 record is linked. Open a product to see whether its certificate covers the PQC algorithms or classical ones only.',
         deepLink: '/migrate',
       },
       {
@@ -894,6 +894,11 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     'What PQC research areas are active?',
     'What are the four FIPS standards for PQC?',
     'Is PQC Today open source?',
+  ],
+  'cert-engineer': [
+    'What is FIPS 140-3 and why does the validation backlog matter?',
+    "What is Common Criteria's role in PQC?",
+    'What HSMs support ML-KEM and ML-DSA?',
   ],
   ops: [
     'What PQC operations tasks should IT teams plan?',

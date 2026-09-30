@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Link } from 'react-router'
 import { useState } from 'react'
 import {
@@ -20,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
@@ -70,20 +73,11 @@ export const FrameworkDetailPopover = ({
   const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
   const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  // Esc closes only the top overlay (the concept graph / revision drill-down
+  // when open); the ref-counted lock keeps the page locked until the last
+  // stacked overlay closes.
+  useOverlayEscape(isOpen && !!framework, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!framework)
 
   if (!isOpen || !framework) return null
 
@@ -188,6 +182,10 @@ export const FrameworkDetailPopover = ({
                     <Network size={18} aria-hidden="true" />
                   </Button>
                 )}
+                <ItemShareButton
+                  title={itemShareTitle(framework.label)}
+                  path={`/compliance?framework=${encodeURIComponent(framework.id)}`}
+                />
                 <Button
                   variant="ghost"
                   onClick={onClose}
@@ -413,6 +411,7 @@ export const FrameworkDetailPopover = ({
           onClose={() => setGraphOpen(false)}
           centerConceptId={graphConceptId}
           title={framework.label}
+          frameworkId={framework.id}
         />
       )}
       {drilldownOpen && (

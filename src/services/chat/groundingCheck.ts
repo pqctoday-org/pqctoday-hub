@@ -147,15 +147,17 @@ export function checkGrounding(
       }
     }
 
-    // Scan first 500 chars of each chunk for entity references
-    const snippet = c.content.slice(0, 500).toLowerCase()
+    // Scan the full retrieved chunk. Restricting this to the first 500
+    // characters caused valid, citation-verified entities later in a chunk to
+    // be treated as hallucinations and the whole answer to be discarded.
+    const snippet = c.content.toLowerCase()
     // Extract FIPS/RFC/SP references from chunk content
     const contentRefs = snippet.match(/\b(fips|rfc|sp)\s?\d[\d-]+\b/gi)
     if (contentRefs) {
       for (const ref of contentRefs) groundedTerms.add(ref.toLowerCase())
     }
     // Extract product/org names from content (capitalized words near "by", "from", "using")
-    const productRefs = c.content.slice(0, 500).match(/\b[A-Z][\w-]+(?:\s+[A-Z][\w-]+){0,2}\b/g)
+    const productRefs = c.content.match(/\b[A-Z][\w-]+(?:\s+[A-Z][\w-]+){0,2}\b/g)
     if (productRefs) {
       for (const ref of productRefs) groundedTerms.add(ref.toLowerCase())
     }

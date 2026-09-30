@@ -4,6 +4,7 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 import { chunkToResource, trustTierMultiplier } from '@/services/search/chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
+import { getTrustedSource } from '@/data/trustedSourcesData'
 import { cosineSearch } from '@/services/search/embeddingRetrieval'
 import { useEmbeddingRetrieval } from '@/services/featureFlags'
 
@@ -61,6 +62,10 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
   catalog_lookup: {
     migrate: 3,
     certifications: 2,
+    modules: 3,
+    'module-content': 2,
+    'module-summaries': 2,
+    'module-topic-summaries': 2,
     'priority-matrix': 1.5,
     'business-center': 1.5,
     vendors: 2,
@@ -68,6 +73,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'vendor-roadmap': 2,
   },
   recommendation: {
+    algorithms: 1.2,
     assessment: 2,
     'priority-matrix': 2,
     compliance: 1.5,
@@ -101,6 +107,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'protocol-matrix': 1.5,
     'standard-algo-xref': 1.5,
     'counter-claims': 1.3,
+    'regulatory-timeline': 1.5,
   },
   whats_new: { changelog: 10, 'app-guide': 1.5 },
   general: {
@@ -181,6 +188,15 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'counter-claims': 1.4,
     'standard-algo-xref': 1.3,
     'concept-registry': 1.2,
+  },
+  'cert-engineer': {
+    certifications: 1.5,
+    'implementation-attacks': 1.4,
+    algorithms: 1.3,
+    library: 1.3,
+    'module-content': 1.3,
+    'standard-algo-xref': 1.3,
+    'algo-product-xref': 1.2,
   },
   ops: {
     migrate: 1.5,
@@ -539,10 +555,10 @@ export function classifyIntent(query: string): QueryIntent {
   )
     return 'whats_new'
 
-  if (/^(what is|define|explain|what does|what are|tell me about)\b/.test(q)) return 'definition'
-  if (/\b(compare|comparison|difference|vs\.?|versus|better)\b/.test(q)) return 'comparison'
+  // Catalog wording wins when the user is asking for products/modules rather
+  // than an explanation of the identifier itself.
   if (
-    /\b(which|list|show|what)\b.*\b(products?|software|tools?|hsms?|libraries|vendors?|browsers?)\b/.test(
+    /\b(which|list|show|what)\b.*\b(products?|software|tools?|hsms?|libraries|vendors?|browsers?|modules?|lessons?|courses?)\b/.test(
       q
     )
   )
@@ -550,14 +566,22 @@ export function classifyIntent(query: string): QueryIntent {
   if (/\b(what|show|list|which)\b.*\b(validated|certified|certifications?)\b/.test(q))
     return 'catalog_lookup'
 
-  // Standard identifier detection — before country detection because
-  // "bsi" and "etsi" are in COUNTRY_KEYS and would hijack e.g. "BSI TR-02102"
+  // A direct "what is" question remains a definition even when the subject
+  // is a standard identifier. Other standard-specific phrasing (for example,
+  // "what does RFC 9881 standardize") still uses the audit-aware intent below.
+  if (/^(what is|define|explain|what are|tell me about)\b/.test(q)) return 'definition'
+
+  // Standard identifier detection — before country detection because country
+  // keys such as "bsi" and "etsi" would otherwise hijack the explicit ID.
   if (
-    /\b(nist\s+(ir|sp|fips|cswp)\s+\d+|fips[-\s]*\d+|rfc\s+\d+|iso[\s/]iec\s+\d+|etsi\s+(ts|tr)\s+\d+|bsi\s+tr[-\s]*\d+|sp\s+800[-\s]*\d+|cnsa\s+2\.0)\b/i.test(
+    /\b(nist\s+(ir|sp|fips|cswp)\s+\d+|fips[-\s]*\d+|rfc\s+\d+|iso[\s/]iec\s+\d+|etsi\s+(ts|tr)\s+\d+|bsi\s+tr[-\s]*\d+|sp\s+800[-\s]*\d+|cnsa\s+2\.0|acvp|cavp)\b/i.test(
       q
     )
   )
     return 'standard_query'
+
+  if (/^what does\b/.test(q)) return 'definition'
+  if (/\b(compare|comparison|difference|vs\.?|versus|better)\b/.test(q)) return 'comparison'
 
   // Country detection — check before recommendation since country names are more specific
   const tokens = q.split(/\s+/)
@@ -592,6 +616,23 @@ function getLimitForIntent(intent: QueryIntent): number {
     default:
       return 15
   }
+}
+
+/** Named identifiers that semantic candidates must retain when a query has one. */
+function semanticAnchors(query: string): string[] {
+  const anchors = new Set<string>()
+  // Bounded user input (1,000 chars in useChatSend); this regex extracts
+  // identifiers and does not control access or validation.
+  const compound =
+    // eslint-disable-next-line security/detect-unsafe-regex
+    /\b(?:RFC\s*\d+|FIPS\s*\d+|NIST\s+(?:IR|SP|FIPS|CSWP)\s+\d+|CNSA\s+2\.0|ML-(?:KEM|DSA)(?:-\d+)?|SLH-DSA(?:-[A-Z0-9-]+)?|FN-DSA(?:-\d+)?)\b/gi
+  for (const match of query.matchAll(compound)) anchors.add(match[0].toLowerCase())
+
+  const genericAcronyms = new Set(['PQC', 'NIST', 'POST', 'QUANTUM'])
+  for (const match of query.matchAll(/\b[A-Z][A-Z0-9-]{2,}\b/g)) {
+    if (!genericAcronyms.has(match[0])) anchors.add(match[0].toLowerCase())
+  }
+  return [...anchors]
 }
 
 class RetrievalService {
@@ -1026,25 +1067,19 @@ class RetrievalService {
   }
 
   /**
-   * Same as search(), but when the embedding-retrieval flag is on
-   * (useEmbeddingRetrieval() — off by default, see featureFlags.ts) and
-   * lexical+expansion retrieval didn't fill the target count, tops up the
-   * result with semantically-similar chunks lexical search missed entirely
-   * — e.g. a paraphrased query sharing no vocabulary with the corpus, which
-   * the QUERY_EXPANSIONS synonym table can't cover for every phrasing.
+   * Hybrid retrieval used by chat when embedding retrieval is enabled.
    *
-   * Deliberately NOT a re-ranking blend: embedding hits are only ever
-   * APPENDED to fill remaining slots, never reordering or displacing a
-   * chunk lexical search already found. This sidesteps the open
-   * calibration question a true blended rerank would require (relative
-   * weight of a cosine score vs. an intent/persona/trust-tier-boosted
-   * MiniSearch score) — see
-   * pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.2.
-   * search() itself is untouched: its scoring/diversity/guarantee logic
-   * and every existing test against it are unaffected by this method.
+   * The old implementation only appended semantic hits when lexical search
+   * returned fewer than its target. At 18k+ chunks that condition is almost
+   * never true, so the complete embedding index was effectively dormant.
+   * This version preserves the first two lexical/entity results, then admits
+   * a small, source-diverse semantic quota into the remaining ranks. Semantic
+   * candidates must clear a cosine floor and come from a source appropriate
+   * to the classified intent. This improves paraphrase recall without letting
+   * a noisy vector match displace every exact identifier hit.
    *
-   * Async because cosineSearch() lazily fetches the ~33MB embedding model
-   * + ~16MB embeddings.bin on first call — a real network/compute cost,
+   * Async because cosineSearch() lazily fetches the embedding model plus the
+   * current ~53 MB embeddings.bin on first call — a real network/compute cost,
    * which is why this is a separate method rather than a change to
    * search()'s synchronous signature (widely depended on: the golden-query
    * suite and every other RetrievalService test call it directly).
@@ -1053,35 +1088,38 @@ class RetrievalService {
    * failure, no WebGPU/wasm backend), silently returns the lexical-only
    * result — this is a supplementary recall boost, never a hard dependency.
    *
-   * Note on how often this actually fires: search()'s own backfill pass
-   * (fuzzy: 0.2, prefix: true in UnifiedSearchService's MiniSearch config)
-   * fills the target count from ANY scored candidate, however weakly
-   * matched, once the corpus is realistically sized — so a literal gap
-   * (results.length < target) is the less common case in production, not
-   * the general case. This mechanism helps genuinely under-matched queries
-   * (e.g. suppressed-source-only candidate pools, very restrictive intent
-   * limits, narrow corpus subsets) rather than acting as a general
-   * paraphrase-query fix — a full re-ranking blend would be needed for
-   * that, and was deliberately not built here (see the calibration-risk
-   * note above).
    */
   async searchWithEmbeddingFallback(
     query: string,
     limit?: number,
     pageContext?: PageContext
   ): Promise<RAGChunk[]> {
-    const results = this.search(query, limit, pageContext)
+    const lexicalResults = this.search(query, limit, pageContext)
     // useEmbeddingRetrieval is a plain flag check (localStorage/env read,
     // see featureFlags.ts), not a React Hook — it only carries the `use`
     // prefix because every flag in that module follows the same naming
     // convention, including ones (like this one) meant to be read from
     // service/data-layer code, not components.
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    if (!useEmbeddingRetrieval()) return results
+    if (!useEmbeddingRetrieval()) return lexicalResults
 
-    const target = limit ?? getLimitForIntent(classifyIntent(query))
-    const gap = target - results.length
-    if (gap <= 0) return results
+    const intent = classifyIntent(query)
+    const target = limit ?? getLimitForIntent(intent)
+    if (target <= 0) return []
+
+    // Direct lookups already have strong lexical/entity signals. They should
+    // not wait for the ~53 MB embedding index and query-vector inference.
+    // Keep semantic retrieval for ambiguous, comparative, and recommendation
+    // queries where it materially improves recall.
+    if (
+      intent === 'definition' ||
+      intent === 'catalog_lookup' ||
+      intent === 'standard_query' ||
+      intent === 'country_query' ||
+      intent === 'whats_new'
+    ) {
+      return lexicalResults.slice(0, target)
+    }
 
     // Same suppression rules search() applies via addChunk() — an embedding
     // hit must not resurface a quiz chunk the user didn't ask for, or a
@@ -1090,22 +1128,76 @@ class RetrievalService {
     const isCurious = pageContext?.experienceLevel === 'curious'
 
     try {
-      const seen = new Set(results.map((c) => c.id))
-      const hits = await cosineSearch(query, { k: gap + 5 })
+      const SEMANTIC_SCORE_FLOOR = 0.72
+      const semanticQuota = Math.max(1, Math.floor(target / 5))
+      const preferredSources = new Set(Object.keys(INTENT_BOOSTS[intent]))
+      const anchors = semanticAnchors(query)
+      const generallyUsefulSources = new Set([
+        'algorithms',
+        'glossary',
+        'library',
+        'document-enrichment',
+        'regulatory-timeline',
+        'counter-claims',
+      ])
+      const hits = await cosineSearch(query, { k: Math.max(15, target * 3) })
+      const semantic: RAGChunk[] = []
+      const semanticSources = new Set<string>()
+
       for (const hit of hits) {
-        if (results.length >= target) break
-        if (seen.has(hit.chunkId)) continue
+        if (semantic.length >= semanticQuota) break
+        if (hit.score < SEMANTIC_SCORE_FLOOR) break
         const chunk = this.corpusById.get(hit.chunkId)
         if (!chunk) continue
+        if (anchors.length > 0) {
+          const searchable = `${chunk.title}\n${chunk.content}`.toLowerCase()
+          if (!anchors.some((anchor) => searchable.includes(anchor))) continue
+        }
         if (chunk.source === 'quiz' && !quizExplicit) continue
         if (chunk.source === 'module-curious' && !isCurious) continue
-        results.push(chunk)
-        seen.add(hit.chunkId)
+        if (
+          !preferredSources.has(chunk.source) &&
+          !generallyUsefulSources.has(chunk.source) &&
+          !(isCurious && chunk.source === 'module-curious')
+        )
+          continue
+        // One semantic candidate per source prevents a near-duplicate source
+        // family from consuming the complete semantic quota.
+        if (semanticSources.has(chunk.source)) continue
+        semantic.push(chunk)
+        semanticSources.add(chunk.source)
       }
+
+      if (semantic.length === 0) return lexicalResults.slice(0, target)
+
+      const merged: RAGChunk[] = []
+      const seen = new Set<string>()
+      const add = (chunk: RAGChunk | undefined) => {
+        if (!chunk || seen.has(chunk.id) || merged.length >= target) return
+        seen.add(chunk.id)
+        merged.push(chunk)
+      }
+
+      // Exact lexical/entity hits retain the two highest-confidence slots.
+      lexicalResults.slice(0, Math.min(2, target)).forEach(add)
+      let lexicalIndex = Math.min(2, target)
+      let semanticIndex = 0
+      while (
+        merged.length < target &&
+        (lexicalIndex < lexicalResults.length || semanticIndex < semantic.length)
+      ) {
+        add(semantic[semanticIndex++])
+        add(lexicalResults[lexicalIndex++])
+        add(lexicalResults[lexicalIndex++])
+      }
+      while (merged.length < target && lexicalIndex < lexicalResults.length) {
+        add(lexicalResults[lexicalIndex++])
+      }
+      return merged
     } catch {
       // See "Fails soft" above.
     }
-    return results
+    return lexicalResults
   }
 
   get isReady(): boolean {
@@ -1158,9 +1250,23 @@ export function topAvailableTier(chunks: RAGChunk[], n = 3): TierLabel {
   let best: TierLabel = 'unknown'
   for (const chunk of chunks.slice(0, n)) {
     const ref = chunkToResource(chunk)
-    if (!ref) continue
-    const score = getTrustScore(ref.resourceType, ref.resourceId)
-    const tier: TierLabel = score?.tier ?? 'unknown'
+    const score = ref ? getTrustScore(ref.resourceType, ref.resourceId) : undefined
+    const trustedSourceId =
+      typeof chunk.metadata?.trustedSourceId === 'string'
+        ? chunk.metadata.trustedSourceId
+        : undefined
+    const sourceTier = trustedSourceId ? getTrustedSource(trustedSourceId)?.trustTier : undefined
+    const tier: TierLabel =
+      score?.tier ??
+      (sourceTier === '1_Authoritative'
+        ? 'Authoritative'
+        : sourceTier === '2_Core'
+          ? 'High'
+          : sourceTier === '3_Supporting'
+            ? 'Moderate'
+            : sourceTier === '4_Contextual'
+              ? 'Low'
+              : 'unknown')
     if (rank[tier] > rank[best]) best = tier
   }
   return best

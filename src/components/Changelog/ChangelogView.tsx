@@ -17,12 +17,14 @@ import {
   Code2,
   Network,
   FlaskConical,
+  BadgeCheck,
   Wrench,
   Compass,
   Calendar,
   UserCheck,
   Search,
   Heart,
+  ClipboardCheck,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 import clsx from 'clsx'
@@ -103,9 +105,11 @@ type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 const PERSONA_CONFIG: Record<string, { label: string; Icon: IconComponent }> = {
   executive: { label: 'Executive', Icon: Briefcase },
+  grc: { label: 'GRC', Icon: ClipboardCheck },
   developer: { label: 'Developer', Icon: Code2 },
   architect: { label: 'Architect', Icon: Network },
   researcher: { label: 'Researcher', Icon: FlaskConical },
+  'cert-engineer': { label: 'Certification', Icon: BadgeCheck },
   ops: { label: 'Ops', Icon: Wrench },
   curious: { label: 'Curious', Icon: Compass },
 }
@@ -241,12 +245,17 @@ function mergeSections(versions: ChangelogVersion[]): ChangelogSection[] {
 export const PERSONA_KEYWORDS: Record<string, RegExp> = {
   executive:
     /\b(compliance|regulatory|governance|board|roadmap|policy|NIST|ANSSI|BSI|CNSA|FIPS 140|deadline|business case|audit|framework|enforcement|stakeholder)\b/i,
+  // grc (added 2026-09-29; the 2026-09-07 split never reached this page): the
+  // obligations, evidence and assurance vocabulary of the GRC changelog entries.
+  grc: /\b(obligation|obligations register|evidence|assurance|risk register|control|checklist|audit|vendor risk|vendor scorecard|applicability|exceptions? register|closure)\b/i,
   developer:
     /\b(API|SDK|library|code|playground|openssl|WASM|JOSE|COSE|JWT|workshop|tool|algorithm|implementation|TLS|liboqs|vitest|Playwright|TypeScript|test|lint|tsconfig|webpack|vite|CI|GitHub Action|workflow)\b/i,
   architect:
     /\b(PKI|certificate|hybrid|agility|architecture|design|HSM|TPM|protocol|hierarchy|enrollment|composite|X\.509|PKCS#?11|module structure|provider|crypto-agility|key management|KMS|root of trust)\b/i,
   researcher:
     /\b(spec|RFC|draft|KAT|ACVP|FIPS 203|FIPS 204|FIPS 205|test vector|cryptanalysis|attack|paper|PROV-DM|provenance|corpus|RAG|embeddings|attestation|trust score|trust engine|trust-engine|trust tier|OSCAL|CBOM|enrichment|xwalk|crosswalk|concept registry)\b/i,
+  'cert-engineer':
+    /\b(FIPS 140-3|CMVP|CAVP|ACVP|ACVTS|Common Criteria|EUCC|certification|validation|self-test|known-answer|KAT|entropy|SP 800-90B|conformance)\b/i,
   ops: /\b(deploy|deployment|runtime|infrastructure|operations|rotate|monitoring|telemetry|incident|migration|CSV|scrape|catalog refresh|data refresh|fleet|cert rotation|HSM firmware|ETL)\b/i,
   curious:
     /\b(landing|explore|intro|overview|basics|simplified|story|getting started|learn|persona|plain.language|three[- ]?step|teaser|orientation|on.ramp)\b/i,

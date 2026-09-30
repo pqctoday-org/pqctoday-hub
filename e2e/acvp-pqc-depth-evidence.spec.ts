@@ -1,14 +1,26 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
-// ML-KEM, SLH-DSA and ML-DSA depth rows (WS-D D1/D3/D2-6: sections/mlkemAcvp.ts,
-// slhdsaAcvp.ts, mldsaDepth.ts) rendered in the real workbench on BOTH engines
-// (dual mode). Asserts row semantics, not a row count: NIST positives and
-// negatives with the NIST evidence class, product-authored rows without it, honest
-// skips — and the two engine findings rendered as red rows on exactly the
-// engine that has them (they are findings to report, not noise to filter).
+// ML-KEM and ML-DSA depth rows (WS-D D1/D2-6: sections/mlkemAcvp.ts,
+// mldsaDepth.ts) rendered in the real workbench on BOTH engines (dual mode).
+// Asserts row semantics, not a row count: NIST positives and negatives with the
+// NIST evidence class, product-authored rows without it, honest skips, NIST-
+// invalid keys rejected on both engines — and no red row at all, since every
+// engine finding this spec used to pin is closed (see the end of the test).
 //
-// Nightly only (deliberately NOT in SMOKE_SPECS): dual mode + SLH-DSA
-// deterministic signing for 12 parameter sets is far above the smoke budget.
+// SLH-DSA is deliberately NOT run here (owner decision 2026-09-29): the
+// slh_stateful category signs deterministically across 12 parameter sets in
+// both engines, and on GitHub's runner (~4-5x slower than a Mac) that alone
+// kept acvp-run-selected busy past the 360 s wait (e2e-nightly runs
+// 36440325478, 36577854144). The workbench selects whole categories only, so
+// there is no smaller SLH-DSA slice to keep. Full SLH-DSA coverage — sigVer
+// "too small" negatives, deterministic sigGen, HashSLH-DSA (passing on BOTH
+// engines since the hsm a22e6ca0 rebuild), product-authored negatives, the
+// internal-interface skip — runs in
+// src/components/Playground/hsm/acvp/useAcvpSuite.slhdsaAcvp.nightly.test.ts
+// (.github/workflows/validation-nightly.yml).
+//
+// Nightly only (deliberately NOT in SMOKE_SPECS): dual mode is above the smoke
+// budget.
 test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
   test.setTimeout(420000)
 
@@ -52,19 +64,16 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
     })
   }
 
-  test('ML-KEM, SLH-DSA and ML-DSA depth rows carry the right semantics on both engines', async ({
+  test('ML-KEM and ML-DSA depth rows carry the right semantics on both engines', async ({
     page,
   }) => {
     const pageErrors: string[] = []
     page.on('pageerror', (err) => pageErrors.push(err.message))
-    await runCategories(page, ['ml_kem', 'slh_stateful', 'ml_dsa'])
+    await runCategories(page, ['ml_kem', 'ml_dsa'])
 
     const rows = page.getByTestId('acvp-result-row')
     const row = (algorithm: string, testCase: string): Locator =>
       rows.filter({ hasText: algorithm }).filter({ hasText: testCase })
-    /** One row by its stable per-case id (data-row-id) — no text ambiguity. */
-    const byRowId = (p: Page, id: string): Locator =>
-      p.locator(`[data-testid="acvp-result-row"][data-row-id="${id}"]`)
     // Evidence class comes from the generated per-case records (manifest + registry).
     const evidenceBadge = (r: Locator) => r.getByTestId('case-evidence-badge').first()
     const details = (r: Locator) => r.locator('td').nth(4)
@@ -99,69 +108,18 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       const encSkip = row(`ML-KEM-512/768/1024 (${engine})`, 'Encapsulation AFT')
       await expect(encSkip).toHaveAttribute('data-status', 'skip')
 
-      // Invalid decapsulation key (NIST VAL, modified H): C++ rejects it; the
-      // Rust engine accepts it — a recorded engine finding, rendered red.
+      // Invalid decapsulation key (NIST VAL, modified H): rejected on BOTH
+      // engines. Rust used to accept it (finding E2) until the hsm a22e6ca0
+      // rebuild enforced FIPS 203 §7.3 there too; this matches
+      // useAcvpSuite.mlkemAcvp.local.test.ts ("the Rust engine now enforces
+      // the FIPS 203 key checks too").
       const badKey = row(`ML-KEM-512 (${engine})`, 'NIST VAL tg7/tc106 · modified H')
       await expect(badKey).toHaveCount(1)
-      await expect(badKey).toHaveAttribute('data-status', engine === 'C++' ? 'pass' : 'fail')
-      if (engine === 'Rust')
-        await expect(details(badKey)).toHaveAttribute('title', /ACCEPTED a key NIST marks invalid/)
-
-      // ── SLH-DSA ──
-      // Addressed by row id, NOT by text: the evidence badge renders each
-      // record's limitations, which quote the vector file's subset policy —
-      // and that policy names all six upstream negative reasons, so a
-      // hasText('invalid signature - too small') filter also matches this
-      // parameter set's POSITIVE row (tc343). With .first() that silently
-      // asserted the positive row instead (found 2026-09-25).
-      // Both upstream 'too small' cases of this set are pinned, pure (tc347)
-      // and pre-hash (tc355), including the byte length that reached the
-      // engine: a 7856B (= full FIPS 205 length) signature here would mean the
-      // case tests nothing, and must fail rather than pass.
-      for (const tc of ['tg25-tc347', 'tg26-tc355']) {
-        const tooSmall = byRowId(page, `slhdsa-sigver-nist-SLH-DSA-SHAKE-128s-${tc}-${engine}`)
-        await expect(tooSmall).toHaveCount(1)
-        await expect(tooSmall).toContainText('invalid signature - too small')
-        await expect(tooSmall).toHaveAttribute('data-status', 'pass')
-        await expect(details(tooSmall)).toHaveAttribute(
-          'title',
-          /C_Verify → CKR_SIGNATURE_LEN_RANGE \(expected CKR_SIGNATURE_LEN_RANGE\)/
-        )
-        await expect(details(tooSmall)).toHaveAttribute('title', /· sig 7855B ·/)
-      }
-
-      const det = row(
-        `SLH-DSA-SHA2-128s (${engine})`,
-        'SigGen deterministic · NIST sigGen tg19/tc161'
+      await expect(badKey).toHaveAttribute('data-status', 'pass')
+      await expect(details(badKey)).not.toHaveAttribute(
+        'title',
+        /ACCEPTED a key NIST marks invalid/
       )
-      await expect(det).toHaveCount(1)
-      await expect(det).toHaveAttribute('data-status', 'pass')
-
-      // Valid NIST HashSLH-DSA signature: Rust accepts; C++ rejects (finding).
-      // STALE as of 2026-09-25 and left as-is deliberately: the P3 combined
-      // rebuild (hsm a22e6ca0, E1) fixed C++ HashSLH-DSA, so this row and the
-      // red-row counts below now pin engine behaviour that no longer exists —
-      // useAcvpSuite.slhdsaAcvp.nightly.test.ts already expects pass on both
-      // engines. Reported for a decision rather than relaxed here.
-      const pre = row(
-        `SLH-DSA-SHA2-128f (${engine})`,
-        'NIST sigVer tg2/tc25 · HashSLH-DSA/SHA2-256'
-      )
-      await expect(pre).toHaveCount(1)
-      await expect(pre).toHaveAttribute('data-status', engine === 'C++' ? 'fail' : 'pass')
-
-      const pkFlip = row(
-        `SLH-DSA-SHAKE-256f (${engine})`,
-        'product-authored negative · public-key bit flip'
-      )
-      await expect(pkFlip).toHaveAttribute('data-status', 'pass')
-      await expect(evidenceBadge(pkFlip)).not.toHaveAttribute(
-        'data-evidence',
-        'nist-acvp-reference-sample'
-      )
-
-      const internal = row(`SLH-DSA (${engine})`, 'internal interface')
-      await expect(internal).toHaveAttribute('data-status', 'skip')
 
       // ── ML-DSA depth (D2-6) ──
       const ctx0 = row(`ML-DSA-44 (${engine})`, 'NIST sigGen tg1/tc5 · pure · ctx 0B')
@@ -170,12 +128,11 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       await expect(ctx256).toHaveAttribute('data-status', 'pass')
     }
 
-    // Exactly the recorded findings are red: 6 Rust ML-KEM key checks and 7
-    // C++ HashSLH-DSA cases (5 sigVer positives + 2 deterministic sigGen).
+    // No row is red. The findings this spec used to pin — 6 Rust ML-KEM key
+    // checks (E2) and 7 C++ HashSLH-DSA cases — were all closed by the hsm
+    // a22e6ca0 rebuild; a red row here is a new regression, not a known one.
     const failed = page.locator('[data-testid="acvp-result-row"][data-status="fail"]')
-    await expect(failed).toHaveCount(13)
-    await expect(failed.filter({ hasText: '(Rust)' })).toHaveCount(6)
-    await expect(failed.filter({ hasText: 'HashSLH-DSA' })).toHaveCount(7)
+    await expect(failed).toHaveCount(0)
     expect(pageErrors, `Unexpected page errors:\n${pageErrors.join('\n')}`).toEqual([])
   })
 })

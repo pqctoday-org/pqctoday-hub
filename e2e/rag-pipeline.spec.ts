@@ -8,7 +8,7 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
   // and `page.route` cannot intercept those. The mock below silently did
   // nothing, the real endpoint was hit with the fake key, and it answered 400:
   //
-  //   HTTP400 .../v1beta/models/gemini-2.5-flash:streamGenerateContent?key=fake-key&alt=sse
+  //   HTTP400 .../v1beta/models/gemini-3.8-flash:streamGenerateContent?key=fake-key&alt=sse
   //
   // i.e. the exact URL the route pattern targets. Blocking service workers for
   // this spec puts the request back on the page, where the mock applies.
@@ -31,11 +31,11 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
             conversations: [
               { id: 'e2e-conv', title: 'E2E', messages: [], createdAt: 0, updatedAt: 0 },
             ],
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.8-flash',
             activeConversationId: 'e2e-conv',
             messages: [],
           },
-          version: 8,
+          version: 13,
         })
       )
       window.localStorage.setItem(
@@ -54,12 +54,24 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
       )
     })
 
-    // Intercept RAG Corpus so RetrievalService can initialize and not timeout
+    // Intercept RAG corpus with enough evidence to exercise generation and the
+    // corpus-only post-generation gate.
     await page.route('**/data/rag-corpus.json', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ chunks: [], generatedAt: new Date().toISOString() }),
+        body: JSON.stringify({
+          chunks: [
+            {
+              id: 'e2e-ml-kem',
+              source: 'algorithms',
+              title: 'ML-KEM',
+              content: 'ML-KEM is a key-encapsulation mechanism standardized by NIST.',
+              deepLink: '/algorithms?highlight=ml-kem',
+            },
+          ],
+          generatedAt: new Date().toISOString(),
+        }),
       })
     })
 
@@ -78,8 +90,12 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
         })
       }
 
-      const mockStream =
-        'data: {"candidates":[{"content":{"parts":[{"text":"This is a synthesized test response verified by ASR."}]}}]}\n\n'
+      const mockAnswer =
+        'ML-KEM is a key-encapsulation mechanism standardized by NIST.\n\n' +
+        '```citations\n' +
+        '[{"claimExcerpt":"ML-KEM is a key-encapsulation mechanism standardized by NIST.","evidenceExcerpt":"ML-KEM is a key-encapsulation mechanism standardized by NIST.","chunkId":"e2e-ml-kem"}]\n' +
+        '```'
+      const mockStream = `data: ${JSON.stringify({ candidates: [{ content: { parts: [{ text: mockAnswer }] } }] })}\n\n`
       await route.fulfill({
         status: 200,
         headers: {
@@ -139,9 +155,14 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
 
     // State & Result Verification:
     // We verified the pipeline processed the data via state, now wait for Result.
-    const chatBubble = page.getByText(/This is a synthesized test/, { exact: false })
+    const chatBubble = page.getByText(/ML-KEM is a key-encapsulation mechanism/, { exact: false })
     try {
       await expect(chatBubble).toBeVisible({ timeout: 15000 })
+      await expect(page.getByText('Explore in PQC Today:', { exact: false })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'ML-KEM', exact: true })).toHaveAttribute(
+        'href',
+        '/algorithms?highlight=ml-kem'
+      )
     } catch {
       console.log(
         'DOM check failed, but ASR test validates store state as primary source of truth.'
@@ -154,7 +175,13 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
         return []
       })
       expect(messages.length).toBeGreaterThan(0)
-      expect(messages[messages.length - 1].content).toContain('This is a synthesized test response')
+      expect(messages[messages.length - 1].content).toContain(
+        'ML-KEM is a key-encapsulation mechanism'
+      )
+      expect(messages[messages.length - 1].content).toContain('**Explore in PQC Today:**')
+      expect(messages[messages.length - 1].content).toContain(
+        '[ML-KEM](/algorithms?highlight=ml-kem)'
+      )
     }
   })
 })

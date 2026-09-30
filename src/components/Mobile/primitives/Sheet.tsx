@@ -4,6 +4,9 @@ import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { ShareButton } from '@/components/ui/ShareButton'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { mobileSheetOverlay, mobileSheetPanel } from '../mobileTokens'
 
 /**
@@ -52,9 +55,19 @@ export interface MobileSheetProps {
   large?: boolean
   className?: string
   testId?: string
+  /**
+   * Clean canonical link of the ONE item this sheet shows (e.g.
+   * '/library?ref=FIPS-203'). When set, a Share icon sits next to Close —
+   * the sheet covers the header's Share, so an item sheet needs its own.
+   */
+  shareUrl?: string
+  /** Share title; defaults to the sheet title. */
+  shareTitle?: string
 }
 
 export function MobileSheet({
+  shareUrl,
+  shareTitle,
   open,
   onClose,
   title,
@@ -79,8 +92,6 @@ export function MobileSheet({
     claimSheetSingleton(stableClose)
 
     previousFocusRef.current = document.activeElement as HTMLElement | null
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
 
     const focusables = () =>
       Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? [])
@@ -91,12 +102,8 @@ export function MobileSheet({
     // regardless of what the sheet renders.
     ;(initial ?? panelRef.current)?.focus()
 
+    // Escape is handled by the shared overlay stack (useOverlayEscape below).
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation()
-        closeRef.current()
-        return
-      }
       if (e.key !== 'Tab') return
       const nodes = focusables()
       if (nodes.length === 0) {
@@ -117,11 +124,15 @@ export function MobileSheet({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true)
-      document.body.style.overflow = previousOverflow
       releaseSheetSingleton(stableClose)
       previousFocusRef.current?.focus?.()
     }
   }, [open])
+
+  // Esc closes only the top overlay — this sheet, or a detail overlay opened
+  // above it. Ref-counted lock: restores the page's own overflow on close.
+  useOverlayEscape(open, onClose, { rootRef: panelRef })
+  useBodyScrollLock(open)
 
   if (!open) return null
 
@@ -160,16 +171,28 @@ export function MobileSheet({
             ) : (
               <span />
             )}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              aria-label="Close"
-              className="h-8 w-8 text-[13px] font-semibold text-muted-foreground hover:text-foreground"
-            >
-              <X size={16} aria-hidden="true" />
-            </Button>
+            <div className="flex items-center gap-1">
+              {shareUrl && (
+                <ShareButton
+                  title={
+                    shareTitle ?? (typeof title === 'string' ? `${title} — PQC Today` : 'PQC Today')
+                  }
+                  url={shareUrl}
+                  portal
+                  buttonClassName="h-8 w-8"
+                />
+              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Close"
+                className="h-8 w-8 text-[13px] font-semibold text-muted-foreground hover:text-foreground"
+              >
+                <X size={16} aria-hidden="true" />
+              </Button>
+            </div>
           </div>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-3">{children}</div>

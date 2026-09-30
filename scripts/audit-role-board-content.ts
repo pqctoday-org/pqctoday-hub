@@ -55,6 +55,7 @@ const ROLES = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
   'curious',
 ] as const
 

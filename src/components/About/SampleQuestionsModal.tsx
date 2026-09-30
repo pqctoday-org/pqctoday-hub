@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Copy, Check } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface SampleQuestionsModalProps {
   isOpen: boolean
@@ -20,15 +21,8 @@ export const SampleQuestionsModal = ({
   const [copiedQuestion, setCopiedQuestion] = useState<string | null>(null)
   const focusTrapRef = useFocusTrap(isOpen)
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   const handleCopy = async (question: string) => {
     try {
