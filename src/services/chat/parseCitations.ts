@@ -12,7 +12,10 @@
  */
 
 export interface ClaimCitation {
+  /** Exact claim text as it appears in the answer. */
   claimExcerpt: string
+  /** Verbatim text copied from the cited RAG chunk that supports the claim. */
+  evidenceExcerpt?: string
   chunkId: string
 }
 
@@ -20,11 +23,14 @@ export function parseCitations(content: string): {
   cleanContent: string
   citations: ClaimCitation[]
 } {
-  const match = content.match(/```citations\n([\s\S]*?)```\s*\n?/)
+  // Models are not perfectly consistent about fence casing, a space before
+  // the newline, or CRLF output. Treat those presentation differences as the
+  // same citations block; the JSON and evidence are still verified below.
+  const match = content.match(/```[ \t]*citations[ \t]*\r?\n([\s\S]*?)```\s*\r?\n?/i)
   if (!match) {
     // Strip an incomplete ```citations block if the response was truncated
     // mid-fence — never leak raw JSON fragments into the displayed message.
-    const incompleteMatch = content.match(/```citations[\s\S]*$/)
+    const incompleteMatch = content.match(/```[ \t]*citations\b[\s\S]*$/i)
     if (incompleteMatch) {
       return {
         cleanContent: content.slice(0, incompleteMatch.index).trimEnd(),
@@ -59,11 +65,15 @@ function parseCitationsJson(raw: string): ClaimCitation[] {
       entry &&
       typeof entry === 'object' &&
       typeof (entry as Record<string, unknown>).claimExcerpt === 'string' &&
+      ((entry as Record<string, unknown>).evidenceExcerpt === undefined ||
+        typeof (entry as Record<string, unknown>).evidenceExcerpt === 'string') &&
       typeof (entry as Record<string, unknown>).chunkId === 'string'
     ) {
-      const e = entry as { claimExcerpt: string; chunkId: string }
+      const e = entry as { claimExcerpt: string; evidenceExcerpt?: string; chunkId: string }
       if (e.claimExcerpt.trim() && e.chunkId.trim()) {
-        citations.push({ claimExcerpt: e.claimExcerpt, chunkId: e.chunkId })
+        const citation: ClaimCitation = { claimExcerpt: e.claimExcerpt, chunkId: e.chunkId }
+        if (e.evidenceExcerpt?.trim()) citation.evidenceExcerpt = e.evidenceExcerpt.trim()
+        citations.push(citation)
       }
     }
   }

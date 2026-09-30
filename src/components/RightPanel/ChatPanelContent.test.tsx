@@ -44,10 +44,10 @@ vi.mock('@/services/chat/WebLLMService', () => ({
   isEngineReady: vi.fn().mockReturnValue(false),
   WEBLLM_MODELS: [
     {
-      id: 'Qwen3-1.7B-q4f16_1-MLC',
-      label: 'Qwen 3 1.7B (1.0 GB)',
-      sizeGB: 1.0,
-      maxContextLength: 8_192,
+      id: 'Qwen3.5-9B-q4f16_1-MLC',
+      label: 'Qwen 3.5 9B (5.1 GB)',
+      sizeGB: 5.1,
+      maxContextLength: 4_096,
     },
   ],
 }))
@@ -87,7 +87,7 @@ const defaultChatState = {
   setApiKey: vi.fn(),
   provider: 'gemini' as string | null,
   setProvider: vi.fn(),
-  localModel: 'Qwen3-1.7B-q4f16_1-MLC',
+  localModel: 'Qwen3.5-9B-q4f16_1-MLC',
   localContextWindow: 4_096,
   setLocalModel: vi.fn(),
   setLocalContextWindow: vi.fn(),

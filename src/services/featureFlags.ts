@@ -14,40 +14,33 @@
  * persona, etc.) live in their own Zustand stores.
  */
 
-function readFlag(name: string, envKey: string): boolean {
-  // Build-time env var (Vite inlines `import.meta.env.VITE_*` at build time).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env = (import.meta as any).env
-  if (env && env[envKey] === '1') return true
-  try {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem(name) === '1') return true
-  } catch {
-    // SSR / private-mode / Safari ITP — fall through
-  }
-  return false
-}
-
 /**
  * T16 — embedding-based passage retrieval at runtime.
- * Off by default in the first release; flip on for measurement, then
- * default-on once telemetry is green (per embedding-optimization.md §9.1).
+ * On by default. The bundled embedding index improves recall without sending
+ * queries to a service. Build-time or localStorage `0` is an emergency opt-out.
  */
-export const useEmbeddingRetrieval = (): boolean =>
-  readFlag('pqc-feature-embedding-retrieval', 'VITE_FEATURE_EMBEDDING_RETRIEVAL')
+export const useEmbeddingRetrieval = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const env = (import.meta as any).env
+  if (env?.VITE_FEATURE_EMBEDDING_RETRIEVAL === '0') return false
+  try {
+    if (localStorage.getItem('pqc-feature-embedding-retrieval') === '0') return false
+  } catch {
+    // Storage unavailable: keep the safe bundled default.
+  }
+  return true
+}
 
 /**
  * Structured claim citations — asks the model to emit a machine-checkable
  * `\`\`\`citations` block (claimExcerpt + chunkId pairs) alongside its
  * prose, verified against the retrieved chunks via exact chunk-id +
  * text-containment matching (citationVerification.ts), not fuzzy
- * entity-presence matching. Off by default: whether Gemini 2.5 Flash and
- * WebLLM Qwen3-8B reliably comply with the new output format across real
- * query variety is a live-traffic question that hasn't been measured —
- * flip on for measurement, then default-on once compliance is green. See
- * pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §7.1.
+ * entity-presence matching. Always on: corpus-only mode cannot safely
+ * display model output without claim-to-chunk evidence. Kept as a function
+ * so existing callers retain a stable API.
  */
-export const useStructuredCitations = (): boolean =>
-  readFlag('pqc-feature-structured-citations', 'VITE_FEATURE_STRUCTURED_CITATIONS')
+export const useStructuredCitations = (): boolean => true
 
 /**
  * Mobile UX layer (design_handoff_pqc_mobile_ux, IMPLEMENTATION-PLAN.md).

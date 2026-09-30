@@ -305,6 +305,8 @@ docs/pqctoday-investor*
 # Note: `scripts/*` (not `scripts/`) so per-file re-include rules below work.
 # Git refuses to un-ignore files inside a fully-ignored directory.
 scripts/*
+# Current-corpus RAG benchmark (invoked by `npm run evaluate:rag-embeddings`)
+!scripts/evaluate-embedding-retrieval.ts
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
 # WS-F ACVP-format prototype CLI (thin entry; logic in src/services/acvp/node/cli.ts)
@@ -383,7 +385,10 @@ scripts/*
 # The gate itself was retired 2026-09-21: the About page's SBOM version column
 # is now GENERATED from package.json by this script (runs in predev/prebuild,
 # `--check` in gate:local), so there is no hand-typed copy left to drift.
-!scripts/gen-sbom-versions.mjs
+!scripts/gen-sbom-versions.ts
+# SBOM derivation + audit (imported by gen-sbom-versions.ts and its unit tests) — must be
+# tracked or the gate can't run from a clean checkout / CI.
+!scripts/sbom/
 
 # Role-board content generator — runs in `npm run build` (npm run generate:
 # role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD

@@ -7,6 +7,8 @@ export interface GlossaryTerm {
   definition: string
   technicalNote?: string
   relatedModule?: string
+  /** Stable id from trusted_sources_*.csv when the definition is a direct status claim. */
+  trustedSourceId?: string
   complexity: 'beginner' | 'intermediate' | 'advanced'
   category: 'algorithm' | 'protocol' | 'standard' | 'concept' | 'organization'
 }

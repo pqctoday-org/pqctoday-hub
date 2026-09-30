@@ -3,67 +3,249 @@
 // The curated Software Bill of Materials the About page renders (SbomSection.tsx).
 //
 // This file is the editorial half: WHICH components appear, under which of the
-// SBOM_CATEGORIES headings, with which license, link and note. It is
-// hand-maintained on purpose — the list is a statement about what this app is
-// built from, not a dump of package-lock.json.
+// SBOM_CATEGORIES headings, with which license and link. The VERSION column is
+// never typed here. Every row names the evidence its version comes from, and
+// scripts/gen-sbom-versions.ts (run on every build and test, and by
+// `gen:sbom-versions:check` in the local gate) fails if that evidence is missing
+// or disagrees with what this build ships:
 //
-// The VERSION column is not hand-maintained. Every entry that is a direct npm
-// dependency names its package.json key in `pkg`, and the version shown is
-// read from src/data/sbomVersions.generated.ts, which
-// scripts/gen-sbom-versions.mjs regenerates from package.json on every build
-// (and CI checks for staleness). A dependency bump therefore updates the page
-// by itself; there is no second copy of the version to forget. Before this
-// (2026-08-09) eleven hand-typed versions were wrong in both directions, and a
-// hand-edit that tried to keep up (PR #598) blanked five component names.
+//   pkg      direct npm dependency          -> package.json
+//   lock     bundled npm package that is not a direct dependency
+//                                           -> package-lock.json
+//   crate    Rust crate in a shipped wasm   -> the binary itself (crate paths the
+//                                              compiler left in it); vendored forks
+//                                              and crates the scan cannot see come
+//                                              from sbomRustLock.json, pinned to the
+//                                              engine's build commit
+//   crates   a labelled group of the above  (supporting crates, listed by name)
+//   embedded a version the binary or its shipped BUILDINFO.json states about itself
+//   built    a bundle with no embedded version -> "built from <repo> @ <commit>",
+//                                              from wasm-provenance.json /
+//                                              sbomWasmArtifacts.json; no release
+//                                              number is invented for it
+//   asset    a shipped non-code file (font)   -> sbomAssets.json, sha256-pinned; name and
+//                                              version read from the font's own name table
+//   model    an AI model downloaded at run time -> sbomModels.json; which models exist is
+//                                              read from the shipped code, licenses and
+//                                              revisions from the model repositories, dated
+//   native   the browser's own Web Crypto API
 //
-// Entries with no `pkg` are not direct npm dependencies — Rust crates compiled
-// into the WASM engine, the OpenSSL WASM build, the engine bundles vendored
-// under src/vendor, the browser's own Web Crypto API — and keep a hand-typed
-// `version`. Exactly one of `pkg` / `version` is set per entry.
+// The check is two-way. A direct dependency, a shipped wasm file, or a crate
+// compiled into a bundle that is not accounted for below fails it, and so does
+// a row whose subject is not actually shipped. History: on 2026-09-29 the live
+// page was missing three, react-dom, strongSwan, OpenSSH, the SP 800-90B
+// estimators and ~60 compiled-in crates, and still listed "ml-dsa" and
+// "slh-dsa" (the engine ships the patched fips204/fips205 forks) and OpenSSL
+// 3.6.1 (the served binary says 3.6.3).
 import { SBOM_CATEGORIES } from './sbomCategories'
-import { SBOM_PACKAGE_VERSIONS } from './sbomVersions.generated'
+import {
+  SBOM_BUILDS,
+  SBOM_CRATES,
+  SBOM_EMBEDDED_VERSIONS,
+  SBOM_CRATE_LICENSES,
+  SBOM_LOCK_VERSIONS,
+  SBOM_PACKAGE_LICENSES,
+  SBOM_PACKAGE_VERSIONS,
+} from './sbomVersions.generated'
+import rustLock from './sbomRustLock.json'
+import assetRecords from './sbomAssets.json'
+import modelRecords from './sbomModels.json'
 
-export type SbomComponent = {
+type Base = {
   /** Display name — may be prose ("React Router") rather than the package name. */
   name: string
-  license: string
   /** Optional release / project link rendered on the name. */
   href?: string
-} & (
-  | {
-      /**
-       * package.json key(s) this entry ships from. Two keys render as
-       * "vA / vB" (one row for a library and its companion plugin).
-       */
-      pkg: string | readonly string[]
-      version?: never
-    }
-  | {
-      /** Hand-typed version text for anything that is not a direct npm dependency. */
-      version: string
-      pkg?: never
-    }
-)
+  /** A caveat shown under the row, e.g. what the binary does not tell us. */
+  note?: string
+}
+type NoOther = {
+  pkg?: never
+  lock?: never
+  crate?: never
+  crates?: never
+  embedded?: never
+  built?: never
+  native?: never
+  asset?: never
+  model?: never
+}
+
+/**
+ * npm rows (`pkg`, `lock`) carry no license: it is generated from package-lock.json, so it
+ * cannot be mistyped or go stale (jszip was shown as MIT; its lock entry is "MIT OR
+ * GPL-3.0-or-later"). Every other kind has no machine-readable source in the build, so its
+ * license is typed here from the component's own shipped license file / banner, or says
+ * "not recorded".
+ */
+export type SbomComponent = Base &
+  (
+    | (Omit<NoOther, 'pkg'> & { pkg: string | readonly string[]; license?: never })
+    | (Omit<NoOther, 'lock'> & { lock: string; license?: never })
+    | (Omit<NoOther, 'crate'> & { crate: string | readonly string[]; license?: never })
+    | (Omit<NoOther, 'crates'> & { crates: readonly string[]; license?: never })
+    | (Omit<NoOther, 'embedded'> & { embedded: string; license: string })
+    | (Omit<NoOther, 'built'> & { built: string; license: string })
+    | (Omit<NoOther, 'native'> & { native: true; license: string })
+    | (Omit<NoOther, 'asset'> & { asset: string; license: string })
+    | (Omit<NoOther, 'model'> & { model: string; license?: never })
+  )
 
 export interface SbomGroup {
   category: (typeof SBOM_CATEGORIES)[number]
-  /** Small heading suffix, e.g. the engine crate version a Rust group ships in. */
+  /** Small heading suffix, e.g. the bundle a Rust group ships in. */
   note?: string
   components: readonly SbomComponent[]
 }
 
+const v = (x: string) => `v${x}`
+
+function crateVersions(name: string): string {
+  const parts: string[] = []
+  const fork = Object.values(rustLock.forks).find((f) => f.crate === name)
+  if (fork) parts.push(`${v(fork.version)} (engine, patched fork)`)
+  const bin = SBOM_CRATES[name]
+  if (bin) {
+    const e = bin.engine?.map(v).join(', ')
+    const k = bin.kmip?.map(v).join(', ')
+    if (e && k && e === k && !fork) parts.push(e)
+    else {
+      if (e && !fork) parts.push(`${e} (engine)`)
+      if (k) parts.push(`${k} (KMIP)`)
+    }
+  }
+  const lock = (rustLock.unscannable as Record<string, { versions: string[] }>)[name]
+  if (lock) parts.push(`${lock.versions.map(v).join(', ')} (Cargo.lock)`)
+  return parts.length ? parts.join(' · ') : 'v?'
+}
+
+/** "(MIT OR Apache-2.0)" -> "MIT / Apache-2.0": the page's existing style for dual licenses. */
+function displayLicense(spdx: string): string {
+  return spdx
+    .replace(/[()]/g, '')
+    .replace(/\s+OR\s+/g, ' / ')
+    .trim()
+}
+
+/** Union of the SPDX identifiers of the named crates: "Apache-2.0 / BSD-3-Clause / MIT". */
+function crateLicenses(names: readonly string[]): string {
+  const all = new Set(names.flatMap((n) => SBOM_CRATE_LICENSES[n] ?? ['?']))
+  return [...all].sort().join(' / ')
+}
+
+/** The license text a row renders: generated for npm rows, typed for everything else. */
+export function sbomLicense(c: SbomComponent): string {
+  if ('pkg' in c && c.pkg !== undefined) {
+    const keys = typeof c.pkg === 'string' ? [c.pkg] : c.pkg
+    return [...new Set(keys.map((k) => displayLicense(SBOM_PACKAGE_LICENSES[k] ?? '?')))].join(
+      ' / '
+    )
+  }
+  if ('lock' in c && c.lock !== undefined)
+    return displayLicense(SBOM_PACKAGE_LICENSES[c.lock] ?? '?')
+  if ('crate' in c && c.crate !== undefined)
+    return crateLicenses(typeof c.crate === 'string' ? [c.crate] : c.crate)
+  if ('crates' in c && c.crates !== undefined) return crateLicenses(c.crates)
+  if ('model' in c && c.model !== undefined)
+    return modelRecords.models.find((r) => r.key === c.model)?.license ?? '?'
+  return c.license ?? '?'
+}
+
 /**
- * The version text a component renders. Derived for direct dependencies;
- * verbatim for everything else. A `pkg` key the generated map does not carry
- * is a build defect (gen-sbom-versions.mjs refuses to emit when the curated
- * list names a package that is not a direct dependency), so the fallback
- * below is belt-and-braces for tests that stub the generated module, not a
- * path a shipped build can reach.
+ * The version text a component renders. Everything is derived; a `?` here
+ * means the generated data is missing a key the curated list names, which the
+ * generator refuses to emit, so it is unreachable in a shipped build.
  */
 export function sbomVersionLabel(c: SbomComponent): string {
-  if (c.pkg === undefined) return c.version
-  const keys = typeof c.pkg === 'string' ? [c.pkg] : c.pkg
-  return keys.map((k) => `v${SBOM_PACKAGE_VERSIONS[k] ?? '?'}`).join(' / ')
+  if ('native' in c && c.native) return 'Native'
+  if ('pkg' in c && c.pkg !== undefined) {
+    const keys = typeof c.pkg === 'string' ? [c.pkg] : c.pkg
+    return keys.map((k) => v(SBOM_PACKAGE_VERSIONS[k] ?? '?')).join(' / ')
+  }
+  if ('lock' in c && c.lock !== undefined)
+    return `${v(SBOM_LOCK_VERSIONS[c.lock] ?? '?')} (lockfile)`
+  if ('crate' in c && c.crate !== undefined) {
+    const names = typeof c.crate === 'string' ? [c.crate] : c.crate
+    return names.map(crateVersions).join(' / ')
+  }
+  if ('crates' in c && c.crates !== undefined) return `${c.crates.length} crates`
+  if ('model' in c && c.model !== undefined) {
+    const m = modelRecords.models.find((r) => r.key === c.model)
+    if (!m) return 'v?'
+    const rev = m.revisionChecked ? m.revisionChecked.slice(0, 8) : 'n/a'
+    return `revision not pinned · checked ${rev} on ${modelRecords.fetchedAt}`
+  }
+  if ('asset' in c && c.asset !== undefined) {
+    const a = assetRecords.assets.find((r) => r.key === c.asset)
+    return a ? v(a.version) : 'v?'
+  }
+  if ('embedded' in c && c.embedded !== undefined)
+    return v(SBOM_EMBEDDED_VERSIONS[c.embedded] ?? '?')
+  if ('built' in c && c.built !== undefined) {
+    const b = SBOM_BUILDS[c.built]
+    if (!b) return 'built from: unknown'
+    const repo = b.repo ? b.repo.split('/').pop() : 'unknown repository'
+    return b.commit
+      ? `built from ${repo} @ ${b.commit.slice(0, 8)}`
+      : `build commit not recorded · sha256 ${b.sha256.slice(0, 8)}`
+  }
+  return 'v?'
+}
+
+/** Link for the row: the row's own, or the exact commit a `built` bundle came from. */
+export function sbomHref(c: SbomComponent): string | undefined {
+  if (c.href) return c.href
+  if ('model' in c && c.model !== undefined)
+    return modelRecords.models.find((r) => r.key === c.model)?.sourceUrl
+  if ('built' in c && c.built !== undefined) {
+    const b = SBOM_BUILDS[c.built]
+    if (b?.repo && b.commit) return `https://github.com/${b.repo}/commit/${b.commit}`
+  }
+  return undefined
+}
+
+/** For a `crates` group: the members with their versions, e.g. "der v0.7.10". */
+export function sbomGroupMembers(c: SbomComponent): readonly string[] {
+  if (!('crates' in c) || c.crates === undefined) return []
+  return c.crates.map((n) => `${n} ${crateVersions(n)}`)
+}
+
+/**
+ * package.json dependencies that are intentionally not on the page, each with
+ * the reason. An entry that stops being a dependency, or is also listed, fails
+ * the check, so this cannot rot into a silent allow-list.
+ */
+export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
+  'ed25519-hd-key':
+    'declared in package.json, imported by no shipped code (named only in teaching copy)',
+  'micro-eth-signer':
+    'declared in package.json, imported by no shipped code (named only in teaching copy)',
+  'pdf-parse':
+    'declared in package.json; no source, script or test imports it (also named in README and LICENSES.md)',
+  '@eslint/js': 'lint rules; ships nothing',
+  'eslint-config-prettier': 'lint rules; ships nothing',
+  'eslint-plugin-jsx-a11y': 'lint rules; ships nothing',
+  'eslint-plugin-react-hooks': 'lint rules; ships nothing',
+  'eslint-plugin-react-refresh': 'lint rules; ships nothing',
+  'eslint-plugin-security': 'lint rules; ships nothing',
+  'eslint-plugin-testing-library': 'lint rules; ships nothing',
+  'eslint-plugin-unused-imports': 'lint rules; ships nothing',
+  globals: 'lint configuration data; ships nothing',
+  'typescript-eslint': 'lint rules; ships nothing',
+  acorn: 'development-time only: imported by no shipped code',
+  daff: 'development-time only: imported by no shipped code',
+  entities: 'development-time only: imported by no shipped code',
+  'ts-morph': 'development-time only: imported by no shipped code',
+  '@types/dagre': 'type declarations only; no code is shipped',
+  '@types/file-saver': 'type declarations only; no code is shipped',
+  '@types/jsdom': 'type declarations only; no code is shipped',
+  '@types/lodash': 'type declarations only; no code is shipped',
+  '@types/node': 'type declarations only; no code is shipped',
+  '@types/papaparse': 'type declarations only; no code is shipped',
+  '@types/pdf-parse': 'type declarations only; no code is shipped',
+  '@types/react': 'type declarations only; no code is shipped',
+  '@types/react-dom': 'type declarations only; no code is shipped',
+  '@types/three': 'type declarations only; no code is shipped',
 }
 
 /** Groups in the order the desktop accordion renders them (Rust groups last). */
@@ -71,89 +253,139 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
   {
     category: SBOM_CATEGORIES[0],
     components: [
-      { name: 'React', license: 'MIT', pkg: 'react' },
-      { name: 'Framer Motion', license: 'MIT', pkg: 'framer-motion' },
-      { name: 'Lucide React', license: 'ISC', pkg: 'lucide-react' },
-      { name: 'Tailwind CSS', license: 'MIT', pkg: 'tailwindcss' },
-      { name: 'clsx', license: 'MIT', pkg: 'clsx' },
-      { name: 'tailwind-merge', license: 'MIT', pkg: 'tailwind-merge' },
-      { name: 'class-variance-authority', license: 'Apache-2.0', pkg: 'class-variance-authority' },
-      { name: 'React Router', license: 'MIT', pkg: 'react-router' },
-      { name: '@xyflow/react', license: 'MIT', pkg: '@xyflow/react' },
-      { name: 'dagre (graph layout)', license: 'MIT', pkg: 'dagre' },
-      { name: '@tanstack/react-virtual', license: 'MIT', pkg: '@tanstack/react-virtual' },
-      { name: 'React Markdown', license: 'MIT', pkg: 'react-markdown' },
-      { name: 'remark-gfm', license: 'MIT', pkg: 'remark-gfm' },
-      { name: 'React Focus Lock', license: 'MIT', pkg: 'react-focus-lock' },
+      { name: 'React', pkg: 'react' },
+      { name: 'React DOM', pkg: 'react-dom' },
+      { name: 'Framer Motion', pkg: 'framer-motion' },
+      { name: 'Lucide React', pkg: 'lucide-react' },
+      { name: 'Tailwind CSS', pkg: 'tailwindcss' },
+      { name: 'clsx', pkg: 'clsx' },
+      { name: 'tailwind-merge', pkg: 'tailwind-merge' },
+      { name: 'class-variance-authority', pkg: 'class-variance-authority' },
+      { name: 'React Router', pkg: 'react-router' },
+      { name: '@xyflow/react', pkg: '@xyflow/react' },
+      { name: 'dagre (graph layout)', pkg: 'dagre' },
+      { name: 'three (3D graphics)', pkg: 'three' },
+      { name: '@tanstack/react-virtual', pkg: '@tanstack/react-virtual' },
+      { name: 'React Markdown', pkg: 'react-markdown' },
+      { name: 'remark-gfm', pkg: 'remark-gfm' },
+      { name: 'React Focus Lock', pkg: 'react-focus-lock' },
+      {
+        name: 'Inter (typeface)',
+        license: 'SIL Open Font License 1.1',
+        asset: 'inter-font',
+        href: 'https://github.com/rsms/inter',
+      },
+      { name: '@monaco-editor/react (code editor)', pkg: '@monaco-editor/react' },
+      {
+        name: 'monaco-editor (bundled with the code editor)',
+        lock: 'monaco-editor',
+      },
     ],
   },
   {
     category: SBOM_CATEGORIES[1],
     components: [
-      { name: 'localforage', license: 'Apache-2.0', pkg: 'localforage' },
-      { name: 'jszip', license: 'MIT', pkg: 'jszip' },
-      { name: 'file-saver', license: 'MIT', pkg: 'file-saver' },
-      { name: 'papaparse', license: 'MIT', pkg: 'papaparse' },
-      { name: 'pdf-parse', license: 'MIT', pkg: 'pdf-parse' },
-      { name: 'minisearch', license: 'MIT', pkg: 'minisearch' },
-      { name: 'recharts', license: 'MIT', pkg: 'recharts' },
-      { name: 'mermaid', license: 'MIT', pkg: 'mermaid' },
-      { name: 'jspdf + jspdf-autotable', license: 'MIT', pkg: ['jspdf', 'jspdf-autotable'] },
-      { name: 'docx', license: 'MIT', pkg: 'docx' },
-      { name: 'cborg', license: 'Apache-2.0', pkg: 'cborg' },
-      { name: 'lodash', license: 'MIT', pkg: 'lodash' },
-      { name: 'ajv (JSON Schema / CBOM validation)', license: 'MIT', pkg: 'ajv' },
-      { name: 'ajv-formats', license: 'MIT', pkg: 'ajv-formats' },
-      { name: 'reflect-metadata', license: 'Apache-2.0', pkg: 'reflect-metadata' },
+      { name: 'localforage', pkg: 'localforage' },
+      { name: 'jszip', pkg: 'jszip' },
+      { name: 'file-saver', pkg: 'file-saver' },
+      { name: 'papaparse', pkg: 'papaparse' },
+      { name: 'minisearch', pkg: 'minisearch' },
+      { name: 'recharts', pkg: 'recharts' },
+      { name: 'mermaid', pkg: 'mermaid' },
+      { name: 'jspdf + jspdf-autotable', pkg: ['jspdf', 'jspdf-autotable'] },
+      { name: 'docx', pkg: 'docx' },
+      { name: 'cborg', pkg: 'cborg' },
+      { name: 'lodash', pkg: 'lodash' },
+      { name: 'reflect-metadata', pkg: 'reflect-metadata' },
+      { name: 'Pyodide (Python runtime, self-hosted)', pkg: 'pyodide' },
+      {
+        name: 'Python (CPython, inside the Pyodide runtime)',
+        license: "Python Software Foundation (per the runtime's copyright banner)",
+        embedded: 'python',
+        note: "The site serves only the Pyodide core and standard library; none of the 343 Python packages in Pyodide's lock file is served.",
+      },
     ],
   },
   {
     category: SBOM_CATEGORIES[2],
     components: [
-      { name: 'OpenSSL WASM', license: 'Apache-2.0', version: 'v3.6.1' },
-      { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', version: 'Native' },
-      { name: '@oqs/liboqs-js', license: 'MIT', pkg: '@oqs/liboqs-js' },
-      { name: '@noble/hashes', license: 'MIT', pkg: '@noble/hashes' },
-      { name: '@noble/curves', license: 'MIT', pkg: '@noble/curves' },
+      { name: 'OpenSSL WASM (OpenSSL Studio)', license: 'Apache-2.0', embedded: 'openssl' },
+      {
+        name: 'pkcs11-provider (OpenSSL PKCS#11 provider, inside OpenSSL Studio)',
+        license: 'Apache-2.0',
+        embedded: 'pkcs11-provider',
+      },
+      { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', native: true },
+      { name: '@oqs/liboqs-js', pkg: '@oqs/liboqs-js' },
+      { name: '@noble/hashes', pkg: '@noble/hashes' },
+      { name: '@noble/curves', pkg: '@noble/curves' },
       {
         name: '@noble/post-quantum (ML-DSA-65 attestation)',
-        license: 'MIT',
         pkg: '@noble/post-quantum',
       },
-      { name: '@peculiar/x509', license: 'MIT', pkg: '@peculiar/x509' },
-      { name: '@scure/bip32', license: 'MIT', pkg: '@scure/bip32' },
-      { name: '@scure/bip39', license: 'MIT', pkg: '@scure/bip39' },
-      { name: '@scure/base', license: 'MIT', pkg: '@scure/base' },
-      { name: 'micro-eth-signer', license: 'MIT', pkg: 'micro-eth-signer' },
-      { name: 'ed25519-hd-key', license: 'MIT', pkg: 'ed25519-hd-key' },
-      { name: '@peculiar/asn1-schema', license: 'MIT', pkg: '@peculiar/asn1-schema' },
-      { name: '@peculiar/asn1-x509', license: 'MIT', pkg: '@peculiar/asn1-x509' },
+      { name: '@peculiar/x509', pkg: '@peculiar/x509' },
+      { name: '@scure/bip32', pkg: '@scure/bip32' },
+      { name: '@scure/bip39', pkg: '@scure/bip39' },
+      { name: '@scure/base', pkg: '@scure/base' },
+      { name: '@peculiar/asn1-schema', pkg: '@peculiar/asn1-schema' },
+      { name: '@peculiar/asn1-x509', pkg: '@peculiar/asn1-x509' },
+      { name: '@peculiar/asn1-cms', pkg: '@peculiar/asn1-cms' },
+      { name: '@peculiar/asn1-x509-post-quantum', pkg: '@peculiar/asn1-x509-post-quantum' },
       {
-        name: '@peculiar/asn1-x509-post-quantum',
-        license: 'MIT',
-        pkg: '@peculiar/asn1-x509-post-quantum',
+        name: '@pqctoday/softhsm-wasm (npm wrapper of the SoftHSM engines)',
+        pkg: '@pqctoday/softhsm-wasm',
       },
-      { name: '@peculiar/asn1-cms', license: 'MIT', pkg: '@peculiar/asn1-cms' },
       {
-        name: 'softhsmv3',
+        name: 'softhsmv3 (PKCS#11 v3.2 engine, C++ / WASM)',
         license: 'BSD-2-Clause',
-        version:
-          'v0.10.0 — native PKCS#11 v3.2 C-ABI 315/315, KMIP CACP control plane, Ed25519 + classical X25519/X448 KEM, crypto-agility policies',
-        href: 'https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.10.0',
+        built: 'softhsm-cpp-engine',
+        note: 'Contains OpenSSL code; the OpenSSL version is not embedded in the binary.',
       },
       {
-        name: 'pqctoday-kmip (CACP control plane)',
+        name: 'softhsmrustv3 (PKCS#11 v3.2 engine, Rust / WASM)',
+        license: 'BSD-2-Clause',
+        built: 'softhsmrustv3-engine',
+      },
+      {
+        name: 'pqctoday-kmip (CACP KMIP 3.0 control plane, Rust / WASM)',
         license: 'MIT',
-        version:
-          'v0.10.0 — in-browser KMIP 3.0 crypto-agility control plane (label-only migration, rekey-on-use, run_batch, policies, dry-run, audit)',
-        href: 'https://github.com/pqctoday-org/pqctoday-hsm/releases/tag/v0.10.0',
+        built: 'cacp-kmip',
       },
       {
-        name: 'pqctoday-tpm',
+        name: 'pqctoday-tpm (TCG V1.85 PQC TPM emulator, WASM)',
         license: 'BSD-3-Clause',
-        version:
-          'v0.3.0 — TCG V1.85 PQC TPM emulator (fork of swtpm + libtpms); ML-KEM-768 + ML-DSA-65 command codes 0x1a3-0x1aa, Emscripten WASM',
-        href: 'https://github.com/pqctoday-org/pqctoday-tpm/releases/tag/v0.3.0',
+        built: 'pqctoday-tpm',
+        note: 'Contains libtpms and OpenSSL code; neither version is embedded in the binary.',
+      },
+      {
+        name: 'OpenSSH server (PKCS#11 build, WASM)',
+        license: 'BSD-style (OpenSSH LICENCE)',
+        built: 'openssh-pkcs11',
+        note: 'Contains OpenSSL code; the OpenSSL version is not embedded in the binary.',
+      },
+      { name: 'strongSwan (IKEv2 / VPN, WASM)', license: 'not recorded', embedded: 'strongswan' },
+      { name: 'LMS/HSS hash-based signature module (WASM)', license: 'not recorded', built: 'lms' },
+      {
+        name: 'NIST SP 800-90B EntropyAssessment (WASM estimators)',
+        license: 'NIST software notice (public domain in the US)',
+        href: 'https://github.com/usnistgov/SP800-90B_EntropyAssessment/commit/87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289',
+        embedded: 'entropy90b.tool',
+      },
+      {
+        name: 'bzip2 (SP 800-90B build)',
+        license: 'bzip2 (BSD-style)',
+        embedded: 'entropy90b.bzip2',
+      },
+      {
+        name: 'libdivsufsort (SP 800-90B build)',
+        license: 'MIT',
+        embedded: 'entropy90b.libdivsufsort',
+      },
+      { name: 'JsonCpp (SP 800-90B build)', license: 'MIT', embedded: 'entropy90b.jsoncpp' },
+      {
+        name: 'OpenSSL libcrypto (SP 800-90B build, per BUILDINFO.json)',
+        license: 'Apache-2.0',
+        embedded: 'entropy90b.openssl',
       },
     ],
   },
@@ -162,94 +394,207 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
     components: [
       {
         name: '@mlc-ai/web-llm (in-browser Qwen 3 8B)',
-        license: 'Apache-2.0',
         pkg: '@mlc-ai/web-llm',
       },
       {
-        name: '@huggingface/transformers (bge-small embeddings)',
-        license: 'Apache-2.0',
+        name: '@huggingface/transformers (runs the embedding model)',
         pkg: '@huggingface/transformers',
       },
-      { name: '@react-oauth/google', license: 'MIT', pkg: '@react-oauth/google' },
+      { name: '@react-oauth/google', pkg: '@react-oauth/google' },
+      {
+        name: 'Qwen3.5-9B chat model (default; q4f16_1 MLC build, WebGPU)',
+        model: 'qwen35-9b-weights',
+        note: "The assistant's default in-browser model. Downloaded by the visitor's browser at run time, not part of the site bundle. No revision is pinned, so it follows the repository's default branch.",
+      },
+      {
+        name: 'Qwen3.5-9B compiled model library (WebGPU wasm)',
+        model: 'qwen35-9b-library',
+        note: 'Downloaded at run time from the mlc-ai/binary-mlc-llm-libs repository; that repository declares no license.',
+      },
+      {
+        name: 'Qwen3-8B chat model (alternative; q4f16_1 MLC build, WebGPU)',
+        model: 'qwen3-8b-weights',
+        note: "Downloaded by the visitor's browser at run time, not part of the site bundle. No revision is pinned, so it follows the repository's default branch.",
+      },
+      {
+        name: 'Qwen3-8B compiled model library (WebGPU wasm)',
+        model: 'qwen3-8b-library',
+        note: 'Downloaded at run time from the mlc-ai/binary-mlc-llm-libs repository; that repository declares no license.',
+      },
+      {
+        name: 'bge-base-en-v1.5 embedding model (quantized ONNX)',
+        model: 'bge-base-embeddings',
+        note: 'Downloaded at run time. The search index shipped with the site was built with this model.',
+      },
     ],
   },
   {
     category: SBOM_CATEGORIES[6],
-    components: [{ name: 'Zustand', license: 'MIT', pkg: 'zustand' }],
+    components: [{ name: 'Zustand', pkg: 'zustand' }],
   },
   {
     category: SBOM_CATEGORIES[7],
-    components: [{ name: 'React GA4', license: 'MIT', pkg: 'react-ga4' }],
+    components: [{ name: 'React GA4', pkg: 'react-ga4' }],
   },
   {
     category: SBOM_CATEGORIES[8],
-    components: [{ name: 'React Hot Toast', license: 'MIT', pkg: 'react-hot-toast' }],
+    components: [{ name: 'React Hot Toast', pkg: 'react-hot-toast' }],
   },
   {
     category: SBOM_CATEGORIES[9],
     components: [
-      { name: 'Vite', license: 'MIT', pkg: 'vite' },
-      { name: 'TypeScript', license: 'Apache-2.0', pkg: 'typescript' },
-      { name: 'tsx', license: 'MIT', pkg: 'tsx' },
-      { name: 'ESLint', license: 'MIT', pkg: 'eslint' },
-      { name: 'Prettier', license: 'MIT', pkg: 'prettier' },
-      { name: 'Husky', license: 'MIT', pkg: 'husky' },
-      { name: 'vite-plugin-pwa', license: 'MIT', pkg: 'vite-plugin-pwa' },
+      { name: 'Vite', pkg: 'vite' },
+      { name: '@vitejs/plugin-react', pkg: '@vitejs/plugin-react' },
+      { name: '@tailwindcss/vite', pkg: '@tailwindcss/vite' },
+      { name: 'vite-plugin-wasm', pkg: 'vite-plugin-wasm' },
+      { name: 'vite-plugin-top-level-await', pkg: 'vite-plugin-top-level-await' },
+      { name: 'TypeScript', pkg: 'typescript' },
+      { name: 'tsx', pkg: 'tsx' },
+      { name: 'ESLint', pkg: 'eslint' },
+      { name: 'Prettier', pkg: 'prettier' },
+      { name: 'Husky', pkg: 'husky' },
+      { name: 'lint-staged', pkg: 'lint-staged' },
+      { name: 'vite-plugin-pwa', pkg: 'vite-plugin-pwa' },
     ],
   },
   {
     category: SBOM_CATEGORIES[10],
     components: [
-      { name: 'Vitest', license: 'MIT', pkg: 'vitest' },
-      { name: 'Playwright', license: 'Apache-2.0', pkg: '@playwright/test' },
-      { name: 'Testing Library (React)', license: 'MIT', pkg: '@testing-library/react' },
-      { name: 'axe-playwright (Accessibility)', license: 'MIT', pkg: 'axe-playwright' },
+      { name: 'Vitest', pkg: 'vitest' },
+      { name: '@vitest/coverage-v8', pkg: '@vitest/coverage-v8' },
+      { name: 'jsdom', pkg: 'jsdom' },
+      { name: 'Playwright', pkg: '@playwright/test' },
+      { name: 'Testing Library (React)', pkg: '@testing-library/react' },
+      { name: 'Testing Library (jest-dom)', pkg: '@testing-library/jest-dom' },
+      { name: 'Testing Library (user-event)', pkg: '@testing-library/user-event' },
+      { name: 'axe-playwright (Accessibility)', pkg: 'axe-playwright' },
+      { name: 'ajv (JSON Schema, test cross-check)', pkg: 'ajv' },
+      { name: 'ajv-formats (CycloneDX schema test)', pkg: 'ajv-formats' },
     ],
   },
   {
     category: SBOM_CATEGORIES[3],
-    note: '(softhsmrustv3 v0.4.23)',
+    note: '(softhsmrustv3 engine + KMIP control plane bundles)',
     components: [
-      { name: 'wasm-bindgen', license: 'MIT / Apache-2.0', version: 'v0.2.117' },
-      { name: 'js-sys', license: 'MIT / Apache-2.0', version: 'v0.3.69' },
-      { name: 'web-sys', license: 'MIT / Apache-2.0', version: 'v0.3.69' },
-      { name: 'getrandom', license: 'MIT / Apache-2.0', version: 'v0.2.17' },
-      { name: 'console_error_panic_hook', license: 'MIT / Apache-2.0', version: 'v0.1.7' },
+      { name: 'wasm-bindgen', crate: 'wasm-bindgen' },
+      { name: 'js-sys', crate: 'js-sys' },
+      {
+        name: 'console_error_panic_hook',
+        crate: 'console_error_panic_hook',
+      },
+      { name: 'getrandom', crate: 'getrandom' },
     ],
   },
   {
     category: SBOM_CATEGORIES[4],
-    note: '(softhsmrustv3 v0.4.23)',
+    note: '(softhsmrustv3 engine + KMIP control plane bundles)',
     components: [
-      { name: 'ml-kem', license: 'MIT / Apache-2.0', version: 'v0.2.3' },
-      { name: 'ml-dsa', license: 'MIT / Apache-2.0', version: 'v0.1.0-rc.7' },
-      { name: 'slh-dsa', license: 'MIT / Apache-2.0', version: 'v0.2.0-rc.4' },
-      { name: 'ed25519-dalek', license: 'BSD-3-Clause', version: 'v2.1' },
-      { name: 'x25519-dalek', license: 'BSD-3-Clause', version: 'v2.0' },
-      { name: 'p256', license: 'MIT / Apache-2.0', version: 'v0.13' },
-      { name: 'p384', license: 'MIT / Apache-2.0', version: 'v0.13' },
-      { name: 'p521', license: 'MIT / Apache-2.0', version: 'v0.13' },
-      { name: 'rsa', license: 'MIT / Apache-2.0', version: 'v0.9' },
+      { name: 'fips204 (ML-DSA)', crate: 'fips204' },
+      { name: 'fips205 (SLH-DSA)', crate: 'fips205' },
+      { name: 'ml-kem', crate: 'ml-kem' },
+      { name: 'frodo-kem', crate: 'frodo-kem' },
       {
-        name: 'aes / aes-gcm / aes-kw',
-        license: 'MIT / Apache-2.0',
-        version: 'v0.8 / v0.10 / v0.2',
+        name: 'classic-mceliece-multi (fork, all 10 parameter sets)',
+        crate: 'classic-mceliece-multi',
       },
-      { name: 'cbc / ctr', license: 'MIT / Apache-2.0', version: 'v0.1.2 / v0.9.2' },
-      { name: 'sha2 / sha3', license: 'MIT / Apache-2.0', version: 'v0.10.8' },
+      { name: 'xmss (XMSS / XMSS-MT)', crate: 'xmss' },
+      { name: 'hbs-lms (LMS/HSS)', crate: 'hbs-lms' },
+      { name: 'ed25519-dalek', crate: 'ed25519-dalek' },
+      { name: 'ed448-goldilocks', crate: 'ed448-goldilocks' },
+      { name: 'x448', crate: 'x448' },
+      { name: 'rsa', crate: 'rsa' },
+      { name: 'k256 (secp256k1)', crate: 'k256' },
+      { name: 'p256 / p384 / p521', crate: ['p256', 'p384', 'p521'] },
+      { name: 'ecdsa', crate: 'ecdsa' },
       {
-        name: 'hmac / pbkdf2 / hkdf',
-        license: 'MIT / Apache-2.0',
-        version: 'v0.12 / v0.12 / v0.12',
+        name: 'aes / aes-gcm / aes-kw / ctr / cmac',
+        crate: ['aes', 'aes-gcm', 'aes-kw', 'ctr', 'cmac'],
       },
-      { name: 'pkcs8 / spki', license: 'MIT / Apache-2.0', version: 'v0.11-rc / v0.8-rc' },
-      { name: 'signature', license: 'MIT / Apache-2.0', version: 'v3.0.0-rc.10' },
-      { name: 'rand', license: 'MIT / Apache-2.0', version: 'v0.8.5' },
-      { name: 'k256 (secp256k1)', license: 'MIT / Apache-2.0', version: 'v0.13.4' },
-      { name: 'x448', license: 'MIT / Apache-2.0', version: 'v0.14.0-pre.8' },
-      { name: 'hbs-lms (LMS/HSS)', license: 'Apache-2.0', version: 'v0.1.1' },
-      { name: 'tiny-keccak (Keccak-256)', license: 'CC0-1.0', version: 'v2.0.2' },
-      { name: 'tinyvec', license: 'MIT / Apache-2.0 / Zlib', version: 'v1.11.0' },
+      { name: 'cbc', crate: 'cbc' },
+      { name: 'xts-mode', crate: 'xts-mode' },
+      { name: 'chacha20poly1305', crate: 'chacha20poly1305' },
+      { name: 'sha2', crate: 'sha2' },
+      { name: 'sha3', crate: 'sha3' },
+      { name: 'tiny-keccak (Keccak-256)', crate: 'tiny-keccak' },
+      { name: 'hmac / hkdf / pbkdf2', crate: ['hmac', 'hkdf', 'pbkdf2'] },
+      { name: 'md-5 / sha1 / ripemd', crate: ['md-5', 'sha1', 'ripemd'] },
+      { name: 'sp800-185 (cSHAKE / KMAC)', crate: 'sp800-185' },
+      { name: 'pkcs8 / spki', crate: ['pkcs8', 'spki'] },
+      { name: 'signature', crate: 'signature' },
+      { name: 'rand', crate: 'rand' },
+      { name: 'tinyvec', crate: 'tinyvec' },
+      {
+        name: 'RustCrypto traits and primitives (supporting)',
+        crates: [
+          'aead',
+          'block-buffer',
+          'block-padding',
+          'chacha20',
+          'cipher',
+          'ctutils',
+          'dbl',
+          'digest',
+          'generic-array',
+          'hybrid-array',
+          'keccak',
+          'poly1305',
+          'ppv-lite86',
+          'rand_chacha',
+          'rand_core',
+          'sponge-cursor',
+          'subtle',
+          'universal-hash',
+        ],
+      },
+      {
+        name: 'Curve and big-integer arithmetic (supporting)',
+        crates: [
+          'crypto-bigint',
+          'curve25519-dalek',
+          'ed25519',
+          'ed448',
+          'elliptic-curve',
+          'num-bigint',
+          'num-bigint-dig',
+          'num-integer',
+          'primeorder',
+          'rfc6979',
+          'sec1',
+        ],
+      },
+      {
+        name: 'ASN.1 and X.509 parsing (supporting, KMIP bundle)',
+        crates: [
+          'asn1-rs',
+          'const-oid',
+          'data-encoding',
+          'der',
+          'der-parser',
+          'nom',
+          'x509-cert',
+          'x509-parser',
+        ],
+      },
+      {
+        name: 'Serialization and utilities (supporting)',
+        crates: [
+          'byteorder',
+          'bytes',
+          'hashbrown',
+          'indexmap',
+          'itoa',
+          'once_cell',
+          'serde',
+          'serde_core',
+          'serde_json',
+          'serde_yaml',
+          'smallvec',
+          'spin',
+          'time',
+          'unsafe-libyaml',
+          'uuid',
+        ],
+      },
     ],
   },
 ]

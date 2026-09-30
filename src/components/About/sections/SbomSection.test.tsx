@@ -3,10 +3,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SbomSection } from './SbomSection'
-import { SBOM_GROUPS, sbomVersionLabel } from '@/data/sbomComponents'
-import { SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
+import { SBOM_GROUPS, sbomHref, sbomLicense, sbomVersionLabel } from '@/data/sbomComponents'
+import { SBOM_BUNDLED_TRANSITIVE, SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
+import embeddingsMeta from '../../../../public/data/embeddings-meta.json'
 import pkg from '../../../../package.json'
+import vendoredWasm from '../../../vendor/softhsm-wasm/package.json'
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -19,6 +21,9 @@ vi.mock('framer-motion', () => ({
 
 const deps: Record<string, string> = { ...pkg.dependencies, ...pkg.devDependencies }
 const pin = (spec: string) => spec.replace(/^[\^~]/, '')
+// A `file:` dependency has no version in package.json; its own manifest is the source.
+const expected = (key: string) =>
+  deps[key].startsWith('file:') ? vendoredWasm.version : pin(deps[key])
 
 describe('SBOM component list', () => {
   it('renders every category heading exactly once', () => {
@@ -36,9 +41,9 @@ describe('SBOM component list', () => {
           expect(
             SBOM_PACKAGE_VERSIONS[k],
             `${k} missing from generated map — run gen:sbom-versions`
-          ).toBe(pin(deps[k]))
+          ).toBe(expected(k))
         }
-        expect(sbomVersionLabel(c)).toBe(keys.map((k) => `v${pin(deps[k])}`).join(' / '))
+        expect(sbomVersionLabel(c)).toBe(keys.map((k) => `v${expected(k)}`).join(' / '))
       }
     }
   })
@@ -58,18 +63,129 @@ describe('SBOM component list', () => {
   })
 })
 
+describe('SBOM content is the shipped build, not a hand-typed list', () => {
+  const rows = SBOM_GROUPS.flatMap((g) => g.components)
+  const byName = (re: RegExp) => rows.find((c) => re.test(c.name))!
+
+  it('never renders an unresolved version', () => {
+    for (const c of rows) expect(sbomVersionLabel(c), c.name).not.toMatch(/\?/)
+  })
+
+  it('shows licenses from the lockfile, including dual licenses the page used to drop', () => {
+    // jszip was typed as MIT; package-lock.json records "(MIT OR GPL-3.0-or-later)".
+    expect(sbomLicense(byName(/^jszip/))).toBe('MIT / GPL-3.0-or-later')
+    for (const c of rows) {
+      expect(sbomLicense(c), c.name).not.toMatch(/\?/)
+      expect(sbomLicense(c).trim(), c.name).not.toBe('')
+    }
+  })
+
+  it('derives Rust crate licenses from the crates themselves', () => {
+    expect(sbomLicense(byName(/^ed25519-dalek/))).toBe('BSD-3-Clause')
+    expect(sbomLicense(byName(/^fips204/))).toBe('Apache-2.0 / MIT')
+    expect(sbomLicense(byName(/^tiny-keccak/))).toBe('CC0-1.0')
+  })
+
+  it('lists what the served binaries contain that the page used to omit', () => {
+    for (const re of [
+      /^React DOM/,
+      /^three/,
+      /^strongSwan/,
+      /^OpenSSH server/,
+      /^NIST SP 800-90B/,
+      /^pqctoday-tpm/,
+      /^@peculiar\/asn1-x509-post-quantum/,
+      /^frodo-kem/,
+      /^classic-mceliece-multi/,
+      /^xmss/,
+    ])
+      expect(byName(re), String(re)).toBeDefined()
+  })
+
+  it('names the PQC crates the engine actually compiles, not ml-dsa / slh-dsa', () => {
+    const names = rows.map((c) => c.name)
+    expect(names).toContain('fips204 (ML-DSA)')
+    expect(names).toContain('fips205 (SLH-DSA)')
+    expect(names.some((n) => /^(ml-dsa|slh-dsa)$/.test(n))).toBe(false)
+  })
+
+  it('reads OpenSSL and strongSwan from the binaries', () => {
+    expect(sbomVersionLabel(byName(/^OpenSSL WASM/))).toBe('v3.6.3')
+    expect(sbomVersionLabel(byName(/^strongSwan/))).toBe('v6.0.5')
+  })
+
+  it('does not invent a release for bundles whose binary embeds none', () => {
+    const tpm = sbomVersionLabel(byName(/^pqctoday-tpm/))
+    expect(tpm).toMatch(/^build commit not recorded · sha256 [0-9a-f]{8}$/)
+    expect(sbomVersionLabel(byName(/^softhsmv3/))).toMatch(
+      /^built from pqctoday-hsm @ [0-9a-f]{8}$/
+    )
+    expect(sbomHref(byName(/^softhsmv3/))).toMatch(
+      /github\.com\/pqctoday-org\/pqctoday-hsm\/commit\//
+    )
+  })
+
+  it('records the embedding model the shipped search index was built with', () => {
+    // public/data/embeddings-meta.json is what production serves; the page used to say
+    // "bge-small" while the index was built with bge-base.
+    const row = byName(/^bge-base-en-v1\.5 embedding model/)
+    expect(sbomHref(row)).toBe(`https://huggingface.co/${embeddingsMeta.model}`)
+    expect(sbomLicense(row)).toBe('MIT')
+    expect(sbomVersionLabel(row)).toMatch(
+      /^revision not pinned · checked [0-9a-f]{8} on 2026-09-29$/
+    )
+  })
+
+  it('records the default local model (Qwen3.5-9B) and keeps the still-supported Qwen3-8B', () => {
+    const def = byName(/^Qwen3\.5-9B chat model/)
+    expect(sbomLicense(def)).toMatch(
+      /^Apache-2\.0 \(upstream model; the MLC repository declares none\)$/
+    )
+    expect(sbomHref(def)).toBe('https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC')
+    expect(sbomLicense(byName(/^Qwen3\.5-9B compiled model library/))).toBe('not declared')
+    expect(byName(/^Qwen3-8B chat model/).name).toMatch(/alternative/)
+  })
+
+  it('records the chat model and its compiled library, with the license position stated', () => {
+    expect(sbomLicense(byName(/^Qwen3-8B chat model/))).toBe('Apache-2.0')
+    expect(sbomLicense(byName(/^Qwen3-8B compiled model library/))).toBe('not declared')
+  })
+
+  it('states per-bundle versions when the engine and KMIP bundles differ', () => {
+    expect(sbomVersionLabel(byName(/^x448/))).toMatch(/\(engine\).*\(KMIP\)/)
+  })
+})
+
 describe('SbomSection', () => {
   it('shows the live package.json version once the accordion is opened', () => {
     render(<SbomSection />)
     fireEvent.click(screen.getByRole('button', { name: /Software Bill of Materials/i }))
     expect(screen.getByText('React')).toBeInTheDocument()
-    expect(screen.getByText(`v${pin(deps.react)}`)).toBeInTheDocument()
-    expect(screen.getByText(`v${pin(deps.vitest)}`)).toBeInTheDocument()
-    // a hand-typed, non-npm entry renders verbatim
-    expect(screen.getByText('OpenSSL WASM')).toBeInTheDocument()
-    expect(screen.getByText('softhsmv3')).toHaveAttribute(
+    expect(screen.getAllByText(`v${pin(deps.react)}`).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(`v${pin(deps.vitest)}`).length).toBeGreaterThan(0)
+    expect(screen.getByText('OpenSSL WASM (OpenSSL Studio)')).toBeInTheDocument()
+    expect(screen.getByText('softhsmv3 (PKCS#11 v3.2 engine, C++ / WASM)')).toHaveAttribute(
       'href',
-      expect.stringContaining('pqctoday-hsm')
+      expect.stringContaining('pqctoday-hsm/commit/')
     )
+  })
+
+  it('summarises the bundled transitive packages and links the complete SBOM file', () => {
+    render(<SbomSection />)
+    fireEvent.click(screen.getByRole('button', { name: /Software Bill of Materials/i }))
+    expect(SBOM_BUNDLED_TRANSITIVE.count).toBeGreaterThan(0)
+    expect(
+      screen.getByText(`${SBOM_BUNDLED_TRANSITIVE.count} more npm packages`)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Download the complete SBOM/i })).toHaveAttribute(
+      'href',
+      '/data/pqctoday-sbom.cdx.json'
+    )
+  })
+
+  it('offers the member list of a supporting-crate group', () => {
+    render(<SbomSection />)
+    fireEvent.click(screen.getByRole('button', { name: /Software Bill of Materials/i }))
+    expect(screen.getAllByText(/^Show the \d+ crates$/).length).toBeGreaterThan(0)
   })
 })
