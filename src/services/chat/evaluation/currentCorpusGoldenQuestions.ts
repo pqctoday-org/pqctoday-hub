@@ -29,6 +29,26 @@ export const CURRENT_CORPUS_BASELINE = {
 
 export const CURRENT_CORPUS_GOLDEN_QUESTIONS: CurrentCorpusGoldenQuestion[] = [
   {
+    id: 'learning-modules-available',
+    query: 'What learning modules are available?',
+    expectedIntent: 'catalog_lookup',
+    mustInclude: ['user-manual-learn'],
+    semanticMustInclude: ['user-manual-learn'],
+    expectedSources: ['user-manual', 'modules'],
+    minTop5Hits: 1,
+    answerTerms: ['62', 'Foundations', 'Applied Crypto'],
+  },
+  {
+    id: 'ml-kem-supporting-libraries',
+    query: 'Which cryptographic libraries in the PQC Today catalog support ML-KEM?',
+    expectedIntent: 'catalog_lookup',
+    mustInclude: ['software-openssl', 'software-bouncy-castle-java'],
+    semanticMustInclude: ['software-openssl', 'software-bouncy-castle-java'],
+    expectedSources: ['migrate'],
+    minTop5Hits: 1,
+    answerTerms: ['ML-KEM', 'OpenSSL', 'Bouncy Castle'],
+  },
+  {
     id: 'rfc-9881-ml-dsa-x509',
     query: 'What does RFC 9881 standardize for ML-DSA certificates?',
     expectedIntent: 'standard_query',
@@ -76,7 +96,7 @@ export const CURRENT_CORPUS_GOLDEN_QUESTIONS: CurrentCorpusGoldenQuestion[] = [
     semanticMustInclude: ['timeline-244'],
     expectedSources: ['document-enrichment'],
     minTop5Hits: 0,
-    answerTerms: ['UAE', 'Crypto Discovery Tool', 'PQC Index'],
+    answerTerms: ['UAE', 'national initiative', 'cryptographic inventory'],
   },
   {
     id: 'finma-migration-guidance',

@@ -100,7 +100,11 @@ function derive(entry: string): Set<ToolRuntimeRequirement> {
       const spec = m[1] ?? m[2]
       if (!spec || (!spec.startsWith('@/') && !spec.startsWith('.'))) continue
       const resolved = resolveModule(spec, file)
-      if (resolved && !seen.has(resolved)) queue.push(resolved)
+      // Search/assistant metadata imports this registry to index tool names.
+      // Following that cycle would make one tool inherit the requirements of
+      // every other lazily registered tool, even though those modules are not
+      // part of its runtime component tree.
+      if (resolved && resolved !== REGISTRY && !seen.has(resolved)) queue.push(resolved)
     }
   }
   // A pthread engine cannot work without SharedArrayBuffer.
