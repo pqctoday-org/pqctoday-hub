@@ -21,7 +21,7 @@ describe('useChatStore', () => {
       conversations: [],
       activeConversationId: null,
       messages: [],
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.8-flash',
       isLoading: false,
       isStreaming: false,
       error: null,
@@ -31,11 +31,11 @@ describe('useChatStore', () => {
   })
 
   describe('initial state', () => {
-    it('has null apiKey, empty messages, and gemini-2.5-flash model', () => {
+    it('has null apiKey, empty messages, and gemini-3.8-flash model', () => {
       const state = useChatStore.getState()
       expect(state.apiKey).toBeNull()
       expect(state.messages).toEqual([])
-      expect(state.model).toBe('gemini-2.5-flash')
+      expect(state.model).toBe('gemini-3.8-flash')
     })
   })
 
@@ -131,12 +131,12 @@ describe('useChatStore', () => {
         },
         1
       )
-      expect(migratedState).toHaveProperty('model', 'gemini-2.5-flash')
+      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
       expect(migratedState).toHaveProperty('conversations', [])
       expect(migratedState).toHaveProperty('activeConversationId', null)
     })
 
-    it('preserves gemini-2.5-flash for version >= 2', () => {
+    it('migrates gemini-2.5-flash to gemini-3.8-flash', () => {
       const migratedState = useChatStore.persist.getOptions().migrate?.(
         {
           apiKey: 'key',
@@ -145,7 +145,33 @@ describe('useChatStore', () => {
         },
         2
       )
-      expect(migratedState).toHaveProperty('model', 'gemini-2.5-flash')
+      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
+    })
+
+    it('pins any v11 cloud selection to gemini-3.8-flash', () => {
+      const migratedState = useChatStore.persist.getOptions().migrate?.(
+        {
+          apiKey: 'key',
+          conversations: [],
+          model: 'gemini-flash-latest',
+          localModel: 'Qwen3-8B-q4f16_1-MLC',
+        },
+        11
+      )
+      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
+      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
+    })
+
+    it('preserves an existing Qwen 3 8B selection for user-controlled A/B', () => {
+      const migratedState = useChatStore.persist.getOptions().migrate?.(
+        {
+          conversations: [],
+          model: 'gemini-3.8-flash',
+          localModel: 'Qwen3-8B-q4f16_1-MLC',
+        },
+        12
+      )
+      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
     })
 
     it('handles null/undefined persisted state safely', () => {
@@ -153,7 +179,7 @@ describe('useChatStore', () => {
       expect(migratedState).toHaveProperty('apiKey', null)
       expect(migratedState).toHaveProperty('conversations', [])
       expect(migratedState).toHaveProperty('activeConversationId', null)
-      expect(migratedState).toHaveProperty('model', 'gemini-2.5-flash')
+      expect(migratedState).toHaveProperty('model', 'gemini-3.8-flash')
     })
 
     it('wraps existing messages into a conversation for version < 4', () => {

@@ -12,7 +12,10 @@
  */
 
 export interface ClaimCitation {
+  /** Exact claim text as it appears in the answer. */
   claimExcerpt: string
+  /** Verbatim text copied from the cited RAG chunk that supports the claim. */
+  evidenceExcerpt?: string
   chunkId: string
 }
 
@@ -59,11 +62,15 @@ function parseCitationsJson(raw: string): ClaimCitation[] {
       entry &&
       typeof entry === 'object' &&
       typeof (entry as Record<string, unknown>).claimExcerpt === 'string' &&
+      ((entry as Record<string, unknown>).evidenceExcerpt === undefined ||
+        typeof (entry as Record<string, unknown>).evidenceExcerpt === 'string') &&
       typeof (entry as Record<string, unknown>).chunkId === 'string'
     ) {
-      const e = entry as { claimExcerpt: string; chunkId: string }
+      const e = entry as { claimExcerpt: string; evidenceExcerpt?: string; chunkId: string }
       if (e.claimExcerpt.trim() && e.chunkId.trim()) {
-        citations.push({ claimExcerpt: e.claimExcerpt, chunkId: e.chunkId })
+        const citation: ClaimCitation = { claimExcerpt: e.claimExcerpt, chunkId: e.chunkId }
+        if (e.evidenceExcerpt?.trim()) citation.evidenceExcerpt = e.evidenceExcerpt.trim()
+        citations.push(citation)
       }
     }
   }

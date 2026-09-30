@@ -2,6 +2,7 @@
 import type { ChatMessage, RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { buildLocalSystemPrompt } from './promptBuilder'
+import { DEFAULT_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -47,28 +48,34 @@ export const DEFAULT_CONTEXT_WINDOW = 4_096
 // support more, but the compiled WebLLM artifacts do not. Do not raise
 // maxContextLength above 4096 without confirming a registry change.
 //
-// Catalog is intentionally narrowed to a single option — Qwen 3 8B — because
-// smaller in-browser models (1.7B–4B) hallucinate too aggressively on PQC
-// standards content (e.g., inventing "Sphinx" / "Tapestry" as FIPS 203
-// algorithms). Qwen 3 8B is the strongest currently-available MLC build for
-// this app's RAG workload: newest training cutoff among 7B+ MLC builds, best
-// instruction-following at that size, and meaningfully lower hallucination
-// rate. Re-expand the catalog only when on-device models reach the accuracy
-// bar this app needs.
+// Qwen 3.5 9B is the recommended accuracy-first option for the app's 8 GB
+// discrete-GPU target. Qwen 3 8B remains available for comparison and for
+// devices that need more memory headroom. The post-generation grounding gate
+// is authoritative for both: model quality never substitutes for evidence.
 export const WEBLLM_MODELS: WebLLMModel[] = [
   {
-    id: 'Qwen3-8B-q4f16_1-MLC',
-    label: 'Qwen 3 8B (4.5 GB) — Best on-device option available',
+    id: DEFAULT_LOCAL_MODEL,
+    label: 'Qwen 3.5 9B (5.1 GB) — Recommended accuracy',
+    sizeGB: 5.1,
+    maxContextLength: 4_096,
+    vramMB: 6433,
+    speed: 1,
+    accuracy: 5,
+    tip: 'Targets an 8 GB discrete GPU (about 6.5 GB free VRAM required) or 16 GB+ Apple Silicon. Every displayed answer must pass corpus-evidence verification.',
+  },
+  {
+    id: QWEN3_LOCAL_MODEL,
+    label: 'Qwen 3 8B (4.5 GB) — More memory headroom',
     sizeGB: 4.5,
     maxContextLength: 4_096,
     vramMB: 5696,
-    speed: 1,
-    accuracy: 5,
-    tip: 'Strongest currently-available local model. Needs ~6 GB of free VRAM — discrete GPU or 16 GB+ Apple Silicon recommended. Smaller models were dropped due to unreliable factual accuracy.',
+    speed: 2,
+    accuracy: 4,
+    tip: 'Uses about 740 MB less VRAM than Qwen 3.5 9B. Choose it if the recommended model is unstable on an 8 GB GPU; the same corpus-evidence gate applies.',
   },
 ]
 
-export const DEFAULT_LOCAL_MODEL = 'Qwen3-8B-q4f16_1-MLC'
+export { DEFAULT_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
 
 /* ------------------------------------------------------------------ */
 /*  Engine singleton                                                   */
@@ -308,12 +315,23 @@ export async function initializeEngine(
     onProgress({ status: 'downloading', text: 'Loading model...', progress: 0 })
 
     // Dynamic import to keep @mlc-ai/web-llm out of the initial bundle (~100KB)
-    const { CreateMLCEngine } = await import('@mlc-ai/web-llm')
+    const { CreateMLCEngine, prebuiltAppConfig } = await import('@mlc-ai/web-llm')
+
+    // The default Cache API backend can fail while committing multi-gigabyte
+    // Qwen shards (Chrome reports an opaque `Cache.add` internal error). OPFS
+    // is a first-class WebLLM backend and is a better fit for these large,
+    // persistent browser artifacts.
+    const appConfig = {
+      ...prebuiltAppConfig,
+      cacheBackend: 'opfs' as const,
+      opfsAccessMode: 'auto' as const,
+    }
 
     try {
       engine = await CreateMLCEngine(
         modelId,
         {
+          appConfig,
           initProgressCallback: (report: { progress: number; text: string }) => {
             onProgress({
               status: 'downloading',
@@ -411,7 +429,7 @@ export async function unloadEngine(): Promise<void> {
 /**
  * Thrown when the local engine stops responding mid-session — most commonly
  * because the browser reclaimed the WebGPU device from a backgrounded tab
- * (Qwen 3 8B holds ~5.7GB of VRAM, which browsers reclaim aggressively).
+ * (Qwen 3.5 9B holds ~6.4GB of VRAM, which browsers reclaim aggressively).
  * Callers should re-run initializeEngine() and retry rather than treat this
  * as a terminal error, since the underlying model files are still cached.
  */
@@ -522,10 +540,11 @@ export async function* streamResponse(
   try {
     const stream = await engine.chat.completions.create({
       messages: formattedMessages,
-      temperature: 0.2,
+      // Greedy generation plus disabled thinking gives the evidence extractor
+      // the most repeatable path through the strict citation contract.
+      temperature: 0,
       max_tokens: maxResponseTokens,
-      top_p: 0.85,
-      frequency_penalty: 0.4,
+      enable_thinking: false,
       stream: true,
       stream_options: { include_usage: true },
     })

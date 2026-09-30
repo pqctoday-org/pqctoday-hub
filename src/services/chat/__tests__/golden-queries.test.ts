@@ -14,6 +14,10 @@ import fs from 'fs'
 import path from 'path'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { RetrievalService, classifyIntent, type QueryIntent } from '../RetrievalService'
+import {
+  CURRENT_CORPUS_BASELINE,
+  CURRENT_CORPUS_GOLDEN_QUESTIONS,
+} from '../evaluation/currentCorpusGoldenQuestions'
 
 interface GoldenQuery {
   query: string
@@ -680,9 +684,12 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedSources: ['patents'],
     minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
+  ...CURRENT_CORPUS_GOLDEN_QUESTIONS,
 ]
 
 let service: RetrievalService
+let corpusMetadata: { generatedAt?: string; chunkCount?: number }
+let corpus: RAGChunk[]
 
 beforeAll(() => {
   const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
@@ -691,14 +698,42 @@ beforeAll(() => {
   }
   const data: unknown = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
   // Support both legacy flat-array and new wrapper format { generatedAt, chunkCount, chunks }
-  const corpus: RAGChunk[] = Array.isArray(data)
-    ? data
-    : ((data as { chunks?: RAGChunk[] }).chunks ?? [])
+  corpus = Array.isArray(data) ? data : ((data as { chunks?: RAGChunk[] }).chunks ?? [])
+  corpusMetadata = Array.isArray(data)
+    ? { chunkCount: corpus.length }
+    : (data as { generatedAt?: string; chunkCount?: number })
   service = new RetrievalService()
   service.initializeWithCorpus(corpus)
 })
 
 describe('Golden Query Suite', () => {
+  it('is calibrated for the current expanded corpus generation', () => {
+    expect(corpusMetadata.generatedAt?.startsWith(CURRENT_CORPUS_BASELINE.generatedDate)).toBe(true)
+    expect(corpusMetadata.chunkCount).toBeGreaterThanOrEqual(
+      CURRENT_CORPUS_BASELINE.minimumChunkCount
+    )
+  })
+
+  it('does not represent FIPS 206 as a published draft or final standard', () => {
+    const statusChunkIds = new Set([
+      'glossary-7',
+      'glossary-168',
+      'page-guide-algorithms',
+      'page-guide-library',
+      'reg-timeline-fips-standards',
+    ])
+    const statusChunks = corpus.filter((chunk) => statusChunkIds.has(chunk.id))
+    expect(statusChunks.map((chunk) => chunk.id).sort()).toEqual([...statusChunkIds].sort())
+
+    for (const chunk of statusChunks) {
+      expect(chunk.content, chunk.id).toMatch(
+        /no (?:initial )?public draft|has not published an initial public draft/i
+      )
+      expect(chunk.content, chunk.id).not.toMatch(/defined in the draft FIPS 206/i)
+      expect(chunk.content, chunk.id).not.toMatch(/FIPS 206[^\n]{0,100}\(final\)/i)
+      expect(chunk.content, chunk.id).not.toMatch(/FIPS 206[^\n]{0,100}finalized/i)
+    }
+  })
   // Aggregate metrics
   const metrics = {
     totalQueries: 0,
@@ -732,7 +767,7 @@ describe('Golden Query Suite', () => {
         metrics.recall15Total++
         const found = resultIds.some((id) => id.startsWith(prefix))
         if (found) metrics.recall15Hits++
-        expect(found).toBe(true)
+        expect(found, `missing ${prefix}; got: ${resultIds.join(', ')}`).toBe(true)
       }
 
       // Check mustInclude in top 5 (Recall@5)
@@ -745,7 +780,7 @@ describe('Golden Query Suite', () => {
           metrics.recall5Hits++
         }
       }
-      expect(top5Hits).toBeGreaterThanOrEqual(gq.minTop5Hits)
+      expect(top5Hits, `top 5: ${top5Ids.join(', ')}`).toBeGreaterThanOrEqual(gq.minTop5Hits)
 
       // Check source coverage
       for (const source of gq.expectedSources) {
@@ -801,16 +836,12 @@ describe('Golden Query Suite', () => {
     expect(recall15).toBeGreaterThanOrEqual(0.95)
     expect(noiseRate).toBeLessThanOrEqual(0.05)
 
-    // Recall@5 and Source Coverage were previously computed and logged but
-    // never asserted — this suite could regress on either without failing.
-    // Recall@5 already clears its stated 80% target (measured 84.1%, 53/63
-    // on 2026-08-18), so assert the target directly.
+    // Recall@5 and Source Coverage are asserted so the expanded corpus cannot
+    // silently regress. The 2026-09-29 baseline measures Recall@5 at 81.1%
+    // (60/74), clearing the stated 80% target.
     expect(recall5).toBeGreaterThanOrEqual(0.8)
-    // Source Coverage does NOT yet clear its stated 90% target (measured
-    // 87.3%, 103/118 on 2026-08-18). Asserting 0.90 here would fail
-    // immediately, so the floor below is the measured value, not the goal —
-    // closing this gap is tracked separately (see
-    // pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.2-1.3).
+    // Source Coverage is 89.0% (113/127) on the same baseline. Keep the hard
+    // floor at 87% while retaining 90% as the visible target above.
     expect(sourceCoverage).toBeGreaterThanOrEqual(0.87)
   })
 })

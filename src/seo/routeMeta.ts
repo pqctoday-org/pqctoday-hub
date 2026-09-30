@@ -187,8 +187,9 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             {
               '@type': 'ListItem',
               position: 4,
-              name: 'FN-DSA (FIPS 206)',
-              description: 'FFT over NTRU-Lattice Digital Signature Algorithm',
+              name: 'FN-DSA (planned FIPS 206)',
+              description:
+                'FFT over NTRU-Lattice Digital Signature Algorithm; FIPS 206 remains in development with no published public draft',
             },
           ],
         },

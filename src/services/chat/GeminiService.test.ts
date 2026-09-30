@@ -58,6 +58,7 @@ describe('validateApiKey', () => {
       expect.stringContaining('generativelanguage.googleapis.com')
     )
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('key=test-key'))
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/gemini-3.8-flash?'))
   })
 })
 
@@ -111,6 +112,36 @@ describe('streamResponse', () => {
     expect(chunks).toEqual(['Complete response.'])
   })
 
+  it('joins answer parts and excludes Gemini thought parts', async () => {
+    const payload = JSON.stringify({
+      candidates: [
+        {
+          content: {
+            parts: [
+              { text: 'internal reasoning', thought: true },
+              { text: 'Grounded ' },
+              { text: 'answer.' },
+            ],
+          },
+        },
+      ],
+    })
+    const encoder = new TextEncoder()
+    const body = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`data: ${payload}\n`))
+        controller.close()
+      },
+    })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 200, body }))
+
+    const chunks: string[] = []
+    for await (const chunk of streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS)) {
+      chunks.push(chunk)
+    }
+    expect(chunks).toEqual(['Grounded answer.'])
+  })
+
   it('should throw on 401/403 status', async () => {
     vi.stubGlobal(
       'fetch',
@@ -154,14 +185,14 @@ describe('streamResponse', () => {
     const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
     vi.stubGlobal('fetch', mockFetch)
 
-    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-2.5-flash')
+    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-3.8-flash')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _ of gen) {
       /* consume */
     }
 
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('gemini-2.5-flash:streamGenerateContent'),
+      expect.stringContaining('gemini-3.8-flash:streamGenerateContent'),
       expect.any(Object)
     )
   })
@@ -188,7 +219,7 @@ describe('streamResponse', () => {
     const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
     vi.stubGlobal('fetch', mockFetch)
 
-    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-2.5-flash', undefined, {
+    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-3.8-flash', undefined, {
       page: 'Algorithms',
       relevantSources: [],
       suggestedQuestions: [],
@@ -202,7 +233,7 @@ describe('streamResponse', () => {
     expect(body.systemInstruction.parts[0].text).toContain('viewing the Algorithms page')
   })
 
-  it('should use temperature 0.3', async () => {
+  it('uses low thinking without deprecated sampling parameters', async () => {
     const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
     vi.stubGlobal('fetch', mockFetch)
 
@@ -213,7 +244,22 @@ describe('streamResponse', () => {
     }
 
     const body = JSON.parse(mockFetch.mock.calls[0][1].body)
-    expect(body.generationConfig.temperature).toBe(0.3)
+    expect(body.generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'low' })
+    expect(body.generationConfig).not.toHaveProperty('temperature')
+    expect(body.generationConfig).not.toHaveProperty('topP')
+  })
+
+  it('uses the Gemini 2.5 token-budget equivalent in comparison runs', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
+    vi.stubGlobal('fetch', mockFetch)
+
+    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-2.5-flash')
+    const chunks: string[] = []
+    for await (const chunk of gen) chunks.push(chunk)
+    expect(chunks).toEqual(['ok'])
+
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.generationConfig.thinkingConfig).toEqual({ thinkingBudget: 0 })
   })
 
   it('should support AbortSignal', async () => {
@@ -226,7 +272,7 @@ describe('streamResponse', () => {
       'key',
       MOCK_MESSAGES,
       MOCK_CHUNKS,
-      'gemini-2.5-flash',
+      'gemini-3.8-flash',
       controller.signal
     )
     await expect(gen.next()).rejects.toThrow()

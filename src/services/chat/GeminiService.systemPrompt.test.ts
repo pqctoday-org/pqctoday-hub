@@ -75,7 +75,7 @@ describe('buildSystemPrompt', () => {
       // Use the full "--- Source:" marker — the bare title also appears in the entity
       // inventory section which is inserted before the context header.
       const headerIdx = result.indexOf(contextHeader)
-      const chunkIdx = result.indexOf('--- Source: algorithms | ML-KEM Overview ---')
+      const chunkIdx = result.indexOf('--- Source: algorithms | ML-KEM Overview')
       expect(headerIdx).toBeLessThan(chunkIdx)
     })
   })

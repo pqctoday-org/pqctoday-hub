@@ -55,22 +55,17 @@ describe('buildLocalSystemPrompt', () => {
     expect(result).toMatch(/product supports an algorithm/i)
   })
 
-  it('instructs source-specific hedging, not a bare "the database" fallback', () => {
+  it('uses the exact corpus-insufficient refusal', () => {
     const result = buildLocalSystemPrompt([])
-    // The instruction must name a specific source category as the example.
-    expect(result).toMatch(/name the specific source/i)
-    // Regression guard: the OLD hedge text modeled exactly the anti-pattern
-    // the instruction warns against — a bare, unqualified "I don't have
-    // that information" with no instruction to name a source or still
-    // answer from what IS available. That exact old phrasing must be gone.
-    expect(result).not.toContain(
-      'If unsure, say "Based on the PQC Today database, I don\'t have that information."'
+    expect(result).toContain(
+      "Based on the PQC Today database, I don't have enough information about [topic]."
     )
   })
 
-  it('still instructs answering from available context after flagging a gap', () => {
+  it('does not invite filling a corpus gap with partial or remembered facts', () => {
     const result = buildLocalSystemPrompt([])
-    expect(result).toMatch(/still answer from what IS available/i)
+    expect(result).toMatch(/output exactly one sentence and nothing else/i)
+    expect(result).not.toMatch(/still answer from what IS available/i)
   })
 
   it('surfaces conflicting sources instead of silently picking one', () => {
@@ -93,7 +88,7 @@ describe('buildLocalSystemPrompt', () => {
 })
 
 // Structured citations (§7.1 of the hallucination-reduction plan) are gated
-// behind useStructuredCitations() — off by default. These tests pin both
+// behind useStructuredCitations() — required in corpus-only mode. These tests pin both
 // halves of that contract: zero prompt change when off (so the flag is
 // truly a no-op today), and the citation instruction + chunk-id context
 // header present when on, for BOTH providers.
