@@ -33,6 +33,7 @@ const AUDIENCE_FOR_ROLE: Record<PersonaId, BusinessToolAudience | null> = {
   developer: 'developer',
   ops: null,
   researcher: null,
+  'cert-engineer': null,
   curious: null,
 }
 

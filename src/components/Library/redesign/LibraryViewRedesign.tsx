@@ -363,7 +363,7 @@ export function LibraryViewRedesign({
 
   // ── Deep-link arrival: successor / not-found / filter widening ─────────────
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
-    kind: 'widened' | 'not-found'
+    kind: 'widened' | 'not-found' | 'moved'
     message: string
     /** Params before widening, for Undo. */
     undoParams?: string
@@ -432,7 +432,7 @@ export function LibraryViewRedesign({
         undoParams: params.toString(),
       })
     } else if (supersededNote) {
-      setDeepLinkNotice({ kind: 'not-found', message: `${supersededNote} Showing it instead.` })
+      setDeepLinkNotice({ kind: 'moved', message: `${supersededNote} Showing it instead.` })
     }
     setScrollTarget(item.referenceId)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per arriving ref

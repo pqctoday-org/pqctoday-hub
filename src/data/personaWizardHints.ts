@@ -718,6 +718,55 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
         'Pressure multipliers: within-1y=1.3, within-2-3y=1.15, internal-deadline=1.05, no-deadline=1.0, unknown=1.1. Applied after regulatory_pressure_score calculation.',
     },
   },
+  'cert-engineer': {
+    industry: {
+      hint: 'Pick the sector the module or product is sold into. The sector decides which certification schemes buyers will ask for — FIPS 140-3 for US federal buyers, Common Criteria or EUCC in Europe, PCI for payments.',
+      title: 'Which sector is the product sold into?',
+      description: 'Sector decides which certification schemes buyers will expect.',
+    },
+    country: {
+      hint: 'Jurisdiction decides which scheme and which deadline apply — CNSA 2.0 and the CMVP in the US, national guidance such as BSI or ANSSI and the EUCC scheme in Europe. Deadlines come from the PQC timeline data.',
+      title: 'Where will the product be certified and sold?',
+      description: 'Jurisdiction decides the scheme and the deadline.',
+    },
+    crypto: {
+      hint: 'Select every algorithm inside the module boundary, not only the ones the product advertises. On FIPS 140-3, an approved algorithm needs a CAVP validation before it can appear on the module certificate.',
+      hintExpert:
+        'Approved PQC today: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and LMS/XMSS (SP 800-208). CAVP validation is the prerequisite stage — it is not a module certificate.',
+    },
+    sensitivity: {
+      hint: 'Pick the most sensitive data the module will protect in its target deployments. It sets how long classical keys in the field remain a harvest-now, decrypt-later exposure.',
+    },
+    compliance: {
+      hint: 'Select the frameworks your buyers will cite. Each deadline becomes the date by which a certificate must list PQC algorithms — and certification lead times are long.',
+    },
+    migration: {
+      hint: 'Answer for the product line rather than the whole organisation: has PQC work started inside the module?',
+    },
+    'use-cases': {
+      hint: 'Pick the use cases the module serves. Key establishment is exposed to harvest-now, decrypt-later today; signing and firmware signing are exposed once signatures can be forged.',
+    },
+    retention: {
+      hint: "Use the longest retention period among the module's target customers — it sets how long data the module protects must stay confidential.",
+    },
+    credential: {
+      hint: 'Include the long-lived credentials the module anchors: root and device certificates, firmware-signing keys. A device certificate issued today can outlive the move to PQC.',
+    },
+    scale: {
+      hint: 'Answer for the fielded product (deployed units, customer systems) and the team that maintains the module.',
+    },
+    agility: {
+      hint: 'Agility here means: can a new algorithm enter the module without a redesign — and without re-opening the certificate from scratch?',
+      hintExpert:
+        'Changes to a validated FIPS 140-3 module go through the CMVP change-submission process, and security-relevant changes can mean substantial re-testing; Common Criteria has assurance continuity. A hard-coded algorithm list makes both harder.',
+    },
+    infra: {
+      hint: 'Select the infrastructure the module runs in or depends on. HSMs and embedded devices are where certification work concentrates: firmware, self-tests and entropy sources all sit inside the boundary.',
+    },
+    timeline: {
+      hint: 'Pick the deadline your buyers work to, then plan backwards: the certificate, lab testing and CAVP algorithm validation all have to land before it.',
+    },
+  },
   ops: {
     industry: {
       hint: 'Your industry determines compliance requirements for your infrastructure — different sectors have different certification mandates and audit cycles.',
@@ -995,6 +1044,7 @@ export const PERSONA_INDUSTRY_STEP_HINTS: Record<
     },
   },
   researcher: {},
+  'cert-engineer': {},
   ops: {
     financebanking: {
       compliance: {

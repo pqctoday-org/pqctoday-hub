@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink } from 'lucide-react'
 import {
@@ -11,6 +11,7 @@ import { CategoryBadge } from './category-badge'
 import { Button } from './button'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface SourcesModalProps {
   isOpen: boolean
@@ -60,18 +61,8 @@ export const SourcesModal = ({ isOpen, onClose, viewType, dataSource }: SourcesM
     return groups
   }, [sources])
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   return (
     <AnimatePresence>

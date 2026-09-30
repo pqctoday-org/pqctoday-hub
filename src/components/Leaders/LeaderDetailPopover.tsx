@@ -17,11 +17,14 @@ import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
@@ -54,13 +57,9 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen, onClose])
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!leader, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!leader)
 
   useEffect(() => {
     setImgError(false) // eslint-disable-line react-hooks/set-state-in-effect -- reset on item change, same pattern as LibraryDetailPopover
@@ -164,6 +163,10 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             />
             <AskAssistantButton
               question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
+            />
+            <ItemShareButton
+              title={itemShareTitle(leader.name)}
+              path={`/leaders?leader=${encodeURIComponent(leader.leaderId || leader.name)}`}
             />
             <Button
               variant="ghost"

@@ -86,7 +86,9 @@ describe('Library table view → drawer via ?ref', () => {
   })
 })
 
-describe('Library detail drawer links and panels', () => {
+// Renders the drawer over the real library dataset (~10 s alone); under the
+// full parallel suite it can pass the default 30 s limit.
+describe('Library detail drawer links and panels', { timeout: 60_000 }, () => {
   it('"Builds on" ids that resolve render as links that push ?ref', () => {
     const parent = libraryData.find((i) =>
       (i.dependencies ?? '')

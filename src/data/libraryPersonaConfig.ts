@@ -21,6 +21,7 @@ export const LIBRARY_PERSONAS: { id: PersonaId; label: string }[] = [
   { id: 'developer', label: 'Developer' },
   { id: 'architect', label: 'Architect' },
   { id: 'researcher', label: 'Researcher' },
+  { id: 'cert-engineer', label: 'Certification' },
   { id: 'ops', label: 'Ops' },
   { id: 'curious', label: 'Curious' },
 ]
@@ -40,6 +41,7 @@ export const LIBRARY_DEFAULT_SORT_BY_PERSONA: Record<PersonaId, SortOption> = {
   developer: 'published',
   architect: 'published',
   researcher: 'published',
+  'cert-engineer': 'published',
   ops: 'published',
   curious: 'published',
 }

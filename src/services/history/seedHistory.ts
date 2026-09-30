@@ -226,6 +226,7 @@ function seedPersonaEvents(out: Omit<HistoryEvent, 'id'>[]) {
       developer: 'Developer / Engineer',
       architect: 'Security Architect',
       researcher: 'Researcher / Academic',
+      'cert-engineer': 'Certification & Validation Engineer',
       ops: 'IT Ops / DevOps',
     }
     out.push({

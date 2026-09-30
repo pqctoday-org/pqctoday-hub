@@ -8,8 +8,9 @@ import {
   leaderNameSlug,
   normalizeLeaderName,
   planLeaderDeepLink,
+  resolveLeaderParam,
 } from './leaderDeepLink'
-import { leadersData } from '@/data/leadersData'
+import { leadersData, deprecatedLeaderSuccessors } from '@/data/leadersData'
 
 const L = (over: Partial<Leader>): Leader =>
   ({
@@ -82,6 +83,76 @@ describe('findLeaderByParam (leader_id first, then name)', () => {
   it('returns undefined for blank or unknown values', () => {
     expect(findLeaderByParam(leaders, '  ')).toBeUndefined()
     expect(findLeaderByParam(leaders, 'no-such-person')).toBeUndefined()
+  })
+})
+
+describe('deprecated duplicate forwarding', () => {
+  const successors = new Map([
+    ['ana-lee-old', { successorId: 'ana', name: 'Dr. Ana Lee' }],
+    ['ana-lee-older', { successorId: 'ana-lee-old', name: 'Ana Lee' }],
+    ['loop-a', { successorId: 'loop-b', name: 'A' }],
+    ['loop-b', { successorId: 'loop-a', name: 'B' }],
+    ['gone', { successorId: 'nobody', name: 'Gone Person' }],
+  ])
+  it('resolves a deprecated leader_id to its kept profile and names the duplicate', () => {
+    expect(resolveLeaderParam(leaders, 'ana-lee-old', successors)).toEqual({
+      leader: leaders[3],
+      forwardedFrom: 'Dr. Ana Lee',
+    })
+    expect(findLeaderByParam(leaders, ' ANA-LEE-OLD ', successors)?.id).toBe('ana')
+  })
+  it('follows a chain of merges, and a cycle or missing successor falls through to names', () => {
+    expect(resolveLeaderParam(leaders, 'ana-lee-older', successors)?.forwardedFrom).toBe('Ana Lee')
+    expect(findLeaderByParam(leaders, 'ana-lee-older', successors)?.id).toBe('ana')
+    expect(findLeaderByParam(leaders, 'loop-a', successors)).toBeUndefined()
+    expect(findLeaderByParam(leaders, 'gone', successors)).toBeUndefined()
+  })
+  it('an active id wins over the successor map, and plain matches carry no forwarding', () => {
+    const shadow = new Map([['ana', { successorId: 'moody', name: 'X' }]])
+    expect(resolveLeaderParam(leaders, 'ana', shadow)).toEqual({ leader: leaders[3] })
+  })
+  it('planLeaderDeepLink reports forwardedFrom alongside any widening', () => {
+    const plan = planLeaderDeepLink(
+      leaders,
+      new URLSearchParams('leader=ana-lee-old&sector=Public'),
+      successors
+    )
+    expect(plan).toMatchObject({
+      kind: 'found',
+      forwardedFrom: 'Dr. Ana Lee',
+      widened: ['sector "Public"'],
+    })
+    expect(planLeaderDeepLink(leaders, new URLSearchParams('leader=ana-lee-old'))).toEqual({
+      kind: 'not-found',
+      name: 'ana-lee-old',
+    })
+  })
+})
+
+describe('merged duplicates in the shipped CSV', () => {
+  it('every successor is an active profile, and no active name is duplicated', () => {
+    expect(deprecatedLeaderSuccessors.size).toBeGreaterThan(0)
+    const activeIds = new Set(leadersData.map((l) => l.leaderId))
+    for (const [id, s] of deprecatedLeaderSuccessors) {
+      expect(activeIds.has(id)).toBe(false)
+      expect(activeIds.has(s.successorId)).toBe(true)
+    }
+    const slugs = leadersData.map((l) => leaderNameSlug(l.name))
+    expect(new Set(slugs).size).toBe(slugs.length)
+  })
+  it("a merged duplicate's old id and old name both open the kept profile", () => {
+    for (const [id, s] of deprecatedLeaderSuccessors) {
+      const kept = leadersData.find((l) => l.leaderId === s.successorId)
+      const match = resolveLeaderParam(leadersData, id, deprecatedLeaderSuccessors)
+      expect(match?.leader).toBe(kept)
+      expect(match?.forwardedFrom).toBe(s.name)
+      expect(findLeaderByParam(leadersData, s.name, deprecatedLeaderSuccessors)).toBe(kept)
+    }
+  })
+  it('Dustin Moody: the stub id forwards to the NIST profile', () => {
+    expect(
+      findLeaderByParam(leadersData, 'dustin-moody-nist-2', deprecatedLeaderSuccessors)?.name
+    ).toBe('Dr. Dustin Moody')
   })
 })
 

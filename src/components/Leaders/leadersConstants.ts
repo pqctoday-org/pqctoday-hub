@@ -186,6 +186,16 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
       why: 'The published dissent. A field with no recorded counter-claims is a field nobody has checked.',
     },
   ],
+  'cert-engineer': [
+    {
+      category: 'Government',
+      why: 'The agencies and national bodies behind the schemes — their guidance decides what a module has to show to be certified.',
+    },
+    {
+      category: 'Industry Vendor',
+      why: 'The module vendors taking PQC through validation — their announcements show which algorithms are reaching certificates first.',
+    },
+  ],
   ops: [
     {
       category: 'Industry Vendor',

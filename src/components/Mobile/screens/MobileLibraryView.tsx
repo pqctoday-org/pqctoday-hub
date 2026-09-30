@@ -340,6 +340,7 @@ export function MobileLibraryView() {
         onClose={() => setDetailRef(null)}
         title={selected?.referenceId}
         large
+        shareUrl={selected ? `/library?ref=${encodeURIComponent(selected.referenceId)}` : undefined}
         testId="library-detail-sheet"
       >
         {selected && (

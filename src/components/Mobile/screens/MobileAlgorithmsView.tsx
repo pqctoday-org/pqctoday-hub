@@ -506,6 +506,11 @@ export function MobileAlgorithmsView() {
         open={!!selected}
         onClose={closeSheet}
         title={selected?.name}
+        shareUrl={
+          selected
+            ? `/algorithms?algo=${encodeURIComponent(algorithmIdFromName(selected.name))}`
+            : undefined
+        }
         testId="algorithm-detail-sheet"
       >
         {selected && (

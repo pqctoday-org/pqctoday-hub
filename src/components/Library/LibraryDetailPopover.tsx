@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar, X, ChevronDown, ListChecks } from 'lucide-react'
 import { Link } from 'react-router'
-import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { motion } from 'framer-motion'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -24,6 +25,7 @@ import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
@@ -89,48 +91,14 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     }
   }, [isOpen, onClose])
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!item, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!item)
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isOpen, onClose])
-
-  // Body scroll lock while modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
-
-  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
-  // document's title/deep-link while the popover is open so the global
-  // ShareButton (MainLayout.tsx) shares the right document instead of the
-  // bare Library page. `?ref=` is already synced into the address bar by
-  // LibraryViewRedesign's openDetail, so this mirrors — not overrides — what
-  // `window.location.href` already resolves to.
-  useEffect(() => {
-    if (!isOpen || !item) return
-    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
-    setPageActions({
-      shareTitle: item.documentTitle,
-      url: `${window.location.origin}/library?ref=${item.referenceId}`,
-    })
-    return () => clearPageActions()
-  }, [isOpen, item])
+  // No page-actions registration here: this pop-up is opened over other pages
+  // (Compliance For-You), whose own top-bar actions it must not replace or
+  // clear on close, and its backdrop covers the top bar anyway. Sharing is
+  // the in-header ItemShareButton below.
 
   if (!isOpen || !item) return null
 
@@ -212,15 +180,23 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     {item.documentTitle?.trim()}
                   </h3>
                 </div>
-                <Button
-                  variant="ghost"
-                  onClick={onClose}
-                  aria-label="Close details"
-                  className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                <div
+                  className="flex shrink-0 items-center gap-1"
                   style={{ marginTop: '-4px', marginRight: '-4px' }}
                 >
-                  <X size={18} aria-hidden="true" />
-                </Button>
+                  <ItemShareButton
+                    title={itemShareTitle(item.documentTitle?.trim() || item.referenceId)}
+                    path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
+                  />
+                  <Button
+                    variant="ghost"
+                    onClick={onClose}
+                    aria-label="Close details"
+                    className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  >
+                    <X size={18} aria-hidden="true" />
+                  </Button>
+                </div>
               </div>
               {/* Actions Row */}
               <div className="hidden md:flex items-center gap-2 flex-wrap">

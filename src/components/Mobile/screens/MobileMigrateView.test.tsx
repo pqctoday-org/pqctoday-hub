@@ -863,5 +863,38 @@ describe('MobileMigrateView', () => {
       const sheet = screen.getByTestId('migrate-product-detail-sheet')
       expect(within(sheet).getAllByText(lib.softwareName).length).toBeGreaterThan(0)
     })
+
+    describe('Vendor risk ?open=', () => {
+      it('<productId> opens that product sheet over the risk tab; closing drops ?open', () => {
+        const [hsm] = productsForDomain('hsm')
+        renderMobile(`/migrate?tab=vendorrisk&open=${encodeURIComponent(hsm.productId)}`)
+        expect(screen.getByRole('button', { name: 'Risk' })).toHaveAttribute('aria-pressed', 'true')
+        const sheet = screen.getByTestId('migrate-product-detail-sheet')
+        expect(within(sheet).getAllByText(hsm.softwareName).length).toBeGreaterThan(0)
+        fireEvent.click(within(sheet).getAllByRole('button', { name: /^close$/i })[0])
+        expect(search()).not.toContain('open=')
+        expect(search()).toContain('tab=vendorrisk')
+      })
+
+      it('<domainId> moves to the Replace tab on that domain and rewrites the URL', () => {
+        renderMobile('/migrate?tab=vendorrisk&open=hsm')
+        expect(screen.getByRole('button', { name: 'Replace' })).toHaveAttribute(
+          'aria-pressed',
+          'true'
+        )
+        expect(chip(/^HSM-protected keys/)).toHaveAttribute('aria-pressed', 'true')
+        expect(search()).toContain('tab=replace')
+        expect(search()).toContain('domain=hsm')
+        expect(search()).not.toContain('open=')
+        expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+      })
+
+      it('an unknown ref shows a not-found notice', () => {
+        renderMobile('/migrate?tab=vendorrisk&open=no-such-thing-zz')
+        expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+          'no-such-thing-zz'
+        )
+      })
+    })
   })
 })

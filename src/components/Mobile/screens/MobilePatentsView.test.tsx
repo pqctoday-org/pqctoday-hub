@@ -151,4 +151,51 @@ describe('MobilePatentsView', () => {
     })
     expect(screen.getByText(p.title)).toBeInTheDocument()
   })
+
+  describe('desktop link filters (?inventor, ?patentIds)', () => {
+    const count = () => Number(screen.getByText(/^\d+ patents$/).textContent!.split(' ')[0])
+    const pqc = patentsData.filter(isPqcPatent)
+
+    it('?patentIds narrows the list to those patents (US or bare form) with a removable chip', () => {
+      const [a, b] = pqc
+      renderView(`/patents?patentIds=${a.patentNumber},${b.patentNumber.replace(/^US/, '')}`)
+      expect(count()).toBe(2)
+      expect(screen.getByText(a.title)).toBeInTheDocument()
+      expect(screen.getByTestId('patent-link-filters')).toHaveTextContent('Patents:2 selected')
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Patents filter' }))
+      expect(new URLSearchParams(lastSearch).get('patentIds')).toBeNull()
+      expect(count()).toBe(pqc.length)
+      expect(screen.queryByTestId('patent-link-filters')).not.toBeInTheDocument()
+    })
+
+    it('?inventor filters by inventor name (desktop matching) and the chip clears it', () => {
+      const withInventor = pqc.find((p) => /^[A-Za-z]+;\s*[A-Za-z]+/.test(p.inventors ?? ''))!
+      const [surname, given] = withInventor.inventors
+        .replace(/\bet\s+al\.?\s*$/i, '')
+        .split(';')
+        .map((s) => s.trim().split(/\s+/)[0])
+      renderView(`/patents?inventor=${encodeURIComponent(`${given} ${surname}`)}&sq=keep`)
+      expect(screen.getByTestId('patent-link-filters')).toHaveTextContent(
+        `Inventor:${given} ${surname}`
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Inventor filter' }))
+      const sp = new URLSearchParams(lastSearch)
+      expect(sp.get('inventor')).toBeNull()
+      expect(sp.get('sq')).toBe('keep')
+    })
+
+    it('narrows the list to the inventor’s patents', () => {
+      const withInventor = pqc.find((p) => /^[A-Za-z]+;\s*[A-Za-z]+/.test(p.inventors ?? ''))!
+      renderView(`/patents?inventor=${encodeURIComponent(withInventor.inventors)}`)
+      expect(screen.getByText(withInventor.title)).toBeInTheDocument()
+      expect(count()).toBeLessThan(pqc.length)
+    })
+
+    it('keeps reading ?search into the search box', () => {
+      renderView('/patents?search=lattice')
+      expect(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i)).toHaveValue(
+        'lattice'
+      )
+    })
+  })
 })

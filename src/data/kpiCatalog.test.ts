@@ -9,6 +9,7 @@ import {
   pqcReadinessTier,
   isPqcReady,
   isFips1403Validated,
+  fips1403Stage,
   computePaceToDeadline,
 } from './kpiCatalog'
 import { getKpiTarget } from './kpiTargets'
@@ -603,5 +604,51 @@ describe('computePaceToDeadline (real pace, not a constant)', () => {
 
   it('returns 100 right at program start (nothing expected yet)', () => {
     expect(computePaceToDeadline(2027, 2030, 0, NOW)).toBe(100)
+  })
+})
+
+describe('fips1403Stage — the source-backed stage decides, the free text only confirms 140-3', () => {
+  it('counts a certificate only when the stage is yes AND the text names FIPS 140-3', () => {
+    expect(
+      fips1403Stage({ hasCertification: 'yes', fipsValidated: 'Yes (FIPS 140-3 L3 #4703)' })
+    ).toBe('certified')
+    expect(fips1403Stage({ hasCertification: 'yes', fipsValidated: 'Yes (FIPS 140-2 L3)' })).toBe(
+      'none'
+    )
+    expect(fips1403Stage({ hasCertification: 'yes', fipsValidated: 'Yes (Trusted)' })).toBe('none')
+    expect(fips1403Stage({ hasCertification: 'yes', fipsValidated: 'Yes (In Progress)' })).toBe(
+      'none'
+    )
+    expect(
+      fips1403Stage({
+        hasCertification: 'yes',
+        fipsValidated: 'No (CAVP algorithm validation, not a CMVP module validation)',
+      })
+    ).toBe('none')
+  })
+  it('counts a cited certificate even when a later PQC clause is still pending', () => {
+    expect(
+      fips1403Stage({
+        hasCertification: 'yes',
+        fipsValidated:
+          'Yes — FIPS 140-3 Level 3, CMVP #4745 nShield 5s (Active), classical algorithms only; PQC resubmission pending',
+      })
+    ).toBe('certified')
+  })
+  it('never promotes free text without a matching stage', () => {
+    expect(
+      fips1403Stage({ hasCertification: 'unknown', fipsValidated: 'Yes (FIPS 140-3 CMVP)' })
+    ).toBe('none')
+    expect(
+      fips1403Stage({ hasCertification: 'component', fipsValidated: 'Yes (AWS-LC FIPS 140-3)' })
+    ).toBe('none')
+  })
+  it('reads the prerequisite and in-process stages from the stage field alone', () => {
+    expect(fips1403Stage({ hasCertification: 'cavp', fipsValidated: 'Yes (CAVP Validated)' })).toBe(
+      'cavp'
+    )
+    expect(fips1403Stage({ hasCertification: 'in_progress', fipsValidated: 'No' })).toBe(
+      'in_process'
+    )
   })
 })

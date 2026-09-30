@@ -72,6 +72,13 @@
       "rationale": "NICE v2.2.0 DD-WRL-008 (Technology Research and Development) closest match for a research role"
     },
     {
+      "code": "PQC-ROLE-VALIDATION",
+      "label": "Cryptographic Validation Engineer",
+      "maps_to": "DD-WRL-007",
+      "persona_alias": "cert-engineer",
+      "rationale": "NICE v2.2.0 DD-WRL-007 (Systems Testing and Evaluation) closest match; no work role is specific to cryptographic-module validation"
+    },
+    {
       "code": "PQC-ROLE-OPSEC",
       "label": "Security Operations",
       "maps_to": "PD-WRL-001",

@@ -5,6 +5,7 @@ import {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
   ChevronDown,
@@ -21,6 +22,7 @@ const PERSONA_ICONS: Record<string, React.ElementType> = {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
 }
@@ -33,6 +35,7 @@ const SHORT_LABELS: Record<PersonaId, string> = {
   architect: 'Architect',
   ops: 'IT Ops',
   researcher: 'Researcher',
+  'cert-engineer': 'Certification',
   curious: 'Explorer',
 }
 

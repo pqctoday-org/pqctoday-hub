@@ -4,6 +4,7 @@ import { Construction, ExternalLink, MessageSquare, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 /**
  * Non-blocking disclaimer banner pinned to bottom of viewport.
@@ -36,14 +37,8 @@ export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' |
   }, [isOpen, placement])
 
   // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleDismiss()
-    }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [isOpen, handleDismiss])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, handleDismiss)
 
   if (!isOpen) return null
 

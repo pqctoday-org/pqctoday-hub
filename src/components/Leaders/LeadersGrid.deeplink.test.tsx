@@ -59,6 +59,10 @@ vi.mock('../../data/leadersData', () => ({
       sourceKind: 'auto-imported',
     },
   ] as Leader[],
+  // A merged duplicate: its frozen id forwards to Alice's kept profile.
+  deprecatedLeaderSuccessors: new Map([
+    ['alice-quant-old', { successorId: 'alice-1', name: 'Dr. Alice Quant' }],
+  ]),
   leadersMetadata: { filename: 'leaders_test.csv', lastUpdate: new Date('2025-02-01') },
 }))
 
@@ -165,6 +169,25 @@ describe('LeadersGrid PR 2 params (leader_id, layer, table sort)', () => {
       await screen.findByRole('button', { name: 'Collapse details for Alice Quant' })
     ).toBeInTheDocument()
     expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+  })
+
+  it("forwards a merged duplicate's leader_id to the kept profile and says so", async () => {
+    renderAt('?leader=alice-quant-old')
+    expect(
+      await screen.findByRole('button', { name: 'Collapse details for Alice Quant' })
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('deeplink-notice-moved')).toHaveTextContent(
+      'Dr. Alice Quant is now listed under Alice Quant'
+    )
+    expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+  })
+
+  it('combines the forwarding note with any filter widening (Undo still offered)', async () => {
+    renderAt('?leader=alice-quant-old&sector=Public')
+    const notice = await screen.findByTestId('deeplink-notice-widened')
+    expect(notice).toHaveTextContent('Dr. Alice Quant is now listed under Alice Quant')
+    expect(notice).toHaveTextContent('cleared sector "Public"')
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeInTheDocument()
   })
 
   it('opening a card writes the leader_id (push) and closing removes it', async () => {

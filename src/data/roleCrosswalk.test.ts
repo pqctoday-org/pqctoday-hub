@@ -24,6 +24,7 @@ const ALL_PERSONA_IDS: PersonaId[] = [
   'developer',
   'architect',
   'researcher',
+  'cert-engineer',
   'ops',
   'curious',
 ]

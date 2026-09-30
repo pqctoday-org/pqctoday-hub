@@ -14,6 +14,9 @@ import {
 interface Props {
   /** Cert records from useComplianceRefresh / the compliance service. */
   records: readonly ComplianceRecord[]
+  /** Replaces the developer-facing closing sentence (which points at the CI
+   *  gate snippet in DeveloperImplementationView). */
+  closingNote?: React.ReactNode
 }
 
 /**
@@ -34,7 +37,7 @@ interface Props {
  * Computes counts client-side from the records the caller already loaded; no
  * extra fetch.
  */
-export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
+export const ModuleCertificationStatus: React.FC<Props> = ({ records, closingNote }) => {
   const counts = useMemo(() => computeCounts(records), [records])
 
   // Empty data → render nothing (compliance service may still be loading).
@@ -86,8 +89,12 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
               Security Target (not a validation)
             </>
           )}{' '}
-          — if your dependency tree includes classical-only modules, the CI gate above will trip.
-          Browse the full Records tab to find your exact upstream.
+          {closingNote ?? (
+            <>
+              — if your dependency tree includes classical-only modules, the CI gate above will
+              trip. Browse the full Records tab to find your exact upstream.
+            </>
+          )}
         </p>
       </div>
 

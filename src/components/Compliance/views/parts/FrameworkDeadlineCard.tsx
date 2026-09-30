@@ -99,6 +99,7 @@ export function FrameworkDeadlineCard({
           onClose={() => setGraphOpen(false)}
           centerConceptId={graphConceptId}
           title={fw.label}
+          frameworkId={fw.id}
         />
       )}
       {onSelectFramework ? (

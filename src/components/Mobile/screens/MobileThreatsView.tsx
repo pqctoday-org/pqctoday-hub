@@ -566,6 +566,7 @@ export function MobileThreatsView() {
         onClose={() => setSelected(null)}
         title={selected?.threatId}
         large
+        shareUrl={selected ? `/threats?id=${encodeURIComponent(selected.threatId)}` : undefined}
         testId="threat-detail-sheet"
       >
         {selected && (

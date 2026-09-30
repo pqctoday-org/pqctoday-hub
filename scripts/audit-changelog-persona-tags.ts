@@ -44,6 +44,7 @@ const VALID_PERSONAS = new Set([
   'developer',
   'architect',
   'researcher',
+  'cert-engineer',
   'ops',
   'curious',
 ])
