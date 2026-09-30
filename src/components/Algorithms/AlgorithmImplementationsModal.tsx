@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, GitBranch, ExternalLink, PackageOpen, BookOpen, Library } from 'lucide-react'
@@ -7,6 +7,7 @@ import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import { baseAlgoName, resolveAlgoXrefs } from '../../data/algoProductXrefData'
 import type { AlgoProductXref } from '../../data/algoProductXrefData'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface AlgorithmImplementationsModalProps {
   algorithmName: string
@@ -19,13 +20,8 @@ export function AlgorithmImplementationsModal({
   isOpen,
   onClose,
 }: AlgorithmImplementationsModalProps) {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   const xrefs = useMemo(() => resolveAlgoXrefs(algorithmName), [algorithmName])
 

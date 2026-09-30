@@ -620,6 +620,7 @@ function FrameworkCard({
           onClose={() => setGraphOpen(false)}
           centerConceptId={graphConceptId}
           title={fw.label}
+          frameworkId={fw.id}
         />
       )}
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import { X, ShieldX, ExternalLink, MessageSquare } from 'lucide-react'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface LeaderRemovalModalProps {
   isOpen: boolean
@@ -24,14 +24,8 @@ const DISCUSSION_NEW_URL = (() => {
 })()
 
 export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps) {
-  useEffect(() => {
-    if (!isOpen) return
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   if (!isOpen) return null
 

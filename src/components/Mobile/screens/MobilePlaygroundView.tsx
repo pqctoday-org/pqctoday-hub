@@ -282,6 +282,7 @@ export function MobilePlaygroundView() {
         onClose={() => setSelected(null)}
         title={selected?.name}
         large
+        shareUrl={selected ? `/playground/${encodeURIComponent(selected.id)}` : undefined}
         testId="playground-tool-detail-sheet"
       >
         {selected && <ToolDetailSheetBody tool={selected} caps={caps} />}

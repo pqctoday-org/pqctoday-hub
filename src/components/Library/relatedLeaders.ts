@@ -5,20 +5,20 @@
  * both list the same people.
  */
 import type { LibraryItem } from '@/data/libraryData'
-import { leadersData, type Leader } from '@/data/leadersData'
+import { deprecatedLeaderSuccessors, leadersData, type Leader } from '@/data/leadersData'
+import { findLeaderByParam } from '@/components/Leaders/leaderDeepLink'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 
-/** Strip parenthetical annotations and honorific prefixes, then lowercase. */
-function normalizeLeaderName(raw: string): string {
-  return raw
-    .replace(/\s*\(.*?\)/g, '')
-    .replace(/^(Dr\.|Prof\.|Dr |Prof )\s*/i, '')
-    .trim()
-    .toLowerCase()
+/**
+ * Enrichment contributor strings carry annotations ("Chris Peikert (author)",
+ * "Jaime Gómez García (Banco Santander)"); drop them, then resolve with the
+ * Community page's own matcher — accent- and honorific-tolerant, and it
+ * forwards names of merged duplicate profiles to the kept one.
+ */
+function leaderForContributor(raw: string): Leader | undefined {
+  const cleaned = raw.replace(/\s*\(.*?\)/g, '').trim()
+  return cleaned ? findLeaderByParam(leadersData, cleaned, deprecatedLeaderSuccessors) : undefined
 }
-
-/** Built once at module load: normalized name → Leader. */
-const leaderByNormalizedName = new Map(leadersData.map((l) => [normalizeLeaderName(l.name), l]))
 
 export function relatedLeadersFor(item: LibraryItem): Leader[] {
   // Pass 1: reverse keyResourceRefs lookup (authoritative). `keyResourceUrl`
@@ -36,7 +36,7 @@ export function relatedLeadersFor(item: LibraryItem): Leader[] {
   const enrichment = libraryEnrichments[item.referenceId]
   if (enrichment) {
     for (const contrib of enrichment.leadersContributions) {
-      const leader = leaderByNormalizedName.get(normalizeLeaderName(contrib))
+      const leader = leaderForContributor(contrib)
       if (leader && !seen.has(leader.id)) {
         related.push(leader)
         seen.add(leader.id)

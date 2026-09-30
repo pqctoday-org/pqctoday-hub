@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Calendar } from 'lucide-react'
+import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import type { TimelinePhase, TimelineEvent, Phase } from '../../types/timeline'
 import { phaseColors, eventLinkKey, timelineEventPageUrl } from '../../data/timelineData'
 import {
@@ -14,6 +16,8 @@ import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import {
   timelineEnrichments,
@@ -67,22 +71,9 @@ export const GanttDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isOpen, onClose])
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!phase, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!phase)
 
   if (!isOpen || !phase) return null
 
@@ -111,6 +102,10 @@ export const GanttDetailPopover = ({
     primaryEvent?.countryName ?? '',
     primaryEvent ? eventLinkKey(primaryEvent) : null
   )
+  // Share the event the popover SHOWS (a `?event=` link can focus a later
+  // event of the row), not the row's first. Legacy event-less rows fall back
+  // to the row title, which `?event=` also resolves.
+  const shareKey = primaryEvent ? eventLinkKey(primaryEvent) : phase.title
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
@@ -163,46 +158,69 @@ export const GanttDetailPopover = ({
                 background: `linear-gradient(to bottom, ${colors.glow} 0%, transparent 100%)`,
               }}
             >
-              {/* Badge and Title */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider text-black flex-shrink-0"
-                  style={{ backgroundColor: colors.start }}
-                >
-                  {phase.phase}
-                </div>
-                <h3
-                  id="gantt-phase-popover-title"
-                  className="text-xs font-bold text-foreground leading-tight"
-                >
-                  {shown.title}
-                </h3>
-                <StatusBadge status={phase.status} size="sm" />
-                {deadlineMandate && (
-                  <span
-                    title={
-                      deadlineMandate === 'HARD'
-                        ? 'Binding legal mandate — law, regulation, or executive order.'
-                        : deadlineMandate === 'SOFT'
-                          ? 'Published guidance — a target, not a binding legal mandate.'
-                          : 'Binding status could not be confirmed from an authoritative source yet — treat as neither binding nor advisory until reviewed.'
-                    }
-                    className={clsx(
-                      'inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium',
-                      deadlineMandate === 'HARD'
-                        ? 'border-destructive/30 bg-destructive/10 text-destructive'
-                        : deadlineMandate === 'SOFT'
-                          ? 'border-border bg-muted text-muted-foreground'
-                          : 'border-status-warning/30 bg-status-warning/10 text-status-warning'
-                    )}
+              <div className="flex items-start gap-2">
+                {/* Badge and Title */}
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                  <div
+                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider text-black flex-shrink-0"
+                    style={{ backgroundColor: colors.start }}
                   >
-                    {deadlineMandate === 'HARD'
-                      ? 'binding mandate'
-                      : deadlineMandate === 'SOFT'
-                        ? 'guidance'
-                        : 'label pending'}
-                  </span>
-                )}
+                    {phase.phase}
+                  </div>
+                  <h3
+                    id="gantt-phase-popover-title"
+                    className="text-xs font-bold text-foreground leading-tight"
+                  >
+                    {shown.title}
+                  </h3>
+                  <StatusBadge status={phase.status} size="sm" />
+                  {deadlineMandate && (
+                    <span
+                      title={
+                        deadlineMandate === 'HARD'
+                          ? 'Binding legal mandate — law, regulation, or executive order.'
+                          : deadlineMandate === 'SOFT'
+                            ? 'Published guidance — a target, not a binding legal mandate.'
+                            : 'Binding status could not be confirmed from an authoritative source yet — treat as neither binding nor advisory until reviewed.'
+                      }
+                      className={clsx(
+                        'inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium',
+                        deadlineMandate === 'HARD'
+                          ? 'border-destructive/30 bg-destructive/10 text-destructive'
+                          : deadlineMandate === 'SOFT'
+                            ? 'border-border bg-muted text-muted-foreground'
+                            : 'border-status-warning/30 bg-status-warning/10 text-status-warning'
+                      )}
+                    >
+                      {deadlineMandate === 'HARD'
+                        ? 'binding mandate'
+                        : deadlineMandate === 'SOFT'
+                          ? 'guidance'
+                          : 'label pending'}
+                    </span>
+                  )}
+                </div>
+                {/* Share + Close — this popover had no close control at all
+                  (only Escape / outside click), unreachable for touch and
+                  screen-reader users. */}
+                <div className="flex shrink-0 items-center gap-1">
+                  {shareKey && (
+                    <ItemShareButton
+                      title={itemShareTitle(shown.title)}
+                      path={`/timeline?event=${encodeURIComponent(shareKey)}`}
+                    />
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    aria-label="Close"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  >
+                    <X size={16} aria-hidden="true" />
+                  </Button>
+                </div>
               </div>
             </div>
 

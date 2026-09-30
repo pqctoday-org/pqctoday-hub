@@ -14,7 +14,7 @@ import { libraryEnrichments, type LibraryEnrichment } from '../libraryEnrichment
 import { timelineEnrichments, getTimelineEnrichmentKey } from '../timelineEnrichmentData'
 import { complianceFrameworks } from '../complianceData'
 import { threatsData } from '../threatsData'
-import { leadersData } from '../leadersData'
+import { formerLeaderNames, leadersData } from '../leadersData'
 import { softwareData } from '../migrateData'
 import { getCertsForProduct } from '../certificationXrefData'
 import { algorithmTrustByName } from '../algorithmTrustData'
@@ -453,6 +453,18 @@ function computeAllScores(): Map<string, TrustScore> {
       peerReviewed: bestPeerReview,
       vettingBody: docVettingBodies.size > 0 ? [...docVettingBodies] : undefined,
     })
+
+    // A merged duplicate's trusted-source xrefs were filed under its own
+    // name; credit them to the kept profile.
+    for (const former of formerLeaderNames.get(l.leaderId) ?? []) {
+      const moved = ctx.xrefsByResource.get(former)
+      if (!moved?.length) continue
+      const existing = ctx.xrefsByResource.get(l.name) ?? []
+      for (const x of moved) {
+        if (!existing.some((e) => e.sourceId === x.sourceId)) existing.push(x)
+      }
+      ctx.xrefsByResource.set(l.name, existing)
+    }
 
     // Inject keyResourceRefs into the cross-reference context so density picks them up
     if (docRefs.length > 0) {

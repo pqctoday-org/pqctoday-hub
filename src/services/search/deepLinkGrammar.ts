@@ -103,6 +103,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'matrixAvailability',
       'matrixSort',
       'matrixHighlight',
+      'cmp',
       'industry',
       'mechanism',
       'usecase',

@@ -179,6 +179,7 @@ export function MobileBusinessToolsView() {
         onClose={() => setSelected(null)}
         title={selected?.name}
         large
+        shareUrl={selected ? `/business/tools/${encodeURIComponent(selected.id)}` : undefined}
         testId="business-tool-detail-sheet"
       >
         {selected && <ToolDetailSheetBody tool={selected} />}

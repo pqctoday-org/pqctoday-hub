@@ -216,6 +216,11 @@ export function MobileProtocolMatrixView() {
         onClose={clearProtocol}
         title={selected?.name}
         large
+        shareUrl={
+          selected
+            ? `/algorithms?tab=support&protocol=${encodeURIComponent(selected.id)}`
+            : undefined
+        }
         testId="protocol-matrix-detail-sheet"
       >
         {selected && (

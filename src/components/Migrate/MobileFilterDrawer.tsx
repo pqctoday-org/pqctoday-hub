@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Filter, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface MobileFilterDrawerProps {
   // We'll pass the exact same props as the dropdowns
@@ -17,17 +18,9 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  // Disallow body scrolling when drawer is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  // Disallow body scrolling when drawer is open (ref-counted: never unlocks
+  // the page under another open overlay).
+  useBodyScrollLock(isOpen)
 
   return (
     <div className="md:hidden">

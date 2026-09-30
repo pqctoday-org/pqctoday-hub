@@ -28,7 +28,7 @@ import { purlByProduct } from './purlXrefData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { patentsData } from './patentsData'
-import { leadersData } from './leadersData'
+import { formerLeaderNames, leadersData } from './leadersData'
 import { expandAlgorithmAliases } from './algorithmNameAliases'
 import { vendors } from './vendorData'
 import { algorithmHref } from '@/utils/algorithmLinks'
@@ -658,8 +658,12 @@ function buildEdges(
       const patId = `pat-${slug(patentNumber)}`
       add(ldrId, nodes.has(patId) ? patId : null, 'related')
     }
-    for (const xref of getSourcesForRecord('leaders', leader.name)) {
-      add(certbodyNodeIdFor(xref.sourceId, nodes), ldrId, 'references')
+    // A merged duplicate's source links were filed under its own name.
+    const names = [leader.name, ...(formerLeaderNames.get(leader.leaderId) ?? [])]
+    for (const name of names) {
+      for (const xref of getSourcesForRecord('leaders', name)) {
+        add(certbodyNodeIdFor(xref.sourceId, nodes), ldrId, 'references')
+      }
     }
   }
 

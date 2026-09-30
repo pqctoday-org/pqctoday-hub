@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import {
@@ -26,6 +25,7 @@ import {
   type PersonaStepHint,
 } from '../../../data/personaWizardHints'
 import type { PersonaId } from '../../../data/learningPersonas'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface StepPersonaInfoModalProps {
   stepKey: string | null
@@ -103,13 +103,8 @@ function HintDetail({ hint, label }: { hint: PersonaStepHint; label: string }) {
 export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfoModalProps) {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (open) document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [open, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(open, onClose)
 
   if (!stepKey) return null
 
