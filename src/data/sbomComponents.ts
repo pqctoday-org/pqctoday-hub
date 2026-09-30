@@ -216,12 +216,6 @@ export function sbomGroupMembers(c: SbomComponent): readonly string[] {
  * the check, so this cannot rot into a silent allow-list.
  */
 export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
-  'ed25519-hd-key':
-    'declared in package.json, imported by no shipped code (named only in teaching copy)',
-  'micro-eth-signer':
-    'declared in package.json, imported by no shipped code (named only in teaching copy)',
-  'pdf-parse':
-    'declared in package.json; no source, script or test imports it (also named in README and LICENSES.md)',
   '@eslint/js': 'lint rules; ships nothing',
   'eslint-config-prettier': 'lint rules; ships nothing',
   'eslint-plugin-jsx-a11y': 'lint rules; ships nothing',
@@ -242,7 +236,6 @@ export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
   '@types/lodash': 'type declarations only; no code is shipped',
   '@types/node': 'type declarations only; no code is shipped',
   '@types/papaparse': 'type declarations only; no code is shipped',
-  '@types/pdf-parse': 'type declarations only; no code is shipped',
   '@types/react': 'type declarations only; no code is shipped',
   '@types/react-dom': 'type declarations only; no code is shipped',
   '@types/three': 'type declarations only; no code is shipped',
