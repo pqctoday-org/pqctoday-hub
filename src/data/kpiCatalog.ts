@@ -156,6 +156,8 @@ export function isFips1403Validated(fipsValidated: string | undefined | null): b
 export type Fips1403Stage = 'certified' | 'in_process' | 'cavp' | 'none'
 
 const QUALIFIED_CLAIM = /\b(in process|in progress|pending|under review)\b/
+/** A cited CMVP certificate number, e.g. "#4745". */
+const CMVP_CERT_NUMBER = /#\d{3,5}\b/
 
 export function fips1403Stage(item: {
   hasCertification?: string | null
@@ -168,8 +170,11 @@ export function fips1403Stage(item: {
       return 'cavp'
     case 'yes': {
       const s = (item.fipsValidated || '').toLowerCase().trim()
-      if (s.startsWith('no') || QUALIFIED_CLAIM.test(s)) return 'none'
-      return s.includes('140-3') ? 'certified' : 'none'
+      if (s.startsWith('no') || !s.includes('140-3')) return 'none'
+      // A cited certificate number is the claim; a later qualifier ("PQC
+      // resubmission pending") is about a future certificate, not this one.
+      if (CMVP_CERT_NUMBER.test(s)) return 'certified'
+      return QUALIFIED_CLAIM.test(s) ? 'none' : 'certified'
     }
     default:
       return 'none'

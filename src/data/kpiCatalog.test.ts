@@ -626,6 +626,15 @@ describe('fips1403Stage — the source-backed stage decides, the free text only 
       })
     ).toBe('none')
   })
+  it('counts a cited certificate even when a later PQC clause is still pending', () => {
+    expect(
+      fips1403Stage({
+        hasCertification: 'yes',
+        fipsValidated:
+          'Yes — FIPS 140-3 Level 3, CMVP #4745 nShield 5s (Active), classical algorithms only; PQC resubmission pending',
+      })
+    ).toBe('certified')
+  })
   it('never promotes free text without a matching stage', () => {
     expect(
       fips1403Stage({ hasCertification: 'unknown', fipsValidated: 'Yes (FIPS 140-3 CMVP)' })

@@ -40,9 +40,13 @@ A new role for the people who test and certify cryptographic modules — validat
 - **Six home boards built on test evidence** [view:/] [view:/compliance] [persona:cert-engineer]: test the algorithms, the entropy source or the module interface, place a product on the FIPS 140-3 stages, sign firmware, or review the drafts — every board says what a result is evidence of, and a CAVP algorithm validation is never counted as a certificate.
 - **Guidance written for this role across the site** [view:/learn] [view:/faq] [view:/leaders] [persona:cert-engineer]: a short tour, "What this means for you" notes on every reference page, "For your role" notes on the related modules and tools, and a NICE workforce mapping to Systems Testing and Evaluation (DD-WRL-007).
 - **176 existing quiz questions now count for this role** [view:/learn/quiz] [persona:cert-engineer]: every question in the role's sixteen topics is eligible for its checkpoints and capstone; no new questions were written.
+- **A Compliance view and a report summary for this role** [view:/compliance] [view:/report] [persona:cert-engineer]: "For You" on Compliance lists the certification schemes that already expect post-quantum cryptography and links the tests to run first; the assessment report adds a summary written for someone taking a module through certification.
+- **Propose a test vector from where you spot the gap** [view:/playground] [view:/learn] [persona:cert-engineer] [persona:developer]: the ACVP validation workbench and the ACVP Lab Workflow module now link the validation contribution form.
+- **GRC entries are easier to find on this page** [view:/changelog] [persona:grc]: the role filter and "For me" view now recognise GRC, which they had missed since the role was added.
 
 ### Fixed
 
+- **FIPS badges in the Migrate catalog now match the certificate record** [view:/migrate] [view:/business] [persona:grc] [persona:ops] [persona:architect] [persona:executive] [persona:cert-engineer]: the green FIPS 140-3 badge now appears only when a product holds a FIPS 140-3 module certificate; "FIPS 140-3 in process" and "CAVP only" show the earlier stages, and FIPS 140-2, FedRAMP or vendor "FIPS mode" claims no longer earn it. The vendor scorecard, supply-chain matrix and Command Center FIPS counts follow the same rule, so their figures are lower and now match the records. The FAQ answer on these badges is rewritten to match.
 - **An entropy quiz question shows again** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: since 25 September a formatting slip had hidden the question on what NIST SP 800-90B specifies from the roles it was written for.
 
 ## [4.133.0] - 2026-09-29
