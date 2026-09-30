@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:daae3b5f-9d2a-5072-8175-4ab8b2824ac7",
+  "serialNumber": "urn:uuid:ab407edb-7953-5929-9bea-9dc9635fc7d8",
   "version": 1,
   "metadata": {
     "component": {
@@ -57,7 +57,9 @@
       "name": "OpenSSH server (PKCS#11 build, WASM)",
       "licenses": [
         {
-          "expression": "BSD-style (OpenSSH LICENCE)"
+          "license": {
+            "name": "BSD-style (OpenSSH LICENCE)"
+          }
         }
       ],
       "hashes": [
@@ -1669,7 +1671,9 @@
       "version": "1.0.8",
       "licenses": [
         {
-          "expression": "bzip2 (BSD-style)"
+          "license": {
+            "name": "bzip2 (BSD-style)"
+          }
         }
       ],
       "properties": [
@@ -6382,7 +6386,9 @@
       "version": "1.1.8",
       "licenses": [
         {
-          "expression": "NIST software notice (public domain in the US)"
+          "license": {
+            "name": "NIST software notice (public domain in the US)"
+          }
         }
       ],
       "properties": [
@@ -7055,7 +7061,9 @@
       "version": "3.13.2",
       "licenses": [
         {
-          "expression": "Python Software Foundation (per the runtime's copyright banner)"
+          "license": {
+            "name": "Python Software Foundation (per the runtime's copyright banner)"
+          }
         }
       ],
       "properties": [
@@ -7749,7 +7757,9 @@
       "purl": "pkg:npm/rgbcolor@1.0.1",
       "licenses": [
         {
-          "expression": "MIT OR SEE LICENSE IN FEEL-FREE.md"
+          "license": {
+            "name": "MIT OR SEE LICENSE IN FEEL-FREE.md"
+          }
         }
       ],
       "hashes": [

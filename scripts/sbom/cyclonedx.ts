@@ -29,7 +29,16 @@ export function cdxLicense(spdx: string): unknown[] {
     return [{ license: { name: 'not recorded' } }]
   // "MIT / Apache-2.0" is this project's display form of the SPDX expression "MIT OR Apache-2.0"
   if (/\s\/\s/.test(s)) return [{ expression: s.split(/\s\/\s/).join(' OR ') }]
-  if (/\s(OR|AND|WITH)\s|[()]/.test(s)) return [{ expression: s }]
+  // A package's own free text ("SEE LICENSE IN …") is not an SPDX expression: keep it as a name.
+  if (/SEE LICENSE IN/i.test(s)) return [{ license: { name: s } }]
+  // A real SPDX expression is identifiers joined by OR / AND / WITH, optionally in parentheses;
+  // prose that merely contains parentheses ("BSD-style (OpenSSH LICENCE)") is not one.
+  const pieces = s
+    .replace(/[()]/g, ' ')
+    .trim()
+    .split(/\s+(?:OR|AND|WITH)\s+/)
+  if (pieces.length > 1 && pieces.every((p) => /^[A-Za-z0-9.+-]+$/.test(p.trim())))
+    return [{ expression: s }]
   if (/^[A-Za-z0-9.+-]+$/.test(s)) return [{ license: { id: s } }]
   return [{ license: { name: s } }]
 }
