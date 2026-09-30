@@ -18,7 +18,9 @@ async function globalSetup(config: FullConfig): Promise<void> {
   const baseURL = config.projects[0]?.use?.baseURL
   if (!baseURL) return
 
-  const browser = await chromium.launch()
+  // Reuse the config's launch options (analytics-host blocking flag) so this
+  // warm-up browser cannot reach Google Analytics either.
+  const browser = await chromium.launch(config.projects[0]?.use?.launchOptions)
   const page = await browser.newPage()
   try {
     for (let attempt = 0; attempt < 6; attempt++) {
