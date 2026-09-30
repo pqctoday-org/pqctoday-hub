@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Zap, HardDrive, FlaskConical, Database } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface AlgorithmInfoModalProps {
   isOpen: boolean
@@ -12,17 +12,8 @@ interface AlgorithmInfoModalProps {
 }
 
 export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps) {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   return (
     <AnimatePresence>

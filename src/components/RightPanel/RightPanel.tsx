@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
 import { PanelHeader } from './PanelHeader'
@@ -30,14 +31,9 @@ export const RightPanel: React.FC = () => {
   const workshopActive = isWorkshopPinning(workshopMode)
 
   // Close on Escape — disabled while workshop is pinned (running or video).
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (workshopActive) return
-      if (e.key === 'Escape') close()
-    }
-    if (isOpen) window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, close, workshopActive])
+  // Esc via the shared overlay stack (the panel opens over drawers / pop-ups
+  // through Ask Assistant). While a workshop runs, Esc belongs to it.
+  useOverlayEscape(isOpen, close, { isBlocked: () => workshopActive })
 
   // Force panel open while workshop is running so the user cannot accidentally close it.
   useEffect(() => {

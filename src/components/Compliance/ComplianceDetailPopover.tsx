@@ -2,6 +2,8 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import {
   ExternalLink,
   Calendar,
@@ -30,6 +32,7 @@ import {
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildRecordEndorsementUrl, buildRecordFlagUrl, recordLabel } from './complianceEndorsement'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -272,22 +275,9 @@ export const ComplianceDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isOpen, onClose])
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!record, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!record)
 
   // Move focus into modal when it opens
   useEffect(() => {
@@ -341,6 +331,10 @@ export const ComplianceDetailPopover = ({
                       flagUrl={buildRecordFlagUrl(record)}
                       resourceLabel={recordLabel(record)}
                       resourceType="Compliance Record"
+                    />
+                    <ItemShareButton
+                      title={itemShareTitle(record.productName || record.id)}
+                      path={`/compliance?cert=${encodeURIComponent(record.id)}`}
                     />
                     <Button
                       variant="ghost"

@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Network, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { FrameworkConceptGraph } from './FrameworkConceptGraph'
 
 interface FrameworkConceptGraphModalProps {
@@ -13,6 +16,9 @@ interface FrameworkConceptGraphModalProps {
   centerConceptId: string
   /** Human-readable title for the modal header. */
   title: string
+  /** The framework the graph belongs to — Share links to its drawer
+   *  (`/compliance?framework=<id>`); the graph itself has no URL. */
+  frameworkId: string
 }
 
 /**
@@ -25,21 +31,13 @@ export function FrameworkConceptGraphModal({
   onClose,
   centerConceptId,
   title,
+  frameworkId,
 }: FrameworkConceptGraphModalProps) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  // Opened on top of FrameworkDetailPopover: Esc closes only this modal, and
+  // the ref-counted lock keeps the page locked while the popover stays open.
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useOverlayEscape(isOpen, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(isOpen)
 
   if (!isOpen) return null
 
@@ -50,6 +48,7 @@ export function FrameworkConceptGraphModal({
         <FocusLock returnFocus>
           <div
             className="w-[95vw] sm:w-[88vw] md:w-[80vw] max-w-[1200px] max-h-[88dvh] border border-border rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl animate-in zoom-in-95 duration-200"
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="framework-graph-title"
@@ -73,15 +72,21 @@ export function FrameworkConceptGraphModal({
                   algorithm leaves.
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="flex-shrink-0"
-                aria-label="Close concept graph"
-              >
-                <X size={16} />
-              </Button>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <ItemShareButton
+                  title={itemShareTitle(title)}
+                  path={`/compliance?framework=${encodeURIComponent(frameworkId)}`}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                  className="flex-shrink-0"
+                  aria-label="Close concept graph"
+                >
+                  <X size={16} />
+                </Button>
+              </div>
             </div>
             <div className="flex-1 overflow-hidden">
               <FrameworkConceptGraph

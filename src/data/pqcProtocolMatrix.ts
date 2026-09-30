@@ -122,6 +122,9 @@ export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularit
   developer: 'ternary',
   architect: 'ternary',
   researcher: 'full',
+  // Early / WG+ / RFC is the distinction a validation engineer plans around:
+  // test harnesses follow the RFC, not the individual draft.
+  'cert-engineer': 'ternary',
 }
 
 /**

@@ -45,6 +45,7 @@ import {
   type ChangelogSection,
   type SectionType,
 } from '../../utils/changelogParser'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 // ── Icon map for data sources ───────────────────────────────────────────────
 
@@ -346,16 +347,8 @@ export const WhatsNewModal = () => {
 
   // ── Keyboard handler ───────────────────────────────────────────────────
 
-  useEffect(() => {
-    if (!isVisible) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleDismiss()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isVisible, handleDismiss])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isVisible, handleDismiss)
 
   // ── Render ────────────────────────────────────────────────────────────
 

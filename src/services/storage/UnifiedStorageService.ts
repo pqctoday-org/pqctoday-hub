@@ -12,6 +12,11 @@ import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import {
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_LOCAL_MODEL,
+  SUPPORTED_LOCAL_MODELS,
+} from '@/services/chat/modelConfig'
+import {
   SNAPSHOT_FORMAT,
   SNAPSHOT_VERSION,
   type AppSnapshot,
@@ -518,9 +523,13 @@ export class UnifiedStorageService {
       useChatStore.setState({
         conversations,
         activeConversationId,
-        model: typeof c.model === 'string' ? c.model : 'gemini-2.5-flash',
+        model: typeof c.model === 'string' ? c.model : DEFAULT_GEMINI_MODEL,
         provider: c.provider ?? null,
-        localModel: typeof c.localModel === 'string' ? c.localModel : 'Qwen3-1.7B-q4f16_1-MLC',
+        localModel:
+          typeof c.localModel === 'string' &&
+          (SUPPORTED_LOCAL_MODELS as readonly string[]).includes(c.localModel)
+            ? c.localModel
+            : DEFAULT_LOCAL_MODEL,
         localContextWindow: typeof c.localContextWindow === 'number' ? c.localContextWindow : 4096,
         messages: activeConv?.messages ?? [],
       })

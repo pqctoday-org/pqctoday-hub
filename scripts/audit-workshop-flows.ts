@@ -605,7 +605,16 @@ function resolveFromManifest(
 }
 
 function checkUrlAutostartMatrix(manifest: Manifest): void {
-  const personas = ['executive', 'grc', 'developer', 'architect', 'ops', 'researcher', 'curious']
+  const personas = [
+    'executive',
+    'grc',
+    'developer',
+    'architect',
+    'ops',
+    'researcher',
+    'cert-engineer',
+    'curious',
+  ]
   const proficiencies = ['basics', 'expert', 'curious']
   const industries = ['Finance & Banking', 'Healthcare', 'Energy & Utilities', 'Government', 'All']
   const regions = ['US', 'CA', 'AU']

@@ -2,7 +2,8 @@
 // Verifies the three runtime capabilities added to the strongSwan WASM build
 // (branch feat/wasm-vpn-frag-multike-childsa in pqctoday-hsm):
 //   1. RFC 9370 multi-KE — hybrid runs a REAL IKE_INTERMEDIATE round
-//      (mlkem768-ke1_ecp256) instead of [SIM] narration.
+//      (ecp256-ke1_mlkem768, draft-ietf-ipsecme-ikev2-mlkem Appendix A order:
+//      ECP-256 in IKE_SA_INIT, ML-KEM in IKE_INTERMEDIATE) instead of [SIM] narration.
 //   2. RFC 7383 fragmentation — over-size ML-DSA IKE_AUTH splits into real
 //      SKF fragments and reassembles on the peer.
 //   3. CHILD_SA — negotiated for real via the stub kernel (SPIs allocated).
@@ -66,7 +67,7 @@ test.describe('VPN PQC runtime capabilities', () => {
     const body = await page.evaluate(() => document.body.innerText)
 
     // Multi-KE proposal negotiated and a real IKE_INTERMEDIATE round ran.
-    expect(body).toContain('KE1_ECP_256')
+    expect(body).toContain('ECP_256/KE1_ML_KEM_768')
     expect(body).toMatch(/generating IKE_INTERMEDIATE request/)
     expect(body).toMatch(/parsed IKE_INTERMEDIATE response/)
     // No synthetic narration remains.

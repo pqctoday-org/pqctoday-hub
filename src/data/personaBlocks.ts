@@ -68,6 +68,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'Run the Secure Boot PQC Known Answer Tests panel, then compare the classical and post-quantum CMS structures produced from the same manifest.',
     ops: 'Sign the mock UEFI manifest with both algorithms and keep the two CMS outputs: they are what a signing service and a verifier on the device exchange, and the difference between them is your update-pipeline change.',
+    'cert-engineer':
+      "Run the Secure Boot PQC Known Answer Tests panel, then sign the mock UEFI manifest with ML-DSA-65 beside RSA-2048 in Upload & Configure: the panel is algorithm evidence, while the CMS output is what the device's verifier will actually have to accept.",
   },
   '/playground/slh-dsa': {
     developer:
@@ -76,6 +78,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Compare SHA2-128s against the f variants and the 192/256 levels: the same message signs to very different signature sizes, and the Stateful vs Stateless comparison panel says when a stateless scheme is worth that size over LMS or XMSS.',
     researcher:
       'Run the Stateful Signatures Known Answer Tests panel to see SLH-DSA sign and verify round-trips (no external expected value) and a SHA-256 NIST reference sample run in-browser, then switch between Pure and pre-hash mode to see what changes on the wire.',
+    'cert-engineer':
+      'Pick a parameter set from the twelve FIPS 205 variants, keep Pure mode, then run 1. Generate Key Pair, 2. Sign Message and 3. Verify Signature: the PKCS#11 call log is the exact sequence a test harness drives through the module interface.',
   },
   '/playground/lms-hss': {
     developer:
@@ -84,6 +88,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Press Simulate State Loss after a few signatures: the What happens if state is lost panel shows why a stateful key can never be restored from backup, which decides where these keys may live in your design.',
     researcher:
       'Sign with the Rust engine and press Verify Signature (C++ engine), then tick Tamper with message or Tamper with signature: the cross-engine verification shows the exact byte flip that breaks C_Verify.',
+    'cert-engineer':
+      'Sign until the Signature Counter runs out and the token returns CKR_KEY_EXHAUSTED, then press Simulate State Loss: state handling is what a module that signs with LMS has to get right, and a stateful key can never be restored from backup.',
   },
   '/playground/hybrid-sigs': {
     developer:
@@ -92,6 +98,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
     researcher:
       'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
+    'cert-engineer':
+      'Sign one message under Concatenation, Nesting and Silithium (Fused): the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them.',
   },
   '/playground/kdf-derivation': {
     developer:
@@ -100,6 +108,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Read KBKDF vs HKDF — Choosing the Right KDF before the run: it says when SP 800-108 counter mode and when HKDF is the right choice for splitting one master secret into encryption, MAC and IV keys.',
     researcher:
       'Open What runs live vs. simulated? to see that the QKD retrieval is a modelled REST exchange while the derivation runs in the PKCS#11 log; the QKD/HSM PQC Known Answer Tests panel runs the KDF checks and labels each result with its evidence class.',
+    'cert-engineer':
+      'Follow the SP 800-108 counter-mode derivation in the PKCS#11 log, then run the QKD/HSM PQC Known Answer Tests panel: each KDF check carries its evidence class, and What runs live vs. simulated? says the QKD retrieval is modelled.',
   },
   '/playground/tee-channel': {
     architect:
@@ -118,7 +128,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/vpn-sim': {
     developer:
-      'Pick Classical (DH Group 15), Hybrid (ML-KEM-768 + ECP-256) or Pure PQC (ML-KEM-768), Start Daemon, and step through IKE_SA_INIT and IKE_AUTH: the Live Wire Capture and Packet Inspector show the payloads, and Raw Config is the strongSwan configuration behind them.',
+      'Pick Classical (ECP-256), Hybrid (ECP-256 + ML-KEM) or Pure PQC (ML-KEM), Start Daemon, and step through IKE_SA_INIT and IKE_AUTH: the Live Wire Capture and Packet Inspector show the payloads, and Raw Config is the strongSwan configuration behind them.',
     architect:
       'Enable IKE Message Fragmentation (RFC 7383) and lower the MTU to see why IKE_SA_INIT cannot fragment and where a hybrid key share breaks a tunnel; the SKEYSEED Chaining panel explains the RFC 9370 intermediate exchange.',
     ops: 'Use Raw Config, then Download config bundle (.zip): it is the client and server configuration for the mode you chose, and Run algorithm matrix shows which combinations complete before you schedule a cutover.',
@@ -165,6 +175,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'The Production Entropy Sources section lists entropy-source products and, where one exists, the CMVP Entropy Validation Certificate that covers them (listed versions only); checking that evidence is where a key-generation design has to start.',
     ops: 'Use the four sources to see what a weak generator produces; the Production Entropy Sources list names the hardware and cloud entropy feeds to check for on your key-generating hosts.',
+    'cert-engineer':
+      'The Production Entropy Sources section lists entropy-source products with the CMVP Entropy Validation Certificate that covers them, where one exists — read the version on the certificate before assuming it covers the part in your module.',
   },
   '/playground/qrng-demo': {
     researcher:
@@ -179,6 +191,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Use the Bit Flipper and the Live Monitor to see which corruption the checks notice and which they miss; the point for a design is that ML-KEM and ML-DSA key generation depends on entropy these output checks cannot measure.',
     developer:
       "Paste Hex from your own generator's output and run the static tests to see the grouped results; Run reference samples under Primitive self-checks compares SHA-256 and HMAC with public NIST ACVP-Server reference samples — algorithm correctness only, not an entropy test.",
+    'cert-engineer':
+      'Run the Static Tests and read the grouped results: the two SP 800-90B health tests are reported apart from the visual checks, and the page points to the NIST SP 800-90B EntropyAssessment tool for the estimate an entropy-source validation needs.',
   },
   '/playground/drbg-demo': {
     architect:
@@ -187,6 +201,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Set the bytes and optional additional input, Generate several times and Reseed: the state tracker shows what your DRBG wrapper must keep between calls and when reseeding changes the output.',
     researcher:
       'Run the known-answer check: 16 NIST HMAC_DRBG vectors must match byte for byte and a one-bit flip in one entropy input must not — evidence the SP 800-90A Rev. 1 mechanism is computed correctly, and none about the entropy input.',
+    'cert-engineer':
+      'Run the known-answer check: 16 NIST HMAC_DRBG vectors must match byte for byte and a one-bit flip must not — algorithm evidence for SP 800-90A Rev. 1, and none about the entropy input that seeds it.',
   },
   '/playground/source-combining': {
     researcher:
@@ -195,6 +211,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Step 6 asks what a combined-source design has to state — independence, adversary control, failure handling, validation, freshness and the SP 800-90C construction class — before anyone can claim one weak source does not weaken the key.',
     developer:
       'Set Source A to Biased toward 0x5A: the Adaptive Proportion test catches it on the raw samples in Step 2, while conditioned and expanded output would look fine — so your health tests go before conditioning, and HKDF is not a stand-in for an SP 800-90A DRBG.',
+    'cert-engineer':
+      'Load each counterexample in Step 6: every verdict names the SP 800-90B or SP 800-90C clause it rests on, and the best possible outcome is “consistent with the stated assumptions”, never a validation.',
   },
   '/playground/pki-workshop': {
     developer:
@@ -266,6 +284,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       "Lesson L5, An honest LMS, is a claim you can check yourself; the Explore tab's Algorithm Explorer and the glossary's commands and flags are the reference for reproducing each lesson at a terminal.",
     ops: "Use the Workbench's Quick Start, Key Generation, CSR and Certificate forms with Command Preview open: the commands are what your scripts will run, and lesson L10 demystifies the config files they read.",
+    'cert-engineer':
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build actually supports; the build is educational and not FIPS-validated, so use it to reproduce a vector, not as evidence.",
   },
   '/playground/api-security-jwt': {
     developer:
@@ -563,6 +583,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG and Bouncy Castle across seven languages, then work through the provider-pattern examples for KeyGen, Sign, Verify, Encrypt and KEM and the API-by-algorithm support matrix.',
     researcher:
       'The eight-library deep dive (liboqs, AWS-LC, Bouncy Castle and others) and the support matrix with status badges and versions are the current state of PQC library support, with the build-versus-buy scoring wizard on top.',
+    'cert-engineer':
+      'Compare PKCS#11 with JCA/JCE, OpenSSL EVP and Windows CNG in the API-by-algorithm support matrix, then use the eight-library deep dive for the versions to check against a certificate record.',
   },
   '/learn/crypto-mgmt-modernization': {
     executive:
@@ -659,6 +681,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The SP 800-90B health tests, the HMAC_DRBG known-answer check against NIST vectors and the source-combining counterexamples are all runnable, with the Entropy Testing tool for your own samples.',
     curious:
       'Every secret key starts as random numbers; the module shows the difference between good randomness and predictable numbers with tests you can run on both.',
+    'cert-engineer':
+      'The Entropy Source Validation walkthrough, the SP 800-90B health tests run apart from the visual checks, and the HMAC_DRBG known-answer check against NIST vectors separate what an entropy source must evidence from what a DRBG must.',
   },
   '/learn/exec-quantum-impact': {
     executive:
@@ -688,6 +712,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'Track CMVP and CAVP PQC validation status across HSM vendors in Step 4: it is the current record of which modules have validated ML-KEM and ML-DSA implementations.',
     ops: 'Plan the firmware migration from classical to PQC with dual partitions in Step 3 and size the fleet in Step 5: the two operations a PQC rollout adds to an HSM estate.',
+    'cert-engineer':
+      'Step 4 tracks CMVP and CAVP PQC validation status across HSM vendors — read it by stage: a CAVP validation of ML-KEM or ML-DSA is the prerequisite, not a module certificate.',
   },
   '/learn/hybrid-crypto': {
     developer:
@@ -697,6 +723,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'The IETF reference artifacts in the certificate deep-dive and the three signature compositions with their non-separability properties are the material to check against the drafts.',
     ops: 'Generate the classical and PQC root CAs and the hybrid certificate formats: which one a relying party that only knows ECDSA still validates is the property your fleet needs during migration.',
+    'cert-engineer':
+      'The three signature compositions and the hybrid X.509 formats with their IETF reference artifacts show which part is a tested primitive and which is composition built on top of it.',
   },
   '/learn/iam-pqc': {
     executive:
@@ -821,6 +849,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The animated visualisers for MPCitH, multivariate, isogeny and lattice families, the cryptanalysis timeline with every attack and reparameterisation, and the worldwide map of KpqC, CACR and ISO/IEC tracks.',
     curious:
       'How a new cryptographic algorithm becomes a standard: pick a candidate and advance it through the rounds, watching what an attack does to it along the way.',
+    'cert-engineer':
+      'The cryptanalysis timeline, with every attack and reparameterisation, and the Standardisation Lifecycle step show which schemes could reach algorithm testing and which are still moving.',
   },
   '/learn/pqc-governance': {
     executive:
@@ -846,6 +876,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'The TVLA side-channel assessment visualiser for ML-KEM and ML-DSA and the KAT runs against the WASM engine are the measurable parts; the passive tap classifier shows what discovery can see.',
     ops: 'The passive tap and SPAN classifier and the active endpoint scan are what you run on the network; the interoperability matrix says which client and server pairs complete.',
+    'cert-engineer':
+      'The TVLA side-channel assessment visualiser for ML-KEM and ML-DSA and the known-answer and functional tests against the SoftHSMv3 WASM engine separate what an implementation leaks from whether it computes the right answer.',
   },
   '/learn/platform-eng-pqc': {
     developer:
@@ -892,6 +924,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The parameter explorer shows the size-versus-speed trade-off across the twelve sets, and the LMS/XMSS/SLH-DSA comparison says when a stateless scheme is worth its signature size.',
     researcher:
       'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the KAT tool verifies the implementation against the published vectors.',
+    'cert-engineer':
+      'Generate keys across all twelve FIPS 205 parameter sets, sign in Pure and HashSLH-DSA modes, and verify with the KAT tool against the published vectors: parameter set and mode are what an algorithm test has to name.',
   },
   '/learn/sbom': {
     executive:
@@ -918,6 +952,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'The vendor readiness comparison across AMI, Insyde, EDK2 and Dell and the live TPM 2.0 V1.85 key generation in the sandbox are the current state of firmware PQC; the TPM playground runs the commands.',
     ops: 'Walk the four-step ML-DSA-65 firmware signing migration from inventory onward: it is the rollout across the fleet, and the vendor comparison says which firmware can take it.',
+    'cert-engineer':
+      'The UEFI PK, KEK and db hierarchy and the Measured Boot, TPM Quote and DICE attestation flows show where a PQC signature verifier sits in firmware; the vendor readiness comparison shows who ships one today.',
   },
   '/learn/skills-team-structure': {
     executive:
@@ -939,6 +975,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     ops: 'The regional coverage grid says which certification programme a product in a given region has to hold; the scenarios show how to pick the right body for a question.',
     curious:
       'Who decides which cryptography is allowed, who checks products, and who makes rules: the module sorts the alphabet soup of organisations into three jobs and five regions.',
+    'cert-engineer':
+      'The standard-to-certification-to-compliance chain separates who writes a standard, who certifies against it and who mandates it — the order in which a certificate should be read.',
   },
   '/learn/stateful-signatures': {
     developer:
@@ -948,6 +986,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'The parameter explorer, the XMSS-versus-LMS comparison at equal security levels, and the Haystack coalition construction are the material to reproduce; the LMS tool runs cross-engine verification.',
     ops: 'The exhaustion and state-loss simulation shows the operational failure mode: state must be tracked correctly, forever, and backups cannot restore it.',
+    'cert-engineer':
+      'Simulate signing, key exhaustion and state loss, then compare XMSS with LMS at equal security: state management is what a module signing under SP 800-208 has to get right.',
   },
   '/learn/tls-basics': {
     developer:

@@ -247,6 +247,13 @@ export function planHighlightWidening<Row>(
   return { unknown, widenTo: WIDE_OPEN_FILTERS }
 }
 
+/** ?cmp after a tray change, which always closes the comparison panel: on
+ *  the Transition tab with ≥2 left, cmp=0 so a reload keeps it closed
+ *  (an absent cmp would reopen it); otherwise drop cmp. */
+function trayCmp(tab: AlgorithmTabId, remaining: number): string | null {
+  return tab === 'transition' && remaining >= 2 ? '0' : null
+}
+
 /** Determine baseline algorithm name based on the function type of compared algorithms */
 function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null {
   if (compareType === 'KEM') return 'ECDH P-256'
@@ -442,7 +449,17 @@ export function useAlgorithmExplorer(
       .map((s) => s.trim())
       .filter(Boolean)
   })
-  const [showComparison, setShowComparison] = useState(false)
+  // Transition-tab comparison panel, mirrored to ?cmp (1 = open, 0 = closed)
+  // so the address bar, reloads and shares reproduce it. A link landing on
+  // the Transition tab with ≥2 algorithms in ?compare and no ?cmp opens it
+  // (links shared before ?cmp existed carried only the tray, which showed
+  // the recipient nothing); an explicit cmp=0 keeps it closed.
+  const [showComparison, setShowComparisonState] = useState(
+    () =>
+      activeTab === 'transition' &&
+      searchParams.get('cmp') !== '0' &&
+      (searchParams.get('compare') ?? '').split(',').filter((s) => s.trim()).length >= 2
+  )
 
   // Determine the locked type from the first compared algorithm
   const compareType = useMemo<'KEM' | 'Signature' | null>(() => {
@@ -506,6 +523,31 @@ export function useAlgorithmExplorer(
     },
     [setSearchParams]
   )
+
+  const arrivalCmpDone = useRef(false)
+  // Every open/close goes through here so ?cmp stays in step (replace).
+  // Closing writes cmp=0 rather than deleting it: with ≥2 in ?compare an
+  // absent cmp would reopen the panel on reload.
+  const setShowComparison = useCallback(
+    (open: boolean) => {
+      arrivalCmpDone.current = true
+      setShowComparisonState(open)
+      updateSearchParams({ cmp: open ? '1' : '0' })
+    },
+    [updateSearchParams]
+  )
+
+  // Arrival that opened the panel: pin ?cmp=1 and bring the panel into view
+  // once the compared algorithms have loaded and it has rendered.
+  useEffect(() => {
+    if (arrivalCmpDone.current || !showComparison || comparisonAlgos.length < 2) return
+    arrivalCmpDone.current = true
+    if (searchParams.get('cmp') !== '1') updateSearchParams({ cmp: '1' })
+    setTimeout(() => {
+      comparisonPanelRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+    }, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showComparison, comparisonAlgos.length])
 
   const handleDetailModeChange = useCallback(
     (mode: 'browse' | 'compare') => {
@@ -649,10 +691,10 @@ export function useAlgorithmExplorer(
         }
         // Update URL
         const raw = next.length > 0 ? next.join(',') : null
-        updateSearchParams({ compare: raw })
+        updateSearchParams({ compare: raw, cmp: trayCmp(activeTabRef.current, next.length) })
         return next
       })
-      setShowComparison(false)
+      setShowComparisonState(false)
     },
     [updateSearchParams]
   )
@@ -667,25 +709,31 @@ export function useAlgorithmExplorer(
         if (prev.includes(pqcName)) {
           // Remove the whole pair
           const next = prev.filter((k) => k !== pqcName && k !== classicalName)
-          updateSearchParams({ compare: next.length > 0 ? next.join(',') : null })
+          updateSearchParams({
+            compare: next.length > 0 ? next.join(',') : null,
+            cmp: trayCmp(activeTabRef.current, next.length),
+          })
           return next
         }
         // Add both — need room for the pair
         const toAdd = [pqcName, ...(classicalName ? [classicalName] : [])]
         if (prev.length + toAdd.length > MAX_COMPARE) return prev
         const next = [...prev, ...toAdd]
-        updateSearchParams({ compare: next.join(',') })
+        updateSearchParams({
+          compare: next.join(','),
+          cmp: trayCmp(activeTabRef.current, next.length),
+        })
         return next
       })
-      setShowComparison(false)
+      setShowComparisonState(false)
     },
     [algorithmData, updateSearchParams]
   )
 
   const handleClearCompare = useCallback(() => {
     setCompareKeys([])
-    setShowComparison(false)
-    updateSearchParams({ compare: null })
+    setShowComparisonState(false)
+    updateSearchParams({ compare: null, cmp: null })
   }, [updateSearchParams])
 
   const handleOpenComparison = useCallback(() => {
@@ -693,7 +741,7 @@ export function useAlgorithmExplorer(
     setTimeout(() => {
       comparisonPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 100)
-  }, [])
+  }, [setShowComparison])
 
   const matchesStatusFilter = useCallback(
     (status: string, tier: AlgorithmStatusTier) => matchesStatus(filterStatus, status, tier),

@@ -163,6 +163,23 @@ describe('MobileCommunityView', () => {
       expect(new URLSearchParams(probe.search).get('leader')).toBeNull()
     })
 
+    it("forwards a merged duplicate's old leader_id to the kept profile, with a dismissible note", () => {
+      renderView('/leaders?leader=dustin-moody-nist-2')
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).getAllByText('Dr. Dustin Moody').length).toBeGreaterThan(0)
+      const note = within(sheet).getByTestId('deeplink-notice-moved')
+      expect(note).toHaveTextContent('Dustin Moody is now listed under Dr. Dustin Moody')
+      fireEvent.click(within(note).getByRole('button', { name: 'Dismiss notice' }))
+      expect(within(sheet).queryByTestId('deeplink-notice-moved')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+    })
+
+    it('opens the kept profile without a note for its own id', () => {
+      renderView('/leaders?leader=dustin-moody-nist')
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
+    })
+
     it('shows a not-found notice for an unknown name instead of failing silently', () => {
       renderView('/leaders?leader=Nobody%20Atall')
       expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('Nobody Atall')

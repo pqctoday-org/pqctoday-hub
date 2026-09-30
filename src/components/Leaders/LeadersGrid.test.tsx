@@ -78,6 +78,7 @@ vi.mock('../../data/leadersData', () => ({
       sourceKind: 'auto-imported',
     },
   ] as Leader[],
+  deprecatedLeaderSuccessors: new Map(),
   leadersMetadata: {
     filename: 'leaders_test.csv',
     lastUpdate: new Date('2025-02-01'),

@@ -376,7 +376,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
     startHere: ['ops'],
     intro: {
       whatYouWillDo:
@@ -401,7 +401,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -426,7 +426,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'sp 800-208'],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Choose an SP 800-208 LMS/HSS parameter set (hash, height, W, levels), Sign Message to advance the one-time key counter, Simulate State Loss, then verify a Rust-signed signature with the C++ engine.',
@@ -466,7 +466,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign the message and Verify to see whether the EC-Schnorr and ML-DSA-65 halves still verify once stripped apart.',
@@ -504,7 +504,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Retrieve a QKD key over ETSI QKD 014, import it into the HSM, and derive a session key from it with SP 800-108 counter-mode KDF over PKCS#11.',
@@ -583,7 +583,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -619,9 +619,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Pick Classical, Hybrid (ML-KEM-768 + ECP-256) or Pure PQC key exchange, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.',
+        'Pick Classical, Hybrid (ECP-256 + ML-KEM) or Pure PQC key exchange, choose the ML-KEM size, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.',
       workedExample:
-        'Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓.',
+        'Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT, IKE_INTERMEDIATE and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓.',
     },
     hasOutput: true,
     outputSpec:
@@ -791,7 +791,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
-    recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
+    recommendedPersonas: ['researcher', 'developer', 'architect', 'ops', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
@@ -865,7 +865,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/entropy-randomness?tab=workshop&step=1',
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['researcher', 'architect', 'developer'],
+    recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -899,7 +899,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['architect', 'developer', 'researcher'],
+    recommendedPersonas: ['architect', 'developer', 'researcher', 'cert-engineer'],
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
@@ -939,7 +939,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     requires: [],
-    recommendedPersonas: ['researcher', 'architect', 'developer'],
+    recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
     intro: {
       whatYouWillDo:
         'Health-test two simulated raw sources, assemble their samples with SP 800-90C concatenation, condition the result, then state the assumptions the combined construction rests on.',
@@ -1220,7 +1220,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
     startHere: ['ops'],
     intro: {
       whatYouWillDo:

@@ -17,10 +17,10 @@ import type { ClaimCitation } from './parseCitations'
 
 export interface CitationViolation extends ClaimCitation {
   /** unknown-chunk: cited an id not among this turn's retrieved chunks
-   *  (the citation itself is fabricated). excerpt-not-found: the cited
-   *  chunk is real, but doesn't contain the claimed text (the claim is
+   *  (the citation itself is fabricated). evidence-not-found: the cited
+   *  chunk is real, but doesn't contain the quoted evidence (the claim is
    *  misattributed, or fabricated with a real-looking source attached). */
-  reason: 'unknown-chunk' | 'excerpt-not-found'
+  reason: 'unknown-chunk' | 'evidence-not-found'
 }
 
 /** Collapse whitespace and case for a tolerant-but-still-exact substring
@@ -50,8 +50,11 @@ export function verifyCitations(
       violations.push({ ...citation, reason: 'unknown-chunk' })
       continue
     }
-    if (!normalize(chunkText(chunk)).includes(normalize(citation.claimExcerpt))) {
-      violations.push({ ...citation, reason: 'excerpt-not-found' })
+    // Legacy citations used claimExcerpt for both fields. New citations keep
+    // the answer's paraphrase separate from a verbatim supporting excerpt.
+    const evidence = citation.evidenceExcerpt ?? citation.claimExcerpt
+    if (!normalize(chunkText(chunk)).includes(normalize(evidence))) {
+      violations.push({ ...citation, reason: 'evidence-not-found' })
     }
   }
 

@@ -3,8 +3,10 @@ import type { ChatMessage } from '@/types/ChatTypes'
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { buildGeminiSystemPrompt, extractEntityInventory } from './promptBuilder'
+import { DEFAULT_GEMINI_MODEL } from './modelConfig'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
+export { DEFAULT_GEMINI_MODEL } from './modelConfig'
 
 /**
  * Re-export buildSystemPrompt for backwards compatibility.
@@ -23,9 +25,12 @@ function formatMessages(
   }))
 }
 
-export async function validateApiKey(apiKey: string): Promise<boolean> {
+export async function validateApiKey(
+  apiKey: string,
+  model: string = DEFAULT_GEMINI_MODEL
+): Promise<boolean> {
   try {
-    const response = await fetch(`${GEMINI_BASE}/gemini-2.5-flash?key=${apiKey}`)
+    const response = await fetch(`${GEMINI_BASE}/${model}?key=${apiKey}`)
     return response.ok
   } catch {
     return false
@@ -45,6 +50,18 @@ const SAFETY_SETTINGS = [
 
 const MAX_RETRIES = 2
 const RETRY_DELAY_MS = 1_000
+
+function buildGenerationConfig(model: string) {
+  return {
+    maxOutputTokens: 8192,
+    // Gemini 2.5 uses token budgets; Gemini 3 uses relative thinking levels.
+    // Both settings select the lowest-latency mode suitable for bounded RAG
+    // extraction, which keeps the optional model comparison meaningful.
+    thinkingConfig: model.startsWith('gemini-2.5')
+      ? { thinkingBudget: 0 }
+      : { thinkingLevel: 'low' },
+  }
+}
 
 async function fetchWithRetry(
   url: string,
@@ -68,7 +85,7 @@ export async function* streamResponse(
   apiKey: string,
   messages: ChatMessage[],
   contextChunks: RAGChunk[],
-  model = 'gemini-2.5-flash',
+  model = DEFAULT_GEMINI_MODEL,
   signal?: AbortSignal,
   pageContext?: PageContext
 ): AsyncGenerator<string> {
@@ -83,11 +100,7 @@ export async function* streamResponse(
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: formattedMessages,
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 8192,
-          topP: 0.9,
-        },
+        generationConfig: buildGenerationConfig(model),
         safetySettings: SAFETY_SETTINGS,
       }),
       signal,
@@ -127,8 +140,16 @@ export async function* streamResponse(
 
         try {
           const parsed = JSON.parse(json)
-          const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text
-          if (text) yield text
+          // Gemini 3 responses may contain multiple parts. Never surface a
+          // thought-summary part; concatenate answer text parts only.
+          const parts = parsed.candidates?.[0]?.content?.parts
+          if (Array.isArray(parts)) {
+            const text = parts
+              .filter((part: { text?: string; thought?: boolean }) => part.text && !part.thought)
+              .map((part: { text: string }) => part.text)
+              .join('')
+            if (text) yield text
+          }
           const finishReason = parsed.candidates?.[0]?.finishReason
           if (finishReason === 'MAX_TOKENS') {
             yield '\n\n*(Response truncated — try asking a more specific question.)*'

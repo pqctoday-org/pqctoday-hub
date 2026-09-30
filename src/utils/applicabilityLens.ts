@@ -165,6 +165,26 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
       twoHopEnabled: true,
     },
   },
+  // cert-engineer (2026-09-29): the schemes and specifications a module is
+  // tested against lead; threats are context, not the work.
+  'cert-engineer': {
+    sections: ['library', 'frameworks', 'timeline', 'threats'],
+    tierCaps: { mandatory: 15, recognized: 12, 'cross-border': 8, advisory: 12 },
+    libraryCategories: [
+      'Compliance & Certification',
+      'NIST Standards',
+      'Algorithm Specifications',
+      'Implementations',
+    ],
+    framing:
+      'The standards a module is tested against and the certification schemes it answers to. Threats shown for context.',
+    trustPathConfig: {
+      allowedRelationships: ALL_NON_RELATED,
+      confidenceThreshold: 45,
+      maxDerivedResults: 15,
+      twoHopEnabled: false,
+    },
+  },
   ops: {
     sections: ['frameworks', 'threats', 'library', 'timeline'],
     tierCaps: { mandatory: 10, recognized: 8, 'cross-border': 6, advisory: 5 },

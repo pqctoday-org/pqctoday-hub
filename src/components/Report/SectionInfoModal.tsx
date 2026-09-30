@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
 import { X, Sliders, Brain, Users, Database } from 'lucide-react'
 import { SECTION_INFO } from './sectionInfoContent'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface SectionInfoModalProps {
   isOpen: boolean
@@ -13,17 +13,8 @@ interface SectionInfoModalProps {
 }
 
 export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModalProps) {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   // eslint-disable-next-line security/detect-object-injection
   const info = SECTION_INFO[sectionId]

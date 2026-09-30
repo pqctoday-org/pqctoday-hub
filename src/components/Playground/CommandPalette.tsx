@@ -6,8 +6,9 @@
 // closes. It searches the universe passed in — sandbox tools stay searchable
 // even while the runtime is off (dim, not hide); picking one opens the same
 // detail modal that gates "Open tool" behind a locked state.
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { Search, Zap, Container, CornerDownLeft, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -48,6 +49,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 }) => {
   const [q, setQ] = useState('')
   const [index, setIndex] = useState(0)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc via the shared overlay stack (mounted only while open).
+  useOverlayEscape(true, onClose, { rootRef: dialogRef })
 
   const ql = q.trim().toLowerCase()
 
@@ -104,9 +108,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     } else if (e.key === 'Enter') {
       e.preventDefault()
       if (total) activate(activeIndex)
-    } else if (e.key === 'Escape') {
-      e.preventDefault()
-      onClose()
     }
   }
 
@@ -120,6 +121,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       />
       <FocusLock returnFocus>
         <div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"

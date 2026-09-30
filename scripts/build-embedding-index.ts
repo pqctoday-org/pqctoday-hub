@@ -3,8 +3,8 @@
 /**
  * build-embedding-index.ts — Phase 1 (T16) embedding index generator.
  *
- * Encodes every RAG corpus chunk into a 384-dim sentence vector using
- * `bge-small-en-v1.5` (quantized int8) and writes a packed Float32 binary
+ * Encodes every RAG corpus chunk into a 768-dim sentence vector using
+ * `bge-base-en-v1.5` (quantized int8) and writes a packed Float32 binary
  * to `public/data/embeddings.bin` plus a JSON sidecar mapping chunk-IDs
  * to byte offsets at `public/data/embeddings-meta.json`.
  *

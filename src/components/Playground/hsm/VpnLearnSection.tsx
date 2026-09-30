@@ -97,7 +97,7 @@ SKEYSEED' = prf(SK_d, new shared secret | Ni | Nr)
 const HNDL_VERDICT: Record<IKEv2Mode, { safe: boolean; text: string }> = {
   classical: {
     safe: false,
-    text: 'Vulnerable to Harvest-Now-Decrypt-Later: a future CRQC recovers the MODP-3072 discrete log from recorded IKE_SA_INIT traffic and decrypts the whole session retroactively.',
+    text: 'Vulnerable to Harvest-Now-Decrypt-Later: a future CRQC recovers the ECP-256 private key from the public values in recorded IKE_SA_INIT traffic and decrypts the whole session retroactively.',
   },
   hybrid: {
     safe: true,
@@ -270,8 +270,10 @@ export function VpnLearnSection() {
             <p className="text-xs text-muted-foreground leading-relaxed">
               The IKE_SA_INIT key exchange travels in plaintext, so an adversary recording VPN
               traffic today can attack it later — Harvest Now, Decrypt Later (HNDL). Classical mode
-              uses DH Group 15 (MODP-3072, 384 B public value, RFC 3526); the PQC modes put
-              ML-KEM-768 (NIST Level 3, IKEv2 Key Exchange Method 36) in the primary KE slot.
+              uses ECP-256 (DH Group 19, 64 B public value, RFC 5903). Pure PQC puts ML-KEM (Key
+              Exchange Method 35/36/37) alone in IKE_SA_INIT; hybrid keeps ECP-256 there and adds
+              ML-KEM as Additional KE 1 in IKE_INTERMEDIATE (draft-ietf-ipsecme-ikev2-mlkem Appendix
+              A).
             </p>
             <div className="flex flex-wrap gap-2">
               {IKE_V2_MODES.map((mode) => (
@@ -354,9 +356,10 @@ export function VpnLearnSection() {
               </span>
               . An over-MTU SA_INIT (ML-KEM-768 encapsulation key:{' '}
               {(pqcKe?.sizeBytes ?? 1192).toLocaleString()} B payload vs{' '}
-              {(classicalKe?.sizeBytes ?? 392).toLocaleString()} B for MODP-3072) must survive
-              IP-layer fragmentation — frequently dropped by middleboxes — or the handshake fails.
-              This is the core ML-KEM-in-SA_INIT deployment problem.
+              {(classicalKe?.sizeBytes ?? 72).toLocaleString()} B for ECP-256) must survive IP-layer
+              fragmentation — frequently dropped by middleboxes — or the handshake fails. This is
+              the core ML-KEM-in-SA_INIT deployment problem, and why hybrid mode here moves ML-KEM
+              into IKE_INTERMEDIATE, which RFC 7383 can fragment.
             </p>
             <p>
               The message that <span className="text-foreground font-medium">most</span> needs RFC
@@ -409,14 +412,14 @@ export function VpnLearnSection() {
                   35/36/37) and certificate loader.
                 </li>
                 <li>
-                  The hybrid IKE_INTERMEDIATE round: ECP-256 runs as Additional Key Exchange 1 (RFC
+                  The hybrid IKE_INTERMEDIATE round: ML-KEM runs as Additional Key Exchange 1 (RFC
                   9242/9370, proposal{' '}
-                  <span className="font-mono text-foreground">mlkem768-ke1_ecp256</span>) in a real
+                  <span className="font-mono text-foreground">ecp256-ke1_mlkem768</span>) in a real
                   exchange
                   {hybridIntermediate
                     ? ` (modeled at ${hybridIntermediate.initiator.payloads
                         .reduce((a, p) => a + p.sizeBytes, 0)
-                        .toLocaleString()} B per message in the diagram)`
+                        .toLocaleString()} B for the ML-KEM-768 request in the diagram)`
                     : ''}
                   .
                 </li>

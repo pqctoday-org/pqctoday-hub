@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink, Calendar, Users } from 'lucide-react'
-import { useEffect } from 'react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import type { Workgroup } from './workgroupData'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface WorkgroupDetailModalProps {
   workgroup: Workgroup | null
@@ -12,18 +13,9 @@ interface WorkgroupDetailModalProps {
 }
 
 export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModalProps) {
-  useEffect(() => {
-    if (!workgroup) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'unset'
-    }
-  }, [workgroup, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(!!workgroup, onClose)
+  useBodyScrollLock(!!workgroup)
 
   return (
     <AnimatePresence>

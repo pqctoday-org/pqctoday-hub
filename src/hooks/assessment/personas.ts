@@ -193,6 +193,8 @@ export const PERSONA_UNKNOWN_WEIGHTS: Record<
   developer: { agility: 1.0, infra: 0.9, compliance: 0.8, migration: 0.9 },
   architect: { agility: 1.0, infra: 1.0, compliance: 0.9, migration: 1.0 },
   researcher: { agility: 0.85, infra: 0.8, compliance: 0.75, migration: 0.85 },
+  // cert-engineer: the standard baseline, as for GRC — an unknown answer is not softened.
+  'cert-engineer': { agility: 1.0, infra: 1.0, compliance: 1.0, migration: 1.0 },
   ops: { agility: 0.9, infra: 1.0, compliance: 0.85, migration: 1.0 },
   curious: { agility: 0.7, infra: 0.7, compliance: 0.8, migration: 0.7 },
 }
@@ -516,6 +518,56 @@ function generateResearcherNarrative(
   return parts.filter(Boolean).join(' ')
 }
 
+/**
+ * cert-engineer (2026-09-29): reads the result as the person who has to get a
+ * module tested and certified. Keeps the FIPS 140-3 stages apart — a CAVP
+ * algorithm validation is the prerequisite, not the certificate — and states
+ * no durations or backlog figures (none are sourced here).
+ */
+function generateCertEngineerNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  pqcFrameworkCount: number
+): string {
+  const parts: string[] = []
+  parts.push(
+    `This assessment scores ${riskLevel} (${riskScore}/100). ${
+      vulnerableCount > 0
+        ? `${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount > 1 ? 's are' : ' is'} in scope, and each replacement — ML-KEM for key establishment, ML-DSA or SLH-DSA for signatures — needs its own CAVP validation before it can appear on a module certificate.`
+        : "No quantum-vulnerable algorithm was selected — check that against the module's full algorithm list, not only the ones the product advertises."
+    }`
+  )
+  if (pqcFrameworkCount > 0) {
+    parts.push(
+      `${pqcFrameworkCount} of the frameworks you selected already expect post-quantum cryptography. Plan back from their dates: the certificate, the lab testing and the algorithm validations all have to land before them.`
+    )
+  }
+  if (input.infrastructure?.some((i) => /hsm|embedded/i.test(i))) {
+    parts.push(
+      'HSMs and embedded devices put firmware, self-tests and the entropy source inside the module boundary, and each needs its own evidence in a submission.'
+    )
+  }
+  if (input.cryptoAgility === 'hardcoded') {
+    parts.push(
+      "A hard-coded algorithm list means a new algorithm reaches a validated module as a change to it — plan for the scheme's change process, not a patch release."
+    )
+  }
+  const statusMsg: Record<string, string> = {
+    started:
+      'PQC work has started — list which new algorithms already hold CAVP validations and which are still untested.',
+    planning:
+      'Plan the test evidence with the code: algorithm testing, self-tests and the entropy source each need their own.',
+    'not-started':
+      'Nothing has started yet — running the published ACVP reference vectors is the cheapest first step.',
+    unknown:
+      "Status unknown — start from the module's current certificate and the algorithms it lists as approved.",
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
 function generateOpsNarrative(
   input: AssessmentInput,
   riskScore: number,
@@ -634,6 +686,14 @@ export function generatePersonaNarrative(
         categoryScores,
         hndl,
         hnfl,
+        pqcFrameworkCount
+      )
+    case 'cert-engineer':
+      return generateCertEngineerNarrative(
+        input,
+        riskScore,
+        riskLevel,
+        vulnerableCount,
         pqcFrameworkCount
       )
     case 'ops':

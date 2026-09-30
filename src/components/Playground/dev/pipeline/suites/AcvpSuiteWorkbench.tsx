@@ -441,6 +441,19 @@ export const AcvpSuiteWorkbench = () => {
         >
           Full coverage matrix and open gaps →
         </a>
+        {/* The repository's validation-contribution issue template had no
+            in-app entry point before 2026-09-29; the workbench is where a
+            lab practitioner would spot a missing or wrong vector. */}
+        <a
+          href="https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=validation_contribution.yml"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 flex items-center gap-1 text-[11px] text-primary hover:underline"
+          data-testid="acvp-contribute-link"
+        >
+          Propose a vector or correction
+          <ExternalLink size={10} aria-hidden="true" />
+        </a>
       </Card>
       <Card className="p-3.5 flex-1 min-h-0 flex flex-col">
         <div className="flex items-center justify-between mb-2">

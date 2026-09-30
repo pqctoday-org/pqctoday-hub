@@ -28,6 +28,7 @@ import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { CertBadges, EvidenceWarnings } from '../migrateHelpers'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Pill } from './workbenchUi'
 import { productVerificationBadge } from './productStatus'
@@ -419,6 +420,12 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           resourceLabel={product.softwareName}
           resourceType="Product"
           variant="text"
+        />
+        {/* PR 4: the top-bar Share can carry the plan token, so the open row
+            carries its own clean link — just this product. */}
+        <ItemShareButton
+          title={itemShareTitle(product.softwareName)}
+          path={`/migrate?product=${encodeURIComponent(product.productId || product.softwareName)}`}
         />
       </div>
     </div>

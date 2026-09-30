@@ -99,7 +99,7 @@ function CitedStandards({
                 </span>
               )}
               {/* Status is shown deliberately: a learner should see
-                  "Draft Standard (not yet published)" next to FIPS 206 rather
+                  "Planned Standard (not yet published)" next to FIPS 206 rather
                   than infer from its absence. */}
               {std.status && (
                 <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">

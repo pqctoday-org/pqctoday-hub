@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { Search, Clock, X, ArrowRight, CornerDownLeft, ChevronUp, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SearchResult } from '@/services/search/SearchIndex'
@@ -113,6 +114,10 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     }
   })
   const inputRef = useRef<HTMLInputElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc via the shared overlay stack: opened over a drawer / pop-up (⌘K), it
+  // closes only the palette.
+  useOverlayEscape(isOpen, onClose, { rootRef: dialogRef })
   const activeItemRef = useRef<HTMLButtonElement>(null)
 
   const curiousLocked = selectedPersona === 'curious' && viewAccess === 'gated'
@@ -211,10 +216,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose()
-        return
-      }
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setActiveIdx((i) => Math.min(i + 1, flatItems.length - 1))
@@ -227,7 +228,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         if (item) navigateTo(item, e.metaKey || e.ctrlKey)
       }
     },
-    [onClose, flatItems, activeIdx, navigateTo]
+    [flatItems, activeIdx, navigateTo]
   )
 
   // Scroll active item into view
@@ -262,6 +263,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 exit={{ opacity: 0, scale: 0.96, y: -12 }}
                 transition={{ duration: 0.15 }}
                 className="glass-panel w-full max-w-2xl max-h-[70dvh] flex flex-col overflow-hidden pointer-events-auto"
+                ref={dialogRef}
                 role="dialog"
                 aria-modal="true"
                 aria-label="Search PQC Today"

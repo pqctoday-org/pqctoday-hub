@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Brain, BookOpen, Zap, Clock } from 'lucide-react'
 import { BELT_RANKS } from '@/hooks/useAwarenessScore'
 import { Button } from '@/components/ui/button'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface ScoringModalProps {
   isOpen: boolean
@@ -43,17 +43,8 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
     },
     ...STATIC_DIMENSIONS,
   ]
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   return (
     <AnimatePresence>

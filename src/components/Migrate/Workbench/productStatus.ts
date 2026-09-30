@@ -6,6 +6,7 @@
 // `pqcSupport`.
 
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { fips1403Stage } from '@/data/kpiCatalog'
 
 export type ProductPqcStatus = 'ga' | 'partial' | 'roadmap' | 'none' | 'unknown'
 
@@ -62,18 +63,26 @@ export function productPqcStatus(item: SoftwareItem): ProductStatusBadge {
 
 export interface FipsBadge {
   label: string
-  tone: 'success' | 'warning'
+  tone: 'success' | 'warning' | 'info'
 }
 
-/** FIPS validation badge, or null when not applicable. */
+/**
+ * FIPS 140-3 stage badge, or null when no FIPS 140-3 record backs one. Reads
+ * the source-backed stage (`fips1403Stage`), not the free-text field alone —
+ * which used to turn "Yes (FIPS 140-2)", "Yes (FedRAMP)" and CAVP-only rows
+ * into a green FIPS 140-3 badge (fixed 2026-09-29).
+ */
 export function productFipsBadge(item: SoftwareItem): FipsBadge | null {
-  const v = (item.fipsValidated || '').toLowerCase().trim()
-  if (!v || v === 'no' || v === 'none' || v === 'n/a') return null
-  if (v.includes('process') || v.includes('pending') || v.includes('progress')) {
-    return { label: 'FIPS pending', tone: 'warning' }
+  switch (fips1403Stage(item)) {
+    case 'certified':
+      return { label: 'FIPS 140-3', tone: 'success' }
+    case 'in_process':
+      return { label: 'FIPS 140-3 in process', tone: 'warning' }
+    case 'cavp':
+      return { label: 'CAVP only', tone: 'info' }
+    default:
+      return null
   }
-  // "yes", "140-3", "validated", a cert number, etc.
-  return { label: 'FIPS 140-3', tone: 'success' }
 }
 
 export interface VerificationBadge {

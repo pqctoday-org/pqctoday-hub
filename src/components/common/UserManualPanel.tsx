@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect } from 'react'
+import React from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookText, X, Lightbulb } from 'lucide-react'
 import { pageManuals, type PageId } from '../../data/userManualData'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 export const UserManualPanel: React.FC<{
   isOpen: boolean
@@ -15,13 +16,8 @@ export const UserManualPanel: React.FC<{
   const manual = pageManuals[pageId]
   const isEmbedded = useIsEmbedded()
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   // Not embedded (2026-08-01 bug fix, same root cause + fix as Glossary.tsx —
   // "clicking outside does not close" the guide panel): portal to

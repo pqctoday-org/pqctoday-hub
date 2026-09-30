@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:0141a02f-6b4d-41c1-88c7-7fe6a3fd5fcb",
+  "serialNumber": "urn:uuid:e9b3457b-eec2-4e56-a4ee-ad1101760648",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-26T00:00:00.000Z",
+    "timestamp": "2026-09-29T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -592,7 +592,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Pending CMVP Review"
+          "value": "Yes (FIPS 140-3 CMVP #4985 OpenSSL FIPS Provider, Active; PQC algorithms CAVP-validated, not yet in a module certificate)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -745,7 +745,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Pending Verification"
+          "value": "Yes (FIPS 140-3 CMVP #5040 CryptoComply 140-3 FIPS Provider, #5264 CryptoComply BoringCrypto Module and #5349 CryptoComply Native Go Module; Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -889,7 +889,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Pending CMVP Review"
+          "value": "Yes (FIPS 140-3 CMVP #5247 Go Cryptographic Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -1513,7 +1513,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (In Progress)"
+          "value": "Yes (FIPS 140-3 CMVP #5313 Microsoft SymCrypt Cryptographic Library, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -1851,7 +1851,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 L3 — classical algorithms; PQC-inclusive FIPS 140-3 certification in progress)"
+          "value": "Yes (FIPS 140-3 CMVP #4684 Thales Luna K7 and #4962 Thales Luna G7 Cryptographic Modules, Active; classical algorithms; PQC-inclusive FIPS 140-3 certification in progress)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -3104,7 +3104,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Trusted)"
+          "value": "Yes (FIPS 140-3 CMVP #4726 Android Kernel Cryptographic Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -6772,7 +6772,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-2 L3)"
+          "value": "Yes (FIPS 140-3 CMVP #5450 Luna T7, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -13519,7 +13519,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Yes (FIPS 140-3 CMVP #5391 NetScaler VPX, #5414 NetScaler MPX and #5111 NetScaler Virtual Appliance; Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -13741,7 +13741,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Yes (FIPS 140-3 CMVP #5395 Purity Encryption Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -15097,7 +15097,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-2)"
+          "value": "Yes (FIPS 140-3 CMVP #5141 Juniper Networks SRX Series Services Gateways, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -16244,7 +16244,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Yes (FIPS 140-3 CMVP #5321 DigiCert TrustCore Cryptographic Suite B Module and #5322 Loadable Kernel Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -17855,7 +17855,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Yes (FIPS 140-3 CMVP #5294 Oracle Linux 9 OpenSSL FIPS Provider, #5036 Kernel Crypto API, #5037 GnuTLS, #4993 libgcrypt and #5339 NSS modules; Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -23109,7 +23109,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "false"
+          "value": "Yes (FIPS 140-3 CMVP #5282 ASI-HSM AHX5 kNET Cryptographic Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -32605,7 +32605,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (CAVP algorithm validation, not a CMVP module validation)"
+          "value": "Yes (FIPS 140-3 CMVP #5497 QASM Cryptographic Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -35068,7 +35068,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (CAVP algorithm validation only — Cert A6066 — not a full FIPS 140 module validation)"
+          "value": "Yes (FIPS 140-3 CMVP #5282 ASI-HSM AHX5 kNET Cryptographic Module, Active)"
         },
         {
           "name": "pqctoday:algorithm_source",

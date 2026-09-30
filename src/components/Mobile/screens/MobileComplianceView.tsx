@@ -667,6 +667,7 @@ function MobileRecordDetailSheet({
       open={!!record}
       onClose={onClose}
       title={record?.productName}
+      shareUrl={record ? `/compliance?cert=${encodeURIComponent(record.id)}` : undefined}
       testId="compliance-record-detail-sheet"
     >
       {record && (
@@ -741,6 +742,7 @@ function MobileFrameworkDetailSheet({
       onClose={onClose}
       title={framework?.label}
       large
+      shareUrl={framework ? `/compliance?framework=${encodeURIComponent(framework.id)}` : undefined}
       testId="compliance-framework-detail-sheet"
     >
       {framework && detail && (
