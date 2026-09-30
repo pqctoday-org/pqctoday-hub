@@ -17,6 +17,7 @@ const PERSONAS: { id: PersonaId; label: string }[] = [
   { id: 'architect', label: 'Architect' },
   { id: 'developer', label: 'Developer' },
   { id: 'researcher', label: 'Researcher' },
+  { id: 'cert-engineer', label: 'Certification' },
   { id: 'ops', label: 'Ops' },
   { id: 'curious', label: 'Curious' },
 ]

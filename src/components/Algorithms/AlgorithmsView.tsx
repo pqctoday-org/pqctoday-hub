@@ -54,6 +54,8 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   grc: 'Use the Transition tab to see certified replacements for your classical algorithms — certified status alone does not establish compliance; confirm applicability against your obligations register.',
   researcher:
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
+  'cert-engineer':
+    'The Validation tab opens first: known-answer tests you can run, and implementation-attack notes per family. A CAVP algorithm validation is the prerequisite for a module certificate, not the certificate itself.',
   ops: 'Filter Status = Certified and look for Production deployment chips on Protocol Support — these are the algorithms safe to deploy in OpenSSL, nginx and HSMs today.',
   curious:
     'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',

@@ -46,6 +46,7 @@ const ROLES = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
   'curious',
 ] as const
 const HREF_SLOTS = new Set(['cta_primary_href', 'cta_secondary_href', 'grid_card_href'])

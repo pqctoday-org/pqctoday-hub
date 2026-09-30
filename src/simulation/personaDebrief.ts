@@ -84,6 +84,18 @@ const DEBRIEFS: Record<PersonaId, PersonaDebrief> = {
       'Working code paths with test evidence — KATs or interop results — not a completed reading list. A passed comprehension check records understanding, not a working implementation.',
     nextStop: { label: 'Playground — hands-on crypto', to: '/playground' },
   },
+  'cert-engineer': {
+    // No framework seat owns certification (PERSONA_SIM_PRACTICE_NONE), so this
+    // reads the run from outside the programme — as the person whose
+    // certificates the programme was relying on.
+    headline:
+      'You watched a programme treat "certified" as a checkbox. Every product it chose depended on a certificate that covers one module, one boundary and one algorithm list.',
+    nextAction:
+      'Pick one product the scenario relied on and check its record: which algorithms are CAVP-validated, whether the module is listed as in process, and what the certificate actually covers.',
+    evidenceObligation:
+      'Algorithm test results, a module certificate whose scope matches the deployment, and a clear line between the prerequisite stage and the certificate. An algorithm validation is not a module certificate.',
+    nextStop: { label: 'Compliance — certificate records', to: '/compliance' },
+  },
   ops: {
     headline:
       'You brought infrastructure through a migration. Operations is judged on what happens after the project ends.',

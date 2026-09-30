@@ -10,7 +10,7 @@ import { vendorMap } from '@/data/vendorData'
 import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
-import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { loadCveSnapshot } from '@/data/cveSnapshotData'
 import { threatsData, type ThreatData } from '@/data/threatsData'
@@ -543,7 +543,7 @@ export function computeDomainStats(
 
     const total = products.length
     const pqcReady = products.filter((p) => isPqcReady(p.pqcSupport)).length
-    const fipsValid = products.filter((p) => isFips1403Validated(p.fipsValidated)).length
+    const fipsValid = products.filter((p) => isFips1403Certified(p)).length
     const hybrid = products.filter((p) => {
       const desc = (p.pqcCapabilityDescription || '').toLowerCase()
       const support = (p.pqcSupport || '').toLowerCase()

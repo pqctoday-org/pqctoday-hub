@@ -2848,6 +2848,7 @@ const PLAYGROUND_PERSONA_LABELS: Record<string, string> = {
   developer: 'Developer / Engineer',
   architect: 'Security Architect',
   researcher: 'Researcher / Academic',
+  'cert-engineer': 'Certification & Validation Engineer',
   ops: 'IT Ops / DevOps',
   curious: 'Curious Explorer',
 }

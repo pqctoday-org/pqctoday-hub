@@ -67,6 +67,10 @@ const PERSONA_HERO_CTA: Record<
     primary: { label: 'Start the Journey', path: '/learn' },
     secondary: { label: 'Jump to Algorithms', path: '/algorithms' },
   },
+  'cert-engineer': {
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Validation', path: '/algorithms?tab=validation' },
+  },
   ops: {
     primary: { label: 'Start the Journey', path: '/learn' },
     secondary: { label: 'Jump to Migration Workbench', path: '/migrate' },
@@ -96,6 +100,8 @@ export const PERSONA_HERO_TAGLINE: Record<string, string> = {
     'Hybrid certs, composite signatures, and multi-fold key/signature growth reshape every PKI. Map the redesign before it maps you.',
   researcher:
     'FIPS 203/204/205 are out, {{latestRfc}}, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
+  'cert-engineer':
+    'ML-KEM, ML-DSA and SLH-DSA can be CAVP-tested today; the module certificate is the long pole. Run the vectors, then trace the path.',
   ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
   curious:
     "Nothing breaks today. But what runs the padlock icon will look very different in five years — here's the short version.",
@@ -603,9 +609,11 @@ export const LandingView = () => {
                     ? 'What are the business risks and compliance deadlines for post-quantum cryptography?'
                     : selectedPersona === 'researcher'
                       ? 'What are the mathematical foundations of the NIST-standardized PQC algorithms?'
-                      : selectedPersona === 'ops'
-                        ? 'What are the best infrastructure tools and configurations for deploying post-quantum cryptography?'
-                        : 'What should I know about post-quantum cryptography?'
+                      : selectedPersona === 'cert-engineer'
+                        ? 'What does it take to get a module with ML-KEM and ML-DSA through FIPS 140-3 validation?'
+                        : selectedPersona === 'ops'
+                          ? 'What are the best infrastructure tools and configurations for deploying post-quantum cryptography?'
+                          : 'What should I know about post-quantum cryptography?'
             }
           />
         </motion.div>

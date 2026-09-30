@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09252026.csv
+ * Source: src/data/role_board_content_09292026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2685,6 +2685,454 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+      },
+    },
+  ],
+  'cert-engineer': [
+    {
+      id: 'testing',
+      order: 1,
+      chipLabel: 'Test the algorithms',
+      chipDescription:
+        'Reference vectors and known-answer tests, with the evidence class on every result.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['acvp-lab-workflow', 'pqc-testing-validation'],
+      workshopIds: [],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'Certification & validation · vectors · evidence class',
+
+        headline: 'Run the vectors before the lab does.',
+        sub: 'Reference vectors and known-answer tests run in this browser against a PKCS#11 engine you pick — C++, Rust, or both in parity — with the evidence class stated on every result. Evidence for that test on that build, not a certificate.',
+        ctaPrimary: 'Open the validation workbench',
+        ctaPrimaryHref: '/playground/hsm?tab=build&dtab=acvp',
+        ctaSecondary: 'Run the known-answer tests',
+        ctaSecondaryHref: '/algorithms?tab=validation&section=kat',
+        proofChips: [
+          'Evidence class on every result, never merged',
+          'Not an ACVTS verdict or a CAVP certificate',
+        ],
+        sideCard: {
+          title: 'What a pass here is evidence of',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'A pass covers', value: 'that test, parameters, build and target' },
+            { label: 'It is not', value: 'an ACVTS verdict or a CAVP/CMVP certificate' },
+            { label: 'Engines', value: 'C++, Rust, or dual parity' },
+          ],
+          punchline: 'State a result at the level it reached, and no higher.',
+          footnote:
+            'Worded from the validation disclaimer that every result and export on this site carries. The engines are the two PKCS#11 builds the HSM playground runs.',
+        },
+        gridTitle: 'Where the evidence goes next',
+        gridSub: 'From one passing row to a coverage claim you can defend',
+        gridCards: [
+          {
+            title: 'See the coverage, and the gaps',
+            body: "The coverage matrix sets each engine's advertised PKCS#11 capabilities against the tests registered for them, and names the open gaps rather than hiding them.",
+            href: '/algorithms?tab=validation&section=coverage',
+          },
+          {
+            title: 'Reproduce it outside the workbench',
+            body: 'OpenSSL Studio runs a real OpenSSL build compiled to WASM in your browser — the same primitives through a different implementation, invoked your way.',
+            href: '/playground/openssl-studio',
+          },
+          {
+            title: 'Learn how the lab runs it',
+            body: 'Vector sets, prompts and responses, dispositions, and how to state a result at exactly the evidence level it reached. A draft, awaiting review by a validation-lab practitioner.',
+            href: '/learn/acvp-lab-workflow',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+        trackNote:
+          "Eight essentials against the full 16-module path plus the quiz, 980 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
+      },
+    },
+    {
+      id: 'entropy',
+      order: 2,
+      chipLabel: 'Test the entropy source',
+      chipDescription: 'Health tests on raw samples, reported apart from the statistics.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['entropy-randomness'],
+      workshopIds: ['entropy-test'],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'Certification & validation · noise source · health tests',
+
+        headline: 'Test the noise source, not just the output.',
+        sub: 'Run the repetition-count and adaptive-proportion health tests on raw samples, next to the statistical checks, each reported as its own group. No entropy estimate is made here, and none is claimed.',
+        ctaPrimary: 'Run the entropy tests',
+        ctaPrimaryHref: '/playground/entropy-test',
+        ctaSecondary: 'Learn the entropy track',
+        ctaSecondaryHref: '/learn/entropy-randomness',
+        proofChips: [
+          'Health tests reported apart from the statistics',
+          'No entropy estimate claimed',
+        ],
+        sideCard: {
+          title: 'What this run does and does not do',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Health tests', value: 'repetition count, adaptive proportion' },
+            { label: 'Statistical checks', value: 'monobit, runs, chi-squared' },
+            { label: 'Entropy estimate', value: 'not made here' },
+          ],
+          punchline: 'Passing health tests is not an entropy assessment.',
+          footnote:
+            "Read from the Entropy Testing workshop itself: its estimator group is labelled as not run, and it points to NIST's own assessment tool for the estimate.",
+        },
+        gridTitle: 'Around the noise source',
+        gridSub: 'Where entropy sits on the way to a certificate',
+        gridCards: [
+          {
+            title: 'Where entropy sits in a certificate',
+            body: "The FIPS 140-3 Certification module separates the tracks — algorithm testing, the module's own self-tests, and entropy — and says which evidence belongs to which.",
+            href: '/learn/fips-140-3-certification',
+          },
+          {
+            title: 'Not sure this is the board you need?',
+            body: 'Every topic on this site, organised for someone who has not decided where to start.',
+            href: '/explore',
+          },
+          {
+            title: 'Read the documents behind the tests',
+            body: "The library searched for entropy: NIST's random-bit-generation and entropy-source documents, next to published failures such as the Debian predictable-RNG advisory.",
+            href: '/library?q=entropy',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
+      },
+    },
+    {
+      id: 'module',
+      order: 3,
+      chipLabel: 'Test the module interface',
+      chipDescription: 'PKCS#11 conformance cases against a real engine, not a validation claim.',
+      phaseId: 'p6',
+      cswp39Zone: 'mitigation',
+      moduleIds: ['hsm-pqc', 'fips-140-3-certification'],
+      workshopIds: [],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'Certification & validation · PKCS#11 · conformance',
+
+        headline: 'Test the module through its own interface.',
+        sub: "Replay the OASIS PKCS#11 v3.2 profile cases and mechanism probes against the playground's PKCS#11 engines, compiled to WebAssembly. Conformance evidence for that build — not a module validation.",
+        ctaPrimary: 'Run the conformance suite',
+        ctaPrimaryHref: '/playground/hsm?tab=build&dtab=conformance',
+        ctaSecondary: 'Learn HSMs and PQC',
+        ctaSecondaryHref: '/learn/hsm-pqc',
+        proofChips: [
+          'OASIS profile cases replayed in the browser',
+          'Conformance evidence, not a module validation',
+        ],
+        sideCard: {
+          title: 'What adding PQC touches in a module',
+          tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Module specification', value: 'new approved functions' },
+            { label: 'SSP management', value: 'new key types and seeds' },
+            { label: 'Services', value: 'new approved services and their indicator' },
+            { label: 'Self-tests', value: 'the IG tests for each PQC algorithm' },
+          ],
+          punchline: 'Adding a PQC algorithm is a security-relevant change, not a patch note.',
+          footnote:
+            'From the FIPS 140-3 Certification module, which takes these four areas from the change categories in the CMVP Management Manual and the self-tests the Implementation Guidance names.',
+        },
+        gridTitle: 'Around the boundary',
+        gridSub: 'What gets looked at besides the algorithms',
+        gridCards: [
+          {
+            title: 'Implementation attacks, per family',
+            body: 'Side-channel and fault-injection considerations for each algorithm family, in one reference.',
+            href: '/algorithms?tab=validation&section=attacks',
+          },
+          {
+            title: 'If you also own a migration',
+            body: 'The full assessment, scored from your own answers rather than a sample estate — for the organisation around the module, not the module itself.',
+            href: '/assess?mode=comprehensive',
+          },
+          {
+            title: 'Record what the product carries',
+            body: "The Command Center's assets zone holds the CBOM and crypto-registry tools — a record of the algorithms, libraries and keys a product actually ships.",
+            href: '/business?zone=assets',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
+      },
+    },
+    {
+      id: 'stages',
+      order: 4,
+      chipLabel: 'Know the certificate stage',
+      chipDescription: 'CAVP, in process, certified — three stages, never merged.',
+      phaseId: 'p7',
+      cswp39Zone: 'governance',
+      moduleIds: [
+        'fips-140-3-certification',
+        'cc-eucc-certification',
+        'crypto-product-certification',
+      ],
+      workshopIds: [],
+      businessToolIds: ['vendor-scorecard'],
+      board: {
+        heroEyebrow: 'Certification & validation · CAVP → in process → certificate',
+
+        headline: 'Algorithm validation is the prerequisite, not the certificate.',
+        sub: 'The certification records follow PQC along the FIPS 140-3 track in three recorded stages — algorithms CAVP-validated, the module listed by NIST as in process, and a certificate — beside Common Criteria and EUCC certificates.',
+        ctaPrimary: 'Open the certification records',
+        ctaPrimaryHref: '/compliance?tab=records',
+        ctaSecondary: 'Learn the FIPS 140-3 path',
+        ctaSecondaryHref: '/learn/fips-140-3-certification',
+        proofChips: ['CAVP is never counted as certified', 'A published snapshot, not a live feed'],
+        sideCard: {
+          title: 'The FIPS 140-3 track, as recorded',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Prerequisite met', value: 'PQC algorithms CAVP-validated' },
+            { label: 'In progress', value: 'only when NIST lists the module (IUT / MIP)' },
+            { label: 'Certified', value: 'a FIPS 140-3 certificate covers the PQC' },
+          ],
+          punchline: 'A CAVP number on a datasheet is not a module certificate.',
+          footnote:
+            'Stage definitions as the certification records and the product catalogue apply them. Certificate data is a published snapshot, not a live feed; the records table shows when each source list was retrieved.',
+        },
+        gridTitle: 'Where the stage shows up',
+        gridSub: 'The same stages, seen from the other side of the table',
+        gridCards: [
+          {
+            title: 'See the stage on a product',
+            body: 'Open a catalogued product and its detail names the stage — CAVP-validated, listed by NIST as in process, or certified — and flags PQC that is CAVP-validated but outside the module certificate.',
+            href: '/migrate?tab=replace',
+          },
+          {
+            title: 'See how a buyer scores it',
+            body: 'The vendor scorecard rates FIPS 140-3 validation next to algorithm support, crypto agility and a published roadmap — the side of the table a certificate lands on.',
+            href: '/business/tools/vendor-scorecard',
+          },
+          {
+            title: 'See a finished report',
+            body: "A complete worked example report, opened without running an assessment first — the format a customer's own assessment on this site produces.",
+            href: '/report?example=1',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
+      },
+    },
+    {
+      id: 'hardware',
+      order: 5,
+      chipLabel: 'Sign firmware, then accelerate',
+      chipDescription: 'PQC on the boot chain and in silicon, with the sizes it costs.',
+      phaseId: 'p6',
+      cswp39Zone: 'mitigation',
+      moduleIds: ['secure-boot-pqc', 'pqc-hw-acceleration'],
+      workshopIds: ['firmware-signing'],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'Certification & validation · firmware · hardware',
+
+        headline: 'Put a PQC signature on the boot chain, and see what it costs.',
+        sub: 'Sign and verify a firmware image with ML-DSA or SLH-DSA beside a classical signature, and compare the sizes. Then see where the cycles go when the same algorithms move into hardware.',
+        ctaPrimary: 'Sign a firmware image',
+        ctaPrimaryHref: '/playground/firmware-signing',
+        ctaSecondary: 'Learn secure boot and PQC',
+        ctaSecondaryHref: '/learn/secure-boot-pqc',
+        proofChips: ['Signature sizes read from FIPS 204', 'Classical and PQC signed side by side'],
+        sideCard: {
+          title: 'What a firmware signature costs',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'ML-DSA-44 signature', value: '2,420 B' },
+            { label: 'ML-DSA-65 signature', value: '3,309 B' },
+            { label: 'ML-DSA-87 signature', value: '4,627 B' },
+          ],
+          punchline: 'The verifier has to fit the signature it checks.',
+          footnote:
+            'Signature sizes are read from the algorithm registry, which takes them from FIPS 204.',
+        },
+        gridTitle: 'Hardware, end to end',
+        gridSub: 'From the boot chain to the silicon',
+        gridCards: [
+          {
+            title: 'Where the cycles go in hardware',
+            body: 'Where PQC spends its time, the building blocks worth accelerating, and what was actually built on Arm — with the FPGA limits stated.',
+            href: '/learn/pqc-hw-acceleration',
+          },
+          {
+            title: 'When firmware signing has to change',
+            body: "The timeline carries dated milestones for software and firmware signing — the NSA's CNSA 2.0 among them — each linked to its source.",
+            href: '/timeline',
+          },
+          {
+            title: 'Why the question is being asked',
+            body: 'The threat landscape: the CRQC capability watch and the expert forecast behind it, with the source behind each figure.',
+            href: '/threats',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
+      },
+    },
+    {
+      id: 'contribute',
+      order: 6,
+      chipLabel: 'Review it, correct it',
+      chipDescription: 'Drafts awaiting practitioner review, and how a correction gets in.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'assets',
+      moduleIds: ['acvp-lab-workflow', 'standards-bodies'],
+      workshopIds: [],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'Certification & validation · built for you, reviewed by you',
+
+        headline: "The drafts here need a lab practitioner's review.",
+        sub: 'The ACVP lab-workflow module is a draft awaiting validation-lab practitioner review. Its contributing section sets out how to propose a source-backed test, and links a Data Suggestion issue if you would rather send the source and let the maintainer do the manifest work.',
+        ctaPrimary: 'Read how to contribute a test',
+        ctaPrimaryHref: '/learn/acvp-lab-workflow',
+        ctaSecondary: 'Ask to be listed in the community',
+        ctaSecondaryHref: '/leaders',
+        proofChips: [
+          'Every correction logged, with who reviewed it',
+          'Listed only with written consent',
+        ],
+        sideCard: {
+          title: 'What a contributed test needs',
+          tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Source', value: 'primary and immutable' },
+            { label: 'Licence', value: 'a redistribution note for copied values' },
+            { label: 'Review', value: 'two people: source, then implementation' },
+            { label: 'Never', value: 'vectors issued to a real ACVTS session' },
+          ],
+          punchline: 'A vector without provenance does not merge as trusted.',
+          footnote:
+            "The reviewer checklist from the ACVP lab-workflow module, which matches the repository's validation-contribution issue template.",
+        },
+        gridTitle: 'Where your review lands',
+        gridSub: 'Corrections are logged in public',
+        gridCards: [
+          {
+            title: 'See every correction already made',
+            body: 'The revisions feed logs each correction to the compliance, vendor and migration data, with who reviewed it — check whether a problem you spotted is already fixed.',
+            href: '/revisions',
+          },
+          {
+            title: 'Check the IP around an implementation',
+            body: 'The patents corpus tracks claims over specific PQC techniques — research context before code goes to a lab, and explicitly not legal advice.',
+            href: '/patents',
+          },
+          {
+            title: 'See what a closure gate asks for',
+            body: "The simulation's verify-and-close phase shows the evidence a closure gate demands before anyone may call a migration done.",
+            href: '/simulation?phase=verify-close',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 9 hours 10, not 16¼.',
+
+        trackChips: [
+          'Product certification',
+          'FIPS 140-3',
+          'ACVP lab workflow',
+          'Entropy',
+          'HSMs',
+          'Testing & validation',
+          'Common Criteria & EUCC',
+          'Hardware acceleration',
+        ],
+        capstoneChip: { label: 'Lab-Ready' },
       },
     },
   ],

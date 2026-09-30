@@ -1631,12 +1631,15 @@ export function SimulationView() {
     .filter(Boolean)
     .join(' ')
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
-  // Researcher / Curious hold no FrameworkRoleId in ROLE_CROSSWALK (personaToRoles
+  // Researcher / Certification & Validation Engineer / Curious hold no FrameworkRoleId in ROLE_CROSSWALK (personaToRoles
   // deliberately maps them to [] — spec §4 orphan-personas decision, audience
   // segments rather than program jobs), so SEATS never contains them and the
   // interactive board silently plays them as the Executive seat. Acknowledge it
   // rather than saying nothing (dismissible banner below + SEAT dial tooltip).
-  const isOrphanSeatPersona = selectedPersona === 'researcher' || selectedPersona === 'curious'
+  const isOrphanSeatPersona =
+    selectedPersona === 'researcher' ||
+    selectedPersona === 'cert-engineer' ||
+    selectedPersona === 'curious'
   const [seatNoticeDismissed, setSeatNoticeDismissed] = useState(false)
 
   // One-time notice for users whose assessment country gained its own archetype.
@@ -3980,10 +3983,11 @@ export function SimulationView() {
                     <strong className="text-foreground">
                       {selectedPersona ? PERSONAS[selectedPersona].label : ''}
                     </strong>{' '}
-                    has no dedicated team role in this program (Researcher and Curious are audience
-                    lenses, not program jobs) — the interactive board plays the Executive seat for
-                    you by default; switch it anytime with the SEAT dial.{' '}
-                    {selectedPersona === 'researcher'
+                    has no dedicated team role in this program (Researcher, Certification &
+                    Validation Engineer and Curious are audience lenses, not program jobs) — the
+                    interactive board plays the Executive seat for you by default; switch it anytime
+                    with the SEAT dial.{' '}
+                    {selectedPersona === 'researcher' || selectedPersona === 'cert-engineer'
                       ? 'Full Migration Journey (Play) is built for a comprehensive, phase-by-phase pass instead.'
                       : 'Executive Overview (Play) is built for a plain-language, no-scoring tour instead.'}
                   </span>

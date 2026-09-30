@@ -22,7 +22,8 @@ export interface LearningPersona {
   id: PersonaId
   label: string
   subtitle: string
-  icon: 'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap' | 'Server' | 'Lightbulb'
+  icon:
+    'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap' | 'BadgeCheck' | 'Server' | 'Lightbulb'
   description: string
   /** Ordered module IDs — first = start here, sequence matters */
   recommendedPath: string[]
@@ -1070,6 +1071,127 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
+  },
+  'cert-engineer': {
+    id: 'cert-engineer',
+    label: 'Certification & Validation Engineer',
+    subtitle: 'From test vectors to certificate',
+    icon: 'BadgeCheck',
+    description:
+      'Prove a module is right, not just that it runs — algorithm testing, entropy, self-tests, and the path from ACVP to a FIPS 140-3 or Common Criteria certificate.',
+    // Added 2026-09-29 (certification-engineer-persona-plan r2, pqctoday-priv
+    // nextfeature/). Starts at the certificate, not at pqc-101: the audience is
+    // validation-lab testers, module vendor engineers and scheme reviewers.
+    // Governance/business-case/risk modules are deliberately left to GRC and
+    // Executive — that absence is what keeps this path distinct (max Jaccard
+    // 0.21 vs any other persona at the time of adding).
+    recommendedPath: [
+      'crypto-product-certification',
+      'fips-140-3-certification',
+      'acvp-lab-workflow',
+      'entropy-randomness',
+      'hsm-pqc',
+      'pqc-testing-validation',
+      'cc-eucc-certification',
+      'pqc-hw-acceleration',
+      'stateful-signatures',
+      'slh-dsa',
+      'hybrid-crypto',
+      'secure-boot-pqc',
+      'crypto-dev-apis',
+      'pqc-candidates',
+      'pci-certification',
+      'standards-bodies',
+      'quiz',
+    ],
+    pathItems: [
+      { type: 'module', moduleId: 'crypto-product-certification' },
+      { type: 'module', moduleId: 'fips-140-3-certification' },
+      { type: 'module', moduleId: 'acvp-lab-workflow' },
+      { type: 'module', moduleId: 'entropy-randomness' },
+      {
+        type: 'checkpoint',
+        id: 'cert-algorithms-entropy',
+        label: 'Algorithms & Entropy',
+        categories: [
+          'crypto-product-certification',
+          'fips-140-3-certification',
+          'acvp-lab-workflow',
+          'entropy-randomness',
+        ],
+      },
+      { type: 'module', moduleId: 'hsm-pqc' },
+      { type: 'module', moduleId: 'pqc-testing-validation' },
+      { type: 'module', moduleId: 'cc-eucc-certification' },
+      { type: 'module', moduleId: 'pqc-hw-acceleration' },
+      {
+        type: 'checkpoint',
+        id: 'cert-module-scheme',
+        label: 'Module & Scheme',
+        categories: [
+          'hsm-pqc',
+          'pqc-testing-validation',
+          'cc-eucc-certification',
+          'pqc-hw-acceleration',
+        ],
+      },
+      { type: 'module', moduleId: 'stateful-signatures' },
+      { type: 'module', moduleId: 'slh-dsa' },
+      { type: 'module', moduleId: 'hybrid-crypto' },
+      { type: 'module', moduleId: 'secure-boot-pqc' },
+      { type: 'module', moduleId: 'crypto-dev-apis' },
+      { type: 'module', moduleId: 'pqc-candidates' },
+      { type: 'module', moduleId: 'pci-certification' },
+      { type: 'module', moduleId: 'standards-bodies' },
+      {
+        type: 'checkpoint',
+        id: 'cert-mastery',
+        label: 'Algorithms in Depth & Schemes',
+        categories: [
+          'stateful-signatures',
+          'slh-dsa',
+          'hybrid-crypto',
+          'secure-boot-pqc',
+          'crypto-dev-apis',
+          'pqc-candidates',
+          'pci-certification',
+          'standards-bodies',
+        ],
+      },
+      { type: 'module', moduleId: 'quiz' },
+    ],
+    estimatedMinutes: 980,
+    essentials: [
+      'crypto-product-certification',
+      'fips-140-3-certification',
+      'acvp-lab-workflow',
+      'entropy-randomness',
+      'hsm-pqc',
+      'pqc-testing-validation',
+      'cc-eucc-certification',
+      'pqc-hw-acceleration',
+    ],
+    essentialsMinutes: 550,
+    quizDescription:
+      'Test your knowledge on product certification, FIPS 140-3, ACVP lab workflow, entropy sources, HSMs, PQC testing and validation, Common Criteria/EUCC, hardware acceleration, stateful and hash-based signatures, hybrid cryptography, secure boot, crypto APIs, PQC candidates, PCI certification, and standards bodies.',
+    quizCategories: [
+      'crypto-product-certification',
+      'fips-140-3-certification',
+      'acvp-lab-workflow',
+      'entropy-randomness',
+      'hsm-pqc',
+      'pqc-testing-validation',
+      'cc-eucc-certification',
+      'pqc-hw-acceleration',
+      'stateful-signatures',
+      'slh-dsa',
+      'hybrid-crypto',
+      'secure-boot-pqc',
+      'crypto-dev-apis',
+      'pqc-candidates',
+      'pci-certification',
+      'standards-bodies',
+    ],
   },
   ops: {
     id: 'ops',

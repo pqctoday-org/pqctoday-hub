@@ -9,6 +9,7 @@ import {
   Layers,
   Compass,
   ClipboardCheck,
+  BadgeCheck,
 } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { cn } from '@/lib/utils'
@@ -73,6 +74,14 @@ const PERSONA_CTAS: Record<PersonaId, CtaSpec> = {
     to: '/library?cat=Standards',
     destination: 'library-standards',
     cta: 'Open the standards shelf',
+  },
+  'cert-engineer': {
+    icon: <BadgeCheck size={20} className="text-primary" />,
+    title: 'Run the ACVP vectors yourself',
+    body: 'Run selected NIST ACVP-Server reference samples and published known-answer tests against the in-browser PKCS#11 engine, with the evidence tier of every result shown.',
+    to: '/playground/hsm?tab=build&dtab=acvp',
+    destination: 'playground-acvp',
+    cta: 'Open the ACVP suite',
   },
   curious: {
     icon: <Compass size={20} className="text-primary" />,

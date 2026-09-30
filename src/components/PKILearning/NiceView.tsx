@@ -81,6 +81,7 @@ const PERSONA_DEFAULT_ROLE: Record<string, NiceWorkRoleId> = {
   ops: 'system-administrator',
   executive: 'is-security-manager',
   researcher: 'systems-security-analyst',
+  'cert-engineer': 'validation-engineer',
 }
 
 interface NiceViewProps {

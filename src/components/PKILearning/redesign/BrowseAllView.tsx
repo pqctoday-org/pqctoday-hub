@@ -93,7 +93,9 @@ export const BrowseAllView = ({
   const [taxonomy, setTaxonomy] = useState<TaxonomySelection>({ algorithm: null, standard: null })
 
   const niceAffinity = personaId != null && NICE_AFFINITY_PERSONAS.has(personaId)
-  const isResearcher = personaId === 'researcher'
+  // The browse-by-algorithm / standard taxonomy serves both roles that read
+  // modules against a specification: researcher and cert-engineer.
+  const showTaxonomyFilter = personaId === 'researcher' || personaId === 'cert-engineer'
 
   const taxonomyIds = useMemo<Set<string> | null>(() => {
     if (taxonomy.algorithm) return new Set(modulesByAlgorithm(taxonomy.algorithm))
@@ -298,7 +300,7 @@ export const BrowseAllView = ({
               ))}
               {!niceAffinity && WorkforceToggle}
             </div>
-            {isResearcher && (
+            {showTaxonomyFilter && (
               <ResearcherTaxonomyFilter selection={taxonomy} onChange={setTaxonomy} />
             )}
             <p className="text-[11px] text-muted-foreground">

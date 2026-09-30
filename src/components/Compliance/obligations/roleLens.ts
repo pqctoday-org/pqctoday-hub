@@ -97,6 +97,18 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
     },
   },
 
+  'cert-engineer': {
+    // Same ordering as developer — the schemes a module is tested and
+    // certified under lead — framed for the person running the evaluation.
+    framing: 'Certification schemes first — the programmes a module is tested and certified under.',
+    rank: (row) =>
+      (isCertificationScheme(row) ? 0 : expectsPqc(row) ? 1000 : 2000) - row.requirementCount,
+    note: (row) =>
+      isCertificationScheme(row)
+        ? 'A scheme modules are validated under — Product Records list the certificates'
+        : null,
+  },
+
   researcher: {
     framing: 'Best-evidenced first — where the documentation goes deepest.',
     rank: (row) => -row.requirementCount,
