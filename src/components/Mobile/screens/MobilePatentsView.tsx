@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { patentsData } from '@/data/patentsData'
 import { findPatentByNumber, readPqcOnly, readScopeParam } from '@/data/patentsScope'
@@ -12,6 +12,7 @@ import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/Pa
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
+import { filterByPatentLinkParams } from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 
 const AGILITY_ORDER: CryptoAgilityMode[] = [
@@ -21,6 +22,22 @@ const AGILITY_ORDER: CryptoAgilityMode[] = [
   'negotiated',
   'unclear',
 ]
+
+/** Desktop link filters the phone honours (Community → a leader's patents);
+ *  matched by the same shared data/patentFilters desktop's filterPatents uses. */
+const LINK_FILTERS = [
+  { key: 'inventor', label: 'Inventor' },
+  { key: 'patentIds', label: 'Patents' },
+] as const
+
+/** `US1,US2,US3` → "3 selected"; a single id is shown as-is (desktop's chip). */
+function patentIdsLabel(value: string): string {
+  const ids = value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return ids.length === 1 ? ids[0] : `${ids.length} selected`
+}
 
 // Deliberately NOT the same strings as PatentsTable.tsx's own terser
 // RELEVANCE_LABELS ('Core'/'Dependent'/'Background') — this is real, already-
@@ -116,8 +133,34 @@ export function MobilePatentsView() {
     return counts
   }, [scoped])
 
+  const inventorParam = (params.get('inventor') ?? '').trim()
+  const patentIdsParam = (params.get('patentIds') ?? '').trim()
+  const linkChips = LINK_FILTERS.flatMap(({ key, label }) => {
+    const value = key === 'inventor' ? inventorParam : patentIdsParam
+    return value ? [{ key, label, text: key === 'patentIds' ? patentIdsLabel(value) : value }] : []
+  })
+  // Removing a chip drops its param (replace — it is a filter, not a place).
+  const removeLinkFilter = useCallback(
+    (key: string) => {
+      const next = new URLSearchParams(params)
+      next.delete(key)
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+
+  const linkScoped = useMemo(
+    () =>
+      filterByPatentLinkParams(
+        scoped,
+        (params.get('inventor') ?? '').trim(),
+        (params.get('patentIds') ?? '').trim()
+      ),
+    [scoped, params]
+  )
+
   const filtered = useMemo(() => {
-    let data = scoped
+    let data = linkScoped
     if (highImpactOnly) data = data.filter((p) => p.impactLevel === 'High')
     if (agilityFilter) data = data.filter((p) => p.cryptoAgilityMode === agilityFilter)
     if (searchText) {
@@ -133,7 +176,7 @@ export function MobilePatentsView() {
       )
     }
     return data
-  }, [scoped, highImpactOnly, agilityFilter, searchText])
+  }, [linkScoped, highImpactOnly, agilityFilter, searchText])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -225,6 +268,29 @@ export function MobilePatentsView() {
           className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
       </div>
+
+      {linkChips.length > 0 && (
+        <div className="mb-2 flex flex-wrap items-center gap-1.5" data-testid="patent-link-filters">
+          {linkChips.map(({ key, label, text }) => (
+            <span
+              key={key}
+              className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]"
+            >
+              <span className="text-muted-foreground">{label}:</span>
+              <span className="truncate font-medium text-foreground">{text}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label={`Remove ${label} filter`}
+                onClick={() => removeLinkFilter(key)}
+                className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          ))}
+        </div>
+      )}
 
       <p className="mb-2 text-[11px] text-muted-foreground">{filtered.length} patents</p>
 

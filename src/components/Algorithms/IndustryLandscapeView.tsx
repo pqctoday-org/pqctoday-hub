@@ -59,6 +59,7 @@ import { libraryHref } from './libraryRef'
 import { threatsData } from '../../data/threatsData'
 import { threatsIndustryHref } from '../Threats/threatsUrlParams'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { learnHref } from './learnHref'
 import { MANIFEST_BY_ID } from '../PKILearning/manifest/registry'
@@ -524,6 +525,11 @@ function RollupRow({
   )
 }
 
+/** Clean share link for one use-case card: the landscape tab plus the card id. */
+function landscapeUseCaseHref(useCaseId: string): string {
+  return `/algorithms?tab=landscape&usecase=${encodeURIComponent(useCaseId)}`
+}
+
 function UseCaseCard({
   uc,
   standards,
@@ -572,11 +578,20 @@ function UseCaseCard({
           <Icon size={18} className="shrink-0 text-primary" />
           <h4 className="font-medium text-foreground">{uc.useCaseLabel}</h4>
         </div>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[uc.migrationStatus]}`}
-        >
-          {STATUS_LABEL[uc.migrationStatus]}
-        </span>
+        <div className="flex shrink-0 items-center gap-1">
+          <span
+            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[uc.migrationStatus]}`}
+          >
+            {STATUS_LABEL[uc.migrationStatus]}
+          </span>
+          {/* the card's clean link — ?usecase= reopens its industry and
+              scrolls to it; the reader's lens/filters are not carried */}
+          <ItemShareButton
+            title={itemShareTitle(uc.useCaseLabel)}
+            path={landscapeUseCaseHref(uc.useCaseId)}
+            className="-my-1"
+          />
+        </div>
       </div>
       {showIndustry && <p className="mt-1 text-xs text-muted-foreground">{uc.industry}</p>}
       <p className="mt-2 text-sm text-muted-foreground">{uc.summary}</p>

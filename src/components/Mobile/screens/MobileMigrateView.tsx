@@ -35,6 +35,7 @@ import {
   domainProductCount,
   filterProducts,
   resolveMigrateLink,
+  resolveDomainRef,
   resolveProductRef,
   vendorHasRoadmapCard,
   migrateLinkKey,
@@ -286,13 +287,34 @@ export function MobileMigrateView() {
   }, [hasLinkParams, linkKey, searchParams, updateParams])
 
   // ?open=<productId>: Plan → that product's sheet; Vendors → its vendor's
-  // roadmap sheet. The Vendor-risk tab has no per-item view on the phone.
+  // roadmap sheet. Vendor risk (desktop rings the risk-matrix card of the
+  // product's / the named domain's layer; the phone has no matrix): a
+  // product opens its detail sheet over the risk tab, and a domain id moves
+  // to the Replace tab on that domain — the phone's only per-domain view —
+  // rewriting the URL to that view (replace) so it reloads and shares as such.
   useEffect(() => {
     if (!openParam) return
     const product = resolveProductRef(openParam)?.product
-    if (!product) {
-      setLinkNotice(`No product matching “${openParam}” is in the catalog.`)
-    } else if (tabParam === 'plan') {
+    const riskDomain = !product && tabParam === 'vendorrisk' ? resolveDomainRef(openParam) : null
+    if (riskDomain) {
+      setTab('replace')
+      setSelectedDomain(riskDomain)
+      setFilter('')
+      setCatalogQuery('')
+      setProductIdFilter(undefined)
+      updateParams((sp) => {
+        for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
+        sp.delete('open')
+        sp.set('tab', 'replace')
+        sp.set('domain', riskDomain)
+      }, true)
+    } else if (!product) {
+      setLinkNotice(
+        tabParam === 'vendorrisk'
+          ? `No product or category matching “${openParam}”.`
+          : `No product matching “${openParam}” is in the catalog.`
+      )
+    } else if (tabParam === 'plan' || tabParam === 'vendorrisk') {
       setSelectedProduct(product)
     } else if (
       tabParam === 'roadmaps' &&

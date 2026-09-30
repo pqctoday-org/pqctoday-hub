@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /** `?usecase=<useCaseId>` on the Industry Landscape tab. Real landscape data. */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
@@ -65,5 +65,19 @@ describe('IndustryLandscapeView — ?usecase', () => {
     expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('no-such-use-case')
     fireEvent.click(screen.getByRole('button', { name: /dismiss notice/i }))
     expect(urlSearch()).not.toContain('usecase=')
+  })
+
+  it('each card shares its clean ?usecase link, without the reader’s lens', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    const mech = uc.classicalMechanisms[0]
+    renderAt(`&mechanism=${encodeURIComponent(mech)}`)
+    fireEvent.click(screen.getByRole('button', { name: `Share ${uc.useCaseLabel} — PQC Today` }))
+    fireEvent.click(await screen.findByRole('button', { name: /copy link/i }))
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        `${window.location.origin}/algorithms?tab=landscape&usecase=${uc.useCaseId}`
+      )
+    )
   })
 })
