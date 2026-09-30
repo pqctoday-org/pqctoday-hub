@@ -312,7 +312,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Requirements" names the model that extracted each quote; "Product Records" are live NIST CMVP, CAVP and Common Criteria records.',
     'cert-engineer':
-      '"Product Records" lists NIST CMVP, CAVP and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification; "For You" puts the standards and schemes first.',
+      '"Product Records" lists NIST CMVP, CAVP and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification; "For You" lists the schemes that expect PQC and the tests to run first.',
     ops: '"For You" has a "Rotation clock" bucketing frameworks by how soon they bind, "Toolchain quick jumps" and "Framework deadlines"; "Products" shows whether each certificate is PQC validated, mixed or classical only.',
     curious:
       '"For You" opens with "Does this affect me?"; the "Landscape" tab shows who defines algorithms (Standardization Bodies), who validates products (Certification Schemes) and who mandates adoption (Compliance Frameworks).',

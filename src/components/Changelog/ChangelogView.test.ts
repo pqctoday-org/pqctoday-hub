@@ -18,6 +18,7 @@ describe('PERSONA_KEYWORDS', () => {
       'curious',
       'developer',
       'executive',
+      'grc',
       'ops',
       'researcher',
     ])
@@ -73,6 +74,16 @@ describe('PERSONA_KEYWORDS', () => {
       'Root of trust attestation flow',
     ])('matches %s', (text) => {
       expect(PERSONA_KEYWORDS.architect.test(text)).toBe(true)
+    })
+  })
+
+  describe('grc', () => {
+    it.each([
+      'Trace one obligation to its source',
+      'Vendor scorecard evidence',
+      'Risk register owners',
+    ])('matches %s', (text) => {
+      expect(PERSONA_KEYWORDS.grc.test(text)).toBe(true)
     })
   })
 

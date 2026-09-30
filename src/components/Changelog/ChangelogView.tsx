@@ -24,6 +24,7 @@ import {
   UserCheck,
   Search,
   Heart,
+  ClipboardCheck,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 import clsx from 'clsx'
@@ -104,6 +105,7 @@ type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 const PERSONA_CONFIG: Record<string, { label: string; Icon: IconComponent }> = {
   executive: { label: 'Executive', Icon: Briefcase },
+  grc: { label: 'GRC', Icon: ClipboardCheck },
   developer: { label: 'Developer', Icon: Code2 },
   architect: { label: 'Architect', Icon: Network },
   researcher: { label: 'Researcher', Icon: FlaskConical },
@@ -243,6 +245,9 @@ function mergeSections(versions: ChangelogVersion[]): ChangelogSection[] {
 export const PERSONA_KEYWORDS: Record<string, RegExp> = {
   executive:
     /\b(compliance|regulatory|governance|board|roadmap|policy|NIST|ANSSI|BSI|CNSA|FIPS 140|deadline|business case|audit|framework|enforcement|stakeholder)\b/i,
+  // grc (added 2026-09-29; the 2026-09-07 split never reached this page): the
+  // obligations, evidence and assurance vocabulary of the GRC changelog entries.
+  grc: /\b(obligation|obligations register|evidence|assurance|risk register|control|checklist|audit|vendor risk|vendor scorecard|applicability|exceptions? register|closure)\b/i,
   developer:
     /\b(API|SDK|library|code|playground|openssl|WASM|JOSE|COSE|JWT|workshop|tool|algorithm|implementation|TLS|liboqs|vitest|Playwright|TypeScript|test|lint|tsconfig|webpack|vite|CI|GitHub Action|workflow)\b/i,
   architect:

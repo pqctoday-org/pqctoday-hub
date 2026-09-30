@@ -77,7 +77,7 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import { matchesIndustry } from '@/data/industryMatch'
 import { threatsData } from '@/data/threatsData'
-import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
 import {
   buildMarkdown as buildMigrationVerification,
   type VerifyState,
@@ -466,7 +466,7 @@ function supplyChainMatrixSample() {
 
   const totalProducts = items.length
   const pqcReadyCount = items.filter((i) => isPqcReady(i.pqcSupport)).length
-  const fipsValidatedCount = items.filter((i) => isFips1403Validated(i.fipsValidated)).length
+  const fipsValidatedCount = items.filter((i) => isFips1403Certified(i)).length
 
   return buildSupplyChainMarkdown({
     industry,
@@ -570,7 +570,7 @@ function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
   const industry = sector === 'financial' ? 'Finance & Banking' : 'Healthcare'
   const industryThreats = threatsData.filter((t) => t.industry === industry)
   const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
-  const fipsValidatedCount = softwareData.filter((i) => isFips1403Validated(i.fipsValidated)).length
+  const fipsValidatedCount = softwareData.filter((i) => isFips1403Certified(i)).length
   return {
     threatsByIndustry: new Map(),
     criticalThreatCount: threatsData.filter((t) => t.criticality === 'Critical').length,

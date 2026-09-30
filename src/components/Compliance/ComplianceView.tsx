@@ -32,6 +32,7 @@ import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { GrcApplicabilityView } from './views/GrcApplicabilityView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
+import { CertEngineerSchemesView } from './views/CertEngineerSchemesView'
 import { DeveloperImplementationView } from './views/DeveloperImplementationView'
 import { OpsRotationView } from './views/OpsRotationView'
 import { CuriousOrientationView } from './views/CuriousOrientationView'
@@ -233,6 +234,8 @@ function ForYouSection({
         <ArchitectStandardsView {...callbacks} />
       ) : persona === 'researcher' ? (
         <ResearcherEvidenceView {...callbacks} />
+      ) : persona === 'cert-engineer' ? (
+        <CertEngineerSchemesView {...callbacks} />
       ) : persona === 'developer' ? (
         <DeveloperImplementationView {...callbacks} />
       ) : persona === 'ops' ? (

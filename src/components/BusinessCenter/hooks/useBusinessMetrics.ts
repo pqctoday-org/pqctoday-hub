@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
+import { fips1403Stage } from '@/data/kpiCatalog'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -378,13 +379,26 @@ function getModuleProgress(moduleStore: LearningProgress, moduleId: string): Mod
   }
 }
 
-function parseFipsStatus(fips: string | undefined): 'validated' | 'partial' | 'none' {
-  if (!fips) return 'none'
-  const lower = fips.toLowerCase()
-  if (lower.startsWith('yes') && !lower.includes('mode')) return 'validated'
-  if (lower.includes('partial') || lower.includes('mode') || lower.includes('fips'))
-    return 'partial'
-  return 'none'
+/**
+ * Reads the source-backed FIPS 140-3 stage (fips1403Stage), not the free-text
+ * field: "validated" = a FIPS 140-3 module certificate; "partial" = on the
+ * way (CAVP algorithm validation, or NIST lists the module in process) —
+ * never a certificate. Replaced 2026-09-29 a text parse that counted
+ * "Yes (FIPS 140-2)", "Yes (FedRAMP)" and CAVP-only rows as validated.
+ */
+function parseFipsStatus(item: {
+  hasCertification?: string | null
+  fipsValidated?: string | null
+}): 'validated' | 'partial' | 'none' {
+  switch (fips1403Stage(item)) {
+    case 'certified':
+      return 'validated'
+    case 'in_process':
+    case 'cavp':
+      return 'partial'
+    default:
+      return 'none'
+  }
 }
 
 function parseDeadlineYear(deadline: string): number | null {
@@ -778,7 +792,7 @@ export function useBusinessMetrics(): BusinessMetrics {
 
     const fipsBreakdown = { validated: 0, partial: 0, none: 0 }
     for (const p of resolvedProducts) {
-      const status = parseFipsStatus(p.fipsValidated)
+      const status = parseFipsStatus(p)
       fipsBreakdown[status]++ // eslint-disable-line security/detect-object-injection
     }
 

@@ -140,6 +140,50 @@ export function isFips1403Validated(fipsValidated: string | undefined | null): b
   return s.startsWith('yes') || s === 'validated'
 }
 
+/**
+ * FIPS 140-3 track stage of a catalogue product, read from the source-backed
+ * `hasCertification` field first (2026-09-26 stage rule: CAVP is the
+ * prerequisite, "in process" only when NIST lists the module on MIP/IUT, a
+ * certificate only when one exists). The free-text `fipsValidated` field is
+ * used only to confirm that a `yes` row's certificate is FIPS 140-3 rather
+ * than FIPS 140-2 or a Common Criteria record, and a qualified claim
+ * ("pending", "in process", "under review") is not counted — under-assert.
+ *
+ * Added 2026-09-29: the text-only check above showed a green FIPS 140-3 badge
+ * for rows reading "Yes (FIPS 140-2)", "Yes (FedRAMP)", "Yes (Trusted)",
+ * CAVP-only records and several "No (…)" values.
+ */
+export type Fips1403Stage = 'certified' | 'in_process' | 'cavp' | 'none'
+
+const QUALIFIED_CLAIM = /\b(in process|in progress|pending|under review)\b/
+
+export function fips1403Stage(item: {
+  hasCertification?: string | null
+  fipsValidated?: string | null
+}): Fips1403Stage {
+  switch (item.hasCertification) {
+    case 'in_progress':
+      return 'in_process'
+    case 'cavp':
+      return 'cavp'
+    case 'yes': {
+      const s = (item.fipsValidated || '').toLowerCase().trim()
+      if (s.startsWith('no') || QUALIFIED_CLAIM.test(s)) return 'none'
+      return s.includes('140-3') ? 'certified' : 'none'
+    }
+    default:
+      return 'none'
+  }
+}
+
+/** A catalogue product holds a FIPS 140-3 module certificate (see fips1403Stage). */
+export function isFips1403Certified(item: {
+  hasCertification?: string | null
+  fipsValidated?: string | null
+}): boolean {
+  return fips1403Stage(item) === 'certified'
+}
+
 // ── Shared auto-score helpers ────────────────────────────────────────────
 function clamp(v: number, lo = 0, hi = 100): number {
   return Math.max(lo, Math.min(hi, v))

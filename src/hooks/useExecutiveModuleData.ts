@@ -10,7 +10,7 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { pqcReadinessTier, isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { pqcReadinessTier, isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
 import { matchesIndustry } from '@/data/industryMatch'
 import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import type {
@@ -164,7 +164,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
         else vendorsByDomain.set(domain, [s])
       }
 
-      if (isFips1403Validated(s.fipsValidated)) fipsValidatedCount++
+      if (isFips1403Certified(s)) fipsValidatedCount++
       if (isPqcReady(s.pqcSupport)) pqcReadyCount++
       readinessWeightSum += pqcReadinessTier(s.pqcSupport)
     }
