@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.136.0] - 2026-09-29
+
+The About page's list of the software this site is built from is now accurate and complete: it shows what the site really ships, with real versions and licenses, says plainly where something is not recorded, and can be downloaded in full.
+
+### Added
+
+- **Download the complete software bill of materials** [view:/about] [persona:grc] [persona:architect] [persona:ops] [persona:executive]: the About page now links a machine-readable list (CycloneDX) of every package and component the site ships or downloads — 366 in all, including the 178 supporting packages that come along with the ones shown on the page — each with its version, license and how that was established.
+- **AI models are listed too** [view:/about] [persona:grc] [persona:architect] [persona:executive]: the chat model, its compiled library and the search-embedding model your browser downloads are now named with their licenses, with a note that the site does not pin a revision for them.
+- **Fonts, the Python runtime and other parts that were missing** [view:/about] [persona:ops] [persona:architect]: the Inter typeface, the Python runtime that runs in your browser, the OpenSSH and strongSwan demo components, the randomness-testing tools and about 60 cryptography libraries built into the PQC engines now appear.
+
+### Changed
+
+- **Every version and license on the About page now comes from the shipped files** [view:/about] [persona:grc] [persona:ops] [persona:architect]: versions are read from the packages, the served WebAssembly programs and their build records, and licenses from each package's own record. Where a program carries no release number the page shows the source commit it was built from, or says the commit is not recorded, instead of a made-up version. The build now stops if the page and the shipped files disagree.
+
+### Fixed
+
+- **Wrong entries on the About page corrected** [view:/about] [persona:grc] [persona:developer] [persona:architect]: OpenSSL is shown as 3.6.3 (the version actually served), the post-quantum signature libraries are named as the ones the engine really uses, the search model is bge-base (not bge-small), and a library that is available under either MIT or GPL now shows both options.
+
 ## [4.135.0] - 2026-09-29
 
 Every item's panel now has its own Share button, so you can share a document, threat, algorithm, product or record while it is open — on desktop and on phones.
