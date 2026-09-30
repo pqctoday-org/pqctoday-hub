@@ -23,11 +23,14 @@ export function parseCitations(content: string): {
   cleanContent: string
   citations: ClaimCitation[]
 } {
-  const match = content.match(/```citations\n([\s\S]*?)```\s*\n?/)
+  // Models are not perfectly consistent about fence casing, a space before
+  // the newline, or CRLF output. Treat those presentation differences as the
+  // same citations block; the JSON and evidence are still verified below.
+  const match = content.match(/```[ \t]*citations[ \t]*\r?\n([\s\S]*?)```\s*\r?\n?/i)
   if (!match) {
     // Strip an incomplete ```citations block if the response was truncated
     // mid-fence — never leak raw JSON fragments into the displayed message.
-    const incompleteMatch = content.match(/```citations[\s\S]*$/)
+    const incompleteMatch = content.match(/```[ \t]*citations\b[\s\S]*$/i)
     if (incompleteMatch) {
       return {
         cleanContent: content.slice(0, incompleteMatch.index).trimEnd(),

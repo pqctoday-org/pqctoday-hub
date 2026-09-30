@@ -16,12 +16,8 @@ import {
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { parseCitations } from '@/services/chat/parseCitations'
-import { appendGroundedDeepLinks } from '@/services/chat/deepLinkInjection'
-import {
-  buildGroundingFailureResponse,
-  enforceGrounding,
-  GROUNDING_RETRY_INSTRUCTION,
-} from '@/services/chat/groundingPolicy'
+import { buildRetrievedEvidenceResponse } from '@/services/chat/groundingPolicy'
+import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
 import { getCached, setCache } from '@/services/chat/responseCache'
@@ -166,6 +162,7 @@ export function useChatSend() {
       let timedOut = false
       let fullContent = ''
       let sourceIds: string[] = []
+      let retrievedChunks: RAGChunk[] = []
       const sourceRefs: ChatSourceRef[] = []
       const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
 
@@ -219,6 +216,7 @@ export function useChatSend() {
           industry: pageContext.industry,
           region: pageContext.region,
         })
+        retrievedChunks = chunks
 
         // Dynamically inject persona-curated "What's New" chunk for changelog queries
         if (classifyIntent(trimmed) === 'whats_new') {
@@ -294,8 +292,67 @@ export function useChatSend() {
           chunks.length
         )
 
-        // Build deduplicated source references for attribution
-        const tierForChunk = await loadTierResolver()
+        // Resolve source trust tiers concurrently with generation. Importing
+        // the trust data used to block the model on every cold first query.
+        const tierResolverPromise = loadTierResolver()
+
+        const runGeneration = async (attemptMessages: ChatMessage[]): Promise<string> => {
+          const streamGen =
+            provider === 'local'
+              ? localStreamResponse(
+                  attemptMessages,
+                  chunks,
+                  controller.signal,
+                  pageContext,
+                  localContextWindow
+                )
+              : geminiStreamResponse(
+                  apiKey!,
+                  attemptMessages,
+                  chunks,
+                  model,
+                  controller.signal,
+                  pageContext
+                )
+          let raw = ''
+          for await (const chunk of streamGen) {
+            raw += chunk
+            // Restore the original immediate-feedback UX while keeping hidden
+            // citation/follow-up metadata out of the visible draft.
+            const metadataStart = raw.search(/```[ \t]*(?:citations|followups)\b/i)
+            setStreamingContent(metadataStart === -1 ? raw : raw.slice(0, metadataStart).trimEnd())
+          }
+          fullContent = raw
+          return raw
+        }
+
+        const parseAndVerify = (raw: string) => {
+          const { cleanContent: contentAfterCitations, citations } = parseCitations(raw)
+          const { cleanContent } = parseFollowUps(contentAfterCitations)
+          return finalizeGroundedResponse(cleanContent, citations, chunks)
+        }
+
+        // One generation only. The former automatic retry doubled latency and
+        // commonly returned the same rejection for both Gemini and Qwen.
+        const verified = parseAndVerify(await runGeneration(allMessages))
+
+        if (verified.mode !== 'verified') {
+          console.warn('[Chat grounding] Model draft did not fully verify', {
+            reasons: verified.decision.reasons,
+            resolution: verified.mode,
+            provider,
+            model: provider === 'gemini' ? model : localModel,
+          })
+        }
+        const finalContent = verified.content
+        // Do not display model-authored follow-ups: they are outside the
+        // claim/evidence map. ChatMessage derives safe question-only prompts
+        // from the verified answer instead.
+        const followUps: string[] = []
+
+        // Build deduplicated source references after generation, reusing the
+        // trust-data import that ran in parallel with the model.
+        const tierForChunk = await tierResolverPromise
         const seenTitles = new Map<string, number>()
         for (const c of chunks) {
           const existingIdx = seenTitles.get(c.title)
@@ -332,61 +389,6 @@ export function useChatSend() {
             trustTier: tierForChunk(c),
           })
         }
-
-        const runGeneration = async (attemptMessages: ChatMessage[]): Promise<string> => {
-          const streamGen =
-            provider === 'local'
-              ? localStreamResponse(
-                  attemptMessages,
-                  chunks,
-                  controller.signal,
-                  pageContext,
-                  localContextWindow
-                )
-              : geminiStreamResponse(
-                  apiKey!,
-                  attemptMessages,
-                  chunks,
-                  model,
-                  controller.signal,
-                  pageContext
-                )
-          let raw = ''
-          for await (const chunk of streamGen) raw += chunk
-          fullContent = raw
-          return raw
-        }
-
-        const parseAndVerify = (raw: string) => {
-          const { cleanContent: contentAfterCitations, citations } = parseCitations(raw)
-          const { cleanContent } = parseFollowUps(contentAfterCitations)
-          return {
-            cleanContent,
-            citations,
-            decision: enforceGrounding(cleanContent, citations, chunks),
-          }
-        }
-
-        // Buffer drafts until verification completes. Unsupported text is
-        // never streamed into the visible chat and then retracted afterward.
-        let verified = parseAndVerify(await runGeneration(allMessages))
-        if (!verified.decision.approved) {
-          const correction: ChatMessage = {
-            id: nextMsgId('grounding-retry'),
-            role: 'user',
-            content: GROUNDING_RETRY_INSTRUCTION,
-            timestamp: Date.now(),
-          }
-          verified = parseAndVerify(await runGeneration([...allMessages, correction]))
-        }
-
-        const finalContent = verified.decision.approved
-          ? appendGroundedDeepLinks(verified.cleanContent, verified.citations, chunks)
-          : buildGroundingFailureResponse()
-        // Do not display model-authored follow-ups: they are outside the
-        // claim/evidence map. ChatMessage derives safe question-only prompts
-        // from the verified answer instead.
-        const followUps: string[] = []
 
         // Finalize message
         const assistantMessage: ChatMessage = {
@@ -430,7 +432,7 @@ export function useChatSend() {
               const assistantMessage: ChatMessage = {
                 id: nextMsgId('assistant'),
                 role: 'assistant',
-                content: buildGroundingFailureResponse(),
+                content: buildRetrievedEvidenceResponse(retrievedChunks),
                 timestamp: Date.now(),
                 sources: sourceIds,
                 sourceRefs,
@@ -449,7 +451,7 @@ export function useChatSend() {
           const assistantMessage: ChatMessage = {
             id: nextMsgId('assistant'),
             role: 'assistant',
-            content: buildGroundingFailureResponse(),
+            content: buildRetrievedEvidenceResponse(retrievedChunks),
             timestamp: Date.now(),
             sources: sourceIds,
             sourceRefs,

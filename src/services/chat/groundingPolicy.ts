@@ -19,6 +19,11 @@ export interface GroundingDecision {
   reasons: GroundingFailureReason[]
 }
 
+export interface GroundedClaimFallback {
+  content: string
+  citations: ClaimCitation[]
+}
+
 const SAFE_REFUSAL =
   /^Based on the PQC Today database, I don't have enough information about .{1,160}\.$/i
 
@@ -88,8 +93,67 @@ export function buildGroundingFailureResponse(): string {
   )
 }
 
+/**
+ * Recover individually verified claims from a draft that failed the strict
+ * whole-answer contract (usually because the model added an uncited heading
+ * or introduction). Invalid evidence, contradictions, and ungrounded entities
+ * are still rejected claim by claim. This keeps useful corpus-backed content
+ * without weakening the evidence boundary.
+ */
+export function salvageGroundedClaims(
+  answer: string,
+  citations: ClaimCitation[],
+  chunks: RAGChunk[]
+): GroundedClaimFallback | null {
+  const normalizedAnswer = visibleText(answer)
+  const seen = new Set<string>()
+  const valid: ClaimCitation[] = []
+
+  for (const citation of citations) {
+    const claim = visibleText(citation.claimExcerpt)
+    if (claim.length < 12 || !normalizedAnswer.includes(claim) || seen.has(claim)) continue
+    if (verifyCitations([citation], chunks).length > 0) continue
+    if (verifyFacts(citation.claimExcerpt, chunks).length > 0) continue
+    if (checkGrounding(citation.claimExcerpt, chunks).hasWarning) continue
+    seen.add(claim)
+    valid.push(citation)
+  }
+
+  if (valid.length === 0) return null
+
+  const content = valid
+    .map((citation) => citation.claimExcerpt.trim().replace(/^[-+*]\s+/, ''))
+    .map((claim) => `- ${claim}`)
+    .join('\n')
+
+  return { content, citations: valid }
+}
+
+/**
+ * Last-resort corpus-only response for a non-empty retrieval result. Titles
+ * and deep links come directly from retrieved chunks, so this remains useful
+ * and deterministic even when a model fails the citation format twice.
+ */
+export function buildRetrievedEvidenceResponse(chunks: RAGChunk[], maxEntries = 8): string {
+  const seen = new Set<string>()
+  const entries: string[] = []
+
+  for (const chunk of chunks) {
+    const title = chunk.title?.replace(/\s+/g, ' ').trim()
+    if (!title) continue
+    const key = title.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    entries.push(chunk.deepLink ? `- [${title}](${chunk.deepLink})` : `- ${title}`)
+    if (entries.length >= maxEntries) break
+  }
+
+  if (entries.length === 0) return buildGroundingFailureResponse()
+  return `These are the most relevant entries retrieved from the PQC Today corpus:\n\n${entries.join('\n')}`
+}
+
 export const GROUNDING_RETRY_INSTRUCTION = `Your previous draft failed corpus-only verification.
-Regenerate it using ONLY the supplied CONTEXT. Every substantive sentence must have one citations entry with:
+Regenerate it using ONLY the supplied CONTEXT. Return 2-6 short bullet sentences with no heading, introduction, conclusion, table, or follow-up block. Every bullet must have one citations entry with:
 - claimExcerpt: that complete sentence exactly as written in your answer; a shorter substring does not count
 - evidenceExcerpt: a verbatim supporting excerpt copied from the cited context chunk
 - chunkId: that chunk's exact id

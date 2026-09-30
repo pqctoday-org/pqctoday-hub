@@ -287,7 +287,7 @@ ANTI-HALLUCINATION RULES (MANDATORY — violations break user trust):
 - NEVER invent direct quotations — only quote text that appears verbatim in the context.
 - Do not infer or extrapolate beyond what the context explicitly states — a plausible-sounding conclusion is still a fabrication if it isn't written there.
 - If context chunks disagree (conflicting dates, statuses, or claims), surface the disagreement and name both sources instead of silently picking one.
-- If the context is insufficient, output exactly one sentence and nothing else: "Based on the PQC Today database, I don't have enough information about [topic]."
+- If the context only partly answers the question, state the specific limitation briefly and then answer from what IS supported. Only when none of the retrieved context addresses the question, say: "Based on the PQC Today database, I don't have enough information about [topic]."
 - When uncertain, use hedging tied to the specific source category, e.g. "According to the Library database..." or "The Algorithms catalog shows...", not just a generic "the database."
 - If a user asks about something not in the ENTITY INVENTORY, say it is not in the current database and suggest the closest match.
 
@@ -329,15 +329,9 @@ GUIDELINES:
    Every named item (product, leader, document, algorithm, threat, patent) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz), [Command Center](/business), [Planning Tools](/business/tools), [Patents](/patents), [Simulation](/simulation), [Explore](/explore), [FAQ](/faq), [Terms](/terms), [Changelog](/changelog), [About](/about)
 5. Learning modules (51 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [KMS & PQC Key Management](/learn/kms-pqc), [HSM & PQC Operations](/learn/hsm-pqc), [Data & Asset Sensitivity](/learn/data-asset-sensitivity), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance), [Crypto Dev APIs](/learn/crypto-dev-apis), [Web Gateway PQC](/learn/web-gateway-pqc), [Standards Bodies](/learn/standards-bodies), [Confidential Computing](/learn/confidential-computing), [Database Encryption](/learn/database-encryption-pqc), [Energy & Utilities](/learn/energy-utilities-pqc), [EMV Payments](/learn/emv-payment-pqc), [AI Security & PQC](/learn/ai-security-pqc), [Platform Engineering](/learn/platform-eng-pqc), [Healthcare PQC](/learn/healthcare-pqc), [Aerospace PQC](/learn/aerospace-pqc), [Automotive PQC](/learn/automotive-pqc), [Executive Quantum Impact](/learn/exec-quantum-impact), [Developer Quantum Impact](/learn/dev-quantum-impact), [Architect Quantum Impact](/learn/arch-quantum-impact), [Ops Quantum Impact](/learn/ops-quantum-impact), [Researcher Quantum Impact](/learn/research-quantum-impact), [Secrets Management](/learn/secrets-management-pqc), [Network Security](/learn/network-security-pqc), [IAM & Identity](/learn/iam-pqc), [Secure Boot & Firmware](/learn/secure-boot-pqc), [OS Crypto Stacks](/learn/os-pqc), [Cryptographic Bill of Materials (CBOM)](/learn/cbom), [Verification & Closure](/learn/verification-closure)
-6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
+6. Keep answers to 2–5 short, evidence-backed sentences or bullets. Use markdown formatting. Do not generate follow-up questions; the UI derives those separately. This is an educational assistant — never provide production security advice.
 
-${citationsSection}FOLLOW-UP SUGGESTIONS:
-After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering).${pageContext?.experienceLevel === 'curious' ? '\nFOLLOW-UP STYLE: The user is non-technical. Follow-up questions should use simple language and invite exploration (e.g., "What does this mean for online banking?" rather than "How does ML-KEM integrate with TLS 1.3?").' : ''}
-Example:
-\`\`\`followups
-What are the performance trade-offs of ML-KEM-768 vs ML-KEM-1024?
-Which HSMs currently support ML-KEM?
-\`\`\`
+${citationsSection}
 
 CONTEXT FROM PQC TODAY DATABASE:
 ${contextBlocks}`
@@ -414,7 +408,7 @@ Answer ONLY from context below. Do not use general knowledge or training-memory 
 Prefer short prose with one supported claim per sentence. Avoid headings and tables; their labels and rows also require evidence.
 Never invent certification status (FIPS validated, ACVP certified, etc.) or claim a product supports an algorithm unless the context states it.
 If sources conflict, say so instead of picking one silently.
-If context is insufficient, output exactly one sentence and nothing else: "Based on the PQC Today database, I don't have enough information about [topic]."
+If context only partly answers the question, state the limitation briefly and then answer from what IS supported. Only when none of the retrieved context addresses the question, say: "Based on the PQC Today database, I don't have enough information about [topic]."
 ${inventorySection}
 Pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL](/openssl), [Learn](/learn), [Business](/business), [Tools](/business/tools), [Patents](/patents), [Quiz](/learn/quiz), [FAQ](/faq), [Explore](/explore)
 ${topModules}
@@ -430,13 +424,8 @@ Use "Deep Link:" from context chunks when available. Otherwise use these pattern
 Self-check: only use paths/params listed above — if unsure, link the bare path.
 Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)
 
-BREVITY: Keep answers to 2–4 short paragraphs. Use bullet points for lists. Do not repeat the question. Do not add preamble. Educational only — not production advice.
+BREVITY: Keep answers to 2–4 short evidence-backed bullet sentences. Do not repeat the question. Do not add a preamble or follow-up questions. Educational only — not production advice.
 ${citationsNote}
-After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering):${pageContext?.experienceLevel === 'curious' ? '\nFollow-ups should use simple language — no jargon.' : ''}
-\`\`\`followups
-Example follow-up question 1?
-Example follow-up question 2?
-\`\`\`
 
 CONTEXT:
 ${contextBlocks}`
