@@ -86,11 +86,12 @@ export function RagAiSection() {
                 <strong className="text-foreground">cloud mode</strong> uses Google&apos;s{' '}
                 <strong className="text-foreground">Gemini 3.8 Flash</strong>, or{' '}
                 <strong className="text-foreground">local mode</strong> runs an in-browser model (
-                Qwen 3.5 9B or Qwen 3 8B over WebGPU) entirely on your device. Qwen 3.5 is the
-                accuracy-first default; Qwen 3 uses less GPU memory. Both target an 8 GB discrete
-                GPU (or 16 GB+ Apple Silicon). In local mode your queries and retrieved context
-                never leave your machine &mdash; it even works in airplane mode after the one-time
-                model and retrieval-asset downloads.
+                Qwen 3 8B or Qwen 3.5 9B over WebGPU) entirely on your device. Qwen 3 8B is the
+                default validated against the native corpus-grounding harness; Qwen 3.5 remains an
+                optional comparison model. Both target an 8 GB discrete GPU (or 16 GB+ Apple
+                Silicon). In local mode your queries and retrieved context never leave your machine
+                &mdash; it even works in airplane mode after the one-time model and retrieval-asset
+                downloads.
               </p>
               <p className="text-muted-foreground mt-3">
                 To use <strong className="text-foreground">cloud mode</strong>, you provide your own{' '}

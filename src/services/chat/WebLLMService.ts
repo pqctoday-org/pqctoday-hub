@@ -2,7 +2,7 @@
 import type { ChatMessage, RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { buildLocalSystemPrompt } from './promptBuilder'
-import { DEFAULT_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
+import { DEFAULT_LOCAL_MODEL, QWEN35_LOCAL_MODEL } from './modelConfig'
 import { classifyIntent } from './RetrievalService'
 
 /* ------------------------------------------------------------------ */
@@ -49,34 +49,35 @@ export const DEFAULT_CONTEXT_WINDOW = 4_096
 // support more, but the compiled WebLLM artifacts do not. Do not raise
 // maxContextLength above 4096 without confirming a registry change.
 //
-// Qwen 3.5 9B is the recommended accuracy-first option for the app's 8 GB
-// discrete-GPU target. Qwen 3 8B remains available for comparison and for
-// devices that need more memory headroom. The post-generation grounding gate
-// is authoritative for both: model quality never substitutes for evidence.
+// Native MLX evaluation on the production RAG harness did not show a reliable
+// grounding-quality advantage for Qwen 3.5 9B. Qwen 3 8B is therefore the
+// default for the app's 8 GB discrete-GPU target; Qwen 3.5 remains available
+// for user-controlled comparison. The grounding gate is authoritative for
+// both: model quality never substitutes for evidence.
 export const WEBLLM_MODELS: WebLLMModel[] = [
   {
     id: DEFAULT_LOCAL_MODEL,
-    label: 'Qwen 3.5 9B (5.1 GB) — Recommended accuracy',
+    label: 'Qwen 3 8B (4.5 GB) — Recommended',
+    sizeGB: 4.5,
+    maxContextLength: 4_096,
+    vramMB: 5696,
+    speed: 2,
+    accuracy: 5,
+    tip: 'Best-tested default for the corpus-grounded assistant. Targets an 8 GB discrete GPU (about 5.7 GB free VRAM required) or 16 GB+ Apple Silicon.',
+  },
+  {
+    id: QWEN35_LOCAL_MODEL,
+    label: 'Qwen 3.5 9B (5.1 GB) — Alternative',
     sizeGB: 5.1,
     maxContextLength: 4_096,
     vramMB: 6433,
     speed: 1,
     accuracy: 5,
-    tip: 'Targets an 8 GB discrete GPU (about 6.5 GB free VRAM required) or 16 GB+ Apple Silicon. Every displayed answer must pass corpus-evidence verification.',
-  },
-  {
-    id: QWEN3_LOCAL_MODEL,
-    label: 'Qwen 3 8B (4.5 GB) — More memory headroom',
-    sizeGB: 4.5,
-    maxContextLength: 4_096,
-    vramMB: 5696,
-    speed: 2,
-    accuracy: 4,
-    tip: 'Uses about 740 MB less VRAM than Qwen 3.5 9B. Choose it if the recommended model is unstable on an 8 GB GPU; the same corpus-evidence gate applies.',
+    tip: 'Available for comparison but uses about 740 MB more VRAM. The native harness did not establish a consistent grounding advantage over Qwen 3 8B.',
   },
 ]
 
-export { DEFAULT_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
+export { DEFAULT_LOCAL_MODEL, QWEN35_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
 
 /* ------------------------------------------------------------------ */
 /*  Engine singleton                                                   */
