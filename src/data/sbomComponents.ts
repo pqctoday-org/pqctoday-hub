@@ -25,6 +25,9 @@
 //                                              number is invented for it
 //   asset    a shipped non-code file (font)   -> sbomAssets.json, sha256-pinned; name and
 //                                              version read from the font's own name table
+//   model    an AI model downloaded at run time -> sbomModels.json; which models exist is
+//                                              read from the shipped code, licenses and
+//                                              revisions from the model repositories, dated
 //   native   the browser's own Web Crypto API
 //
 // The check is two-way. A direct dependency, a shipped wasm file, or a crate
@@ -46,6 +49,7 @@ import {
 } from './sbomVersions.generated'
 import rustLock from './sbomRustLock.json'
 import assetRecords from './sbomAssets.json'
+import modelRecords from './sbomModels.json'
 
 type Base = {
   /** Display name — may be prose ("React Router") rather than the package name. */
@@ -64,6 +68,7 @@ type NoOther = {
   built?: never
   native?: never
   asset?: never
+  model?: never
 }
 
 /**
@@ -83,6 +88,7 @@ export type SbomComponent = Base &
     | (Omit<NoOther, 'built'> & { built: string; license: string })
     | (Omit<NoOther, 'native'> & { native: true; license: string })
     | (Omit<NoOther, 'asset'> & { asset: string; license: string })
+    | (Omit<NoOther, 'model'> & { model: string; license?: never })
   )
 
 export interface SbomGroup {
@@ -140,6 +146,8 @@ export function sbomLicense(c: SbomComponent): string {
   if ('crate' in c && c.crate !== undefined)
     return crateLicenses(typeof c.crate === 'string' ? [c.crate] : c.crate)
   if ('crates' in c && c.crates !== undefined) return crateLicenses(c.crates)
+  if ('model' in c && c.model !== undefined)
+    return modelRecords.models.find((r) => r.key === c.model)?.license ?? '?'
   return c.license ?? '?'
 }
 
@@ -161,6 +169,12 @@ export function sbomVersionLabel(c: SbomComponent): string {
     return names.map(crateVersions).join(' / ')
   }
   if ('crates' in c && c.crates !== undefined) return `${c.crates.length} crates`
+  if ('model' in c && c.model !== undefined) {
+    const m = modelRecords.models.find((r) => r.key === c.model)
+    if (!m) return 'v?'
+    const rev = m.revisionChecked ? m.revisionChecked.slice(0, 8) : 'n/a'
+    return `revision not pinned · checked ${rev} on ${modelRecords.fetchedAt}`
+  }
   if ('asset' in c && c.asset !== undefined) {
     const a = assetRecords.assets.find((r) => r.key === c.asset)
     return a ? v(a.version) : 'v?'
@@ -181,6 +195,8 @@ export function sbomVersionLabel(c: SbomComponent): string {
 /** Link for the row: the row's own, or the exact commit a `built` bundle came from. */
 export function sbomHref(c: SbomComponent): string | undefined {
   if (c.href) return c.href
+  if ('model' in c && c.model !== undefined)
+    return modelRecords.models.find((r) => r.key === c.model)?.sourceUrl
   if ('built' in c && c.built !== undefined) {
     const b = SBOM_BUILDS[c.built]
     if (b?.repo && b.commit) return `https://github.com/${b.repo}/commit/${b.commit}`
@@ -383,10 +399,25 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         pkg: '@mlc-ai/web-llm',
       },
       {
-        name: '@huggingface/transformers (bge-base-en-v1.5 embeddings)',
+        name: '@huggingface/transformers (runs the embedding model)',
         pkg: '@huggingface/transformers',
       },
       { name: '@react-oauth/google', pkg: '@react-oauth/google' },
+      {
+        name: 'Qwen3-8B chat model (q4f16_1 MLC build, WebGPU)',
+        model: 'qwen3-8b-weights',
+        note: "Downloaded by the visitor's browser at run time, not part of the site bundle. No revision is pinned, so it follows the repository's default branch.",
+      },
+      {
+        name: 'Qwen3-8B compiled model library (WebGPU wasm)',
+        model: 'qwen3-8b-library',
+        note: 'Downloaded at run time from the mlc-ai/binary-mlc-llm-libs repository; that repository declares no license.',
+      },
+      {
+        name: 'bge-base-en-v1.5 embedding model (quantized ONNX)',
+        model: 'bge-base-embeddings',
+        note: 'Downloaded at run time. The search index shipped with the site was built with this model.',
+      },
     ],
   },
   {

@@ -422,11 +422,65 @@ export function derive(root: string, curated: Curated): Derived {
   for (const f of pinned.keys())
     if (!shippedFonts.includes(f)) bad(`${f}: recorded in sbomAssets.json but not shipped`)
 
+  // ---- AI models: what the shipped code names must be recorded, and nothing else -----
+  const modelFile = readJson<{
+    models: {
+      key: string
+      id: string
+      sourceUrl: string
+      license: string
+      revisionChecked: string | null
+    }[]
+    fetchedAt: string
+  }>(root, 'src/data/sbomModels.json')
+  const modelKeys = new Set(modelFile.models.map((m) => m.key))
+  const shippedModelUrls = new Map<string, string>() // sourceUrl -> what names it
+  const webllmPath = join(root, 'node_modules', '@mlc-ai', 'web-llm', 'lib', 'index.js')
+  const chatPath = join(root, 'src/services/chat/WebLLMService.ts')
+  const metaPath = join(root, 'public/data/embeddings-meta.json')
+  if (!existsSync(webllmPath) || !existsSync(chatPath) || !existsSync(metaPath)) {
+    bad('cannot check AI models: web-llm lib, WebLLMService.ts or embeddings-meta.json is missing')
+  } else {
+    const chat = readFileSync(chatPath, 'utf8')
+    const start = chat.indexOf('export const WEBLLM_MODELS')
+    const catalog = chat.slice(start, chat.indexOf('\n]', start))
+    const chatIds = [...catalog.matchAll(/\bid:\s*'([^']+)'/g)].map((m) => m[1])
+    if (start < 0 || chatIds.length === 0) bad('WebLLMService.ts: no models found in WEBLLM_MODELS')
+    const lib = readFileSync(webllmPath, 'utf8')
+    const prefix = /modelLibURLPrefix\s*=\s*"([^"]+)"/.exec(lib)?.[1]
+    const version = /modelVersion\s*=\s*"([^"]+)"/.exec(lib)?.[1]
+    for (const id of chatIds) {
+      const esc = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const m = new RegExp(
+        `model:\\s*"([^"]+)",\\s*model_id:\\s*"${esc}",\\s*model_lib:\\s*modelLibURLPrefix\\s*\\+\\s*modelVersion\\s*\\+\\s*"([^"]+)"`
+      ).exec(lib)
+      if (!m || !prefix || !version) {
+        bad(`${id}: named by WebLLMService.ts but not found in the bundled @mlc-ai/web-llm config`)
+        continue
+      }
+      shippedModelUrls.set(m[1], `${id} (weights)`)
+      shippedModelUrls.set(`${prefix}${version}${m[2]}`, `${id} (model library)`)
+    }
+    const embed = (JSON.parse(readFileSync(metaPath, 'utf8')) as { model?: string }).model
+    if (embed) shippedModelUrls.set(`https://huggingface.co/${embed}`, `${embed} (embeddings)`)
+    else bad('public/data/embeddings-meta.json names no embedding model')
+    for (const [url, what] of shippedModelUrls)
+      if (!modelFile.models.some((m) => m.sourceUrl === url))
+        bad(`${what}: named by shipped code (${url}) but not recorded in src/data/sbomModels.json`)
+    for (const m of modelFile.models) {
+      if (!shippedModelUrls.has(m.sourceUrl))
+        bad(`${m.key}: recorded in sbomModels.json but no shipped code names ${m.sourceUrl}`)
+      if (!m.license.trim()) bad(`${m.key}: no license stated in sbomModels.json`)
+    }
+  }
+
   // ---- row sources must resolve --------------------------------------------
   for (const g of curated.groups)
     for (const c of g.components) {
       if ('embedded' in c && c.embedded !== undefined && !(c.embedded in embedded))
         bad(`"${c.name}": embedded source "${c.embedded}" does not exist`)
+      if ('model' in c && c.model !== undefined && !modelKeys.has(c.model))
+        bad(`"${c.name}": model source "${c.model}" is not in src/data/sbomModels.json`)
       if ('asset' in c && c.asset !== undefined) {
         const rec = assets.assets.find((a) => a.key === c.asset)
         if (!rec) bad(`"${c.name}": asset source "${c.asset}" is not in src/data/sbomAssets.json`)

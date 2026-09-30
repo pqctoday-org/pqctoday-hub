@@ -124,15 +124,20 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
     )
   })
 
-  it('names the embedding model the shipped search index was built with', () => {
+  it('records the embedding model the shipped search index was built with', () => {
     // public/data/embeddings-meta.json is what production serves; the page used to say
     // "bge-small" while the index was built with bge-base.
-    const model = embeddingsMeta.model
-      .split('/')
-      .pop()!
-      .replace(/-en-v1\.5$/, '')
-    expect(byName(/^@huggingface\/transformers/).name).toContain(model)
-    expect(byName(/^@huggingface\/transformers/).name).toContain('v1.5')
+    const row = byName(/^bge-base-en-v1\.5 embedding model/)
+    expect(sbomHref(row)).toBe(`https://huggingface.co/${embeddingsMeta.model}`)
+    expect(sbomLicense(row)).toBe('MIT')
+    expect(sbomVersionLabel(row)).toMatch(
+      /^revision not pinned · checked [0-9a-f]{8} on 2026-09-29$/
+    )
+  })
+
+  it('records the chat model and its compiled library, with the license position stated', () => {
+    expect(sbomLicense(byName(/^Qwen3-8B chat model/))).toBe('Apache-2.0')
+    expect(sbomLicense(byName(/^Qwen3-8B compiled model library/))).toBe('not declared')
   })
 
   it('states per-bundle versions when the engine and KMIP bundles differ', () => {

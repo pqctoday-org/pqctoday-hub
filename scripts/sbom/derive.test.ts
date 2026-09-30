@@ -126,6 +126,46 @@ function makeTree(): Tree {
       },
     })
   )
+  write(
+    'src/services/chat/WebLLMService.ts',
+    "export const WEBLLM_MODELS = [\n  {\n    id: 'Chat-1-MLC',\n  },\n]\n"
+  )
+  write('public/data/embeddings-meta.json', JSON.stringify({ model: 'org/embed-1' }))
+  write(
+    'node_modules/@mlc-ai/web-llm/lib/index.js',
+    'const modelLibURLPrefix = "https://libs.example/"; const modelVersion = "v1/base"; ' +
+      '[{ model: "https://hf.example/org/Chat-1-MLC", model_id: "Chat-1-MLC", ' +
+      'model_lib: modelLibURLPrefix + modelVersion + "/Chat-1.wasm" }]'
+  )
+  write(
+    'src/data/sbomModels.json',
+    JSON.stringify({
+      fetchedAt: '2026-09-29',
+      models: [
+        {
+          key: 'chat',
+          id: 'Chat-1-MLC',
+          sourceUrl: 'https://hf.example/org/Chat-1-MLC',
+          license: 'Apache-2.0',
+          revisionChecked: 'abc',
+        },
+        {
+          key: 'lib',
+          id: 'Chat-1.wasm',
+          sourceUrl: 'https://libs.example/v1/base/Chat-1.wasm',
+          license: 'not declared',
+          revisionChecked: null,
+        },
+        {
+          key: 'embed',
+          id: 'org/embed-1',
+          sourceUrl: 'https://huggingface.co/org/embed-1',
+          license: 'MIT',
+          revisionChecked: 'def',
+        },
+      ],
+    })
+  )
   write('public/fonts/inter.woff2', FONT)
   write(
     'src/data/sbomAssets.json',
@@ -367,6 +407,34 @@ describe('SBOM gate', () => {
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
       /only the browser's own Web Crypto/
     )
+  })
+
+  it('fails when the shipped code names a model that is not recorded, or a record no code names', () => {
+    const t = makeTree()
+    t.write('public/data/embeddings-meta.json', JSON.stringify({ model: 'org/embed-2' }))
+    const p = derive(t.root, t.curated).problems.join('\n')
+    expect(p).toMatch(/org\/embed-2 \(embeddings\): named by shipped code .* but not recorded/)
+    expect(p).toMatch(/embed: recorded in sbomModels\.json but no shipped code names/)
+  })
+
+  it('fails when the chat model catalog gains a model with no record', () => {
+    const t = makeTree()
+    t.write(
+      'src/services/chat/WebLLMService.ts',
+      "export const WEBLLM_MODELS = [\n  {\n    id: 'Chat-1-MLC',\n  },\n  {\n    id: 'Chat-2-MLC',\n  },\n]\n"
+    )
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /Chat-2-MLC: named by WebLLMService\.ts but not found in the bundled @mlc-ai\/web-llm config/
+    )
+  })
+
+  it('fails when a model row names a record that does not exist', () => {
+    const t = makeTree()
+    t.curated.groups[1].components = [
+      ...t.curated.groups[1].components,
+      { name: 'Ghost model', model: 'ghost' },
+    ]
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(/model source "ghost"/)
   })
 
   it('fails when a shipped font has no record, or changed since it was pinned', () => {
