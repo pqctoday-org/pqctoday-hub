@@ -57,7 +57,7 @@ const persona = (state: Record<string, unknown>) =>
 const opened = (page: Page, text: string) =>
   page.locator('[role="dialog"]:visible').filter({ hasText: text }).first()
 
-const notice = (page: Page, kind: 'widened' | 'not-found') =>
+const notice = (page: Page, kind: 'widened' | 'not-found' | 'moved') =>
   page.getByTestId(`deeplink-notice-${kind}`).first()
 
 test.describe.configure({ mode: 'parallel' })
@@ -71,7 +71,7 @@ test.describe('desktop — resource links open the resource', () => {
     url: string
     open?: string
     visible?: string
-    notice?: 'widened' | 'not-found'
+    notice?: 'widened' | 'not-found' | 'moved'
     storage?: Record<string, string>
   }[] = [
     {
@@ -83,7 +83,7 @@ test.describe('desktop — resource links open the resource', () => {
       name: 'library retired ref forwards to its successor',
       url: '/library?ref=PKCS11-V32-OASIS',
       open: 'PKCS',
-      notice: 'not-found',
+      notice: 'moved',
     },
     {
       name: 'library ref hidden by executive role narrowing',
@@ -389,4 +389,40 @@ test.describe('share from inside an open item overlay', () => {
       }
     })
   }
+})
+
+test.describe('merged profiles and stacked overlays', () => {
+  test.use({ viewport: { width: 1440, height: 900 } })
+
+  test('a link to a merged duplicate Community profile opens the kept one and says so', async ({
+    page,
+  }) => {
+    await seed(page, 'returning')
+    await page.goto('/leaders?leader=dustin-moody-nist-2')
+    await expect(page.getByTestId('deeplink-notice-moved')).toContainText('Dustin Moody', {
+      timeout: 30_000,
+    })
+    // The old id keeps working (it forwards); the kept profile is what opens.
+    await expect(page.getByText('Dustin Moody').first()).toBeVisible()
+  })
+
+  test('Escape closes only the topmost overlay (command palette over a drawer)', async ({
+    page,
+  }) => {
+    await seed(page, 'returning')
+    await page.goto('/library?ref=KpqC-Competition-Results')
+    const drawer = opened(page, 'Korean Post-Quantum')
+    await expect(drawer).toBeVisible({ timeout: 30_000 })
+    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+k' : 'Control+k')
+    const palette = page
+      .locator('[role="dialog"]:visible')
+      .filter({ hasNot: page.getByText('Korean Post-Quantum') })
+      .last()
+    await expect(palette).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(palette).toBeHidden()
+    await expect(drawer).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(drawer).toBeHidden()
+  })
 })
