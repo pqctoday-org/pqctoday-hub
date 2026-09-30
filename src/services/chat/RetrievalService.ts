@@ -62,6 +62,10 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
   catalog_lookup: {
     migrate: 3,
     certifications: 2,
+    modules: 3,
+    'module-content': 2,
+    'module-summaries': 2,
+    'module-topic-summaries': 2,
     'priority-matrix': 1.5,
     'business-center': 1.5,
     vendors: 2,
@@ -554,7 +558,7 @@ export function classifyIntent(query: string): QueryIntent {
   // Catalog wording wins when the user is asking for products/modules rather
   // than an explanation of the identifier itself.
   if (
-    /\b(which|list|show|what)\b.*\b(products?|software|tools?|hsms?|libraries|vendors?|browsers?)\b/.test(
+    /\b(which|list|show|what)\b.*\b(products?|software|tools?|hsms?|libraries|vendors?|browsers?|modules?|lessons?|courses?)\b/.test(
       q
     )
   )
@@ -1102,6 +1106,20 @@ class RetrievalService {
     const intent = classifyIntent(query)
     const target = limit ?? getLimitForIntent(intent)
     if (target <= 0) return []
+
+    // Direct lookups already have strong lexical/entity signals. They should
+    // not wait for the ~53 MB embedding index and query-vector inference.
+    // Keep semantic retrieval for ambiguous, comparative, and recommendation
+    // queries where it materially improves recall.
+    if (
+      intent === 'definition' ||
+      intent === 'catalog_lookup' ||
+      intent === 'standard_query' ||
+      intent === 'country_query' ||
+      intent === 'whats_new'
+    ) {
+      return lexicalResults.slice(0, target)
+    }
 
     // Same suppression rules search() applies via addChunk() — an embedding
     // hit must not resurface a quiz chunk the user didn't ask for, or a
