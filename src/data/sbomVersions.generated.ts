@@ -31,7 +31,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   '@testing-library/react': '16.3.3',
   '@testing-library/user-event': '14.6.7',
   '@vitejs/plugin-react': '5.2.0',
-  '@vitest/coverage-v8': '5.0.1',
+  '@vitest/coverage-v8': '5.0.2',
   '@xyflow/react': '12.11.6',
   ajv: '8.20.0',
   'ajv-formats': '3.0.1',
