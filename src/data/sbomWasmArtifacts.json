@@ -1,0 +1,38 @@
+{
+  "_comment": "Records for shipped .wasm files that are NOT built from pqctoday-hsm and so are not in public/wasm/wasm-provenance.json (that manifest is drift-checked against the hsm repo, and adding entries with no hsm commit would fail it). Each file is pinned by full sha256: rebuilding or replacing the binary without updating this record fails `gen:sbom-versions:check`, so the SBOM cannot keep describing bytes that are no longer shipped. `commit: null` means no build commit is recorded anywhere; that is stated on the page, not guessed.",
+  "artifacts": [
+    {
+      "key": "pqctoday-tpm",
+      "label": "PQC TPM emulator (swtpm/libtpms fork)",
+      "repo": "pqctoday-org/pqctoday-tpm",
+      "commit": null,
+      "files": {
+        "public/wasm/pqctpm.wasm": "4e209ead587d7e5502ea7a4c1d5840cdb27b5c3b277cd67eb9308acda1f43314"
+      },
+      "note": "The binary embeds no release version, and the one local pqctoday-tpm build available (sha 8ddbd860…) does not match. Build commit unknown."
+    },
+    {
+      "key": "lms",
+      "label": "LMS/HSS hash-based signature module",
+      "repo": null,
+      "commit": null,
+      "files": {
+        "public/wasm/lms.wasm": "61204da8dbda98c5c9f489f4afc9097f92f2afed76b71fd8ee28cc714c8e66f2"
+      },
+      "note": "No version or origin string in the binary and no build record. Origin unknown."
+    },
+    {
+      "key": "entropy90b",
+      "label": "NIST SP 800-90B estimators",
+      "repo": "usnistgov/SP800-90B_EntropyAssessment",
+      "commit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+      "files": {
+        "public/wasm/entropy90b/ea_iid.wasm": "6c06533b3985e4fb75183461f3ca69cbe4bcc468b7dfb6627287745496a6e2a6",
+        "public/wasm/entropy90b/ea_non_iid.wasm": "d0c2a5faca24319c97ac3dafb3de3a1c4469647f8e5047cce14f5eabf92c78cc",
+        "public/wasm/entropy90b/ea_restart.wasm": "7b5b1eacf512581ed452cbbd052b2202fe2b468eb4aa4096e3de8bacaaee2de5"
+      },
+      "buildinfo": "public/wasm/entropy90b/BUILDINFO.json",
+      "note": "Versions of the tool and its libraries come from the BUILDINFO.json shipped beside the binaries, whose own per-file sha256 values are re-checked against the files."
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "_comment": "AI model artifacts the visitor's browser downloads at run time (they are not in the site bundle). Which models exist is read from the shipped code by `gen:sbom-versions:check` (WebLLMService.ts, public/data/embeddings-meta.json, and the URLs inside the bundled @mlc-ai/web-llm); licenses and revisions below were read from the model repositories on `fetchedAt` because no shipped file carries them. The site pins no revision for any of them, so each follows its repository's default branch and this record is a dated snapshot, not a guarantee.",
+  "fetchedAt": "2026-09-29",
+  "models": [
+    {
+      "key": "qwen35-9b-weights",
+      "id": "Qwen3.5-9B-q4f16_1-MLC",
+      "role": "chat model weights (WebGPU), the assistant's default local model",
+      "sourceUrl": "https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC",
+      "revisionChecked": "c7c5d3f5a81e37b8facbb72970940a1b131314a8",
+      "revisionPinned": false,
+      "license": "Apache-2.0 (upstream model; the MLC repository declares none)",
+      "licenseSource": "the mlc-ai repository declares no license and no base model; the upstream model Qwen/Qwen3.5-9B (revision c202236235762e1c871ad0ccb60c8ee5ba337b9a) declares apache-2.0. The link between the two rests on the shared name and web-llm's own config, not on repository metadata.",
+      "baseModel": null,
+      "sizeGB": 5.1
+    },
+    {
+      "key": "qwen35-9b-library",
+      "id": "Qwen3.5-9B-q4f16_1_cs1k-webgpu.wasm",
+      "role": "compiled model library for the default chat model",
+      "sourceUrl": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3.5-9B-q4f16_1_cs1k-webgpu.wasm",
+      "revisionChecked": null,
+      "revisionPinned": false,
+      "license": "not declared",
+      "licenseSource": "the mlc-ai/binary-mlc-llm-libs repository reports no license",
+      "baseModel": null,
+      "sizeGB": null
+    },
+    {
+      "key": "qwen3-8b-weights",
+      "id": "Qwen3-8B-q4f16_1-MLC",
+      "role": "chat model weights (WebGPU)",
+      "sourceUrl": "https://huggingface.co/mlc-ai/Qwen3-8B-q4f16_1-MLC",
+      "revisionChecked": "b3d55c289eae58f77095f5b68c895eeea358ee09",
+      "revisionPinned": false,
+      "license": "Apache-2.0",
+      "licenseSource": "base model Qwen/Qwen3-8B (revision b968826d9c46dd6066d109eabc6255188de91218) declares apache-2.0; the mlc-ai conversion repository declares no license of its own",
+      "baseModel": "Qwen/Qwen3-8B",
+      "sizeGB": 4.5
+    },
+    {
+      "key": "qwen3-8b-library",
+      "id": "Qwen3-8B-q4f16_1_cs1k-webgpu.wasm",
+      "role": "compiled model library for the chat model",
+      "sourceUrl": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3-8B-q4f16_1_cs1k-webgpu.wasm",
+      "revisionChecked": null,
+      "revisionPinned": false,
+      "license": "not declared",
+      "licenseSource": "the mlc-ai/binary-mlc-llm-libs repository reports no license",
+      "baseModel": null,
+      "sizeGB": null
+    },
+    {
+      "key": "bge-base-embeddings",
+      "id": "Xenova/bge-base-en-v1.5",
+      "role": "text embeddings for search and the assistant (quantized ONNX, q8)",
+      "sourceUrl": "https://huggingface.co/Xenova/bge-base-en-v1.5",
+      "revisionChecked": "4d6cd88e18e51a5e020c2c305726d76ada9c03cf",
+      "revisionPinned": false,
+      "license": "MIT",
+      "licenseSource": "the Xenova repository declares mit; base model BAAI/bge-base-en-v1.5 (revision a5beb1e3e68b9ab74eb54cfd186867f64f240e1a) declares mit",
+      "baseModel": "BAAI/bge-base-en-v1.5",
+      "sizeGB": null
+    }
+  ]
+}
