@@ -5,11 +5,12 @@ name: PR check
 # D20 change left `main` requiring `checks`/`test (1)`/`test (2)` — jobs that
 # only run on push to main — and every PR sat BLOCKED; see GATES.md).
 #
-# Scope is deliberately small (~5–8 min): what must be proven on a clean
-# machine BEFORE merge and cannot be faked from a developer machine — install,
-# the security lint, signature verification, and a clean build. The full unit,
-# data and e2e suites stay in the local gate (.husky/pre-push) and in CI on
-# main, as D20 decided.
+# What must be proven on a clean machine BEFORE merge and cannot be faked from
+# a developer machine: install, the security lint, signature verification, the
+# data gate, a clean build (`pr-check`, ~8–10 min) and the sharded unit suite
+# (`pr-test`, ~8 min, in parallel). Since 2026-09-29 the pre-push hook runs
+# only the fast local tier; the machine-dependent `test:local` tier runs once
+# per release (GATES.md). E2E stays in CI on main (smoke) and nightly (full).
 #
 # NO paths-ignore on purpose: a required check that is skipped for some PRs
 # (docs-only) leaves those PRs BLOCKED forever — the exact failure this file
@@ -62,7 +63,44 @@ jobs:
         # `npm run build` prerenders routes with Playwright.
         run: npx playwright install chromium --with-deps
 
+      - name: Data gate
+        # Same data-truth checks ci.yml `checks` runs (clean-machine variant,
+        # without the pqctoday-priv evidence caches).
+        run: npm run gate:data
+
       - name: Build
         # Clean-checkout `tsc -b` (the type check) + vite + prerender + budgets.
         # No VITE_* secrets: the PR build is never deployed.
         run: npm run build
+
+  pr-test:
+    # The unit suite, moved off the pre-push hook to here on 2026-09-29 (owner
+    # decision: fast local pre-push, heavy checks on GitHub). Same as ci.yml
+    # `test`. Keep the job name: branch protection requires `pr-test (1)` and
+    # `pr-test (2)`.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
+        run: npm ci
+
+      - name: Generate SBOM versions (see ci.yml `test`)
+        run: npm run gen:sbom-versions
+
+      - name: Unit tests (shard ${{ matrix.shard }}/2)
+        run: npx vitest run --shard=${{ matrix.shard }}/2

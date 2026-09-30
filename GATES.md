@@ -12,7 +12,15 @@ what it guards.
 - `tsc --noEmit` — the tree still type-checks.
 - `lint-staged` — eslint `--fix` + prettier on staged files; CRLF stripped from CSVs.
 
-## pre-push (`.husky/pre-push`, every push) — `gate:local` + receipt
+## pre-push (`.husky/pre-push`, every push) — `gate:prepush` (fast tier)
+
+**Changed 2026-09-29 (owner decision):** the hook runs `npm run gate:prepush`
+(~3–5 min), which is `gate:local` below **minus** `test` and `test:local`. The
+unit suite (`test`) now runs on GitHub for every PR (`pr-test` in
+`pr-check.yml`); the ~19 min `test:local` tier runs once per release
+(`npm run gate:release-local`, see "Merging a PR"). `npm run gate:local` is
+unchanged and still runs everything by hand. The list below describes
+`gate:local`.
 
 Always, receipt or not (a second each):
 
@@ -89,10 +97,11 @@ then the receipt is written. (`gate:cacp` was removed from the hook and from Git
 
 ## GitHub — PR check (`.github/workflows/pr-check.yml`, every PR to main)
 
-The only check `main`'s branch protection requires (job `pr-check`, with
-"branch must be up to date"). Install, `lint` (security rules),
-`verify-attestations`, and a clean `build` (which includes `tsc -b`), about
-5–8 min on GitHub's machine. It exists so a PR can satisfy protection
+The only checks `main`'s branch protection requires: `pr-check`, `pr-test (1)`,
+`pr-test (2)`, with "branch must be up to date". `pr-check`: install, `lint`
+(security rules), `verify-attestations`, `gate:data`, and a clean `build`
+(which includes `tsc -b`), ~8–10 min. `pr-test`: the unit suite in 2 shards,
+~8 min, in parallel. It exists so a PR can satisfy protection
 without an override, and so the proof that a PR builds does not rest on a
 developer machine. No `paths-ignore`: a required check that some PRs skip
 blocks those PRs forever.
@@ -104,10 +113,13 @@ to 2026-09-29.
 
 ## Merging a PR and verifying the release
 
-1. The full local gate passed on the exact head (pre-push, or `npm run
-gate:local`, which now writes the `.gate-ok-<sha>` receipt itself).
-2. `pr-check` is green and the branch is up to date with `main` (`gh pr
-update-branch <n>` or merge `origin/main`, then re-gate if the tree changed).
+1. The fast tier passed on push (`gate:prepush`, via the hook). For a
+   **release** (anything that deploys app changes), `npm run gate:release-local`
+   (`test:local`, ~19 min) also passed on the exact head, run once, just before
+   asking for the merge yes.
+2. `pr-check`, `pr-test (1)` and `pr-test (2)` are green and the branch is up
+   to date with `main` (`gh pr update-branch <n>` or merge `origin/main`; the
+   checks re-run on the new head).
 3. The owner's yes for this PR and head (given directly, or relayed verbatim
    by the coordinator session per the workspace `CLAUDE.md` relay rule). Post
    the approval line as a PR comment.
