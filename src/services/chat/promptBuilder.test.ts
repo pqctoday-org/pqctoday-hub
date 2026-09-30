@@ -155,14 +155,17 @@ describe('advertised deep-link params match the grammar', () => {
     return out
   }
 
-  it.each([
-    ['gemini', () => buildGeminiSystemPrompt([])],
-    ['local', () => buildLocalSystemPrompt([])],
-  ])('%s prompt advertises only grammar-valid keys', (_name, build) => {
-    const pairs = advertisedKeys(build())
+  it('gemini prompt advertises only grammar-valid keys', () => {
+    const pairs = advertisedKeys(buildGeminiSystemPrompt([]))
     expect(pairs.length).toBeGreaterThan(10)
     const bad = pairs.filter(({ route, key }) => validateDeepLink(`${route}?${key}=x`) !== null)
     expect(bad).toEqual([])
+  })
+
+  it('local prompt delegates deep links to deterministic post-processing', () => {
+    const prompt = buildLocalSystemPrompt([])
+    expect(advertisedKeys(prompt)).toEqual([])
+    expect(prompt).toContain('application appends validated deep links')
   })
 
   it('no longer advertises the dead forms', () => {

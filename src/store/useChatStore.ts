@@ -265,7 +265,7 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 13,
+      version: 14,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
@@ -391,6 +391,14 @@ export const useChatStore = create<ChatState>()(
 
         // v12 → v13: Qwen 3.5 9B becomes the default for new users, while an
         // existing Qwen 3 8B selection is preserved for user-controlled A/B.
+
+        // v13 → v14: native production-harness testing found no consistent
+        // grounding advantage for Qwen 3.5 and confirmed Qwen 3 8B on the
+        // reported regressions. Roll existing defaults back once; users can
+        // still select Qwen 3.5 afterward for comparison.
+        if (version < 14 && state.localModel === 'Qwen3.5-9B-q4f16_1-MLC') {
+          state.localModel = DEFAULT_LOCAL_MODEL
+        }
 
         // Validate localModel against current catalog — reset stale IDs from old versions
         const VALID_LOCAL_MODELS = new Set<string>(SUPPORTED_LOCAL_MODELS)

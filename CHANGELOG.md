@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.137.0] - 2026-09-30
+
+The PQC Assistant answers from the retrieved PQC Today corpus again, responds more quickly on broad lists, and uses the better-tested Qwen 3 8B model by default while keeping Qwen 3.5 available.
+
+### Changed
+
+- **Qwen 3 8B is the local default again** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: native tests against the expanded current corpus found no consistent grounding advantage from Qwen 3.5 9B. Qwen 3 8B passed the reported Learning Center and ML-KEM library questions, uses less GPU memory, and is selected automatically after this update; Qwen 3.5 remains available in the model picker for comparison.
+
+### Fixed
+
+- **Assistant answers use the passages that actually match the question** [view:/learn] [view:/migrate] [view:/library] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: retrieval order is no longer replaced by a generic priority order before generation, so specific answer-bearing passages are not pushed out of the local model's limited context. “What learning modules are available?” now uses the Learning Center overview, and ML-KEM library questions use actual cryptographic-library product records rather than unrelated certification or vendor entries.
+- **Local answers finish instead of exposing reasoning or partial metadata** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Qwen thinking is disabled through the setting the local runtime actually reads and is removed defensively if it still appears. Short catalogue answers receive a compact, diverse evidence set, common valid citation formats are accepted, and verified links into PQC Today are appended by the application instead of invented by the model.
+
 ## [4.136.0] - 2026-09-29
 
 The About page's list of the software this site is built from is now accurate and complete: it shows what the site really ships, with real versions and licenses, says plainly where something is not recorded, and can be downloaded in full.
