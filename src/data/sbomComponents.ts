@@ -220,9 +220,8 @@ export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
     'declared in package.json, imported by no shipped code (named only in teaching copy)',
   'micro-eth-signer':
     'declared in package.json, imported by no shipped code (named only in teaching copy)',
-  'ajv-formats':
-    'dev-only companion of ajv (a test/script dependency); imported by no shipped code',
-  'pdf-parse': 'imported by no shipped code (repository scripts only)',
+  'pdf-parse':
+    'declared in package.json; no source, script or test imports it (also named in README and LICENSES.md)',
   '@eslint/js': 'lint rules; ships nothing',
   'eslint-config-prettier': 'lint rules; ships nothing',
   'eslint-plugin-jsx-a11y': 'lint rules; ships nothing',
@@ -460,6 +459,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       { name: 'Testing Library (user-event)', pkg: '@testing-library/user-event' },
       { name: 'axe-playwright (Accessibility)', pkg: 'axe-playwright' },
       { name: 'ajv (JSON Schema, test cross-check)', pkg: 'ajv' },
+      { name: 'ajv-formats (CycloneDX schema test)', pkg: 'ajv-formats' },
     ],
   },
   {
