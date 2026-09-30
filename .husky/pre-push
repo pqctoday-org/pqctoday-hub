@@ -59,7 +59,10 @@ fi
 # checkout, landing counts, CSV copy-forward, and the unit suite. See
 # package.json `gate:local` for the exact chain and GATES.md for what
 # each step guards.
-npm run gate:local
-
-# Everything passed on this exact commit — write the receipt (see above).
-npm run gate:receipt
+# FAST tier only since 2026-09-29 (owner decision): format, lint, data and
+# editorial audits, generated-file checks (~3–5 min; `gate:prepush` writes the
+# receipt itself). The unit suite runs on GitHub for every PR (pr-check.yml,
+# sharded), and the ~19 min `test:local` tier runs once per release
+# (`npm run gate:release-local`) before the owner's merge yes — not on every
+# push. `npm run gate:local` still runs everything, by hand.
+npm run gate:prepush
