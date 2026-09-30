@@ -80,12 +80,51 @@ then the receipt is written. (`gate:cacp` was removed from the hook and from Git
 - `verify-attestations` — signatures on shipped trust artifacts.
 - `build` — clean-checkout `tsc -b` + vite + Playwright prerender + precache/TLA budgets; on main its `dist/` is uploaded for deploy.
 - `test:e2e:ci-smoke` — the 6-spec Playwright smoke tier against the build.
-- ~~PR only~~ — **GitHub CI no longer runs on pull requests (owner decision D20, 2026-09-27)**: it runs on push to `main` (concurrency group `ci-main`, superseded runs cancelled) and on `workflow_dispatch`. PRs are validated only by the full local gates (`.husky/pre-push`) and merged with `gh pr merge --admin` on local green (D21). `check-tool-version-bump` / `check-module-version-bump` moved into `gate:local` (`npm run check:version-bumps`). `validate-offline-attestation` is not run anywhere now: it needs a PR number, and no `approvals/offline-*` file has ever been committed. Re-home it if SME attestations start being used.
+- ~~PR only~~ — **GitHub CI no longer runs on pull requests (owner decision D20, 2026-09-27)**: it runs on push to `main` (concurrency group `ci-main`, superseded runs cancelled) and on `workflow_dispatch`. PRs are validated by the full local gates (`.husky/pre-push`) plus the small `pr-check` workflow below. ~~Merged with `gh pr merge --admin` on local green (D21)~~ — **superseded 2026-09-29**: D21 left `main` requiring `checks`/`test (1)`/`test (2)`, which never run on a PR, so every PR was BLOCKED and every merge needed an admin override that the Claude Code auto-mode classifier refuses. Merges are now plain (see "Merging a PR"). `check-tool-version-bump` / `check-module-version-bump` moved into `gate:local` (`npm run check:version-bumps`). `validate-offline-attestation` is not run anywhere now: it needs a PR number, and no `approvals/offline-*` file has ever been committed. Re-home it if SME attestations start being used.
 - `audit:deps` — high/critical advisories, with dated exceptions (`scripts/ci/audit-gate.ts`). Last on purpose: if it is the only red step, it is the known `pptxgenjs → image-size` pair.
 
 `test` (matrix ×2) ≈ 8 min each: `vitest run --shard=N/2` — the unit suite.
 
 `gate-cacp` — **removed 2026-09-27** (owner decision). It gated every hub PR on pqctoday-hsm's state. `npm run gate:cacp` stays available to run by hand.
+
+## GitHub — PR check (`.github/workflows/pr-check.yml`, every PR to main)
+
+The only check `main`'s branch protection requires (job `pr-check`, with
+"branch must be up to date"). Install, `lint` (security rules),
+`verify-attestations`, and a clean `build` (which includes `tsc -b`), about
+5–8 min on GitHub's machine. It exists so a PR can satisfy protection
+without an override, and so the proof that a PR builds does not rest on a
+developer machine. No `paths-ignore`: a required check that some PRs skip
+blocks those PRs forever.
+
+**Invariant:** branch protection on `main` must only ever require checks that
+run on `pull_request`. Requiring a push-only job (like `checks` or `test`)
+makes every PR unmergeable without `--admin`. This happened from 2026-09-27
+to 2026-09-29.
+
+## Merging a PR and verifying the release
+
+1. The full local gate passed on the exact head (pre-push, or `npm run
+gate:local`, which now writes the `.gate-ok-<sha>` receipt itself).
+2. `pr-check` is green and the branch is up to date with `main` (`gh pr
+update-branch <n>` or merge `origin/main`, then re-gate if the tree changed).
+3. The owner's yes for this PR and head (given directly, or relayed verbatim
+   by the coordinator session per the workspace `CLAUDE.md` relay rule). Post
+   the approval line as a PR comment.
+4. Plain merge, pinned to the gated head:
+   `gh pr merge <n> --repo pqctoday-org/pqctoday-hub --merge --match-head-commit <full sha>`.
+   **Never `--admin`.**
+5. Not done until production is verified: wait for CI and Deploy on the merge
+   commit, then run the live smoke check for the release (the release's own
+   spot-check; `npm run check:sbom-production` for SBOM changes). On any
+   failure, open a `git revert -m 1 <merge sha>` PR at once and put it
+   through the same steps.
+6. While the nightly E2E is red, only fix and revert PRs merge unless the
+   owner overrides for a named PR (owner decision 2026-09-29).
+7. Cleanup: remove the worktree only if clean, delete the local branch with
+   `git branch -d` (merged-only), and delete the remote branch with
+   `gh api -X DELETE repos/pqctoday-org/pqctoday-hub/git/refs/heads/<branch>`.
+   Never `git push --delete`: it runs this hook's full ~30 min gate.
 
 ## GitHub — deploy (`.github/workflows/deploy.yml`)
 

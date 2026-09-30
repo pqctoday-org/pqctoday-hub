@@ -1,0 +1,68 @@
+name: PR check
+
+# The one GitHub check a pull request CAN pass, so `main` can require it and a
+# merge never needs `gh pr merge --admin` (owner decision 2026-09-29, after the
+# D20 change left `main` requiring `checks`/`test (1)`/`test (2)` — jobs that
+# only run on push to main — and every PR sat BLOCKED; see GATES.md).
+#
+# Scope is deliberately small (~5–8 min): what must be proven on a clean
+# machine BEFORE merge and cannot be faked from a developer machine — install,
+# the security lint, signature verification, and a clean build. The full unit,
+# data and e2e suites stay in the local gate (.husky/pre-push) and in CI on
+# main, as D20 decided.
+#
+# NO paths-ignore on purpose: a required check that is skipped for some PRs
+# (docs-only) leaves those PRs BLOCKED forever — the exact failure this file
+# exists to fix. Keep the job name `pr-check`: branch protection requires it.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pr-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # See ci.yml `checks`: .git is dominated by regenerated artefacts
+          # this job never reads.
+          filter: blob:none
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
+        run: npm ci
+
+      - name: Lint
+        # Carries the eslint-plugin-security rules. Heap note: see ci.yml.
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+        run: npm run lint
+
+      - name: Verify trust-engine attestations
+        run: npm run verify-attestations
+
+      - name: Install Playwright Chromium
+        # `npm run build` prerenders routes with Playwright.
+        run: npx playwright install chromium --with-deps
+
+      - name: Build
+        # Clean-checkout `tsc -b` (the type check) + vite + prerender + budgets.
+        # No VITE_* secrets: the PR build is never deployed.
+        run: npm run build
