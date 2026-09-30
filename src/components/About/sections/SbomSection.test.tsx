@@ -6,6 +6,7 @@ import { SbomSection } from './SbomSection'
 import { SBOM_GROUPS, sbomHref, sbomVersionLabel } from '@/data/sbomComponents'
 import { SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
+import embeddingsMeta from '../../../../public/data/embeddings-meta.json'
 import pkg from '../../../../package.json'
 import vendoredWasm from '../../../vendor/softhsm-wasm/package.json'
 
@@ -106,6 +107,17 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
     expect(sbomHref(byName(/^softhsmv3/))).toMatch(
       /github\.com\/pqctoday-org\/pqctoday-hsm\/commit\//
     )
+  })
+
+  it('names the embedding model the shipped search index was built with', () => {
+    // public/data/embeddings-meta.json is what production serves; the page used to say
+    // "bge-small" while the index was built with bge-base.
+    const model = embeddingsMeta.model
+      .split('/')
+      .pop()!
+      .replace(/-en-v1\.5$/, '')
+    expect(byName(/^@huggingface\/transformers/).name).toContain(model)
+    expect(byName(/^@huggingface\/transformers/).name).toContain('v1.5')
   })
 
   it('states per-bundle versions when the engine and KMIP bundles differ', () => {

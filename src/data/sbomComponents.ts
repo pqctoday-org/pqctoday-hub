@@ -309,7 +309,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         pkg: '@mlc-ai/web-llm',
       },
       {
-        name: '@huggingface/transformers (bge-small embeddings)',
+        name: '@huggingface/transformers (bge-base-en-v1.5 embeddings)',
         license: 'Apache-2.0',
         pkg: '@huggingface/transformers',
       },
