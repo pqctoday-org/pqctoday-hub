@@ -201,18 +201,33 @@ export function derive(root: string, curated: Curated): Derived {
       )
   }
 
-  // ---- npm transitive (package-lock) ----------------------------------------
+  // ---- npm transitive (package-lock) + licenses for every npm row -------------
   const lockVersions: Record<string, string> = {}
-  if (lockKeys.size > 0) {
-    const lock = readJson<{ packages: Record<string, { version?: string }> }>(
-      root,
-      'package-lock.json'
-    )
-    for (const k of [...lockKeys].sort()) {
-      const v = lock.packages[`node_modules/${k}`]?.version
-      if (v) lockVersions[k] = v
-      else bad(`${k}: listed as a lockfile package but absent from package-lock.json`)
+  const packageLicenses: Record<string, string> = {}
+  const lockFile = existsSync(join(root, 'package-lock.json'))
+    ? readJson<{ packages: Record<string, { version?: string; license?: string }> }>(
+        root,
+        'package-lock.json'
+      )
+    : { packages: {} }
+  for (const k of [...lockKeys].sort()) {
+    const v = lockFile.packages[`node_modules/${k}`]?.version
+    if (v) lockVersions[k] = v
+    else bad(`${k}: listed as a lockfile package but absent from package-lock.json`)
+  }
+  // License evidence, strongest first: the lockfile entry for the pinned version, then the
+  // manifest of the package itself (only for a `file:` dependency, which the lock omits).
+  for (const k of [...listedPkgs, ...lockKeys].sort()) {
+    let lic = lockFile.packages[`node_modules/${k}`]?.license
+    const spec = deps[k]
+    if (!lic && spec?.startsWith('file:')) {
+      const manifest = join(root, spec.slice('file:'.length), 'package.json')
+      if (existsSync(manifest))
+        lic = (JSON.parse(readFileSync(manifest, 'utf8')) as { license?: string }).license
     }
+    if (lic && lic.trim()) packageLicenses[k] = lic.trim()
+    else
+      bad(`${k}: no license in package-lock.json (or its own package.json for a file: dependency)`)
   }
 
   // ---- wasm inventory: every shipped .wasm has a record ---------------------
@@ -314,6 +329,40 @@ export function derive(root: string, curated: Curated): Derived {
     if (!knownCrates.has(name))
       bad(`crate ${name}: "${row}" lists it but it is not in any shipped wasm bundle`)
 
+  // ---- rust crate licenses: every compiled-in crate@version has a reviewed entry ----
+  const crateLicenseFile = readJson<{ crates: Record<string, Record<string, string>> }>(
+    root,
+    'src/data/sbomCrateLicenses.json'
+  )
+  const crateLicenses: Record<string, string[]> = {}
+  const tokens = (spdx: string) =>
+    spdx
+      .replace(/[()]/g, '')
+      .split(/\s+OR\s+|\s*\/\s*/)
+      .map((t) => t.trim())
+      .filter(Boolean)
+  const addLicense = (crate: string, spdx: string) => {
+    crateLicenses[crate] = [...new Set([...(crateLicenses[crate] ?? []), ...tokens(spdx)])].sort()
+  }
+  for (const [name, byBundle] of Object.entries(crates))
+    for (const versions of Object.values(byBundle))
+      for (const v of versions ?? []) {
+        const lic = crateLicenseFile.crates[name]?.[v]
+        if (lic) addLicense(name, lic)
+        else
+          bad(
+            `crate ${name}@${v}: no license recorded in src/data/sbomCrateLicenses.json — run \`npm run sbom:refresh-crate-licenses\` (needs the local cargo registry) and review the diff`
+          )
+      }
+  for (const [name, entry] of Object.entries(crateLicenseFile.crates))
+    if (!crates[name]) bad(`crate ${name}: in sbomCrateLicenses.json but not in any shipped bundle`)
+    else
+      for (const v of Object.keys(entry))
+        if (![...Object.values(crates[name])].some((vs) => vs?.includes(v)))
+          bad(`crate ${name}@${v}: in sbomCrateLicenses.json but not in any shipped bundle`)
+  for (const fork of Object.values(rustLock.forks)) addLicense(fork.crate, fork.license)
+  for (const [name, entry] of Object.entries(rustLock.unscannable)) addLicense(name, entry.license)
+
   // ---- embedded versions ----------------------------------------------------
   const embedded: Record<string, string> = {}
   for (const [key, cfg] of Object.entries(EMBEDDED_SCANS)) {
@@ -393,7 +442,15 @@ export function derive(root: string, curated: Curated): Derived {
     }
 
   return {
-    content: generate({ packageVersions, lockVersions, crates, embedded, builds }),
+    content: generate({
+      packageVersions,
+      lockVersions,
+      packageLicenses,
+      crateLicenses,
+      crates,
+      embedded,
+      builds,
+    }),
     problems,
   }
 }
@@ -401,6 +458,8 @@ export function derive(root: string, curated: Curated): Derived {
 function generate(d: {
   packageVersions: Record<string, string>
   lockVersions: Record<string, string>
+  packageLicenses: Record<string, string>
+  crateLicenses: Record<string, string[]>
   crates: Record<string, Partial<Record<string, string[]>>>
   embedded: Record<string, string>
   builds: Record<string, { repo: string | null; commit: string | null; sha256: string }>
@@ -440,6 +499,19 @@ function generate(d: {
 /** Direct npm dependencies, exactly as package.json pins them. */
 export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
 ${map(d.packageVersions)}
+}
+
+/** License of every npm package on the page, as package-lock.json records it (SPDX). */
+export const SBOM_PACKAGE_LICENSES: Readonly<Record<string, string>> = {
+${map(d.packageLicenses)}
+}
+
+/** SPDX license identifiers per Rust crate, from each crate's own Cargo.toml (see sbomCrateLicenses.json). */
+export const SBOM_CRATE_LICENSES: Readonly<Record<string, readonly string[]>> = {
+${Object.keys(d.crateLicenses)
+  .sort()
+  .map((k) => `  ${key(k)}: [${d.crateLicenses[k].map((x) => `'${x}'`).join(', ')}],`)
+  .join('\n')}
 }
 
 /** npm packages that are not direct dependencies, versions from package-lock.json. */

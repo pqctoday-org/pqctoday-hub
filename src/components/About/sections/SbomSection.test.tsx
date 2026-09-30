@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SbomSection } from './SbomSection'
-import { SBOM_GROUPS, sbomHref, sbomVersionLabel } from '@/data/sbomComponents'
+import { SBOM_GROUPS, sbomHref, sbomLicense, sbomVersionLabel } from '@/data/sbomComponents'
 import { SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
 import embeddingsMeta from '../../../../public/data/embeddings-meta.json'
@@ -69,6 +69,21 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
 
   it('never renders an unresolved version', () => {
     for (const c of rows) expect(sbomVersionLabel(c), c.name).not.toMatch(/\?/)
+  })
+
+  it('shows licenses from the lockfile, including dual licenses the page used to drop', () => {
+    // jszip was typed as MIT; package-lock.json records "(MIT OR GPL-3.0-or-later)".
+    expect(sbomLicense(byName(/^jszip/))).toBe('MIT / GPL-3.0-or-later')
+    for (const c of rows) {
+      expect(sbomLicense(c), c.name).not.toMatch(/\?/)
+      expect(sbomLicense(c).trim(), c.name).not.toBe('')
+    }
+  })
+
+  it('derives Rust crate licenses from the crates themselves', () => {
+    expect(sbomLicense(byName(/^ed25519-dalek/))).toBe('BSD-3-Clause')
+    expect(sbomLicense(byName(/^fips204/))).toBe('Apache-2.0 / MIT')
+    expect(sbomLicense(byName(/^tiny-keccak/))).toBe('CC0-1.0')
   })
 
   it('lists what the served binaries contain that the page used to omit', () => {

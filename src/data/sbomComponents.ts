@@ -39,30 +39,51 @@ import {
   SBOM_BUILDS,
   SBOM_CRATES,
   SBOM_EMBEDDED_VERSIONS,
+  SBOM_CRATE_LICENSES,
   SBOM_LOCK_VERSIONS,
+  SBOM_PACKAGE_LICENSES,
   SBOM_PACKAGE_VERSIONS,
 } from './sbomVersions.generated'
 import rustLock from './sbomRustLock.json'
 import assetRecords from './sbomAssets.json'
 
-export type SbomComponent = {
+type Base = {
   /** Display name — may be prose ("React Router") rather than the package name. */
   name: string
-  license: string
   /** Optional release / project link rendered on the name. */
   href?: string
   /** A caveat shown under the row, e.g. what the binary does not tell us. */
   note?: string
-} & (
-  | { pkg: string | readonly string[]; lock?: never; crate?: never; crates?: never }
-  | { lock: string; pkg?: never; crate?: never; crates?: never }
-  | { crate: string | readonly string[]; pkg?: never; lock?: never; crates?: never }
-  | { crates: readonly string[]; pkg?: never; lock?: never; crate?: never }
-  | { embedded: string; pkg?: never; lock?: never; crate?: never; crates?: never }
-  | { built: string; pkg?: never; lock?: never; crate?: never; crates?: never }
-  | { native: true; pkg?: never; lock?: never; crate?: never; crates?: never }
-  | { asset: string; pkg?: never; lock?: never; crate?: never; crates?: never }
-)
+}
+type NoOther = {
+  pkg?: never
+  lock?: never
+  crate?: never
+  crates?: never
+  embedded?: never
+  built?: never
+  native?: never
+  asset?: never
+}
+
+/**
+ * npm rows (`pkg`, `lock`) carry no license: it is generated from package-lock.json, so it
+ * cannot be mistyped or go stale (jszip was shown as MIT; its lock entry is "MIT OR
+ * GPL-3.0-or-later"). Every other kind has no machine-readable source in the build, so its
+ * license is typed here from the component's own shipped license file / banner, or says
+ * "not recorded".
+ */
+export type SbomComponent = Base &
+  (
+    | (Omit<NoOther, 'pkg'> & { pkg: string | readonly string[]; license?: never })
+    | (Omit<NoOther, 'lock'> & { lock: string; license?: never })
+    | (Omit<NoOther, 'crate'> & { crate: string | readonly string[]; license?: never })
+    | (Omit<NoOther, 'crates'> & { crates: readonly string[]; license?: never })
+    | (Omit<NoOther, 'embedded'> & { embedded: string; license: string })
+    | (Omit<NoOther, 'built'> & { built: string; license: string })
+    | (Omit<NoOther, 'native'> & { native: true; license: string })
+    | (Omit<NoOther, 'asset'> & { asset: string; license: string })
+  )
 
 export interface SbomGroup {
   category: (typeof SBOM_CATEGORIES)[number]
@@ -90,6 +111,36 @@ function crateVersions(name: string): string {
   const lock = (rustLock.unscannable as Record<string, { versions: string[] }>)[name]
   if (lock) parts.push(`${lock.versions.map(v).join(', ')} (Cargo.lock)`)
   return parts.length ? parts.join(' · ') : 'v?'
+}
+
+/** "(MIT OR Apache-2.0)" -> "MIT / Apache-2.0": the page's existing style for dual licenses. */
+function displayLicense(spdx: string): string {
+  return spdx
+    .replace(/[()]/g, '')
+    .replace(/\s+OR\s+/g, ' / ')
+    .trim()
+}
+
+/** Union of the SPDX identifiers of the named crates: "Apache-2.0 / BSD-3-Clause / MIT". */
+function crateLicenses(names: readonly string[]): string {
+  const all = new Set(names.flatMap((n) => SBOM_CRATE_LICENSES[n] ?? ['?']))
+  return [...all].sort().join(' / ')
+}
+
+/** The license text a row renders: generated for npm rows, typed for everything else. */
+export function sbomLicense(c: SbomComponent): string {
+  if ('pkg' in c && c.pkg !== undefined) {
+    const keys = typeof c.pkg === 'string' ? [c.pkg] : c.pkg
+    return [...new Set(keys.map((k) => displayLicense(SBOM_PACKAGE_LICENSES[k] ?? '?')))].join(
+      ' / '
+    )
+  }
+  if ('lock' in c && c.lock !== undefined)
+    return displayLicense(SBOM_PACKAGE_LICENSES[c.lock] ?? '?')
+  if ('crate' in c && c.crate !== undefined)
+    return crateLicenses(typeof c.crate === 'string' ? [c.crate] : c.crate)
+  if ('crates' in c && c.crates !== undefined) return crateLicenses(c.crates)
+  return c.license ?? '?'
 }
 
 /**
@@ -184,40 +235,36 @@ export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
   '@types/three': 'type declarations only; no code is shipped',
 }
 
-const RC = 'MIT / Apache-2.0'
-const AM = 'Apache-2.0 / MIT'
-
 /** Groups in the order the desktop accordion renders them (Rust groups last). */
 export const SBOM_GROUPS: readonly SbomGroup[] = [
   {
     category: SBOM_CATEGORIES[0],
     components: [
-      { name: 'React', license: 'MIT', pkg: 'react' },
-      { name: 'React DOM', license: 'MIT', pkg: 'react-dom' },
-      { name: 'Framer Motion', license: 'MIT', pkg: 'framer-motion' },
-      { name: 'Lucide React', license: 'ISC', pkg: 'lucide-react' },
-      { name: 'Tailwind CSS', license: 'MIT', pkg: 'tailwindcss' },
-      { name: 'clsx', license: 'MIT', pkg: 'clsx' },
-      { name: 'tailwind-merge', license: 'MIT', pkg: 'tailwind-merge' },
-      { name: 'class-variance-authority', license: 'Apache-2.0', pkg: 'class-variance-authority' },
-      { name: 'React Router', license: 'MIT', pkg: 'react-router' },
-      { name: '@xyflow/react', license: 'MIT', pkg: '@xyflow/react' },
-      { name: 'dagre (graph layout)', license: 'MIT', pkg: 'dagre' },
-      { name: 'three (3D graphics)', license: 'MIT', pkg: 'three' },
-      { name: '@tanstack/react-virtual', license: 'MIT', pkg: '@tanstack/react-virtual' },
-      { name: 'React Markdown', license: 'MIT', pkg: 'react-markdown' },
-      { name: 'remark-gfm', license: 'MIT', pkg: 'remark-gfm' },
-      { name: 'React Focus Lock', license: 'MIT', pkg: 'react-focus-lock' },
+      { name: 'React', pkg: 'react' },
+      { name: 'React DOM', pkg: 'react-dom' },
+      { name: 'Framer Motion', pkg: 'framer-motion' },
+      { name: 'Lucide React', pkg: 'lucide-react' },
+      { name: 'Tailwind CSS', pkg: 'tailwindcss' },
+      { name: 'clsx', pkg: 'clsx' },
+      { name: 'tailwind-merge', pkg: 'tailwind-merge' },
+      { name: 'class-variance-authority', pkg: 'class-variance-authority' },
+      { name: 'React Router', pkg: 'react-router' },
+      { name: '@xyflow/react', pkg: '@xyflow/react' },
+      { name: 'dagre (graph layout)', pkg: 'dagre' },
+      { name: 'three (3D graphics)', pkg: 'three' },
+      { name: '@tanstack/react-virtual', pkg: '@tanstack/react-virtual' },
+      { name: 'React Markdown', pkg: 'react-markdown' },
+      { name: 'remark-gfm', pkg: 'remark-gfm' },
+      { name: 'React Focus Lock', pkg: 'react-focus-lock' },
       {
         name: 'Inter (typeface)',
         license: 'SIL Open Font License 1.1',
         asset: 'inter-font',
         href: 'https://github.com/rsms/inter',
       },
-      { name: '@monaco-editor/react (code editor)', license: 'MIT', pkg: '@monaco-editor/react' },
+      { name: '@monaco-editor/react (code editor)', pkg: '@monaco-editor/react' },
       {
         name: 'monaco-editor (bundled with the code editor)',
-        license: 'MIT',
         lock: 'monaco-editor',
       },
     ],
@@ -225,19 +272,19 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
   {
     category: SBOM_CATEGORIES[1],
     components: [
-      { name: 'localforage', license: 'Apache-2.0', pkg: 'localforage' },
-      { name: 'jszip', license: 'MIT', pkg: 'jszip' },
-      { name: 'file-saver', license: 'MIT', pkg: 'file-saver' },
-      { name: 'papaparse', license: 'MIT', pkg: 'papaparse' },
-      { name: 'minisearch', license: 'MIT', pkg: 'minisearch' },
-      { name: 'recharts', license: 'MIT', pkg: 'recharts' },
-      { name: 'mermaid', license: 'MIT', pkg: 'mermaid' },
-      { name: 'jspdf + jspdf-autotable', license: 'MIT', pkg: ['jspdf', 'jspdf-autotable'] },
-      { name: 'docx', license: 'MIT', pkg: 'docx' },
-      { name: 'cborg', license: 'Apache-2.0', pkg: 'cborg' },
-      { name: 'lodash', license: 'MIT', pkg: 'lodash' },
-      { name: 'reflect-metadata', license: 'Apache-2.0', pkg: 'reflect-metadata' },
-      { name: 'Pyodide (Python runtime, self-hosted)', license: 'MPL-2.0', pkg: 'pyodide' },
+      { name: 'localforage', pkg: 'localforage' },
+      { name: 'jszip', pkg: 'jszip' },
+      { name: 'file-saver', pkg: 'file-saver' },
+      { name: 'papaparse', pkg: 'papaparse' },
+      { name: 'minisearch', pkg: 'minisearch' },
+      { name: 'recharts', pkg: 'recharts' },
+      { name: 'mermaid', pkg: 'mermaid' },
+      { name: 'jspdf + jspdf-autotable', pkg: ['jspdf', 'jspdf-autotable'] },
+      { name: 'docx', pkg: 'docx' },
+      { name: 'cborg', pkg: 'cborg' },
+      { name: 'lodash', pkg: 'lodash' },
+      { name: 'reflect-metadata', pkg: 'reflect-metadata' },
+      { name: 'Pyodide (Python runtime, self-hosted)', pkg: 'pyodide' },
       {
         name: 'Python (CPython, inside the Pyodide runtime)',
         license: "Python Software Foundation (per the runtime's copyright banner)",
@@ -256,24 +303,22 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         embedded: 'pkcs11-provider',
       },
       { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', native: true },
-      { name: '@oqs/liboqs-js', license: 'MIT', pkg: '@oqs/liboqs-js' },
-      { name: '@noble/hashes', license: 'MIT', pkg: '@noble/hashes' },
-      { name: '@noble/curves', license: 'MIT', pkg: '@noble/curves' },
+      { name: '@oqs/liboqs-js', pkg: '@oqs/liboqs-js' },
+      { name: '@noble/hashes', pkg: '@noble/hashes' },
+      { name: '@noble/curves', pkg: '@noble/curves' },
       {
         name: '@noble/post-quantum (ML-DSA-65 attestation)',
-        license: 'MIT',
         pkg: '@noble/post-quantum',
       },
-      { name: '@peculiar/x509', license: 'MIT', pkg: '@peculiar/x509' },
-      { name: '@scure/bip32', license: 'MIT', pkg: '@scure/bip32' },
-      { name: '@scure/bip39', license: 'MIT', pkg: '@scure/bip39' },
-      { name: '@scure/base', license: 'MIT', pkg: '@scure/base' },
-      { name: '@peculiar/asn1-schema', license: 'MIT', pkg: '@peculiar/asn1-schema' },
-      { name: '@peculiar/asn1-x509', license: 'MIT', pkg: '@peculiar/asn1-x509' },
-      { name: '@peculiar/asn1-cms', license: 'MIT', pkg: '@peculiar/asn1-cms' },
+      { name: '@peculiar/x509', pkg: '@peculiar/x509' },
+      { name: '@scure/bip32', pkg: '@scure/bip32' },
+      { name: '@scure/bip39', pkg: '@scure/bip39' },
+      { name: '@scure/base', pkg: '@scure/base' },
+      { name: '@peculiar/asn1-schema', pkg: '@peculiar/asn1-schema' },
+      { name: '@peculiar/asn1-x509', pkg: '@peculiar/asn1-x509' },
+      { name: '@peculiar/asn1-cms', pkg: '@peculiar/asn1-cms' },
       {
         name: '@pqctoday/softhsm-wasm (npm wrapper of the SoftHSM engines)',
-        license: 'BSD-2-Clause',
         pkg: '@pqctoday/softhsm-wasm',
       },
       {
@@ -335,117 +380,111 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
     components: [
       {
         name: '@mlc-ai/web-llm (in-browser Qwen 3 8B)',
-        license: 'Apache-2.0',
         pkg: '@mlc-ai/web-llm',
       },
       {
         name: '@huggingface/transformers (bge-base-en-v1.5 embeddings)',
-        license: 'Apache-2.0',
         pkg: '@huggingface/transformers',
       },
-      { name: '@react-oauth/google', license: 'MIT', pkg: '@react-oauth/google' },
+      { name: '@react-oauth/google', pkg: '@react-oauth/google' },
     ],
   },
   {
     category: SBOM_CATEGORIES[6],
-    components: [{ name: 'Zustand', license: 'MIT', pkg: 'zustand' }],
+    components: [{ name: 'Zustand', pkg: 'zustand' }],
   },
   {
     category: SBOM_CATEGORIES[7],
-    components: [{ name: 'React GA4', license: 'MIT', pkg: 'react-ga4' }],
+    components: [{ name: 'React GA4', pkg: 'react-ga4' }],
   },
   {
     category: SBOM_CATEGORIES[8],
-    components: [{ name: 'React Hot Toast', license: 'MIT', pkg: 'react-hot-toast' }],
+    components: [{ name: 'React Hot Toast', pkg: 'react-hot-toast' }],
   },
   {
     category: SBOM_CATEGORIES[9],
     components: [
-      { name: 'Vite', license: 'MIT', pkg: 'vite' },
-      { name: '@vitejs/plugin-react', license: 'MIT', pkg: '@vitejs/plugin-react' },
-      { name: '@tailwindcss/vite', license: 'MIT', pkg: '@tailwindcss/vite' },
-      { name: 'vite-plugin-wasm', license: 'MIT', pkg: 'vite-plugin-wasm' },
-      { name: 'vite-plugin-top-level-await', license: 'MIT', pkg: 'vite-plugin-top-level-await' },
-      { name: 'TypeScript', license: 'Apache-2.0', pkg: 'typescript' },
-      { name: 'tsx', license: 'MIT', pkg: 'tsx' },
-      { name: 'ESLint', license: 'MIT', pkg: 'eslint' },
-      { name: 'Prettier', license: 'MIT', pkg: 'prettier' },
-      { name: 'Husky', license: 'MIT', pkg: 'husky' },
-      { name: 'lint-staged', license: 'MIT', pkg: 'lint-staged' },
-      { name: 'vite-plugin-pwa', license: 'MIT', pkg: 'vite-plugin-pwa' },
+      { name: 'Vite', pkg: 'vite' },
+      { name: '@vitejs/plugin-react', pkg: '@vitejs/plugin-react' },
+      { name: '@tailwindcss/vite', pkg: '@tailwindcss/vite' },
+      { name: 'vite-plugin-wasm', pkg: 'vite-plugin-wasm' },
+      { name: 'vite-plugin-top-level-await', pkg: 'vite-plugin-top-level-await' },
+      { name: 'TypeScript', pkg: 'typescript' },
+      { name: 'tsx', pkg: 'tsx' },
+      { name: 'ESLint', pkg: 'eslint' },
+      { name: 'Prettier', pkg: 'prettier' },
+      { name: 'Husky', pkg: 'husky' },
+      { name: 'lint-staged', pkg: 'lint-staged' },
+      { name: 'vite-plugin-pwa', pkg: 'vite-plugin-pwa' },
     ],
   },
   {
     category: SBOM_CATEGORIES[10],
     components: [
-      { name: 'Vitest', license: 'MIT', pkg: 'vitest' },
-      { name: '@vitest/coverage-v8', license: 'MIT', pkg: '@vitest/coverage-v8' },
-      { name: 'jsdom', license: 'MIT', pkg: 'jsdom' },
-      { name: 'Playwright', license: 'Apache-2.0', pkg: '@playwright/test' },
-      { name: 'Testing Library (React)', license: 'MIT', pkg: '@testing-library/react' },
-      { name: 'Testing Library (jest-dom)', license: 'MIT', pkg: '@testing-library/jest-dom' },
-      { name: 'Testing Library (user-event)', license: 'MIT', pkg: '@testing-library/user-event' },
-      { name: 'axe-playwright (Accessibility)', license: 'MIT', pkg: 'axe-playwright' },
-      { name: 'ajv (JSON Schema, test cross-check)', license: 'MIT', pkg: 'ajv' },
+      { name: 'Vitest', pkg: 'vitest' },
+      { name: '@vitest/coverage-v8', pkg: '@vitest/coverage-v8' },
+      { name: 'jsdom', pkg: 'jsdom' },
+      { name: 'Playwright', pkg: '@playwright/test' },
+      { name: 'Testing Library (React)', pkg: '@testing-library/react' },
+      { name: 'Testing Library (jest-dom)', pkg: '@testing-library/jest-dom' },
+      { name: 'Testing Library (user-event)', pkg: '@testing-library/user-event' },
+      { name: 'axe-playwright (Accessibility)', pkg: 'axe-playwright' },
+      { name: 'ajv (JSON Schema, test cross-check)', pkg: 'ajv' },
     ],
   },
   {
     category: SBOM_CATEGORIES[3],
     note: '(softhsmrustv3 engine + KMIP control plane bundles)',
     components: [
-      { name: 'wasm-bindgen', license: RC, crate: 'wasm-bindgen' },
-      { name: 'js-sys', license: RC, crate: 'js-sys' },
+      { name: 'wasm-bindgen', crate: 'wasm-bindgen' },
+      { name: 'js-sys', crate: 'js-sys' },
       {
         name: 'console_error_panic_hook',
-        license: 'Apache-2.0 / MIT',
         crate: 'console_error_panic_hook',
       },
-      { name: 'getrandom', license: RC, crate: 'getrandom' },
+      { name: 'getrandom', crate: 'getrandom' },
     ],
   },
   {
     category: SBOM_CATEGORIES[4],
     note: '(softhsmrustv3 engine + KMIP control plane bundles)',
     components: [
-      { name: 'fips204 (ML-DSA)', license: RC, crate: 'fips204' },
-      { name: 'fips205 (SLH-DSA)', license: RC, crate: 'fips205' },
-      { name: 'ml-kem', license: AM, crate: 'ml-kem' },
-      { name: 'frodo-kem', license: AM, crate: 'frodo-kem' },
+      { name: 'fips204 (ML-DSA)', crate: 'fips204' },
+      { name: 'fips205 (SLH-DSA)', crate: 'fips205' },
+      { name: 'ml-kem', crate: 'ml-kem' },
+      { name: 'frodo-kem', crate: 'frodo-kem' },
       {
         name: 'classic-mceliece-multi (fork, all 10 parameter sets)',
-        license: 'MIT',
         crate: 'classic-mceliece-multi',
       },
-      { name: 'xmss (XMSS / XMSS-MT)', license: RC, crate: 'xmss' },
-      { name: 'hbs-lms (LMS/HSS)', license: 'Apache-2.0', crate: 'hbs-lms' },
-      { name: 'ed25519-dalek', license: 'BSD-3-Clause', crate: 'ed25519-dalek' },
-      { name: 'ed448-goldilocks', license: AM, crate: 'ed448-goldilocks' },
-      { name: 'x448', license: AM, crate: 'x448' },
-      { name: 'rsa', license: RC, crate: 'rsa' },
-      { name: 'k256 (secp256k1)', license: AM, crate: 'k256' },
-      { name: 'p256 / p384 / p521', license: AM, crate: ['p256', 'p384', 'p521'] },
-      { name: 'ecdsa', license: AM, crate: 'ecdsa' },
+      { name: 'xmss (XMSS / XMSS-MT)', crate: 'xmss' },
+      { name: 'hbs-lms (LMS/HSS)', crate: 'hbs-lms' },
+      { name: 'ed25519-dalek', crate: 'ed25519-dalek' },
+      { name: 'ed448-goldilocks', crate: 'ed448-goldilocks' },
+      { name: 'x448', crate: 'x448' },
+      { name: 'rsa', crate: 'rsa' },
+      { name: 'k256 (secp256k1)', crate: 'k256' },
+      { name: 'p256 / p384 / p521', crate: ['p256', 'p384', 'p521'] },
+      { name: 'ecdsa', crate: 'ecdsa' },
       {
         name: 'aes / aes-gcm / aes-kw / ctr / cmac',
-        license: 'MIT / Apache-2.0',
         crate: ['aes', 'aes-gcm', 'aes-kw', 'ctr', 'cmac'],
       },
-      { name: 'cbc', license: RC, crate: 'cbc' },
-      { name: 'xts-mode', license: 'MIT', crate: 'xts-mode' },
-      { name: 'chacha20poly1305', license: AM, crate: 'chacha20poly1305' },
-      { name: 'sha2', license: RC, crate: 'sha2' },
-      { name: 'sha3', license: RC, crate: 'sha3' },
-      { name: 'tiny-keccak (Keccak-256)', license: 'CC0-1.0', crate: 'tiny-keccak' },
-      { name: 'hmac / hkdf / pbkdf2', license: RC, crate: ['hmac', 'hkdf', 'pbkdf2'] },
-      { name: 'md-5 / sha1 / ripemd', license: RC, crate: ['md-5', 'sha1', 'ripemd'] },
-      { name: 'sp800-185 (cSHAKE / KMAC)', license: 'MIT', crate: 'sp800-185' },
-      { name: 'pkcs8 / spki', license: AM, crate: ['pkcs8', 'spki'] },
-      { name: 'signature', license: AM, crate: 'signature' },
-      { name: 'rand', license: RC, crate: 'rand' },
-      { name: 'tinyvec', license: 'Zlib / Apache-2.0 / MIT', crate: 'tinyvec' },
+      { name: 'cbc', crate: 'cbc' },
+      { name: 'xts-mode', crate: 'xts-mode' },
+      { name: 'chacha20poly1305', crate: 'chacha20poly1305' },
+      { name: 'sha2', crate: 'sha2' },
+      { name: 'sha3', crate: 'sha3' },
+      { name: 'tiny-keccak (Keccak-256)', crate: 'tiny-keccak' },
+      { name: 'hmac / hkdf / pbkdf2', crate: ['hmac', 'hkdf', 'pbkdf2'] },
+      { name: 'md-5 / sha1 / ripemd', crate: ['md-5', 'sha1', 'ripemd'] },
+      { name: 'sp800-185 (cSHAKE / KMAC)', crate: 'sp800-185' },
+      { name: 'pkcs8 / spki', crate: ['pkcs8', 'spki'] },
+      { name: 'signature', crate: 'signature' },
+      { name: 'rand', crate: 'rand' },
+      { name: 'tinyvec', crate: 'tinyvec' },
       {
         name: 'RustCrypto traits and primitives (supporting)',
-        license: 'MIT / Apache-2.0 / BSD-3-Clause',
         crates: [
           'aead',
           'block-buffer',
@@ -469,7 +508,6 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       },
       {
         name: 'Curve and big-integer arithmetic (supporting)',
-        license: 'MIT / Apache-2.0 / BSD-3-Clause',
         crates: [
           'crypto-bigint',
           'curve25519-dalek',
@@ -486,7 +524,6 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       },
       {
         name: 'ASN.1 and X.509 parsing (supporting, KMIP bundle)',
-        license: 'MIT / Apache-2.0',
         crates: [
           'asn1-rs',
           'const-oid',
@@ -500,7 +537,6 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       },
       {
         name: 'Serialization and utilities (supporting)',
-        license: 'MIT / Apache-2.0 / Unlicense',
         crates: [
           'byteorder',
           'bytes',

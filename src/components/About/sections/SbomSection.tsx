@@ -8,6 +8,7 @@ import {
   SBOM_GROUPS,
   sbomGroupMembers,
   sbomHref,
+  sbomLicense,
   sbomVersionLabel,
   type SbomComponent,
 } from '@/data/sbomComponents'
@@ -37,7 +38,7 @@ function SbomRow({ component }: { component: SbomComponent }) {
         <span className="text-muted-foreground">{component.name}</span>
       )}
       <div className="flex flex-col items-end text-right max-w-[60%]">
-        <span className="text-xs text-muted-foreground/40 font-mono">{component.license}</span>
+        <span className="text-xs text-muted-foreground/40 font-mono">{sbomLicense(component)}</span>
         <span className="text-xs text-muted-foreground">{sbomVersionLabel(component)}</span>
       </div>
       {component.note && (

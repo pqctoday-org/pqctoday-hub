@@ -52,6 +52,7 @@
     "gen:sbom-versions": "tsx scripts/gen-sbom-versions.ts",
     "gen:sbom-versions:check": "tsx scripts/gen-sbom-versions.ts --check",
     "check:sbom-production": "tsx scripts/sbom/check-production.ts",
+    "sbom:refresh-crate-licenses": "tsx scripts/sbom/refresh-crate-licenses.ts",
     "predev": "npm run gen:timeline-facts && npm run gen:landing-counts && npm run gen:sbom-versions && npm run generate:role-board-content && npm run generate:data-filenames && npm run sync:pyodide-runtime && npm run sync:pyodide-shims && npm run build:monaco-worker && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
     "prebuild": "npm run gen:timeline-facts && npm run gen:landing-counts && npm run gen:sbom-versions && npm run sync:pyodide-runtime && npm run sync:pyodide-shims && npm run build:monaco-worker",
     "dev": "vite",

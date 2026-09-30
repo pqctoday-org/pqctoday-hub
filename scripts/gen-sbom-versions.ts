@@ -13,10 +13,37 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { format, resolveConfig } from 'prettier'
 import { derive } from './sbom/derive'
-import { SBOM_EXCLUDED, SBOM_GROUPS } from '../src/data/sbomComponents'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'src', 'data', 'sbomVersions.generated.ts')
+
+// The curated list imports the generated file, and the generator imports the curated list.
+// If a new export is added to the generated file, the old committed copy lacks it and the
+// import below would fail before the generator could write the new one. Break that cycle by
+// making sure every export the curated list needs exists (empty is fine) before importing it.
+const EXPORTS = [
+  'SBOM_PACKAGE_VERSIONS',
+  'SBOM_PACKAGE_LICENSES',
+  'SBOM_CRATE_LICENSES',
+  'SBOM_LOCK_VERSIONS',
+  'SBOM_CRATES',
+  'SBOM_EMBEDDED_VERSIONS',
+  'SBOM_BUILDS',
+]
+let existing = ''
+try {
+  existing = readFileSync(OUT, 'utf8')
+} catch {
+  /* first run */
+}
+const missing = EXPORTS.filter((e) => !existing.includes(`export const ${e}`))
+if (missing.length) {
+  writeFileSync(
+    OUT,
+    existing + missing.map((e) => `\nexport const ${e}: never = {} as never\n`).join('')
+  )
+}
+const { SBOM_EXCLUDED, SBOM_GROUPS } = await import('../src/data/sbomComponents')
 
 const { content: raw, problems } = derive(ROOT, { groups: SBOM_GROUPS, excluded: SBOM_EXCLUDED })
 // The generated file is prettier-checked by `format:check`; emit it already formatted so

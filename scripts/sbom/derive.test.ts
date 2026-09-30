@@ -105,8 +105,27 @@ function makeTree(): Tree {
       unscannable: {},
     })
   )
-  write('package-lock.json', JSON.stringify({ packages: {} }))
+  write(
+    'package-lock.json',
+    JSON.stringify({
+      packages: {
+        'node_modules/react': { version: '19.3.0', license: 'MIT' },
+        'node_modules/three': { version: '0.185.1', license: 'MIT' },
+        'node_modules/vitest': { version: '5.0.1', license: '(MIT OR Apache-2.0)' },
+      },
+    })
+  )
   write('node_modules/pyodide/pyodide-lock.json', JSON.stringify({ info: { python: '3.13.2' } }))
+  write(
+    'src/data/sbomCrateLicenses.json',
+    JSON.stringify({
+      crates: {
+        aes: { '0.8.4': 'MIT OR Apache-2.0' },
+        serde: { '1.0.228': 'MIT OR Apache-2.0' },
+        sha2: { '0.10.9': 'MIT OR Apache-2.0' },
+      },
+    })
+  )
   write('public/fonts/inter.woff2', FONT)
   write(
     'src/data/sbomAssets.json',
@@ -126,8 +145,8 @@ function makeTree(): Tree {
       {
         category: SBOM_CATEGORIES[0],
         components: [
-          { name: 'React', license: 'MIT', pkg: 'react' },
-          { name: 'three', license: 'MIT', pkg: 'three' },
+          { name: 'React', pkg: 'react' },
+          { name: 'three', pkg: 'three' },
         ],
       },
       {
@@ -145,14 +164,14 @@ function makeTree(): Tree {
       {
         category: SBOM_CATEGORIES[4],
         components: [
-          { name: 'sha2', license: 'MIT', crate: 'sha2' },
-          { name: 'fips204', license: 'MIT', crate: 'fips204' },
-          { name: 'supporting', license: 'MIT', crates: ['aes', 'serde'] },
+          { name: 'sha2', crate: 'sha2' },
+          { name: 'fips204', crate: 'fips204' },
+          { name: 'supporting', crates: ['aes', 'serde'] },
         ],
       },
       {
         category: SBOM_CATEGORIES[10],
-        components: [{ name: 'Vitest', license: 'MIT', pkg: 'vitest' }],
+        components: [{ name: 'Vitest', pkg: 'vitest' }],
       },
     ],
   }
@@ -191,6 +210,42 @@ describe('SBOM gate', () => {
     expect(p).toMatch(/react: both listed and in SBOM_EXCLUDED/)
   })
 
+  it('takes npm licenses from the lockfile and fails when one is missing', () => {
+    const t = makeTree()
+    expect(derive(t.root, t.curated).content).toContain("vitest: '(MIT OR Apache-2.0)'")
+    t.write(
+      'package-lock.json',
+      JSON.stringify({
+        packages: {
+          'node_modules/react': { version: '19.3.0' },
+          'node_modules/three': { version: '0.185.1', license: 'MIT' },
+          'node_modules/vitest': { version: '5.0.1', license: 'MIT' },
+        },
+      })
+    )
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /react: no license in package-lock\.json/
+    )
+  })
+
+  it('takes npm licenses from the lockfile and fails when one is missing', () => {
+    const t = makeTree()
+    expect(derive(t.root, t.curated).content).toContain("vitest: '(MIT OR Apache-2.0)'")
+    t.write(
+      'package-lock.json',
+      JSON.stringify({
+        packages: {
+          'node_modules/react': { version: '19.3.0' },
+          'node_modules/three': { version: '0.185.1', license: 'MIT' },
+          'node_modules/vitest': { version: '5.0.1', license: 'MIT' },
+        },
+      })
+    )
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /react: no license in package-lock\.json/
+    )
+  })
+
   it('fails when a listed runtime package is imported by no shipped code', () => {
     const t = makeTree()
     t.write('src/app.tsx', "import React from 'react'\n")
@@ -210,10 +265,39 @@ describe('SBOM gate', () => {
     const t = makeTree()
     t.curated.groups[2].components = [
       ...t.curated.groups[2].components,
-      { name: 'ml-dsa', license: 'MIT', crate: 'ml-dsa' },
+      { name: 'ml-dsa', crate: 'ml-dsa' },
     ]
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
       /crate ml-dsa: "ml-dsa" lists it but it is not in any shipped wasm bundle/
+    )
+  })
+
+  it('fails when a compiled-in crate has no reviewed license entry, or an entry is stale', () => {
+    const t = makeTree()
+    t.write(
+      'src/data/sbomCrateLicenses.json',
+      JSON.stringify({ crates: { aes: { '0.8.4': 'MIT' } } })
+    )
+    const p = derive(t.root, t.curated).problems.join('\n')
+    expect(p).toMatch(
+      /crate sha2@0\.10\.9: no license recorded in src\/data\/sbomCrateLicenses\.json/
+    )
+    const t2 = makeTree()
+    t2.write(
+      'src/data/sbomCrateLicenses.json',
+      JSON.stringify({
+        crates: {
+          aes: { '0.8.4': 'MIT' },
+          serde: { '1.0.228': 'MIT' },
+          sha2: { '0.10.9': 'MIT', '0.9.0': 'MIT' },
+          gone: { '1.0.0': 'MIT' },
+        },
+      })
+    )
+    const p2 = derive(t2.root, t2.curated).problems.join('\n')
+    expect(p2).toMatch(/crate gone: in sbomCrateLicenses\.json but not in any shipped bundle/)
+    expect(p2).toMatch(
+      /crate sha2@0\.9\.0: in sbomCrateLicenses\.json but not in any shipped bundle/
     )
   })
 
