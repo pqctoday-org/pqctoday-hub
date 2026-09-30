@@ -158,6 +158,7 @@ function makeTree(): Tree {
         {
           key: 'chat',
           id: 'Chat-1-MLC',
+          role: "chat model weights, the assistant's default local model",
           sourceUrl: 'https://hf.example/org/Chat-1-MLC',
           license: 'Apache-2.0',
           revisionChecked: 'abc',
@@ -165,6 +166,7 @@ function makeTree(): Tree {
         {
           key: 'lib',
           id: 'Chat-1.wasm',
+          role: 'compiled model library for the default chat model',
           sourceUrl: 'https://libs.example/v1/base/Chat-1.wasm',
           license: 'not declared',
           revisionChecked: null,
@@ -172,6 +174,7 @@ function makeTree(): Tree {
         {
           key: 'embed',
           id: 'org/embed-1',
+          role: 'text embeddings',
           sourceUrl: 'https://huggingface.co/org/embed-1',
           license: 'MIT',
           revisionChecked: 'def',
@@ -553,9 +556,127 @@ describe('SBOM gate', () => {
     const t = makeTree()
     t.write(
       'src/services/chat/modelConfig.ts',
-      "export const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
+      "export const DEFAULT_LOCAL_MODEL = 'Chat-1-MLC'\nexport const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
     )
     expect(derive(t.root, t.curated).problems).toEqual([])
+  })
+
+  // The default-model rule: a role says "default" iff the record is the weights or library of
+  // DEFAULT_LOCAL_MODEL. On 2026-09-30 the code's default changed and the records kept the old one.
+  describe('default local model', () => {
+    const TWO_MODELS =
+      "export const DEFAULT_LOCAL_MODEL = 'Chat-2-MLC'\nexport const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC', DEFAULT_LOCAL_MODEL] as const\n"
+    // a tree that ships two chat models, Chat-1 (the fixture's) and Chat-2, each with weights + library
+    function twoModelTree(defaultRoleOn: 'chat-1' | 'chat-2' | 'none') {
+      const t = makeTree()
+      t.write('src/services/chat/modelConfig.ts', TWO_MODELS)
+      t.write(
+        'node_modules/@mlc-ai/web-llm/lib/index.js',
+        'const modelLibURLPrefix = "https://libs.example/"; const modelVersion = "v1/base"; ' +
+          '[{ model: "https://hf.example/org/Chat-1-MLC", model_id: "Chat-1-MLC", ' +
+          'model_lib: modelLibURLPrefix + modelVersion + "/Chat-1.wasm" }, ' +
+          '{ model: "https://hf.example/org/Chat-2-MLC", model_id: "Chat-2-MLC", ' +
+          'model_lib: modelLibURLPrefix + modelVersion + "/Chat-2.wasm" }]'
+      )
+      const rec = (n: 1 | 2, kind: 'weights' | 'library') => ({
+        key: `chat${n}-${kind}`,
+        id: kind === 'weights' ? `Chat-${n}-MLC` : `Chat-${n}.wasm`,
+        role:
+          (kind === 'weights' ? 'chat model weights' : 'compiled model library') +
+          (defaultRoleOn === `chat-${n}` ? ', the default' : ''),
+        sourceUrl:
+          kind === 'weights'
+            ? `https://hf.example/org/Chat-${n}-MLC`
+            : `https://libs.example/v1/base/Chat-${n}.wasm`,
+        license: 'Apache-2.0',
+        revisionChecked: null,
+      })
+      t.write(
+        'src/data/sbomModels.json',
+        JSON.stringify({
+          fetchedAt: '2026-09-30',
+          models: [
+            rec(1, 'weights'),
+            rec(1, 'library'),
+            rec(2, 'weights'),
+            rec(2, 'library'),
+            {
+              key: 'embed',
+              id: 'org/embed-1',
+              role: 'text embeddings',
+              sourceUrl: 'https://huggingface.co/org/embed-1',
+              license: 'MIT',
+              revisionChecked: null,
+            },
+          ],
+        })
+      )
+      return t
+    }
+
+    it('passes when exactly the default model weights and library are marked default', () => {
+      const t = twoModelTree('chat-2')
+      expect(derive(t.root, t.curated).problems).toEqual([])
+    })
+
+    it('fails when the default model in code has no record marked default', () => {
+      const t = twoModelTree('none')
+      const p = derive(t.root, t.curated).problems.join('\n')
+      expect(p).toMatch(
+        /chat2-weights \(Chat-2-MLC\): it belongs to Chat-2-MLC, the DEFAULT_LOCAL_MODEL in modelConfig\.ts, but its role .* does not say "default"/
+      )
+      expect(p).toMatch(/chat2-library \(Chat-2\.wasm\): it belongs to Chat-2-MLC/)
+    })
+
+    it('fails when a model that is not the default is marked default', () => {
+      // the code default moved to Chat-2; the records still call Chat-1 the default
+      const t = twoModelTree('chat-1')
+      const p = derive(t.root, t.curated).problems.join('\n')
+      expect(p).toMatch(
+        /chat1-weights \(Chat-1-MLC\): role "chat model weights, the default" in sbomModels\.json says "default", but DEFAULT_LOCAL_MODEL in modelConfig\.ts is Chat-2-MLC/
+      )
+      expect(p).toMatch(/chat1-library \(Chat-1\.wasm\): role .* says "default"/)
+      expect(p).toMatch(/chat2-weights \(Chat-2-MLC\): it belongs to Chat-2-MLC/)
+    })
+
+    it('fails when DEFAULT_LOCAL_MODEL is missing or names something it cannot resolve', () => {
+      const t = makeTree()
+      t.write(
+        'src/services/chat/modelConfig.ts',
+        "export const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
+      )
+      expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+        /DEFAULT_LOCAL_MODEL is missing or names something/
+      )
+      const t2 = makeTree()
+      t2.write(
+        'src/services/chat/modelConfig.ts',
+        "export const DEFAULT_LOCAL_MODEL = UNKNOWN_CONSTANT\nexport const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
+      )
+      expect(derive(t2.root, t2.curated).problems.join('\n')).toMatch(
+        /DEFAULT_LOCAL_MODEL is missing or names something/
+      )
+    })
+
+    it('resolves DEFAULT_LOCAL_MODEL through an exported constant', () => {
+      const t = makeTree()
+      t.write(
+        'src/services/chat/modelConfig.ts',
+        "export const CHAT_ONE = 'Chat-1-MLC'\nexport const DEFAULT_LOCAL_MODEL = CHAT_ONE\nexport const SUPPORTED_LOCAL_MODELS = [DEFAULT_LOCAL_MODEL] as const\n"
+      )
+      expect(derive(t.root, t.curated).problems).toEqual([])
+    })
+
+    it('fails when DEFAULT_LOCAL_MODEL is not one of SUPPORTED_LOCAL_MODELS', () => {
+      const t = makeTree()
+      t.write(
+        'src/services/chat/modelConfig.ts',
+        "export const DEFAULT_LOCAL_MODEL = 'Chat-9-MLC'\nexport const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
+      )
+      expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+        /Chat-9-MLC: DEFAULT_LOCAL_MODEL in modelConfig\.ts is not in SUPPORTED_LOCAL_MODELS/
+      )
+    })
   })
 
   it('fails when a model row names a record that does not exist', () => {

@@ -457,6 +457,7 @@ export function derive(root: string, curated: Curated): Derived {
     models: {
       key: string
       id: string
+      role?: string
       sourceUrl: string
       license: string
       revisionChecked: string | null
@@ -477,6 +478,11 @@ export function derive(root: string, curated: Curated): Derived {
     const consts = new Map(
       [...cfg.matchAll(/export const (\w+)\s*=\s*'([^']+)'/g)].map((m) => [m[1], m[2]] as const)
     )
+    // a constant may also alias an earlier one (QWEN3_LOCAL_MODEL = DEFAULT_LOCAL_MODEL)
+    for (const m of cfg.matchAll(/export const (\w+)\s*=\s*(\w+)\s*(?:as const)?\s*;?\s*$/gm)) {
+      const target = consts.get(m[2])
+      if (target !== undefined) consts.set(m[1], target)
+    }
     const list = /export const SUPPORTED_LOCAL_MODELS\s*=\s*\[([^\]]*)\]/.exec(cfg)
     const entries = (list?.[1] ?? '')
       .split(',')
@@ -489,6 +495,20 @@ export function derive(root: string, curated: Curated): Derived {
       bad(
         'modelConfig.ts: SUPPORTED_LOCAL_MODELS is missing or names something this check cannot resolve'
       )
+    // DEFAULT_LOCAL_MODEL is a string literal or an exported constant above it, like the list.
+    const defRhs = /export const DEFAULT_LOCAL_MODEL\s*=\s*([^\n;]+)/
+      .exec(cfg)?.[1]
+      .replace(/\/\/.*$/, '')
+      .replace(/\s+as const\s*$/, '')
+      .trim()
+    const defaultId = defRhs ? (/^'([^']+)'$/.exec(defRhs)?.[1] ?? consts.get(defRhs)) : undefined
+    if (!defaultId)
+      bad(
+        'modelConfig.ts: DEFAULT_LOCAL_MODEL is missing or names something this check cannot resolve'
+      )
+    else if (!chatIds.includes(defaultId))
+      bad(`${defaultId}: DEFAULT_LOCAL_MODEL in modelConfig.ts is not in SUPPORTED_LOCAL_MODELS`)
+    const defaultUrls = new Set<string>() // sourceUrls of the default model's weights and library
     const lib = readFileSync(webllmPath, 'utf8')
     const prefix = /modelLibURLPrefix\s*=\s*"([^"]+)"/.exec(lib)?.[1]
     const version = /modelVersion\s*=\s*"([^"]+)"/.exec(lib)?.[1]
@@ -503,6 +523,10 @@ export function derive(root: string, curated: Curated): Derived {
       }
       shippedModelUrls.set(m[1], `${id} (weights)`)
       shippedModelUrls.set(`${prefix}${version}${m[2]}`, `${id} (model library)`)
+      if (id === defaultId) {
+        defaultUrls.add(m[1])
+        defaultUrls.add(`${prefix}${version}${m[2]}`)
+      }
     }
     const embed = (JSON.parse(readFileSync(metaPath, 'utf8')) as { model?: string }).model
     if (embed) shippedModelUrls.set(`https://huggingface.co/${embed}`, `${embed} (embeddings)`)
@@ -514,6 +538,22 @@ export function derive(root: string, curated: Curated): Derived {
       if (!shippedModelUrls.has(m.sourceUrl))
         bad(`${m.key}: recorded in sbomModels.json but no shipped code names ${m.sourceUrl}`)
       if (!m.license.trim()) bad(`${m.key}: no license stated in sbomModels.json`)
+      // The free-text `role` is where the page's data says which model is "the default". The
+      // rule: a record's role contains the word "default" if and only if the record is the
+      // weights or the compiled library of DEFAULT_LOCAL_MODEL (matched by sourceUrl, the
+      // same identity used above). Nothing else may say "default" in its role.
+      if (defaultId) {
+        const marked = /\bdefault\b/i.test(m.role ?? '')
+        const isDefault = defaultUrls.has(m.sourceUrl)
+        if (isDefault && !marked)
+          bad(
+            `${m.key} (${m.id}): it belongs to ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its role "${m.role ?? ''}" in sbomModels.json does not say "default"`
+          )
+        else if (!isDefault && marked)
+          bad(
+            `${m.key} (${m.id}): role "${m.role}" in sbomModels.json says "default", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}`
+          )
+      }
     }
   }
 
