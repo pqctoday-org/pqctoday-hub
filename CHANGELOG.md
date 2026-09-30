@@ -36,6 +36,8 @@ Every item's panel now has its own Share button, so you can share a document, th
 ### Added
 
 - **Share an item from its own panel** [view:/library] [view:/threats] [view:/algorithms] [view:/timeline] [view:/migrate] [view:/patents] [view:/leaders] [view:/compliance] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: every document, threat, algorithm, protocol, timeline event, product, vendor roadmap, patent, Community profile, framework and certification record now has a Share button right in its panel or sheet, next to Close. It shares a clean link to that one item (without your filters or sort), with the same options as the main Share button; before, the open panel covered the Share button so nothing could be shared.
+- **Share an industry use case or an open comparison** [view:/algorithms] [persona:architect] [persona:executive] [persona:developer]: each use case on the Industry Landscape tab has its own Share button, and a shared Transition-tab comparison now reopens with the comparison panel showing (or stays closed if you closed it).
+- **More links work on phones** [view:/migrate] [view:/patents] [persona:ops] [persona:researcher]: a Vendor-risk link to a product opens that product on a phone, and Patents links filtered by inventor or a list of patents apply the same filter on a phone, with removable chips.
 
 ### Fixed
 
@@ -43,6 +45,8 @@ Every item's panel now has its own Share button, so you can share a document, th
 - **Migrate shares the product you are looking at** [view:/migrate] [persona:ops] [persona:architect]: with a migration plan started, Share used to send the plan even while a specific product or vendor was open; it now shares the open item.
 - **Timeline event pop-up has a Close button** [view:/timeline] [persona:grc] [persona:researcher]: the event details pop-up now has a visible Close button, and keyboard focus stays inside open panels across the Library, Algorithms and Patents pages.
 - **On phones, document and "try it" panels are no longer hidden under the header** [persona:developer] [persona:curious]: their Close and Share buttons were covered by the top header on phones.
+- **Escape closes only the panel on top** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: with one panel open over another (for example a revision history over a framework, or search over a document), Escape now closes just the top one instead of both, and the page behind an open panel no longer scrolls.
+- **Community lists each person once** [view:/leaders] [persona:researcher] [persona:executive]: 14 people who appeared twice (for example Tanja Lange and Oded Regev) now have a single profile that carries all of their references; old links to the duplicate profiles open the kept one and say so.
 
 ## [4.133.0] - 2026-09-29
 
