@@ -183,7 +183,6 @@ export const ShareButton = ({
       {showMenu &&
         (portal && anchor ? (
           createPortal(
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- not a control: only stops menu clicks reaching the host overlay's outside-click handler
             <div
               role="presentation"
               data-no-focus-lock="true"

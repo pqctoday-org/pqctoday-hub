@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /// <reference types="vitest" />
 import { defineConfig, configDefaults } from 'vitest/config'
+import { bundledPackagesPlugin } from './scripts/sbom/vite-plugin-bundle-packages'
 import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
@@ -201,6 +202,7 @@ function coiGuardHtml(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    bundledPackagesPlugin(process.cwd()),
     coiGuardHtml(),
     buildTimestampPlugin(),
     precacheShellAllowlist(),

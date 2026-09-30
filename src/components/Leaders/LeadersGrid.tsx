@@ -293,7 +293,6 @@ export const LeadersGrid = () => {
     const plan = planLeaderDeepLink(leadersData, searchParams, deprecatedLeaderSuccessors)
     if (!plan) return
     if (plan.kind === 'not-found') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL-driven notice
       setDeepLinkNotice({
         kind: 'not-found',
         message: `"${plan.name}" was not found in the Community list.`,

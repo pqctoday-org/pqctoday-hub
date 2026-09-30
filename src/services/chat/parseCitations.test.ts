@@ -25,6 +25,22 @@ What about ML-KEM-1024?
     ])
   })
 
+  it('accepts harmless fence casing, spacing, and CRLF differences', () => {
+    const input =
+      'Grounded answer.\r\n\r\n``` CITATIONS \r\n' +
+      '[{"claimExcerpt":"Grounded answer.","evidenceExcerpt":"Grounded evidence.","chunkId":"chunk-a"}]\r\n```\r\n'
+    expect(parseCitations(input)).toEqual({
+      cleanContent: 'Grounded answer.',
+      citations: [
+        {
+          claimExcerpt: 'Grounded answer.',
+          evidenceExcerpt: 'Grounded evidence.',
+          chunkId: 'chunk-a',
+        },
+      ],
+    })
+  })
+
   it('extracts multiple citations', () => {
     const input = `Answer text.
 

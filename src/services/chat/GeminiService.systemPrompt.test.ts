@@ -40,9 +40,10 @@ describe('buildSystemPrompt', () => {
       expect(result).toContain('Answer based ONLY on the provided context')
     })
 
-    it('includes followups instruction with the ```followups code fence format', () => {
+    it('does not spend model tokens generating discarded follow-ups', () => {
       const result = buildSystemPrompt([])
-      expect(result).toContain('```followups')
+      expect(result).not.toContain('```followups')
+      expect(result).toContain('Do not generate follow-up questions')
     })
 
     it('includes deep-link patterns', () => {

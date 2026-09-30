@@ -488,7 +488,9 @@ export async function* streamResponse(
   const totalChars = safeContextWindow * 4
   const ragCharBudget = Math.round(totalChars * 0.45)
   const maxHistoryMsgs = Math.min(6, Math.max(2, Math.floor(safeContextWindow / 2048)))
-  const maxResponseTokens = Math.min(2048, Math.round(safeContextWindow * 0.2))
+  // Browser-local 9B generation dominates latency. A few grounded bullets and
+  // their evidence map fit within this tighter budget.
+  const maxResponseTokens = Math.min(512, Math.round(safeContextWindow * 0.125))
   const maxInventory = Math.min(25, Math.max(8, Math.floor(safeContextWindow / 400)))
 
   // Priority-sort chunks so the most authoritative and linkable survive truncation.

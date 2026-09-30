@@ -2,21 +2,32 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { Info, Link2, ChevronDown } from 'lucide-react'
+import { Info, Link2, ChevronDown, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SBOM_GROUPS, sbomVersionLabel, type SbomComponent } from '@/data/sbomComponents'
+import {
+  SBOM_GROUPS,
+  sbomGroupMembers,
+  sbomHref,
+  sbomLicense,
+  sbomVersionLabel,
+  type SbomComponent,
+} from '@/data/sbomComponents'
+import { SBOM_BUNDLED_TRANSITIVE } from '@/data/sbomVersions.generated'
 
 // The list itself lives in src/data/sbomComponents.ts (which components, under
-// which heading, with which license/link); the version column is derived from
-// package.json at build time via src/data/sbomVersions.generated.ts. This file
-// is only the accordion chrome around that data.
+// which heading, with which license/link); the version column is derived at build
+// time from package.json and from the shipped WASM binaries via
+// src/data/sbomVersions.generated.ts. This file is only the accordion chrome
+// around that data.
 
 function SbomRow({ component }: { component: SbomComponent }) {
+  const href = sbomHref(component)
+  const members = sbomGroupMembers(component)
   return (
     <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
-      {component.href ? (
+      {href ? (
         <a
-          href={component.href}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline flex items-center gap-1"
@@ -27,10 +38,19 @@ function SbomRow({ component }: { component: SbomComponent }) {
       ) : (
         <span className="text-muted-foreground">{component.name}</span>
       )}
-      <div className="flex flex-col items-end shrink-0">
-        <span className="text-xs text-muted-foreground/40 font-mono">{component.license}</span>
+      <div className="flex flex-col items-end text-right max-w-[60%]">
+        <span className="text-xs text-muted-foreground/40 font-mono">{sbomLicense(component)}</span>
         <span className="text-xs text-muted-foreground">{sbomVersionLabel(component)}</span>
       </div>
+      {component.note && (
+        <p className="basis-full text-xs text-muted-foreground/80">{component.note}</p>
+      )}
+      {members.length > 0 && (
+        <details className="basis-full text-xs text-muted-foreground">
+          <summary className="cursor-pointer">Show the {members.length} crates</summary>
+          <p className="mt-1 font-mono break-words">{members.join(' · ')}</p>
+        </details>
+      )}
     </li>
   )
 }
@@ -91,6 +111,31 @@ export function SbomSection() {
                 </div>
               ))}
             </div>
+            <div className="px-3 md:px-6 pb-3 space-y-2 text-sm">
+              <p>
+                <span className="font-semibold">
+                  {SBOM_BUNDLED_TRANSITIVE.count} more npm packages
+                </span>{' '}
+                are bundled into the site because the packages above depend on them. By license:{' '}
+                {SBOM_BUNDLED_TRANSITIVE.licenses
+                  .map(([license, n]) => `${license} ${n}`)
+                  .join(' · ')}
+                .
+              </p>
+              <a
+                href="/data/pqctoday-sbom.cdx.json"
+                download
+                className="inline-flex items-center gap-1.5 text-primary hover:underline"
+              >
+                <Download size={14} aria-hidden="true" />
+                Download the complete SBOM (CycloneDX JSON, every package and component)
+              </a>
+            </div>
+            <p className="px-3 md:px-6 pb-3 text-xs text-muted-foreground">
+              Versions are read from package.json and from the WASM binaries this site serves; where
+              a binary embeds no release number the entry shows the source commit it was built from
+              (or says the commit is not recorded) instead of a release.
+            </p>
           </motion.div>
         )}
       </AnimatePresence>

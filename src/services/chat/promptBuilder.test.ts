@@ -62,10 +62,10 @@ describe('buildLocalSystemPrompt', () => {
     )
   })
 
-  it('does not invite filling a corpus gap with partial or remembered facts', () => {
+  it('answers partial corpus coverage without inviting remembered facts', () => {
     const result = buildLocalSystemPrompt([])
-    expect(result).toMatch(/output exactly one sentence and nothing else/i)
-    expect(result).not.toMatch(/still answer from what IS available/i)
+    expect(result).toMatch(/then answer from what IS supported/i)
+    expect(result).toContain('Do not use general knowledge or training-memory facts')
   })
 
   it('surfaces conflicting sources instead of silently picking one', () => {
@@ -125,8 +125,7 @@ describe('structured citations (useStructuredCitations flag)', () => {
     expect(result).toContain('id: test-1')
     expect(result).toMatch(/claimExcerpt/)
     expect(result).toMatch(/chunkId/)
-    // Instructed to appear before the follow-ups fence, not after.
-    expect(result.indexOf('```citations')).toBeLessThan(result.indexOf('FOLLOW-UP SUGGESTIONS'))
+    expect(result).not.toContain('```followups')
   })
 })
 

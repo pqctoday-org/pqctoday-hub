@@ -236,6 +236,10 @@ describe('classifyIntent', () => {
     expect(classifyIntent('List PQC-ready software')).toBe('catalog_lookup')
   })
 
+  it('should classify learning-module lists as catalog_lookup', () => {
+    expect(classifyIntent('What learning modules are available?')).toBe('catalog_lookup')
+  })
+
   it('should classify "Show products with FIPS validation" as catalog_lookup', () => {
     expect(classifyIntent('Show products with FIPS validation')).toBe('catalog_lookup')
   })

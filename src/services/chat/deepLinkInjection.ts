@@ -44,3 +44,17 @@ export function appendGroundedDeepLinks(
   if (links.length === 0) return answer
   return `${answer.trimEnd()}\n\n**Explore in PQC Today:** ${links.join(' · ')}`
 }
+
+/**
+ * Append deterministic links from the ranked retrieval result when a model
+ * answer is corpus-prompted but its optional machine-readable citation block
+ * is missing or malformed. The links still come only from retrieved chunks
+ * and pass the same route-grammar validation as citation-linked answers.
+ */
+export function appendRetrievedDeepLinks(answer: string, chunks: RAGChunk[]): string {
+  return appendGroundedDeepLinks(
+    answer,
+    chunks.map((chunk) => ({ claimExcerpt: '', chunkId: chunk.id })),
+    chunks
+  )
+}

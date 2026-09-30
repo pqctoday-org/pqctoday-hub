@@ -251,7 +251,6 @@ export function MobileMigrateView() {
   )
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- follow ?tab= from the URL (initial load and back/forward)
     if (isTab(tabParam)) setTab(tabParam)
   }, [tabParam])
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
-import { appendGroundedDeepLinks } from './deepLinkInjection'
+import { appendGroundedDeepLinks, appendRetrievedDeepLinks } from './deepLinkInjection'
 
 const chunks: RAGChunk[] = [
   {
@@ -87,5 +87,11 @@ describe('appendGroundedDeepLinks', () => {
     )
 
     expect(answer).toBe('Answer.')
+  })
+
+  it('appends validated links from ranked retrieval when model citations are unavailable', () => {
+    const answer = appendRetrievedDeepLinks('Corpus-grounded answer.', chunks)
+    expect(answer).toContain('/timeline?event=uae-crypto-discovery-tool-and-pqc-index')
+    expect(answer).toContain('/library?ref=RFC%209881')
   })
 })

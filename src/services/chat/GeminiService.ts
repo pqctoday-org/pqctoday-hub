@@ -53,7 +53,9 @@ const RETRY_DELAY_MS = 1_000
 
 function buildGenerationConfig(model: string) {
   return {
-    maxOutputTokens: 8192,
+    // The assistant is intentionally concise and includes an evidence map.
+    // A large ceiling encouraged needlessly long generations.
+    maxOutputTokens: 2048,
     // Gemini 2.5 uses token budgets; Gemini 3 uses relative thinking levels.
     // Both settings select the lowest-latency mode suitable for bounded RAG
     // extraction, which keeps the optional model comparison meaningful.
