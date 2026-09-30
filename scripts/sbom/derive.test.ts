@@ -30,6 +30,7 @@ const STRONGSWAN = Buffer.from('strongSwan 6.0.5')
 const TPM = Buffer.from('tpm-bytes')
 const FONT = Buffer.from('font-bytes')
 const COMMIT = 'a'.repeat(40)
+const DEFAULT_NOTE = "The assistant's default in-browser model."
 
 interface Tree {
   root: string
@@ -215,6 +216,11 @@ function makeTree(): Tree {
           { name: 'pkcs11-provider', license: 'Apache-2.0', embedded: 'pkcs11-provider' },
           { name: 'Python', license: 'PSF', embedded: 'python' },
           { name: 'Inter', license: 'SIL Open Font License 1.1', asset: 'inter-font' },
+          {
+            name: 'Chat-1 chat model (default; q4 build)',
+            model: 'chat',
+            note: DEFAULT_NOTE + " It follows the repository's default branch.",
+          },
         ],
       },
       {
@@ -567,7 +573,15 @@ describe('SBOM gate', () => {
     const TWO_MODELS =
       "export const DEFAULT_LOCAL_MODEL = 'Chat-2-MLC'\nexport const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC', DEFAULT_LOCAL_MODEL] as const\n"
     // a tree that ships two chat models, Chat-1 (the fixture's) and Chat-2, each with weights + library
-    function twoModelTree(defaultRoleOn: 'chat-1' | 'chat-2' | 'none') {
+    const row = (n: 1 | 2, marker: 'default' | 'alternative', note = false) => ({
+      name: `Chat-${n} chat model (${marker}; q4 build)`,
+      model: `chat${n}-weights`,
+      note: (note ? `${DEFAULT_NOTE} ` : '') + "Follows the repository's default branch.",
+    })
+    function twoModelTree(
+      defaultRoleOn: 'chat-1' | 'chat-2' | 'none',
+      rowsOverride?: ReturnType<typeof row>[]
+    ) {
       const t = makeTree()
       t.write('src/services/chat/modelConfig.ts', TWO_MODELS)
       t.write(
@@ -591,6 +605,11 @@ describe('SBOM gate', () => {
         license: 'Apache-2.0',
         revisionChecked: null,
       })
+      const rows = rowsOverride ?? [row(1, 'alternative'), row(2, 'default', true)]
+      t.curated.groups[1].components = [
+        ...t.curated.groups[1].components.filter((c) => !('model' in c)),
+        ...rows,
+      ]
       t.write(
         'src/data/sbomModels.json',
         JSON.stringify({
@@ -665,6 +684,38 @@ describe('SBOM gate', () => {
         "export const CHAT_ONE = 'Chat-1-MLC'\nexport const DEFAULT_LOCAL_MODEL = CHAT_ONE\nexport const SUPPORTED_LOCAL_MODELS = [DEFAULT_LOCAL_MODEL] as const\n"
       )
       expect(derive(t.root, t.curated).problems).toEqual([])
+    })
+
+    it('fails when the default model row says "(alternative;"', () => {
+      const t = twoModelTree('chat-2', [row(1, 'alternative'), row(2, 'alternative', true)])
+      expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+        /"Chat-2 chat model \(alternative; q4 build\)" \(Chat-2-MLC\): it is Chat-2-MLC, the DEFAULT_LOCAL_MODEL in modelConfig\.ts, but its row name in sbomComponents\.ts does not say "\(default;"/
+      )
+    })
+
+    it('fails when a model that is not the default has a row marked "(default;"', () => {
+      const t = twoModelTree('chat-2', [row(1, 'default'), row(2, 'default', true)])
+      expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+        /"Chat-1 chat model \(default; q4 build\)" \(Chat-1-MLC\): its row name in sbomComponents\.ts says "\(default;", but DEFAULT_LOCAL_MODEL in modelConfig\.ts is Chat-2-MLC/
+      )
+    })
+
+    it("fails when the default note is on the wrong row, or missing from the default's row", () => {
+      const t = twoModelTree('chat-2', [row(1, 'alternative', true), row(2, 'default')])
+      const p = derive(t.root, t.curated).problems.join('\n')
+      expect(p).toMatch(
+        /"Chat-1 chat model \(alternative; q4 build\)" .*says "The assistant's default in-browser model\."/
+      )
+      expect(p).toMatch(
+        /"Chat-2 chat model \(default; q4 build\)" .*lacks "The assistant's default in-browser model\."/
+      )
+    })
+
+    it('fails when the default model has no weights row on the page', () => {
+      const t = twoModelTree('chat-2', [row(1, 'alternative')])
+      expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+        /Chat-2-MLC: DEFAULT_LOCAL_MODEL in modelConfig\.ts has no weights row/
+      )
     })
 
     it('fails when DEFAULT_LOCAL_MODEL is not one of SUPPORTED_LOCAL_MODELS', () => {

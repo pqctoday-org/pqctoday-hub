@@ -509,6 +509,7 @@ export function derive(root: string, curated: Curated): Derived {
     else if (!chatIds.includes(defaultId))
       bad(`${defaultId}: DEFAULT_LOCAL_MODEL in modelConfig.ts is not in SUPPORTED_LOCAL_MODELS`)
     const defaultUrls = new Set<string>() // sourceUrls of the default model's weights and library
+    const chatWeightsUrls = new Set<string>() // sourceUrls of every chat model's weights
     const lib = readFileSync(webllmPath, 'utf8')
     const prefix = /modelLibURLPrefix\s*=\s*"([^"]+)"/.exec(lib)?.[1]
     const version = /modelVersion\s*=\s*"([^"]+)"/.exec(lib)?.[1]
@@ -523,6 +524,7 @@ export function derive(root: string, curated: Curated): Derived {
       }
       shippedModelUrls.set(m[1], `${id} (weights)`)
       shippedModelUrls.set(`${prefix}${version}${m[2]}`, `${id} (model library)`)
+      chatWeightsUrls.add(m[1])
       if (id === defaultId) {
         defaultUrls.add(m[1])
         defaultUrls.add(`${prefix}${version}${m[2]}`)
@@ -554,6 +556,45 @@ export function derive(root: string, curated: Curated): Derived {
             `${m.key} (${m.id}): role "${m.role}" in sbomModels.json says "default", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}`
           )
       }
+    }
+    // The rows the About page renders say it again in words: a chat-model weights row's name
+    // carries "(default;" or "(alternative;", and only the default's row carries the note
+    // "The assistant's default in-browser model." (every model row's note also says "the
+    // repository's default branch", so the bare word "default" cannot be used). Rows are tied
+    // to records through `model:` -> sbomModels.json -> sourceUrl, as for the roles above.
+    if (defaultId) {
+      const DEFAULT_NOTE = "The assistant's default in-browser model."
+      let defaultRows = 0
+      for (const g of curated.groups)
+        for (const c of g.components) {
+          if (!('model' in c) || c.model === undefined) continue
+          const rec = modelFile.models.find((x) => x.key === c.model)
+          if (!rec) continue // reported below as an unknown model source
+          const isDefaultRow = chatWeightsUrls.has(rec.sourceUrl) && defaultUrls.has(rec.sourceUrl)
+          const claimsDefault = c.name.includes('(default;')
+          const hasNote = (c.note ?? '').includes(DEFAULT_NOTE)
+          if (isDefaultRow) defaultRows++
+          if (isDefaultRow && !claimsDefault)
+            bad(
+              `"${c.name}" (${rec.id}): it is ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its row name in sbomComponents.ts does not say "(default;" (e.g. "(alternative;" instead)`
+            )
+          else if (!isDefaultRow && claimsDefault)
+            bad(
+              `"${c.name}" (${rec.id}): its row name in sbomComponents.ts says "(default;", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}`
+            )
+          if (isDefaultRow && !hasNote)
+            bad(
+              `"${c.name}" (${rec.id}): it is ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its row note in sbomComponents.ts lacks "${DEFAULT_NOTE}"`
+            )
+          else if (!isDefaultRow && hasNote)
+            bad(
+              `"${c.name}" (${rec.id}): its row note in sbomComponents.ts says "${DEFAULT_NOTE}", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}; only that model's weights row may`
+            )
+        }
+      if (defaultRows === 0)
+        bad(
+          `${defaultId}: DEFAULT_LOCAL_MODEL in modelConfig.ts has no weights row in src/data/sbomComponents.ts`
+        )
     }
   }
 
