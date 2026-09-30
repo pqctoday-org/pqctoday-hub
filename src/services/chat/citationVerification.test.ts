@@ -40,7 +40,7 @@ describe('verifyCitations', () => {
       {
         claimExcerpt: 'ML-KEM-768 is FIPS 140-3 certified',
         chunkId: 'algo-ml-kem-768',
-        reason: 'excerpt-not-found',
+        reason: 'evidence-not-found',
       },
     ])
   })
@@ -90,8 +90,22 @@ describe('verifyCitations', () => {
       {
         claimExcerpt: 'ML-DSA-65 provides NIST security level 5',
         chunkId: 'algo-ml-dsa-65',
-        reason: 'excerpt-not-found',
+        reason: 'evidence-not-found',
       },
     ])
+  })
+
+  it('allows a paraphrased claim when verbatim evidence exists in the chunk', () => {
+    const violations = verifyCitations(
+      [
+        {
+          claimExcerpt: 'FIPS 203 standardizes ML-KEM-768 at security level 3.',
+          evidenceExcerpt: 'ML-KEM-768 provides NIST security level 3',
+          chunkId: 'algo-ml-kem-768',
+        },
+      ],
+      [CHUNK]
+    )
+    expect(violations).toEqual([])
   })
 })

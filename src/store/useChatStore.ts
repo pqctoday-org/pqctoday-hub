@@ -3,6 +3,11 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { ChatMessage, ChatProvider, Conversation } from '../types/ChatTypes'
 import type { WebLLMStatus, WebLLMProgress } from '../services/chat/WebLLMService'
+import {
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_LOCAL_MODEL,
+  SUPPORTED_LOCAL_MODELS,
+} from '../services/chat/modelConfig'
 
 interface ChatState {
   // Persisted
@@ -78,12 +83,12 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       apiKey: null,
       provider: null,
-      localModel: 'Qwen3-1.7B-q4f16_1-MLC',
+      localModel: DEFAULT_LOCAL_MODEL,
       localContextWindow: 4_096,
       conversations: [],
       activeConversationId: null,
       messages: [],
-      model: 'gemini-2.5-flash',
+      model: DEFAULT_GEMINI_MODEL,
       isLoading: false,
       isStreaming: false,
       error: null,
@@ -260,7 +265,7 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 11,
+      version: 13,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
@@ -278,7 +283,7 @@ export const useChatStore = create<ChatState>()(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
         state.apiKey = typeof state.apiKey === 'string' ? state.apiKey : null
-        state.model = typeof state.model === 'string' ? state.model : 'gemini-2.5-flash'
+        state.model = typeof state.model === 'string' ? state.model : DEFAULT_GEMINI_MODEL
 
         // v1 → v2: migrate from retired gemini-2.0-flash to gemini-2.5-flash
         if (version < 2 && state.model === 'gemini-2.0-flash') {
@@ -374,16 +379,25 @@ export const useChatStore = create<ChatState>()(
         // models hallucinate unacceptably on PQC standards content. Map every prior
         // local-model selection — including those that survived the v10 cleanup —
         // to Qwen 3 8B so existing users land on the only supported option.
-        if (version < 11 && state.localModel !== 'Qwen3-8B-q4f16_1-MLC') {
-          state.localModel = 'Qwen3-8B-q4f16_1-MLC'
+        if (version < 11 && state.localModel !== DEFAULT_LOCAL_MODEL) {
+          state.localModel = DEFAULT_LOCAL_MODEL
         }
 
+        // v11 → v12: pin cloud mode to the production model covered by the
+        // grounding evaluation. Avoid the moving `gemini-flash-latest` alias.
+        if (version < 12 && state.model !== DEFAULT_GEMINI_MODEL) {
+          state.model = DEFAULT_GEMINI_MODEL
+        }
+
+        // v12 → v13: Qwen 3.5 9B becomes the default for new users, while an
+        // existing Qwen 3 8B selection is preserved for user-controlled A/B.
+
         // Validate localModel against current catalog — reset stale IDs from old versions
-        const VALID_LOCAL_MODELS = new Set(['Qwen3-8B-q4f16_1-MLC'])
+        const VALID_LOCAL_MODELS = new Set<string>(SUPPORTED_LOCAL_MODELS)
         state.localModel =
           typeof state.localModel === 'string' && VALID_LOCAL_MODELS.has(state.localModel)
             ? state.localModel
-            : 'Qwen3-8B-q4f16_1-MLC'
+            : DEFAULT_LOCAL_MODEL
         state.localContextWindow =
           typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
 

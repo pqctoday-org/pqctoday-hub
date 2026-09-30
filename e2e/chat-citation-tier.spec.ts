@@ -37,7 +37,7 @@ test.beforeEach(async ({ page }) => {
 
     // Seed chat-storage with one conversation containing an assistant message
     // whose sourceRefs carry trustTier='Authoritative'. The schema version is
-    // 8 (matches useChatStore migrate target).
+    // 13 (matches useChatStore migrate target).
     localStorage.setItem(
       'pqc-chat-storage',
       JSON.stringify({
@@ -46,7 +46,7 @@ test.beforeEach(async ({ page }) => {
           provider: 'gemini',
           localModel: '',
           localContextWindow: 4096,
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.8-flash',
           activeConversationId: 'e2e-c7',
           conversations: [
             {
@@ -80,7 +80,7 @@ test.beforeEach(async ({ page }) => {
             },
           ],
         },
-        version: 8,
+        version: 13,
       })
     )
   })

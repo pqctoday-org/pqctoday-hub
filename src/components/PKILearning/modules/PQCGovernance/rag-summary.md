@@ -28,6 +28,6 @@ The workshop has 3 interactive steps:
 - OMB M-23-02 (Migrating to Post-Quantum Cryptography)
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
 - NIST SP 800-53 (Security and Privacy Controls)
-- FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, draft)
+- FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and planned FIPS 206 (FN-DSA; in development with no public draft)
 - ISO 27001 (Information Security Management Systems)
 - COBIT (Control Objectives for Information and Related Technologies)

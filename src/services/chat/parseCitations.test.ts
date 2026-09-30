@@ -42,6 +42,22 @@ What about ML-KEM-1024?
     ])
   })
 
+  it('extracts a verbatim evidence excerpt for a paraphrased claim', () => {
+    const input = `A paraphrased answer.
+
+\`\`\`citations
+[{"claimExcerpt":"A paraphrased answer.","evidenceExcerpt":"Exact corpus text.","chunkId":"chunk-a"}]
+\`\`\``
+
+    expect(parseCitations(input).citations).toEqual([
+      {
+        claimExcerpt: 'A paraphrased answer.',
+        evidenceExcerpt: 'Exact corpus text.',
+        chunkId: 'chunk-a',
+      },
+    ])
+  })
+
   it('returns empty citations when no fenced block exists', () => {
     const input = 'Just normal content without citations.'
     const { cleanContent, citations } = parseCitations(input)

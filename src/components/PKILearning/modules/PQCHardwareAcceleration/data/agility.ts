@@ -2,7 +2,7 @@
 /**
  * Crypto agility × acceleration: which primitive each algorithm spends its time
  * in, and which accelerator therefore helps it. Primitive usage follows the
- * standards (FIPS 202/203/204/205; FN-DSA per the FIPS 206 draft, marked
+ * standards (FIPS 202/203/204/205; Falcon as the basis for planned FN-DSA,
  * draft). The "ours" notes point at PQC Today's own engine decisions and
  * measurements (data/measurements.ts, data/armWork.ts).
  */
@@ -89,7 +89,7 @@ export const ALGORITHM_USES: AlgorithmUse[] = [
     note: 'SHA-256 at category 1; SHA-512 for some functions at categories 3 and 5.',
   },
   {
-    algorithm: 'FN-DSA (FIPS 206, draft)',
+    algorithm: 'Falcon (planned FN-DSA / FIPS 206)',
     kind: 'PQC signature',
     uses: ['fft', 'keccak'],
     hotspot: 'fft',
