@@ -49,6 +49,20 @@ A new role for the people who test and certify cryptographic modules — validat
 - **FIPS badges in the Migrate catalog now match the certificate record** [view:/migrate] [view:/business] [persona:grc] [persona:ops] [persona:architect] [persona:executive] [persona:cert-engineer]: the green FIPS 140-3 badge now appears only when a product holds a FIPS 140-3 module certificate; "FIPS 140-3 in process" and "CAVP only" show the earlier stages, and FIPS 140-2, FedRAMP or vendor "FIPS mode" claims no longer earn it. The vendor scorecard, supply-chain matrix and Command Center FIPS counts follow the same rule, so their figures are lower and now match the records. The FAQ answer on these badges is rewritten to match.
 - **An entropy quiz question shows again** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: since 25 September a formatting slip had hidden the question on what NIST SP 800-90B specifies from the roles it was written for.
 
+## [4.133.1] - 2026-09-29
+
+The PQC VPN Simulator now runs hybrid IKEv2 in the order the ML-KEM draft recommends, and shows why pure ML-KEM runs into size limits.
+
+### Changed
+
+- **Hybrid VPN mode now follows the IETF draft's recommended order** [view:/playground/vpn-sim] [view:/learn/vpn-ssh-pqc] [persona:architect] [persona:ops] [persona:developer]: the simulator's hybrid mode used to send ML-KEM in the very first message, the order the draft advises against over UDP. It now sends classical ECP-256 first and ML-KEM in the second, encrypted exchange, which can be split into fragments when it is too big. The real in-browser strongSwan engine negotiates this order at all three ML-KEM sizes, and the log now tags the ML-KEM steps with the exchange they actually happen in.
+
+- **The handshake diagram follows the ML-KEM size you pick** [view:/playground/vpn-sim] [persona:architect] [persona:developer]: choosing ML-KEM-512, -768 or -1024 now changes the message sizes in the diagram and totals. With ML-KEM-1024, pure post-quantum mode shows a 1,704-byte first message that is over a 1,500-byte limit and cannot be fragmented, while hybrid mode splits the same key into two fragments.
+
+### Fixed
+
+- **Classical VPN mode is now labelled with the key exchange it really runs** [view:/playground/vpn-sim] [view:/learn/vpn-ssh-pqc] [persona:developer] [persona:researcher]: the simulator, exercises and size tables said classical mode used MODP-3072 (DH Group 15), but the engine has always negotiated ECP-256. Everything now says ECP-256, and the classical handshake size is corrected from about 2,040 to 1,400 bytes. The post-quantum modes also now list HMAC-SHA-256, which is what the engine negotiates, instead of SHA-384.
+
 ## [4.133.0] - 2026-09-29
 
 Shared links now reach much further into the hub: you can link to a single algorithm, vendor roadmap, Compliance requirement, Community profile and more, and links from Learn modules, search and the PQC Assistant open the exact item they mention.

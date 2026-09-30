@@ -128,7 +128,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/vpn-sim': {
     developer:
-      'Pick Classical (DH Group 15), Hybrid (ML-KEM-768 + ECP-256) or Pure PQC (ML-KEM-768), Start Daemon, and step through IKE_SA_INIT and IKE_AUTH: the Live Wire Capture and Packet Inspector show the payloads, and Raw Config is the strongSwan configuration behind them.',
+      'Pick Classical (ECP-256), Hybrid (ECP-256 + ML-KEM) or Pure PQC (ML-KEM), Start Daemon, and step through IKE_SA_INIT and IKE_AUTH: the Live Wire Capture and Packet Inspector show the payloads, and Raw Config is the strongSwan configuration behind them.',
     architect:
       'Enable IKE Message Fragmentation (RFC 7383) and lower the MTU to see why IKE_SA_INIT cannot fragment and where a hybrid key share breaks a tunnel; the SKEYSEED Chaining panel explains the RFC 9370 intermediate exchange.',
     ops: 'Use Raw Config, then Download config bundle (.zip): it is the client and server configuration for the mode you chose, and Run algorithm matrix shows which combinations complete before you schedule a cutover.',

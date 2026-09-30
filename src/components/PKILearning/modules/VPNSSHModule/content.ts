@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'vpn-ssh-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-28',
+  lastEdited: '2026-09-29',
 
   // Expanded from a single line 2026-08-23. The one-line form is why the five
   // declarations below first landed in algorithms[] — an applier that looked for the
@@ -56,7 +56,7 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    ikeClassicalSize: "2,040 bytes (this workshop's sample handshake)",
+    ikeClassicalSize: "1,400 bytes (this workshop's sample handshake)",
     ikeHybridSize: "3,784 bytes (this workshop's sample handshake)",
     wireGuardIncrease: '22x',
     sshClassicalSize: "984 bytes (this workshop's sample handshake)",
