@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -14,6 +13,7 @@ import {
   CheckCircle,
   HelpCircle,
 } from 'lucide-react'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 
 interface ReportMethodologyModalProps {
   isOpen: boolean
@@ -44,17 +44,8 @@ const CATEGORIES = [
 ]
 
 export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyModalProps) {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose)
 
   return createPortal(
     <AnimatePresence>

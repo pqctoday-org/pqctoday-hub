@@ -14,11 +14,13 @@
  * The registry and the tool chunk load on demand, so no page pays for this
  * until someone presses Try.
  */
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -82,16 +84,13 @@ export function TryToolModalHost() {
     }
   }, [toolId, navigate])
 
-  useEffect(() => {
-    const onEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    if (toolId) document.addEventListener('keydown', onEscape)
-    return () => document.removeEventListener('keydown', onEscape)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toolId, params])
-
   const open = Boolean(toolId) && loaded?.id === toolId
+
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack) — also while the tool is
+  // still loading, as before; the page is locked only once the modal shows.
+  useOverlayEscape(Boolean(toolId), close, { rootRef: dialogRef })
+  useBodyScrollLock(open)
 
   return (
     <AnimatePresence>
@@ -114,6 +113,7 @@ export function TryToolModalHost() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 16 }}
                 className="glass-panel flex max-h-[90dvh] w-[min(72rem,92vw)] flex-col overflow-hidden"
+                ref={dialogRef}
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${loaded.name} — live tool`}

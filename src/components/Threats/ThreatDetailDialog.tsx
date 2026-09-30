@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import {
   ShieldAlert,
   X,
@@ -33,6 +33,8 @@ import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareBu
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
@@ -99,13 +101,10 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
   // section: focus must not return to (and scroll back to) the trigger row.
   const jumpingToHorizon = useRef(false)
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [onClose])
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(!!threat, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(!!threat)
 
   if (!threat) return null
 
@@ -120,6 +119,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
         />
 
         <div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby="threat-dialog-title"

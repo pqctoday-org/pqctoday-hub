@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Link } from 'react-router'
 import { useState } from 'react'
 import {
@@ -71,20 +73,11 @@ export const FrameworkDetailPopover = ({
   const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
   const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  // Esc closes only the top overlay (the concept graph / revision drill-down
+  // when open); the ref-counted lock keeps the page locked until the last
+  // stacked overlay closes.
+  useOverlayEscape(isOpen && !!framework, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!framework)
 
   if (!isOpen || !framework) return null
 

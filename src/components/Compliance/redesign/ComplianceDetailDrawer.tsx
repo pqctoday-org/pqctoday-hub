@@ -5,10 +5,12 @@
 // requires a scheme → which covers algorithms → with live cert evidence.
 // Supersedes FrameworkDetailPopover for the redesigned Landscape.
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import {
   ArrowDown,
   BookOpen,
@@ -118,15 +120,9 @@ export function ComplianceDetailDrawer({
   const [drilldownOpen, setDrilldownOpen] = useState(false)
   const { revisions } = useRevisions()
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (framework) {
-      document.addEventListener('keydown', onKey)
-      return () => document.removeEventListener('keydown', onKey)
-    }
-  }, [framework, onClose])
+  // Esc closes only the top overlay (the revision drill-down when it is open).
+  useOverlayEscape(!!framework, onClose, { rootRef: panelRef })
+  useBodyScrollLock(!!framework)
 
   if (!framework) return null
   const d = buildDrawerDetail(framework, pillar)

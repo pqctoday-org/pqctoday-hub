@@ -69,8 +69,14 @@ describe('LibraryDetailDrawer — Share inside the drawer', () => {
     )
     expect(onClose).not.toHaveBeenCalled()
     await vi.waitFor(() => expect(screen.queryByRole('menu')).toBeNull())
-    fireEvent.keyDown(document, { key: 'Escape' })
-    expect(onClose).toHaveBeenCalledTimes(1)
+    // The menu closes from an async clipboard callback, and its Escape
+    // listener goes in a passive-effect cleanup that can land a tick after the
+    // DOM update — retry until that cleanup has run (as it has long before a
+    // real user's next key press).
+    await vi.waitFor(() => {
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(onClose).toHaveBeenCalledTimes(1)
+    })
   })
 
   it('traps focus inside the open drawer', async () => {

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { X, GitMerge, Bot, UserCheck } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { byRecord, type RevisionEntry, type FieldChange } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'
@@ -210,13 +212,9 @@ export function RevisionDrilldownPanel({
   const matches = byRecord(revisions, domain, entityId)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [onClose])
+  // Esc closes only this panel, not the drawer / pop-up it was opened from.
+  useOverlayEscape(true, onClose, { rootRef: panelRef })
+  useBodyScrollLock(true)
 
   // aria-modal promises focus stays inside; FocusLock keeps that promise.
   // It is opened from inside other focus-locked overlays (framework drawer /

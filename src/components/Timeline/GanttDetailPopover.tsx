@@ -3,6 +3,8 @@ import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import type { TimelinePhase, TimelineEvent, Phase } from '../../types/timeline'
 import { phaseColors, eventLinkKey, timelineEventPageUrl } from '../../data/timelineData'
 import {
@@ -69,22 +71,9 @@ export const GanttDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isOpen, onClose])
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!phase, onClose, { rootRef: popoverRef })
+  useBodyScrollLock(isOpen && !!phase)
 
   if (!isOpen || !phase) return null
 

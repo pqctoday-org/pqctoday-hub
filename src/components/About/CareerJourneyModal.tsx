@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 
 interface CareerJourneyModalProps {
@@ -54,16 +55,8 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
     }
   }
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
+  // Ref-counted: never unlocks the page under another open overlay.
+  useBodyScrollLock(isOpen)
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % PANELS.length)
   const prev = () => setCurrentIndex((prev) => (prev - 1 + PANELS.length) % PANELS.length)

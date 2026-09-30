@@ -11,6 +11,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
@@ -45,16 +47,12 @@ interface LibraryDetailDrawerProps {
 }
 
 /**
- * True when another modal dialog sits above `root` — a nested pop-up (the
- * Community leader card, the revision drill-down) that is portalled to <body>
- * or rendered inside the drawer. The last aria-modal dialog in document order
- * is the top one. Esc and scrim clicks belong to that overlay, not the drawer.
+ * True when another modal dialog sits above `root` in document order (the last
+ * aria-modal dialog is the top one) — covers a nested pop-up that isn't on the
+ * useOverlayEscape stack.
  */
-function hasOverlayAbove(root: HTMLElement | null): boolean {
+function hasDialogAbove(root: HTMLElement | null): boolean {
   if (!root) return false
-  // The header Share menu is portalled to <body> and owns Esc / outside clicks
-  // while it is open.
-  if (document.querySelector('[role="menu"]')) return true
   const dialogs = document.querySelectorAll('[role="dialog"][aria-modal="true"]')
   const top = dialogs[dialogs.length - 1]
   return Boolean(top) && top !== root
@@ -124,7 +122,6 @@ function DrawerPanel({
   onClose,
   onOpenRef,
 }: LibraryDetailDrawerProps & { item: LibraryItem }) {
-  const rootRef = useRef<HTMLDivElement>(null)
   // Set on scrim pointer-down when a nested pop-up was on top: that click
   // dismisses the pop-up (its own outside-click handler), not the drawer.
   const scrimBlockedRef = useRef(false)
@@ -141,16 +138,24 @@ function DrawerPanel({
     return () => cancelAnimationFrame(id)
   }, [])
 
-  // Esc closes only the top overlay. Capture phase, so this runs before a
-  // nested pop-up's own (document, bubble) Esc handler has removed it.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape' || hasOverlayAbove(rootRef.current)) return
-      onClose()
-    }
-    window.addEventListener('keydown', onKey, true)
-    return () => window.removeEventListener('keydown', onKey, true)
-  }, [onClose])
+  const rootRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay. Nested pop-ups (the Community leader
+  // card, the revision drill-down) sit above this drawer on the shared stack,
+  // and an open Share menu swallows Esc before the stack sees it; a modal
+  // dialog that isn't on the stack still blocks it via the DOM check.
+  const isTopOverlay = useOverlayEscape(true, onClose, {
+    rootRef,
+    // Also covers a modal above that holds no focus (the generic guard keys
+    // off where the Escape came from).
+    isBlocked: () => hasDialogAbove(rootRef.current),
+  })
+  useBodyScrollLock(true)
+  // Scrim clicks belong to whatever is above the drawer — a nested pop-up, or
+  // the header Share menu (portalled to <body>, owns outside clicks).
+  const hasOverlayAbove = () =>
+    !isTopOverlay() ||
+    document.querySelector('[role="menu"]') !== null ||
+    hasDialogAbove(rootRef.current)
 
   const reqs = maturityByRefId.get(item.referenceId) ?? []
   const groupedMaturity = PILLAR_ORDER.map((p) => ({
@@ -181,7 +186,7 @@ function DrawerPanel({
           variant="ghost"
           aria-label="Close detail"
           onPointerDown={() => {
-            scrimBlockedRef.current = hasOverlayAbove(rootRef.current)
+            scrimBlockedRef.current = hasOverlayAbove()
           }}
           onClick={() => {
             const blocked = scrimBlockedRef.current

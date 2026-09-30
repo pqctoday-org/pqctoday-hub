@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Filter, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 
 interface FilterDrawerProps {
   filterContent: React.ReactNode
@@ -20,16 +21,8 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  // Ref-counted: never unlocks the page under another open overlay.
+  useBodyScrollLock(isOpen)
 
   return (
     <>

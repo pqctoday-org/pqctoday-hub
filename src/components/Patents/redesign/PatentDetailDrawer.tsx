@@ -6,9 +6,11 @@
  * through the active result list, plus keyboard control (←/→ step, Esc close).
  * Transform-only entrance (resting opacity 1, per the handoff).
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { PatentDetail } from '@/components/Patents/PatentDetail'
@@ -52,21 +54,26 @@ function DrawerPanel({
   const prev = hasList && index > 0 ? resultList[index - 1] : null
   const next = hasList && index < resultList.length - 1 ? resultList[index + 1] : null
 
-  // Keyboard: ←/→ step through the list, Esc closes.
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(true, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(true)
+
+  // Keyboard: ←/→ step through the list.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowLeft' && prev) onNavigate(prev.patentNumber)
+      if (e.key === 'ArrowLeft' && prev) onNavigate(prev.patentNumber)
       else if (e.key === 'ArrowRight' && next) onNavigate(next.patentNumber)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [prev, next, onClose, onNavigate])
+  }, [prev, next, onNavigate])
 
   return (
     <FocusLock returnFocus>
       <div
         className="fixed inset-0 z-50 print:hidden"
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={patent.title}

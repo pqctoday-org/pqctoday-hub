@@ -5,6 +5,8 @@ import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ShareButton } from '@/components/ui/ShareButton'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { mobileSheetOverlay, mobileSheetPanel } from '../mobileTokens'
 
 /**
@@ -90,8 +92,6 @@ export function MobileSheet({
     claimSheetSingleton(stableClose)
 
     previousFocusRef.current = document.activeElement as HTMLElement | null
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
 
     const focusables = () =>
       Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? [])
@@ -102,12 +102,8 @@ export function MobileSheet({
     // regardless of what the sheet renders.
     ;(initial ?? panelRef.current)?.focus()
 
+    // Escape is handled by the shared overlay stack (useOverlayEscape below).
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation()
-        closeRef.current()
-        return
-      }
       if (e.key !== 'Tab') return
       const nodes = focusables()
       if (nodes.length === 0) {
@@ -128,11 +124,15 @@ export function MobileSheet({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true)
-      document.body.style.overflow = previousOverflow
       releaseSheetSingleton(stableClose)
       previousFocusRef.current?.focus?.()
     }
   }, [open])
+
+  // Esc closes only the top overlay — this sheet, or a detail overlay opened
+  // above it. Ref-counted lock: restores the page's own overflow on close.
+  useOverlayEscape(open, onClose, { rootRef: panelRef })
+  useBodyScrollLock(open)
 
   if (!open) return null
 

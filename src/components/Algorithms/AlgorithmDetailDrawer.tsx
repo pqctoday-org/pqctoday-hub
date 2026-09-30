@@ -7,11 +7,13 @@
  * one card instead of spread across nine columns, plus the row's Try / Spec /
  * Why links and the indexed implementations.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { X, ExternalLink, GitBranch } from 'lucide-react'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import {
@@ -101,14 +103,10 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
     return () => cancelAnimationFrame(id)
   }, [])
 
-  // Esc to close.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(true, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(true)
 
   const xrefs = useMemo(() => resolveAlgoXrefs(algo.name), [algo.name])
   const cnsa = classifyCnsa20(algo)
@@ -119,6 +117,7 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
     <FocusLock returnFocus>
       <div
         className="fixed inset-0 z-50 print:hidden"
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={algo.name}

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -31,6 +31,8 @@ import {
   type TestabilityValue,
 } from '../../data/pqcProtocolMatrix'
 import FocusLock from 'react-focus-lock'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -435,13 +437,10 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
     return protocol.sources.filter((s) => !shown.has(normalizeUrl(s.url)))
   }, [protocol])
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (isOpen) document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Esc closes only the top overlay (shared stack); page stays put behind.
+  useOverlayEscape(isOpen && !!protocol, onClose, { rootRef: dialogRef })
+  useBodyScrollLock(isOpen && !!protocol)
 
   return (
     <AnimatePresence>
@@ -464,6 +463,7 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
             className={`glass-panel p-6 max-w-5xl w-full max-h-[88dvh] overflow-y-auto z-50 ${
               isEmbedded ? '' : 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
             }`}
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="protocol-detail-modal-title"
