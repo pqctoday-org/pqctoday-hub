@@ -35,8 +35,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # See ci.yml `checks`: .git is dominated by regenerated artefacts
-          # this job never reads.
+          # Full commit graph, as in ci.yml `checks`: the data gate's LN-1/LN-3/
+          # LN-4 checks and the version-bump checks compare against
+          # origin/main. A shallow checkout has no origin/main, so LN-3 treats
+          # every row as new (210 false findings — the first run of this
+          # workflow, 2026-09-30). No historical file contents needed: partial
+          # clone, because .git is dominated by regenerated artefacts.
+          fetch-depth: 0
           filter: blob:none
 
       - name: Use Node.js 22
