@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { useVpnPacketStore } from '@/store/useVpnPacketStore'
 import { EXCHANGE_TYPE } from '@/utils/isakmp'
 import { Check, X } from 'lucide-react'
+import { IKE_V2_EXCHANGES } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
 
 /** Mirrors IKEv2Mode in @/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants. */
 export type ScorecardKeMode = 'classical' | 'hybrid' | 'pure-pqc'
@@ -22,11 +23,10 @@ interface VpnScorecardProps {
   kemSize?: 512 | 768 | 1024
 }
 
-// Reference baselines for classical IKEv2 (two-roundtrip ECDH + auth).
-// Matches the classical-mode totalBytes model in
-// @/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants so the
-// "vs classical" framing is consistent with the rest of the workshop.
-const CLASSICAL_BASELINE_BYTES = 2040
+// Reference baselines for classical IKEv2 (two-roundtrip ECP-256 + PSK auth),
+// read from the classical-mode model in ikev2Constants so the "vs classical"
+// framing always matches the rest of the workshop.
+const CLASSICAL_BASELINE_BYTES = IKE_V2_EXCHANGES.classical.totalBytes
 const CLASSICAL_BASELINE_ROUND_TRIPS = 2
 
 const Indicator: React.FC<{ on: boolean; label: string; subtitle?: string }> = ({

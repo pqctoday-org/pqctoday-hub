@@ -48,6 +48,20 @@ Every item's panel now has its own Share button, so you can share a document, th
 - **Escape closes only the panel on top** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: with one panel open over another (for example a revision history over a framework, or search over a document), Escape now closes just the top one instead of both, and the page behind an open panel no longer scrolls.
 - **Community lists each person once** [view:/leaders] [persona:researcher] [persona:executive]: 14 people who appeared twice (for example Tanja Lange and Oded Regev) now have a single profile that carries all of their references; old links to the duplicate profiles open the kept one and say so.
 
+## [4.133.1] - 2026-09-29
+
+The PQC VPN Simulator now runs hybrid IKEv2 in the order the ML-KEM draft recommends, and shows why pure ML-KEM runs into size limits.
+
+### Changed
+
+- **Hybrid VPN mode now follows the IETF draft's recommended order** [view:/playground/vpn-sim] [view:/learn/vpn-ssh-pqc] [persona:architect] [persona:ops] [persona:developer]: the simulator's hybrid mode used to send ML-KEM in the very first message, the order the draft advises against over UDP. It now sends classical ECP-256 first and ML-KEM in the second, encrypted exchange, which can be split into fragments when it is too big. The real in-browser strongSwan engine negotiates this order at all three ML-KEM sizes, and the log now tags the ML-KEM steps with the exchange they actually happen in.
+
+- **The handshake diagram follows the ML-KEM size you pick** [view:/playground/vpn-sim] [persona:architect] [persona:developer]: choosing ML-KEM-512, -768 or -1024 now changes the message sizes in the diagram and totals. With ML-KEM-1024, pure post-quantum mode shows a 1,704-byte first message that is over a 1,500-byte limit and cannot be fragmented, while hybrid mode splits the same key into two fragments.
+
+### Fixed
+
+- **Classical VPN mode is now labelled with the key exchange it really runs** [view:/playground/vpn-sim] [view:/learn/vpn-ssh-pqc] [persona:developer] [persona:researcher]: the simulator, exercises and size tables said classical mode used MODP-3072 (DH Group 15), but the engine has always negotiated ECP-256. Everything now says ECP-256, and the classical handshake size is corrected from about 2,040 to 1,400 bytes. The post-quantum modes also now list HMAC-SHA-256, which is what the engine negotiates, instead of SHA-384.
+
 ## [4.133.0] - 2026-09-29
 
 Shared links now reach much further into the hub: you can link to a single algorithm, vendor roadmap, Compliance requirement, Community profile and more, and links from Learn modules, search and the PQC Assistant open the exact item they mention.
