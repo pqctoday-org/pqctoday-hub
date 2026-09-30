@@ -5,7 +5,7 @@
     {
       "key": "qwen35-9b-weights",
       "id": "Qwen3.5-9B-q4f16_1-MLC",
-      "role": "chat model weights (WebGPU), the assistant's default local model",
+      "role": "chat model weights (WebGPU)",
       "sourceUrl": "https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC",
       "revisionChecked": "c7c5d3f5a81e37b8facbb72970940a1b131314a8",
       "revisionPinned": false,
@@ -17,7 +17,7 @@
     {
       "key": "qwen35-9b-library",
       "id": "Qwen3.5-9B-q4f16_1_cs1k-webgpu.wasm",
-      "role": "compiled model library for the default chat model",
+      "role": "compiled model library for the chat model",
       "sourceUrl": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3.5-9B-q4f16_1_cs1k-webgpu.wasm",
       "revisionChecked": null,
       "revisionPinned": false,
@@ -29,7 +29,7 @@
     {
       "key": "qwen3-8b-weights",
       "id": "Qwen3-8B-q4f16_1-MLC",
-      "role": "chat model weights (WebGPU)",
+      "role": "chat model weights (WebGPU), the assistant's default local model",
       "sourceUrl": "https://huggingface.co/mlc-ai/Qwen3-8B-q4f16_1-MLC",
       "revisionChecked": "b3d55c289eae58f77095f5b68c895eeea358ee09",
       "revisionPinned": false,
@@ -41,7 +41,7 @@
     {
       "key": "qwen3-8b-library",
       "id": "Qwen3-8B-q4f16_1_cs1k-webgpu.wasm",
-      "role": "compiled model library for the chat model",
+      "role": "compiled model library for the default chat model",
       "sourceUrl": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3-8B-q4f16_1_cs1k-webgpu.wasm",
       "revisionChecked": null,
       "revisionPinned": false,
