@@ -50,6 +50,10 @@ const EMBEDDED_SCANS: Record<string, { file: string; re: RegExp }> = {
     re: /OpenSSL (3\.\d+\.\d+) \d+ [A-Z][a-z]{2} \d{4}/,
   },
   strongswan: { file: 'public/wasm/strongswan.wasm', re: /strongSwan (\d+\.\d+\.\d+)/ },
+  'pkcs11-provider': {
+    file: 'public/wasm/openssl.wasm',
+    re: /pkcs11-provider (\d+\.\d+\.\d+)/,
+  },
 }
 
 /** Categories whose rows describe build/test tooling, not code in the shipped bundle. */
@@ -322,10 +326,13 @@ export function derive(root: string, curated: Curated): Derived {
     if (!a.buildinfo) continue
     const info = readJson<{
       toolVersionString: string
+      compiler?: string
       deps: Record<string, string>
       files: Record<string, { sha256: string }>
     }>(root, a.buildinfo)
     embedded[`${a.key}.tool`] = info.toolVersionString
+    const emcc = /emcc[^\n]*?(\d+\.\d+\.\d+)/.exec(info.compiler ?? '')
+    if (emcc) embedded[`${a.key}.emscripten`] = emcc[1]
     for (const [dep, v] of Object.entries(info.deps)) embedded[`${a.key}.${dep}`] = v
     const dir = a.buildinfo.slice(0, a.buildinfo.lastIndexOf('/'))
     for (const [name, meta] of Object.entries(info.files)) {
@@ -336,11 +343,47 @@ export function derive(root: string, curated: Curated): Derived {
     }
   }
 
+  // CPython inside the Pyodide runtime that ships: the runtime's own lock records it.
+  const pyodideLock = join(root, 'node_modules', 'pyodide', 'pyodide-lock.json')
+  if (existsSync(pyodideLock)) {
+    const info = (JSON.parse(readFileSync(pyodideLock, 'utf8')) as { info?: { python?: string } })
+      .info
+    if (info?.python) embedded['python'] = info.python
+    else bad('node_modules/pyodide/pyodide-lock.json has no info.python')
+  } else bad('node_modules/pyodide/pyodide-lock.json missing — run npm ci')
+
+  // ---- shipped non-code assets (fonts): every file recorded, pinned by sha256 ---
+  const assets = readJson<{
+    assets: { key: string; license: string; files: Record<string, string> }[]
+  }>(root, 'src/data/sbomAssets.json')
+  const pinned = new Map<string, string>()
+  for (const a of assets.assets) for (const [f, h] of Object.entries(a.files)) pinned.set(f, h)
+  const fontDir = join(root, 'public', 'fonts')
+  const shippedFonts = existsSync(fontDir)
+    ? walk(fontDir, [], () => false).map((f) => relative(root, f))
+    : []
+  for (const f of shippedFonts) {
+    const want = pinned.get(f)
+    if (!want) bad(`${f}: shipped font with no record in src/data/sbomAssets.json`)
+    else if (sha256(join(root, f)) !== want)
+      bad(
+        `${f}: sha256 differs from src/data/sbomAssets.json — the font changed; update the record`
+      )
+  }
+  for (const f of pinned.keys())
+    if (!shippedFonts.includes(f)) bad(`${f}: recorded in sbomAssets.json but not shipped`)
+
   // ---- row sources must resolve --------------------------------------------
   for (const g of curated.groups)
     for (const c of g.components) {
       if ('embedded' in c && c.embedded !== undefined && !(c.embedded in embedded))
         bad(`"${c.name}": embedded source "${c.embedded}" does not exist`)
+      if ('asset' in c && c.asset !== undefined) {
+        const rec = assets.assets.find((a) => a.key === c.asset)
+        if (!rec) bad(`"${c.name}": asset source "${c.asset}" is not in src/data/sbomAssets.json`)
+        else if (rec.license !== c.license)
+          bad(`"${c.name}": row says "${c.license}" but sbomAssets.json records "${rec.license}"`)
+      }
       if ('built' in c && c.built !== undefined && !(c.built in builds))
         bad(
           `"${c.name}": built source "${c.built}" is not in wasm-provenance.json or sbomWasmArtifacts.json`

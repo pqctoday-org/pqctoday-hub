@@ -25,9 +25,10 @@ const ENGINE = Buffer.from(
   `${registry('sha2', '0.10.9')}${registry('aes', '0.8.4')}fips204-patched/src/lib.rs\0`
 )
 const KMIP = Buffer.from(`${registry('sha2', '0.10.9')}${registry('serde', '1.0.228')}`)
-const OPENSSL = Buffer.from('xx OpenSSL 3.6.3 9 Jun 2026 xx')
+const OPENSSL = Buffer.from('xx OpenSSL 3.6.3 9 Jun 2026 xx pkcs11-provider 0.4.0 xx')
 const STRONGSWAN = Buffer.from('strongSwan 6.0.5')
 const TPM = Buffer.from('tpm-bytes')
+const FONT = Buffer.from('font-bytes')
 const COMMIT = 'a'.repeat(40)
 
 interface Tree {
@@ -105,6 +106,20 @@ function makeTree(): Tree {
     })
   )
   write('package-lock.json', JSON.stringify({ packages: {} }))
+  write('node_modules/pyodide/pyodide-lock.json', JSON.stringify({ info: { python: '3.13.2' } }))
+  write('public/fonts/inter.woff2', FONT)
+  write(
+    'src/data/sbomAssets.json',
+    JSON.stringify({
+      assets: [
+        {
+          key: 'inter-font',
+          license: 'SIL Open Font License 1.1',
+          files: { 'public/fonts/inter.woff2': sha(FONT) },
+        },
+      ],
+    })
+  )
   const curated: Curated = {
     excluded: { '@types/react': 'type declarations only' },
     groups: [
@@ -122,6 +137,9 @@ function makeTree(): Tree {
           { name: 'strongSwan', license: 'x', embedded: 'strongswan' },
           { name: 'TPM', license: 'x', built: 'pqctoday-tpm' },
           { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', native: true },
+          { name: 'pkcs11-provider', license: 'Apache-2.0', embedded: 'pkcs11-provider' },
+          { name: 'Python', license: 'PSF', embedded: 'python' },
+          { name: 'Inter', license: 'SIL Open Font License 1.1', asset: 'inter-font' },
         ],
       },
       {
@@ -265,6 +283,44 @@ describe('SBOM gate', () => {
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
       /only the browser's own Web Crypto/
     )
+  })
+
+  it('fails when a shipped font has no record, or changed since it was pinned', () => {
+    const t = makeTree()
+    t.write('public/fonts/new.woff2', 'another font')
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /public\/fonts\/new\.woff2: shipped font with no record/
+    )
+    const t2 = makeTree()
+    t2.write('public/fonts/inter.woff2', 'a different font')
+    expect(derive(t2.root, t2.curated).problems.join('\n')).toMatch(
+      /inter\.woff2: sha256 differs from src\/data\/sbomAssets\.json/
+    )
+  })
+
+  it('fails when an asset row disagrees with its record, or the record is missing', () => {
+    const t = makeTree()
+    ;(
+      t.curated.groups[1].components.find((c) => c.name === 'Inter') as { license: string }
+    ).license = 'MIT'
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /row says "MIT" but sbomAssets\.json records/
+    )
+  })
+
+  it('fails when the pkcs11-provider banner is gone from openssl.wasm', () => {
+    const t = makeTree()
+    t.write('public/wasm/openssl.wasm', OPENSSL.toString().replace('pkcs11-provider 0.4.0', ''))
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /pkcs11-provider: no version string found/
+    )
+  })
+
+  it('reads the Python version from the installed Pyodide runtime', () => {
+    const t = makeTree()
+    expect(derive(t.root, t.curated).content).toContain("python: '3.13.2'")
+    t.write('node_modules/pyodide/pyodide-lock.json', JSON.stringify({ info: {} }))
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(/has no info\.python/)
   })
 
   it('fails when a `built` row names a bundle with no provenance', () => {

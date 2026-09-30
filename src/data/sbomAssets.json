@@ -1,0 +1,17 @@
+{
+  "_comment": "Shipped non-code assets that carry a third-party license. Every file under public/fonts must be recorded here and is pinned by sha256, so replacing a font without updating this record fails `gen:sbom-versions:check`. Name, version and copyright are read from the font file's own name table; the license is what that table points to.",
+  "assets": [
+    {
+      "key": "inter-font",
+      "name": "Inter (variable font, latin subset)",
+      "version": "4.001",
+      "copyright": "Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)",
+      "license": "SIL Open Font License 1.1",
+      "licenseSource": "the font's own name table (name ID 14) points to https://openfontlicense.org",
+      "href": "https://github.com/rsms/inter",
+      "files": {
+        "public/fonts/inter-latin-wght-normal.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62"
+      }
+    }
+  ]
+}

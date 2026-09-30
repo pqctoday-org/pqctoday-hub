@@ -40,6 +40,9 @@ function SbomRow({ component }: { component: SbomComponent }) {
         <span className="text-xs text-muted-foreground/40 font-mono">{component.license}</span>
         <span className="text-xs text-muted-foreground">{sbomVersionLabel(component)}</span>
       </div>
+      {component.note && (
+        <p className="basis-full text-xs text-muted-foreground/80">{component.note}</p>
+      )}
       {members.length > 0 && (
         <details className="basis-full text-xs text-muted-foreground">
           <summary className="cursor-pointer">Show the {members.length} crates</summary>

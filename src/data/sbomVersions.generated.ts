@@ -175,11 +175,14 @@ export const SBOM_CRATES: Readonly<
 /** Versions a shipped binary (or its shipped build record) states about itself. */
 export const SBOM_EMBEDDED_VERSIONS: Readonly<Record<string, string>> = {
   'entropy90b.bzip2': '1.0.8',
+  'entropy90b.emscripten': '6.0.10',
   'entropy90b.jsoncpp': '1.9.8',
   'entropy90b.libdivsufsort': '2.0.1',
   'entropy90b.openssl': '3.6.4',
   'entropy90b.tool': '1.1.8',
   openssl: '3.6.3',
+  'pkcs11-provider': '0.4.0',
+  python: '3.13.2',
   strongswan: '6.0.5',
 }
 

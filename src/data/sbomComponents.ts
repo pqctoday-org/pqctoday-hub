@@ -23,6 +23,8 @@
 //                                              from wasm-provenance.json /
 //                                              sbomWasmArtifacts.json; no release
 //                                              number is invented for it
+//   asset    a shipped non-code file (font)   -> sbomAssets.json, sha256-pinned; name and
+//                                              version read from the font's own name table
 //   native   the browser's own Web Crypto API
 //
 // The check is two-way. A direct dependency, a shipped wasm file, or a crate
@@ -41,6 +43,7 @@ import {
   SBOM_PACKAGE_VERSIONS,
 } from './sbomVersions.generated'
 import rustLock from './sbomRustLock.json'
+import assetRecords from './sbomAssets.json'
 
 export type SbomComponent = {
   /** Display name — may be prose ("React Router") rather than the package name. */
@@ -48,6 +51,8 @@ export type SbomComponent = {
   license: string
   /** Optional release / project link rendered on the name. */
   href?: string
+  /** A caveat shown under the row, e.g. what the binary does not tell us. */
+  note?: string
 } & (
   | { pkg: string | readonly string[]; lock?: never; crate?: never; crates?: never }
   | { lock: string; pkg?: never; crate?: never; crates?: never }
@@ -56,6 +61,7 @@ export type SbomComponent = {
   | { embedded: string; pkg?: never; lock?: never; crate?: never; crates?: never }
   | { built: string; pkg?: never; lock?: never; crate?: never; crates?: never }
   | { native: true; pkg?: never; lock?: never; crate?: never; crates?: never }
+  | { asset: string; pkg?: never; lock?: never; crate?: never; crates?: never }
 )
 
 export interface SbomGroup {
@@ -104,6 +110,10 @@ export function sbomVersionLabel(c: SbomComponent): string {
     return names.map(crateVersions).join(' / ')
   }
   if ('crates' in c && c.crates !== undefined) return `${c.crates.length} crates`
+  if ('asset' in c && c.asset !== undefined) {
+    const a = assetRecords.assets.find((r) => r.key === c.asset)
+    return a ? v(a.version) : 'v?'
+  }
   if ('embedded' in c && c.embedded !== undefined)
     return v(SBOM_EMBEDDED_VERSIONS[c.embedded] ?? '?')
   if ('built' in c && c.built !== undefined) {
@@ -198,6 +208,12 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       { name: 'React Markdown', license: 'MIT', pkg: 'react-markdown' },
       { name: 'remark-gfm', license: 'MIT', pkg: 'remark-gfm' },
       { name: 'React Focus Lock', license: 'MIT', pkg: 'react-focus-lock' },
+      {
+        name: 'Inter (typeface)',
+        license: 'SIL Open Font License 1.1',
+        asset: 'inter-font',
+        href: 'https://github.com/rsms/inter',
+      },
       { name: '@monaco-editor/react (code editor)', license: 'MIT', pkg: '@monaco-editor/react' },
       {
         name: 'monaco-editor (bundled with the code editor)',
@@ -222,12 +238,23 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       { name: 'lodash', license: 'MIT', pkg: 'lodash' },
       { name: 'reflect-metadata', license: 'Apache-2.0', pkg: 'reflect-metadata' },
       { name: 'Pyodide (Python runtime, self-hosted)', license: 'MPL-2.0', pkg: 'pyodide' },
+      {
+        name: 'Python (CPython, inside the Pyodide runtime)',
+        license: "Python Software Foundation (per the runtime's copyright banner)",
+        embedded: 'python',
+        note: "The site serves only the Pyodide core and standard library; none of the 343 Python packages in Pyodide's lock file is served.",
+      },
     ],
   },
   {
     category: SBOM_CATEGORIES[2],
     components: [
       { name: 'OpenSSL WASM (OpenSSL Studio)', license: 'Apache-2.0', embedded: 'openssl' },
+      {
+        name: 'pkcs11-provider (OpenSSL PKCS#11 provider, inside OpenSSL Studio)',
+        license: 'Apache-2.0',
+        embedded: 'pkcs11-provider',
+      },
       { name: 'Web Crypto API (X25519, P-256)', license: 'W3C', native: true },
       { name: '@oqs/liboqs-js', license: 'MIT', pkg: '@oqs/liboqs-js' },
       { name: '@noble/hashes', license: 'MIT', pkg: '@noble/hashes' },
@@ -253,6 +280,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         name: 'softhsmv3 (PKCS#11 v3.2 engine, C++ / WASM)',
         license: 'BSD-2-Clause',
         built: 'softhsm-cpp-engine',
+        note: 'Contains OpenSSL code; the OpenSSL version is not embedded in the binary.',
       },
       {
         name: 'softhsmrustv3 (PKCS#11 v3.2 engine, Rust / WASM)',
@@ -268,11 +296,13 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         name: 'pqctoday-tpm (TCG V1.85 PQC TPM emulator, WASM)',
         license: 'BSD-3-Clause',
         built: 'pqctoday-tpm',
+        note: 'Contains libtpms and OpenSSL code; neither version is embedded in the binary.',
       },
       {
         name: 'OpenSSH server (PKCS#11 build, WASM)',
         license: 'BSD-style (OpenSSH LICENCE)',
         built: 'openssh-pkcs11',
+        note: 'Contains OpenSSL code; the OpenSSL version is not embedded in the binary.',
       },
       { name: 'strongSwan (IKEv2 / VPN, WASM)', license: 'not recorded', embedded: 'strongswan' },
       { name: 'LMS/HSS hash-based signature module (WASM)', license: 'not recorded', built: 'lms' },
