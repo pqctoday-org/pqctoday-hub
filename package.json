@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.136.0",
+  "version": "4.137.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -170,6 +170,7 @@
     "generate-embeddings": "tsx scripts/build-embedding-index.ts",
     "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
     "evaluate:rag-embeddings": "tsx scripts/evaluate-embedding-retrieval.ts",
+    "evaluate:mlx-harness": "vitest run --config vitest.local.config.ts src/services/chat/evaluation/mlxHarness.local.test.ts --reporter=verbose",
     "evaluate:local-models": "E2E_SERVER=dev RUN_LOCAL_MODEL_COMPARISON=1 playwright test --project=local e2e/local-model-comparison.local.spec.ts",
     "evaluate:cloud-models": "E2E_SERVER=dev playwright test --project=local e2e/cloud-model-comparison.local.spec.ts",
     "sync:sandbox": "tsx scripts/sync-sandbox-scenarios.ts",

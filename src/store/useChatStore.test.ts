@@ -174,6 +174,18 @@ describe('useChatStore', () => {
       expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
     })
 
+    it('rolls the v13 Qwen 3.5 default back to Qwen 3 8B', () => {
+      const migratedState = useChatStore.persist.getOptions().migrate?.(
+        {
+          conversations: [],
+          model: 'gemini-3.8-flash',
+          localModel: 'Qwen3.5-9B-q4f16_1-MLC',
+        },
+        13
+      )
+      expect(migratedState).toHaveProperty('localModel', 'Qwen3-8B-q4f16_1-MLC')
+    })
+
     it('handles null/undefined persisted state safely', () => {
       const migratedState = useChatStore.persist.getOptions().migrate?.(null, 0)
       expect(migratedState).toHaveProperty('apiKey', null)

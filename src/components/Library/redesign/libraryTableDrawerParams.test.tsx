@@ -51,7 +51,11 @@ function tableRowIds(container: HTMLElement): string[] {
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
 
-describe('Library table view → drawer via ?ref', () => {
+// Renders the table/drawer over the real library dataset (~10 s alone); on a
+// GitHub runner under the full parallel suite it passes the default 30 s limit
+// (seen on #773 and #769 pr-test, 30 Sep). Same allowance as the drawer-links
+// suite below (b9d7bd6bf).
+describe('Library table view → drawer via ?ref', { timeout: 60_000 }, () => {
   it('a row click pushes ?ref and opens the detail drawer (no local popover)', () => {
     const { container } = renderPage('/library?view=table')
     const [firstId] = tableRowIds(container)
@@ -137,7 +141,8 @@ describe('Library detail drawer links and panels', { timeout: 60_000 }, () => {
   })
 })
 
-describe('Library drawer with a nested pop-up on top', () => {
+// See the note on the first describe: real-data drawer render.
+describe('Library drawer with a nested pop-up on top', { timeout: 60_000 }, () => {
   function renderDrawer(onClose: () => void) {
     return render(
       <MemoryRouter>

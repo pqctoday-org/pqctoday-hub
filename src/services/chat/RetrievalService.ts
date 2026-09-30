@@ -71,6 +71,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     vendors: 2,
     'algo-product-xref': 1.5,
     'vendor-roadmap': 2,
+    'user-manual': 2,
   },
   recommendation: {
     algorithms: 1.2,
@@ -711,6 +712,26 @@ class RetrievalService {
     // --- Phase 1: Direct entity matching ---
     const queryLower = query.toLowerCase()
     const queryTokens = queryLower.split(/\s+/)
+    const learningCatalogQuery =
+      intent === 'catalog_lookup' &&
+      /\b(learn|learning|lesson|lessons|course|courses|training)\b/.test(queryLower) &&
+      /\b(module|modules|lesson|lessons|course|courses)\b/.test(queryLower)
+    const libraryCatalogQuery =
+      intent === 'catalog_lookup' && /\b(cryptographic\s+)?librar(?:y|ies)\b/.test(queryLower)
+    const catalogAlgorithmAnchors = libraryCatalogQuery ? semanticAnchors(query) : []
+    const isMatchingLibraryProduct = (chunk: RAGChunk): boolean => {
+      if (chunk.source !== 'migrate') return false
+      if (!/category:\s*cryptographic libraries\b/i.test(chunk.content)) return false
+      if (catalogAlgorithmAnchors.length === 0) return true
+      const searchable = `${chunk.title}\n${chunk.content}`.toLowerCase()
+      return catalogAlgorithmAnchors.every((anchor) => searchable.includes(anchor))
+    }
+
+    // Broad catalog questions need their compact catalog overview before
+    // individual records. Without this seed, thousands of module Q&A chunks
+    // can crowd the Learning Center summary out of the top 20 and leave the
+    // model unable to answer even "What learning modules are available?".
+    if (learningCatalogQuery) addChunk('user-manual-learn')
 
     // Try matching full query, then progressively smaller n-grams
     const nGrams: string[] = [queryLower]
@@ -734,6 +755,7 @@ class RetrievalService {
           if (selected.length >= 4) break
           const chunk = this.corpusById.get(id)
           if (!chunk) continue
+          if (libraryCatalogQuery && !isMatchingLibraryProduct(chunk)) continue
           const count = phase1SourceCounts.get(chunk.source) ?? 0
           if (count >= PHASE1_MAX_PER_SOURCE) continue
           if (addChunk(id)) phase1SourceCounts.set(chunk.source, count + 1)
@@ -809,6 +831,8 @@ class RetrievalService {
       if (entityIds) {
         for (const id of entityIds) {
           if (selected.length >= 6) break
+          const chunk = this.corpusById.get(id)
+          if (libraryCatalogQuery && (!chunk || !isMatchingLibraryProduct(chunk))) continue
           addChunk(id)
         }
       }
@@ -863,6 +887,12 @@ class RetrievalService {
       if (!chunk) return { ...r, boostedScore: r.score }
 
       let multiplier = boosts[chunk.source] ?? 1
+      // When the user explicitly asks for cryptographic libraries, favor
+      // product rows categorized as libraries over products that merely
+      // mention OpenSSL, a PQC algorithm, or a certification in passing.
+      if (libraryCatalogQuery && isMatchingLibraryProduct(chunk)) {
+        multiplier *= 2
+      }
       // Page context boost: 1.5× for sources matching current page
       if (pageContext?.relevantSources.includes(chunk.source)) {
         multiplier *= 1.5
@@ -931,6 +961,7 @@ class RetrievalService {
 
       const chunk = this.corpusById.get(r.id)
       if (!chunk) continue
+      if (libraryCatalogQuery && !isMatchingLibraryProduct(chunk)) continue
 
       const count = sourceCounts.get(chunk.source) ?? 0
       if (count >= maxPerSource) continue
@@ -964,6 +995,7 @@ class RetrievalService {
         if (r.boostedScore < scoreFloor) break
         const chunk = this.corpusById.get(r.id)
         if (!chunk) continue
+        if (libraryCatalogQuery && !isMatchingLibraryProduct(chunk)) continue
         const count = sourceCounts.get(chunk.source) ?? 0
         if (count >= relaxedMax) continue
         addChunk(r.id)
@@ -979,7 +1011,7 @@ class RetrievalService {
         c.source === 'library' ||
         (c.source === 'document-enrichment' && c.metadata?.collection === 'library')
     )
-    if (!hasLibrary) {
+    if (!hasLibrary && !libraryCatalogQuery) {
       for (const r of boostedResults) {
         if (selectedIds.has(r.id)) continue
         const chunk = this.corpusById.get(r.id)
