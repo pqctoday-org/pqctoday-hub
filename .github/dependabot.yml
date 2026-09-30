@@ -102,8 +102,6 @@ updates:
       # security gate (eslint-plugin-security), so it has to actually run.
       - dependency-name: 'eslint-plugin-react-hooks'
         update-types: ['version-update:semver-minor']
-      - dependency-name: 'micro-eth-signer'
-        update-types: ['version-update:semver-minor']
       - dependency-name: 'pyodide'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'reflect-metadata'

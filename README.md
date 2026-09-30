@@ -746,8 +746,6 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
-  - `micro-eth-signer` for Ethereum transactions
-  - `ed25519-hd-key` for Solana key derivation
 - **Styling**: Tailwind CSS 4 with custom design system and CSS variables
 - **State Management**: Zustand for module state and persistence
 - **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage), cborg (CBOR encoding for EUDI mDocs)
