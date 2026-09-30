@@ -165,15 +165,27 @@ function buildContextBlocks(
   let totalChars = 0
   const chunkContentLimit = compact ? 600 : Infinity
 
+  const compactContent = (value: string): string => {
+    if (!compact || value.length <= chunkContentLimit) return value
+    const candidate = value.slice(0, chunkContentLimit)
+    const sentenceEnd = Math.max(
+      candidate.lastIndexOf('. '),
+      candidate.lastIndexOf('.\n'),
+      candidate.lastIndexOf('\n')
+    )
+    // Avoid exposing a made-up ellipsis as if it were verbatim corpus text.
+    // Prefer a complete sentence/line when one exists near the cutoff.
+    return sentenceEnd >= Math.floor(chunkContentLimit * 0.55)
+      ? candidate.slice(0, sentenceEnd + (candidate.charAt(sentenceEnd) === '.' ? 1 : 0)).trimEnd()
+      : candidate.trimEnd()
+  }
+
   for (const c of chunks) {
     const header = includeIds
       ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
       : `--- Source: ${c.source} | ${c.title} ---`
     const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
-    const content =
-      compact && c.content.length > chunkContentLimit
-        ? c.content.slice(0, chunkContentLimit) + '...'
-        : c.content
+    const content = compactContent(c.content)
     const block = [header, deepLinkLine, content, '---'].filter(Boolean).join('\n')
 
     if (totalChars + block.length > maxChars) break
@@ -354,7 +366,7 @@ export function buildLocalSystemPrompt(
   // Compact mode: truncate chunk content to fit more chunks in limited context
   const contextBlocks = buildContextBlocks(chunks, maxContextChars, true, citationsEnabled)
   const citationsNote = citationsEnabled
-    ? `\nCORPUS EVIDENCE (REQUIRED): every substantive sentence needs a citations entry, using that complete sentence as claimExcerpt; a shorter substring does not count. Before the followups fence, add a \`\`\`citations fence: [{"claimExcerpt": "<complete sentence exactly as written in the answer>", "evidenceExcerpt": "<verbatim supporting text copied from the chunk>", "chunkId": "<exact id>"}]. Paraphrases are allowed only when the quoted evidence directly supports them. Use only ids and evidence that appear below.\n`
+    ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceExcerpt":"<one contiguous verbatim excerpt copied from its context chunk; never add ...>","chunkId":"<that chunk's exact id>"}. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
     : ''
 
   // Compact page/persona context — every token counts at 4K
@@ -394,12 +406,6 @@ export function buildLocalSystemPrompt(
     assessNote = `Assessment: ${parts.join(' | ')}\n`
   }
 
-  // Top modules — only included when context budget allows (8K+ tokens = ~32K chars budget)
-  const topModules =
-    maxContextChars >= 14_000
-      ? `Top modules: [PQC 101](/learn/pqc-101), [Hybrid Crypto](/learn/hybrid-crypto), [HSM PQC](/learn/hsm-pqc), [KMS PQC](/learn/kms-pqc), [TLS](/learn/tls-basics)\n`
-      : ''
-
   const inventorySection = extractEntityInventory(chunks, maxEntities)
 
   return `You are PQC Today Assistant — expert in post-quantum cryptography.
@@ -410,21 +416,9 @@ Never invent certification status (FIPS validated, ACVP certified, etc.) or clai
 If sources conflict, say so instead of picking one silently.
 If context only partly answers the question, state the limitation briefly and then answer from what IS supported. Only when none of the retrieved context addresses the question, say: "Based on the PQC Today database, I don't have enough information about [topic]."
 ${inventorySection}
-Pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL](/openssl), [Learn](/learn), [Business](/business), [Tools](/business/tools), [Patents](/patents), [Quiz](/learn/quiz), [FAQ](/faq), [Explore](/explore)
-${topModules}
-LINKING (MANDATORY): Every named item (algorithm, product, leader, document, threat) MUST be a markdown link.
-Use "Deep Link:" from context chunks when available. Otherwise use these patterns:
-- /algorithms?algo=<id or exact name> (one algorithm, e.g. ML-KEM-768), /algorithms?highlight=<slug> (tint rows). MUST: /algorithms?tab=transition&highlight=<classical-slug> for classical algos (rsa, ecdsa, dh) — never bare ?highlight= for classical.
-- /algorithms?tab=detailed&mode=compare (Compare view), /algorithms?tab=support&protocol=<id> (Protocol Support detail), /algorithms?tab=support&matrixView=detailed (card view), /algorithms?tab=validation&section=<attacks|kat|coverage>, /timeline?event=<event_id>, /timeline?country=<name>, /library?ref=<id>
-- /migrate?product=<product_id>, /migrate?tab=<replace|plan|roadmaps|vendorrisk>, /migrate?tab=roadmaps&vendor=<VND-id>, /leaders?leader=<id or name>, /compliance?framework=<id>, /compliance?cert=<id>
-- /threats?id=<threatId>, /learn/<module-id>, /learn?mode=<mypath|browse>, /assess?step=<n> (0-based: 0=industry, 1=country, ...)
-- /playground/<toolId> (use the toolId from a chunk's Deep Link, never guess), /playground/hsm, /playground/cacp, /playground/docker, /openssl?cmd=<category>
-- /business/tools/<toolId> (e.g. roi-calculator, board-pitch, risk-register, compliance-timeline, roadmap-builder, deployment-playbook)
-- /patents, /patents?patent=US<number>, /patents?tab=<insights|explore|search>, /patents?assignee=<name>, /patents?quantumTech=<family>, /patents?nistStatus=<status>
-Self-check: only use paths/params listed above — if unsure, link the bare path.
-Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)
+Do not write markdown links. The application appends validated deep links from the cited corpus chunks after grounding.
 
-BREVITY: Keep answers to 2–4 short evidence-backed bullet sentences. Do not repeat the question. Do not add a preamble or follow-up questions. Educational only — not production advice.
+BREVITY: Do not repeat the question. Do not add a heading, preamble, conclusion, table, or follow-up questions. Educational only — not production advice.
 ${citationsNote}
 
 CONTEXT:

@@ -3,6 +3,23 @@ import { describe, it, expect } from 'vitest'
 import { parseCitations } from './parseCitations'
 
 describe('parseCitations', () => {
+  it('accepts a generic json fence only when it contains citation objects', () => {
+    const content = `- Grounded claim.\n\n\`\`\`json\n[{"claimExcerpt":"Grounded claim.","evidenceExcerpt":"Evidence.","chunkId":"chunk-1"}]\n\`\`\``
+    const result = parseCitations(content)
+
+    expect(result.cleanContent).toBe('- Grounded claim.')
+    expect(result.citations).toEqual([
+      {
+        claimExcerpt: 'Grounded claim.',
+        evidenceExcerpt: 'Evidence.',
+        chunkId: 'chunk-1',
+      },
+    ])
+
+    const ordinaryJson = 'Example:\n```json\n{"algorithm":"ML-KEM"}\n```'
+    expect(parseCitations(ordinaryJson)).toEqual({ cleanContent: ordinaryJson, citations: [] })
+  })
+
   it('extracts citations from a valid fenced block', () => {
     const input = `ML-KEM-768 provides NIST security level 3.
 
@@ -55,6 +72,28 @@ What about ML-KEM-1024?
     expect(citations).toEqual([
       { claimExcerpt: 'first claim', chunkId: 'chunk-a' },
       { claimExcerpt: 'second claim', chunkId: 'chunk-b' },
+    ])
+  })
+
+  it('accepts adjacent citation arrays emitted inside one fence', () => {
+    const input = `Two grounded claims.
+
+\`\`\`citations
+[{"claimExcerpt":"first claim","evidenceExcerpt":"first evidence","chunkId":"chunk-a"}]
+[{"claimExcerpt":"second claim","evidenceExcerpt":"second evidence","chunkId":"chunk-b"}]
+\`\`\``
+
+    expect(parseCitations(input).citations).toEqual([
+      {
+        claimExcerpt: 'first claim',
+        evidenceExcerpt: 'first evidence',
+        chunkId: 'chunk-a',
+      },
+      {
+        claimExcerpt: 'second claim',
+        evidenceExcerpt: 'second evidence',
+        chunkId: 'chunk-b',
+      },
     ])
   })
 

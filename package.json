@@ -170,6 +170,7 @@
     "generate-embeddings": "tsx scripts/build-embedding-index.ts",
     "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
     "evaluate:rag-embeddings": "tsx scripts/evaluate-embedding-retrieval.ts",
+    "evaluate:mlx-harness": "vitest run --config vitest.local.config.ts src/services/chat/evaluation/mlxHarness.local.test.ts --reporter=verbose",
     "evaluate:local-models": "E2E_SERVER=dev RUN_LOCAL_MODEL_COMPARISON=1 playwright test --project=local e2e/local-model-comparison.local.spec.ts",
     "evaluate:cloud-models": "E2E_SERVER=dev playwright test --project=local e2e/cloud-model-comparison.local.spec.ts",
     "sync:sandbox": "tsx scripts/sync-sandbox-scenarios.ts",

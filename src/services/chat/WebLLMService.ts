@@ -3,6 +3,7 @@ import type { ChatMessage, RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { buildLocalSystemPrompt } from './promptBuilder'
 import { DEFAULT_LOCAL_MODEL, QWEN3_LOCAL_MODEL } from './modelConfig'
+import { classifyIntent } from './RetrievalService'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -443,6 +444,56 @@ export class EngineDisconnectedError extends Error {
   }
 }
 
+type LocalPromptMessage = {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+}
+
+/**
+ * Build the WebLLM request in one testable place. WebLLM reads its
+ * model-specific flags from `extra_body`; a top-level `enable_thinking`
+ * property is accepted by JavaScript but silently ignored by the engine.
+ */
+export function buildLocalCompletionRequest(messages: LocalPromptMessage[], maxTokens: number) {
+  return {
+    messages,
+    temperature: 0,
+    max_tokens: maxTokens,
+    extra_body: { enable_thinking: false },
+    stream: true as const,
+    stream_options: { include_usage: true },
+  }
+}
+
+/** Remove Qwen reasoning blocks, including a tag split across stream chunks. */
+export function stripLocalThinking(raw: string): string {
+  const firstToken = raw.trimStart().toLowerCase()
+  if ('<think>'.startsWith(firstToken)) return ''
+  return raw.replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/<think>[\s\S]*$/i, '')
+}
+
+/** Keep broad catalog prompts small and avoid near-duplicate product variants. */
+export function selectLocalPromptChunks(chunks: RAGChunk[], userQuery: string): RAGChunk[] {
+  if (classifyIntent(userQuery) !== 'catalog_lookup') return chunks
+  const normalizedQuery = userQuery.toLowerCase()
+  const compactCatalogQuery =
+    /\b(cryptographic\s+)?librar(?:y|ies)\b/.test(normalizedQuery) ||
+    (/\b(learn|learning|lesson|lessons|course|courses|training)\b/.test(normalizedQuery) &&
+      /\b(module|modules|lesson|lessons|course|courses)\b/.test(normalizedQuery))
+  if (!compactCatalogQuery) return chunks
+
+  const selected: RAGChunk[] = []
+  const families = new Set<string>()
+  for (const chunk of chunks) {
+    const family = chunk.title.toLowerCase().split(/\s+/).slice(0, 2).join(' ')
+    if (families.has(family)) continue
+    families.add(family)
+    selected.push(chunk)
+    if (selected.length === 3) break
+  }
+  return selected
+}
+
 /**
  * Detect errors that mean the underlying WebGPU device/engine is dead rather
  * than a normal generation failure. web-llm surfaces this either as a
@@ -488,21 +539,23 @@ export async function* streamResponse(
   const totalChars = safeContextWindow * 4
   const ragCharBudget = Math.round(totalChars * 0.45)
   const maxHistoryMsgs = Math.min(6, Math.max(2, Math.floor(safeContextWindow / 2048)))
-  // Browser-local 9B generation dominates latency. A few grounded bullets and
-  // their evidence map fit within this tighter budget.
+  // The native comparison completes grounded answers within 512 tokens. A
+  // larger ceiling adds browser latency without improving answer coverage.
   const maxResponseTokens = Math.min(512, Math.round(safeContextWindow * 0.125))
   const maxInventory = Math.min(25, Math.max(8, Math.floor(safeContextWindow / 400)))
 
-  // Priority-sort chunks so the most authoritative and linkable survive truncation.
-  // Retrieval order is preserved for equal-priority chunks via stable sort.
-  const prioritizedChunks = [...contextChunks].sort((a, b) => {
-    const aPri = (a.priority ?? 1) * (a.deepLink ? 1.2 : 1)
-    const bPri = (b.priority ?? 1) * (b.deepLink ? 1.2 : 1)
-    return bPri - aPri
-  })
-
+  // RetrievalService already ranks and trust-adjusts these chunks. Re-sorting
+  // by generic corpus priority pushed exact answer chunks out of the 4K prompt
+  // (measured for UAE PQC Index and NIST ACVP queries).
+  // The source drawer retains every retrieved result. Generation only needs
+  // three representative catalog records; sending all twenty makes small
+  // models enumerate until the token ceiling instead of answering concisely.
+  const latestUserQuery = [...messages]
+    .reverse()
+    .find((message) => message.role === 'user')?.content
+  const promptChunks = selectLocalPromptChunks(contextChunks, latestUserQuery ?? '')
   const systemPrompt = buildLocalSystemPrompt(
-    prioritizedChunks,
+    promptChunks,
     pageContext,
     ragCharBudget,
     maxInventory
@@ -537,19 +590,12 @@ export async function* streamResponse(
   // Optimization: skip regex when no <think> tag has been seen (common with /no_think).
   let accumulated = ''
   let yieldedLength = 0
-  let seenThink = false
+  let hitTokenLimit = false
 
   try {
-    const stream = await engine.chat.completions.create({
-      messages: formattedMessages,
-      // Greedy generation plus disabled thinking gives the evidence extractor
-      // the most repeatable path through the strict citation contract.
-      temperature: 0,
-      max_tokens: maxResponseTokens,
-      enable_thinking: false,
-      stream: true,
-      stream_options: { include_usage: true },
-    })
+    const stream = await engine.chat.completions.create(
+      buildLocalCompletionRequest(formattedMessages, maxResponseTokens)
+    )
 
     for await (const chunk of stream) {
       if (signal?.aborted) {
@@ -565,22 +611,13 @@ export async function* streamResponse(
       if (!delta) {
         const finishReason = chunk.choices?.[0]?.finish_reason
         if (finishReason === 'length') {
-          yield '\n\n*(Response truncated — try asking a more specific question.)*'
+          hitTokenLimit = true
         }
         continue
       }
 
       accumulated += delta
-
-      // Track whether we've ever seen a <think> tag to skip regex on clean streams
-      if (!seenThink && accumulated.includes('<think>')) seenThink = true
-
-      // Strip all closed <think>...</think> blocks, then truncate at any unclosed <think>
-      let cleaned = seenThink ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '') : accumulated
-      if (seenThink) {
-        const unclosedIdx = cleaned.indexOf('<think>')
-        if (unclosedIdx !== -1) cleaned = cleaned.slice(0, unclosedIdx)
-      }
+      const cleaned = stripLocalThinking(accumulated)
 
       // Yield only the new portion since last yield
       if (cleaned.length > yieldedLength) {
@@ -600,24 +637,15 @@ export async function* streamResponse(
   }
 
   // Final flush: strip any trailing unclosed <think> block
-  const final = seenThink
-    ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<think>[\s\S]*$/, '')
-    : accumulated
+  const final = stripLocalThinking(accumulated)
   if (final.length > yieldedLength) {
     yield final.slice(yieldedLength)
   }
 
-  // Fallback: if Qwen ignored /no_think and produced ONLY thinking content
-  // (no visible answer survived the strip), surface a partial reasoning excerpt
-  // so the user sees something actionable instead of an empty bubble.
-  if (final.trim().length === 0 && accumulated.trim().length > 0) {
-    const thinkMatch = accumulated.match(/<think>([\s\S]*?)(?:<\/think>|$)/)
-    const reasoning = thinkMatch?.[1]?.trim() ?? accumulated.trim()
-    const excerpt = reasoning.slice(0, 800)
-    const truncated = reasoning.length > 800 ? '…' : ''
-    yield `> *The local model produced reasoning but no final answer ` +
-      `(its "thinking mode" wasn't suppressed). Partial reasoning shown below — ` +
-      `try a shorter question or switch to a smaller Qwen variant.*\n\n` +
-      `${excerpt}${truncated}`
+  // Only annotate truncation when a visible answer exists. If a model ever
+  // returns thinking-only output again, yield nothing and let the shared
+  // finalizer produce a safe extractive response from retrieved corpus data.
+  if (hitTokenLimit && final.trim().length > 0) {
+    yield '\n\n*(Response truncated — try asking a more specific question.)*'
   }
 }
