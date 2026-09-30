@@ -140,8 +140,8 @@ function makeTree(): Tree {
     })
   )
   write(
-    'src/services/chat/WebLLMService.ts',
-    "export const WEBLLM_MODELS = [\n  {\n    id: 'Chat-1-MLC',\n  },\n]\n"
+    'src/services/chat/modelConfig.ts',
+    "export const DEFAULT_LOCAL_MODEL = 'Chat-1-MLC'\nexport const SUPPORTED_LOCAL_MODELS = [DEFAULT_LOCAL_MODEL] as const\n"
   )
   write('public/data/embeddings-meta.json', JSON.stringify({ model: 'org/embed-1' }))
   write(
@@ -525,12 +525,37 @@ describe('SBOM gate', () => {
   it('fails when the chat model catalog gains a model with no record', () => {
     const t = makeTree()
     t.write(
-      'src/services/chat/WebLLMService.ts',
-      "export const WEBLLM_MODELS = [\n  {\n    id: 'Chat-1-MLC',\n  },\n  {\n    id: 'Chat-2-MLC',\n  },\n]\n"
+      'src/services/chat/modelConfig.ts',
+      "export const DEFAULT_LOCAL_MODEL = 'Chat-1-MLC'\nexport const OTHER_LOCAL_MODEL = 'Chat-2-MLC'\nexport const SUPPORTED_LOCAL_MODELS = [DEFAULT_LOCAL_MODEL, OTHER_LOCAL_MODEL] as const\n"
     )
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
-      /Chat-2-MLC: named by WebLLMService\.ts but not found in the bundled @mlc-ai\/web-llm config/
+      /Chat-2-MLC: named by modelConfig\.ts but not found in the bundled @mlc-ai\/web-llm config/
     )
+  })
+
+  it('fails when SUPPORTED_LOCAL_MODELS is gone or names something it cannot resolve', () => {
+    const t = makeTree()
+    t.write('src/services/chat/modelConfig.ts', "export const OTHER = 'x'\n")
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /SUPPORTED_LOCAL_MODELS is missing or names something/
+    )
+    const t2 = makeTree()
+    t2.write(
+      'src/services/chat/modelConfig.ts',
+      'export const SUPPORTED_LOCAL_MODELS = [UNKNOWN_CONSTANT] as const\n'
+    )
+    expect(derive(t2.root, t2.curated).problems.join('\n')).toMatch(
+      /SUPPORTED_LOCAL_MODELS is missing or names something/
+    )
+  })
+
+  it('accepts string literals in SUPPORTED_LOCAL_MODELS as well as constants', () => {
+    const t = makeTree()
+    t.write(
+      'src/services/chat/modelConfig.ts',
+      "export const SUPPORTED_LOCAL_MODELS = ['Chat-1-MLC'] as const\n"
+    )
+    expect(derive(t.root, t.curated).problems).toEqual([])
   })
 
   it('fails when a model row names a record that does not exist', () => {

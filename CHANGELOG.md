@@ -35,8 +35,8 @@ The About page's list of the software this site is built from is now accurate an
 
 ### Added
 
-- **Download the complete software bill of materials** [view:/about] [persona:grc] [persona:architect] [persona:ops] [persona:executive]: the About page now links a machine-readable list (CycloneDX) of every package and component the site ships or downloads — 366 in all, including the 178 supporting packages that come along with the ones shown on the page — each with its version, license and how that was established.
-- **AI models are listed too** [view:/about] [persona:grc] [persona:architect] [persona:executive]: the chat model, its compiled library and the search-embedding model your browser downloads are now named with their licenses, with a note that the site does not pin a revision for them.
+- **Download the complete software bill of materials** [view:/about] [persona:grc] [persona:architect] [persona:ops] [persona:executive]: the About page now links a machine-readable list (CycloneDX) of every package and component the site ships or downloads — 368 in all, including the 178 supporting packages that come along with the ones shown on the page — each with its version, license and how that was established.
+- **AI models are listed too** [view:/about] [persona:grc] [persona:architect] [persona:executive]: the in-browser assistant's models — Qwen 3.5 9B, now its default, and Qwen 3 8B, still available — with their compiled libraries, plus the search-embedding model your browser downloads, are named with their licenses, with a note that the site does not pin a revision for them.
 - **Fonts, the Python runtime and other parts that were missing** [view:/about] [persona:ops] [persona:architect]: the Inter typeface, the Python runtime that runs in your browser, the OpenSSH and strongSwan demo components, the randomness-testing tools and about 60 cryptography libraries built into the PQC engines now appear.
 
 ### Changed

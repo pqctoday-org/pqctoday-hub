@@ -466,16 +466,29 @@ export function derive(root: string, curated: Curated): Derived {
   const modelKeys = new Set(modelFile.models.map((m) => m.key))
   const shippedModelUrls = new Map<string, string>() // sourceUrl -> what names it
   const webllmPath = join(root, 'node_modules', '@mlc-ai', 'web-llm', 'lib', 'index.js')
-  const chatPath = join(root, 'src/services/chat/WebLLMService.ts')
+  const chatPath = join(root, 'src/services/chat/modelConfig.ts')
   const metaPath = join(root, 'public/data/embeddings-meta.json')
   if (!existsSync(webllmPath) || !existsSync(chatPath) || !existsSync(metaPath)) {
-    bad('cannot check AI models: web-llm lib, WebLLMService.ts or embeddings-meta.json is missing')
+    bad('cannot check AI models: web-llm lib, modelConfig.ts or embeddings-meta.json is missing')
   } else {
-    const chat = readFileSync(chatPath, 'utf8')
-    const start = chat.indexOf('export const WEBLLM_MODELS')
-    const catalog = chat.slice(start, chat.indexOf('\n]', start))
-    const chatIds = [...catalog.matchAll(/\bid:\s*'([^']+)'/g)].map((m) => m[1])
-    if (start < 0 || chatIds.length === 0) bad('WebLLMService.ts: no models found in WEBLLM_MODELS')
+    // The local models the app supports are named once, in modelConfig.ts
+    // (SUPPORTED_LOCAL_MODELS, whose entries are string literals or the exported constants above it).
+    const cfg = readFileSync(chatPath, 'utf8')
+    const consts = new Map(
+      [...cfg.matchAll(/export const (\w+)\s*=\s*'([^']+)'/g)].map((m) => [m[1], m[2]] as const)
+    )
+    const list = /export const SUPPORTED_LOCAL_MODELS\s*=\s*\[([^\]]*)\]/.exec(cfg)
+    const entries = (list?.[1] ?? '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+    const chatIds = entries
+      .map((t) => /^'([^']+)'$/.exec(t)?.[1] ?? consts.get(t))
+      .filter((x): x is string => Boolean(x))
+    if (!list || entries.length === 0 || chatIds.length !== entries.length)
+      bad(
+        'modelConfig.ts: SUPPORTED_LOCAL_MODELS is missing or names something this check cannot resolve'
+      )
     const lib = readFileSync(webllmPath, 'utf8')
     const prefix = /modelLibURLPrefix\s*=\s*"([^"]+)"/.exec(lib)?.[1]
     const version = /modelVersion\s*=\s*"([^"]+)"/.exec(lib)?.[1]
@@ -485,7 +498,7 @@ export function derive(root: string, curated: Curated): Derived {
         `model:\\s*"([^"]+)",\\s*model_id:\\s*"${esc}",\\s*model_lib:\\s*modelLibURLPrefix\\s*\\+\\s*modelVersion\\s*\\+\\s*"([^"]+)"`
       ).exec(lib)
       if (!m || !prefix || !version) {
-        bad(`${id}: named by WebLLMService.ts but not found in the bundled @mlc-ai/web-llm config`)
+        bad(`${id}: named by modelConfig.ts but not found in the bundled @mlc-ai/web-llm config`)
         continue
       }
       shippedModelUrls.set(m[1], `${id} (weights)`)

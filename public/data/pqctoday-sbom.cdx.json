@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:a52d774b-1b96-5ef3-99fe-2e2ff0c048af",
+  "serialNumber": "urn:uuid:2aad8007-8523-51c0-a804-86d553a98b29",
   "version": 1,
   "metadata": {
     "component": {
@@ -9624,7 +9624,7 @@
     },
     {
       "type": "machine-learning-model",
-      "name": "Qwen3-8B chat model (q4f16_1 MLC build, WebGPU)",
+      "name": "Qwen3-8B chat model (alternative; q4f16_1 MLC build, WebGPU)",
       "version": "b3d55c289eae58f77095f5b68c895eeea358ee09",
       "licenses": [
         {
@@ -9668,6 +9668,69 @@
         {
           "type": "distribution",
           "url": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3-8B-q4f16_1_cs1k-webgpu.wasm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "named by shipped code; license and revision read from the model repository on 2026-09-29"
+        },
+        {
+          "name": "pqctoday:revision-pinned",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:delivery",
+          "value": "downloaded by the visitor's browser at run time; not in the site bundle"
+        }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
+      "name": "Qwen3.5-9B chat model (default; q4f16_1 MLC build, WebGPU)",
+      "version": "c7c5d3f5a81e37b8facbb72970940a1b131314a8",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0 (upstream model; the MLC repository declares none)"
+          }
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "named by shipped code; license and revision read from the model repository on 2026-09-29"
+        },
+        {
+          "name": "pqctoday:revision-pinned",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:delivery",
+          "value": "downloaded by the visitor's browser at run time; not in the site bundle"
+        }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
+      "name": "Qwen3.5-9B compiled model library (WebGPU wasm)",
+      "licenses": [
+        {
+          "license": {
+            "name": "not recorded"
+          }
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_84/base/Qwen3.5-9B-q4f16_1_cs1k-webgpu.wasm"
         }
       ],
       "properties": [
