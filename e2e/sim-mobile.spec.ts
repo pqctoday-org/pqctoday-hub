@@ -1,4 +1,5 @@
-import { test, expect, type Page, type Locator } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
+import type { Page, Locator } from '@playwright/test'
 
 /**
  * sim-mobile-full-play WS-7 — the phone Simulation play-through, end to end,

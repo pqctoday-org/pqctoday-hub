@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
 import { injectAxe, checkA11y, getViolations } from 'axe-playwright'
 
 // Scan with reduced motion so axe never samples a mid-fade/mid-pulse frame of a

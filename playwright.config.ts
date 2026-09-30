@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { chromiumHostResolverRules } from './e2e/fixtures/analyticsHosts'
 
 // Port can be overridden via PLAYWRIGHT_DEV_PORT for parallel worktrees that
 // can't all bind the default (see CLAUDE.md "Parallel sessions: use git worktrees").
@@ -9,27 +10,27 @@ const BASE_URL = `http://localhost:${PORT}`
 // Automated browsers must never call Google Analytics / Tag Manager. The site
 // loads react-ga4 when VITE_GA_MEASUREMENT_ID is set at build time, so headless
 // runs against a production build (or the live site) would inflate analytics and
-// contribute to Google captchas. `playwright.config.ts` cannot register routes,
-// so the hosts are unresolvable at the Chromium resolver instead: `~NOTFOUND`
-// fails the lookup immediately (net::ERR_NAME_NOT_RESOLVED) with no packet sent.
-// Only these hosts are listed, so localhost and every other host resolve as
-// usual. Chromium-only flag: applied to the chromium / smoke / local projects
-// (Desktop Chrome) and, via globalSetup, to its warm-up browser. NOT applied to
-// `mobile-smoke`: `devices['iPhone 14']` is a WebKit device
-// (defaultBrowserType 'webkit'), which ignores Chromium flags — verified
-// 2026-09-30, the WebKit project still reached the analytics hosts. Closing that
-// gap needs a context-level route in a shared fixture, not a launch flag.
-const BLOCKED_ANALYTICS_HOSTS = [
-  'www.google-analytics.com',
-  'ssl.google-analytics.com',
-  'region1.google-analytics.com',
-  'analytics.google.com',
-  'www.googletagmanager.com',
-]
+// contribute to Google captchas. The host list lives in ONE place,
+// e2e/fixtures/analyticsHosts.ts, and is enforced in two layers:
+//   1. Chromium resolver flag (below): `~NOTFOUND` fails the lookup immediately
+//      (net::ERR_NAME_NOT_RESOLVED) with no packet sent. Applied to the
+//      chromium / smoke / local projects (Desktop Chrome) and, via globalSetup,
+//      to its warm-up browser. `playwright.config.ts` cannot register routes,
+//      and WebKit ignores Chromium flags (verified 2026-09-30: the WebKit
+//      project reached the analytics hosts), so this layer alone is Chromium-only.
+//   2. Context route (e2e/fixtures/blockAnalytics.ts): an auto fixture that
+//      aborts matching requests in any engine. This closes the `mobile-smoke`
+//      (WebKit, iPhone 14) gap, but only for specs that import `test` from that
+//      fixture. Every spec that `mobile-smoke` runs (MOBILE_SMOKE_SPECS) does.
+//      Any NEW spec added to MOBILE_SMOKE_SPECS, and any ad-hoc probe script
+//      that launches WebKit/Firefox directly (`webkit.launch()`, or a spec that
+//      imports plain '@playwright/test'), must import the fixture or call
+//      `installAnalyticsBlock(context)` before navigating. None exist in this
+//      repo today outside e2e/ specs.
+// Only the listed hosts are touched, so localhost and every other host behave
+// as usual.
 const CHROMIUM_LAUNCH_OPTIONS = {
-  args: [
-    `--host-resolver-rules=${BLOCKED_ANALYTICS_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`).join(', ')}`,
-  ],
+  args: [`--host-resolver-rules=${chromiumHostResolverRules()}`],
 }
 
 // By DEFAULT the e2e suite runs against the PRODUCTION BUILD (`vite preview`):
