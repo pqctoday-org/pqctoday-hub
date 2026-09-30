@@ -216,8 +216,6 @@ export function sbomGroupMembers(c: SbomComponent): readonly string[] {
  * the check, so this cannot rot into a silent allow-list.
  */
 export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
-  '@peculiar/asn1-x509-post-quantum':
-    'declared in package.json, imported by no shipped code (named only in a comment in certBuilder.ts)',
   'ed25519-hd-key':
     'declared in package.json, imported by no shipped code (named only in teaching copy)',
   'micro-eth-signer':
@@ -333,6 +331,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       { name: '@peculiar/asn1-schema', pkg: '@peculiar/asn1-schema' },
       { name: '@peculiar/asn1-x509', pkg: '@peculiar/asn1-x509' },
       { name: '@peculiar/asn1-cms', pkg: '@peculiar/asn1-cms' },
+      { name: '@peculiar/asn1-x509-post-quantum', pkg: '@peculiar/asn1-x509-post-quantum' },
       {
         name: '@pqctoday/softhsm-wasm (npm wrapper of the SoftHSM engines)',
         pkg: '@pqctoday/softhsm-wasm',

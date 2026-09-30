@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SbomSection } from './SbomSection'
 import { SBOM_GROUPS, sbomHref, sbomLicense, sbomVersionLabel } from '@/data/sbomComponents'
-import { SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
+import { SBOM_BUNDLED_TRANSITIVE, SBOM_PACKAGE_VERSIONS } from '@/data/sbomVersions.generated'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
 import embeddingsMeta from '../../../../public/data/embeddings-meta.json'
 import pkg from '../../../../package.json'
@@ -94,6 +94,7 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
       /^OpenSSH server/,
       /^NIST SP 800-90B/,
       /^pqctoday-tpm/,
+      /^@peculiar\/asn1-x509-post-quantum/,
       /^frodo-kem/,
       /^classic-mceliece-multi/,
       /^xmss/,
@@ -156,6 +157,19 @@ describe('SbomSection', () => {
     expect(screen.getByText('softhsmv3 (PKCS#11 v3.2 engine, C++ / WASM)')).toHaveAttribute(
       'href',
       expect.stringContaining('pqctoday-hsm/commit/')
+    )
+  })
+
+  it('summarises the bundled transitive packages and links the complete SBOM file', () => {
+    render(<SbomSection />)
+    fireEvent.click(screen.getByRole('button', { name: /Software Bill of Materials/i }))
+    expect(SBOM_BUNDLED_TRANSITIVE.count).toBeGreaterThan(0)
+    expect(
+      screen.getByText(`${SBOM_BUNDLED_TRANSITIVE.count} more npm packages`)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Download the complete SBOM/i })).toHaveAttribute(
+      'href',
+      '/data/pqctoday-sbom.cdx.json'
     )
   })
 

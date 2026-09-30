@@ -26,6 +26,7 @@ import { join, relative } from 'node:path'
 import { scanEmbeddedVersion, scanRustWasm } from './wasm-scan.mjs'
 import type { SbomComponent, SbomGroup } from '../../src/data/sbomComponents'
 import { SBOM_CATEGORIES } from '../../src/data/sbomCategories'
+import { buildCycloneDx, cdxLicense, integrityHash, npmPurl, type CdxComponent } from './cyclonedx'
 
 export interface Curated {
   groups: readonly SbomGroup[]
@@ -36,6 +37,8 @@ export interface Curated {
 export interface Derived {
   content: string
   problems: string[]
+  /** Other generated files, keyed by repo-relative path. */
+  files: Record<string, string>
 }
 
 /** The two Rust bundles whose crate lists are scanned, keyed as the page labels them. */
@@ -126,6 +129,25 @@ interface RustLock {
   unscannable: Record<string, { versions: string[]; license: string }>
 }
 
+/**
+ * Last resort for a bundled package whose manifest and lock entry carry no license: recognise
+ * the license text the package itself ships. Only unambiguous, standard texts are recognised;
+ * anything else stays a failure so a human reads it.
+ */
+export function licenseFromFile(dir: string): string | undefined {
+  for (const name of ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'license', 'license.md', 'COPYING']) {
+    const p = join(dir, name)
+    if (!existsSync(p)) continue
+    const t = readFileSync(p, 'utf8')
+    if (/Permission is hereby granted, free of charge/i.test(t) && /\bMIT\b/i.test(t)) return 'MIT'
+    if (/Apache License/i.test(t) && /Version 2\.0/i.test(t)) return 'Apache-2.0'
+    if (/ISC License/i.test(t)) return 'ISC'
+    if (/Redistribution and use in source and binary forms/i.test(t))
+      return /Neither the name/i.test(t) ? 'BSD-3-Clause' : 'BSD-2-Clause'
+  }
+  return undefined
+}
+
 export function derive(root: string, curated: Curated): Derived {
   const problems: string[] = []
   const bad = (m: string) => problems.push(m)
@@ -135,6 +157,14 @@ export function derive(root: string, curated: Curated): Derived {
     devDependencies?: Record<string, string>
   }>(root, 'package.json')
   const deps: Record<string, string> = { ...pkgJson.dependencies, ...pkgJson.devDependencies }
+
+  const SNAPSHOT = 'src/data/sbomBundledPackages.json'
+  const bundledKeys: string[] = existsSync(join(root, SNAPSHOT))
+    ? readJson<{ packages: string[] }>(root, SNAPSHOT).packages
+    : (bad(`${SNAPSHOT} missing — run \`npm run sbom:snapshot-bundle\` (a production build)`), [])
+  const bundledNames = new Set(
+    bundledKeys.map((k) => k.slice(k.lastIndexOf('node_modules/') + 'node_modules/'.length))
+  )
 
   // ---- npm: listed <=> package.json, and listed => shipped ------------------
   const listedPkgs = new Set<string>()
@@ -195,9 +225,9 @@ export function derive(root: string, curated: Curated): Derived {
   const uses = shippedPackageUses(root)
   for (const [key, category] of pkgCategory) {
     if (TOOLING.has(category)) continue
-    if (!uses.has(key))
+    if (!uses.has(key) && !bundledNames.has(key))
       bad(
-        `${key}: listed under "${category}" but imported by no shipped source — it is declared, not shipped (move it to SBOM_EXCLUDED or remove the dependency)`
+        `${key}: listed under "${category}" but neither imported by shipped source nor bundled by the build — it is declared, not shipped (move it to SBOM_EXCLUDED or remove the dependency)`
       )
   }
 
@@ -495,7 +525,234 @@ export function derive(root: string, curated: Curated): Derived {
         bad(`"${c.name}": only the browser's own Web Crypto API may use a hand-typed "Native"`)
     }
 
+  // ---- npm packages the production build actually bundles (build evidence) -------
+  interface Bundled {
+    key: string
+    name: string
+    version: string
+    license: string
+    integrity?: string
+  }
+  const bundled: Bundled[] = []
+  for (const key of bundledKeys) {
+    const entry = lockFile.packages[key] as
+      { version?: string; license?: string; integrity?: string } | undefined
+    const name = key.slice(key.lastIndexOf('node_modules/') + 'node_modules/'.length)
+    if (!entry?.version) {
+      bad(`${key}: in ${SNAPSHOT} but absent from package-lock.json — the snapshot is stale`)
+      continue
+    }
+    let license = entry.license
+    if (!license) {
+      const manifest = join(root, key, 'package.json')
+      if (existsSync(manifest))
+        license = (JSON.parse(readFileSync(manifest, 'utf8')) as { license?: string }).license
+    }
+    if (!license) license = licenseFromFile(join(root, key))
+    if (!license?.trim()) {
+      bad(`${key}: bundled but no license in package-lock.json or its own package.json`)
+      continue
+    }
+    bundled.push({
+      key,
+      name,
+      version: entry.version,
+      license: license.trim(),
+      integrity: entry.integrity,
+    })
+  }
+  for (const b of bundled)
+    if (b.key === `node_modules/${b.name}` && b.name in curated.excluded)
+      bad(
+        `${b.name}: the build bundles it, but SBOM_EXCLUDED says it is not shipped (${curated.excluded[b.name]})`
+      )
+  const listedNames = new Set<string>([...listedPkgs, ...lockKeys])
+  const transitive = bundled.filter((b) => !listedNames.has(b.name))
+  const licenseHistogram = new Map<string, number>()
+  for (const b of transitive) {
+    const shown = b.license
+      .replace(/[()]/g, '')
+      .replace(/\s+OR\s+/g, ' / ')
+      .trim()
+    licenseHistogram.set(shown, (licenseHistogram.get(shown) ?? 0) + 1)
+  }
+  const bundledTransitive = {
+    count: transitive.length,
+    licenses: [...licenseHistogram.entries()].sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    ),
+  }
+
+  // ---- the complete machine-readable SBOM ---------------------------------------
+  const cdx: CdxComponent[] = []
+  for (const b of bundled)
+    cdx.push({
+      type: 'library',
+      name: b.name,
+      version: b.version,
+      purl: npmPurl(b.name, b.version),
+      licenses: cdxLicense(b.license),
+      ...(integrityHash(b.integrity) ? { hashes: [integrityHash(b.integrity)!] } : {}),
+      properties: [
+        {
+          name: 'pqctoday:evidence',
+          value:
+            'bundled into the production build (emitted chunks); version and license from package-lock.json',
+        },
+        { name: 'pqctoday:listed-on-about-page', value: String(listedNames.has(b.name)) },
+        ...(b.key !== `node_modules/${b.name}`
+          ? [{ name: 'pqctoday:lock-path', value: b.key }]
+          : []),
+      ],
+    })
+  const crateBundles = (name: string) =>
+    Object.entries(crates[name] ?? {}).map(([bundle, vs]) => ({ bundle, vs: vs ?? [] }))
+  const seenCrate = new Set<string>()
+  for (const name of Object.keys(crates).sort())
+    for (const version of new Set(crateBundles(name).flatMap((x) => x.vs))) {
+      seenCrate.add(`${name}@${version}`)
+      cdx.push({
+        type: 'library',
+        name,
+        version,
+        purl: `pkg:cargo/${name}@${version}`,
+        licenses: cdxLicense(crateLicenseFile.crates[name]?.[version] ?? ''),
+        properties: [
+          {
+            name: 'pqctoday:evidence',
+            value: 'crate path found inside the served WebAssembly bundle',
+          },
+          {
+            name: 'pqctoday:bundles',
+            value: crateBundles(name)
+              .filter((x) => x.vs.includes(version))
+              .map((x) => x.bundle)
+              .join(', '),
+          },
+        ],
+      })
+    }
+  for (const [dir, fork] of Object.entries(rustLock.forks))
+    cdx.push({
+      type: 'library',
+      name: fork.crate,
+      version: fork.version,
+      purl: `pkg:cargo/${fork.crate}@${fork.version}`,
+      licenses: cdxLicense(fork.license),
+      properties: [
+        {
+          name: 'pqctoday:evidence',
+          value: `vendored fork "${dir}": source directory present in the engine binary; version read from the pqctoday-hsm sources at ${rustLock.commit.slice(0, 8)}`,
+        },
+        { name: 'pqctoday:bundles', value: 'engine' },
+      ],
+    })
+  for (const [name, entry] of Object.entries(rustLock.unscannable))
+    for (const version of entry.versions)
+      cdx.push({
+        type: 'library',
+        name,
+        version,
+        purl: `pkg:cargo/${name}@${version}`,
+        licenses: cdxLicense(entry.license),
+        properties: [
+          {
+            name: 'pqctoday:evidence',
+            value: `Cargo.lock at ${rustLock.commit.slice(0, 8)}; leaves no path string in the binary, so not verifiable there`,
+          },
+          { name: 'pqctoday:bundles', value: 'engine' },
+        ],
+      })
+  for (const g of curated.groups)
+    for (const c of g.components) {
+      if ('embedded' in c && c.embedded !== undefined)
+        cdx.push({
+          type: 'library',
+          name: c.name,
+          version: embedded[c.embedded],
+          licenses: cdxLicense(c.license),
+          properties: [
+            {
+              name: 'pqctoday:evidence',
+              value: 'version string embedded in the served binary or its shipped build record',
+            },
+          ],
+        })
+      else if ('built' in c && c.built !== undefined) {
+        const b = builds[c.built]
+        cdx.push({
+          type: 'application',
+          name: c.name,
+          licenses: cdxLicense(c.license),
+          hashes: b?.sha256 ? [{ alg: 'SHA-256', content: b.sha256 }] : undefined,
+          externalReferences:
+            b?.repo && b.commit
+              ? [{ type: 'vcs', url: `https://github.com/${b.repo}/commit/${b.commit}` }]
+              : undefined,
+          properties: [
+            {
+              name: 'pqctoday:evidence',
+              value: 'served WebAssembly binary; the binary embeds no release version',
+            },
+            {
+              name: 'pqctoday:build',
+              value: b?.commit ? `built from ${b.repo} @ ${b.commit}` : 'build commit not recorded',
+            },
+            ...(c.note ? [{ name: 'pqctoday:note', value: c.note }] : []),
+          ],
+        })
+      } else if ('asset' in c && c.asset !== undefined) {
+        const rec = assets.assets.find((a) => a.key === c.asset) as
+          | { version: string; license: string; copyright: string; files: Record<string, string> }
+          | undefined
+        cdx.push({
+          type: 'data',
+          name: c.name,
+          version: rec?.version,
+          licenses: cdxLicense(c.license),
+          hashes: rec
+            ? Object.values(rec.files).map((content) => ({ alg: 'SHA-256', content }))
+            : undefined,
+          properties: [
+            {
+              name: 'pqctoday:evidence',
+              value: "read from the shipped font file's own name table",
+            },
+            ...(rec ? [{ name: 'pqctoday:copyright', value: rec.copyright }] : []),
+          ],
+        })
+      } else if ('model' in c && c.model !== undefined) {
+        const m = modelFile.models.find((x) => x.key === c.model)
+        cdx.push({
+          type: 'machine-learning-model',
+          name: c.name,
+          version: m?.revisionChecked ?? undefined,
+          licenses: cdxLicense(m?.license ?? ''),
+          externalReferences: m ? [{ type: 'distribution', url: m.sourceUrl }] : undefined,
+          properties: [
+            {
+              name: 'pqctoday:evidence',
+              value: `named by shipped code; license and revision read from the model repository on ${modelFile.fetchedAt}`,
+            },
+            { name: 'pqctoday:revision-pinned', value: 'false' },
+            {
+              name: 'pqctoday:delivery',
+              value: "downloaded by the visitor's browser at run time; not in the site bundle",
+            },
+          ],
+        })
+      }
+    }
+  const cdxDoc = buildCycloneDx({
+    app: { name: 'pqctoday-hub', version: (pkgJson as { version?: string }).version ?? '0.0.0' },
+    components: cdx,
+  })
+  const files: Record<string, string> = {
+    'public/data/pqctoday-sbom.cdx.json': JSON.stringify(cdxDoc, null, 2) + '\n',
+  }
+
   return {
+    files,
     content: generate({
       packageVersions,
       lockVersions,
@@ -504,6 +761,7 @@ export function derive(root: string, curated: Curated): Derived {
       crates,
       embedded,
       builds,
+      bundledTransitive,
     }),
     problems,
   }
@@ -515,6 +773,7 @@ function generate(d: {
   packageLicenses: Record<string, string>
   crateLicenses: Record<string, string[]>
   crates: Record<string, Partial<Record<string, string[]>>>
+  bundledTransitive: { count: number; licenses: [string, number][] }
   embedded: Record<string, string>
   builds: Record<string, { repo: string | null; commit: string | null; sha256: string }>
 }): string {
@@ -567,6 +826,16 @@ ${Object.keys(d.crateLicenses)
   .map((k) => `  ${key(k)}: [${d.crateLicenses[k].map((x) => `'${x}'`).join(', ')}],`)
   .join('\n')}
 }
+
+/**
+ * npm packages the production build bundles that are not rows above (dependencies of the
+ * listed packages): how many, and how many per license. The full list is
+ * public/data/pqctoday-sbom.cdx.json.
+ */
+export const SBOM_BUNDLED_TRANSITIVE: {
+  readonly count: number
+  readonly licenses: readonly (readonly [string, number])[]
+} = ${JSON.stringify(d.bundledTransitive)}
 
 /** npm packages that are not direct dependencies, versions from package-lock.json. */
 export const SBOM_LOCK_VERSIONS: Readonly<Record<string, string>> = {

@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { Info, Link2, ChevronDown } from 'lucide-react'
+import { Info, Link2, ChevronDown, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   SBOM_GROUPS,
@@ -12,6 +12,7 @@ import {
   sbomVersionLabel,
   type SbomComponent,
 } from '@/data/sbomComponents'
+import { SBOM_BUNDLED_TRANSITIVE } from '@/data/sbomVersions.generated'
 
 // The list itself lives in src/data/sbomComponents.ts (which components, under
 // which heading, with which license/link); the version column is derived at build
@@ -109,6 +110,26 @@ export function SbomSection() {
                   </ul>
                 </div>
               ))}
+            </div>
+            <div className="px-3 md:px-6 pb-3 space-y-2 text-sm">
+              <p>
+                <span className="font-semibold">
+                  {SBOM_BUNDLED_TRANSITIVE.count} more npm packages
+                </span>{' '}
+                are bundled into the site because the packages above depend on them. By license:{' '}
+                {SBOM_BUNDLED_TRANSITIVE.licenses
+                  .map(([license, n]) => `${license} ${n}`)
+                  .join(' · ')}
+                .
+              </p>
+              <a
+                href="/data/pqctoday-sbom.cdx.json"
+                download
+                className="inline-flex items-center gap-1.5 text-primary hover:underline"
+              >
+                <Download size={14} aria-hidden="true" />
+                Download the complete SBOM (CycloneDX JSON, every package and component)
+              </a>
             </div>
             <p className="px-3 md:px-6 pb-3 text-xs text-muted-foreground">
               Versions are read from package.json and from the WASM binaries this site serves; where

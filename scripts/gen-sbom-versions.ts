@@ -29,6 +29,7 @@ const EXPORTS = [
   'SBOM_CRATES',
   'SBOM_EMBEDDED_VERSIONS',
   'SBOM_BUILDS',
+  'SBOM_BUNDLED_TRANSITIVE',
 ]
 let existing = ''
 try {
@@ -45,10 +46,25 @@ if (missing.length) {
 }
 const { SBOM_EXCLUDED, SBOM_GROUPS } = await import('../src/data/sbomComponents')
 
-const { content: raw, problems } = derive(ROOT, { groups: SBOM_GROUPS, excluded: SBOM_EXCLUDED })
+const {
+  content: raw,
+  problems,
+  files,
+} = derive(ROOT, {
+  groups: SBOM_GROUPS,
+  excluded: SBOM_EXCLUDED,
+})
 // The generated file is prettier-checked by `format:check`; emit it already formatted so
 // regenerating never dirties the tree and the staleness comparison is byte-exact.
 const content = await format(raw, { ...(await resolveConfig(OUT)), filepath: OUT })
+
+// Other generated files (the CycloneDX SBOM), formatted the way `format:check` expects.
+const formatted: Record<string, string> = {}
+for (const [rel, text] of Object.entries(files))
+  formatted[rel] = await format(text, {
+    ...(await resolveConfig(join(ROOT, rel))),
+    filepath: join(ROOT, rel),
+  })
 
 if (problems.length) {
   console.error(`✗ SBOM disagrees with what this build ships (${problems.length}):`)
@@ -67,9 +83,22 @@ if (process.argv.includes('--check')) {
     console.error(`✗ ${OUT} is stale — run \`npm run gen:sbom-versions\``)
     process.exit(1)
   }
+  for (const [rel, want] of Object.entries(formatted)) {
+    let have = ''
+    try {
+      have = readFileSync(join(ROOT, rel), 'utf8')
+    } catch {
+      /* missing → stale */
+    }
+    if (have !== want) {
+      console.error(`✗ ${rel} is stale — run \`npm run gen:sbom-versions\``)
+      process.exit(1)
+    }
+  }
   console.log('✓ SBOM matches the shipped build')
   process.exit(0)
 }
 
 writeFileSync(OUT, content)
+for (const [rel, text] of Object.entries(formatted)) writeFileSync(join(ROOT, rel), text)
 console.log(`wrote ${OUT}`)

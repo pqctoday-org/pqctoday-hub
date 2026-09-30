@@ -112,7 +112,20 @@ function makeTree(): Tree {
         'node_modules/react': { version: '19.3.0', license: 'MIT' },
         'node_modules/three': { version: '0.185.1', license: 'MIT' },
         'node_modules/vitest': { version: '5.0.1', license: '(MIT OR Apache-2.0)' },
+        'node_modules/tiny-dep': { version: '1.0.0', license: 'ISC', integrity: 'sha512-AAAA' },
+        'node_modules/react/node_modules/nested': { version: '2.0.0', license: 'MIT' },
       },
+    })
+  )
+  write(
+    'src/data/sbomBundledPackages.json',
+    JSON.stringify({
+      packages: [
+        'node_modules/react',
+        'node_modules/react/node_modules/nested',
+        'node_modules/three',
+        'node_modules/tiny-dep',
+      ],
     })
   )
   write('node_modules/pyodide/pyodide-lock.json', JSON.stringify({ info: { python: '3.13.2' } }))
@@ -286,11 +299,99 @@ describe('SBOM gate', () => {
     )
   })
 
-  it('fails when a listed runtime package is imported by no shipped code', () => {
+  it('summarises the bundled packages that are not page rows, and writes the CycloneDX file', () => {
+    const t = makeTree()
+    const r = derive(t.root, t.curated)
+    expect(r.problems).toEqual([])
+    expect(r.content).toContain('"count":2')
+    const doc = JSON.parse(r.files['public/data/pqctoday-sbom.cdx.json'])
+    expect(doc.bomFormat).toBe('CycloneDX')
+    const names = doc.components.map((c: { name: string }) => c.name)
+    expect(names).toContain('tiny-dep')
+    expect(names).toContain('nested')
+    const tiny = doc.components.find((c: { name: string }) => c.name === 'tiny-dep')
+    expect(tiny.purl).toBe('pkg:npm/tiny-dep@1.0.0')
+    expect(tiny.licenses).toEqual([{ license: { id: 'ISC' } }])
+    // deterministic: same tree, same bytes
+    expect(derive(t.root, t.curated).files['public/data/pqctoday-sbom.cdx.json']).toBe(
+      r.files['public/data/pqctoday-sbom.cdx.json']
+    )
+  })
+
+  it('fails when the bundle snapshot is missing, names a package the lock lacks, or one has no license', () => {
+    const t = makeTree()
+    t.write(
+      'src/data/sbomBundledPackages.json',
+      JSON.stringify({ packages: ['node_modules/ghost'] })
+    )
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /node_modules\/ghost: in src\/data\/sbomBundledPackages\.json but absent from package-lock\.json/
+    )
+    const t2 = makeTree()
+    t2.write(
+      'package-lock.json',
+      JSON.stringify({
+        packages: {
+          'node_modules/react': { version: '19.3.0', license: 'MIT' },
+          'node_modules/three': { version: '0.185.1', license: 'MIT' },
+          'node_modules/vitest': { version: '5.0.1', license: 'MIT' },
+          'node_modules/tiny-dep': { version: '1.0.0' },
+          'node_modules/react/node_modules/nested': { version: '2.0.0', license: 'MIT' },
+        },
+      })
+    )
+    expect(derive(t2.root, t2.curated).problems.join('\n')).toMatch(
+      /node_modules\/tiny-dep: bundled but no license/
+    )
+  })
+
+  it("reads a license from the package's own license file only when the text is unambiguous", () => {
+    const t = makeTree()
+    t.write(
+      'package-lock.json',
+      JSON.stringify({
+        packages: {
+          'node_modules/react': { version: '19.3.0', license: 'MIT' },
+          'node_modules/three': { version: '0.185.1', license: 'MIT' },
+          'node_modules/vitest': { version: '5.0.1', license: 'MIT' },
+          'node_modules/tiny-dep': { version: '1.0.0' },
+          'node_modules/react/node_modules/nested': { version: '2.0.0', license: 'MIT' },
+        },
+      })
+    )
+    t.write(
+      'node_modules/tiny-dep/license',
+      'The MIT License (MIT)\n\nPermission is hereby granted, free of charge, to any person'
+    )
+    expect(derive(t.root, t.curated).problems).toEqual([])
+    t.write('node_modules/tiny-dep/license', 'custom terms nobody recognises')
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /tiny-dep: bundled but no license/
+    )
+  })
+
+  it('fails when the build bundles a package the SBOM claims is not shipped', () => {
+    const t = makeTree()
+    t.curated.excluded['tiny-dep'] = 'declared, never shipped'
+    const p = derive(t.root, t.curated).problems.join('\n')
+    expect(p).toMatch(/tiny-dep: the build bundles it, but SBOM_EXCLUDED says it is not shipped/)
+  })
+
+  it('accepts a listed package that no source imports when the build bundles it', () => {
+    const t = makeTree()
+    t.write('src/app.tsx', "import React from 'react'\n") // no import of three
+    expect(derive(t.root, t.curated).problems).toEqual([])
+  })
+
+  it('fails when a listed runtime package is imported by no shipped code and not bundled', () => {
     const t = makeTree()
     t.write('src/app.tsx', "import React from 'react'\n")
+    t.write(
+      'src/data/sbomBundledPackages.json',
+      JSON.stringify({ packages: ['node_modules/react'] })
+    )
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
-      /three: listed under .* but imported by no shipped source/
+      /three: listed under .* but neither imported by shipped source nor bundled by the build/
     )
   })
 
@@ -298,6 +399,10 @@ describe('SBOM gate', () => {
     const t = makeTree()
     t.write('src/app.tsx', "import React from 'react'\n")
     t.write('src/app.test.tsx', "import * as T from 'three'\n")
+    t.write(
+      'src/data/sbomBundledPackages.json',
+      JSON.stringify({ packages: ['node_modules/react'] })
+    )
     expect(derive(t.root, t.curated).problems.join('\n')).toMatch(/three: listed under/)
   })
 
@@ -502,5 +607,19 @@ describe('wasm scan', () => {
 
   it('returns null when the embedded version is absent', () => {
     expect(scanEmbeddedVersion(Buffer.from('nothing'), /strongSwan (\d+\.\d+\.\d+)/)).toBeNull()
+  })
+})
+
+describe('bundle plugin key mapping', () => {
+  it('maps module ids to package-lock keys, including nested and scoped packages', async () => {
+    const { lockKeyOf } = await import('./vite-plugin-bundle-packages')
+    expect(lockKeyOf('/w/node_modules/react/index.js')).toBe('node_modules/react')
+    expect(lockKeyOf('/w/node_modules/@scope/pkg/dist/x.js')).toBe('node_modules/@scope/pkg')
+    expect(lockKeyOf('/w/node_modules/a/node_modules/b/x.js')).toBe('node_modules/a/node_modules/b')
+    expect(lockKeyOf('/w/node_modules/@s/a/node_modules/@t/b/x.js?commonjs-module')).toBe(
+      'node_modules/@s/a/node_modules/@t/b'
+    )
+    expect(lockKeyOf('\0/w/node_modules/c/x.js?commonjs-proxy')).toBe('node_modules/c')
+    expect(lockKeyOf('/w/src/app.tsx')).toBeNull()
   })
 })

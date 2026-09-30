@@ -17,6 +17,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   '@peculiar/asn1-cms': '2.9.4',
   '@peculiar/asn1-schema': '2.6.0',
   '@peculiar/asn1-x509': '2.6.1',
+  '@peculiar/asn1-x509-post-quantum': '2.9.4',
   '@peculiar/x509': '2.1.0',
   '@playwright/test': '1.63.0',
   '@pqctoday/softhsm-wasm': '0.4.23',
@@ -91,6 +92,7 @@ export const SBOM_PACKAGE_LICENSES: Readonly<Record<string, string>> = {
   '@peculiar/asn1-cms': 'MIT',
   '@peculiar/asn1-schema': 'MIT',
   '@peculiar/asn1-x509': 'MIT',
+  '@peculiar/asn1-x509-post-quantum': 'MIT',
   '@peculiar/x509': 'MIT',
   '@playwright/test': 'Apache-2.0',
   '@pqctoday/softhsm-wasm': 'BSD-2-Clause',
@@ -251,6 +253,28 @@ export const SBOM_CRATE_LICENSES: Readonly<Record<string, readonly string[]>> = 
   'x509-parser': ['Apache-2.0', 'MIT'],
   xmss: ['Apache-2.0', 'MIT'],
   'xts-mode': ['MIT'],
+}
+
+/**
+ * npm packages the production build bundles that are not rows above (dependencies of the
+ * listed packages): how many, and how many per license. The full list is
+ * public/data/pqctoday-sbom.cdx.json.
+ */
+export const SBOM_BUNDLED_TRANSITIVE: {
+  readonly count: number
+  readonly licenses: readonly (readonly [string, number])[]
+} = {
+  count: 178,
+  licenses: [
+    ['MIT', 146],
+    ['ISC', 20],
+    ['BSD-3-Clause', 6],
+    ['0BSD', 2],
+    ['MIT / SEE LICENSE IN FEEL-FREE.md', 1],
+    ['MIT AND ISC', 1],
+    ['MIT AND Zlib', 1],
+    ['MPL-2.0 / Apache-2.0', 1],
+  ],
 }
 
 /** npm packages that are not direct dependencies, versions from package-lock.json. */
