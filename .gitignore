@@ -383,7 +383,10 @@ scripts/*
 # The gate itself was retired 2026-09-21: the About page's SBOM version column
 # is now GENERATED from package.json by this script (runs in predev/prebuild,
 # `--check` in gate:local), so there is no hand-typed copy left to drift.
-!scripts/gen-sbom-versions.mjs
+!scripts/gen-sbom-versions.ts
+# SBOM derivation + audit (imported by gen-sbom-versions.ts and its unit tests) — must be
+# tracked or the gate can't run from a clean checkout / CI.
+!scripts/sbom/
 
 # Role-board content generator — runs in `npm run build` (npm run generate:
 # role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD
