@@ -10,7 +10,7 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
-import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   Info,
@@ -47,7 +47,7 @@ export const DIMENSIONS: Dimension[] = [
     label: 'FIPS 140-3 Validation',
     description: 'Cryptographic modules have current FIPS validation',
     weight: 0.2,
-    autoDetect: (item) => isFips1403Validated(item.fipsValidated),
+    autoDetect: (item) => isFips1403Certified(item),
   },
   {
     id: 'pqc-roadmap',

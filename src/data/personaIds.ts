@@ -10,6 +10,12 @@
  * distinct persona rather than replacing or renaming anything. Every consumer
  * that previously assumed six personas must treat this as the source of truth
  * instead of re-declaring the union.
+ *
+ * `cert-engineer` (added 2026-09-29) is additive in the same way: a new
+ * persona for people who produce or judge cryptographic certificates
+ * (validation-lab testers, module vendor engineers, scheme reviewers).
+ * Nobody is migrated into it; it sits after `researcher`, whose path it
+ * overlaps most.
  */
 export const PERSONA_IDS = [
   'executive',
@@ -17,6 +23,7 @@ export const PERSONA_IDS = [
   'developer',
   'architect',
   'researcher',
+  'cert-engineer',
   'ops',
   'curious',
 ] as const

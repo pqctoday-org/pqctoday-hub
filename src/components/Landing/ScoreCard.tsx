@@ -123,6 +123,7 @@ const GRADUATE_PERSONAS: { id: PersonaId; pitch: string }[] = [
   { id: 'architect', pitch: 'Infrastructure & key management' },
   { id: 'ops', pitch: 'Deploy & operate PQC at scale' },
   { id: 'researcher', pitch: 'Comprehensive deep dive' },
+  { id: 'cert-engineer', pitch: 'From test vectors to certificate' },
 ]
 
 function GraduateCTA() {

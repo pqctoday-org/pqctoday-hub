@@ -30,8 +30,8 @@ function renderBoard(ui: ReactElement) {
 }
 
 describe('PersonaBoardView', () => {
-  it('covers all 7 real personas', () => {
-    expect(ALL_PERSONAS).toHaveLength(7)
+  it('covers all 8 real personas', () => {
+    expect(ALL_PERSONAS).toHaveLength(8)
   })
 
   it.each(ALL_PERSONAS)('renders the %s board headline from config', (personaId) => {
@@ -67,12 +67,12 @@ describe('PersonaBoardView', () => {
     }
   )
 
-  it('has a capstone chip for exactly the 6 personas that define one', () => {
+  it('has a capstone chip for exactly the 7 personas that define one', () => {
     const personasWithCapstone = ALL_PERSONAS.filter(
       // eslint-disable-next-line security/detect-object-injection -- id is drawn from ALL_PERSONAS itself
       (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined
     )
-    expect(personasWithCapstone).toHaveLength(6)
+    expect(personasWithCapstone).toHaveLength(7)
     expect(personasWithCapstone).not.toContain('researcher')
   })
 

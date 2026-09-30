@@ -394,9 +394,9 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/migrate',
       },
       {
-        question: 'What do the three FIPS badge tiers mean?',
+        question: 'What do the FIPS badges in the Migrate catalog mean?',
         answer:
-          'The Migrate catalog uses three FIPS badge tiers: Validated (green) means the product has achieved FIPS 140-3 certification with PQC algorithms; Partial (amber) means the vendor claims FIPS-mode operation, FedRAMP authorization, or WebTrust audit but full PQC validation is pending; No (gray) means no FIPS validation is available. The catalog shows these badges on every product entry.',
+          'A badge appears only where a certification record backs it. "FIPS 140-3" means the product holds a FIPS 140-3 module certificate; "FIPS 140-3 in process" means NIST lists the module as in process; "CAVP only" means its algorithms are CAVP-validated — the prerequisite for a certificate, not a certificate. No badge means no FIPS 140-3 record is linked. Open a product to see whether its certificate covers the PQC algorithms or classical ones only.',
         deepLink: '/migrate',
       },
       {
@@ -894,6 +894,11 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     'What PQC research areas are active?',
     'What are the four FIPS standards for PQC?',
     'Is PQC Today open source?',
+  ],
+  'cert-engineer': [
+    'What is FIPS 140-3 and why does the validation backlog matter?',
+    "What is Common Criteria's role in PQC?",
+    'What HSMs support ML-KEM and ML-DSA?',
   ],
   ops: [
     'What PQC operations tasks should IT teams plan?',

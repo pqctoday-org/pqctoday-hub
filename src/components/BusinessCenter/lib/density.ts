@@ -33,6 +33,7 @@ const PERSONA_DEFAULT_DENSITY: Record<PersonaId, Density> = {
   grc: 'intermediate',
   developer: 'advanced',
   researcher: 'advanced',
+  'cert-engineer': 'advanced',
 }
 
 const EXPERIENCE_DENSITY: Record<ExperienceLevel, Density> = {

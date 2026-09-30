@@ -26,7 +26,10 @@ function softwareItem(id: string, vendorId: string, fips: 'Yes' | 'No') {
     license: '',
     latestVersion: '',
     releaseDate: '',
-    fipsValidated: fips,
+    // 'Yes' = a FIPS 140-3 certificate on record (fips1403Stage reads the
+    // source-backed hasCertification stage, not the free text alone).
+    fipsValidated: fips === 'Yes' ? 'Yes (FIPS 140-3)' : 'No',
+    hasCertification: fips === 'Yes' ? 'yes' : 'no',
     pqcMigrationPriority: '',
     primaryPlatforms: '',
     targetIndustries: '',

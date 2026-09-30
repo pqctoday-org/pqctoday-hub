@@ -31,6 +31,7 @@ const PERSONA_TAG: Record<PersonaId, string> = {
   architect: 'Architect view',
   developer: 'Developer view',
   researcher: 'Researcher view',
+  'cert-engineer': 'Certification view',
   ops: 'Operations view',
   curious: 'Getting started',
 }

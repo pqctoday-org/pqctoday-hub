@@ -182,6 +182,15 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'standard-algo-xref': 1.3,
     'concept-registry': 1.2,
   },
+  'cert-engineer': {
+    certifications: 1.5,
+    'implementation-attacks': 1.4,
+    algorithms: 1.3,
+    library: 1.3,
+    'module-content': 1.3,
+    'standard-algo-xref': 1.3,
+    'algo-product-xref': 1.2,
+  },
   ops: {
     migrate: 1.5,
     certifications: 1.3,

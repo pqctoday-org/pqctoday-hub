@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AlertTriangle, CheckCircle, ExternalLink, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, ExternalLink } from 'lucide-react'
 import type { CertificationXref } from '../../types/MigrateTypes'
 import { Button } from '../ui/button'
 
@@ -35,33 +35,6 @@ export const EvidenceWarnings: React.FC<{ flags?: string[] }> = ({ flags }) => {
         ))}
       </ul>
     </div>
-  )
-}
-
-/** Three-tier FIPS badge: Validated (green), Partial (amber), No (gray) */
-export const renderFipsStatus = (status: string): React.ReactElement => {
-  const lower = (status || '').toLowerCase()
-  const isFipsCertified = lower.includes('fips 140') || lower.includes('fips 203')
-  const isPartial = !isFipsCertified && lower.startsWith('yes')
-
-  if (isFipsCertified) {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-success text-status-success">
-        <CheckCircle size={10} /> Validated
-      </span>
-    )
-  }
-  if (isPartial) {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-warning text-status-warning">
-        <ShieldAlert size={10} /> Partial
-      </span>
-    )
-  }
-  return (
-    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground border border-border">
-      <span className="w-2 h-2 rounded-full bg-muted-foreground/50" /> No
-    </span>
   )
 }
 

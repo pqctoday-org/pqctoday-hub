@@ -3,7 +3,15 @@
 // Shared, dependency-light helpers for the redesigned /learn surface.
 // Counts are DERIVED from the manifest-driven catalog (never hard-coded) so the
 // "Browse all N" label and subtitle always reflect reality (G4 in the build plan).
-import { Briefcase, Code, ShieldCheck, GraduationCap, Server, Lightbulb } from 'lucide-react'
+import {
+  Briefcase,
+  Code,
+  ShieldCheck,
+  GraduationCap,
+  BadgeCheck,
+  Server,
+  Lightbulb,
+} from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { MODULE_TRACKS } from '../moduleData'
@@ -18,16 +26,19 @@ export const PERSONA_ORDER: PersonaId[] = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
 ]
 
 /** Roles for which the workforce (NICE) lens is auto-surfaced (Decision 1).
  *  `grc` added 2026-09-07 — its whole learning path maps onto risk-manager /
  *  is-security-manager NICE work roles (see roleCrosswalk.ts), at least as
- *  directly as executive's. */
+ *  directly as executive's. `cert-engineer` added 2026-09-29 — its path maps
+ *  onto DD-WRL-007 Systems Testing and Evaluation (niceFramework.ts). */
 export const NICE_AFFINITY_PERSONAS: ReadonlySet<PersonaId> = new Set([
   'executive',
   'grc',
   'researcher',
+  'cert-engineer',
 ])
 
 const PERSONA_ICONS: Record<LearningPersonaIcon, LucideIcon> = {
@@ -35,6 +46,7 @@ const PERSONA_ICONS: Record<LearningPersonaIcon, LucideIcon> = {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Lightbulb,
 }

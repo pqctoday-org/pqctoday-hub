@@ -14,9 +14,11 @@ describe('PERSONA_KEYWORDS', () => {
   it('has a regex for every persona', () => {
     expect(Object.keys(PERSONA_KEYWORDS).sort()).toEqual([
       'architect',
+      'cert-engineer',
       'curious',
       'developer',
       'executive',
+      'grc',
       'ops',
       'researcher',
     ])
@@ -72,6 +74,27 @@ describe('PERSONA_KEYWORDS', () => {
       'Root of trust attestation flow',
     ])('matches %s', (text) => {
       expect(PERSONA_KEYWORDS.architect.test(text)).toBe(true)
+    })
+  })
+
+  describe('grc', () => {
+    it.each([
+      'Trace one obligation to its source',
+      'Vendor scorecard evidence',
+      'Risk register owners',
+    ])('matches %s', (text) => {
+      expect(PERSONA_KEYWORDS.grc.test(text)).toBe(true)
+    })
+  })
+
+  describe('cert-engineer', () => {
+    it.each([
+      'FIPS 140-3 module certificate stages',
+      'CAVP validation is a prerequisite',
+      'Entropy source health tests (SP 800-90B)',
+      'Common Criteria and EUCC records',
+    ])('matches %s', (text) => {
+      expect(PERSONA_KEYWORDS['cert-engineer'].test(text)).toBe(true)
     })
   })
 

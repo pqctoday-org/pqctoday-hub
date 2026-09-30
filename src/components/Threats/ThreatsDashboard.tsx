@@ -68,6 +68,7 @@ const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
   architect: 'Architect',
   ops: 'IT Ops',
   researcher: 'Researcher',
+  'cert-engineer': 'Certification',
   curious: 'Curious',
 }
 

@@ -89,7 +89,14 @@ export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> 
  * recorded as data; `PERSONA_SIM_PRACTICE_PHASES` leaving them undefined only
  * recorded an absence of one.
  */
-export const PERSONA_SIM_PRACTICE_NONE: readonly PersonaId[] = ['researcher', 'curious']
+export const PERSONA_SIM_PRACTICE_NONE: readonly PersonaId[] = [
+  'researcher',
+  // cert-engineer (added 2026-09-29): like researcher, it owns no framework
+  // core role in ROLE_CROSSWALK — certificate production is not one of the
+  // eight program jobs — so no in-sim seat exists to rehearse from.
+  'cert-engineer',
+  'curious',
+]
 
 /**
  * True when the active persona practices this module's phase in the sim, so the
@@ -192,6 +199,22 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/simulation',
   ],
   researcher: null,
+  // cert-engineer (2026-09-29): the certificate-facing routes — product
+  // records on /compliance, the Validation tab on /algorithms, the validation
+  // workbench on /playground. /business, /patents and /simulation stay one
+  // click away under MORE: the Command Center plans a migration program, and
+  // this role owns no seat in it (see PERSONA_SIM_PRACTICE_NONE).
+  'cert-engineer': [
+    '/migrate',
+    '/compliance',
+    '/assess',
+    '/report',
+    '/algorithms',
+    '/library',
+    '/playground',
+    '/leaders',
+    '/navigate',
+  ],
   ops: [
     '/migrate',
     '/compliance',
@@ -289,6 +312,7 @@ export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
   architect: [],
   // researcher: PERSONA_NAV_PATHS is null (no gating at all) — nothing marked.
   researcher: [],
+  'cert-engineer': [],
   ops: [],
   // curious: every route is already reachable and un-gated — nothing marked.
   curious: [],
@@ -346,6 +370,8 @@ export const PERSONA_ABSENT_PATHS: Record<PersonaId, Record<string, PersonaAbsen
   architect: {},
   // researcher: PERSONA_NAV_PATHS is null — no gating at all, so no absences.
   researcher: {},
+  // cert-engineer: nothing is withheld — routes outside its list stay under MORE.
+  'cert-engineer': {},
   ops: {
     // The O1 decision (07-19 follow-up remediation), previously recorded only
     // in PERSONA_NAV_PATHS' comment above.
@@ -447,6 +473,13 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
     filters: { status: 'Certified' },
     openSections: ['attacks', 'kat'],
   },
+  // Plan §4.2: open straight onto the Validation tab — known-answer tests and
+  // implementation-attack notes are this role's first question.
+  'cert-engineer': {
+    tab: 'validation',
+    filters: { status: 'Certified' },
+    openSections: ['attacks', 'kat'],
+  },
   curious: {
     tab: 'transition',
     filters: { status: 'Certified', fn: 'KEM' },
@@ -512,6 +545,7 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   developer: ['/learn', '/algorithms', '/playground'],
   architect: ['/learn', '/timeline', '/assess', '/business'],
   researcher: ['/learn', '/algorithms', '/playground', '/library', '/patents'],
+  'cert-engineer': ['/learn', '/algorithms', '/playground', '/compliance'],
   ops: ['/learn', '/migrate', '/playground', '/assess'],
   curious: ['/learn', '/timeline', '/assess', '/threats'],
 }
@@ -540,6 +574,7 @@ export const PERSONA_REVISION_DOMAINS: Record<PersonaId, readonly string[]> = {
   developer: ['algorithms', 'migrate', 'tool'],
   architect: ['compliance', 'migrate', 'algorithms', 'library'],
   researcher: [],
+  'cert-engineer': ['compliance', 'algorithms', 'tool', 'library'],
   ops: ['migrate', 'compliance', 'threats'],
   curious: ['compliance', 'library'],
 }
@@ -556,6 +591,7 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
   developer: 'comprehensive',
   architect: 'comprehensive',
   researcher: 'comprehensive',
+  'cert-engineer': 'comprehensive',
   ops: 'comprehensive',
   curious: 'quick',
 }
@@ -600,6 +636,9 @@ export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
   developer: 'americas',
   architect: 'global',
   researcher: 'All',
+  // Certification schemes are national; applicability comes from the user's
+  // own region, as for GRC.
+  'cert-engineer': 'global',
   ops: 'americas',
   curious: 'americas',
 }
@@ -707,6 +746,7 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
   developer: ['Technology', 'Cross-cutting & Other'],
   architect: ['Technology', 'Telecommunications', 'Cross-cutting & Other'],
   researcher: [],
+  'cert-engineer': [],
   ops: ['Energy & Utilities', 'Telecommunications', 'Cross-cutting & Other'],
   curious: [],
 }
@@ -866,6 +906,17 @@ export const PERSONA_REPORT_CONFIG: Record<
     migrationToolkit: { state: 'collapsed' },
     recommendedActions: { state: 'collapsed' },
     executiveSummary: { state: 'collapsed' },
+  },
+  // cert-engineer (2026-09-29): the reader is scoping a module, not running a
+  // programme. Lead with the inputs and the algorithm inventory (what sits
+  // inside the boundary and what has to change); algorithm migration and
+  // compliance impact are already open by default. Programme framing is
+  // demoted, never hidden.
+  'cert-engineer': {
+    assessmentProfile: { state: 'open' },
+    cbom: { state: 'open' },
+    executiveSummary: { state: 'collapsed' },
+    migrationRoadmap: { state: 'collapsed' },
   },
   ops: {
     hndlHnfl: { state: 'hidden' },
@@ -1066,6 +1117,15 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
     { label: 'Explore in OpenSSL', path: '/playground/openssl-studio', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
+  'cert-engineer': [
+    {
+      label: 'Run the ACVP vectors',
+      path: '/playground/hsm?tab=build&dtab=acvp',
+      icon: 'FlaskConical',
+    },
+    { label: 'Check certificate records', path: '/compliance', icon: 'Package' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
   ops: [
     { label: 'Browse migration catalog', path: '/migrate', icon: 'Package' },
     { label: 'Try OpenSSL Studio', path: '/playground/openssl-studio', icon: 'Terminal' },
@@ -1240,6 +1300,28 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
       purpose: 'Fifteen questions produce the risk score your board paper needs.',
     },
   ],
+  'cert-engineer': [
+    {
+      afterPhase: 'cert-algorithms-entropy',
+      route: '/playground',
+      label: 'Run Validation Tests',
+      purpose:
+        'Check our numbers against selected public NIST ACVP-Server reference samples and published KATs rather than trusting them.',
+    },
+    {
+      afterPhase: 'cert-module-scheme',
+      route: '/compliance',
+      label: 'Check Certificate Records',
+      purpose:
+        'See which PQC modules sit at which FIPS 140-3 stage, and which products hold Common Criteria certificates.',
+    },
+    {
+      afterPhase: 'cert-mastery',
+      route: '/migrate',
+      label: 'Browse Migration Workbench',
+      purpose: "Compare a vendor's PQC claim with the certificate record behind it.",
+    },
+  ],
   ops: [
     {
       afterPhase: 'ops-cp-2',
@@ -1335,6 +1417,12 @@ export const PERSONA_WORKFLOW_LABELS: Record<PersonaId, Record<WorkflowPhaseId, 
     migrate: 'Compare Vendor Claims to Evidence',
     timeline: 'Track the Standardisation Record',
   },
+  'cert-engineer': {
+    assess: 'Scope the Module Under Test',
+    comply: 'Map Schemes and Certificate Stages',
+    migrate: 'Check Claims Against Certificates',
+    timeline: 'Plan Back from the Deadline',
+  },
   ops: {
     assess: 'Infrastructure Risk Assessment',
     comply: 'Map Operational Compliance',
@@ -1360,6 +1448,7 @@ export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
   developer: ['Libraries', 'Cloud', 'Database'],
   architect: ['Cloud', 'Network', 'AppServers', 'Security Stack'],
   researcher: [],
+  'cert-engineer': ['Hardware', 'Libraries', 'Security Stack'],
   ops: ['Network', 'Hardware', 'OS', 'Security Stack'],
   curious: [],
 }
@@ -1402,6 +1491,13 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
     'International Frameworks',
   ],
   researcher: [],
+  'cert-engineer': [
+    'Compliance & Certification',
+    'NIST Standards',
+    'Algorithm Specifications',
+    'Implementations',
+    'International Frameworks',
+  ],
   ops: [
     'PKI Certificate Management',
     'Protocols',
@@ -1484,6 +1580,15 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'first-standard-read',
     'met-the-quantum-threat',
   ],
+  // Same shape as ops: every playground and business rung is reachable (the
+  // Command Center stays under MORE), executive documents are not this role's.
+  'cert-engineer': [
+    'first-exec-doc',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
   ops: [
     'first-exec-doc',
     // Curious-only (CC-15)
@@ -1547,6 +1652,7 @@ export const PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS: Partial<Record<PersonaId, re
     architect: ['NIST', 'BSI', 'ANSSI', 'ENISA', 'CNSA-2', 'FIPS'],
     ops: ['CNSA-2', 'FedRAMP', 'NIS2', 'PCI-DSS', 'DORA'],
     researcher: ['NIST', 'ENISA', 'BSI', 'ANSSI', '3GPP-PQC', 'BIS-158-PQC'],
+    'cert-engineer': ['FIPS', 'CC', 'CNSA-2', 'NIST', 'PCI-DSS'],
     curious: ['NIST', 'ENISA', 'CNSA-2', 'GDPR', 'HIPAA'],
   }
 
@@ -1593,6 +1699,8 @@ export const PERSONA_BELT_TIER_LABELS: Partial<
   architect: ['Scoping', 'Designing', 'Reviewing', 'Blueprint-Ready'],
   ops: ['Inventorying', 'Piloting', 'Rolling Out', 'Run-Ready'],
   researcher: ['Sourcing', 'Reproducing', 'Corroborating', 'Peer-Ready'],
+  // cert-engineer (2026-09-29) — learning labels, not a lab or scheme status.
+  'cert-engineer': ['Scoping', 'Testing', 'Evidencing', 'Lab-Ready'],
 }
 
 const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {

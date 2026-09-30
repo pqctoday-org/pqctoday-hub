@@ -8,6 +8,7 @@ import {
   Code,
   ShieldCheck,
   GraduationCap,
+  BadgeCheck,
   Server,
   Sparkles,
   CheckCircle,
@@ -38,6 +39,7 @@ const PERSONA_META: { id: PersonaId; label: string; icon: LucideIcon }[] = [
   { id: 'developer', label: 'Developer', icon: Code },
   { id: 'architect', label: 'Security Architect', icon: ShieldCheck },
   { id: 'researcher', label: 'Researcher', icon: GraduationCap },
+  { id: 'cert-engineer', label: 'Certification & Validation Engineer', icon: BadgeCheck },
   { id: 'ops', label: 'IT Ops / DevOps', icon: Server },
 ]
 
