@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { leadersData } from './leadersData'
+import { leadersData, deprecatedLeaderSuccessors } from './leadersData'
 
 describe('leadersData', () => {
   it('loads without error', () => {
@@ -42,7 +42,26 @@ describe('leadersData', () => {
     expect(byName('Jérôme Notin')?.leaderId).toBe('jerome-notin')
     expect(byName('Prof. Dr. Léo Ducas')?.leaderId).toBe('leo-ducas')
     expect(byName('Dr. Dustin Moody')?.leaderId).toBe('dustin-moody-nist')
-    expect(byName('Dustin Moody')?.leaderId).toBe('dustin-moody-nist-2')
+    // The 'Dustin Moody' stub (dustin-moody-nist-2) is a deprecated duplicate now.
+    expect(byName('Dustin Moody')).toBeUndefined()
+  })
+
+  it('maps deprecated duplicate ids to their kept profile ("duplicate of <id>")', () => {
+    expect(deprecatedLeaderSuccessors.get('dustin-moody-nist-2')).toEqual({
+      successorId: 'dustin-moody-nist',
+      name: 'Dustin Moody',
+    })
+    expect(deprecatedLeaderSuccessors.get('tanja-lange-tu-eindhoven-3')?.successorId).toBe(
+      'tanja-lange-tu-eindhoven'
+    )
+    // Deprecated rows never appear in the active list.
+    const active = new Set(leadersData.map((l) => l.leaderId))
+    for (const id of deprecatedLeaderSuccessors.keys()) expect(active.has(id)).toBe(false)
+  })
+
+  it('kept profiles carry the references merged in from their duplicates', () => {
+    const moody = leadersData.find((l) => l.leaderId === 'dustin-moody-nist')
+    expect(moody?.keyResourceRefs).toEqual(['NIST IR 8413', 'FIPS 203', 'NIST-SP-800-133r3-ipd'])
   })
 
   it('does not flag rows Updated just because the previous snapshot lacks leader_id', () => {
@@ -87,5 +106,16 @@ describe('leadersData', () => {
     // so re-deriving it here risked writing wrong values). Real gap, not a bug;
     // raise this back once the newly-added rows get their backfill pass.
     expect(withTrust.length / linked.length).toBeGreaterThan(0.6)
+  })
+})
+
+describe('formerLeaderNames', () => {
+  it('lists the names a kept profile was also listed under', async () => {
+    const { formerLeaderNames, leadersData } = await import('./leadersData')
+    const gaborit = leadersData.find(
+      (l) => l.leaderId === 'philippe-gaborit-xlim-laboratory-university-of-limoges'
+    )
+    expect(gaborit).toBeTruthy()
+    expect(formerLeaderNames.get(gaborit!.leaderId)).toContain('Philippe Gaborit')
   })
 })

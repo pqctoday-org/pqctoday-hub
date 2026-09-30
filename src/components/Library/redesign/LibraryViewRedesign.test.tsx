@@ -140,7 +140,7 @@ describe('LibraryViewRedesign', () => {
       renderWithProbe('/library?ref=PKCS11-V32-OASIS')
       expect(currentParams().get('ref')).toBe('PKCS11-V32-OS-OASIS')
       expect(screen.getByRole('dialog')).toBeInTheDocument()
-      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
+      expect(screen.getByTestId('deeplink-notice-moved')).toHaveTextContent(
         /PKCS11-V32-OASIS.*superseded by PKCS11-V32-OS-OASIS/
       )
     })

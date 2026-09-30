@@ -3,12 +3,12 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ShieldCheck, Building2, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { leadersData, type Leader } from '@/data/leadersData'
+import { leadersData, deprecatedLeaderSuccessors, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
-import { findLeaderByParam } from '@/components/Leaders/leaderDeepLink'
+import { leaderForwardedMessage, resolveLeaderParam } from '@/components/Leaders/leaderDeepLink'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -68,10 +68,19 @@ export function MobileCommunityView() {
   // linked document-contributor stub still opens. Open pushes; close replaces.
   const [searchParams, setSearchParams] = useSearchParams()
   const leaderParam = searchParams.get('leader')?.trim() || null
-  const selected: Leader | null = useMemo(
-    () => (leaderParam ? (findLeaderByParam(leadersData, leaderParam) ?? null) : null),
+  const match = useMemo(
+    () =>
+      leaderParam
+        ? resolveLeaderParam(leadersData, leaderParam, deprecatedLeaderSuccessors)
+        : undefined,
     [leaderParam]
   )
+  const selected: Leader | null = match?.leader ?? null
+  // A link to a merged duplicate's leader_id opens the kept profile; the sheet
+  // says so (it covers the page, so the notice lives inside it).
+  const [dismissedForward, setDismissedForward] = useState<string | null>(null)
+  const forwardedFrom =
+    match?.forwardedFrom && dismissedForward !== leaderParam ? match.forwardedFrom : null
   const [dismissedNotFound, setDismissedNotFound] = useState<string | null>(null)
   const notFound =
     leaderParam && !selected && dismissedNotFound !== leaderParam ? leaderParam : null
@@ -251,6 +260,13 @@ export function MobileCommunityView() {
       >
         {selected && (
           <div className="flex flex-col gap-3">
+            {forwardedFrom && (
+              <DeepLinkNotice
+                kind="moved"
+                message={leaderForwardedMessage(forwardedFrom, selected)}
+                onDismiss={() => setDismissedForward(leaderParam)}
+              />
+            )}
             <div>
               <h2 className="text-[15px] font-bold leading-snug text-foreground">
                 {selected.name}
