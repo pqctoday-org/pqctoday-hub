@@ -211,6 +211,14 @@ export const ChatPanelContent: React.FC = () => {
                 <span className="truncate">{providerLabel}</span>
               </span>
             )}
+            {provider && (
+              <span
+                className="text-[10px] text-status-success border border-status-success/30 bg-status-success/10 rounded-full px-1.5 py-0.5 hidden md:inline-flex"
+                title="Answers must pass corpus-evidence verification. Web search is disabled."
+              >
+                Corpus only · no web
+              </span>
+            )}
           </div>
           {provider && (
             <div className="flex items-center gap-1 shrink-0">

@@ -84,8 +84,9 @@
   },
   {
     "term": "FIPS 206",
-    "definition": "The draft NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon); still in draft, not yet published.",
-    "relatedModule": "/library?ref=FIPS 206",
+    "definition": "The planned NIST standard for FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, based on Falcon). FIPS 206 is still in development; NIST has not published an Initial Public Draft or final standard.",
+    "relatedModule": "/algorithms?highlight=FN-DSA-512,FN-DSA-1024",
+    "trustedSourceId": "nist-csrc",
     "complexity": "intermediate",
     "category": "standard"
   },

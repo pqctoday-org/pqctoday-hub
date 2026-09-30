@@ -83,8 +83,8 @@ const LEXICAL_CHUNK: RAGChunk = {
 const SEMANTIC_ONLY_CHUNK: RAGChunk = {
   id: 'semantic-only',
   source: 'algorithms',
-  title: 'ECDSA overview',
-  content: 'ECDSA is an elliptic-curve signature scheme.',
+  title: 'RSA migration companion',
+  content: 'RSA migration guidance for a post-quantum transition.',
   category: 'algorithms',
   metadata: {},
 }
@@ -100,10 +100,18 @@ const CURIOUS_CHUNK: RAGChunk = {
   id: 'curious-embedding-only',
   source: 'module-curious',
   title: 'Curious-mode summary',
-  content: 'A curious-mode-only summary findable only via its embedding vector.',
+  content: 'A curious-mode-only RSA migration summary findable only via its embedding vector.',
   category: 'module-curious',
   metadata: {},
 }
+const LEXICAL_FILLERS: RAGChunk[] = [1, 2, 3, 4].map((n) => ({
+  id: `lexical-filler-${n}`,
+  source: 'glossary',
+  title: `Lexical filler ${n}`,
+  content: `Lexical result ${n}.`,
+  category: 'glossary',
+  metadata: {},
+}))
 
 describe('RetrievalService.searchWithEmbeddingFallback', () => {
   let service: RetrievalService
@@ -114,7 +122,13 @@ describe('RetrievalService.searchWithEmbeddingFallback', () => {
     // a cosineSearch hit against — but query-time matching (search() itself)
     // is stubbed per-test below, so what MiniSearch would or wouldn't match
     // for QUERY against this corpus is irrelevant here.
-    service.initializeWithCorpus([LEXICAL_CHUNK, SEMANTIC_ONLY_CHUNK, QUIZ_CHUNK, CURIOUS_CHUNK])
+    service.initializeWithCorpus([
+      LEXICAL_CHUNK,
+      SEMANTIC_ONLY_CHUNK,
+      QUIZ_CHUNK,
+      CURIOUS_CHUNK,
+      ...LEXICAL_FILLERS,
+    ])
     embeddingRetrievalEnabled = false
     resetEmbeddingRuntime()
   })
@@ -141,6 +155,26 @@ describe('RetrievalService.searchWithEmbeddingFallback', () => {
     // Append-only: the lexical hit keeps rank 0, the embedding hit fills
     // the remaining slot — never reordered ahead of it.
     expect(results.map((c) => c.id)).toEqual(['lexical-match', 'semantic-only'])
+  })
+
+  it('admits a semantic candidate when lexical search already filled the target', async () => {
+    vi.spyOn(service, 'search').mockReturnValue([LEXICAL_CHUNK, ...LEXICAL_FILLERS])
+    embeddingRetrievalEnabled = true
+    const queryVec = vec([1, 0, 0, 0])
+    injectTestRuntime({
+      vectors: pack([vec([0, 1, 0, 0]), queryVec]),
+      meta: makeMeta(['lexical-match', 'semantic-only'], 4),
+      encoder: async () => ({ data: queryVec }),
+    })
+
+    const results = await service.searchWithEmbeddingFallback(QUERY, 5)
+    expect(results.map((c) => c.id)).toEqual([
+      'lexical-match',
+      'lexical-filler-1',
+      'semantic-only',
+      'lexical-filler-2',
+      'lexical-filler-3',
+    ])
   })
 
   it('does not resurface a quiz chunk via the embedding path unless the query asks for one', async () => {

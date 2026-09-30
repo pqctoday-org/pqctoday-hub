@@ -12,7 +12,7 @@
  * §6.1). This module reads the committed artifacts as static assets.
  *
  * Lazy load: nothing happens until the first call to `initEmbeddingRuntime()`
- * or `cosineSearch()`. Heavy artefacts (the ~33 MB model + ~16 MB vectors)
+ * or `cosineSearch()`. Heavy artefacts (the encoder model + ~53 MB vectors)
  * are fetched on demand so users who don't engage chat/⌘K never pay the
  * cost.
  */

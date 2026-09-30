@@ -246,28 +246,22 @@ export const ProviderSetup: React.FC = () => {
                 </div>
               </div>
 
-              {/* Quality warning — prominent, not collapsed. Sets expectations
-                before the user has invested time picking a model. */}
-              <div className="rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-status-warning">
-                  <AlertTriangle size={14} className="shrink-0" />
-                  Accuracy is currently below our bar
+              {/* Local models can draft unsupported text, so explain the display gate
+                before the user invests time downloading the model. */}
+              <div className="rounded-lg bg-status-success/10 border border-status-success/30 p-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-status-success">
+                  <Shield size={14} className="shrink-0" />
+                  Corpus-only display guardrail
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Local AI runs entirely in your browser, but small on-device models (a few billion
-                  parameters) <strong className="text-foreground">routinely fabricate facts</strong>{' '}
-                  about specific algorithms, standards, and dates — including inventing non-existent
-                  algorithm names or using deprecated terminology.
+                  The selected model drafts the answer entirely in your browser. Every substantive
+                  sentence must map to quoted evidence from the retrieved PQC Today corpus before it
+                  is displayed. Unsupported drafts are withheld rather than shown.
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  We&apos;re actively monitoring local-AI progress and will reintroduce it as a
-                  first-class option once on-device models reach the accuracy bar this app needs.
-                  For now,{' '}
-                  <strong className="text-foreground">
-                    use Cloud (Gemini) for any factual question about standards, algorithms, or
-                    compliance
-                  </strong>
-                  .
+                  The model receives no web-search tool and cannot fall back to outside knowledge.
+                  If the retrieved corpus is insufficient, the assistant says so. Local mode targets
+                  an 8 GB discrete GPU with about 6.5 GB free VRAM, or 16 GB+ Apple Silicon.
                 </p>
               </div>
 
@@ -458,28 +452,24 @@ export const ProviderSetup: React.FC = () => {
                         quality. The 4K default works on any GPU — increase if your hardware allows.
                       </p>
                       <p>
-                        <strong className="text-foreground">Why only Qwen 3 8B</strong>: Smaller
-                        in-browser models (1.7–4B parameters) hallucinate too aggressively on PQC
-                        standards content — inventing algorithm names, mixing up FIPS numbers, and
-                        using deprecated terminology (e.g., &ldquo;Kyber&rdquo; instead of ML-KEM).
-                        Qwen 3 8B is the strongest currently-available MLC build for this app&apos;s
-                        RAG workload. We&apos;re monitoring smaller-model progress and will
-                        reintroduce a tiered catalog when on-device models reach the accuracy bar
-                        this app needs.
+                        <strong className="text-foreground">Why these two models</strong>: Qwen 3.5
+                        9B is the accuracy-first default and Qwen 3 8B provides more GPU-memory
+                        headroom. Smaller 1.7–4B models follow the detailed corpus citation contract
+                        less reliably. You can switch between the two and the same verification gate
+                        applies to every displayed answer.
                       </p>
                       <p>
-                        <strong className="text-foreground">Limitations vs Cloud</strong>: Even Qwen
-                        3 8B is much smaller than Gemini and still hallucinates a meaningful
-                        fraction of factual answers. For any question about specific standards,
-                        algorithms, certifications, or compliance frameworks, use Cloud (Gemini) and
-                        verify named entities against the source pages.
+                        <strong className="text-foreground">Limitations vs Cloud</strong>: Both
+                        local models are much smaller than Gemini, so they can fail the
+                        corpus-evidence gate more often or produce shorter explanations. Failed
+                        drafts are withheld; use the linked corpus sources for authoritative detail.
                       </p>
                     </div>
                   )}
 
                   {!showConsent ? (
                     <>
-                      {/* Acknowledgement #1 — quality risk. Stays in the main card so
+                      {/* Acknowledgement #1 — local limitations. Stays in the main card so
                         the user faces it before clicking Get Started. */}
                       <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-border bg-muted/10 p-3 hover:border-muted-foreground/30">
                         <input
@@ -493,12 +483,8 @@ export const ProviderSetup: React.FC = () => {
                           id="local-ack-quality-text"
                           className="text-xs text-foreground leading-relaxed"
                         >
-                          I understand that local AI may{' '}
-                          <strong>
-                            fabricate algorithm names, standards, dates, and other facts
-                          </strong>
-                          , and I will verify every named entity in its responses against the source
-                          pages before relying on it.
+                          I understand that local AI may be unable to produce a verified answer, and
+                          that I should use the linked corpus sources for authoritative decisions.
                         </span>
                       </label>
                       <p className="text-xs text-muted-foreground">
@@ -560,10 +546,9 @@ export const ProviderSetup: React.FC = () => {
                           id="local-ack-exploratory-text"
                           className="text-xs text-foreground leading-relaxed"
                         >
-                          I understand that local AI is an <strong>exploratory feature</strong>,
-                          that current results do <strong>not meet the accuracy bar</strong> of this
-                          app, and I am proceeding on that basis. I will not screenshot or share
-                          local-AI responses as if they were authoritative.
+                          I understand that local AI is an <strong>exploratory feature</strong> and
+                          may return a source-verification notice instead of an answer when its
+                          draft cannot be tied to retrieved corpus evidence.
                         </span>
                       </label>
                       <div className="flex gap-2">
@@ -618,7 +603,7 @@ export const ProviderSetup: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="text-sm font-semibold text-foreground">
-                    Gemini 2.5 Flash (Cloud)
+                    Gemini 3.8 Flash (Cloud)
                   </h4>
                   <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/20 text-primary">
                     Recommended
@@ -636,17 +621,15 @@ export const ProviderSetup: React.FC = () => {
                 Meets this app&apos;s accuracy bar
               </div>
               <p className="text-xs text-muted-foreground">
-                Gemini 2.5 Flash reliably grounds its answers in the retrieved PQC corpus, honors
-                the &ldquo;answer only from context&rdquo; instruction, and uses current standard
-                names (ML-KEM, ML-DSA — not the deprecated Kyber/Dilithium). It&apos;s the provider
-                we test against and the one we recommend for any factual question about standards,
-                algorithms, or compliance.
+                Gemini 3.8 Flash answers from the retrieved PQC corpus. Every substantive sentence
+                must map to quoted corpus evidence before the answer is displayed. Web search and
+                external tools are disabled.
               </p>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Powered by Google&apos;s Gemini 2.5 Flash — a frontier model orders of magnitude
-              larger than any local option. Your questions are processed on Google&apos;s servers.
+              Powered by Google&apos;s Gemini 3.8 Flash. Your question and retrieved corpus passages
+              are processed on Google&apos;s servers, but the model receives no web-search tool.
             </p>
 
             {/* Feature comparison */}

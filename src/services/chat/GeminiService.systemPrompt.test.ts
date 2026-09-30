@@ -40,9 +40,10 @@ describe('buildSystemPrompt', () => {
       expect(result).toContain('Answer based ONLY on the provided context')
     })
 
-    it('includes followups instruction with the ```followups code fence format', () => {
+    it('does not spend model tokens generating discarded follow-ups', () => {
       const result = buildSystemPrompt([])
-      expect(result).toContain('```followups')
+      expect(result).not.toContain('```followups')
+      expect(result).toContain('Do not generate follow-up questions')
     })
 
     it('includes deep-link patterns', () => {
@@ -75,7 +76,7 @@ describe('buildSystemPrompt', () => {
       // Use the full "--- Source:" marker — the bare title also appears in the entity
       // inventory section which is inserted before the context header.
       const headerIdx = result.indexOf(contextHeader)
-      const chunkIdx = result.indexOf('--- Source: algorithms | ML-KEM Overview ---')
+      const chunkIdx = result.indexOf('--- Source: algorithms | ML-KEM Overview')
       expect(headerIdx).toBeLessThan(chunkIdx)
     })
   })

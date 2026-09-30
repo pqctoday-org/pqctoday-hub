@@ -119,6 +119,46 @@ interface RAGChunk {
   prov?: ChunkProv
 }
 
+/**
+ * Corpus-wide status guard for FIPS 206. Several older secondary records used
+ * "draft" as shorthand for "work in progress" even though NIST has not
+ * published an Initial Public Draft. Normalize those phrases before they can
+ * become retrieval evidence. This does not alter references to unrelated IETF
+ * drafts.
+ */
+export function normalizeFips206Status(text: string): string {
+  if (!/FIPS 206/i.test(text)) return text
+
+  return text
+    .replace(
+      /FIPS 206 expected to be published in late 2026 early 2027/gi,
+      'FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard'
+    )
+    .replace(
+      /FIPS 206 \(FN-DSA\/FALCON\) remains in draft as of mid-2026, not a finalized NIST standard/gi,
+      'FIPS 206 (planned FN-DSA/Falcon) remains in development; NIST has not published an Initial Public Draft or final standard'
+    )
+    .replace(
+      /FIPS 206 itself remains in draft as of mid-2026 \(submitted for approval Aug 2025, final publication expected late 2026\/2027\)/gi,
+      'FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard'
+    )
+    .replace(/FIPS 206 \(FN-DSA, draft\)/gi, 'planned FIPS 206 (FN-DSA; no public draft)')
+    .replace(/FIPS 206 \(draft\)/gi, 'planned FIPS 206 (no public draft)')
+    .replace(/FIPS 206,? still in draft/gi, 'planned FIPS 206, still in development with no public draft')
+    .replace(/FIPS 206 draft/gi, 'planned FIPS 206 (no public draft)')
+    .replace(/draft FIPS 206/gi, 'planned FIPS 206 (no public draft)')
+    .replace(/DRAFT FIPS 206/gi, 'planned FIPS 206 (no public draft)')
+    .replace(/FN-DSA \(FIPS 206, draft\)/gi, 'Falcon / planned FN-DSA (FIPS 206 not yet drafted)')
+    .replace(/draft FN-DSA \(FIPS 206\)/gi, 'planned FN-DSA (FIPS 206; no public draft)')
+    .replace(/FIPS 206 standardizes the FALCON signature scheme/gi, 'planned FIPS 206 is based on the Falcon signature scheme')
+    .replace(/standardized as FN-DSA in FIPS 206/gi, 'selected as the basis for planned FN-DSA in FIPS 206')
+    .replace(/defined by NIST in FIPS 206/gi, 'selected by NIST for the planned FIPS 206')
+    .replace(
+      /FIPS 206 is still in draft, with final publication expected in late 2026 to 2027/gi,
+      'FIPS 206 remains in development; NIST has not published an Initial Public Draft or final standard'
+    )
+}
+
 const BUILD_DATE = new Date().toISOString().slice(0, 10)
 
 function buildChunkProv(opts: {
@@ -663,6 +703,7 @@ async function processGlossary(): Promise<RAGChunk[]> {
         definition: string
         technicalNote?: string
         relatedModule?: string
+        trustedSourceId?: string
         complexity: string
         category: string
       },
@@ -687,6 +728,7 @@ async function processGlossary(): Promise<RAGChunk[]> {
           acronym: term.acronym || '',
           complexity: term.complexity || 'beginner',
           relatedModule: term.relatedModule || '',
+          trustedSourceId: term.trustedSourceId || '',
         },
         deepLink: term.relatedModule || '/learn',
       } as RAGChunk
@@ -4038,7 +4080,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Algorithms Page — Transition Guide & Detailed Comparison',
       content:
-        "Algorithms Page Overview\n\nThe Algorithms page has four tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65); Detailed Comparison is a flat, sortable table with full specs for every algorithm, with a Browse ↔ Compare toggle; Protocol Support (the PQC Protocol Matrix) tracks IETF/TCG/OASIS/3GPP/IEEE/UEFI protocol standardization across 4 PQC dimensions (pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig) in a Heatmap or Detailed card view; Validation runs live in-browser KAT (known-answer-test) vectors and documents implementation-level attacks (side-channel, fault injection, RNG). A baseline algorithm is auto-selected for Detailed-tab comparisons: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition|detailed|support|landscape|validation (default: transition); ?algo=<algorithm id or exact name> opens one algorithm's detail; ?quickview=nist-picks|fips-validated|none sets the quick-view preset (a ?highlight= link widens it automatically); ?family=, ?fn=, ?level=, ?region=, ?status=, ?q= to filter (Transition & Detailed tabs); ?mode=compare for the Detailed tab's Compare view; ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?section=attacks|kat|coverage opens a Validation-tab section; ?protocol=<id> opens one Protocol Support row's detail (implies tab=support); ?industry=<label> and ?mechanism= filter the Landscape tab. On Protocol Support: ?matrixView=detailed for the card view (default: heatmap), ?matrixQ= to search, ?matrixStatus=<rfc|draft|experimental|none|na> (comma-separated) and ?matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment> to filter, ?matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc> to sort. Example: /algorithms?tab=support&matrixView=detailed&matrixStatus=rfc.",
+        "Algorithms Page Overview\n\nThe Algorithms page has four tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65); Detailed Comparison is a flat, sortable table with full specs for every algorithm, with a Browse ↔ Compare toggle; Protocol Support (the PQC Protocol Matrix) tracks IETF/TCG/OASIS/3GPP/IEEE/UEFI protocol standardization across 4 PQC dimensions (pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig) in a Heatmap or Detailed card view; Validation runs live in-browser KAT (known-answer-test) vectors and documents implementation-level attacks (side-channel, fault injection, RNG). A baseline algorithm is auto-selected for Detailed-tab comparisons: ECDH P-256 for KEM families, RSA-2048 for Signature families.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (planned FIPS 206; in development with no public draft or final publication; compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?tab=transition|detailed|support|landscape|validation (default: transition); ?algo=<algorithm id or exact name> opens one algorithm's detail; ?quickview=nist-picks|fips-validated|none sets the quick-view preset (a ?highlight= link widens it automatically); ?family=, ?fn=, ?level=, ?region=, ?status=, ?q= to filter (Transition & Detailed tabs); ?mode=compare for the Detailed tab's Compare view; ?highlight= to highlight specific algorithms (comma-separated); ?compare= for pre-selected comparisons; ?section=attacks|kat|coverage opens a Validation-tab section; ?protocol=<id> opens one Protocol Support row's detail (implies tab=support); ?industry=<label> and ?mechanism= filter the Landscape tab. On Protocol Support: ?matrixView=detailed for the card view (default: heatmap), ?matrixQ= to search, ?matrixStatus=<rfc|draft|experimental|none|na> (comma-separated) and ?matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment> to filter, ?matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc> to sort. Example: /algorithms?tab=support&matrixView=detailed&matrixStatus=rfc.",
       category: 'page-guide',
       metadata: { page: 'algorithms' },
       deepLink: '/algorithms',
@@ -4049,7 +4091,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Library Page — Standards, RFCs & Reference Documents',
       content:
-        'Library Page Overview\n\nThe Library catalogs 680+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research) and filterable by organization and sector. Persona-aware category boosting surfaces the most relevant categories for your role.\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?ref=<referenceId> — open a specific document detail panel (e.g., /library?ref=FIPS-203)\n- ?cat=<category> — filter by category: Digital Signature | KEM | PKI Certificate Management | Protocols | Government & Policy | NIST Standards | International Frameworks | Migration Guidance | Algorithm Specifications | Industry & Research\n- ?org=<organization> — filter by standardization body: NIST, IETF, ETSI, 3GPP, ENISA, NSA, CISA/NSA, ANSSI France, BSI Germany, UK NCSC, CCCS Canada, ASD Australia, CA/Browser Forum, Cloud Security Alliance, CRYPTREC Japan, Open Quantum Safe\n- ?sector=<NAICS code> — filter by sector (repeatable): 52 Finance & Insurance | 92 Public Administration | 54 Professional & Technical Services | 51 Information Technology | 62 Healthcare & Life Sciences | 22 Energy & Utilities | 48 Transportation | 91 Government & Defense\n- ?sort=<order> — sort: newest (default) | name | referenceId | urgency\n- ?view=<mode> — layout: cards (default) | table\n\nExample shareable links: /library?cat=KEM&org=NIST (NIST KEM standards), /library?cat=Digital+Signature&sort=urgency (signature docs by urgency), /library?sector=52&cat=Protocols (finance protocol standards), /library?ref=FIPS-203&cat=KEM (open ML-KEM doc with KEM filter active).',
+        'Library Page Overview\n\nThe Library catalogs 680+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research) and filterable by organization and sector. Persona-aware category boosting surfaces the most relevant categories for your role.\n\nPublished key standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), and SP 800-208 (LMS/XMSS). Planned FIPS 206 (FN-DSA) remains in development; NIST has not published an Initial Public Draft or final standard.\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?ref=<referenceId> — open a specific document detail panel (e.g., /library?ref=FIPS-203)\n- ?cat=<category> — filter by category: Digital Signature | KEM | PKI Certificate Management | Protocols | Government & Policy | NIST Standards | International Frameworks | Migration Guidance | Algorithm Specifications | Industry & Research\n- ?org=<organization> — filter by standardization body: NIST, IETF, ETSI, 3GPP, ENISA, NSA, CISA/NSA, ANSSI France, BSI Germany, UK NCSC, CCCS Canada, ASD Australia, CA/Browser Forum, Cloud Security Alliance, CRYPTREC Japan, Open Quantum Safe\n- ?sector=<NAICS code> — filter by sector (repeatable): 52 Finance & Insurance | 92 Public Administration | 54 Professional & Technical Services | 51 Information Technology | 62 Healthcare & Life Sciences | 22 Energy & Utilities | 48 Transportation | 91 Government & Defense\n- ?sort=<order> — sort: newest (default) | name | referenceId | urgency\n- ?view=<mode> — layout: cards (default) | table\n\nExample shareable links: /library?cat=KEM&org=NIST (NIST KEM standards), /library?cat=Digital+Signature&sort=urgency (signature docs by urgency), /library?sector=52&cat=Protocols (finance protocol standards), /library?ref=FIPS-203&cat=KEM (open ML-KEM doc with KEM filter active).',
       category: 'page-guide',
       metadata: { page: 'library' },
       deepLink: '/library',
@@ -4953,7 +4995,7 @@ function processRegulatoryTimelines(): RAGChunk[] {
     source: 'regulatory-timeline',
     title: 'NIST FIPS Post-Quantum Standards',
     content: [
-      `NIST FIPS Post-Quantum Cryptography Standards (finalized ${NIST_DEPRECATION.fipsFinalized}):`,
+      `NIST post-quantum FIPS publication status (FIPS 203/204/205 finalized ${NIST_DEPRECATION.fipsFinalized}):`,
       ...fipsLines,
     ].join('\n'),
     category: 'regulatory-deadline',
@@ -5264,6 +5306,36 @@ async function main() {
   // Cross-domain linking
   const crossRefCount = enrichWithCrossReferences(corpus)
   console.log(`\n  🔗 Cross-references added: ${crossRefCount} links`)
+
+  // A status label is not harmless here: the model treats every corpus line as
+  // candidate evidence. Remove the legacy "FIPS 206 draft" shorthand across
+  // all processors, including old enrichment prose and changelog summaries.
+  let fips206Normalizations = 0
+  for (const chunk of corpus) {
+    const normalized = normalizeFips206Status(chunk.content)
+    if (normalized !== chunk.content) {
+      chunk.content = normalized
+      fips206Normalizations++
+    }
+  }
+  const staleFips206 = corpus.filter(
+    (chunk) =>
+      /FIPS 206/i.test(chunk.content) &&
+      /(?:FIPS 206(?!\) Nears Draft Approval)[^\n.]{0,35}\bdraft\b|\b(?:the )?draft FIPS 206\b)/i.test(
+        chunk.content
+      ) &&
+      !/FIPS 206,\s*Draft NIST IR/i.test(chunk.content) &&
+      !/(?:no|not|without|hasn't|has not)[^\n.]{0,30}\b(?:public )?draft\b/i.test(chunk.content)
+  )
+  if (staleFips206.length > 0) {
+    throw new Error(
+      `FIPS 206 status guard found ${staleFips206.length} stale draft claim(s): ${staleFips206
+        .slice(0, 10)
+        .map((chunk) => chunk.id)
+        .join(', ')}`
+    )
+  }
+  console.log(`  ✓ FIPS 206 status guard: ${fips206Normalizations} chunk(s) normalized`)
 
   // Assign static priority per source type
   const SOURCE_PRIORITY: Record<string, number> = {

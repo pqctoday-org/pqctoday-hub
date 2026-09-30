@@ -75,12 +75,22 @@ export function RagAiSection() {
                 discussed.
               </p>
               <p className="text-muted-foreground mt-3">
+                Before an answer is shown, every substantive sentence must map to a verbatim
+                evidence excerpt in one of those retrieved chunks. Unsupported drafts are retried
+                once, then replaced with a source-verification notice. Neither mode has a web-search
+                tool, so explanations can rephrase the corpus but cannot add facts from the
+                model&apos;s general training knowledge.
+              </p>
+              <p className="text-muted-foreground mt-3">
                 You choose where the model runs:{' '}
                 <strong className="text-foreground">cloud mode</strong> uses Google&apos;s{' '}
-                <strong className="text-foreground">Gemini 2.5 Flash</strong>, or{' '}
+                <strong className="text-foreground">Gemini 3.8 Flash</strong>, or{' '}
                 <strong className="text-foreground">local mode</strong> runs an in-browser model (
-                Qwen3-8B over WebGPU) entirely on your device. In local mode your queries and the
-                retrieved context never leave your machine &mdash; it even works in airplane mode.
+                Qwen 3.5 9B or Qwen 3 8B over WebGPU) entirely on your device. Qwen 3.5 is the
+                accuracy-first default; Qwen 3 uses less GPU memory. Both target an 8 GB discrete
+                GPU (or 16 GB+ Apple Silicon). In local mode your queries and retrieved context
+                never leave your machine &mdash; it even works in airplane mode after the one-time
+                model and retrieval-asset downloads.
               </p>
               <p className="text-muted-foreground mt-3">
                 To use <strong className="text-foreground">cloud mode</strong>, you provide your own{' '}
@@ -104,7 +114,7 @@ export function RagAiSection() {
                   <strong className="text-foreground">cloud mode</strong>, when you submit a
                   question your query text and the retrieved context chunks are sent to{' '}
                   <strong className="text-foreground">Google&apos;s servers</strong> for processing
-                  by the Gemini 2.5 Flash model. Do not include sensitive, confidential, or personal
+                  by the Gemini 3.8 Flash model. Do not include sensitive, confidential, or personal
                   information in cloud-mode queries (local mode sends nothing off-device).{' '}
                   <a
                     href="https://ai.google.dev/gemini-api/terms"

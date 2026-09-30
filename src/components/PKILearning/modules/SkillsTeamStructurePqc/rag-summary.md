@@ -24,6 +24,6 @@ The workshop has 2 interactive steps:
 ## Related Standards
 
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
-- FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, draft)
+- FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and planned FIPS 206 (FN-DSA; in development with no public draft)
 - NSA CNSA 2.0 (algorithm suite and timelines)
 - CycloneDX (CBOM format the team operates and maintains)

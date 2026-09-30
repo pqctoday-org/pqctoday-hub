@@ -305,6 +305,8 @@ docs/pqctoday-investor*
 # Note: `scripts/*` (not `scripts/`) so per-file re-include rules below work.
 # Git refuses to un-ignore files inside a fully-ignored directory.
 scripts/*
+# Current-corpus RAG benchmark (invoked by `npm run evaluate:rag-embeddings`)
+!scripts/evaluate-embedding-retrieval.ts
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
 # WS-F ACVP-format prototype CLI (thin entry; logic in src/services/acvp/node/cli.ts)

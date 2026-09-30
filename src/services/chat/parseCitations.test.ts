@@ -25,6 +25,22 @@ What about ML-KEM-1024?
     ])
   })
 
+  it('accepts harmless fence casing, spacing, and CRLF differences', () => {
+    const input =
+      'Grounded answer.\r\n\r\n``` CITATIONS \r\n' +
+      '[{"claimExcerpt":"Grounded answer.","evidenceExcerpt":"Grounded evidence.","chunkId":"chunk-a"}]\r\n```\r\n'
+    expect(parseCitations(input)).toEqual({
+      cleanContent: 'Grounded answer.',
+      citations: [
+        {
+          claimExcerpt: 'Grounded answer.',
+          evidenceExcerpt: 'Grounded evidence.',
+          chunkId: 'chunk-a',
+        },
+      ],
+    })
+  })
+
   it('extracts multiple citations', () => {
     const input = `Answer text.
 
@@ -39,6 +55,22 @@ What about ML-KEM-1024?
     expect(citations).toEqual([
       { claimExcerpt: 'first claim', chunkId: 'chunk-a' },
       { claimExcerpt: 'second claim', chunkId: 'chunk-b' },
+    ])
+  })
+
+  it('extracts a verbatim evidence excerpt for a paraphrased claim', () => {
+    const input = `A paraphrased answer.
+
+\`\`\`citations
+[{"claimExcerpt":"A paraphrased answer.","evidenceExcerpt":"Exact corpus text.","chunkId":"chunk-a"}]
+\`\`\``
+
+    expect(parseCitations(input).citations).toEqual([
+      {
+        claimExcerpt: 'A paraphrased answer.',
+        evidenceExcerpt: 'Exact corpus text.',
+        chunkId: 'chunk-a',
+      },
     ])
   })
 
