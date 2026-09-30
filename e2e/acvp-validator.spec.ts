@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
   test.setTimeout(420000) // WASM load + autoInit + the workbench run (see the 300 s wait below)

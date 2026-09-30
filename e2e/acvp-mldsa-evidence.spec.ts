@@ -1,4 +1,5 @@
-import { test, expect, type Locator } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
+import type { Locator } from '@playwright/test'
 
 // ML-DSA reference-sample rows (useAcvpSuite section 5d, sections/mldsaAcvp.ts)
 // rendered in the real workbench on BOTH engines (dual mode). Asserts row

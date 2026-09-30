@@ -7,7 +7,8 @@
 // downloads complete, no request may carry vector data (URL or body), and no
 // non-GET request may leave the page. Engine code (.js/.wasm) is fetched by
 // GET from this origin and carries nothing from the file.
-import { test, expect, type Request } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
+import type { Request } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 

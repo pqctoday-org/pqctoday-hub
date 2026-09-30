@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
 
 /**
  * Trust-tier filter (C8) — covers Library, Migrate, Compliance, Threats, Timeline.
