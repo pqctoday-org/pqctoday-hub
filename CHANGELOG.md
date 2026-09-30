@@ -35,7 +35,7 @@ The PQC Assistant answers from the retrieved PQC Today corpus again, responds mo
 
 ### Changed
 
-- **Qwen 3 8B is the local default again** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: native tests against the current 17,998-chunk corpus found no consistent grounding advantage from Qwen 3.5 9B. Qwen 3 8B passed the reported Learning Center and ML-KEM library questions, uses less GPU memory, and is selected automatically after this update; Qwen 3.5 remains available in the model picker for comparison.
+- **Qwen 3 8B is the local default again** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: native tests against the expanded current corpus found no consistent grounding advantage from Qwen 3.5 9B. Qwen 3 8B passed the reported Learning Center and ML-KEM library questions, uses less GPU memory, and is selected automatically after this update; Qwen 3.5 remains available in the model picker for comparison.
 
 ### Fixed
 
