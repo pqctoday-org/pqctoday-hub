@@ -25,6 +25,11 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('command palette opens and returns ranked results for "ML-KEM"', async ({ page }) => {
+  // The whole-test budget must exceed the 60 s results wait below plus page load,
+  // trigger wait and input wait. The config default (45 s) would cut the wait
+  // short locally; the nightly passes --timeout=180000, which already covers it.
+  test.setTimeout(120_000)
+
   await page.goto('/library')
   await page.waitForLoadState('networkidle')
 
@@ -56,16 +61,17 @@ test('command palette opens and returns ranked results for "ML-KEM"', async ({ p
   // At least one result row should appear. Result rows have a recognisable
   // structure but no fixed test id; rely on text presence.
   //
-  // 15s, not 5s. The palette pre-loads the search index on first ⌘K open
-  // (SearchIndex.ts → unified.loadCached()), and that fetches and parses
-  // public/data/rag-corpus.json — currently 21.3 MB. Locally the file is warm
-  // in the HTTP cache and results land in well under a second, which is why
-  // this passed on every dev machine while failing in CI, where each run
-  // fetches it cold. 5s was an under-estimate of a real load, not a flake:
-  // the palette opened and accepted input every time, only the results were
-  // late. Matches the 15s used elsewhere in this suite for index-dependent
-  // assertions.
+  // 60s, not 5s or 15s. The palette pre-loads the search index on first ⌘K open
+  // (SearchIndex.ts → unified.loadCached()): fetch public/data/rag-corpus.json
+  // (currently ~27.8 MB / 26.5 MiB), JSON.parse, build the MiniSearch index,
+  // JSON.stringify and write it to IndexedDB. Locally that lands in ~2.4 s (file
+  // warm in the HTTP cache), but on a 2-4 vCPU GitHub runner time-to-first-result
+  // measured ~10-25 s (~10 s at 4x CPU throttle, 25-53 s at 8x), so the nightly
+  // failed 3/3 on 27 Sep and again on 30 Sep against a 15 s assertion. It is a
+  // load-time flake, not a regression: the palette opens and accepts input every
+  // time, only the results are late. 60 s is a ceiling, not an expected latency —
+  // a passing run still returns as soon as the first result renders.
   await expect(
     page.locator('[role="option"], [role="listbox"] button, [role="listbox"] a').first()
-  ).toBeVisible({ timeout: 15_000 })
+  ).toBeVisible({ timeout: 60_000 })
 })

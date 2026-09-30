@@ -6,6 +6,32 @@ import { defineConfig, devices } from '@playwright/test'
 const PORT = parseInt(process.env.PLAYWRIGHT_DEV_PORT ?? '4173', 10)
 const BASE_URL = `http://localhost:${PORT}`
 
+// Automated browsers must never call Google Analytics / Tag Manager. The site
+// loads react-ga4 when VITE_GA_MEASUREMENT_ID is set at build time, so headless
+// runs against a production build (or the live site) would inflate analytics and
+// contribute to Google captchas. `playwright.config.ts` cannot register routes,
+// so the hosts are unresolvable at the Chromium resolver instead: `~NOTFOUND`
+// fails the lookup immediately (net::ERR_NAME_NOT_RESOLVED) with no packet sent.
+// Only these hosts are listed, so localhost and every other host resolve as
+// usual. Chromium-only flag: applied to the chromium / smoke / local projects
+// (Desktop Chrome) and, via globalSetup, to its warm-up browser. NOT applied to
+// `mobile-smoke`: `devices['iPhone 14']` is a WebKit device
+// (defaultBrowserType 'webkit'), which ignores Chromium flags — verified
+// 2026-09-30, the WebKit project still reached the analytics hosts. Closing that
+// gap needs a context-level route in a shared fixture, not a launch flag.
+const BLOCKED_ANALYTICS_HOSTS = [
+  'www.google-analytics.com',
+  'ssl.google-analytics.com',
+  'region1.google-analytics.com',
+  'analytics.google.com',
+  'www.googletagmanager.com',
+]
+const CHROMIUM_LAUNCH_OPTIONS = {
+  args: [
+    `--host-resolver-rules=${BLOCKED_ANALYTICS_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`).join(', ')}`,
+  ],
+}
+
 // By DEFAULT the e2e suite runs against the PRODUCTION BUILD (`vite preview`):
 // prerendered <title>s and build-generated data (OSCAL/CBOM/sitemap) match what
 // actually ships, so specs are reliable. The old dev-server default produced
@@ -123,7 +149,7 @@ export default defineConfig({
     // intended project; the exclusion here was simply missing.
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], launchOptions: CHROMIUM_LAUNCH_OPTIONS },
       testIgnore: ['**/*.local.spec.ts', '**/sim-mobile.spec.ts'],
     },
     // SMOKE tier — a fast, curated, reliably-green subset of critical user
@@ -133,7 +159,7 @@ export default defineConfig({
     // deliberately excluded — they run in the nightly full suite instead.
     {
       name: 'smoke',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], launchOptions: CHROMIUM_LAUNCH_OPTIONS },
       testMatch: SMOKE_SPECS.map((f) => `**/${f}`),
     },
     // LOCAL tier — `*.local.spec.ts` only. Never runs in CI (both CI projects
@@ -141,7 +167,7 @@ export default defineConfig({
     // or `playwright test --project=local`.
     {
       name: 'local',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], launchOptions: CHROMIUM_LAUNCH_OPTIONS },
       testMatch: ['**/*.local.spec.ts'],
     },
     // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the
