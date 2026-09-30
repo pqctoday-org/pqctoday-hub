@@ -36,24 +36,24 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
   const scenarios: Scenario[] = [
     {
       id: 'ikev2-classical',
-      title: '1. Classical IKEv2 Handshake (MODP-3072)',
+      title: '1. Classical IKEv2 Handshake (ECP-256)',
       description:
-        'Step through a standard IKEv2 handshake using DH Group 15 (MODP-3072). Observe the IKE_SA_INIT and IKE_AUTH phases, payload structure, and the compact message sizes with classical DH.',
+        'Step through a standard IKEv2 handshake using elliptic-curve Diffie-Hellman (ECP-256, DH Group 19). Observe the IKE_SA_INIT and IKE_AUTH phases, payload structure, and the compact message sizes with classical ECDH.',
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        "The total handshake is approximately 2,040 bytes across 2 round trips. The KE payload carries a 384-byte MODP-3072 public value (3072 bits, RFC 3526). This baseline is quantum-vulnerable to Shor's algorithm.",
+        "The total handshake is approximately 1,400 bytes across 2 round trips. The KE payload carries a 64-byte ECP-256 public value (RFC 5903). This baseline is quantum-vulnerable to Shor's algorithm.",
       config: { step: 0, ikev2Mode: 'classical' },
     },
     {
       id: 'ikev2-hybrid',
       title: '2. Hybrid IKEv2 with ML-KEM + Additional KE',
       description:
-        'Run a hybrid IKEv2 handshake per draft-ietf-ipsecme-ikev2-mlkem. ML-KEM-768 runs in the primary KE slot of IKE_SA_INIT; classical ECP-256 follows as Additional Key Exchange 1 in IKE_INTERMEDIATE (RFC 9370).',
+        'Run a hybrid IKEv2 handshake per draft-ietf-ipsecme-ikev2-mlkem Appendix A. Classical ECP-256 runs in IKE_SA_INIT; ML-KEM-768 follows as Additional Key Exchange 1 in the encrypted IKE_INTERMEDIATE exchange (RFC 9370).',
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The handshake grows to approximately 3,784 bytes and adds a third round trip for IKE_INTERMEDIATE. The ML-KEM encapsulation key (1,184 B) and ciphertext (1,088 B) in IKE_SA_INIT dominate the size increase.',
+        'The handshake grows to approximately 3,784 bytes and adds a third round trip for IKE_INTERMEDIATE. IKE_SA_INIT stays small; the ML-KEM encapsulation key (1,184 B) and ciphertext (1,088 B) travel in IKE_INTERMEDIATE, which RFC 7383 can fragment. Switch the ML-KEM size to 1024 and watch the same messages fragment instead of being dropped.',
       config: { step: 0, ikev2Mode: 'hybrid' },
     },
     {
