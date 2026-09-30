@@ -309,14 +309,16 @@ export function VpnComparisonPanel({ selectedMode }: Props) {
       {/* Migration analysis */}
       <p className="text-xs text-muted-foreground leading-relaxed">
         Migrating IKEv2 to post-quantum cryptography swaps the plaintext key exchange first — that
-        is where HNDL bites. Hybrid mode chains ML-KEM-768 (primary KE slot of IKE_SA_INIT) with
-        ECP-256 over an extra IKE_INTERMEDIATE round trip (
+        is where HNDL bites. Hybrid mode keeps ECP-256 in IKE_SA_INIT and adds ML-KEM-768 as
+        Additional KE 1 in an extra, encrypted IKE_INTERMEDIATE round trip
+        (draft-ietf-ipsecme-ikev2-mlkem Appendix A), where RFC 7383 can fragment it (
         {IKE_V2_EXCHANGES.hybrid.totalBytes.toLocaleString()} B /{' '}
         {IKE_V2_EXCHANGES.hybrid.roundTrips} RTT vs{' '}
         {IKE_V2_EXCHANGES.classical.totalBytes.toLocaleString()} B /{' '}
         {IKE_V2_EXCHANGES.classical.roundTrips} RTT classical), re-deriving SKEYSEED per RFC 9370
         §2.2.2 so both algorithms must fall before the session keys do. Pure-PQC drops the classical
-        round entirely ({IKE_V2_EXCHANGES['pure-pqc'].totalBytes.toLocaleString()} B /{' '}
+        exchange entirely and carries ML-KEM in the unfragmentable IKE_SA_INIT (
+        {IKE_V2_EXCHANGES['pure-pqc'].totalBytes.toLocaleString()} B /{' '}
         {IKE_V2_EXCHANGES['pure-pqc'].roundTrips} RTT). In this simulator the ML-KEM-768
         encapsulation and decapsulation run as real C_EncapsulateKey / C_DecapsulateKey calls on
         softhsmv3 WASM, keeping the shared secret inside the PKCS#11 token boundary.

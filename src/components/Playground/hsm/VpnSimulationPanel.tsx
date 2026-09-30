@@ -44,8 +44,11 @@ import {
 
 import {
   IKE_V2_MODES,
-  IKE_V2_EXCHANGES,
+  buildIkeV2Exchange,
   IKE_AUTH_SK_BYTES,
+  KEM_PUBKEY_BYTES,
+  KEM_CIPHERTEXT_BYTES,
+  type KemSize,
   type IKEv2Mode,
   type IKEv2Message,
   type IKEv2Payload,
@@ -88,13 +91,7 @@ export interface VpnSimulationPanelProps {
 // 512/1024 became real (not just standalone-verified) via the 2026-08-31
 // strongswan-pkcs11 fix — see kem_parameter_set() in pqctoday-hsm's
 // pkcs11_kem.c and this panel's buildKemOverrideProposal.
-type KemSize = 512 | 768 | 1024
 const KEM_NIST_LEVEL: Record<KemSize, string> = { 512: 'Level 1', 768: 'Level 3', 1024: 'Level 5' }
-// FIPS 203 encapsulation-key (public key) byte sizes, ek size per size class.
-const KEM_PUBKEY_BYTES: Record<KemSize, number> = { 512: 800, 768: 1184, 1024: 1568 }
-// FIPS 203 ciphertext byte sizes per size class (also the C_EncapsulateKey
-// ct_len this panel's PKCS#11 trace log reports).
-const KEM_CIPHERTEXT_BYTES: Record<KemSize, number> = { 512: 768, 768: 1088, 1024: 1568 }
 
 type SoftHSMWasmModule = NonNullable<
   ReturnType<typeof getSoftHSMRustModule> extends Promise<infer T> ? T : never
@@ -531,13 +528,15 @@ const PayloadCard: React.FC<{
 // ── C6: IKE phase annotation for charon.log entries ───────────────────────────
 type IkePhase = 'SETUP' | 'IKE_SA_INIT' | 'IKE_INTERMEDIATE' | 'IKE_AUTH'
 
-function getIkePhase(text: string): IkePhase | null {
+function getIkePhase(text: string, mode: IKEv2Mode): IkePhase | null {
   if (/C_Initialize|C_OpenSession|C_Login|C_GetSlotList|C_GetSlotInfo/.test(text)) return 'SETUP'
+  // ML-KEM key generation, encapsulation and decapsulation belong to whichever
+  // exchange carries the ML-KEM KE payload: IKE_SA_INIT in pure-pqc mode, the
+  // Additional KE 1 round in IKE_INTERMEDIATE in hybrid mode (draft Appendix A).
+  const mlkemPhase: IkePhase = mode === 'hybrid' ? 'IKE_INTERMEDIATE' : 'IKE_SA_INIT'
+  if (/EncapsulateKey|DecapsulateKey/.test(text)) return mlkemPhase
+  if (/C_GenerateKeyPair/.test(text) && /ML_KEM/.test(text)) return mlkemPhase
   if (/C_GenerateKeyPair|C_GenerateKey/.test(text)) return 'IKE_SA_INIT'
-  // ML-KEM runs in the primary KE slot of IKE_SA_INIT in both hybrid and
-  // pure-pqc modes; the hybrid Additional KE (ECDH) round is the [SIM]-tagged
-  // IKE_INTERMEDIATE narration, not a C_* call.
-  if (/EncapsulateKey|DecapsulateKey/.test(text)) return 'IKE_SA_INIT'
   if (/C_Sign|C_Verify|C_Find|CERT/.test(text)) return 'IKE_AUTH'
   return null
 }
@@ -645,8 +644,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const buildKemOverrideProposal = useCallback(
     (mode: IKEv2Mode, size: KemSize): string | undefined => {
       if (mode === 'classical') return undefined
-      const base = `aes256-sha256-mlkem${size}`
-      return mode === 'hybrid' ? `${base}-ke1_ecp256` : base
+      // Hybrid follows draft-ietf-ipsecme-ikev2-mlkem Appendix A: classical
+      // ECP-256 in IKE_SA_INIT, ML-KEM as Additional KE 1 in the encrypted
+      // IKE_INTERMEDIATE, where RFC 7383 fragmentation applies. Verified live
+      // in this WASM build for ML-KEM-512/768/1024 on 2026-09-29.
+      return mode === 'hybrid'
+        ? `aes256-sha256-ecp256-ke1_mlkem${size}`
+        : `aes256-sha256-mlkem${size}`
     },
     []
   )
@@ -936,21 +940,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       keyIdHex?: { left: string; right: string }
     ) => {
       // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
-      //   pure-pqc:  aes256-sha384-mlkemNNN           — IKE_SA_INIT only
-      //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
-      //   hybrid:    aes256-sha384-mlkemNNN-ke1_ecp256 — ML-KEM in IKE_SA_INIT
-      //              (real C_Encapsulate/DecapsulateKey on the HSM), then an
-      //              IKE_INTERMEDIATE round with ECP-256 as Additional KE 1
-      //              (RFC 9242/9370). The additional-KE exchange logic is not
-      //              in this WASM build, so that round is narrated as [SIM]
-      //              log entries rather than executed by charon.
+      //   pure-pqc:  aes256-sha256-mlkemNNN            — ML-KEM in IKE_SA_INIT only
+      //   classical: aes256-sha256-ecp256              — IKE_SA_INIT only
+      //   hybrid:    aes256-sha256-ecp256-ke1_mlkemNNN — ECP-256 in IKE_SA_INIT,
+      //              then a real IKE_INTERMEDIATE round with ML-KEM as
+      //              Additional KE 1 (RFC 9242/9370, draft-ietf-ipsecme-ikev2-mlkem
+      //              Appendix A), real C_Encapsulate/DecapsulateKey on the HSM.
       // NNN is the selected ML-KEM parameter set (512/768/1024) — this text is
       // display-only (see the "Raw Config" tab note below), but must match the
       // real negotiated size so it's not misleading; the real value is driven
       // by kemOverrideProposal/WASM_IKE_PROPOSAL, not by this string.
-      let modeIke = `aes256-sha384-mlkem${kemSizeArg}!`
-      if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
-      if (mode === 'hybrid') modeIke = `aes256-sha384-mlkem${kemSizeArg}-ke1_ecp256!`
+      let modeIke = `aes256-sha256-mlkem${kemSizeArg}!`
+      if (mode === 'classical') modeIke = 'aes256-sha256-ecp256!'
+      if (mode === 'hybrid') modeIke = `aes256-sha256-ecp256-ke1_mlkem${kemSizeArg}!`
       const left = role === 'initiator' ? '192.168.0.1' : '192.168.0.2'
       const right = role === 'initiator' ? '192.168.0.2' : '192.168.0.1'
       const auto = role === 'initiator' ? 'start' : 'route'
@@ -2297,10 +2299,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               level: rv === 0 ? 'info' : 'error',
               text: `[RPC] C_DecapsulateKey(93) hSess=${hSess93} hKey=${hKey93} ctLen=${ctLen93} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
             })
-            // Hybrid mode: ML-KEM runs in IKE_SA_INIT; the ECP-256 Additional
-            // KE round is a REAL IKE_INTERMEDIATE exchange now (RFC 9370
-            // ke1_ecp256 in the wasm build) — charon logs the round itself,
-            // so no synthetic narration is injected.
+            // Hybrid mode: ECP-256 runs in IKE_SA_INIT and this ML-KEM
+            // decapsulation is the Additional KE 1 round of a REAL
+            // IKE_INTERMEDIATE exchange (RFC 9370 ke1_mlkemNNN) — charon logs
+            // the round itself, so no synthetic narration is injected.
             break
           }
 
@@ -2408,7 +2410,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     }
   }, [moduleRef, hSessionRef, addHsmLog, addHsmKey])
 
-  const exchange = IKE_V2_EXCHANGES[selectedMode]
+  const exchange = useMemo(() => buildIkeV2Exchange(selectedMode, kemSize), [selectedMode, kemSize])
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
   // modeConfig.dhGroup is shared Learn-module content and always describes the
   // 768 default; substitute the live kemSize for the "Tunnel Statistics" result
@@ -3566,10 +3568,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">
                 PQC key exchange payloads are 3–24× larger than classical DH (ML-KEM-{kemSize}
-                encapsulation key: {KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B vs. MODP-3072: 256
-                B or ECP-256: 64 B), often exceeding UDP MTU. RFC 7383 splits oversized SK-carrying
-                IKE messages into fragments reassembled before processing — IKE_SA_INIT itself can
-                never be fragmented.
+                encapsulation key: {KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B vs. ECP-256: 64
+                B), often exceeding UDP MTU. RFC 7383 splits oversized SK-carrying IKE messages into
+                fragments reassembled before processing — IKE_SA_INIT itself can never be
+                fragmented.
               </p>
             </div>
           </div>
@@ -4297,9 +4299,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       if (!moduleRef.current) moduleRef.current = rawM
                     }
 
-                    // proposalMode: 0 = classical (modp3072), 1 = pure-pqc (mlkem768),
-                    // 2 = hybrid (mlkem768 + ke1_ecp256 — real RFC 9370 Additional KE
-                    // over an IKE_INTERMEDIATE round, supported by the wasm build).
+                    // proposalMode: 0 = classical (ecp256), 1 = pure-pqc, 2 = hybrid.
+                    // For pure-pqc and hybrid the exact proposal (ML-KEM size, and the
+                    // ecp256-ke1_mlkemNNN hybrid order) comes from kemOverrideProposal.
                     const proposalMode =
                       selectedMode === 'hybrid' ? 2 : selectedMode === 'pure-pqc' ? 1 : 0
 
@@ -4472,7 +4474,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <div className="text-muted-foreground/80 italic">Awaiting daemon initialization...</div>
           ) : (
             ssLogs.map((log, i) => {
-              const phase = getIkePhase(log.text)
+              const phase = getIkePhase(log.text, selectedMode)
               return (
                 <div
                   key={i}

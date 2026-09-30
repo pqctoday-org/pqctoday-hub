@@ -583,7 +583,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -619,9 +619,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Pick Classical, Hybrid (ML-KEM-768 + ECP-256) or Pure PQC key exchange, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.',
+        'Pick Classical, Hybrid (ECP-256 + ML-KEM) or Pure PQC key exchange, choose the ML-KEM size, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.',
       workedExample:
-        'Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓.',
+        'Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT, IKE_INTERMEDIATE and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓.',
     },
     hasOutput: true,
     outputSpec:
