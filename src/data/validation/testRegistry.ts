@@ -1996,6 +1996,105 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     ],
     'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. A Wycheproof `invalid` case passes when C_UnwrapKey refuses; unwrapping it successfully is a discrepancy row.'
   ),
+  // ── Project Wycheproof ML-KEM / ML-DSA — sections/wycheproofPqc.ts ──
+  // Same evidence class and result policy as the classical files above. A
+  // negative case passes when the engine refuses it anywhere on the path (key
+  // import, key generation, init or the operation) — the same rule as the NIST
+  // key-check rows (§7b.4 / §7c), so the operation the path ends in is listed
+  // even when the refusal comes at C_CreateObject. Seed-length negatives of
+  // mlkem_<ps>_test are refused by C_GenerateKeyPair and register key
+  // generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
+  // the randomness m; `Randomized` sign cases need rnd) are not vendored: see
+  // each file's _provenance.excluded_cases.
+  acvp(
+    '37.wycheproof-mlkem',
+    '§20d (sections/wycheproofPqc.ts)',
+    'ML-KEM-512/768/1024 — Project Wycheproof (Google / C2SP): keyGen from seed, decapsulation (implicit rejection, malleable and wrong-length ciphertexts, wrong-length seeds), corrupted expanded dk, unreduced and wrong-length ek',
+    MLKEM_SETS.flatMap((ps) => {
+      const v = ps.slice(7)
+      const kg = x('CKM_ML_KEM_KEY_PAIR_GEN', 'generate-key-pair', ps)
+      return [
+        ...casesOf(`wycheproof_mlkem_${v}_keygen_seed_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [kg],
+            `wyc-mlkem${v}keygen-${upstreamIds(c)}-{engine}`
+          )
+        ),
+        ...casesOf(`wycheproof_mlkem_${v}_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            Number(param(c, 'seedBytes')) === 64 ? [kg, x('CKM_ML_KEM', 'decapsulate', ps)] : [kg],
+            `wyc-mlkem${v}decaps-${upstreamIds(c)}-{engine}`
+          )
+        ),
+        ...casesOf(`wycheproof_mlkem_${v}_semi_expanded_decaps_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [x('CKM_ML_KEM', 'decapsulate', ps)],
+            `wyc-mlkem${v}semidecaps-${upstreamIds(c)}-{engine}`
+          )
+        ),
+        ...casesOf(`wycheproof_mlkem_${v}_encaps_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [x('CKM_ML_KEM', 'encapsulate', ps)],
+            `wyc-mlkem${v}encaps-${upstreamIds(c)}-{engine}`
+          )
+        ),
+      ]
+    }),
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. Valid MLKEMEncapsTest cases are not vendored (C_EncapsulateKey takes no caller-supplied m); every invalid one is.'
+  ),
+  acvp(
+    '37.wycheproof-mldsa',
+    '§20d (sections/wycheproofPqc.ts)',
+    'ML-DSA-44/65/87 — Project Wycheproof (Google / C2SP): verify (modified signatures, hint encodings, infinity-norm violations, wrong-length keys and signatures, contexts > 255 bytes) and deterministic sign from an expanded key or a seed',
+    (['44', '65', '87'] as const).flatMap((v) => {
+      const ps = `ML-DSA-${v}`
+      return [
+        ...casesOf(`wycheproof_mldsa_${v}_verify_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [x('CKM_ML_DSA', 'verify', ps)],
+            `wyc-mldsa${v}verify-${upstreamIds(c)}-{engine}`
+          )
+        ),
+        ...casesOf(`wycheproof_mldsa_${v}_sign_noseed_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [x(mldsaMech(c), 'sign', ps, 'deterministic')],
+            `wyc-mldsa${v}signnoseed-${upstreamIds(c)}-{engine}`
+          )
+        ),
+        ...casesOf(`wycheproof_mldsa_${v}_sign_seed_test`).map((c) =>
+          mc(
+            c.caseId,
+            ORACLE,
+            c.expectation,
+            [
+              x('CKM_ML_DSA_KEY_PAIR_GEN', 'generate-key-pair', ps),
+              x(mldsaMech(c), 'sign', ps, 'deterministic'),
+            ],
+            `wyc-mldsa${v}signseed-${upstreamIds(c)}-{engine}`
+          )
+        ),
+      ]
+    }),
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. `Internal` cases sign µ with the vendor CKM_ML_DSA_EXTERNAL_MU (0x403c). `Randomized` cases are not vendored (no PKCS #11 input for rnd).'
+  ),
   // ── Multi-part message signing round-trip — sections/multiMessageSign.ts ──
   // Both engines advertise CKF_MULTI_MESSAGE on every signing mechanism since
   // hsm d4345f88. Functional round-trip only: a fresh key signs 5+11+16 bytes

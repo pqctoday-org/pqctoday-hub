@@ -75,6 +75,28 @@ FILES = {
         "RSASSA-PSS",
     ),
 }
+# PQC batch (2026-09-30) — runner sections/wycheproofPqc.ts. Algorithm names are
+# the NIST entries' ("ML-KEM" / "ML-DSA") with the parameter set in `parameters`,
+# so byAlgorithm counts group both evidence classes under one algorithm.
+for _v in (512, 768, 1024):
+    FILES[f"wycheproof_mlkem_{_v}_keygen_seed_test"] = (
+        f"mlkem_{_v}_keygen_seed_test.json", "keyGen", "keyGen-from-seed", "ML-KEM")
+    FILES[f"wycheproof_mlkem_{_v}_test"] = (
+        f"mlkem_{_v}_test.json", "decapsulation", "decapsulation", "ML-KEM")
+    FILES[f"wycheproof_mlkem_{_v}_semi_expanded_decaps_test"] = (
+        f"mlkem_{_v}_semi_expanded_decaps_test.json", "decapsulation", "decapsulation", "ML-KEM")
+    FILES[f"wycheproof_mlkem_{_v}_encaps_test"] = (
+        f"mlkem_{_v}_encaps_test.json", "encapsulation", "encapsulation", "ML-KEM")
+for _v in (44, 65, 87):
+    FILES[f"wycheproof_mldsa_{_v}_verify_test"] = (
+        f"mldsa_{_v}_verify_test.json", "sigVer", "sigVer", "ML-DSA")
+    FILES[f"wycheproof_mldsa_{_v}_sign_noseed_test"] = (
+        f"mldsa_{_v}_sign_noseed_test.json", "sigGen", "sigGen-deterministic", "ML-DSA")
+    FILES[f"wycheproof_mldsa_{_v}_sign_seed_test"] = (
+        f"mldsa_{_v}_sign_seed_test.json", "sigGen", "sigGen-deterministic", "ML-DSA")
+
+# Files vendored on a later day than the first batch carry their own date.
+RETRIEVED_BY_STEM = {k: "2026-09-30" for k in FILES if k.startswith(("wycheproof_mlkem_", "wycheproof_mldsa_"))}
 
 # The caseRecord schema has no free-text field, so the `acceptable` policy is
 # machine-readable on every case as parameters.wycheproofResult and stated once
@@ -107,6 +129,20 @@ def params_for(stem: str, group: dict, test: dict) -> dict:
     elif stem.startswith("wycheproof_ed"):
         p["curve"] = "Ed25519" if "ed25519" in stem else "Ed448"
         p["msgBytes"] = len(test.get("msg", "")) // 2
+    elif stem.startswith("wycheproof_mlkem_"):
+        p["parameterSet"] = group["parameterSet"]
+        for k, name in (("seed", "seedBytes"), ("ek", "ekBytes"), ("dk", "dkBytes"), ("c", "ciphertextBytes")):
+            if k in test:
+                p[name] = len(test[k]) // 2
+    elif stem.startswith("wycheproof_mldsa_"):
+        p["parameterSet"] = "ML-DSA-" + stem.split("_")[2]
+        internal = "Internal" in test.get("flags", [])
+        p["externalMu"] = internal
+        p["messageBytes"] = len(test.get("mu" if internal else "msg", "") or "") // 2
+        p["contextBytes"] = None if internal or "ctx" not in test else len(test["ctx"]) // 2
+        if "_sign_" in stem:
+            p["deterministic"] = True
+            p["privateKeyForm"] = "seed" if "_seed_" in stem else "expanded"
     elif stem.startswith("wycheproof_rsa_pss"):
         p["modulo"] = group["keySize"]
         p["hashAlg"] = group["sha"]
@@ -122,10 +158,12 @@ def params_for(stem: str, group: dict, test: dict) -> dict:
 
 def entry(stem: str) -> dict:
     upstream_name, operation, local_op, alg = FILES[stem]
+    retrieved = RETRIEVED_BY_STEM.get(stem, RETRIEVED)
     path = ACVP / f"{stem}.json"
     raw = path.read_bytes()
     doc = json.loads(raw)
     prov = doc["_provenance"]
+    excluded = prov.get("excluded_cases")
     upstream_path = f"testvectors_v1/{upstream_name}"
     url = f"https://raw.githubusercontent.com/C2SP/wycheproof/{COMMIT}/{upstream_path}"
     lineage_id = stem.replace("_", "-") + "-1"
@@ -172,7 +210,7 @@ def entry(stem: str) -> dict:
                 "version": COMMIT,
             },
             "verification": {
-                "date": RETRIEVED,
+                "date": retrieved,
                 "method": VERIFY_METHOD,
                 "result": "match",
                 "evidence": [
@@ -180,12 +218,12 @@ def entry(stem: str) -> dict:
                         "title": f"C2SP/wycheproof {upstream_path} @ {COMMIT[:8]}",
                         "url": url,
                         "sha256": prov["source_sha256"],
-                        "retrieved": RETRIEVED,
+                        "retrieved": retrieved,
                     },
                     {
                         "title": "C2SP/wycheproof LICENSE (Apache-2.0) at the pinned commit",
                         "url": f"https://raw.githubusercontent.com/C2SP/wycheproof/{COMMIT}/LICENSE",
-                        "retrieved": RETRIEVED,
+                        "retrieved": retrieved,
                         "mirror": True,
                         "localCopy": "src/data/acvp/WYCHEPROOF-LICENSE.txt",
                     },
@@ -209,6 +247,26 @@ def entry(stem: str) -> dict:
                         "Everything else is the pinned upstream file byte-for-byte: no case dropped, "
                         "no tcId renumbered, no value re-derived or normalized.",
                     }
+                ]
+                if not excluded
+                else [
+                    {
+                        "type": "field-add",
+                        "detail": "ONE top-level `_provenance` key added (attribution, pinned commit, "
+                        "upstream path + sha256, Apache-2.0 licence, evidence class, result policy and "
+                        "the excluded_cases list). Every kept case is the pinned upstream case byte-for-byte: "
+                        "no tcId renumbered, no value re-derived or normalized.",
+                    },
+                    {
+                        "type": "subset",
+                        "detail": f"{excluded['count']} upstream case(s) dropped by a DECLARED rule "
+                        f"({', '.join(sorted(excluded['rules']))}), listed by tgId/tcId in the file's "
+                        "_provenance.excluded_cases: "
+                        + " ".join(r["reason"] for r in excluded["rules"].values())
+                        + " `vendor_wycheproof.py --check` re-applies the rule to the pinned upstream "
+                        "file and fails unless exactly those cases are dropped and every other case is "
+                        "kept unchanged.",
+                    },
                 ],
             }
         ],
@@ -225,10 +283,34 @@ def entry(stem: str) -> dict:
             for p in (RFC3394_COPY_PATHS if stem == "wycheproof_aes_wrap_test" else [])
         ],
         "publishabilityGaps": [],
-        "notes": "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because a runner "
-        "executes every case of this file against both engines. Reject-path evidence NIST does not "
-        "publish. " + ACCEPTABLE_NOTE,
+        "notes": notes_for(stem, cases, excluded),
     }
+
+
+def notes_for(stem: str, cases: list[dict], excluded: dict | None) -> str:
+    if stem not in RETRIEVED_BY_STEM:  # first batch: wording unchanged
+        return (
+            "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because a runner "
+            "executes every case of this file against both engines. Reject-path evidence NIST does not "
+            "publish. " + ACCEPTABLE_NOTE
+        )
+    neg = sum(1 for c in cases if c["expectation"] == "negative")
+    text = (
+        "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because "
+        "src/components/Playground/hsm/acvp/sections/wycheproofPqc.ts executes every vendored case of "
+        "this file against both engines."
+    )
+    if excluded:
+        text += (
+            f" {excluded['count']} upstream case(s) are NOT vendored, by the declared rule recorded in "
+            "lineage (type subset) and in the file's _provenance.excluded_cases."
+        )
+    text += (
+        f" {neg} case(s) are Wycheproof `invalid`: reject-path evidence NIST does not publish."
+        if neg
+        else " Every case is Wycheproof `valid` (positive evidence only)."
+    )
+    return text
 
 
 def main() -> int:

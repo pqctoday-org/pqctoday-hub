@@ -156,6 +156,7 @@ import {
   runWycheproofRsaPssSection,
   runWycheproofXdhSection,
 } from './sections/wycheproofNegative'
+import { runWycheproofMldsaSection, runWycheproofMlkemSection } from './sections/wycheproofPqc'
 import { runMultiMessageSignSection } from './sections/multiMessageSign'
 import type { MultiPartFamily } from '@/data/validation/multipartTargets'
 import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
@@ -199,7 +200,14 @@ import type { HsmKey } from '../HsmContext'
  * guard is entered — the section bodies themselves are unmodified.
  */
 export type CategoryId =
-  'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
+  | 'symmetric'
+  | 'hashing_mac'
+  | 'kdf'
+  | 'classical'
+  | 'ml_dsa'
+  | 'slh_stateful'
+  | 'ml_kem'
+  | 'wycheproof_pqc'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 10 },
@@ -209,6 +217,12 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'ml_dsa', label: 'ML-DSA', groups: 9 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 8 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
+  // Project Wycheproof ML-KEM + ML-DSA (sections/wycheproofPqc.ts): its own
+  // category because its 2,458 cases per engine take ~10 s in Node but
+  // minutes in a browser (each row streams into the table), which the
+  // ML-KEM / ML-DSA browser checks (e2e acvp-validator smoke, acvp-pqc-depth)
+  // cannot absorb. Opt-in in the sidebar; included in "Run All".
+  { id: 'wycheproof_pqc', label: 'Wycheproof ML-KEM / ML-DSA', groups: 2 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -2931,6 +2945,30 @@ export function useAcvpSuite() {
           }
           await runWycheproofXdhSection(wycCtx)
           await runWycheproofEddsaSection(wycCtx)
+        }
+
+        // ── 20d. PROJECT WYCHEPROOF (Google / C2SP) ML-KEM + ML-DSA vectors ──
+        // ML-KEM: keyGen from seed, decapsulation (implicit rejection, wrong
+        // ciphertext lengths and seed lengths, corrupted expanded dk) and
+        // encapsulation-key rejection (unreduced / wrong-length ek). ML-DSA:
+        // verify (forged/malformed signatures, hint encodings, norm
+        // violations, wrong-length keys, contexts > 255 bytes) and
+        // deterministic sign from an expanded key or a seed.
+        // independent-oracle evidence only: "agrees with Wycheproof <commit>
+        // for this case", never conformance. sections/wycheproofPqc.ts.
+        if (activeCategories.has('wycheproof_pqc')) {
+          currentCategory = 'wycheproof_pqc'
+          const pqcCtx = {
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          }
+          await runWycheproofMldsaSection(pqcCtx)
+          await runWycheproofMlkemSection(pqcCtx)
         }
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
