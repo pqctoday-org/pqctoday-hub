@@ -18,6 +18,7 @@
  *   npx tsx scripts/mobile-ux/dom-golden.ts compare --base http://localhost:4599 --golden scripts/mobile-ux/__golden__/desktop.json
  */
 import { chromium } from '@playwright/test'
+import { chromiumLaunchArgs } from '../lib/chromiumLaunchArgs'
 import { writeFileSync, readFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 
@@ -172,7 +173,7 @@ async function main() {
     process.exit(2)
   }
 
-  const browser = await chromium.launch()
+  const browser = await chromium.launch({ args: chromiumLaunchArgs() })
   const context = await browser.newContext({
     viewport: { width: 1280, height: 800 },
     baseURL: base,

@@ -60,6 +60,17 @@ export const ShareButton = ({
   const [showMenu, setShowMenu] = useState(false)
   const [anchor, setAnchor] = useState<{ top: number; right: number } | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  // The "copied" flag resets after 2 s. Keep the timer so it can be cleared on
+  // unmount: left running it sets state on an unmounted component, and in the
+  // test run it fired after jsdom was torn down ("window is not defined", an
+  // unhandled error that failed pr-test (1) on #790 on 30 Sep).
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current)
+    },
+    []
+  )
 
   const shareUrl = toAbsoluteUrl(url)
   const shareText = text || title
@@ -107,7 +118,8 @@ export const ShareButton = ({
     // The menu closes on copy, so its own "Copied!" label is never seen.
     toast.success('Link copied', { duration: 2000 })
     logEvent('Share', 'Copy Link', title)
-    setTimeout(() => setCopied(false), 2000)
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current)
+    copiedTimerRef.current = setTimeout(() => setCopied(false), 2000)
     setShowMenu(false)
   }
 
