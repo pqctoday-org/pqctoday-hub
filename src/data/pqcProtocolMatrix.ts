@@ -1068,6 +1068,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9925 — Unsigned X.509 Certificates',
         url: 'https://datatracker.ietf.org/doc/html/rfc9925',
         date: '2026-02',
+        localFile: '/library/RFC-9925.html',
       },
     ],
     latestDraft: [
@@ -1084,6 +1085,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-ietf-lamps-pq-composite-kem-21 — Composite ML-KEM in X.509 (IESG Evaluation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
         date: '2026-09-01',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-21.html',
       },
       {
         // Active LAMPS WG draft. Its id-ad-certDiscovery access method and
@@ -1093,6 +1095,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-certdiscovery-03 — Certificate Discovery via subjectInfoAccess (WG draft, OIDs TBD)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-certdiscovery/',
         date: '2026-05-21',
+        localFile: '/library/draft-ietf-lamps-certdiscovery-03.html',
       },
       {
         // Watchlist: FN-DSA (planned FIPS 206, not yet final) in X.509. OIDs TBD.
@@ -1101,6 +1104,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-fn-dsa-certificates-00 — FN-DSA in X.509 (WG draft; FIPS 206 not final, OIDs TBD)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-fn-dsa-certificates/',
         date: '2026-05-20',
+        localFile: '/library/draft-ietf-lamps-fn-dsa-certificates-00.html',
       },
       {
         // Watchlist: single-use signing certificates. X.509 work, not a hybrid mechanism.
@@ -1109,6 +1113,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-one-signature-certs-02 — One Signature Certificates (WG draft; not a hybrid format)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-one-signature-certs/',
         date: '2026-07-01',
+        localFile: '/library/draft-ietf-lamps-one-signature-certs-02.html',
       },
     ],
     dimensions: {

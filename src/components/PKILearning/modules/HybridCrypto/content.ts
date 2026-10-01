@@ -23,11 +23,12 @@ export const content: ModuleContent = {
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
-    getStandard('Composite-ML-KEM-for-use-in-X-509-Public-Key-Infrastructure'), // Composite ML-KEM (draft -20; the library retired -19 as superseded, 2026-09-17)
+    getStandard('draft-ietf-lamps-pq-composite-kem-21'), // Composite ML-KEM (draft -21, IESG Evaluation; supersedes -20, 2026-09-30)
     getStandard('RFC-9763'), // Related Certificates
     getStandard('RFC 9629'), // CMS KEMRecipientInfo — how a KEM certificate key is used
     getStandard('RFC-9936'), // ML-KEM in CMS
-    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates,
+    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates — expired individual draft, historical design
+    getStandard('draft-ietf-lamps-fn-dsa-certificates-00'), // FN-DSA in X.509 — watchlist, OIDs TBD
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
