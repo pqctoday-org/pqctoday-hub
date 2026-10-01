@@ -55,6 +55,17 @@ jobs:
           ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
         run: npm ci
 
+      - name: SBOM version list matches package.json (committed copy)
+        # `pr-test` only REGENERATES this file inside the runner, so a PR whose
+        # committed `sbomVersions.generated.ts` lags package.json went unnoticed
+        # until the next pre-push (it sat stale after dependabot #781 until
+        # #786). Skipped for dependabot PRs: a bump of an SBOM-listed package
+        # changes the list and a bot cannot regenerate it, so those PRs would
+        # be red by construction; the coordinator regenerates when merging
+        # them (any push from a human actor runs this check again).
+        if: github.actor != 'dependabot[bot]'
+        run: npm run gen:sbom-versions:check
+
       - name: Lint
         # Carries the eslint-plugin-security rules. Heap note: see ci.yml.
         env:
