@@ -49,12 +49,12 @@ const DATES: { what: string; who: string; status: string }[] = [
   },
   {
     what: `Post-quantum key establishment by end of ${KEY_EST_YEAR}; signatures by end of ${EO_14412.digitalSignatures}`,
-    who: 'US federal civilian high-value systems and their contractors (EO 14412)',
+    who: 'US federal civilian high-value and high-impact systems, and their contractors (EO 14412)',
     status: 'In force',
   },
   {
     what: `Software signing and traditional networking use only CNSA 2.0 algorithms by ${CNSA_2_0.softwareExclusive}; all systems by ${CNSA_2_0.fullEnforcement}`,
-    who: 'US National Security Systems (NSA CNSA 2.0)',
+    who: 'US national security systems (NSA CNSA 2.0)',
     status: 'In force',
   },
   {

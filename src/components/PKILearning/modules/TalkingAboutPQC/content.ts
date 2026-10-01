@@ -62,7 +62,7 @@ export const content: ModuleContent = {
     oneMinute:
       'Most online security relies on mathematics a large quantum computer could undo. No such computer exists yet, but data copied today could be read once one does. NIST published the replacements in August 2024 (FIPS 203, 204 and 205). The slow part now is fitting them into every product and system.',
     dates:
-      'Every real date belongs to someone and applies to specific systems. CNSA 2.0 covers US National Security Systems; EO 14412 covers US federal civilian high-value systems and their contractors; NIST IR 8547 is still a draft proposal. When a quantum computer will arrive is an estimate, and experts disagree.',
+      'Every real date belongs to someone and applies to specific systems. CNSA 2.0 covers US National Security Systems; EO 14412 covers US federal civilian high-value and high-impact systems and their contractors; NIST IR 8547 is still a draft proposal. When a quantum computer will arrive is an estimate, and experts disagree.',
     certificates:
       'An algorithm test certificate (CAVP) says one implementation of one algorithm passed its tests. Being on the CMVP Modules In Process list means a module is being validated, not that it is. A FIPS 140-3 validation has a certificate number anyone can look up. Read what a certificate covers before its level.',
     words:

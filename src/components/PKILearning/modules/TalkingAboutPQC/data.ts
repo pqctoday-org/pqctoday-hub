@@ -73,7 +73,7 @@ export const CLAIMS: DrillItem[] = [
     options: [
       { text: `The US requires everyone to switch by ${KEY_EST_YEAR}.`, correct: false },
       {
-        text: `Under Executive Order 14412, US federal civilian high-value systems and the contractors serving them must use post-quantum key establishment by the end of ${KEY_EST_YEAR}.`,
+        text: `Under Executive Order 14412, US federal civilian high-value and high-impact systems, and the contractors serving them must use post-quantum key establishment by the end of ${KEY_EST_YEAR}.`,
         correct: true,
       },
       {
