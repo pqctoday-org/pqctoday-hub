@@ -1029,13 +1029,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['architect'],
     intro: {
       whatYouWillDo:
-        'Enable the HSM, press Generate on any of the eight certificate format cards or Generate All Formats, then read each PEM or parsed view and the Format Comparison table.',
+        "Enable the HSM, press Generate on any of the seven current certificate format cards or Generate All Current Formats, check each card's verification results, then read each PEM or parsed view and the Format Comparison table. Advanced and historical examples are generated separately.",
       workedExample:
         'Generate Pure PQC (ML-DSA-65) and Related Certificates (RFC 9763) first: the comparison table shows their DER size, generation time and quantum-safe status side by side.',
     },
     hasOutput: true,
     outputSpec:
-      'DER-encoded hybrid X.509 certificate with composite public key; ML-DSA-65 signature must verify under PQC public key component.',
+      'DER-encoded X.509 certificates for each format — CA-issued where the format calls for it — each with its signature, issuer chain and key usage verified by an implementation other than the HSM that signed it.',
   },
   {
     id: 'merkle-proof',

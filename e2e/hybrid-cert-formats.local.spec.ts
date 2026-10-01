@@ -35,6 +35,15 @@ async function diag(page: Page): Promise<Diag> {
   )
 }
 
+/** Live HSM mode persists across visits, so Enable is only clicked if shown. */
+async function enableHsm(page: Page): Promise<void> {
+  const active = page.getByText('Live HSM Mode Active')
+  const enable = page.getByRole('button', { name: 'Enable', exact: true })
+  await expect(active.or(enable).first()).toBeVisible({ timeout: 60_000 })
+  if (await enable.isVisible()) await enable.click()
+  await expect(active).toBeVisible({ timeout: 60_000 })
+}
+
 async function verifiedCount(page: Page): Promise<number> {
   return page.getByText(/^Verified — \d+\/\d+ checks passed$/).count()
 }
@@ -62,8 +71,7 @@ test.describe('hybrid certificate formats — browser smoke', () => {
     })
 
     await page.goto('/playground/hybrid-certs')
-    await page.getByRole('button', { name: 'Enable', exact: true }).first().click()
-    await expect(page.getByText('Live HSM Mode Active')).toBeVisible({ timeout: 60_000 })
+    await enableHsm(page)
     const baseline = (await diag(page)).hsmObjects
     expect(baseline).not.toBeNull()
 
@@ -106,12 +114,7 @@ test.describe('hybrid certificate formats — browser smoke', () => {
     await expect(generateAll).toBeEnabled({ timeout: 120_000 })
     await page.goto('/learn/hybrid-crypto')
     await page.goto('/playground/hybrid-certs')
-    await page
-      .getByRole('button', { name: 'Enable', exact: true })
-      .first()
-      .click()
-      .catch(() => undefined)
-    await expect(page.getByText('Live HSM Mode Active')).toBeVisible({ timeout: 60_000 })
+    await enableHsm(page)
     expect((await diag(page)).trackedHandles).toBe(0)
     expect((await diag(page)).results).toEqual([])
 
