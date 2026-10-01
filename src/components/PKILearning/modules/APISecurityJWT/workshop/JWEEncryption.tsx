@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { Lock, Unlock, ArrowRight, Key, XCircle } from 'lucide-react'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
-import { kmac256xof } from '@noble/hashes/sha3-addons.js'
+import { kmac256 } from '@noble/hashes/sha3-addons.js'
 import { JOSE_KEY_AGREEMENT_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
 import { base64urlDecode, base64urlEncode, bytesToHex } from '../jwtUtils'
 import { Button } from '@/components/ui/button'
@@ -45,8 +45,11 @@ function joseKdfContext(encAlg: string, keyLenBits: number): Uint8Array {
 
 function deriveCek(sharedSecret: Uint8Array, encAlg: string, keyLenBytes: number): Uint8Array {
   const x = joseKdfContext(encAlg, keyLenBytes * 8)
-  // KMAC256 with empty personalization S=""; dkLen = keyLenBytes
-  return kmac256xof(sharedSecret, x, { dkLen: keyLenBytes })
+  // Fixed-length KMAC256 (SP 800-185 right_encode(L)), NOT KMACXOF256
+  // (right_encode(0)): -05 §5.1 specifies KMAC(K, X, L, S) per SP 800-108r1-upd1,
+  // and the two give different keys. This used the XOF variant until 2026-10-01.
+  // Empty customization S=""; dkLen = keyLenBytes.
+  return kmac256(sharedSecret, x, { dkLen: keyLenBytes })
 }
 
 type JwsBackend = 'noble' | 'softhsmv3'

@@ -5172,7 +5172,7 @@
         "revision": "draft-ietf-jose-pq-composite-sigs-04",
         "verification": {
           "date": "2026-10-01",
-          "method": "Mechanical RFC 8792 line-unwrapping of Appendix A.1 from the archived draft text. Each example then checked for internal consistency: the JWS signature segment equals raw_composite_signature, jwk.pub equals raw_composite_public_key, raw_to_be_signed equals the JWS signing input. The ML-DSA and traditional public keys re-derive from the printed seeds.",
+          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient); the archived text is hashed below. Mechanical RFC 8792 line-unwrapping of Appendix A.1 from the archived draft text. Each example then checked for internal consistency: the JWS signature segment equals raw_composite_signature, jwk.pub equals raw_composite_public_key, raw_to_be_signed equals the JWS signing input. The ML-DSA and traditional public keys re-derive from the printed seeds.",
           "result": "match",
           "evidence": [
             {
@@ -5328,6 +5328,178 @@
       "publishabilityGaps": [],
       "notes": "Added 2026-10-01 (api-security-jwt remediation) to replace the self-pinned composite-sigs-jose-kat snapshot. QUARANTINED pending the WS-I two-person vector-source review: it is a contributed file, so it needs src/data/validation/reviews/<id>.review.json (two named reviewers) before it may be promoted to active. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard.",
       "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active."
+    },
+    {
+      "id": "cose-sphincs-plus-10-examples",
+      "path": "src/data/acvp/cose-sphincs-plus-10-examples.json",
+      "sha256": "2095ee39d99e30aa4343b1a2c9317148bbe8140d3df89056f2ac8bed09dbe560",
+      "status": "quarantined",
+      "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "internet-draft",
+        "citation": "draft-ietf-cose-sphincs-plus-10 Appendix B (JOSE AKP keys B.1, COSE_Sign1 examples B.2; SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s) — an Internet-Draft (work in progress), not an RFC",
+        "url": "https://www.ietf.org/archive/id/draft-ietf-cose-sphincs-plus-10.txt",
+        "revision": "draft-ietf-cose-sphincs-plus-10",
+        "verification": {
+          "date": "2026-10-01",
+          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient); the archived text is hashed below. Appendix B unwrapped per RFC 8792; the AKP public key re-derives from the private key with FIPS 205 keygen, and each COSE_Sign1 signature verifies under it.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "draft-ietf-cose-sphincs-plus-10",
+              "url": "https://www.ietf.org/archive/id/draft-ietf-cose-sphincs-plus-10.txt",
+              "sha256": "f6b882a07aec9834e02e5bd8b0576a0474e70874582ea120b8aa47c0f82758a5"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "IETF document text is subject to the IETF Trust Legal Provisions (BCP 78/79); redistribution of the example values has not been reviewed.",
+        "reviewed": false
+      },
+      "caseContainers": [
+        {
+          "pointer": "/vectors",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "cose-sphincs-plus-10-examples#/vectors/0",
+          "pointer": "/vectors/0",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "jws-verify",
+          "parameters": {
+            "alg": "SLH-DSA-SHA2-128s",
+            "parameterSet": "SLH-DSA-SHA2-128s"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-cose-sphincs-plus-10 Appendix B.1 (JOSE AKP key) and B.2 (COSE_Sign1) SLH-DSA-SHA2-128s examples"
+          },
+          "lineage": ["cose-sphincs-plus-10-examples-1"]
+        },
+        {
+          "caseId": "cose-sphincs-plus-10-examples#/vectors/1",
+          "pointer": "/vectors/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "jws-verify",
+          "parameters": {
+            "alg": "SLH-DSA-SHAKE-128s",
+            "parameterSet": "SLH-DSA-SHAKE-128s"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-cose-sphincs-plus-10 Appendix B.1 (JOSE AKP key) and B.2 (COSE_Sign1) SLH-DSA-SHAKE-128s examples"
+          },
+          "lineage": ["cose-sphincs-plus-10-examples-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "cose-sphincs-plus-10-examples-1",
+          "appliesTo": [
+            "cose-sphincs-plus-10-examples#/vectors/0",
+            "cose-sphincs-plus-10-examples#/vectors/1"
+          ],
+          "upstreamOperation": "AKP keys and COSE_Sign1 signatures produced by the draft authors (Cloudflare CIRCL, cross-validated with Trail of Bits go-slh-dsa)",
+          "localOperation": "keygen re-derivation of pub from priv; SLH-DSA verify of the COSE Sig_structure; a JWS round-trip with signJWS/verifyJWS under the published key (joseTrustedKat.test.ts)",
+          "transformations": [
+            {
+              "type": "operation-change",
+              "detail": "The draft prints no JWS: the published COSE_Sign1 signature checks the SLH-DSA primitive and key, and the JWS case is a round-trip under the published key."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "Added 2026-10-01 (api-security-jwt remediation). QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard."
+    },
+    {
+      "id": "rfc7515-a3-es256-jws",
+      "path": "src/data/acvp/rfc7515-a3-es256-jws.json",
+      "sha256": "b2788486dbebce0fd5d28a7c0cd1f2d3d36d9d689ab1b89db380074ebf559464",
+      "status": "quarantined",
+      "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "rfc",
+        "citation": "RFC 7515 Appendix A.3 (Example JWS Using ECDSA P-256 SHA-256)",
+        "url": "https://www.rfc-editor.org/rfc/rfc7515.txt",
+        "revision": "RFC 7515",
+        "verification": {
+          "date": "2026-10-01",
+          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient); the archived text is hashed below. The JWK x, y, d and the three compact-serialization segments were each found verbatim in the RFC text.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "RFC 7515",
+              "url": "https://www.rfc-editor.org/rfc/rfc7515.txt",
+              "sha256": "ecbf84674118e62526511c1237e1deaa86aada86d25b247623a2a7e04ae62e40"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "RFC text is subject to the IETF Trust Legal Provisions (BCP 78/79); redistribution of the example values has not been reviewed.",
+        "reviewed": false
+      },
+      "caseContainers": [
+        {
+          "pointer": "/vectors",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "rfc7515-a3-es256-jws#/vectors/0",
+          "pointer": "/vectors/0",
+          "algorithm": {
+            "name": "ECDSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "jws-verify",
+          "parameters": {
+            "alg": "ES256",
+            "curve": "P-256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "RFC 7515 Appendix A.3 ES256 JWS"
+          },
+          "lineage": ["rfc7515-a3-es256-jws-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "rfc7515-a3-es256-jws-1",
+          "appliesTo": ["rfc7515-a3-es256-jws#/vectors/0"],
+          "upstreamOperation": "ES256 JWS example published in RFC 7515",
+          "localOperation": "WebCrypto ECDSA P-256/SHA-256 verify of the JWS signing input, the call HybridJWT.tsx uses for the inner token (joseTrustedKat.test.ts)",
+          "transformations": [
+            {
+              "type": "operation-change",
+              "detail": "Published signing example used as a positive verification case; ECDSA is randomized so the signature is not reproduced."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "Added 2026-10-01 (api-security-jwt remediation). QUARANTINED pending the WS-I two-person vector-source review."
     },
     {
       "id": "cose-dilithium-11-jose-kat",
@@ -16043,7 +16215,7 @@
     {
       "id": "jose-pqc-kem-jwe-kat",
       "path": "src/data/acvp/jose-pqc-kem-jwe-kat.json",
-      "sha256": "eef2c47ebe4a35ebb111a42ac690df99c94c61120c67ac075cf0ab75ac9afc93",
+      "sha256": "272d44e82e05e00754f5b23db19dae00c9ec0fc989a213a457d62a16d73623cc",
       "status": "active",
       "evidenceClass": "functional-round-trip",
       "source": {
@@ -16055,7 +16227,7 @@
           "name": "@noble/post-quantum",
           "version": null
         },
-        "generator": "Node 24 one-shot \u2014 ml_kem768.keygen(64-zero-byte seed); ml_kem768.encapsulate(pk, 32-zero-byte seed); KDF = KMAC256(K=SS, X=AlgorithmID||SuppPubInfo, dkLen=32) per draft \u00a75.1; protected header {alg, enc, ek} per -05 \u00a76.1; JWE Encrypted Key absent; AES-256-GCM with all-zero IV (KAT-only \u2014 never reuse in prod) and AAD = ASCII(BASE64URL(protected header)) per RFC 7516 \u00a75.1 step 14 (regenerated 2026-10-01)"
+        "generator": "Node 24 one-shot \u2014 ml_kem768.keygen(64-zero-byte seed); ml_kem768.encapsulate(pk, 32-zero-byte seed); KDF = fixed-length KMAC256(K=SS, X=AlgorithmID||SuppPubInfo, L=256) per draft \u00a75.1 (KMACXOF256 before 2026-10-01); protected header {alg, enc, ek} per -05 \u00a76.1; JWE Encrypted Key absent; AES-256-GCM with all-zero IV (KAT-only \u2014 never reuse in prod) and AAD = ASCII(BASE64URL(protected header)) per RFC 7516 \u00a75.1 step 14 (regenerated 2026-10-01)"
       },
       "license": {
         "note": "Generated by PQC Today; distributed under this repository license (GPL-3.0-only).",
@@ -16094,14 +16266,14 @@
           "transformations": [
             {
               "type": "locally-generated",
-              "detail": "Expected values are PQC Today's own deterministic output from all-zero seeds: Node 24 one-shot \u2014 ml_kem768.keygen(64-zero-byte seed); ml_kem768.encapsulate(pk, 32-zero-byte seed); KDF = KMAC256(K=SS, X=AlgorithmID||SuppPubInfo, dkLen=32) per draft \u00a75.1; protected header {alg, enc, ek} per -05 \u00a76.1; JWE Encrypted Key absent; AES-256-GCM with all-zero IV (KAT-only \u2014 never reuse in prod) and AAD = ASCII(BASE64URL(protected header)) per RFC 7516 \u00a75.1 step 14 (regenerated 2026-10-01)"
+              "detail": "Expected values are PQC Today's own deterministic output from all-zero seeds: Node 24 one-shot \u2014 ml_kem768.keygen(64-zero-byte seed); ml_kem768.encapsulate(pk, 32-zero-byte seed); KDF = fixed-length KMAC256(K=SS, X=AlgorithmID||SuppPubInfo, L=256) per draft \u00a75.1 (KMACXOF256 before 2026-10-01); protected header {alg, enc, ek} per -05 \u00a76.1; JWE Encrypted Key absent; AES-256-GCM with all-zero IV (KAT-only \u2014 never reuse in prod) and AAD = ASCII(BASE64URL(protected header)) per RFC 7516 \u00a75.1 step 14 (regenerated 2026-10-01)"
             }
           ]
         }
       ],
       "copies": [],
       "publishabilityGaps": ["oracle-version-not-recorded"],
-      "notes": "Provenance resolved 2026-09-24 (no _provenance block): a self-pinned snapshot generated with @noble/post-quantum in Node 24 (file fields $schema, generator, generated_at 2026-05-17; added in commit 752b03369). src/components/PKILearning/modules/APISecurityJWT/jweKat.test.ts re-derives the keypair and shared secret from the pinned seeds. Same implementation family produced and checks the value, so no external correctness claim. Regenerated 2026-10-01 (api-security-jwt remediation): the earlier snapshot used the decoded header JSON as AES-GCM AAD (RFC 7516 requires the ASCII of the encoded header) and put the KEM ciphertext in the Encrypted Key segment instead of the -05 \"ek\" header. Still self-pinned: regression evidence only."
+      "notes": "Provenance resolved 2026-09-24 (no _provenance block): a self-pinned snapshot generated with @noble/post-quantum in Node 24 (file fields $schema, generator, generated_at 2026-05-17; added in commit 752b03369). src/components/PKILearning/modules/APISecurityJWT/jweKat.test.ts re-derives the keypair and shared secret from the pinned seeds. Same implementation family produced and checks the value, so no external correctness claim. Regenerated 2026-10-01 (api-security-jwt remediation): the earlier snapshot used the decoded header JSON as AES-GCM AAD (RFC 7516 requires the ASCII of the encoded header) and put the KEM ciphertext in the Encrypted Key segment instead of the -05 \"ek\" header, and derived the CEK with KMACXOF256 where -05 specifies fixed-length KMAC256 (found by a Codex second review). Still self-pinned: regression evidence only."
     },
     {
       "id": "kbkdf_acvp_test",

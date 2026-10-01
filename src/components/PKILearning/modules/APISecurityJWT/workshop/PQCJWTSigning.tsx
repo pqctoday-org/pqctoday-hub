@@ -58,6 +58,7 @@ type SigningAlgorithm =
   | 'ML-DSA-65'
   | 'ML-DSA-87'
   | 'SLH-DSA-SHA2-128s'
+  | 'SLH-DSA-SHAKE-128s'
   | 'SLH-DSA-SHA2-192s'
   | 'SLH-DSA-SHA2-256s'
   | 'ML-DSA-44-ES256'
@@ -67,16 +68,26 @@ type SigningAlgorithm =
   | 'ML-DSA-65-Ed25519'
   | 'ML-DSA-87-Ed448'
 
-const SIGNABLE_ALGS: { jose: SigningAlgorithm; nistLevel: number; sigBytes: number }[] = [
+// `primitiveOnly`: exercised as an SLH-DSA primitive, but NOT a registered JOSE
+// algorithm — draft-ietf-cose-sphincs-plus-10 registers only SHA2-128s and SHAKE-128s.
+// Composite sizes are maxima: the -04 ECDSA component is a DER Ecdsa-Sig-Value
+// (≤ 72 B for P-256, ≤ 104 B for P-384).
+const SIGNABLE_ALGS: {
+  jose: SigningAlgorithm
+  nistLevel: number
+  sigBytes: number
+  primitiveOnly?: boolean
+}[] = [
   { jose: 'ML-DSA-44', nistLevel: 2, sigBytes: 2420 },
   { jose: 'ML-DSA-65', nistLevel: 3, sigBytes: 3309 },
   { jose: 'ML-DSA-87', nistLevel: 5, sigBytes: 4627 },
   { jose: 'SLH-DSA-SHA2-128s', nistLevel: 1, sigBytes: 7856 },
-  { jose: 'SLH-DSA-SHA2-192s', nistLevel: 3, sigBytes: 16224 },
-  { jose: 'SLH-DSA-SHA2-256s', nistLevel: 5, sigBytes: 29792 },
-  { jose: 'ML-DSA-44-ES256', nistLevel: 2, sigBytes: 2484 },
-  { jose: 'ML-DSA-65-ES256', nistLevel: 3, sigBytes: 3373 },
-  { jose: 'ML-DSA-87-ES384', nistLevel: 5, sigBytes: 4723 },
+  { jose: 'SLH-DSA-SHAKE-128s', nistLevel: 1, sigBytes: 7856 },
+  { jose: 'SLH-DSA-SHA2-192s', nistLevel: 3, sigBytes: 16224, primitiveOnly: true },
+  { jose: 'SLH-DSA-SHA2-256s', nistLevel: 5, sigBytes: 29792, primitiveOnly: true },
+  { jose: 'ML-DSA-44-ES256', nistLevel: 2, sigBytes: 2492 },
+  { jose: 'ML-DSA-65-ES256', nistLevel: 3, sigBytes: 3381 },
+  { jose: 'ML-DSA-87-ES384', nistLevel: 5, sigBytes: 4731 },
   { jose: 'ML-DSA-44-Ed25519', nistLevel: 2, sigBytes: 2484 },
   { jose: 'ML-DSA-65-Ed25519', nistLevel: 3, sigBytes: 3373 },
   { jose: 'ML-DSA-87-Ed448', nistLevel: 5, sigBytes: 4741 },
@@ -238,7 +249,25 @@ export const PQCJWTSigning: React.FC = () => {
           >
             RFC 9964
           </a>{' '}
-          (ML-DSA for JOSE and COSE, published May 2026).
+          (ML-DSA for JOSE and COSE, published May 2026). SLH-DSA codes follow{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-cose-sphincs-plus-10
+          </a>{' '}
+          and composite codes{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-jose-pq-composite-sigs-04
+          </a>{' '}
+          — both still Internet-Drafts.
         </p>
       </div>
 
@@ -260,6 +289,14 @@ export const PQCJWTSigning: React.FC = () => {
           >
             {alg.jose}
             <span className="ml-1 text-[10px]">L{alg.nistLevel}</span>
+            {alg.primitiveOnly && (
+              <span
+                className="ml-1 text-[10px] text-warning"
+                title="Not a JOSE algorithm: draft-ietf-cose-sphincs-plus-10 registers only SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s"
+              >
+                primitive only
+              </span>
+            )}
           </Button>
         ))}
       </div>

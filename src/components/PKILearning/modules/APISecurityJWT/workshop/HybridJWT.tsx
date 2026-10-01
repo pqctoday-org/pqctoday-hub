@@ -164,28 +164,36 @@ export const HybridJWT: React.FC = () => {
         setVerifyValid(v.valid)
       } else {
         // RFC 8725 §3.3: in a nested JWT "both outer and inner operations MUST
-        // be validated", each with the key the application expects for it.
+        // be validated using the keys and algorithms supplied by the
+        // application" — so each layer's alg is pinned here, never taken from
+        // the token, and the outer header must declare cty "JWT" (RFC 7519 §5.2).
         const outer = await verifyJWS({
           token: result.outerJwt.token,
           publicKey: keyPair.publicKey,
           backend: effectiveBackend,
           hsm: hsmCtx,
         })
+        const outerOk = outer.valid && outer.header.alg === outerAlg && outer.header.cty === 'JWT'
         let inner: boolean | null = null
-        if (outer.valid) {
+        if (outerOk) {
           const innerJwt = new TextDecoder().decode(
             base64urlDecode(result.outerJwt.token.split('.')[1])
           )
           const [h, p, sig] = innerJwt.split('.')
-          inner = await crypto.subtle.verify(
-            { name: 'ECDSA', hash: 'SHA-256' },
-            result.innerPublicKey,
-            base64urlDecode(sig) as Uint8Array<ArrayBuffer>,
-            new TextEncoder().encode(`${h}.${p}`)
-          )
+          const innerHeader = JSON.parse(new TextDecoder().decode(base64urlDecode(h))) as {
+            alg?: string
+          }
+          inner =
+            innerHeader.alg === 'ES256' &&
+            (await crypto.subtle.verify(
+              { name: 'ECDSA', hash: 'SHA-256' },
+              result.innerPublicKey,
+              base64urlDecode(sig) as Uint8Array<ArrayBuffer>,
+              new TextEncoder().encode(`${h}.${p}`)
+            ))
         }
-        setNestedVerify({ outer: outer.valid, inner })
-        setVerifyValid(outer.valid && inner === true)
+        setNestedVerify({ outer: outerOk, inner })
+        setVerifyValid(outerOk && inner === true)
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))

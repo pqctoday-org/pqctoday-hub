@@ -5,6 +5,7 @@
 import { ml_dsa44, ml_dsa65, ml_dsa87 } from '@noble/post-quantum/ml-dsa.js'
 import {
   slh_dsa_sha2_128s,
+  slh_dsa_shake_128s,
   slh_dsa_sha2_192s,
   slh_dsa_sha2_256s,
 } from '@noble/post-quantum/slh-dsa.js'
@@ -25,6 +26,7 @@ import {
   hsm_slhdsaVerify,
   hsm_importSLHDSAPublicKey,
   CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHAKE_128S,
   CKP_SLH_DSA_SHA2_192S,
   CKP_SLH_DSA_SHA2_256S,
 } from '@/wasm/softhsm'
@@ -146,7 +148,10 @@ export type JwsAlg =
   | 'ML-DSA-44'
   | 'ML-DSA-65'
   | 'ML-DSA-87'
+  // SHA2-128s and SHAKE-128s are the only SLH-DSA JOSE algorithms
+  // (draft-ietf-cose-sphincs-plus-10); 192s/256s are raw-primitive demos.
   | 'SLH-DSA-SHA2-128s'
+  | 'SLH-DSA-SHAKE-128s'
   | 'SLH-DSA-SHA2-192s'
   | 'SLH-DSA-SHA2-256s'
   // draft-ietf-jose-pq-composite-sigs-04 Table 5 (all 6 JOSE composite algs)
@@ -239,17 +244,18 @@ const ML_DSA_VARIANT: Record<'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87', 44 | 65 | 
   'ML-DSA-87': 87,
 }
 
+type SlhDsaAlg =
+  'SLH-DSA-SHA2-128s' | 'SLH-DSA-SHAKE-128s' | 'SLH-DSA-SHA2-192s' | 'SLH-DSA-SHA2-256s'
+
 interface SlhDsaSuite {
   keygen: () => { publicKey: Uint8Array; secretKey: Uint8Array }
   sign: (msg: Uint8Array, sk: Uint8Array) => Uint8Array
   verify: (sig: Uint8Array, msg: Uint8Array, pk: Uint8Array) => boolean
 }
 
-const SLH_DSA_SUITES: Record<
-  'SLH-DSA-SHA2-128s' | 'SLH-DSA-SHA2-192s' | 'SLH-DSA-SHA2-256s',
-  SlhDsaSuite
-> = {
+const SLH_DSA_SUITES: Record<SlhDsaAlg, SlhDsaSuite> = {
   'SLH-DSA-SHA2-128s': slh_dsa_sha2_128s as unknown as SlhDsaSuite,
+  'SLH-DSA-SHAKE-128s': slh_dsa_shake_128s as unknown as SlhDsaSuite,
   'SLH-DSA-SHA2-192s': slh_dsa_sha2_192s as unknown as SlhDsaSuite,
   'SLH-DSA-SHA2-256s': slh_dsa_sha2_256s as unknown as SlhDsaSuite,
 }
@@ -263,11 +269,9 @@ const SLH_DSA_SUITES: Record<
 // module's top-level runs). Dev/vitest don't use that plugin, so this bug is
 // invisible outside a real production build. See
 // pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
-const slhDsaParamSet = (): Record<
-  'SLH-DSA-SHA2-128s' | 'SLH-DSA-SHA2-192s' | 'SLH-DSA-SHA2-256s',
-  number
-> => ({
+const slhDsaParamSet = (): Record<SlhDsaAlg, number> => ({
   'SLH-DSA-SHA2-128s': CKP_SLH_DSA_SHA2_128S,
+  'SLH-DSA-SHAKE-128s': CKP_SLH_DSA_SHAKE_128S,
   'SLH-DSA-SHA2-192s': CKP_SLH_DSA_SHA2_192S,
   'SLH-DSA-SHA2-256s': CKP_SLH_DSA_SHA2_256S,
 })
@@ -578,10 +582,8 @@ function isMlDsa(alg: JwsAlg): alg is 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87' {
   return alg === 'ML-DSA-44' || alg === 'ML-DSA-65' || alg === 'ML-DSA-87'
 }
 
-function isSlhDsa(
-  alg: JwsAlg
-): alg is 'SLH-DSA-SHA2-128s' | 'SLH-DSA-SHA2-192s' | 'SLH-DSA-SHA2-256s' {
-  return alg === 'SLH-DSA-SHA2-128s' || alg === 'SLH-DSA-SHA2-192s' || alg === 'SLH-DSA-SHA2-256s'
+function isSlhDsa(alg: JwsAlg): alg is SlhDsaAlg {
+  return alg in SLH_DSA_SUITES
 }
 
 /**

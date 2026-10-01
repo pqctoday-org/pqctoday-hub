@@ -2,8 +2,9 @@
 // ── JOSE Algorithm Data ─────────────────────────────────────────────────────
 //
 // PQC `alg` codes follow RFC 9964 (ML-DSA for JOSE and COSE, May 2026).
-// The composite family uses draft-ietf-jose-pq-composite-sigs-03. Sizes
-// for PQC variants come from @noble/post-quantum 0.6.1 and match FIPS 203/204/205.
+// SLH-DSA codes follow draft-ietf-cose-sphincs-plus-10 and the composite family
+// draft-ietf-jose-pq-composite-sigs-04. PQC sizes match FIPS 203/204/205; composite
+// sizes use -04's uncompressed ECDSA keys and the maximum DER ECDSA signature.
 
 export interface JOSEAlgorithm {
   name: string
@@ -88,40 +89,51 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 7856,
     broken: false,
     nistLevel: 1,
-    spec: 'RFC 9964 (AKP key type)',
+    spec: 'draft-ietf-cose-sphincs-plus-10 (AKP key type)',
+  },
+  {
+    name: 'SLH-DSA-SHAKE-128s',
+    jose: 'SLH-DSA-SHAKE-128s',
+    type: 'pqc',
+    category: 'signing',
+    keyBytes: 32,
+    sigBytes: 7856,
+    broken: false,
+    nistLevel: 1,
+    spec: 'draft-ietf-cose-sphincs-plus-10 (AKP key type)',
   },
   {
     name: 'ML-DSA-44 + ECDSA P-256 (composite)',
     jose: 'ML-DSA-44-ES256',
     type: 'composite',
     category: 'signing',
-    keyBytes: 1345, // 1312 + 33 (compressed P-256)
-    sigBytes: 2484, // 2420 + 64
+    keyBytes: 1377, // 1312 + 65 (uncompressed X9.62 P-256)
+    sigBytes: 2492, // 2420 + up to 72 (DER Ecdsa-Sig-Value)
     broken: false,
     nistLevel: 2,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
   {
     name: 'ML-DSA-65 + ECDSA P-256 (composite)',
     jose: 'ML-DSA-65-ES256',
     type: 'composite',
     category: 'signing',
-    keyBytes: 1985, // 1952 + 33
-    sigBytes: 3373, // 3309 + 64
+    keyBytes: 2017, // 1952 + 65
+    sigBytes: 3381, // 3309 + up to 72
     broken: false,
     nistLevel: 3,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
   {
     name: 'ML-DSA-87 + ECDSA P-384 (composite)',
     jose: 'ML-DSA-87-ES384',
     type: 'composite',
     category: 'signing',
-    keyBytes: 2641, // 2592 + 49 (compressed P-384)
-    sigBytes: 4723, // 4627 + 96
+    keyBytes: 2689, // 2592 + 97 (uncompressed X9.62 P-384)
+    sigBytes: 4731, // 4627 + up to 104
     broken: false,
     nistLevel: 5,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
   {
     name: 'ML-DSA-44 + Ed25519 (composite)',
@@ -132,7 +144,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 2484, // 2420 + 64
     broken: false,
     nistLevel: 2,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
   {
     name: 'ML-DSA-65 + Ed25519 (composite)',
@@ -143,7 +155,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 3373, // 3309 + 64
     broken: false,
     nistLevel: 3,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
   {
     name: 'ML-DSA-87 + Ed448 (composite)',
@@ -154,7 +166,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 4741, // 4627 + 114
     broken: false,
     nistLevel: 5,
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 (Table 2)',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 (Table 5)',
   },
 ]
 

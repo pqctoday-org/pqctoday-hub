@@ -23,7 +23,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
-import { kmac256xof } from '@noble/hashes/sha3-addons.js'
+import { kmac256, kmac256xof } from '@noble/hashes/sha3-addons.js'
 import kat from '@/data/acvp/jose-pqc-kem-jwe-kat.json'
 
 function hexToBytes(hex: string): Uint8Array {
@@ -62,7 +62,8 @@ function deriveCek(sharedSecret: Uint8Array, encAlg: string, keyLenBytes: number
   dv.setUint32(0, algNameBytes.length, false)
   x.set(algNameBytes, 4)
   dv.setUint32(4 + algNameBytes.length, keyLenBytes * 8, false)
-  return kmac256xof(sharedSecret, x, { dkLen: keyLenBytes })
+  // Fixed-length KMAC256, not KMACXOF256 — see JWEEncryption.tsx deriveCek.
+  return kmac256(sharedSecret, x, { dkLen: keyLenBytes })
 }
 
 describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () => {
@@ -223,6 +224,15 @@ describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () =
         new Uint8Array(combined)
       )
     ).rejects.toThrow()
+  })
+
+  it('KDF is fixed-length KMAC256, not KMACXOF256 (they differ for the same inputs)', () => {
+    const ss = hexToBytes(v.expected_shared_secret_hex)
+    const x = new Uint8Array([0, 0, 0, 7, ...new TextEncoder().encode('A256GCM'), 0, 0, 1, 0])
+    expect(bytesToHex(deriveCek(ss, 'A256GCM', 32))).toBe(bytesToHex(kmac256(ss, x, { dkLen: 32 })))
+    expect(bytesToHex(kmac256(ss, x, { dkLen: 32 }))).not.toBe(
+      bytesToHex(kmac256xof(ss, x, { dkLen: 32 }))
+    )
   })
 
   it('sanity: hex helpers roundtrip', () => {
