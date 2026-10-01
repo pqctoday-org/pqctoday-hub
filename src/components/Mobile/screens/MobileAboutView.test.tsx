@@ -91,6 +91,18 @@ describe('MobileAboutView', () => {
     ).toBeInTheDocument()
   })
 
+  it('links the Data Suggestion issue template from the Community row', () => {
+    renderView()
+    fireEvent.click(screen.getByRole('button', { name: /Assistant, community & preferences/i }))
+    const link = screen.getByRole('link', { name: /Suggest a data change/i })
+    expect(link).toHaveAttribute(
+      'href',
+      'https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml'
+    )
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
   it("hides the 5 standalone-only rows when embedded, matching AboutView.tsx's own gate", () => {
     mockIsEmbedded = true
     renderView()
