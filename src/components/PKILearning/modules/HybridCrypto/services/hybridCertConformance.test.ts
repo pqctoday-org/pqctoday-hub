@@ -79,6 +79,8 @@ const GENERATORS: Record<string, Generator> = {
   'pure-pqc-kem': (M, h) => hybridCryptoService.generatePurePQCCertMLKEM(SUBJECT, M, h),
   'composite-kem': (M, h) => hybridCryptoService.generateCompositeKEMCert(SUBJECT, M, h),
   chameleon: (M, h) => hybridCryptoService.generateChameleonCert(SUBJECT, M, h),
+  'cert-discovery': (M, h) => hybridCryptoService.generateCertDiscovery(SUBJECT, M, h),
+  'unsigned-kem': (M, h) => hybridCryptoService.generateUnsignedKEMCert(SUBJECT, M, h),
 }
 
 /** Expected keyUsage per format's subject certificate, as the card displays it. */
@@ -88,6 +90,7 @@ const EXPECTED_KU: Record<string, string> = {
   'related-certs': 'Digital Signature',
   'pure-pqc-kem': 'Key Encipherment',
   'composite-kem': 'Key Encipherment',
+  'cert-discovery': 'Digital Signature',
 }
 
 /**
@@ -156,6 +159,12 @@ describe('hybrid certificate conformance (SoftHSM → builders → @noble + Open
           '/ssl/leaf.pem': cert.pem,
           // Self-signed certs verify against themselves; CA-issued against the CA.
           '/ssl/anchor.pem': cert.role === 'subject' && ca ? ca.pem : cert.pem,
+        }
+        if (id === 'unsigned-kem') {
+          const v = await openssl(files, ['verify', '-CAfile', '/ssl/anchor.pem', '/ssl/leaf.pem'])
+          results.push(`${cert.label}: rc=${v.rc} (must be refused) ${v.stderr.trim()}`)
+          expect(v.rc, 'RFC 9925 cert must not validate as a path').not.toBe(0)
+          continue
         }
         if (NO_OPENSSL_ORACLE.has(id)) {
           results.push(`${cert.label}: not checkable by OpenSSL 3.6.3 (no composite KEM support)`)
@@ -433,6 +442,10 @@ function runWith(
       return hybridCryptoService.generateCompositeKEMCert(SUBJECT, M, h, onKey, run)
     case 'chameleon':
       return hybridCryptoService.generateChameleonCert(SUBJECT, M, h, onKey, run)
+    case 'cert-discovery':
+      return hybridCryptoService.generateCertDiscovery(SUBJECT, M, h, onKey, run)
+    case 'unsigned-kem':
+      return hybridCryptoService.generateUnsignedKEMCert(SUBJECT, M, h, onKey, run)
     default:
       throw new Error(`no generator for ${id}`)
   }

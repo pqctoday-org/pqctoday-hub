@@ -1398,6 +1398,135 @@ export async function buildRelatedCertificates(opts: {
   return { relatedCertRequest, requestVerified: true, certB, bindingHash: toHex(hashA) }
 }
 
+// ---------------------------------------------------------------------------
+// Advanced: Certificate Discovery (draft-ietf-lamps-certdiscovery-03)
+//
+// A primary certificate advertises where a secondary certificate (here one
+// with a PQC key) can be fetched, in a subjectInfoAccess entry whose
+// accessMethod is id-ad-certDiscovery and whose accessLocation is an
+// otherName carrying a RelatedCertificateDescriptor.
+//
+// The draft's OIDs are still TBD. These placeholders sit under the IANA
+// documentation enterprise number 32473 (RFC 5612) — clearly not real,
+// and never valid in a deployed certificate.
+// ---------------------------------------------------------------------------
+
+export const CERT_DISCOVERY_PLACEHOLDER_OIDS = {
+  /** stands in for id-ad-certDiscovery (id-ad TBD) */
+  accessMethod: '1.3.6.1.4.1.32473.1.1',
+  /** stands in for id-on-relatedCertificateDescriptor (id-on TBD) */
+  otherName: '1.3.6.1.4.1.32473.1.2',
+  /** stands in for id-rcd-agility (id-rcd 1, id-rcd TBD4) */
+  intentAgility: '1.3.6.1.4.1.32473.1.3.1',
+} as const
+
+const SUBJECT_INFO_ACCESS_OID = '1.3.6.1.5.5.7.1.11'
+
+function derOid(oid: string): Uint8Array {
+  const parts = oid.split('.').map(Number)
+  const body: number[] = [parts[0] * 40 + parts[1]]
+  for (const v of parts.slice(2)) {
+    const stack = [v & 0x7f]
+    for (let x = Math.floor(v / 128); x > 0; x = Math.floor(x / 128))
+      stack.unshift((x & 0x7f) | 0x80)
+    body.push(...stack)
+  }
+  return new Uint8Array([0x06, ...encodeDERLength(body.length), ...body])
+}
+
+/** Re-tag a DER TLV (e.g. an AlgorithmIdentifier SEQUENCE) with an IMPLICIT [n] constructed tag. */
+function implicitConstructed(n: number, tlv: Uint8Array): Uint8Array {
+  const out = tlv.slice()
+  out[0] = 0xa0 | n
+  return out
+}
+
+/**
+ * Build the subjectInfoAccess extension advertising a secondary certificate:
+ *
+ *   AccessDescription { accessMethod id-ad-certDiscovery,
+ *     accessLocation otherName { type-id id-on-relatedCertificateDescriptor,
+ *       value [0] EXPLICIT RelatedCertificateDescriptor {
+ *         method byUri [0] IMPLICIT IA5String,
+ *         intent id-rcd-agility,
+ *         signatureAlgorithm [0] IMPLICIT AlgorithmIdentifier,
+ *         publicKeyAlgorithm [1] IMPLICIT AlgorithmIdentifier } } }
+ */
+export function buildCertDiscoveryExtension(opts: {
+  uri: string
+  signatureOid: string
+  publicKeyOid: string
+}): Extension {
+  const ids = CERT_DISCOVERY_PLACEHOLDER_OIDS
+  const uriBytes = new TextEncoder().encode(opts.uri)
+  const byUri = new Uint8Array([0x80, ...encodeDERLength(uriBytes.length), ...uriBytes])
+  const algId = (oid: string) => new Uint8Array(AsnConvert.serialize(buildAlgId(oid)))
+  const descriptor = buildDERSequence([
+    byUri,
+    derOid(ids.intentAgility),
+    implicitConstructed(0, algId(opts.signatureOid)),
+    implicitConstructed(1, algId(opts.publicKeyOid)),
+  ])
+  // GeneralName otherName is [0] IMPLICIT AnotherName (constructed).
+  const otherName = implicitConstructed(
+    0,
+    buildDERSequence([derOid(ids.otherName), buildDERContextExplicit(0, descriptor)])
+  )
+  const accessDescription = buildDERSequence([derOid(ids.accessMethod), otherName])
+  // RFC 5280 §4.2.2.2: subjectInfoAccess MUST be non-critical.
+  return buildExtension(
+    SUBJECT_INFO_ACCESS_OID,
+    false,
+    buildDERSequence([accessDescription]).buffer as ArrayBuffer
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Advanced: unsigned certificate (RFC 9925)
+// ---------------------------------------------------------------------------
+
+/** id-alg-unsigned (RFC 9925) */
+export const ID_ALG_UNSIGNED_OID = '1.3.6.1.5.5.7.6.36'
+/** id-rdna-unsigned — the placeholder issuer RDN attribute (RFC 9925) */
+export const ID_RDNA_UNSIGNED_OID = '1.3.6.1.5.5.7.25.1'
+
+/**
+ * Build an RFC 9925 unsigned certificate: signature algorithm id-alg-unsigned
+ * with absent parameters, a zero-length signature BIT STRING, and the
+ * placeholder issuer `1.3.6.1.5.5.7.25.1=#0C00` (an empty UTF8String) so the
+ * object can never be mistaken for a self-signed certificate. issuerUniqueID,
+ * authorityKeyIdentifier and issuerAltName are omitted as the RFC requires /
+ * recommends. Validators MUST NOT accept it as a signature in a certification path.
+ */
+export async function buildUnsignedCertificate(opts: {
+  subject: string
+  subjectKeyOid: string
+  subjectPublicKey: Uint8Array
+  keyUsage: KeyUsageBit[]
+}): Promise<Uint8Array> {
+  const unsigned = buildAlgId(ID_ALG_UNSIGNED_OID)
+  const issuer = new Name([
+    new RelativeDistinguishedName([
+      new AttributeTypeAndValue({
+        type: ID_RDNA_UNSIGNED_OID,
+        value: new AttributeValue({ utf8String: '' }),
+      }),
+    ]),
+  ])
+  const keyId = await computeKeyIdentifier(opts.subjectPublicKey)
+  const tbs = new TBSCertificate({
+    version: Version.v3,
+    serialNumber: generateSerialBytes(),
+    signature: unsigned,
+    issuer,
+    validity: buildValidity().validity,
+    subject: buildName(opts.subject),
+    subjectPublicKeyInfo: buildSPKI(buildAlgId(opts.subjectKeyOid), opts.subjectPublicKey),
+    extensions: new Extensions([keyUsageExt(opts.keyUsage), subjectKeyIdExt(keyId)]),
+  })
+  return buildCertificate(tbs, unsigned, new Uint8Array(0))
+}
+
 /** The ECDSA P-256 AlgorithmIdentifier (with namedCurve), for issueCertificate. */
 export function ecP256SpkiAlgId(): AlgorithmIdentifier {
   return buildECAlgId()

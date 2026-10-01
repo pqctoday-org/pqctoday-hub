@@ -27,6 +27,7 @@ import { verifyCompositeCert } from '../services/compositeVerifier'
 import type { VerificationCheck } from '../services/certVerifier'
 import {
   CURRENT_HYBRID_CERT_FORMATS,
+  ADVANCED_HYBRID_CERT_FORMATS,
   HISTORICAL_HYBRID_CERT_FORMATS,
   STATUS_BADGE_CLASSES,
   STRUCTURE_LINE_COLOR_CLASSES,
@@ -322,6 +323,24 @@ export const HybridCertFormats: React.FC = () => {
               run
             )
             break
+          case 'cert-discovery':
+            output = await hybridCryptoService.generateCertDiscovery(
+              subject,
+              M,
+              hSession,
+              track,
+              run
+            )
+            break
+          case 'unsigned-kem':
+            output = await hybridCryptoService.generateUnsignedKEMCert(
+              sandbox('Unsigned ML-KEM-768 (RFC 9925) Demo'),
+              M,
+              hSession,
+              track,
+              run
+            )
+            break
           case 'chameleon':
             output = await hybridCryptoService.generateChameleonCert(
               subject,
@@ -415,7 +434,9 @@ export const HybridCertFormats: React.FC = () => {
   // user chose to generate.
   const comparisonFormats = [
     ...CURRENT_HYBRID_CERT_FORMATS,
-    ...HISTORICAL_HYBRID_CERT_FORMATS.filter((f) => results[f.id] && !results[f.id].error),
+    ...[...ADVANCED_HYBRID_CERT_FORMATS, ...HISTORICAL_HYBRID_CERT_FORMATS].filter(
+      (f) => results[f.id] && !results[f.id].error
+    ),
   ]
 
   const renderFormatCard = (baseFmt: HybridCertFormat) => {
@@ -586,6 +607,10 @@ export const HybridCertFormats: React.FC = () => {
                     'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
                   {fmt.id === 'related-certs' &&
                     'Requires an ECDSA P-256 key for Cert A, an ML-DSA-65 key for Cert B, and an ML-DSA-65 workshop CA.'}
+                  {fmt.id === 'cert-discovery' &&
+                    'Requires an ECDSA P-256 primary key, an ML-DSA-65 secondary key and an ML-DSA-65 workshop CA in the HSM.'}
+                  {fmt.id === 'unsigned-kem' &&
+                    'Requires an ML-KEM-768 key pair in the HSM; no signing key is involved.'}
                   {fmt.id === 'chameleon' &&
                     'Requires an ML-DSA-65 primary key and an ECDSA P-256 delta key; the DeltaCertificateDescriptor carries the DER-encoded ECDSA delta signature.'}
                   {fmt.id === 'pure-pqc-kem' &&
@@ -890,6 +915,26 @@ export const HybridCertFormats: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {CURRENT_HYBRID_CERT_FORMATS.map(renderFormatCard)}
         </div>
+
+        {/* Advanced examples — specialised or illustrative, generated on request */}
+        {ADVANCED_HYBRID_CERT_FORMATS.length > 0 && (
+          <section aria-labelledby="advanced-examples-heading" className="space-y-3">
+            <div>
+              <h3 id="advanced-examples-heading" className="text-sm font-bold text-foreground">
+                Advanced examples
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Specialised mechanisms that are not part of Generate All: Certificate Discovery (an
+                active draft whose OIDs are not assigned yet, so its encoding here is illustrative)
+                and the RFC 9925 unsigned certificate (a container that is never valid in a
+                certification path).
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {ADVANCED_HYBRID_CERT_FORMATS.map(renderFormatCard)}
+            </div>
+          </section>
+        )}
 
         {/* Historical designs — separated from the main comparison */}
         {HISTORICAL_HYBRID_CERT_FORMATS.length > 0 && (

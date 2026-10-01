@@ -35,6 +35,9 @@ import {
   buildRelatedCertificates,
   buildChameleonCert,
   buildWorkshopCA,
+  buildCertDiscoveryExtension,
+  buildUnsignedCertificate,
+  CERT_DISCOVERY_PLACEHOLDER_OIDS,
   issueCertificate,
   ecP256SpkiAlgId,
   EC_PUBLIC_KEY_OID_STR,
@@ -53,6 +56,8 @@ import {
   parseCertificate,
   verifyAltSigCert,
   verifyChameleonCert,
+  verifyCertDiscovery,
+  checkUnsignedCertificate,
   verifyIssuedBy,
   verifyRelatedCertificate,
   type VerificationCheck,
@@ -1437,6 +1442,124 @@ export class HybridCryptoService {
       }
     } catch (e) {
       return this.failed(start, e, 'Composite KEM certificate generation failed', st)
+    }
+  }
+
+  /**
+   * ADVANCED — Certificate Discovery (draft-ietf-lamps-certdiscovery-03).
+   * A classical ECDSA primary advertises, in subjectInfoAccess, where an
+   * ML-DSA-65 secondary can be fetched. The draft's OIDs are TBD, so the
+   * encoding uses documentation-arc placeholders and is illustrative only.
+   * The URI resolves locally — no network request is made.
+   */
+  async generateCertDiscovery(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker,
+    run?: RunContext
+  ): Promise<FormatOutput> {
+    const start = performance.now()
+    const st = new Stager(run)
+    try {
+      await st.enter('Workshop CA key + certificate')
+      const ca = await this.createWorkshopCA(M, hSession, onKey)
+      await st.enter('Secondary (ML-DSA-65) key generation')
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      await st.enter('Secondary certificate issuance')
+      const { der: secondary } = await issueCertificate({
+        subject: subject.replace(/CN=([^/]+)/, 'CN=$1 (Secondary PQC)'),
+        subjectKeyOid: ML_DSA_65_OID_STR,
+        subjectPublicKey: mldsa.publicKey,
+        issuer: ca,
+        isCA: false,
+        keyUsage: ['digitalSignature'],
+      })
+      const uri = 'https://pqctoday.invalid/workshop/discovery/secondary.der'
+      await st.enter('Primary (ECDSA) key generation')
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      await st.enter('Primary certificate issuance')
+      const { der: primary } = await issueCertificate({
+        subject: subject.replace(/CN=([^/]+)/, 'CN=$1 (Primary classical)'),
+        subjectKeyOid: EC_PUBLIC_KEY_OID_STR,
+        subjectAlgId: ecP256SpkiAlgId(),
+        subjectPublicKey: ec.publicKeyRaw,
+        issuer: null,
+        selfSigner: { signatureOid: ECDSA_SHA256_OID_STR, signerFn: ec.derSignerFn },
+        isCA: false,
+        keyUsage: ['digitalSignature'],
+        extraExtensions: [
+          buildCertDiscoveryExtension({
+            uri,
+            signatureOid: ML_DSA_65_OID_STR,
+            publicKeyOid: ML_DSA_65_OID_STR,
+          }),
+        ],
+      })
+      await st.enter('Discovery + verification')
+      const repository = new Map([[uri, secondary]])
+      const checks = verifyCertDiscovery(
+        parseCertificate(primary),
+        CERT_DISCOVERY_PLACEHOLDER_OIDS,
+        (u) => repository.get(u),
+        parseCertificate(ca.certDer)
+      )
+      return {
+        certs: [
+          this.view(
+            primary,
+            'Primary — ECDSA P-256, advertises the secondary',
+            'classical',
+            'existing'
+          ),
+          this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
+          this.view(
+            secondary,
+            'Secondary — ML-DSA-65, found via the advertisement',
+            'pqc',
+            'subject'
+          ),
+        ],
+        checks,
+        timingMs: performance.now() - start,
+      }
+    } catch (e) {
+      return this.failed(start, e, 'Certificate Discovery generation failed', st)
+    }
+  }
+
+  /**
+   * ADVANCED — RFC 9925 unsigned certificate carrying an ML-KEM-768 key.
+   * id-alg-unsigned, zero-length signature, placeholder issuer; useful only
+   * where no issuer signature is needed, and refused in a certification path.
+   */
+  async generateUnsignedKEMCert(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker,
+    run?: RunContext
+  ): Promise<FormatOutput> {
+    const start = performance.now()
+    const st = new Stager(run)
+    try {
+      await st.enter('ML-KEM key generation')
+      const kem = this.generateMLKEMForCert(M, hSession, onKey)
+      await st.enter('Unsigned certificate encoding')
+      const der = await buildUnsignedCertificate({
+        subject,
+        subjectKeyOid: ML_KEM_768_OID_STR,
+        subjectPublicKey: kem.publicKey,
+        keyUsage: ['keyEncipherment'],
+      })
+      await st.enter('Verification')
+      return {
+        certs: [this.view(der, 'Unsigned ML-KEM-768 certificate (RFC 9925)', 'pqc', 'subject')],
+        checks: [...checkUnsignedCertificate(parseCertificate(der)), ...kem.checks],
+        timingMs: performance.now() - start,
+      }
+    } catch (e) {
+      return this.failed(start, e, 'Unsigned certificate generation failed', st)
     }
   }
 }

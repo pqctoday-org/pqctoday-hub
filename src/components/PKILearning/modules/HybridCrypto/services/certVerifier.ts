@@ -410,3 +410,151 @@ export function verifyChameleonCert(primary: Certificate): VerificationCheck[] {
   }
   return checks
 }
+
+// ---------------------------------------------------------------------------
+// Certificate Discovery (draft-ietf-lamps-certdiscovery-03) — advanced example
+// ---------------------------------------------------------------------------
+
+export interface DiscoveryAdvertisement {
+  uri: string
+  intentOid: string | null
+  signatureOid: string | null
+  publicKeyOid: string | null
+}
+
+/** Strip a TLV's tag + length, returning its content bytes. */
+function tlvContent(tlv: Uint8Array): Uint8Array {
+  const l = tlv[1]
+  return tlv.subarray(l & 0x80 ? 2 + (l & 0x7f) : 2)
+}
+
+function oidFromTlv(tlv: Uint8Array): string {
+  const body = tlvContent(tlv)
+  const parts = [Math.floor(body[0] / 40), body[0] % 40]
+  let v = 0
+  for (let i = 1; i < body.length; i++) {
+    v = v * 128 + (body[i] & 0x7f)
+    if ((body[i] & 0x80) === 0) {
+      parts.push(v)
+      v = 0
+    }
+  }
+  return parts.join('.')
+}
+
+/** Read the certDiscovery advertisement from a primary's subjectInfoAccess. */
+export function readDiscoveryAdvertisement(
+  cert: Certificate,
+  ids: { accessMethod: string; otherName: string }
+): DiscoveryAdvertisement | null {
+  const ext = findExtension(cert, '1.3.6.1.5.5.7.1.11')
+  if (!ext) return null
+  for (const ad of derSequenceChildren(new Uint8Array(ext.extnValue.buffer))) {
+    const [method, location] = derSequenceChildren(ad)
+    if (oidFromTlv(method) !== ids.accessMethod || location[0] !== 0xa0) continue
+    // otherName [0] IMPLICIT AnotherName → re-read as a SEQUENCE
+    const another = location.slice()
+    another[0] = 0x30
+    const [typeId, explicitValue] = derSequenceChildren(another)
+    if (oidFromTlv(typeId) !== ids.otherName) continue
+    const descriptor = tlvContent(explicitValue)
+    const fields = derSequenceChildren(descriptor)
+    const adv: DiscoveryAdvertisement = {
+      uri: '',
+      intentOid: null,
+      signatureOid: null,
+      publicKeyOid: null,
+    }
+    for (const f of fields) {
+      if (f[0] === 0x80) adv.uri = new TextDecoder().decode(tlvContent(f))
+      else if (f[0] === 0x06) adv.intentOid = oidFromTlv(f)
+      else if (f[0] === 0xa0 || f[0] === 0xa1) {
+        const seq = f.slice()
+        seq[0] = 0x30
+        const oid = oidFromTlv(derSequenceChildren(seq)[0])
+        if (f[0] === 0xa0) adv.signatureOid = oid
+        else adv.publicKeyOid = oid
+      }
+    }
+    return adv
+  }
+  return null
+}
+
+/**
+ * Verify a Certificate Discovery pair: the primary advertises a secondary;
+ * the resolved secondary must match the advertised algorithms, and — per the
+ * draft's security considerations — must itself pass path validation.
+ */
+export function verifyCertDiscovery(
+  primary: Certificate,
+  ids: { accessMethod: string; otherName: string },
+  resolve: (uri: string) => Uint8Array | undefined,
+  secondaryIssuer: Certificate
+): VerificationCheck[] {
+  const checks = verifyIssuedBy(primary, primary).map((c) => ({ ...c, name: `Primary: ${c.name}` }))
+  const ext = findExtension(primary, '1.3.6.1.5.5.7.1.11')
+  checks.push({ name: 'subjectInfoAccess is non-critical', ok: !!ext && ext.critical !== true })
+  const adv = readDiscoveryAdvertisement(primary, ids)
+  checks.push({ name: 'Primary advertises a related certificate (certDiscovery)', ok: !!adv?.uri })
+  if (!adv?.uri) return checks
+  const der = resolve(adv.uri)
+  checks.push({ name: `Secondary resolves from ${adv.uri}`, ok: !!der })
+  if (!der) return checks
+  const secondary = parseCertificate(der)
+  checks.push({
+    name: 'Secondary signature algorithm matches the advertisement',
+    ok: secondary.signatureAlgorithm.algorithm === adv.signatureOid,
+  })
+  checks.push({
+    name: 'Secondary public-key algorithm matches the advertisement',
+    ok: secondary.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm === adv.publicKeyOid,
+  })
+  for (const c of verifyIssuedBy(secondary, secondaryIssuer)) {
+    checks.push({ ...c, name: `Secondary: ${c.name}` })
+  }
+  return checks
+}
+
+// ---------------------------------------------------------------------------
+// RFC 9925 unsigned certificate — advanced example
+// ---------------------------------------------------------------------------
+
+/** Structural RFC 9925 checks, plus the path-validation refusal it requires. */
+export function checkUnsignedCertificate(cert: Certificate): VerificationCheck[] {
+  const tbs = cert.tbsCertificate
+  const sigAlg = cert.signatureAlgorithm
+  const issuerRdn = tbs.issuer[0]?.[0]
+  const issuerName = new Uint8Array(AsnConvert.serialize(tbs.issuer))
+  const subjectName = new Uint8Array(AsnConvert.serialize(tbs.subject))
+  const has = (oid: string) => !!findExtension(cert, oid)
+  const refused = verifyIssuedBy(cert, cert)[0]
+  return [
+    {
+      name: 'Signature algorithm is id-alg-unsigned with absent parameters',
+      ok: sigAlg.algorithm === OID.unsigned && sigAlg.parameters === undefined,
+    },
+    {
+      name: 'TBS signature field matches (id-alg-unsigned)',
+      ok: tbs.signature.algorithm === OID.unsigned,
+    },
+    {
+      name: 'signatureValue is a zero-length BIT STRING',
+      ok: new Uint8Array(cert.signatureValue).length === 0,
+    },
+    {
+      name: 'Issuer is the id-rdna-unsigned placeholder (1.3.6.1.5.5.7.25.1=#0C00)',
+      ok: issuerRdn?.type === '1.3.6.1.5.5.7.25.1' && issuerRdn.value.utf8String === '',
+    },
+    { name: 'Not self-issued (issuer ≠ subject)', ok: !bytesEqual(issuerName, subjectName) },
+    {
+      name: 'issuerUniqueID, authorityKeyIdentifier and issuerAltName omitted',
+      ok: tbs.issuerUniqueID === undefined && !has('2.5.29.35') && !has('2.5.29.18'),
+    },
+    {
+      name: 'Refused as a signature in a certification path',
+      ok: refused.ok === false,
+      detail: refused.detail,
+    },
+  ]
+}
