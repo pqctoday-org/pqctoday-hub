@@ -22,7 +22,12 @@ import { Certificate, TBSCertificate } from '@peculiar/asn1-x509'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import * as SoftHSM from '@/wasm/softhsm'
 import { newModule, runOpenssl, writeFile } from '@/test/kat/openssl-driver'
-import { hybridCryptoService, type FormatOutput } from './HybridCryptoService'
+import {
+  hybridCryptoService,
+  GenerationCancelledError,
+  type FormatOutput,
+  type RunContext,
+} from './HybridCryptoService'
 import {
   parseCertificate,
   readBasicConstraints,
@@ -328,3 +333,107 @@ describe('hybrid certificate conformance (SoftHSM → builders → @noble + Open
     }
   })
 })
+
+// ---------------------------------------------------------------------------
+// Repeated runs and cancellation — the lifecycle half of the plan (§7).
+// Every key a format creates must be reported to the tracker, so that
+// destroying the tracked handles returns the HSM to its starting object count.
+// ---------------------------------------------------------------------------
+describe('repeated Generate All leaves no HSM objects behind', () => {
+  let M: SoftHSM.SoftHSMModule
+  let session: number
+  const RUNS = 10
+
+  beforeAll(async () => {
+    M = (await SoftHSM.getSoftHSMRustModule()) as never
+    SoftHSM.hsm_initialize(M)
+    const slot = SoftHSM.hsm_initToken(M, SoftHSM.hsm_getFirstFreeSlot(M), '1234', 'Repeat')
+    session = SoftHSM.hsm_openUserSession(M, slot, '1234', '1234')
+  }, 60_000)
+
+  const count = () => SoftHSM.hsm_findAllObjects(M, session, []).length
+
+  it(`${RUNS} consecutive runs of every format: each succeeds and the object count returns to baseline`, async () => {
+    const baseline = count()
+    const durations: Record<string, number[]> = {}
+    for (let run = 0; run < RUNS; run++) {
+      for (const [id] of Object.entries(GENERATORS)) {
+        const handles: number[] = []
+        const stages: string[] = []
+        const track = (h: number) => {
+          handles.push(h)
+        }
+        const t0 = performance.now()
+        const out = await runWith(id, M, session, track, { onStage: (s) => stages.push(s) })
+        ;(durations[id] ??= []).push(performance.now() - t0)
+        expect(out.error, `run ${run} ${id}`).toBeUndefined()
+        expect(stages.length, `run ${run} ${id}: stages reported`).toBeGreaterThan(1)
+        expect(handles.length, `run ${run} ${id}: keys tracked`).toBeGreaterThan(0)
+        for (const h of handles) SoftHSM.hsm_destroyObject(M, session, h)
+        expect(count(), `run ${run} ${id}: objects after cleanup`).toBe(baseline)
+      }
+    }
+    if (process.env.HYBRID_CONFORMANCE_REPORT) {
+      const medians = Object.fromEntries(
+        Object.entries(durations).map(([id, ds]) => [
+          id,
+          Math.round([...ds].sort((a, b) => a - b)[Math.floor(ds.length / 2)]),
+        ])
+      )
+      writeFileSync(
+        process.env.HYBRID_CONFORMANCE_REPORT.replace(/\.json$/, '-repeat.json'),
+        JSON.stringify({ runs: RUNS, baselineObjects: baseline, medianMs: medians }, null, 2)
+      )
+    }
+  }, 600_000)
+
+  it('cancelling mid-run throws GenerationCancelledError and its tracked keys clean up to baseline', async () => {
+    const baseline = count()
+    const controller = new AbortController()
+    const handles: number[] = []
+    let caught: unknown
+    try {
+      await runWith('pure-pqc-kem', M, session, (h) => handles.push(h), {
+        signal: controller.signal,
+        // Cancel once the ML-KEM key exists, i.e. mid-format.
+        onStage: (s) => {
+          if (s === 'Subject certificate issuance') controller.abort()
+        },
+      })
+    } catch (e) {
+      caught = e
+    }
+    expect(caught).toBeInstanceOf(GenerationCancelledError)
+    expect(handles.length).toBeGreaterThan(0)
+    for (const h of handles) SoftHSM.hsm_destroyObject(M, session, h)
+    expect(count()).toBe(baseline)
+  })
+})
+
+function runWith(
+  id: string,
+  M: SoftHSM.SoftHSMModule,
+  h: number,
+  track: (handle: number) => void,
+  run: RunContext
+): Promise<FormatOutput> {
+  const onKey = (handle: number) => track(handle)
+  switch (id) {
+    case 'pure-pqc':
+      return hybridCryptoService.generatePurePQCCertMLDSA(SUBJECT, M, h, onKey, run)
+    case 'pure-pqc-slh':
+      return hybridCryptoService.generateSelfSignedCertSLHDSA(SUBJECT, M, h, onKey, run)
+    case 'alt-sig':
+      return hybridCryptoService.generateAltSigCert(SUBJECT, M, h, onKey, run)
+    case 'related-certs':
+      return hybridCryptoService.generateRelatedCertPairReal(SUBJECT, M, h, onKey, run)
+    case 'pure-pqc-kem':
+      return hybridCryptoService.generatePurePQCCertMLKEM(SUBJECT, M, h, onKey, run)
+    case 'composite-kem':
+      return hybridCryptoService.generateCompositeKEMCert(SUBJECT, M, h, onKey, run)
+    case 'chameleon':
+      return hybridCryptoService.generateChameleonCert(SUBJECT, M, h, onKey, run)
+    default:
+      throw new Error(`no generator for ${id}`)
+  }
+}

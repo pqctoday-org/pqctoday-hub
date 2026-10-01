@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import {
   Info,
   Loader2,
@@ -11,10 +11,15 @@ import {
   Copy,
   Check,
   Download,
+  Square,
+  Trash2,
 } from 'lucide-react'
 import {
   hybridCryptoService,
+  GenerationCancelledError,
   type FormatOutput,
+  type KeyTracker,
+  type RunContext,
   type IssuedCertView,
 } from '../services/HybridCryptoService'
 import { COMPOSITE_PROFILE_CHOICES } from '../services/certBuilder'
@@ -30,6 +35,7 @@ import {
   type HybridFormatId,
 } from '../constants'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
+import { hsm_destroyObject, hsm_findAllObjects } from '@/wasm/softhsm'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -66,20 +72,11 @@ export const HybridCertFormats: React.FC = () => {
   const [results, setResults] = useState<Record<string, FormatResult>>({})
   const [generating, setGenerating] = useState<string | null>(null)
   const [generatingFormat, setGeneratingFormat] = useState<string | null>(null)
-  const [phase, setPhase] = useState<string>('')
-
-  React.useEffect(() => {
-    if (!generatingFormat) {
-      setPhase('')
-      return
-    }
-    // Best-effort estimate since service doesn't expose mid-operation callbacks
-    setPhase('Generating key pair...')
-    const t1 = setTimeout(() => {
-      setPhase('Building ASN.1 & signing...')
-    }, 1500)
-    return () => clearTimeout(t1)
-  }, [generatingFormat])
+  /** The stage the running format reported last — real progress, not a timer. */
+  const [stage, setStage] = useState<string>('')
+  /** Every HSM key handle each format created, so its keys can be destroyed. */
+  const formatHandles = useRef<Partial<Record<HybridFormatId, number[]>>>({})
+  const abortRef = useRef<AbortController | null>(null)
   const [expandedViews, setExpandedViews] = useState<Record<string, 'pem' | 'parsed' | null>>({})
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
   /**
@@ -157,12 +154,68 @@ export const HybridCertFormats: React.FC = () => {
     [hsm]
   )
 
+  /**
+   * C_DestroyObject every key a format created and drop them from the key
+   * inspector. Called before a format regenerates, on Clear, on cancel and on
+   * unmount — repeated runs must not accumulate HSM objects.
+   */
+  const destroyFormatKeys = useCallback(
+    (formatId: HybridFormatId) => {
+      const handles = formatHandles.current[formatId] ?? []
+      delete formatHandles.current[formatId]
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      for (const h of handles) {
+        if (M && hSession) {
+          try {
+            hsm_destroyObject(M, hSession, h)
+          } catch (err) {
+            console.error('HybridCertFormats: could not destroy key handle', h, err)
+          }
+        }
+        hsm.removeKey(h)
+      }
+    },
+    [hsm]
+  )
+
+  const destroyAllKeys = useCallback(() => {
+    for (const id of Object.keys(formatHandles.current) as HybridFormatId[]) destroyFormatKeys(id)
+  }, [destroyFormatKeys])
+
+  // Unmount: leave nothing behind in the shared HSM session.
+  const destroyAllRef = useRef(destroyAllKeys)
+  destroyAllRef.current = destroyAllKeys
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+      destroyAllRef.current()
+    },
+    []
+  )
+
+  /** Returns 'cancelled' when the run was aborted, so Generate All can stop. */
   const generateFormat = useCallback(
-    async (formatId: HybridFormatId, skipStateReset = false) => {
-      if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) return
+    async (
+      formatId: HybridFormatId,
+      skipStateReset = false,
+      signal?: AbortSignal
+    ): Promise<'done' | 'cancelled'> => {
+      if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) return 'done'
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
 
+      // Regenerating replaces the previous result — destroy its keys first.
+      destroyFormatKeys(formatId)
+      const handles: number[] = []
+      formatHandles.current[formatId] = handles
+      const track: KeyTracker = (handle, family, label, role) => {
+        handles.push(handle)
+        onKeyTracked(handle, family, label, role)
+      }
+      const run: RunContext = { onStage: setStage, signal }
+
+      setStage('Starting')
       setGeneratingFormat(formatId)
       if (!skipStateReset) setGenerating(formatId)
       const start = performance.now()
@@ -177,7 +230,8 @@ export const HybridCertFormats: React.FC = () => {
               subject,
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
           case 'pure-pqc-slh':
@@ -185,7 +239,8 @@ export const HybridCertFormats: React.FC = () => {
               sandbox('Pure PQC (SLH-DSA-128s) Demo'),
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
           case 'composite': {
@@ -200,8 +255,9 @@ export const HybridCertFormats: React.FC = () => {
               subject,
               M,
               hSession,
-              onKeyTracked,
-              chosen.profile
+              track,
+              chosen.profile,
+              run
             )
             const checks: VerificationCheck[] = []
             if (!r.error) {
@@ -237,19 +293,15 @@ export const HybridCertFormats: React.FC = () => {
             break
           }
           case 'alt-sig':
-            output = await hybridCryptoService.generateAltSigCert(
-              subject,
-              M,
-              hSession,
-              onKeyTracked
-            )
+            output = await hybridCryptoService.generateAltSigCert(subject, M, hSession, track, run)
             break
           case 'related-certs':
             output = await hybridCryptoService.generateRelatedCertPairReal(
               subject,
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
           case 'pure-pqc-kem':
@@ -257,7 +309,8 @@ export const HybridCertFormats: React.FC = () => {
               sandbox('Pure PQC KEM (ML-KEM-768) Demo'),
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
           case 'composite-kem':
@@ -265,7 +318,8 @@ export const HybridCertFormats: React.FC = () => {
               sandbox('Composite KEM (ML-KEM-768 + X25519) Demo'),
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
           case 'chameleon':
@@ -273,13 +327,17 @@ export const HybridCertFormats: React.FC = () => {
               subject,
               M,
               hSession,
-              onKeyTracked
+              track,
+              run
             )
             break
         }
         setResults((prev) => ({ ...prev, [formatId]: { formatId, ...output } }))
         if (!output.error) pushHybridFiles(formatId, output.certs)
       } catch (e) {
+        const cancelled = e instanceof GenerationCancelledError
+        // A cancelled or failed run keeps no keys.
+        if (cancelled) destroyFormatKeys(formatId)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -287,26 +345,69 @@ export const HybridCertFormats: React.FC = () => {
             certs: [],
             checks: [],
             timingMs: performance.now() - start,
-            error: translateCryptoError(e instanceof Error ? e.message : 'Generation failed'),
+            error: cancelled
+              ? e.message
+              : translateCryptoError(e instanceof Error ? e.message : 'Generation failed'),
           },
         }))
+        if (cancelled) {
+          setGeneratingFormat(null)
+          setStage('')
+          if (!skipStateReset) setGenerating(null)
+          return 'cancelled'
+        }
       }
 
       setGeneratingFormat(null)
-      setGeneratingFormat(null)
+      setStage('')
       if (!skipStateReset) setGenerating(null)
+      return 'done'
     },
-    [hsm, onKeyTracked, pushHybridFiles, compositeOid]
+    [hsm, onKeyTracked, pushHybridFiles, compositeOid, destroyFormatKeys]
   )
 
   const generateAll = useCallback(async () => {
+    const controller = new AbortController()
+    abortRef.current = controller
     setGenerating('all')
     // Current formats only — historical designs are generated on request.
+    // A failed format does not stop the run; a cancel does.
     for (const fmt of CURRENT_HYBRID_CERT_FORMATS) {
-      await generateFormat(fmt.id, true)
+      if ((await generateFormat(fmt.id, true, controller.signal)) === 'cancelled') break
     }
+    abortRef.current = null
     setGenerating(null)
   }, [generateFormat])
+
+  const cancelRun = useCallback(() => abortRef.current?.abort(), [])
+
+  const clearResults = useCallback(() => {
+    destroyAllKeys()
+    setResults({})
+    setExpandedViews({})
+  }, [destroyAllKeys])
+
+  // Dev/test-only diagnostics: lets the browser smoke check prove repeated
+  // runs leave no HSM objects behind. Never present in a production build.
+  useEffect(() => {
+    if (!import.meta.env.DEV && import.meta.env.MODE !== 'test') return
+    const w = window as unknown as { __hybridCertDiag?: () => unknown }
+    w.__hybridCertDiag = () => {
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      return {
+        hsmObjects: M && hSession ? hsm_findAllObjects(M, hSession, []).length : null,
+        trackedHandles: Object.values(formatHandles.current).reduce(
+          (n, hs) => n + (hs?.length ?? 0),
+          0
+        ),
+        results: Object.keys(results),
+      }
+    }
+    return () => {
+      delete w.__hybridCertDiag
+    }
+  }, [hsm, results])
 
   const anyGenerated = Object.values(results).some((r) => !r.error)
 
@@ -462,7 +563,9 @@ export const HybridCertFormats: React.FC = () => {
               Generating...
             </div>
             {isCurrentlyExecuting && (
-              <span className="text-xs text-muted-foreground h-4">{phase}</span>
+              <span className="text-xs text-muted-foreground h-4" aria-live="polite">
+                {stage}
+              </span>
             )}
           </div>
         )}
@@ -732,25 +835,44 @@ export const HybridCertFormats: React.FC = () => {
           </p>
         )}
 
-        {/* Generate All button */}
-        <Button
-          variant="gradient"
-          onClick={generateAll}
-          disabled={generating !== null || !hsm.isReady}
-          className="flex items-center gap-2"
-        >
-          {generating === 'all' ? (
-            <>
-              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
-              Generating Current Formats...
-            </>
-          ) : (
-            <>
-              <Play size={18} fill="currentColor" />
-              Generate All Current Formats
-            </>
+        {/* Generate All, Cancel, Clear */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="gradient"
+            onClick={generateAll}
+            disabled={generating !== null || !hsm.isReady}
+            className="flex items-center gap-2"
+          >
+            {generating === 'all' ? (
+              <>
+                <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                Generating Current Formats...
+              </>
+            ) : (
+              <>
+                <Play size={18} fill="currentColor" />
+                Generate All Current Formats
+              </>
+            )}
+          </Button>
+          {generating === 'all' && (
+            <Button variant="outline" onClick={cancelRun} className="flex items-center gap-2">
+              <Square size={14} aria-hidden="true" />
+              Cancel
+            </Button>
           )}
-        </Button>
+          {generating === null && Object.keys(results).length > 0 && (
+            <Button
+              variant="ghost"
+              onClick={clearResults}
+              className="flex items-center gap-2 text-muted-foreground"
+              title="Remove the results and destroy every key these runs created in the HSM"
+            >
+              <Trash2 size={14} aria-hidden="true" />
+              Clear results
+            </Button>
+          )}
+        </div>
 
         {/* Recommended starting point callout */}
         {Object.keys(results).filter((k) => !results[k].error).length === 0 && (

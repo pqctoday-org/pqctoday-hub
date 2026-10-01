@@ -129,6 +129,42 @@ export interface FormatOutput {
   error?: string
 }
 
+/** Progress + cancellation for one format run (Generate All passes one per format). */
+export interface RunContext {
+  /** Called as each stage starts, e.g. 'Workshop CA', 'Subject key generation'. */
+  onStage?: (stage: string) => void
+  /** Aborting stops the run at the next stage boundary. */
+  signal?: AbortSignal
+}
+
+/** Thrown when a run is cancelled; the caller destroys whatever keys it made. */
+export class GenerationCancelledError extends Error {
+  constructor(stage: string) {
+    super(`Cancelled during: ${stage}`)
+    this.name = 'GenerationCancelledError'
+  }
+}
+
+/**
+ * Tracks the current stage of a run: reports it, honours cancellation, and
+ * yields to the event loop so the UI repaints between expensive HSM calls.
+ * Errors are prefixed with the stage they happened in.
+ */
+class Stager {
+  current = 'Starting'
+  private readonly run?: RunContext
+  constructor(run?: RunContext) {
+    this.run = run
+  }
+  async enter(stage: string): Promise<void> {
+    if (this.run?.signal?.aborted) throw new GenerationCancelledError(this.current)
+    this.current = stage
+    this.run?.onStage?.(stage)
+    await new Promise((r) => setTimeout(r, 0))
+    if (this.run?.signal?.aborted) throw new GenerationCancelledError(stage)
+  }
+}
+
 const ML_KEM_768_OID_STR = '2.16.840.1.101.3.4.4.2'
 const SANDBOX_OU = 'Hybrid Certificate Sandbox'
 
@@ -892,12 +928,14 @@ export class HybridCryptoService {
     ]
   }
 
-  private failed(start: number, e: unknown, fallback: string): FormatOutput {
+  private failed(start: number, e: unknown, fallback: string, st?: Stager): FormatOutput {
+    if (e instanceof GenerationCancelledError) throw e
+    const msg = e instanceof Error ? e.message : fallback
     return {
       certs: [],
       checks: [],
       timingMs: performance.now() - start,
-      error: e instanceof Error ? e.message : fallback,
+      error: st ? `${st.current}: ${msg}` : msg,
     }
   }
 
@@ -910,12 +948,17 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('Workshop CA key + certificate')
       const ca = await this.createWorkshopCA(M, hSession, onKey)
+      await st.enter('Subject key generation')
       const ee = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      await st.enter('Subject certificate issuance')
       const { der } = await issueCertificate({
         subject,
         subjectKeyOid: ML_DSA_65_OID_STR,
@@ -929,6 +972,7 @@ export class HybridCryptoService {
         ...checkProfile(parseCertificate(der), { keyUsage: ['digitalSignature'], cA: false }),
         { name: 'ML-DSA-65 public key is 1,952 bytes', ok: ee.publicKey.length === 1952 },
       ]
+      await st.enter('Verification')
       return {
         certs: [
           this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
@@ -944,7 +988,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'ML-DSA-65 certificate generation failed')
+      return this.failed(start, e, 'ML-DSA-65 certificate generation failed', st)
     }
   }
 
@@ -970,8 +1014,10 @@ export class HybridCryptoService {
      * security" — and the previous hard-coded behaviour, so existing callers
      * are unaffected.
      */
-    profile: CompositeProfileDraft19 = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512
+    profile: CompositeProfileDraft19 = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+    run?: RunContext
   ): Promise<CertResult> {
+    const st = new Stager(run)
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
@@ -994,9 +1040,12 @@ export class HybridCryptoService {
           : profile.mldsaOid === ML_DSA_87_OID_STR
             ? 87
             : 65
+      await st.enter('ML-DSA key generation')
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey, mldsaParamSet)
+      await st.enter('Classical key generation')
       const classical = await this.generateClassicalForProfile(profile, M, hSession, onKey)
 
+      await st.enter('Composite certificate signing')
       const derBytes = await buildCompositeCertDraft19(
         profile,
         mldsa.publicKey,
@@ -1009,11 +1058,12 @@ export class HybridCryptoService {
       const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite', profile)
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
+      if (e instanceof GenerationCancelledError) throw e
       return {
         pem: '',
         parsed: '',
         timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'Composite certificate generation failed',
+        error: `${st.current}: ${e instanceof Error ? e.message : 'Composite certificate generation failed'}`,
       }
     }
   }
@@ -1027,12 +1077,17 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('ECDSA key generation')
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      await st.enter('ML-DSA key generation')
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      await st.enter('Certificate signing (alternative, then conventional)')
       const der = await buildAltSigCert(
         ec.publicKeyRaw,
         ec.derSignerFn,
@@ -1040,6 +1095,7 @@ export class HybridCryptoService {
         mldsa.signerFn,
         subject
       )
+      await st.enter('Verification')
       return {
         certs: [
           this.view(
@@ -1054,7 +1110,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'Alt-Sig certificate generation failed')
+      return this.failed(start, e, 'Alt-Sig certificate generation failed', st)
     }
   }
 
@@ -1068,11 +1124,15 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('ECDSA key generation')
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      await st.enter('Cert A issuance')
       const { der: certA } = await issueCertificate({
         subject: subject.replace(/CN=([^/]+)/, 'CN=$1 (Existing classical)'),
         subjectKeyOid: EC_PUBLIC_KEY_OID_STR,
@@ -1083,8 +1143,11 @@ export class HybridCryptoService {
         isCA: false,
         keyUsage: ['digitalSignature'],
       })
+      await st.enter('Workshop CA key + certificate')
       const ca = await this.createWorkshopCA(M, hSession, onKey)
+      await st.enter('ML-DSA key generation')
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      await st.enter('relatedCertRequest check + Cert B issuance')
       const related = await buildRelatedCertificates({
         certA,
         certASignerFn: ec.derSignerFn,
@@ -1094,6 +1157,7 @@ export class HybridCryptoService {
         certBPublicKey: mldsa.publicKey,
         issuer: ca,
       })
+      await st.enter('Verification')
       const certAParsed = parseCertificate(certA)
       const certBParsed = parseCertificate(related.certB)
       const checks: VerificationCheck[] = [
@@ -1127,7 +1191,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'Related certificate generation failed')
+      return this.failed(start, e, 'Related certificate generation failed', st)
     }
   }
 
@@ -1141,12 +1205,17 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('ML-DSA key generation')
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      await st.enter('ECDSA key generation')
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      await st.enter('Certificate signing (delta, then primary)')
       const der = await buildChameleonCert(
         mldsa.publicKey,
         mldsa.signerFn,
@@ -1154,6 +1223,7 @@ export class HybridCryptoService {
         ec.derSignerFn,
         subject
       )
+      await st.enter('Verification')
       return {
         certs: [
           this.view(
@@ -1168,7 +1238,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'Chameleon certificate generation failed')
+      return this.failed(start, e, 'Chameleon certificate generation failed', st)
     }
   }
 
@@ -1181,15 +1251,20 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('Workshop CA key + certificate')
       const ca = await this.createWorkshopCA(M, hSession, onKey, 'SLH-DSA-SHA2-128s')
+      await st.enter('Subject key generation')
       const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
       if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s (Cert Gen)', 'private')
       if (onKey) onKey(pubHandle, 'slh-dsa', 'SLH-DSA-128s Public (Cert Gen)', 'public')
       const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
+      await st.enter('Subject certificate issuance')
       const { der } = await issueCertificate({
         subject,
         subjectKeyOid: SLH_DSA_SHA2_128S_OID_STR,
@@ -1198,6 +1273,7 @@ export class HybridCryptoService {
         isCA: false,
         keyUsage: ['digitalSignature'],
       })
+      await st.enter('Verification')
       return {
         certs: [
           this.view(ca.certDer, 'Workshop CA (SLH-DSA-SHA2-128s)', 'pqc', 'ca'),
@@ -1216,7 +1292,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'SLH-DSA certificate generation failed')
+      return this.failed(start, e, 'SLH-DSA certificate generation failed', st)
     }
   }
 
@@ -1258,12 +1334,17 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('Workshop CA key + certificate')
       const ca = await this.createWorkshopCA(M, hSession, onKey)
+      await st.enter('ML-KEM key generation')
       const kem = this.generateMLKEMForCert(M, hSession, onKey)
+      await st.enter('Subject certificate issuance')
       const { der } = await issueCertificate({
         subject,
         subjectKeyOid: ML_KEM_768_OID_STR,
@@ -1272,6 +1353,7 @@ export class HybridCryptoService {
         isCA: false,
         keyUsage: ['keyEncipherment'],
       })
+      await st.enter('Verification')
       return {
         certs: [
           this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
@@ -1285,7 +1367,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'ML-KEM-768 certificate generation failed')
+      return this.failed(start, e, 'ML-KEM-768 certificate generation failed', st)
     }
   }
 
@@ -1301,12 +1383,17 @@ export class HybridCryptoService {
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    run?: RunContext
   ): Promise<FormatOutput> {
     const start = performance.now()
+    const st = new Stager(run)
     try {
+      await st.enter('Workshop CA key + certificate')
       const ca = await this.createWorkshopCA(M, hSession, onKey)
+      await st.enter('ML-KEM key generation')
       const kem = this.generateMLKEMForCert(M, hSession, onKey)
+      await st.enter('X25519 key generation')
       const x = hsm_generateECKeyPair(M, hSession, 'X25519')
       if (onKey) onKey(x.privHandle, 'ecdh', 'X25519 (Composite KEM)', 'private')
       if (onKey) onKey(x.pubHandle, 'ecdh', 'X25519 Public (Composite KEM)', 'public')
@@ -1318,12 +1405,14 @@ export class HybridCryptoService {
       if (x25519Pub.length !== 32)
         throw new Error(`unexpected X25519 public key length ${x25519Pub.length}`)
       const compositePub = new Uint8Array([...kem.publicKey, ...x25519Pub])
+      await st.enter('Subject certificate issuance')
       const der = await buildCompositeKEMCert(
         compositePub,
         COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
         ca,
         subject
       )
+      await st.enter('Verification')
       return {
         certs: [
           this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
@@ -1347,7 +1436,7 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return this.failed(start, e, 'Composite KEM certificate generation failed')
+      return this.failed(start, e, 'Composite KEM certificate generation failed', st)
     }
   }
 }
