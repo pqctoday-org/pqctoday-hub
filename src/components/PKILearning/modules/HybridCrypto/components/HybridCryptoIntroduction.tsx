@@ -312,6 +312,44 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
           </div>
 
+          {/* Advanced examples */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Advanced examples
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-foreground">Certificate Discovery</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                    Active draft
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>draft-ietf-lamps-certdiscovery-03</strong> lets a certificate tell
+                  PQC-capable relying parties where to fetch a related certificate, through a{' '}
+                  <code className="text-[10px]">subjectInfoAccess</code> entry. A fetched
+                  certificate must still pass full path validation. The OIDs are not assigned yet,
+                  so the workshop&apos;s encoding is illustrative.
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-foreground">Unsigned certificate</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    Published
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>RFC 9925</strong> defines{' '}
+                  <code className="text-[10px]">id-alg-unsigned</code> for a certificate with no
+                  signature at all — a container for a key that is trusted by other means, such as a
+                  trust anchor. It is never valid in a certification path.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Historical designs */}
           <div>
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
