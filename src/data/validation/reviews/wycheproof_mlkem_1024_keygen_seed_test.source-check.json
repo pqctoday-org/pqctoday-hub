@@ -1,0 +1,23 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:wycheproof_mlkem_1024_keygen_seed_test",
+  "subjectSha256": "917aa01de514c6fe2475b1acb2f7f05ecfbd1731d6e92c8d74243c2db8b5bcba",
+  "fileSha256": "2943f56b3bf04df9c1a002d9a5651ded58462160570acc5a9b0d9421a78cc262",
+  "result": "match",
+  "tool": "scripts/acvp/vendor_wycheproof.py",
+  "command": "python3 scripts/acvp/vendor_wycheproof.py --clone <clone of C2SP/wycheproof at the pinned commit> --check",
+  "upstream": {
+    "repository": "https://github.com/C2SP/wycheproof",
+    "revision": "3fa63dd0344abb611f1fb1d77e119938603ea230",
+    "files": [
+      {
+        "path": "testvectors_v1/mlkem_1024_keygen_seed_test.json",
+        "sha256": "cd9241bf5d65a78e005866ea2c660615c17f50caa9afc2b96fd1573cc65617b5"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 100
+  },
+  "checkedAt": "2026-10-01"
+}

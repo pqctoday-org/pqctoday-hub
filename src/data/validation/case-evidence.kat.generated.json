@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
-    "registrySha256": "2fe5f154a20167ff4711bcd20398f3cb38207e7c3d22d2513b65ee4861bf4faa"
+    "manifestSha256": "19c625562b9e686b44bc1a5f2a4cdfdc7c714d8f56220abb8406a77516221925",
+    "registrySha256": "cbed2db1f7d410a96527620392c065b9e2acc30aa5b651b9d1311d8a2661cc4c"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3506,6 +3506,27 @@
     "acvp/wycheproof_aes_wrap_test.json": "independent-oracle",
     "acvp/wycheproof_ed25519_test.json": "independent-oracle",
     "acvp/wycheproof_ed448_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_44_sign_noseed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_44_sign_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_44_verify_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_65_sign_noseed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_65_sign_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_65_verify_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_87_sign_noseed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_87_sign_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mldsa_87_verify_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_1024_encaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_1024_keygen_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_1024_semi_expanded_decaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_1024_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_512_encaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_512_keygen_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_512_semi_expanded_decaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_512_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_768_encaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_768_keygen_seed_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_768_semi_expanded_decaps_test.json": "independent-oracle",
+    "acvp/wycheproof_mlkem_768_test.json": "independent-oracle",
     "acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json": "independent-oracle",
     "acvp/wycheproof_x25519_test.json": "independent-oracle",
     "acvp/wycheproof_x448_test.json": "independent-oracle"

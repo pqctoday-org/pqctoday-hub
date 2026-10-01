@@ -156,6 +156,7 @@ import {
   runWycheproofRsaPssSection,
   runWycheproofXdhSection,
 } from './sections/wycheproofNegative'
+import { runWycheproofMldsaSection, runWycheproofMlkemSection } from './sections/wycheproofPqc'
 import { runMultiMessageSignSection } from './sections/multiMessageSign'
 import type { MultiPartFamily } from '@/data/validation/multipartTargets'
 import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
@@ -206,9 +207,9 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 10 },
   { id: 'kdf', label: 'KDF', groups: 8 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 17 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 9 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 10 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 8 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 5 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -1237,6 +1238,22 @@ export function useAcvpSuite() {
             addLog,
           })
 
+          // ── 5g. PROJECT WYCHEPROOF (Google / C2SP) ML-DSA vectors — verify
+          // (forged/malformed signatures, hint encodings, norm violations,
+          // wrong-length keys, contexts > 255 bytes) and deterministic sign
+          // (expanded sk and seed). independent-oracle evidence only:
+          // "agrees with Wycheproof <commit> for this case", never
+          // conformance. sections/wycheproofPqc.ts.
+          await runWycheproofMldsaSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          })
+
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
             const dsaAlgo = `ML-DSA-${dsaVariant}`
@@ -1459,6 +1476,21 @@ export function useAcvpSuite() {
             eName,
             mechs: engine.mechs,
             referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+          })
+
+          // ── 7d. PROJECT WYCHEPROOF (Google / C2SP) ML-KEM vectors — keyGen
+          // from seed, decapsulation (implicit rejection, wrong ciphertext
+          // lengths, corrupted expanded dk) and encapsulation-key rejection
+          // (unreduced / wrong-length ek). independent-oracle evidence only.
+          // sections/wycheproofPqc.ts.
+          await runWycheproofMlkemSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
             pushResult,
             addLog,
           })

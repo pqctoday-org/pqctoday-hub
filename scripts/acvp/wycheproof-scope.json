@@ -8,7 +8,7 @@
     "evidence_class": "independent-oracle",
     "scope_rule": "WYC-SCOPE-1, filters F1-F4 — see scripts/acvp/vendor_wycheproof.py",
     "generator": "python3 scripts/acvp/wycheproof_scope_census.py --clone <clone>",
-    "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: every one of the 343 upstream files is accounted for here as vendored-and-executed, in-scope-not-vendored (a runner exists for its schema but the file was not chosen), in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope (with the filter that excluded it)."
+    "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: every one of the 343 upstream files is accounted for here as vendored-and-executed, in-scope-not-vendored (a runner exists for its schema but the file was not chosen), vendored with a declared exclusion (vendoredCases + excluded, every excluded case counted), in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope (with the filter that excluded it)."
   },
   "totals": {
     "upstream": {
@@ -21,15 +21,21 @@
       "invalid": 18864
     },
     "vendored": {
-      "files": 7,
-      "cases": 1793,
-      "invalid": 493,
+      "files": 28,
+      "cases": 4251,
+      "invalid": 1458,
       "acceptable": 502
     },
+    "vendoredExcluded": {
+      "files": 9,
+      "cases": 405,
+      "valid": 405,
+      "invalid": 0
+    },
     "inScopeRunnerMissing": {
-      "files": 149,
-      "cases": 35758,
-      "invalid": 17643
+      "files": 128,
+      "cases": 32895,
+      "invalid": 16678
     },
     "inScopeNotVendored": {
       "files": 17,
@@ -2783,8 +2789,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_44_sign_noseed_test.json",
+      "vendoredCases": 72,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_44_sign_seed_test.json",
@@ -2797,8 +2814,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_44_sign_seed_test.json",
+      "vendoredCases": 85,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_44_verify_test.json",
@@ -2811,8 +2839,8 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_44_verify_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_65_sign_noseed_test.json",
@@ -2825,8 +2853,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_65_sign_noseed_test.json",
+      "vendoredCases": 77,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_65_sign_seed_test.json",
@@ -2839,8 +2878,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_65_sign_seed_test.json",
+      "vendoredCases": 104,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_65_verify_test.json",
@@ -2853,8 +2903,8 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_65_verify_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_87_sign_noseed_test.json",
@@ -2867,8 +2917,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_87_sign_noseed_test.json",
+      "vendoredCases": 68,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_87_sign_seed_test.json",
@@ -2881,8 +2942,19 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_87_sign_seed_test.json",
+      "vendoredCases": 95,
+      "excluded": {
+        "cases": 1,
+        "byResult": {
+          "valid": 1,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["sign-randomized"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mldsa_87_verify_test.json",
@@ -2895,8 +2967,8 @@
         "acceptable": 0
       },
       "bucket": "ML-DSA",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mldsa_87_verify_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_1024_encaps_test.json",
@@ -2909,8 +2981,19 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_1024_encaps_test.json",
+      "vendoredCases": 136,
+      "excluded": {
+        "cases": 133,
+        "byResult": {
+          "valid": 133,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["encaps-valid"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_1024_keygen_seed_test.json",
@@ -2923,8 +3006,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_1024_keygen_seed_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_1024_semi_expanded_decaps_test.json",
@@ -2937,8 +3020,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_1024_semi_expanded_decaps_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_1024_test.json",
@@ -2951,8 +3034,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_1024_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_512_encaps_test.json",
@@ -2965,8 +3048,19 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_512_encaps_test.json",
+      "vendoredCases": 128,
+      "excluded": {
+        "cases": 133,
+        "byResult": {
+          "valid": 133,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["encaps-valid"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_512_keygen_seed_test.json",
@@ -2979,8 +3073,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_512_keygen_seed_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_512_semi_expanded_decaps_test.json",
@@ -2993,8 +3087,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_512_semi_expanded_decaps_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_512_test.json",
@@ -3007,8 +3101,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_512_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_768_encaps_test.json",
@@ -3021,8 +3115,19 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_768_encaps_test.json",
+      "vendoredCases": 132,
+      "excluded": {
+        "cases": 133,
+        "byResult": {
+          "valid": 133,
+          "invalid": 0,
+          "acceptable": 0
+        },
+        "rules": ["encaps-valid"],
+        "reason": "declared subset — see the file's _provenance.excluded_cases and EXCLUSIONS in scripts/acvp/vendor_wycheproof.py"
+      }
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_768_keygen_seed_test.json",
@@ -3035,8 +3140,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_768_keygen_seed_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_768_semi_expanded_decaps_test.json",
@@ -3049,8 +3154,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_768_semi_expanded_decaps_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/mlkem_768_test.json",
@@ -3063,8 +3168,8 @@
         "acceptable": 0
       },
       "bucket": "ML-KEM",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_mlkem_768_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/morus1280_test.json",

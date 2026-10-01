@@ -1,0 +1,23 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:wycheproof_mldsa_44_sign_noseed_test",
+  "subjectSha256": "daf022cf513f60a10f23a31af1d44760550d8784a7810d947bdd91175acbeb8b",
+  "fileSha256": "4b174941a80c3653e1af6e3ffa668f06fff90bbc7931e154556e410a836297fb",
+  "result": "match",
+  "tool": "scripts/acvp/vendor_wycheproof.py",
+  "command": "python3 scripts/acvp/vendor_wycheproof.py --clone <clone of C2SP/wycheproof at the pinned commit> --check",
+  "upstream": {
+    "repository": "https://github.com/C2SP/wycheproof",
+    "revision": "3fa63dd0344abb611f1fb1d77e119938603ea230",
+    "files": [
+      {
+        "path": "testvectors_v1/mldsa_44_sign_noseed_test.json",
+        "sha256": "ee55e18b1944db496b2539d3884dfacc04a96db21bcec239063df5e4cd1ee6cb"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 72
+  },
+  "checkedAt": "2026-10-01"
+}

@@ -16,31 +16,31 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "0f23f618fc46a63ac255e80b864b9f89db6c1556bbe2bc39fa30e3245b5857a3",
+    "public/data/validation/coverage-matrix.json": "c3cb00199997fec77cb29e2ff8954de1e3a2cc610745f5563be84ad62635ca69",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "b79a2bc01179c09c48b0628958e7f6bc196261453024e2009dc9e174f9fd75ae",
-    "src/data/validation/open-gaps.json": "9c48aa2daa3ae5f503c9fa0c489881d81973813b86fb7d721b638ceb6c03b5a9",
+    "src/data/validation/open-gaps.json": "32fb0bba5047bc4e0194ccefd5e6edb204e1964eb6d420e26403872fb404579b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098",
     "src/data/validation/run-results/wasm-node-katRunner.json": "ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "96bdfa1aaaeb28c56fb9c992b5f6e6626aa23ca1bb55898ca6028d0c99bfdf39",
-    "src/data/validation/validation-counts.generated.json": "2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a",
-    "src/data/validation/vector-manifest.json": "2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577"
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "6b50b60e9c2d0e705d1b5ff9bc37b18457282255b90a7be899f659a510ccb12d",
+    "src/data/validation/validation-counts.generated.json": "81abd27123bc3808ec5143910a139167a84e48805209c38ed16e3ddb721d1d82",
+    "src/data/validation/vector-manifest.json": "dca6012b8a58b1bea7ab60ead5944cba82ad94fc42ea4fb00c49ba89a22bd6a2"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
+    "manifestCanonicalSha256": "19c625562b9e686b44bc1a5f2a4cdfdc7c714d8f56220abb8406a77516221925",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 964,
     "vectorFiles": {
-      "total": 74,
-      "active": 74,
+      "total": 95,
+      "active": 95,
       "quarantined": 0
     },
     "filesByClass": {
       "nist-acvp-reference-sample": 53,
       "acvts-issued-vector": 0,
       "published-standard-kat": 11,
-      "independent-oracle": 8,
+      "independent-oracle": 29,
       "cross-implementation-differential": 0,
       "functional-round-trip": 2,
       "oasis-profile-case": 0,
@@ -48,15 +48,15 @@
       "unverified": 0
     },
     "cases": {
-      "total": 2785,
-      "active": 2785,
+      "total": 5243,
+      "active": 5243,
       "quarantined": 0
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 964,
       "acvts-issued-vector": 0,
       "published-standard-kat": 22,
-      "independent-oracle": 1795,
+      "independent-oracle": 4253,
       "cross-implementation-differential": 0,
       "functional-round-trip": 2,
       "oasis-profile-case": 0,
@@ -64,8 +64,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 2017,
-      "negative": 768
+      "positive": 3510,
+      "negative": 1733
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
@@ -106,8 +106,8 @@
         },
         "byPolarity": {
           "positive": {
-            "covered": 187,
-            "sampled": 1870,
+            "covered": 190,
+            "sampled": 1867,
             "untested": 158,
             "denominator": 2215,
             "byStatus": {
@@ -123,19 +123,19 @@
             }
           },
           "negative": {
-            "covered": 78,
+            "covered": 84,
             "sampled": 64,
-            "untested": 2073,
+            "untested": 2067,
             "denominator": 2215,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 106,
               "standard-kat": 0,
-              "oracle": 2,
+              "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 34,
-              "untested": 2073,
+              "behavior-only": 31,
+              "untested": 2067,
               "unsupported": 0
             }
           },
@@ -210,8 +210,8 @@
         },
         "byPolarity": {
           "positive": {
-            "covered": 188,
-            "sampled": 1885,
+            "covered": 191,
+            "sampled": 1882,
             "untested": 158,
             "denominator": 2231,
             "byStatus": {
@@ -227,19 +227,19 @@
             }
           },
           "negative": {
-            "covered": 78,
+            "covered": 84,
             "sampled": 64,
-            "untested": 2089,
+            "untested": 2083,
             "denominator": 2231,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 106,
               "standard-kat": 0,
-              "oracle": 2,
+              "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 34,
-              "untested": 2089,
+              "behavior-only": 31,
+              "untested": 2083,
               "unsupported": 0
             }
           },
@@ -283,7 +283,7 @@
             "status": "registered",
             "registeredCells": 2182,
             "passedCells": 2181,
-            "failedCells": 2,
+            "failedCells": 8,
             "skippedCells": 0
           },
           "native": {
@@ -312,13 +312,13 @@
       },
       "negative": {
         "parity": 142,
-        "divergent": 0,
-        "not-established": 2066,
+        "divergent": 6,
+        "not-established": 2060,
         "single-engine": 46
       },
       "boundary": {
-        "parity": 214,
-        "divergent": 0,
+        "parity": 211,
+        "divergent": 3,
         "not-established": 1994,
         "single-engine": 46
       },
@@ -332,7 +332,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 8448 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub bbc625f07). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub 279358135). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -525,18 +525,18 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "bbc625f070954d8021dbb247643863eb47dc5da1",
-      "recordedAt": "2026-09-27",
-      "results": 8448,
+      "hubCommit": "27935813570f0ab7445a729bc161c630ff66d720",
+      "recordedAt": "2026-10-01",
+      "results": 13364,
       "byEngine": {
         "cpp": {
-          "pass": 4219,
+          "pass": 6677,
           "fail": 1,
           "skip": 4
         },
         "rust": {
-          "pass": 4205,
-          "fail": 19
+          "pass": 6654,
+          "fail": 28
         }
       },
       "failures": [
@@ -619,6 +619,42 @@
         {
           "engine": "rust",
           "registryCase": "acvp.36#rsa_oaep_test#/testGroups/1/tests/9"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_seed_test#/testGroups/21/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_seed_test#/testGroups/23/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/4/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_seed_test#/testGroups/23/tests/0"
         }
       ]
     }
@@ -2215,17 +2251,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 73,
+    "total": 84,
     "byStatus": {
-      "open": 68,
+      "open": 79,
       "accepted-limitation": 4,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 29,
-      "generated": 44
+      "curated": 31,
+      "generated": 53
     },
-    "unassignedOwner": 73,
+    "unassignedOwner": 84,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -2418,7 +2454,21 @@
       },
       {
         "id": "wycheproof-wave2-not-executed",
-        "title": "166 in-scope Wycheproof files (38,056 cases, 18,371 invalid) are not yet executed",
+        "title": "145 in-scope Wycheproof files (35,193 cases, 17,406 invalid) are not yet executed",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wycheproof-rust-mldsa-sk-range",
+        "title": "Rust engine imports an ML-DSA private key whose s1 or s2 vector is out of range, and signs with it (Wycheproof InvalidPrivateKey, 6 cases)",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wycheproof-rust-mldsa-empty-seed",
+        "title": "Rust engine treats a zero-length CKA_SEED in ML-DSA key generation as absent and returns a random key (Wycheproof IncorrectPrivateKeyLength 'empty private seed', 3 cases)",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -2436,7 +2486,7 @@
     "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
     "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
     "families": 7,
-    "groups": 66,
+    "groups": 68,
     "categories": [
       {
         "id": "symmetric",
@@ -2461,7 +2511,7 @@
       {
         "id": "ml_dsa",
         "label": "ML-DSA",
-        "groups": 9
+        "groups": 10
       },
       {
         "id": "slh_stateful",
@@ -2471,15 +2521,15 @@
       {
         "id": "ml_kem",
         "label": "ML-KEM",
-        "groups": 4
+        "groups": 5
       }
     ]
   },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
-    "validRecords": 70,
+    "validRecords": 91,
     "statusCounts": {
-      "source-verified": 70,
+      "source-verified": 91,
       "awaiting-review": 28
     },
     "awaiting": {
@@ -2994,6 +3044,153 @@
         "status": "source-verified"
       },
       {
+        "id": "vector-source:wycheproof_mlkem_512_keygen_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_512_keygen_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_512_keygen_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_512_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_512_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_512_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_512_semi_expanded_decaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_512_semi_expanded_decaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_512_semi_expanded_decaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_512_encaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_512_encaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_512_encaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_768_keygen_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_768_keygen_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_768_keygen_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_768_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_768_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_768_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_768_semi_expanded_decaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_768_semi_expanded_decaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_768_semi_expanded_decaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_768_encaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_768_encaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_768_encaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_1024_keygen_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_1024_keygen_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_1024_keygen_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_1024_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_1024_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_1024_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_1024_semi_expanded_decaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_1024_semi_expanded_decaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_1024_semi_expanded_decaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mlkem_1024_encaps_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mlkem_1024_encaps_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mlkem_1024_encaps_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_44_verify_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_44_verify_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_44_verify_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_44_sign_noseed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_44_sign_noseed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_44_sign_noseed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_44_sign_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_44_sign_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_44_sign_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_65_verify_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_65_verify_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_65_verify_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_65_sign_noseed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_65_sign_noseed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_65_sign_noseed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_65_sign_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_65_sign_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_65_sign_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_87_verify_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_87_verify_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_87_verify_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_87_sign_noseed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_87_sign_noseed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_87_sign_noseed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_mldsa_87_sign_seed_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_mldsa_87_sign_seed_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/mldsa_87_sign_seed_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp+rust",
         "kind": "coverage-waiver",
         "title": "CKM_HASH_SLH_DSA (cpp, rust): 20 cell pattern(s), status baseline-pending-review",
@@ -3187,7 +3384,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 6830 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9288 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3197,7 +3394,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "74 active vector files, 0 without provenance; 0 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
+      "basis": "95 active vector files, 0 without provenance; 0 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
     },
     {
       "n": 3,
