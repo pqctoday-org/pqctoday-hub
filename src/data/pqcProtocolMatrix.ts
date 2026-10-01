@@ -2087,7 +2087,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: '5g-suci',
     name: '5G SUCI (3GPP)',
     description:
-      '3GPP 5G Subscription Concealed Identifier — protects the subscriber IMSI/SUPI in transit. No 3GPP TR or TS currently defines a PQC concealment profile; ML-KEM-based SUCI schemes exist only as vendor research.',
+      '3GPP 5G Subscription Concealed Identifier — protects the subscriber IMSI/SUPI in transit. No 3GPP TS defines a PQC concealment profile yet; the Rel-20 study TR 33.703 on transitioning to PQC covers 3GPP-specific protocols including the SUCI calculation. ML-KEM-based SUCI schemes exist so far only as vendor research.',
     latestRelease: [
       {
         id: '3GPP-TS-33.501',
@@ -2099,6 +2099,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
+        id: '3GPP-TR-33.703',
+        title: '3GPP TR 33.703 — Study on Transitioning to PQC in 3GPP (Rel-20)',
+        url: 'https://www.3gpp.org/dynareport/33703.htm',
+        date: '2026-07',
+      },
+      {
         id: '3GPP-TR-33.938',
         title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
         url: 'https://www.3gpp.org/dynareport/33938.htm',
@@ -2109,8 +2115,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'No chartered 3GPP study or work item defines a PQC SUCI concealment profile. TR 33.938 ("3GPP Cryptographic Inventory", latest V19.2.0) surveys existing algorithm usage across 3GPP specs and does not specify ML-KEM-based SUCI concealment or any "Profile C". ML-KEM-based SUCI schemes exist only in vendor whitepapers (e.g. Ericsson, Nokia) ahead of any 3GPP normative process.',
+        note: 'No 3GPP TS defines a PQC SUCI concealment profile yet. 3GPP SA3 runs a Rel-20 study, TR 33.703 ("Study on Transitioning to PQC in 3GPP", generation-agnostic, study target June 2026), to revise 3GPP-specific cryptographic profiles and protocols — 3GPP names the 5G-SUCI calculation in TS 33.501 as one of them; Rel-20 specifications are expected to freeze around mid-2027. TR 33.938 ("3GPP Cryptographic Inventory") surveys existing algorithm usage and does not specify ML-KEM-based SUCI concealment. ML-KEM-based SUCI schemes exist so far only in vendor whitepapers (e.g. Ericsson, Nokia).',
         refs: [
+          {
+            kind: 'spec',
+            id: '3GPP TR 33.703',
+            title:
+              'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
+            url: 'https://www.3gpp.org/technologies/pqc-sa3',
+            publishedOn: '2026-07-29',
+          },
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
@@ -2122,8 +2136,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'experimental',
-        note: 'Same gap as Pure KEM — no 3GPP TR or TS defines a hybrid X25519+ML-KEM-768 SUCI construction. Vendor whitepapers discuss such combiners informally; no 3GPP normative or study text has been found to confirm it.',
+        note: 'Same as Pure KEM — no 3GPP TS defines a hybrid X25519+ML-KEM-768 SUCI construction; the Rel-20 PQC study TR 33.703 is where such a profile would be evaluated. Vendor whitepapers discuss such combiners informally.',
         refs: [
+          {
+            kind: 'spec',
+            id: '3GPP TR 33.703',
+            title:
+              'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
+            url: 'https://www.3gpp.org/technologies/pqc-sa3',
+            publishedOn: '2026-07-29',
+          },
           {
             kind: 'spec',
             id: '3GPP TR 33.938',
