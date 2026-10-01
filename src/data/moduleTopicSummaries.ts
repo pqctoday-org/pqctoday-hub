@@ -16,3 +16,17 @@ function parse(text: string): Record<string, string> {
 }
 
 export const MODULE_TOPIC_SUMMARIES: Record<string, string> = parse(raw)
+
+/**
+ * moduleId -> the curated "Sub-topics keywords" line of that module's topic
+ * summary (e.g. iot-ot-pqc: "... SCADA ICS, Purdue model, critical
+ * infrastructure ..."). Used by the Learn browse-all search so a module is
+ * findable by topics its short card description does not spell out. Only the
+ * keywords line is used, not the long scope paragraph, to keep matches precise.
+ */
+export const MODULE_TOPIC_KEYWORDS: Record<string, string> = Object.fromEntries(
+  Object.entries(MODULE_TOPIC_SUMMARIES).flatMap(([id, body]) => {
+    const m = body.match(/\*\*Sub-topics keywords:\*\*\s*([^\n]*)/)
+    return m && m[1].trim() ? [[id, m[1].trim()]] : []
+  })
+)

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { matchesAllWords } from '@/utils/searchMatch'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -91,12 +92,9 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         if (activeCategory !== 'all' && t.category !== activeCategory) return false
         if (activeLetter && !t.term.toUpperCase().startsWith(activeLetter)) return false
         if (!search) return true
-        const q = search.toLowerCase()
-        return (
-          t.term.toLowerCase().includes(q) ||
-          t.acronym?.toLowerCase().includes(q) ||
-          t.definition.toLowerCase().includes(q)
-        )
+        // Every meaningful word must appear somewhere in term/acronym/definition,
+        // so "purdue model for OT" finds the Purdue Model entry.
+        return matchesAllWords([t.term, t.acronym, t.definition], search)
       })
       .sort((a, b) => a.term.localeCompare(b.term))
   }, [glossaryTerms, search, activeCategory, activeLetter])
