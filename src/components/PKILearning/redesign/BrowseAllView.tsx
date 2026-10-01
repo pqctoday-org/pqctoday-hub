@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Search, LayoutGrid, List, Bookmark, SlidersHorizontal, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,7 @@ import { ResearcherTaxonomyFilter, type TaxonomySelection } from '../ResearcherT
 import { modulesByAlgorithm, modulesByStandard } from '../moduleEnrichment'
 import { MODULE_TRACKS, MODULE_TO_TRACK, TRACK_COLORS } from '../moduleData'
 import { TOTAL_MODULE_COUNT, NICE_AFFINITY_PERSONAS } from './learnRedesign.helpers'
+import { matchesAllWords } from '@/utils/searchMatch'
 
 type SortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'status'
 
@@ -80,6 +81,25 @@ export const BrowseAllView = ({
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
 
   const [search, setSearch] = useState('')
+  // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT). Loaded
+  // lazily on the first search so the ~100 KB topic-summary text stays out of the
+  // initial Learn bundle; until it arrives, title + description still match.
+  const [topicKeywords, setTopicKeywords] = useState<Record<string, string> | null>(null)
+  const hasSearch = search.trim().length > 0
+  useEffect(() => {
+    if (!hasSearch || topicKeywords) return
+    let cancelled = false
+    import('@/data/moduleTopicSummaries')
+      .then((m) => {
+        if (!cancelled) setTopicKeywords(m.MODULE_TOPIC_KEYWORDS)
+      })
+      .catch(() => {
+        // Keyword enrichment is best-effort; search keeps working on title + description.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [hasSearch, topicKeywords])
   const [status, setStatus] = useState('All')
   const [sort, setSort] = useState<SortMode>('default')
   const [track, setTrack] = useState(() =>
@@ -106,7 +126,7 @@ export const BrowseAllView = ({
   const savedSet = useMemo(() => new Set(myLearnModules), [myLearnModules])
 
   const matches = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const q = search.trim()
     const groups = MODULE_TRACKS.map((t) => {
       const mods = t.modules.filter((m) => {
         if (track !== 'All' && t.track !== track) return false
@@ -114,7 +134,7 @@ export const BrowseAllView = ({
         if (status !== 'All' && (modules[m.id]?.status ?? 'not-started') !== status) return false
         if (!passesTier(m.id, tier)) return false
         if (taxonomyIds && !taxonomyIds.has(m.id)) return false
-        if (q && !`${m.title} ${m.description}`.toLowerCase().includes(q)) return false
+        if (q && !matchesAllWords([m.title, m.description, topicKeywords?.[m.id]], q)) return false
         return true
       })
       return { track: t.track, modules: mods as ModuleItem[] }
@@ -142,7 +162,7 @@ export const BrowseAllView = ({
     }
     if (sort !== 'default') groups.forEach((g) => g.modules.sort(sorter))
     return groups
-  }, [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules])
+  }, [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules, topicKeywords])
 
   const shownCount = matches.reduce((n, g) => n + g.modules.length, 0)
   const trackChips = ['All', ...MODULE_TRACKS.map((t) => t.track)]
