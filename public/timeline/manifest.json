@@ -43,7 +43,7 @@
     },
     {
       "refId": "australia-asd-acsc-annual-cyber-threat-report-2024-25-pqc-as-a-national-priority",
-      "label": "ACSC Annual Cyber Threat Report 2024–25 — Prepare for PQC as one of 4 'Big Moves'",
+      "label": "ACSC Annual Cyber Threat Report 2024\u201325 \u2014 Prepare for PQC as one of 4 'Big Moves'",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "status": "downloaded",
       "file": "timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
@@ -781,7 +781,7 @@
     },
     {
       "refId": "germany-bsi-dlr-quantity-initiative-launched",
-      "label": "DLR × BSI Cooperation on QUANTITY Cryptanalysis Project",
+      "label": "DLR \u00d7 BSI Cooperation on QUANTITY Cryptanalysis Project",
       "url": "https://qci.dlr.de/en/dlr-x-bsi-working-together-for-more-security/",
       "status": "downloaded",
       "file": "timeline/Germany_BSI_DLR_QUANTITY_Initiative_Launched.html",
@@ -799,7 +799,7 @@
     },
     {
       "refId": "germany-bsi-critical-applications-pqc-hybrid-no-longer-required",
-      "label": "Very High Protection Requirements — Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form",
+      "label": "Very High Protection Requirements \u2014 Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
       "status": "downloaded",
       "file": "timeline/Germany_BSI_TR-02102-1_Cryptographic_Mechanisms.pdf",
@@ -2365,7 +2365,7 @@
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-eo-14306-deadline",
-      "label": "CISA PQC Product Category List — EO 14306 Deadline",
+      "label": "CISA PQC Product Category List \u2014 EO 14306 Deadline",
       "url": "https://www.federalregister.gov/documents/full_text/html/2025/06/11/2025-10804.html",
       "status": "downloaded",
       "file": "timeline/federal_register_eo14306.html",
@@ -2599,7 +2599,7 @@
     },
     {
       "refId": "international-ietf-draft-ietf-tls-ecdhe-mlkem-hybrid-kex",
-      "label": "RFC 10024 — PQ/T Hybrid Key Agreement for TLS 1.3",
+      "label": "RFC 10024 \u2014 PQ/T Hybrid Key Agreement for TLS 1.3",
       "url": "https://www.rfc-editor.org/info/rfc10024",
       "status": "downloaded",
       "file": "timeline/International_IETF_draft_ietf_tls_ecdhe_mlkem_Hybrid_KEX.html",
@@ -2923,7 +2923,7 @@
     },
     {
       "refId": "united-states-far-council-far-council-proposed-rule-contractor-pqc-fips-complian",
-      "label": "FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)",
+      "label": "FAR Council Proposed Rule \u2014 Contractor PQC/FIPS Compliance (EO 14412)",
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
       "status": "downloaded",
       "file": "timeline/United_States_FAR_Council_Proposed_Rule_Contractor_PQC_FIPS_Compliance.html",
@@ -3067,7 +3067,7 @@
     },
     {
       "refId": "switzerland-ncsc-quantum-computers-and-post-quantum-cryptogr",
-      "label": "Quantum Computers and Post-Quantum Cryptography — Technology Brief",
+      "label": "Quantum Computers and Post-Quantum Cryptography \u2014 Technology Brief",
       "url": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/technologiebetrachtung-qcpqc-en.pdf.download.pdf/technologiebetrachtung-qcpqc-en.pdf",
       "status": "downloaded",
       "file": "timeline/Switzerland-NCSC-Quantum-Computers-and-Post-Quantum-Cryptogr.pdf",
@@ -3193,7 +3193,7 @@
     },
     {
       "refId": "indonesia-bssn-national-pqc-migration-roadmap-task-force",
-      "label": "National PQC Migration Roadmap Task Force — Inaugural Meeting",
+      "label": "National PQC Migration Roadmap Task Force \u2014 Inaugural Meeting",
       "url": "https://www.komite.id/2026/06/30/bssn-pembentukan-task-force-roadmap-pqc-migration-better-late-than-never-oleh-dr-rudi-rusdiah-anggota-taskforce-national-pqc-migration-road-map/",
       "status": "downloaded",
       "file": "timeline/Indonesia-BSSN-National-PQC-Migration-Roadmap-Task-Force.html",
@@ -3388,9 +3388,27 @@
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-27"
+    },
+    {
+      "label": "Quantum-Resilience-Supervisory-Expectations-Announced",
+      "url": "https://www.mas.gov.sg/news/speeches/2026/md-remarks-for-mas-ar-2025-2026",
+      "status": "downloaded",
+      "file": "timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html",
+      "sizeBytes": 280815,
+      "contentType": "text/html",
+      "sha256": "4d1c5708881e628d82b513135854f0ddd5d608b1848c8de048c24345b0da8b1c"
+    },
+    {
+      "label": "PIV-Standards-PQC-Working-Drafts-Released",
+      "url": "https://www.nist.gov/news-events/news/2026/06/working-drafts-post-quantum-cryptography-updates-piv-standards",
+      "status": "downloaded",
+      "file": "timeline/PIV-Standards-PQC-Working-Drafts-Released.html",
+      "sizeBytes": 85281,
+      "contentType": "text/html",
+      "sha256": "f7e688e12c53d976b6e0970dbaf7a160f0530eb388daaa2112b5abc0e4e6c08b"
     }
   ],
   "archivedEntries": [],
-  "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
+  "archivedNote": "Entries no active row cites \u2014 superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-27T23:44:23.497514+00:00"
 }
