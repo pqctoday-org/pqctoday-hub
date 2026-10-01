@@ -148,6 +148,10 @@ export function buildDataFoundation(
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'
 
+/** The "Suggest a Data Change" issue form (.github/ISSUE_TEMPLATE/data_suggestion.yml). */
+export const DATA_SUGGESTION_URL =
+  'https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml'
+
 export const DISCUSSIONS = [
   {
     number: 108,
