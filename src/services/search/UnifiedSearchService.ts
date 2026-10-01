@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import MiniSearch from 'minisearch'
+import type { SearchResult as MiniSearchResult } from 'minisearch'
 import localforage from 'localforage'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { chunkToResource, trustTierMultiplier } from './chunkToResource'
@@ -71,6 +72,34 @@ export interface PaletteResult {
   metadata?: Record<string, unknown>
   score: number
   match: Record<string, string[]>
+}
+
+/** A hit the palette dropped because of `authoritativeOnly` (see `searchPaletteWithHidden`). */
+export interface PaletteHiddenHit {
+  id: string
+  source: string
+}
+
+interface RankedHit {
+  r: MiniSearchResult
+  chunk: RAGChunk | undefined
+  tier: TrustTier | null
+  score: number
+}
+
+function toPaletteResult({ r, chunk, score }: RankedHit): PaletteResult {
+  return {
+    id: r.id,
+    source: chunk?.source ?? '',
+    title: chunk?.title ?? '',
+    content: chunk?.content ?? '',
+    category: chunk?.category,
+    deepLink: chunk?.deepLink,
+    priority: chunk?.priority,
+    metadata: chunk?.metadata as Record<string, unknown> | undefined,
+    score,
+    match: r.match as Record<string, string[]>,
+  }
 }
 
 export class UnifiedSearchService {
@@ -344,7 +373,41 @@ export class UnifiedSearchService {
     }
   ): PaletteResult[] {
     if (!this._index) return []
-    const raw = this._index.search(query)
+    return this.selectPalette(this.rankPalette(query), opts).map(toPaletteResult)
+  }
+
+  /**
+   * `searchPalette` plus a report of what `authoritativeOnly` removed.
+   *
+   * With `authoritativeOnly` on, the Authoritative/High filter silently drops
+   * every chunk whose trust tier is null (glossary, Learn module content and
+   * Q&A, quiz, patents, vendors) as well as Moderate/Low ones, and a reader had
+   * no way to know results were missing. This runs the SAME query/options a
+   * second time WITHOUT the tier filter and returns the hits that appear there
+   * but not in the filtered list, so the caller can say "N more results are
+   * hidden". `results` is exactly what `searchPalette` returns for the same
+   * arguments; `hidden` is always empty when `authoritativeOnly` is off. The
+   * index is searched and re-scored once, not twice.
+   */
+  searchPaletteWithHidden(
+    query: string,
+    opts?: Parameters<UnifiedSearchService['searchPalette']>[1]
+  ): { results: PaletteResult[]; hidden: PaletteHiddenHit[] } {
+    if (!this._index) return { results: [], hidden: [] }
+    const ranked = this.rankPalette(query)
+    const results = this.selectPalette(ranked, opts).map(toPaletteResult)
+    if (!opts?.authoritativeOnly) return { results, hidden: [] }
+    const shown = new Set(results.map((r) => r.id))
+    const unfiltered = this.selectPalette(ranked, { ...opts, authoritativeOnly: false })
+    const hidden = unfiltered
+      .filter(({ r }) => !shown.has(r.id))
+      .map(({ r, chunk }) => ({ id: r.id, source: chunk?.source ?? '' }))
+    return { results, hidden }
+  }
+
+  /** MiniSearch hits re-scored by trust tier and sorted best-first (no filtering). */
+  private rankPalette(query: string): RankedHit[] {
+    const raw = this._index!.search(query)
     const rescored = raw.map((r) => {
       const chunk = this._corpusById.get(r.id)
       const tier = chunk ? this.resolveTier(chunk) : null
@@ -352,7 +415,14 @@ export class UnifiedSearchService {
       return { r, chunk, tier, score: r.score * multiplier }
     })
     rescored.sort((a, b) => b.score - a.score)
+    return rescored
+  }
 
+  /** Apply the `sources` / `authoritativeOnly` filters, the limit and `ensureSources`. */
+  private selectPalette(
+    rescored: RankedHit[],
+    opts?: Parameters<UnifiedSearchService['searchPalette']>[1]
+  ): RankedHit[] {
     // Both filters run BEFORE `slice(0, limit)`. They used to run after it,
     // which made each one behave like "of the global top-`limit`, keep these"
     // instead of "the top `limit` of these" — so a narrow filter returned
@@ -390,18 +460,7 @@ export class UnifiedSearchService {
       }
     }
 
-    return selected.map(({ r, chunk, score }) => ({
-      id: r.id,
-      source: chunk?.source ?? '',
-      title: chunk?.title ?? '',
-      content: chunk?.content ?? '',
-      category: chunk?.category,
-      deepLink: chunk?.deepLink,
-      priority: chunk?.priority,
-      metadata: chunk?.metadata as Record<string, unknown> | undefined,
-      score,
-      match: r.match as Record<string, string[]>,
-    }))
+    return selected
   }
 
   private resolveTier(chunk: RAGChunk): TrustTier | null {
