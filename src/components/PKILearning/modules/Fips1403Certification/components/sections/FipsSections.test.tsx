@@ -7,7 +7,7 @@
  * height.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import type { ReactNode } from 'react'
@@ -75,25 +75,33 @@ describe('FIPS landscape — Hub data contract', () => {
       'fetch',
       vi.fn(async () => ({
         ok: true,
-        json: async () => [
-          {
-            id: withFields.cert,
-            type: 'FIPS 140-3',
-            // legacy fields must be ignored
-            certificationLevel: 'FIPS 140-3 L1',
-            pqcCoverage: 'nonsense',
-            overallLevel: 3,
-            cmvpStatus: 'Active',
-            sunsetDate: '2031-05-19',
-            embodiment: 'MultiChipStand',
-            cmvpDetailsFetchedAt: '2026-09-24T12:00:00Z',
-          },
-        ],
+        // resolve late on purpose: the rows render with the link-out fallback first, so a
+        // test that asserts right after finding the row races the data (flaked on main)
+        json: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 50))
+          return [
+            {
+              id: withFields.cert,
+              type: 'FIPS 140-3',
+              // legacy fields must be ignored
+              certificationLevel: 'FIPS 140-3 L1',
+              pqcCoverage: 'nonsense',
+              overallLevel: 3,
+              cmvpStatus: 'Active',
+              sunsetDate: '2031-05-19',
+              embodiment: 'MultiChipStand',
+              cmvpDetailsFetchedAt: '2026-09-24T12:00:00Z',
+            },
+          ]
+        },
       }))
     )
     wrap(<FipsLandscape />)
-    const row = await screen.findByRole('row', { name: (n) => n.includes(`#${withFields.cert}`) })
-    expect(within(row).getByText('Level 3')).toBeInTheDocument()
+    const findRow = () =>
+      screen.getByRole('row', { name: (n) => n.includes(`#${withFields.cert}`) })
+    // wait for the fetched fields, not just for the row (it first renders the fallback)
+    await waitFor(() => expect(within(findRow()).getByText('Level 3')).toBeInTheDocument())
+    const row = findRow()
     expect(within(row).getByText('Active')).toBeInTheDocument()
     expect(within(row).getByText('2031-05-19')).toBeInTheDocument()
     // the other three have no fields → link-out fallback
