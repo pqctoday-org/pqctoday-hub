@@ -8,7 +8,8 @@
 // exact row id) per file and per Wycheproof result class, so a fixed or a
 // regressed engine turns the pin red instead of silently changing published
 // evidence. Measured 2026-09-30 on the bundles built from hsm 68278dfe: the
-// whole ml_dsa + ml_kem run (every section, both engines) takes ~10 s in Node.
+// wycheproof_pqc category (both engines) takes ~10 s in Node, but minutes in
+// a browser — hence its own opt-in workbench category.
 //
 // Venue: `*.local.test.ts` — run by `npm run test:local` (local gate only).
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -124,7 +125,7 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
     rustRef.current = (await SoftHSM.getSoftHSMRustModule()) as SoftHSMModule
     cppRef.current = await loadCppEngineInNode()
     const t0 = Date.now()
-    rows = (await run(['ml_dsa', 'ml_kem'])).filter((r) => /^wyc-ml(kem|dsa)/.test(r.id))
+    rows = (await run(['wycheproof_pqc'])).filter((r) => /^wyc-ml(kem|dsa)/.test(r.id))
     ms = Date.now() - t0
   }, 3_600_000)
 
@@ -179,7 +180,7 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
   })
 
   it('MEASURE: per file, per engine, per Wycheproof result (written on request)', () => {
-    const lines: string[] = [`ml_dsa+ml_kem run: ${(ms / 1000).toFixed(1)} s`]
+    const lines: string[] = [`wycheproof_pqc run: ${(ms / 1000).toFixed(1)} s`]
     for (const { key, file } of FILES) {
       const c = censusOf(file)
       for (const engine of ['C++', 'Rust']) {
@@ -334,7 +335,7 @@ describe('Wycheproof PQC section — sabotaged expectations fail', () => {
     vi.doMock('@/data/acvp/wycheproof_mldsa_65_sign_noseed_test.json', () => ({ default: sg }))
     vi.doMock('@/data/acvp/wycheproof_mldsa_44_verify_test.json', () => ({ default: vf }))
     try {
-      const results = await run(['ml_dsa', 'ml_kem'])
+      const results = await run(['wycheproof_pqc'])
       const row = (id: string) => results.find((r) => r.id === id)
       for (const engine of ['C++', 'Rust']) {
         expect(row(`wyc-mlkem768decaps-tg2-tc${kt.tcId}-${engine}`)?.status, engine).toBe('fail')

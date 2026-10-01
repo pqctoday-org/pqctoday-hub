@@ -2008,7 +2008,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   // each file's _provenance.excluded_cases.
   acvp(
     '37.wycheproof-mlkem',
-    '§7d (sections/wycheproofPqc.ts)',
+    '§20d (sections/wycheproofPqc.ts)',
     'ML-KEM-512/768/1024 — Project Wycheproof (Google / C2SP): keyGen from seed, decapsulation (implicit rejection, malleable and wrong-length ciphertexts, wrong-length seeds), corrupted expanded dk, unreduced and wrong-length ek',
     MLKEM_SETS.flatMap((ps) => {
       const v = ps.slice(7)
@@ -2056,7 +2056,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   ),
   acvp(
     '37.wycheproof-mldsa',
-    '§5g (sections/wycheproofPqc.ts)',
+    '§20d (sections/wycheproofPqc.ts)',
     'ML-DSA-44/65/87 — Project Wycheproof (Google / C2SP): verify (modified signatures, hint encodings, infinity-norm violations, wrong-length keys and signatures, contexts > 255 bytes) and deterministic sign from an expanded key or a seed',
     (['44', '65', '87'] as const).flatMap((v) => {
       const ps = `ML-DSA-${v}`

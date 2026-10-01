@@ -20,7 +20,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Coverage waivers (entries; all statuses)                |                22 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                 0 | `src/data/validation/coverage-waivers.json`                       |
 | Open gaps (register entries)                            |                84 | `public/data/validation/coverage-matrix.json`                     |
-| Workbench test groups / families                        |            68 / 7 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
+| Workbench test groups / families                        |            68 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
 

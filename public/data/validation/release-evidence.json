@@ -2485,7 +2485,7 @@
   "workbench": {
     "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
     "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
-    "families": 7,
+    "families": 8,
     "groups": 68,
     "categories": [
       {
@@ -2511,7 +2511,7 @@
       {
         "id": "ml_dsa",
         "label": "ML-DSA",
-        "groups": 10
+        "groups": 9
       },
       {
         "id": "slh_stateful",
@@ -2521,7 +2521,12 @@
       {
         "id": "ml_kem",
         "label": "ML-KEM",
-        "groups": 5
+        "groups": 4
+      },
+      {
+        "id": "wycheproof_pqc",
+        "label": "Wycheproof ML-KEM / ML-DSA",
+        "groups": 2
       }
     ]
   },
