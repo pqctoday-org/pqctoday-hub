@@ -27,6 +27,7 @@ import type { TrustTier } from '@/data/trustScore'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { PersonaId } from '@/data/learningPersonas'
 import type { DocumentStatusBucket } from '@/utils/documentStatusBucket'
+import { matchesAllWords } from '@/utils/searchMatch'
 
 const URGENCY_ORDER: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
 
@@ -262,11 +263,14 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
     return false
   if (!filterText) return true
   const searchLower = filterText.toLowerCase()
-  const lexicalMatch =
-    item.documentTitle.toLowerCase().includes(searchLower) ||
-    item.referenceId.toLowerCase().includes(searchLower) ||
-    item.shortDescription?.toLowerCase().includes(searchLower) ||
-    item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
+  // Every meaningful word of the query must appear somewhere in title / id /
+  // description / categories ("operational technology purdue" finds a document
+  // whose title has the first two words and whose description has the third).
+  // A contiguous phrase that matched before still matches (see searchMatch.ts).
+  const lexicalMatch = matchesAllWords(
+    [item.documentTitle, item.referenceId, item.shortDescription, ...(item.categories ?? [])],
+    filterText
+  )
   if (lexicalMatch) return true
   // Separator-insensitive fallback: "PKCS #11" (title), "PKCS-11" (reference_id),
   // and "PKCS#11" (prose) never contain the literal substring "pkcs11", so a
