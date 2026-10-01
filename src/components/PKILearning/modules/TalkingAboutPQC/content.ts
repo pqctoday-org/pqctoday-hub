@@ -29,7 +29,7 @@ export const content: ModuleContent = {
     getStandard('NSA CNSA 2.0'),
     getStandard('EO-2026-06-22-Securing-the-Nation'),
     getStandard('OMB-M-26-15'),
-    getStandard('FIPS-140-3'),
+    getStandard('FIPS-140-3-STANDARD'),
     getStandard('NIST-CMVP-MIP-List'),
     getStandard('NIST-CMVP-Validated-Modules'),
     getStandard('ETSI-GR-QSC-001'),
