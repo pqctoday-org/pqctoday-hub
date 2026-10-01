@@ -56,6 +56,14 @@ const MINISEARCH_CONFIG = {
   },
 }
 
+/**
+ * Documents added per slice when the index is built without blocking the page.
+ * Measured on the live corpus (18,015 chunks, Node, idle M5 Max): one sync
+ * `addAll` is a ~1.2 s freeze; 200-document slices total the same work (+3%) with a
+ * ~35 ms longest stall. See cold-search-index-design-10012026.md.
+ */
+const INDEX_BUILD_CHUNK_SIZE = 200
+
 interface CachedIndex {
   version: string
   serialized: string
@@ -111,6 +119,10 @@ export class UnifiedSearchService {
   private _index: MiniSearch<RAGChunk> | null = null
   private _generatedAt: string | null = null
   private initPromise: Promise<void> | null = null
+  /** In-flight async index build; concurrent callers (⌘K and the Assistant) share it. */
+  private indexBuild: Promise<void> | null = null
+  /** Bumped whenever the corpus/index is replaced, so a stale async build never installs. */
+  private buildGeneration = 0
 
   static getInstance(): UnifiedSearchService {
     if (!UnifiedSearchService.instance) {
@@ -174,6 +186,8 @@ export class UnifiedSearchService {
     }
     this._index = null
     this.initPromise = null
+    this.indexBuild = null
+    this.buildGeneration++
   }
 
   private async load(): Promise<void> {
@@ -191,10 +205,12 @@ export class UnifiedSearchService {
       this._generatedAt = data.generatedAt ?? null
     }
 
-    this.buildIndex()
+    await this.buildIndexAsync()
   }
 
-  private buildIndex(): void {
+  /** Dedupe the corpus and rebuild the alias lookups (cheap, synchronous). */
+  private prepareCorpus(): void {
+    this.buildGeneration++
     this._corpusById.clear()
     this._entityIndex.clear()
 
@@ -207,9 +223,37 @@ export class UnifiedSearchService {
     for (const chunk of this._corpus) {
       this.indexEntity(chunk)
     }
+  }
 
+  /** Synchronous build — for `initializeWithCorpus` (tests, the Assistant's seeded corpus). */
+  private buildIndex(): void {
+    this.prepareCorpus()
     this._index = new MiniSearch<RAGChunk>(MINISEARCH_CONFIG)
     this._index.addAll(this._corpus)
+  }
+
+  /**
+   * Same index, built in slices that yield to the event loop so typing and
+   * scrolling are not frozen for the whole build. The index is installed only
+   * when it is complete, so `isReady` / `searchPalette` never see a partial one;
+   * concurrent callers share one build; a build superseded by a newer corpus (or
+   * `invalidateCache`) is discarded.
+   */
+  private buildIndexAsync(): Promise<void> {
+    if (this.indexBuild) return this.indexBuild
+    this.prepareCorpus()
+    const generation = this.buildGeneration
+    const index = new MiniSearch<RAGChunk>(MINISEARCH_CONFIG)
+    const build: Promise<void> = index
+      .addAllAsync(this._corpus, { chunkSize: INDEX_BUILD_CHUNK_SIZE })
+      .then(() => {
+        if (generation === this.buildGeneration) this._index = index
+      })
+      .finally(() => {
+        if (this.indexBuild === build) this.indexBuild = null
+      })
+    this.indexBuild = build
+    return build
   }
 
   private indexEntity(chunk: RAGChunk): void {
@@ -325,7 +369,7 @@ export class UnifiedSearchService {
     }
 
     this._corpus = chunks
-    this.buildIndex()
+    await this.buildIndexAsync()
 
     try {
       if (this._index) {
