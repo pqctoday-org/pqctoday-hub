@@ -7,15 +7,12 @@ import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { Search, Clock, X, ArrowRight, CornerDownLeft, ChevronUp, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SearchResult } from '@/services/search/SearchIndex'
-import {
-  chunkToRoute,
-  SOURCE_LABELS,
-  ADVANCED_SOURCES,
-  PALETTE_ENSURE_SOURCES,
-} from '@/data/searchRoutes'
+import type { PaletteHiddenHit } from '@/services/search/UnifiedSearchService'
+import { chunkToRoute, ADVANCED_SOURCES, PALETTE_ENSURE_SOURCES } from '@/data/searchRoutes'
 import { useSearchHistoryStore } from '@/store/useSearchHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { buildNav, capGroups, groupResults, hiddenHintText, summarizeHidden } from './paletteGroups'
 
 interface CommandPaletteProps {
   isOpen: boolean
@@ -58,22 +55,6 @@ const EXAMPLE_QUERIES = [
   'quantum threat',
 ]
 
-type GroupedResults = { source: string; label: string; items: SearchResult[] }[]
-
-function groupResults(results: SearchResult[]): GroupedResults {
-  const map = new Map<string, SearchResult[]>()
-  for (const r of results) {
-    const label = SOURCE_LABELS[r.source] ?? r.source
-    if (!map.has(label)) map.set(label, [])
-    map.get(label)!.push(r)
-  }
-  return Array.from(map.entries()).map(([label, items]) => ({
-    source: items[0].source,
-    label,
-    items,
-  }))
-}
-
 /** React-safe highlighter: splits text around case-insensitive query matches
  * and returns a JSX fragment with <mark> nodes, so React's own escaping
  * handles the text (no dangerouslySetInnerHTML, no HTML-string concat). */
@@ -100,6 +81,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  // Hits the Authoritative-only tier filter removed for the current query (for the hint row).
+  const [hidden, setHidden] = useState<PaletteHiddenHit[]>([])
+  // Group labels whose "Show N more" has been activated for the current results.
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(() => new Set())
+  // True once the search index has finished building at least once. Until then an empty
+  // result list means "still loading", not "no matches".
+  const [indexReady, setIndexReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activeIdx, setActiveIdx] = useState(0)
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -128,9 +116,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   // the user finishes typing a query, so the index is warm by the time it matters.
   useEffect(() => {
     if (!isOpen) return
+    let cancelled = false
     loadSearchModule()
       .then((m) => m.getSearchIndex())
+      .then(() => {
+        if (!cancelled) setIndexReady(true)
+      })
       .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
   }, [isOpen])
 
   // Focus input when opened
@@ -148,6 +143,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   useEffect(() => {
     if (!query.trim()) {
       setResults([])
+      setHidden([])
+      setExpanded(new Set())
       setError(null)
       setActiveIdx(0)
       return
@@ -164,18 +161,21 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     // without displacing anything.
     loadSearchModule()
       .then((m) =>
-        m.search(query, {
+        m.searchWithHidden(query, {
           limit: 60,
           authoritativeOnly,
           ensureSources: [...PALETTE_ENSURE_SOURCES],
           ensureLimit: 3,
         })
       )
-      .then((raw) => {
+      .then(({ results: raw, hidden: hiddenHits }) => {
         if (cancelled) return
-        const filtered =
-          curiousLocked && !showAdvanced ? raw.filter((r) => !ADVANCED_SOURCES.has(r.source)) : raw
-        setResults(filtered)
+        const keep = (r: { source: string }) =>
+          !(curiousLocked && !showAdvanced && ADVANCED_SOURCES.has(r.source))
+        setResults(raw.filter(keep))
+        setHidden(hiddenHits.filter(keep))
+        setExpanded(new Set())
+        setIndexReady(true)
         setActiveIdx(0)
         setLoading(false)
       })
@@ -183,6 +183,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         if (cancelled) return
         console.error('Search failed', err)
         setResults([])
+        setHidden([])
         setError(err instanceof Error ? err.message : 'Search index failed to load')
         setLoading(false)
       })
@@ -192,8 +193,26 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     }
   }, [query, curiousLocked, showAdvanced, authoritativeOnly])
 
-  // Flat list of all result items for keyboard nav
-  const flatItems = useMemo(() => results, [results])
+  const grouped = useMemo(() => groupResults(results), [results])
+  // Per-group cap: only the top PALETTE_GROUP_CAP rows of each group render until its
+  // "Show N more" is activated. `nav` is the flat list keyboard navigation walks and is
+  // built from exactly what is rendered, so activeIdx never lands on a collapsed row.
+  const capped = useMemo(() => capGroups(grouped, expanded), [grouped, expanded])
+  const nav = useMemo(() => buildNav(capped), [capped])
+  const hiddenSummary = useMemo(() => summarizeHidden(hidden), [hidden])
+
+  const expandGroup = useCallback((label: string) => {
+    setExpanded((prev) => new Set(prev).add(label))
+  }, [])
+
+  const setAuthoritative = useCallback((next: boolean) => {
+    setAuthoritativeOnly(next)
+    try {
+      localStorage.setItem('pqc-cmdk-authoritative-only', next ? '1' : '0')
+    } catch {
+      // non-critical
+    }
+  }, [])
 
   const navigateTo = useCallback(
     (result: SearchResult, newTab = false) => {
@@ -218,25 +237,24 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     (e: React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setActiveIdx((i) => Math.min(i + 1, flatItems.length - 1))
+        setActiveIdx((i) => Math.min(i + 1, nav.length - 1))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
         setActiveIdx((i) => Math.max(i - 1, 0))
       } else if (e.key === 'Enter') {
         e.preventDefault()
-        const item = flatItems[activeIdx]
-        if (item) navigateTo(item, e.metaKey || e.ctrlKey)
+        const entry = nav[activeIdx]
+        if (entry?.kind === 'result') navigateTo(entry.item, e.metaKey || e.ctrlKey)
+        else if (entry?.kind === 'more') expandGroup(entry.label)
       }
     },
-    [flatItems, activeIdx, navigateTo]
+    [nav, activeIdx, navigateTo, expandGroup]
   )
 
   // Scroll active item into view
   useEffect(() => {
     activeItemRef.current?.scrollIntoView({ block: 'nearest' })
   }, [activeIdx])
-
-  const grouped = useMemo(() => groupResults(results), [results])
 
   // Map flat index → result for highlighting
   let flatCounter = 0
@@ -262,7 +280,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: -12 }}
                 transition={{ duration: 0.15 }}
-                className="glass-panel w-full max-w-2xl max-h-[70dvh] flex flex-col overflow-hidden pointer-events-auto"
+                className="glass-panel w-full max-w-2xl max-h-[70dvh] sm:max-h-[80dvh] flex flex-col overflow-hidden pointer-events-auto"
                 ref={dialogRef}
                 role="dialog"
                 aria-modal="true"
@@ -313,6 +331,32 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     </Button>
                   )}
                 </div>
+
+                {/* Authoritative-only hint: that filter drops every untiered chunk
+                    (glossary, Learn content and Q&A, quiz, patents, vendors) with no
+                    other sign, so say how many results it hid and offer the way out.
+                    Outside the scrolling list so it is visible without scrolling. */}
+                {authoritativeOnly && query.trim() && !loading && hiddenSummary.count > 0 && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    data-testid="cmdk-hidden-hint"
+                    className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2 border-b border-border bg-status-warning/10 text-xs text-foreground shrink-0"
+                  >
+                    <span>{hiddenHintText(hiddenSummary)}: </span>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        setAuthoritative(false)
+                        inputRef.current?.focus()
+                      }}
+                      className="h-auto p-0 text-xs text-primary underline"
+                    >
+                      turn it off to see them
+                    </Button>
+                  </div>
+                )}
 
                 {/* Results / Recent / Empty */}
                 <div
@@ -371,7 +415,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                         be regenerated.
                       </p>
                     </div>
-                  ) : results.length === 0 && !loading ? (
+                  ) : results.length === 0 && loading ? (
+                    /* Index still building (up to ~17 s on slow CPUs) or first query
+                       in flight: say so instead of rendering a blank list. */
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground"
+                    >
+                      {indexReady ? 'Searching…' : 'Loading search index…'}
+                    </div>
+                  ) : results.length === 0 ? (
                     /* No results */
                     <div className="flex flex-col items-center gap-2 py-12 text-center">
                       <Search size={28} className="text-muted-foreground/30" aria-hidden="true" />
@@ -381,14 +435,14 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       </p>
                     </div>
                   ) : (
-                    /* Grouped results */
+                    /* Grouped results — top PALETTE_GROUP_CAP rows per group */
                     <div className="p-2">
-                      {grouped.map(({ label, items }) => (
+                      {capped.map(({ label, total, visible, moreCount }) => (
                         <div key={label} className="mb-3">
                           <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground px-3 py-1">
-                            {label} ({items.length})
+                            {label} ({total})
                           </p>
-                          {items.map((item) => {
+                          {visible.map((item) => {
                             const idx = flatCounter++
                             const isActive = idx === activeIdx
                             const snippet = item.content.slice(0, 120).replace(/\n/g, ' ')
@@ -437,6 +491,35 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                               </Button>
                             )
                           })}
+                          {moreCount > 0 &&
+                            (() => {
+                              const idx = flatCounter++
+                              const isActive = idx === activeIdx
+                              return (
+                                <Button
+                                  variant="ghost"
+                                  ref={
+                                    isActive
+                                      ? (activeItemRef as React.RefObject<HTMLButtonElement>)
+                                      : undefined
+                                  }
+                                  role="option"
+                                  aria-selected={isActive}
+                                  aria-label={`Show ${moreCount} more ${label} results`}
+                                  data-testid="cmdk-show-more"
+                                  onClick={() => expandGroup(label)}
+                                  onMouseEnter={() => setActiveIdx(idx)}
+                                  className={`flex items-center gap-3 w-full px-3 py-1.5 rounded-lg text-left h-auto justify-start text-xs text-primary transition-colors ${
+                                    isActive
+                                      ? 'bg-primary/10 border border-primary/20'
+                                      : 'hover:bg-muted/30 border border-transparent'
+                                  }`}
+                                >
+                                  <ChevronDown size={13} className="shrink-0" aria-hidden="true" />
+                                  Show {moreCount} more
+                                </Button>
+                              )
+                            })()}
                         </div>
                       ))}
                     </div>
@@ -470,20 +553,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   <Button
                     variant="link"
                     size="sm"
-                    onClick={() => {
-                      const next = !authoritativeOnly
-                      setAuthoritativeOnly(next)
-                      try {
-                        localStorage.setItem('pqc-cmdk-authoritative-only', next ? '1' : '0')
-                      } catch {
-                        // non-critical
-                      }
-                    }}
+                    onClick={() => setAuthoritative(!authoritativeOnly)}
                     aria-pressed={authoritativeOnly}
-                    className={`h-auto p-0 ${authoritativeOnly ? 'text-status-success' : 'text-muted-foreground'}`}
-                    title="Restrict results to Authoritative + High trust tiers"
+                    data-testid="cmdk-authoritative-toggle"
+                    className={`h-auto text-[10px] ${
+                      authoritativeOnly
+                        ? 'rounded-full border border-status-success/50 bg-status-success/10 px-2 py-0.5 font-semibold text-status-success'
+                        : 'p-0 text-muted-foreground'
+                    }`}
+                    title="Restrict results to Authoritative + High trust tiers (hides glossary, Learn, quiz, patents and vendor results)"
                   >
-                    {authoritativeOnly ? '✓ Authoritative only' : 'Authoritative only'}
+                    {authoritativeOnly ? '✓ Authoritative only: ON' : 'Authoritative only'}
                   </Button>
                   {results.length > 0 && (
                     <span className="ml-auto">

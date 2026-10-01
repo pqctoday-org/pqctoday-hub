@@ -9,6 +9,7 @@
  */
 import type MiniSearch from 'minisearch'
 import { UnifiedSearchService } from './UnifiedSearchService'
+import type { PaletteHiddenHit } from './UnifiedSearchService'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 export interface SearchChunk {
@@ -69,4 +70,17 @@ export async function search(
 ): Promise<SearchResult[]> {
   await getSearchIndex()
   return UnifiedSearchService.getInstance().searchPalette(query, opts) as SearchResult[]
+}
+
+/**
+ * `search` plus the hits the `authoritativeOnly` tier filter removed (empty
+ * when the filter is off) — see UnifiedSearchService.searchPaletteWithHidden.
+ */
+export async function searchWithHidden(
+  query: string,
+  opts?: Parameters<typeof search>[1]
+): Promise<{ results: SearchResult[]; hidden: PaletteHiddenHit[] }> {
+  await getSearchIndex()
+  const out = UnifiedSearchService.getInstance().searchPaletteWithHidden(query, opts)
+  return { results: out.results as SearchResult[], hidden: out.hidden }
 }
