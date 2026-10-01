@@ -14,10 +14,20 @@ function product(overrides: Partial<SoftwareItem>): SoftwareItem {
   return { softwareName: 'Test', ...overrides } as SoftwareItem
 }
 
+/**
+ * A local calendar date `months` before today, as YYYY-MM-DD.
+ *
+ * Built from local parts on purpose. The previous version shifted a local Date
+ * with setMonth() and then read it back with toISOString() (UTC): on the
+ * evening of Sep 30 in a negative-offset timezone, "3 months ago" (Jun 30
+ * local) became 2026-07-01 in UTC and the age read as 2. Day is clamped to 28
+ * so the month arithmetic never overflows into the next month.
+ */
 function isoMonthsAgo(months: number): string {
-  const d = new Date()
-  d.setMonth(d.getMonth() - months)
-  return d.toISOString().slice(0, 10)
+  const now = new Date()
+  const d = new Date(now.getFullYear(), now.getMonth() - months, Math.min(now.getDate(), 28))
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 
 describe('proofFreshness', () => {
