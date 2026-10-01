@@ -11,7 +11,7 @@ import {
 import { ed25519 } from '@noble/curves/ed25519.js'
 import { ed448 } from '@noble/curves/ed448.js'
 import { p256, p384 } from '@noble/curves/nist.js'
-import { sha256, sha384, sha512 } from '@noble/hashes/sha2.js'
+import { sha256, sha512 } from '@noble/hashes/sha2.js'
 import { shake256 } from '@noble/hashes/sha3.js'
 import {
   hsm_generateMLDSAKeyPair,
@@ -134,7 +134,7 @@ export function calculateJWTSize(
 // Real sign/verify for the API Security & JWT workshop.
 //
 // Algorithms follow RFC 9964 (ML-DSA for JOSE and COSE, published May 2026)
-// and draft-ietf-jose-pq-composite-sigs-03 for the hybrid family.
+// and draft-ietf-jose-pq-composite-sigs-04 for the hybrid family.
 //
 // Two backends are supported:
 //   - 'noble'    — @noble/post-quantum + @noble/curves (pure JS)
@@ -149,7 +149,7 @@ export type JwsAlg =
   | 'SLH-DSA-SHA2-128s'
   | 'SLH-DSA-SHA2-192s'
   | 'SLH-DSA-SHA2-256s'
-  // draft-ietf-jose-pq-composite-sigs-03 Table 2 (all 6 JOSE composite algs)
+  // draft-ietf-jose-pq-composite-sigs-04 Table 5 (all 6 JOSE composite algs)
   | 'ML-DSA-44-ES256'
   | 'ML-DSA-65-ES256'
   | 'ML-DSA-87-ES384'
@@ -272,19 +272,33 @@ const slhDsaParamSet = (): Record<
   'SLH-DSA-SHA2-256s': CKP_SLH_DSA_SHA2_256S,
 })
 
-// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-03) ────────
+// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-04) ────────
+//
+// Conformance is checked against the draft's own Appendix A.1 JOSE examples
+// (src/data/acvp/composite-sigs-04-jose-examples.json) — all six algorithms.
 //
 // §4.4 (Encoding Rules): byte streams of the keys and signatures are directly
-// concatenated, ML-DSA first then traditional. Component sizes are fixed so
-// the split is unambiguous.
+// concatenated, ML-DSA first then traditional. The ML-DSA part is fixed-length,
+// so the split is unambiguous even though a DER ECDSA signature is not.
 //
-// §4.2 Composite Sign (M' computation):
+// §4.1 key encodings (taken from draft-ietf-lamps-pq-composite-sigs):
+//   public  = ML-DSA pk || trad pk   (ECDSA: X9.62 UNCOMPRESSED 0x04||x||y;
+//                                     EdDSA: the RFC 8032 public key)
+//   private = ML-DSA 32-byte seed || trad sk
+//                                    (ECDSA: RFC 5915 ECPrivateKey, §4.5.2;
+//                                     EdDSA: the RFC 8032 seed)
+//
+// §4.2 Composite Sign:
 //   Prefix = "CompositeAlgorithmSignatures2025"  (32 bytes ASCII)
-//   Label  = per-alg COMPSIG-* string from Table 4
-//   PH(M)  = pre-hash per Table 2 (SHA256 / SHA512 / SHAKE256)
+//   Label  = per-alg COMPSIG-* string from Table 7
+//   PH(M)  = pre-hash per Table 5 (SHA256 / SHA512 / SHAKE256)
 //   M'     = Prefix || Label || 0x00 || PH(M)
-//   For JOSE, M' is base64url-encoded before sign/verify (§4.2 last paragraph).
+//   "M' is signed as a raw octet string in both JOSE and COSE." (-01 and -02
+//   base64url-encoded M' for JOSE; -03 dropped that, and this code did not
+//   follow until -04.)
 //   ML-DSA component additionally takes ctx = Label.
+//   ECDSA component signature is a DER Ecdsa-Sig-Value (§4.5.1) — new in -04;
+//   -02/-03 used raw r||s.
 const COMPOSITE_PREFIX = new TextEncoder().encode('CompositeAlgorithmSignatures2025')
 
 type MlDsaVariant = 44 | 65 | 87
@@ -295,69 +309,51 @@ interface CompositeSpec {
   mlDsaVariant: MlDsaVariant
   /** ML-DSA public key length per FIPS 204 Table 1. */
   mlDsaPkLen: number
-  /** ML-DSA secret key length per FIPS 204 Table 1. */
-  mlDsaSkLen: number
   /** ML-DSA signature length per FIPS 204 Table 1. */
   mlDsaSigLen: number
-  /** Traditional component public key length. */
+  /** Traditional component public key length (ECDSA: uncompressed point). */
   tradPkLen: number
-  /** Traditional component secret key length. */
-  tradSkLen: number
-  /** Traditional component signature length. */
-  tradSigLen: number
-  /** Label bytes from Table 4 (used both in M' and as ML-DSA ctx). */
+  /** Label bytes from Table 7 (used both in M' and as ML-DSA ctx). */
   label: Uint8Array
-  /** Pre-hash per Table 2 — Schmidt-Hashin/SHAKE256 of the signing input. */
+  /** Pre-hash per Table 5. */
   preHash: PreHash
   /** Traditional component family. Drives the sign/verify code path. */
-  traditional: 'ed25519' | 'ed448' | 'ecdsa-p256-sha256' | 'ecdsa-p384-sha384'
+  traditional: 'ed25519' | 'ed448' | 'ecdsa-p256' | 'ecdsa-p384'
 }
 
 const COMPOSITE_SPECS: Record<CompositeAlg, CompositeSpec> = {
   'ML-DSA-44-ES256': {
     mlDsaVariant: 44,
     mlDsaPkLen: 1312,
-    mlDsaSkLen: 2560,
     mlDsaSigLen: 2420,
-    tradPkLen: 33, // compressed SEC1: 0x02|0x03 || X(32) — noble default
-    tradSkLen: 32,
-    tradSigLen: 64, // raw r||s
+    tradPkLen: 65,
     label: new TextEncoder().encode('COMPSIG-MLDSA44-ECDSA-P256-SHA256'),
     preHash: 'SHA256',
-    traditional: 'ecdsa-p256-sha256',
+    traditional: 'ecdsa-p256',
   },
   'ML-DSA-65-ES256': {
     mlDsaVariant: 65,
     mlDsaPkLen: 1952,
-    mlDsaSkLen: 4032,
     mlDsaSigLen: 3309,
-    tradPkLen: 33,
-    tradSkLen: 32,
-    tradSigLen: 64,
+    tradPkLen: 65,
     label: new TextEncoder().encode('COMPSIG-MLDSA65-ECDSA-P256-SHA512'),
     preHash: 'SHA512',
-    traditional: 'ecdsa-p256-sha256',
+    traditional: 'ecdsa-p256',
   },
   'ML-DSA-87-ES384': {
     mlDsaVariant: 87,
     mlDsaPkLen: 2592,
-    mlDsaSkLen: 4896,
     mlDsaSigLen: 4627,
-    tradPkLen: 49, // compressed P-384 SEC1
-    tradSkLen: 48,
-    tradSigLen: 96, // raw r||s (48+48)
+    tradPkLen: 97,
     label: new TextEncoder().encode('COMPSIG-MLDSA87-ECDSA-P384-SHA512'),
     preHash: 'SHA512',
-    traditional: 'ecdsa-p384-sha384',
+    traditional: 'ecdsa-p384',
   },
   'ML-DSA-44-Ed25519': {
     mlDsaVariant: 44,
     mlDsaPkLen: 1312,
-    mlDsaSkLen: 2560,
     mlDsaSigLen: 2420,
     tradPkLen: 32,
-    tradSkLen: 32,
-    tradSigLen: 64,
     label: new TextEncoder().encode('COMPSIG-MLDSA44-Ed25519-SHA512'),
     preHash: 'SHA512',
     traditional: 'ed25519',
@@ -365,11 +361,8 @@ const COMPOSITE_SPECS: Record<CompositeAlg, CompositeSpec> = {
   'ML-DSA-65-Ed25519': {
     mlDsaVariant: 65,
     mlDsaPkLen: 1952,
-    mlDsaSkLen: 4032,
     mlDsaSigLen: 3309,
     tradPkLen: 32,
-    tradSkLen: 32,
-    tradSigLen: 64,
     label: new TextEncoder().encode('COMPSIG-MLDSA65-Ed25519-SHA512'),
     preHash: 'SHA512',
     traditional: 'ed25519',
@@ -377,15 +370,49 @@ const COMPOSITE_SPECS: Record<CompositeAlg, CompositeSpec> = {
   'ML-DSA-87-Ed448': {
     mlDsaVariant: 87,
     mlDsaPkLen: 2592,
-    mlDsaSkLen: 4896,
     mlDsaSigLen: 4627,
     tradPkLen: 57,
-    tradSkLen: 57,
-    tradSigLen: 114,
     label: new TextEncoder().encode('COMPSIG-MLDSA87-Ed448-SHAKE256'),
     preHash: 'SHAKE256',
     traditional: 'ed448',
   },
+}
+
+/** Length of the ML-DSA seed that opens a composite private key (§4.1). */
+const MLDSA_SEED_LEN = 32
+
+// §4.5.2 Table 4: an ECPrivateKey is the raw scalar d between two fixed byte
+// strings that depend only on the curve (publicKey field omitted).
+const EC_PRIVATE_KEY_FRAME = {
+  'ecdsa-p256': {
+    before: Uint8Array.from([0x30, 0x31, 0x02, 0x01, 0x01, 0x04, 0x20]),
+    after: Uint8Array.from([
+      0xa0, 0x0a, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07,
+    ]),
+    dLen: 32,
+  },
+  'ecdsa-p384': {
+    before: Uint8Array.from([0x30, 0x3e, 0x02, 0x01, 0x01, 0x04, 0x30]),
+    after: Uint8Array.from([0xa0, 0x07, 0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22]),
+    dLen: 48,
+  },
+} as const
+
+function encodeEcPrivateKey(curve: 'ecdsa-p256' | 'ecdsa-p384', d: Uint8Array): Uint8Array {
+  const f = EC_PRIVATE_KEY_FRAME[curve]
+  return concatBytes(f.before, d, f.after)
+}
+
+function decodeEcPrivateKey(curve: 'ecdsa-p256' | 'ecdsa-p384', der: Uint8Array): Uint8Array {
+  const f = EC_PRIVATE_KEY_FRAME[curve]
+  if (der.length !== f.before.length + f.dLen + f.after.length) {
+    throw new Error('ECPrivateKey has the wrong length for this curve')
+  }
+  const ok =
+    f.before.every((b, i) => der[i] === b) &&
+    f.after.every((b, i) => der[f.before.length + f.dLen + i] === b)
+  if (!ok) throw new Error('ECPrivateKey framing does not match draft §4.5.2 Table 4')
+  return der.subarray(f.before.length, f.before.length + f.dLen)
 }
 
 function isComposite(alg: JwsAlg): alg is CompositeAlg {
@@ -399,31 +426,22 @@ function mlDsaSuiteForVariant(v: MlDsaVariant): MlDsaSuite {
 function preHashBytes(preHash: PreHash, input: Uint8Array): Uint8Array {
   if (preHash === 'SHA256') return sha256(input)
   if (preHash === 'SHA512') return sha512(input)
-  // SHAKE256 with the Ed448 pairing — draft §4.2 + Table 2 don't pin a length,
-  // but FIPS 202 says SHAKE output length is caller-chosen. Match Ed448's
-  // sign-hash internal context (114 bytes = sig size). 64 is a common
-  // canonical choice in COSE/JOSE contexts; use 64 for spec-equivalence to
-  // SHA512 byte-budget. Document if upstream pins something different.
+  // SHAKE256 with a 64-byte output — confirmed by the ML-DSA-87-Ed448
+  // raw_message_representative in draft -04 Appendix A.1.
   return shake256(input, { dkLen: 64 })
 }
 
-/** Compute the composite message representative M' per draft §4.2 (JOSE encoding) */
-function compositeMessageRepresentative(spec: CompositeSpec, signingInput: Uint8Array): Uint8Array {
+/** Compute the composite message representative M' per draft -04 §4.2 (raw octets). */
+export function compositeMessageRepresentative(
+  alg: CompositeAlg,
+  signingInput: Uint8Array
+): Uint8Array {
+  const spec = COMPOSITE_SPECS[alg]
   const ph = preHashBytes(spec.preHash, signingInput)
-  const m = new Uint8Array(COMPOSITE_PREFIX.length + spec.label.length + 1 + ph.length)
-  let off = 0
-  m.set(COMPOSITE_PREFIX, off)
-  off += COMPOSITE_PREFIX.length
-  m.set(spec.label, off)
-  off += spec.label.length
-  m[off] = 0x00
-  off += 1
-  m.set(ph, off)
-  // JOSE encoding step: base64url-encode M' before signing.
-  return new TextEncoder().encode(base64urlEncode(m))
+  return concatBytes(COMPOSITE_PREFIX, spec.label, Uint8Array.of(0x00), ph)
 }
 
-/** Generate a traditional keypair for the given composite spec. */
+/** Generate the traditional component as (encoded public key, encoded private key). */
 function generateTraditionalKeyPair(spec: CompositeSpec): {
   publicKey: Uint8Array
   secretKey: Uint8Array
@@ -433,40 +451,44 @@ function generateTraditionalKeyPair(spec: CompositeSpec): {
       return ed25519.keygen()
     case 'ed448':
       return ed448.keygen()
-    case 'ecdsa-p256-sha256':
-      return p256.keygen()
-    case 'ecdsa-p384-sha384':
-      return p384.keygen()
+    case 'ecdsa-p256': {
+      const d = p256.utils.randomSecretKey()
+      return {
+        publicKey: p256.getPublicKey(d, false),
+        secretKey: encodeEcPrivateKey('ecdsa-p256', d),
+      }
+    }
+    case 'ecdsa-p384': {
+      const d = p384.utils.randomSecretKey()
+      return {
+        publicKey: p384.getPublicKey(d, false),
+        secretKey: encodeEcPrivateKey('ecdsa-p384', d),
+      }
+    }
   }
 }
 
-/** Sign with the traditional component over M'. ECDSA signs the hashed M';
- *  EdDSA signs M' directly per RFC 8032. Output is always raw r||s for
- *  ECDSA and the standard 64/114-byte Ed25519/Ed448 sig. */
+/** Sign M' with the traditional component. EdDSA signs M' per RFC 8032.
+ *  ECDSA hashes M' with the curve's hash (noble's default prehash: SHA-256 for
+ *  P-256, SHA-384 for P-384 — "ecdsa-with-SHA256/SHA384" in Table 5) and emits
+ *  a DER Ecdsa-Sig-Value per -04 §4.5.1. Do NOT pre-hash M' here as well:
+ *  noble already does, and a second hash makes a signature no other
+ *  implementation verifies (the pre-2026-10-01 code had exactly that bug). */
 function traditionalSign(spec: CompositeSpec, mPrime: Uint8Array, sk: Uint8Array): Uint8Array {
   switch (spec.traditional) {
     case 'ed25519':
       return ed25519.sign(mPrime, sk)
     case 'ed448':
       return ed448.sign(mPrime, sk)
-    case 'ecdsa-p256-sha256':
-      // noble returns Uint8Array (raw r||s, 64 B for P-256)
-      // No `format` option: @noble defaults to COMPACT (raw r||s, 64 B),
-      // which is what draft-ietf-jose-pq-composite-sigs-03 §3 requires — it
-      // adapts the LAMPS serialization "to use raw fixed-length encodings for
-      // ECDSA components". (-01 simply deferred to LAMPS, i.e. DER
-      // Ecdsa-Sig-Value.) Verified empirically 2026-08-18 before bumping the
-      // -01 citations to -03: the emitted signature is 64 bytes, not DER.
-      // Do NOT add `format: 'der'` here — that would silently break JOSE
-      // conformance, the same way the X.509 composite path broke in F17.
-      return p256.sign(sha256(mPrime), sk)
-    case 'ecdsa-p384-sha384':
-      // noble returns Uint8Array (raw r||s, 96 B for P-384)
-      return p384.sign(sha384(mPrime), sk)
+    case 'ecdsa-p256':
+      return p256.sign(mPrime, decodeEcPrivateKey('ecdsa-p256', sk), { format: 'der' })
+    case 'ecdsa-p384':
+      return p384.sign(mPrime, decodeEcPrivateKey('ecdsa-p384', sk), { format: 'der' })
   }
 }
 
-/** Verify the traditional component signature over M'. */
+/** Verify the traditional component signature over M'. `lowS: false` because
+ *  other implementations are free to emit high-S ECDSA signatures. */
 function traditionalVerify(
   spec: CompositeSpec,
   mPrime: Uint8Array,
@@ -479,11 +501,74 @@ function traditionalVerify(
         return ed25519.verify(sig, mPrime, pk)
       case 'ed448':
         return ed448.verify(sig, mPrime, pk)
-      case 'ecdsa-p256-sha256':
-        return p256.verify(sig, sha256(mPrime), pk)
-      case 'ecdsa-p384-sha384':
-        return p384.verify(sig, sha384(mPrime), pk)
+      case 'ecdsa-p256':
+        return p256.verify(sig, mPrime, pk, { format: 'der', lowS: false })
+      case 'ecdsa-p384':
+        return p384.verify(sig, mPrime, pk, { format: 'der', lowS: false })
     }
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Composite sign per draft-ietf-jose-pq-composite-sigs-04 §4.2.
+ *   M' = Prefix || Label || 0x00 || PH(signing_input)   (raw octets)
+ *   ML-DSA signs M' with ctx=Label, using the key re-derived from its seed;
+ *   the traditional component signs M'; output = ML-DSA sig || trad sig.
+ * `secretKey` is the §4.1 composite private key (32-byte ML-DSA seed || trad sk).
+ */
+export function compositeSign(
+  alg: CompositeAlg,
+  secretKey: Uint8Array,
+  signingInput: Uint8Array
+): Uint8Array {
+  const spec = COMPOSITE_SPECS[alg]
+  const seed = secretKey.subarray(0, MLDSA_SEED_LEN)
+  const tradSk = secretKey.subarray(MLDSA_SEED_LEN)
+  const ml = mlDsaSuiteForVariant(spec.mlDsaVariant)
+  const mPrime = compositeMessageRepresentative(alg, signingInput)
+  // ML-DSA with extraEntropy:false uses the FIPS 204 rnd=0 path, which is what
+  // the draft's Appendix A.1 examples were produced with; EdDSA is
+  // deterministic by RFC 8032; noble's ECDSA uses RFC 6979 nonces.
+  const mlSig = ml.sign(mPrime, ml.keygen(seed).secretKey, {
+    context: spec.label,
+    extraEntropy: false,
+  })
+  return concatBytes(mlSig, traditionalSign(spec, mPrime, tradSk))
+}
+
+/**
+ * Composite verify per draft -04 §4.3: split ML-DSA (fixed length) from the
+ * traditional part, rebuild M', and require BOTH components to verify.
+ * A component key of the wrong length is an invalid signature (§4.3 step 1).
+ */
+export function compositeVerify(
+  alg: CompositeAlg,
+  publicKey: Uint8Array,
+  signingInput: Uint8Array,
+  signature: Uint8Array
+): boolean {
+  const spec = COMPOSITE_SPECS[alg]
+  if (publicKey.length !== spec.mlDsaPkLen + spec.tradPkLen) return false
+  if (signature.length <= spec.mlDsaSigLen) return false
+  const mPrime = compositeMessageRepresentative(alg, signingInput)
+  try {
+    const mlValid = mlDsaSuiteForVariant(spec.mlDsaVariant).verify(
+      signature.subarray(0, spec.mlDsaSigLen),
+      mPrime,
+      publicKey.subarray(0, spec.mlDsaPkLen),
+      { context: spec.label }
+    )
+    return (
+      mlValid &&
+      traditionalVerify(
+        spec,
+        mPrime,
+        signature.subarray(spec.mlDsaSigLen),
+        publicKey.subarray(spec.mlDsaPkLen)
+      )
+    )
   } catch {
     return false
   }
@@ -562,15 +647,18 @@ export async function generateJwsKeyPair(opts: {
   }
 
   if (isComposite(alg)) {
-    // Composite key: ML-DSA component first, then traditional — per
-    // draft-ietf-jose-pq-composite-sigs-03 §4.4 (Encoding Rules).
+    // Composite key per draft-ietf-jose-pq-composite-sigs-04 §4.1: ML-DSA
+    // component first, then traditional. The private key holds the 32-byte
+    // ML-DSA seed, not the expanded key, so it is also the AKP `priv` value.
     const spec = COMPOSITE_SPECS[alg]
-    const ml = mlDsaSuiteForVariant(spec.mlDsaVariant).keygen()
+    const seed = new Uint8Array(MLDSA_SEED_LEN)
+    crypto.getRandomValues(seed)
+    const ml = mlDsaSuiteForVariant(spec.mlDsaVariant).keygen(seed)
     const trad = generateTraditionalKeyPair(spec)
     return {
       alg,
       publicKey: concatBytes(ml.publicKey, trad.publicKey),
-      secretKey: concatBytes(ml.secretKey, trad.secretKey),
+      secretKey: concatBytes(seed, trad.secretKey),
     }
   }
 
@@ -580,11 +668,13 @@ export async function generateJwsKeyPair(opts: {
 /**
  * Sign a JWT and return the compact JWS token.
  * The signing input is `b64u(header).b64u(payload)` per RFC 7515 §5.1.
+ * `payload` is a JWT claims object, or a string used as the raw payload
+ * (e.g. the inner compact JWT of a nested JWT, RFC 7519 §5.2 `cty: "JWT"`).
  */
 export async function signJWS(opts: {
   alg: JwsAlg
   header?: Record<string, unknown>
-  payload: Record<string, unknown>
+  payload: Record<string, unknown> | string
   keyPair: JwsKeyPair
   backend: JwsBackend
   hsm?: HsmContext
@@ -594,7 +684,10 @@ export async function signJWS(opts: {
     throw new Error(`keyPair alg ${keyPair.alg} does not match requested alg ${alg}`)
   }
   const headerB64 = createJWTHeader(alg, header)
-  const payloadB64 = createJWTPayload(payload)
+  const payloadB64 =
+    typeof payload === 'string'
+      ? base64urlEncode(new TextEncoder().encode(payload))
+      : createJWTPayload(payload)
   const signingInput = `${headerB64}.${payloadB64}`
   const signingBytes = new TextEncoder().encode(signingInput)
 
@@ -617,25 +710,7 @@ export async function signJWS(opts: {
   } else if (isSlhDsa(alg)) {
     signature = SLH_DSA_SUITES[alg].sign(signingBytes, keyPair.secretKey)
   } else if (isComposite(alg)) {
-    // draft-ietf-jose-pq-composite-sigs-03 §4.2:
-    //   M' = base64url(Prefix || Label || 0x00 || PH(signing_input))
-    //   ML-DSA component signs M' with ctx=Label (deterministic mode)
-    //   Traditional component signs M'
-    //   Output sig = ML-DSA sig || traditional sig
-    // Secret-key layout (set in generateJwsKeyPair): ML-DSA first, then traditional.
-    const spec = COMPOSITE_SPECS[alg]
-    const mlSk = keyPair.secretKey.subarray(0, spec.mlDsaSkLen)
-    const tradSk = keyPair.secretKey.subarray(spec.mlDsaSkLen, spec.mlDsaSkLen + spec.tradSkLen)
-    const mPrime = compositeMessageRepresentative(spec, signingBytes)
-    // Ed25519/Ed448 are deterministic by RFC 8032 §5.1.6 / RFC 8032 §5.2.6;
-    // ECDSA via WebCrypto is randomized (no determinism opt-in); ML-DSA with
-    // extraEntropy:false uses the FIPS 204 rnd=0 path.
-    const mlSig = mlDsaSuiteForVariant(spec.mlDsaVariant).sign(mPrime, mlSk, {
-      context: spec.label,
-      extraEntropy: false,
-    })
-    const tradSig = traditionalSign(spec, mPrime, tradSk)
-    signature = concatBytes(mlSig, tradSig)
+    signature = compositeSign(alg, keyPair.secretKey, signingBytes)
   } else {
     throw new Error(`Unsupported alg: ${alg}`)
   }
@@ -741,20 +816,7 @@ export async function verifyJWS(opts: {
     } else if (isSlhDsa(alg)) {
       valid = SLH_DSA_SUITES[alg].verify(signature, signingBytes, publicKey)
     } else if (isComposite(alg)) {
-      // Split per draft §4.4: ML-DSA first, then traditional. Sizes are fixed.
-      const spec = COMPOSITE_SPECS[alg]
-      const mlSig = signature.subarray(0, spec.mlDsaSigLen)
-      const tradSig = signature.subarray(spec.mlDsaSigLen)
-      const mlPk = publicKey.subarray(0, spec.mlDsaPkLen)
-      const tradPk = publicKey.subarray(spec.mlDsaPkLen)
-      const mPrime = compositeMessageRepresentative(spec, signingBytes)
-      // §4.3: both component signatures must verify on M'. ML-DSA additionally
-      // takes ctx=Label so the verifier must too.
-      const mlValid = mlDsaSuiteForVariant(spec.mlDsaVariant).verify(mlSig, mPrime, mlPk, {
-        context: spec.label,
-      })
-      const tradValid = traditionalVerify(spec, mPrime, tradSig, tradPk)
-      valid = mlValid && tradValid
+      valid = compositeVerify(alg, publicKey, signingBytes, signature)
     }
   } catch {
     valid = false

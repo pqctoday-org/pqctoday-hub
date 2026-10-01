@@ -16,41 +16,41 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "c3cb00199997fec77cb29e2ff8954de1e3a2cc610745f5563be84ad62635ca69",
+    "public/data/validation/coverage-matrix.json": "f1c9b15d9b01ded129bb5beb7448b32c482ff65ed2bc079c90e25a979c7546d4",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "b79a2bc01179c09c48b0628958e7f6bc196261453024e2009dc9e174f9fd75ae",
     "src/data/validation/open-gaps.json": "32fb0bba5047bc4e0194ccefd5e6edb204e1964eb6d420e26403872fb404579b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098",
     "src/data/validation/run-results/wasm-node-katRunner.json": "ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "6b50b60e9c2d0e705d1b5ff9bc37b18457282255b90a7be899f659a510ccb12d",
-    "src/data/validation/validation-counts.generated.json": "81abd27123bc3808ec5143910a139167a84e48805209c38ed16e3ddb721d1d82",
-    "src/data/validation/vector-manifest.json": "dca6012b8a58b1bea7ab60ead5944cba82ad94fc42ea4fb00c49ba89a22bd6a2"
+    "src/data/validation/validation-counts.generated.json": "178e0a4f2206a82a9ec327e4c9d9b4fff9d1121b40e9620bad095ccdc3d6a2a9",
+    "src/data/validation/vector-manifest.json": "fdcc8ae5ba46c9b56ebe186e419530a9e0f25c7aa11162c505cc45fcb13ecf07"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "19c625562b9e686b44bc1a5f2a4cdfdc7c714d8f56220abb8406a77516221925",
+    "manifestCanonicalSha256": "56b2388d2bff0ca4a3fe256e2a5ce53f6e4bab2c143580534430f5afc139fd3c",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 964,
     "vectorFiles": {
       "total": 95,
-      "active": 95,
-      "quarantined": 0
+      "active": 94,
+      "quarantined": 1
     },
     "filesByClass": {
       "nist-acvp-reference-sample": 53,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 11,
+      "published-standard-kat": 12,
       "independent-oracle": 29,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 2,
+      "functional-round-trip": 1,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 0,
       "unverified": 0
     },
     "cases": {
-      "total": 5243,
-      "active": 5243,
-      "quarantined": 0
+      "total": 5248,
+      "active": 5242,
+      "quarantined": 6
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 964,
@@ -58,18 +58,17 @@
       "published-standard-kat": 22,
       "independent-oracle": 4253,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 2,
+      "functional-round-trip": 1,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 2,
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 3510,
+      "positive": 3509,
       "negative": 1733
     },
     "filesWithPublishabilityGap": {
-      "generator-script-not-in-repo": 1,
-      "oracle-version-not-recorded": 3
+      "oracle-version-not-recorded": 2
     }
   },
   "coverage": {
@@ -3399,7 +3398,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "95 active vector files, 0 without provenance; 0 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
+      "basis": "94 active vector files, 0 without provenance; 6 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×2."
     },
     {
       "n": 3,
