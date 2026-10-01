@@ -23,6 +23,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname, extname } from 'path'
 import { fileURLToPath } from 'url'
 import { ROUTE_META, isNoindexRoute } from '../src/seo/routeMeta'
+import { chromiumLaunchArgs } from './lib/chromiumLaunchArgs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = join(__dirname, '..', 'dist')
@@ -204,7 +205,7 @@ async function prerender(): Promise<void> {
   const baseUrl = `http://localhost:${port}`
   console.log(`  Static server on ${baseUrl}`)
 
-  const browser = await chromium.launch({ headless: true })
+  const browser = await chromium.launch({ headless: true, args: chromiumLaunchArgs() })
 
   const queue = [...ROUTES]
   const failures: Array<{ route: string; error: string }> = []

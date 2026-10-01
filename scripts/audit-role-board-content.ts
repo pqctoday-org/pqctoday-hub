@@ -41,6 +41,7 @@ import { readFileSync, mkdirSync, writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { chromium } from 'playwright'
+import { chromiumLaunchArgs } from './lib/chromiumLaunchArgs'
 import Papa from 'papaparse'
 import { latestCtaCsv, parseCtaRegistry } from './audit-role-board-ctas'
 import { latestDatedCsv, ROLE_BOARD_CONTENT_RE, ROLE_BOARD_VARIANTS_RE } from './lib/latestDatedCsv'
@@ -178,7 +179,7 @@ async function main() {
 
   let browser
   try {
-    browser = await chromium.launch()
+    browser = await chromium.launch({ args: chromiumLaunchArgs() })
   } catch (e) {
     console.error(`\n✗ Could not launch a browser: ${e instanceof Error ? e.message : e}`)
     process.exit(1)
