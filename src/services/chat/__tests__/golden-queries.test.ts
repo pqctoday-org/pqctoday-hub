@@ -708,7 +708,16 @@ beforeAll(() => {
 
 describe('Golden Query Suite', () => {
   it('is calibrated for the current expanded corpus generation', () => {
-    expect(corpusMetadata.generatedAt?.startsWith(CURRENT_CORPUS_BASELINE.generatedDate)).toBe(true)
+    // The golden questions were calibrated on the baseline generation; the corpus
+    // must be that generation or NEWER. A routine reindex on a later day (every
+    // release with a CHANGELOG entry) must not trip this: the golden-query and
+    // Recall@5 tests below are what prove the calibration still holds, and the
+    // chunk-count floor guards against a shrunken corpus. ISO dates compare
+    // lexicographically.
+    expect(corpusMetadata.generatedAt).toBeTruthy()
+    expect(
+      (corpusMetadata.generatedAt ?? '').slice(0, 10) >= CURRENT_CORPUS_BASELINE.generatedDate
+    ).toBe(true)
     expect(corpusMetadata.chunkCount).toBeGreaterThanOrEqual(
       CURRENT_CORPUS_BASELINE.minimumChunkCount
     )
