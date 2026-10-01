@@ -46,6 +46,7 @@ The Hybrid Certificate playground now builds every certificate the way its stand
 
 ### Added
 
+- **Wycheproof tests for ML-KEM and ML-DSA** [view:/playground] [persona:developer] [persona:researcher] [persona:grc]: Google's Project Wycheproof tests for ML-KEM and ML-DSA now run on both engines in the validation workbench (2,458 cases, 965 of them deliberately invalid inputs). Nine invalid ML-DSA signing cases fail on the Rust engine; those two engine bugs are listed in the open-gaps register while the fix is in progress.
 - **Suggest a correction in one click** [view:/about] [view:/editorial-independence] [persona:curious] [persona:researcher] [persona:grc]: the About and Editorial Independence pages, on desktop and mobile, now link straight to the Data Suggestion form, so you can propose a sourced correction or a new record.
 - **Advanced examples: Certificate Discovery and unsigned certificates** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: Certificate Discovery shows how a classical certificate can point to a post-quantum one (its identifiers are not assigned yet, so the example is marked illustrative), and the RFC 9925 example shows a certificate with no signature at all — and why it is never valid in a certificate chain.
 
