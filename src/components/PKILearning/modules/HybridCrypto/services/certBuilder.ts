@@ -75,7 +75,7 @@ import {
 /** ML-DSA-65 — 2.16.840.1.101.3.4.3.18 (RFC 9881) */
 export const ML_DSA_65_OID_STR = '2.16.840.1.101.3.4.3.18'
 
-/** id-MLKEM768-X25519-SHA3-256 (aka X-Wing) — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem §6). Re-verified 2026-08-17 against the -19 text: the allocated block 1.3.6.1.5.5.7.6.55–.66 is unchanged from -17. The draft moved off its earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering. */
+/** id-MLKEM768-X25519-SHA3-256 — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem-21). Re-verified 2026-09-30 against the -21 text (allocated block 1.3.6.1.5.5.7.6.55–.66). Not X-Wing: this is the LAMPS composite construction with its own combiner. */
 export const COMPOSITE_KEM_MLKEM768_X25519_OID_STR = '1.3.6.1.5.5.7.6.58'
 
 /** id-MLKEM768-ECDH-P256-SHA3-256 — 1.3.6.1.5.5.7.6.59 (draft-ietf-lamps-pq-composite-kem §6; unchanged -17→-19) */
