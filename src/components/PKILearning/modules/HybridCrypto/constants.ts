@@ -2,6 +2,8 @@
 
 // ── Hybrid Signature Spectrum (IETF draft-ietf-pquip-hybrid-signature-spectrums) ──
 
+import type { CompositeProfileDraft19 } from './services/certBuilder'
+
 export type NonSeparabilityLevel = 'none' | 'wns' | 'sns'
 export type HybridSigConstruction = 'concatenation' | 'nesting' | 'fused'
 
@@ -246,16 +248,30 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     statusColor: 'success',
     quantumSafe: true,
     legacyCompat: false,
-    description: 'Standard X.509 certificate using ML-DSA-65 as the sole algorithm.',
+    description:
+      'An ML-DSA-65 end-entity certificate issued by an ML-DSA-65 workshop CA — ML-DSA is the only algorithm in the chain.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
-      { text: 'tbsCertificate      TBSCertificate,', color: 'muted', indent: 1 },
+      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
+      { text: 'issuer               Workshop CA (ML-DSA-65)', color: 'muted', indent: 2 },
+      {
+        text: 'subjectPublicKeyInfo ML-DSA-65 (2.16.840.1.101.3.4.3.18), no parameters',
+        color: 'success',
+        indent: 2,
+      },
+      { text: 'keyUsage (critical)  digitalSignature', color: 'success', indent: 2 },
+      { text: 'basicConstraints (critical)  cA=FALSE', color: 'muted', indent: 2 },
+      { text: '}', color: 'muted', indent: 1 },
       {
         text: 'signatureAlgorithm  ML-DSA-65 (2.16.840.1.101.3.4.3.18),',
         color: 'success',
         indent: 1,
       },
-      { text: 'signatureValue      BIT STRING (3309 bytes)', color: 'success', indent: 1 },
+      {
+        text: 'signatureValue      BIT STRING (3309 bytes, by the CA)',
+        color: 'success',
+        indent: 1,
+      },
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
@@ -280,7 +296,15 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       'X.509 using SLH-DSA-128s — a hash-based signature whose security rests only on hash-function properties, which diversifies away from lattice assumptions.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
-      { text: 'tbsCertificate      TBSCertificate,', color: 'muted', indent: 1 },
+      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
+      { text: 'issuer               Workshop CA (SLH-DSA-SHA2-128s)', color: 'muted', indent: 2 },
+      {
+        text: 'subjectPublicKeyInfo SLH-DSA-SHA2-128s, no parameters',
+        color: 'success',
+        indent: 2,
+      },
+      { text: 'keyUsage (critical)  digitalSignature', color: 'success', indent: 2 },
+      { text: '}', color: 'muted', indent: 1 },
       {
         text: 'signatureAlgorithm  SLH-DSA-SHA2-128s (2.16.840.1.101.3.4.3.20),',
         color: 'success',
@@ -404,11 +428,26 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'muted', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       { text: 'signatureAlgorithm  ecdsa-with-SHA256', color: 'warning', indent: 1 },
-      { text: 'signatureValue      ECDSA signature', color: 'warning', indent: 1 },
+      {
+        text: 'signatureValue      ECDSA signature (DER Ecdsa-Sig-Value)',
+        color: 'warning',
+        indent: 1,
+      },
       { text: '}', color: 'foreground', indent: 0 },
+      { text: '', color: 'muted', indent: 0 },
+      {
+        text: '// The ML-DSA signature covers the TBSCertificate with BOTH',
+        color: 'muted',
+        indent: 0,
+      },
+      {
+        text: '// the signature field and AltSignatureValue removed (§7.2.2).',
+        color: 'muted',
+        indent: 0,
+      },
     ],
     educationalNote:
-      'Alt-Sig (the alternative-signature extensions from ITU-T X.509 §9.8; ISARA marketed an implementation as "Catalyst") embeds a PQC public key and signature inside a classical certificate\'s X.509 extensions. Legacy validators ignore the unknown extensions and process only the classical ECDSA signature. PQC-aware verifiers check both signatures. This differs from Related Certificates (RFC 9763), which uses two separate independent certificates bound by a hash.',
+      'Alt-Sig (the alternative-signature extensions from ITU-T X.509 §9.8; ISARA marketed an implementation as "Catalyst") embeds a PQC public key and signature inside a classical certificate\'s X.509 extensions. Legacy validators ignore the unknown extensions and process only the classical ECDSA signature. PQC-aware verifiers can also check the alternative signature; their policy decides whether one or both must verify. This differs from Related Certificates (RFC 9763), which uses two separate independent certificates bound by a hash.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
@@ -417,7 +456,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     group: 'current',
     label: 'Related Certificates (RFC 9763)',
     shortLabel: 'Related',
-    approach: 'Paired certificates with binding hash',
+    approach: 'New certificate references an existing one',
     standard: 'RFC 9763',
     standardUrl: 'https://datatracker.ietf.org/doc/rfc9763/',
     oids: ['1.3.6.1.5.5.7.1.36'],
@@ -426,28 +465,31 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     quantumSafe: 'system',
     legacyCompat: true,
     description:
-      'Two independent certificates bound by a RelatedCertificate extension containing a hash of the partner certificate.',
+      'An existing classical certificate (Cert A) stays unchanged; a new PQC certificate (Cert B) carries a RelatedCertificate extension holding the hash of Cert A.',
     structureLines: [
-      { text: 'Certificate A (Classical) ::= SEQUENCE {', color: 'warning', indent: 0 },
+      { text: 'Existing Cert A (ECDSA P-256) — never modified', color: 'warning', indent: 0 },
+      { text: '│  hash of its complete final DER', color: 'primary', indent: 0 },
+      { text: '▼', color: 'primary', indent: 0 },
+      { text: 'New Cert B (ML-DSA-65) ::= SEQUENCE {', color: 'success', indent: 0 },
       { text: 'tbsCertificate {', color: 'muted', indent: 1 },
-      { text: 'extensions: RelatedCertificate {', color: 'primary', indent: 2 },
-      { text: 'sha256(CertificateB) → binding hash', color: 'primary', indent: 3 },
-      { text: '}', color: 'primary', indent: 2 },
-      { text: '}', color: 'muted', indent: 1 },
-      { text: 'signatureAlgorithm  ecdsa-with-SHA256', color: 'warning', indent: 1 },
-      { text: '}', color: 'warning', indent: 0 },
-      { text: '', color: 'muted', indent: 0 },
-      { text: 'Certificate B (PQC) ::= SEQUENCE {', color: 'success', indent: 0 },
-      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
-      { text: 'extensions: RelatedCertificate {', color: 'primary', indent: 2 },
-      { text: 'sha256(CertificateA) → binding hash', color: 'primary', indent: 3 },
+      { text: 'issuer: Workshop CA (ML-DSA-65)', color: 'muted', indent: 2 },
+      { text: 'extensions: RelatedCertificate (non-critical) {', color: 'primary', indent: 2 },
+      { text: 'hashAlgorithm  sha256', color: 'primary', indent: 3 },
+      { text: 'hashValue      SHA-256(Cert A)', color: 'primary', indent: 3 },
       { text: '}', color: 'primary', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       { text: 'signatureAlgorithm  ML-DSA-65', color: 'success', indent: 1 },
       { text: '}', color: 'success', indent: 0 },
+      { text: '', color: 'muted', indent: 0 },
+      {
+        text: '// Before issuing B, the CA checks a relatedCertRequest',
+        color: 'muted',
+        indent: 0,
+      },
+      { text: "// signed with Cert A's key (proof of possession).", color: 'muted', indent: 0 },
     ],
     educationalNote:
-      "RFC 9763 (Related Certificates) pairs two fully independent certificates — one classical, one PQC — bound by a SHA-256 hash in a RelatedCertificate extension. Each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. Unlike Alt-Sig (which embeds a secondary signature inside one certificate's extensions), Related Certificates keeps both certificates completely separate.",
+      "RFC 9763 (Related Certificates) links a NEW certificate to an EXISTING one. The requester proves it holds Cert A's key in a relatedCertRequest CSR attribute; the CA verifies that proof and issues Cert B with a RelatedCertificate extension holding the hash of the complete final Cert A — the hash named by Cert A's signature algorithm, SHA-256 here. The link is one-way and Cert A is never modified. Each certificate stays independently valid, and a protocol may use either or both — RFC 9763 does not require both. Unlike Alt-Sig (one certificate carrying a second signature), the two certificates stay separate.",
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
@@ -465,7 +507,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     quantumSafe: true,
     legacyCompat: false,
     description:
-      'X.509 certificate whose SubjectPublicKey is an ML-KEM-768 public key. RFC 9935 §4: KEM certs are encryption-only — they cannot sign.',
+      'A CA-issued end-entity certificate whose subject key is ML-KEM-768. The ML-KEM key encapsulates and decapsulates; it cannot sign, so a separate ML-DSA-65 CA signs the certificate.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
       { text: 'tbsCertificate {', color: 'muted', indent: 1 },
@@ -474,14 +516,15 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
         color: 'success',
         indent: 2,
       },
-      { text: 'keyUsage              keyEncipherment only', color: 'success', indent: 2 },
+      { text: 'keyUsage (critical)   keyEncipherment only', color: 'success', indent: 2 },
+      { text: 'basicConstraints (critical)  cA=FALSE', color: 'muted', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       {
-        text: 'signatureAlgorithm  (signed by external CA — ML-DSA or classical)',
-        color: 'muted',
+        text: 'signatureAlgorithm  ML-DSA-65 — by the Workshop CA, not the KEM key',
+        color: 'primary',
         indent: 1,
       },
-      { text: 'signatureValue      CA signature', color: 'muted', indent: 1 },
+      { text: 'signatureValue      CA signature', color: 'primary', indent: 1 },
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
@@ -516,17 +559,18 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
         color: 'primary',
         indent: 2,
       },
+      { text: 'keyUsage (critical)   keyEncipherment only', color: 'success', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       {
-        text: 'signatureAlgorithm  (signed by external CA — ML-DSA or classical)',
-        color: 'muted',
+        text: 'signatureAlgorithm  ML-DSA-65 — by the Workshop CA',
+        color: 'primary',
         indent: 1,
       },
       { text: 'signatureValue      CA signature', color: 'muted', indent: 1 },
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'draft-ietf-lamps-pq-composite-kem defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, RSA-2048/3072/4096, brainpoolP256) under a single OID (encoded ML-KEM component first, then the classical component — §4.1). Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries: stock OpenSSL 3.6.3 registers no composite algorithms at all and fails to load a composite public key, so composite certificates are NOT backward compatible. KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
+      'draft-ietf-lamps-pq-composite-kem defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, RSA-2048/3072/4096, brainpoolP256) under a single OID (encoded ML-KEM component first, then the classical component — §4.1). Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries: stock OpenSSL 3.6.3 registers no composite algorithms at all and fails to load a composite public key, so composite certificates are NOT backward compatible. KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA. This card shows the certificate encoding only — it does not run composite encapsulation.',
     classicalAlg: 'X25519',
     pqcAlg: 'ML-KEM-768',
   },
@@ -567,6 +611,68 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     pqcAlg: 'ML-DSA-65',
   },
 ]
+
+/**
+ * ASN.1 structure lines for the composite card, derived from the selected
+ * draft §6 profile — never hard-coded to one profile.
+ */
+export function compositeStructureLines(
+  profile: CompositeProfileDraft19
+): HybridCertFormat['structureLines'] {
+  const name = profile.label.replace(/^id-/, '')
+  const mldsa = name.split('-')[0].replace('MLDSA', 'ML-DSA-')
+  const c = profile.classical
+  const trad =
+    c.kind === 'ecdsa'
+      ? {
+          label: `EC ${c.curve}`,
+          pk: c.curve === 'P-384' ? '97 bytes, X9.62' : '65 bytes, X9.62',
+          sig: c.curve === 'P-384' ? 'ECDSA (~103 bytes, DER)' : 'ECDSA (70-72 bytes, DER)',
+        }
+      : c.kind === 'ed25519'
+        ? { label: 'Ed25519', pk: '32 bytes', sig: 'Ed25519 (64 bytes)' }
+        : {
+            label: `RSA-${c.modulusBits}`,
+            pk: 'RSAPublicKey, DER',
+            sig: `RSASSA-PSS (${c.modulusBits / 8} bytes)`,
+          }
+  return [
+    { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
+    { text: 'tbsCertificate      TBSCertificate {', color: 'muted', indent: 1 },
+    { text: 'subjectPublicKeyInfo {', color: 'muted', indent: 2 },
+    { text: `algorithm         ${name} (${profile.compositeOid})`, color: 'primary', indent: 3 },
+    { text: 'subjectPublicKey  BIT STRING — raw concatenation:', color: 'primary', indent: 3 },
+    {
+      text: `mldsaPublicKey  ${mldsa} (${profile.mldsaPubKeyBytes} bytes)  ← ML-DSA FIRST`,
+      color: 'success',
+      indent: 4,
+    },
+    { text: `tradPublicKey   ${trad.label} (${trad.pk})`, color: 'warning', indent: 4 },
+    { text: '}', color: 'muted', indent: 2 },
+    { text: '}', color: 'muted', indent: 1 },
+    { text: `signatureAlgorithm  ${name} (${profile.compositeOid}),`, color: 'primary', indent: 1 },
+    { text: 'signatureValue      BIT STRING — raw concatenation:', color: 'primary', indent: 1 },
+    {
+      text: `mldsaSignature  ${mldsa} (${profile.mldsaSigBytes} bytes)  ← ML-DSA FIRST`,
+      color: 'success',
+      indent: 2,
+    },
+    { text: `tradSignature   ${trad.sig}`, color: 'warning', indent: 2 },
+    { text: '}', color: 'foreground', indent: 0 },
+    { text: '', color: 'muted', indent: 0 },
+    {
+      text: '// No ASN.1 SEQUENCE wraps the components — the raw bytes go',
+      color: 'muted',
+      indent: 0,
+    },
+    {
+      text: "// straight into the BIT STRING. A verifier splits at ML-DSA's",
+      color: 'muted',
+      indent: 0,
+    },
+    { text: '// fixed length (FIPS 204).', color: 'muted', indent: 0 },
+  ]
+}
 
 /** Formats in the main comparison — the set Generate All produces. */
 export const CURRENT_HYBRID_CERT_FORMATS = HYBRID_CERT_FORMATS.filter((f) => f.group === 'current')

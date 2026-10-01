@@ -12,13 +12,20 @@ import {
   Check,
   Download,
 } from 'lucide-react'
-import { hybridCryptoService } from '../services/HybridCryptoService'
+import {
+  hybridCryptoService,
+  type FormatOutput,
+  type IssuedCertView,
+} from '../services/HybridCryptoService'
 import { COMPOSITE_PROFILE_CHOICES } from '../services/certBuilder'
+import { verifyCompositeCert } from '../services/compositeVerifier'
+import type { VerificationCheck } from '../services/certVerifier'
 import {
   CURRENT_HYBRID_CERT_FORMATS,
   HISTORICAL_HYBRID_CERT_FORMATS,
   STATUS_BADGE_CLASSES,
   STRUCTURE_LINE_COLOR_CLASSES,
+  compositeStructureLines,
   type HybridCertFormat,
   type HybridFormatId,
 } from '../constants'
@@ -36,10 +43,16 @@ const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 interface FormatResult {
   formatId: HybridFormatId
-  certs: Array<{ label: string; pem: string; parsed: string; type: 'classical' | 'pqc' }>
+  certs: IssuedCertView[]
+  checks: VerificationCheck[]
   timingMs: number
   bindingHash?: string
   error?: string
+}
+
+function pemToDer(pem: string): Uint8Array {
+  const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))
 }
 
 /** Compute DER byte size from a PEM string (strips headers, base64-decodes length). */
@@ -104,25 +117,19 @@ export const HybridCertFormats: React.FC = () => {
     URL.revokeObjectURL(url)
   }, [])
 
-  const pushHybridFiles = useCallback(
-    (
-      formatId: HybridFormatId,
-      certs: Array<{ label: string; pem: string; parsed: string; type: 'classical' | 'pqc' }>
-    ) => {
-      const { addFile } = useOpenSSLStore.getState()
-      certs.forEach((cert, idx) => {
-        const name = certs.length === 1 ? `hybrid-${formatId}.pem` : `hybrid-${formatId}-${idx}.pem`
-        addFile({
-          name,
-          type: 'cert',
-          content: new TextEncoder().encode(cert.pem),
-          size: cert.pem.length,
-          timestamp: Date.now(),
-        })
+  const pushHybridFiles = useCallback((formatId: HybridFormatId, certs: IssuedCertView[]) => {
+    const { addFile } = useOpenSSLStore.getState()
+    certs.forEach((cert, idx) => {
+      const name = certs.length === 1 ? `hybrid-${formatId}.pem` : `hybrid-${formatId}-${idx}.pem`
+      addFile({
+        name,
+        type: 'cert',
+        content: new TextEncoder().encode(cert.pem),
+        size: cert.pem.length,
+        timestamp: Date.now(),
       })
-    },
-    []
-  )
+    })
+  }, [])
 
   const onKeyTracked = useCallback(
     (handle: number, family: HsmFamily, label: string, role: HsmKeyRole = 'private') => {
@@ -151,251 +158,123 @@ export const HybridCertFormats: React.FC = () => {
       const subject = '/CN=Hybrid Certificate Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
 
       try {
-        if (formatId === 'pure-pqc-slh') {
-          // SLH-DSA-128s: Real DER-encoded certificate via liboqs + ASN.1 builder (RFC 9909).
-          const certResult = await hybridCryptoService.generateSelfSignedCertSLHDSA(
-            '/CN=Pure PQC (SLH-DSA-128s) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox',
-            M,
-            hSession,
-            onKeyTracked
-          )
-          const slhCerts = certResult.error
-            ? []
-            : [
+        const sandbox = (cn: string) => `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
+        let output: FormatOutput
+        switch (formatId) {
+          case 'pure-pqc':
+            output = await hybridCryptoService.generatePurePQCCertMLDSA(
+              subject,
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'pure-pqc-slh':
+            output = await hybridCryptoService.generateSelfSignedCertSLHDSA(
+              sandbox('Pure PQC (SLH-DSA-128s) Demo'),
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'composite': {
+            // Resolved HERE rather than closed over: generateFormat is memoised,
+            // and capturing the derived object would pin whichever profile was
+            // selected when the callback was last built — the dropdown would move
+            // the label while still minting the original profile.
+            const chosen =
+              COMPOSITE_PROFILE_CHOICES.find((c) => c.profile.compositeOid === compositeOid) ??
+              COMPOSITE_PROFILE_CHOICES[0]
+            const r = await hybridCryptoService.generateCompositeCert(
+              subject,
+              M,
+              hSession,
+              onKeyTracked,
+              chosen.profile
+            )
+            const checks: VerificationCheck[] = []
+            if (!r.error) {
+              const v = await verifyCompositeCert(pemToDer(r.pem))
+              checks.push(
                 {
-                  label: 'SLH-DSA-128s Certificate',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: slhCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, slhCerts)
-          setGeneratingFormat(null)
-          setGeneratingFormat(null)
-          if (!skipStateReset) setGenerating(null)
-          return
-        } else if (formatId === 'pure-pqc') {
-          const certResult = await hybridCryptoService.generatePurePQCCertMLDSA(
-            subject,
-            M,
-            hSession,
-            onKeyTracked
-          )
-          const pqcCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: 'ML-DSA-65 Certificate (RFC 9881)',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: pqcCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, pqcCerts)
-        } else if (formatId === 'composite') {
-          // Real composite certificate (draft-ietf-lamps-pq-composite-sigs)
-          // Resolved HERE rather than closed over: generateFormat is memoised,
-          // and capturing the derived object would pin whichever profile was
-          // selected when the callback was last built — the dropdown would move
-          // the label while still minting the original profile.
-          const chosen =
-            COMPOSITE_PROFILE_CHOICES.find((c) => c.profile.compositeOid === compositeOid) ??
-            COMPOSITE_PROFILE_CHOICES[0]
-          const certResult = await hybridCryptoService.generateCompositeCert(
-            subject,
-            M,
-            hSession,
-            onKeyTracked,
-            chosen.profile
-          )
-          const compCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: `Composite: ${chosen.profile.label.replace(/^id-/, '')}`,
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: compCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, compCerts)
-        } else if (formatId === 'alt-sig') {
-          // Real Alt-Sig certificate (ITU-T X.509 §9.8)
-          const certResult = await hybridCryptoService.generateAltSigCert(
-            subject,
-            M,
-            hSession,
-            onKeyTracked
-          )
-          const altCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: 'Alt-Sig Certificate: ECDSA primary + ML-DSA-65 extensions',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'classical' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: altCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, altCerts)
-        } else if (formatId === 'related-certs') {
-          const relResult = await hybridCryptoService.generateRelatedCertPairReal(
-            subject,
-            M,
-            hSession,
-            onKeyTracked
-          )
-          const relCerts = relResult.error
-            ? []
-            : [
-                {
-                  label: 'Certificate A: ECDSA P-256 (Classical)',
-                  pem: relResult.classical.pem,
-                  parsed: relResult.classical.parsed,
-                  type: 'classical' as const,
+                  name: `${v.mldsa?.algorithm ?? 'ML-DSA'} component verifies`,
+                  ok: v.mldsa?.verified === true,
                 },
                 {
-                  label: 'Certificate B: ML-DSA-65 (PQC)',
-                  pem: relResult.pqc.pem,
-                  parsed: relResult.pqc.parsed,
-                  type: 'pqc' as const,
+                  name: `${v.classical?.algorithm ?? 'Classical'} component verifies`,
+                  ok: v.classical?.verified === true,
                 },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: relCerts,
-              timingMs: relResult.totalMs,
-              bindingHash: relResult.bindingHash,
-              error: relResult.error,
-            },
-          }))
-          if (!relResult.error) pushHybridFiles(formatId, relCerts)
-        } else if (formatId === 'pure-pqc-kem') {
-          // Pure ML-KEM-768 X.509 cert per RFC 9935 (encryption-only).
-          const certResult = await hybridCryptoService.generatePurePQCCertMLKEM(
-            'ML-KEM-768',
-            'Pure PQC KEM (ML-KEM-768) Demo'
-          )
-          const kemCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: 'ML-KEM-768 Certificate (RFC 9935, encryption-only)',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: kemCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, kemCerts)
-        } else if (formatId === 'composite-kem') {
-          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem.
-          const certResult = await hybridCryptoService.generateCompositeKEMCert(
-            'ML-KEM-768',
-            'X25519',
-            'Composite KEM (ML-KEM-768 + X25519) Demo'
-          )
-          const compKemCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: 'Composite Certificate: X25519-MLKEM768 (encryption-only)',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: compKemCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, compKemCerts)
-        } else if (formatId === 'chameleon') {
-          // Real Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07)
-          const certResult = await hybridCryptoService.generateChameleonCert(
-            subject,
-            M,
-            hSession,
-            onKeyTracked
-          )
-          const chamCerts = certResult.error
-            ? []
-            : [
-                {
-                  label: 'Chameleon: ML-DSA-65 primary + ECDSA delta',
-                  pem: certResult.pem,
-                  parsed: certResult.parsed,
-                  type: 'pqc' as const,
-                },
-              ]
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: chamCerts,
-              timingMs: certResult.timingMs,
-              error: certResult.error,
-            },
-          }))
-          if (!certResult.error) pushHybridFiles(formatId, chamCerts)
+                { name: 'Both components verify (composite AND rule)', ok: v.valid }
+              )
+            }
+            output = {
+              certs: r.error
+                ? []
+                : [
+                    {
+                      label: `Composite: ${chosen.profile.label.replace(/^id-/, '')}`,
+                      pem: r.pem,
+                      parsed: r.parsed,
+                      type: 'pqc',
+                      role: 'subject',
+                    },
+                  ],
+              checks,
+              timingMs: r.timingMs,
+              error: r.error,
+            }
+            break
+          }
+          case 'alt-sig':
+            output = await hybridCryptoService.generateAltSigCert(
+              subject,
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'related-certs':
+            output = await hybridCryptoService.generateRelatedCertPairReal(
+              subject,
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'pure-pqc-kem':
+            output = await hybridCryptoService.generatePurePQCCertMLKEM(
+              sandbox('Pure PQC KEM (ML-KEM-768) Demo'),
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'composite-kem':
+            output = await hybridCryptoService.generateCompositeKEMCert(
+              sandbox('Composite KEM (ML-KEM-768 + X25519) Demo'),
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
+          case 'chameleon':
+            output = await hybridCryptoService.generateChameleonCert(
+              subject,
+              M,
+              hSession,
+              onKeyTracked
+            )
+            break
         }
+        setResults((prev) => ({ ...prev, [formatId]: { formatId, ...output } }))
+        if (!output.error) pushHybridFiles(formatId, output.certs)
       } catch (e) {
         setResults((prev) => ({
           ...prev,
           [formatId]: {
             formatId,
             certs: [],
+            checks: [],
             timingMs: performance.now() - start,
             error: translateCryptoError(e instanceof Error ? e.message : 'Generation failed'),
           },
@@ -427,7 +306,18 @@ export const HybridCertFormats: React.FC = () => {
     ...HISTORICAL_HYBRID_CERT_FORMATS.filter((f) => results[f.id] && !results[f.id].error),
   ]
 
-  const renderFormatCard = (fmt: HybridCertFormat) => {
+  const renderFormatCard = (baseFmt: HybridCertFormat) => {
+    // The composite card follows the selected draft §6 profile — its label,
+    // OID and structure are never hard-coded to one profile.
+    const fmt: HybridCertFormat =
+      baseFmt.id === 'composite'
+        ? {
+            ...baseFmt,
+            label: `Composite (${compositeChoice.shortLabel})`,
+            oids: [compositeChoice.profile.compositeOid],
+            structureLines: compositeStructureLines(compositeChoice.profile),
+          }
+        : baseFmt
     const result = results[fmt.id]
     const isGeneratingThis =
       generating === fmt.id || (generating === 'all' && !result && fmt.group === 'current')
@@ -573,21 +463,21 @@ export const HybridCertFormats: React.FC = () => {
                 <p className="text-xs text-destructive">{result.error}</p>
                 <p className="text-[10px] text-muted-foreground">
                   {fmt.id === 'pure-pqc' &&
-                    'Requires ML-DSA-65 key pair via PKCS#11 (C_GenerateKeyPair + C_Sign).'}
+                    'Requires ML-DSA-65 key pairs in the HSM for the workshop CA and the end entity (C_GenerateKeyPair + C_Sign).'}
                   {fmt.id === 'pure-pqc-slh' &&
-                    'Requires SLH-DSA-128s key pair via liboqs (C_GenerateKeyPair + C_MessageSign).'}
+                    'Requires SLH-DSA-128s key pairs in the HSM for the workshop CA and the end entity (C_GenerateKeyPair + C_MessageSign).'}
                   {fmt.id === 'composite' &&
                     'Requires both ML-DSA-65 and ECDSA P-256 key pairs; both signatures over shared TBS bytes.'}
                   {fmt.id === 'alt-sig' &&
                     'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
                   {fmt.id === 'related-certs' &&
-                    'Requires two independent key pairs (ECDSA + ML-DSA-65) with SHA-256 cross-binding.'}
+                    'Requires an ECDSA P-256 key for Cert A, an ML-DSA-65 key for Cert B, and an ML-DSA-65 workshop CA.'}
                   {fmt.id === 'chameleon' &&
-                    'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
+                    'Requires an ML-DSA-65 primary key and an ECDSA P-256 delta key; the DeltaCertificateDescriptor carries the DER-encoded ECDSA delta signature.'}
                   {fmt.id === 'pure-pqc-kem' &&
-                    'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
+                    'Requires an ML-KEM-768 key pair (CKA_ENCAPSULATE / CKA_DECAPSULATE) and an ML-DSA-65 workshop CA in the HSM; the KEM key cannot sign, so the CA signs its certificate.'}
                   {fmt.id === 'composite-kem' &&
-                    'Per draft-ietf-lamps-pq-composite-kem §6 (IESG Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
+                    'Requires ML-KEM-768 and X25519 key pairs plus an ML-DSA-65 workshop CA in the HSM. OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58; subjectPublicKey = ML-KEM-768 (1184 B) ‖ X25519 (32 B).'}
                 </p>
                 {!isGeneratingThis && (
                   <Button
@@ -627,7 +517,8 @@ export const HybridCertFormats: React.FC = () => {
                     <Link2 size={14} className="text-primary shrink-0 mt-0.5" />
                     <div>
                       <div className="text-[10px] font-medium text-primary">
-                        SHA-256(Cert A) — stored in Cert B&apos;s RelatedCertificate extension
+                        SHA-256 of the complete final Cert A — stored in Cert B&apos;s
+                        RelatedCertificate extension
                       </div>
                       <div className="font-mono text-[10px] text-muted-foreground break-all">
                         {result.bindingHash}
@@ -636,14 +527,45 @@ export const HybridCertFormats: React.FC = () => {
                   </div>
                 )}
 
+                {/* Verification — run with @noble, not the HSM that signed */}
+                {result.checks.length > 0 && (
+                  <div className="rounded-lg border border-border p-2 space-y-1">
+                    <div
+                      className={`text-[10px] font-bold ${
+                        result.checks.every((c) => c.ok)
+                          ? 'text-status-success'
+                          : 'text-status-error'
+                      }`}
+                    >
+                      {result.checks.every((c) => c.ok)
+                        ? `Verified — ${result.checks.length}/${result.checks.length} checks passed`
+                        : `${result.checks.filter((c) => !c.ok).length} of ${result.checks.length} checks failed`}
+                    </div>
+                    <ul className="space-y-0.5">
+                      {result.checks.map((c, i) => (
+                        <li
+                          key={i}
+                          className={`text-[10px] ${c.ok ? 'text-muted-foreground' : 'text-status-error'}`}
+                        >
+                          {c.ok ? '✓' : '✗'} {c.name}
+                          {!c.ok && c.detail ? ` — ${c.detail}` : ''}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {/* Component certs */}
-                {result.certs.map((cert) => {
-                  const viewKey = `${fmt.id}-${cert.type}`
+                {result.certs.map((cert, certIdx) => {
+                  // Keyed by position: a CA and its end entity share a type.
+                  const viewKey = `${fmt.id}-${certIdx}`
                   const currentView = expandedViews[viewKey]
                   const certBadgeClass =
-                    cert.type === 'pqc'
-                      ? 'bg-success/10 text-success border-success/20'
-                      : 'bg-warning/10 text-warning border-warning/20'
+                    cert.role === 'ca'
+                      ? 'bg-primary/10 text-primary border-primary/20'
+                      : cert.type === 'pqc'
+                        ? 'bg-success/10 text-success border-success/20'
+                        : 'bg-warning/10 text-warning border-warning/20'
                   const copyKey = `${viewKey}-${currentView}`
                   const isCopied = copiedKey === copyKey
 
@@ -654,7 +576,11 @@ export const HybridCertFormats: React.FC = () => {
                         <span
                           className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${certBadgeClass}`}
                         >
-                          {cert.type === 'pqc' ? 'PQC' : 'CLASSICAL'}
+                          {cert.role === 'ca'
+                            ? 'ISSUER CA'
+                            : cert.type === 'pqc'
+                              ? 'PQC'
+                              : 'CLASSICAL'}
                         </span>
                       </div>
                       <div className="flex gap-2 items-center">
@@ -708,8 +634,8 @@ export const HybridCertFormats: React.FC = () => {
                                 downloadContent(
                                   currentView === 'pem' ? cert.pem.trim() : cert.parsed.trim(),
                                   currentView === 'pem'
-                                    ? `${fmt.id}-${cert.type}.pem`
-                                    : `${fmt.id}-${cert.type}-parsed.txt`
+                                    ? `${fmt.id}-${certIdx}-${cert.role}.pem`
+                                    : `${fmt.id}-${certIdx}-${cert.role}-parsed.txt`
                                 )
                               }
                               className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30"

@@ -1,22 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
-// NOTE: `CMSSigningService` is misnamed for our usage here — we only invoke
-// its X.509 cert-issuance half (`genKey` + `mkCert`), which calls
-// `openssl req -x509 -provider pkcs11 …` under the hood. That is NOT CMS;
-// it's plain X.509 minting via pkcs11-provider. We borrow the service
-// because it already owns a Worker with pkcs11-provider preloaded and
-// because the same code path already proves out KEM-only CA-issued certs
-// in MLKEMEncryptDemo. See the architectural-debt note at
-// `memory/project-pkcs-hsm-service-naming.md` — the right long-term fix is
-// to factor a `PkcsHsmCryptoService` layer (Option 2) that both
-// CMSSigningService and HybridCryptoService delegate to.
-import { CMSSigningService } from '@/components/PKILearning/modules/EmailSigning/services/CMSSigningService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
-import { x25519 } from '@noble/curves/ed25519.js'
-import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
-import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
@@ -26,6 +12,8 @@ import {
   hsm_extractKeyValue,
   hsm_extractECPoint,
   hsm_extractRSAPublicKeyDer,
+  hsm_generateMLKEMKeyPair,
+  hsm_getKeyAttributes,
   hsm_signBytesMLDSA,
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
@@ -36,7 +24,6 @@ import {
   CKM_SHA256_RSA_PKCS_PSS,
 } from '@/wasm/softhsm'
 import {
-  buildSelfSignedX509,
   buildCompositeCertDraft19,
   ecdsaRawSignatureToDer,
   COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
@@ -45,18 +32,31 @@ import {
   type CompositeProfileDraft19,
   buildCompositeKEMCert,
   buildAltSigCert,
-  buildRelatedCertPair as buildRelatedCertPairDER,
+  buildRelatedCertificates,
   buildChameleonCert,
+  buildWorkshopCA,
+  issueCertificate,
+  ecP256SpkiAlgId,
+  EC_PUBLIC_KEY_OID_STR,
+  ECDSA_SHA256_OID_STR,
+  SLH_DSA_SHA2_128S_OID_STR,
+  type CertIssuer,
   derToPem,
   buildParsedText,
-  SLH_DSA_SHA2_128S_OID,
-  ML_DSA_65_OID,
   ML_DSA_65_OID_STR,
   COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
-  COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR,
   type SignerFn,
   type CompositeMLDSASignerFn,
 } from './certBuilder'
+import {
+  checkProfile,
+  parseCertificate,
+  verifyAltSigCert,
+  verifyChameleonCert,
+  verifyIssuedBy,
+  verifyRelatedCertificate,
+  type VerificationCheck,
+} from './certVerifier'
 
 export interface KeyGenResult {
   algorithm: string
@@ -105,6 +105,33 @@ export interface CertResult {
   error?: string
 }
 
+/** One certificate a format produced, ready to display and download. */
+export interface IssuedCertView {
+  label: string
+  pem: string
+  parsed: string
+  type: 'classical' | 'pqc'
+  /** 'ca' = the workshop CA that issued the subject; 'existing' = RFC 9763 Cert A */
+  role: 'ca' | 'subject' | 'existing'
+}
+
+/**
+ * Everything one hybrid-certificate format produced: the certificates
+ * (issuer first), the verification checks run over them by an implementation
+ * other than the HSM that signed them, and format-specific extras.
+ */
+export interface FormatOutput {
+  certs: IssuedCertView[]
+  checks: VerificationCheck[]
+  timingMs: number
+  /** RFC 9763: hex hash of Cert A, as stored in Cert B */
+  bindingHash?: string
+  error?: string
+}
+
+const ML_KEM_768_OID_STR = '2.16.840.1.101.3.4.4.2'
+const SANDBOX_OU = 'Hybrid Certificate Sandbox'
+
 export type KeyTracker = (
   handle: number,
   family: HsmFamily,
@@ -113,33 +140,6 @@ export type KeyTracker = (
 ) => void
 
 export class HybridCryptoService {
-  // Lazy-init CMSSigningService for HSM-routed cert ops (Pure PQC KEM,
-  // composite KEM, anywhere we need pkcs11-provider + softhsmv3 instead
-  // of bare openssl genpkey/req). One Worker per HybridCryptoService
-  // singleton — kept alive for the session.
-  // TODO: extract a shared PkcsHsmWorker layer when a third consumer
-  // beyond EmailSigning + HybridCrypto appears.
-  private cmsService: CMSSigningService | null = null
-  private cmsInitPromise: Promise<void> | null = null
-
-  private async getCms(): Promise<CMSSigningService> {
-    if (!this.cmsService) {
-      this.cmsService = new CMSSigningService()
-    }
-    if (!this.cmsInitPromise) {
-      this.cmsInitPromise = (async () => {
-        const r = await this.cmsService!.initProvider()
-        if (r.status !== 'ok' && r.status !== 'already') {
-          // Reset so a future call can retry from scratch.
-          this.cmsInitPromise = null
-          throw new Error(`pkcs11-provider init failed: ${r.status} (${r.code}) ${r.detail ?? ''}`)
-        }
-      })()
-    }
-    await this.cmsInitPromise
-    return this.cmsService
-  }
-
   private getGenCommand(algorithm: string, filename: string): string {
     if (algorithm === 'EC') {
       return `openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ${filename}`
@@ -830,31 +830,121 @@ export class HybridCryptoService {
   }
 
   /**
-   * Pure PQC certificate: ML-DSA-65 (RFC 9881).
-   * Real DER-encoded X.509 with correct OID 2.16.840.1.101.3.4.3.18.
+   * A workshop root CA in the HSM. ML-DSA-65 by default; SLH-DSA-SHA2-128s
+   * for the SLH-DSA example so that card still shows an SLH-DSA signature.
+   */
+  private async createWorkshopCA(
+    M: SoftHSMModule,
+    hSession: number,
+    onKey: KeyTracker | undefined,
+    alg: 'ML-DSA-65' | 'SLH-DSA-SHA2-128s' = 'ML-DSA-65'
+  ): Promise<CertIssuer> {
+    const subject = `/CN=PQC Today Workshop CA (${alg})/O=PQC Today/OU=${SANDBOX_OU}`
+    if (alg === 'SLH-DSA-SHA2-128s') {
+      const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
+      if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s Workshop CA', 'private')
+      if (onKey) onKey(pubHandle, 'slh-dsa', 'SLH-DSA-128s Workshop CA Public', 'public')
+      return buildWorkshopCA({
+        subject,
+        keyOid: SLH_DSA_SHA2_128S_OID_STR,
+        publicKey: hsm_extractKeyValue(M, hSession, pubHandle),
+        signerFn: async (tbs) => hsm_signBytesSLHDSA(M, hSession, privHandle, tbs),
+      })
+    }
+    const ca = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+    return buildWorkshopCA({
+      subject,
+      keyOid: ML_DSA_65_OID_STR,
+      publicKey: ca.publicKey,
+      signerFn: ca.signerFn,
+    })
+  }
+
+  /** Display view for a certificate. */
+  private view(
+    der: Uint8Array,
+    label: string,
+    type: IssuedCertView['type'],
+    role: IssuedCertView['role'],
+    hint?: string
+  ): IssuedCertView {
+    const now = new Date()
+    return {
+      label,
+      pem: derToPem(der, 'CERTIFICATE'),
+      parsed: buildParsedText(der, '', now, now, hint),
+      type,
+      role,
+    }
+  }
+
+  /** Signature + name chain + CA checks for an end entity and its CA. */
+  private chainChecks(subjectDer: Uint8Array, caDer: Uint8Array): VerificationCheck[] {
+    const ee = parseCertificate(subjectDer)
+    const ca = parseCertificate(caDer)
+    return [
+      ...verifyIssuedBy(ca, ca).map((c) => ({ ...c, name: `CA: ${c.name}` })),
+      ...checkProfile(ca, { keyUsage: ['keyCertSign', 'cRLSign'], cA: true }).map((c) => ({
+        ...c,
+        name: `CA: ${c.name}`,
+      })),
+      ...verifyIssuedBy(ee, ca),
+    ]
+  }
+
+  private failed(start: number, e: unknown, fallback: string): FormatOutput {
+    return {
+      certs: [],
+      checks: [],
+      timingMs: performance.now() - start,
+      error: e instanceof Error ? e.message : fallback,
+    }
+  }
+
+  /**
+   * Pure PQC: an ML-DSA-65 end-entity certificate (RFC 9881) issued by an
+   * ML-DSA-65 workshop CA. Empty context, parameters absent, critical
+   * keyUsage = digitalSignature.
    */
   async generatePurePQCCertMLDSA(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker
-  ): Promise<CertResult> {
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const notBefore = new Date()
-    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const { publicKey, signerFn } = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
-      const derBytes = await buildSelfSignedX509(publicKey, signerFn, ML_DSA_65_OID, subject)
-      const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'pure-pqc')
-      return { pem, parsed, timingMs: performance.now() - start }
-    } catch (e) {
+      const ca = await this.createWorkshopCA(M, hSession, onKey)
+      const ee = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      const { der } = await issueCertificate({
+        subject,
+        subjectKeyOid: ML_DSA_65_OID_STR,
+        subjectPublicKey: ee.publicKey,
+        issuer: ca,
+        isCA: false,
+        keyUsage: ['digitalSignature'],
+      })
+      const checks = [
+        ...this.chainChecks(der, ca.certDer),
+        ...checkProfile(parseCertificate(der), { keyUsage: ['digitalSignature'], cA: false }),
+        { name: 'ML-DSA-65 public key is 1,952 bytes', ok: ee.publicKey.length === 1952 },
+      ]
       return {
-        pem: '',
-        parsed: '',
+        certs: [
+          this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
+          this.view(
+            der,
+            'ML-DSA-65 end-entity certificate (RFC 9881)',
+            'pqc',
+            'subject',
+            'pure-pqc'
+          ),
+        ],
+        checks,
         timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'ML-DSA-65 certificate generation failed',
       }
+    } catch (e) {
+      return this.failed(start, e, 'ML-DSA-65 certificate generation failed')
     }
   }
 
@@ -929,448 +1019,335 @@ export class HybridCryptoService {
   }
 
   /**
-   * Alt-Sig / Catalyst certificate (ITU-T X.509 §9.8).
-   * ECDSA primary with ML-DSA-65 in extensions 2.5.29.72/73/74.
+   * Alt-Sig / Catalyst certificate (ITU-T X.509 (10/2019) §7.2.2, §9.8).
+   * ECDSA P-256 primary (DER Ecdsa-Sig-Value) with ML-DSA-65 in extensions
+   * 2.5.29.72/73/74. Self-signed: it demonstrates the extension mechanism.
    */
   async generateAltSigCert(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker
-  ): Promise<CertResult> {
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const notBefore = new Date()
-    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
-
-      const derBytes = await buildAltSigCert(
+      const der = await buildAltSigCert(
         ec.publicKeyRaw,
-        ec.signerFn,
+        ec.derSignerFn,
         mldsa.publicKey,
         mldsa.signerFn,
         subject
       )
-      const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'alt-sig')
-      return { pem, parsed, timingMs: performance.now() - start }
-    } catch (e) {
       return {
-        pem: '',
-        parsed: '',
+        certs: [
+          this.view(
+            der,
+            'Alt-Sig certificate: ECDSA primary + ML-DSA-65 extensions',
+            'classical',
+            'subject',
+            'alt-sig'
+          ),
+        ],
+        checks: verifyAltSigCert(parseCertificate(der)),
         timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'Alt-Sig certificate generation failed',
       }
+    } catch (e) {
+      return this.failed(start, e, 'Alt-Sig certificate generation failed')
     }
   }
 
   /**
-   * Related Certificates (RFC 9763) with two-pass bidirectional binding.
-   * Each cert contains RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36)
-   * with SHA-256 hash of the partner cert.
+   * Related Certificates (RFC 9763). An existing ECDSA Cert A is issued first
+   * and never modified; the requester proves possession of Cert A's key in a
+   * relatedCertRequest; the ML-DSA-65 workshop CA verifies that proof and
+   * issues Cert B carrying a hash of the complete final Cert A.
    */
   async generateRelatedCertPairReal(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker
-  ): Promise<{
-    classical: CertResult
-    pqc: CertResult
-    bindingHash: string
-    totalMs: number
-    error?: string
-  }> {
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const empty: CertResult = { pem: '', parsed: '', timingMs: 0 }
-    const notBefore = new Date()
-    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      const { der: certA } = await issueCertificate({
+        subject: subject.replace(/CN=([^/]+)/, 'CN=$1 (Existing classical)'),
+        subjectKeyOid: EC_PUBLIC_KEY_OID_STR,
+        subjectAlgId: ecP256SpkiAlgId(),
+        subjectPublicKey: ec.publicKeyRaw,
+        issuer: null,
+        selfSigner: { signatureOid: ECDSA_SHA256_OID_STR, signerFn: ec.derSignerFn },
+        isCA: false,
+        keyUsage: ['digitalSignature'],
+      })
+      const ca = await this.createWorkshopCA(M, hSession, onKey)
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
-
-      const result = await buildRelatedCertPairDER(
-        ec.publicKeyRaw,
-        ec.signerFn,
-        mldsa.publicKey,
-        mldsa.signerFn,
-        subject
-      )
-
-      const classicalSubject = subject.replace(/CN=([^/]+)/, 'CN=$1 (Classical)')
-      const pqcSubject = subject.replace(/CN=([^/]+)/, 'CN=$1 (PQC)')
-
+      const related = await buildRelatedCertificates({
+        certA,
+        certASignerFn: ec.derSignerFn,
+        locationInfo: 'urn:pqctoday:workshop:related-cert-a',
+        certBSubject: subject.replace(/CN=([^/]+)/, 'CN=$1 (New PQC)'),
+        certBKeyOid: ML_DSA_65_OID_STR,
+        certBPublicKey: mldsa.publicKey,
+        issuer: ca,
+      })
+      const certAParsed = parseCertificate(certA)
+      const certBParsed = parseCertificate(related.certB)
+      const checks: VerificationCheck[] = [
+        ...verifyIssuedBy(certAParsed, certAParsed).map((c) => ({
+          ...c,
+          name: `Cert A: ${c.name}`,
+        })),
+        {
+          name: 'CA verified the relatedCertRequest proof of possession of Cert A',
+          ok: related.requestVerified,
+        },
+        ...this.chainChecks(related.certB, ca.certDer).map((c) => ({
+          ...c,
+          name: c.name.startsWith('CA:') ? c.name : `Cert B: ${c.name}`,
+        })),
+        verifyRelatedCertificate(certBParsed, certA),
+      ]
       return {
-        classical: {
-          pem: derToPem(result.certA, 'CERTIFICATE'),
-          parsed: buildParsedText(
-            result.certA,
-            classicalSubject,
-            notBefore,
-            notAfter,
-            'related-classical'
+        certs: [
+          this.view(certA, 'Cert A — existing ECDSA P-256 certificate', 'classical', 'existing'),
+          this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
+          this.view(
+            related.certB,
+            'Cert B — new ML-DSA-65 certificate referencing Cert A',
+            'pqc',
+            'subject'
           ),
-          timingMs: performance.now() - start,
-        },
-        pqc: {
-          pem: derToPem(result.certB, 'CERTIFICATE'),
-          parsed: buildParsedText(result.certB, pqcSubject, notBefore, notAfter, 'related-pqc'),
-          timingMs: performance.now() - start,
-        },
-        bindingHash: result.bindingHashA,
-        totalMs: performance.now() - start,
+        ],
+        checks,
+        bindingHash: related.bindingHash,
+        timingMs: performance.now() - start,
       }
     } catch (e) {
-      return {
-        classical: empty,
-        pqc: empty,
-        bindingHash: '',
-        totalMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'Related cert pair generation failed',
-      }
+      return this.failed(start, e, 'Related certificate generation failed')
     }
   }
 
   /**
-   * Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07).
-   * ML-DSA-65 primary with DeltaCertificateDescriptor extension containing ECDSA delta.
+   * Chameleon certificate — HISTORICAL (draft-bonnell-lamps-chameleon-certs-07,
+   * expired individual draft). ML-DSA-65 primary with a DeltaCertificateDescriptor
+   * holding a DER-encoded ECDSA delta signature; the delta certificate is
+   * reconstructed from the descriptor and verified.
    */
   async generateChameleonCert(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker
-  ): Promise<CertResult> {
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const notBefore = new Date()
-    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
-
-      const derBytes = await buildChameleonCert(
+      const der = await buildChameleonCert(
         mldsa.publicKey,
         mldsa.signerFn,
         ec.publicKeyRaw,
-        ec.signerFn,
+        ec.derSignerFn,
         subject
       )
-      const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'chameleon')
-      return { pem, parsed, timingMs: performance.now() - start }
-    } catch (e) {
       return {
-        pem: '',
-        parsed: '',
+        certs: [
+          this.view(
+            der,
+            'Chameleon: ML-DSA-65 primary + ECDSA delta',
+            'pqc',
+            'subject',
+            'chameleon'
+          ),
+        ],
+        checks: verifyChameleonCert(parseCertificate(der)),
         timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'Chameleon certificate generation failed',
       }
+    } catch (e) {
+      return this.failed(start, e, 'Chameleon certificate generation failed')
     }
   }
 
   /**
-   * Generates a real self-signed X.509 certificate for SLH-DSA-128s via SoftHSM PKCS#11.
-   * C_GenerateKeyPair(CKM_SLH_DSA_KEY_PAIR_GEN) + C_MessageSign(CKM_SLH_DSA).
-   *
-   * @param subject OpenSSL slash-format DN e.g. `/CN=.../O=.../OU=...`
+   * Pure PQC: an SLH-DSA-SHA2-128s end-entity certificate (RFC 9909) issued by
+   * an SLH-DSA workshop CA. C_GenerateKeyPair(CKM_SLH_DSA_KEY_PAIR_GEN) +
+   * C_MessageSign(CKM_SLH_DSA).
    */
   async generateSelfSignedCertSLHDSA(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker
-  ): Promise<CertResult> {
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const notBefore = new Date()
-    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
+      const ca = await this.createWorkshopCA(M, hSession, onKey, 'SLH-DSA-SHA2-128s')
       const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
       if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s (Cert Gen)', 'private')
       if (onKey) onKey(pubHandle, 'slh-dsa', 'SLH-DSA-128s Public (Cert Gen)', 'public')
       const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
-
-      const derBytes = await buildSelfSignedX509(
-        publicKey,
-        async (tbs) => hsm_signBytesSLHDSA(M, hSession, privHandle, tbs),
-        SLH_DSA_SHA2_128S_OID,
-        subject
-      )
-
-      const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'pure-pqc-slh')
-
-      return { pem, parsed, timingMs: performance.now() - start }
-    } catch (e) {
+      const { der } = await issueCertificate({
+        subject,
+        subjectKeyOid: SLH_DSA_SHA2_128S_OID_STR,
+        subjectPublicKey: publicKey,
+        issuer: ca,
+        isCA: false,
+        keyUsage: ['digitalSignature'],
+      })
       return {
-        pem: '',
-        parsed: '',
+        certs: [
+          this.view(ca.certDer, 'Workshop CA (SLH-DSA-SHA2-128s)', 'pqc', 'ca'),
+          this.view(
+            der,
+            'SLH-DSA-128s end-entity certificate (RFC 9909)',
+            'pqc',
+            'subject',
+            'pure-pqc-slh'
+          ),
+        ],
+        checks: [
+          ...this.chainChecks(der, ca.certDer),
+          ...checkProfile(parseCertificate(der), { keyUsage: ['digitalSignature'], cA: false }),
+        ],
         timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'SLH-DSA certificate generation failed',
       }
+    } catch (e) {
+      return this.failed(start, e, 'SLH-DSA certificate generation failed')
+    }
+  }
+
+  /** ML-KEM-768 key pair in the HSM, with its PKCS#11 usage attributes checked. */
+  private generateMLKEMForCert(
+    M: SoftHSMModule,
+    hSession: number,
+    onKey: KeyTracker | undefined
+  ): { publicKey: Uint8Array; checks: VerificationCheck[] } {
+    const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, 768)
+    if (onKey) onKey(privHandle, 'ml-kem', 'ML-KEM-768 (Cert Gen)', 'private')
+    if (onKey) onKey(pubHandle, 'ml-kem', 'ML-KEM-768 Public (Cert Gen)', 'public')
+    const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
+    const pub = hsm_getKeyAttributes(M, hSession, pubHandle)
+    const prv = hsm_getKeyAttributes(M, hSession, privHandle)
+    return {
+      publicKey,
+      checks: [
+        { name: 'ML-KEM-768 public key is 1,184 bytes', ok: publicKey.length === 1184 },
+        {
+          name: 'ML-KEM public key: CKA_ENCAPSULATE set, no CKA_VERIFY',
+          ok: pub.ckEncapsulate === true && pub.ckVerify !== true,
+        },
+        {
+          name: 'ML-KEM private key: CKA_DECAPSULATE set, no CKA_SIGN',
+          ok: prv.ckDecapsulate === true && prv.ckSign !== true,
+        },
+      ],
     }
   }
 
   /**
-   * Pure PQC KEM certificate: ML-KEM-512/768/1024 per RFC 9935.
-   *
-   * KEM keys cannot self-sign (RFC 9935 §4: encryption-only). We mint a
-   * transient ML-DSA-65 issuer and CA-sign the KEM subject cert. Both
-   * keys are HSM-resident via softhsmv3 + pkcs11-provider; OpenSSL never
-   * sees raw key material, mirroring the S/MIME workshop's KEM-only flow
-   * in MLKEMEncryptDemo.
-   *
-   * Why HSM instead of OpenSSL `genpkey + req -force_pubkey`: the
-   * filesystem-key path was producing 0-byte certs in our 5.4 MB
-   * openssl.wasm bundle (RFC 9935 cert issuance via -force_pubkey isn't
-   * reliable for ML-KEM SPKI). Routing through pkcs11-provider's mkcert
-   * path produces a real PEM byte-identical to what an HSM-backed CA
-   * would emit in production.
-   *
-   * RFC 9935 OIDs:
-   *   id-alg-ml-kem-512   = 2.16.840.1.101.3.4.4.1
-   *   id-alg-ml-kem-768   = 2.16.840.1.101.3.4.4.2
-   *   id-alg-ml-kem-1024  = 2.16.840.1.101.3.4.4.3
+   * Pure PQC KEM: an ML-KEM-768 end-entity certificate (RFC 9935) issued by an
+   * ML-DSA-65 workshop CA. The subject key performs encapsulation and
+   * decapsulation; only the issuer key signs. keyUsage = keyEncipherment only.
+   * Runs on the playground HSM — the same runtime as every other format.
    */
   async generatePurePQCCertMLKEM(
-    variant: 'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024',
-    cn: string
-  ): Promise<CertResult> {
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const tag = variant.toLowerCase().replace(/-/g, '_')
-    const kemKeyId = `kem_${tag}_priv`
-    const issuerKeyId = `kem_${tag}_issuer`
-    // The cms.worker derives the issuer cert path from `${issuerKeyId}.crt`,
-    // so the issuer's self-signed cert MUST be minted with certId=issuerKeyId
-    // (see EmailSigning/worker/cms.worker.ts §3196 "Convention").
-    const issuerCertId = issuerKeyId
-    const certId = `kem_${tag}_cert`
-    const subject = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
-    const issuerSubject = '/CN=PQC Workshop CA/O=PQC Today/OU=Transient Issuer'
-
     try {
-      const cms = await this.getCms()
-
-      // 1. Generate the ML-KEM subject key in the HSM (encryption-only).
-      await cms.genKey(variant, kemKeyId, true)
-
-      // 2. Generate the ML-DSA-65 issuer key in the HSM.
-      await cms.genKey('ML-DSA-65', issuerKeyId, true)
-
-      // 3. Mint the issuer's self-signed CA cert. The cms.worker requires
-      //    `/ssl/<issuerKeyId>.crt` to exist before any CA-issued mkCert
-      //    call; otherwise it errors with "issuer cert not found". Mirrors
-      //    MLKEMEncryptDemo's CA-then-subject pattern.
-      await cms.mkCert({
-        keyId: issuerKeyId,
-        certId: issuerCertId,
-        subject: issuerSubject,
-        days: 730,
-        useHsm: true,
-      })
-
-      // 4. CA-issue the subject cert. pkcs11-provider signs the SPKI
-      //    containing the ML-KEM pubkey using the ML-DSA-65 issuer key.
-      //    No raw key material leaves the HSM.
-      const cert = await cms.mkCert({
-        keyId: kemKeyId,
-        certId,
+      const ca = await this.createWorkshopCA(M, hSession, onKey)
+      const kem = this.generateMLKEMForCert(M, hSession, onKey)
+      const { der } = await issueCertificate({
         subject,
-        days: 365,
-        useHsm: true,
-        issuerKeyId,
-        alg: variant,
+        subjectKeyOid: ML_KEM_768_OID_STR,
+        subjectPublicKey: kem.publicKey,
+        issuer: ca,
+        isCA: false,
+        keyUsage: ['keyEncipherment'],
       })
-
-      if (!cert.certPem) {
-        return {
-          pem: '',
-          parsed: '',
-          timingMs: performance.now() - start,
-          error: `${variant} CA-signed cert returned empty PEM`,
-        }
-      }
-
-      // 4. Parse the PEM for human-readable display. The PEM is plain
-      //    ASCII; we feed it to bare `openssl x509 -text -noout` (no HSM
-      //    needed for parsing).
-      const certBytes = new TextEncoder().encode(cert.certPem)
-      const parsedResult = await openSSLService.execute(
-        `openssl x509 -in ${certId}.pem -text -noout`,
-        [{ name: `${certId}.pem`, data: certBytes }]
-      )
-
       return {
-        pem: cert.certPem,
-        parsed: parsedResult.stdout || parsedResult.stderr || '',
+        certs: [
+          this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
+          this.view(der, 'ML-KEM-768 end-entity certificate (RFC 9935)', 'pqc', 'subject'),
+        ],
+        checks: [
+          ...this.chainChecks(der, ca.certDer),
+          ...checkProfile(parseCertificate(der), { keyUsage: ['keyEncipherment'], cA: false }),
+          ...kem.checks,
+        ],
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return {
-        pem: '',
-        parsed: '',
-        timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : `${variant} certificate generation failed`,
-      }
+      return this.failed(start, e, 'ML-KEM-768 certificate generation failed')
     }
   }
 
   /**
-   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem.
-   *
-   * The subject public key is a CompositeKEMPublicKey binding ML-KEM-768 with a classical
-   * KEM (X25519 or P-256) under a single OID. Like pure KEM certs, the cert itself is signed
-   * by a separate signing-capable issuer key (KEM keys cannot self-sign).
-   *
-   * draft-composite-kem OIDs (IANA PKIX arc; the draft moved off its
-   * earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering —
-   * verified against the live IETF datatracker as of 2026-07-03):
-   *   id-MLKEM768-X25519-SHA3-256      = 1.3.6.1.5.5.7.6.58
-   *   id-MLKEM768-ECDH-P256-SHA3-256   = 1.3.6.1.5.5.7.6.59
-   *
-   * Composite KEM (X25519 + ML-KEM-768) X.509 certificate per
-   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; in IESG Evaluation as
-   * of 2026-08-17, on the 2026-09-03 telechat agenda). OID
-   * id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58 (LAMPS draft §6).
-   *
-   * Why not OpenSSL: the LAMPS composite KEM draft is not yet an RFC.
-   * OpenSSL 3.5 ships X25519MLKEM768 as a TLS 1.3 hybrid named group
-   * (RFC 9145-style key exchange) but does NOT provide an X.509 SPKI
-   * encoder for the same algorithm — `openssl genpkey -algorithm
-   * X25519MLKEM768` returns `No encoders were found`. So the workshop
-   * routes through @noble/curves/x25519 + @noble/post-quantum/ml-kem
-   * for keygen and our own `buildCompositeKEMCert` (certBuilder.ts) for
-   * cert minting, in the same pattern used for the Silithium fused-
-   * signature path.
-   *
-   * Public key layout per LAMPS draft §6 byte concatenation (ML-KEM
-   * component first, then the traditional component — "mlkemPK ‖
-   * tradPK" per §4.1):
-   *   subjectPublicKey ::= mlkem768PublicKey (1184 B) ‖ x25519PublicKey (32 B)
-   *   total length: 1216 B
-   *
-   * Issuer: a transient ML-DSA-65 keypair (FIPS 204, RFC 9881). KEM
-   * keys cannot self-sign, so the cert is signed by a separate ML-DSA-65
-   * issuer key created on the fly.
-   *
-   * Note: the P-256 classical variant of this format
-   * (id-MLKEM768-ECDH-P256-SHA3-256 = 1.3.6.1.5.5.7.6.59) is reserved
-   * in the LAMPS draft but not yet wired in the workshop UI; it is
-   * accepted in the type signature for forward compatibility.
+   * Composite KEM certificate (draft-ietf-lamps-pq-composite-kem-21):
+   * id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58), subjectPublicKey =
+   * mlkem768PK (1184 B) ‖ x25519PK (32 B), ML-KEM first. Both keys live in the
+   * playground HSM; the certificate is issued by the ML-DSA-65 workshop CA.
+   * This shows the certificate ENCODING only — it does not run composite
+   * encapsulation, the KEM combiner, or decapsulation.
    */
   async generateCompositeKEMCert(
-    // pqcVariant: only ML-KEM-768 is wired today; the parameter is kept in
-    // the signature as a forward-compat slot for the LAMPS draft's eventual
-    // ML-KEM-1024 composite variant. Renamed to _pqcVariant to silence
-    // TS6133 noUnusedParameters under the production `tsc -b` build.
-    _pqcVariant: 'ML-KEM-768',
-    classicalVariant: 'X25519' | 'P-256',
-    cn: string
-  ): Promise<CertResult> {
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<FormatOutput> {
     const start = performance.now()
-    const subj = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
-
-    if (classicalVariant !== 'X25519') {
-      return {
-        pem: '',
-        parsed: '',
-        timingMs: performance.now() - start,
-        error: `Classical variant '${classicalVariant}' is reserved in LAMPS draft-ietf-lamps-pq-composite-kem (id-MLKEM768-ECDH-P256-SHA3-256) but not wired in this workshop. Only id-MLKEM768-X25519-SHA3-256 is implemented.`,
-      }
-    }
-
     try {
-      const compositeOidStr = COMPOSITE_KEM_MLKEM768_X25519_OID_STR
-      // Acknowledge that the P-256 variant's OID constant is imported for
-      // forward compatibility (referenced in the type-signature contract).
-      void COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR
-
-      // 1. Generate the composite KEM subject keys via @noble.
-      const x25519Pair = x25519.keygen()
-      const mlkemPair = ml_kem768.keygen()
-
-      // 2. Build the subject public key per LAMPS draft §6 (§4.1 byte
-      //    order — ML-KEM component first, then the traditional component):
-      //    mlkem768PublicKey(1184) ‖ x25519PublicKey(32) = 1216 bytes.
-      const compositePubKey = new Uint8Array(
-        mlkemPair.publicKey.length + x25519Pair.publicKey.length
+      const ca = await this.createWorkshopCA(M, hSession, onKey)
+      const kem = this.generateMLKEMForCert(M, hSession, onKey)
+      const x = hsm_generateECKeyPair(M, hSession, 'X25519')
+      if (onKey) onKey(x.privHandle, 'ecdh', 'X25519 (Composite KEM)', 'private')
+      if (onKey) onKey(x.pubHandle, 'ecdh', 'X25519 Public (Composite KEM)', 'public')
+      const point = hsm_extractECPoint(M, hSession, x.pubHandle)
+      // CKA_EC_POINT may arrive DER-wrapped (04 20 || 32 bytes); the composite
+      // key carries the raw 32-byte X25519 public key (RFC 7748).
+      const x25519Pub =
+        point.length === 34 && point[0] === 0x04 && point[1] === 0x20 ? point.slice(2) : point
+      if (x25519Pub.length !== 32)
+        throw new Error(`unexpected X25519 public key length ${x25519Pub.length}`)
+      const compositePub = new Uint8Array([...kem.publicKey, ...x25519Pub])
+      const der = await buildCompositeKEMCert(
+        compositePub,
+        COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
+        ca,
+        subject
       )
-      compositePubKey.set(mlkemPair.publicKey, 0)
-      compositePubKey.set(x25519Pair.publicKey, mlkemPair.publicKey.length)
-
-      // 3. Mint a transient ML-DSA-65 issuer (RFC 9881). KEM keys can't
-      //    self-sign — the cert binds the composite KEM public key under
-      //    an ML-DSA-65 signature from the same DN (self-issued, cross-
-      //    algorithm).
-      const issuerPair = ml_dsa65.keygen()
-      const mldsaSignerFn: SignerFn = async (tbsDer: Uint8Array) =>
-        ml_dsa65.sign(tbsDer, issuerPair.secretKey)
-
-      // 4. Build the X.509 cert. buildCompositeKEMCert uses the composite
-      //    OID for SubjectPublicKeyInfo.algorithm and the ML-DSA-65 OID
-      //    for TBSCertificate.signature, matching the LAMPS draft.
-      const certDer = await buildCompositeKEMCert(
-        compositePubKey,
-        compositeOidStr,
-        mldsaSignerFn,
-        ML_DSA_65_OID_STR,
-        subj
-      )
-      const pem = derToPem(certDer, 'CERTIFICATE')
-
-      // 5. Build a parsed-text description. We don't route through
-      //    `openssl x509 -text` because OpenSSL doesn't recognise the
-      //    LAMPS composite KEM OID yet and would print "unknown
-      //    algorithm". The description below is byte-exact and cites
-      //    the LAMPS draft sections so a learner can cross-reference.
-      const parsed = [
-        'Certificate:',
-        '    Data:',
-        '        Version: 3 (0x2)',
-        '        Serial Number: (random 16 bytes)',
-        `        Signature Algorithm: ml-dsa-65 (${ML_DSA_65_OID_STR})  [RFC 9881]`,
-        `    Issuer: ${cn} (transient ML-DSA-65 CA)`,
-        '    Validity',
-        '        Not Before: now',
-        '        Not After : now + 365 days',
-        `    Subject: ${cn}`,
-        '    Subject Public Key Info:',
-        `        Public Key Algorithm: id-MLKEM768-X25519-SHA3-256 (${compositeOidStr})`,
-        `        [LAMPS draft-ietf-lamps-pq-composite-kem §6  — IESG Evaluation]`,
-        `            Composite Public Key (1216 bytes):`,
-        `                ML-KEM-768 component   (1184 B): ${this.toHex(mlkemPair.publicKey).slice(0, 64)}…`,
-        `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
-        '        Encoding: subjectPublicKey ::= mlkem768PublicKey ‖ x25519PublicKey',
-        '    X509v3 extensions:',
-        '        X509v3 Basic Constraints: critical',
-        '            CA:FALSE',
-        `    Signature Algorithm: ml-dsa-65 (${ML_DSA_65_OID_STR})`,
-        `    Signature Value: 3309 bytes (ML-DSA-65 signature over TBSCertificate DER)`,
-        '',
-        '# References:',
-        '#   draft-ietf-lamps-pq-composite-kem  — IESG Evaluation',
-        '#     §6  Subject public key encoding',
-        '#     OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58',
-        '#   RFC 9881  ML-DSA in X.509 (signature algorithm)',
-        '#   FIPS 203  ML-KEM',
-        '#   FIPS 204  ML-DSA',
-        '# Backend: @noble/curves/x25519 + @noble/post-quantum/ml-kem +',
-        '#          @noble/post-quantum/ml-dsa (no OpenSSL composite KEM',
-        '#          encoder exists yet; LAMPS draft not yet RFC).',
-      ].join('\n')
-
       return {
-        pem,
-        parsed,
+        certs: [
+          this.view(ca.certDer, 'Workshop CA (ML-DSA-65)', 'pqc', 'ca'),
+          this.view(
+            der,
+            'Composite KEM certificate: ML-KEM-768 + X25519 (encoding only)',
+            'pqc',
+            'subject'
+          ),
+        ],
+        checks: [
+          ...this.chainChecks(der, ca.certDer),
+          ...checkProfile(parseCertificate(der), { keyUsage: ['keyEncipherment'], cA: false }),
+          ...kem.checks,
+          {
+            name: 'Composite public key is 1,216 bytes, ML-KEM component first',
+            ok:
+              compositePub.length === 1216 && kem.publicKey.every((b, i) => compositePub[i] === b),
+          },
+        ],
         timingMs: performance.now() - start,
       }
     } catch (e) {
-      return {
-        pem: '',
-        parsed: '',
-        timingMs: performance.now() - start,
-        error: e instanceof Error ? e.message : 'Composite KEM certificate generation failed',
-      }
+      return this.failed(start, e, 'Composite KEM certificate generation failed')
     }
   }
 }
