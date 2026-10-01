@@ -91,19 +91,19 @@ export const WYCHEPROOF_ATTRIBUTION =
 export const wycTag = (p: Provenance): string =>
   `Wycheproof(Google/C2SP)@${p.source_commit.slice(0, 8)} ${p.source_path.split('/').pop()}`
 
-type WycResult = 'valid' | 'invalid' | 'acceptable'
+export type WycResult = 'valid' | 'invalid' | 'acceptable'
 
 /** Upstream `result` → the `expected` value the row records. */
-const expectedFor = (r: WycResult): AcvpCaseMeta['expected'] =>
+export const expectedFor = (r: WycResult): AcvpCaseMeta['expected'] =>
   r === 'valid' ? 'byte-match' : r === 'invalid' ? 'rejected' : 'refuse-or-match'
 
-const flagsOf = (t: { flags?: string[] }) => (t.flags ?? []).join(',') || 'none'
+export const flagsOf = (t: { flags?: string[] }) => (t.flags ?? []).join(',') || 'none'
 
 /**
  * The shared verdict for a case whose engine call either refused (`rv`) or
  * produced `got`, against the upstream expectation.
  */
-function verdict(
+export function verdict(
   result: WycResult,
   refusedAs: string | null,
   got: Uint8Array | null,
@@ -163,7 +163,7 @@ interface XdhGroup {
   curve: string
   tests: XdhTest[]
 }
-interface WycFile<G> {
+export interface WycFile<G> {
   _provenance: Provenance
   testGroups: G[]
 }

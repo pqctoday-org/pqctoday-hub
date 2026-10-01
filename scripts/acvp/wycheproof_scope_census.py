@@ -37,6 +37,9 @@ import re
 import subprocess
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from vendor_wycheproof import apply_exclusions  # noqa: E402  (same directory)
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUT = ROOT / "scripts" / "acvp" / "wycheproof-scope.json"
 PIN_COMMIT = "3fa63dd0344abb611f1fb1d77e119938603ea230"
@@ -51,6 +54,16 @@ IMPLEMENTED_SCHEMAS = {
     "eddsa_verify_schema_v1.json",
     "keywrap_test_schema_v1.json",
     "rsassa_pss_verify_schema_v1.json",
+    # PQC batch 2026-09-30 — sections/wycheproofPqc.ts. The encaps and sign
+    # schemas run with a DECLARED subset (vendor_wycheproof.py EXCLUSIONS): the
+    # cases PKCS#11 cannot reproduce are excluded and counted below, per file.
+    "mlkem_keygen_seed_test_schema.json",
+    "mlkem_test_schema.json",
+    "mlkem_semi_expanded_decaps_test_schema.json",
+    "mlkem_encaps_test_schema.json",
+    "mldsa_verify_schema.json",
+    "mldsa_sign_noseed_schema.json",
+    "mldsa_sign_seed_schema.json",
 }
 
 SYMMETRIC_IN_SCOPE = {
@@ -135,6 +148,9 @@ def build(clone: pathlib.Path) -> dict:
         "upstream": {"files": 0, "cases": 0},
         "inScope": {"files": 0, "cases": 0, "invalid": 0},
         "vendored": {"files": 0, "cases": 0, "invalid": 0, "acceptable": 0},
+        # Cases of vendored files that a declared exclusion rule drops (they are
+        # NOT in `vendored.cases`, which counts only what is vendored and run).
+        "vendoredExcluded": {"files": 0, "cases": 0, "valid": 0, "invalid": 0},
         "inScopeRunnerMissing": {"files": 0, "cases": 0, "invalid": 0},
         "inScopeNotVendored": {"files": 0, "cases": 0, "invalid": 0},
         "outOfScope": {"files": 0, "cases": 0},
@@ -182,8 +198,23 @@ def build(clone: pathlib.Path) -> dict:
             )
         elif reason:
             rec["reason"] = reason
+        kept_counts = counts
         if executed:
             rec["localPath"] = f"src/data/acvp/wycheproof_{p.name}"
+            _, excl = apply_exclusions(p.name, doc)
+            if excl:
+                ex = {"valid": 0, "invalid": 0, "acceptable": 0}
+                for c in excl["cases"]:
+                    ex[str(c["result"])] += 1
+                kept_counts = {k: counts[k] - ex[k] for k in counts}
+                rec["vendoredCases"] = sum(kept_counts.values())
+                rec["excluded"] = {
+                    "cases": excl["count"],
+                    "byResult": ex,
+                    "rules": sorted(excl["rules"]),
+                    "reason": "declared subset — see the file's _provenance.excluded_cases and "
+                    "EXCLUSIONS in scripts/acvp/vendor_wycheproof.py",
+                }
         files.append(rec)
         totals["upstream"]["files"] += 1
         totals["upstream"]["cases"] += n
@@ -193,10 +224,16 @@ def build(clone: pathlib.Path) -> dict:
             totals["inScope"]["invalid"] += counts["invalid"]
             k = "vendored" if executed else ("inScopeNotVendored" if runner else "inScopeRunnerMissing")
             totals[k]["files"] += 1
-            totals[k]["cases"] += n
-            totals[k]["invalid"] += counts["invalid"]
+            totals[k]["cases"] += sum(kept_counts.values())
+            totals[k]["invalid"] += kept_counts["invalid"]
             if executed:
-                totals["vendored"]["acceptable"] += counts["acceptable"]
+                totals["vendored"]["acceptable"] += kept_counts["acceptable"]
+                if "excluded" in rec:
+                    x = rec["excluded"]
+                    totals["vendoredExcluded"]["files"] += 1
+                    totals["vendoredExcluded"]["cases"] += x["cases"]
+                    totals["vendoredExcluded"]["valid"] += x["byResult"]["valid"]
+                    totals["vendoredExcluded"]["invalid"] += x["byResult"]["invalid"]
         else:
             totals["outOfScope"]["files"] += 1
             totals["outOfScope"]["cases"] += n
@@ -214,6 +251,7 @@ def build(clone: pathlib.Path) -> dict:
             "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: "
             "every one of the 343 upstream files is accounted for here as vendored-and-executed, "
             "in-scope-not-vendored (a runner exists for its schema but the file was not chosen), "
+            "vendored with a declared exclusion (vendoredCases + excluded, every excluded case counted), "
             "in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope "
             "(with the filter that excluded it).",
         },
@@ -241,7 +279,8 @@ def main() -> int:
         f"wrote {OUT.name}: upstream {t['upstream']['files']} files / {t['upstream']['cases']} cases; "
         f"in scope {t['inScope']['files']}/{t['inScope']['cases']}; "
         f"vendored+executed {t['vendored']['files']}/{t['vendored']['cases']} "
-        f"({t['vendored']['invalid']} invalid, {t['vendored']['acceptable']} acceptable); "
+        f"({t['vendored']['invalid']} invalid, {t['vendored']['acceptable']} acceptable; "
+        f"{t['vendoredExcluded']['cases']} excluded by declared rule from {t['vendoredExcluded']['files']} files); "
         f"in-scope runner missing {t['inScopeRunnerMissing']['files']}/{t['inScopeRunnerMissing']['cases']} "
         f"({t['inScopeRunnerMissing']['invalid']} invalid); "
         f"out of scope {t['outOfScope']['files']}/{t['outOfScope']['cases']}"

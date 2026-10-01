@@ -133,7 +133,7 @@ export function importPublic(M: SoftHSMModule, h: number, v: Variant, ek: Uint8A
   )
 }
 
-function importPrivate(M: SoftHSMModule, h: number, v: Variant, dk: Uint8Array) {
+export function importPrivate(M: SoftHSMModule, h: number, v: Variant, dk: Uint8Array) {
   return createObjectRv(
     M,
     h,
