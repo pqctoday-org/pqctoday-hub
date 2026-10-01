@@ -179,6 +179,20 @@ export function EditorialIndependenceView() {
             <li>Update data that has changed in the underlying authoritative source.</li>
           </ol>
           <p>Disclosure is published in the changelog and on the relevant data page.</p>
+          <p>
+            Anyone, vendor or not, can propose a correction or a new record with its source through
+            a{' '}
+            <a
+              href="https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline inline-flex items-center gap-1"
+            >
+              Data Suggestion issue
+              <ExternalLink size={12} />
+            </a>{' '}
+            on GitHub. It is public, and the same evidence rule applies.
+          </p>
         </Section>
 
         <Section number={5} slug="funding-sources" title="Funding sources">
