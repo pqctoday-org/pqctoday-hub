@@ -3518,8 +3518,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Customers are starting to ask about quantum. Here is what you can say today, which dates are real and whose they are, and which words do not hold up — each linked to the record behind it.',
         ctaPrimary: 'Learn what you can say',
         ctaPrimaryHref: '/learn/talking-about-pqc',
-        ctaSecondary: 'See who has actually shipped',
-        ctaSecondaryHref: '/migrate',
+        ctaSecondary: "What we know, and what we don't",
+        ctaSecondaryHref: '/threats',
         proofChips: [
           'Plain English by default',
           'Every claim links to its own source',
@@ -3542,19 +3542,19 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Optional, none of it locked',
         gridCards: [
           {
-            title: 'The dates customers are working to',
-            body: 'Government and regulator deadlines, each with whose it is and the source behind it.',
-            href: '/timeline',
+            title: 'The names you will quote',
+            body: 'ML-KEM, ML-DSA and SLH-DSA: what each one replaces, and where each stands.',
+            href: '/algorithms?tab=transition&highlight=ML-KEM-768',
           },
           {
-            title: 'Who has actually shipped',
-            body: 'Which products have post-quantum support, drawn from the same proof-gated catalogue as everything else on this site — not press releases.',
-            href: '/migrate',
+            title: "The questions a customer's team will face",
+            body: 'Six plain questions and a rough position. About 3 minutes.',
+            href: '/assess?mode=quick',
           },
           {
-            title: 'An overclaim costs more than it wins',
-            body: 'Customers can now check a quantum claim against public records. The sentence they can verify is the one they trust.',
-            href: '/learn/talking-about-pqc',
+            title: 'Corrections in public build trust',
+            body: 'When this site gets something wrong, it logs the correction where anyone can see it instead of quietly fixing it. Hold your own claims to the same standard.',
+            href: '/revisions',
           },
         ] as [
           { title: string; body: string; href?: string },

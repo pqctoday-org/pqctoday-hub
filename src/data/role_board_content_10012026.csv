@@ -1718,8 +1718,8 @@ curious,atwork,headline,,Talk about it without overclaiming.,active,,,2026-10-01
 curious,atwork,sub,,"Customers are starting to ask about quantum. Here is what you can say today, which dates are real and whose they are, and which words do not hold up — each linked to the record behind it.",active,,,2026-10-01,
 curious,atwork,cta_primary_label,,Learn what you can say,active,,,2026-10-01,
 curious,atwork,cta_primary_href,,/learn/talking-about-pqc,active,,,2026-10-01,
-curious,atwork,cta_secondary_label,,See who has actually shipped,active,,,2026-10-01,
-curious,atwork,cta_secondary_href,,/migrate,active,,,2026-10-01,
+curious,atwork,cta_secondary_label,,"What we know, and what we don't",active,,,2026-10-01,
+curious,atwork,cta_secondary_href,,/threats,active,,,2026-10-01,"2026-10-01: links re-homed from the replaced curious/howbad option so curious still reaches Threats, Algorithms, Assess and Revisions (audit:role-board-coverage). Same destinations and placeholders howbad used."
 curious,atwork,proof_chip,0,Plain English by default,active,,,2026-10-01,
 curious,atwork,proof_chip,1,Every claim links to its own source,active,,,2026-10-01,
 curious,atwork,proof_chip,2,Nothing to install,active,,,2026-10-01,
@@ -1736,13 +1736,13 @@ curious,atwork,side_card_punchline,,"Say what the record shows, and link to it."
 curious,atwork,side_card_footnote,,Guidance drawn from how this site labels certificates and deadlines. It is not legal advice.,active,,,2026-10-01,
 curious,atwork,grid_title,,Where you can go next,active,,,2026-10-01,
 curious,atwork,grid_sub,,"Optional, none of it locked",active,,,2026-10-01,
-curious,atwork,grid_card_title,0,The dates customers are working to,active,,,2026-10-01,
-curious,atwork,grid_card_body,0,"Government and regulator deadlines, each with whose it is and the source behind it.",active,,,2026-10-01,
-curious,atwork,grid_card_href,0,/timeline,active,,,2026-10-01,
-curious,atwork,grid_card_title,1,Who has actually shipped,active,,,2026-10-01,
-curious,atwork,grid_card_body,1,"Which products have post-quantum support, drawn from the same proof-gated catalogue as everything else on this site — not press releases.",active,,,2026-10-01,
-curious,atwork,grid_card_href,1,/migrate,active,,,2026-10-01,
-curious,atwork,grid_card_title,2,An overclaim costs more than it wins,active,,,2026-10-01,
-curious,atwork,grid_card_body,2,Customers can now check a quantum claim against public records. The sentence they can verify is the one they trust.,active,,,2026-10-01,
-curious,atwork,grid_card_href,2,/learn/talking-about-pqc,active,,,2026-10-01,Argument card linked to the module that makes the argument; the module is on curious's own recommendedPath.
+curious,atwork,grid_card_title,0,The names you will quote,active,,,2026-10-01,
+curious,atwork,grid_card_body,0,"ML-KEM, ML-DSA and SLH-DSA: what each one replaces, and where each stands.",active,,,2026-10-01,
+curious,atwork,grid_card_href,0,/algorithms?tab=transition&highlight=ML-KEM-768,active,,,2026-10-01,"2026-10-01: links re-homed from the replaced curious/howbad option so curious still reaches Threats, Algorithms, Assess and Revisions (audit:role-board-coverage). Same destinations and placeholders howbad used."
+curious,atwork,grid_card_title,1,The questions a customer's team will face,active,,,2026-10-01,
+curious,atwork,grid_card_body,1,{Assess_quick_question_count} plain questions and a rough position. About {assess_quick_minutes} minutes.,active,,,2026-10-01,
+curious,atwork,grid_card_href,1,/assess?mode=quick,active,,,2026-10-01,"2026-10-01: links re-homed from the replaced curious/howbad option so curious still reaches Threats, Algorithms, Assess and Revisions (audit:role-board-coverage). Same destinations and placeholders howbad used."
+curious,atwork,grid_card_title,2,Corrections in public build trust,active,,,2026-10-01,
+curious,atwork,grid_card_body,2,"When this site gets something wrong, it logs the correction where anyone can see it instead of quietly fixing it. Hold your own claims to the same standard.",active,,,2026-10-01,
+curious,atwork,grid_card_href,2,/revisions,active,,,2026-10-01,"2026-10-01: links re-homed from the replaced curious/howbad option so curious still reaches Threats, Algorithms, Assess and Revisions (audit:role-board-coverage). Same destinations and placeholders howbad used."
 curious,atwork,track_title,,Start anywhere. Nothing is locked.,active,,,2026-10-01,
