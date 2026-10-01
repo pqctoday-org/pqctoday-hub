@@ -15,9 +15,11 @@ import {
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import { COMPOSITE_PROFILE_CHOICES } from '../services/certBuilder'
 import {
-  HYBRID_CERT_FORMATS,
+  CURRENT_HYBRID_CERT_FORMATS,
+  HISTORICAL_HYBRID_CERT_FORMATS,
   STATUS_BADGE_CLASSES,
   STRUCTURE_LINE_COLOR_CLASSES,
+  type HybridCertFormat,
   type HybridFormatId,
 } from '../constants'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
@@ -409,13 +411,334 @@ export const HybridCertFormats: React.FC = () => {
 
   const generateAll = useCallback(async () => {
     setGenerating('all')
-    for (const fmt of HYBRID_CERT_FORMATS) {
+    // Current formats only — historical designs are generated on request.
+    for (const fmt of CURRENT_HYBRID_CERT_FORMATS) {
       await generateFormat(fmt.id, true)
     }
     setGenerating(null)
   }, [generateFormat])
 
   const anyGenerated = Object.values(results).some((r) => !r.error)
+
+  // The comparison table covers current formats, plus any historical design the
+  // user chose to generate.
+  const comparisonFormats = [
+    ...CURRENT_HYBRID_CERT_FORMATS,
+    ...HISTORICAL_HYBRID_CERT_FORMATS.filter((f) => results[f.id] && !results[f.id].error),
+  ]
+
+  const renderFormatCard = (fmt: HybridCertFormat) => {
+    const result = results[fmt.id]
+    const isGeneratingThis =
+      generating === fmt.id || (generating === 'all' && !result && fmt.group === 'current')
+    const isCurrentlyExecuting = generatingFormat === fmt.id
+    const badgeClass = STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
+
+    return (
+      <div key={fmt.id} className="glass-panel p-5 space-y-4 min-w-0">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText size={18} className="text-primary" />
+            <h3 className="font-bold text-foreground text-sm">{fmt.label}</h3>
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded border font-bold ${badgeClass}`}>
+            {fmt.status}
+          </span>
+        </div>
+
+        {/* Standard & OIDs */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="font-medium">Standard:</span>
+            <a
+              href={fmt.standardUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline flex items-center gap-0.5"
+            >
+              {fmt.standard}
+              <ExternalLink size={10} />
+            </a>
+          </div>
+          {fmt.oids.map((oid, i) => (
+            <div key={i} className="font-mono text-[10px] text-muted-foreground">
+              OID: {oid}
+            </div>
+          ))}
+        </div>
+
+        {/* ASN.1 Structure Diagram */}
+        <div className="font-mono text-[10px] bg-background p-3 rounded border border-border">
+          {fmt.structureLines.map((line, i) => (
+            <div
+              key={i}
+              className={STRUCTURE_LINE_COLOR_CLASSES[line.color]}
+              style={{ paddingLeft: `${line.indent * 12}px` }}
+            >
+              {line.text || '\u00A0'}
+            </div>
+          ))}
+        </div>
+
+        {/* Generate button or results */}
+        {!result && !isGeneratingThis && (
+          <div className="space-y-2">
+            {fmt.id === 'composite' && (
+              <div className="space-y-1">
+                <label
+                  htmlFor="composite-profile"
+                  className="block text-xs font-medium text-muted-foreground"
+                >
+                  Composite profile (draft §6)
+                </label>
+                {/*
+                  DOCUMENTED EXCEPTION to the <FilterDropdown> contract
+                  (WS22 Stage 2). The two <optgroup>s — "Recommended by
+                  §10.4" and "Also implemented" — are normative guidance
+                  from the composite-sigs draft, not decoration, and
+                  FilterDropdown has no grouped-item concept: flattening
+                  the list would drop the recommendation that tells a
+                  learner which profile to pick. Revisit if
+                  FilterDropdown ever grows option groups.
+                */}
+                {/* eslint-disable-next-line no-restricted-syntax -- see exception note above */}
+                <select
+                  id="composite-profile"
+                  value={compositeOid}
+                  onChange={(e) => setCompositeOid(e.target.value)}
+                  disabled={generating !== null}
+                  className="w-full max-w-md rounded-md border border-border bg-background px-2 py-1.5 text-xs disabled:opacity-50"
+                >
+                  <optgroup label="Recommended by §10.4">
+                    {COMPOSITE_PROFILE_CHOICES.filter((c) => c.recommended).map((c) => (
+                      <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
+                        {c.shortLabel} — {c.profile.compositeOid}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Also implemented">
+                    {COMPOSITE_PROFILE_CHOICES.filter((c) => !c.recommended).map((c) => (
+                      <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
+                        {c.shortLabel} — {c.profile.compositeOid}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+                <p className="text-[10px] leading-relaxed text-muted-foreground">
+                  {compositeChoice.useWhen}
+                </p>
+                <p className="text-[10px] text-muted-foreground">
+                  <span className="font-mono">{compositeChoice.profile.label}</span> — PH{' '}
+                  {compositeChoice.profile.preHash}, traditional{' '}
+                  {compositeChoice.profile.classical.kind === 'ed25519'
+                    ? 'Ed25519 (hashes internally, no separate hash)'
+                    : compositeChoice.profile.classical.kind === 'rsa-pss'
+                      ? `RSA-${compositeChoice.profile.classical.modulusBits} PSS with ${compositeChoice.profile.classical.tradHash}`
+                      : `ECDSA ${compositeChoice.profile.classical.curve} with ${compositeChoice.profile.classical.tradHash}`}
+                  . The pre-hash and the traditional hash are chosen independently — the SHA-xxx in
+                  the profile name is the pre-hash, not the traditional algorithm’s hash.
+                </p>
+              </div>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => generateFormat(fmt.id)}
+              disabled={generating !== null || !hsm.isReady}
+              className="flex items-center gap-2 text-primary border-primary/20 hover:bg-primary/10"
+            >
+              <Play size={14} fill="currentColor" />
+              Generate
+            </Button>
+          </div>
+        )}
+
+        {isGeneratingThis && (
+          <div className="flex flex-col items-start gap-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+              Generating...
+            </div>
+            {isCurrentlyExecuting && (
+              <span className="text-xs text-muted-foreground h-4">{phase}</span>
+            )}
+          </div>
+        )}
+
+        {result && (
+          <div className="space-y-3">
+            {result.error ? (
+              <div className="space-y-1">
+                <p className="text-xs text-destructive">{result.error}</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {fmt.id === 'pure-pqc' &&
+                    'Requires ML-DSA-65 key pair via PKCS#11 (C_GenerateKeyPair + C_Sign).'}
+                  {fmt.id === 'pure-pqc-slh' &&
+                    'Requires SLH-DSA-128s key pair via liboqs (C_GenerateKeyPair + C_MessageSign).'}
+                  {fmt.id === 'composite' &&
+                    'Requires both ML-DSA-65 and ECDSA P-256 key pairs; both signatures over shared TBS bytes.'}
+                  {fmt.id === 'alt-sig' &&
+                    'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
+                  {fmt.id === 'related-certs' &&
+                    'Requires two independent key pairs (ECDSA + ML-DSA-65) with SHA-256 cross-binding.'}
+                  {fmt.id === 'chameleon' &&
+                    'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
+                  {fmt.id === 'pure-pqc-kem' &&
+                    'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
+                  {fmt.id === 'composite-kem' &&
+                    'Per draft-ietf-lamps-pq-composite-kem §6 (IESG Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
+                </p>
+                {!isGeneratingThis && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => generateFormat(fmt.id)}
+                    disabled={generating !== null || !hsm.isReady}
+                    className="flex items-center gap-2 text-status-error border-destructive/20 hover:bg-destructive/10 mt-2"
+                  >
+                    <Play size={14} fill="currentColor" />
+                    Retry
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Timing + DER size */}
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span>
+                    Total:{' '}
+                    <strong className="text-foreground">{result.timingMs.toFixed(0)}ms</strong>
+                  </span>
+                  <span>
+                    DER:{' '}
+                    <strong className="text-foreground">
+                      {result.certs.reduce((s, c) => s + pemToDerSize(c.pem), 0)} B
+                    </strong>
+                  </span>
+                  <span>
+                    Certs: <strong className="text-foreground">{result.certs.length}</strong>
+                  </span>
+                </div>
+
+                {/* Binding hash for related certs */}
+                {result.bindingHash && (
+                  <div className="flex items-start gap-2 bg-primary/5 rounded-lg p-2 border border-primary/10">
+                    <Link2 size={14} className="text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-[10px] font-medium text-primary">
+                        SHA-256(Cert A) — stored in Cert B&apos;s RelatedCertificate extension
+                      </div>
+                      <div className="font-mono text-[10px] text-muted-foreground break-all">
+                        {result.bindingHash}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Component certs */}
+                {result.certs.map((cert) => {
+                  const viewKey = `${fmt.id}-${cert.type}`
+                  const currentView = expandedViews[viewKey]
+                  const certBadgeClass =
+                    cert.type === 'pqc'
+                      ? 'bg-success/10 text-success border-success/20'
+                      : 'bg-warning/10 text-warning border-warning/20'
+                  const copyKey = `${viewKey}-${currentView}`
+                  const isCopied = copiedKey === copyKey
+
+                  return (
+                    <div key={cert.label} className="border border-border rounded-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-foreground">{cert.label}</span>
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${certBadgeClass}`}
+                        >
+                          {cert.type === 'pqc' ? 'PQC' : 'CLASSICAL'}
+                        </span>
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleView(viewKey, 'parsed')}
+                          className={`text-[10px] h-7 px-2 ${
+                            currentView === 'parsed'
+                              ? 'bg-primary/20 text-primary border border-primary/50'
+                              : 'text-muted-foreground border border-border hover:border-primary/30'
+                          }`}
+                        >
+                          Parsed
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleView(viewKey, 'pem')}
+                          className={`text-[10px] h-7 px-2 ${
+                            currentView === 'pem'
+                              ? 'bg-primary/20 text-primary border border-primary/50'
+                              : 'text-muted-foreground border border-border hover:border-primary/30'
+                          }`}
+                        >
+                          PEM
+                        </Button>
+                        {currentView && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                copyToClipboard(
+                                  currentView === 'pem' ? cert.pem.trim() : cert.parsed.trim(),
+                                  copyKey
+                                )
+                              }
+                              className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30 ml-auto"
+                            >
+                              {isCopied ? (
+                                <Check size={11} className="text-success" />
+                              ) : (
+                                <Copy size={11} />
+                              )}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                downloadContent(
+                                  currentView === 'pem' ? cert.pem.trim() : cert.parsed.trim(),
+                                  currentView === 'pem'
+                                    ? `${fmt.id}-${cert.type}.pem`
+                                    : `${fmt.id}-${cert.type}-parsed.txt`
+                                )
+                              }
+                              className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30"
+                            >
+                              <Download size={11} />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                      {currentView && (
+                        <pre className="text-[10px] bg-background p-2 rounded border border-border overflow-x-auto max-h-48 overflow-y-auto font-mono whitespace-pre-wrap">
+                          {currentView === 'parsed' ? cert.parsed.trim() : cert.pem.trim()}
+                        </pre>
+                      )}
+                    </div>
+                  )
+                })}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Educational note */}
+        <div className="bg-muted/30 rounded-lg p-3 border border-border">
+          <p className="text-[10px] text-muted-foreground">{fmt.educationalNote}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-full relative">
@@ -442,19 +765,23 @@ export const HybridCertFormats: React.FC = () => {
           variant="info"
         >
           <p>
-            A &quot;harvest now, decrypt later&quot; adversary recording TLS today can break
-            RSA/ECDSA signatures retroactively once a cryptographically-relevant quantum computer
-            exists. Hybrid certificates let you deploy PQC signatures <em>without</em> abandoning
-            classical trust anchors — relying parties that don&apos;t support ML-DSA still validate
-            the RSA/ECDSA component, while PQC-capable clients get full quantum resistance.
+            Two quantum risks reach certificates differently. &quot;Harvest now, decrypt later&quot;
+            is a confidentiality risk: traffic recorded today can be decrypted once a
+            cryptographically-relevant quantum computer can break the classical key exchange, so key
+            establishment must move to PQC first. Signatures are different: a future quantum
+            computer could forge new RSA/ECDSA signatures, but it cannot reach back and undo
+            authentication that already happened. Certificates need PQC signatures before that
+            computer exists, and relying parties upgrade at different speeds.
           </p>
           <p className="mt-2">
-            Three approaches are compared here: <strong>dual-cert</strong> (two separate X.509
-            certificates, widest compatibility), <strong>catalyst/chameleon</strong> (classical cert
-            with a non-critical PQC extension — transparent to legacy verifiers), and{' '}
-            <strong>LAMPS composite</strong> (single OID, both algorithms required — strongest
-            binding, defined in draft-ietf-lamps-pq-composite-sigs). Pick the format that matches
-            your relying-party upgrade horizon.
+            The main comparison shows {CURRENT_HYBRID_CERT_FORMATS.length} formats: pure PQC
+            signature certificates, a single-OID <strong>composite</strong> signature (both
+            algorithms must verify), <strong>Alt-Sig</strong> (a classical certificate carrying a
+            PQC key and signature in extensions), <strong>Related Certificates</strong> (two
+            separate certificates linked by a hash), and two KEM certificate formats. The subject
+            key and the certificate signature are independent: an ML-KEM key cannot sign, so its
+            certificate is signed by a separate CA. Pick the format that matches your relying-party
+            upgrade horizon.
           </p>
         </WhyThisMatters>
 
@@ -478,12 +805,12 @@ export const HybridCertFormats: React.FC = () => {
           {generating === 'all' ? (
             <>
               <Loader2 size={18} className="animate-spin" aria-hidden="true" />
-              Generating All Formats...
+              Generating Current Formats...
             </>
           ) : (
             <>
               <Play size={18} fill="currentColor" />
-              Generate All Formats
+              Generate All Current Formats
             </>
           )}
         </Button>
@@ -500,335 +827,28 @@ export const HybridCertFormats: React.FC = () => {
           </div>
         )}
 
-        {/* Format cards */}
+        {/* Format cards — current formats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {HYBRID_CERT_FORMATS.map((fmt) => {
-            const result = results[fmt.id]
-            const isGeneratingThis = generating === fmt.id || (generating === 'all' && !result)
-            const isCurrentlyExecuting = generatingFormat === fmt.id
-            const badgeClass =
-              STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
-
-            return (
-              <div key={fmt.id} className="glass-panel p-5 space-y-4 min-w-0">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText size={18} className="text-primary" />
-                    <h3 className="font-bold text-foreground text-sm">{fmt.label}</h3>
-                  </div>
-                  <span className={`text-xs px-2 py-0.5 rounded border font-bold ${badgeClass}`}>
-                    {fmt.status}
-                  </span>
-                </div>
-
-                {/* Standard & OIDs */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span className="font-medium">Standard:</span>
-                    <a
-                      href={fmt.standardUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline flex items-center gap-0.5"
-                    >
-                      {fmt.standard}
-                      <ExternalLink size={10} />
-                    </a>
-                  </div>
-                  {fmt.oids.map((oid, i) => (
-                    <div key={i} className="font-mono text-[10px] text-muted-foreground">
-                      OID: {oid}
-                    </div>
-                  ))}
-                </div>
-
-                {/* ASN.1 Structure Diagram */}
-                <div className="font-mono text-[10px] bg-background p-3 rounded border border-border">
-                  {fmt.structureLines.map((line, i) => (
-                    <div
-                      key={i}
-                      className={STRUCTURE_LINE_COLOR_CLASSES[line.color]}
-                      style={{ paddingLeft: `${line.indent * 12}px` }}
-                    >
-                      {line.text || '\u00A0'}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Generate button or results */}
-                {!result && !isGeneratingThis && (
-                  <div className="space-y-2">
-                    {fmt.id === 'composite' && (
-                      <div className="space-y-1">
-                        <label
-                          htmlFor="composite-profile"
-                          className="block text-xs font-medium text-muted-foreground"
-                        >
-                          Composite profile (draft §6)
-                        </label>
-                        {/*
-                          DOCUMENTED EXCEPTION to the <FilterDropdown> contract
-                          (WS22 Stage 2). The two <optgroup>s — "Recommended by
-                          §10.4" and "Also implemented" — are normative guidance
-                          from the composite-sigs draft, not decoration, and
-                          FilterDropdown has no grouped-item concept: flattening
-                          the list would drop the recommendation that tells a
-                          learner which profile to pick. Revisit if
-                          FilterDropdown ever grows option groups.
-                        */}
-                        {/* eslint-disable-next-line no-restricted-syntax -- see exception note above */}
-                        <select
-                          id="composite-profile"
-                          value={compositeOid}
-                          onChange={(e) => setCompositeOid(e.target.value)}
-                          disabled={generating !== null}
-                          className="w-full max-w-md rounded-md border border-border bg-background px-2 py-1.5 text-xs disabled:opacity-50"
-                        >
-                          <optgroup label="Recommended by §10.4">
-                            {COMPOSITE_PROFILE_CHOICES.filter((c) => c.recommended).map((c) => (
-                              <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
-                                {c.shortLabel} — {c.profile.compositeOid}
-                              </option>
-                            ))}
-                          </optgroup>
-                          <optgroup label="Also implemented">
-                            {COMPOSITE_PROFILE_CHOICES.filter((c) => !c.recommended).map((c) => (
-                              <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
-                                {c.shortLabel} — {c.profile.compositeOid}
-                              </option>
-                            ))}
-                          </optgroup>
-                        </select>
-                        <p className="text-[10px] leading-relaxed text-muted-foreground">
-                          {compositeChoice.useWhen}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground">
-                          <span className="font-mono">{compositeChoice.profile.label}</span> — PH{' '}
-                          {compositeChoice.profile.preHash}, traditional{' '}
-                          {compositeChoice.profile.classical.kind === 'ed25519'
-                            ? 'Ed25519 (hashes internally, no separate hash)'
-                            : compositeChoice.profile.classical.kind === 'rsa-pss'
-                              ? `RSA-${compositeChoice.profile.classical.modulusBits} PSS with ${compositeChoice.profile.classical.tradHash}`
-                              : `ECDSA ${compositeChoice.profile.classical.curve} with ${compositeChoice.profile.classical.tradHash}`}
-                          . The pre-hash and the traditional hash are chosen independently — the
-                          SHA-xxx in the profile name is the pre-hash, not the traditional
-                          algorithm’s hash.
-                        </p>
-                      </div>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => generateFormat(fmt.id)}
-                      disabled={generating !== null || !hsm.isReady}
-                      className="flex items-center gap-2 text-primary border-primary/20 hover:bg-primary/10"
-                    >
-                      <Play size={14} fill="currentColor" />
-                      Generate
-                    </Button>
-                  </div>
-                )}
-
-                {isGeneratingThis && (
-                  <div className="flex flex-col items-start gap-1">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-                      Generating...
-                    </div>
-                    {isCurrentlyExecuting && (
-                      <span className="text-xs text-muted-foreground h-4">{phase}</span>
-                    )}
-                  </div>
-                )}
-
-                {result && (
-                  <div className="space-y-3">
-                    {result.error ? (
-                      <div className="space-y-1">
-                        <p className="text-xs text-destructive">{result.error}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {fmt.id === 'pure-pqc' &&
-                            'Requires ML-DSA-65 key pair via PKCS#11 (C_GenerateKeyPair + C_Sign).'}
-                          {fmt.id === 'pure-pqc-slh' &&
-                            'Requires SLH-DSA-128s key pair via liboqs (C_GenerateKeyPair + C_MessageSign).'}
-                          {fmt.id === 'composite' &&
-                            'Requires both ML-DSA-65 and ECDSA P-256 key pairs; both signatures over shared TBS bytes.'}
-                          {fmt.id === 'alt-sig' &&
-                            'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
-                          {fmt.id === 'related-certs' &&
-                            'Requires two independent key pairs (ECDSA + ML-DSA-65) with SHA-256 cross-binding.'}
-                          {fmt.id === 'chameleon' &&
-                            'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
-                          {fmt.id === 'pure-pqc-kem' &&
-                            'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
-                          {fmt.id === 'composite-kem' &&
-                            'Per draft-ietf-lamps-pq-composite-kem §6 (IESG Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
-                        </p>
-                        {!isGeneratingThis && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => generateFormat(fmt.id)}
-                            disabled={generating !== null || !hsm.isReady}
-                            className="flex items-center gap-2 text-status-error border-destructive/20 hover:bg-destructive/10 mt-2"
-                          >
-                            <Play size={14} fill="currentColor" />
-                            Retry
-                          </Button>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        {/* Timing + DER size */}
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>
-                            Total:{' '}
-                            <strong className="text-foreground">
-                              {result.timingMs.toFixed(0)}ms
-                            </strong>
-                          </span>
-                          <span>
-                            DER:{' '}
-                            <strong className="text-foreground">
-                              {result.certs.reduce((s, c) => s + pemToDerSize(c.pem), 0)} B
-                            </strong>
-                          </span>
-                          <span>
-                            Certs:{' '}
-                            <strong className="text-foreground">{result.certs.length}</strong>
-                          </span>
-                        </div>
-
-                        {/* Binding hash for related certs */}
-                        {result.bindingHash && (
-                          <div className="flex items-start gap-2 bg-primary/5 rounded-lg p-2 border border-primary/10">
-                            <Link2 size={14} className="text-primary shrink-0 mt-0.5" />
-                            <div>
-                              <div className="text-[10px] font-medium text-primary">
-                                SHA-256(Cert A) — stored in Cert B&apos;s RelatedCertificate
-                                extension
-                              </div>
-                              <div className="font-mono text-[10px] text-muted-foreground break-all">
-                                {result.bindingHash}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Component certs */}
-                        {result.certs.map((cert) => {
-                          const viewKey = `${fmt.id}-${cert.type}`
-                          const currentView = expandedViews[viewKey]
-                          const certBadgeClass =
-                            cert.type === 'pqc'
-                              ? 'bg-success/10 text-success border-success/20'
-                              : 'bg-warning/10 text-warning border-warning/20'
-                          const copyKey = `${viewKey}-${currentView}`
-                          const isCopied = copiedKey === copyKey
-
-                          return (
-                            <div
-                              key={cert.label}
-                              className="border border-border rounded-lg p-3 space-y-2"
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-foreground">
-                                  {cert.label}
-                                </span>
-                                <span
-                                  className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${certBadgeClass}`}
-                                >
-                                  {cert.type === 'pqc' ? 'PQC' : 'CLASSICAL'}
-                                </span>
-                              </div>
-                              <div className="flex gap-2 items-center">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => toggleView(viewKey, 'parsed')}
-                                  className={`text-[10px] h-7 px-2 ${
-                                    currentView === 'parsed'
-                                      ? 'bg-primary/20 text-primary border border-primary/50'
-                                      : 'text-muted-foreground border border-border hover:border-primary/30'
-                                  }`}
-                                >
-                                  Parsed
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => toggleView(viewKey, 'pem')}
-                                  className={`text-[10px] h-7 px-2 ${
-                                    currentView === 'pem'
-                                      ? 'bg-primary/20 text-primary border border-primary/50'
-                                      : 'text-muted-foreground border border-border hover:border-primary/30'
-                                  }`}
-                                >
-                                  PEM
-                                </Button>
-                                {currentView && (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        copyToClipboard(
-                                          currentView === 'pem'
-                                            ? cert.pem.trim()
-                                            : cert.parsed.trim(),
-                                          copyKey
-                                        )
-                                      }
-                                      className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30 ml-auto"
-                                    >
-                                      {isCopied ? (
-                                        <Check size={11} className="text-success" />
-                                      ) : (
-                                        <Copy size={11} />
-                                      )}
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        downloadContent(
-                                          currentView === 'pem'
-                                            ? cert.pem.trim()
-                                            : cert.parsed.trim(),
-                                          currentView === 'pem'
-                                            ? `${fmt.id}-${cert.type}.pem`
-                                            : `${fmt.id}-${cert.type}-parsed.txt`
-                                        )
-                                      }
-                                      className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30"
-                                    >
-                                      <Download size={11} />
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-                              {currentView && (
-                                <pre className="text-[10px] bg-background p-2 rounded border border-border overflow-x-auto max-h-48 overflow-y-auto font-mono whitespace-pre-wrap">
-                                  {currentView === 'parsed' ? cert.parsed.trim() : cert.pem.trim()}
-                                </pre>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Educational note */}
-                <div className="bg-muted/30 rounded-lg p-3 border border-border">
-                  <p className="text-[10px] text-muted-foreground">{fmt.educationalNote}</p>
-                </div>
-              </div>
-            )
-          })}
+          {CURRENT_HYBRID_CERT_FORMATS.map(renderFormatCard)}
         </div>
+
+        {/* Historical designs — separated from the main comparison */}
+        {HISTORICAL_HYBRID_CERT_FORMATS.length > 0 && (
+          <section aria-labelledby="historical-designs-heading" className="space-y-3">
+            <div>
+              <h3 id="historical-designs-heading" className="text-sm font-bold text-foreground">
+                Historical designs
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Proposals that expired or were never adopted by the IETF. They are kept for study
+                only, are not part of Generate All, and are not recommended for new deployments.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {HISTORICAL_HYBRID_CERT_FORMATS.map(renderFormatCard)}
+            </div>
+          </section>
+        )}
 
         {/* Comparison table — shown as soon as any format is generated */}
         {anyGenerated && (
@@ -839,7 +859,7 @@ export const HybridCertFormats: React.FC = () => {
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left p-2 text-muted-foreground font-medium">Property</th>
-                    {HYBRID_CERT_FORMATS.map((fmt) => (
+                    {comparisonFormats.map((fmt) => (
                       <th
                         key={fmt.id}
                         className="text-center p-2 text-foreground font-bold text-xs"
@@ -852,7 +872,7 @@ export const HybridCertFormats: React.FC = () => {
                 <tbody>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Standard</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => (
+                    {comparisonFormats.map((fmt) => (
                       <td key={fmt.id} className="p-2 text-center font-mono text-[10px] break-all">
                         {fmt.standard}
                       </td>
@@ -860,7 +880,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Approach</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => (
+                    {comparisonFormats.map((fmt) => (
                       <td key={fmt.id} className="p-2 text-center text-xs">
                         {fmt.approach}
                       </td>
@@ -868,7 +888,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">DER Size</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => {
+                    {comparisonFormats.map((fmt) => {
                       const r = results[fmt.id]
                       const size = r?.certs.reduce((s, c) => s + pemToDerSize(c.pem), 0) ?? 0
                       return (
@@ -880,7 +900,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Gen Time</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => {
+                    {comparisonFormats.map((fmt) => {
                       const r = results[fmt.id]
                       return (
                         <td key={fmt.id} className="p-2 text-center font-mono text-xs">
@@ -891,7 +911,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Quantum Safe</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => (
+                    {comparisonFormats.map((fmt) => (
                       <td key={fmt.id} className="p-2 text-center">
                         {fmt.quantumSafe === 'system' ? (
                           <span
@@ -908,7 +928,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="p-2 text-muted-foreground">Legacy Compat</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => (
+                    {comparisonFormats.map((fmt) => (
                       <td key={fmt.id} className="p-2 text-center">
                         {fmt.legacyCompat ? (
                           <span className="text-success font-bold text-xs">Yes</span>
@@ -920,7 +940,7 @@ export const HybridCertFormats: React.FC = () => {
                   </tr>
                   <tr>
                     <td className="p-2 text-muted-foreground">Status</td>
-                    {HYBRID_CERT_FORMATS.map((fmt) => {
+                    {comparisonFormats.map((fmt) => {
                       const cls =
                         STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
                       return (

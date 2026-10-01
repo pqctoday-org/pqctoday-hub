@@ -118,8 +118,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            There are six distinct X.509 certificate formats for PQC deployment, split into two
-            groups by backward compatibility:
+            Seven X.509 certificate formats make up the workshop&apos;s main comparison: five carry
+            signature keys and two carry KEM (encryption) keys. One rule underlies all of them: the{' '}
+            <strong>subject public key</strong> and the <strong>certificate signature</strong> are
+            independent. The subject key is what the certificate is about; the signature comes from
+            the issuer&apos;s key.
           </p>
 
           {/* Row 1: No backward compatibility */}
@@ -179,7 +182,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-primary">Composite (Dual-Algorithm)</h3>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    Draft
+                    RFC Editor queue
                   </span>
                 </div>
                 <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
@@ -192,8 +195,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <p className="text-xs text-muted-foreground">
                   A single composite OID identifies the algorithm pair. Both signatures must verify.
-                  Defined in <strong>draft-ietf-lamps-pq-composite-sigs</strong>. Strongest security
-                  model &mdash; prevents downgrade attacks. Not backward-compatible with legacy
+                  Defined in <strong>draft-ietf-lamps-pq-composite-sigs-19</strong>, approved and in
+                  the RFC Editor queue (no RFC number yet). Strongest binding &mdash; neither
+                  signature can be stripped and reused alone. Not backward-compatible with legacy
                   validators.
                 </p>
               </div>
@@ -205,13 +209,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
               Hybrid with legacy fallback
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Alt-Sig / Catalyst */}
               <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-secondary">Alt-Sig / Catalyst</h3>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    Draft
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    ITU-T X.509
                   </span>
                 </div>
                 <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
@@ -226,8 +230,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <p className="text-xs text-muted-foreground">
                   A single classical cert with PQC key and signature in X.509 extensions. Legacy
-                  verifiers ignore the extensions; PQC-aware verifiers check both. Defined in{' '}
-                  <strong>draft-ietf-lamps-cert-binding-for-multi-auth</strong>.
+                  verifiers ignore the extensions; PQC-aware verifiers can check the alternative
+                  signature too, and their policy decides whether one or both must verify. Defined
+                  in <strong>ITU-T X.509 (2019)</strong> &sect;7.2.2 and &sect;9.8.
                 </p>
               </div>
               {/* Related Certificates (RFC 9763) */}
@@ -239,59 +244,106 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                   </span>
                 </div>
                 <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
-                  <div className="text-warning">{`Cert A (Classical) {`}</div>
+                  <div className="text-warning">{`Existing Cert A (Classical) {`}</div>
                   <div className="text-foreground pl-3">{`algorithm: ecdsa-with-SHA256`}</div>
-                  <div className="text-primary pl-3">{`ext: sha256(CertB) → binding`}</div>
+                  <div className="text-muted-foreground pl-3">{`(unchanged)`}</div>
                   <div className="text-warning">{`}`}</div>
-                  <div className="text-success">{`Cert B (PQC) {`}</div>
+                  <div className="text-success">{`New Cert B (PQC) {`}</div>
                   <div className="text-foreground pl-3">{`algorithm: ML-DSA-65`}</div>
-                  <div className="text-primary pl-3">{`ext: sha256(CertA) → binding`}</div>
+                  <div className="text-primary pl-3">{`ext: RelatedCertificate =`}</div>
+                  <div className="text-primary pl-6">{`hash(final DER of Cert A)`}</div>
                   <div className="text-success">{`}`}</div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Two separate independent certificates bound by a hash in a{' '}
-                  <code className="text-[10px]">RelatedCertificate</code> extension. Each
-                  certificate is independently valid. Legacy systems validate the classical cert;
-                  PQC-aware systems verify both and check the binding hash.
-                </p>
-              </div>
-              {/* Chameleon Certificates */}
-              <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-secondary">Chameleon</h3>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    Draft
-                  </span>
-                </div>
-                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
-                  <div className="text-muted-foreground">{`Certificate (PQC primary) {`}</div>
-                  <div className="text-success pl-3">{`algorithm: ML-DSA-65`}</div>
-                  <div className="text-foreground pl-3">{`ext: DeltaCertDescriptor {`}</div>
-                  <div className="text-warning pl-6">{`sig: ecdsa-with-SHA256`}</div>
-                  <div className="text-warning pl-6">{`pubKey: EC P-256`}</div>
-                  <div className="text-warning pl-6">{`sigValue: ECDSA sig`}</div>
-                  <div className="text-foreground pl-3">{`}`}</div>
-                  <div className="text-muted-foreground">{`}`}</div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  One certificate with a{' '}
-                  <code className="text-[10px]">DeltaCertificateDescriptor</code> extension encoding
-                  the differences needed to reconstruct a partner cert. More space-efficient than
-                  Related Certs. Backed by DigiCert and Entrust ({' '}
-                  <strong>draft-bonnell-lamps-chameleon-certs</strong>).
+                  A <em>new</em> certificate carries a{' '}
+                  <code className="text-[10px]">RelatedCertificate</code> extension holding the hash
+                  of an <em>existing</em> one. The link is one-way: Cert A is never modified. The CA
+                  issues Cert B only after the requester proves it holds Cert A&apos;s key. Legacy
+                  systems use the classical cert; a protocol may ask for either certificate or both
+                  &mdash; RFC 9763 does not require both.
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Row 3: KEM certificates */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              KEM certificates &mdash; the subject key encrypts, the issuer signs
+            </h3>
+            <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+              <div className="text-success">{`ML-KEM subject key  ── performs encapsulation / decapsulation`}</div>
+              <div className="text-primary">{`ML-DSA issuer key   ── signs the X.509 certificate`}</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Pure ML-KEM */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-success">Pure PQC KEM (ML-KEM)</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    Published
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>RFC 9935</strong> defines ML-KEM public keys in X.509. An ML-KEM key
+                  cannot sign, so its certificate is always issued by a separate signing-capable CA
+                  (ML-DSA, ECDSA, RSA, &hellip;). If keyUsage is present, keyEncipherment must be
+                  the only bit. Because the CA cannot check a self-signature from a KEM key, proof
+                  of possession uses a KEM-based exchange instead. The key is then used, for
+                  example, in CMS KEMRecipientInfo (<strong>RFC 9629</strong>, ML-KEM in{' '}
+                  <strong>RFC 9936</strong>).
+                </p>
+              </div>
+              {/* Composite ML-KEM */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-primary">Composite KEM</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                    IESG Evaluation
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>draft-ietf-lamps-pq-composite-kem-21</strong> puts an ML-KEM key and a
+                  classical KEM key (X25519, ECDH, RSA) under one OID, ML-KEM component first.
+                  Encapsulation runs both and combines the shared secrets. Still an Internet-Draft;
+                  not backward compatible.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Historical designs */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Historical design
+            </h3>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-muted-foreground">Chameleon</h3>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/10 text-muted-foreground border border-border font-bold">
+                  Expired draft
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                One certificate with a{' '}
+                <code className="text-[10px]">DeltaCertificateDescriptor</code> extension encoding
+                the differences needed to rebuild a paired certificate. The proposal,{' '}
+                <strong>draft-bonnell-lamps-chameleon-certs-07</strong>, is an expired individual
+                draft that the LAMPS working group never adopted. It is shown for study only and is
+                not recommended for new deployments.
+              </p>
+            </div>
+          </div>
+
           <p className="text-xs text-muted-foreground">
-            <strong>Deployment guidance:</strong> Pure PQC (ML-DSA) is ready today (RFC 9881 OIDs in
-            OpenSSL 3.x). Pure SLH-DSA is also ready (RFC 9909) and ANSSI-approved as standalone.
-            Composite requires both parties to support the draft spec &mdash; ideal for closed PKI.
-            Alt-Sig and Chameleon work with legacy verifiers via extensions. Related Certs (RFC
-            9763) provides full backward compatibility with two independent certificates. Upcoming:
-            FN-DSA (FIPS 206) will add compact lattice-based signatures; composite KEM (ML-KEM+ECDH)
-            will enable hybrid key encapsulation in S/MIME.
+            <strong>Deployment guidance:</strong> Pure PQC (ML-DSA) is ready today (RFC 9881; the
+            workshop is tested with OpenSSL 3.6.3). Pure SLH-DSA is also ready (RFC 9909) and
+            ANSSI-approved as standalone. Composite requires both parties to support the draft spec
+            &mdash; best suited to closed PKI. Alt-Sig works with legacy verifiers via extensions.
+            Related Certs (RFC 9763) keeps the classical certificate fully usable on its own.
+            Watchlist: FN-DSA (planned FIPS 206, not yet final) has an IETF certificate draft whose
+            OIDs are still TBD; composite KEM will enable hybrid key encapsulation in S/MIME once
+            published.
           </p>
         </div>
       </section>

@@ -523,8 +523,8 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       note: 'Certificate B of a bound pair: ML-DSA-65. Carries a matching RelatedCertificate extension pointing back to the ECDSA cert. Relying parties that support RFC 9763 verify both certs and the binding.',
     },
     'hybrid-chameleon.pem': {
-      title: 'Chameleon Certificate (draft-bonnell-lamps-chameleon-certs)',
-      note: 'Primary cert uses ML-DSA-65; a delta certificate descriptor extension (OID 2.16.840.1.114027.80.6.1) encodes an ECDSA variant. Same SubjectPublicKeyInfo base, different signature algorithms. Classical verifiers see an ECDSA cert; PQC-aware verifiers reconstruct and verify both. Most experimental of the 6 formats.',
+      title: 'Chameleon Certificate — historical (expired draft-bonnell-lamps-chameleon-certs-07)',
+      note: 'Historical design: draft-bonnell-lamps-chameleon-certs-07 is an expired individual draft, never adopted by the LAMPS working group, and is not recommended for new deployments. The primary cert uses ML-DSA-65; a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1) encodes the differences for an ECDSA partner cert. A classical verifier sees only the ML-DSA-65 primary, which it cannot verify; only a chameleon-aware parser can rebuild the ECDSA partner.',
     },
   }
 
@@ -743,8 +743,8 @@ S8Y=
         {hybridCertFiles.length === 0 && (
           <p className="mt-3 text-xs text-muted-foreground">
             Hybrid/PQC certificates are optional — this workshop focuses on classical PKI. To
-            explore the 8 hybrid formats (Pure PQC, Composite, Alt-Sig, Related Certs, Chameleon),
-            generate them in{' '}
+            explore the hybrid formats (Pure PQC, Composite, Alt-Sig, Related Certs, KEM
+            certificates), generate them in{' '}
             <span className="text-primary font-medium">Playground → Hybrid Certs</span>, then return
             here to parse and compare their X.509 structures.
           </p>
