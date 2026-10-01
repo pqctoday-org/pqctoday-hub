@@ -36,4 +36,15 @@ describe('EditorialIndependenceView', () => {
     const text = document.body.textContent ?? ''
     expect(text).toMatch(/marked with a.*Sponsor.*badge on its listing in.*\/migrate/i)
   })
+
+  it('links the Data Suggestion issue template for corrections', () => {
+    render(<EditorialIndependenceView />)
+    const link = screen.getByRole('link', { name: /Data Suggestion issue/i })
+    expect(link).toHaveAttribute(
+      'href',
+      'https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml'
+    )
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
 })
