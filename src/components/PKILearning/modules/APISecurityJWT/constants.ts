@@ -284,7 +284,7 @@ export const VULNERABILITY_TABLE: VulnerabilityEntry[] = [
     type: 'Signing',
     attack: "Shor's algorithm",
     broken: true,
-    notes: 'RSA factoring broken in polynomial time',
+    notes: 'A CRQC running Shor would factor the modulus in polynomial time',
   },
   {
     algorithm: 'ES256 (ECDSA P-256)',
@@ -292,7 +292,7 @@ export const VULNERABILITY_TABLE: VulnerabilityEntry[] = [
     type: 'Signing',
     attack: "Shor's algorithm",
     broken: true,
-    notes: 'Elliptic curve discrete log broken',
+    notes: 'A CRQC running Shor would solve the elliptic-curve discrete log',
   },
   {
     algorithm: 'EdDSA (Ed25519)',
@@ -308,7 +308,7 @@ export const VULNERABILITY_TABLE: VulnerabilityEntry[] = [
     type: 'Key Agreement',
     attack: "Shor's algorithm",
     broken: true,
-    notes: 'ECDH key agreement broken',
+    notes: 'Recorded ECDH-ES traffic is exposed to harvest-now-decrypt-later',
   },
   {
     algorithm: 'ML-DSA-65',
@@ -363,14 +363,14 @@ export const OAUTH_MIGRATION_ITEMS: OAuthMigrationItem[] = [
     component: 'JWKS Endpoints',
     description: 'JSON Web Key Sets published by the authorization server',
     impact:
-      'ML-DSA public keys are ~2 KB each (vs 32 bytes for EC). JWKS payloads grow significantly with key rotation.',
+      'ML-DSA public keys are 1,312–2,592 bytes (about 1.7–3.5 KB as base64url in an AKP JWK) vs 32–65 bytes for EdDSA/EC keys. JWKS payloads grow significantly during key rotation, when old and new keys are both published.',
     priority: 'medium',
   },
   {
     component: 'Client Authentication',
-    description: 'private_key_jwt and client_secret_jwt flows',
+    description: 'private_key_jwt client assertions',
     impact:
-      'Client assertion JWTs grow with PQC. Server-side validation must support ML-DSA verification.',
+      'private_key_jwt assertions are signed with the client key, so they grow with PQC and the server must verify ML-DSA. client_secret_jwt uses HMAC and is not affected by Shor.',
     priority: 'low',
   },
   {

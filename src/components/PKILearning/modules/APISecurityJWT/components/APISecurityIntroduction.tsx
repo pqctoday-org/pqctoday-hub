@@ -96,7 +96,8 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               <p className="text-xs text-muted-foreground">
                 Cryptographic signature over{' '}
                 <code className="text-foreground/70">header.payload</code> using the algorithm
-                specified in the header. This is where PQC changes everything.
+                specified in the header. This is the part PQC replaces — the claims and the encoding
+                stay the same.
               </p>
             </div>
           </div>
@@ -115,14 +116,17 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Every JWT signing algorithm in production today &mdash;{' '}
+            The widely deployed asymmetric JWT signature algorithms &mdash;{' '}
             <InlineTooltip term="RSA">RS256</InlineTooltip> (RSA-PKCS1-v1_5),{' '}
             <InlineTooltip term="ECDSA">ES256</InlineTooltip> (ECDSA P-256), and{' '}
-            <InlineTooltip term="EdDSA">EdDSA</InlineTooltip> (Ed25519) &mdash; relies on
-            mathematical problems that{' '}
-            <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> solves
-            efficiently on a quantum computer. Key agreement algorithms like ECDH-ES are equally
-            vulnerable.
+            <InlineTooltip term="EdDSA">EdDSA</InlineTooltip> (Ed25519) &mdash; rely on mathematical
+            problems that{' '}
+            <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> would solve
+            efficiently on a cryptographically relevant quantum computer (CRQC). None is broken
+            today; they are vulnerable to a machine that does not yet exist. Key agreement with
+            ECDH-ES is exposed in the same way. HMAC-based JWTs (HS256) are different: they use a
+            shared secret, and Grover&apos;s algorithm only reduces their effective strength, so a
+            256-bit key remains adequate.
           </p>
           <div
             className="overflow-x-auto"
@@ -153,11 +157,11 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                     <td className="p-2">
                       {row.broken ? (
                         <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-destructive/20 text-destructive border-destructive/50">
-                          Quantum Vulnerable
+                          Vulnerable to a CRQC
                         </span>
                       ) : (
                         <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/20 text-success border-success/50">
-                          Quantum Safe
+                          Post-quantum
                         </span>
                       )}
                     </td>
@@ -166,12 +170,31 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted-foreground">
-            <strong>Harvest Now, Decrypt Later (HNDL):</strong> Attackers can capture signed JWTs
-            today and forge signatures once quantum computers break the signing algorithms. For
-            long-lived tokens (refresh tokens, ID tokens with long expiry), this is an immediate
-            concern.
-          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                Signed JWTs (JWS): a forgery risk, not HNDL
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A signed JWT is not encrypted &mdash; anyone holding it can already read its claims,
+                so there is nothing to &quot;decrypt later&quot;. The quantum risk is{' '}
+                <strong>forgery</strong>: a CRQC could recover a signing key from its public key and
+                mint new tokens that any verifier still trusting that key accepts. What matters is
+                how long verifiers trust a key (JWKS rotation, pinned keys, signatures kept as
+                long-term evidence), not how long one token lives.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                Encrypted JWTs (JWE) and TLS: Harvest Now, Decrypt Later
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Anything protected by ECDH today &mdash; a JWE using ECDH-ES, or the TLS connection
+                that carries a bearer token &mdash; can be recorded now and decrypted once a CRQC
+                exists. That is the HNDL threat, and it is why confidentiality migrates first.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -192,14 +215,18 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>), along with a new{' '}
             <code className="text-foreground/70">kty="AKP"</code> (Algorithm Key Pair) key type that
             carries a 32-byte FIPS 204 seed as the private key. ML-DSA replaces ECDSA and RSA for
-            JWT signing; ML-KEM JWE (
-            <code className="text-foreground/70">draft-ietf-jose-pqc-kem-05</code>) and PQ/T
-            composite signatures (
-            <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs</code>) round out
-            the JOSE PQC stack. Note that the KEM draft moved on: revision{' '}
-            <code className="text-foreground/70">-06</code> was retitled for COSE alone and no
-            longer registers any JWE algorithms, so the JWE construction shown here is the one
-            specified by <code className="text-foreground/70">-05</code>.
+            JWT signing. The rest of the JOSE PQC stack is still in draft: SLH-DSA (
+            <code className="text-foreground/70">draft-ietf-cose-sphincs-plus-10</code>, two
+            parameter sets), PQ/T composite signatures (
+            <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs-04</code>), and
+            ML-KEM encryption for JWE, which now goes through HPKE (
+            <code className="text-foreground/70">draft-ietf-jose-hpke-encrypt</code>, in the RFC
+            Editor queue, plus the PQ suites in{' '}
+            <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>). An earlier
+            direct-KEM draft for JWE was narrowed to COSE in its revision{' '}
+            <code className="text-foreground/70">-06</code>; the workshop&apos;s JWE tab shows that
+            historical <code className="text-foreground/70">-05</code> construction so you can see
+            how a KEM slots into JWE.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -210,7 +237,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 </p>
                 <p>Public key: 1,312 bytes</p>
                 <p>Signature: 2,420 bytes</p>
-                <p className="text-foreground/70 italic">Comparable to AES-128 security</p>
+                <p className="text-foreground/70 italic">
+                  Category 2: at least as hard as a SHA-256 collision search
+                </p>
               </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -219,7 +248,10 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 <p>NIST Level 3</p>
                 <p>Public key: 1,952 bytes</p>
                 <p>Signature: 3,309 bytes</p>
-                <p className="text-foreground/70 italic">Recommended for general use</p>
+                <p className="text-foreground/70 italic">
+                  Category 3 (≈ AES-192); this module&apos;s default example, not a NIST
+                  recommendation
+                </p>
               </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -228,7 +260,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 <p>NIST Level 5</p>
                 <p>Public key: 2,592 bytes</p>
                 <p>Signature: 4,627 bytes</p>
-                <p className="text-foreground/70 italic">Maximum security, largest size</p>
+                <p className="text-foreground/70 italic">
+                  Category 5 (≈ AES-256); the level CNSA 2.0 requires
+                </p>
               </div>
             </div>
           </div>
@@ -251,7 +285,8 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) replaces ECDH-ES for key
             agreement in JWE, using a{' '}
             <InlineTooltip term="KEM">Key Encapsulation Mechanism</InlineTooltip> instead of
-            Diffie-Hellman key exchange.
+            Diffie-Hellman key exchange. The standards route is HPKE: ML-KEM (alone or combined with
+            X25519) supplies the KEM, and the HPKE suite fixes the key derivation and AEAD.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -272,7 +307,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">
-                ECDH is broken by Shor&apos;s algorithm (discrete log on elliptic curves).
+                ECDH falls to Shor&apos;s algorithm on a CRQC (discrete log on elliptic curves).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -283,8 +318,10 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-success/10 text-success text-xs font-bold">
-                  <InlineTooltip term="HKDF">HKDF</InlineTooltip>
-                  (shared_secret) &rarr; CEK
+                  KDF(shared_secret) &rarr; CEK
+                  <div className="text-[10px] font-normal">
+                    the HPKE suite&apos;s KDF; KMAC256 in the historical -05 draft
+                  </div>
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-muted text-foreground text-xs font-bold">
@@ -292,7 +329,8 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">
-                ML-KEM is a lattice-based KEM, resistant to quantum attacks.
+                ML-KEM is a lattice-based KEM with no known quantum attack at its standardized
+                parameters.
               </p>
             </div>
           </div>
@@ -309,11 +347,36 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Migrating to PQC requires updating the <InlineTooltip term="JOSE">JOSE</InlineTooltip>{' '}
-            header&apos;s <code className="text-foreground/70">alg</code> field. The rest of the JWT
-            structure remains identical &mdash; the JOSE framework was designed for algorithm
-            agility.
+            The token format survives the migration: the{' '}
+            <InlineTooltip term="JOSE">JOSE</InlineTooltip> header&apos;s{' '}
+            <code className="text-foreground/70">alg</code> value changes and the compact
+            serialization does not. That is the easy part. Around it, nearly everything that handles
+            tokens changes too:
           </p>
+          <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
+            <li>
+              <strong>Keys:</strong> ML-DSA keys use the new <code>kty: &quot;AKP&quot;</code> JWK
+              type (RFC 9964), so every JWKS publisher and consumer must understand it, and each
+              public key is ~1.3&ndash;2.6 KB.
+            </li>
+            <li>
+              <strong>Verifier policy:</strong> each verifier needs an explicit allowlist of
+              algorithms per key (RFC 8725 §3.1) &mdash; never &quot;whatever the header says&quot;.
+            </li>
+            <li>
+              <strong>Sizes and transport:</strong> header, cookie and proxy limits (below).
+            </li>
+            <li>
+              <strong>Libraries:</strong> most JOSE libraries do not ship ML-DSA yet; check the JOSE
+              layer, not just the crypto provider underneath.
+            </li>
+            <li>
+              <strong>Rollout:</strong> a period where verifiers accept both old and new keys, and a
+              plan to stop accepting the classical ones so the transition can&apos;t be used as a
+              downgrade path.
+            </li>
+          </ul>
+          <p></p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-destructive mb-2">Classical Header</div>
@@ -433,7 +496,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               },
               {
                 t: 'Cookie Storage',
-                d: 'Browser cookies are limited to ~4 KB per cookie. PQC JWTs cannot fit in a single cookie. Session tokens may need to move from cookies to request bodies.',
+                d: 'Browsers cap a cookie at about 4 KB, so a ~4.7 KB ML-DSA-65 JWT does not fit in one. Rather than moving bearer tokens into request bodies, keep the JWT server-side and give the browser an opaque session cookie (the backend-for-frontend pattern), or use reference tokens. Measure the real limits of your browsers, proxies and servers — they vary.',
               },
               {
                 t: 'Bandwidth',
@@ -462,9 +525,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            OAuth 2.0 and <InlineTooltip term="OIDC">OpenID Connect</InlineTooltip> rely heavily on
-            JWTs for access tokens, ID tokens, and <InlineTooltip term="DPoP">DPoP</InlineTooltip>{' '}
-            proofs. Migrating these ecosystems to PQC requires coordinated changes across
+            OAuth 2.0 and <InlineTooltip term="OIDC">OpenID Connect</InlineTooltip> use JWTs in
+            several places, but not everywhere: ID tokens are always JWTs; access tokens may be JWTs
+            (RFC 9068) or opaque strings; refresh tokens are usually opaque handles the
+            authorization server looks up, so a quantum computer cannot forge them unless they are
+            themselves signed tokens. <InlineTooltip term="DPoP">DPoP</InlineTooltip> proofs (RFC
+            9449) are JWTs signed by the client, so PQC changes their key binding and verifier
+            support as well as their size. Migrating requires coordinated changes across
             authorization servers, resource servers, and client applications.
           </p>
           <div className="space-y-3">
@@ -489,6 +556,99 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Section 8: JWT validation basics PQC does not change */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Shield size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">
+            JWT Validation Basics That PQC Does Not Change
+          </h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            A post-quantum signature protects a token only if the verifier checks the right things.
+            Most real-world JWT breaches come from validation mistakes, and PQC fixes none of them.
+            The rules below come from{' '}
+            <a
+              href="https://www.rfc-editor.org/rfc/rfc8725.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              RFC 8725
+            </a>{' '}
+            (JWT Best Current Practices),{' '}
+            <a
+              href="https://www.rfc-editor.org/rfc/rfc9700.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              RFC 9700
+            </a>{' '}
+            (OAuth 2.0 Security BCP) and{' '}
+            <a
+              href="https://www.rfc-editor.org/rfc/rfc9068.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              RFC 9068
+            </a>{' '}
+            (JWT access tokens).
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              {
+                t: 'Pin the algorithm to the key',
+                d: 'Decide which algorithm each key may be used with, and reject anything else — including alg "none" and an HMAC alg presented with a public key. The header is attacker-controlled (RFC 8725 §3.1–3.2).',
+              },
+              {
+                t: 'Resolve keys safely',
+                d: 'Look keys up in a JWKS you configured, by kid. Never fetch a key from a URL inside the token (jku, x5u) unless it is on an allowlist (RFC 8725 §3.10).',
+              },
+              {
+                t: 'Validate the claims',
+                d: 'Check iss and aud against what you expect, enforce exp and nbf with a small clock skew, and use jti where replay matters. A valid signature on the wrong audience is still the wrong token (RFC 8725 §3.8–3.9; exp, nbf and jti are defined in RFC 7519 §4.1).',
+              },
+              {
+                t: 'Use explicit typing',
+                d: 'Distinguish token kinds with typ — for example "at+jwt" for access tokens (RFC 9068) — so an ID token cannot be replayed as an access token (RFC 8725 §3.11–3.12).',
+              },
+              {
+                t: 'Validate every layer',
+                d: 'In a nested JWT, verify the outer and the inner signature, each with the key and algorithm you expect (RFC 8725 §3.3). The Hybrid JWT tab does exactly this.',
+              },
+              {
+                t: 'Keep the steps separate',
+                d: 'Decoding is not verifying, verifying is not validating claims, and a valid token is not authorization. Each step can fail independently; only all of them together say "accept".',
+              },
+            ].map((item) => (
+              <div key={item.t} className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-foreground mb-1">{item.t}</div>
+                <p className="text-xs text-muted-foreground">{item.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            One PQC-era change helps here: new JOSE registrations such as ML-DSA-65 are{' '}
+            <em>fully specified</em> (
+            <a
+              href="https://www.rfc-editor.org/rfc/rfc9864.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              RFC 9864
+            </a>
+            ): the <code>alg</code> value alone names the exact algorithm and parameters, which
+            makes a per-key allowlist straightforward to write.
+          </p>
         </div>
       </section>
 
