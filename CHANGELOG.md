@@ -29,20 +29,6 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [Unreleased]
-
-The Curious Explorer role now also serves people who need post-quantum cryptography for their job without a technical background: sales, marketing, communications, procurement, policy and press.
-
-### Added
-
-- **New module: Talking About PQC Accurately** [view:/learn/talking-about-pqc] [persona:curious]: a 30-minute beginner guide to what is true about post-quantum cryptography today, which deadlines are real and who they apply to, what a FIPS certificate does and does not prove, and which words ("quantum-proof", "NIST-approved", "PQC-ready") to avoid. A Claim Checker and a Customer Questions workshop let you practise, with the reason behind each answer. It is marked as a work in progress until a reviewer signs it off.
-- **"I talk about it at work" on the Curious home board** [view:/] [persona:curious]: a new starting point for non-technical professionals, linking the new module, the honest state of the threat, the algorithm names you will quote, the quick assessment, and the public log of this site's own corrections.
-
-### Changed
-
-- **Curious Explorer is for your job too** [view:/learn] [persona:curious]: the role's description now says it serves anyone without a technical background, for themselves or for their work, and its learning path includes the new module (essentials unchanged).
-- **"How bad is it really?" replaced on the Curious home board** [view:/] [persona:curious]: the board keeps six starting points, and this one overlapped most with "Watch it break". The threat page it pointed to is still one click away from the new starting point and from the menu.
-
 ## [4.139.0] - 2026-10-01
 
 The Hybrid Certificate playground now builds every certificate the way its standard says, checks each one with a second, independent implementation, and tells you plainly which formats are published, which are drafts, and which are history.

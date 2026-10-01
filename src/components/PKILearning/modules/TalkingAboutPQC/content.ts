@@ -6,7 +6,8 @@
  * this module cannot drift from the Timeline and the other role guides.
  * Status facts were checked 2026-10-01: FIPS 203/204/205 final (13 Aug 2024);
  * NIST IR 8547 still an Initial Public Draft (csrc.nist.gov/pubs/ir/8547/ipd);
- * FIPS 206 not yet published.
+ * FIPS 206 not yet published. ETSI is cited for its "quantum-safe" wording
+ * (GR QSC 001; TS 103 774's library row is deprecated).
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
@@ -15,7 +16,9 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'talking-about-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-10-01',
+  // No lastReviewed: this is a DRAFT awaiting review (owner names a reviewer
+  // later). record_module_review.py sets it when that review is recorded —
+  // never by hand.
   lastEdited: '2026-10-01',
 
   standards: [
@@ -29,7 +32,7 @@ export const content: ModuleContent = {
     getStandard('FIPS-140-3'),
     getStandard('NIST-CMVP-MIP-List'),
     getStandard('NIST-CMVP-Validated-Modules'),
-    getStandard('ETSI TS 103 774'),
+    getStandard('ETSI-GR-QSC-001'),
   ],
 
   algorithms: [],
