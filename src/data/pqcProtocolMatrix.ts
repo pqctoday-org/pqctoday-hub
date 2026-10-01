@@ -2104,7 +2104,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'spec',
             id: '3GPP TR 33.703',
-            title: 'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
+            title:
+              'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
             url: 'https://www.3gpp.org/technologies/pqc-sa3',
             publishedOn: '2026-07-29',
           },
@@ -2124,7 +2125,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'spec',
             id: '3GPP TR 33.703',
-            title: 'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
+            title:
+              'Study on Transitioning to PQC in 3GPP (Rel-20 study; covers 3GPP-specific protocols incl. SUCI)',
             url: 'https://www.3gpp.org/technologies/pqc-sa3',
             publishedOn: '2026-07-29',
           },
