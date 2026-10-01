@@ -82,6 +82,7 @@ const WORDS: { phrase: string; problem: string; instead: string }[] = [
     instead: 'Fine, as long as you say what is inside and from which version.',
   },
   {
+    // claims-lint-allow: quotes the overclaim this table teaches readers to avoid
     phrase: '“NIST-approved product”, “NIST-certified”',
     problem: 'NIST standardizes algorithms. It does not approve or certify products.',
     instead: '“Implements ML-DSA (FIPS 204); FIPS 140-3 certificate #…”',
