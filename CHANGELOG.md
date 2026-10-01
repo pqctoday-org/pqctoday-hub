@@ -29,6 +29,33 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.139.0] - 2026-09-30
+
+The Hybrid Certificate playground now builds every certificate the way its standard says, checks each one with a second, independent implementation, and tells you plainly which formats are published, which are drafts, and which are history.
+
+### Changed
+
+- **Every hybrid certificate is now verified, and you can see the checks** [view:/learn/hybrid-crypto] [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: each card in the Hybrid Certificate Formats workshop lists what was checked — the certificate signature, the issuer chain, the key usage and, where it applies, the second signature or the link between two certificates — and every check is run by a different implementation from the one that signed. The ML-DSA, SLH-DSA and both ML-KEM certificates are now issued by a workshop CA instead of signing themselves, so you can follow a real issuer chain.
+- **ML-KEM certificates are issued the RFC 9935 way** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: an ML-KEM key cannot sign, so its certificate is signed by a separate ML-DSA CA and carries key usage "key encipherment" only. Both ML-KEM formats now run in the same in-browser HSM as the rest of the workshop.
+- **Related Certificates now follow RFC 9763** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: an existing certificate stays untouched, the CA checks a proof that you hold its key, and the new certificate carries a hash of the existing one. Previously the two certificates pointed at each other and the stored hash could not match.
+- **Alt-Sig's second signature covers the right data** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: the post-quantum signature in an Alt-Sig certificate now covers exactly what ITU-T X.509 specifies, and all classical signatures use the standard encoding.
+- **Composite ML-KEM cites revision 21 everywhere** [view:/algorithms] [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:grc]: the workshop, the Learn module, the Library and the X.509 row of the Protocol Support matrix now agree on draft-ietf-lamps-pq-composite-kem-21, in IESG Evaluation.
+- **Chameleon certificates are shown as history** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: the expired Chameleon draft moved to a separate Historical designs section, is no longer part of Generate All, and is no longer described as working with legacy verifiers.
+- **Generate All shows real progress and can be cancelled** [view:/learn/hybrid-crypto] [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: each card shows the stage it is on, a Cancel button stops the run, an error names the step that failed, and Clear results removes the keys the runs created from the HSM.
+- **The X.509 matrix row is more honest** [view:/algorithms] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: the row now lists RFC 9802, RFC 9925, Certificate Discovery, the FN-DSA certificate draft and One Signature Certificates, and the workshop's rating for X.509 is "partial" with a note on each part until every check is proven in the browser too.
+
+### Added
+
+- **Advanced examples: Certificate Discovery and unsigned certificates** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: Certificate Discovery shows how a classical certificate can point to a post-quantum one (its identifiers are not assigned yet, so the example is marked illustrative), and the RFC 9925 example shows a certificate with no signature at all — and why it is never valid in a certificate chain.
+
+### Fixed
+
+- **Hybrid cryptography explanations corrected** [view:/learn/hybrid-crypto] [persona:curious] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: "harvest now, decrypt later" is now described as a risk to confidentiality, not to past signatures; stale counts of certificate formats are gone; Alt-Sig is credited to ITU-T X.509; and the Learn page now covers how KEM certificates are issued and used.
+
+### Data
+
+- **Library** [view:/library] [persona:grc] [persona:researcher]: added RFC 9925, draft-ietf-lamps-pq-composite-kem-21, draft-ietf-lamps-certdiscovery-03, draft-ietf-lamps-fn-dsa-certificates-00 and draft-ietf-lamps-one-signature-certs-02; the unverified Composite ML-KEM revision 20 entry is marked as superseded by revision 21.
+
 ## [4.138.0] - 2026-09-30
 
 Search finds what you typed more often: ⌘K shows strong matches without scrolling and tells you when a filter is hiding results, and the Glossary, Library and Learn search boxes now match every word of a query instead of the exact phrase.
