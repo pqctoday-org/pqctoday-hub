@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
-import { matchesAllWords } from '@/utils/searchMatch'
+import { matchesAllWords, partialMatchFallback } from '@/utils/searchMatch'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -86,17 +86,28 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 
-  const filteredTerms = useMemo(() => {
-    return glossaryTerms
+  const { filteredTerms, partialMissing } = useMemo(() => {
+    const base = glossaryTerms
       .filter((t) => {
         if (activeCategory !== 'all' && t.category !== activeCategory) return false
         if (activeLetter && !t.term.toUpperCase().startsWith(activeLetter)) return false
-        if (!search) return true
-        // Every meaningful word must appear somewhere in term/acronym/definition,
-        // so "purdue model for OT" finds the Purdue Model entry.
-        return matchesAllWords([t.term, t.acronym, t.definition], search)
+        return true
       })
       .sort((a, b) => a.term.localeCompare(b.term))
+    if (!search) return { filteredTerms: base, partialMissing: null }
+    const haystack = (t: GlossaryTerm) => [t.term, t.acronym, t.definition]
+    // Every meaningful word must appear somewhere in term/acronym/definition,
+    // so "purdue model for OT" finds the Purdue Model entry.
+    const strict = base.filter((t) => matchesAllWords(haystack(t), search))
+    if (strict.length > 0) return { filteredTerms: strict, partialMissing: null }
+    // Nothing has every word: for a 3+ word query, fall back to terms that match
+    // all but one word and say which word(s) were not matched.
+    const partial = partialMatchFallback(base, haystack, search)
+    if (!partial || partial.length === 0) return { filteredTerms: strict, partialMissing: null }
+    return {
+      filteredTerms: partial.map((p) => p.item),
+      partialMissing: [...new Set(partial.flatMap((p) => p.missing))],
+    }
   }, [glossaryTerms, search, activeCategory, activeLetter])
 
   const availableLetters = useMemo(() => {
@@ -222,6 +233,14 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 <p className="text-xs text-muted-foreground mb-2">
                   {filteredTerms.length} term{filteredTerms.length !== 1 ? 's' : ''}
                 </p>
+                <div role="status" aria-live="polite">
+                  {partialMissing && (
+                    <p className="text-xs text-warning bg-warning/10 border border-warning/30 rounded-md px-3 py-2">
+                      No term contains every word. Showing terms that match all but one — not
+                      matched: {partialMissing.map((w) => `"${w}"`).join(', ')}.
+                    </p>
+                  )}
+                </div>
                 {filteredTerms.map((term) => (
                   <TermCard key={term.term} term={term} />
                 ))}

@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { matchesAllWords, SEARCH_STOPWORDS, tokenizeQuery } from './searchMatch'
+import {
+  matchesAllWords,
+  matchScore,
+  partialMatchFallback,
+  SEARCH_STOPWORDS,
+  tokenizeQuery,
+} from './searchMatch'
 
 describe('tokenizeQuery', () => {
   it('lowercases and splits on whitespace', () => {
@@ -104,5 +110,58 @@ describe('matchesAllWords', () => {
     }
     expect(matchesAllWords('Modern C++ and a guide', 'c++ and a')).toBe(true)
     expect(matchesAllWords('PKCS #11 profiles', 'pkcs #11')).toBe(true)
+  })
+})
+
+describe('matchScore', () => {
+  it('reports matched count and the missing words', () => {
+    expect(matchScore('Purdue Model', 'purdue model for OT')).toEqual({
+      tokens: ['purdue', 'model', 'ot'],
+      matched: 2,
+      missing: ['ot'],
+    })
+  })
+
+  it('has nothing missing for an empty or stopword-only query', () => {
+    expect(matchScore('x', '')).toEqual({ tokens: [], matched: 0, missing: [] })
+    expect(matchScore('x', 'the of')).toEqual({ tokens: [], matched: 0, missing: [] })
+  })
+})
+
+describe('partialMatchFallback', () => {
+  const items = [
+    ['Purdue Model', 'levels 0 to 5'],
+    ['Programmable Logic Controller', 'sits at Purdue Level 1'],
+    ['Unrelated', 'nothing here'],
+  ]
+  const get = (i: string[]) => i
+
+  it('returns all-but-one matches, with the word each lacks, for 3+ words', () => {
+    const r = partialMatchFallback(items, get, 'purdue model for OT')
+    expect(r).toEqual([{ item: items[0], missing: ['ot'] }])
+  })
+
+  it('keeps the incoming order among equally ranked matches', () => {
+    const r = partialMatchFallback(items, get, 'purdue level zzz')
+    expect(r?.map((x) => x.item[0])).toEqual(['Purdue Model', 'Programmable Logic Controller'])
+  })
+
+  it('returns null when some item already contains every word', () => {
+    expect(partialMatchFallback(items, get, 'purdue model levels')).toBeNull()
+  })
+
+  it('returns null for fewer than 3 words (no fallback), even with no match', () => {
+    expect(partialMatchFallback(items, get, 'purdue zzz')).toBeNull()
+    expect(partialMatchFallback(items, get, 'purdue')).toBeNull()
+    expect(partialMatchFallback(items, get, 'purdue for the zzz')).toBeNull()
+  })
+
+  it('returns null for an empty or stopword-only query', () => {
+    expect(partialMatchFallback(items, get, '')).toBeNull()
+    expect(partialMatchFallback(items, get, 'the of and')).toBeNull()
+  })
+
+  it('returns [] when applicable but nothing matches all but one', () => {
+    expect(partialMatchFallback(items, get, 'aaa bbb ccc')).toEqual([])
   })
 })
