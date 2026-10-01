@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable security/detect-object-injection */
+
 import React, { useState, useCallback, useMemo } from 'react'
 import { Lock, Unlock, ArrowRight, Key, XCircle } from 'lucide-react'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
 import { kmac256xof } from '@noble/hashes/sha3-addons.js'
 import { JOSE_KEY_AGREEMENT_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
-import { base64urlEncode, bytesToHex } from '../jwtUtils'
+import { base64urlDecode, base64urlEncode, bytesToHex } from '../jwtUtils'
 import { Button } from '@/components/ui/button'
 import { ShieldCheck } from 'lucide-react'
 import { useHSM } from '@/hooks/useHSM'
@@ -63,7 +63,7 @@ const JWE_STEPS: { id: JWEStep; label: string; description: string }[] = [
     id: 'encapsulate',
     label: '2. Encapsulate Shared Secret',
     description:
-      'The sender calls ML-KEM.Encaps(pk) which produces a shared secret (32 bytes) and a ciphertext (1,088 bytes). The ciphertext is included in the JWE encrypted key field.',
+      'The sender calls ML-KEM.Encaps(pk), which produces a shared secret (32 bytes) and a KEM ciphertext (1,088 bytes). Per draft-ietf-jose-pqc-kem-05 §6.1 (direct key agreement) the ciphertext travels in the "ek" header parameter, and the JWE Encrypted Key is absent — the same shape ECDH-ES uses for its "epk".',
   },
   {
     id: 'derive',
@@ -75,13 +75,13 @@ const JWE_STEPS: { id: JWEStep; label: string; description: string }[] = [
     id: 'encrypt',
     label: '4. Encrypt Payload with AES-256-GCM',
     description:
-      'The JWT payload is encrypted using AES-256-GCM via the browser WebCrypto API. This produces ciphertext and a 128-bit authentication tag.',
+      'The JWT payload is encrypted with AES-256-GCM via WebCrypto. The Additional Authenticated Data is ASCII(BASE64URL(protected header)) per RFC 7516 §5.1 step 14 — the encoded header, not its JSON — so the header, including "ek", is integrity-protected.',
   },
   {
     id: 'assemble',
     label: '5. Assemble JWE',
     description:
-      'The five JWE parts are assembled per RFC 7516: JOSE header, KEM ciphertext (encrypted key), initialization vector, ciphertext, and authentication tag.',
+      'The five JWE Compact parts are assembled per RFC 7516 §7.1: protected header (carrying "ek"), an EMPTY Encrypted Key, initialization vector, ciphertext, and authentication tag.',
   },
 ]
 
@@ -95,7 +95,8 @@ interface JWEKeys {
 
 interface JWEResult {
   headerB64: string
-  encryptedKeyB64: string
+  /** KEM ciphertext as carried in the protected header's "ek" parameter. */
+  ekB64: string
   ivB64: string
   ciphertextB64: string
   tagB64: string
@@ -103,8 +104,6 @@ interface JWEResult {
   sharedSecret: Uint8Array
   cek: Uint8Array
   pubKey: Uint8Array
-  // softhsmv3: KEM ciphertext bytes (needed for decap)
-  ciphertextBytes?: Uint8Array
 }
 
 const mlKem768Meta = JOSE_KEY_AGREEMENT_ALGORITHMS.find((a) => a.jose === 'ML-KEM-768')!
@@ -190,9 +189,14 @@ export const JWEEncryption: React.FC = () => {
         ['encrypt', 'decrypt']
       )
       const plaintext = new TextEncoder().encode(JSON.stringify(SAMPLE_JWT_PAYLOAD))
-      const aad = new TextEncoder().encode(
-        JSON.stringify({ alg: 'ML-KEM-768', enc: 'A256GCM', typ: 'JWT' })
+      // draft-ietf-jose-pqc-kem-05 §6.1: the KEM ciphertext goes in "ek". Compact
+      // Serialization has only a protected header, so that is where it lives.
+      const ekB64 = base64urlEncode(ciphertextBytes)
+      const headerB64 = base64urlEncode(
+        new TextEncoder().encode(JSON.stringify({ alg: 'ML-KEM-768', enc: 'A256GCM', ek: ekB64 }))
       )
+      // RFC 7516 §5.1 step 14: AAD = ASCII(Encoded Protected Header).
+      const aad = new TextEncoder().encode(headerB64)
       const encryptedWithTag = new Uint8Array(
         await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad }, aesKey, plaintext)
       )
@@ -202,16 +206,16 @@ export const JWEEncryption: React.FC = () => {
 
       // Step 5: assemble
       setActiveStep('assemble')
-      const headerB64 = base64urlEncode(aad)
-      const encryptedKeyB64 = base64urlEncode(ciphertextBytes)
       const ivB64 = base64urlEncode(iv)
       const ciphertextB64 = base64urlEncode(ciphertext)
       const tagB64 = base64urlEncode(tag)
-      const fullToken = `${headerB64}.${encryptedKeyB64}.${ivB64}.${ciphertextB64}.${tagB64}`
+      // Direct key agreement: "The JWE Encrypted Key MUST be absent" — an
+      // empty second segment in Compact Serialization.
+      const fullToken = `${headerB64}..${ivB64}.${ciphertextB64}.${tagB64}`
 
       setResult({
         headerB64,
-        encryptedKeyB64,
+        ekB64,
         ivB64,
         ciphertextB64,
         tagB64,
@@ -219,7 +223,6 @@ export const JWEEncryption: React.FC = () => {
         sharedSecret,
         cek,
         pubKey,
-        ciphertextBytes,
       })
     } catch (e) {
       setEncryptError(e instanceof Error ? e.message : String(e))
@@ -234,31 +237,37 @@ export const JWEEncryption: React.FC = () => {
     setDecryptError(null)
     setDecryptedPayload(null)
     try {
-      const iv = base64urlToBytes(result.ivB64)
-      const ciphertext = base64urlToBytes(result.ciphertextB64)
-      const tag = base64urlToBytes(result.tagB64)
-      const aad = base64urlToBytes(result.headerB64)
+      // Decrypt from the assembled token itself — on both backends — so the
+      // serialization shown on screen is what actually round-trips.
+      const parts = result.fullToken.split('.')
+      if (parts.length !== 5) throw new Error('JWE Compact Serialization must have 5 parts')
+      const [headerB64, encryptedKeyB64, ivB64, ciphertextB64, tagB64] = parts
+      if (encryptedKeyB64 !== '') {
+        throw new Error('direct key agreement: the JWE Encrypted Key must be absent')
+      }
+      const header = JSON.parse(new TextDecoder().decode(base64urlDecode(headerB64))) as {
+        alg?: string
+        enc?: string
+        ek?: string
+      }
+      if (header.alg !== 'ML-KEM-768' || header.enc !== 'A256GCM' || !header.ek) {
+        throw new Error('unexpected protected header: need alg ML-KEM-768, enc A256GCM, ek')
+      }
+      const kemCiphertext = base64urlDecode(header.ek)
+      const iv = base64urlDecode(ivB64)
+      const ciphertext = base64urlDecode(ciphertextB64)
+      const tag = base64urlDecode(tagB64)
+      // RFC 7516 §5.2 step 15: AAD = ASCII(Encoded Protected Header).
+      const aad = new TextEncoder().encode(headerB64)
 
       let sharedSecret: Uint8Array
-      if (
-        backend === 'softhsmv3' &&
-        hsmCtx &&
-        keys.privHandle !== undefined &&
-        result.ciphertextBytes
-      ) {
+      if (backend === 'softhsmv3' && hsmCtx && keys.privHandle !== undefined) {
         const { M, session } = hsmCtx
-        const secretHandle = hsm_pqcDecap(
-          M,
-          session,
-          keys.privHandle,
-          result.ciphertextBytes,
-          'ML-KEM-768'
-        )
+        const secretHandle = hsm_pqcDecap(M, session, keys.privHandle, kemCiphertext, 'ML-KEM-768')
         sharedSecret = hsm_extractKeyValue(M, session, secretHandle)
         hsm_destroyObject(M, session, secretHandle)
       } else {
-        const encryptedKey = base64urlToBytes(result.encryptedKeyB64)
-        sharedSecret = ml_kem768.decapsulate(encryptedKey, keys.secKey)
+        sharedSecret = ml_kem768.decapsulate(kemCiphertext, keys.secKey)
       }
 
       const cek = deriveCek(sharedSecret, 'A256GCM', 32)
@@ -294,7 +303,12 @@ export const JWEEncryption: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">JWE Encryption with ML-KEM</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">
+          JWE Encryption with ML-KEM{' '}
+          <span className="text-[10px] align-middle px-2 py-0.5 rounded border font-bold bg-warning/20 text-warning border-warning/50">
+            historical draft · not interoperable
+          </span>
+        </h3>
         <p className="text-sm text-muted-foreground">
           Walk through the five-step JWE encryption flow using ML-KEM-768 (
           {/* Link the -05 ARCHIVE, not the datatracker landing page. That page
@@ -311,8 +325,27 @@ export const JWEEncryption: React.FC = () => {
           </a>
           ) for key agreement and AES-256-GCM (WebCrypto) for content encryption. All operations run
           real crypto in your browser. This flow follows revision <strong>-05</strong>, which
-          covered JOSE and COSE; revision -06 (2026) narrowed the document to COSE only and no
-          longer registers JWE algorithms.
+          covered JOSE and COSE; revision -06 (2026) narrowed the document to COSE only, so no
+          current specification defines these JWE algorithms. PQ encryption for JWE now runs through
+          HPKE:{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-jose-hpke-encrypt
+          </a>{' '}
+          (in the RFC Editor queue) plus the ML-KEM suites in{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-jose-hpke-pq-pqt
+          </a>
+          . Use this tab to see how a KEM slots into JWE, not as a format to deploy.
         </p>
       </div>
 
@@ -387,8 +420,9 @@ export const JWEEncryption: React.FC = () => {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
-          Unlike JWS (3 parts), JWE has 5 base64url-encoded parts. The "Encrypted Key" field
-          contains the ML-KEM ciphertext (1,088 bytes for ML-KEM-768).
+          Unlike JWS (3 parts), JWE has 5 base64url-encoded parts. In direct key agreement the
+          Encrypted Key is empty: the ML-KEM ciphertext (1,088 bytes for ML-KEM-768) rides in the
+          protected header&apos;s <code>ek</code> parameter, where the AAD covers it.
         </p>
       </div>
 
@@ -540,14 +574,14 @@ export const JWEEncryption: React.FC = () => {
           <div className="space-y-3">
             {[
               {
-                label: 'Header',
+                label: `Protected header (alg, enc, and ek = ML-KEM ciphertext, ${mlKem768Meta.ctBytes} B)`,
                 value: result.headerB64,
                 color: 'text-primary',
                 bg: 'bg-primary/10',
               },
               {
-                label: `Encrypted Key (ML-KEM ct, ${mlKem768Meta.ctBytes} B)`,
-                value: result.encryptedKeyB64,
+                label: 'Encrypted Key (empty in direct key agreement)',
+                value: '',
                 color: 'text-warning',
                 bg: 'bg-warning/10',
               },
@@ -632,20 +666,14 @@ export const JWEEncryption: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Key insight:</strong> JWE with ML-KEM replaces the ECDH-ES key agreement step with
-          KEM encapsulation. The rest of the JWE pipeline (AES-GCM content encryption) remains
-          unchanged. The ML-KEM-768 ciphertext (1,088 bytes) goes in the "encrypted key" field where
-          the ECDH ephemeral public key would normally appear.
+          KEM encapsulation; AES-GCM content encryption is unchanged. Where ECDH-ES puts the
+          sender&apos;s ephemeral public key in the <code>epk</code> header, this draft put the
+          1,088-byte KEM ciphertext in <code>ek</code>, and both leave the Encrypted Key empty. The
+          HPKE design that replaced it (Integrated Encryption) moves the encapsulated key into the
+          Encrypted Key segment instead — one reason a format still in draft is no basis for
+          production tokens.
         </p>
       </div>
     </div>
   )
-}
-
-function base64urlToBytes(str: string): Uint8Array {
-  let base64 = str.replace(/-/g, '+').replace(/_/g, '/')
-  while (base64.length % 4 !== 0) base64 += '='
-  const binary = atob(base64)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
-  return bytes
 }
