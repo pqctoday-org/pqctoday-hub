@@ -739,7 +739,7 @@ export function useAlgorithmExplorer(
   const handleOpenComparison = useCallback(() => {
     setShowComparison(true)
     setTimeout(() => {
-      comparisonPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      comparisonPanelRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
     }, 100)
   }, [setShowComparison])
 

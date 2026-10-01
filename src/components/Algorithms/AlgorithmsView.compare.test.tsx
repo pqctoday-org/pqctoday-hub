@@ -158,6 +158,16 @@ describe('AlgorithmsView — Transition compare panel (?cmp)', () => {
     await waitFor(() => expect(urlSearch()).toContain('cmp=1'))
   })
 
+  it('opening from the tray survives the delayed scroll where scrollIntoView is missing', async () => {
+    // jsdom has no scrollIntoView; the 100 ms scroll timer must not throw. vitest turns an
+    // uncaught timer error into a failed run with every test still green (seen under load).
+    renderAt('/algorithms?tab=transition&compare=ML-KEM-768,HQC-128&cmp=0')
+    await screen.findByTestId('transition-body')
+    fireEvent.click(await screen.findByRole('button', { name: /^Compare/ }))
+    expect(await screen.findByTestId('comparison-panel')).toBeInTheDocument()
+    await new Promise((resolve) => setTimeout(resolve, 200))
+  })
+
   it('one algorithm in the tray does not open the panel', async () => {
     renderAt('/algorithms?tab=transition&compare=ML-KEM-768')
     await screen.findByTestId('transition-body')
