@@ -29,6 +29,38 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.140.0] - 2026-10-0X
+
+The Curious Explorer role now also serves people who need post-quantum cryptography for their job without a technical background, the JWT module follows the current IETF drafts and passes their published test vectors, and two engine bugs found by Google's Wycheproof tests are fixed.
+
+### Added
+
+- **New module: Talking About PQC Accurately** [view:/learn/talking-about-pqc] [persona:curious]: a 30-minute beginner guide to what is true about post-quantum cryptography today, which deadlines are real and who they apply to, what a FIPS certificate does and does not prove, and which words ("quantum-proof", "NIST-approved", "PQC-ready") to avoid. A Claim Checker and a Customer Questions workshop let you practise, with the reason behind each answer. It is marked as a work in progress until a reviewer signs it off.
+- **"I talk about it at work" on the Curious home board** [view:/] [persona:curious]: a new starting point for non-technical professionals, linking the new module, the honest state of the threat, the algorithm names you will quote, the quick assessment, and the public log of this site's own corrections.
+
+### Changed
+
+- **Curious Explorer is for your job too** [view:/learn] [persona:curious]: the role's description now says it serves anyone without a technical background, for themselves or for their work, and its learning path includes the new module (essentials unchanged).
+- **"How bad is it really?" replaced on the Curious home board** [view:/] [persona:curious]: the board keeps six starting points, and this one overlapped most with "Watch it break". The threat page it pointed to is still one click away from the new starting point and from the menu.
+- **Composite JWT signatures follow the current IETF draft and pass its published test vectors** [view:/learn/api-security-jwt] [persona:developer] [persona:architect] [persona:researcher]: all six ML-DSA + ECDSA/EdDSA combinations now implement draft-ietf-jose-pq-composite-sigs-04 and verify against the examples printed in that draft. The ECDSA keys, signatures and signed message had all been encoded differently from the specification.
+- **The nested JWT checks both signatures, and SLH-DSA-SHAKE-128s is available** [view:/learn/api-security-jwt] [persona:developer] [persona:architect]: the nested example now places a real inner JWT inside an ML-DSA-65 JWT and verifies both layers with the algorithms you expect, as RFC 8725 requires. SLH-DSA-SHAKE-128s joins SHA2-128s; the two are the only SLH-DSA sets registered for JOSE. Larger SLH-DSA sets are marked as primitive demonstrations.
+- **The ML-KEM JWE tab is corrected and labeled as a historical draft** [view:/learn/api-security-jwt] [persona:developer] [persona:researcher]: the tab now follows the draft it shows (KEM ciphertext in the `ek` header, header-based authentication data per RFC 7516, KMAC256 key derivation). It points to HPKE, which is now the route for post-quantum encryption in JWE.
+- **New lesson: JWT validation basics that post-quantum signatures do not fix** [view:/learn/api-security-jwt] [persona:developer] [persona:architect] [persona:ops] [persona:grc]: pin algorithms to keys, check issuer, audience and expiry, use explicit token types, and validate every layer (RFC 8725, RFC 9700, RFC 9068). The module also clears up a common mix-up: signed JWTs face a forgery risk, not harvest-now-decrypt-later.
+- **The JOSE row of the Protocol Matrix shows the current standards** [view:/algorithms] [persona:architect] [persona:researcher] [persona:executive]: HPKE-based ML-KEM encryption for JWE is in the RFC Editor queue, composite signatures are at draft -04, and SLH-DSA for JOSE is listed. The ML-KEM JWE workshop is now rated partial, because it shows a withdrawn draft.
+
+### Fixed
+
+- **Two Rust-engine bugs found by Google's Wycheproof tests are fixed in the validation workbench** [view:/algorithms] [persona:cert-engineer] [persona:developer]: the Rust engine no longer signs with an ML-DSA private key whose values are out of range, and no longer turns an empty seed into a random key (ML-DSA, ML-KEM, SLH-DSA, FrodoKEM, Classic McEliece). All 2,458 Wycheproof ML-KEM and ML-DSA cases now pass on both engines, and both entries leave the open-gaps register.
+- **The first search no longer freezes the page** [view:/library] [persona:curious] [persona:developer] [persona:researcher]: the first time you open search (⌘K) or the Assistant, the site builds its search index in small slices instead of all at once, so the page stays responsive while it loads. Results appear only once the index is complete, never half-built.
+
+### Data
+
+- **Eight more products with NIST-validated post-quantum algorithms** [view:/migrate] [persona:ops] [persona:cert-engineer] [persona:architect] [persona:developer]: IBM CryptoLite for C and the SANCTUAIRE Cryptographic Core (ML-DSA, ML-KEM), the Google Tensor 6th Gen security core (SLH-DSA), and LMS-validated modules from NetApp, AMD, NVIDIA (two) and SK hynix. Each one was checked against its NIST algorithm-validation record.
+- **Library: three new post-quantum documents** [view:/library] [persona:researcher] [persona:developer] [persona:grc]: the IETF draft "Security Considerations for ML-DSA", an IETF draft on choosing post-quantum algorithms for DNSSEC, and ETSI TR 104 239-1 V1.2.1. The library now holds 1,221 documents.
+- **Vendor roadmaps: Cloudflare Workers and MTG** [view:/migrate] [persona:developer] [persona:architect]: Cloudflare Workers' Web Crypto API now offers ML-KEM-768/1024 and ML-DSA-44/65/87 behind an opt-in flag, and MTG's ERS product line adds its post-quantum roadmap.
+- **5G SUCI now points to 3GPP's post-quantum study** [view:/algorithms] [persona:architect] [persona:researcher] [persona:grc]: the Protocol Support matrix no longer says 3GPP has no study. It cites the Release 20 study TR 33.703, which covers the SUCI calculation. No 3GPP specification defines a post-quantum SUCI profile yet.
+- **Three new trusted sources** [view:/about] [persona:grc] [persona:researcher]: Brazil's national PKI authority ITI, whose January 2026 rule adds ML-DSA to ICP-Brasil; the XJTLU post-quantum migration lab; and the UAE's Advanced Technology Research Council.
+
 ## [4.139.0] - 2026-10-01
 
 The Hybrid Certificate playground now builds every certificate the way its standard says, checks each one with a second, independent implementation, and tells you plainly which formats are published, which are drafts, and which are history.
