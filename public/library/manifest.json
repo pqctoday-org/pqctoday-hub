@@ -11339,10 +11339,10 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:05:01.612672+00:00"
+      "stampedAt": "2026-10-01T03:06:35.834859+00:00"
     },
     {
       "refId": "ref-quantinuum-helios",
@@ -31700,9 +31700,10 @@
       "sha256": "4ba9fa300b59e7ee177a5e3b091af0d6a48cb82c47914ba312aef2f20e38bcb2",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T13:05:01.612672+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-10-01T03:06:35.834859+00:00"
     },
     {
       "refId": "ref-quantinuum-helios",
