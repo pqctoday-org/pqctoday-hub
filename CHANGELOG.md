@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.139.0] - 2026-09-30
+## [4.139.0] - 2026-10-01
 
 The Hybrid Certificate playground now builds every certificate the way its standard says, checks each one with a second, independent implementation, and tells you plainly which formats are published, which are drafts, and which are history.
 
@@ -46,6 +46,7 @@ The Hybrid Certificate playground now builds every certificate the way its stand
 
 ### Added
 
+- **Suggest a correction in one click** [view:/about] [view:/editorial-independence] [persona:curious] [persona:researcher] [persona:grc]: the About and Editorial Independence pages, on desktop and mobile, now link straight to the Data Suggestion form, so you can propose a sourced correction or a new record.
 - **Advanced examples: Certificate Discovery and unsigned certificates** [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: Certificate Discovery shows how a classical certificate can point to a post-quantum one (its identifiers are not assigned yet, so the example is marked illustrative), and the RFC 9925 example shows a certificate with no signature at all — and why it is never valid in a certificate chain.
 
 ### Fixed
@@ -54,6 +55,7 @@ The Hybrid Certificate playground now builds every certificate the way its stand
 
 ### Data
 
+- **Timeline** [view:/timeline] [persona:grc] [persona:executive] [persona:researcher]: Canada's CCCS high-priority-systems entry now shows its dated milestones (departmental plans by April 2026, high-priority systems migrated by end of 2031) instead of bare years.
 - **Library** [view:/library] [persona:grc] [persona:researcher]: added RFC 9925, draft-ietf-lamps-pq-composite-kem-21, draft-ietf-lamps-certdiscovery-03, draft-ietf-lamps-fn-dsa-certificates-00 and draft-ietf-lamps-one-signature-certs-02; the unverified Composite ML-KEM revision 20 entry is marked as superseded by revision 21.
 
 ## [4.138.0] - 2026-09-30
