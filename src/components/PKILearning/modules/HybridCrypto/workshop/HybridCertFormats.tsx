@@ -406,10 +406,17 @@ export const HybridCertFormats: React.FC = () => {
     setExpandedViews({})
   }, [destroyAllKeys])
 
-  // Dev/test-only diagnostics: lets the browser smoke check prove repeated
-  // runs leave no HSM objects behind. Never present in a production build.
+  // Diagnostics for the browser smoke check: proves repeated runs leave no HSM
+  // objects behind. On in dev/test builds; in a production build only when
+  // localStorage 'pqc-hybrid-cert-diag' is '1'. Exposes object counts only.
   useEffect(() => {
-    if (!import.meta.env.DEV && import.meta.env.MODE !== 'test') return
+    let optIn = false
+    try {
+      optIn = localStorage.getItem('pqc-hybrid-cert-diag') === '1'
+    } catch {
+      optIn = false
+    }
+    if (!import.meta.env.DEV && import.meta.env.MODE !== 'test' && !optIn) return
     const w = window as unknown as { __hybridCertDiag?: () => unknown }
     w.__hybridCertDiag = () => {
       const M = hsm.moduleRef.current
