@@ -119,8 +119,19 @@ export const HybridCertFormats: React.FC = () => {
 
   const pushHybridFiles = useCallback((formatId: HybridFormatId, certs: IssuedCertView[]) => {
     const { addFile } = useOpenSSLStore.getState()
-    certs.forEach((cert, idx) => {
-      const name = certs.length === 1 ? `hybrid-${formatId}.pem` : `hybrid-${formatId}-${idx}.pem`
+    certs.forEach((cert) => {
+      // Named by role so the PKI Workshop parser can attach the right note:
+      // hybrid-<format>.pem, hybrid-<format>-ca.pem, and for RFC 9763
+      // hybrid-related-certs-cert-a.pem / -cert-b.pem.
+      const suffix =
+        cert.role === 'ca'
+          ? '-ca'
+          : cert.role === 'existing'
+            ? '-cert-a'
+            : formatId === 'related-certs'
+              ? '-cert-b'
+              : ''
+      const name = `hybrid-${formatId}${suffix}.pem`
       addFile({
         name,
         type: 'cert',

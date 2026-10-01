@@ -499,28 +499,36 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   // Map hybrid file name prefix → educational note
   const HYBRID_FORMAT_NOTES: Record<string, { title: string; note: string }> = {
     'hybrid-pure-pqc.pem': {
-      title: 'Pure PQC — ML-DSA-65 (RFC 9881)',
-      note: 'Single PQC algorithm only. No classical fallback. Requires a PQC-aware relying party. OpenSSL 3.x will parse the X.509 structure; the signature algorithm OID (2.16.840.1.101.3.4.3.18) is registered in FIPS 204.',
+      title: 'Pure PQC — ML-DSA-65 end entity (RFC 9881)',
+      note: 'An ML-DSA-65 end-entity certificate issued by the ML-DSA-65 workshop CA (hybrid-pure-pqc-ca.pem). Critical keyUsage digitalSignature, cA=FALSE. No classical fallback — the relying party must support ML-DSA. OpenSSL 3.5+ parses and verifies it.',
     },
     'hybrid-pure-pqc-slh.pem': {
-      title: 'Pure PQC — SLH-DSA-SHA2-128s (RFC 9909)',
-      note: 'Stateless hash-based signature scheme. Larger signatures (~8KB) but no algebraic structure assumptions. Algorithm OID 2.16.840.1.101.3.4.3.20 per FIPS 205.',
+      title: 'Pure PQC — SLH-DSA-SHA2-128s end entity (RFC 9909)',
+      note: 'An SLH-DSA end-entity certificate issued by an SLH-DSA workshop CA. Stateless hash-based signatures (7,856 bytes each) whose security rests only on hash-function properties. Algorithm OID 2.16.840.1.101.3.4.3.20.',
     },
     'hybrid-composite.pem': {
-      title: 'Composite Signature — MLDSA65-ECDSA-P256-SHA512 (draft-ietf-lamps-pq-composite-sigs)',
-      note: 'Both ML-DSA-65 and ECDSA-P256 signatures are bound in a single SubjectPublicKeyInfo and SignatureValue — secure as long as either algorithm holds. OID 1.3.6.1.5.5.7.6.45 is draft-assigned (proposed in the IETF LAMPS working group, not yet IANA-registered or in a finalized RFC as of 2025) — do not expect to find this OID in production certificates today. OpenSSL will parse the outer X.509 structure; the inner composite encoding is draft-specific and will appear as an unknown algorithm.',
+      title: 'Composite signature (draft-ietf-lamps-pq-composite-sigs-19)',
+      note: 'One certificate whose key and signature each concatenate an ML-DSA component and a classical component under a single composite OID. BOTH signatures must verify — that is what stops either half being stripped. The draft is in the RFC Editor queue with no RFC number yet. OpenSSL 3.6.3 has no composite algorithms, so it shows the key and signature as an unknown algorithm.',
     },
     'hybrid-alt-sig.pem': {
-      title: 'Alternative Signature (Alt-Sig) — ITU-T X.509 §9.8',
-      note: 'A classical ECDSA certificate carrying the PQC key and signature in private extensions (OIDs 2.5.29.72/73/74). Backward-compatible: classical verifiers ignore the unknown extensions. PQC-aware verifiers check both. OpenSSL x509 will show the extensions as unrecognized hex.',
+      title: 'Alternative Signature (Alt-Sig) — ITU-T X.509 (2019) §7.2.2, §9.8',
+      note: 'A classical ECDSA certificate carrying a PQC key and signature in extensions 2.5.29.72/73/74. Classical verifiers ignore the extensions; PQC-aware verifiers can also check the alternative signature, which covers the TBSCertificate without its signature field and without the AltSignatureValue extension. OpenSSL shows the extensions as unrecognised.',
     },
-    'hybrid-related-certs-0.pem': {
-      title: 'Related Certificates — Classical cert (RFC 9763)',
-      note: 'Certificate A of a bound pair: ECDSA P-256. Carries a RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36) pointing to the companion ML-DSA-65 cert. Each cert is individually valid; the binding proves they share the same subject identity.',
+    'hybrid-related-certs-cert-a.pem': {
+      title: 'Related Certificates — existing Cert A (RFC 9763)',
+      note: 'The existing classical certificate (ECDSA P-256). It is issued first and never modified, and it carries no RelatedCertificate extension — the link is one-way, from Cert B to Cert A.',
     },
-    'hybrid-related-certs-1.pem': {
-      title: 'Related Certificates — PQC cert (RFC 9763)',
-      note: 'Certificate B of a bound pair: ML-DSA-65. Carries a matching RelatedCertificate extension pointing back to the ECDSA cert. Relying parties that support RFC 9763 verify both certs and the binding.',
+    'hybrid-related-certs-cert-b.pem': {
+      title: 'Related Certificates — new Cert B (RFC 9763)',
+      note: "The new ML-DSA-65 certificate, issued by the workshop CA after it verified a relatedCertRequest signed with Cert A's key. Its RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36, non-critical) holds the SHA-256 hash of the complete Cert A. A protocol may use either certificate or both.",
+    },
+    'hybrid-pure-pqc-kem.pem': {
+      title: 'ML-KEM-768 end entity (RFC 9935)',
+      note: 'The subject key is ML-KEM-768 (1,184 bytes); it encapsulates and decapsulates but cannot sign, so the ML-DSA-65 workshop CA signs the certificate. Critical keyUsage keyEncipherment only.',
+    },
+    'hybrid-composite-kem.pem': {
+      title: 'Composite ML-KEM (draft-ietf-lamps-pq-composite-kem-21)',
+      note: 'An ML-KEM-768 + X25519 composite public key under id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58), ML-KEM component first, issued by the ML-DSA-65 workshop CA. Encoding only — no encapsulation is performed. OpenSSL 3.6.3 cannot parse the composite key.',
     },
     'hybrid-chameleon.pem': {
       title: 'Chameleon Certificate — historical (expired draft-bonnell-lamps-chameleon-certs-07)',
@@ -528,8 +536,17 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     },
   }
 
-  // eslint-disable-next-line security/detect-object-injection
-  const selectedHybridNote = selectedHybridFile ? HYBRID_FORMAT_NOTES[selectedHybridFile] : null
+  /** Every *-ca.pem the hybrid workshop pushes is a workshop root CA. */
+  const WORKSHOP_CA_NOTE = {
+    title: 'Workshop root CA (self-signed)',
+    note: 'The workshop CA that issued the matching end-entity certificate: self-signed, critical basicConstraints cA=TRUE, critical keyUsage keyCertSign + cRLSign. Load it as the trust anchor to verify the chain.',
+  }
+
+  const selectedHybridNote = selectedHybridFile
+    ? // eslint-disable-next-line security/detect-object-injection
+      (HYBRID_FORMAT_NOTES[selectedHybridFile] ??
+      (selectedHybridFile.endsWith('-ca.pem') ? WORKSHOP_CA_NOTE : null))
+    : null
 
   const handleParse = async () => {
     if (!certInput.trim()) return

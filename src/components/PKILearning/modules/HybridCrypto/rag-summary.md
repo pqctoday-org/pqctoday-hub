@@ -39,7 +39,7 @@ The workshop has 5 hands-on steps:
 1. **Hybrid Key Generation** — generate and compare classical, pure PQC, and hybrid key pairs, observing key size differences across categories
 2. **Hybrid Encryption and Signing Demo** — perform KEM encapsulation and digital signature operations in hybrid mode, comparing classical and PQC outputs
 3. **Hybrid CA Setup** — set up a hybrid certificate authority with both classical and PQC keys
-4. **Hybrid Certificate Formats** — generate and compare seven X.509 formats: Pure PQC (ML-DSA-65), Pure PQC (SLH-DSA-128s), Composite (ML-DSA-65 + ECDSA), Alt-Sig/Catalyst (ECDSA primary + ML-DSA extensions), Related Certs (RFC 9763), Pure ML-KEM-768 (RFC 9935) and Composite ML-KEM; Chameleon is available separately under Historical designs
+4. **Hybrid Certificate Formats** — generate and compare seven X.509 formats: Pure PQC (ML-DSA-65), Pure PQC (SLH-DSA-128s), Composite (ML-DSA-65 + ECDSA), Alt-Sig/Catalyst (ECDSA primary + ML-DSA extensions), Related Certs (RFC 9763), Pure ML-KEM-768 (RFC 9935) and Composite ML-KEM; Chameleon is available separately under Historical designs. End-entity certificates for ML-DSA, SLH-DSA and both KEM formats are issued by a workshop CA in the browser HSM, and every result is verified (signatures, issuer chain, key usage) by an implementation other than the one that signed it
 5. **Certificate Inspector** — deep-dive into generated certificates with Tree, Raw, and Size views; also inspect real IETF Hackathon reference certificates from the pqc-certificates test vector repository
 
 ## IETF Reference Certificates

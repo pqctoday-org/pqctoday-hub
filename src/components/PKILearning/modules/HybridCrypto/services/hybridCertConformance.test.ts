@@ -25,6 +25,8 @@ import { newModule, runOpenssl, writeFile } from '@/test/kat/openssl-driver'
 import { hybridCryptoService, type FormatOutput } from './HybridCryptoService'
 import {
   parseCertificate,
+  readBasicConstraints,
+  readKeyUsage,
   verifyAltSigCert,
   verifyIssuedBy,
   verifyRelatedCertificate,
@@ -282,6 +284,32 @@ describe('hybrid certificate conformance (SoftHSM → builders → @noble + Open
     bytes[bytes.length - 10] ^= 0x01
     const altCheck = verifyAltSigCert(cert).find((c) => c.name.startsWith('Alternative signature'))
     expect(altCheck?.ok).toBe(false)
+  })
+
+  it('every keyUsage / basicConstraints claim on a card matches the generated DER', () => {
+    const KU_NAMES: Record<string, string> = {
+      digitalSignature: 'digitalSignature',
+      keyEncipherment: 'keyEncipherment',
+    }
+    for (const fmt of HYBRID_CERT_FORMATS) {
+      const out = outputs[fmt.id]
+      if (!out) continue
+      const subject = out.certs.find((c) => c.role === 'subject')!
+      const cert = parseCertificate(pemToDer(subject.pem))
+      for (const line of fmt.structureLines.map((l) => l.text)) {
+        const ku = line.match(/keyUsage \(critical\)\s+(\w+)/)
+        if (ku) {
+          const got = readKeyUsage(cert)
+          expect(got?.critical, `${fmt.id}: ${line}`).toBe(true)
+          expect(got?.bits, `${fmt.id}: ${line}`).toEqual([KU_NAMES[ku[1]]])
+        }
+        const bc = line.match(/basicConstraints \(critical\)\s+cA=(TRUE|FALSE)/)
+        if (bc) {
+          const got = readBasicConstraints(cert)
+          expect(got, `${fmt.id}: ${line}`).toEqual({ cA: bc[1] === 'TRUE', critical: true })
+        }
+      }
+    }
   })
 
   it('KEM and pure-PQC end entities are CA-issued, never self-issued', () => {

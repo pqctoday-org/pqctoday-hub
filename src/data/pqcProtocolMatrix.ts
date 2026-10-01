@@ -1217,10 +1217,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'hybrid-certs',
         toolName: 'Hybrid Certificate Workshop',
-        // Downgraded from 'full' 2026-09-30: the workshop generates every format
-        // but does not yet verify signatures or issuer chains for all of them,
-        // and several encodings have known conformance gaps under repair.
-        // Restore per cell only when the conformance suite proves it.
+        // Downgraded from 'full' 2026-09-30. The encodings are now fixed and
+        // checked by hybridCertConformance.test.ts (@noble + OpenSSL 3.6.3);
+        // restore a cell to 'full' only once the repeated Generate All run and
+        // the headless-browser check also pass for it.
         testability: {
           pureKem: 'partial',
           hybridKem: 'partial',
@@ -1228,13 +1228,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           hybridSig: 'partial',
         },
         pureKemNote:
-          'Generates a CA-issued ML-KEM-768 certificate; keyUsage and issuer-chain verification are not yet added.',
+          'Issues an ML-KEM-768 end-entity certificate from an ML-DSA-65 workshop CA, with keyUsage keyEncipherment; the chain is verified independently. Rated partial until the repeated-run and browser checks pass.',
         hybridKemNote:
-          'Encodes a composite ML-KEM public key only — no encapsulation or decapsulation is performed, and the certificate is not yet issued by a separate CA.',
+          'Encodes a composite ML-KEM public key in a CA-issued certificate — no encapsulation or decapsulation is performed.',
         pureSigNote:
-          'Generates self-signed ML-DSA-65 and SLH-DSA certificates; keyUsage and independent verification are not yet added.',
+          'Issues ML-DSA-65 and SLH-DSA end-entity certificates from workshop CAs; signatures and chains are verified independently. Rated partial until the repeated-run and browser checks pass.',
         hybridSigNote:
-          'Composite signatures are checked against the draft test vectors. The Alt-Sig and Related Certificates examples have known encoding defects under repair.',
+          'Composite signatures are checked against the draft test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding. Rated partial until the repeated-run and browser checks pass.',
       },
       {
         toolId: 'openssl-studio',
