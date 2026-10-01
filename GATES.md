@@ -98,7 +98,8 @@ then the receipt is written. (`gate:cacp` was removed from the hook and from Git
 ## GitHub — PR check (`.github/workflows/pr-check.yml`, every PR to main)
 
 The only checks `main`'s branch protection requires: `pr-check`, `pr-test (1)`,
-`pr-test (2)`, with "branch must be up to date". `pr-check`: install, `lint`
+`pr-test (2)`, with "branch must be up to date". `pr-check`: install, the committed SBOM version list check
+(`gen:sbom-versions:check`, skipped for dependabot PRs), `lint`
 (security rules), `verify-attestations`, `gate:data`, and a clean `build`
 (which includes `tsc -b`), ~8–10 min. `pr-test`: the unit suite in 2 shards,
 ~8 min, in parallel. It exists so a PR can satisfy protection
