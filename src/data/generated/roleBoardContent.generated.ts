@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09292026.csv
+ * Source: src/data/role_board_content_10012026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3282,81 +3282,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'howbad',
-      order: 3,
-      chipLabel: 'How bad is it really?',
-      chipDescription: "The honest version: what we know, what we don't, and what replaces it.",
-      phaseId: '',
-      cswp39Zone: '',
-      moduleIds: ['quantum-threats', 'pqc-candidates'],
-      workshopIds: [],
-      businessToolIds: [],
-      board: {
-        heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-
-        headline: 'Nobody knows the year. Here is what they do know.',
-        sub: 'The honest answer to “when” is a range, not a date, and people who study this disagree with each other in public. The replacements, though, are already published — that part is not in doubt.',
-        ctaPrimary: "See what we know and what we don't",
-        ctaPrimaryHref: '/threats',
-        ctaSecondary: 'Meet the replacements',
-        ctaSecondaryHref: '/algorithms?tab=transition&highlight=ML-KEM-768',
-        proofChips: [
-          'Plain English by default',
-          'The estimate carries its dissent',
-          'When we get it wrong, we say so',
-        ],
-        sideCard: {
-          title: 'What is and is not settled',
-          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
-          rows: [
-            { label: 'The maths breaking', value: 'settled' },
-            { label: 'The year it breaks', value: '2035 (2030–2041)' },
-            { label: 'The replacement', value: 'published and final' },
-          ],
-          punchline: 'Uncertain timing is not the same as uncertain outcome.',
-          footnote:
-            'The range is the published consensus window, shown with its range rather than as a single year.',
-        },
-        gridTitle: 'Where you can go next',
-        gridSub: 'Optional, none of it sequenced',
-        gridCards: [
-          {
-            title: 'Where would you actually stand?',
-            body: 'Six plain questions and a rough position. About 3 minutes.',
-            href: '/assess?mode=quick',
-          },
-          {
-            title: 'Everything we have corrected',
-            body: 'When we get something wrong we log it here rather than quietly fixing it.',
-            href: '/revisions',
-          },
-          {
-            title: 'Uncertain timing, certain outcome',
-            body: 'Nobody can give you the year. That is not the same as nobody knowing what breaks, or what replaces it — both of those are settled.',
-            href: '/learn/quantum-threats',
-          },
-        ] as [
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-        ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
-
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
-      },
-    },
-    {
       id: 'mylife',
-      order: 4,
+      order: 3,
       chipLabel: 'Where this touches me',
       chipDescription: 'Your payments, your ID, your medical records.',
       phaseId: '',
@@ -3430,7 +3357,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'anyone',
-      order: 5,
+      order: 4,
       chipLabel: 'Is anyone fixing it?',
       chipDescription: 'Governments, companies, and the people actually doing the work.',
       phaseId: '',
@@ -3503,7 +3430,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'whattake',
-      order: 6,
+      order: 5,
       chipLabel: 'What would fixing it take?',
       chipDescription: 'Watch an organisation actually do it, start to finish.',
       phaseId: '',
@@ -3555,6 +3482,79 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             title: 'The hard problem is inventory, not cryptography',
             body: 'Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.',
             href: '/report?example=1',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Start anywhere. Nothing is locked.',
+
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'atwork',
+      order: 6,
+      chipLabel: 'I talk about it at work',
+      chipDescription: 'What you can say today, which dates are real, and which words to avoid.',
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['talking-about-pqc', 'compliance-strategy'],
+      workshopIds: [],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'No background needed · nothing to install',
+
+        headline: 'Talk about it without overclaiming.',
+        sub: 'Customers are starting to ask about quantum. Here is what you can say today, which dates are real and whose they are, and which words do not hold up — each linked to the record behind it.',
+        ctaPrimary: 'Learn what you can say',
+        ctaPrimaryHref: '/learn/talking-about-pqc',
+        ctaSecondary: 'See who has actually shipped',
+        ctaSecondaryHref: '/migrate',
+        proofChips: [
+          'Plain English by default',
+          'Every claim links to its own source',
+          'Nothing to install',
+        ],
+        sideCard: {
+          title: 'Three phrases to check',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: '“Quantum-proof”', value: 'no standard uses it' },
+            { label: '“FIPS validated”', value: 'only with a certificate number' },
+            { label: '“Hybrid”', value: 'two algorithms together, not a halfway step' },
+          ],
+          punchline: 'Say what the record shows, and link to it.',
+          footnote:
+            'Guidance drawn from how this site labels certificates and deadlines. It is not legal advice.',
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Optional, none of it locked',
+        gridCards: [
+          {
+            title: 'The dates customers are working to',
+            body: 'Government and regulator deadlines, each with whose it is and the source behind it.',
+            href: '/timeline',
+          },
+          {
+            title: 'Who has actually shipped',
+            body: 'Which products have post-quantum support, drawn from the same proof-gated catalogue as everything else on this site — not press releases.',
+            href: '/migrate',
+          },
+          {
+            title: 'An overclaim costs more than it wins',
+            body: 'Customers can now check a quantum claim against public records. The sentence they can verify is the one they trust.',
+            href: '/learn/talking-about-pqc',
           },
         ] as [
           { title: string; body: string; href?: string },
