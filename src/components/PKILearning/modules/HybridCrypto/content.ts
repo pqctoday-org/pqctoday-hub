@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-30',
+  lastEdited: '2026-10-01',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,9 +23,14 @@ export const content: ModuleContent = {
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
-    getStandard('Composite-ML-KEM-for-use-in-X-509-Public-Key-Infrastructure'), // Composite ML-KEM (draft -20; the library retired -19 as superseded, 2026-09-17)
+    getStandard('draft-ietf-lamps-pq-composite-kem-21'), // Composite ML-KEM (draft -21, IESG Evaluation; supersedes -20, 2026-09-30)
     getStandard('RFC-9763'), // Related Certificates
-    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates,
+    getStandard('RFC 9629'), // CMS KEMRecipientInfo — how a KEM certificate key is used
+    getStandard('RFC-9936'), // ML-KEM in CMS
+    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates — expired individual draft, historical design
+    getStandard('draft-ietf-lamps-fn-dsa-certificates-00'), // FN-DSA in X.509 — watchlist, OIDs TBD
+    getStandard('RFC-9925'), // Unsigned certificates — Advanced example
+    getStandard('draft-ietf-lamps-certdiscovery-03'), // Certificate Discovery — Advanced example, OIDs TBD
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
@@ -108,11 +113,11 @@ export const content: ModuleContent = {
     nistRecommendation:
       'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
     certFormatExplain:
-      'Eight certificate approaches are covered here — six that carry signatures, plus two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in X.509 extensions, ITU-T X.509 (2019) §9.8), Related Certificates (paired certs with a binding hash, RFC 9763), and Chameleon (delta extension — an expired individual draft, taught as a design study). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (single OID over ML-KEM plus a classical KEM). Only Alt-Sig, Related Certificates and Chameleon remain verifiable by a validator that does not understand PQC; composite is not backward compatible.',
+      'Seven certificate formats make up the main comparison — five that carry signature keys and two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify, draft-ietf-lamps-pq-composite-sigs-19, in the RFC Editor queue), Alt-Sig (a PQC key and signature in X.509 extensions, ITU-T X.509 (2019)), and Related Certificates (RFC 9763: a new certificate carries a hash of an existing one). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (draft-ietf-lamps-pq-composite-kem-21, in IESG Evaluation). The subject key and the certificate signature are independent: an ML-KEM key cannot sign, so a KEM certificate is always signed by a separate signing-capable CA. Only Alt-Sig and the classical certificate of a Related Certificates pair remain verifiable by a validator that does not understand PQC; composite is not backward compatible. Two Advanced examples sit outside the main comparison: Certificate Discovery (draft-ietf-lamps-certdiscovery-03, an active draft whose OIDs are still TBD, so its encoding is illustrative) and the RFC 9925 unsigned certificate (no issuer signature, never valid in a certification path). Chameleon certificates (an expired individual draft, never adopted by the LAMPS working group) are shown separately as a historical design.',
     compositeSigSize: '~3,379 bytes (3,309 B ML-DSA-65 + 64 B ECDSA P-256 + 6 B of encoding)',
     altSigSize: '2,017 bytes',
     relatedStandards:
-      'Planned FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, remains in development with no published public draft or final text. This hub cites the distinct Falcon v1.2 candidate specification without presenting it as FIPS 206.',
+      'Planned FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, remains in development with no published public draft or final text. This hub cites the distinct Falcon v1.2 candidate specification without presenting it as FIPS 206. The LAMPS working group has started draft-ietf-lamps-fn-dsa-certificates for FN-DSA in X.509, but its OIDs are still TBD, so no deployable FN-DSA certificate exists yet.',
     hpkeDefinition:
       "HPKE (RFC 9180) is a public-key encryption scheme built from three swappable components — a KEM, a KDF, and an AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction. It is not itself a hybrid-vs-classical choice: RFC 9180's own KEM registry is all-classical (DHKEM over P-256/P-384/P-521/X25519/X448). The PQC angle comes from draft-ietf-hpke-pq, which registers PQ and PQ/T hybrid KEM IDs (pure ML-KEM, and MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384 hybrids) that plug into the exact same KeySchedule and Seal/Open — still an Internet-Draft, not yet an RFC.",
     hpkeUseCases:

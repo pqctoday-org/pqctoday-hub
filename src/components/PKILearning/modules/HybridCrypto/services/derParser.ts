@@ -153,6 +153,10 @@ const OID_LABELS: Record<string, string> = {
   '1.3.6.1.5.5.7.6.46': 'MLDSA65-ECDSA-P384-SHA512',
   '1.3.6.1.5.5.7.6.48': 'MLDSA65-Ed25519',
   '1.3.6.1.5.5.7.6.49': 'MLDSA87-ECDSA-P384-SHA512',
+  // Composite KEM (draft-ietf-lamps-pq-composite-kem-21)
+  '1.3.6.1.5.5.7.6.58': 'id-MLKEM768-X25519-SHA3-256 (Composite KEM)',
+  // Unsigned certificates (RFC 9925)
+  '1.3.6.1.5.5.7.6.36': 'id-alg-unsigned (RFC 9925)',
   // Standard X.509v3 extensions
   '2.5.29.14': 'Subject Key Identifier',
   '2.5.29.15': 'Key Usage',

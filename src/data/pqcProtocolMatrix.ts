@@ -1052,21 +1052,68 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-06',
         localFile: '/library/RFC-9763.html',
       },
+      {
+        // Added 2026-09-30 (hybrid-cert refresh): hash-based signatures in X.509.
+        id: 'RFC-9802',
+        title: 'RFC 9802 — HSS and XMSS Hash-Based Signatures in X.509',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9802',
+        date: '2025-06',
+        localFile: '/library/RFC_9802.html',
+      },
+      {
+        // Added 2026-09-30 (hybrid-cert refresh): unsigned certificates
+        // (id-alg-unsigned, zero-length signature). Rejected as a signature
+        // in a certification path — a container, not a CA-issued certificate.
+        id: 'RFC-9925',
+        title: 'RFC 9925 — Unsigned X.509 Certificates',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9925',
+        date: '2026-02',
+        localFile: '/library/RFC-9925.html',
+      },
     ],
     latestDraft: [
       {
         id: 'draft-ietf-lamps-pq-composite-sigs-19',
-        title: 'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA in X.509',
+        title:
+          'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA in X.509 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
         date: '2026-04-21',
         localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-19',
-        title: 'draft-ietf-lamps-pq-composite-kem-19 — Composite ML-KEM in X.509 (IESG Evaluation)',
+        id: 'draft-ietf-lamps-pq-composite-kem-21',
+        title: 'draft-ietf-lamps-pq-composite-kem-21 — Composite ML-KEM in X.509 (IESG Evaluation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-08-14',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-19.html',
+        date: '2026-09-01',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-21.html',
+      },
+      {
+        // Active LAMPS WG draft. Its id-ad-certDiscovery access method and
+        // relatedCertificateDescriptor otherName OIDs are still TBD.
+        id: 'draft-ietf-lamps-certdiscovery-03',
+        title:
+          'draft-ietf-lamps-certdiscovery-03 — Certificate Discovery via subjectInfoAccess (WG draft, OIDs TBD)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-certdiscovery/',
+        date: '2026-05-21',
+        localFile: '/library/draft-ietf-lamps-certdiscovery-03.html',
+      },
+      {
+        // Watchlist: FN-DSA (planned FIPS 206, not yet final) in X.509. OIDs TBD.
+        id: 'draft-ietf-lamps-fn-dsa-certificates-00',
+        title:
+          'draft-ietf-lamps-fn-dsa-certificates-00 — FN-DSA in X.509 (WG draft; FIPS 206 not final, OIDs TBD)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-fn-dsa-certificates/',
+        date: '2026-05-20',
+        localFile: '/library/draft-ietf-lamps-fn-dsa-certificates-00.html',
+      },
+      {
+        // Watchlist: single-use signing certificates. X.509 work, not a hybrid mechanism.
+        id: 'draft-ietf-lamps-one-signature-certs-02',
+        title:
+          'draft-ietf-lamps-one-signature-certs-02 — One Signature Certificates (WG draft; not a hybrid format)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-one-signature-certs/',
+        date: '2026-07-01',
+        localFile: '/library/draft-ietf-lamps-one-signature-certs-02.html',
       },
     ],
     dimensions: {
@@ -1090,7 +1137,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'iesg-submitted',
         stageNote:
-          "Corrects the 2026-08-17 note, which claimed 'this scale has no iesg-evaluation member' — it does: iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition (see the type doc comment above). draft-ietf-lamps-pq-composite-kem-19 has been in IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat agenda. Re-verified live 2026-09-01.",
+          'IESG Evaluation (iesg-submitted is step 5, after ietf-last-call, on this file\'s DraftStage scale). draft-ietf-lamps-pq-composite-kem-21 (2026-09-01) is current; the IESG state has been "Revised I-D Needed" since the 2026-09-03 telechat. Re-verified live 2026-09-30.',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1098,7 +1145,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-lamps-pq-composite-kem',
             title: 'Composite ML-KEM in X.509',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-            publishedOn: '2026-03-27',
+            publishedOn: '2026-09-01',
           },
         ],
       },
@@ -1170,7 +1217,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'hybrid-certs',
         toolName: 'Hybrid Certificate Workshop',
-        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'full' },
+        // Restored to 'full' 2026-09-30 after the refresh: every format is built
+        // to its standard and checked by hybridCertConformance.test.ts (@noble +
+        // OpenSSL 3.6.3), and the browser smoke (e2e/hybrid-cert-formats.local
+        // .spec.ts) confirms Generate All, cancel and key cleanup in the page.
+        testability: {
+          pureKem: 'full',
+          hybridKem: 'full',
+          pureSig: 'full',
+          hybridSig: 'full',
+        },
+        pureKemNote:
+          'Issues an ML-KEM-768 end-entity certificate from an ML-DSA-65 workshop CA, with keyUsage keyEncipherment; the chain is verified independently.',
+        hybridKemNote:
+          'Encodes a composite ML-KEM public key in a CA-issued certificate and verifies the chain. The card does not run encapsulation or decapsulation, and OpenSSL 3.6.3 cannot parse the composite key.',
+        pureSigNote:
+          'Issues ML-DSA-65 and SLH-DSA end-entity certificates from workshop CAs; signatures and chains are verified independently.',
+        hybridSigNote:
+          'Composite signatures are checked against the draft test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding.',
       },
       {
         toolId: 'openssl-studio',

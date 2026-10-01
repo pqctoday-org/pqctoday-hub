@@ -17,7 +17,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const generateCompositeCert = vi.fn()
 
-vi.mock('../services/HybridCryptoService', () => ({
+// Partial mock: the component's error path needs the real GenerationCancelledError.
+vi.mock('../services/HybridCryptoService', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../services/HybridCryptoService')>()),
   hybridCryptoService: {
     generateCompositeCert: (...args: unknown[]) => generateCompositeCert(...args),
   },

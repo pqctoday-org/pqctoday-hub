@@ -2,15 +2,15 @@
 // X.509 certificate builder using @peculiar/asn1-schema for standards-compliant DER encoding.
 // All ASN.1 encoding goes through Peculiar's schema-validated serializer — no hand-rolled DER.
 //
-// Supports 8 PQC/hybrid certificate formats (6 signature + 2 KEM):
-//   1. Pure PQC (ML-DSA-65) — RFC 9881
-//   2. Pure PQC (SLH-DSA-128s) — RFC 9909
-//   3. Composite (ML-DSA-65 + ECDSA P-256) — draft-ietf-lamps-pq-composite-sigs
-//   4. Alt-Sig / Catalyst — ITU-T X.509 (2019) §9.8
-//   5. Related Certificates — RFC 9763
-//   6. Chameleon — draft-bonnell-lamps-chameleon-certs (EXPIRED individual draft)
-//   7. Pure PQC KEM (ML-KEM-768) — RFC 9935
-//   8. Composite KEM (ML-KEM-768 + classical) — draft-ietf-lamps-pq-composite-kem
+// Supports the workshop's certificate formats:
+//   1. Pure PQC (ML-DSA-65) — RFC 9881, CA-issued end entity
+//   2. Pure PQC (SLH-DSA-128s) — RFC 9909, CA-issued end entity
+//   3. Composite (ML-DSA + classical) — draft-ietf-lamps-pq-composite-sigs-19
+//   4. Alt-Sig / Catalyst — ITU-T X.509 (10/2019) §7.2.2, §9.8
+//   5. Related Certificates — RFC 9763 (new Cert B references existing Cert A)
+//   6. Pure PQC KEM (ML-KEM-768) — RFC 9935, CA-issued end entity
+//   7. Composite KEM (ML-KEM-768 + X25519) — draft-ietf-lamps-pq-composite-kem-21
+//   Historical: Chameleon — draft-bonnell-lamps-chameleon-certs-07 (EXPIRED)
 //
 // Signing is performed by async signer functions — SoftHSM PKCS#11 (C_Sign).
 //
@@ -51,9 +51,22 @@ import {
   AttributeTypeAndValue,
   AttributeValue,
   BasicConstraints,
+  KeyUsage,
+  KeyUsageFlags,
+  SubjectKeyIdentifier,
+  AuthorityKeyIdentifier,
+  KeyIdentifier,
 } from '@peculiar/asn1-x509'
 import { parseCertificateInfo, oidToLabel } from './derParser'
 import { canonicalPositiveInteger } from '@/utils/derInteger'
+import {
+  altSignatureInput,
+  parseCertificate,
+  readBasicConstraints,
+  readKeyUsage,
+  verifyWithSpki,
+  type KeyUsageBit,
+} from './certVerifier'
 
 // ---------------------------------------------------------------------------
 // OID string constants
@@ -62,7 +75,7 @@ import { canonicalPositiveInteger } from '@/utils/derInteger'
 /** ML-DSA-65 — 2.16.840.1.101.3.4.3.18 (RFC 9881) */
 export const ML_DSA_65_OID_STR = '2.16.840.1.101.3.4.3.18'
 
-/** id-MLKEM768-X25519-SHA3-256 (aka X-Wing) — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem §6). Re-verified 2026-08-17 against the -19 text: the allocated block 1.3.6.1.5.5.7.6.55–.66 is unchanged from -17. The draft moved off its earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering. */
+/** id-MLKEM768-X25519-SHA3-256 — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem-21). Re-verified 2026-09-30 against the -21 text (allocated block 1.3.6.1.5.5.7.6.55–.66). Not X-Wing: this is the LAMPS composite construction with its own combiner. */
 export const COMPOSITE_KEM_MLKEM768_X25519_OID_STR = '1.3.6.1.5.5.7.6.58'
 
 /** id-MLKEM768-ECDH-P256-SHA3-256 — 1.3.6.1.5.5.7.6.59 (draft-ietf-lamps-pq-composite-kem §6; unchanged -17→-19) */
@@ -282,9 +295,36 @@ function buildExtension(oid: string, critical: boolean, value: ArrayBuffer): Ext
   })
 }
 
-function basicConstraintsExt(isCA = false): Extension {
+function basicConstraintsExt(isCA = false, critical = false): Extension {
   const bcValue = AsnConvert.serialize(new BasicConstraints({ cA: isCA }))
-  return buildExtension('2.5.29.19', false, bcValue)
+  return buildExtension('2.5.29.19', critical, bcValue)
+}
+
+/** keyUsage, always critical (RFC 5280 §4.2.1.3: conforming CAs SHOULD mark it critical). */
+function keyUsageExt(bits: KeyUsageBit[]): Extension {
+  const flags = bits.reduce((acc, b) => acc | KeyUsageFlags[b], 0)
+  return buildExtension('2.5.29.15', true, AsnConvert.serialize(new KeyUsage(flags)))
+}
+
+/**
+ * Key identifier per RFC 7093 §2 method 1: the leftmost 160 bits of the
+ * SHA-256 hash of the subjectPublicKey BIT STRING value.
+ */
+export async function computeKeyIdentifier(subjectPublicKey: Uint8Array): Promise<Uint8Array> {
+  const h = await crypto.subtle.digest('SHA-256', subjectPublicKey as BufferSource)
+  return new Uint8Array(h).slice(0, 20)
+}
+
+function subjectKeyIdExt(keyId: Uint8Array): Extension {
+  const ski = new SubjectKeyIdentifier(keyId.buffer as ArrayBuffer)
+  return buildExtension('2.5.29.14', false, AsnConvert.serialize(ski))
+}
+
+function authorityKeyIdExt(keyId: Uint8Array): Extension {
+  const aki = new AuthorityKeyIdentifier({
+    keyIdentifier: new KeyIdentifier(keyId.buffer as ArrayBuffer),
+  })
+  return buildExtension('2.5.29.35', false, AsnConvert.serialize(aki))
 }
 
 function serializeTBS(tbs: TBSCertificate): Uint8Array {
@@ -303,6 +343,107 @@ function buildCertificate(
     signatureValue: signatureBytes.buffer as ArrayBuffer,
   })
   return new Uint8Array(AsnConvert.serialize(cert))
+}
+
+// ---------------------------------------------------------------------------
+// CA issuance — the workshop CA and every certificate it issues
+// ---------------------------------------------------------------------------
+
+/** What a CA needs to issue a certificate. */
+export interface CertIssuer {
+  /** The issuer's own certificate, DER */
+  certDer: Uint8Array
+  /** Issuer DN in OpenSSL slash format */
+  subject: string
+  /** Signature algorithm OID the issuer key produces */
+  signatureOid: string
+  /** Signs TBSCertificate DER with the issuer's private key */
+  signerFn: SignerFn
+  /** The issuer's subjectKeyIdentifier, copied into the AKI of what it issues */
+  keyId: Uint8Array
+}
+
+export interface IssueCertOptions {
+  subject: string
+  /** Subject key: algorithm OID (parameters absent) and raw public key bytes */
+  subjectKeyOid: string
+  subjectPublicKey: Uint8Array
+  /** null = self-signed with `selfSigner` */
+  issuer: CertIssuer | null
+  selfSigner?: { signatureOid: string; signerFn: SignerFn }
+  isCA: boolean
+  keyUsage: KeyUsageBit[]
+  extraExtensions?: Extension[]
+  /** Pre-built SPKI algorithm, for keys whose AlgorithmIdentifier has parameters (EC) */
+  subjectAlgId?: AlgorithmIdentifier
+}
+
+/**
+ * Build a v3 certificate with critical keyUsage and basicConstraints, a
+ * subjectKeyIdentifier, and — when CA-issued — an authorityKeyIdentifier.
+ *
+ * The subject key and the signature are independent: an ML-KEM subject key
+ * is signed here by an ML-DSA issuer, which is exactly the RFC 9935 model.
+ */
+export async function issueCertificate(
+  opts: IssueCertOptions
+): Promise<{ der: Uint8Array; keyId: Uint8Array }> {
+  const signing = opts.issuer ?? (opts.selfSigner && { ...opts.selfSigner, subject: opts.subject })
+  if (!signing) throw new Error('issueCertificate: need an issuer or a self-signer')
+  const sigAlgId = buildAlgId(signing.signatureOid)
+  const keyId = await computeKeyIdentifier(opts.subjectPublicKey)
+  const extensions = [
+    basicConstraintsExt(opts.isCA, true),
+    keyUsageExt(opts.keyUsage),
+    subjectKeyIdExt(keyId),
+    ...(opts.issuer ? [authorityKeyIdExt(opts.issuer.keyId)] : []),
+    ...(opts.extraExtensions ?? []),
+  ]
+  const tbs = new TBSCertificate({
+    version: Version.v3,
+    serialNumber: generateSerialBytes(),
+    signature: sigAlgId,
+    issuer: buildName(signing.subject),
+    validity: buildValidity().validity,
+    subject: buildName(opts.subject),
+    subjectPublicKeyInfo: buildSPKI(
+      opts.subjectAlgId ?? buildAlgId(opts.subjectKeyOid),
+      opts.subjectPublicKey
+    ),
+    extensions: new Extensions(extensions),
+  })
+  const signature = await signing.signerFn(serializeTBS(tbs))
+  return { der: buildCertificate(tbs, sigAlgId, signature), keyId }
+}
+
+/**
+ * The workshop's root CA: a self-signed certificate with cA=TRUE and
+ * keyUsage {keyCertSign, cRLSign}, both critical. One signature algorithm
+ * per CA — an SLH-DSA end entity is issued by an SLH-DSA CA so its card
+ * still shows an SLH-DSA certificate signature.
+ */
+export async function buildWorkshopCA(opts: {
+  subject: string
+  keyOid: string
+  publicKey: Uint8Array
+  signerFn: SignerFn
+}): Promise<CertIssuer> {
+  const { der, keyId } = await issueCertificate({
+    subject: opts.subject,
+    subjectKeyOid: opts.keyOid,
+    subjectPublicKey: opts.publicKey,
+    issuer: null,
+    selfSigner: { signatureOid: opts.keyOid, signerFn: opts.signerFn },
+    isCA: true,
+    keyUsage: ['keyCertSign', 'cRLSign'],
+  })
+  return {
+    certDer: der,
+    subject: opts.subject,
+    signatureOid: opts.keyOid,
+    signerFn: opts.signerFn,
+    keyId,
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -347,59 +488,32 @@ export async function buildSelfSignedX509(
 }
 
 // ---------------------------------------------------------------------------
-// 1b. Composite KEM certificate (X25519MLKEM768 + ML-DSA-65 issuer)
-//     Per draft-ietf-lamps-pq-composite-kem §6
+// 1b. Composite KEM certificate — draft-ietf-lamps-pq-composite-kem-21
 //
 //     Subject public key: id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58)
-//     SubjectPublicKey:   mlkem768PublicKey(1184B) || x25519PublicKey(32B) = 1216B
-//     Signature:          signed by an external CA — here a transient ML-DSA-65
-//                         issuer (KEM keys cannot self-sign).
-//
-//     Asymmetric pattern: signature algorithm != subject public-key algorithm,
-//     so we cannot reuse buildSelfSignedX509 (which uses one AlgorithmIdentifier
-//     for both).
+//     SubjectPublicKey:   mlkem768PublicKey(1184B) || x25519PublicKey(32B)
+//                         — raw concatenation, ML-KEM component first (§4.1)
+//     keyUsage:           keyEncipherment only (the draft's CERT-KEY-USAGE)
+//     Signature:          by a separate CA. A KEM key cannot sign, so the
+//                         certificate is never self-issued.
 // ---------------------------------------------------------------------------
 
-/**
- * Build a self-issued X.509 v3 certificate carrying a composite KEM
- * subject public key, signed by a separate signer (typically ML-DSA-65).
- *
- * @param compositePubKeyBytes  Subject public key bytes per LAMPS draft-17 §4.1/§6:
- *                              mlkem768PubKey(1184) || x25519PubKey(32) for
- *                              id-MLKEM768-X25519-SHA3-256.
- * @param compositeKemOidStr    OID for the composite KEM (e.g.
- *                              COMPOSITE_KEM_MLKEM768_X25519_OID_STR).
- * @param signerFn              Async signer over TBSCertificate DER bytes.
- * @param signatureOidStr       OID for the signature algorithm (e.g.
- *                              ML_DSA_65_OID_STR).
- * @param subject               DN in OpenSSL slash format: `/CN=.../O=.../OU=...`
- */
+/** CA-issue an end-entity certificate carrying a composite ML-KEM public key. */
 export async function buildCompositeKEMCert(
   compositePubKeyBytes: Uint8Array,
   compositeKemOidStr: string,
-  signerFn: SignerFn,
-  signatureOidStr: string,
+  issuer: CertIssuer,
   subject: string
 ): Promise<Uint8Array> {
-  const subjectAlgId = buildAlgId(compositeKemOidStr)
-  const signatureAlgId = buildAlgId(signatureOidStr)
-  const { validity } = buildValidity()
-  const name = buildName(subject)
-
-  const tbs = new TBSCertificate({
-    version: Version.v3,
-    serialNumber: generateSerialBytes(),
-    signature: signatureAlgId,
-    issuer: name,
-    validity,
-    subject: name,
-    subjectPublicKeyInfo: buildSPKI(subjectAlgId, compositePubKeyBytes),
-    extensions: new Extensions([basicConstraintsExt()]),
+  const { der } = await issueCertificate({
+    subject,
+    subjectKeyOid: compositeKemOidStr,
+    subjectPublicKey: compositePubKeyBytes,
+    issuer,
+    isCA: false,
+    keyUsage: ['keyEncipherment'],
   })
-
-  const tbsDer = serializeTBS(tbs)
-  const signature = await signerFn(tbsDer)
-  return buildCertificate(tbs, signatureAlgId, signature)
+  return der
 }
 
 // ---------------------------------------------------------------------------
@@ -1092,6 +1206,9 @@ export async function buildCompositeCertDraft19(
 
 /**
  * ECDSA primary with ML-DSA-65 in alt-sig extensions (2.5.29.72/73/74).
+ *
+ * @param ecSignerFn must return a DER Ecdsa-Sig-Value (RFC 3279 §2.2.3) — the
+ *                   X.509 signatureValue never carries raw PKCS#11 r||s.
  */
 export async function buildAltSigCert(
   ecPubKey: Uint8Array,
@@ -1126,9 +1243,11 @@ export async function buildAltSigCert(
     extensions: new Extensions([basicConstraintsExt(), ext72, ext73]),
   })
 
-  // Step 2: Sign with ML-DSA-65 → alt signature value
-  const tbsForAltSigDer = serializeTBS(tbsForAltSig)
-  const altSigBytes = await mldsaSignerFn(tbsForAltSigDer)
+  // Step 2: Sign with ML-DSA-65 → alt signature value. ITU-T X.509 (10/2019)
+  // §7.2.2: the input is the TBSCertificate with BOTH the altSignatureValue
+  // extension AND the `signature` component removed. Until 2026-09-30 this
+  // signed the TBS with `signature` still present.
+  const altSigBytes = await mldsaSignerFn(altSignatureInput(tbsForAltSig))
 
   // Extension 74: BIT STRING of alt signature
   const altSigBitString = buildDERBitString(altSigBytes)
@@ -1154,112 +1273,263 @@ export async function buildAltSigCert(
 
 // ---------------------------------------------------------------------------
 // 4. Related Certificates (RFC 9763)
+//
+//   Existing Cert A ──(hash of its complete final DER)──▶ new Cert B
+//
+// One-way: Cert A is issued first and never modified. The requester proves it
+// holds Cert A's key with a relatedCertRequest CSR attribute; the CA checks
+// that proof and issues Cert B carrying a RelatedCertificate extension.
+// Until 2026-09-30 this built a reciprocal pair and hashed a draft Cert A that
+// was then re-signed, so the stored hash never matched the returned Cert A.
 // ---------------------------------------------------------------------------
 
-export interface RelatedCertPairResult {
-  certA: Uint8Array
+export const RELATED_CERT_REQUEST_OID = '1.2.840.113549.1.9.16.2.60' // id-aa 60
+
+export interface RelatedCertificatesResult {
+  /** DER RequesterCertificate (the relatedCertRequest attribute value) */
+  relatedCertRequest: Uint8Array
+  /** Did the CA's proof-of-possession check pass? Issuance stops if not. */
+  requestVerified: true
   certB: Uint8Array
-  bindingHashA: string
-  bindingHashB: string
+  /** Hex SHA-256 of the complete final DER of Cert A, as stored in Cert B */
+  bindingHash: string
+}
+
+const toHex = (b: Uint8Array) =>
+  Array.from(b)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+
+function derIA5String(s: string): Uint8Array {
+  const body = new TextEncoder().encode(s)
+  return new Uint8Array([0x16, ...encodeDERLength(body.length), ...body])
 }
 
 /**
- * Two-pass build with bidirectional binding hashes per RFC 9763.
+ * Issue Cert B referencing the existing, final Cert A per RFC 9763.
+ *
+ * @param certA           Existing certificate, final DER — hashed as-is
+ * @param certASignerFn   Cert A's private key, producing signatures in the
+ *                        form Cert A's own signature algorithm uses (DER ECDSA)
+ * @param locationInfo    Where Cert A can be fetched (deterministic local URI)
  */
-export async function buildRelatedCertPair(
-  ecPubKey: Uint8Array,
-  ecSignerFn: SignerFn,
-  mldsaPubKey: Uint8Array,
-  mldsaSignerFn: SignerFn,
-  subject: string
-): Promise<RelatedCertPairResult> {
-  const ecAlgId = buildAlgId(ECDSA_SHA256_OID_STR)
-  const mldsaAlgId = buildAlgId(ML_DSA_65_OID_STR)
-  const { validity } = buildValidity()
-  const nameA = buildName(subject.replace(/CN=([^/]+)/, 'CN=$1 (Classical)'))
-  const nameB = buildName(subject.replace(/CN=([^/]+)/, 'CN=$1 (PQC)'))
-  const serialA = generateSerialBytes()
-  const serialB = generateSerialBytes()
+export async function buildRelatedCertificates(opts: {
+  certA: Uint8Array
+  certASignerFn: SignerFn
+  locationInfo: string
+  certBSubject: string
+  certBKeyOid: string
+  certBPublicKey: Uint8Array
+  issuer: CertIssuer
+  requestTime?: Date
+}): Promise<RelatedCertificatesResult> {
+  const certA = parseCertificate(opts.certA)
+  const tbsA = certA.tbsCertificate
 
-  // Helper: build RelatedCertificate extension value
-  const buildRelatedExt = (hashBytes: Uint8Array): Extension => {
-    const sha256AlgId = new AlgorithmIdentifier({
-      algorithm: SHA256_OID_STR,
-      parameters: new Uint8Array([0x05, 0x00]).buffer as ArrayBuffer, // NULL
-    })
-    const sha256AlgIdDer = new Uint8Array(AsnConvert.serialize(sha256AlgId))
-    // SEQUENCE { AlgorithmIdentifier, OCTET STRING(hash) }
-    const octetStringHash = buildDEROctetString(hashBytes)
-    const extValue = buildDERSequence([sha256AlgIdDer, octetStringHash])
-    return buildExtension(RELATED_CERT_OID, false, extValue.buffer as ArrayBuffer)
-  }
+  // RequesterCertificate.certID — IssuerAndSerialNumber of Cert A
+  const issuerAndSerial = buildDERSequence([
+    new Uint8Array(AsnConvert.serialize(tbsA.issuer)),
+    buildDERInteger(new Uint8Array(tbsA.serialNumber)),
+  ])
+  // requestTime — BinaryTime (RFC 6019): seconds since the epoch
+  const seconds = Math.floor((opts.requestTime ?? new Date()).getTime() / 1000)
+  const secBytes: number[] = []
+  for (let v = seconds; v > 0; v = Math.floor(v / 256)) secBytes.unshift(v & 0xff)
+  const binaryTime = buildDERInteger(new Uint8Array(secBytes.length ? secBytes : [0]))
 
-  // Pass 1: Build Cert A (ECDSA) WITHOUT RelatedCertificate extension
-  const tbsA_draft = new TBSCertificate({
-    version: Version.v3,
-    serialNumber: serialA,
-    signature: ecAlgId,
-    issuer: nameA,
-    validity,
-    subject: nameA,
-    subjectPublicKeyInfo: buildSPKI(buildECAlgId(), ecPubKey),
-    extensions: new Extensions([basicConstraintsExt()]),
-  })
-  const tbsA_draftDer = serializeTBS(tbsA_draft)
-  const sigA_draft = await ecSignerFn(tbsA_draftDer)
-  const certA_draft = buildCertificate(tbsA_draft, ecAlgId, sigA_draft)
+  // §3.1: signature over DER(IssuerAndSerialNumber) || DER(BinaryTime) with
+  // Cert A's key and signature algorithm.
+  const signed = new Uint8Array([...issuerAndSerial, ...binaryTime])
+  const popSig = await opts.certASignerFn(signed)
+  const relatedCertRequest = buildDERSequence([
+    issuerAndSerial,
+    binaryTime,
+    derIA5String(opts.locationInfo),
+    buildDERBitString(popSig),
+  ])
 
-  // Pass 2: Hash draft Cert A → build Cert B with that hash
-  const hashA = new Uint8Array(
-    await crypto.subtle.digest('SHA-256', certA_draft.buffer as ArrayBuffer)
+  // §3.2: the CA verifies possession with the public key in Cert A.
+  const pop = verifyWithSpki(
+    certA.signatureAlgorithm.algorithm,
+    tbsA.subjectPublicKeyInfo,
+    signed,
+    popSig
   )
-  const relatedExtB = buildRelatedExt(hashA)
-
-  const tbsB = new TBSCertificate({
-    version: Version.v3,
-    serialNumber: serialB,
-    signature: mldsaAlgId,
-    issuer: nameB,
-    validity,
-    subject: nameB,
-    subjectPublicKeyInfo: buildSPKI(buildAlgId(ML_DSA_65_OID_STR), mldsaPubKey),
-    extensions: new Extensions([basicConstraintsExt(), relatedExtB]),
-  })
-  const tbsBDer = serializeTBS(tbsB)
-  const sigB = await mldsaSignerFn(tbsBDer)
-  const certB = buildCertificate(tbsB, mldsaAlgId, sigB)
-
-  // Pass 3: Hash Cert B → rebuild Cert A with hash of Cert B
-  const hashB = new Uint8Array(await crypto.subtle.digest('SHA-256', certB.buffer as ArrayBuffer))
-  const relatedExtA = buildRelatedExt(hashB)
-
-  const tbsA = new TBSCertificate({
-    version: Version.v3,
-    serialNumber: serialA,
-    signature: ecAlgId,
-    issuer: nameA,
-    validity,
-    subject: nameA,
-    subjectPublicKeyInfo: buildSPKI(buildECAlgId(), ecPubKey),
-    extensions: new Extensions([basicConstraintsExt(), relatedExtA]),
-  })
-  const tbsADer = serializeTBS(tbsA)
-  const sigA = await ecSignerFn(tbsADer)
-  const certA = buildCertificate(tbsA, ecAlgId, sigA)
-
-  const toHex = (b: Uint8Array) =>
-    Array.from(b)
-      .map((x) => x.toString(16).padStart(2, '0'))
-      .join('')
-
-  return {
-    certA,
-    certB,
-    bindingHashA: toHex(
-      new Uint8Array(await crypto.subtle.digest('SHA-256', certA.buffer as ArrayBuffer))
-    ),
-    bindingHashB: toHex(hashB),
+  if (!pop.ok) {
+    throw new Error(
+      `relatedCertRequest proof of possession failed${pop.detail ? `: ${pop.detail}` : ''}`
+    )
   }
+
+  // §4: Cert A must already carry the key usage Cert B will assert.
+  const kuA = tbsA.extensions?.find((e) => e.extnID === '2.5.29.15')
+  if (
+    !kuA ||
+    (AsnConvert.parse(kuA.extnValue.buffer, KeyUsage).toNumber() &
+      KeyUsageFlags.digitalSignature) ===
+      0
+  ) {
+    throw new Error('Cert A does not assert digitalSignature, which Cert B would assert')
+  }
+
+  // RelatedCertificate ::= SEQUENCE { hashAlgorithm, hashValue } over the
+  // entire final Cert A. Cert A is ecdsa-with-SHA256, so SHA-256 (§4 SHOULD),
+  // parameters absent (RFC 5754 §2).
+  const hashA = new Uint8Array(await crypto.subtle.digest('SHA-256', opts.certA as BufferSource))
+  const relatedExt = buildExtension(
+    RELATED_CERT_OID,
+    false, // §4: SHOULD NOT be critical
+    buildDERSequence([
+      new Uint8Array(AsnConvert.serialize(buildAlgId(SHA256_OID_STR))),
+      buildDEROctetString(hashA),
+    ]).buffer as ArrayBuffer
+  )
+
+  const { der: certB } = await issueCertificate({
+    subject: opts.certBSubject,
+    subjectKeyOid: opts.certBKeyOid,
+    subjectPublicKey: opts.certBPublicKey,
+    issuer: opts.issuer,
+    isCA: false,
+    keyUsage: ['digitalSignature'],
+    extraExtensions: [relatedExt],
+  })
+
+  return { relatedCertRequest, requestVerified: true, certB, bindingHash: toHex(hashA) }
+}
+
+// ---------------------------------------------------------------------------
+// Advanced: Certificate Discovery (draft-ietf-lamps-certdiscovery-03)
+//
+// A primary certificate advertises where a secondary certificate (here one
+// with a PQC key) can be fetched, in a subjectInfoAccess entry whose
+// accessMethod is id-ad-certDiscovery and whose accessLocation is an
+// otherName carrying a RelatedCertificateDescriptor.
+//
+// The draft's OIDs are still TBD. These placeholders sit under the IANA
+// documentation enterprise number 32473 (RFC 5612) — clearly not real,
+// and never valid in a deployed certificate.
+// ---------------------------------------------------------------------------
+
+export const CERT_DISCOVERY_PLACEHOLDER_OIDS = {
+  /** stands in for id-ad-certDiscovery (id-ad TBD) */
+  accessMethod: '1.3.6.1.4.1.32473.1.1',
+  /** stands in for id-on-relatedCertificateDescriptor (id-on TBD) */
+  otherName: '1.3.6.1.4.1.32473.1.2',
+  /** stands in for id-rcd-agility (id-rcd 1, id-rcd TBD4) */
+  intentAgility: '1.3.6.1.4.1.32473.1.3.1',
+} as const
+
+const SUBJECT_INFO_ACCESS_OID = '1.3.6.1.5.5.7.1.11'
+
+function derOid(oid: string): Uint8Array {
+  const parts = oid.split('.').map(Number)
+  const body: number[] = [parts[0] * 40 + parts[1]]
+  for (const v of parts.slice(2)) {
+    const stack = [v & 0x7f]
+    for (let x = Math.floor(v / 128); x > 0; x = Math.floor(x / 128))
+      stack.unshift((x & 0x7f) | 0x80)
+    body.push(...stack)
+  }
+  return new Uint8Array([0x06, ...encodeDERLength(body.length), ...body])
+}
+
+/** Re-tag a DER TLV (e.g. an AlgorithmIdentifier SEQUENCE) with an IMPLICIT [n] constructed tag. */
+function implicitConstructed(n: number, tlv: Uint8Array): Uint8Array {
+  const out = tlv.slice()
+  out[0] = 0xa0 | n
+  return out
+}
+
+/**
+ * Build the subjectInfoAccess extension advertising a secondary certificate:
+ *
+ *   AccessDescription { accessMethod id-ad-certDiscovery,
+ *     accessLocation otherName { type-id id-on-relatedCertificateDescriptor,
+ *       value [0] EXPLICIT RelatedCertificateDescriptor {
+ *         method byUri [0] IMPLICIT IA5String,
+ *         intent id-rcd-agility,
+ *         signatureAlgorithm [0] IMPLICIT AlgorithmIdentifier,
+ *         publicKeyAlgorithm [1] IMPLICIT AlgorithmIdentifier } } }
+ */
+export function buildCertDiscoveryExtension(opts: {
+  uri: string
+  signatureOid: string
+  publicKeyOid: string
+}): Extension {
+  const ids = CERT_DISCOVERY_PLACEHOLDER_OIDS
+  const uriBytes = new TextEncoder().encode(opts.uri)
+  const byUri = new Uint8Array([0x80, ...encodeDERLength(uriBytes.length), ...uriBytes])
+  const algId = (oid: string) => new Uint8Array(AsnConvert.serialize(buildAlgId(oid)))
+  const descriptor = buildDERSequence([
+    byUri,
+    derOid(ids.intentAgility),
+    implicitConstructed(0, algId(opts.signatureOid)),
+    implicitConstructed(1, algId(opts.publicKeyOid)),
+  ])
+  // GeneralName otherName is [0] IMPLICIT AnotherName (constructed).
+  const otherName = implicitConstructed(
+    0,
+    buildDERSequence([derOid(ids.otherName), buildDERContextExplicit(0, descriptor)])
+  )
+  const accessDescription = buildDERSequence([derOid(ids.accessMethod), otherName])
+  // RFC 5280 §4.2.2.2: subjectInfoAccess MUST be non-critical.
+  return buildExtension(
+    SUBJECT_INFO_ACCESS_OID,
+    false,
+    buildDERSequence([accessDescription]).buffer as ArrayBuffer
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Advanced: unsigned certificate (RFC 9925)
+// ---------------------------------------------------------------------------
+
+/** id-alg-unsigned (RFC 9925) */
+export const ID_ALG_UNSIGNED_OID = '1.3.6.1.5.5.7.6.36'
+/** id-rdna-unsigned — the placeholder issuer RDN attribute (RFC 9925) */
+export const ID_RDNA_UNSIGNED_OID = '1.3.6.1.5.5.7.25.1'
+
+/**
+ * Build an RFC 9925 unsigned certificate: signature algorithm id-alg-unsigned
+ * with absent parameters, a zero-length signature BIT STRING, and the
+ * placeholder issuer `1.3.6.1.5.5.7.25.1=#0C00` (an empty UTF8String) so the
+ * object can never be mistaken for a self-signed certificate. issuerUniqueID,
+ * authorityKeyIdentifier and issuerAltName are omitted as the RFC requires /
+ * recommends. Validators MUST NOT accept it as a signature in a certification path.
+ */
+export async function buildUnsignedCertificate(opts: {
+  subject: string
+  subjectKeyOid: string
+  subjectPublicKey: Uint8Array
+  keyUsage: KeyUsageBit[]
+}): Promise<Uint8Array> {
+  const unsigned = buildAlgId(ID_ALG_UNSIGNED_OID)
+  const issuer = new Name([
+    new RelativeDistinguishedName([
+      new AttributeTypeAndValue({
+        type: ID_RDNA_UNSIGNED_OID,
+        value: new AttributeValue({ utf8String: '' }),
+      }),
+    ]),
+  ])
+  const keyId = await computeKeyIdentifier(opts.subjectPublicKey)
+  const tbs = new TBSCertificate({
+    version: Version.v3,
+    serialNumber: generateSerialBytes(),
+    signature: unsigned,
+    issuer,
+    validity: buildValidity().validity,
+    subject: buildName(opts.subject),
+    subjectPublicKeyInfo: buildSPKI(buildAlgId(opts.subjectKeyOid), opts.subjectPublicKey),
+    extensions: new Extensions([keyUsageExt(opts.keyUsage), subjectKeyIdExt(keyId)]),
+  })
+  return buildCertificate(tbs, unsigned, new Uint8Array(0))
+}
+
+/** The ECDSA P-256 AlgorithmIdentifier (with namedCurve), for issueCertificate. */
+export function ecP256SpkiAlgId(): AlgorithmIdentifier {
+  return buildECAlgId()
 }
 
 // ---------------------------------------------------------------------------
@@ -1455,11 +1725,46 @@ export function buildParsedText(
   const formatDate = (d: Date): string => d.toUTCString().replace('GMT', 'GMT').replace(',', '')
   const dnDisplay = subject.split('/').filter(Boolean).join(', ')
 
+  // Issuer, subject, validity and extension values come from the certificate
+  // itself, so a CA-issued certificate shows its real issuer and the Parsed
+  // view can never claim an extension value the DER does not carry.
+  const cert = parseCertificate(der)
+  const tbs = cert.tbsCertificate
+  const nameText = (n: Name): string =>
+    n
+      .map((rdn) =>
+        rdn
+          .map((atv) => {
+            const short =
+              atv.type === '2.5.4.3'
+                ? 'CN'
+                : atv.type === '2.5.4.10'
+                  ? 'O'
+                  : atv.type === '2.5.4.11'
+                    ? 'OU'
+                    : atv.type
+            return `${short}=${atv.value.utf8String ?? atv.value.printableString ?? atv.value.toString()}`
+          })
+          .join('+')
+      )
+      .join(', ')
+  const issuerDisplay = nameText(tbs.issuer) || dnDisplay
+  const subjectDisplay = nameText(tbs.subject) || dnDisplay
+  const certNotBefore = tbs.validity.notBefore.getTime() ?? notBefore
+  const certNotAfter = tbs.validity.notAfter.getTime() ?? notAfter
+
   const extLines: string[] = []
-  if (info.extensionOIDs.length > 0) {
+  if (tbs.extensions && tbs.extensions.length > 0) {
     extLines.push('    X509v3 extensions:')
-    for (const ext of info.extensionOIDs) {
-      extLines.push(`        ${oidToLabel(ext)}: present`)
+    for (const ext of tbs.extensions) {
+      extLines.push(`        ${oidToLabel(ext.extnID)}${ext.critical ? ' (critical)' : ''}:`)
+      if (ext.extnID === '2.5.29.15') {
+        extLines.push(`            ${readKeyUsage(cert)?.bits.join(', ') ?? '(unreadable)'}`)
+      } else if (ext.extnID === '2.5.29.19') {
+        extLines.push(`            CA:${readBasicConstraints(cert)?.cA ? 'TRUE' : 'FALSE'}`)
+      } else {
+        extLines.push(`            present (${ext.extnValue.buffer.byteLength} bytes)`)
+      }
     }
   }
 
@@ -1553,11 +1858,11 @@ export function buildParsedText(
     '        Version: 3 (0x2)',
     `        Serial Number: (random 16 bytes)`,
     `        Signature Algorithm: ${algLabel}`,
-    `    Issuer: ${dnDisplay}`,
+    `    Issuer: ${issuerDisplay}`,
     '    Validity',
-    `        Not Before: ${formatDate(notBefore)}`,
-    `        Not After : ${formatDate(notAfter)}`,
-    `    Subject: ${dnDisplay}`,
+    `        Not Before: ${formatDate(certNotBefore)}`,
+    `        Not After : ${formatDate(certNotAfter)}`,
+    `    Subject: ${subjectDisplay}`,
     ...spkiLines,
     ...extLines,
     `    Signature Algorithm: ${algLabel}`,
