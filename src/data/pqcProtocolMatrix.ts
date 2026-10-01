@@ -1217,24 +1217,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'hybrid-certs',
         toolName: 'Hybrid Certificate Workshop',
-        // Downgraded from 'full' 2026-09-30. The encodings are now fixed and
-        // checked by hybridCertConformance.test.ts (@noble + OpenSSL 3.6.3);
-        // restore a cell to 'full' only once the repeated Generate All run and
-        // the headless-browser check also pass for it.
+        // Restored to 'full' 2026-09-30 after the refresh: every format is built
+        // to its standard and checked by hybridCertConformance.test.ts (@noble +
+        // OpenSSL 3.6.3), and the browser smoke (e2e/hybrid-cert-formats.local
+        // .spec.ts) confirms Generate All, cancel and key cleanup in the page.
         testability: {
-          pureKem: 'partial',
-          hybridKem: 'partial',
-          pureSig: 'partial',
-          hybridSig: 'partial',
+          pureKem: 'full',
+          hybridKem: 'full',
+          pureSig: 'full',
+          hybridSig: 'full',
         },
         pureKemNote:
-          'Issues an ML-KEM-768 end-entity certificate from an ML-DSA-65 workshop CA, with keyUsage keyEncipherment; the chain is verified independently. Rated partial until the repeated-run and browser checks pass.',
+          'Issues an ML-KEM-768 end-entity certificate from an ML-DSA-65 workshop CA, with keyUsage keyEncipherment; the chain is verified independently.',
         hybridKemNote:
-          'Encodes a composite ML-KEM public key in a CA-issued certificate — no encapsulation or decapsulation is performed.',
+          'Encodes a composite ML-KEM public key in a CA-issued certificate and verifies the chain. The card does not run encapsulation or decapsulation, and OpenSSL 3.6.3 cannot parse the composite key.',
         pureSigNote:
-          'Issues ML-DSA-65 and SLH-DSA end-entity certificates from workshop CAs; signatures and chains are verified independently. Rated partial until the repeated-run and browser checks pass.',
+          'Issues ML-DSA-65 and SLH-DSA end-entity certificates from workshop CAs; signatures and chains are verified independently.',
         hybridSigNote:
-          'Composite signatures are checked against the draft test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding. Rated partial until the repeated-run and browser checks pass.',
+          'Composite signatures are checked against the draft test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding.',
       },
       {
         toolId: 'openssl-studio',
