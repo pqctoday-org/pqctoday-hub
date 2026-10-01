@@ -46,7 +46,10 @@ vi.mock('@/hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
-describe('LibraryViewRedesign', () => {
+// Every test here renders the whole Library view over the real corpus (2-10 s alone, 20-40 s on a
+// loaded machine); the default 30 s limit failed pr-test (1) on #797 ("forwards a retired ref"),
+// and 8b's loaded local run. Same allowance as libraryTableDrawerParams.test.tsx (#782).
+describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
   it('renders a populated results grid and does not render its own persona picker', () => {
     renderView()
     // At least one document card opens the drawer (role=button with the refId).
@@ -95,7 +98,7 @@ describe('LibraryViewRedesign', () => {
     expect(narrowedCount).not.toBeNull()
     // Architect has a non-empty preferred-category set, so the grid changes.
     expect(narrowedCount).not.toBe(allCount)
-  }, 30_000)
+  }, 60_000)
 
   // Mobile UX layer (Phase 7). LibraryEmbed.tsx renders this same component
   // inside the simulation at whatever viewport the player is on (simEmbed

@@ -26,6 +26,7 @@ import { leadersData } from '@/data/leadersData'
 import {
   DISCUSSIONS_BASE,
   DISCUSSIONS,
+  DATA_SUGGESTION_URL,
   CRYPTO_BUFF_SITES,
   CRYPTO_BUFF_BOOKS,
 } from '@/components/About/aboutData'
@@ -294,6 +295,10 @@ export function MobileAboutView() {
                                 label={d.label}
                               />
                             ))}
+                            <ExternalLinkRow
+                              href={DATA_SUGGESTION_URL}
+                              label="Suggest a data change"
+                            />
                           </div>
                         </Row>
                       )}

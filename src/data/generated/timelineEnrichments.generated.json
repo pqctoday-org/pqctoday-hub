@@ -14985,181 +14985,130 @@
   "successorDependencies": "Annual progress reporting required; None detected"
  },
  "Canada:CCCS — High Priority Systems Complete": {
-  "mainTopic": "Canadian Centre for Cyber Security guidance on PQC adoption.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
-   "PROTECTED A",
-   "PROTECTED B information)"
-  ],
+  "mainTopic": "A roadmap for the Government of Canada to migrate non-classified IT systems to post-quantum cryptography, outlining stakeholders, execution phases, milestones, and governance.",
+  "pqcAlgorithms": [],
   "quantumThreats": [
-   "HNDL",
-   "Quantum Computer",
-   "Post-Quantum"
+   "Harvest Now Decrypt Later",
+   "quantum computer threat"
   ],
   "migrationTimeline": [
-   "Year: 2024",
-   "Year: 2025",
-   "Year: 2026",
-   "Year: 2031",
-   "Year: 2035",
-   "must migrate"
+   "April 2026: Develop an initial departmental PQC migration plan",
+   "Beginning April 2026 and annually after: Report on PQC migration progress",
+   "End of 2031: Completion of PQC migration of high priority systems",
+   "End of 2035: Completion of PQC migration of remaining systems"
   ],
   "regionsAndBodies": {
-   "regions": [
-    "United States",
-    "Canada"
-   ],
+   "regions": [],
    "bodies": [
-    "NIST"
+    "Canadian Centre for Cyber Security",
+    "Treasury Board of Canada Secretariat",
+    "Shared Services Canada",
+    "Communications Security Establishment Canada"
    ]
   },
-  "leadersContributions": [
-   "None detected (guidance document with organizational roles",
-   "not individuals)"
-  ],
-  "pqcProducts": [
-   "None detected (guidance focused on migration methodology",
-   "not specific products)"
-  ],
-  "protocols": [
-   "Network security protocols (referenced as ITSP.40.062)",
-   "TLS",
-   "VPN",
-   "SSH"
-  ],
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [],
   "infrastructureLayers": [
-   "Cloud",
-   "Email"
+   "PKI",
+   "Key Management",
+   "HSM",
+   "Cloud KMS"
   ],
   "standardizationBodies": [
    "NIST"
   ],
   "complianceFrameworks": [
-   "CCCS ITSM.40.001"
+   "Cryptographic Module Validation Program"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Organizations must develop a departmental PQC migration plan by April 2026",
-   "High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats",
-   "Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations",
-   "Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles",
-   "An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition"
+   "Federal departments must develop an initial PQC migration plan by April 2026",
+   "High-priority systems protecting data in transit over public networks must be migrated by the end of 2031 due to Harvest Now Decrypt Later threats",
+   "All remaining systems must be migrated by the end of 2035",
+   "Procurement policies should include clauses requiring PQC support to reduce future migration costs",
+   "Departments should leverage existing IT lifecycle budgets to mitigate financial impact."
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "cryptographic agility",
-   "composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes"
+   "Backwards compatibility",
+   "Tunnelling",
+   "Isolation",
+   "Cryptographic agility"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Directors and managers of IT systems in federal departments and agencies",
-   "decision makers accountable for the migration to PQC",
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead"
+   "CISO",
+   "Security Architect",
+   "Operations",
+   "Policy Maker"
   ],
   "implementationPrereqs": [
-   "establishment of a committee with senior management representation",
-   "identification of a dedicated migration lead",
-   "development of a departmental PQC migration plan",
-   "creation of an inventory of systems employing cryptography",
-   "procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111",
-   "certification of cryptographic modules by the Cryptographic Module Validation Program"
+   "Departmental PQC migration plan",
+   "Cryptographic inventory",
+   "Vendor engagement",
+   "Financial planning",
+   "Education strategy"
   ],
   "relevantFeatures": [
+   "migration-program",
+   "pqc-governance",
    "Timeline",
    "Threats",
-   "Compliance",
-   "Migrate",
-   "Assess",
-   "pqc-governance",
-   "migration-program",
-   "crypto-agility",
-   "hsm-pqc",
-   "vendor-risk"
+   "Compliance"
   ],
-  "implementationAttackSurface": [
-   "harvest now, decrypt later (HNDL) threat",
-   "confidentiality of information in transit over public network zones"
-  ],
+  "implementationAttackSurface": [],
   "cryptoDiscovery": [
-   "cryptographic discovery",
-   "inventory of systems that need to be transitioned",
-   "system components employing cryptography",
-   "vendor and product version for each of the components",
-   "security controls that rely upon the identified cryptography",
-   "applicable network security zones",
-   "current cryptographic configurations",
-   "hosting platform",
-   "system dependencies",
-   "relevant service contracts and expiry dates",
-   "expected refresh year for the system or its components"
+   "Cryptographic discovery",
+   "Inventory of systems employing cryptography",
+   "SIEM solutions",
+   "Network monitoring",
+   "Endpoint detection and response"
   ],
   "testingValidation": [],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [
-   "smart cards",
-   "hardware tokens",
-   "mobile telephones",
-   "printers",
-   "voice over Internet Protocol telephony",
-   "hardware security modules"
-  ],
+  "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "vendor lock-in",
-   "procurement policies for new equipment",
-   "contract clauses to ensure that the vendor will include support for PQC",
-   "cryptographic modules have been certified by the Cryptographic Module Validation Program",
-   "third-party library trust (implied via vendor products)",
-   "open-source vs proprietary (not explicitly stated)"
+   "Vendor PQC roadmap",
+   "Procurement risk",
+   "Vendor lock-in",
+   "Contract clauses for PQC support"
   ],
   "deploymentComplexity": [
-   "Preparation phase",
-   "Identification phase",
-   "Transition phase",
-   "departmental PQC migration plan",
-   "high priority systems",
-   "remaining systems",
-   "April 2026: Develop an initial departmental PQC migration plan",
-   "End of 2031: Completion of PQC migration of high priority systems",
-   "End of 2035: Completion of PQC migration of remaining systems",
-   "cryptographic agility to allow for future configuration changes"
+   "Phased rollout",
+   "Backward compatibility",
+   "Rollback playbook",
+   "Staging environment",
+   "Impact assessment"
   ],
   "financialBusinessImpact": [
-   "financial planning",
-   "cost estimate that includes resource allocation",
-   "staffing impacts",
-   "new hiring",
-   "external contractors",
-   "realignment of roles",
-   "existing IT equipment lifecycles",
-   "system modernization plans",
-   "rushed procurement will increase costs"
+   "Cost estimates for resource allocation",
+   "Staffing impacts",
+   "Procurement costs",
+   "Leverage existing IT lifecycle budgets"
   ],
   "organizationalReadiness": [
-   "Designated Official for Cyber Security (DOCS)",
-   "PQC Migration Executive Lead",
-   "PQC Migration Technical Lead",
-   "committee consisting of stakeholders throughout the organization",
-   "senior management member",
-   "non-technical areas such as finance, project management, procurement and asset management",
-   "education strategy to inform staff on the quantum threat",
-   "TBS GCxchange platform",
-   "Cyber Centre’s Learning Hub"
+   "Governance prerequisites",
+   "Dedicated migration lead",
+   "Executive buy-in",
+   "Committee establishment",
+   "Reporting on progress"
   ],
-  "phaseClassification": "The document title explicitly states the completion of a migration phase for high priority systems, marking a definitive endpoint or deadline achievement. - **Regulatory Mandate Level**: Mandatory",
+  "phaseClassification": "This document represents a Planning and Preparation phase event, as it outlines the roadmap, stakeholders, and initial steps (preparation, identification) required before execution, with the first milestone being the development of a departmental plan in April 2026.",
   "mandateLevel": "Mandatory",
   "sectorApplicability": [
    "Government"
   ],
   "migrationUrgency": "Critical Deadline",
-  "phaseTransition": "Transitions from active migration to completed status for high priority government systems.",
-  "historicalSignificance": "Represents the successful conclusion of PQC migration efforts for critical government infrastructure, serving as a milestone in national security modernization.",
-  "implementationDates": [],
-  "successorDependencies": null
+  "phaseTransition": "Moves from Awareness/Strategy to Planning and Preparation — signals the start of formal departmental planning and inventory creation leading into execution.",
+  "historicalSignificance": "This is the first comprehensive, government-wide roadmap for PQC migration in Canada, establishing specific deadlines and governance structures for federal departments.",
+  "implementationDates": [
+   "April 2026: Develop an initial departmental PQC migration plan",
+   "End of 2031: Completion of PQC migration of high priority systems",
+   "End of 2035: Completion of PQC migration of remaining systems"
+  ],
+  "successorDependencies": "Requires development of departmental PQC migration plans; Depends on vendor adoption of PQC in products; Enables execution of identification and transition phases."
  },
  "Canada:CCCS — Remaining Systems Migration": {
   "mainTopic": "Canadian Centre for Cyber Security guidance on PQC adoption.",

@@ -2,9 +2,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { MessageSquare, ChevronDown, Users } from 'lucide-react'
+import { MessageSquare, ChevronDown, Users, FilePen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { DISCUSSIONS_BASE, DISCUSSIONS } from '../aboutData'
+import { DISCUSSIONS_BASE, DISCUSSIONS, DATA_SUGGESTION_URL } from '../aboutData'
 
 export function CommunitySection() {
   const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
@@ -95,6 +95,16 @@ export function CommunitySection() {
         >
           <MessageSquare size={13} aria-hidden="true" />
           Source on GitHub
+        </a>
+        <a
+          href={DATA_SUGGESTION_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+          title="Propose a new record or a correction, with a source. No coding required."
+        >
+          <FilePen size={13} aria-hidden="true" />
+          Suggest a data change
         </a>
       </div>
 
