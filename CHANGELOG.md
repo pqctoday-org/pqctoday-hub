@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.138.0] - 2026-09-30
+
+Search finds what you typed more often: ⌘K shows strong matches without scrolling and tells you when a filter is hiding results, and the Glossary, Library and Learn search boxes now match every word of a query instead of the exact phrase.
+
+### Changed
+
+- **⌘K tells you when "Authoritative only" is hiding results** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: with the filter on, the palette now says how many results it is hiding, with an example, and offers a button that turns the filter off. The filter's switch at the bottom now clearly shows when it is on.
+- **⌘K shows strong matches without scrolling** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: each group of results now shows its top 5, with a "Show N more" row to expand it, so one long group no longer pushes the others out of sight. Searching "purdue model for OT" now shows the Purdue Model glossary entry without scrolling. While the search index is still loading, the palette says "Loading search index…" instead of showing an empty list.
+- **Glossary, Library and Learn search match every word** [view:/library] [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: a search now finds entries that contain every word you typed, in any order, instead of only the exact phrase. Common words such as "for" or "the" are ignored, and names such as ML-KEM, PKCS#11 and C++ stay whole. Learn search also looks at each module's list of sub-topics.
+- **The Glossary suggests close matches when nothing matches every word** [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: for a search of three or more words with no complete match, the Glossary shows the terms that match all but one word, with a one-line note saying which word was not matched.
+
 ## [4.137.0] - 2026-09-30
 
 The PQC Assistant answers from the retrieved PQC Today corpus again, responds more quickly on broad lists, and uses the better-tested Qwen 3 8B model by default while keeping Qwen 3.5 available.

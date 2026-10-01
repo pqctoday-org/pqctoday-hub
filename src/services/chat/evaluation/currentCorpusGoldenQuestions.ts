@@ -23,7 +23,11 @@ export interface CurrentCorpusGoldenQuestion {
 }
 
 export const CURRENT_CORPUS_BASELINE = {
-  generatedDate: '2026-09-30',
+  // Date the golden questions were re-verified against the regenerated corpus:
+  // the 4.138.0 corpus (18,000 chunks, generated 2026-10-01 UTC) passed every
+  // other golden-query and Recall@5 test. Bump it with each reindex on a later
+  // UTC day, after those tests pass.
+  generatedDate: '2026-10-01',
   minimumChunkCount: 17_990,
 } as const
 
