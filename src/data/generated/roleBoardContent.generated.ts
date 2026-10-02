@@ -2619,7 +2619,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Where the algorithms actually show up: sectors, products, regulations.',
       phaseId: 'p7',
       cswp39Zone: 'migration',
-      moduleIds: ['emv-payment-pqc', 'energy-utilities-pqc', 'aerospace-pqc'],
+      moduleIds: ['emv-payment-pqc', 'ot-pqc', 'aerospace-pqc'],
       workshopIds: ['suci-flow'],
       businessToolIds: ['supply-chain-matrix'],
       board: {

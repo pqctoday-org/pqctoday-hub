@@ -8,7 +8,10 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_TOPIC_KEYWORDS } from '@/data/moduleTopicSummaries'
 import { MODULE_TRACKS } from '../moduleData'
 
-const iotOt = MODULE_TRACKS.flatMap((t) => t.modules).find((m) => m.id === 'iot-pqc')!
+const allModules = MODULE_TRACKS.flatMap((t) => t.modules)
+const iot = allModules.find((m) => m.id === 'iot-pqc')!
+// The Purdue model is an OT architecture, so it lives in the OT module's keywords.
+const ot = allModules.find((m) => m.id === 'ot-pqc')!
 
 const renderBrowse = () =>
   render(
@@ -26,29 +29,29 @@ describe('BrowseAllView search — match all words + topic keywords', () => {
     localStorage.clear()
   })
 
-  it('premise: the IoT & OT card description does not mention Purdue, its keywords do', () => {
-    expect(iotOt).toBeDefined()
-    expect(`${iotOt.title} ${iotOt.description}`.toLowerCase()).not.toContain('purdue')
-    expect(MODULE_TOPIC_KEYWORDS['iot-pqc'].toLowerCase()).toContain('purdue model')
+  it('premise: the OT card description does not mention Purdue, its keywords do', () => {
+    expect(ot).toBeDefined()
+    expect(`${ot.title} ${ot.description}`.toLowerCase()).not.toContain('purdue')
+    expect(MODULE_TOPIC_KEYWORDS['ot-pqc'].toLowerCase()).toContain('purdue model')
   })
 
-  it('finds the IoT & OT module for "purdue model for OT"', async () => {
+  it('finds the OT module for "purdue model for OT"', async () => {
     renderBrowse()
     search('purdue model for OT')
-    expect(await screen.findByText(iotOt.title)).toBeInTheDocument()
+    expect(await screen.findByText(ot.title)).toBeInTheDocument()
     expect(screen.queryByText('No modules match your filters.')).not.toBeInTheDocument()
   })
 
   it('finds it for the single word "purdue"', async () => {
     renderBrowse()
     search('purdue')
-    expect(await screen.findByText(iotOt.title)).toBeInTheDocument()
+    expect(await screen.findByText(ot.title)).toBeInTheDocument()
   })
 
   it('still matches title+description phrases it matched before', async () => {
     renderBrowse()
     search('constrained devices')
-    expect(await screen.findByText(iotOt.title)).toBeInTheDocument()
+    expect(await screen.findByText(iot.title)).toBeInTheDocument()
   })
 
   it('shows the empty state when a word matches nothing', async () => {
