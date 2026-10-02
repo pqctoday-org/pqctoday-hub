@@ -29,6 +29,7 @@ export interface PhaseResource {
 
 export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-101': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'talking-about-pqc': { phasesServed: ['foundations'], legs: ['learn', 'practice', 'reference'] },
   'quantum-threats': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
   'pqc-candidates': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },

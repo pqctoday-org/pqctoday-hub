@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09292026.csv
+ * Source: src/data/role_board_content_10012026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1221 documents, trust-tiered',
+          '1220 documents, trust-tiered',
           'Regulatory data verified 27 Sept 2026',
         ],
         sideCard: {
@@ -164,7 +164,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1221 documents, trust-tiered',
+          '1220 documents, trust-tiered',
           'Regulatory data verified 27 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -301,7 +301,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1221 documents, trust-tiered',
+          '1220 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -441,7 +441,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1221 documents, trust-tiered', 'Regulatory data verified 27 Sept 2026'],
+        proofChips: ['1220 documents, trust-tiered', 'Regulatory data verified 27 Sept 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -512,7 +512,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1221 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1220 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -654,7 +654,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1221 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1220 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -723,7 +723,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1221 documents, trust-tiered', 'Regulatory data verified 27 Sept 2026'],
+        proofChips: ['1220 documents, trust-tiered', 'Regulatory data verified 27 Sept 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2481,7 +2481,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1221 documents, trust-tiered',
+          '1220 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -3156,7 +3156,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/learn',
         ctaSecondary: 'The cost of waiting',
         ctaSecondaryHref: '/business/tools/cost-of-inaction',
-        proofChips: ['Plain English by default', 'Plain English by default', 'Nothing to install'],
+        proofChips: ['Plain English by default', 'Nothing to install'],
         sideCard: {
           title: 'The one idea',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3226,11 +3226,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/playground/tls-simulator',
         ctaSecondary: 'See what a breach costs',
         ctaSecondaryHref: '/business/tools/breach-simulator',
-        proofChips: [
-          'Real cryptography, running here',
-          'Plain English by default',
-          'Plain English by default',
-        ],
+        proofChips: ['Real cryptography, running here', 'Plain English by default'],
         sideCard: {
           title: 'The bit that surprises people',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3282,81 +3278,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'howbad',
-      order: 3,
-      chipLabel: 'How bad is it really?',
-      chipDescription: "The honest version: what we know, what we don't, and what replaces it.",
-      phaseId: '',
-      cswp39Zone: '',
-      moduleIds: ['quantum-threats', 'pqc-candidates'],
-      workshopIds: [],
-      businessToolIds: [],
-      board: {
-        heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-
-        headline: 'Nobody knows the year. Here is what they do know.',
-        sub: 'The honest answer to “when” is a range, not a date, and people who study this disagree with each other in public. The replacements, though, are already published — that part is not in doubt.',
-        ctaPrimary: "See what we know and what we don't",
-        ctaPrimaryHref: '/threats',
-        ctaSecondary: 'Meet the replacements',
-        ctaSecondaryHref: '/algorithms?tab=transition&highlight=ML-KEM-768',
-        proofChips: [
-          'Plain English by default',
-          'The estimate carries its dissent',
-          'When we get it wrong, we say so',
-        ],
-        sideCard: {
-          title: 'What is and is not settled',
-          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
-          rows: [
-            { label: 'The maths breaking', value: 'settled' },
-            { label: 'The year it breaks', value: '2035 (2030–2041)' },
-            { label: 'The replacement', value: 'published and final' },
-          ],
-          punchline: 'Uncertain timing is not the same as uncertain outcome.',
-          footnote:
-            'The range is the published consensus window, shown with its range rather than as a single year.',
-        },
-        gridTitle: 'Where you can go next',
-        gridSub: 'Optional, none of it sequenced',
-        gridCards: [
-          {
-            title: 'Where would you actually stand?',
-            body: 'Six plain questions and a rough position. About 3 minutes.',
-            href: '/assess?mode=quick',
-          },
-          {
-            title: 'Everything we have corrected',
-            body: 'When we get something wrong we log it here rather than quietly fixing it.',
-            href: '/revisions',
-          },
-          {
-            title: 'Uncertain timing, certain outcome',
-            body: 'Nobody can give you the year. That is not the same as nobody knowing what breaks, or what replaces it — both of those are settled.',
-            href: '/learn/quantum-threats',
-          },
-        ] as [
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-        ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
-
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
-      },
-    },
-    {
       id: 'mylife',
-      order: 4,
+      order: 3,
       chipLabel: 'Where this touches me',
       chipDescription: 'Your payments, your ID, your medical records.',
       phaseId: '',
@@ -3373,11 +3296,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/playground/digital-id',
         ctaSecondary: 'Follow a Bitcoin transaction',
         ctaSecondaryHref: '/playground/bitcoin-flow',
-        proofChips: [
-          'Real cryptography, running here',
-          'Plain English by default',
-          'Plain English by default',
-        ],
+        proofChips: ['Real cryptography, running here', 'Plain English by default'],
         sideCard: {
           title: 'Three things it touches',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3430,7 +3349,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'anyone',
-      order: 5,
+      order: 4,
       chipLabel: 'Is anyone fixing it?',
       chipDescription: 'Governments, companies, and the people actually doing the work.',
       phaseId: '',
@@ -3447,11 +3366,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Meet the people doing the work',
         ctaSecondaryHref: '/leaders',
-        proofChips: [
-          'Plain English by default',
-          'Plain English by default',
-          'Every claim links to its own source',
-        ],
+        proofChips: ['Plain English by default', 'Every claim links to its own source'],
         sideCard: {
           title: 'Where it already stands',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3503,7 +3418,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'whattake',
-      order: 6,
+      order: 5,
       chipLabel: 'What would fixing it take?',
       chipDescription: 'Watch an organisation actually do it, start to finish.',
       phaseId: '',
@@ -3555,6 +3470,79 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             title: 'The hard problem is inventory, not cryptography',
             body: 'Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.',
             href: '/report?example=1',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Start anywhere. Nothing is locked.',
+
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'atwork',
+      order: 6,
+      chipLabel: 'I talk about it at work',
+      chipDescription: 'What you can say today, which dates are real, and which words to avoid.',
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['talking-about-pqc', 'compliance-strategy'],
+      workshopIds: [],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'No background needed · nothing to install',
+
+        headline: 'Talk about it without overclaiming.',
+        sub: 'Customers are starting to ask about quantum. Here is what you can say today, which dates are real and whose they are, and which words do not hold up — each linked to the record behind it.',
+        ctaPrimary: 'Learn what you can say',
+        ctaPrimaryHref: '/learn/talking-about-pqc',
+        ctaSecondary: "What we know, and what we don't",
+        ctaSecondaryHref: '/threats',
+        proofChips: [
+          'Plain English by default',
+          'Every claim links to its own source',
+          'Nothing to install',
+        ],
+        sideCard: {
+          title: 'Three phrases to check',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: '“Quantum-proof”', value: 'no standard uses it' },
+            { label: '“FIPS validated”', value: 'only with a certificate number' },
+            { label: '“Hybrid”', value: 'two algorithms together, not a halfway step' },
+          ],
+          punchline: 'Say what the record shows, and link to it.',
+          footnote:
+            'Guidance drawn from how this site labels certificates and deadlines. It is not legal advice.',
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Optional, none of it locked',
+        gridCards: [
+          {
+            title: 'The names you will quote',
+            body: 'ML-KEM, ML-DSA and SLH-DSA: what each one replaces, and where each stands.',
+            href: '/algorithms?tab=transition&highlight=ML-KEM-768',
+          },
+          {
+            title: "The questions a customer's team will face",
+            body: 'Six plain questions and a rough position. About 3 minutes.',
+            href: '/assess?mode=quick',
+          },
+          {
+            title: 'Corrections in public build trust',
+            body: 'When this site gets something wrong, it logs the correction where anyone can see it instead of quietly fixing it. Hold your own claims to the same standard.',
+            href: '/revisions',
           },
         ] as [
           { title: string; body: string; href?: string },

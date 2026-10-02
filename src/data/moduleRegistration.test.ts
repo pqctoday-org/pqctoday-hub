@@ -38,7 +38,15 @@ const NOT_A_LEARN_MODULE = new Set(['quiz'])
 // skills-team-structure, and soc-implementation-pqc were the three
 // "pre-existing gap, never mapped" entries this list existed to make
 // visible — all three now have real NICE_MODULE_MAP entries.
-const NICE_EXEMPT: Record<string, string> = {}
+const NICE_EXEMPT: Record<string, string> = {
+  // Added 2026-10-01 with the module (owner decision: broaden Curious instead of
+  // adding a sales/marketing persona). It is written for non-technical jobs —
+  // sales, marketing, communications, procurement, press — that sit outside the
+  // NICE cybersecurity workforce framework, so mapping it to a NICE work role
+  // would claim a fit that does not exist.
+  'talking-about-pqc':
+    'Curious role guide for non-technical professionals; no NICE work role covers these jobs.',
+}
 
 /**
  * Modules deliberately absent from every persona's recommendedPath.

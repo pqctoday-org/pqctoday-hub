@@ -310,6 +310,13 @@ export const NEXT_STEPS: Record<string, NextStep> = {
   // ── module→tool ── (hand-authored, WS-I 2026-09-24: the HSM Playground's
   // Developer → Validation workbench hosts the same ACVP-format prototype and
   // the evidence-labelled validation suite this module teaches)
+  // Curious role guide → the catalogue it tells readers to point to: each
+  // product's post-quantum support and certificate stage from public records.
+  '/learn/talking-about-pqc': {
+    to: '/migrate',
+    label: 'Check a claim: who has actually shipped',
+    why: 'The Migrate catalogue shows each product’s post-quantum support and certificate stage, taken from public records — the evidence this module tells you to point to.',
+  },
   '/learn/acvp-lab-workflow': {
     to: '/playground/hsm',
     label: 'Practice it: HSM Playground validation workbench',
