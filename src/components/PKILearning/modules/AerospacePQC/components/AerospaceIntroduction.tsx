@@ -615,12 +615,14 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
-            to="/learn/iot-ot-pqc"
+            to="/learn/iot-pqc"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
-              <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
+              <div className="text-sm font-medium text-foreground">
+                IoT &amp; Embedded Device PQC
+              </div>
               <div className="text-xs text-muted-foreground">
                 PQC migration for embedded and space-rated processors
               </div>

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: '5g-security',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-046',
   title: '5G Security',
   description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   workInProgress: true,
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 6,
+  trackOrder: 5,
   // learnSections CORRECTED 2026-07-30 to describe this module's actual
   // learn tab. The previous ids read like the module's workshop steps and
   // did not correspond to any rendered heading — which made the table of

@@ -175,7 +175,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       targetLevel: 'basic',
       linkedModules: [
         { id: 'data-asset-sensitivity', label: 'Data & Asset Sensitivity' },
-        { id: 'energy-utilities-pqc', label: 'Energy & Utilities PQC' },
+        { id: 'ot-pqc', label: 'OT & ICS PQC' },
       ],
     },
     {

@@ -24,7 +24,7 @@ const PARTS: WorkshopPart[] = [
     id: 'sensor-data-integrity',
     title: 'Step 2: Sensor Data Integrity Simulator',
     description:
-      'Compare signing throughput for LiDAR, radar, camera, and V2X sensors under real automotive data rates and latency budgets.',
+      'Compare signing throughput for LiDAR, radar, camera, and V2X sensors under real automotive data rates and latency budgets, then estimate V2X channel load as vehicle density grows.',
     icon: Activity,
   },
   {

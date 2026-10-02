@@ -196,7 +196,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       targetLevel: 'basic',
       linkedModules: [
         { id: 'digital-assets', label: 'Digital Assets' },
-        { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'iot-pqc', label: 'IoT & Embedded PQC' },
         { id: 'ai-security-pqc', label: 'AI Security & PQC' },
       ],
     },
@@ -232,7 +232,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       modules: [
         { id: 'standards-bodies', label: 'Standards Bodies' },
         { id: 'digital-assets', label: 'Digital Assets' },
-        { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'iot-pqc', label: 'IoT & Embedded PQC' },
       ],
     },
   ],

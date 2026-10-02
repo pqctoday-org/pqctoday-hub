@@ -112,16 +112,16 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
   energy: {
     p0: [
       {
-        moduleId: 'energy-utilities-pqc',
+        moduleId: 'ot-pqc',
         label: 'PQC for energy & utilities — OT/ICS context',
-        to: '/learn/energy-utilities-pqc',
+        to: '/learn/ot-pqc',
       },
     ],
     p4: [
       {
-        moduleId: 'iot-ot-pqc',
+        moduleId: 'iot-pqc',
         label: 'IoT/OT device migration for operational technology',
-        to: '/learn/iot-ot-pqc',
+        to: '/learn/iot-pqc',
       },
     ],
   },

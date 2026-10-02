@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-070',
   title: 'Trust Services & Long-Term Signatures',
   description:
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 8,
+  trackOrder: 7,
   learnSections: [
     { id: 'qualified-signatures', label: 'Qualified vs Advanced Signatures' },
     { id: 'timestamping', label: 'Timestamping & Proof of Existence' },

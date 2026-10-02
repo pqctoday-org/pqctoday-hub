@@ -149,7 +149,7 @@ export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
     signingTimeMs: 0.1,
     verificationTimeMs: 0.05,
     signatureBytes: 2512, // RFC 8554 H10/W4 with the HSS header (was 2156, unsourced)
-    publicKeyBytes: 56,
+    publicKeyBytes: 60, // HSS L=1 public key (plain LMS is 56 B); kept consistent with the 2,512 B HSS signature
   },
 ]
 

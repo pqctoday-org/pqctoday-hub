@@ -163,7 +163,7 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     why: 'S/MIME & CMS Workshop is the hands-on version of this module: the same ideas, run in your browser.',
   },
   // ── module→business ──
-  '/learn/energy-utilities-pqc': {
+  '/learn/ot-pqc': {
     to: '/business/tools/mti-negotiator',
     label: 'Produce the artifact: MTI Negotiator',
     why: 'This module belongs to phase 5 (Pilots & Migration); MTI Negotiator produces a deliverable of that phase in the Command Center.',
@@ -219,7 +219,7 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     why: 'Multi-Algorithm Signing is the hands-on version of this module: the same ideas, run in your browser.',
   },
   // ── module→business ──
-  '/learn/iot-ot-pqc': {
+  '/learn/iot-pqc': {
     to: '/business/tools/mti-negotiator',
     label: 'Produce the artifact: MTI Negotiator',
     why: 'This module belongs to phase 5 (Pilots & Migration); MTI Negotiator produces a deliverable of that phase in the Command Center.',

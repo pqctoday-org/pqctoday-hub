@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'healthcare-pqc',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-041',
   title: 'Healthcare PQC',
   description:
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 2,
+  trackOrder: 1,
   learnSections: [
     { id: 'biometric-threat', label: 'Biometric Data Permanence' },
     { id: 'pharma-ip', label: 'Pharma IP Protection' },

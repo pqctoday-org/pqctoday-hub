@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'government-defense-pqc',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-069',
   title: 'Government & Defense PQC',
   description:
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 7,
+  trackOrder: 6,
   learnSections: [
     { id: 'cnsa-suite', label: 'The CNSA 2.0 Suite' },
     { id: 'cnsa-timeline', label: 'Mandates & Dated Milestones' },

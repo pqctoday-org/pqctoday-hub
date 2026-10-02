@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'digital-assets',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-30',
+  lastEdited: '2026-10-02',
 
   standards: [
     getStandard('RFC-8032'),

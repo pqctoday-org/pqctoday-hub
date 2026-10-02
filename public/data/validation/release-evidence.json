@@ -16,12 +16,12 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "88041a219dd9be231da13ac314b3f927e3366d81b2e1886210e5bc22d2913517",
+    "public/data/validation/coverage-matrix.json": "7b75600a1679410bc7571f96903e20de95f71b1f5ec68906db6e808db36f2444",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "935416e9428889bec874552405ce11d55a54fd959ab8b5f6fa728177c461e609",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "91f6c1df36e31ab7a155aaee7cd94ea1c77c63ef24ab920eb75a3768e8dfe4e1",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "00a7852fe56c5d626d198de5d6027649eeeb00f203c50bcd590a2469b83015e2",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "581a4eb48a63d7b8dbd58d7b76fb2c7e254e3ab4177f86330ab0524bcdfdb9fd",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "56ca1fbaec9eda5df629d5bacc56c5068b4dab87fe3a5190d6ea4eb1ffc6f8d5",
     "src/data/validation/validation-counts.generated.json": "2c3c06565f30bc0d41da0223c63cbd3af94aa9b9556aa605b1e23cdbf2ed9ca4",
     "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286"
@@ -209,17 +209,17 @@
         },
         "byPolarity": {
           "positive": {
-            "covered": 191,
-            "sampled": 1882,
+            "covered": 192,
+            "sampled": 1881,
             "untested": 158,
             "denominator": 2231,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 673,
-              "standard-kat": 4,
+              "standard-kat": 5,
               "oracle": 32,
               "differential": 0,
-              "round-trip": 891,
+              "round-trip": 890,
               "behavior-only": 473,
               "untested": 158,
               "unsupported": 0
@@ -331,7 +331,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 63098a492); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -509,12 +509,12 @@
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "hubCommit": "63098a4925d15bedaac510eefb3b174b40956fb6",
       "recordedAt": "2026-10-02",
-      "results": 94,
+      "results": 96,
       "byEngine": {
         "rust": {
-          "pass": 94
+          "pass": 96
         }
       },
       "failures": []
@@ -3338,7 +3338,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9288 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9290 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,

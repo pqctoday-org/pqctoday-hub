@@ -9,7 +9,7 @@
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+  "hubCommit": "63098a4925d15bedaac510eefb3b174b40956fb6",
   "recordedAt": "2026-10-02",
   "results": [
     {
@@ -199,6 +199,20 @@
       "artifactKind": "wasm",
       "artifactSha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3",
       "registryCase": "kat.hmac-verify#hmac_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3",
+      "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3",
+      "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc2",
       "status": "pass"
     },
     {

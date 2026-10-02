@@ -26,7 +26,7 @@ type ModuleEntry = LearningProgress['modules'][string]
 type Modules = LearningProgress['modules']
 
 /** Bump when the catalog's module set changes (drives drift detection). */
-export const LEARN_CONTENT_VERSION = 2
+export const LEARN_CONTENT_VERSION = 3
 
 /** Canonical module ids — the single source is the manifest collection. */
 export const MODULE_IDS: ReadonlySet<string> = new Set(MANIFESTS.map((m) => m.id))
@@ -44,6 +44,11 @@ export const MODULE_IDS: ReadonlySet<string> = new Set(MANIFESTS.map((m) => m.id
  */
 export const MODULE_ID_RENAMES: Readonly<Record<string, string>> = {
   'fips-pci-certification': 'fips-140-3-certification',
+  // 2026-10-01 IoT/OT split: IoT & OT Security (LM-032) became IoT & Embedded
+  // Device PQC (LM-074); Energy & Utilities PQC (LM-042) became the cross-sector
+  // OT & Industrial Control Systems PQC module (LM-075).
+  'iot-ot-pqc': 'iot-pqc',
+  'energy-utilities-pqc': 'ot-pqc',
 }
 
 /** Lossless carry-over when both old and new ids hold progress (rare). */

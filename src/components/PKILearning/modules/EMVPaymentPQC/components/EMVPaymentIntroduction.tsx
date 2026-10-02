@@ -827,12 +827,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </div>
           </Link>
           <Link
-            to="/learn/iot-ot-pqc"
+            to="/learn/iot-pqc"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
-              <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
+              <div className="text-sm font-medium text-foreground">
+                IoT &amp; Embedded Device PQC
+              </div>
               <div className="text-xs text-muted-foreground">
                 FN-DSA for constrained card chips and POS terminal migration
               </div>

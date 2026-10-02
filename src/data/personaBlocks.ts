@@ -667,10 +667,12 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     curious:
       'A signature on an email has to be trustworthy for years; this module shows what a signed and an encrypted message are made of and what changes for post-quantum algorithms.',
   },
-  '/learn/energy-utilities-pqc': {
+  '/learn/ot-pqc': {
+    architect:
+      'Map IEC 62443 zones and conduits to where PQC lands first, plan an IEC 61850 substation migration within the GOOSE trip-time classes, and lay out sector roadmaps for energy, water, rail, manufacturing and building automation.',
     researcher:
-      'Assess IEC 61850, DNP3, Modbus and DLMS readiness, model 900 MHz smart-meter time-on-air and saturation with PQC message sizes, and score safety and environmental consequences: the constraints are physical, not informational.',
-    ops: 'Plan IEC 61850 substation migration across protection and control, PQC key rotation for a smart-meter fleet of millions, and the utility-wide roadmap with NERC CIP milestones.',
+      'Compare the native security of IEC 61850/62351, DNP3 Secure Authentication, OPC UA, CIP Security, PROFINET and BACnet/SC, and score how safety and timing constraints limit which PQC algorithms can be used where.',
+    ops: 'Plan the substation migration around outage windows, sign PLC firmware and project files with ML-DSA, with the LMS verifier checked against the RFC 8554 test vectors, and track the NERC CIP, NIS2 and TSA milestones per sector.',
   },
   '/learn/entropy-randomness': {
     developer:
@@ -739,14 +741,14 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     curious:
       'Every login token your systems issue is signed; the module shows which parts of an identity system a quantum computer would break and in what order to fix them.',
   },
-  '/learn/iot-ot-pqc': {
+  '/learn/iot-pqc': {
     developer:
-      'Compare PQC algorithm resource requirements against device classes, sign and verify a firmware image with LMS, XMSS or ML-DSA, and simulate a CoAP/DTLS 1.3 handshake with PQC to measure the overhead.',
+      'Compare PQC algorithm RAM and cycle costs against device classes, sign and verify a firmware image with real ML-DSA and LMS signatures, and measure DTLS 1.3 and EDHOC handshakes with PQC on constrained links.',
     architect:
-      'Certificate chain sizes on constrained devices and the SCADA/ICS migration plan across the Purdue levels are the two design constraints; the device-class comparison says what fits in memory.',
+      'Certificate chain size and device identity, fleet key rotation and LPWAN airtime are the design constraints; the device-class comparison says which algorithms fit in memory for verifying versus signing.',
     researcher:
-      'The Secure Boot RAM load latency and V2X broadcast simulations, and the CoAP/DTLS overhead measurement, quantify what constrained devices pay for each algorithm.',
-    ops: 'The SCADA/ICS assessment across Purdue levels and the firmware signing step are the two operations a plant migration consists of; a deployed device cannot be patched later.',
+      'The constrained-device benchmarks, the handshake comparison and the LPWAN airtime model quantify what each algorithm costs a battery-powered device, with the source of every figure.',
+    ops: 'Rotate keys across a device fleet, plan firmware signing for devices that cannot be patched easily later, and map the EU Cyber Resilience Act, EN 18031, US Cyber Trust Mark and UK PSTI duties.',
   },
   '/learn/kms-pqc': {
     architect:

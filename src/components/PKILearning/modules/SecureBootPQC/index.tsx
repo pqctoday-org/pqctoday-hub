@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Shield, FileCode, Key, BarChart3, CheckCircle, ExternalLink } from 'lucide-react'
+import { Shield, FileCode, Key, BarChart3, CheckCircle, ExternalLink, Timer } from 'lucide-react'
 import { Link } from 'react-router'
 import { SecureBootIntroduction } from './components/SecureBootIntroduction'
 import { SecureBootExercises } from './components/SecureBootExercises'
@@ -9,6 +9,7 @@ import { FirmwareSigningMigrator } from './workshop/FirmwareSigningMigrator'
 import { TPMKeyHierarchyExplorer } from './workshop/TPMKeyHierarchyExplorer'
 import { FirmwareVendorMatrix } from './workshop/FirmwareVendorMatrix'
 import { AttestationFlowDesigner } from './workshop/AttestationFlowDesigner'
+import { BootVerifyLatencySimulator } from './workshop/BootVerifyLatencySimulator'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -47,6 +48,13 @@ const PARTS: WorkshopPart[] = [
     description:
       'Design PQC attestation flows for Measured Boot, TPM Quote, DICE, FIDO Device Onboard, and RA-TLS.',
     icon: CheckCircle,
+  },
+  {
+    id: 'boot-verify-latency',
+    title: 'Step 6: Boot Verify Latency',
+    description:
+      'Estimate signature load + verify time on a Cortex-M4-class root of trust for ECDSA, RSA-3072, ML-DSA-44 and LMS.',
+    icon: Timer,
   },
 ]
 
@@ -97,6 +105,8 @@ export const SecureBootPQCModule: FC = () => (
           return <FirmwareVendorMatrix key={`vendors-${configKey}`} />
         case 4:
           return <AttestationFlowDesigner key={`attestation-${configKey}`} />
+        case 5:
+          return <BootVerifyLatencySimulator key={`boot-latency-${configKey}`} />
         default:
           return null
       }

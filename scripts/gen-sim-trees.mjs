@@ -544,7 +544,7 @@ const FRAMEWORK = {
           'Reference: data-source & SBOM / CT-log standards in the Library',
           '/library?topic=SBOM'
         ),
-        L('iot-ot-pqc', 'Learn: OT & embedded systems — the hardest assets to discover'),
+        L('iot-pqc', 'Learn: OT & embedded systems — the hardest assets to discover'),
       ],
     },
     {

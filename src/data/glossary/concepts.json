@@ -291,7 +291,7 @@
     "term": "SCADA",
     "acronym": "SCADA",
     "definition": "Supervisory Control and Data Acquisition, industrial control systems used in power grids, water treatment, and manufacturing. Quantum-vulnerable via legacy crypto.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -713,7 +713,7 @@
     "acronym": "DER",
     "definition": "Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid. Not to be confused with DER the ASN.1 encoding (Distinguished Encoding Rules).",
     "technicalNote": "DERs authenticate via IEEE 2030.5 certificates (ECDSA P-256). PQC migration requires fleet-wide certificate reissuance to ML-DSA-65.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -1046,7 +1046,7 @@
   {
     "term": "Purdue Model",
     "definition": "Reference architecture for industrial control system (ICS) networks. Defines 6 levels from physical process (Level 0) to enterprise network (Level 5), guiding security zone segmentation and PQC migration priority.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1054,7 +1054,7 @@
     "term": "Programmable Logic Controller",
     "acronym": "PLC",
     "definition": "An industrial computer that controls manufacturing processes, assembly lines, and infrastructure equipment. PLCs sit at Purdue Level 1 and typically use pre-shared keys or DNP3-SA for authentication.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1062,7 +1062,7 @@
     "term": "Remote Terminal Unit",
     "acronym": "RTU",
     "definition": "A microprocessor-controlled device that interfaces field devices (sensors, actuators) to a SCADA system. RTUs sit at Purdue Level 1 with asset lifecycles of 15–25 years.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1070,7 +1070,7 @@
     "term": "Human-Machine Interface",
     "acronym": "HMI",
     "definition": "A user interface panel or software application that allows operators to monitor and control industrial processes. HMIs sit at Purdue Level 2, typically using RSA-2048 or TLS 1.2.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1444,7 +1444,7 @@
     "term": "BES",
     "acronym": "BES",
     "definition": "Bulk Electric System. The interconnected electrical generation and transmission resources subject to NERC reliability standards.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1453,7 +1453,7 @@
     "acronym": "IED",
     "definition": "Intelligent Electronic Device. Microprocessor-based controllers in substations (protection relays, bay controllers) with 20-25 year lifecycles.",
     "technicalNote": "IEDs deployed in 2026 will operate until 2046-2051. Any cryptographic algorithms selected today must survive CRQC arrival. Firmware updates often require physical site visits.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
