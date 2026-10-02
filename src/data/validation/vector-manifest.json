@@ -16693,7 +16693,7 @@
     {
       "id": "cfrg-concrete-hybrid-kems-test-vectors",
       "path": "src/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json",
-      "sha256": "08b47d9fe5c827f7ceb20dd10a59bc853a949d6eaf0ad835405e86d833f92bad",
+      "sha256": "80ad6e5509dd7e27255bf999b8575f00c0f24d44e2be4bf1277154ff30aabe85",
       "status": "quarantined",
       "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
       "evidenceClass": "published-standard-kat",
@@ -16722,22 +16722,14 @@
       },
       "caseContainers": [
         {
-          "pointer": "/mlkem768_p256",
-          "kind": "array"
-        },
-        {
-          "pointer": "/mlkem768_x25519",
-          "kind": "array"
-        },
-        {
-          "pointer": "/mlkem1024_p384",
+          "pointer": "/vectors",
           "kind": "array"
         }
       ],
       "cases": [
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/0",
-          "pointer": "/mlkem768_p256/0",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/0",
+          "pointer": "/vectors/0",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16754,8 +16746,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/1",
-          "pointer": "/mlkem768_p256/1",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/1",
+          "pointer": "/vectors/1",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16772,8 +16764,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/2",
-          "pointer": "/mlkem768_p256/2",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/2",
+          "pointer": "/vectors/2",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16790,8 +16782,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/3",
-          "pointer": "/mlkem768_p256/3",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/3",
+          "pointer": "/vectors/3",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16808,8 +16800,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/4",
-          "pointer": "/mlkem768_p256/4",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/4",
+          "pointer": "/vectors/4",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16826,8 +16818,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/5",
-          "pointer": "/mlkem768_p256/5",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/5",
+          "pointer": "/vectors/5",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16844,8 +16836,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/6",
-          "pointer": "/mlkem768_p256/6",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/6",
+          "pointer": "/vectors/6",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16862,8 +16854,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/7",
-          "pointer": "/mlkem768_p256/7",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/7",
+          "pointer": "/vectors/7",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16880,8 +16872,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/8",
-          "pointer": "/mlkem768_p256/8",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/8",
+          "pointer": "/vectors/8",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16898,8 +16890,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/9",
-          "pointer": "/mlkem768_p256/9",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/9",
+          "pointer": "/vectors/9",
           "algorithm": {
             "name": "MLKEM768-P256",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16916,8 +16908,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/0",
-          "pointer": "/mlkem768_x25519/0",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/10",
+          "pointer": "/vectors/10",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16934,8 +16926,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/1",
-          "pointer": "/mlkem768_x25519/1",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/11",
+          "pointer": "/vectors/11",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16952,8 +16944,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/2",
-          "pointer": "/mlkem768_x25519/2",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/12",
+          "pointer": "/vectors/12",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16970,8 +16962,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/3",
-          "pointer": "/mlkem768_x25519/3",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/13",
+          "pointer": "/vectors/13",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -16988,8 +16980,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/4",
-          "pointer": "/mlkem768_x25519/4",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/14",
+          "pointer": "/vectors/14",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17006,8 +16998,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/5",
-          "pointer": "/mlkem768_x25519/5",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/15",
+          "pointer": "/vectors/15",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17024,8 +17016,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/6",
-          "pointer": "/mlkem768_x25519/6",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/16",
+          "pointer": "/vectors/16",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17042,8 +17034,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/7",
-          "pointer": "/mlkem768_x25519/7",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/17",
+          "pointer": "/vectors/17",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17060,8 +17052,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/8",
-          "pointer": "/mlkem768_x25519/8",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/18",
+          "pointer": "/vectors/18",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17078,8 +17070,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/9",
-          "pointer": "/mlkem768_x25519/9",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/19",
+          "pointer": "/vectors/19",
           "algorithm": {
             "name": "MLKEM768-X25519",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17096,8 +17088,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/0",
-          "pointer": "/mlkem1024_p384/0",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/20",
+          "pointer": "/vectors/20",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17114,8 +17106,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/1",
-          "pointer": "/mlkem1024_p384/1",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/21",
+          "pointer": "/vectors/21",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17132,8 +17124,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/2",
-          "pointer": "/mlkem1024_p384/2",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/22",
+          "pointer": "/vectors/22",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17150,8 +17142,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/3",
-          "pointer": "/mlkem1024_p384/3",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/23",
+          "pointer": "/vectors/23",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17168,8 +17160,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/4",
-          "pointer": "/mlkem1024_p384/4",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/24",
+          "pointer": "/vectors/24",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17186,8 +17178,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/5",
-          "pointer": "/mlkem1024_p384/5",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/25",
+          "pointer": "/vectors/25",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17204,8 +17196,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/6",
-          "pointer": "/mlkem1024_p384/6",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/26",
+          "pointer": "/vectors/26",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17222,8 +17214,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/7",
-          "pointer": "/mlkem1024_p384/7",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/27",
+          "pointer": "/vectors/27",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17240,8 +17232,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/8",
-          "pointer": "/mlkem1024_p384/8",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/28",
+          "pointer": "/vectors/28",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17258,8 +17250,8 @@
           "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
         },
         {
-          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/9",
-          "pointer": "/mlkem1024_p384/9",
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/29",
+          "pointer": "/vectors/29",
           "algorithm": {
             "name": "MLKEM1024-P384",
             "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
@@ -17280,40 +17272,48 @@
         {
           "id": "cfrg-concrete-hybrid-kems-test-vectors-1",
           "appliesTo": [
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/0",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/1",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/2",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/3",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/4",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/5",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/6",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/7",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/8",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_p256/9",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/0",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/1",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/2",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/3",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/4",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/5",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/6",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/7",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/8",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem768_x25519/9",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/0",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/1",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/2",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/3",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/4",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/5",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/6",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/7",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/8",
-            "cfrg-concrete-hybrid-kems-test-vectors#/mlkem1024_p384/9"
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/0",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/1",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/2",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/3",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/4",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/5",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/6",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/7",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/8",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/9",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/10",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/11",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/12",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/13",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/14",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/15",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/16",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/17",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/18",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/19",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/20",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/21",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/22",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/23",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/24",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/25",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/26",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/27",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/28",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/29"
           ],
           "upstreamOperation": "Concrete hybrid KEM vectors from the CFRG reference implementation: seed → keys, randomness → ciphertext and shared secret",
           "localOperation": "Through the hub's PKCS#11 binding on the SoftHSM3 Rust engine (src/wasm/hpkePqVectors.local.test.ts): seed imported as CKA_SEED on CKM_HPKE_KEM_KEY_PAIR_GEN, public key compared with encapsulation_key; C_EncapsulateKey(CKM_HPKE, HKDF-SHA256/AES-256-GCM) with the test-only forced randomness compared with ciphertext; the recipient's C_DecapsulateKey derives the same base nonce and AEAD key (seal/open round trip). The shared secret itself is checked by the engine's cargo tests (rust/src/hpke_pq_vectors_tests.rs).",
           "transformations": [
+            {
+              "type": "renumber",
+              "detail": "The three upstream per-KEM arrays (mlkem768_x25519, mlkem768_p256, mlkem1024_p384, 10 each) are concatenated in that order under /vectors: upstream <kem>[j] is local /vectors/(10*kemIndex + j)."
+            },
+            {
+              "type": "field-add",
+              "detail": "Each vector gains a \"kem\" field naming its upstream key; top-level $schema, spec, upstream_vectors_url, upstream_vectors_sha256 and retrieved_at added."
+            },
             {
               "type": "operation-change",
               "detail": "The hub replay compares encapsulation_key (from the imported seed) and ciphertext (from the forced randomness) through the PKCS#11 binding and checks that both sides derive the same AEAD key; decapsulation_key, decapsulation_key_pq, decapsulation_key_t and shared_secret are not compared there (CKM_HPKE never releases them) and are checked by the engine's cargo tests instead."

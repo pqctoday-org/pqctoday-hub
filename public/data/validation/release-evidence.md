@@ -19,7 +19,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Rust: advertised capability cells (denominator)         |              2,231 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 22 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                  0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 54 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |                 73 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             68 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
@@ -80,7 +80,7 @@ Artifacts:
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,182 |             0 |             0 |
+| wasm          | registered |            2,182 |         2,181 |             2 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -91,9 +91,9 @@ Artifacts:
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 94 results: rust 94 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 13,364 results: cpp 6,677 pass, 1 fail, 4 skip; rust 6,663 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-02 at hub `9d8ee910d98b`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-02 at hub `9d8ee910d98b`; 94 results: rust 94 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-02 at hub `9d8ee910d98b`; 13,364 results: cpp 6,677 pass, 1 fail, 4 skip; rust 6,663 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -122,7 +122,7 @@ Imported from the reports pqctoday-hsm committed; nothing here was executed by t
 | Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                      |
 | ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | --------------------------------------------------------------------------------- |
 | C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   961 |    0 |            2 |   966 | `7f95629c989a` (2026-09-27) |                                           8 | no — bundle `68278dfe69ad`: 13 commit(s) ahead of the engine commit, 0 behind it  |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          94 | no — bundle `d09deb339197`: 162 commit(s) ahead of the engine commit, 0 behind it |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          94 | no — bundle `eda62b31dca3`: 164 commit(s) ahead of the engine commit, 0 behind it |
 | Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                 |
 
 ## Cross-target evidence runs
@@ -245,7 +245,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-54 entries — by status: open 49, accepted-limitation 4, in-progress 1; by origin: curated 29, generated 25; owner unassigned: 54.
+73 entries — by status: open 68, accepted-limitation 4, in-progress 1; by origin: curated 29, generated 44; owner unassigned: 73.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -334,12 +334,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `6589631447371a6a269fe3fdf5b81668babde3447ac09266a235151c944deff9` |
+| `public/data/validation/coverage-matrix.json`                           | `88041a219dd9be231da13ac314b3f927e3366d81b2e1886210e5bc22d2913517` |
 | `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
-| `src/data/validation/native-conformance.generated.json`                 | `fa5caa797140191ab6a470f5b9185014b76081e752083d3f8e4e6aa5ca9be384` |
+| `src/data/validation/native-conformance.generated.json`                 | `935416e9428889bec874552405ce11d55a54fd959ab8b5f6fa728177c461e609` |
 | `src/data/validation/open-gaps.json`                                    | `5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `4e5c641128e1c76f26557797644f1e2bfd5c035f75ab7d03421d1ceea5fd77de` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `1dac820ae37b4e261359c392665f4eaf5fbc865917ca8ba34167d135883d7d04` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `4c97b879521a947d2287cc59ab65bb3c234e9e75670c3068a32cf53cb39f46e7` |
-| `src/data/validation/validation-counts.generated.json`                  | `2bea45f27029c0279e0ccf34a88c11a611bcc863a01052be79b78fba35b2e4af` |
-| `src/data/validation/vector-manifest.json`                              | `ddf820ebe261e7fd416e5ab7a12ba85de19779924b409694bc6b66d5b11db333` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `91f6c1df36e31ab7a155aaee7cd94ea1c77c63ef24ab920eb75a3768e8dfe4e1` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `00a7852fe56c5d626d198de5d6027649eeeb00f203c50bcd590a2469b83015e2` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `56ca1fbaec9eda5df629d5bacc56c5068b4dab87fe3a5190d6ea4eb1ffc6f8d5` |
+| `src/data/validation/validation-counts.generated.json`                  | `2c3c06565f30bc0d41da0223c63cbd3af94aa9b9556aa605b1e23cdbf2ed9ca4` |
+| `src/data/validation/vector-manifest.json`                              | `f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286` |

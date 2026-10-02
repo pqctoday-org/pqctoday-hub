@@ -29,9 +29,10 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import * as SoftHSM from './softhsm'
 import type { AttrDef } from './softhsm'
 import hpkePqFile from '@/data/acvp/hpke-pq-04-test-vectors.json'
-import cfrg from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
+import cfrgFile from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
 
 const hpkePq = hpkePqFile.vectors
+const cfrg = cfrgFile.vectors
 
 const {
   hsm_generateHpkeKeyPair,
@@ -206,7 +207,7 @@ describe('CKM_HPKE post-quantum suites — published-vector replay through the J
   it.each(CFRG_KEMS)(
     'CFRG concrete hybrid KEM %s: seed → encapsulation key, randomness → ciphertext, both sides agree',
     (name, kemId) => {
-      const cases = cfrg[name]
+      const cases = cfrg.filter((t) => t.kem === name)
       expect(cases).toHaveLength(10)
       const params = {
         kemId,
