@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.140.0] - 2026-10-0X
+## [4.140.0] - 2026-10-01
 
 The Curious Explorer role now also serves people who need post-quantum cryptography for their job without a technical background, the JWT module follows the current IETF drafts and passes their published test vectors, and two engine bugs found by Google's Wycheproof tests are fixed.
 
