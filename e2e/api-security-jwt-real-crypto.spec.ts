@@ -164,9 +164,10 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     // Wait for the JWE Token Parts panel
     await expect(page.getByText('JWE Token Parts')).toBeVisible({ timeout: 30_000 })
 
-    // ML-KEM-768 ciphertext is exactly 1088 bytes → 1451 base64url chars
-    // The encrypted-key part label includes "ML-KEM ct, 1088 B"
-    await expect(page.getByText(/Encrypted Key \(ML-KEM ct, 1088 B\)/)).toBeVisible()
+    // ML-KEM-768 ciphertext is exactly 1088 bytes. Per draft-ietf-jose-pqc-kem-05
+    // §6.1 it travels in the protected header's "ek", and the Encrypted Key is empty.
+    await expect(page.getByText(/ek = ML-KEM ciphertext, 1088 B/)).toBeVisible()
+    await expect(page.getByText(/Encrypted Key \(empty in direct key agreement\)/)).toBeVisible()
 
     // Decrypt — real ML-KEM decap + real AES-GCM auth-tag check must succeed
     await page.getByRole('button', { name: /^Decrypt$/ }).click()
@@ -234,8 +235,9 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     await page.getByRole('button', { name: /Run JOSE KAT suite/ }).click()
 
-    // 5 vectors: 3 IETF ML-DSA JOSE KATs + 2 composite checks (sign-equal + verify)
-    await expect(page.getByText(/5 passed/)).toBeVisible({ timeout: 60_000 })
+    // 9 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 6 published composite examples
+    // of draft-ietf-jose-pq-composite-sigs-04 Appendix A.1
+    await expect(page.getByText(/9 passed/)).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText(/0 failed/).first()).toBeVisible()
   })
 

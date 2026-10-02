@@ -101,6 +101,8 @@ const MAX_SCAN_BYTES = 64 * 1024 * 1024
  * approved, non-stale two-person review record
  * (src/data/validation/reviews/*.review.json, item vector-source:<id>).
  * Adding an id here is a reviewed decision, never a way around the rule.
+ * (composite-sigs-jose-kat left 2026-10-01: deleted, superseded by the
+ * draft's own published examples, composite-sigs-04-jose-examples.)
  */
 export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
   'aescbc_test',
@@ -108,7 +110,6 @@ export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
   'aesctr_test',
   'aesgcm_test',
   'aeskw_test',
-  'composite-sigs-jose-kat',
   'cose-dilithium-11-jose-kat',
   'ecdsa_p384_test',
   'ecdsa_p521_test',

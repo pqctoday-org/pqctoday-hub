@@ -31,7 +31,6 @@ import {
   FileCheck2,
 } from 'lucide-react'
 import { ml_dsa44, ml_dsa65, ml_dsa87 } from '@noble/post-quantum/ml-dsa.js'
-import { ed25519 } from '@noble/curves/ed25519.js'
 import { Button } from '@/components/ui/button'
 import { PROTOCOL_MATRIX } from '@/data/pqcProtocolMatrix'
 import {
@@ -43,12 +42,11 @@ import {
   generateJwsKeyPair,
   signJWS,
   verifyJWS,
-  type JwsKeyPair,
 } from '../jwtUtils'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import coseDilithiumKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
-import compositeKat from '@/data/acvp/composite-sigs-jose-kat.json'
+import compositeExamples from '@/data/acvp/composite-sigs-04-jose-examples.json'
 
 // In-browser JOSE-KAT runner — same vectors that joseKat.test.ts replays in
 // vitest, exposed as a one-click compliance check in the audit panel.
@@ -120,78 +118,37 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     })
   }
 
-  // ── Self-pinned composite KAT (draft-ietf-jose-pq-composite-sigs-03) ────
-  {
-    const v = (compositeKat as { vector: typeof compositeKat.vector }).vector
+  // ── Published composite examples (draft-ietf-jose-pq-composite-sigs-04 A.1) ─
+  // The draft authors' own JOSE examples for all six algorithms — external
+  // evidence, unlike the self-pinned -01 snapshot this replaced.
+  for (const v of (
+    compositeExamples as { vectors: { alg: string; jws: string; jwk: { pub: string } }[] }
+  ).vectors) {
     const start = performance.now()
     let passed = false
     let evidence = ''
     try {
-      const ml = ml_dsa65.keygen(hexToBytesUtil(v.ml_dsa_seed_hex))
-      const ed = ed25519.keygen(hexToBytesUtil(v.ed25519_seed_hex))
-      const publicKey = new Uint8Array(ml.publicKey.length + ed.publicKey.length)
-      publicKey.set(ml.publicKey, 0)
-      publicKey.set(ed.publicKey, ml.publicKey.length)
-      const secretKey = new Uint8Array(ml.secretKey.length + ed.secretKey.length)
-      secretKey.set(ml.secretKey, 0)
-      secretKey.set(ed.secretKey, ml.secretKey.length)
-      const keyPair: JwsKeyPair = {
-        alg: 'ML-DSA-65-Ed25519',
-        publicKey,
-        secretKey,
-      }
-      // Sign and assert byte-equality against the pinned snapshot
-      const signed = await signJWS({
-        alg: 'ML-DSA-65-Ed25519',
-        payload: v.payload as Record<string, unknown>,
-        keyPair,
+      const result = await verifyJWS({
+        token: v.jws,
+        publicKey: base64urlDecode(v.jwk.pub),
         backend: 'noble',
       })
-      passed = signed.token === v.expected_jws
+      passed = result.valid
       evidence = passed
-        ? `Re-signed composite JWS matches pinned snapshot byte-for-byte (${signed.token.length} chars)`
-        : `signed token diverges from snapshot at length ${signed.token.length} vs expected ${v.expected_jws.length}`
+        ? `Published ${v.alg} JWS verifies (ML-DSA and traditional components)`
+        : `verify returned false for the published ${v.alg} example`
     } catch (e) {
       evidence = `threw: ${e instanceof Error ? e.message : String(e)}`
     }
     out.push({
-      id: 'composite-sigs-snapshot',
-      spec: 'draft-ietf-jose-pq-composite-sigs-03 §4 (self-pinned snapshot)',
-      reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-      vector: 'ML-DSA-65-Ed25519',
-      description:
-        'Re-sign with the pinned seed and assert byte-equality against the snapshot (catches any wire-format regression)',
+      id: `composite-sigs-04-${v.alg}`,
+      spec: 'draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 (published example)',
+      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt',
+      vector: v.alg,
+      description: `Verify the draft's published ${v.alg} JWS under its published AKP public key`,
       passed,
       durationMs: performance.now() - start,
       evidence,
-    })
-
-    // Also verify the pinned JWS round-trip
-    const start2 = performance.now()
-    let verified = false
-    let verifyEvidence = ''
-    try {
-      const result = await verifyJWS({
-        token: v.expected_jws,
-        publicKey: hexToBytesUtil(v.public_key_hex),
-        backend: 'noble',
-      })
-      verified = result.valid
-      verifyEvidence = verified
-        ? 'pinned JWS verifies under pinned public key (both components ok)'
-        : 'verify returned false — ML-DSA ctx, M′ derivation, or split point regression'
-    } catch (e) {
-      verifyEvidence = `threw: ${e instanceof Error ? e.message : String(e)}`
-    }
-    out.push({
-      id: 'composite-sigs-verify',
-      spec: 'draft-ietf-jose-pq-composite-sigs-03 §4.3',
-      reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-      vector: 'ML-DSA-65-Ed25519',
-      description: 'Verify the pinned composite JWS (both ML-DSA and Ed25519 components)',
-      passed: verified,
-      durationMs: performance.now() - start2,
-      evidence: verifyEvidence,
     })
   }
 
@@ -406,7 +363,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
     evidence: 'verifyJWS({tampered header}) returned valid=false',
   })
 
-  // ── 8. draft-ietf-jose-pq-composite-sigs-03 §3 — composite framing ─────
+  // ── 8. draft-ietf-jose-pq-composite-sigs-04 — composite framing (self round-trip) ─
   const compKp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
   const compSigned = await signJWS({
     alg: 'ML-DSA-65-Ed25519',
@@ -418,15 +375,15 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   const compAlg = compDecoded?.header?.['alg']
   checks.push({
     id: 'composite-sigs-alg-code',
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 §3',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 §5.1',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-    description: 'Composite token uses the MLDSA65-Ed25519 alg identifier',
+    description: 'Composite token uses the ML-DSA-65-Ed25519 alg identifier',
     passed: compAlg === 'ML-DSA-65-Ed25519',
     evidence: `Observed alg="${String(compAlg)}"`,
   })
   checks.push({
     id: 'composite-sigs-size',
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 §4.4',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 §4.4',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description:
       'Composite signature = direct concat: 3309 B ML-DSA-65 || 64 B Ed25519 (ML-DSA first per §4.4)',
@@ -440,9 +397,9 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   })
   checks.push({
     id: 'composite-sigs-verify',
-    spec: 'draft-ietf-jose-pq-composite-sigs-03 §4',
+    spec: 'draft-ietf-jose-pq-composite-sigs-04 §4.3',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-    description: 'Composite verify accepts the well-formed token',
+    description: 'Composite verify accepts a freshly signed token (self round-trip)',
     passed: compVerify.valid === true,
     evidence: 'verifyJWS(composite token) returned valid=true',
   })
@@ -480,7 +437,10 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
 interface DraftSnapshotEntry {
   current_version: string
   current_date: string
-  status: string
+  title?: string
+  state?: string
+  iesg_state?: string | null
+  rfceditor_state?: string | null
   url: string
   covers: string[]
 }
@@ -488,7 +448,19 @@ interface DraftSnapshotEntry {
 interface DraftSnapshot {
   generated_at: string
   source: string
+  max_age_days?: number
   drafts: Record<string, DraftSnapshotEntry>
+}
+
+/** Days between an ISO date (YYYY-MM-DD) and today. */
+function ageInDays(isoDate: string): number {
+  return Math.floor((Date.now() - Date.parse(`${isoDate}T00:00:00Z`)) / 86_400_000)
+}
+
+/** A row draft id may carry a revision suffix (draft-ietf-jose-hpke-encrypt-22). */
+function splitDraftId(id: string): { name: string; rev: string | null } {
+  const m = /^(draft-.+?)-(\d{2})$/.exec(id)
+  return m ? { name: m[1], rev: m[2] } : { name: id, rev: null }
 }
 
 interface LibStatusEntry {
@@ -515,6 +487,10 @@ interface DraftDelta {
   snapshotVersion: string | null
   rowDate: string | null
   snapshotDate: string | null
+  /** Datatracker IESG / RFC Editor state, so a "stage" claim can be checked. */
+  snapshotState: string | null
+  /** The row's title no longer matches the draft's scope (e.g. JOSE -> COSE-only). */
+  scopeChanged: boolean
   stale: boolean
 }
 
@@ -528,11 +504,15 @@ interface LibraryDelta {
 
 interface AuditReport {
   generated_at: string
+  /** When the standards snapshot was taken — NOT when this report was exported. */
+  snapshot_generated_at: string
+  snapshotExpired: boolean
   signSelfTest: { alg: string; durationMs: number; valid: boolean }
   draftDeltas: DraftDelta[]
   libraryDeltas: LibraryDelta[]
   proposedPatch: {
     generated_at: string
+    snapshot_generated_at: string
     deltas: {
       row_id: string
       dimension: 'pureSig' | 'hybridSig'
@@ -616,28 +596,45 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       // 2. Draft snapshot vs. row
       const draftDeltas: DraftDelta[] = []
       for (const rowDraft of joseRow.latestDraft) {
-        const snap = draftSnapshot.drafts[rowDraft.id]
+        const { name, rev } = splitDraftId(rowDraft.id)
+        const snap = draftSnapshot.drafts[name]
         if (!snap) {
           draftDeltas.push({
             draftId: rowDraft.id,
-            rowVersion: null,
+            rowVersion: rev,
             snapshotVersion: null,
             rowDate: rowDraft.date ?? null,
             snapshotDate: null,
-            stale: false,
+            snapshotState: null,
+            scopeChanged: false,
+            // Not in the snapshot means nothing checked it: never "current".
+            stale: true,
           })
           continue
         }
-        const stale = (rowDraft.date ?? '').slice(0, 7) < (snap.current_date ?? '').slice(0, 7)
+        // Revision-aware: an explicit row revision must equal the snapshot's;
+        // otherwise fall back to comparing full dates, not year-month strings.
+        const revStale = rev !== null && rev !== snap.current_version
+        const dateStale = (rowDraft.date ?? '') < (snap.current_date ?? '')
+        // Scope check: a row that says JOSE for a draft whose title no longer does.
+        const scopeChanged =
+          /JOSE|JWE|JWS/.test(rowDraft.title) &&
+          !!snap.title &&
+          !/JOSE|JWE|JWS|JSON/.test(snap.title)
         draftDeltas.push({
           draftId: rowDraft.id,
-          rowVersion: null,
+          rowVersion: rev,
           snapshotVersion: snap.current_version,
           rowDate: rowDraft.date ?? null,
           snapshotDate: snap.current_date,
-          stale,
+          snapshotState:
+            [snap.iesg_state, snap.rfceditor_state].filter(Boolean).join(' / ') || null,
+          scopeChanged,
+          stale: revStale || dateStale || scopeChanged,
         })
       }
+      const snapshotAge = ageInDays(draftSnapshot.generated_at)
+      const snapshotExpired = snapshotAge > (draftSnapshot.max_age_days ?? 45)
 
       // 3. Library claims vs. status table
       const libraryDeltas: LibraryDelta[] = []
@@ -697,6 +694,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       const hybridSigDraft = draftSnapshot.drafts['draft-ietf-jose-pq-composite-sigs']
       const proposedPatch: AuditReport['proposedPatch'] = {
         generated_at: today,
+        snapshot_generated_at: draftSnapshot.generated_at,
         deltas: [
           {
             row_id: 'jose',
@@ -707,7 +705,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             current_state_slug: 'rfc-published',
             last_updated: '2026-05',
             notes: [
-              `In-browser ML-DSA-65 sign+verify roundtrip ${v.valid ? 'passed' : 'FAILED'} in ${durationMs.toFixed(0)}ms via @noble/post-quantum 0.6.1`,
+              `In-browser ML-DSA-65 sign+verify self round-trip ${v.valid ? 'passed' : 'FAILED'} in ${durationMs.toFixed(0)}ms (self-consistency, not conformance — see the RFC 9964 Appendix A.1 KATs)`,
               'Spec: RFC 9964 — ML-DSA for JOSE and COSE (published May 2026)',
             ],
           },
@@ -717,10 +715,10 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             ref_id: 'draft-ietf-jose-pq-composite-sigs',
             encoded_stage: joseRow.dimensions.hybridSig.value,
             current_stage: 'draft',
-            current_state_slug: hybridSigDraft?.status ?? 'draft',
+            current_state_slug: hybridSigDraft?.iesg_state ?? 'draft',
             last_updated: hybridSigDraft?.current_date ?? today,
             notes: [
-              `In-browser ML-DSA-65-Ed25519 composite sign+verify roundtrip ${compositeValid ? 'passed' : 'FAILED'} in ${compositeDurationMs.toFixed(0)}ms; wire format matches draft §4.4 (ML-DSA first, direct concat), M' per §4.2 (Prefix || Label || 0x00 || SHA512), ctx=Label.`,
+              `In-browser ML-DSA-65-Ed25519 composite sign+verify self round-trip ${compositeValid ? 'passed' : 'FAILED'} in ${compositeDurationMs.toFixed(0)}ms (self-consistency; conformance comes from the draft -04 Appendix A.1 KATs).`,
               `Spec: draft-ietf-jose-pq-composite-sigs-${hybridSigDraft?.current_version ?? '?'} (${hybridSigDraft?.current_date ?? '?'})`,
             ],
           },
@@ -731,6 +729,8 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
 
       setReport({
         generated_at: today,
+        snapshot_generated_at: draftSnapshot.generated_at,
+        snapshotExpired,
         signSelfTest: { alg: 'ML-DSA-65', durationMs, valid: v.valid },
         draftDeltas,
         libraryDeltas,
@@ -924,7 +924,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-03
+            draft-ietf-jose-pq-composite-sigs-04
           </a>
           . The test panel below runs the same primitives the workshop uses: ML-DSA and ML-KEM
           functional round-trips plus one HMAC-SHA256 check against a public NIST ACVP-Server
@@ -1019,17 +1019,17 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           >
             RFC 9964
           </a>{' '}
-          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87) plus a self-pinned
-          composite ML-DSA-65+Ed25519 snapshot for{' '}
+          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87) plus the six published
+          composite examples in{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-03
-          </a>
-          .
+            draft-ietf-jose-pq-composite-sigs-04
+          </a>{' '}
+          Appendix A.1 — both are external vectors, written by the drafts' authors .
         </p>
 
         {joseKatError && (
@@ -1119,15 +1119,23 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
               Self-test: ML-DSA-65 sign/verify roundtrip
             </h4>
             <p className="text-xs text-muted-foreground">
-              {report.signSelfTest.valid ? 'Signature verified' : 'Signature INVALID'} via
-              @noble/post-quantum 0.6.1 in {report.signSelfTest.durationMs.toFixed(0)} ms. This
-              proves the row's <code className="text-foreground/80">pureSig.value: 'draft'</code> is
-              implementable in this build, not just declared.
+              {report.signSelfTest.valid ? 'Signature verified' : 'Signature INVALID'} in{' '}
+              {report.signSelfTest.durationMs.toFixed(0)} ms. A self round-trip only shows this
+              build agrees with itself; conformance comes from the published-vector KATs above.
             </p>
           </div>
 
           <div className="glass-panel p-4">
             <h4 className="text-sm font-bold text-foreground mb-3">Draft freshness</h4>
+            <p
+              className={`text-xs mb-3 ${report.snapshotExpired ? 'text-status-error font-bold' : 'text-muted-foreground'}`}
+            >
+              Standards snapshot taken {report.snapshot_generated_at} (
+              {ageInDays(report.snapshot_generated_at)} days ago).{' '}
+              {report.snapshotExpired
+                ? 'EXPIRED — every row below is treated as unverified until the snapshot is refreshed (npx tsx scripts/refresh-jose-drafts-snapshot.ts).'
+                : 'A green "current" means current as of that date, not today.'}
+            </p>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
@@ -1140,6 +1148,9 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
                     <th className="text-left p-2 text-muted-foreground font-medium">
                       Snapshot version
                     </th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">
+                      IESG / RFC Editor
+                    </th>
                     <th className="text-left p-2 text-muted-foreground font-medium">Status</th>
                   </tr>
                 </thead>
@@ -1150,8 +1161,13 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
                       <td className="p-2 text-muted-foreground">{d.rowDate ?? '-'}</td>
                       <td className="p-2 text-muted-foreground">{d.snapshotDate ?? '-'}</td>
                       <td className="p-2 text-muted-foreground">{d.snapshotVersion ?? '-'}</td>
+                      <td className="p-2 text-muted-foreground">{d.snapshotState ?? '-'}</td>
                       <td className="p-2">
-                        {d.stale ? (
+                        {report.snapshotExpired ? (
+                          <span className="text-status-error font-bold">unverified</span>
+                        ) : d.scopeChanged ? (
+                          <span className="text-warning font-bold">scope changed</span>
+                        ) : d.stale ? (
                           <span className="text-warning font-bold">stale</span>
                         ) : (
                           <span className="text-success">current</span>
