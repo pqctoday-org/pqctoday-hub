@@ -942,12 +942,15 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: "Air-gapped sites cannot be reconfigured remotely, so every zone's hours are scaled up by half; serial links get a smaller 30% uplift, and fiber or cellular add nothing to the estimate.",
   },
-  'iot-pqc/smart-meter-key-manager': {
-    prompt:
-      'In the DLMS/COSEM Key Types table, which key wraps the GEK and GAK during key transport and is never transmitted in cleartext?',
-    options: ['GEK (Global Encryption Key)', 'KEK (Key Encryption Key)', 'HLS Secret'],
+  'iot-pqc/fleet-key-manager': {
+    prompt: 'With the default fleet, what limits how fast the keys can be rotated?',
+    options: [
+      'The per-cell network capacity',
+      'The head-end HSM throughput',
+      'The rotation frequency setting',
+    ],
     answer: 1,
-    why: 'The key-encryption key exists only to protect the other keys while they travel, which is why it rotates only on provisioning or compromise rather than annually like the global encryption and authentication keys.',
+    why: 'Each cell needs about 16 minutes of airtime, but the head-end HSM needs about 1.1 hours of ML-KEM operations for the fleet, so the HSM sets the pace. This is a model estimate.',
   },
   'ot-pqc/sector-migration-roadmap': {
     prompt: 'Raise the number of sites from 50 to 400. What now ends after the 2033 planning year?',
@@ -959,51 +962,50 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: 'Site rollout scales with the number of sites; at 400 sites it runs 192 months, pushing the programme end to 2043, ten years past the planning year. This is a model estimate, not a forecast.',
   },
-  'iot-pqc/rf-mesh-simulator': {
-    prompt: "What condition makes the simulator declare 'Mesh Collapse'?",
+  'iot-pqc/lpwan-airtime': {
+    prompt:
+      'Choose NB-IoT with 2,000 devices: the PQC unicast update misses the window. What about the same update signed with ECDSA?',
     options: [
-      'ToA per meter exceeds 10 seconds',
-      'A Pure PQC payload is selected',
-      'Total Cell Time exceeds the 24-hour reporting window',
+      'It fits easily',
+      'It also misses the window',
+      'It is blocked by the duty-cycle limit',
     ],
-    answer: 2,
-    why: "Every meter's time-on-air is summed as if the cell were perfectly scheduled; once that total overruns the daily window the meters can never all report, which is the collapse. A per-meter ToA above 10 s only raises the separate battery-drain warning.",
+    answer: 1,
+    why: 'The firmware image is about 97% of the bytes, so swapping the signature barely changes airtime; unicast delivery to 2,000 devices misses the window either way. Multicast is what fixes it. This is a model estimate.',
   },
   // iot-pqc
   'iot-pqc/constrained-algorithm': {
-    prompt:
-      "Select Class 0 (2 KB RAM). Which is the only PQC signature algorithm that shows 'Fits'?",
-    options: ['XMSS (H10)', 'FN-DSA-512', 'LMS (H10/W4)'],
-    answer: 2,
-    why: 'LMS is the smallest PQC verifier at about half a kilobyte of RAM and a 56-byte public key; XMSS and FN-DSA start at Class 1, and no PQC KEM fits Class 0 at all, so key exchange there needs pre-shared keys or a gateway.',
+    prompt: "Pick Class 1, role 'Device verifies' and the speed build. Which algorithms turn red?",
+    options: ['ML-DSA-44, -65 and -87', 'LMS and XMSS', 'FN-DSA-512 only'],
+    answer: 0,
+    why: 'The speed-optimised ML-DSA builds need several KB of stack plus key and signature buffers, more than a ~10 KiB Class 1 device has; hash-based and FN-DSA verifiers stay small. Switch to the stack build to see the difference.',
   },
   'iot-pqc/firmware-signing': {
-    prompt:
-      "After signing, which algorithm choices show a 'State counter … (monotonic, never rollback)' line under the signing step?",
-    options: ['ML-DSA-44 and ML-DSA-65', 'LMS / HSS and XMSS', 'All four algorithms'],
-    answer: 1,
-    why: 'Hash-based LMS and XMSS are stateful one-time-signature trees: reusing a leaf index leaks the key, so the signer must advance a monotonic counter kept in a TPM or secure element on every signature. ML-DSA is stateless and needs no counter.',
+    prompt: 'Which algorithms does the step mark as accepted for CNSA 2.0 firmware signing?',
+    options: ['LMS, XMSS and ML-DSA-87', 'Every ML-DSA parameter set', 'FN-DSA-512 and ML-DSA-44'],
+    answer: 0,
+    why: 'CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing: preferred from 2025, exclusive by 2030.',
   },
-  'iot-pqc/dtls-handshake': {
-    prompt:
-      'Whichever KEM and signature you pick, which DTLS 1.3 handshake message is drawn as the largest bar?',
+  'iot-pqc/constrained-handshake': {
+    prompt: 'Why is the EDHOC exchange so much smaller than DTLS 1.3 with certificates?',
     options: [
-      'ClientHello — it carries the KEM public key',
-      'Certificate — it carries three public keys and two chain signatures',
-      'CertificateVerify — it carries the fresh handshake signature',
+      'EDHOC compresses PQC signatures',
+      'EDHOC can send credentials by reference (a key identifier), so no certificate chain travels',
+      'EDHOC skips the key exchange',
     ],
     answer: 1,
-    why: "The certificate chain multiplies the signature algorithm's sizes: three certificates each carry a public key and two carry an issuer signature, so with ML-DSA-44 that one message tops 9 KB while CertificateVerify holds a single signature.",
+    why: 'EDHOC (RFC 9528) messages can carry a kid instead of a full certificate, so the chain never crosses the radio; the KEM key, ciphertext and signatures still do.',
   },
-  'iot-pqc/cert-chain-bloat': {
-    prompt: 'Which mitigation shows the largest reduction, and why can it be that large?',
+  'iot-pqc/cert-chain': {
+    prompt:
+      'Set the root to ML-DSA-87 and the intermediate to ML-DSA-44. Why is the intermediate certificate 6,239 bytes?',
     options: [
-      'Merkle Tree Certificates (−85%) — Merkle proofs replace the leaf signatures',
-      'Certificate Compression (−30%) — Brotli shrinks the chain',
-      'Session Resumption (PSK) (−90%) — no certificates are sent at all on reconnection',
+      'Its own public key is counted twice',
+      "It carries the root's 4,627-byte ML-DSA-87 signature",
+      'The root certificate is embedded inside it',
     ],
-    answer: 2,
-    why: "Resuming with a pre-shared key skips the certificate exchange entirely, so the chain's size stops mattering on reconnects; the other mitigations still ship a chain, just a smaller one.",
+    answer: 1,
+    why: "A certificate holds its issuer's signature (RFC 5280 signatureValue), so the intermediate carries ML-DSA-87's 4,627 bytes next to its own 1,312-byte ML-DSA-44 key.",
   },
   'ot-pqc/zone-conduit-planner': {
     prompt: 'At the defaults, what drives the score of the Basic control zone?',
