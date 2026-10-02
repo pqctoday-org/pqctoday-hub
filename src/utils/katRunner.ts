@@ -12,6 +12,8 @@
  * Test vector sources:
  *   ML-KEM: src/data/acvp/mlkem_test.json (NIST ACVP vsId=1, encapDecap)
  *   ML-DSA: src/data/acvp/mldsa_test.json (NIST ACVP vsId=2, sigGen)
+ *   LMS/HSS: RFC 8554 Appendix F Test Cases 1-2 (src/data/kat/lms_hss_rfc8554.json
+ *     for TC1; TC2 inline below as RFC8554_TC2)
  *   SLH-DSA: functional round-trip here. Real NIST ACVP vectors for all 12
  *     parameter sets DO exist (src/data/acvp/slhdsa_ctx_test.json) and are
  *     wired into the SigVer KAT in HsmAcvpTesting.tsx, not this file — this
@@ -52,6 +54,7 @@ import pbkdf2Rfc7914Vectors from '../data/acvp/pbkdf2_rfc7914_test.json'
 
 import hkdfTestVectors from '../data/acvp/hkdf_test.json'
 import suciProfileBTestVectors from '../data/kat/gsma_suci_ts33501_annex_c.json'
+import lmsHssRfc8554Vectors from '../data/kat/lms_hss_rfc8554.json'
 import { hexToBytes } from './dataInputUtils'
 import {
   hsm_importMLKEMPrivateKey,
@@ -122,6 +125,8 @@ import {
   hsm_injectTestKey,
   hsm_getMechanismList,
   hsm_importECPrivateKey,
+  hsm_importStatefulPublicKey,
+  hsm_statefulVerifyBytes,
   writeBytes,
   CKO_SECRET_KEY,
   CKK_AES,
@@ -152,7 +157,7 @@ import {
   CKD_SHA256_KDF,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
-import { CKM_ML_DSA } from '../wasm/softhsm/constants'
+import { CKM_ML_DSA, CKM_HSS, CKK_HSS } from '../wasm/softhsm/constants'
 import { MECH_TABLE } from '../wasm/softhsm/mechanismTable'
 import { evidenceForKind, evidenceRecordsForKind, type KatEvidenceClass } from './katEvidence'
 
@@ -201,6 +206,9 @@ export type KatKind =
   | { type: 'slhdsa-functional'; variant: SlhDsaVariant }
   /** NIST ACVP SLH-DSA sigGen output verified locally (workbench §9b). */
   | { type: 'slhdsa-sigver'; variant: SlhDsaVariant }
+  /** RFC 8554 Appendix F HSS/LMS test case verified through C_Verify(CKM_HSS),
+   *  plus a one-bit-flipped copy that must be rejected. */
+  | { type: 'lms-sigver'; testCase: 1 | 2 }
   // AES symmetric (SP 800-38D/38A, RFC 3394)
   | { type: 'aesgcm-decrypt'; testIndex?: number }
   | { type: 'aescbc-decrypt'; testIndex?: number }
@@ -1463,6 +1471,173 @@ async function runSLHDSASigVerKAT(
 }
 
 /**
+ * RFC 8554 Appendix F, Test Case 2 — transcribed byte-for-byte from the RFC
+ * text (HSS L=2: top LMS_SHA256_M32_H10 / LMOTS_SHA256_N32_W4, second level
+ * LMS_SHA256_M32_H5 / LMOTS_SHA256_N32_W8). Test Case 1 lives in
+ * src/data/kat/lms_hss_rfc8554.json; this case is kept here until it is moved
+ * into that file beside it. The lengths are structural and asserted in the
+ * katRunner tests: public key 60 B, signature 4 + (2,508 + 56) + 1,292 = 3,860 B.
+ */
+const RFC8554_TC2 = {
+  id: 'Test Case 2 (HSS, RFC 8554 Appendix F)',
+  levels: 2,
+  pub_key_hex: [
+    '000000020000000600000003d08fabd4a2091ff0a8cb4ed834e7453432a58885cd9ba0431235466bff9651c6c9212440',
+    '4d45fa53cf161c28f1ad5a8e',
+  ].join(''),
+  message_hex: [
+    '54686520656e756d65726174696f6e20696e2074686520436f6e737469747574696f6e2c206f66206365727461696e20',
+    '7269676874732c207368616c6c206e6f7420626520636f6e73747275656420746f2064656e79206f7220646973706172',
+    '616765206f74686572732072657461696e6564206279207468652070656f706c652e0a',
+  ].join(''),
+  signature_hex: [
+    '0000000100000003000000033d46bee8660f8f215d3f96408a7a64cf1c4da02b63a55f62c666ef5707a914ce0674e8cb',
+    '7a55f0c48d484f31f3aa4af9719a74f22cf823b94431d01c926e2a76bb71226d279700ec81c9e95fb11a0d10d065279a',
+    '5796e265ae17737c44eb8c594508e126a9a7870bf4360820bdeb9a01d9693779e416828e75bddd7d8c70d50a0ac8ba39',
+    '810909d445f44cb5bb58de737e60cb4345302786ef2c6b14af212ca19edeaa3bfcfe8baa6621ce88480df2371dd37add',
+    '732c9de4ea2ce0dffa53c92649a18d39a50788f4652987f226a1d48168205df6ae7c58e049a25d4907edc1aa90da8aa5',
+    'e5f7671773e941d8055360215c6b60dd35463cf2240a9c06d694e9cb54e7b1e1bf494d0d1a28c0d31acc75161f4f485d',
+    'fd3cb9578e836ec2dc722f37ed30872e07f2b8bd0374eb57d22c614e09150f6c0d8774a39a6e168211035dc52988ab46',
+    'eaca9ec597fb18b4936e66ef2f0df26e8d1e34da28cbb3af752313720c7b345434f72d65314328bbb030d0f0f6d5e47b',
+    '28ea91008fb11b05017705a8be3b2adb83c60a54f9d1d1b2f476f9e393eb5695203d2ba6ad815e6a111ea293dcc21033',
+    'f9453d49c8e5a6387f588b1ea4f706217c151e05f55a6eb7997be09d56a326a32f9cba1fbe1c07bb49fa04cecf9df1a1',
+    'b815483c75d7a27cc88ad1b1238e5ea986b53e087045723ce16187eda22e33b2c70709e53251025abde8939645fc8c06',
+    '93e97763928f00b2e3c75af3942d8ddaee81b59a6f1f67efda0ef81d11873b59137f67800b35e81b01563d187c4a1575',
+    'a1acb92d087b517a8833383f05d357ef4678de0c57ff9f1b2da61dfde5d88318bcdde4d9061cc75c2de3cd4740dd7739',
+    'ca3ef66f1930026f47d9ebaa713b07176f76f953e1c2e7f8f271a6ca375dbfb83d719b1635a7d8a13891957944b1c29b',
+    'b101913e166e11bd5f34186fa6c0a555c9026b256a6860f4866bd6d0b5bf90627086c6149133f8282ce6c9b362244244',
+    '3d5eca959d6c14ca8389d12c4068b503e4e3c39b635bea245d9d05a2558f249c9661c0427d2e489ca5b5dde220a90333',
+    'f4862aec793223c781997da98266c12c50ea28b2c438e7a379eb106eca0c7fd6006e9bf612f3ea0a454ba3bdb76e8027',
+    '992e60de01e9094fddeb3349883914fb17a9621ab929d970d101e45f8278c14b032bcab02bd15692d21b6c5c204abbf0',
+    '77d465553bd6eda645e6c3065d33b10d518a61e15ed0f092c32226281a29c8a0f50cde0a8c66236e29c2f310a375cebd',
+    'a1dc6bb9a1a01dae6c7aba8ebedc6371a7d52aacb955f83bd6e4f84d2949dcc198fb77c7e5cdf6040b0f84faf82808bf',
+    '985577f0a2acf2ec7ed7c0b0ae8a270e951743ff23e0b2dd12e9c3c828fb5598a22461af94d568f29240ba2820c4591f',
+    '71c088f96e095dd98beae456579ebbba36f6d9ca2613d1c26eee4d8c73217ac5962b5f3147b492e8831597fd89b64aa7',
+    'fde82e1974d2f6779504dc21435eb3109350756b9fdabe1c6f368081bd40b27ebcb9819a75d7df8bb07bb05db1bab705',
+    'a4b7e37125186339464ad8faaa4f052cc1272919fde3e025bb64aa8e0eb1fcbfcc25acb5f718ce4f7c2182fb393a1814',
+    'b0e942490e52d3bca817b2b26e90d4c9b0cc38608a6cef5eb153af0858acc867c9922aed43bb67d7b33acc519313d28d',
+    '41a5c6fe6cf3595dd5ee63f0a4c4065a083590b275788bee7ad875a7f88dd73720708c6c6c0ecf1f43bbaadae6f20855',
+    '7fdc07bd4ed91f88ce4c0de842761c70c186bfdafafc444834bd3418be4253a71eaf41d718753ad07754ca3effd5960b',
+    '0336981795721426803599ed5b2b7516920efcbe32ada4bcf6c73bd29e3fa152d9adeca36020fdeeee1b739521d3ea8c',
+    '0da497003df1513897b0f54794a873670b8d93bcca2ae47e64424b7423e1f078d9554bb5232cc6de8aae9b83fa5b9510',
+    'beb39ccf4b4e1d9c0f19d5e17f58e5b8705d9a6837a7d9bf99cd13387af256a8491671f1f2f22af253bcff54b673199b',
+    'db7d05d81064ef05f80f0153d0be7919684b23da8d42ff3effdb7ca0985033f389181f47659138003d712b5ec0a614d3',
+    '1cc7487f52de8664916af79c98456b2c94a8038083db55391e3475862250274a1de2584fec975fb09536792cfbfcf619',
+    '2856cc76eb5b13dc4709e2f7301ddff26ec1b23de2d188c999166c74e1e14bbc15f457cf4e471ae13dcbdd9c50f4d646',
+    'fc6278e8fe7eb6cb5c94100fa870187380b777ed19d7868fd8ca7ceb7fa7d5cc861c5bdac98e7495eb0a2ceec1924ae9',
+    '79f44c5390ebedddc65d6ec11287d978b8df064219bc5679f7d7b264a76ff272b2ac9f2f7cfc9fdcfb6a51428240027a',
+    'fd9d52a79b647c90c2709e060ed70f87299dd798d68f4fadd3da6c51d839f851f98f67840b964ebe73f8cec41572538e',
+    'c6bc131034ca2894eb736b3bda93d9f5f6fa6f6c0f03ce43362b8414940355fb54d3dfdd03633ae108f3de3ebc85a3ff',
+    '51efeea3bc2cf27e1658f1789ee612c83d0f5fd56f7cd071930e2946beeecaa04dccea9f97786001475e0294bc2852f6',
+    '2eb5d39bb9fbeef75916efe44a662ecae37ede27e9d6eadfdeb8f8b2b2dbccbf96fa6dbaf7321fb0e701f4d429c2f4dc',
+    'd153a2742574126e5eaccc77686acf6e3ee48f423766e0fc466810a905ff5453ec99897b56bc55dd49b991142f65043f',
+    '2d744eeb935ba7f4ef23cf80cc5a8a335d3619d781e7454826df720eec82e06034c44699b5f0c44a8787752e057fa341',
+    '9b5bb0e25d30981e41cb1361322dba8f69931cf42fad3f3bce6ded5b8bfc3d20a2148861b2afc14562ddd27f12897abf',
+    '0685288dcc5c4982f826026846a24bf77e383c7aacab1ab692b29ed8c018a65f3dc2b87ff619a633c41b4fadb1c78725',
+    'c1f8f922f6009787b1964247df0136b1bc614ab575c59a16d089917bd4a8b6f04d95c581279a139be09fcf6e98a470a0',
+    'bceca191fce476f9370021cbc05518a7efd35d89d8577c990a5e19961ba16203c959c91829ba7497cffcbb4b29454645',
+    '4fa5388a23a22e805a5ca35f956598848bda678615fec28afd5da61a00000006b326493313053ced3876db9d23714818',
+    '1b7173bc7d042cefb4dbe94d2e58cd21a769db4657a103279ba8ef3a629ca84ee836172a9c50e51f45581741cf808315',
+    '0b491cb4ecbbabec128e7c81a46e62a67b57640a0a78be1cbf7dd9d419a10cd8686d16621a80816bfdb5bdc56211d72c',
+    'a70b81f1117d129529a7570cf79cf52a7028a48538ecdd3b38d3d5d62d26246595c4fb73a525a5ed2c30524ebb1d8cc8',
+    '2e0c19bc4977c6898ff95fd3d310b0bae71696cef93c6a552456bf96e9d075e383bb7543c675842bafbfc7cdb88483b3',
+    '276c29d4f0a341c2d406e40d4653b7e4d045851acf6a0a0ea9c710b805cced4635ee8c107362f0fc8d80c14d0ac49c51',
+    '6703d26d14752f34c1c0d2c4247581c18c2cf4de48e9ce949be7c888e9caebe4a415e291fd107d21dc1f084b11582082',
+    '49f28f4f7c7e931ba7b3bd0d824a45700000000500000004215f83b7ccb9acbcd08db97b0d04dc2ba1cd035833e0e900',
+    '59603f26e07ad2aad152338e7a5e5984bcd5f7bb4eba40b700000004000000040eb1ed54a2460d512388cad533138d24',
+    '0534e97b1e82d33bd927d201dfc24ebb11b3649023696f85150b189e50c00e98850ac343a77b3638319c347d7310269d',
+    '3b7714fa406b8c35b021d54d4fdada7b9ce5d4ba5b06719e72aaf58c5aae7aca057aa0e2e74e7dcfd17a0823429db629',
+    '65b7d563c57b4cec942cc865e29c1dad83cac8b4d61aacc457f336e6a10b66323f5887bf3523dfcadee158503bfaa89d',
+    'c6bf59daa82afd2b5ebb2a9ca6572a6067cee7c327e9039b3b6ea6a1edc7fdc3df927aade10c1c9f2d5ff446450d2a39',
+    '98d0f9f6202b5e07c3f97d2458c69d3c8190643978d7a7f4d64e97e3f1c4a08a7c5bc03fd55682c017e2907eab07e5bb',
+    '2f190143475a6043d5e6d5263471f4eecf6e2575fbc6ff37edfa249d6cda1a09f797fd5a3cd53a066700f45863f04b6c',
+    '8a58cfd341241e002d0d2c0217472bf18b636ae547c1771368d9f317835c9b0ef430b3df4034f6af00d0da44f4af7800',
+    'bc7a5cf8a5abdb12dc718b559b74cab9090e33cc58a955300981c420c4da8ffd67df540890a062fe40dba8b2c1c548ce',
+    'd22473219c534911d48ccaabfb71bc71862f4a24ebd376d288fd4e6fb06ed8705787c5fedc813cd2697e5b1aac1ced45',
+    '767b14ce88409eaebb601a93559aae893e143d1c395bc326da821d79a9ed41dcfbe549147f71c092f4f3ac522b5cc572',
+    '90706650487bae9bb5671ecc9ccc2ce51ead87ac01985268521222fb9057df7ed41810b5ef0d4f7cc67368c90f573b1a',
+    'c2ce956c365ed38e893ce7b2fae15d3685a3df2fa3d4cc098fa57dd60d2c9754a8ade980ad0f93f6787075c3f680a2ba',
+    '1936a8c61d1af52ab7e21f416be09d2a8d64c3d3d8582968c2839902229f85aee297e717c094c8df4a23bb5db658dd37',
+    '7bf0f4ff3ffd8fba5e383a48574802ed545bbe7a6b4753533353d73706067640135a7ce517279cd683039747d218647c',
+    '86e097b0daa2872d54b8f3e5085987629547b830d8118161b65079fe7bc59a99e9c3c7380e3e70b7138fe5d9be255150',
+    '2b698d09ae193972f27d40f38dea264a0126e637d74ae4c92a6249fa103436d3eb0d4029ac712bfc7a5eacbdd7518d6d',
+    '4fe903a5ae65527cd65bb0d4e9925ca24fd7214dc617c150544e423f450c99ce51ac8005d33acd74f1bed3b17b7266a4',
+    'a3bb86da7eba80b101e15cb79de9a207852cf91249ef480619ff2af8cabca83125d1faa94cbb0a03a906f683b3f47a97',
+    'c871fd513e510a7a25f283b196075778496152a91c2bf9da76ebe089f4654877f2d586ae7149c406e663eadeb2b5c7e8',
+    '2429b9e8cb4834c83464f079995332e4b3c8f5a72bb4b8c6f74b0d45dc6c1f79952c0b7420df525e37c15377b5f09843',
+    '19c3993921e5ccd97e097592064530d33de3afad5733cbe7703c5296263f77342efbf5a04755b0b3c997c4328463e84c',
+    'aa2de3ffdcd297baaaacd7ae646e44b5c0f16044df38fabd296a47b3a838a913982fb2e370c078edb042c84db34ce36b',
+    '46ccb76460a690cc86c302457dd1cde197ec8075e82b393d542075134e2a17ee70a5e187075d03ae3c853cff60729ba4',
+    '000000054de1f6965bdabc676c5a4dc7c35f97f82cb0e31c68d04f1dad96314ff09e6b3de96aeee300d1f68bf1bca9fc',
+    '58e4032336cd819aaf578744e50d1357a0e4286704d341aa0a337b19fe4bc43c2e79964d4f351089f2e0e41c7c43ae0d',
+    '49e7f404b0f75be80ea3af098c9752420a8ac0ea2bbb1f4eeba05238aef0d8ce63f0c6e5e4041d95398a6f7f3e0ee97c',
+    'c1591849d4ed236338b147abde9f51ef9fd4e1c1',
+  ].join(''),
+}
+
+interface Rfc8554Case {
+  id: string
+  levels: number
+  pub_key_hex: string
+  message_hex: string
+  signature_hex: string
+}
+
+function rfc8554Case(testCase: 1 | 2): Rfc8554Case {
+  if (testCase === 2) return RFC8554_TC2
+  const tc1 = lmsHssRfc8554Vectors.test_cases[0]
+  if (!tc1) throw new Error('RFC 8554 Test Case 1 missing from lms_hss_rfc8554.json')
+  return tc1
+}
+
+/** Exported for the structural-length assertions in katRunner.test.ts. */
+export const RFC8554_TEST_CASES = { 1: () => rfc8554Case(1), 2: () => rfc8554Case(2) } as const
+
+/**
+ * LMS/HSS SigVer KAT — RFC 8554 Appendix F.
+ *
+ * Imports the RFC's HSS public key with C_CreateObject(CKK_HSS), verifies the
+ * RFC's signature over the RFC's message with C_Verify(CKM_HSS) and expects
+ * CKR_OK, then flips one bit in the last byte of the signature and expects the
+ * engine to refuse it. A verifier that returned CKR_OK for everything would
+ * pass the first half and fail the second, which is why both halves run.
+ */
+async function runLMSSigVerKAT(
+  M: SoftHSMModule,
+  hSession: number,
+  testCase: 1 | 2
+): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  const tc = rfc8554Case(testCase)
+  const pub = hexToBytes(tc.pub_key_hex)
+  const msg = hexToBytes(tc.message_hex)
+  const sig = hexToBytes(tc.signature_hex)
+  const pubHandle = hsm_importStatefulPublicKey(M, hSession, CKK_HSS, pub)
+
+  const rvGood = hsm_statefulVerifyBytes(M, hSession, CKM_HSS, pubHandle, msg, sig)
+  const tampered = sig.slice()
+  tampered[tampered.length - 1] ^= 0x01
+  const rvBad = hsm_statefulVerifyBytes(M, hSession, CKM_HSS, pubHandle, msg, tampered)
+
+  const what = `RFC 8554 App. F ${tc.id.replace(/ \(.*$/, '')} (HSS L=${tc.levels}, pk ${pub.length} B, sig ${sig.length} B, msg ${msg.length} B)`
+  if (rvGood !== 0) {
+    return {
+      status: 'fail',
+      details: `${what}: C_Verify(CKM_HSS) → ${rvName(rvGood)}, expected CKR_OK`,
+    }
+  }
+  if (rvBad === 0) {
+    return {
+      status: 'fail',
+      details: `${what}: verified, but a one-bit-flipped signature was ALSO accepted (C_Verify → CKR_OK)`,
+    }
+  }
+  return {
+    status: 'pass',
+    details: `${what}: C_Verify(CKM_HSS) → CKR_OK; one-bit-flipped copy → ${rvName(rvBad)}, as expected`,
+  }
+}
+
+/**
  * Dedicated NIST ML-DSA sigVer case (external interface, pure) through the
  * workbench's own verifyRv — same case, same executor, same expected return
  * (CKR_OK for the positive case, CKR_SIGNATURE_INVALID for the negative one;
@@ -1521,6 +1696,8 @@ function getAlgorithmName(kind: KatKind): string {
     case 'slhdsa-functional':
     case 'slhdsa-sigver':
       return `SLH-DSA-${kind.variant}`
+    case 'lms-sigver':
+      return kind.testCase === 1 ? 'HSS/LMS (L=2, H5/W8)' : 'HSS/LMS (L=2, H10/W4 + H5/W8)'
     case 'aesgcm-decrypt':
     case 'aesgcm-functional':
       return 'AES-256-GCM'
@@ -1848,6 +2025,9 @@ export async function runKAT(
         break
       case 'slhdsa-functional':
         result = await runSLHDSAFunctionalKAT(M, hSession, spec.kind.variant, spec.message)
+        break
+      case 'lms-sigver':
+        result = await runLMSSigVerKAT(M, hSession, spec.kind.testCase)
         break
       case 'aesgcm-decrypt':
         result = await runAESGCMDecryptKAT(M, hSession, spec.kind.testIndex)

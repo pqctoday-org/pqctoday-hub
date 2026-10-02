@@ -48,6 +48,10 @@ vi.mock('../wasm/softhsm', () => ({
   hsm_rsaVerifyBytes: vi.fn(),
   hsm_generateRSAKeyPair: vi.fn(),
   hsm_rsaSign: vi.fn(),
+  // HSS/LMS (RFC 8554)
+  hsm_importStatefulPublicKey: vi.fn(),
+  hsm_statefulVerifyBytes: vi.fn(),
+  rvName: (rv: number) => (rv === 0 ? 'CKR_OK' : `CKR_0x${rv.toString(16)}`),
   // SLH-DSA CKP constants
   CKP_SLH_DSA_SHA2_128S: 0x01,
   CKP_SLH_DSA_SHA2_128F: 0x03,
@@ -254,7 +258,7 @@ vi.mock('./dataInputUtils', () => ({
 
 // ── Module under test (imported after mocks) ──────────────────────────────────
 
-import { runKAT, requiredMechanisms, summarizeKatResults } from './katRunner'
+import { runKAT, requiredMechanisms, summarizeKatResults, RFC8554_TEST_CASES } from './katRunner'
 import type { KatTestSpec } from './katRunner'
 import * as softhsm from '../wasm/softhsm'
 
@@ -1333,5 +1337,99 @@ describe("runKAT 'skip' — not tested when the engine does not advertise a need
         { status: 'skip' },
       ])
     ).toEqual({ pass: 1, fail: 1, error: 1, skip: 2, total: 5 })
+  })
+})
+
+// ── lms-sigver (RFC 8554 Appendix F) ─────────────────────────────────────────
+//
+// hexToBytes is mocked above (zero-filled), so the byte-level assertions read
+// the hex strings directly: the lengths below are structural consequences of
+// RFC 8554 §4-6 and would change if a single segment of the transcription were
+// dropped or duplicated.
+describe('lms-sigver', () => {
+  const CKR_SIGNATURE_INVALID = 0xc0
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(softhsm.hsm_importStatefulPublicKey).mockReturnValue(31)
+  })
+
+  it.each([
+    // TC1: HSS L=2, both levels LMS H5 / LMOTS W8. LMS sig = 4 + (4 + 32 + 34*32) + 4 + 5*32 = 1,292.
+    [1, 60, 4 + (1292 + 56) + 1292, 'LMS_SHA256_M32_H5', 'LMOTS_SHA256_N32_W8'],
+    // TC2: top LMS H10 / LMOTS W4 (4 + (4 + 32 + 67*32) + 4 + 10*32 = 2,508), bottom H5 / W8 (1,292).
+    [2, 60, 4 + (2508 + 56) + 1292, 'LMS_SHA256_M32_H10', 'LMOTS_SHA256_N32_W4'],
+  ] as const)(
+    'test case %i has the RFC structure (pk %i B, sig %i B)',
+    (tcNo, pkLen, sigLen, topLms, topOts) => {
+      const tc = RFC8554_TEST_CASES[tcNo]()
+      expect(tc.pub_key_hex.length / 2).toBe(pkLen)
+      expect(tc.signature_hex.length / 2).toBe(sigLen)
+      expect(tc.levels).toBe(2)
+      // HSS public key = u32(L) || LMS public key (type || ots type || I || K)
+      const typeIds: Record<string, string> = {
+        LMS_SHA256_M32_H5: '00000005',
+        LMS_SHA256_M32_H10: '00000006',
+        LMOTS_SHA256_N32_W4: '00000003',
+        LMOTS_SHA256_N32_W8: '00000004',
+      }
+      expect(tc.pub_key_hex.slice(0, 8)).toBe('00000002')
+      expect(tc.pub_key_hex.slice(8, 16)).toBe(typeIds[topLms])
+      expect(tc.pub_key_hex.slice(16, 24)).toBe(typeIds[topOts])
+      // HSS signature starts with Nspk = L - 1 = 1
+      expect(tc.signature_hex.slice(0, 8)).toBe('00000001')
+    }
+  )
+
+  it('test case 2 carries the RFC message text', () => {
+    const msg = RFC8554_TEST_CASES[2]().message_hex
+    const text = String.fromCharCode(...(msg.match(/../g) ?? []).map((h) => parseInt(h, 16)))
+    expect(text).toBe(
+      'The enumeration in the Constitution, of certain rights, shall not be construed to deny or disparage others retained by the people.\n'
+    )
+  })
+
+  it('passes when the RFC signature verifies and the tampered copy is rejected', async () => {
+    vi.mocked(softhsm.hsm_statefulVerifyBytes)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(CKR_SIGNATURE_INVALID)
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 2 }))
+    expect(r.status).toBe('pass')
+    expect(r.algorithm).toBe('HSS/LMS (L=2, H10/W4 + H5/W8)')
+    expect(r.details).toMatch(/RFC 8554 App\. F Test Case 2/)
+    expect(softhsm.hsm_importStatefulPublicKey).toHaveBeenCalledWith(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      0x46, // CKK_HSS
+      expect.any(Uint8Array)
+    )
+  })
+
+  it('fails when the RFC signature does not verify', async () => {
+    vi.mocked(softhsm.hsm_statefulVerifyBytes).mockReturnValue(CKR_SIGNATURE_INVALID)
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    expect(r.status).toBe('fail')
+    expect(r.details).toMatch(/expected CKR_OK/)
+  })
+
+  it('fails when a one-bit-flipped signature is also accepted (a verifier that says yes to everything)', async () => {
+    vi.mocked(softhsm.hsm_statefulVerifyBytes).mockReturnValue(0)
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    expect(r.status).toBe('fail')
+    expect(r.details).toMatch(/ALSO accepted/)
+  })
+
+  it('flips exactly one bit of the last signature byte for the negative half', async () => {
+    vi.mocked(softhsm.hsm_statefulVerifyBytes)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(CKR_SIGNATURE_INVALID)
+    await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    const calls = vi.mocked(softhsm.hsm_statefulVerifyBytes).mock.calls
+    const good = calls[0][5] as Uint8Array
+    const bad = calls[1][5] as Uint8Array
+    expect(bad.length).toBe(good.length)
+    const diffs = [...good].map((b, i) => b ^ bad[i]).filter((x) => x !== 0)
+    expect(diffs).toEqual([0x01])
+    expect(good[good.length - 1] ^ bad[bad.length - 1]).toBe(0x01)
   })
 })
