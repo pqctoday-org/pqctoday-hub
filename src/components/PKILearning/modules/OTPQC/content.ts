@@ -14,9 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'ot-pqc',
+  lastReviewed: '2026-10-01',
   version: '2.0.0',
-  // No lastReviewed yet — this split module has not had a recorded review;
-  // record_module_review.py sets it once a person reviews the content.
   lastEdited: '2026-10-02',
 
   standards: [
