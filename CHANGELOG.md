@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.143.0] - 2026-10-02
 
-A new HSM playground lesson shows how applications discover certificates across slots, the Rust engine follows PKCS#11 v3.2 more closely, and catalog entries were corrected after a source-by-source accuracy check.
+A new HSM playground lesson shows how applications discover certificates across slots, the Rust engine follows PKCS#11 v3.2 more closely, HMAC works again after a hash-based signature on the C++ engine, and catalog entries were corrected after a source-by-source accuracy check.
 
 ### Added
 
@@ -45,6 +45,7 @@ A new HSM playground lesson shows how applications discover certificates across 
 
 ### Fixed
 
+- **HMAC works again after a hash-based signature on the C++ engine** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer]: on the C++ (SoftHSM3 C++) engine, one HSS/LMS or XMSS signature or verification broke every later HMAC operation in the same session (the key was reported invalid, or a correct MAC was rejected). The engine now ends each operation cleanly, and the validation suite checks this order.
 - **Dual-engine checks in the KEM and Sign/Verify tabs use a real Rust session** [view:/playground/hsm] [persona:developer]: in dual-engine mode the Rust side now runs on its own logged-in session instead of borrowing the C++ engine's.
 
 ### Data
