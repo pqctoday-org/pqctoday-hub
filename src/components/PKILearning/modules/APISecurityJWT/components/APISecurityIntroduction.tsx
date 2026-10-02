@@ -222,11 +222,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             ML-KEM encryption for JWE, which now goes through HPKE (
             <code className="text-foreground/70">draft-ietf-jose-hpke-encrypt</code>, in the RFC
             Editor queue, plus the PQ suites in{' '}
-            <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>). An earlier
-            direct-KEM draft for JWE was narrowed to COSE in its revision{' '}
-            <code className="text-foreground/70">-06</code>; the workshop&apos;s JWE tab shows that
-            historical <code className="text-foreground/70">-05</code> construction so you can see
-            how a KEM slots into JWE.
+            <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>), which the
+            workshop&apos;s JWE tab implements. An earlier direct-KEM draft for JWE was narrowed to
+            COSE in its revision <code className="text-foreground/70">-06</code>.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -288,6 +286,19 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             Diffie-Hellman key exchange. The standards route is HPKE: ML-KEM (alone or combined with
             X25519) supplies the KEM, and the HPKE suite fixes the key derivation and AEAD.
           </p>
+          <p>
+            In HPKE <strong>Integrated Encryption</strong> (
+            <code className="text-foreground/70">draft-ietf-jose-hpke-encrypt</code>) the JWE header
+            carries only <code className="text-foreground/70">&quot;alg&quot;</code>, such as{' '}
+            <code className="text-foreground/70">HPKE-12</code> (ML-KEM-768) or{' '}
+            <code className="text-foreground/70">HPKE-9</code> (ML-KEM-768 + X25519, the X-Wing
+            hybrid) from <code className="text-foreground/70">draft-ietf-jose-hpke-pq-pqt</code>.
+            There is no <code className="text-foreground/70">&quot;enc&quot;</code>, because HPKE
+            itself encrypts the payload. The JWE Encrypted Key holds the 1,088-byte (or 1,120-byte)
+            encapsulated secret, and the IV and Authentication Tag segments are empty. A recipient
+            must still check that <code className="text-foreground/70">&quot;alg&quot;</code> is one
+            it expects for that key before decrypting.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-destructive mb-2">
@@ -318,14 +329,14 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-success/10 text-success text-xs font-bold">
-                  KDF(shared_secret) &rarr; CEK
+                  HPKE key schedule(shared_secret) &rarr; AEAD key + nonce
                   <div className="text-[10px] font-normal">
-                    the HPKE suite&apos;s KDF; KMAC256 in the historical -05 draft
+                    the suite&apos;s KDF (SHAKE256 in the ML-KEM suites)
                   </div>
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-muted text-foreground text-xs font-bold">
-                  AES-GCM-Encrypt(CEK, payload) &rarr; ciphertext
+                  AES-256-GCM-Encrypt(key, payload, AAD = header) &rarr; ciphertext
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">

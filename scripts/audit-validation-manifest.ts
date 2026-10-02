@@ -102,7 +102,9 @@ const MAX_SCAN_BYTES = 64 * 1024 * 1024
  * (src/data/validation/reviews/*.review.json, item vector-source:<id>).
  * Adding an id here is a reviewed decision, never a way around the rule.
  * (composite-sigs-jose-kat left 2026-10-01: deleted, superseded by the
- * draft's own published examples, composite-sigs-04-jose-examples.)
+ * draft's own published examples, composite-sigs-04-jose-examples.
+ * jose-pqc-kem-jwe-kat left 2026-10-01: deleted with the pqc-kem-05 JWE tab,
+ * superseded by jose-hpke-pq-pqt-01-examples.)
  */
 export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
   'aescbc_test',
@@ -120,7 +122,6 @@ export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
   'hmac_sha384_test',
   'hmac_sha512_test',
   'hmac_test',
-  'jose-pqc-kem-jwe-kat',
   'kmac_test',
   'mldsa_extended_test',
   'mldsa_keygen_test',
