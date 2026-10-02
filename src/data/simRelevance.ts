@@ -14,7 +14,8 @@ export const VERTICAL_BY_SECTOR: Record<string, string[]> = {
   'healthcare-pqc': ['healthcare'],
   'emv-payment-pqc': ['financial', 'retail'],
   '5g-security': ['telecom'],
-  'ot-pqc': ['energy'],
+  // ot-pqc is cross-sector since the 2026-10-01 IoT/OT split (energy, water, rail,
+  // manufacturing, buildings), so it is no longer hidden outside the energy sector.
   'digital-assets': ['financial'],
   'automotive-pqc': [], // no sim sector → never relevant
   'aerospace-pqc': [],
