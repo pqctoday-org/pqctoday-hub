@@ -1235,13 +1235,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.2.1',
+    version: '1.3.0',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
       // (hpke-encrypt-22, hpke-pq-pqt-01). The earlier direct-KEM JWE
       // (draft-ietf-jose-pqc-kem-05) was removed when -06 narrowed to COSE.
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01.',
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, in the browser or entirely inside softhsmv3 (PKCS#11 CKM_HPKE).',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',
