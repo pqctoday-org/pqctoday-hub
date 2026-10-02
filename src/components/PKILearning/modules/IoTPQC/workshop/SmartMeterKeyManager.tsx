@@ -16,7 +16,7 @@ import type {
   RotationFrequency,
   HSMCapacity,
   SecuritySuite,
-} from '../data/energyConstants'
+} from '../data/fleetTypes'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'

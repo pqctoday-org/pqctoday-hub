@@ -19,7 +19,7 @@ import {
   type ScopeManifest,
 } from '../components/PKILearning/manifest/learnPathScope'
 
-const MODULE_STORE_VERSION = 17
+const MODULE_STORE_VERSION = 18
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -919,6 +919,14 @@ export const useModuleStore = create<ModuleState>()(
         // makes persist run migrate once, so the rename map below is applied.
         if (version <= 16) {
           state.version = '17.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 17 → Version 18: IoT/OT split (2026-10-01) adds two
+        // MODULE_ID_RENAMES entries (iot-ot-pqc → iot-pqc, energy-utilities-pqc
+        // → ot-pqc). No data changes here; the bump makes persist run migrate.
+        if (version <= 17) {
+          state.version = '18.0.0'
           state.timestamp = Date.now()
         }
 

@@ -8,7 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_TOPIC_KEYWORDS } from '@/data/moduleTopicSummaries'
 import { MODULE_TRACKS } from '../moduleData'
 
-const iotOt = MODULE_TRACKS.flatMap((t) => t.modules).find((m) => m.id === 'iot-ot-pqc')!
+const iotOt = MODULE_TRACKS.flatMap((t) => t.modules).find((m) => m.id === 'iot-pqc')!
 
 const renderBrowse = () =>
   render(
@@ -29,7 +29,7 @@ describe('BrowseAllView search — match all words + topic keywords', () => {
   it('premise: the IoT & OT card description does not mention Purdue, its keywords do', () => {
     expect(iotOt).toBeDefined()
     expect(`${iotOt.title} ${iotOt.description}`.toLowerCase()).not.toContain('purdue')
-    expect(MODULE_TOPIC_KEYWORDS['iot-ot-pqc'].toLowerCase()).toContain('purdue model')
+    expect(MODULE_TOPIC_KEYWORDS['iot-pqc'].toLowerCase()).toContain('purdue model')
   })
 
   it('finds the IoT & OT module for "purdue model for OT"', async () => {

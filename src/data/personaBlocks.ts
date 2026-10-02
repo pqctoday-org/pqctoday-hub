@@ -667,7 +667,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     curious:
       'A signature on an email has to be trustworthy for years; this module shows what a signed and an encrypted message are made of and what changes for post-quantum algorithms.',
   },
-  '/learn/energy-utilities-pqc': {
+  '/learn/ot-pqc': {
     researcher:
       'Assess IEC 61850, DNP3, Modbus and DLMS readiness, model 900 MHz smart-meter time-on-air and saturation with PQC message sizes, and score safety and environmental consequences: the constraints are physical, not informational.',
     ops: 'Plan IEC 61850 substation migration across protection and control, PQC key rotation for a smart-meter fleet of millions, and the utility-wide roadmap with NERC CIP milestones.',
@@ -739,7 +739,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     curious:
       'Every login token your systems issue is signed; the module shows which parts of an identity system a quantum computer would break and in what order to fix them.',
   },
-  '/learn/iot-ot-pqc': {
+  '/learn/iot-pqc': {
     developer:
       'Compare PQC algorithm resource requirements against device classes, sign and verify a firmware image with LMS, XMSS or ML-DSA, and simulate a CoAP/DTLS 1.3 handshake with PQC to measure the overhead.',
     architect:

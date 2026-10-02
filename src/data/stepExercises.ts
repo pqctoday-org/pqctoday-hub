@@ -920,8 +920,8 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 0,
     why: 'The planner back-dates a three-year design phase from launch: algorithm selection fills the first year, crypto library integration and DO-178C certification the second, key provisioning the last, so the algorithm choice must be locked three years out.',
   },
-  // energy-utilities-pqc
-  'energy-utilities-pqc/protocol-security-analyzer': {
+  // ot-pqc
+  'ot-pqc/protocol-security-analyzer': {
     prompt:
       'Select IEC 61850 GOOSE and expand it. Which of its two crypto layers is tagged Quantum-safe, and why?',
     options: [
@@ -932,7 +932,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 0,
     why: "Per-message GOOSE authentication is an HMAC, a symmetric construction that Shor's algorithm does not touch; the quantum exposure is the RSA-based key distribution that seeds those HMAC keys, which is why only that layer maps to ML-KEM-768.",
   },
-  'energy-utilities-pqc/substation-migration-planner': {
+  'ot-pqc/substation-migration-planner': {
     prompt:
       'Switch Connectivity to Air-Gapped. What does the Migration Summary say happens to the effort estimates?',
     options: [
@@ -943,14 +943,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: "Air-gapped sites cannot be reconfigured remotely, so every zone's hours are scaled up by half; serial links get a smaller 30% uplift, and fiber or cellular add nothing to the estimate.",
   },
-  'energy-utilities-pqc/smart-meter-key-manager': {
+  'iot-pqc/smart-meter-key-manager': {
     prompt:
       'In the DLMS/COSEM Key Types table, which key wraps the GEK and GAK during key transport and is never transmitted in cleartext?',
     options: ['GEK (Global Encryption Key)', 'KEK (Key Encryption Key)', 'HLS Secret'],
     answer: 1,
     why: 'The key-encryption key exists only to protect the other keys while they travel, which is why it rotates only on provisioning or compromise rather than annually like the global encryption and authentication keys.',
   },
-  'energy-utilities-pqc/grid-migration-roadmap': {
+  'ot-pqc/grid-migration-roadmap': {
     prompt:
       'Change Budget Level from Normal to Constrained. What changes on every phase in the Migration Gantt Chart?',
     options: [
@@ -961,7 +961,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 0,
     why: "Budget in this planner is a pacing lever: a constrained budget stretches each phase's months by a factor of 1.4, while the dollar estimate is driven only by service-territory size, so the cost labels do not move.",
   },
-  'energy-utilities-pqc/rf-mesh-simulator': {
+  'iot-pqc/rf-mesh-simulator': {
     prompt: "What condition makes the simulator declare 'Mesh Collapse'?",
     options: [
       'ToA per meter exceeds 10 seconds',
@@ -971,22 +971,22 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: "Every meter's time-on-air is summed as if the cell were perfectly scheduled; once that total overruns the daily window the meters can never all report, which is the collapse. A per-meter ToA above 10 s only raises the separate battery-drain warning.",
   },
-  // iot-ot-pqc
-  'iot-ot-pqc/constrained-algorithm': {
+  // iot-pqc
+  'iot-pqc/constrained-algorithm': {
     prompt:
       "Select Class 0 (2 KB RAM). Which is the only PQC signature algorithm that shows 'Fits'?",
     options: ['XMSS (H10)', 'FN-DSA-512', 'LMS (H10/W4)'],
     answer: 2,
     why: 'LMS is the smallest PQC verifier at about half a kilobyte of RAM and a 56-byte public key; XMSS and FN-DSA start at Class 1, and no PQC KEM fits Class 0 at all, so key exchange there needs pre-shared keys or a gateway.',
   },
-  'iot-ot-pqc/firmware-signing': {
+  'iot-pqc/firmware-signing': {
     prompt:
       "After signing, which algorithm choices show a 'State counter … (monotonic, never rollback)' line under the signing step?",
     options: ['ML-DSA-44 and ML-DSA-65', 'LMS / HSS and XMSS', 'All four algorithms'],
     answer: 1,
     why: 'Hash-based LMS and XMSS are stateful one-time-signature trees: reusing a leaf index leaks the key, so the signer must advance a monotonic counter kept in a TPM or secure element on every signature. ML-DSA is stateless and needs no counter.',
   },
-  'iot-ot-pqc/dtls-handshake': {
+  'iot-pqc/dtls-handshake': {
     prompt:
       'Whichever KEM and signature you pick, which DTLS 1.3 handshake message is drawn as the largest bar?',
     options: [
@@ -997,7 +997,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: "The certificate chain multiplies the signature algorithm's sizes: three certificates each carry a public key and two carry an issuer signature, so with ML-DSA-44 that one message tops 9 KB while CertificateVerify holds a single signature.",
   },
-  'iot-ot-pqc/cert-chain-bloat': {
+  'iot-pqc/cert-chain-bloat': {
     prompt: 'Which mitigation shows the largest reduction, and why can it be that large?',
     options: [
       'Merkle Tree Certificates (−85%) — Merkle proofs replace the leaf signatures',
@@ -1007,14 +1007,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: "Resuming with a pre-shared key skips the certificate exchange entirely, so the chain's size stops mattering on reconnects; the other mitigations still ship a chain, just a smaller one.",
   },
-  'iot-ot-pqc/scada-assessment': {
+  'ot-pqc/scada-assessment': {
     prompt:
       "Which posture makes a Purdue layer's Migration Priority drop to 0 and show 'Quantum-resistant'?",
     options: ['PQC Hybrid (ML-KEM + X25519)', 'TLS 1.3 (X25519)', 'ECDSA P-256 / TLS 1.3'],
     answer: 0,
     why: "TLS 1.3 on its own still keys the session with X25519, which Shor's algorithm breaks; only the hybrid that adds ML-KEM is treated as non-vulnerable, which zeroes the score regardless of internet exposure or asset lifetime.",
   },
-  'iot-ot-pqc/hardware-constraints': {
+  'iot-pqc/hardware-constraints': {
     prompt:
       'In the Secure Boot Delay Calculator, which algorithm shows the fewest verification Cycles?',
     options: ['ECDSA P-256', 'ML-DSA-44', 'RSA-3072'],

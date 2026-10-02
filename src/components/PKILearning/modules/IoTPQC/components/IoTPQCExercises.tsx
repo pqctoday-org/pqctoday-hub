@@ -8,7 +8,7 @@ export interface WorkshopConfig {
   step: number
 }
 
-interface IoTOTExercisesProps {
+interface IoTPQCExercisesProps {
   onNavigateToWorkshop: () => void
   onSetWorkshopConfig?: (config: WorkshopConfig) => void
 }
@@ -23,7 +23,7 @@ interface Scenario {
   config: WorkshopConfig
 }
 
-export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
+export const IoTPQCExercises: React.FC<IoTPQCExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {

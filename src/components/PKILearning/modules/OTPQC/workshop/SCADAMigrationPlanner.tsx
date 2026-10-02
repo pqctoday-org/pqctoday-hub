@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Shield, AlertTriangle, CheckCircle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { PURDUE_LAYERS } from '../constants'
+import { PURDUE_LAYERS } from '../data/purdueLayers'
 
 type CryptoPosture = 'none' | 'psk' | 'rsa-2048' | 'ecdsa-p256' | 'tls-1.3' | 'pqc-hybrid'
 

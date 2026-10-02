@@ -553,7 +553,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   // IoT / OT / Embedded
   // -----------------------------------------------------------------------
   {
-    moduleId: 'iot-ot-pqc',
+    moduleId: 'iot-pqc',
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
@@ -589,7 +589,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: true,
   },
   {
-    moduleId: 'energy-utilities-pqc',
+    moduleId: 'ot-pqc',
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-RISK', 'CA-NETDEF'],
     tier: 'awareness',

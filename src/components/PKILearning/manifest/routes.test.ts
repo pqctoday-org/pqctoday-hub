@@ -45,7 +45,7 @@ const GOLDEN_ROUTE_PATHS = [
   'dnssec-pqc',
   'email-signing',
   'emv-payment-pqc',
-  'energy-utilities-pqc',
+  'ot-pqc',
   'entropy-randomness',
   'exec-quantum-impact',
   // Redirect only since 2026-09-27 (split into fips-140-3-certification + pci-certification).
@@ -57,7 +57,7 @@ const GOLDEN_ROUTE_PATHS = [
   'hsm-pqc',
   'hybrid-crypto',
   'iam-pqc',
-  'iot-ot-pqc',
+  'iot-pqc',
   'kms-pqc',
   'merkle-tree-certs',
   'migration-program',

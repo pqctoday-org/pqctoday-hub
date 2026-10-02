@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Structured content for the EnergyUtilities module.
+ * Structured content for the OTPQC module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -8,7 +8,7 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
-  moduleId: 'energy-utilities-pqc',
+  moduleId: 'ot-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
   lastEdited: '2026-09-20',
@@ -36,9 +36,9 @@ export const content: ModuleContent = {
     // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
     getStandard('NIST-SP-800-38D'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
-    getStandard('IEC-62056-5-3-2023-Electricity-metering-data-exchange-The-DL'), // m-energy-utilities-pqc: IEC 62056-5
-    getStandard('IEC-62351-6-2020-Power-systems-management-and-associated-inf'), // m-energy-utilities-pqc: IEC 62351-6
-    getStandard('IEEE-Standard-for-Smart-Energy-Profile-Application-Protocol'), // m-energy-utilities-pqc: IEEE 2030.5
+    getStandard('IEC-62056-5-3-2023-Electricity-metering-data-exchange-The-DL'), // m-ot-pqc: IEC 62056-5
+    getStandard('IEC-62351-6-2020-Power-systems-management-and-associated-inf'), // m-ot-pqc: IEC 62351-6
+    getStandard('IEEE-Standard-for-Smart-Energy-Profile-Application-Protocol'), // m-ot-pqc: IEEE 2030.5
   ],
 
   algorithms: [

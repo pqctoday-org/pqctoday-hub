@@ -164,10 +164,10 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Button
             variant="ghost"
-            onClick={() => navigate('/learn/iot-ot-pqc')}
+            onClick={() => navigate('/learn/iot-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
-            IoT &amp; OT Security <ArrowRight size={14} />
+            IoT &amp; Embedded Device PQC <ArrowRight size={14} />
           </Button>
           <Button
             variant="ghost"

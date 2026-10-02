@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Render-parity golden test for the IoTOT ModuleShell conversion.
- * Captured against the PRE-conversion module; must stay green after IoTOT
+ * Render-parity golden test for the IoTPQC ModuleShell conversion.
+ * Captured against the PRE-conversion module; must stay green after IoTPQC
  * adopts <ModuleShell>, proving the conversion is behaviour-preserving.
  */
 import { describe, it, expect } from 'vitest'
@@ -9,14 +9,14 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
-import { IoTOTModule } from './index'
+import { IoTPQCModule } from './index'
 
-describe('IoTOT render parity', () => {
+describe('IoTPQC render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     render(
       <EmbedProvider>
         <MemoryRouter>
-          <IoTOTModule />
+          <IoTPQCModule />
         </MemoryRouter>
       </EmbedProvider>
     )

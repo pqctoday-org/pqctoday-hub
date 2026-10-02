@@ -2,15 +2,15 @@
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
-  id: 'iot-ot-pqc',
-  contentVersion: 10,
-  lm_id: 'LM-032',
-  title: 'IoT & OT Security',
+  id: 'iot-pqc',
+  contentVersion: 1,
+  lm_id: 'LM-074',
+  title: 'IoT & Embedded Device PQC',
   description:
-    'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
+    'PQC for constrained IoT and embedded devices: algorithm fit by device class, firmware and update signing (SUIT/COSE), constrained protocols (DTLS 1.3, EDHOC/OSCORE, Matter, LPWAN), certificate size and device identity, fleet key management, secure elements, and the IoT security regulations (EU CRA, EN 18031, Cyber Trust Mark).',
   whyThisMatters:
     "A constrained IoT device can't just add more compute for bigger PQC signatures — algorithm selection here is a hard engineering trade-off, and a decade-long deployed device can't easily be patched later.",
-  duration: '60 min',
+  duration: '90 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Applications',
@@ -50,7 +50,7 @@ const manifest: ModuleManifest = {
     standards: ['RFC 9846', 'NIST SP 800-208', 'NSA CNSA 2.0'],
   },
   embeddable: true,
-  load: () => import('./index').then((m) => ({ default: m.IoTOTModule })),
+  load: () => import('./index').then((m) => ({ default: m.IoTPQCModule })),
 }
 
 export default manifest

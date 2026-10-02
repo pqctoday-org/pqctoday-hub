@@ -701,12 +701,12 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('API Security & JWT with PQC', 'PT90M', 'Advanced'),
   },
 
-  '/learn/iot-ot-pqc': {
-    title: 'IoT & OT Security — PQC for Constrained Devices & SCADA | PQC Today',
+  '/learn/iot-pqc': {
+    title: 'IoT & Embedded Device PQC — Constrained Devices, Firmware & Protocols | PQC Today',
     description:
-      'Master PQC challenges for IoT and OT: algorithm selection for constrained devices, firmware signing with LMS/XMSS, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration planning.',
-    canonical: `${BASE_URL}/learn/iot-ot-pqc`,
-    structuredData: buildModuleSchema('IoT & OT Security', 'PT90M', 'Advanced'),
+      'Post-quantum cryptography for IoT and embedded devices: algorithm fit by device class, firmware signing with LMS and ML-DSA, DTLS 1.3 and EDHOC, certificate size, device identity, fleet keys and IoT regulation.',
+    canonical: `${BASE_URL}/learn/iot-pqc`,
+    structuredData: buildModuleSchema('IoT & Embedded Device PQC', 'PT90M', 'Advanced'),
   },
 
   '/learn/data-asset-sensitivity': {
@@ -797,12 +797,12 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT120M', 'Advanced'),
   },
 
-  '/learn/energy-utilities-pqc': {
-    title: 'Energy & Utilities PQC — SCADA, Smart Grid & IEC 62351 Migration | PQC Today',
+  '/learn/ot-pqc': {
+    title: 'OT & Industrial Control Systems PQC — IEC 62443, SCADA & Substations | PQC Today',
     description:
-      'Post-quantum cryptography for energy infrastructure: SCADA/ICS protocols, smart grid security, IEC 62351 compliance, substation automation, and OT network migration planning.',
-    canonical: `${BASE_URL}/learn/energy-utilities-pqc`,
-    structuredData: buildModuleSchema('Energy & Utilities PQC', 'PT90M', 'Intermediate'),
+      'Post-quantum cryptography for operational technology in energy, water, rail, manufacturing and buildings: IEC 62443 zones, OT protocol security, safety timing, PLC signing, NERC CIP and NIS2.',
+    canonical: `${BASE_URL}/learn/ot-pqc`,
+    structuredData: buildModuleSchema('OT & Industrial Control Systems PQC', 'PT90M', 'Advanced'),
   },
 
   '/learn/healthcare-pqc': {

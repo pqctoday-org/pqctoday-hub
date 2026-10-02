@@ -8,7 +8,7 @@ export interface WorkshopConfig {
   step: number
 }
 
-interface EnergyUtilitiesExercisesProps {
+interface OTPQCExercisesProps {
   onNavigateToWorkshop: () => void
   onSetWorkshopConfig?: (config: WorkshopConfig) => void
 }
@@ -23,7 +23,7 @@ interface Scenario {
   config: WorkshopConfig
 }
 
-export const EnergyUtilitiesExercises: React.FC<EnergyUtilitiesExercisesProps> = ({
+export const OTPQCExercises: React.FC<OTPQCExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {

@@ -14,7 +14,7 @@ export const VERTICAL_BY_SECTOR: Record<string, string[]> = {
   'healthcare-pqc': ['healthcare'],
   'emv-payment-pqc': ['financial', 'retail'],
   '5g-security': ['telecom'],
-  'energy-utilities-pqc': ['energy'],
+  'ot-pqc': ['energy'],
   'digital-assets': ['financial'],
   'automotive-pqc': [], // no sim sector → never relevant
   'aerospace-pqc': [],

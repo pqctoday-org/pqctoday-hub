@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
 import { Cpu, FileCode, Network, Link2, Factory, Zap } from 'lucide-react'
-import { IoTOTIntroduction } from './components/IoTOTIntroduction'
-import { IoTOTExercises } from './components/IoTOTExercises'
+import { IoTPQCIntroduction } from './components/IoTPQCIntroduction'
+import { IoTPQCExercises } from './components/IoTPQCExercises'
 import { ConstrainedAlgorithmExplorer } from './workshop/ConstrainedAlgorithmExplorer'
 import { FirmwareSigningSimulator } from './workshop/FirmwareSigningSimulator'
 import { DTLSHandshakeVisualizer } from './workshop/DTLSHandshakeVisualizer'
@@ -52,13 +52,13 @@ const PARTS: WorkshopPart[] = [
   },
 ]
 
-export const IoTOTModule: FC = () => (
+export const IoTPQCModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     description="PQC for constrained devices — algorithm selection, firmware signing, protocol impacts, and SCADA migration."
-    learn={(api) => <IoTOTIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+    learn={(api) => <IoTPQCIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
-      <IoTOTExercises
+      <IoTPQCExercises
         onNavigateToWorkshop={api.goToWorkshop}
         onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
       />

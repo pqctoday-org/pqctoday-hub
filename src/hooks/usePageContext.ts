@@ -195,7 +195,7 @@ const MODULE_NAMES: Record<string, string> = {
   qkd: 'Quantum Key Distribution',
   'api-security-jwt': 'API Security & JWT',
   'code-signing': 'Code Signing',
-  'iot-ot-pqc': 'IoT & OT Security',
+  'iot-pqc': 'IoT & OT Security',
   'pqc-risk-management': 'PQC Risk Management',
   'pqc-business-case': 'PQC Business Case',
   'pqc-governance': 'PQC Governance & Policy',
@@ -213,7 +213,7 @@ const MODULE_NAMES: Record<string, string> = {
   'ai-security-pqc': 'AI Security & PQC',
   'emv-payment-pqc': 'EMV Payment Systems & PQC',
   'healthcare-pqc': 'Healthcare PQC',
-  'energy-utilities-pqc': 'Energy & Utilities PQC',
+  'ot-pqc': 'Energy & Utilities PQC',
   'automotive-pqc': 'Automotive PQC',
   'aerospace-pqc': 'Aerospace PQC',
   'confidential-computing': 'Confidential Computing & TEEs',
@@ -354,7 +354,7 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'What is SD-JWT and its role in digital identity?',
     'How do verifiable credentials prepare for the quantum threat?',
   ],
-  'iot-ot-pqc': [
+  'iot-pqc': [
     'Which PQC algorithms work on constrained IoT devices?',
     'How does PQC migration differ for OT/industrial systems?',
     'What are the key challenges of PQC in embedded systems?',
@@ -444,7 +444,7 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How does PQC affect HIPAA compliance and PHI encryption requirements?',
     'What are the PQC constraints for implantable medical devices?',
   ],
-  'energy-utilities-pqc': [
+  'ot-pqc': [
     'Can PQC signatures fit within IEC 61850 GOOSE 4ms trip timing budgets?',
     'How do I migrate DNP3 Secure Authentication key ceremonies to ML-KEM?',
     'What is the HNDL risk for smart meters with 20-year lifetimes?',

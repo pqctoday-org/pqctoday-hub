@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, type FC } from 'react'
 import { Network, Factory, Key, AlertTriangle, Map } from 'lucide-react'
-import { EnergyUtilitiesIntroduction } from './components/EnergyUtilitiesIntroduction'
-import { EnergyUtilitiesExercises } from './components/EnergyUtilitiesExercises'
+import { OTPQCIntroduction } from './components/OTPQCIntroduction'
+import { OTPQCExercises } from './components/OTPQCExercises'
 import { ProtocolSecurityAnalyzer } from './workshop/ProtocolSecurityAnalyzer'
 import { SubstationMigrationPlanner } from './workshop/SubstationMigrationPlanner'
 import { SmartMeterKeyManager } from './workshop/SmartMeterKeyManager'
@@ -81,7 +81,7 @@ const PARTS: WorkshopPart[] = [
  * stepper via `goToStep` — which marks the current step complete and moves
  * forward, identical to the old `handleStepComplete`.
  */
-const EnergyUtilitiesWorkshop: FC<{
+const OTPQCWorkshop: FC<{
   index: number
   configKey: number
   goToStep: (step: number) => void
@@ -153,20 +153,20 @@ const EnergyUtilitiesWorkshop: FC<{
   }
 }
 
-export const EnergyUtilitiesModule: FC = () => (
+export const OTPQCModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     description="PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring."
-    learn={(api) => <EnergyUtilitiesIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+    learn={(api) => <OTPQCIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
-      <EnergyUtilitiesExercises
+      <OTPQCExercises
         onNavigateToWorkshop={api.goToWorkshop}
         onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
       />
     )}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey, config, goToStep) => (
-      <EnergyUtilitiesWorkshop
+      <OTPQCWorkshop
         // Reset (configKey bump with no config) remounts → default profiles
         // restored; an exercise prefill carries a config, so the key stays stable
         // and the shared state survives the step jump.

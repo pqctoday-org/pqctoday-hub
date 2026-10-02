@@ -466,7 +466,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How does the JWT PQC Simulator demonstrate algorithm performance trade-offs?',
     'What IETF drafts define PQC algorithm identifiers for JOSE/JWK?',
   ],
-  'IoT & OT Security': [
+  'IoT & Embedded Device PQC': [
     'What PQC algorithm is recommended for Cortex-M4 microcontrollers with 64KB RAM?',
     'How does ML-KEM-512 compare to ML-KEM-768 for resource-constrained IoT?',
     'What is the DTLS 1.3 PQC extension for embedded systems?',
@@ -520,7 +520,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How do you detect algorithm drift in a large microservice fleet?',
     'What SBOM fields capture cryptographic algorithm usage for PQC audit?',
   ],
-  'Energy & Utilities PQC': [
+  'OT & Industrial Control Systems PQC': [
     'How does IEC 62351 address PQC for substation communications?',
     'What is the HNDL risk for SCADA traffic captured on operational technology networks?',
     'How does GOOSE message signing change with ML-DSA for substation protection?',

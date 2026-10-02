@@ -589,7 +589,7 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is the PQC challenge for IoT devices?',
         answer:
           'IoT devices face severe constraints for PQC adoption: limited memory (often under 256KB RAM), slow processors (Cortex-M class), and low bandwidth connections make full ML-DSA certificate chains impractical. ML-KEM-512 and SLH-DSA-128s (small variant) are the most viable algorithms for Cortex-M4 class devices, but certificate chain bloat remains the single biggest challenge. The IoT/OT module includes a certificate chain bloat analyzer.',
-        deepLink: '/learn/iot-ot-pqc',
+        deepLink: '/learn/iot-pqc',
       },
       {
         question: 'How does PQC affect healthcare data?',
@@ -613,7 +613,7 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is the energy sector PQC migration?',
         answer:
           'The energy sector must migrate PQC across SCADA and ICS protocols (including DNP3 and IEC 61850 Secure Authentication), substation automation (IEC 62351), and grid management systems, while managing equipment lifecycles of 30 years or more. NERC-CIP compliance will increasingly require quantum-resilient cryptography for bulk electric system protection. The Energy and Utilities module covers the specific protocols and regulatory requirements.',
-        deepLink: '/learn/energy-utilities-pqc',
+        deepLink: '/learn/ot-pqc',
       },
       {
         question: 'How does PQC protect AI systems?',

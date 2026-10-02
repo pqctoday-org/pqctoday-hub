@@ -24,11 +24,11 @@ import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
-interface IoTOTIntroductionProps {
+interface IoTPQCIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigateToWorkshop }) => {
+export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   useSectionAnchors()
 
   const kemAlgorithms = CONSTRAINED_ALGORITHMS.filter((a) => a.type === 'KEM')
@@ -627,7 +627,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
               desc: 'V2X, AUTOSAR, and connected vehicle PQC migration',
             },
             {
-              to: '/learn/energy-utilities-pqc',
+              to: '/learn/ot-pqc',
               icon: Zap,
               title: 'Energy & Utilities',
               desc: 'Smart grid, SCADA, and critical infrastructure PQC',

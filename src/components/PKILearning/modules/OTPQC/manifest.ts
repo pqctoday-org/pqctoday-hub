@@ -2,19 +2,19 @@
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
-  id: 'energy-utilities-pqc',
-  contentVersion: 7,
-  lm_id: 'LM-042',
-  title: 'Energy & Utilities PQC',
+  id: 'ot-pqc',
+  contentVersion: 1,
+  lm_id: 'LM-075',
+  title: 'OT & Industrial Control Systems PQC',
   description:
-    'PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.',
+    'PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.',
   whyThisMatters:
     "A compromised substation isn't a data breach, it's a power outage — NERC CIP and IEC 61850/62351 exist because grid crypto failures have physical, not just informational, consequences.",
-  duration: '60 min',
-  difficulty: 'intermediate',
+  duration: '90 min',
+  difficulty: 'advanced',
   frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 1,
+  track: 'Applications',
+  trackOrder: 6,
   learnSections: [
     { id: 'why-energy', label: 'Why Energy & Utilities' },
     { id: 'nerc-cip', label: 'NERC CIP & IEC 62351' },
@@ -45,7 +45,7 @@ const manifest: ModuleManifest = {
     standards: ['NIST SP 800-227', 'FIPS 203', 'FIPS 204', 'FIPS 205'],
   },
   embeddable: true,
-  load: () => import('./index').then((m) => ({ default: m.EnergyUtilitiesModule })),
+  load: () => import('./index').then((m) => ({ default: m.OTPQCModule })),
 }
 
 export default manifest
