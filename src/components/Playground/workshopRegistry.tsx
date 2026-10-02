@@ -1235,7 +1235,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.1.1',
+    version: '1.2.1',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
@@ -1283,7 +1283,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['developer'],
     intro: {
       whatYouWillDo:
-        'Open six sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as an HPKE JWE with ML-KEM-768 or the X25519 hybrid, compare token sizes, and run the JOSE known-answer audit.',
+        'Open seven sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as an HPKE JWE with ML-KEM-768 or the X25519 hybrid, compare token sizes, run the JOSE known-answer audit, and attack a JWT verifier in the Attack Lab.',
       workedExample:
         "In PQC JWT Signing pick ML-DSA-65 on the @noble/post-quantum backend, Generate Keypair, sign the sample payload for Alice Engineer, then Verify (noble) reports Signature valid with the token's byte sizes.",
     },

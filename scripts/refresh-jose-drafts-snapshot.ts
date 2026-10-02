@@ -18,6 +18,10 @@
  * Usage:
  *   npx tsx scripts/refresh-jose-drafts-snapshot.ts          # write
  *   npx tsx scripts/refresh-jose-drafts-snapshot.ts --check  # exit 1 if stale
+ *
+ * Exit codes: 0 current/written, 1 stale (--check), 2 could not reach the
+ * datatracker. scripts/enrich-protocol-matrix.py (the protocol-matrix source of
+ * the maintenance pipeline, 7-day cadence) runs --check and tells 1 from 2.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -107,5 +111,5 @@ async function main(): Promise<void> {
 
 main().catch((e: unknown) => {
   console.error(e instanceof Error ? e.message : e)
-  process.exit(1)
+  process.exit(2)
 })

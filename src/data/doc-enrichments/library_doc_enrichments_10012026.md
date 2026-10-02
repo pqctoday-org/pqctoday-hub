@@ -1,49 +1,49 @@
 ---
 generated: 2026-10-01
 collection: library
-documents_processed: 2
+documents_processed: 5
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## Security-Considerations-for-ML-DSA
+## PI-PROFINET-Security-Whitepaper-V105-2019
 
-- **Reference ID**: Security-Considerations-for-ML-DSA
-- **Title**: Security Considerations for ML-DSA
+- **Reference ID**: PI-PROFINET-Security-Whitepaper-V105-2019
+- **Title**: PROFINET Security Whitepaper (PI, V1.05, Feb 2019)
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This document provides security considerations and usage guidelines for the ML-DSA digital signature algorithm within cryptographic protocols.
-- **PQC Algorithms Covered**: ML-DSA
-- **Quantum Threats Addressed**: CRQC; Harvest Now Decrypt Later
+- **Main Topic**: This whitepaper outlines the security concept, requirements, and fundamental cryptographic mechanisms for securing the PROFINET industrial communication protocol.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
-- **Leaders Contributions Mentioned**: D. Connolly (Author)
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: PROFIBUS & PROFINET International, PNO
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI; Key Management
-- **Standardization Bodies**: NIST; IETF
-- **Compliance Frameworks Referenced**: FIPS 204
-- **Classical Algorithms Referenced**: DH; RSA; ECDSA
-- **Key Takeaways**: ML-DSA is standardized in FIPS 204 and resistant to quantum attacks; Hedged signing is recommended over deterministic signing to mitigate fault injection attacks; Context strings should be used to prevent cross-protocol signature forgery; Long-lived public keys require protection against future CRQC threats.
-- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87
+- **Protocols Covered**: PROFINET
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: PROFIBUS & PROFINET International, IEC
+- **Compliance Frameworks Referenced**: IEC 62443, ISO 27001
+- **Classical Algorithms Referenced**: HMAC-SHA 256
+- **Key Takeaways**: PROFINET security relies on a defense-in-depth approach combining perimeter firewalls and zone division; Protocol-level security requires cryptographic measures for integrity, authenticity, and confidentiality of cyclic and acyclic data; Asymmetric keys are used for initial handshake and symmetric key negotiation, while symmetric keys secure ongoing communication; HMAC-SHA 256 is identified as the best-performing MAC algorithm for PROFINET data packets based on current evaluation.
+- **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "NIST standardized ML-DSA as FIPS 204... a digital signature scheme that is considered resistant to quantum attacks"
-- **Hybrid PQC Signature Support**: No
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Draft
+- **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer
+- **Target Audience**: Security Architect, Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Threats; pqc-101
-- **Implementation Attack Surface**: fault injection; side-channel; nonce reuse
+- **Relevant PQC Today Features**: iot-ot-pqc; crypto-agility
+- **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
@@ -53,58 +53,55 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: Security-Considerations-for-ML-DSA.html (32,997 bytes, 7,845 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T17:28:46
-- **Evidence SHA-256**: c2ba5d5fa50ea24eb5a37b1701f7ada8a59306dd0fb6a786d3e017c7bc31285c
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: PI-PROFINET-Security-Whitepaper-V105-2019.pdf (1,572,908 bytes, 13,481 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:19
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: c2ba5d5fa50ea24e
-- **Window Chars**: 7845
 
 ---
 
-## ETSI-TR-104-239-1-V1-2-1
+## EN-18031-3-2024
 
-- **Reference ID**: ETSI-TR-104-239-1-V1-2-1
-- **Title**: ETSI TR 104 239-1 V1.2.1
-- **Authors**: See document
-- **Publication Date**: 2026
+- **Reference ID**: EN-18031-3-2024
+- **Title**: EN 18031-3:2024 Common security requirements for radio equipment - Part 3: Internet connected radio equipment processing virtual money or monetary value
+- **Authors**: iTeh Standards
+- **Publication Date**: 2024
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This document provides general guidance for the secure implementation of quantum-safe key encapsulation mechanisms and digital signature schemes, covering interfaces, side-channel mitigations, and testing.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
-- **Quantum Threats Addressed**: Shor's Algorithm
+- **Main Topic**: This document specifies common security requirements and assessment criteria for internet-connected radio equipment that processes virtual money or monetary value.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: ETSI, NIST, NCSC
+- **Applicable Regions / Bodies**: Regions: Europe; Bodies: CEN, CENELEC, European Commission
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Protocols Covered**: SSH
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: ETSI, NIST, ISO/IEC
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA, ECDH, ECDSA
-- **Key Takeaways**: Secure implementation of quantum-safe algorithms requires careful consideration of side-channel and fault attacks; Developers should use rigorous threat models to determine the extent of formal verification and side-channel mitigations; Protocol-level adaptations like key rotation are part of the secure implementation strategy; The document serves as a general foundation for specific algorithm implementation guidance in subsequent parts.
+- **Standardization Bodies**: CEN, CENELEC
+- **Compliance Frameworks Referenced**: Directive 2014/53/EU, Delegated Regulation (EU) 2022/30
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The standard applies to radio equipment enabling the transfer of money, monetary value, or virtual currency; It provides common security requirements and related assessment criteria for such equipment; The standard was approved by CEN on 1 August 2024; National standards implementing this European Standard must be withdrawn by February 2025.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer, Security Architect
+- **Target Audience**: Compliance Officer, Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-101; Algorithms; Threats
-- **Implementation Attack Surface**: side-channel (power analysis, timing, EM leakage), fault injection
+- **Relevant PQC Today Features**: Compliance, iot-ot-pqc, digital-assets
+- **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: formal verification, testing
+- **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
@@ -112,14 +109,179 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Hash-based
-- **PQC Round**: Standardised
-- **Source Document**: ETSI-TR-104-239-1-V1-2-1.pdf (252,181 bytes, 14,293 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T17:28:47
-- **Evidence SHA-256**: 92db1494d4bbd8a127bd3e4eb9ccfcdf851b3f02e23f5108a9e00ae3e217723c
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: EN-18031-3-2024.pdf (1,277,759 bytes, 11,797 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:19
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 92db1494d4bbd8a1
-- **Window Chars**: 14293
+
+---
+
+## PNNL-29313-RADIANCE
+
+- **Reference ID**: PNNL-29313-RADIANCE
+- **Title**: RADIANCE: Cyber Vulnerabilities and Mitigations Related to Communication Protocols (PNNL-29313)
+- **Authors**: See document
+- **Publication Date**: 2019
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: An overview of cybersecurity vulnerabilities and available mitigations for communication protocols used in energy delivery systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: U.S. Department of Energy, Pacific Northwest National Laboratory, Battelle Memorial Institute
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Modbus, DNP3, IEC 61850, IEC 60870-5, TLS, IPsec, IEEE 1588, NTP, SNTP, IRIG-B, C37.118
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: NIST, IEC, IETF, IEEE, ISO
+- **Compliance Frameworks Referenced**: FIPS 199, ISO 27000
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Non-secure telemetry and control protocols like Modbus and DNP3 are vulnerable to impersonation and man-in-the-middle attacks due to lack of authentication; Protocol wrappers like TLS and IPsec can secure wide-area communications but may introduce latency and jitter; DNP3 Secure Authentication provides integrity and authentication but not confidentiality; Digital certificates using X.509 are essential for machine-to-machine authentication in secure grid communications; IEEE 1588 time synchronization requires specific network switch capabilities (transparent clocks) and is sensitive to encryption overhead.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc, tls-basics, pki-workshop
+- **Implementation Attack Surface**: Impersonation, Man-in-the-middle, Rogue device masquerading
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: PNNL-29313-RADIANCE.pdf (433,028 bytes, 16,926 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:20
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+
+---
+
+## SAND2022-1118
+
+- **Reference ID**: SAND2022-1118
+- **Title**: Distributed Energy Resource Cybersecurity Standards Development - Final Project Report (SAND2022-1118)
+- **Authors**: See document
+- **Publication Date**: 2022
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This report details the development of cybersecurity standards and recommendations for Distributed Energy Resources (DERs), focusing on communication protocol security, access control, and patching guidance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Energy, Sandia National Laboratories, NREL, UL, IEEE, IEC, NIST
+- **Leaders Contributions Mentioned**: Jay Johnson, Ifeoma Onunkwo, Danish Saleem, William Hupp, Jordan Peterson, Ryan Cryar (Authors); Sandia and NREL (Led working groups and standards development)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.2, TLS 1.3, Modbus/TCP, DNP3, IEEE 2030.5, IEEE 1815, SunSpec Modbus, IEC 61850, SNMP
+- **Infrastructure Layers**: PKI, Key Management, Access Control
+- **Standardization Bodies**: UL, IEEE, IEC, NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, AES, SHA-256, SHA-384, ECDSA, ECDHE, 3DES
+- **Key Takeaways**: DER communication protocols must be standardized to prevent malicious control and misuse; Mutual authentication and Role-based Access Control (RBAC) are required for all DER systems; TLS 1.2 is the minimum requirement with TLS 1.3 recommended for all DER communications; Proprietary security technologies should be avoided in favor of cybersecurity standards; Key management must be handled through PKI with certificate revocation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "Require at least TLS 1.2"; TLS-1.3: "recommend TLS 1.3 for all DER communications"; X.509: "Uses X.509v3 Digital Certificates"
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Operations
+- **Implementation Prerequisites**: TLS 1.2 or higher; PKI with certificate revocation; Role-based Access Control (RBAC)
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: SAND2022-1118.pdf (3,690,557 bytes, 15,708 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:21
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+
+---
+
+## Torres-ICREPQ-2024-341
+
+- **Reference ID**: Torres-ICREPQ-2024-341
+- **Title**: A practical implementation of virtualized protection system with IEC61850 under Docker
+- **Authors**: See document
+- **Publication Date**: 2024
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The document presents a practical simulation of a virtualized Substation Automation System (SAS) using Docker to evaluate how the number of virtual IEDs affects communication latency and tripping performance under the IEC 61850 standard.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Spain; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IEC 61850, MMS, SMV, GOOSE
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Increasing the number of virtual IEDs in a Docker-based IEC 61850 system increases network traffic and communication delay; This increased delay can cause the system to fail to meet critical transfer time classes (TT4, TT5, TT6) required for protection functions; Virtualization allows for centralized protection functions but requires careful evaluation of scalability limits regarding latency; Simulation results show a significant increase in tripping operation delay (up to 44 ms) when scaling virtual devices.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Transfer time class TT6 requires <3 ms; Scenario B increased delay by ~3 ms; Scenario C increased delay by 44 ms
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Docker; IEC 61850 SCD configuration file; Wireshark
+- **Relevant PQC Today Features**: iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Torres-ICREPQ-2024-341.pdf (550,067 bytes, 10,254 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:21
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -174,9 +336,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: 10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio.html (81,505 bytes, 11,499 extracted chars)
-- **Extraction Timestamp**: 2026-08-18T19:56:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -447,9 +606,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: 21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html (68,554 bytes, 7,594 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1044,9 +1200,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: A-Gentle-Introduction-to-Lattice-Based-Cryptography.pdf (5,683,687 bytes, 16,726 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1101,9 +1254,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: A-Multifaceted-Look-at-Starlink-Performance.pdf (2,934,270 bytes, 16,726 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:46
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1320,9 +1470,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based; Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: A-Scenario-Based-Evaluation-of-CRQC-AI-Vulnerability-Spectru.html (44,172 bytes, 5,126 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1485,9 +1632,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based; Symmetric; Code-based; MPC-in-the-Head; Multivariate; Isogeny
 - **PQC Round**: Round 2
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: A-look-at-the-latest-post-quantum-signature-standardization.html (567,935 bytes, 11,654 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1542,9 +1686,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: AACS-Introduction-and-Common-Cryptographic-Elements-Book-Rev.pdf (1,862,877 bytes, 17,953 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -1923,9 +2064,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL.html (52,551 bytes, 3,217 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -3168,9 +3306,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf (3,791,096 bytes, 23,380 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -3603,9 +3738,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: About-Updating-SafeNet-Network-HSM.html (26,822 bytes, 14,825 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -4200,9 +4332,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Anchors-Post-Quantum-Command-Provenance-for-Autonomous-Machi.html (61,290 bytes, 7,427 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:19:25
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -5175,9 +5304,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: BIP-361-Post-Quantum-Migration-and-Legacy-Signature-Sunset.html (22,141 bytes, 11,690 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -9930,9 +10056,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Choosing-a-Cloud-Key-Management-Model.html (137,541 bytes, 8,178 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -10797,9 +10920,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Symmetric
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html (369,216 bytes, 9,436 extracted chars)
-- **Extraction Timestamp**: 2026-09-01T06:08:22
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -11070,9 +11190,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; MPC-in-the-Head
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment.html (45,555 bytes, 10,084 extracted chars)
-- **Extraction Timestamp**: 2026-08-31T19:38:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -11127,9 +11244,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Crypto-getRandomValues-method-Web-APIs-MDN.html (155,676 bytes, 2,731 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -11508,9 +11622,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: DCSA-Information-Model-v3-0.pdf (2,566,936 bytes, 21,371 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -12051,9 +12162,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification.pdf (1,998,347 bytes, 22,180 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -12702,9 +12810,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: EBA-RTS-SCA-2018-389.html (165,553 bytes, 14,287 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -13623,9 +13728,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: EMV-Key-Management-Explained.pdf (2,826,318 bytes, 17,090 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:43
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -13678,6 +13780,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Financial & Business Impact**: Breaking individual card key would be uneconomic for a fraudster
 - **Organizational Readiness**: SWG will monitor and support standards development; monitor milestones for fault-tolerant logical qubits
 - **Math Family**: Symmetric
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## EN-18031-1-2024
+
+- **Reference ID**: EN-18031-1-2024
+- **Title**: EN 18031-1:2024 Common security requirements for radio equipment - Part 1: Internet connected radio equipment
+- **Authors**: iTeh Standards
+- **Publication Date**: 2024
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document specifies common security requirements for internet-connected radio equipment, covering technical specifications for electrical or electronic products capable of communicating over the internet.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Europe; Bodies: CEN, CENELEC, European Commission, EFTA States
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: CEN, CENELEC, ETSI
+- **Compliance Frameworks Referenced**: Directive 2014/53/EU, EU delegated regulation
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The standard defines technical security requirements for internet-connected radio equipment under EU Directive 2014/53/EU; It covers mechanisms for access control, authentication, secure updates, and secure communication; Compliance with this standard provides a presumption of conformity with the Radio Equipment Directive; The document includes requirements for cryptography, key management, and resilience against network incidents.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Internet-connected radio equipment; consumer IoT; industrial radios; gateways
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -14706,9 +14862,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an.pdf (458,249 bytes, 17,535 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -14817,9 +14970,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us.pdf (1,408,734 bytes, 17,953 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -15306,9 +15456,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp.pdf (70,119 bytes, 9,236 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -16608,6 +16755,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 
 ---
 
+## ETSI-TR-104-239-1-V1-2-1
+
+- **Reference ID**: ETSI-TR-104-239-1-V1-2-1
+- **Title**: ETSI TR 104 239-1 V1.2.1
+- **Authors**: 
+- **Publication Date**: 2026
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document provides general guidance for the secure implementation of quantum-safe key encapsulation mechanisms and digital signature schemes, covering interfaces, side-channel mitigations, and testing.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: Shor's Algorithm
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: ETSI, NIST, NCSC
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI, NIST, ISO/IEC
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, ECDH, ECDSA
+- **Key Takeaways**: Secure implementation of quantum-safe algorithms requires careful consideration of side-channel and fault attacks; Developers should use rigorous threat models to determine the extent of formal verification and side-channel mitigations; Protocol-level adaptations like key rotation are part of the secure implementation strategy; The document serves as a general foundation for specific algorithm implementation guidance in subsequent parts.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-101; Algorithms; Threats
+- **Implementation Attack Surface**: side-channel (power analysis, timing, EM leakage), fault injection
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: formal verification, testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## ETSI-TS-103-673
 
 - **Reference ID**: ETSI-TS-103-673
@@ -16767,9 +16968,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch.pdf (765,637 bytes, 16,308 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -16824,9 +17022,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport.pdf (657,010 bytes, 15,735 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -16881,9 +17076,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S.pdf (418,909 bytes, 16,726 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -16938,9 +17130,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ.pdf (202,812 bytes, 14,338 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -18345,9 +18534,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.pdf (295,610 bytes, 10,438 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -18672,9 +18858,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: FERC-Security-Program-for-Hydropower-Projects-Division-of-Da.pdf (437,278 bytes, 18,553 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -19701,9 +19884,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: FRA-Information-Guide-on-Positive-Train-Control-in-49-CFR-Pa.pdf (277,108 bytes, 8,027 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -19920,9 +20100,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Round 2
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Falcon-Towards-FN-DSA-Technical-Overview.pdf (578,498 bytes, 6,665 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -20031,9 +20208,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Federal-PKI-Policy-Authority.html (157,903 bytes, 7,227 extracted chars)
-- **Extraction Timestamp**: 2026-08-18T19:56:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -20574,9 +20748,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: GFMA-Quantum-Migration-Mapping-the-Emerging-Landscape-Octobe.pdf (1,675,799 bytes, 13,845 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -21873,9 +22044,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C.html (145,863 bytes, 16,099 extracted chars)
-- **Extraction Timestamp**: 2026-08-18T19:56:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -22416,9 +22584,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Hybrid
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html (210,605 bytes, 10,063 extracted chars)
-- **Extraction Timestamp**: 2026-09-01T06:08:21
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -22581,9 +22746,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Hash-based
 - **PQC Round**: Draft
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Hypericum-a-post-quantum-digital-signature-for-standardizati.html (2,462,195 bytes, 12,570 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -23286,9 +23448,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity.pdf (124,245 bytes, 6,576 extracted chars)
-- **Extraction Timestamp**: 2026-08-18T19:56:24
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -23397,9 +23556,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness.html (66,019 bytes, 8,701 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -25776,9 +25932,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk.pdf (424,627 bytes, 12,629 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -26265,9 +26418,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M.html (87,341 bytes, 3,932 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -26322,9 +26472,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com.html (86,140 bytes, 4,128 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -26487,9 +26634,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part.html (104,369 bytes, 5,698 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -26706,9 +26850,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit.html (85,794 bytes, 3,831 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:49
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -27519,9 +27660,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Institute-of-Commercial-Cryptography-Standards.html (62,738 bytes, 1,331 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -27792,9 +27930,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Internet2-InCommon-Federation.html (110,628 bytes, 9,387 extracted chars)
-- **Extraction Timestamp**: 2026-08-23T15:31:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -27903,9 +28038,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Introduction-to-the-IETF.html (86,257 bytes, 7,556 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -28878,9 +29010,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Round 3
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Lattice-based-Signature-Schemes-for-Bitcoin.html (17,288 bytes, 2,676 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -29205,9 +29334,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: LoRaWAN-Regional-Parameters.pdf (1,443,984 bytes, 13,299 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:45
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -29262,9 +29388,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Looma-Low-Latency-Post-Quantum-Authentication-for-TLS-1-3-in.html (103,312 bytes, 20,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:48:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -30021,9 +30144,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Isogeny
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Mathematics-of-Isogeny-Based-Cryptography.html (40,405 bytes, 3,845 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -30078,9 +30198,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Matter-1-6-Core-Specification.pdf (15,679,164 bytes, 18,762 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -30729,9 +30846,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC.html (59,606 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-13T16:30:28
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit
 
 ---
 
@@ -30894,9 +31008,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Munich-Re-Cyber-Insurance-Risks-and-Trends-2025.html (134,601 bytes, 11,454 extracted chars)
-- **Extraction Timestamp**: 2026-08-18T19:56:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -31005,9 +31116,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NAIC-Insurance-Data-Security-Model-Law-MDL-668.pdf (238,211 bytes, 13,421 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -31116,12 +31224,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NCCoE-Automation-of-the-CMVP.html (104,053 bytes, 4,087 extracted chars)
-- **Extraction Timestamp**: 2026-09-27T19:27:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 61314a32abe86637
-- **Reader**: unified/5 full
-- **Window Chars**: 4087
 
 ---
 
@@ -33336,12 +33438,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-ACMVP-Protocol-Workstream.html (162,992 bytes, 20,608 extracted chars)
-- **Extraction Timestamp**: 2026-09-27T19:27:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 8172d8eefeb3411a
-- **Reader**: unified/5 selection
-- **Window Chars**: 20608
 
 ---
 
@@ -33558,12 +33654,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-CMVP-ESV-Announcements.html (78,609 bytes, 12,457 extracted chars)
-- **Extraction Timestamp**: 2026-09-27T19:27:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 621cc5952dd8b3c8
-- **Reader**: unified/5 full
-- **Window Chars**: 12457
 
 ---
 
@@ -33618,12 +33708,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-CMVP-ESV-Program.html (62,219 bytes, 3,672 extracted chars)
-- **Extraction Timestamp**: 2026-09-27T19:27:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 7a385ea3c5e3d762
-- **Reader**: unified/5 full
-- **Window Chars**: 3672
 
 ---
 
@@ -33732,12 +33816,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-CMVP-MIS-SP800-140B.html (106,359 bytes, 5,767 extracted chars)
-- **Extraction Timestamp**: 2026-09-27T19:27:07
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 8eb04417e5de57df
-- **Reader**: unified/5 full
-- **Window Chars**: 5767
 
 ---
 
@@ -34061,6 +34139,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: governance prerequisites (implied by CMVP validation authority role), dedicated crypto team required (not explicitly stated), board-level reporting (not explicitly stated), change management scope (not explicitly stated), estimated planning horizon (not explicitly stated), maturity assessment level (not explicitly stated)
 - **Math Family**: None detected
 - **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## NIST-IR-8259
+
+- **Reference ID**: NIST-IR-8259
+- **Title**: NISTIR 8259 Foundational Cybersecurity Activities for IoT Device Manufacturers
+- **Authors**: 
+- **Publication Date**: 2020
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Foundational cybersecurity activities for IoT device manufacturers during the pre-market and post-market phases.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST
+- **Leaders Contributions Mentioned**: Michael Fagan; Katerina N. Megas; Karen Scarfone; Matthew Smith
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FISMA; NIST SP 800-53
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers should identify device cybersecurity capabilities early in the pre-market phase to reduce later costs; Device cybersecurity capabilities can be provided by the device itself, related devices, or external systems; Clear communication of cybersecurity information to customers is essential for post-market support; Manufacturers should plan for vulnerability response and flaw remediation as part of foundational activities.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Expired
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT device hardware and software resource provisioning; embedded device constraints
+- **Supply Chain & Vendor Risk**: Third-party software verification; vulnerability response program
+- **Deployment & Migration Complexity**: Pre-market vs post-market phase planning; hardware constraints limiting post-market changes
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -35574,9 +35706,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy.pdf (1,289,805 bytes, 16,717 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -36549,9 +36678,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for.pdf (693,666 bytes, 14,290 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -37146,9 +37272,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: NSM-8.html (175,926 bytes, 13,063 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -37959,9 +38082,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D.html (409,328 bytes, 13,359 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -38016,9 +38136,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity.html (393,160 bytes, 9,370 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -38073,9 +38190,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co.html (395,538 bytes, 10,893 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -39156,9 +39270,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O.pdf (530,083 bytes, 13,699 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T13:57:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -39213,9 +39324,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3.pdf (468,117 bytes, 15,099 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T13:57:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -39594,9 +39702,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua.html (1,207,150 bytes, 24,634 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -39975,9 +40080,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: PSD2-Directive-EU-2015-2366.html (609,023 bytes, 17,326 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -40356,9 +40458,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Hash-based; Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-Algorithms-Luna-HSM.html (47,081 bytes, 1,463 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:45
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -40467,9 +40566,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Multivariate
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut.html (42,892 bytes, 7,480 extracted chars)
-- **Extraction Timestamp**: 2026-08-31T19:38:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -40578,9 +40674,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-Cryptography-Recommendations-for-Key-Fragmentat.html (77,762 bytes, 9,854 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:19:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -40689,9 +40782,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-EDHOC-Initiator-and-Responder-using-signature-a.html (239,671 bytes, 20,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:48:27
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -40854,9 +40944,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based; Multivariate
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-Evidence-Records-with-Algorithm-Agility-Wathiqa.html (72,813 bytes, 8,863 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:19:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -41073,9 +41160,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Code-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-Quantum-Key-Encapsulation-Scheme-Kodiyum.pdf (165,169 bytes, 5,861 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -41346,9 +41430,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3.html (68,129 bytes, 11,054 extracted chars)
-- **Extraction Timestamp**: 2026-08-31T19:38:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -42051,9 +42132,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Quantum-Computing-and-Post-Quantum-Cryptography-FAQs.pdf (264,081 bytes, 17,081 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -42648,9 +42726,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Hash-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Quantumglow-Will-Solana-s-Performance-Survive-Quantum-Comput.html (277,912 bytes, 7,067 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -48645,9 +48720,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp.html (54,585 bytes, 12,463 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -51351,6 +51423,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 
 ---
 
+## RFC-9068
+
+- **Reference ID**: RFC-9068
+- **Title**: JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This specification defines a profile for issuing OAuth 2.0 access tokens in JSON Web Token (JWT) format to enable interoperability between authorization and resource servers.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: Vittorio Bertocci (Author); Dominick Baier (provided sample tokens); Brian Campbell (provided sample tokens and early feedback); Daniel Dobalian (provided sample tokens); Karl Guinness (provided sample tokens); Filip Skokan (provided early feedback)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OAuth 2.0, JWT
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RS256
+- **Key Takeaways**: Authorization servers and resource servers must support RS256 for signing JWT access tokens; JWT access tokens must include the "application/at+jwt" media type in the "typ" header parameter; Clients must not inspect the content of the access token to ensure forward compatibility; Resource servers must validate the "typ" header and reject tokens with other values; Asymmetric cryptography is recommended for signing to simplify key validation for resource servers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: Support for RS256 signature algorithm; Inclusion of "application/at+jwt" in "typ" header parameter
+- **Relevant PQC Today Features**: api-security-jwt
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## RFC-9110
 
 - **Reference ID**: RFC-9110
@@ -51726,12 +51852,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: RFC-9329.html (627,612 bytes, 20,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-28T21:48:55
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 911fbe98a5fb9328
-- **Reader**: unified/5 head
-- **Window Chars**: 20000
 
 ---
 
@@ -52213,6 +52333,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Constrained Device & IoT Suitability**: IoT devices mentioned as vulnerable to side-channel and fault injection attacks
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: Obsoletes previous TLS versions; requires negotiation of common version; backward compatibility with TLS 1.2 via legacy extensions
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## RFC-9864
+
+- **Reference ID**: RFC-9864
+- **Title**: Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This specification creates fully-specified algorithm identifiers for registered JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) polymorphic algorithm identifiers, enabling applications to use only fully-specified algorithm identifiers.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: M.B. Jones; O. Steele
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE; COSE
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RS256; ES256K; ES256; EdDSA; Ed25519; Ed448; ECDSA; P-256; P-384; P-521; SHA-256; SHA-384; SHA-512; RSA; PS*
+- **Key Takeaways**: Polymorphic algorithm identifiers in JOSE and COSE are deprecated in favor of fully-specified identifiers; Fully-specified algorithms enable protocols to specify allow lists that prevent cross-curve key establishment and mismatched KDF sizes; The specification updates RFCs 7518, 8037, and 9053 to provide fully-specified replacements for polymorphic algorithms; Varying algorithm identifiers can be used by malicious software to evade rule-based detection and classification systems.
+- **Security Levels & Parameters**: 2048-bit RSA; 4096-bit RSA; P-256; P-384; P-521; Ed25519; Ed448
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: crypto-agility; api-security-jwt
+- **Implementation Attack Surface**: rule-based detection evasion
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
@@ -52866,9 +53040,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms.pdf (502,632 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-08-21T21:12:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -52923,9 +53094,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Reducing-the-Number-of-Qubits-in-Quantum-Factoring.pdf (581,217 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-08-21T21:12:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -53142,9 +53310,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Code-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Resistance-Analysis-of-Post-Quantum-Signature-Scheme-Shipovn.pdf (267,643 bytes, 9,091 extracted chars)
-- **Extraction Timestamp**: 2026-09-09T19:31:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -55035,9 +55200,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Secret-Zero-Tackling-the-Secret-Zero-Problem.html (206,282 bytes, 4,992 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:43
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -55141,6 +55303,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Constrained Device & IoT Suitability**: Android; embedded viability via hardware-backed keys
 - **Supply Chain & Vendor Risk**: Supply chain risks for privilege elevation; third-party library trust via allowlists
 - **Deployment & Migration Complexity**: Future library updates required for PQC; code-level patches for current threats
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Security-Considerations-for-ML-DSA
+
+- **Reference ID**: Security-Considerations-for-ML-DSA
+- **Title**: Security Considerations for ML-DSA
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document provides security considerations and usage guidelines for the ML-DSA digital signature algorithm within cryptographic protocols.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: CRQC; Harvest Now Decrypt Later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: D. Connolly (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: DH; RSA; ECDSA
+- **Key Takeaways**: ML-DSA is standardized in FIPS 204 and resistant to quantum attacks; Hedged signing is recommended over deterministic signing to mitigate fault injection attacks; Context strings should be used to prevent cross-protocol signature forgery; Long-lived public keys require protection against future CRQC threats.
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "NIST standardized ML-DSA as FIPS 204... a digital signature scheme that is considered resistant to quantum attacks"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Threats; pqc-101
+- **Implementation Attack Surface**: fault injection; side-channel; nonce reuse
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
@@ -55578,9 +55794,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Singapore-Financial-Sector-QKD-Sandbox-Technical-Report.pdf (4,713,851 bytes, 18,917 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:24
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -56121,9 +56334,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Summary-of-NATO-s-Quantum-Technologies-Strategy.html (329,395 bytes, 13,283 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:23
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -56178,9 +56388,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Swift-Customer-Security-Controls-Framework-CSCF-v2026.pdf (4,576,203 bytes, 19,528 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -57261,9 +57468,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hybrid
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: The-Internet-Identity-Card-IIC-Credential-Format-A-Self-Cont.html (62,236 bytes, 11,863 extracted chars)
-- **Extraction Timestamp**: 2026-09-11T09:19:24
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
@@ -57480,9 +57684,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant.pdf (1,136,898 bytes, 11,790 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:44
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -57699,9 +57900,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System.pdf (700,264 bytes, 13,752 extracted chars)
-- **Extraction Timestamp**: 2026-08-07T23:22:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -57975,6 +58173,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 
 ---
 
+## UK-PSTI-Regs-2023-1007
+
+- **Reference ID**: UK-PSTI-Regs-2023-1007
+- **Title**: The Product Security and Telecommunications Infrastructure (Security Requirements for Relevant Connectable Products) Regulations 2023
+- **Authors**: 
+- **Publication Date**: 2023
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: UK statutory regulations establishing mandatory cybersecurity baseline requirements, including unique passwords and security update periods, for relevant connectable products.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: England and Wales, Scotland, Northern Ireland, United Kingdom; Bodies: Secretary of State, Office for Product Safety and Standards, Department for Science, Innovation and Technology, World Trade Organisation, EU Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI, ISO/IEC
+- **Compliance Frameworks Referenced**: ETSI EN 303 645, ISO/IEC 29147
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers must provide unique, non-guessable passwords for each product; Products must have a defined minimum support period for security updates; Importers must retain statements of compliance for at least 10 years or the defined support period, whichever is longer; Compliance can be demonstrated by adhering to ETSI EN 303 645 or specific ISO/IEC 29147 provisions
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Consumer Internet of Things
+- **Supply Chain & Vendor Risk**: Importer retention of statement of compliance; Manufacturer compliance with security requirements
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag
 
 - **Reference ID**: UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag
@@ -58026,9 +58278,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html (565,900 bytes, 17,735 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -58299,9 +58548,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS.pdf (1,635,883 bytes, 16,926 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:28
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -58463,6 +58709,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: identifying personnel and resources; developing and implementing a post-quantum transition plan specific to their organization
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## US-FCC-24-26-Cyber-Trust-Mark
+
+- **Reference ID**: US-FCC-24-26-Cyber-Trust-Mark
+- **Title**: FCC 24-26 Report and Order: Cybersecurity Labeling for Internet of Things (U.S. Cyber Trust Mark)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The Federal Communications Commission establishes a voluntary cybersecurity labeling program for Internet of Things (IoT) products, defining eligibility, testing requirements, and the use of the FCC IoT Label (Cyber Trust Mark).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Federal Communications Commission, National Institute of Standards and Technology, Department of Commerce, Department of Defense
+- **Leaders Contributions Mentioned**: Chairwoman Rosenworcel, Commissioners Starks, Simington, and Gomez
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST, ISO/IEC, ETSI, ANSI National Accreditation Board
+- **Compliance Frameworks Referenced**: NISTIR 8425, ISO/IEC 17011, ISO/IEC 17025, ETSI EN 303 645
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers must undergo third-party conformity testing by accredited labs to use the FCC IoT Label; The program relies on NISTIR 8425 core baseline capabilities rather than specific technical requirements; A two-step process involving product testing and application filing with a Cybersecurity Label Administrator is required; The label includes a QR code linking to a registry with product security details and support periods.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, Operations
+- **Implementation Prerequisites**: Conformity testing by an accredited and recognized lab; Filing an application with a Cybersecurity Label Administrator; Adherence to NISTIR 8425 criteria
+- **Relevant PQC Today Features**: iot-ot-pqc, compliance-strategy, vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: SBOM, HBOM, exclusion of entities on Department of Commerce Entity List or Department of Defense Chinese Military Companies list
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -58734,9 +59034,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Understanding-Programs-and-Projects.html (455,041 bytes, 11,445 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -58953,9 +59250,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for.html (40,164 bytes, 1,341 extracted chars)
-- **Extraction Timestamp**: 2026-08-31T19:38:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -59334,9 +59628,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Verifying-and-optimizing-post-quantum-cryptography-at-Amazon.html (313,354 bytes, 11,478 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -59391,9 +59682,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Visa-Token-Service.html (192,707 bytes, 6,417 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -59556,9 +59844,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: W3C-Verifiable-Credentials-Data-Model-v2-0.html (1,023,165 bytes, 20,580 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -59613,9 +59898,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: WCO-SAFE-Framework-of-Standards-2021.pdf (2,987,075 bytes, 21,998 extracted chars)
-- **Extraction Timestamp**: 2026-07-30T12:12:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -59994,9 +60276,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: What-Are-NIST-PQC-Standards-Palo-Alto-Networks.html (712,350 bytes, 17,299 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -60375,9 +60654,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Symmetric; Hash-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: ZIP-2005-Ironwood-Quantum-Recoverability.html (191,637 bytes, 19,538 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -60432,9 +60708,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.html (16,781 bytes, 2,652 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -61029,9 +61302,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: draft-becker-cnsa2-smime-profile.html (66,377 bytes, 8,836 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -62328,12 +62598,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: draft-ietf-ipsecme-ikev2-mlkem-09.html (81,555 bytes, 20,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-28T21:48:54
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: e91e50c8687e3093
-- **Reader**: unified/5 head
-- **Window Chars**: 20000
 
 ---
 
@@ -62765,6 +63029,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## draft-ietf-lake-pqsuites
+
+- **Reference ID**: draft-ietf-lake-pqsuites
+- **Title**: Quantum-Resistant Cipher Suites for EDHOC (LAKE WG)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document specifies quantum-resistant cipher suites for the Lightweight Authenticated Key Exchange (LAKE) protocol using ML-KEM and ML-DSA.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FN-DSA
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: G. Selander; J. Preuß Mattsson; C. Papon
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: LAKE (formerly EDHOC)
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA; Elliptic Curve Cryptography (ECC); SHAKE256
+- **Key Takeaways**: LAKE protocol is renamed from EDHOC to reflect the removal of dependency on Diffie-Hellman; New cipher suites use ML-KEM for key exchange and ML-DSA for signatures; KEM-based key exchange is incompatible with LAKE methods 0–3 which require DH/NIKE primitives; Hybrid algorithms are recommended to ensure continuity of classical security during the transition.
+- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-1024; ML-DSA-44; ML-DSA-87
+- **Hybrid & Transition Approaches**: Composite hybrid KEMs; Hybrid algorithms combining classical and post-quantum algorithms
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "Cipher suites using ML-KEM-512 and ML-KEM-1024 ... for key exchange"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ML-DSA ... for digital signatures"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer
+- **Implementation Prerequisites**: Side-channel resistance requirements per FIPS 203 and FIPS 204; Freshly generated ML-KEM keys for each session
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; iot-ot-pqc; migration-program
+- **Implementation Attack Surface**: side-channel (timing or power analysis attacks)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Constrained devices may face issues due to increased size of signatures or KEM keys
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -68328,9 +68646,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice; Code-based; Hash-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo.html (432,168 bytes, 10,048 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -69519,9 +69834,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Hash-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: shrincs-bip-SHRINCS-md-at-main-SHRINCS-shrincs-bip-GitHub.html (1,633,676 bytes, 14,326 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:28
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -69576,9 +69888,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: specs-archive-dev-cryptographic-specs-falcon-deterministic-p.html (234,965 bytes, 800 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -69633,9 +69942,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: sys-dm-database-encryption-keys-Transact-SQL.html (56,892 bytes, 4,663 extracted chars)
-- **Extraction Timestamp**: 2026-08-30T17:25:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
@@ -69690,9 +69996,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Code-based
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: tc26-Kodieum-Kryptonit-PQ-Mechanism.html (46,198 bytes, 2,881 extracted chars)
-- **Extraction Timestamp**: 2026-09-07T11:24:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
