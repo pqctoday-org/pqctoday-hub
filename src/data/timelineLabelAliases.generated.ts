@@ -532,6 +532,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'singapore-mas-financial-sector-qkd-sandbox-completed': [
     'Singapore:MAS — Financial Sector QKD Sandbox Completed',
   ],
+  'singapore-mas-quantum-resilience-supervisory-expectations-an': [
+    'Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced',
+  ],
   'singapore-quantinuum-nqo-helios-quantum-computer-singapore-deployment': [
     'Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment',
   ],
@@ -753,6 +756,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'united-states-nist-nsa-cryptographic-inventory': [
     'United States:NIST/NSA — Cryptographic Inventory',
     'United States:NIST/NSA — National Security Memorandum on Quantum Computing Risk (NSM-10)',
+  ],
+  'united-states-nist-piv-standards-pqc-working-drafts-released': [
+    'United States:NIST — PIV Standards PQC Working Drafts Released',
   ],
   'united-states-nist-sixth-pqc-standardization-conference': [
     'United States:NIST — Sixth PQC Standardization Conference',
