@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 8,
+  trackOrder: 7,
   learnSections: [
     { id: 'qualified-signatures', label: 'Qualified vs Advanced Signatures' },
     { id: 'timestamping', label: 'Timestamping & Proof of Existence' },

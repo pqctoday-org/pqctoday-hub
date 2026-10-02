@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 5,
+  trackOrder: 4,
   // learnSections CORRECTED 2026-07-30 to describe this module's actual
   // learn tab. The previous ids read like the module's workshop steps and
   // did not correspond to any rendered heading — which made the table of

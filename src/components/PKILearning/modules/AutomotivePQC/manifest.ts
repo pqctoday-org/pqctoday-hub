@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 3,
+  trackOrder: 2,
   learnSections: [
     { id: 'vehicle-crypto-landscape', label: 'Automotive Crypto' },
     { id: 'autonomous-data', label: 'Autonomous Data Integrity' },

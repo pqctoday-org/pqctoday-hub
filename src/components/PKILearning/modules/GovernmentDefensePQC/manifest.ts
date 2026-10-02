@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 7,
+  trackOrder: 6,
   learnSections: [
     { id: 'cnsa-suite', label: 'The CNSA 2.0 Suite' },
     { id: 'cnsa-timeline', label: 'Mandates & Dated Milestones' },

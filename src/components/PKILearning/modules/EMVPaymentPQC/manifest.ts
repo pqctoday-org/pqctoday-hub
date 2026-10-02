@@ -22,7 +22,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 4,
+  trackOrder: 3,
   learnSections: [
     { id: 'emv-ecosystem', label: 'The EMV Payment Ecosystem' },
     { id: 'card-auth', label: 'Card Auth: SDA, DDA & CDA' },
