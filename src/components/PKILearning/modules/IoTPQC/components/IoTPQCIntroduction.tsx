@@ -97,7 +97,13 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           computer may exist — so the choice of algorithm, protocol and hardware is made today and
           lived with for a decade.
         </p>
-        <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
+        <div
+          className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Scrollable table"
+        >
           <div className="text-xs font-bold text-foreground mb-2">
             Classes of constrained devices
           </div>
@@ -185,7 +191,13 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           operations have very different costs, so &quot;does FN-DSA fit on a sensor?&quot; has two
           answers.
         </p>
-        <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
+        <div
+          className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Scrollable table"
+        >
           <div className="text-xs font-bold text-foreground mb-2">
             Stack RAM on an Arm Cortex-M4 (benchmark; varies by implementation)
           </div>
@@ -326,7 +338,13 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         icon={<Network size={24} className="text-primary" />}
         title="Constrained protocols"
       >
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Scrollable table"
+        >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border text-muted-foreground">

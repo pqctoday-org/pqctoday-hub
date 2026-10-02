@@ -386,7 +386,12 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
               <div className="font-bold text-foreground">
                 2. Manifest (shown as JSON; SUIT encodes it in CBOR per draft-ietf-suit-manifest)
               </div>
-              <pre className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto">
+              <pre
+                className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto"
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+                tabIndex={0}
+                aria-label="Scrollable code"
+              >
                 {outcome.manifestText}
               </pre>
             </div>
@@ -444,7 +449,12 @@ export const FirmwareSigningSimulator: React.FC<{ initial?: FirmwareSigningConfi
           </div>
           <div className="text-xs">
             <div className="font-bold text-foreground">4. COSE_Sign1 inside the SUIT envelope</div>
-            <pre className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto">
+            <pre
+              className="bg-muted/50 rounded p-2 border border-border font-mono text-[10px] overflow-x-auto"
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+              tabIndex={0}
+              aria-label="Scrollable code"
+            >
               {`COSE_Sign1 = [
   protected:   { 1 (alg): ${fa.coseAlg ?? 'unassigned'} }   / ${fa.coseSource} /
   unprotected: { 4 (kid): h'…' },

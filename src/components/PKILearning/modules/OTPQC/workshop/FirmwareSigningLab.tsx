@@ -223,7 +223,13 @@ export const FirmwareSigningLab: React.FC<FirmwareSigningLabProps> = ({ onComple
 
       <div className="glass-panel p-4">
         <h3 className="text-sm font-bold text-foreground mb-2">All schemes at a glance</h3>
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Scrollable table"
+        >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border text-muted-foreground">

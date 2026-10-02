@@ -311,7 +311,13 @@ export const FleetKeyManager: React.FC<{ initial?: Partial<FleetConfig> }> = ({ 
             <Key size={16} className="text-primary" />
             <h3 className="text-sm font-bold text-foreground">DLMS/COSEM keys in a meter</h3>
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">

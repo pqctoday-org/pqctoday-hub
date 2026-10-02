@@ -117,7 +117,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               </p>
             </Card>
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
@@ -186,7 +192,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             an algorithm or a quantum-safe requirement, so PQC enters through risk assessment and
             procurement, not through the standard&rsquo;s text.
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
@@ -287,7 +299,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </Card>
           </div>
           <h3 className="text-sm font-bold text-foreground">IEC 62351 parts at a glance</h3>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
@@ -609,7 +627,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
           </ul>
           <h3 className="text-sm font-bold text-foreground">NERC CIP (North American grid)</h3>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
@@ -638,7 +662,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             &ldquo;hybrid by&rdquo; or &ldquo;PQC-only by&rdquo; date and no hybrid mandate — each
             category has its own. AES-256 is a CNSA 2.0 algorithm with no sunset.
           </p>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Scrollable table"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
