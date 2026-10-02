@@ -1,7 +1,7 @@
 ---
 generated: 2026-10-02
 collection: library
-documents_processed: 4
+documents_processed: 3
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
@@ -179,65 +179,6 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 - **Evidence SHA256**: bcfa5406acd364ea
 - **Window Chars**: 2149
-
----
-
-## fhe-rs-v0.1.1
-
-- **Reference ID**: fhe-rs-v0.1.1
-- **Title**: fhe.rs v0.1.1
-- **Authors**: Tancrède Lepoint
-- **Publication Date**: 2025-11-23
-- **Last Updated**: 2025-11-23
-- **Document Status**: Released
-- **Main Topic**: The document describes the CI/CD workflows, coverage setup, and publishing process for the fhe.rs Rust library.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: fhe.rs
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: The repository uses GitHub Actions for CI/CD with pinned toolchains and commit hashes; Publishing to crates.io is a manual process requiring a specific tag and dry-run validation; Coverage is measured using cargo-llvm-cov and uploaded to Codecov via OIDC; The library is a Fully Homomorphic Encryption implementation in Rust.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer
-- **Implementation Prerequisites**: Rust 1.91.1; nightly-2026-08-15 toolchain; protoc; Python 3.11 or newer
-- **Relevant PQC Today Features**: None detected
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: cargo-audit; Clippy; rustfmt; cargo-llvm-cov; unit and integration tests
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: cargo-audit scans Cargo.lock; Dependabot checks actions daily; pinned commit hashes for actions
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: fhe-rs-v0.1.1.html (298,221 bytes, 9,809 extracted chars)
-- **Extraction Timestamp**: 2026-10-02T16:19:55
-- **Evidence SHA-256**: c37c5fe14fc86c87907455601712b2128b8a74f87b981c5c0a5934f28cad1a5e
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: c37c5fe14fc86c87
-- **Window Chars**: 9809
 
 ---
 
