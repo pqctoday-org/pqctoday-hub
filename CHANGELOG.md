@@ -38,6 +38,11 @@ Confidential Computing now teaches fully homomorphic encryption, with a workshop
 - **Homomorphic encryption explained in Confidential Computing** [view:/learn/confidential-computing] [persona:architect] [persona:developer] [persona:researcher] [persona:curious]: a new Learn section covers how fully homomorphic encryption lets a server compute on data it cannot read, the four standard scheme families (BGV, BFV, CKKS, TFHE), their keys and operations, why FHE does not work directly with AES (and how transciphering bridges it), where FHE stands against quantum attacks, and the open-source libraries that implement it.
 - **New workshop step: FHE + HSM Flows** [view:/learn/confidential-computing] [persona:architect] [persona:ops] [persona:researcher] [persona:developer]: step through six scenarios: CKKS and TFHE key custody in an HSM, OpenFHE and Lattigo threshold FHE, what can and cannot run inside an HSM, and TFHE-rs transciphering. Each step shows the data and compute involved, key sizes against an RSA-2048 key pair, a quantum overlay with its post-quantum fix, a map of where every key sits and whether a secret is exposed, and a label saying what the pqctoday HSM emulator can do today. Click any step for its input, computation and output.
 
+### Data
+
+- **Three homomorphic-encryption libraries in the Library** [view:/library] [persona:developer] [persona:researcher] [persona:architect]: TFHE-rs, Lattigo and OpenFHE now have reference entries, each with its licence and the ISO/IEC 28033 parts that cover its schemes.
+- **New trusted sources for homomorphic encryption** [view:/library] [persona:researcher]: Zama, Tune Insight (Lattigo), OpenFHE and fhe.rs join as supporting sources, used only for claims about their own libraries.
+
 ## [4.142.0] - 2026-10-02
 
 The IoT & OT module is now two advanced modules, one for IoT and embedded devices and one for operational technology across five sectors, both checked against their standards; search stays smooth after the first search; the JWT workshop's encrypted tokens can run entirely inside the emulated HSM; and the Library and vendor roadmaps gain new entries.
