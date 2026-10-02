@@ -21260,7 +21260,12 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-01T23:48:39.957808+00:00",
-      "admittedBy": "admit.py"
+      "admittedBy": "admit.py",
+      "ok": false,
+      "superseded_file": "_superseded-10012026/library/EN-18031-3-2024.html",
+      "supersededAt": "2026-10-02T00:21:21.194561+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "thin reseller landing page replaced by the official iTeh sample PDF (SIST EN 18031-3:2024 adoption; scope + clause 1) \u2014 replaced by EN-18031-3-2024.pdf"
     },
     {
       "refId": "US-FCC-24-26-Cyber-Trust-Mark",
@@ -21741,6 +21746,39 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T00:08:20.092474+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "PI-PROFINET-Security-Whitepaper-V105-2019",
+      "title": "PROFINET Security Whitepaper (PI, V1.05, Feb 2019)",
+      "url": "https://www.profibus.com/fileadmin/media/downloadsection/brochures/PROFINET_Protocol_Security_Whitepaper_engl_V105_Feb19.pdf",
+      "status": "downloaded",
+      "filename": "PI-PROFINET-Security-Whitepaper-V105-2019.pdf",
+      "sizeBytes": 1572908,
+      "contentType": "application/pdf",
+      "sha256": "bdc6f749bbe3b5d61c9f1efcb48d1dcaf40717dd6d40d0abb32ee545ae4c1a0c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T00:19:22.236222+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "EN-18031-3-2024",
+      "filename": "EN-18031-3-2024.pdf",
+      "sizeBytes": 1277759,
+      "contentType": "application/pdf",
+      "url": "https://standards.iteh.ai/catalog/standards/cen/7b7620a4-c718-4dff-99af-13f0a4809c7f/en-18031-3-2024",
+      "sha256": "c1e4a5abde01087afcb307a12a26195854bcb8c424ced44a8a324b7e57bd6d1f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T00:21:21.855023+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "file": "library/EN-18031-3-2024.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-02T00:21:21.194561+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "thin reseller landing page replaced by the official iTeh sample PDF (SIST EN 18031-3:2024 adoption; scope + clause 1)"
     }
   ],
   "archivedEntries": [
