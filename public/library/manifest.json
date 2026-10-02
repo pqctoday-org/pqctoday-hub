@@ -21999,21 +21999,6 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T20:58:52.479697+00:00",
       "admittedBy": "admit.py"
-    },
-    {
-      "refId": "fhe-rs-v0.1.1",
-      "title": "fhe.rs v0.1.1",
-      "url": "https://github.com/tlepoint/fhe.rs",
-      "status": "downloaded",
-      "filename": "fhe-rs-v0.1.1.html",
-      "sizeBytes": 298221,
-      "contentType": "text/html",
-      "sha256": "c37c5fe14fc86c87907455601712b2128b8a74f87b981c5c0a5934f28cad1a5e",
-      "artefact": "SOURCE",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-10-02T20:59:00.430202+00:00",
-      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
