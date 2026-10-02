@@ -3388,6 +3388,38 @@
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-27"
+    },
+    {
+      "refId": "united-states-nist-piv-standards-pqc-working-drafts-released",
+      "label": "PIV-Standards-PQC-Working-Drafts-Released",
+      "url": "https://www.nist.gov/news-events/news/2026/06/working-drafts-post-quantum-cryptography-updates-piv-standards",
+      "status": "downloaded",
+      "file": "timeline/PIV-Standards-PQC-Working-Drafts-Released.html",
+      "sizeBytes": 85280,
+      "contentType": "text/html",
+      "sha256": "623dbfae9a842554db315bf27102f0c2da78ba7863e6328a96243d5ac9077d83",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T03:22:46.754887+00:00",
+      "admittedBy": "admit.py",
+      "superseded_file": "_superseded-10012026/timeline/PIV-Standards-PQC-Working-Drafts-Released.html"
+    },
+    {
+      "refId": "singapore-mas-quantum-resilience-supervisory-expectations-an",
+      "label": "Quantum-Resilience-Supervisory-Expectations-Announced",
+      "url": "https://www.mas.gov.sg/news/speeches/2026/md-remarks-for-mas-ar-2025-2026",
+      "status": "downloaded",
+      "file": "timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html",
+      "sizeBytes": 280815,
+      "contentType": "text/html",
+      "sha256": "87dde1da05b2e9eefd50fdf2896a32f18154244c87e5213bd726afc495178f78",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T03:22:56.080370+00:00",
+      "admittedBy": "admit.py",
+      "superseded_file": "_superseded-10012026/timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html"
     }
   ],
   "archivedEntries": [],
