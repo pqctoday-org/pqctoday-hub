@@ -927,6 +927,11 @@ export const hsm_importTrustedWrapKey = (
       { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
       { type: CKA_VALUE, bytesPtr: valuePtr, bytesLen: keyBytes.length },
       { type: CKA_TOKEN, boolVal: false },
+      // Public on purpose: this import runs on an SO-logged-in session, and
+      // the SO has no access to private objects (PKCS#11 v3.2 Usage Guide
+      // Table 3). Both engines default a secret key to CKA_PRIVATE=TRUE, so
+      // leaving it unset makes the import fail CKR_USER_NOT_LOGGED_IN.
+      { type: CKA_PRIVATE, boolVal: false },
       { type: CKA_WRAP, boolVal: true },
       { type: CKA_TRUSTED, boolVal: true },
     ])
@@ -954,6 +959,12 @@ export const hsm_generateAESKeyWrapWithTrusted = (
     { type: CKA_UNWRAP, boolVal: false },
     { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
     { type: CKA_WRAP_WITH_TRUSTED, boolVal: true },
+    // Public on purpose: the trust-wrapping lesson switches to the SO and
+    // back between generating this key and wrapping it, and C_Logout
+    // destroys every PRIVATE session object (PKCS#11 v3.2 §5.6.10). Secret
+    // keys default to CKA_PRIVATE=TRUE in both engines, so leaving it unset
+    // makes the key vanish before the wrap step.
+    { type: CKA_PRIVATE, boolVal: false },
   ]
   const tpl = buildTemplate(M, attrs)
   const hKeyPtr = M._malloc(4)

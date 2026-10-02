@@ -17,7 +17,7 @@ import {
   hsm_initToken,
   hsm_openUserSession,
 } from '../../../wasm/softhsm'
-import { useHsmContext } from '../hsm/HsmContext'
+import { openCrossCheckSession, useHsmContext } from '../hsm/HsmContext'
 
 // ── Step badge ─────────────────────────────────────────────────────────────────
 
@@ -39,6 +39,7 @@ export const TokenSetupPanel = () => {
     moduleRef,
     rawModuleRef,
     crossCheckModuleRef,
+    crossCheckSessionRef,
     hSessionRef,
     slotRef,
     engineMode,
@@ -136,6 +137,9 @@ export const TokenSetupPanel = () => {
         const M = moduleRef.current
         const hSession = hsm_openUserSession(M, slotRef.current, '12345678', 'user1234')
         hSessionRef.current = hSession
+        if (crossCheckModuleRef.current) {
+          crossCheckSessionRef.current = openCrossCheckSession(crossCheckModuleRef.current)
+        }
         setPhase('session_open')
       } catch (e) {
         setTokenError(String(e))

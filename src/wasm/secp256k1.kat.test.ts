@@ -17,13 +17,15 @@ describe('SoftHSMv3 secp256k1 Known Answer Tests', () => {
     const instance = await SoftHSM.getSoftHSMRustModule()
     M = instance as any
 
-    const hSessionPtr = M._malloc(4)
-    M._C_Initialize(0)
-
-    // Default slot 0
-    M._C_OpenSession(0, 0x0002 | 0x0004, 0, 0, hSessionPtr)
-    hSession = new Uint32Array(M.HEAPU8.buffer, hSessionPtr, 1)[0]
-    M._free(hSessionPtr)
+    // A logged-in user session: the key pair's private half is private
+    // (CKA_PRIVATE=TRUE), and PKCS#11 v3.2 Usage Guide Table 3 only lets a
+    // user session create — or see — private objects. The previous raw
+    // C_OpenSession on slot 0 without a token or login made the private key
+    // invisible to its own session (C_SignInit -> CKR_KEY_HANDLE_INVALID).
+    SoftHSM.hsm_initialize(M)
+    const slot = SoftHSM.hsm_getFirstSlot(M)
+    const initializedSlot = SoftHSM.hsm_initToken(M, slot, '12345678', 'secp256k1KAT')
+    hSession = SoftHSM.hsm_openUserSession(M, initializedSlot, '12345678', 'user1234')
   })
 
   afterAll(() => {
@@ -45,10 +47,11 @@ describe('SoftHSMv3 secp256k1 Known Answer Tests', () => {
     expect(keys.privHandle).toBeGreaterThan(0)
   })
 
-  // secp256k1 key generation succeeds but C_SignInit returns CKR_KEY_HANDLE_INVALID
-  // in the current WASM build — the Rust engine generates the key pair but the
-  // PKCS#11 sign path does not yet accept secp256k1 private handles.
-  it.todo('Signs and verifies ECDSA-SHA256 with secp256k1', () => {
+  // Was it.todo: C_SignInit returned CKR_KEY_HANDLE_INVALID. The cause was
+  // this suite's session, not the sign path — the private key (CKA_PRIVATE=
+  // TRUE) was created in an unauthenticated session, which then could not see
+  // it. With the user session above, sign + verify work (2026-10-02).
+  it('Signs and verifies ECDSA-SHA256 with secp256k1', () => {
     const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
     const msg = 'Bitcoin Transaction Data Hash Placeholder'
 
