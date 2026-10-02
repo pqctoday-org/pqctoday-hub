@@ -3278,8 +3278,8 @@
     "rust": {
       "source": {
         "repo": "pqctoday-org/pqctoday-hsm",
-        "recordedCommit": "5e28f11ab6be053a6f26987d49b9eac22558c174",
-        "commitRead": "5e28f11ab6be053a6f26987d49b9eac22558c174",
+        "recordedCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
+        "commitRead": "d09deb33919732dd584123f8dc61f843164eb00d",
         "commitMatchesWasmBuild": true,
         "readMethod": "git show <commitRead>:<path> (no checkout; hsm working tree untouched)",
         "dispatchFiles": [

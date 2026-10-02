@@ -392,7 +392,7 @@ export const SBOM_BUILDS: Readonly<
 > = {
   'cacp-kmip': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '5e28f11ab6be053a6f26987d49b9eac22558c174',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
     sha256: '9eb00dbcb7da26236968615a962ced9195c24bfba65564aec47b091fc673221f',
   },
   entropy90b: {
@@ -412,7 +412,7 @@ export const SBOM_BUILDS: Readonly<
   },
   'openssl-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '5e28f11ab6be053a6f26987d49b9eac22558c174',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
     sha256: 'ccdafa7995c1c5fba6b455dedb6b016393090406f615599ebf0529e95e563e8f',
   },
   'pqctoday-tpm': {
@@ -427,7 +427,7 @@ export const SBOM_BUILDS: Readonly<
   },
   'softhsmrustv3-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '5e28f11ab6be053a6f26987d49b9eac22558c174',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
     sha256: '3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211',
   },
   strongswan: {

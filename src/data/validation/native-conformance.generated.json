@@ -1055,9 +1055,9 @@
         },
         "wasm": {
           "bundle": "softhsmrustv3-engine",
-          "bundleHsmCommit": "5e28f11ab6be053a6f26987d49b9eac22558c174",
+          "bundleHsmCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 161,
+          "commitsFromEngineToBundle": 162,
           "commitsFromBundleToEngine": 0
         },
         "cases": [

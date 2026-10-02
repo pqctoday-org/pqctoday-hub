@@ -68,7 +68,7 @@ Artifacts:
 
 ### Rust engine
 
-175 mechanisms · 2,231 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `5e28f11ab6be053a6f26987d49b9eac22558c174`
+175 mechanisms · 2,231 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `d09deb33919732dd584123f8dc61f843164eb00d`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
@@ -122,7 +122,7 @@ Imported from the reports pqctoday-hsm committed; nothing here was executed by t
 | Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                      |
 | ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | --------------------------------------------------------------------------------- |
 | C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   961 |    0 |            2 |   966 | `7f95629c989a` (2026-09-27) |                                           8 | no — bundle `68278dfe69ad`: 13 commit(s) ahead of the engine commit, 0 behind it  |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          94 | no — bundle `5e28f11ab6be`: 161 commit(s) ahead of the engine commit, 0 behind it |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          94 | no — bundle `d09deb339197`: 162 commit(s) ahead of the engine commit, 0 behind it |
 | Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                 |
 
 ## Cross-target evidence runs
@@ -334,9 +334,9 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `8223eb9804f4aee5435d518064f977cf7412d5c6e0a76338bb2f5fdcda26c9c2` |
+| `public/data/validation/coverage-matrix.json`                           | `5ef367ad850d35ebcdaa480fd0a63a2bd88a310c33d15873591565aa990287e6` |
 | `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
-| `src/data/validation/native-conformance.generated.json`                 | `be5d2c82f794f0d9f53dcf372f97df6efd26977cfc51e5893f64c47b27ba93a1` |
+| `src/data/validation/native-conformance.generated.json`                 | `fa5caa797140191ab6a470f5b9185014b76081e752083d3f8e4e6aa5ca9be384` |
 | `src/data/validation/open-gaps.json`                                    | `5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `4e5c641128e1c76f26557797644f1e2bfd5c035f75ab7d03421d1ceea5fd77de` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `1dac820ae37b4e261359c392665f4eaf5fbc865917ca8ba34167d135883d7d04` |

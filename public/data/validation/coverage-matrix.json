@@ -3,7 +3,7 @@
   "$disclaimer": "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
-    "src/data/validation/mechanism-inventory.generated.json": "6df597f0900986b37c9f47d2f38af8c050267cab1fad8da943d8a6f3190a284c",
+    "src/data/validation/mechanism-inventory.generated.json": "aa5d6bed48eba36d9be1a860af770958a1c5328d37325fb3f4944a865f4ddb69",
     "src/data/validation/capability-map.json": "5e728d04aabfa26aa9c135ca7d78a2716823b1f7f260c2663bb9d516a0416923",
     "src/data/validation/vector-manifest.json": "4ae588100c5896a7ecb3f7d992f8055549e133e54bd525d80956c5a94fc15f07",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
@@ -76,7 +76,7 @@
       "label": "Rust",
       "mechanismCount": 175,
       "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
-      "sourceCommit": "5e28f11ab6be053a6f26987d49b9eac22558c174",
+      "sourceCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
       "artifacts": [
         {
           "path": "src/wasm/softhsmrustv3_bg.wasm",

@@ -3496,7 +3496,7 @@
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "5e28f11ab6be053a6f26987d49b9eac22558c174",
+        "sourceCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-10-01",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
