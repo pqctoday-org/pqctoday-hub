@@ -633,9 +633,10 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             security-update period.
           </li>
           <li>
-            <strong>NIST IR 8259 / 8259A</strong>: foundational activities for manufacturers and the
-            core device-capability baseline. NIST IR 8259 was withdrawn on 2026-04-20 and replaced
-            by NIST IR 8259r1; 8259A remains the capability baseline.
+            <strong>NIST IR 8259r1 / 8259A</strong>: foundational activities for manufacturers and
+            the core device-capability baseline. NIST IR 8259r1 (April 2026) superseded NIST IR 8259
+            and names quantum-safe choices as an example of future-proofing, without a deadline;
+            8259A remains the capability baseline.
           </li>
         </ul>
       </Section>

@@ -70,7 +70,7 @@ export const content: ModuleContent = {
     getStandard('EN-18031-3-2024'),
     getStandard('US-FCC-24-26-Cyber-Trust-Mark'),
     getStandard('UK-PSTI-Regs-2023-1007'),
-    getStandard('NIST-IR-8259'),
+    getStandard('NIST-IR-8259r1'),
     getStandard('NIST-IR-8259A'),
   ],
 
@@ -108,6 +108,6 @@ export const content: ModuleContent = {
   narratives: {
     hybridKem: 'X25519MLKEM768',
     relatedStandards:
-      'FIPS 206 (FN-DSA) is not yet published; this module cites the Falcon v1.2 specification for FN-DSA-512 sizes and labels it pre-standard. NIST IR 8259 was withdrawn on 2026-04-20 in favour of NIST IR 8259r1; NIST IR 8259A remains the device-capability baseline.',
+      'FIPS 206 (FN-DSA) is not yet published; this module cites the Falcon v1.2 specification for FN-DSA-512 sizes and labels it pre-standard. This module cites NIST IR 8259r1 (April 2026), which superseded NIST IR 8259; NIST IR 8259A remains the device-capability baseline.',
   },
 }
