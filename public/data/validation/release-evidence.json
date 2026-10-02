@@ -16,30 +16,30 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "483fcb18a36ee9c463466492901342cba1865bae0bda22679bb6bf269c3e0d20",
+    "public/data/validation/coverage-matrix.json": "14c3efaf6911249199790e728b541044a91329b881bfa22b5e15840093b3be80",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "fa5caa797140191ab6a470f5b9185014b76081e752083d3f8e4e6aa5ca9be384",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "4e5c641128e1c76f26557797644f1e2bfd5c035f75ab7d03421d1ceea5fd77de",
     "src/data/validation/run-results/wasm-node-katRunner.json": "1dac820ae37b4e261359c392665f4eaf5fbc865917ca8ba34167d135883d7d04",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "4c97b879521a947d2287cc59ab65bb3c234e9e75670c3068a32cf53cb39f46e7",
-    "src/data/validation/validation-counts.generated.json": "e5793499ff6e6be58698ce44785586ed1b8c26ba2e8cf5325a5a18f78199960e",
-    "src/data/validation/vector-manifest.json": "8579845d70cfa09c081fa8cea25fd3f4bb336ffa4abdf340702e9dd0866f71ea"
+    "src/data/validation/validation-counts.generated.json": "005df0eaf596993662f490c13843982257294b7e1aef65c041fc49d05f47e46a",
+    "src/data/validation/vector-manifest.json": "afaf88a43daad7e43fcbc75b7b2c5ae8414fa584b639b0bf970818757316ce80"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "03bfd46d07f34bf3e66d1824dcb3a90515457f93e9b32227b54715f267454e44",
+    "manifestCanonicalSha256": "c24e5efb3627e02a298d9a2082872287b541bcdeb6ee41571d756fc5ed89fe66",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 964,
     "vectorFiles": {
-      "total": 97,
+      "total": 99,
       "active": 93,
-      "quarantined": 4
+      "quarantined": 6
     },
     "filesByClass": {
       "nist-acvp-reference-sample": 53,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 15,
+      "published-standard-kat": 17,
       "independent-oracle": 29,
       "cross-implementation-differential": 0,
       "functional-round-trip": 0,
@@ -48,9 +48,9 @@
       "unverified": 0
     },
     "cases": {
-      "total": 5252,
+      "total": 5295,
       "active": 5241,
-      "quarantined": 11
+      "quarantined": 54
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 964,
@@ -281,8 +281,8 @@
           "wasm": {
             "status": "registered",
             "registeredCells": 2182,
-            "passedCells": 2181,
-            "failedCells": 2,
+            "passedCells": 0,
+            "failedCells": 0,
             "skippedCells": 0
           },
           "native": {
@@ -304,27 +304,27 @@
     },
     "parity": {
       "positive": {
-        "parity": 2034,
-        "divergent": 1,
-        "not-established": 173,
+        "parity": 0,
+        "divergent": 0,
+        "not-established": 2208,
         "single-engine": 46
       },
       "negative": {
-        "parity": 148,
+        "parity": 0,
         "divergent": 0,
-        "not-established": 2060,
+        "not-established": 2208,
         "single-engine": 46
       },
       "boundary": {
-        "parity": 214,
+        "parity": 0,
         "divergent": 0,
-        "not-established": 1994,
+        "not-established": 2208,
         "single-engine": 46
       },
       "state-error": {
-        "parity": 913,
+        "parity": 0,
         "divergent": 0,
-        "not-established": 1295,
+        "not-established": 2208,
         "single-engine": 46
       }
     },
@@ -360,12 +360,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
+        "sourceCommit": "eda62b31dca307bb478f0a7d596c85d9820f777c",
         "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211"
+            "sha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -2214,17 +2214,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 73,
+    "total": 54,
     "byStatus": {
-      "open": 68,
+      "open": 49,
       "accepted-limitation": 4,
       "in-progress": 1
     },
     "byOrigin": {
       "curated": 29,
-      "generated": 44
+      "generated": 25
     },
-    "unassignedOwner": 73,
+    "unassignedOwner": 54,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -3348,7 +3348,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "93 active vector files, 0 without provenance; 11 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
+      "basis": "93 active vector files, 0 without provenance; 54 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
     },
     {
       "n": 3,

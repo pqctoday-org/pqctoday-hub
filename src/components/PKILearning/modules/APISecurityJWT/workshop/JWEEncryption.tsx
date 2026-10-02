@@ -3,31 +3,24 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { Lock, Unlock, ArrowRight, Key, XCircle, CheckCircle } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD } from '../constants'
-import { base64urlDecode, bytesToHex } from '../jwtUtils'
+import { base64urlDecode, base64urlEncode, bytesToHex } from '../jwtUtils'
 import {
   HPKE_JWE_ALGS,
   HPKE_JWE_SPEC,
   HPKE_JWE_SUITES,
   type HpkeJweAlg,
-  type HpkeKey,
   generateHpkeKeyPair,
   hpkeJweDecrypt,
+  hpkeJweDecryptInHsm,
   hpkeJweEncrypt,
-  hsmKeyPair,
-  hsmMlKem768,
+  hpkeJweEncryptInHsm,
 } from '../hpkeJwe'
+import { type HsmHpkeRecipient, hsmHpkeRecipient, softHsmHpkeOps } from '../hpkeJweHsm'
 import publishedExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
 import { Button } from '@/components/ui/button'
 import { ShieldCheck } from 'lucide-react'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
-import {
-  hsm_generateMLKEMKeyPair,
-  hsm_pqcEncap,
-  hsm_pqcDecap,
-  hsm_extractKeyValue,
-  hsm_destroyObject,
-} from '@/wasm/softhsm'
 
 type JwsBackend = 'noble' | 'softhsmv3'
 type JWEStep = 'keygen' | 'header' | 'seal' | 'assemble'
@@ -68,7 +61,8 @@ interface JWEKeys {
   pubKey: Uint8Array
   /** KEM seed (noble backend); empty when the key lives in the HSM. */
   seed: Uint8Array
-  hsmKeys?: { publicKey: HpkeKey; privateKey: HpkeKey }
+  /** SoftHSM3 key handles, when the whole HPKE operation runs in the token. */
+  hsmKeys?: HsmHpkeRecipient
 }
 
 interface JWEResult {
@@ -99,33 +93,15 @@ export const JWEEncryption: React.FC = () => {
   const hsm = useHSM('rust')
   const steps = useMemo(() => stepsFor(alg), [alg])
   const suite = HPKE_JWE_SUITES[alg]
-  // SoftHSM implements ML-KEM but not the X-Wing hybrid.
-  const hsmAvailable = alg === 'HPKE-12'
-  const useHsm = backend === 'softhsmv3' && hsmAvailable
+  // SoftHSM3 runs both suites (CKM_HPKE with the SHAKE256 KDF).
+  const useHsm = backend === 'softhsmv3'
 
   const hsmCtx = useMemo(() => {
     if (!useHsm || !hsm.isReady || !hsm.moduleRef.current) return undefined
-    return { M: hsm.moduleRef.current, session: hsm.hSessionRef.current }
+    const M = hsm.moduleRef.current
+    const session = hsm.hSessionRef.current
+    return { M, session, ops: softHsmHpkeOps(M, session) }
   }, [useHsm, hsm.isReady, hsm.moduleRef, hsm.hSessionRef])
-
-  const hsmKem = useMemo(() => {
-    if (!hsmCtx) return undefined
-    const { M, session } = hsmCtx
-    return hsmMlKem768({
-      encapsulate(pubHandle) {
-        const r = hsm_pqcEncap(M, session, pubHandle, 'ML-KEM-768')
-        const sharedSecret = hsm_extractKeyValue(M, session, r.secretHandle)
-        hsm_destroyObject(M, session, r.secretHandle)
-        return { enc: r.ciphertextBytes, sharedSecret }
-      },
-      decapsulate(privHandle, enc) {
-        const secretHandle = hsm_pqcDecap(M, session, privHandle, enc, 'ML-KEM-768')
-        const sharedSecret = hsm_extractKeyValue(M, session, secretHandle)
-        hsm_destroyObject(M, session, secretHandle)
-        return sharedSecret
-      },
-    })
-  }, [hsmCtx])
 
   const reset = () => {
     setResult(null)
@@ -147,15 +123,9 @@ export const JWEEncryption: React.FC = () => {
       setActiveStep('keygen')
       let newKeys: JWEKeys
       if (useHsm && hsmCtx) {
-        const { M, session } = hsmCtx
-        const kp = hsm_generateMLKEMKeyPair(M, session, 768, true)
-        const pubKey = hsm_extractKeyValue(M, session, kp.pubHandle)
-        newKeys = {
-          alg,
-          pubKey,
-          seed: new Uint8Array(0),
-          hsmKeys: hsmKeyPair(pubKey, kp.pubHandle, kp.privHandle),
-        }
+        // CKM_HPKE_KEM_KEY_PAIR_GEN: the token picks the seed and keeps it.
+        const recipient = hsmHpkeRecipient(hsmCtx.M, hsmCtx.session, alg)
+        newKeys = { alg, pubKey: recipient.publicKey, seed: new Uint8Array(0), hsmKeys: recipient }
       } else {
         const kp = await generateHpkeKeyPair(alg)
         newKeys = { alg, pubKey: kp.publicKey, seed: kp.privateKey }
@@ -170,13 +140,16 @@ export const JWEEncryption: React.FC = () => {
       // Step 3: HPKE Seal (Encap → SHAKE256 key schedule → AES-256-GCM)
       setActiveStep('seal')
       const plaintext = new TextEncoder().encode(JSON.stringify(SAMPLE_JWT_PAYLOAD))
-      const sealed = await hpkeJweEncrypt({
-        alg,
-        plaintext,
-        publicKey: newKeys.hsmKeys ? newKeys.hsmKeys.publicKey : newKeys.pubKey,
-        kid: KID,
-        kem: newKeys.hsmKeys ? hsmKem : undefined,
-      })
+      const sealed =
+        newKeys.hsmKeys && hsmCtx
+          ? hpkeJweEncryptInHsm({
+              alg,
+              plaintext,
+              hsm: hsmCtx.ops,
+              pubHandle: newKeys.hsmKeys.pubHandle,
+              kid: KID,
+            })
+          : await hpkeJweEncrypt({ alg, plaintext, publicKey: newKeys.pubKey, kid: KID })
       await new Promise((r) => setTimeout(r, 250))
 
       // Step 4: assemble
@@ -196,7 +169,7 @@ export const JWEEncryption: React.FC = () => {
     } finally {
       setIsEncrypting(false)
     }
-  }, [alg, useHsm, hsmCtx, hsmKem])
+  }, [alg, useHsm, hsmCtx])
 
   const handleDecrypt = useCallback(async () => {
     if (!result || !keys) return
@@ -206,41 +179,61 @@ export const JWEEncryption: React.FC = () => {
     try {
       // Decrypt the assembled token itself, with the -22 checks: alg must be the
       // key's algorithm, no "enc"/"ek", empty IV and Tag.
-      const { plaintext } = await hpkeJweDecrypt({
-        token: result.fullToken,
-        alg: keys.alg,
-        privateKey: keys.hsmKeys ? keys.hsmKeys.privateKey : keys.seed,
-        kem: keys.hsmKeys ? hsmKem : undefined,
-      })
+      const { plaintext } =
+        keys.hsmKeys && hsmCtx
+          ? hpkeJweDecryptInHsm({
+              token: result.fullToken,
+              alg: keys.alg,
+              hsm: hsmCtx.ops,
+              privHandle: keys.hsmKeys.privHandle,
+            })
+          : await hpkeJweDecrypt({ token: result.fullToken, alg: keys.alg, privateKey: keys.seed })
       setDecryptedPayload(new TextDecoder().decode(plaintext))
     } catch (e) {
       setDecryptError(e instanceof Error ? e.message : String(e))
     } finally {
       setIsDecrypting(false)
     }
-  }, [result, keys, hsmKem])
+  }, [result, keys, hsmCtx])
 
   const handleCheckExample = useCallback(async () => {
     setExampleCheck(null)
     const v = publishedExamples.vectors.find((x) => x.alg === alg)
     if (!v) return
     try {
-      const { plaintext } = await hpkeJweDecrypt({
-        token: v.compact,
-        alg,
-        privateKey: base64urlDecode(v.jwk.priv),
-      })
+      const seed = base64urlDecode(v.jwk.priv)
+      let plaintext: Uint8Array
+      let where: string
+      if (useHsm && hsmCtx) {
+        // Import the published "priv" seed into the token, let it derive "pub",
+        // and open the published JWE there.
+        const recipient = hsmHpkeRecipient(hsmCtx.M, hsmCtx.session, alg, seed)
+        if (base64urlEncode(recipient.publicKey) !== v.jwk.pub) {
+          throw new Error('SoftHSM3 derived a different public key from the published seed')
+        }
+        plaintext = hpkeJweDecryptInHsm({
+          token: v.compact,
+          alg,
+          hsm: hsmCtx.ops,
+          privHandle: recipient.privHandle,
+        }).plaintext
+        where =
+          'inside SoftHSM3 (seed imported, public key re-derived and matched, CKM_HPKE + AES-256-GCM in the token)'
+      } else {
+        plaintext = (await hpkeJweDecrypt({ token: v.compact, alg, privateKey: seed })).plaintext
+        where = 'in your browser with its published private key'
+      }
       const ok = new TextDecoder().decode(plaintext) === publishedExamples.plaintext
       setExampleCheck({
         ok,
         message: ok
-          ? `Decrypted the ${alg} example from ${HPKE_JWE_SPEC.suites} Appendix A with its published private key — plaintext matches.`
+          ? `Decrypted the ${alg} example from ${HPKE_JWE_SPEC.suites} Appendix A ${where} — plaintext matches.`
           : `The ${alg} example decrypted, but the plaintext does not match the published one.`,
       })
     } catch (e) {
       setExampleCheck({ ok: false, message: e instanceof Error ? e.message : String(e) })
     }
-  }, [alg])
+  }, [alg, useHsm, hsmCtx])
 
   const tabBtn = (active: boolean) =>
     `px-3 py-1.5 rounded text-xs font-medium border ${
@@ -335,23 +328,29 @@ export const JWEEncryption: React.FC = () => {
                 setBackend('softhsmv3')
                 reset()
               }}
-              disabled={!hsmAvailable}
-              className={`${tabBtn(backend === 'softhsmv3' && hsmAvailable)} disabled:opacity-50`}
+              className={tabBtn(backend === 'softhsmv3')}
             >
               SoftHSM3 (PKCS#11 v3.2 WASM)
             </Button>
           </div>
-          {!hsmAvailable && (
-            <p className="text-[10px] text-muted-foreground mt-2">
-              SoftHSM3 implements ML-KEM but not the X-Wing hybrid, so {alg} runs on
-              @noble/post-quantum.
-            </p>
-          )}
+          <p className="text-[10px] text-muted-foreground mt-2">
+            {useHsm
+              ? `The whole HPKE operation runs inside SoftHSM3 through the vendor mechanism CKM_HPKE: ${suite.kemName} encapsulation, the SHAKE256 key schedule and AES-256-GCM. The private key (a seed) and the content-encryption key are non-extractable token objects; only the public key, the encapsulated secret and the ciphertext leave the token.`
+              : 'The browser path runs @noble/post-quantum (ML-KEM, X-Wing) and @noble/hashes (SHAKE256) inside the hpke package.'}
+          </p>
           {useHsm && (
             <div className="mt-3">
               <LiveHSMToggle
                 hsm={hsm}
-                operations={['C_GenerateKeyPair', 'C_EncapsulateKey', 'C_DecapsulateKey']}
+                operations={[
+                  'C_GenerateKeyPair',
+                  'C_EncapsulateKey',
+                  'C_DecapsulateKey',
+                  'C_EncryptInit',
+                  'C_Encrypt',
+                  'C_DecryptInit',
+                  'C_Decrypt',
+                ]}
               />
             </div>
           )}
@@ -494,7 +493,7 @@ export const JWEEncryption: React.FC = () => {
               &quot; {'}'}
               {keys.hsmKeys && (
                 <span className="ml-2 text-muted-foreground font-normal">
-                  private key stays in SoftHSM3
+                  private key (seed) stays in SoftHSM3
                 </span>
               )}
             </div>
@@ -588,7 +587,7 @@ export const JWEEncryption: React.FC = () => {
           </pre>
           <p className="text-[10px] text-muted-foreground mt-2">
             {keys?.hsmKeys
-              ? 'Decryption: check alg / no enc, ek / empty IV, Tag → C_DecapsulateKey → SHAKE256 key schedule → AES-256-GCM open → plaintext'
+              ? 'Decryption: check alg / no enc, ek / empty IV, Tag → C_DecapsulateKey(CKM_HPKE: Decap + SHAKE256 key schedule, in the token) → C_Decrypt(AES-256-GCM) on the non-extractable key → plaintext'
               : `Decryption: check alg / no enc, ek / empty IV, Tag → ${suite.kemName}.Decap → SHAKE256 key schedule → AES-256-GCM open → plaintext`}
           </p>
         </div>
@@ -608,11 +607,13 @@ export const JWEEncryption: React.FC = () => {
         <p className="text-xs text-muted-foreground mb-3">
           {HPKE_JWE_SPEC.suites} Appendix A publishes, for each algorithm, a private key and a JWE
           made by the draft authors with a different ML-KEM implementation. Decrypting it here shows
-          this code interoperates with theirs, not just with itself.
+          this code interoperates with theirs, not just with itself. With the SoftHSM3 backend the
+          published private key is imported into the token and the example is opened there.
         </p>
         <Button
           variant="ghost"
           onClick={() => void handleCheckExample()}
+          disabled={useHsm && !hsmCtx}
           className="px-4 py-2 text-xs font-medium rounded border border-border hover:border-primary/30"
         >
           Decrypt the published {alg} example
