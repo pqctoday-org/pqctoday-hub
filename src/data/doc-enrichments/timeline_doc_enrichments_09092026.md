@@ -174,7 +174,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit — every field's actual c
 - **Performance & Size Considerations**: Larger key sizes; larger signature sizes
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Developer
 - **Implementation Prerequisites**: Cryptographic inventory; PKI upgrade; Hardware replacement for embedded systems; Coordination with standards bodies
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms; hybrid-crypto; crypto-agility; iot-ot-pqc; pqc-governance
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms; hybrid-crypto; crypto-agility; iot-pqc; pqc-governance
 - **Implementation Attack Surface**: Side-channel; Fault injection; Nonce reuse; Memory safety failures; Cache-timing attacks
 - **Cryptographic Discovery & Inventory**: Crypto-agility scanning; Algorithm enumeration; Deprecated cipher detection; Certificate inventory; Key material audit
 - **Testing & Validation Methods**: Conformance testing; Interoperability testing

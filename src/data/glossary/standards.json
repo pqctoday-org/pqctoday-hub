@@ -285,14 +285,14 @@
     "term": "SUIT",
     "acronym": "SUIT",
     "definition": "Software Updates for Internet of Things (RFC 9019). A CBOR-based manifest format for secure firmware updates, providing metadata, conditions, and signature verification for OTA delivery.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "standard"
   },
   {
     "term": "RFC 7228",
     "definition": "Terminology for Constrained-Node Networks. Defines device Class 0/1/2 based on RAM and Flash memory constraints, used to categorize IoT device capabilities for protocol selection.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
@@ -393,7 +393,7 @@
     "acronym": "NERC CIP",
     "definition": "North American Electric Reliability Corporation Critical Infrastructure Protection standards. Mandatory cybersecurity requirements for bulk electric system operators.",
     "technicalNote": "CIP-012 mandates encrypted inter-control-center communications (ICCP/TASE.2) — the highest-priority PQC migration target in the energy sector. CIP-013 requires supply chain risk management including vendor PQC readiness.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
@@ -401,7 +401,7 @@
     "term": "IEC 61850",
     "definition": "International standard for communication networks and systems in substations. Defines GOOSE, MMS, and Sampled Values protocols for protection and control.",
     "technicalNote": "GOOSE messages have a 4ms delivery requirement for protection relay tripping. HMAC authentication is quantum-safe, but asymmetric key distribution for HMAC seeds requires PQC migration.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
@@ -409,7 +409,7 @@
     "term": "IEC 62351",
     "definition": "Power systems management and associated information exchange — security standard. Covers TLS profiles, GOOSE authentication, and key management for power systems.",
     "technicalNote": "Part 3 covers TCP/IP security (TLS for MMS/ICCP), Part 6 covers GOOSE peer-to-peer authentication using HMAC, and Part 9 defines key management architecture for power systems.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
@@ -417,7 +417,7 @@
     "term": "IEEE 2030.5",
     "definition": "Smart Energy Profile 2.0 standard for distributed energy resource communication using certificate-based device authentication.",
     "technicalNote": "Each DER (solar inverter, battery, EV charger) has a unique IEEE 2030.5 device certificate signed by the utility CA. Fleet-wide PQC certificate reissuance is required for migration.",
-    "relatedModule": "/learn/energy-utilities-pqc",
+    "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
     "category": "standard"
   },
