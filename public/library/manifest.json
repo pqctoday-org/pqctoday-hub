@@ -21711,6 +21711,36 @@
       "unified": "converted",
       "admittedAt": "2026-10-01T23:56:48.160832+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "RFC-9068",
+      "title": "JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens",
+      "url": "https://www.rfc-editor.org/rfc/rfc9068.html",
+      "status": "downloaded",
+      "filename": "RFC-9068.html",
+      "sizeBytes": 104974,
+      "contentType": "text/html",
+      "sha256": "03f9f0f2090864299fa2779dd4129824859017165a0ae99f90669d7084a1712f",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T00:08:07.698337+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "RFC-9864",
+      "title": "Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)",
+      "url": "https://www.rfc-editor.org/rfc/rfc9864.html",
+      "status": "downloaded",
+      "filename": "RFC-9864.html",
+      "sizeBytes": 123713,
+      "contentType": "text/html",
+      "sha256": "c893d4d32a4146d1189c6dc32cb125aca986136a2116d7f650f64a9230928aee",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T00:08:20.092474+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
