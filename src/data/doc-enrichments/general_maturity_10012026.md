@@ -1,9 +1,37 @@
 ---
 generated: 2026-10-01
 category: Technical Standards
-document_count: 4
-requirement_count: 18
+document_count: 6
+requirement_count: 33
 ---
+
+## RFC-9068
+- **Source**: JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
+- **URL**: https://www.rfc-editor.org/rfc/rfc9068.html
+- **Requirement count**: 11
+- **Assurance / FIPS**:
+    - _T3 Repeatable · software_: Resource servers MUST validate the signature of all incoming JWT access tokens using the algorithm specified in the JWT alg Header Parameter.
+    - _T3 Repeatable · software_: Resource servers MUST reject any JWT in which the value of alg is none.
+    - _T3 Repeatable · software_: Resource servers MUST verify that the typ header value is at+jwt or application/at+jwt and reject tokens carrying any other value.
+    - _T3 Repeatable · software_: Resource servers MUST validate that the aud claim contains a resource indicator value corresponding to an identifier the resource server expects for itself.
+    - _T3 Repeatable · software_: Resource servers MUST ensure the current time is before the time represented by the exp claim.
+    - _T3 Repeatable · software_: Resource servers MUST use the keys provided by the authorization server for signature validation.
+    - _T3 Repeatable · software_: Resource servers MUST handle validation errors by including the error code invalid_token in the response.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Authorization servers MUST include RS256 among their supported signature algorithms for JWT access tokens.
+    - _T3 Repeatable · keys_: Authorization servers SHOULD use OAuth 2.0 Authorization Server Metadata to advertise signing keys via jwks_uri and issuer values.
+    - _T3 Repeatable · software_: Authorization servers MUST NOT issue a JWT access token if the authorization granted by the token would be ambiguous.
+    - _T3 Repeatable · software_: Authorization servers MUST use a distinct identifier as an aud claim value to uniquely identify access tokens issued for distinct resources.
+
+## RFC-9864
+- **Source**: Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)
+- **URL**: https://www.rfc-editor.org/rfc/rfc9864.html
+- **Requirement count**: 4
+- **Governance**:
+    - _T2 Risk-Informed · all_: Utilize fully-specified algorithm identifiers in new deployments in preference to deprecated polymorphic identifiers, unless documented operational or regulatory requirements prevent migration.
+    - _T3 Repeatable · all_: Prohibit the use of algorithm identifiers designated as 'Prohibited' and the functionality they reference.
+    - _T3 Repeatable · all_: Ensure that the 'alg' value in JOSE encryption specifies all parameters for key establishment or derives them from the 'enc' value, and that the 'enc' value specifies all parameters for symmetric encryption.
+    - _T3 Repeatable · all_: Ensure that the outer 'alg' value in COSE encryption specifies all parameters for key establishment, and the inner 'alg' value specifies all parameters for symmetric encryption.
 
 ## Security-Considerations-for-ML-DSA
 - **Source**: Security Considerations for ML-DSA

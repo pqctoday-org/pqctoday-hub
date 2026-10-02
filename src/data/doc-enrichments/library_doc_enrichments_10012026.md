@@ -1,87 +1,31 @@
 ---
 generated: 2026-10-01
 collection: library
-documents_processed: 5
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## EN-18031-1-2024
+## RFC-9068
 
-- **Reference ID**: EN-18031-1-2024
-- **Title**: EN 18031-1:2024 Common security requirements for radio equipment - Part 1: Internet connected radio equipment
-- **Authors**: iTeh Standards
-- **Publication Date**: 2024
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: This document specifies common security requirements for internet-connected radio equipment, covering technical specifications for electrical or electronic products capable of communicating over the internet.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Europe; Bodies: CEN, CENELEC, European Commission, EFTA States
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: CEN, CENELEC, ETSI
-- **Compliance Frameworks Referenced**: Directive 2014/53/EU, EU delegated regulation
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: The standard defines technical security requirements for internet-connected radio equipment under EU Directive 2014/53/EU; It covers mechanisms for access control, authentication, secure updates, and secure communication; Compliance with this standard provides a presumption of conformity with the Radio Equipment Directive; The document includes requirements for cryptography, key management, and resilience against network incidents.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect, Compliance Officer, Developer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Internet-connected radio equipment; consumer IoT; industrial radios; gateways
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: EN-18031-1-2024.html (295,969 bytes, 14,481 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:01:53
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-
----
-
-## US-FCC-24-26-Cyber-Trust-Mark
-
-- **Reference ID**: US-FCC-24-26-Cyber-Trust-Mark
-- **Title**: FCC 24-26 Report and Order: Cybersecurity Labeling for Internet of Things (U.S. Cyber Trust Mark)
+- **Reference ID**: RFC-9068
+- **Title**: JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: The Federal Communications Commission establishes a voluntary cybersecurity labeling program for Internet of Things (IoT) products, defining eligibility, testing requirements, and the use of the FCC IoT Label (Cyber Trust Mark).
+- **Main Topic**: This specification defines a profile for issuing OAuth 2.0 access tokens in JSON Web Token (JWT) format to enable interoperability between authorization and resource servers.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: Federal Communications Commission, National Institute of Standards and Technology, Department of Commerce, Department of Defense
-- **Leaders Contributions Mentioned**: Chairwoman Rosenworcel, Commissioners Starks, Simington, and Gomez
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: Vittorio Bertocci (Author); Dominick Baier (provided sample tokens); Brian Campbell (provided sample tokens and early feedback); Daniel Dobalian (provided sample tokens); Karl Guinness (provided sample tokens); Filip Skokan (provided early feedback)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Protocols Covered**: OAuth 2.0, JWT
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST, ISO/IEC, ETSI, ANSI National Accreditation Board
-- **Compliance Frameworks Referenced**: NISTIR 8425, ISO/IEC 17011, ISO/IEC 17025, ETSI EN 303 645
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Manufacturers must undergo third-party conformity testing by accredited labs to use the FCC IoT Label; The program relies on NISTIR 8425 core baseline capabilities rather than specific technical requirements; A two-step process involving product testing and application filing with a Cybersecurity Label Administrator is required; The label includes a QR code linking to a registry with product security details and support periods.
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RS256
+- **Key Takeaways**: Authorization servers and resource servers must support RS256 for signing JWT access tokens; JWT access tokens must include the "application/at+jwt" media type in the "typ" header parameter; Clients must not inspect the content of the access token to ensure forward compatibility; Resource servers must validate the "typ" header and reject tokens with other values; Asymmetric cryptography is recommended for signing to simplify key validation for resource servers.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -96,49 +40,49 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer, Policy Maker, Operations
-- **Implementation Prerequisites**: Conformity testing by an accredited and recognized lab; Filing an application with a Cybersecurity Label Administrator; Adherence to NISTIR 8425 criteria
-- **Relevant PQC Today Features**: iot-ot-pqc, compliance-strategy, vendor-risk
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: Support for RS256 signature algorithm; Inclusion of "application/at+jwt" in "typ" header parameter
+- **Relevant PQC Today Features**: api-security-jwt
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: SBOM, HBOM, exclusion of entities on Department of Commerce Entity List or Department of Defense Chinese Military Companies list
+- **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: US-FCC-24-26-Cyber-Trust-Mark.pdf (646,765 bytes, 23,798 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:01:55
+- **Source Document**: RFC-9068.html (104,974 bytes, 11,272 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:10:15
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
-## UK-PSTI-Regs-2023-1007
+## RFC-9864
 
-- **Reference ID**: UK-PSTI-Regs-2023-1007
-- **Title**: The Product Security and Telecommunications Infrastructure (Security Requirements for Relevant Connectable Products) Regulations 2023
+- **Reference ID**: RFC-9864
+- **Title**: Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)
 - **Authors**: See document
-- **Publication Date**: 2023
+- **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: UK statutory regulations establishing mandatory cybersecurity baseline requirements, including unique passwords and security update periods, for relevant connectable products.
+- **Main Topic**: This specification creates fully-specified algorithm identifiers for registered JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) polymorphic algorithm identifiers, enabling applications to use only fully-specified algorithm identifiers.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: England and Wales, Scotland, Northern Ireland, United Kingdom; Bodies: Secretary of State, Office for Product Safety and Standards, Department for Science, Innovation and Technology, World Trade Organisation, EU Commission
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: M.B. Jones; O. Steele
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Protocols Covered**: JOSE; COSE
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: ETSI, ISO/IEC
-- **Compliance Frameworks Referenced**: ETSI EN 303 645, ISO/IEC 29147
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Manufacturers must provide unique, non-guessable passwords for each product; Products must have a defined minimum support period for security updates; Importers must retain statements of compliance for at least 10 years or the defined support period, whichever is longer; Compliance can be demonstrated by adhering to ETSI EN 303 645 or specific ISO/IEC 29147 provisions
-- **Security Levels & Parameters**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RS256; ES256K; ES256; EdDSA; Ed25519; Ed448; ECDSA; P-256; P-384; P-521; SHA-256; SHA-384; SHA-512; RSA; PS*
+- **Key Takeaways**: Polymorphic algorithm identifiers in JOSE and COSE are deprecated in favor of fully-specified identifiers; Fully-specified algorithms enable protocols to specify allow lists that prevent cross-curve key establishment and mismatched KDF sizes; The specification updates RFCs 7518, 8037, and 9053 to provide fully-specified replacements for polymorphic algorithms; Varying algorithm identifiers can be used by malicious software to evade rule-based detection and classification systems.
+- **Security Levels & Parameters**: 2048-bit RSA; 4096-bit RSA; P-256; P-384; P-521; Ed25519; Ed448
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
@@ -152,135 +96,23 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer, Security Architect
+- **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; vendor-risk
-- **Implementation Attack Surface**: None detected
+- **Relevant PQC Today Features**: crypto-agility; api-security-jwt
+- **Implementation Attack Surface**: rule-based detection evasion
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Consumer Internet of Things
-- **Supply Chain & Vendor Risk**: Importer retention of statement of compliance; Manufacturer compliance with security requirements
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: UK-PSTI-Regs-2023-1007.pdf (251,119 bytes, 13,063 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:01:55
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-
----
-
-## NIST-IR-8259
-
-- **Reference ID**: NIST-IR-8259
-- **Title**: NISTIR 8259 Foundational Cybersecurity Activities for IoT Device Manufacturers
-- **Authors**: See document
-- **Publication Date**: 2020
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: Foundational cybersecurity activities for IoT device manufacturers during the pre-market and post-market phases.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST
-- **Leaders Contributions Mentioned**: Michael Fagan; Katerina N. Megas; Karen Scarfone; Matthew Smith
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: FISMA; NIST SP 800-53
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Manufacturers should identify device cybersecurity capabilities early in the pre-market phase to reduce later costs; Device cybersecurity capabilities can be provided by the device itself, related devices, or external systems; Clear communication of cybersecurity information to customers is essential for post-market support; Manufacturers should plan for vulnerability response and flaw remediation as part of foundational activities.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Expired
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; Compliance Officer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: IoT device hardware and software resource provisioning; embedded device constraints
-- **Supply Chain & Vendor Risk**: Third-party software verification; vulnerability response program
-- **Deployment & Migration Complexity**: Pre-market vs post-market phase planning; hardware constraints limiting post-market changes
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: NIST-IR-8259.pdf (1,552,600 bytes, 16,117 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:01:56
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-
----
-
-## draft-ietf-lake-pqsuites
-
-- **Reference ID**: draft-ietf-lake-pqsuites
-- **Title**: Quantum-Resistant Cipher Suites for EDHOC (LAKE WG)
-- **Authors**: See document
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: This document specifies quantum-resistant cipher suites for the Lightweight Authenticated Key Exchange (LAKE) protocol using ML-KEM and ML-DSA.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FN-DSA
-- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC)
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
-- **Leaders Contributions Mentioned**: G. Selander; J. Preuß Mattsson; C. Papon
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: LAKE (formerly EDHOC)
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: ECDSA; Elliptic Curve Cryptography (ECC); SHAKE256
-- **Key Takeaways**: LAKE protocol is renamed from EDHOC to reflect the removal of dependency on Diffie-Hellman; New cipher suites use ML-KEM for key exchange and ML-DSA for signatures; KEM-based key exchange is incompatible with LAKE methods 0–3 which require DH/NIKE primitives; Hybrid algorithms are recommended to ensure continuity of classical security during the transition.
-- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-1024; ML-DSA-44; ML-DSA-87
-- **Hybrid & Transition Approaches**: Composite hybrid KEMs; Hybrid algorithms combining classical and post-quantum algorithms
-- **Pure PQC KEM Support**: Yes
-- **Pure PQC KEM Evidence**: "Cipher suites using ML-KEM-512 and ML-KEM-1024 ... for key exchange"
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "ML-DSA ... for digital signatures"
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer
-- **Implementation Prerequisites**: Side-channel resistance requirements per FIPS 203 and FIPS 204; Freshly generated ML-KEM keys for each session
-- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; iot-ot-pqc; migration-program
-- **Implementation Attack Surface**: side-channel (timing or power analysis attacks)
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Constrained devices may face issues due to increased size of signatures or KEM keys
+- **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: draft-ietf-lake-pqsuites.html (29,918 bytes, 13,063 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:01:57
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9864.html (123,713 bytes, 10,063 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:10:16
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
@@ -13780,6 +13612,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Financial & Business Impact**: Breaking individual card key would be uneconomic for a fraudster
 - **Organizational Readiness**: SWG will monitor and support standards development; monitor milestones for fault-tolerant logical qubits
 - **Math Family**: Symmetric
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## EN-18031-1-2024
+
+- **Reference ID**: EN-18031-1-2024
+- **Title**: EN 18031-1:2024 Common security requirements for radio equipment - Part 1: Internet connected radio equipment
+- **Authors**: iTeh Standards
+- **Publication Date**: 2024
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document specifies common security requirements for internet-connected radio equipment, covering technical specifications for electrical or electronic products capable of communicating over the internet.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Europe; Bodies: CEN, CENELEC, European Commission, EFTA States
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: CEN, CENELEC, ETSI
+- **Compliance Frameworks Referenced**: Directive 2014/53/EU, EU delegated regulation
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The standard defines technical security requirements for internet-connected radio equipment under EU Directive 2014/53/EU; It covers mechanisms for access control, authentication, secure updates, and secure communication; Compliance with this standard provides a presumption of conformity with the Radio Equipment Directive; The document includes requirements for cryptography, key management, and resilience against network incidents.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Internet-connected radio equipment; consumer IoT; industrial radios; gateways
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -34085,6 +33971,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: governance prerequisites (implied by CMVP validation authority role), dedicated crypto team required (not explicitly stated), board-level reporting (not explicitly stated), change management scope (not explicitly stated), estimated planning horizon (not explicitly stated), maturity assessment level (not explicitly stated)
 - **Math Family**: None detected
 - **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## NIST-IR-8259
+
+- **Reference ID**: NIST-IR-8259
+- **Title**: NISTIR 8259 Foundational Cybersecurity Activities for IoT Device Manufacturers
+- **Authors**: 
+- **Publication Date**: 2020
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Foundational cybersecurity activities for IoT device manufacturers during the pre-market and post-market phases.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST
+- **Leaders Contributions Mentioned**: Michael Fagan; Katerina N. Megas; Karen Scarfone; Matthew Smith
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FISMA; NIST SP 800-53
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers should identify device cybersecurity capabilities early in the pre-market phase to reduce later costs; Device cybersecurity capabilities can be provided by the device itself, related devices, or external systems; Clear communication of cybersecurity information to customers is essential for post-market support; Manufacturers should plan for vulnerability response and flaw remediation as part of foundational activities.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Expired
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT device hardware and software resource provisioning; embedded device constraints
+- **Supply Chain & Vendor Risk**: Third-party software verification; vulnerability response program
+- **Deployment & Migration Complexity**: Pre-market vs post-market phase planning; hardware constraints limiting post-market changes
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -57957,6 +57897,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 
 ---
 
+## UK-PSTI-Regs-2023-1007
+
+- **Reference ID**: UK-PSTI-Regs-2023-1007
+- **Title**: The Product Security and Telecommunications Infrastructure (Security Requirements for Relevant Connectable Products) Regulations 2023
+- **Authors**: 
+- **Publication Date**: 2023
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: UK statutory regulations establishing mandatory cybersecurity baseline requirements, including unique passwords and security update periods, for relevant connectable products.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: England and Wales, Scotland, Northern Ireland, United Kingdom; Bodies: Secretary of State, Office for Product Safety and Standards, Department for Science, Innovation and Technology, World Trade Organisation, EU Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI, ISO/IEC
+- **Compliance Frameworks Referenced**: ETSI EN 303 645, ISO/IEC 29147
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers must provide unique, non-guessable passwords for each product; Products must have a defined minimum support period for security updates; Importers must retain statements of compliance for at least 10 years or the defined support period, whichever is longer; Compliance can be demonstrated by adhering to ETSI EN 303 645 or specific ISO/IEC 29147 provisions
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Consumer Internet of Things
+- **Supply Chain & Vendor Risk**: Importer retention of statement of compliance; Manufacturer compliance with security requirements
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag
 
 - **Reference ID**: UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag
@@ -58439,6 +58433,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: identifying personnel and resources; developing and implementing a post-quantum transition plan specific to their organization
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## US-FCC-24-26-Cyber-Trust-Mark
+
+- **Reference ID**: US-FCC-24-26-Cyber-Trust-Mark
+- **Title**: FCC 24-26 Report and Order: Cybersecurity Labeling for Internet of Things (U.S. Cyber Trust Mark)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The Federal Communications Commission establishes a voluntary cybersecurity labeling program for Internet of Things (IoT) products, defining eligibility, testing requirements, and the use of the FCC IoT Label (Cyber Trust Mark).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Federal Communications Commission, National Institute of Standards and Technology, Department of Commerce, Department of Defense
+- **Leaders Contributions Mentioned**: Chairwoman Rosenworcel, Commissioners Starks, Simington, and Gomez
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST, ISO/IEC, ETSI, ANSI National Accreditation Board
+- **Compliance Frameworks Referenced**: NISTIR 8425, ISO/IEC 17011, ISO/IEC 17025, ETSI EN 303 645
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers must undergo third-party conformity testing by accredited labs to use the FCC IoT Label; The program relies on NISTIR 8425 core baseline capabilities rather than specific technical requirements; A two-step process involving product testing and application filing with a Cybersecurity Label Administrator is required; The label includes a QR code linking to a registry with product security details and support periods.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, Operations
+- **Implementation Prerequisites**: Conformity testing by an accredited and recognized lab; Filing an application with a Cybersecurity Label Administrator; Adherence to NISTIR 8425 criteria
+- **Relevant PQC Today Features**: iot-ot-pqc, compliance-strategy, vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: SBOM, HBOM, exclusion of entities on Department of Commerce Entity List or Department of Defense Chinese Military Companies list
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -62705,6 +62753,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## draft-ietf-lake-pqsuites
+
+- **Reference ID**: draft-ietf-lake-pqsuites
+- **Title**: Quantum-Resistant Cipher Suites for EDHOC (LAKE WG)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document specifies quantum-resistant cipher suites for the Lightweight Authenticated Key Exchange (LAKE) protocol using ML-KEM and ML-DSA.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FN-DSA
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: G. Selander; J. Preuß Mattsson; C. Papon
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: LAKE (formerly EDHOC)
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA; Elliptic Curve Cryptography (ECC); SHAKE256
+- **Key Takeaways**: LAKE protocol is renamed from EDHOC to reflect the removal of dependency on Diffie-Hellman; New cipher suites use ML-KEM for key exchange and ML-DSA for signatures; KEM-based key exchange is incompatible with LAKE methods 0–3 which require DH/NIKE primitives; Hybrid algorithms are recommended to ensure continuity of classical security during the transition.
+- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-1024; ML-DSA-44; ML-DSA-87
+- **Hybrid & Transition Approaches**: Composite hybrid KEMs; Hybrid algorithms combining classical and post-quantum algorithms
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "Cipher suites using ML-KEM-512 and ML-KEM-1024 ... for key exchange"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ML-DSA ... for digital signatures"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer
+- **Implementation Prerequisites**: Side-channel resistance requirements per FIPS 203 and FIPS 204; Freshly generated ML-KEM keys for each session
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; iot-ot-pqc; migration-program
+- **Implementation Attack Surface**: side-channel (timing or power analysis attacks)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Constrained devices may face issues due to increased size of signatures or KEM keys
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
