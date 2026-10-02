@@ -53,11 +53,13 @@ export const SUBSTATION_TYPE_LABELS: Record<SubstationType, string> = {
   generation: 'Generation plant switchyard',
 }
 
-/** IEC 61850-5 transfer-time class for trip messages, by substation type. */
-export function tripTimeClass(type: SubstationType): { perfClass: string; budgetMs: number } {
-  return type === 'distribution'
-    ? { perfClass: 'P1 (TT5)', budgetMs: 10 }
-    : { perfClass: 'P2/P3 (TT6)', budgetMs: 3 }
+/**
+ * IEC 61850-5 transfer-time class for GOOSE type 1A trip messages. In the current edition
+ * trips fall in TT6 (3 ms or less) at every substation type; TT5 (10 ms or less) covers
+ * releases and status changes, not trips.
+ */
+export function tripTimeClass(): { perfClass: string; budgetMs: number } {
+  return { perfClass: 'TT6 trip ≤3 ms', budgetMs: 3 }
 }
 
 export const IMPACT_WEIGHT: Record<NERCCIPImpact, number> = {

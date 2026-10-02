@@ -50,7 +50,8 @@ export const COMM_TECHNOLOGIES: CommTechnologySpec[] = [
     id: 'g3-plc',
     name: 'G3-PLC (CENELEC-A)',
     modelKbps: 34,
-    rateSource: 'ITU-T G.9903 G3-PLC in the CENELEC-A band, ≈ 34 kbit/s peak PHY rate',
+    rateSource:
+      'ITU-T G.9903 (08/2017) Table 7-2, CENELEC-A: ≈ 34.8 kbit/s PHY with DQPSK (D8PSK peaks ≈ 42.6 kbit/s; the G3-PLC Alliance quotes ≈ 17 kbit/s typical UDP throughput)',
     publicKeyCapable: true,
     notes: 'Powerline: throughput falls with line noise and the number of repeaters.',
   },

@@ -79,7 +79,7 @@ export const OT_EXERCISES: OTExerciseScenario[] = [
       'The Substation Planner opens with a transmission substation: 80 IEDs, utility fibre, IEC 62351 Parts 3/4/6/8/9, High impact. Which zone is first, and where does the process bus land?',
     badge: 'Substation',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-    observe: `WAN / control-centre links come first (${sub('wan-iccp').priority}), then the station bus (${sub('station-bus').priority}) and engineering access (${sub('engineering').priority}). The process bus scores only ${sub('process-bus').priority}: GOOSE and SV keep their symmetric MAC, so only the GDOI key channel needs work — even though it is the highest-complexity zone. The trip-message budget shows 3 ms (P2/P3).`,
+    observe: `WAN / control-centre links come first (${sub('wan-iccp').priority}), then the station bus (${sub('station-bus').priority}) and engineering access (${sub('engineering').priority}). The process bus scores only ${sub('process-bus').priority}: GOOSE and SV keep their symmetric MAC, so only the GDOI key channel needs work — even though it is the highest-complexity zone. The trip-message budget shows 3 ms (TT6).`,
     config: { step: 2, substation: EXERCISE_SUBSTATION },
   },
   {

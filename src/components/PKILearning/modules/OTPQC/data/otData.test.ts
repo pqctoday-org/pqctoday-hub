@@ -85,10 +85,10 @@ describe('OT protocol facts', () => {
     )
   })
 
-  it('E4: GOOSE trip budget is TT6 = 3 ms for P2/P3', () => {
-    expect(proto('iec61850-goose').timingRequirement).toMatch(/TT6 = 3 ms \(P2\/P3\)/)
-    expect(tripTimeClass('transmission').budgetMs).toBe(3)
-    expect(tripTimeClass('distribution').budgetMs).toBe(10)
+  it('E4: GOOSE type 1A trip budget is TT6, 3 ms or less', () => {
+    expect(proto('iec61850-goose').timingRequirement).toMatch(/TT6, 3 ms or less/)
+    expect(proto('iec61850-goose').timingRequirement).not.toMatch(/P1|P2|P3/)
+    expect(tripTimeClass()).toEqual({ perfClass: 'TT6 trip ≤3 ms', budgetMs: 3 })
   })
 
   it('every public-key size delta comes from the algorithm registry', () => {

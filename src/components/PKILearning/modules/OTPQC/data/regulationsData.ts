@@ -88,7 +88,7 @@ export const IEC_62351_PARTS: IEC62351Part[] = [
     part: 3,
     title: 'Profiles including TCP/IP',
     scope:
-      'TLS profile for MMS, IEC 60870-5-104, DNP3/TCP and ICCP. Ed.2 (2023) adds TLS 1.3, per the standard (not independently verified).',
+      'TLS profile for MMS, IEC 60870-5-104, DNP3/TCP and ICCP. IEC 62351-3:2023 adds a TLS 1.3 profile and now lists the mandatory TLS 1.2 cipher suites itself; it profiles conventional TLS cipher suites and does not specify PQC key-exchange or signature algorithms.',
     quantumExposure: 'TLS key exchange (HNDL) and certificates (forgery).',
   },
   {

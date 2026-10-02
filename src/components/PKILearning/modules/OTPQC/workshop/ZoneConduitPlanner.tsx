@@ -245,8 +245,10 @@ export const ZoneConduitPlanner: React.FC<ZoneConduitPlannerProps> = ({
             so the signing roots have to move years before that day.
           </p>
           <p>
-            IEC 62443-3-3 SR 4.3 and 62443-4-2 CR 4.3 require &ldquo;commonly accepted&rdquo;
-            cryptography for the target security level; neither says anything about PQC yet.
+            SR 4.3 (IEC 62443-3-3) and CR 4.3 (IEC 62443-4-2), both titled &lsquo;Use of
+            cryptography&rsquo; and applying from SL 1, ask for cryptography that follows commonly
+            accepted (SR 4.3) or internationally recognized and proven (CR 4.3) security practice;
+            neither names an algorithm or PQC.
           </p>
         </div>
       </div>

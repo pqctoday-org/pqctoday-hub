@@ -100,7 +100,7 @@ export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProp
   const results = useMemo(() => planSubstation(profile), [profile])
   const totalEffort = results.reduce((s, r) => s + r.effort, 0)
   const truckRolls = results.filter((r) => r.zone.requiresTruckRoll).length
-  const trip = tripTimeClass(profile.type)
+  const trip = tripTimeClass()
   const maxPriority = Math.max(...results.map((r) => r.priority), 1)
 
   return (

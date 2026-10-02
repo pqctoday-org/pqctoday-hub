@@ -82,7 +82,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     standard: 'IEC 61850-8-1 · security: IEC 62351-6 (2020), keys: IEC 62351-9 / RFC 8052',
     sectors: ['energy'],
     transport: 'Layer 2 multicast',
-    timingRequirement: 'Trip TT6 = 3 ms (P2/P3); TT5 = 10 ms (P1)',
+    timingRequirement:
+      'Type 1A trip: TT6, 3 ms or less; TT5 (10 ms or less) covers releases and status changes',
     description:
       'Generic Object Oriented Substation Event — Layer 2 multicast for protection trips, interlocks and status. Repeats on change, so it cannot wait for a handshake.',
     standardStatus:
@@ -146,7 +147,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Client/server protocol for SCADA polling, control and configuration of IEDs over the station bus.',
     standardStatus:
-      'IEC 62351-3 Ed.2 (2023) adds TLS 1.3, per the standard (not independently verified). No PQC cipher suite is profiled yet.',
+      'IEC 62351-3:2023 adds a TLS 1.3 profile and now lists the mandatory TLS 1.2 cipher suites itself; it profiles conventional TLS cipher suites and does not specify PQC key-exchange or signature algorithms.',
     cryptoLayers: [
       {
         layerName: 'TLS key exchange',
@@ -201,7 +202,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
       {
         layerName: 'Update key change — symmetric (default)',
         mechanism:
-          'New Update Key wrapped with AES Key Wrap and authenticated with HMAC under the Authority key',
+          'New Update Key encrypted under the Authority key (AES Key Wrap); both sides confirm with an HMAC keyed with the new Update Key',
         threat: 'none',
         pqcPath: null,
         notes:
@@ -209,7 +210,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
       },
       {
         layerName: 'Update key change — asymmetric (optional)',
-        mechanism: 'Update Key encrypted to the outstation with RSA; authority signs with RSA/DSA',
+        mechanism:
+          'Update Key encrypted to the outstation with RSAES-OAEP; user credentials signed with DSA',
         threat: 'both',
         pqcPath: 'Switch to the symmetric method, or wait for a revised standard with PQC options',
         classicalBytes: RSA_2048_SIG,

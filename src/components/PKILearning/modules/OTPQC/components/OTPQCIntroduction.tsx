@@ -183,14 +183,15 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
           </ul>
           <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/20 text-xs">
-            <strong className="text-foreground">No PQC wording yet.</strong> The crypto requirements
-            — IEC 62443-3-3 SR 4.3 (system) and{' '}
+            <strong className="text-foreground">No PQC wording yet.</strong> SR 4.3 (IEC 62443-3-3)
+            and CR 4.3 (
             <LibLink id="IEC-62443-4-2-2019-Security-for-industrial-automation-and-co">
               IEC 62443-4-2
-            </LibLink>{' '}
-            CR 4.3 (component) — ask for &ldquo;commonly accepted&rdquo; cryptography. Neither names
-            an algorithm or a quantum-safe requirement, so PQC enters through risk assessment and
-            procurement, not through the standard&rsquo;s text.
+            </LibLink>
+            ), both titled &lsquo;Use of cryptography&rsquo; and applying from SL 1, ask for
+            cryptography that follows commonly accepted (SR 4.3) or internationally recognized and
+            proven (CR 4.3) security practice; neither names an algorithm or PQC. So PQC enters
+            through risk assessment and procurement, not through the standard&rsquo;s text.
           </div>
           <div
             className="overflow-x-auto"
@@ -252,15 +253,17 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
                 (2020) protects GOOSE and Sampled Values with profiles that include HMAC-SHA256 and
                 AES-GMAC. Group keys come from a key distribution centre over GDOI (IEC 62351-9,{' '}
                 <LibLink id="RFC-8052">RFC 8052</LibLink>) — not from RSA certificates. MMS uses TLS
-                per IEC 62351-3; Ed.2 (2023) adds TLS 1.3, per the standard (not independently
-                verified).
+                per IEC 62351-3. IEC 62351-3:2023 adds a TLS 1.3 profile and now lists the mandatory
+                TLS 1.2 cipher suites itself; it profiles conventional TLS cipher suites and does
+                not specify PQC key-exchange or signature algorithms.
               </p>
             </Card>
             <Card title="DNP3 SAv5 and IEC 60870-5-104">
               <p>
                 DNP3 Secure Authentication v5 uses an HMAC challenge-response and wraps session keys
-                with AES key wrap. Its <strong>default</strong> update-key change is symmetric (AES
-                key wrap plus HMAC); the RSA method is optional. IEEE moved 1815-2012 to inactive
+                with AES key wrap. Update keys are pre-shared by default; where they are changed
+                remotely, the <strong>default</strong> method is symmetric (AES-256 key wrap plus
+                HMAC-SHA-256) and the RSA/DSA methods are optional. IEEE moved 1815-2012 to inactive
                 status in 2023, the P1815 revision runs to 2027, and &ldquo;SAv6&rdquo; is
                 unpublished. IEC 104 uses IEC 62351-3 TLS and IEC 62351-5 authentication.
               </p>
@@ -344,8 +347,9 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            IEC 61850-5 gives trip and blocking messages the tightest transfer-time class:{' '}
-            <strong>TT6 = 3 ms</strong> for performance classes P2/P3, and TT5 = 10 ms for P1 (
+            GOOSE type 1A trip messages fall in transfer-time class{' '}
+            <strong>TT6, 3 ms or less</strong> (IEC 61850-5); TT5 (10 ms or less) covers releases
+            and status changes (
             <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, which
             tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
             <strong>4,000, 4,800 and 14,400 samples per second</strong> — a frame every {sv(4000)},{' '}
