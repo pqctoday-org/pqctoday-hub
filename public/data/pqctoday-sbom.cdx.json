@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:615e9cfa-99c3-5307-92f7-331073f2f9f6",
+  "serialNumber": "urn:uuid:e75ac9fc-d97b-5304-8642-3d9e1b0c703d",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.139.0"
+      "version": "4.141.0"
     },
     "properties": [
       {
@@ -102,13 +102,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "9c3c990aef1db760ce34d59462e0739a14849afde55ff617495ab103c48e799f"
+          "content": "9eb00dbcb7da26236968615a962ced9195c24bfba65564aec47b091fc673221f"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/d09deb33919732dd584123f8dc61f843164eb00d"
         }
       ],
       "properties": [
@@ -118,7 +118,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ 68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "value": "built from pqctoday-org/pqctoday-hsm @ d09deb33919732dd584123f8dc61f843164eb00d"
         }
       ]
     },
@@ -166,13 +166,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f1f63edb62b48d5ee3d8bbabc0e8578579088d4032a2375f798c87d33a7b0098"
+          "content": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/d09deb33919732dd584123f8dc61f843164eb00d"
         }
       ],
       "properties": [
@@ -182,7 +182,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ 68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "value": "built from pqctoday-org/pqctoday-hsm @ d09deb33919732dd584123f8dc61f843164eb00d"
         }
       ]
     },
@@ -602,8 +602,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-asym-key",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-asym-key@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-asym-key@2.10.0",
       "licenses": [
         {
           "license": {
@@ -614,7 +614,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "b3b4897e3717951dcc60c9e00d378c2c2cb756319a231784cbdd39090d23d3da436de621341bc1180eebedc02f099624545a3d91583d440922d0ada2533ed219"
+          "content": "d51f315137aa7144d230b1534c2cc9c85b8a8aadf2db91102acf437b351eb49f2a32a6c9cb1a375e4cf2922c304ff5f396de7fbd1cd2fec5b8335afea6ad454e"
         }
       ],
       "properties": [
@@ -631,8 +631,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-cms",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-cms@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-cms@2.10.0",
       "licenses": [
         {
           "license": {
@@ -643,7 +643,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "71b7a7ee8c6642c50666aa2dbacef2b74b2b61d9dc393e9135671343bed3d9114e5de8d855891769dadf78f75172b5693bd2bde4844b28a8251b6937f23297bb"
+          "content": "0a45f41f834220e307394deb876c57672c229d867f12726568e9498862347b92f85e316a1dfe221f7d0b31b5d60a1569a5d03d9636da9e3b734053a10cd7d35a"
         }
       ],
       "properties": [
@@ -747,8 +747,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-pkcs8",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-pkcs8@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-pkcs8@2.10.0",
       "licenses": [
         {
           "license": {
@@ -759,7 +759,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "76e45da2d954c7d78365ee90ad0a502a5eb545b5b29021c10a429ac8ff15f1774417094a1d9f2a1860ccc92e8fc9eece5fb9cb16db534e946425e7adefc724c1"
+          "content": "462f81653f5b9f0aa51d69a1b3b96f5a3bc947129ebf6840dbee046d96a381e61609b47c872bf4ce71780e1b05a2e3a1323da748357f88627a0cc42dc084e70b"
         }
       ],
       "properties": [
@@ -834,8 +834,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-schema",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-schema@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-schema@2.10.0",
       "licenses": [
         {
           "license": {
@@ -846,7 +846,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "1a3cde3dc4fd230f0dcde38f7fbde2352f7133e4c185dfc58a501f3fe4501a44cc4094d55adcad3772472400828dffc004d6aee52ee64b783e0dcbb199181812"
+          "content": "1a1a240f8d65578810aeb2d89b7c029077c13a726b9e10cc82de1778c5bc8337c4d54749a88b92c2c13e8207fcd97063517449ca5726f8a2064056b8bad2152f"
         }
       ],
       "properties": [
@@ -863,8 +863,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-x509",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-x509@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-x509@2.10.0",
       "licenses": [
         {
           "license": {
@@ -875,7 +875,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "0b1841a3f45d11b30ca1bed3df565d4231aea324452d5c2b0f34e7db96e287305ab1183d9119bfd08c483ef86042d70affd74d70ed5740bd9fb8fba0c042cbd1"
+          "content": "b9c35583cf8036f793a4c3777f2f650366a5af238d7577360387041b684c9e259bbd0b7e60e6687bc048f3461834ef0505cb83635a9b0d0e2e406415ada1f118"
         }
       ],
       "properties": [
@@ -892,8 +892,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-x509-attr",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-x509-attr@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-x509-attr@2.10.0",
       "licenses": [
         {
           "license": {
@@ -904,7 +904,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "7a14176e941a418c9c82ef0eaef8a0c123d315f55172ed0408d6025b0fb2cc1a74d8bc39a5a46acf3854a5f3a03b62b7f3e59f159b84cffd113ed6a6e60d0e32"
+          "content": "ffce46b4a38a9a0bee4893656857f019635d452659fa1a45d36372334d57882773a5a64e362065b43c9f96e14fbc5c7deba091f991cd486d639e2c29cb4ee81a"
         }
       ],
       "properties": [
@@ -921,8 +921,8 @@
     {
       "type": "library",
       "name": "@peculiar/asn1-x509-post-quantum",
-      "version": "2.9.4",
-      "purl": "pkg:npm/%40peculiar/asn1-x509-post-quantum@2.9.4",
+      "version": "2.10.0",
+      "purl": "pkg:npm/%40peculiar/asn1-x509-post-quantum@2.10.0",
       "licenses": [
         {
           "license": {
@@ -933,7 +933,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "183d24ec163776c10879a8bb0bb6d544f75d8ff3f366efac4dac113d1c5d1ca6ddcb57fd6f9f1643293478525daf6f064a1c8b55353ca68ca2e3e6d30197c4b5"
+          "content": "71729c677d3029b52444ae512b86775b58a67b05ef1c007d6a9100b88a89d0e3a43900a926bc0b3ae377f1096c117a8e23ede0b54bfc29fdd46688549826dfdf"
         }
       ],
       "properties": [
@@ -1298,8 +1298,8 @@
     {
       "type": "library",
       "name": "@xyflow/react",
-      "version": "12.11.6",
-      "purl": "pkg:npm/%40xyflow/react@12.11.6",
+      "version": "12.12.0",
+      "purl": "pkg:npm/%40xyflow/react@12.12.0",
       "licenses": [
         {
           "license": {
@@ -1310,7 +1310,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "f57b0424d1e36ad2989ddb3329317f6ec53b14e3fd749e95fc4430cf2de831db6a801b94abb063292c24128f82eece2a1ecb4741fc30a0703713c41fa4fc5965"
+          "content": "ef8a172344609b512edf770740077be09ea8560087f666c5c935506ec1a0a769265b08741ddb41af654fd38cfc99b3c3f8cff13baf67a86e5d0c4b7bfc4376ad"
         }
       ],
       "properties": [
@@ -1327,8 +1327,8 @@
     {
       "type": "library",
       "name": "@xyflow/system",
-      "version": "0.0.82",
-      "purl": "pkg:npm/%40xyflow/system@0.0.82",
+      "version": "0.0.83",
+      "purl": "pkg:npm/%40xyflow/system@0.0.83",
       "licenses": [
         {
           "license": {
@@ -1339,7 +1339,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "e032a72f7086b4218b4529a00ea69a8d15607a4b0c5eafd8c38c0f7dd31f9bb26f7488961c6cd560e7c5533b62013c1d05766a514e8785e87051d6d5f46db73d"
+          "content": "6bffde0e37b3dd6645e3b69a3d37d55030f438834eabe595c01642453a86fa6d1ae5eb97f04c252788cc6355b1cf439c8f8c4e79e909ef4576d8fab4965f1127"
         }
       ],
       "properties": [
@@ -1725,7 +1725,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -1948,7 +1948,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"classic-mceliece-multi\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"classic-mceliece-multi\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",
@@ -3442,8 +3442,8 @@
     {
       "type": "library",
       "name": "docx",
-      "version": "9.7.1",
-      "purl": "pkg:npm/docx@9.7.1",
+      "version": "9.8.1",
+      "purl": "pkg:npm/docx@9.8.1",
       "licenses": [
         {
           "license": {
@@ -3454,7 +3454,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "8a55c57fd328cf8ec00631690e2039b35c3d9696f81054a9efee6288949b7f260333e6e965d0202e54abedf5b86978557bf13e17a402bf412f4551447790ac5a"
+          "content": "6efe320f182257d691ca1df6ec71be577eb01b47f6df0937d920e15c64295219f2915b483da4752b82128bc13e0d827b39c45046447c63bd10625492d3c57570"
         }
       ],
       "properties": [
@@ -3922,7 +3922,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"fips204-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"fips204-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",
@@ -3943,7 +3943,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"fips205-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"fips205-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",
@@ -4066,7 +4066,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -4226,7 +4226,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"hbs-lms-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"hbs-lms-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",
@@ -4273,6 +4273,35 @@
         {
           "name": "pqctoday:bundles",
           "value": "engine, kmip"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hpke",
+      "version": "1.1.7",
+      "purl": "pkg:npm/hpke@1.1.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c1018e0691411653f687b7aeb8bb9ecbcc89194b49f9cf03fe884fc6d4d0aa920222d16d1c3a5b5e4d81dbdc5f5292053e7d26892f5325539b14601e119cc324"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "bundled into the production build (emitted chunks); version and license from package-lock.json"
+        },
+        {
+          "name": "pqctoday:listed-on-about-page",
+          "value": "true"
         }
       ]
     },
@@ -4986,8 +5015,8 @@
     {
       "type": "library",
       "name": "lucide-react",
-      "version": "1.47.0",
-      "purl": "pkg:npm/lucide-react@1.47.0",
+      "version": "1.48.0",
+      "purl": "pkg:npm/lucide-react@1.48.0",
       "licenses": [
         {
           "license": {
@@ -4998,7 +5027,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "a3c0b6dda5e9350ca9458ef75bb7d6d36132bd62629c431780a7868c5a0aca6d338f743bde10fdec0d48429b3583c0b5e074c6b0ea592f4026fb18df8056406e"
+          "content": "474088298fdf5e20bacbdc510400e0b0af955b6a7fa5c4c938c84b65fd53fae1bebc952fc94474da718e8262080bb30f92234ae0ec7c4039dba85f2b25858f65"
         }
       ],
       "properties": [
@@ -6285,7 +6314,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"ml-kem-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"ml-kem-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",
@@ -6656,7 +6685,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6677,7 +6706,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6698,7 +6727,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6779,7 +6808,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6847,7 +6876,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6868,7 +6897,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -8263,7 +8292,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -8284,7 +8313,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at 68278dfe; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at d09deb33; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -9468,7 +9497,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"xmss-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at 68278dfe"
+          "value": "vendored fork \"xmss-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at d09deb33"
         },
         {
           "name": "pqctoday:bundles",

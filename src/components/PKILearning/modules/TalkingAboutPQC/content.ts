@@ -15,11 +15,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'talking-about-pqc',
+  lastReviewed: '2026-10-01',
   version: '1.0.0',
-  // No lastReviewed: this is a DRAFT awaiting review (owner names a reviewer
-  // later). record_module_review.py sets it when that review is recorded —
-  // never by hand.
-  lastEdited: '2026-10-01',
+  // lastReviewed set by record_module_review.py: owner review, 1 Oct 2026,
+  // clean (revisions.jsonl review_only entry). Never edit it by hand.
+  lastEdited: '2026-10-02',
 
   standards: [
     getStandard('FIPS 203'),

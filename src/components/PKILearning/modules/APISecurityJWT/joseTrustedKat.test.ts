@@ -12,18 +12,14 @@
  *    SLH-DSA primitive; the JWS framing is the same code path RFC 9964 checks.
  *  - ES256 (inner layer of the Nested JWT tab): RFC 7515 Appendix A.3, verified
  *    with the same WebCrypto call HybridJWT.tsx uses.
- *  - KMAC256 (CEK derivation in the ML-KEM JWE tab): NIST KMAC_samples.pdf
- *    Sample #4, already in src/data/acvp/kmac_test.json. It shows the library's
- *    fixed-length KMAC256 is the SP 800-185 function; the JWE construction
- *    itself has no published vectors (see jweKat.test.ts).
+ *  - The HPKE JWE tab has its own file, hpkeJwe.test.ts, against the
+ *    published examples of draft-ietf-jose-hpke-pq-pqt-01.
  */
 import { describe, expect, it } from 'vitest'
 import { slh_dsa_sha2_128s, slh_dsa_shake_128s } from '@noble/post-quantum/slh-dsa.js'
-import { kmac256 } from '@noble/hashes/sha3-addons.js'
 import { base64urlDecode, bytesToHex, generateJwsKeyPair, signJWS, verifyJWS } from './jwtUtils'
 import slhExamples from '@/data/acvp/cose-sphincs-plus-10-examples.json'
 import rfc7515A3 from '@/data/acvp/rfc7515-a3-es256-jws.json'
-import kmacSamples from '@/data/acvp/kmac_test.json'
 
 function hexToBytes(hex: string): Uint8Array {
   const out = new Uint8Array(hex.length / 2)
@@ -128,18 +124,5 @@ describe('ES256 — RFC 7515 Appendix A.3 (inner layer of the nested JWT)', () =
       new TextEncoder().encode(`${h}.${p}x`)
     )
     expect(ok).toBe(false)
-  })
-})
-
-describe('KMAC256 — NIST KMAC_samples.pdf Sample #4 (JWE CEK derivation primitive)', () => {
-  const group = kmacSamples.testGroups.find((g) => g.variant === 'KMAC256')!
-  const t = group.tests[0]
-
-  it('fixed-length kmac256 reproduces NIST Outval', () => {
-    const mac = kmac256(hexToBytes(t.key), hexToBytes(t.msg), {
-      dkLen: group.macLen / 8,
-      personalization: hexToBytes(t.customization),
-    })
-    expect(bytesToHex(mac)).toBe(t.mac.toLowerCase())
   })
 })

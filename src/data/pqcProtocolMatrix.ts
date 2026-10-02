@@ -1762,10 +1762,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'api-security-jwt',
         toolName: 'API Security & JWT Workshop',
         url: '/learn/api-security-jwt?tab=workshop',
-        testability: { pureKem: 'partial', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'full' },
         pureKemNote:
-          'Historical construction only: direct ML-KEM-768 JWE per revision -05 of the jose-pqc-kem draft, whose JOSE content was removed in -06. Not interoperable with the current HPKE/JWE path; self-pinned KAT only.',
-        hybridKemNote: 'No HPKE tool yet.',
+          // Names the revisions explicitly: what the tool was verified against, not
+          // which revision is current. Bump only together with hpkeJwe.ts and the fixture.
+          "HPKE-12 (ML-KEM-768) JWE with HPKE Integrated Encryption per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, verified in-browser against that draft's published Appendix A examples. Work-in-progress drafts.",
+        hybridKemNote:
+          "HPKE-9 (ML-KEM-768 + X25519, X-Wing) JWE per draft-ietf-jose-hpke-pq-pqt-01, verified against the draft's published Appendix A example. Work-in-progress draft.",
         pureSigNote:
           'ML-DSA-44/65/87 verified against the RFC 9964 Appendix A.1 vectors in-browser. SLH-DSA is exercised as a primitive; only SLH-DSA-SHA2-128s and -SHAKE-128s are JOSE algorithms (draft-ietf-cose-sphincs-plus-10), with no external JOSE vectors here.',
         hybridSigNote:

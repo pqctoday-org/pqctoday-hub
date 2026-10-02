@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "d78ff115402e39962c4c389f0196c2fdba6946208e6bc14cc9f6a18bbb7ce2d7",
+    "manifestSha256": "03bfd46d07f34bf3e66d1824dcb3a90515457f93e9b32227b54715f267454e44",
     "registrySha256": "9d5bf45b8794589f00c0d55415481e359ca145c1bd408eb3c24641cd37199c64"
   },
   "records": {
@@ -3517,7 +3517,7 @@
     "acvp/hmac_sha384_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_test.json": "nist-acvp-reference-sample",
-    "acvp/jose-pqc-kem-jwe-kat.json": "functional-round-trip",
+    "acvp/jose-hpke-pq-pqt-01-examples.json": "unverified",
     "acvp/kbkdf_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/kmac_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/kmac_test.json": "published-standard-kat",

@@ -9,6 +9,7 @@ import { HybridJWT } from './workshop/HybridJWT'
 import { JWEEncryption } from './workshop/JWEEncryption'
 import { TokenSizeAnalyzer } from './workshop/TokenSizeAnalyzer'
 import { JOSEProtocolMatrixAudit } from './workshop/JOSEProtocolMatrixAudit'
+import { JWTAttackLab } from './workshop/JWTAttackLab'
 
 const SECTIONS = [
   {
@@ -26,13 +27,13 @@ const SECTIONS = [
     id: 'hybrid-jwt',
     title: 'Step 3 — Hybrid JWT',
     description:
-      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-03; dual-signature migration pattern',
+      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-04, checked against its published examples; nested-JWT migration pattern',
   },
   {
     id: 'jwe-encryption',
     title: 'Step 4 — JWE Encryption',
     description:
-      'ML-KEM-768 JWE encryption per draft-ietf-jose-pqc-kem-05; KMAC256-based CEK derivation (FIPS 203)',
+      'PQ JWE with HPKE Integrated Encryption — HPKE-12 (ML-KEM-768) and HPKE-9 (ML-KEM-768 + X25519) per draft-ietf-jose-hpke-pq-pqt-01, checked against its published examples',
   },
   {
     id: 'token-size',
@@ -45,6 +46,12 @@ const SECTIONS = [
     description:
       'Live KAT suite validating RFC 9964 Appendix A.1 vectors and composite pinned snapshots',
   },
+  {
+    id: 'attack-lab',
+    title: 'Step 7 — Attack Lab',
+    description:
+      'alg:none, edited claims, wrong audience, expiry and token-type attacks against a strict (RFC 8725) and a naive verifier, on real ML-DSA-65 tokens',
+  },
 ]
 
 export const APISecurityJWTPlayground: React.FC = () => {
@@ -55,6 +62,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
     'jwe-encryption': true,
     'token-size': false,
     'matrix-audit': false,
+    'attack-lab': false,
   })
 
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -63,7 +71,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
     <div className="space-y-4">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
-        ML-KEM-768 JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
+        HPKE-based ML-KEM JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
         <Link
           to="/learn/api-security-jwt?tab=workshop"
           className="text-primary underline underline-offset-2"
@@ -98,6 +106,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
                 {id === 'jwe-encryption' && <JWEEncryption />}
                 {id === 'token-size' && <TokenSizeAnalyzer />}
                 {id === 'matrix-audit' && <JOSEProtocolMatrixAudit />}
+                {id === 'attack-lab' && <JWTAttackLab />}
               </div>
             )}
           </div>
