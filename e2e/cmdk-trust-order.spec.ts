@@ -63,8 +63,8 @@ test('command palette opens and returns ranked results for "ML-KEM"', async ({ p
   //
   // 60s, not 5s or 15s. The palette pre-loads the search index on first ⌘K open
   // (SearchIndex.ts → unified.loadCached()): fetch public/data/rag-corpus.json
-  // (currently ~27.8 MB / 26.5 MiB), JSON.parse, build the MiniSearch index,
-  // JSON.stringify and write it to IndexedDB. Locally that lands in ~2.4 s (file
+  // (currently ~27.8 MB / 26.5 MiB), JSON.parse, build the MiniSearch index in
+  // slices (no saved copy since 2026-10-01). Locally that lands in ~2.4 s (file
   // warm in the HTTP cache), but on a 2-4 vCPU GitHub runner time-to-first-result
   // measured ~10-25 s (~10 s at 4x CPU throttle, 25-53 s at 8x), so the nightly
   // failed 3/3 on 27 Sep and again on 30 Sep against a 15 s assertion. It is a
