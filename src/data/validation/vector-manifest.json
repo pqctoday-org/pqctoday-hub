@@ -16309,7 +16309,7 @@
             "jose-hpke-pq-pqt-01-examples#/vectors/1"
           ],
           "upstreamOperation": "JWE encryption examples produced by the draft authors with the `hpke` npm package on Node's native WebCrypto ML-KEM",
-          "localOperation": "jwe-decrypt of the compact and flattened (with JWE AAD) examples under the published private JWK, with noble ML-KEM-768 / X-Wing / SHAKE256 plugged into `hpke`; pub re-derived from the priv seed; -22 header rules and tamper cases (hpkeJwe.test.ts)",
+          "localOperation": "jwe-decrypt of the compact and flattened (with JWE AAD) examples under the published private JWK, with noble ML-KEM-768 / X-Wing / SHAKE256 plugged into `hpke`; pub re-derived from the priv seed; -22 header rules and tamper cases (hpkeJwe.test.ts). Also: priv imported into SoftHSM3 as CKA_SEED, pub re-derived in the token, compact example opened with C_DecapsulateKey(CKM_HPKE) + C_Decrypt(AES-256-GCM) (hpkeJweHsm.local.test.ts)",
           "transformations": [
             {
               "type": "subset",
@@ -16324,7 +16324,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; the HPKE key schedule is the same `hpke` package on both sides."
+      "notes": "Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; in the browser path the HPKE key schedule is the same `hpke` package on both sides. Since 2026-10-01 both examples also decrypt inside SoftHSM3 (Rust engine, PKCS#11 CKM_HPKE, pqctoday-hsm #310), whose ML-KEM, X-Wing, SHAKE256 key schedule and AES-GCM share no code with `hpke` or the authors' generator (hpkeJweHsm.local.test.ts)."
     },
     {
       "id": "hpke-pq-04-test-vectors",

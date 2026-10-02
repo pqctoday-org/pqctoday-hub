@@ -7,7 +7,8 @@
  * The examples were produced by the draft authors with the `hpke` package on
  * Node's native ML-KEM; this code runs noble's ML-KEM, X-Wing and SHAKE256, so
  * the KEM, KDF and JOSE wiring are checked independently. The HPKE key schedule
- * itself is the same `hpke` code on both sides.
+ * itself is the same `hpke` code on both sides here; hpkeJweHsm.local.test.ts
+ * closes that gap by opening the same examples inside SoftHSM3's own CKM_HPKE.
  */
 import { describe, expect, it } from 'vitest'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
