@@ -1,23 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, type FC } from 'react'
-import { Network, Factory, Key, AlertTriangle, Map } from 'lucide-react'
+import { Network, Layers, Factory, AlertTriangle, Map, FileSignature } from 'lucide-react'
 import { OTPQCIntroduction } from './components/OTPQCIntroduction'
-import { OTPQCExercises } from './components/OTPQCExercises'
+import { OTPQCExercises, type WorkshopConfig } from './components/OTPQCExercises'
 import { ProtocolSecurityAnalyzer } from './workshop/ProtocolSecurityAnalyzer'
+import { ZoneConduitPlanner } from './workshop/ZoneConduitPlanner'
 import { SubstationMigrationPlanner } from './workshop/SubstationMigrationPlanner'
-import { SmartMeterKeyManager } from './workshop/SmartMeterKeyManager'
-import { SafetyRiskScorer } from './workshop/SafetyRiskScorer'
-import { GridMigrationRoadmap } from './workshop/GridMigrationRoadmap'
-import { RFMeshSimulator } from './workshop/RFMeshSimulator'
-import {
-  DEFAULT_SUBSTATION,
-  DEFAULT_FLEET,
-  DEFAULT_UTILITY,
-  type SubstationProfile,
-  type SmartMeterFleetConfig,
-  type UtilityProfile,
-  type SafetyRiskResult,
-} from './data/energyConstants'
+import { SafetyConsequenceScorer } from './workshop/SafetyConsequenceScorer'
+import { SectorMigrationRoadmap } from './workshop/SectorMigrationRoadmap'
+import { FirmwareSigningLab } from './workshop/FirmwareSigningLab'
+import { DEFAULT_SUBSTATION, type SubstationProfile } from './data/substationData'
+import { DEFAULT_ROADMAP, type RoadmapInputs } from './data/roadmapData'
+import type { ZoneAssessment } from './data/zoneConduitData'
+import type { ConsequenceResult } from './data/consequenceData'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -25,129 +20,129 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'protocol-security-analyzer',
     title: 'Step 1: Protocol Analyzer',
-    description: 'Assess PQC readiness of energy protocols — IEC 61850, DNP3, Modbus, DLMS/COSEM.',
+    description:
+      'Break OT protocols (IEC 61850, DNP3, IEC 104, OPC UA, CIP Security, PROFINET, Modbus, BACnet/SC, DLMS/COSEM, PTP) into crypto layers and tag each as forgery, HNDL or symmetric.',
     icon: Network,
+  },
+  {
+    id: 'zone-conduit-planner',
+    title: 'Step 2: Zone & Conduit Planner',
+    description:
+      'Map Purdue levels onto IEC 62443 zones and conduits and rank them by forgery and HNDL exposure.',
+    icon: Layers,
   },
   {
     id: 'substation-migration-planner',
-    title: 'Step 2: Substation Planner',
+    title: 'Step 3: Substation Planner',
     description:
-      'Plan PQC migration for IEC 61850 substations across protection, control, and metering zones.',
+      'Energy worked example: prioritise an IEC 61850 substation’s zones by real quantum exposure and estimate the effort.',
     icon: Factory,
   },
   {
-    id: 'smart-meter-key-manager',
-    title: 'Step 3: Meter Key Manager',
-    description: 'Plan PQC key rotation for smart meter fleets of 1M–20M devices using DLMS/COSEM.',
-    icon: Key,
-  },
-  {
-    id: 'safety-risk-scorer',
-    title: 'Step 4: Risk Scorer',
+    id: 'safety-consequence-scorer',
+    title: 'Step 4: Safety & Consequence Scorer',
     description:
-      'Score safety and environmental consequences of cryptographic failures in energy systems.',
+      'Score forged-command and forged-firmware scenarios across energy, water, rail, manufacturing and buildings, with IEC 61511 safety-layer framing.',
     icon: AlertTriangle,
   },
   {
-    id: 'grid-migration-roadmap',
-    title: 'Step 5: Grid Roadmap',
+    id: 'sector-migration-roadmap',
+    title: 'Step 5: Sector Roadmap',
     description:
-      'Generate a utility-wide PQC migration roadmap with NERC CIP milestones and budget estimates.',
+      'Build a multi-year plan for one sector and jurisdiction and see which phases end after your CRQC planning year.',
     icon: Map,
   },
   {
-    id: 'rf-mesh-simulator',
-    title: 'Step 6: RF Mesh Simulator',
+    id: 'firmware-project-signing-lab',
+    title: 'Step 6: Firmware & Project Signing Lab',
     description:
-      'Model the Time-on-Air and network saturation of 900MHz smart meter mesh networks under PQC payload loads.',
-    icon: Network,
+      'Compare LMS/HSS and ML-DSA for PLC firmware and project signing: bytes, key lifetime and stateful-key management.',
+    icon: FileSignature,
   },
 ]
 
 /**
- * Holds the cross-step shared state the workshop lifts above its steps
- * (substation / meter-fleet / utility profiles + risk results). Mounted once
- * for the whole workshop; the individual step bodies still remount on
- * `configKey` via their per-step `key`.
- *
- * Reset is handled by the caller via the wrapper's `key`: the shell's Reset
- * bumps `configKey` with no config, so the caller keys this component on
- * `reset-${configKey}` and the default profiles/results are restored by a fresh
- * mount — matching the pre-ModuleShell Reset behavior. An exercise prefill
- * always carries a defined config, so it keeps a stable key and the shared
- * state survives (as before).
- *
- * Each step's in-body "Continue" button (the original `onComplete`) advances the
- * stepper via `goToStep` — which marks the current step complete and moves
- * forward, identical to the old `handleStepComplete`.
+ * Holds the state the workshop shares across steps (substation profile,
+ * roadmap inputs, the zone planner's top zone and the consequence results).
+ * Reset arrives as a `reset-${configKey}` key on this component (fresh mount);
+ * an exercise prefill carries a config and keeps the state.
  */
 const OTPQCWorkshop: FC<{
   index: number
   configKey: number
+  config?: WorkshopConfig
   goToStep: (step: number) => void
-}> = ({ index, configKey, goToStep }) => {
-  const [substationProfile, setSubstationProfile] = useState<SubstationProfile>({
+}> = ({ index, configKey, config, goToStep }) => {
+  const [substation, setSubstation] = useState<SubstationProfile>(() => ({
     ...DEFAULT_SUBSTATION,
-  })
-  const [meterFleetConfig, setMeterFleetConfig] = useState<SmartMeterFleetConfig>({
-    ...DEFAULT_FLEET,
-  })
-  const [utilityProfile, setUtilityProfile] = useState<UtilityProfile>({ ...DEFAULT_UTILITY })
-  const [riskResults, setRiskResults] = useState<SafetyRiskResult[]>([])
+    ...config?.substation,
+  }))
+  const [roadmap, setRoadmap] = useState<RoadmapInputs>(() => ({
+    ...DEFAULT_ROADMAP,
+    ...config?.roadmap,
+  }))
+  const [topZone, setTopZone] = useState<ZoneAssessment | null>(null)
+  const [consequenceResults, setConsequenceResults] = useState<ConsequenceResult[]>([])
 
-  // Original handleStepComplete: mark the current step complete (handled by the
-  // shell's goToStep on a forward move) and advance — but only while there is a
-  // next step (PARTS.length - 1 is the last index).
-  const handleStepComplete = () => {
+  const next = () => {
     if (index < PARTS.length - 1) goToStep(index + 1)
   }
 
   switch (index) {
     case 0:
       return (
-        <ProtocolSecurityAnalyzer key={`protocol-${configKey}`} onComplete={handleStepComplete} />
+        <ProtocolSecurityAnalyzer
+          key={`protocol-${configKey}`}
+          onComplete={next}
+          initialSelected={config?.protocols}
+        />
       )
     case 1:
       return (
-        <SubstationMigrationPlanner
-          key={`substation-${configKey}`}
-          profile={substationProfile}
-          onProfileChange={setSubstationProfile}
-          onComplete={handleStepComplete}
+        <ZoneConduitPlanner
+          key={`zones-${configKey}`}
+          onComplete={next}
+          onTopZoneChange={setTopZone}
         />
       )
     case 2:
       return (
-        <SmartMeterKeyManager
-          key={`meter-${configKey}`}
-          config={meterFleetConfig}
-          onConfigChange={setMeterFleetConfig}
-          onComplete={handleStepComplete}
+        <SubstationMigrationPlanner
+          key={`substation-${configKey}`}
+          profile={substation}
+          onProfileChange={setSubstation}
+          onComplete={next}
         />
       )
     case 3:
       return (
-        <SafetyRiskScorer
-          key={`safety-${configKey}`}
-          riskResults={riskResults}
-          onRiskResultsChange={setRiskResults}
-          onComplete={handleStepComplete}
+        <SafetyConsequenceScorer
+          key={`consequence-${configKey}`}
+          results={consequenceResults}
+          onResultsChange={setConsequenceResults}
+          onComplete={next}
+          initialScenarioId={config?.scenario}
         />
       )
     case 4:
       return (
-        <GridMigrationRoadmap
+        <SectorMigrationRoadmap
           key={`roadmap-${configKey}`}
-          utilityProfile={utilityProfile}
-          onUtilityProfileChange={setUtilityProfile}
-          substationProfile={substationProfile}
-          meterFleetConfig={meterFleetConfig}
-          riskResults={riskResults}
-          onComplete={handleStepComplete}
+          inputs={roadmap}
+          onInputsChange={setRoadmap}
+          topZone={topZone}
+          consequenceResults={consequenceResults}
+          onComplete={next}
         />
       )
     case 5:
-      return <RFMeshSimulator key={`rfmesh-${configKey}`} />
+      return (
+        <FirmwareSigningLab
+          key={`signing-${configKey}`}
+          onComplete={next}
+          initial={config?.signing}
+        />
+      )
     default:
       return null
   }
@@ -156,7 +151,7 @@ const OTPQCWorkshop: FC<{
 export const OTPQCModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring."
+    description="PQC for operational technology across energy, water, rail, manufacturing and building automation: why forged commands and firmware matter more than harvested data, IEC 62443 zones and conduits, the native security of OT protocols, safety-critical timing, PLC firmware and project signing, and the regulations that apply."
     learn={(api) => <OTPQCIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
       <OTPQCExercises
@@ -167,12 +162,12 @@ export const OTPQCModule: FC = () => (
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey, config, goToStep) => (
       <OTPQCWorkshop
-        // Reset (configKey bump with no config) remounts → default profiles
-        // restored; an exercise prefill carries a config, so the key stays stable
-        // and the shared state survives the step jump.
-        key={config === undefined ? `reset-${configKey}` : 'energy-utilities-workshop'}
+        // Reset (configKey bump with no config) remounts → defaults restored; an
+        // exercise prefill carries a config, so it gets its own stable key.
+        key={config === undefined ? `reset-${configKey}` : `prefill-${configKey}`}
         index={index}
         configKey={configKey}
+        config={config as unknown as WorkshopConfig | undefined}
         goToStep={goToStep}
       />
     )}
