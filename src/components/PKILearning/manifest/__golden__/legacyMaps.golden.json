@@ -217,15 +217,6 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
-    "energy-utilities-pqc": {
-      "id": "energy-utilities-pqc",
-      "lm_id": "LM-042",
-      "title": "Energy & Utilities PQC",
-      "description": "PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.",
-      "duration": "60 min",
-      "difficulty": "intermediate",
-      "frameworkPhase": "p5"
-    },
     "entropy-randomness": {
       "id": "entropy-randomness",
       "lm_id": "LM-003",
@@ -308,12 +299,12 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
-    "iot-ot-pqc": {
-      "id": "iot-ot-pqc",
-      "lm_id": "LM-032",
-      "title": "IoT & OT Security",
-      "description": "PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.",
-      "duration": "60 min",
+    "iot-pqc": {
+      "id": "iot-pqc",
+      "lm_id": "LM-074",
+      "title": "IoT & Embedded Device PQC",
+      "description": "PQC for constrained IoT and embedded devices: algorithm fit by device class (verify vs sign), firmware and update signing (LMS, ML-DSA, SUIT/COSE), constrained protocols (DTLS 1.3, EDHOC/OSCORE, Matter, BLE Mesh, LoRaWAN), certificate size and device identity, fleet key management, secure elements, and the IoT security regulations (EU CRA, RED/EN 18031, Cyber Trust Mark, UK PSTI).",
+      "duration": "90 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
@@ -379,6 +370,15 @@
       "duration": "50 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "ot-pqc": {
+      "id": "ot-pqc",
+      "lm_id": "LM-075",
+      "title": "OT & Industrial Control Systems PQC",
+      "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
+      "duration": "90 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p5"
     },
     "ops-quantum-impact": {
       "id": "ops-quantum-impact",
@@ -603,6 +603,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
+    "talking-about-pqc": {
+      "id": "talking-about-pqc",
+      "lm_id": "LM-073",
+      "title": "Talking About PQC Accurately",
+      "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
+      "duration": "30 min",
+      "difficulty": "beginner",
+      "frameworkPhase": "foundations"
+    },
     "trust-services-pqc": {
       "id": "trust-services-pqc",
       "lm_id": "LM-070",
@@ -647,15 +656,6 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
-    },
-    "talking-about-pqc": {
-      "id": "talking-about-pqc",
-      "lm_id": "LM-073",
-      "title": "Talking About PQC Accurately",
-      "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
-      "duration": "30 min",
-      "difficulty": "beginner",
-      "frameworkPhase": "foundations"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -683,7 +683,6 @@
     "digital-id": 5,
     "emv-payment-pqc": 8,
     "email-signing": 4,
-    "energy-utilities-pqc": 6,
     "entropy-randomness": 6,
     "exec-quantum-impact": 4,
     "fips-140-3-certification": 1,
@@ -693,7 +692,7 @@
     "hsm-pqc": 5,
     "hybrid-crypto": 7,
     "iam-pqc": 6,
-    "iot-ot-pqc": 6,
+    "iot-pqc": 6,
     "kms-pqc": 6,
     "mls-group-messaging": 2,
     "merkle-tree-certs": 5,
@@ -701,6 +700,7 @@
     "pqc-101": 4,
     "network-security-pqc": 6,
     "os-pqc": 5,
+    "ot-pqc": 6,
     "ops-quantum-impact": 4,
     "pki-enrollment-protocols": 6,
     "pki-workshop": 6,
@@ -720,19 +720,19 @@
     "slh-dsa": 4,
     "sbom": 2,
     "secrets-management-pqc": 5,
-    "secure-boot-pqc": 5,
+    "secure-boot-pqc": 6,
     "skills-team-structure": 2,
     "soc-implementation-pqc": 5,
     "standards-bodies": 5,
     "stateful-signatures": 5,
     "tls-basics": 4,
+    "talking-about-pqc": 2,
     "trust-services-pqc": 3,
     "vpn-ssh-pqc": 3,
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1,
-    "talking-about-pqc": 2
+    "assess": 1
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1352,36 +1352,6 @@
         "label": "Certificate Migration"
       }
     ],
-    "energy-utilities-pqc": [
-      {
-        "id": "why-energy",
-        "label": "Why Energy & Utilities"
-      },
-      {
-        "id": "nerc-cip",
-        "label": "NERC CIP & IEC 62351"
-      },
-      {
-        "id": "substation-protocols",
-        "label": "Substation Protocols"
-      },
-      {
-        "id": "smart-meters",
-        "label": "Smart Meter Management"
-      },
-      {
-        "id": "safety-environmental",
-        "label": "Safety & Environmental"
-      },
-      {
-        "id": "lifecycle-connectivity",
-        "label": "Lifecycle & Connectivity"
-      },
-      {
-        "id": "water-wastewater",
-        "label": "Water & Wastewater"
-      }
-    ],
     "entropy-randomness": [
       {
         "id": "entropy",
@@ -1585,38 +1555,42 @@
         "label": "Identity Federation & EAP"
       }
     ],
-    "iot-ot-pqc": [
+    "iot-pqc": [
       {
-        "id": "why-different",
-        "label": "Why IoT/OT Is Different"
+        "id": "why-iot",
+        "label": "Why IoT is different: device classes"
       },
       {
-        "id": "constrained",
-        "label": "Algorithm Selection for Constrained Devices"
+        "id": "algorithm-selection",
+        "label": "Algorithm selection: verify vs sign"
       },
       {
-        "id": "certs",
-        "label": "Certificate Chain Bloat"
+        "id": "firmware-signing",
+        "label": "Firmware and update signing (SUIT, COSE)"
       },
       {
-        "id": "firmware",
-        "label": "Firmware Signing for IoT"
+        "id": "constrained-protocols",
+        "label": "Constrained protocols"
       },
       {
-        "id": "protocols",
-        "label": "Protocol Considerations"
+        "id": "certificates-identity",
+        "label": "Certificates and device identity"
       },
       {
-        "id": "scada",
-        "label": "SCADA/ICS Security"
+        "id": "fleet-keys-lpwan",
+        "label": "Fleet key management and LPWAN"
       },
       {
-        "id": "hybrid-constrained",
-        "label": "Hybrid Approaches on Constrained Hardware"
+        "id": "hardware-support",
+        "label": "Hardware support: secure elements and TPMs"
       },
       {
-        "id": "rail-transit",
-        "label": "Rail & Transit Key Management"
+        "id": "hybrid",
+        "label": "Hybrid on constrained hardware"
+      },
+      {
+        "id": "regulations",
+        "label": "IoT security regulations"
       }
     ],
     "kms-pqc": [
@@ -1755,6 +1729,44 @@
       {
         "id": "fips-mode",
         "label": "FIPS Mode & PQC OS"
+      }
+    ],
+    "ot-pqc": [
+      {
+        "id": "why-ot",
+        "label": "Why OT is different"
+      },
+      {
+        "id": "architecture",
+        "label": "Purdue, zones and conduits"
+      },
+      {
+        "id": "ot-protocols",
+        "label": "OT protocol native security"
+      },
+      {
+        "id": "safety-timing",
+        "label": "Safety-critical timing"
+      },
+      {
+        "id": "firmware-project-signing",
+        "label": "Firmware and project signing"
+      },
+      {
+        "id": "remote-access",
+        "label": "Remote access and boundaries"
+      },
+      {
+        "id": "sectors",
+        "label": "Sector deep dives"
+      },
+      {
+        "id": "retrofit",
+        "label": "Brownfield retrofit"
+      },
+      {
+        "id": "regulations",
+        "label": "Key regulations"
       }
     ],
     "ops-quantum-impact": [
@@ -2224,6 +2236,28 @@
         "label": "PQC in TLS & Hybrid Modes"
       }
     ],
+    "talking-about-pqc": [
+      {
+        "id": "one-minute",
+        "label": "The One-Minute Version"
+      },
+      {
+        "id": "real-dates",
+        "label": "Dates That Are Real"
+      },
+      {
+        "id": "certificates",
+        "label": "What a Certificate Proves"
+      },
+      {
+        "id": "words",
+        "label": "Words to Check"
+      },
+      {
+        "id": "customer-questions",
+        "label": "Answering the Question"
+      }
+    ],
     "trust-services-pqc": [
       {
         "id": "qualified-signatures",
@@ -2320,28 +2354,6 @@
       {
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
-      }
-    ],
-    "talking-about-pqc": [
-      {
-        "id": "one-minute",
-        "label": "The One-Minute Version"
-      },
-      {
-        "id": "real-dates",
-        "label": "Dates That Are Real"
-      },
-      {
-        "id": "certificates",
-        "label": "What a Certificate Proves"
-      },
-      {
-        "id": "words",
-        "label": "Words to Check"
-      },
-      {
-        "id": "customer-questions",
-        "label": "Answering the Question"
       }
     ]
   },
@@ -2886,32 +2898,6 @@
         "label": "Live HSM Provider"
       }
     ],
-    "energy-utilities-pqc": [
-      {
-        "id": "protocol-security-analyzer",
-        "label": "Protocol Analyzer"
-      },
-      {
-        "id": "substation-migration-planner",
-        "label": "Substation Planner"
-      },
-      {
-        "id": "smart-meter-key-manager",
-        "label": "Meter Key Manager"
-      },
-      {
-        "id": "safety-risk-scorer",
-        "label": "Risk Scorer"
-      },
-      {
-        "id": "grid-migration-roadmap",
-        "label": "Grid Roadmap"
-      },
-      {
-        "id": "rf-mesh-simulator",
-        "label": "RF Mesh Simulator"
-      }
-    ],
     "entropy-randomness": [
       {
         "id": "random-generation",
@@ -3090,7 +3076,7 @@
         "label": "Identity Proxy"
       }
     ],
-    "iot-ot-pqc": [
+    "iot-pqc": [
       {
         "id": "constrained-algorithm",
         "label": "Algorithm Explorer"
@@ -3100,20 +3086,20 @@
         "label": "Firmware Signing"
       },
       {
-        "id": "dtls-handshake",
-        "label": "DTLS Handshake"
+        "id": "constrained-handshake",
+        "label": "Constrained Handshake"
       },
       {
-        "id": "cert-chain-bloat",
-        "label": "Chain Bloat Analysis"
+        "id": "cert-chain",
+        "label": "Certificate Chain"
       },
       {
-        "id": "scada-assessment",
-        "label": "SCADA Planner"
+        "id": "fleet-key-manager",
+        "label": "Fleet Key Manager"
       },
       {
-        "id": "hardware-constraints",
-        "label": "Hardware Constraints"
+        "id": "lpwan-airtime",
+        "label": "LPWAN Airtime"
       }
     ],
     "kms-pqc": [
@@ -3256,6 +3242,32 @@
       {
         "id": "fips-compat",
         "label": "FIPS Compatibility Checker"
+      }
+    ],
+    "ot-pqc": [
+      {
+        "id": "protocol-security-analyzer",
+        "label": "Protocol Analyzer"
+      },
+      {
+        "id": "zone-conduit-planner",
+        "label": "Zone & Conduit Planner"
+      },
+      {
+        "id": "substation-migration-planner",
+        "label": "Substation Planner"
+      },
+      {
+        "id": "safety-consequence-scorer",
+        "label": "Safety & Consequence Scorer"
+      },
+      {
+        "id": "sector-migration-roadmap",
+        "label": "Sector Roadmap"
+      },
+      {
+        "id": "firmware-project-signing-lab",
+        "label": "Firmware & Project Signing Lab"
       }
     ],
     "ops-quantum-impact": [
@@ -3642,6 +3654,10 @@
       {
         "id": "attestation-designer",
         "label": "Attestation Flow Designer"
+      },
+      {
+        "id": "boot-verify-latency",
+        "label": "Boot Verify Latency"
       }
     ],
     "skills-team-structure": [
@@ -3738,6 +3754,16 @@
         "label": "HSM-Backed TLS Server"
       }
     ],
+    "talking-about-pqc": [
+      {
+        "id": "claim-checker",
+        "label": "Claim Checker"
+      },
+      {
+        "id": "question-practice",
+        "label": "Customer Questions"
+      }
+    ],
     "trust-services-pqc": [
       {
         "id": "longevity-calculator",
@@ -3818,16 +3844,6 @@
       {
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
-      }
-    ],
-    "talking-about-pqc": [
-      {
-        "id": "claim-checker",
-        "label": "Claim Checker"
-      },
-      {
-        "id": "question-practice",
-        "label": "Customer Questions"
       }
     ]
   },
@@ -4317,11 +4333,11 @@
           "frameworkPhase": "p5"
         },
         {
-          "id": "iot-ot-pqc",
-          "lm_id": "LM-032",
-          "title": "IoT & OT Security",
-          "description": "PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.",
-          "duration": "60 min",
+          "id": "iot-pqc",
+          "lm_id": "LM-074",
+          "title": "IoT & Embedded Device PQC",
+          "description": "PQC for constrained IoT and embedded devices: algorithm fit by device class (verify vs sign), firmware and update signing (LMS, ML-DSA, SUIT/COSE), constrained protocols (DTLS 1.3, EDHOC/OSCORE, Matter, BLE Mesh, LoRaWAN), certificate size and device identity, fleet key management, secure elements, and the IoT security regulations (EU CRA, RED/EN 18031, Cyber Trust Mark, UK PSTI).",
+          "duration": "90 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
         },
@@ -4340,6 +4356,15 @@
           "title": "Digital ID",
           "description": "Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.",
           "duration": "80 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "ot-pqc",
+          "lm_id": "LM-075",
+          "title": "OT & Industrial Control Systems PQC",
+          "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
+          "duration": "90 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
         }
@@ -4450,15 +4475,6 @@
           "description": "PQC challenges unique to aerospace: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.",
           "duration": "80 min",
           "difficulty": "advanced",
-          "frameworkPhase": "p5"
-        },
-        {
-          "id": "energy-utilities-pqc",
-          "lm_id": "LM-042",
-          "title": "Energy & Utilities PQC",
-          "description": "PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.",
-          "duration": "60 min",
-          "difficulty": "intermediate",
           "frameworkPhase": "p5"
         },
         {
@@ -4647,10 +4663,6 @@
       "algorithms": ["ML-DSA"],
       "standards": ["JOSE", "X.509"]
     },
-    "energy-utilities-pqc": {
-      "algorithms": ["ML-DSA", "ML-KEM"],
-      "standards": ["NIST SP 800-227", "FIPS 203", "FIPS 204", "FIPS 205"]
-    },
     "entropy-randomness": {
       "algorithms": ["ML-KEM"],
       "standards": ["NIST SP 800-90B", "NIST SP 800-131A", "NIST SP 800-57", "FIPS 140-3"]
@@ -4691,9 +4703,9 @@
       "algorithms": ["ML-DSA", "ML-KEM"],
       "standards": ["FIPS 140-3", "NIST IR 8547"]
     },
-    "iot-ot-pqc": {
+    "iot-pqc": {
       "algorithms": ["Falcon", "LMS/XMSS", "ML-DSA", "ML-KEM"],
-      "standards": ["RFC 9846", "NIST SP 800-208", "NSA CNSA 2.0"]
+      "standards": ["FIPS 203", "FIPS 204", "NIST SP 800-208", "RFC 9846", "NSA CNSA 2.0"]
     },
     "kms-pqc": {
       "algorithms": ["ML-KEM"],
@@ -4721,6 +4733,10 @@
     "os-pqc": {
       "algorithms": ["ML-DSA", "ML-KEM"],
       "standards": ["NIST SP 800-227", "FIPS 140-3"]
+    },
+    "ot-pqc": {
+      "algorithms": ["ML-KEM", "ML-DSA", "LMS/XMSS"],
+      "standards": ["FIPS 203", "FIPS 204", "NIST SP 800-208", "NSA CNSA 2.0"]
     },
     "ops-quantum-impact": {
       "algorithms": ["ML-DSA", "ML-KEM"],
@@ -4838,6 +4854,9 @@
       "algorithms": ["ML-KEM", "X25519", "ECDSA", "ML-DSA"],
       "standards": ["RFC 9846", "X.509"]
     },
+    "talking-about-pqc": {
+      "standards": ["FIPS 203", "NIST IR 8547", "NSA CNSA 2.0"]
+    },
     "trust-services-pqc": {
       "algorithms": ["ML-DSA"],
       "standards": ["RFC 3161", "NSA CNSA 2.0"]
@@ -4865,9 +4884,6 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
-    },
-    "talking-about-pqc": {
-      "standards": ["FIPS 203", "NIST IR 8547", "NSA CNSA 2.0"]
     }
   }
 }

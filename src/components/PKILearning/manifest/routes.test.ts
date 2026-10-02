@@ -45,6 +45,7 @@ const GOLDEN_ROUTE_PATHS = [
   'dnssec-pqc',
   'email-signing',
   'emv-payment-pqc',
+  // Redirect only since 2026-10-01 (became ot-pqc in the IoT/OT split).
   'energy-utilities-pqc',
   'entropy-randomness',
   'exec-quantum-impact',
@@ -57,8 +58,11 @@ const GOLDEN_ROUTE_PATHS = [
   'hsm-pqc',
   'hybrid-crypto',
   'iam-pqc',
+  'iot-pqc',
+  // Redirect only since 2026-10-01 (became iot-pqc in the IoT/OT split).
   'iot-ot-pqc',
   'kms-pqc',
+  'ot-pqc',
   'merkle-tree-certs',
   'migration-program',
   'mls',

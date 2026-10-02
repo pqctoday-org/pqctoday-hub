@@ -2311,6 +2311,31 @@ const KAT_RUNNER: RegisteredTest[] = [
       { type: 'aesctr-roundtrip' }
     ),
   ]),
+  kat(
+    'lms-sigver',
+    'HSS/LMS verify, RFC 8554 Appendix F Test Cases 1-2',
+    ([1, 2] as const).map((n) =>
+      k(
+        lc(`kat.lms-sigver`, `tc${n}`, STD, 'positive', [x('CKM_HSS', 'verify')], {
+          source: {
+            citation: `RFC 8554 Appendix F, Test Case ${n}`,
+            url: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+          },
+          note:
+            n === 1
+              ? 'Inputs in src/data/kat/lms_hss_rfc8554.json (outside the src/data/acvp vector manifest).'
+              : 'Inputs transcribed from RFC 8554 Appendix F (RFC8554_TC2 in src/utils/katRunner.ts); outside the src/data/acvp vector manifest.',
+          // Known issue (open): on the C++ softhsm-wasm engine a valid C_Verify(CKM_HSS)
+          // corrupts later HMAC cases in the same session (CKR_KEY_HANDLE_INVALID / MAC
+          // rejected); Rust is unaffected. runLMSSigVerKAT runs in its own session for that
+          // reason. Root cause: Session::resetOp() (softhsm Session.cpp) never resets the
+          // stateful mechanism set by StatefulVerifyInit, and C_Sign/C_Verify check it before
+          // getMacOp(), so later HMAC ops take the stateful path. Fix pending in softhsm.
+        }),
+        { type: 'lms-sigver', testCase: n }
+      )
+    )
+  ),
   kat('aeskw-wrap', 'AES-KW-256 wrap (testIndex 0)', [
     k(
       mc('aeskw_test#/testGroups/0/tests/0', STD, 'positive', [

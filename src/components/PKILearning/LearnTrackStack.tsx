@@ -83,7 +83,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
   Applications: [
     'digital-id',
     'code-signing',
-    'iot-ot-pqc',
+    'iot-pqc',
     'ai-security-pqc',
     'platform-eng-pqc',
     'iam-pqc',
@@ -100,12 +100,12 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
   Industries: [
     'digital-assets',
     '5g-security',
-    'energy-utilities-pqc',
+    'ot-pqc',
     'healthcare-pqc',
     'aerospace-pqc',
     'automotive-pqc',
     'emv-payment-pqc',
-    'iot-ot-pqc',
+    'iot-pqc',
     'industry-threats',
   ],
 }

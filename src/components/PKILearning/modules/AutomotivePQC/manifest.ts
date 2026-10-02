@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'automotive-pqc',
-  contentVersion: 7,
+  contentVersion: 9,
   lm_id: 'LM-043',
   title: 'Automotive PQC',
   description:
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 3,
+  trackOrder: 2,
   learnSections: [
     { id: 'vehicle-crypto-landscape', label: 'Automotive Crypto' },
     { id: 'autonomous-data', label: 'Autonomous Data Integrity' },

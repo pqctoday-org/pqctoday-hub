@@ -389,7 +389,7 @@
   {
     "term": "GlobalPlatform",
     "definition": "An industry association that standardizes secure-element and trusted-execution-environment specifications used in SIM cards, secure elements, and IoT hardware roots of trust, now extending its specifications to PQC-capable secure elements.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "organization"
   },

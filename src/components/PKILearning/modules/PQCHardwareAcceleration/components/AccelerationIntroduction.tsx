@@ -1085,7 +1085,7 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               label: 'HSM & PQC',
               note: 'Where accelerated PQC runs in production',
             },
-            { to: '/learn/iot-ot-pqc', label: 'IoT & OT', note: 'Small cores, tight budgets' },
+            { to: '/learn/iot-pqc', label: 'IoT & Embedded', note: 'Small cores, tight budgets' },
           ].map((l) => (
             <Link
               key={l.to}

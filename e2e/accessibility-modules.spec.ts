@@ -270,6 +270,9 @@ const B3_SCROLLABLE_TABLE_MODULES = [
   'slh-dsa',
   'secure-boot-pqc',
   'digital-assets',
+  // 2026-10-01 IoT/OT split: both new modules carry wide tables in Learn and Workshop.
+  'iot-pqc',
+  'ot-pqc',
 ]
 
 for (const id of B3_SCROLLABLE_TABLE_MODULES) {

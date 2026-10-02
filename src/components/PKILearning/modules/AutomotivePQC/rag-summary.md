@@ -18,7 +18,7 @@ Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptogra
 ## Workshop Steps
 
 1. **VehicleArchitectureMapper** — Compare domain-based vs. zonal architectures; identify crypto upgrade points at domain controllers, zone HPCs, and gateway ECUs; map PQC feasibility to each internal bus type
-2. **SensorDataIntegritySimulator** — Configure signing strategies per sensor type (LiDAR, camera, radar, fusion); calculate bandwidth overhead at operating frequency; evaluate HMAC vs. ML-DSA tradeoffs for real-time data streams
+2. **SensorDataIntegritySimulator** — Configure signing strategies per sensor type (LiDAR, camera, radar, fusion); calculate bandwidth overhead at operating frequency; evaluate HMAC vs. ML-DSA tradeoffs for real-time data streams. Includes a **V2X Channel Load** panel (model estimate): vehicles in range (10–300) × 10 Hz BSMs × signature bytes vs the 6 Mbps IEEE 802.11p default rate
 3. **SafetyCryptoAnalyzer** — Map ASIL levels to crypto requirements; model worst-case ML-DSA verification latency on representative MCUs (Cortex-M7, RISC-V RH850, Aurix TC3xx); identify timing budget violations and mitigations
 4. **OTAOrchestrationPlanner** — Design 3-layer OTA signing chain with ML-DSA-87/65/44; simulate UNECE R156 compliance verification; model campaign rollout for a mixed fleet of 2M vehicles across 6 model years
 5. **CarKeyProtocolExplorer** — Step through CCC Digital Key 3.0 pairing and unlock flows with PQC key exchange; compare CPCQ hybrid vs. pure ML-KEM-768; test offline operation without network connectivity
@@ -30,11 +30,13 @@ Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptogra
 - **SAE autonomy levels**: Module uses SAE J3016 (2021). L2 (sedan), L3 conditional (SUV highway), L4 geofenced (shuttle, truck emerging). No L5 vehicles exist in production as of 2026. Higher autonomy increases quantum attack surface via more ECDSA sensor paths and mandatory V2X.
 - CAN-FD maximum payload: 64 bytes — ML-DSA-44 signature (2,420 bytes) requires 38 CAN-FD frames; use AUTOSAR SecOC with AES-CMAC-128 (16 bytes) for real-time CAN buses
 - Automotive Ethernet 100BASE-T1: 100 Mbps — ML-KEM-768 ciphertext (1,088 bytes) adds <0.1 ms overhead per session
-- **Algorithm benchmarks** are for ARM Cortex-A72 @ 2 GHz. Real automotive ECUs (Cortex-R52 @ 400 MHz) expect 5–20× slower. FN-DSA-512 and LMS timings are estimated from reference implementations, not validated on production automotive silicon.
+- **Algorithm benchmarks** in the Sensor Data Integrity step are for ARM Cortex-A72 @ 2 GHz. Real automotive ECUs (Cortex-R52 @ 400 MHz) expect 5–20× slower. FN-DSA-512 and LMS timings are estimated from reference implementations, not validated on production automotive silicon.
 - ML-DSA-44 verification time: ~2–4 ms on Cortex-A72; ~5–15 ms on Cortex-R52 — may exceed 5 ms ADAS timing budget on constrained MCUs
 - OTA update signing chain size: ML-DSA-87 (OEM root) + ML-DSA-65 (group CA) + ML-DSA-44 (delta) = cert chain ~14 KB over-the-air
 - Vehicle HNDL exposure: 2026 model year vehicle (expected service to 2041) — RSA/ECDSA OTA signing keys encrypted today could be broken by CRQC within 10–20 year window
 - V2X BSM: ~300-byte payload broadcast at 10 Hz per vehicle (~3 KB/s). PQC signature overhead (2,420 bytes ML-DSA-44) dwarfs the payload; constraint is signature + cert chain size, not payload budget.
+- **V2X channel load (model estimate)**: BSMs at 10 Hz (SAE J2945/1) against the 6 Mbps IEEE 802.11p default data rate. Signature bytes alone fill the channel at ~30 vehicles with ML-DSA-44 (2,420 B), ~112 with FN-DSA-512 (666 B), ~1,171 with ECDSA P-256 (64 B); 100 vehicles with ML-DSA-44 = 19.36 Mbps. The model ignores the BSM payload, IEEE 1609.2 headers, periodic certificate attachment and MAC/PHY/CSMA overhead, so real congestion starts well below these counts.
+- **DSRC → C-V2X**: in the US the FCC moved the 5.9 GHz ITS band from DSRC to C-V2X (ET Docket 19-138; 2020 order, finalized November 2024). 6 Mbps is the 802.11p (DSRC / ITS-G5) reference; C-V2X sidelink capacity differs, but kilobyte-scale per-message PQC signatures remain a channel-capacity problem either way.
 - CCC Digital Key 3.0 UWB ranging precision: ±10 cm — PQC key exchange must complete within 500 ms for passive entry user experience
 - UNECE R155 compliance: mandatory for new type approvals in 54 UNECE member states since July 2024; retroactive for existing types by July 2027
 - **Regulatory confidence**: UNECE R155/R156, ISO/SAE 21434, CNSA 2.0 are published. IEEE 1609.2-2025 specifies ECC and has no post-quantum amendment project. China GB/T, Japan NISC, TISAX v7 PQC dates are projected (no official timelines published).
@@ -60,7 +62,7 @@ Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptogra
 
 - `hsm-pqc` — automotive HSMs (Evita Full/Medium/Light) for OTA signing key storage
 - `kms-pqc` — OEM backend KMS for OTA campaign key management
-- `iot-ot-pqc` — overlapping ECU constraints with embedded IoT device patterns
+- `iot-pqc` — IoT & Embedded Device PQC: overlapping ECU constraints with embedded IoT device patterns
 - `hybrid-crypto` — CPCQ hybrid key agreement for CCC Digital Key during transition
 - `tls-basics` — Automotive Ethernet TLS 1.3 profile migration
 - `code-signing` — firmware signing for ECU software loads

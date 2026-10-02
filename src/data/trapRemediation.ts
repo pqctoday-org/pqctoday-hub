@@ -28,7 +28,7 @@ export const TRAP_REMEDIATION: Record<string, string> = {
   'Run an interview-only inventory': 'cbom',
   'Keep the inventory in a spreadsheet': 'cbom',
   'Wait for 100% completeness': 'data-asset-sensitivity',
-  'Skip OT and embedded systems': 'iot-ot-pqc',
+  'Skip OT and embedded systems': 'iot-pqc',
   'Trust a single discovery tool': 'cbom',
   'Rely on the CMDB alone for asset discovery': 'crypto-mgmt-modernization',
   'Treat discovery as one-time': 'cbom',

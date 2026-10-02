@@ -216,7 +216,7 @@ const PENDING_ORDERING_REVIEW: string[] = [
   //   APISecurityJWT             -> getStandard('RFC-9964')
   //   CryptoMgmtModernization    -> getStandard('FIPS-140-3-STANDARD')
   //                                 and getStandard('NIST-SP-800-131A-Rev3')
-  //   EnergyUtilities            -> getStandard('NIST SP 800-82 Rev. 3')
+  //   OTPQC                      -> getStandard('NIST SP 800-82 Rev. 3')
   //   OpsQuantumImpact           -> getStandard('NIST-SP-800-57-Pt1-R5')
   // The four-document sampler cap that made the ordering a dilemma was lifted on
   // 2026-08-22 (see the DECLARED notes in the module files), which is why

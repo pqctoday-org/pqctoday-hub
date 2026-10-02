@@ -920,19 +920,18 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 0,
     why: 'The planner back-dates a three-year design phase from launch: algorithm selection fills the first year, crypto library integration and DO-178C certification the second, key provisioning the last, so the algorithm choice must be locked three years out.',
   },
-  // energy-utilities-pqc
-  'energy-utilities-pqc/protocol-security-analyzer': {
-    prompt:
-      'Select IEC 61850 GOOSE and expand it. Which of its two crypto layers is tagged Quantum-safe, and why?',
+  // ot-pqc
+  'ot-pqc/protocol-security-analyzer': {
+    prompt: 'Expand IEC 61850 GOOSE. Which layer is marked quantum-exposed, and why?',
     options: [
-      'Message Authentication — HMAC-SHA256 is symmetric, so no PQC replacement is needed',
-      'Key Distribution — RSA-2048 certificates are already quantum-safe',
-      'Neither; both GOOSE layers are quantum-vulnerable',
+      'The per-frame HMAC/GMAC tag, because a quantum computer breaks HMAC-SHA256',
+      'Group key management: the GDOI key distribution centre registration (IEC 62351-9 / RFC 8052) uses public-key authentication',
+      'Nothing: GOOSE carries no cryptography at all',
     ],
-    answer: 0,
-    why: "Per-message GOOSE authentication is an HMAC, a symmetric construction that Shor's algorithm does not touch; the quantum exposure is the RSA-based key distribution that seeds those HMAC keys, which is why only that layer maps to ML-KEM-768.",
+    answer: 1,
+    why: 'The frame MAC is symmetric (HMAC-SHA256 or AES-GMAC per IEC 62351-6) and stays safe; the exposure is where group keys are handed out, because the GDOI registration with the key distribution centre is authenticated with classical public-key crypto.',
   },
-  'energy-utilities-pqc/substation-migration-planner': {
+  'ot-pqc/substation-migration-planner': {
     prompt:
       'Switch Connectivity to Air-Gapped. What does the Migration Summary say happens to the effort estimates?',
     options: [
@@ -943,83 +942,116 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: "Air-gapped sites cannot be reconfigured remotely, so every zone's hours are scaled up by half; serial links get a smaller 30% uplift, and fiber or cellular add nothing to the estimate.",
   },
-  'energy-utilities-pqc/smart-meter-key-manager': {
-    prompt:
-      'In the DLMS/COSEM Key Types table, which key wraps the GEK and GAK during key transport and is never transmitted in cleartext?',
-    options: ['GEK (Global Encryption Key)', 'KEK (Key Encryption Key)', 'HLS Secret'],
-    answer: 1,
-    why: 'The key-encryption key exists only to protect the other keys while they travel, which is why it rotates only on provisioning or compromise rather than annually like the global encryption and authentication keys.',
-  },
-  'energy-utilities-pqc/grid-migration-roadmap': {
-    prompt:
-      'Change Budget Level from Normal to Constrained. What changes on every phase in the Migration Gantt Chart?',
+  'iot-pqc/fleet-key-manager': {
+    prompt: 'With the default fleet, what limits how fast the keys can be rotated?',
     options: [
-      "Each phase's duration grows by 40%; its cost stays the same",
-      "Each phase's cost grows by 40%; its duration stays the same",
-      'Both cost and duration grow by 40%',
+      'The per-cell network capacity',
+      'The head-end HSM throughput',
+      'The rotation frequency setting',
+    ],
+    answer: 1,
+    why: 'Each cell needs about 16 minutes of airtime, but the head-end HSM needs about 1.1 hours of ML-KEM operations for the fleet, so the HSM sets the pace. This is a model estimate.',
+  },
+  'ot-pqc/sector-migration-roadmap': {
+    prompt: 'Raise the number of sites from 50 to 400. What now ends after the 2033 planning year?',
+    options: [
+      'Nothing: every phase still ends before 2033',
+      'The site-rollout phase, which stretches to 192 months so the programme ends in 2043',
+      'Only the inventory phase',
+    ],
+    answer: 1,
+    why: 'Site rollout scales with the number of sites; at 400 sites it runs 192 months, pushing the programme end to 2043, ten years past the planning year. This is a model estimate, not a forecast.',
+  },
+  'iot-pqc/lpwan-airtime': {
+    prompt:
+      'Choose NB-IoT with 2,000 devices: the PQC unicast update misses the window. What about the same update signed with ECDSA?',
+    options: [
+      'It fits easily',
+      'It also misses the window',
+      'It is blocked by the duty-cycle limit',
+    ],
+    answer: 1,
+    why: 'The firmware image is about 97% of the bytes, so swapping the signature barely changes airtime; unicast delivery to 2,000 devices misses the window either way. Multicast is what fixes it. This is a model estimate.',
+  },
+  // iot-pqc
+  'iot-pqc/constrained-algorithm': {
+    prompt: "Pick Class 1, role 'Device verifies' and the speed build. Which algorithms turn red?",
+    options: ['ML-DSA-44, -65 and -87', 'LMS and XMSS', 'FN-DSA-512 only'],
+    answer: 0,
+    why: 'The speed-optimised ML-DSA builds need several KB of stack plus key and signature buffers, more than a ~10 KiB Class 1 device has; hash-based and FN-DSA verifiers stay small. Switch to the stack build to see the difference.',
+  },
+  'iot-pqc/firmware-signing': {
+    prompt: 'Which algorithms does the step mark as accepted for CNSA 2.0 firmware signing?',
+    options: ['LMS, XMSS and ML-DSA-87', 'Every ML-DSA parameter set', 'FN-DSA-512 and ML-DSA-44'],
+    answer: 0,
+    why: 'CNSA 2.0 accepts ML-DSA-87, or LMS/XMSS per NIST SP 800-208, for software and firmware signing: preferred from 2025, exclusive by 2030.',
+  },
+  'iot-pqc/constrained-handshake': {
+    prompt: 'Why is the EDHOC exchange so much smaller than DTLS 1.3 with certificates?',
+    options: [
+      'EDHOC compresses PQC signatures',
+      'EDHOC can send credentials by reference (a key identifier), so no certificate chain travels',
+      'EDHOC skips the key exchange',
+    ],
+    answer: 1,
+    why: 'EDHOC (RFC 9528) messages can carry a kid instead of a full certificate, so the chain never crosses the radio; the KEM key, ciphertext and signatures still do.',
+  },
+  'iot-pqc/cert-chain': {
+    prompt:
+      'Set the root to ML-DSA-87 and the intermediate to ML-DSA-44. Why is the intermediate certificate 6,239 bytes?',
+    options: [
+      'Its own public key is counted twice',
+      "It carries the root's 4,627-byte ML-DSA-87 signature",
+      'The root certificate is embedded inside it',
+    ],
+    answer: 1,
+    why: "A certificate holds its issuer's signature (RFC 5280 signatureValue), so the intermediate carries ML-DSA-87's 4,627 bytes next to its own 1,312-byte ML-DSA-44 key.",
+  },
+  'ot-pqc/zone-conduit-planner': {
+    prompt: 'At the defaults, what drives the score of the Basic control zone?',
+    options: [
+      'Harvest-now-decrypt-later exposure (score 90)',
+      'Forgery risk (score 90); its HNDL score is 0',
+      'Internet exposure of the zone',
+    ],
+    answer: 1,
+    why: 'Basic control carries commands and firmware, so the quantum threat is forged commands or forged firmware rather than decrypted traffic; the planner scores it 90 on the forgery axis and 0 on HNDL. Level 0–1 is no longer ranked low.',
+  },
+  'ot-pqc/safety-consequence-scorer': {
+    prompt:
+      'Pick the gas pipeline scenario and switch its firmware signing to LMS/ML-DSA. What happens to the score?',
+    options: [
+      'It drops from 46 to 9 (low)',
+      'It stays at 46: firmware signing does not change consequence',
+      'It rises, because PQC signatures are larger',
     ],
     answer: 0,
-    why: "Budget in this planner is a pacing lever: a constrained budget stretches each phase's months by a factor of 1.4, while the dollar estimate is driven only by service-territory size, so the cost labels do not move.",
+    why: 'Quantum-resistant firmware signatures remove the forged-firmware path, which carried most of the scenario score; the remaining risk is low. This is a model estimate.',
   },
-  'energy-utilities-pqc/rf-mesh-simulator': {
-    prompt: "What condition makes the simulator declare 'Mesh Collapse'?",
-    options: [
-      'ToA per meter exceeds 10 seconds',
-      'A Pure PQC payload is selected',
-      'Total Cell Time exceeds the 24-hour reporting window',
-    ],
-    answer: 2,
-    why: "Every meter's time-on-air is summed as if the cell were perfectly scheduled; once that total overruns the daily window the meters can never all report, which is the collapse. A per-meter ToA above 10 s only raises the separate battery-drain warning.",
-  },
-  // iot-ot-pqc
-  'iot-ot-pqc/constrained-algorithm': {
+  'ot-pqc/firmware-project-signing-lab': {
     prompt:
-      "Select Class 0 (2 KB RAM). Which is the only PQC signature algorithm that shows 'Fits'?",
-    options: ['XMSS (H10)', 'FN-DSA-512', 'LMS (H10/W4)'],
-    answer: 2,
-    why: 'LMS is the smallest PQC verifier at about half a kilobyte of RAM and a 56-byte public key; XMSS and FN-DSA start at Class 1, and no PQC KEM fits Class 0 at all, so key exchange there needs pre-shared keys or a gateway.',
-  },
-  'iot-ot-pqc/firmware-signing': {
-    prompt:
-      "After signing, which algorithm choices show a 'State counter … (monotonic, never rollback)' line under the signing step?",
-    options: ['ML-DSA-44 and ML-DSA-65', 'LMS / HSS and XMSS', 'All four algorithms'],
-    answer: 1,
-    why: 'Hash-based LMS and XMSS are stateful one-time-signature trees: reusing a leaf index leaks the key, so the signer must advance a monotonic counter kept in a TPM or secure element on every signature. ML-DSA is stateless and needs no counter.',
-  },
-  'iot-ot-pqc/dtls-handshake': {
-    prompt:
-      'Whichever KEM and signature you pick, which DTLS 1.3 handshake message is drawn as the largest bar?',
-    options: [
-      'ClientHello — it carries the KEM public key',
-      'Certificate — it carries three public keys and two chain signatures',
-      'CertificateVerify — it carries the fresh handshake signature',
-    ],
-    answer: 1,
-    why: "The certificate chain multiplies the signature algorithm's sizes: three certificates each carry a public key and two carry an issuer signature, so with ML-DSA-44 that one message tops 9 KB while CertificateVerify holds a single signature.",
-  },
-  'iot-ot-pqc/cert-chain-bloat': {
-    prompt: 'Which mitigation shows the largest reduction, and why can it be that large?',
-    options: [
-      'Merkle Tree Certificates (−85%) — Merkle proofs replace the leaf signatures',
-      'Certificate Compression (−30%) — Brotli shrinks the chain',
-      'Session Resumption (PSK) (−90%) — no certificates are sent at all on reconnection',
-    ],
-    answer: 2,
-    why: "Resuming with a pre-shared key skips the certificate exchange entirely, so the chain's size stops mattering on reconnects; the other mitigations still ship a chain, just a smaller one.",
-  },
-  'iot-ot-pqc/scada-assessment': {
-    prompt:
-      "Which posture makes a Purdue layer's Migration Priority drop to 0 and show 'Quantum-resistant'?",
-    options: ['PQC Hybrid (ML-KEM + X25519)', 'TLS 1.3 (X25519)', 'ECDSA P-256 / TLS 1.3'],
+      'Choose LMS H10 for project signing at 5,000 signatures a year with one HSM. How long does the key last?',
+    options: ['About 0.2 years', 'About 2 years', 'About 20 years'],
     answer: 0,
-    why: "TLS 1.3 on its own still keys the session with X25519, which Shor's algorithm breaks; only the hybrid that adds ML-KEM is treated as non-vulnerable, which zeroes the score regardless of internet exposure or asset lifetime.",
+    why: 'LMS with tree height 10 has 2^10 = 1,024 one-time signatures; at 5,000 a year the key is exhausted in about 0.2 years, which is why high-volume signing needs a taller tree or HSS.',
   },
-  'iot-ot-pqc/hardware-constraints': {
+  'secure-boot-pqc/boot-verify-latency': {
     prompt:
-      'In the Secure Boot Delay Calculator, which algorithm shows the fewest verification Cycles?',
-    options: ['ECDSA P-256', 'ML-DSA-44', 'RSA-3072'],
+      'At the defaults (2 MB/s SPI flash, 120 MHz), which algorithm has the longest Verify time in the comparison table?',
+    options: [
+      'ML-DSA-44 — its 2,420-byte signature makes it the slowest',
+      'LMS H10/W4 — hash-based verification needs thousands of hash calls',
+      'RSA-3072 — about 25 M cycles in software, roughly 211 ms at 120 MHz',
+    ],
     answer: 2,
-    why: 'RSA verification is one modular exponentiation with a tiny public exponent, about 100k cycles here; ECDSA verification needs two scalar multiplications (2M cycles) and ML-DSA-44 sits between at 400k. Verify time is those cycles divided by the MCU clock.',
+    why: 'Verify time is cycles divided by clock. On a Cortex-M4, software RSA-3072 verify costs about 25 M cycles (Oryx STM32G4: 149 ms at 170 MHz), against ~1.42 M for ML-DSA-44 (pqm4) and ~2.66 M for LMS H10/W4 (ePrint 2020/470). Signature size mostly affects flash read time, which is under 2 ms for every algorithm here.',
+  },
+  'automotive-pqc/sensor-data-integrity': {
+    prompt:
+      'In the V2X Channel Load panel, at roughly how many vehicles do ML-DSA-44 signatures alone fill the 6 Mbps channel?',
+    options: ['About 30', 'About 112', 'About 1,171'],
+    answer: 0,
+    why: 'Each vehicle sends 10 BSMs per second, so ML-DSA-44 adds 10 × 2,420 bytes × 8 = 193.6 kbps per vehicle; 6 Mbps divided by that is about 31, so ~30 vehicles saturate the channel on signature bytes alone. 112 is the FN-DSA-512 figure and 1,171 the ECDSA P-256 one; the model ignores payload, headers, certificates and MAC overhead, so real congestion comes sooner.',
   },
   // ai-security-pqc
   'ai-security-pqc/agentic-commerce-simulator': {

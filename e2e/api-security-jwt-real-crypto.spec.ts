@@ -180,7 +180,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await expect(page.locator('pre').filter({ hasText: /"sub"/ })).toBeVisible()
   })
 
-  test('JWEEncryption runs HPKE-12 with ML-KEM-768 inside SoftHSM3 (PKCS#11 encapsulate/decapsulate)', async ({
+  test('JWEEncryption runs HPKE-12 and HPKE-9 entirely inside SoftHSM3 (CKM_HPKE + AES-GCM in the token)', async ({
     page,
   }) => {
     await openWorkshop(page)
@@ -191,18 +191,39 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     await page.getByRole('button', { name: /SoftHSM3 \(PKCS#11 v3\.2 WASM\)/ }).click()
 
-    // Encrypt is enabled only once the PKCS#11 engine has a session.
-    const encrypt = page.getByRole('button', { name: 'Encrypt JWT Payload' })
-    await expect(encrypt).toBeEnabled({ timeout: 40_000 })
-    await encrypt.click()
+    // Both suites, including the X-Wing hybrid, run in the token since hsm #310
+    // (SHAKE256 KDF). Encrypted Key = encapsulated secret: 1088 B for ML-KEM-768,
+    // 1120 B for MLKEM768-X25519.
+    for (const [suite, encBytes] of [
+      [/HPKE-12 · ML-KEM-768 \(pure PQ\)/, 1088],
+      [/HPKE-9 · ML-KEM-768 \+ X25519/, 1120],
+    ] as const) {
+      await page.getByRole('button', { name: suite }).click()
+      // Encrypt is enabled only once the PKCS#11 engine has a session.
+      const encrypt = page.getByRole('button', { name: 'Encrypt JWT Payload' })
+      await expect(encrypt).toBeEnabled({ timeout: 40_000 })
+      await encrypt.click()
 
-    await expect(page.getByText(/private key stays in SoftHSM3/)).toBeVisible({ timeout: 40_000 })
-    await expect(page.getByText(/Encrypted Key = HPKE encapsulated secret, 1088 B/)).toBeVisible()
+      await expect(page.getByText(/private key \(seed\) stays in SoftHSM3/)).toBeVisible({
+        timeout: 40_000,
+      })
+      await expect(
+        page.getByText(new RegExp(`Encrypted Key = HPKE encapsulated secret, ${encBytes} B`))
+      ).toBeVisible()
 
-    // C_DecapsulateKey + HPKE key schedule + AES-GCM: a wrong shared secret fails the tag.
-    await page.getByRole('button', { name: /^Decrypt$/ }).click()
-    await expect(page.getByText('GCM tag verified')).toBeVisible({ timeout: 40_000 })
-    await expect(page.getByText(/C_DecapsulateKey → SHAKE256 key schedule/)).toBeVisible()
+      // C_DecapsulateKey(CKM_HPKE) + C_Decrypt on the token's AES key: a wrong key fails the tag.
+      await page.getByRole('button', { name: /^Decrypt$/ }).click()
+      await expect(page.getByText('GCM tag verified')).toBeVisible({ timeout: 40_000 })
+      await expect(
+        page.getByText(/C_DecapsulateKey\(CKM_HPKE: Decap \+ SHAKE256 key schedule, in the token\)/)
+      ).toBeVisible()
+    }
+
+    // The published HPKE-9 example: seed imported into the token, opened there.
+    await page.getByRole('button', { name: 'Decrypt the published HPKE-9 example' }).click()
+    await expect(
+      page.getByText(/Decrypted the HPKE-9 example .* inside SoftHSM3 .* plaintext matches/)
+    ).toBeVisible({ timeout: 40_000 })
   })
 
   test('JWEEncryption decrypts the published draft-ietf-jose-hpke-pq-pqt-01 examples (HPKE-12 and HPKE-9)', async ({

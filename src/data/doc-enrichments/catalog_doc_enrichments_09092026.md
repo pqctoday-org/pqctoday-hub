@@ -366,7 +366,7 @@ enrichment_method: example-echo cleanup (priv 3d3ae9f0) — no model was run. On
 - **Performance & Size Considerations**: Kyber keys are an order of magnitude larger than ECDSA; Hybrid SPKI is several times heavier than classical structures; CSR size exceeds previous boundaries; Larger handshake packets trigger buffer issues on IoT devices
 - **Target Audience**: Security Architect, Developer, DevOps Engineer, Compliance Officer
 - **Implementation Prerequisites**: OpenSSL 3.x; updated cryptographic libraries; modernized DevOps pipelines; compatible K8s controllers; HSM resources supporting PQC; updated edge devices
-- **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, iot-ot-pqc
+- **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit, algorithm enumeration, deprecated cipher detection
 - **Testing & Validation Methods**: conformance testing, interoperability testing, regression testing
@@ -582,7 +582,7 @@ enrichment_method: example-echo cleanup (priv 3d3ae9f0) — no model was run. On
 - **Performance & Size Considerations**: 17 times faster computation with hardware and software vs software only; ML_DSA65 signature software only 335.97ms; ML_DSA65 signature hardware and software 19.02ms at 200MHz; minimum attack resistance time for EAL 4+ is one week (168 hours)
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats, Algorithms, Compliance, iot-ot-pqc, pqc-risk-management
+- **Relevant PQC Today Features**: Threats, Algorithms, Compliance, iot-pqc, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected

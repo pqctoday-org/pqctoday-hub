@@ -21,6 +21,16 @@
 // default engine); the C++ pass is asserted here but not recorded.
 //
 // Venue: `*.local.test.ts` — local gate only (directive 2026-07-01).
+//
+// Known engine issue (open, 2026-10-02): on the C++ engine a valid
+// C_Verify(CKM_HSS) corrupts later HMAC cases in the same session (HMAC verify
+// rejects the ACVP MAC; HMAC sign → CKR_KEY_HANDLE_INVALID). Rust is unaffected.
+// kat.lms-sigver runs in its own session for that reason (runLMSSigVerKAT);
+// if this suite's C++ HMAC cases start failing, check that isolation first.
+// Root cause: Session::resetOp() (softhsm src/lib/session_mgr/Session.cpp) never
+// resets the stateful mechanism (1000-1002) that StatefulVerifyInit/SignInit set,
+// and C_Sign/C_Verify (SoftHSM_sign.cpp) test it before getMacOp(), so later HMAC
+// ops are routed to the stateful path. Affects HSS, XMSS, XMSS^MT. Fix pending.
 import { createHash } from 'node:crypto'
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'

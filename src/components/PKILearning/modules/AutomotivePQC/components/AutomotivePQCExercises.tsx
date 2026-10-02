@@ -55,6 +55,17 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       config: { step: 1 },
     },
     {
+      id: 'v2x-channel-load',
+      title: '2b. V2X Channel Load — How many PQC-signed vehicles fit on one channel?',
+      description:
+        'Scroll to the V2X Channel Load panel in the Sensor Data Integrity Simulator. At the default 100 vehicles, compare ECDSA P-256, FN-DSA-512 and ML-DSA-44 signatures against the 6 Mbps IEEE 802.11p default rate, then move the slider to find where each one fills the channel.',
+      badge: 'V2X',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      observe:
+        'At 10 Hz BSMs, signature bytes alone fill 6 Mbps at about 1,171 vehicles for ECDSA P-256, about 112 for FN-DSA-512 and only about 30 for ML-DSA-44 — 100 vehicles with ML-DSA-44 is 19.36 Mbps. This is a model estimate that ignores the BSM payload, 1609.2 headers, certificate attachment and MAC/PHY/CSMA overhead, so a real channel congests sooner. The US has moved from DSRC to C-V2X (FCC ET Docket 19-138), but the capacity problem carries over.',
+      config: { step: 1 },
+    },
+    {
       id: 'asil-d-braking-crypto',
       title:
         '3. ASIL-D Braking Crypto Verification — Validate PQC timing for safety-critical braking',
@@ -114,9 +125,9 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to explore zonal architecture crypto audits, sensor signing
-          throughput, safety-critical timing, OTA campaigns, car key protocols, and vehicle
-          lifecycle planning. Each exercise pre-configures the Workshop &mdash; click &quot;Load
-          &amp; Run&quot; to begin.
+          throughput, V2X channel load, safety-critical timing, OTA campaigns, car key protocols,
+          and vehicle lifecycle planning. Each exercise pre-configures the Workshop &mdash; click
+          &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 
@@ -164,10 +175,10 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Button
             variant="ghost"
-            onClick={() => navigate('/learn/iot-ot-pqc')}
+            onClick={() => navigate('/learn/iot-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
-            IoT &amp; OT Security <ArrowRight size={14} />
+            IoT &amp; Embedded Device PQC <ArrowRight size={14} />
           </Button>
           <Button
             variant="ghost"

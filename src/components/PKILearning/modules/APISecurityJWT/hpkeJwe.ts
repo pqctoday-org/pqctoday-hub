@@ -11,7 +11,12 @@
  * The HPKE key schedule comes from the `hpke` package. Its built-in ML-KEM and
  * cSHAKE need WebCrypto "Modern Algorithms", which most browsers (and Node 20)
  * lack, so the KEMs and the KDF are plugged in from @noble/post-quantum and
- * @noble/hashes. A SoftHSM-backed ML-KEM-768 KEM can be swapped in for HPKE-12.
+ * @noble/hashes.
+ *
+ * The SoftHSM backend does not use the `hpke` package at all: the whole HPKE
+ * operation (Encap/Decap, the SHAKE256 key schedule and AES-256-GCM) runs
+ * inside the token through PKCS#11 CKM_HPKE — see HsmHpkeOps and
+ * hpkeJweHsm.ts. This file then only does the JWE wiring around it.
  *
  * Verified against the draft's own published examples
  * (src/data/acvp/jose-hpke-pq-pqt-01-examples.json, hpkeJwe.test.ts).
@@ -70,6 +75,10 @@ export const HPKE_JWE_SPEC = {
   suites: 'draft-ietf-jose-hpke-pq-pqt-01',
 } as const
 
+/** Both suites: one-stage SHAKE256 KDF (kdf_id 0x0011) and AES-256-GCM (aead_id 0x0002). */
+export const HPKE_JWE_KDF_ID = 0x0011
+export const HPKE_JWE_AEAD_ID = 0x0002
+
 // ── Plug-in primitives ──────────────────────────────────────────────────────
 
 /** SHAKE256 single-stage HPKE KDF (id 0x0011): Derive(ikm, L) = SHAKE256(ikm, L). */
@@ -95,8 +104,6 @@ export interface HpkeKey extends HPKE.Key {
   readonly bytes: Uint8Array
   /** Expanded noble secret key (private keys only). */
   readonly sk?: Uint8Array
-  /** SoftHSM object handle, when the key lives in the HSM. */
-  readonly handle?: number
 }
 
 function makeKey(
@@ -170,49 +177,37 @@ const NOBLE_KEMS: Record<HpkeJweAlg, HPKE.KEMFactory> = {
   'HPKE-9': nobleKem(HPKE_JWE_SUITES['HPKE-9'], ml_kem768_x25519),
 }
 
-/** PKCS#11 operations an HSM-backed ML-KEM-768 KEM needs. Keys stay in the HSM:
- *  only the public key value and the per-message shared secret leave it. */
-export interface HsmMlKemOps {
-  encapsulate(pubHandle: number): { enc: Uint8Array; sharedSecret: Uint8Array }
-  decapsulate(privHandle: number, enc: Uint8Array): Uint8Array
-}
-
-/** ML-KEM-768 KEM backed by SoftHSM (HPKE-12 only — the HSM has no X-Wing). */
-export function hsmMlKem768(ops: HsmMlKemOps): HPKE.KEMFactory {
-  const base = NOBLE_KEMS['HPKE-12']()
-  return () => ({
-    ...base,
-    async Encap(pkR: HPKE.Key) {
-      const handle = (pkR as HpkeKey).handle
-      if (handle === undefined) throw new Error('HSM public key handle missing')
-      const { enc, sharedSecret } = ops.encapsulate(handle)
-      return { enc, shared_secret: sharedSecret }
-    },
-    async Decap(enc: Uint8Array, skR: HPKE.Key) {
-      const handle = (skR as HpkeKey).handle
-      if (handle === undefined) throw new Error('HSM private key handle missing')
-      return ops.decapsulate(handle, enc)
-    },
-  })
-}
-
-/** Key objects that point at SoftHSM handles, for use with hsmMlKem768(). */
-export function hsmKeyPair(publicKey: Uint8Array, pubHandle: number, privHandle: number) {
-  const name = HPKE_JWE_SUITES['HPKE-12'].kemName
-  return {
-    publicKey: makeKey(name, 'public', publicKey, { handle: pubHandle }),
-    privateKey: makeKey(name, 'private', new Uint8Array(0), { handle: privHandle }),
-  }
+/**
+ * HPKE single-shot Seal/Open run entirely inside an HSM (PKCS#11 CKM_HPKE,
+ * base mode, empty info). Encap/Decap, the key schedule and AES-256-GCM all
+ * happen in the token, and the AEAD key is a non-extractable key object: only
+ * the encapsulated secret, the ciphertext and the plaintext cross the
+ * boundary. Implementations MUST NOT pass a forced ephemeral seed — that hook
+ * is for known-answer tests only.
+ */
+export interface HsmHpkeOps {
+  seal(
+    alg: HpkeJweAlg,
+    pubHandle: number,
+    aad: Uint8Array,
+    plaintext: Uint8Array
+  ): { enc: Uint8Array; ciphertext: Uint8Array }
+  open(
+    alg: HpkeJweAlg,
+    privHandle: number,
+    enc: Uint8Array,
+    aad: Uint8Array,
+    ciphertext: Uint8Array
+  ): Uint8Array
 }
 
 /** Copy into this realm's Uint8Array: `hpke` checks `instanceof Uint8Array`, and
  *  TextEncoder output can come from another realm (jsdom under Node). */
 const u8 = (b: Uint8Array): Uint8Array => new Uint8Array(b)
-const isBytes = (k: unknown): k is Uint8Array => ArrayBuffer.isView(k)
 const utf8 = (s: string): Uint8Array => u8(new TextEncoder().encode(s))
 
-function suiteFor(alg: HpkeJweAlg, kem?: HPKE.KEMFactory) {
-  return new HPKE.CipherSuite(kem ?? NOBLE_KEMS[alg], KDF_SHAKE256, HPKE.AEAD_AES_256_GCM)
+function suiteFor(alg: HpkeJweAlg) {
+  return new HPKE.CipherSuite(NOBLE_KEMS[alg], KDF_SHAKE256, HPKE.AEAD_AES_256_GCM)
 }
 
 // ── Keys ────────────────────────────────────────────────────────────────────
@@ -259,6 +254,27 @@ export interface HpkeJweEncryptResult {
   header: { alg: HpkeJweAlg; kid?: string }
 }
 
+function protectedHeader(alg: HpkeJweAlg, kid?: string) {
+  const header = kid ? { alg, kid } : { alg }
+  return { header, headerB64: base64urlEncode(utf8(JSON.stringify(header))) }
+}
+
+function compact(
+  headerB64: string,
+  encapsulatedKey: Uint8Array,
+  ciphertext: Uint8Array,
+  header: { alg: HpkeJweAlg; kid?: string }
+): HpkeJweEncryptResult {
+  const token = [
+    headerB64,
+    base64urlEncode(encapsulatedKey),
+    '',
+    base64urlEncode(ciphertext),
+    '',
+  ].join('.')
+  return { token, headerB64, encapsulatedKey, ciphertext, header }
+}
+
 /**
  * JWE Compact Serialization with HPKE Integrated Encryption (-22 §5, §7.1):
  * protected header {alg[, kid]} with no "enc" and no "ek"; Encrypted Key =
@@ -268,28 +284,36 @@ export interface HpkeJweEncryptResult {
 export async function hpkeJweEncrypt(opts: {
   alg: HpkeJweAlg
   plaintext: Uint8Array
-  /** Recipient public key bytes, or a prepared key object (e.g. HSM-backed). */
-  publicKey: Uint8Array | HpkeKey
+  /** Recipient public key bytes. */
+  publicKey: Uint8Array
   kid?: string
-  kem?: HPKE.KEMFactory
 }): Promise<HpkeJweEncryptResult> {
-  const suite = suiteFor(opts.alg, opts.kem)
-  const pkR = isBytes(opts.publicKey)
-    ? await suite.DeserializePublicKey(u8(opts.publicKey))
-    : opts.publicKey
-  const header = opts.kid ? { alg: opts.alg, kid: opts.kid } : { alg: opts.alg }
-  const headerB64 = base64urlEncode(utf8(JSON.stringify(header)))
+  const suite = suiteFor(opts.alg)
+  const pkR = await suite.DeserializePublicKey(u8(opts.publicKey))
+  const { header, headerB64 } = protectedHeader(opts.alg, opts.kid)
   const { encapsulatedSecret, ciphertext } = await suite.Seal(pkR, u8(opts.plaintext), {
     aad: utf8(headerB64),
   })
-  const token = [
-    headerB64,
-    base64urlEncode(encapsulatedSecret),
-    '',
-    base64urlEncode(ciphertext),
-    '',
-  ].join('.')
-  return { token, headerB64, encapsulatedKey: encapsulatedSecret, ciphertext, header }
+  return compact(headerB64, encapsulatedSecret, ciphertext, header)
+}
+
+/** Same JWE as hpkeJweEncrypt, with the HPKE Seal run inside the HSM. */
+export function hpkeJweEncryptInHsm(opts: {
+  alg: HpkeJweAlg
+  plaintext: Uint8Array
+  hsm: HsmHpkeOps
+  /** Recipient public key handle (CKK_HPKE_KEM). */
+  pubHandle: number
+  kid?: string
+}): HpkeJweEncryptResult {
+  const { header, headerB64 } = protectedHeader(opts.alg, opts.kid)
+  const { enc, ciphertext } = opts.hsm.seal(
+    opts.alg,
+    opts.pubHandle,
+    utf8(headerB64),
+    u8(opts.plaintext)
+  )
+  return compact(headerB64, enc, ciphertext, header)
 }
 
 // ── Decrypt ─────────────────────────────────────────────────────────────────
@@ -328,27 +352,48 @@ function parseProtected(b64: string): ParsedHeader {
   return header as ParsedHeader
 }
 
-async function open(
-  alg: HpkeJweAlg,
-  enc: Uint8Array,
-  ciphertext: Uint8Array,
-  aad: Uint8Array,
-  privateKey: Uint8Array | HpkeKey,
-  kem?: HPKE.KEMFactory
-): Promise<Uint8Array> {
+function checkEncLength(alg: HpkeJweAlg, enc: Uint8Array) {
   if (enc.length !== HPKE_JWE_SUITES[alg].Nenc) {
     throw new HpkeJweError(
       `Encrypted Key must be the ${HPKE_JWE_SUITES[alg].Nenc}-byte encapsulated secret for ${alg}`
     )
   }
-  const suite = suiteFor(alg, kem)
-  const skR = isBytes(privateKey)
-    ? await suite.DeserializePrivateKey(u8(privateKey), true)
-    : privateKey
+}
+
+const OPEN_FAILED = 'HPKE open failed: wrong key, or the token was modified'
+
+async function open(
+  alg: HpkeJweAlg,
+  enc: Uint8Array,
+  ciphertext: Uint8Array,
+  aad: Uint8Array,
+  privateKey: Uint8Array
+): Promise<Uint8Array> {
+  checkEncLength(alg, enc)
+  const suite = suiteFor(alg)
+  const skR = await suite.DeserializePrivateKey(u8(privateKey), true)
   try {
     return await suite.Open(skR, u8(enc), u8(ciphertext), { aad: u8(aad) })
   } catch {
-    throw new HpkeJweError('HPKE open failed: wrong key, or the token was modified')
+    throw new HpkeJweError(OPEN_FAILED)
+  }
+}
+
+/** -22 §7.2 compact parsing and header checks, shared by both backends. */
+function parseCompact(token: string, alg: HpkeJweAlg) {
+  const parts = token.split('.')
+  if (parts.length !== 5) throw new HpkeJweError('JWE Compact Serialization must have 5 parts')
+  const [headerB64, ekB64, ivB64, ctB64, tagB64] = parts
+  const header = parseProtected(headerB64)
+  checkIntegratedHeader(header, [alg])
+  if (ivB64 !== '' || tagB64 !== '') {
+    throw new HpkeJweError('JWE Initialization Vector and Authentication Tag MUST be empty')
+  }
+  return {
+    header,
+    aad: utf8(headerB64),
+    enc: base64urlDecode(ekB64),
+    ciphertext: base64urlDecode(ctB64),
   }
 }
 
@@ -356,25 +401,30 @@ export async function hpkeJweDecrypt(opts: {
   token: string
   /** The recipient's key algorithm — the token's "alg" must equal it. */
   alg: HpkeJweAlg
-  privateKey: Uint8Array | HpkeKey
-  kem?: HPKE.KEMFactory
+  /** The KEM seed (SerializePrivateKey). */
+  privateKey: Uint8Array
 }): Promise<{ plaintext: Uint8Array; header: ParsedHeader }> {
-  const parts = opts.token.split('.')
-  if (parts.length !== 5) throw new HpkeJweError('JWE Compact Serialization must have 5 parts')
-  const [headerB64, ekB64, ivB64, ctB64, tagB64] = parts
-  const header = parseProtected(headerB64)
-  checkIntegratedHeader(header, [opts.alg])
-  if (ivB64 !== '' || tagB64 !== '') {
-    throw new HpkeJweError('JWE Initialization Vector and Authentication Tag MUST be empty')
+  const { header, aad, enc, ciphertext } = parseCompact(opts.token, opts.alg)
+  const plaintext = await open(opts.alg, enc, ciphertext, aad, opts.privateKey)
+  return { plaintext, header }
+}
+
+/** Same checks as hpkeJweDecrypt, with the HPKE Open run inside the HSM. */
+export function hpkeJweDecryptInHsm(opts: {
+  token: string
+  alg: HpkeJweAlg
+  hsm: HsmHpkeOps
+  /** Recipient private key handle (CKK_HPKE_KEM). */
+  privHandle: number
+}): { plaintext: Uint8Array; header: ParsedHeader } {
+  const { header, aad, enc, ciphertext } = parseCompact(opts.token, opts.alg)
+  checkEncLength(opts.alg, enc)
+  let plaintext: Uint8Array
+  try {
+    plaintext = opts.hsm.open(opts.alg, opts.privHandle, enc, aad, ciphertext)
+  } catch {
+    throw new HpkeJweError(OPEN_FAILED)
   }
-  const plaintext = await open(
-    opts.alg,
-    base64urlDecode(ekB64),
-    base64urlDecode(ctB64),
-    utf8(headerB64),
-    opts.privateKey,
-    opts.kem
-  )
   return { plaintext, header }
 }
 
@@ -393,7 +443,7 @@ export interface FlattenedJwe {
 export async function hpkeJweDecryptFlattened(opts: {
   jwe: FlattenedJwe
   alg: HpkeJweAlg
-  privateKey: Uint8Array | HpkeKey
+  privateKey: Uint8Array
 }): Promise<{ plaintext: Uint8Array; header: ParsedHeader }> {
   const { jwe } = opts
   const header = {

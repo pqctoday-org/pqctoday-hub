@@ -331,10 +331,10 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'JWT/JWS/JWE with PQC algorithms, JOSE header changes, ML-DSA token signing, ML-KEM key agreement, and OAuth 2.0 migration.',
       icon: 'KeyRound',
     },
-    'iot-ot-pqc': {
-      label: 'IoT & OT Security',
+    'iot-pqc': {
+      label: 'IoT & Embedded Device PQC',
       description:
-        'PQC for constrained devices, RFC 7228 device classes, firmware signing, DTLS 1.3, certificate chain bloat, and SCADA migration.',
+        'PQC for constrained devices: algorithm fit by device class, firmware signing (SUIT/COSE), DTLS 1.3 and EDHOC, certificate size, device identity, fleet keys, and IoT regulation.',
       icon: 'Cpu',
     },
     'pqc-risk-management': {
@@ -391,10 +391,10 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'PQC deployment at web gateways, CDNs, load balancers, and WAFs: TLS termination, certificate lifecycle, and vendor migration.',
       icon: 'Globe',
     },
-    'energy-utilities-pqc': {
-      label: 'Energy & Utilities PQC',
+    'ot-pqc': {
+      label: 'OT & Industrial Control Systems PQC',
       description:
-        'NERC CIP compliance, IEC 61850/62351 substation security, DNP3/DLMS/COSEM protocol hardening, smart meter key management, and safety risk scoring.',
+        'IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety timing, PLC signing, NERC CIP and NIS2.',
       icon: 'Zap',
     },
     'emv-payment-pqc': {

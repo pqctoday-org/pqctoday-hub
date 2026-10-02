@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "03bfd46d07f34bf3e66d1824dcb3a90515457f93e9b32227b54715f267454e44",
-    "registrySha256": "cbed2db1f7d410a96527620392c065b9e2acc30aa5b651b9d1311d8a2661cc4c"
+    "manifestSha256": "a66f85bd5fc80426d6f902bbe58bc5be0cb244c352223b196c0f7dae3c834df8",
+    "registrySha256": "9d5bf45b8794589f00c0d55415481e359ca145c1bd408eb3c24641cd37199c64"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -888,6 +888,52 @@
         "subset: 1 case (upstream tcId 3) taken from upstream tgId 1 (150 cases in that group; 150 in the upstream file).",
         "field-drop: upstream fields not carried: keyLen, msgLen",
         "operation-change: Upstream AFT expects MAC generation; the hub imports the key and runs C_Verify (CKM_SHA*_HMAC_GENERAL, truncated macLen) with the upstream mac as a positive verification tuple."
+      ]
+    },
+    "kat.lms-sigver#local:kat.lms-sigver/tc1": {
+      "id": "kat.lms-sigver#local:kat.lms-sigver/tc1",
+      "test": "kat.lms-sigver",
+      "title": "HSS/LMS verify, RFC 8554 Appendix F Test Cases 1-2",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.lms-sigver/tc1",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "RFC 8554 Appendix F, Test Case 1",
+        "url": "https://www.rfc-editor.org/rfc/rfc8554#appendix-F"
+      },
+      "exercises": [
+        "CKM_HSS verify"
+      ],
+      "limitations": [
+        "Inputs in src/data/kat/lms_hss_rfc8554.json (outside the src/data/acvp vector manifest)."
+      ]
+    },
+    "kat.lms-sigver#local:kat.lms-sigver/tc2": {
+      "id": "kat.lms-sigver#local:kat.lms-sigver/tc2",
+      "test": "kat.lms-sigver",
+      "title": "HSS/LMS verify, RFC 8554 Appendix F Test Cases 1-2",
+      "runner": "katRunner",
+      "engines": [
+        "rust"
+      ],
+      "caseId": "local:kat.lms-sigver/tc2",
+      "evidenceClass": "published-standard-kat",
+      "polarity": "positive",
+      "parameters": {},
+      "source": {
+        "citation": "RFC 8554 Appendix F, Test Case 2",
+        "url": "https://www.rfc-editor.org/rfc/rfc8554#appendix-F"
+      },
+      "exercises": [
+        "CKM_HSS verify"
+      ],
+      "limitations": [
+        "Inputs transcribed from RFC 8554 Appendix F (RFC8554_TC2 in src/utils/katRunner.ts); outside the src/data/acvp vector manifest."
       ]
     },
     "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44": {
@@ -3232,6 +3278,12 @@
     "hmac-verify;hashAlg=SHA-512": [
       "kat.hmac-verify#hmac_sha512_test#/testGroups/0/tests/0"
     ],
+    "lms-sigver;testCase=1": [
+      "kat.lms-sigver#local:kat.lms-sigver/tc1"
+    ],
+    "lms-sigver;testCase=2": [
+      "kat.lms-sigver#local:kat.lms-sigver/tc2"
+    ],
     "mldsa-functional;variant=44": [
       "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44"
     ],
@@ -3445,6 +3497,7 @@
     "acvp/aesgcm_test.json": "published-standard-kat",
     "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aeskw_test.json": "published-standard-kat",
+    "acvp/cfrg-concrete-hybrid-kems-test-vectors.json": "unverified",
     "acvp/composite-sigs-04-jose-examples.json": "unverified",
     "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
     "acvp/cose-sphincs-plus-10-examples.json": "unverified",
@@ -3465,6 +3518,7 @@
     "acvp/hmac_sha384_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_test.json": "nist-acvp-reference-sample",
+    "acvp/hpke-pq-04-test-vectors.json": "unverified",
     "acvp/jose-hpke-pq-pqt-01-examples.json": "unverified",
     "acvp/kbkdf_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/kmac_acvp_test.json": "nist-acvp-reference-sample",

@@ -302,7 +302,7 @@
   {
     "term": "Ascon",
     "definition": "A lightweight authenticated encryption cipher selected by NIST as the standard for constrained environments (IoT, embedded devices). Very low resource requirements.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -495,7 +495,7 @@
     "acronym": "CCM",
     "definition": "Counter with CBC-MAC, an authenticated-encryption (AEAD) mode for AES that combines counter-mode encryption with a CBC-MAC authentication tag.",
     "technicalNote": "Common in constrained environments (Bluetooth LE, Zigbee/802.15.4, some IoT/OT protocols) where GCM's parallel-friendly design matters less than CCM's simpler hardware footprint.",
-    "relatedModule": "/learn/iot-ot-pqc",
+    "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
     "category": "algorithm"
   },

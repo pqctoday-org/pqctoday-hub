@@ -9,6 +9,7 @@ import {
 } from '../data/sensorFusionData'
 import type { SensorProfile } from '../data/sensorFusionData'
 import { Button } from '@/components/ui/button'
+import { V2XChannelLoadPanel } from './V2XChannelLoadPanel'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -392,6 +393,9 @@ export const SensorDataIntegritySimulator: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ── V2X channel load (merged from the IoT/OT Hardware Constraints step) ── */}
+      <V2XChannelLoadPanel />
 
       {enabledProfiles.length === 0 && (
         <div className="glass-panel p-8 text-center">

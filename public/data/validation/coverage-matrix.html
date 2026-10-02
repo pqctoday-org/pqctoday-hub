@@ -12,7 +12,7 @@
 <p>Generated from the runtime mechanism inventory, the reviewed capability map and the registered test inventory. A status says a registered test exists for the cell; it is not a pass. Machine-readable copy: <a href="coverage-matrix.json">coverage-matrix.json</a>.</p>
 <h2>Headline</h2><ul>
 <li>C++: 2215 advertised capability cells (166 mechanisms). Positive: 190 covered, 1867 sampled, 158 untested. Negative: 84 covered, 64 sampled, 2067 untested. 39 further cells unsupported. WebAssembly runs: 2172 cells with a recorded pass, 1 with a recorded fail, 0 with a recorded skip (not run, never a pass).</li>
-<li>Rust: 2231 advertised capability cells (175 mechanisms). Positive: 191 covered, 1882 sampled, 158 untested. Negative: 84 covered, 64 sampled, 2083 untested. 23 further cells unsupported. WebAssembly runs: 2181 cells with a recorded pass, 2 with a recorded fail, 0 with a recorded skip (not run, never a pass).</li>
+<li>Rust: 2231 advertised capability cells (175 mechanisms). Positive: 192 covered, 1881 sampled, 158 untested. Negative: 84 covered, 64 sampled, 2083 untested. 23 further cells unsupported. WebAssembly runs: 2181 cells with a recorded pass, 2 with a recorded fail, 0 with a recorded skip (not run, never a pass).</li>
 </ul>
 <h2>Rules and definitions</h2><dl>
 <dt>cell</dt><dd>A capability cell is one (mechanism, operation, parameter set, sign variant). Mechanism, operation (from CKF_ flags) and key-size range are DISCOVERED from the running engine (C_GetMechanismList + C_GetMechanismInfo); parameter sets, sign variants and boundaries are DECLARED in capability-map.json and kept only when the parameter set falls inside the engine-reported key-size range.</dd>
@@ -35,16 +35,16 @@
 <tr><td>C++</td><td>overall</td><td>15</td><td>2158</td><td>42</td><td>2215</td></tr>
 <tr><td>C++</td><td>Algorithm correctness (G-3)</td><td>241</td><td>1364</td><td>610</td><td>2215</td></tr>
 <tr><td>C++</td><td>PKCS #11 API behaviour (G-3)</td><td>917</td><td>23</td><td>1275</td><td>2215</td></tr>
-<tr><td>Rust</td><td>positive</td><td>191</td><td>1882</td><td>158</td><td>2231</td></tr>
+<tr><td>Rust</td><td>positive</td><td>192</td><td>1881</td><td>158</td><td>2231</td></tr>
 <tr><td>Rust</td><td>negative</td><td>84</td><td>64</td><td>2083</td><td>2231</td></tr>
 <tr><td>Rust</td><td>boundary</td><td>42</td><td>173</td><td>2016</td><td>2231</td></tr>
 <tr><td>Rust</td><td>state-error</td><td>923</td><td>0</td><td>1308</td><td>2231</td></tr>
 <tr><td>Rust</td><td>overall</td><td>15</td><td>2167</td><td>49</td><td>2231</td></tr>
-<tr><td>Rust</td><td>Algorithm correctness (G-3)</td><td>242</td><td>1375</td><td>614</td><td>2231</td></tr>
+<tr><td>Rust</td><td>Algorithm correctness (G-3)</td><td>243</td><td>1374</td><td>614</td><td>2231</td></tr>
 <tr><td>Rust</td><td>PKCS #11 API behaviour (G-3)</td><td>923</td><td>23</td><td>1285</td><td>2231</td></tr>
 </tbody></table></div>
 <h2>Artifact kinds and parity</h2><ul>
-<li><strong>wasm</strong> — registered; partly recorded. Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388). Tests without a recorded result are never reported as passed.</li>
+<li><strong>wasm</strong> — registered; partly recorded. Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 63098a492); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d). Tests without a recorded result are never reported as passed.</li>
 <li><strong>native</strong> — not-run. macOS, Linux x86-64 and Linux Arm64 native builds have not been run through these tests (plan H-2). Never counted as pass.</li>
 <li><strong>hardware</strong> — not-run. i.MX 95 and KV260 targets have not been run through these tests (plan H-3). Never counted as pass.</li>
 </ul>
@@ -1363,7 +1363,7 @@
 <tr><td><code>CKM_HKDF_DATA</code></td><td>derive</td><td>HKDF (data object output)</td><td>1</td><td>behavior-only (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
 <tr><td><code>CKM_HSS_KEY_PAIR_GEN</code></td><td>generate-key-pair</td><td>HSS/LMS</td><td>1</td><td>round-trip (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
 <tr><td><code>CKM_HSS</code></td><td>sign</td><td>HSS/LMS</td><td>1</td><td>round-trip (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
-<tr><td><code>CKM_HSS</code></td><td>verify</td><td>HSS/LMS</td><td>1</td><td>round-trip (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
+<tr><td><code>CKM_HSS</code></td><td>verify</td><td>HSS/LMS</td><td>1</td><td>standard-kat (1 covered / 0 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
 <tr><td><code>CKM_XMSS_KEY_PAIR_GEN</code></td><td>generate-key-pair</td><td>XMSS</td><td>1</td><td>round-trip (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
 <tr><td><code>CKM_XMSSMT_KEY_PAIR_GEN</code></td><td>generate-key-pair</td><td>XMSS^MT</td><td>1</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>
 <tr><td><code>CKM_XMSS</code></td><td>sign</td><td>XMSS</td><td>1</td><td>round-trip (0 covered / 1 sampled / 0 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td><td>untested (0 covered / 0 sampled / 1 untested)</td></tr>

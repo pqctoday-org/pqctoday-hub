@@ -23,14 +23,16 @@ export const content: ModuleContent = {
     getStandard('RFC 9449'),
     // DECLARED 2026-10-01 (api-security-jwt remediation): documents the module
     // now teaches from — JWT/OAuth validation BCPs, JWK, and the current JOSE PQ
-    // drafts. RFC 9068 and RFC 9864 are cited in prose but have no library row
-    // yet (queued as library gaps).
+    // drafts. RFC 9068 and RFC 9864 are declared below now that they have rows.
     getStandard('RFC 8725'),
     getStandard('RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security'),
     getStandard('RFC 7517'),
     getStandard('SLH-DSA-for-JOSE-and-COSE'),
     getStandard('draft-ietf-jose-hpke-encrypt'),
     getStandard('draft-ietf-jose-hpke-pq-pqt-01'),
+    // RFC 9068 / RFC 9864 rows added 2026-10-01 (library data PR, 4.141.0).
+    getStandard('RFC-9068'),
+    getStandard('RFC-9864'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.

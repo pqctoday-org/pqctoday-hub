@@ -28,6 +28,9 @@ export const SPLIT_MODULE_REDIRECTS: ReadonlyMap<string, SplitRedirect> = new Ma
       fallback: 'fips-140-3-certification',
     },
   ],
+  // 2026-10-01: 1→1 renames from the IoT/OT split (no learn-path choice needed).
+  ['iot-ot-pqc', { byPath: new Map(), fallback: 'iot-pqc' }],
+  ['energy-utilities-pqc', { byPath: new Map(), fallback: 'ot-pqc' }],
 ])
 
 /** Target URL (`/learn/<id>[?query][#hash]`) for an old split-module URL, or null. */

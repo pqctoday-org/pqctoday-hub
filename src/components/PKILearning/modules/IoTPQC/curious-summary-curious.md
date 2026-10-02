@@ -1,0 +1,3 @@
+Billions of small connected devices — electricity meters, building sensors, fitness trackers — check a digital signature before they accept a software update. That signature is what stops a stranger from taking over the device. A future quantum computer could forge today's signatures, so these devices need new, quantum-safe ones.
+
+The new signatures are bigger, and these devices have very little memory and slow radios. The good news is that checking a signature is cheap even when making one is not, so most small devices can do their part while the heavy work happens on servers. Engineers are choosing those algorithms now, because a device built today may stay in service for 15 years.

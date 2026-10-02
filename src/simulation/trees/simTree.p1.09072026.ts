@@ -156,8 +156,8 @@ const TREE: PhaseTree = {
             {
               kind: 'learn',
               label: 'Learn: OT & embedded systems — the hardest assets to discover',
-              to: '/learn/iot-ot-pqc',
-              moduleId: 'iot-ot-pqc',
+              to: '/learn/iot-pqc',
+              moduleId: 'iot-pqc',
             },
           ],
         },

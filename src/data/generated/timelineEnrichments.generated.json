@@ -14986,7 +14986,13 @@
  },
  "Canada:CCCS — High Priority Systems Complete": {
   "mainTopic": "A roadmap for the Government of Canada to migrate non-classified IT systems to post-quantum cryptography, outlining stakeholders, execution phases, milestones, and governance.",
-  "pqcAlgorithms": [],
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED",
+   "PROTECTED A",
+   "PROTECTED B information)"
+  ],
   "quantumThreats": [
    "Harvest Now Decrypt Later",
    "quantum computer threat"
@@ -15006,9 +15012,20 @@
     "Communications Security Establishment Canada"
    ]
   },
-  "leadersContributions": [],
-  "pqcProducts": [],
-  "protocols": [],
+  "leadersContributions": [
+   "None detected (guidance document with organizational roles",
+   "not individuals)"
+  ],
+  "pqcProducts": [
+   "None detected (guidance focused on migration methodology",
+   "not specific products)"
+  ],
+  "protocols": [
+   "Network security protocols (referenced as ITSP.40.062)",
+   "TLS",
+   "VPN",
+   "SSH"
+  ],
   "infrastructureLayers": [
    "PKI",
    "Key Management",
@@ -15057,7 +15074,10 @@
    "Threats",
    "Compliance"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "harvest now, decrypt later (HNDL) threat",
+   "confidentiality of information in transit over public network zones"
+  ],
   "cryptoDiscovery": [
    "Cryptographic discovery",
    "Inventory of systems employing cryptography",
@@ -15068,7 +15088,14 @@
   "testingValidation": [],
   "qkdProtocols": [],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
+  "constrainedDeviceIoT": [
+   "smart cards",
+   "hardware tokens",
+   "mobile telephones",
+   "printers",
+   "voice over Internet Protocol telephony",
+   "hardware security modules"
+  ],
   "supplyChainRisk": [
    "Vendor PQC roadmap",
    "Procurement risk",
@@ -37810,5 +37837,148 @@
    "1 January 2029: Non-CNSA 2.0 products not posted to PCL"
   ],
   "successorDependencies": "Requires products to meet CNSA 2.0 requirements; Enables the transition to quantum-resistant cryptography in National Security Systems by removing non-compliant options from procurement."
+ },
+ "United States:NIST — PIV Standards PQC Working Drafts Released": {
+  "mainTopic": "NIST has released initial working drafts of proposed updates to the Personal Identity Verification (PIV) standards to support the use of post-quantum cryptography.",
+  "pqcAlgorithms": [
+   "ML-DSA",
+   "ML-KEM"
+  ],
+  "quantumThreats": [],
+  "migrationTimeline": null,
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "NIST"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [
+   "PIV"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "Key Management"
+  ],
+  "standardizationBodies": [
+   "NIST"
+  ],
+  "complianceFrameworks": [],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "NIST has released working drafts for PIV standards to support ML-DSA and ML-KEM",
+   "The proposed approach uses a dual-stack model to preserve existing classical keys while adding PQC credentials",
+   "The drafts aim to support backward compatibility and incremental deployment",
+   "Stakeholders are invited to provide feedback via mailing lists and GitHub to accelerate standardization."
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Dual-stack model",
+   "Backward compatibility",
+   "Incremental deployment"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Security Architect",
+   "Developer",
+   "Compliance Officer"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "digital-id",
+   "migration-program",
+   "hybrid-crypto",
+   "compliance"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [
+   "Backward compatibility",
+   "Incremental deployment"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The document announces the release of \"initial working drafts\" and \"preliminary working materials,\" indicating the start of the formal standardization and specification development phase for PIV PQC updates.",
+  "mandateLevel": "Informational",
+  "sectorApplicability": [
+   "Government"
+  ],
+  "migrationUrgency": "Exploratory",
+  "phaseTransition": "Moves from Research/Concept to Standardization — signals the beginning of formal specification development for PQC in PIV credentials.",
+  "historicalSignificance": "This is the first release of working drafts specifically addressing PQC updates to the PIV standards, marking a concrete step toward integrating post-quantum algorithms into U.S. federal identity verification systems.",
+  "implementationDates": [],
+  "successorDependencies": "Requires feedback from implementers and users; Enables future formal public drafts and standardization of PQC in PIV."
+ },
+ "Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced": {
+  "mainTopic": "MAS Managing Director's remarks on the 2025/2026 Annual Report, covering economic developments, financial sector growth, and strategies to strengthen resilience against AI-enabled and quantum-computing threats.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "Quantum-computing"
+  ],
+  "migrationTimeline": null,
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "MAS"
+   ]
+  },
+  "leadersContributions": [
+   "Mr Chia Der Jiun",
+   "Managing Director",
+   "MAS"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [],
+  "standardizationBodies": [],
+  "complianceFrameworks": [],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "MAS is actively working with the industry to address new challenges posed by quantum-computing and frontier AI",
+   "Financial institutions must strengthen controls to defend against sophisticated AI-enabled scam tactics",
+   "MAS is reviewing banks' efforts to enhance the effectiveness of their fraud detection models, including AI usage",
+   "The domestic financial system remains broadly resilient but has small pockets of vulnerability among highly leveraged households and corporates."
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Policy Maker"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "quantum-threats",
+   "pqc-risk-management",
+   "compliance-strategy"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The document is a general annual report speech that mentions quantum-computing as a new challenge but does not detail specific PQC migration phases, mandates, or technical standards.",
+  "mandateLevel": "Informational",
+  "sectorApplicability": [
+   "Finance",
+   "Banking"
+  ],
+  "migrationUrgency": "Exploratory",
+  "phaseTransition": null,
+  "historicalSignificance": null,
+  "implementationDates": [],
+  "successorDependencies": null
  }
 }

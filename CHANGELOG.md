@@ -29,6 +29,41 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.142.0] - 2026-10-02
+
+The IoT & OT module is now two advanced modules, one for IoT and embedded devices and one for operational technology across five sectors, both checked against their standards; search stays smooth after the first search; the JWT workshop's encrypted tokens can run entirely inside the emulated HSM; and the Library and vendor roadmaps gain new entries.
+
+### Added
+
+- **New module: IoT & Embedded Device PQC** [view:/learn/iot-pqc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: which PQC algorithms fit each device class for verifying versus signing, firmware signing with real ML-DSA and LMS signatures in the browser, DTLS 1.3 vs EDHOC, BLE Mesh and Matter provisioning, certificate size and device identity, fleet key rotation, LPWAN airtime, secure elements, and the IoT rules (EU Cyber Resilience Act, EN 18031, US Cyber Trust Mark, UK PSTI).
+- **New module: OT & Industrial Control Systems PQC** [view:/learn/ot-pqc] [persona:architect] [persona:ops] [persona:grc] [persona:researcher]: IEC 62443 zones and conduits, the native security of OT protocols (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety timing, PLC firmware and project signing, and sector deep dives for energy, water, rail, manufacturing and building automation, with NERC CIP, NIS2 and TSA rules.
+- **LMS signatures are checked against the RFC 8554 test vectors** [view:/learn/iot-pqc] [view:/learn/ot-pqc] [persona:developer] [persona:cert-engineer]: the firmware-signing steps run RFC 8554 Appendix F test cases through the hub's HSS/LMS verifier.
+- **Boot verify latency** [view:/learn/secure-boot-pqc] [persona:developer] [persona:architect]: a new Secure Boot step compares flash load and verify time for ECDSA, RSA, ML-DSA and LMS on a microcontroller, with the source of every figure.
+- **V2X channel load** [view:/learn/automotive-pqc] [persona:architect] [persona:researcher]: the Sensor Data Integrity step shows how many vehicles fill the radio channel with ECDSA, FN-DSA or ML-DSA signatures.
+- **NIST IR 8259 Rev. 1 in the Library** [view:/library] [persona:grc] [persona:researcher]: NIST's April 2026 revision of its guidance for IoT product manufacturers, which replaces the 2020 edition and names quantum-safe choices as a way to future-proof devices.
+- **Six new trusted sources** [view:/library] [persona:researcher] [persona:grc]: CEN-CENELEC, LoRa Alliance, OPC Foundation, ODVA, ASHRAE and PSA Certified, the bodies behind the IoT and OT standards the new modules cite; 11 Library documents now show who published them.
+
+### Changed
+
+- **IoT & Embedded Device PQC cites the current NIST guidance** [view:/learn/iot-pqc] [persona:grc]: the module now points to NIST IR 8259 Rev. 1 instead of the withdrawn 2020 edition.
+- **The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM** [view:/learn/api-security-jwt] [view:/playground] [persona:developer] [persona:architect] [persona:cert-engineer]: with the SoftHSM3 backend selected, both post-quantum JWE suites (ML-KEM-768 and the ML-KEM-768 + X25519 hybrid) now run inside the token. That covers key encapsulation, key derivation and AES-GCM, and neither the private key nor the content key ever leaves it. The hybrid suite was previously browser-only. The draft's published example can also be opened inside SoftHSM3 from its published private key.
+- **Post-quantum HPKE checked against two more published test-vector sets** [view:/learn/api-security-jwt] [persona:researcher] [persona:cert-engineer]: the emulated HSM now reproduces the HPKE post-quantum draft's test vectors and the CFRG hybrid KEM vectors. They are listed as awaiting review until the two-person vector review is done.
+- **Search stays smooth after the first search, and frees 37 MB of browser storage** [view:/] [persona:curious] [persona:developer] [persona:architect] [persona:researcher] [persona:grc] [persona:executive] [persona:ops] [persona:cert-engineer]: the site stopped saving a 37 MB copy of the search index in your browser. Saving it froze the page for up to a second right after the first search, and in Safari a saved copy was slower to restore than rebuilding the index. Your browser frees that space on your next search.
+- **API Security & JWT now lists RFC 9068 and RFC 9864 among its references** [view:/learn/api-security-jwt] [persona:developer] [persona:architect]: the JWT access-token profile and the fully-specified algorithms RFC, which the module's validation lesson teaches from, now appear in the References tab and the Library.
+- **Old links keep working and your progress carries over** [view:/learn] [persona:curious]: links to the former IoT & OT Security and Energy & Utilities modules open the new modules, and saved progress moves with them.
+- **18 IoT and OT quiz questions corrected and 20 added** [view:/learn/quiz] [persona:curious] [persona:researcher]: 18 IoT and OT questions corrected and 20 new ones added.
+
+### Fixed
+
+- **IoT and OT figures now match their sources** [view:/learn/iot-pqc] [view:/learn/ot-pqc] [persona:researcher] [persona:architect]: corrected RAM and cycle counts for constrained devices, certificate chain sizes, GOOSE trip timing classes, how GOOSE group keys and DNP3 update keys really work, the CNSA 2.0 dates and the NERC CIP requirements; the firmware-signing demo now signs for real instead of showing random bytes.
+- **The JWT encryption step no longer says the HSM cannot run the X-Wing hybrid** [view:/learn/api-security-jwt] [persona:developer]: that sentence was wrong; the engine now supports it, and the step runs it.
+- **ETSI TS 103 744 shows the edition it links to** [view:/library] [persona:architect] [persona:researcher]: the entry now carries the V1.2.2 title and its February 2026 date. It had named a V1.3.1 that ETSI never published.
+
+### Data
+
+- **Four more vendor post-quantum roadmaps** [view:/migrate] [persona:architect] [persona:ops]: Threema, SK Telecom, Renesas and Landis+Gyr now have roadmap entries, each taken from the vendor's own dated page.
+- **Two new trusted sources** [view:/library] [persona:grc] [persona:researcher]: Romania's national cybersecurity agency (DNSC) joins as an authoritative source and the Fibre Channel Industry Association as a supporting one.
+
 ## [4.141.0] - 2026-10-02
 
 Talking About PQC Accurately has been reviewed and now has its own quiz questions, the API Security workshop names the draft revision it actually implements, a new Attack Lab shows why a JWT verifier must check more than the signature, and the Library adds 42 references for the IoT and OT modules.

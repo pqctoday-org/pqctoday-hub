@@ -188,7 +188,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
         'Managing PQC transitions for constrained IoT devices and operational technology systems.',
       targetLevel: 'basic',
       linkedModules: [
-        { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'iot-pqc', label: 'IoT & Embedded PQC' },
         { id: 'secure-boot-pqc', label: 'Secure Boot' },
       ],
     },
@@ -233,7 +233,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description: 'Plan and execute phased migrations for fleets and constrained environments.',
       modules: [
         { id: 'migration-program', label: 'Migration Program' },
-        { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'iot-pqc', label: 'IoT & Embedded PQC' },
         { id: 'crypto-agility', label: 'Crypto Agility' },
       ],
     },

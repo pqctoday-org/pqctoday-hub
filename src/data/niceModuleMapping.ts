@@ -553,11 +553,20 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
   // IoT / OT / Embedded
   // -----------------------------------------------------------------------
   {
-    moduleId: 'iot-ot-pqc',
+    moduleId: 'iot-pqc',
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
     workRoles: ['security-architect', 'network-security-specialist'],
+    isCommonGround: false,
+  },
+  {
+    // 2026-10-01: cross-sector OT module (was the Energy & Utilities vertical).
+    moduleId: 'ot-pqc',
+    nfExtra: ['NF-COM-010'],
+    competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'network-security-specialist', 'risk-manager'],
     isCommonGround: false,
   },
 
@@ -587,14 +596,6 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     tier: 'awareness',
     workRoles: ['risk-manager', 'is-security-manager'],
     isCommonGround: true,
-  },
-  {
-    moduleId: 'energy-utilities-pqc',
-    nfExtra: ['NF-COM-010'],
-    competencyAreas: ['CA-RISK', 'CA-NETDEF'],
-    tier: 'awareness',
-    workRoles: ['risk-manager', 'network-security-specialist'],
-    isCommonGround: false,
   },
   {
     moduleId: 'digital-assets',

@@ -529,7 +529,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: AMD Versal Gen 2 Adaptive SoC; Vivado Design Suite; Vitis Software Platform
-- **Relevant PQC Today Features**: Compliance, Algorithms, iot-ot-pqc
+- **Relevant PQC Today Features**: Compliance, Algorithms, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -853,7 +853,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Leaders; pki-workshop; iot-ot-pqc; compliance-strategy
+- **Relevant PQC Today Features**: Algorithms; Leaders; pki-workshop; iot-pqc; compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2095,7 +2095,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: ML-KEM encapsulation 6,000/s; ML-KEM unblock 2,500/s; ML-KEM key generation 3,500 pairs/s; ML-DSA signing 1,000/s; ML-DSA verification 3,000/s; ML-DSA key generation 1,800 pairs/s; SLH-DSA signing 1/s to 10/s; SLH-DSA verification 300/s to 600/s; SLH-DSA key generation 15/s to 250/s; LMS signing 1 to 40/s; LMS verification 200 to 1,500/s; LMS key generation 1 pair/15 minutes; XMSS signing 50 to 200/s; XMSS verification 50 to 600/s; XMSS key generation 1 pair/10 minutes
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: Conduct stress test before migration; Gradually migrate business to GVSM PQC version; Properly manage signature key state for LMS and XMSS
-- **Relevant PQC Today Features**: hsm-pqc, algorithms, threats, pki-workshop, iot-ot-pqc
+- **Relevant PQC Today Features**: hsm-pqc, algorithms, threats, pki-workshop, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: stress test
@@ -3499,7 +3499,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Ephemeral keys refresh as frequently as every 30 seconds; Zero impact on bandwidth
 - **Target Audience**: Security Architect; CISO; Defense Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: compliance-strategy; migration-program; iot-ot-pqc; kms-pqc; crypto-agility
+- **Relevant PQC Today Features**: compliance-strategy; migration-program; iot-pqc; kms-pqc; crypto-agility
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: validated by leading cyber security institutions; meets NCSC recommendations; aligns with NSA guidance; CSfC Symmetric Key Management Requirements Annex
@@ -4093,7 +4093,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Key Generation 87,050 op/s @300 MHz for ML-KEM-512; Encapsulation 70,500 op/s @300 MHz for ML-KEM-512; Decapsulation 52,300 op/s @300 MHz for ML-KEM-512; Resource usage 9.0K LUT and 7.4K Register on AMD Xilinx Spartan-7
 - **Target Audience**: Security Architect, Developer, Hardware Engineer
 - **Implementation Prerequisites**: AMD (Xilinx), Intel (Altera), or Microchip (Microsemi) device; AMBA AXI interfaces; ANSI C drivers
-- **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, iot-pqc
 - **Implementation Attack Surface**: Side-Channel Attacks (SCA), timing attacks, Simple Power Analysis (SPA)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 204 compliance, FIPS 140-3 compliance, Simulation Model
@@ -4687,7 +4687,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: QNX Software Development Platform (SDP) 8.0
-- **Relevant PQC Today Features**: compliance-strategy; iot-ot-pqc; vendor-risk
+- **Relevant PQC Today Features**: compliance-strategy; iot-pqc; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5389,7 +5389,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 80 Mbps throughput
 - **Target Audience**: Security Architect, Policy Maker, Researcher, Operations
 - **Implementation Prerequisites**: Existing fibre carrying network traffic for multiplexing; C-DOT Collaborative Research Policy (CCRP-2022) for engagement and funding terms.
-- **Relevant PQC Today Features**: qkd, hybrid-crypto, 5g-security, iot-ot-pqc, migration-program
+- **Relevant PQC Today Features**: qkd, hybrid-crypto, 5g-security, iot-pqc, migration-program
 - **Implementation Attack Surface**: detector-side channel attacks exploiting imperfections in commercially available single-photon detectors
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5443,7 +5443,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: AMBA hardware interfaces; FPGA-based reference design for evaluation
-- **Relevant PQC Today Features**: Algorithms, Leaders, Migrate, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Leaders, Migrate, iot-pqc
 - **Implementation Attack Surface**: Protection against timing-based side channel attacks; minimal attack surface
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Self-checking HDL testbench; sample simulation scripts
@@ -6037,7 +6037,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Developer
 - **Implementation Prerequisites**: NXP S32G vehicle networking processors; Certicom Code Signing and Key Management Server
-- **Relevant PQC Today Features**: code-signing; crypto-agility; threats; iot-ot-pqc
+- **Relevant PQC Today Features**: code-signing; crypto-agility; threats; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6847,7 +6847,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Network Administrator, CISO
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: digital-id, iot-ot-pqc, vendor-risk
+- **Relevant PQC Today Features**: digital-id, iot-pqc, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6901,7 +6901,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Dual 25Gbps SFP28 WAN ports; Integrated security performance beyond 10Gbps; Up to 8Gbps Threat performance; Up to 20Gbps Firewall performance; Compact 12-inch depth
 - **Target Audience**: Security Architect; Network Engineer; CISO; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: vendor-risk, migration-program, pqc-business-case, iot-ot-pqc
+- **Relevant PQC Today Features**: vendor-risk, migration-program, pqc-business-case, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7225,7 +7225,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Asset Inventory, Exposure Management, Vulnerability Disclosure Dashboard
 - **Testing & Validation Methods**: None detected
@@ -8251,7 +8251,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Process nodes 55nm down to 12nm; Security strength up to 256 bits; Lifetime operating time greater than 25 years
 - **Target Audience**: Security Architect; Developer; Compliance Officer; IC Designer
 - **Implementation Prerequisites**: Standard CMOS process; Verification on TSMC, GF, UMC fabs; Bulk CMOS, FDSOI, FinFET process technologies
-- **Relevant PQC Today Features**: entropy-randomness; digital-id; iot-ot-pqc; hsm-pqc
+- **Relevant PQC Today Features**: entropy-randomness; digital-id; iot-pqc; hsm-pqc
 - **Implementation Attack Surface**: side-channel attacks on memory, secret leakage through countermeasures and attack detection schemes, traditional side-channel attacks, fault injection detection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST SP 800-22 randomness, NIST SP 800-90B entropy, voltage tests, temperature tests, device ageing tests, environmental operating data testing
@@ -8629,7 +8629,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Embedded version with low memory footprint; Side-Channel Attack Resistant version with masking; portable across all types of environments
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Cryptographic inventory; functional and stress testing; integration into IT infrastructure; design phase incorporation for long-lifespan products
-- **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, stateful-signatures, iot-ot-pqc
+- **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, stateful-signatures, iot-pqc
 - **Implementation Attack Surface**: timing attacks, side-channel attacks, pre- and post-compilation timing attacks, masking
 - **Cryptographic Discovery & Inventory**: cryptographic assets discovery, map every cryptographic asset, eliminate blind spots, inventory your cryptography, manage cryptographic gaps, CryptoNext COMPASS Discovery
 - **Testing & Validation Methods**: NIST CAVP program validation, functional testing, stress testing, test the impacts of PQC, evaluate impacts on systems
@@ -9547,7 +9547,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Certificates roughly 10x larger; ML-DSA adds 14.7kB to TLS handshake; Two 1312-byte public keys; Five 2420-byte signatures; ClientHello message exceeds standard MTU
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: TLS 1.3 stack enabled; OpenSSL with OQS provider; FIPS 140-3 certified crypto SDK; TPM or secure element supporting ML-DSA; Reliable OTA update system; SBOM including PQC libraries
-- **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, tls-basics, pki-workshop
+- **Relevant PQC Today Features**: iot-pqc, hybrid-crypto, crypto-agility, tls-basics, pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Software Bill of Materials (SBOMs), Crypto Bill of Materials (CBOM), Hardware Bill of Materials (HBOM), certificate inventory, key material audit
 - **Testing & Validation Methods**: FIPS 140-3 certification, interoperability testing, regression testing, PQC playground testing
@@ -9655,7 +9655,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Developer; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Cryptographic bill of materials; pilot environment; executive support and budget; vendor alignment
-- **Relevant PQC Today Features**: migration-program, crypto-agility, code-signing, iot-ot-pqc, digital-id
+- **Relevant PQC Today Features**: migration-program, crypto-agility, code-signing, iot-pqc, digital-id
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9763,7 +9763,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: ML-KEM-512 public key 800 B; ML-KEM-512 private key 1632 B; ML-KEM-768 public key 1184 B; ML-KEM-768 private key 2400 B; ML-KEM-1024 public key 1568 B; ML-KEM-1024 private key 3168 B; ML-DSA-44 public key 1312 B; ML-DSA-44 private key 2528 B; ML-DSA-44 signature up to 2420 B; ML-DSA-65 public key 1952 B; ML-DSA-65 private key 3872 B; ML-DSA-65 signature up to 3293 B; ML-DSA-87 public key 2592 B; ML-DSA-87 private key 4896 B; ML-DSA-87 signature up to 4595 B; Shared secret 32 bytes
 - **Target Audience**: Developer, Security Architect, IoT Engineer
 - **Implementation Prerequisites**: CMake projects; TPM 2.0 hardware; OpenSSL shim compatibility; NanoCrypto external entropy injection
-- **Relevant PQC Today Features**: Algorithms, iot-ot-pqc, tls-basics, vpn-ssh-pqc, pki-workshop
+- **Relevant PQC Today Features**: Algorithms, iot-pqc, tls-basics, vpn-ssh-pqc, pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9925,7 +9925,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Operations, Compliance Officer
 - **Implementation Prerequisites**: Windows-based devices for Dragos Agent deployment; Containerized and edge computing environments for Lightweight Collector; Existing data sources or vendor files for asset inventory import.
-- **Relevant PQC Today Features**: iot-ot-pqc, pqc-risk-management, migration-program, compliance-strategy, vendor-risk
+- **Relevant PQC Today Features**: iot-pqc, pqc-risk-management, migration-program, compliance-strategy, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Asset Visibility and Inventory; OT asset inventory; passive-first discovery; safe active collection; deep protocol analysis; software and OS vulnerabilities matching
 - **Testing & Validation Methods**: Segmentation Policy Validation; firewall policy evaluation; interoperability validation with industrial OEMs
@@ -10087,7 +10087,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: TSSOP-28 package; QFN-32 package 5x5mm; Power Active <150mW typical; Power Idle <5mW; NV Storage 32 KB; 24 PCRs per hash algorithm; Temperature Range -40°C to +85°C
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: TCG TPM 2.0-compliant platform; Windows 10/11 or Linux with tpm2-tss; UEFI Firmware EDK2/coreboot/AMI BIOS; LPC Bus or SPI interface up to 33 MHz; 3.3V ± 5% supply voltage
-- **Relevant PQC Today Features**: Compliance, Migrate, Algorithms, hybrid-crypto, iot-ot-pqc
+- **Relevant PQC Today Features**: Compliance, Migrate, Algorithms, hybrid-crypto, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 Level 2 validation in process; Common Criteria EAL4+ pathway planned; TCG TPM 2.0 PC Client Platform TPM Profile full compliance target
@@ -10465,7 +10465,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Operations; Developer
 - **Implementation Prerequisites**: REST APIs; open protocols like ACME; integration with cloud providers, monitoring systems, ticketing systems, and enterprise directories
-- **Relevant PQC Today Features**: crypto-agility; pki-workshop; hsm-pqc; iot-ot-pqc; compliance-strategy
+- **Relevant PQC Today Features**: crypto-agility; pki-workshop; hsm-pqc; iot-pqc; compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, discovery of digital certificates by scanning devices over the network or locally
 - **Testing & Validation Methods**: None detected
@@ -11437,7 +11437,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: ML-DSA signing is faster than the unverified C reference implementation; No specific byte sizes or bandwidth overhead values provided
 - **Target Audience**: CISO, Developer, Security Architect, Compliance Officer, Government & Procurement, Operations
 - **Implementation Prerequisites**: API key for authentication; JSON payload with algorithm and deployment parameters; Optional source code handover (Python, C, Jasmin) for isolated deployments; Cryptographic inventory via CipherScout
-- **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, crypto-agility, hybrid-crypto, tls-basics, iot-ot-pqc, pqc-risk-management, migration-program
+- **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, crypto-agility, hybrid-crypto, tls-basics, iot-pqc, pqc-risk-management, migration-program
 - **Implementation Attack Surface**: timing side-channels, constant-time execution vulnerabilities, Clang timing vulnerability in ML-KEM reference code
 - **Cryptographic Discovery & Inventory**: CipherScout Cryptographic Discovery & Inventory, full cryptographic inventory across various attack surfaces
 - **Testing & Validation Methods**: formal verification, Jasmin language proof at assembly level, regression testing avoidance via configuration updates
@@ -12139,7 +12139,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: Active Directory or LDAP integration; FortiClient EMS for Trusted Endpoint SSO; Support for RADIUS, TACACS+, SAML, or OIDC protocols
-- **Relevant PQC Today Features**: digital-id, pki-workshop, vpn-ssh-pqc, iot-ot-pqc, compliance-strategy
+- **Relevant PQC Today Features**: digital-id, pki-workshop, vpn-ssh-pqc, iot-pqc, compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory; key material audit
 - **Testing & Validation Methods**: None detected
@@ -12571,7 +12571,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: MbedTLS v3.5.1; WolfSSL v5.6.4; 40+ MCU architectures; 15+ toolchains
-- **Relevant PQC Today Features**: iot-ot-pqc
+- **Relevant PQC Today Features**: iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12895,7 +12895,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Doubling key length for symmetric systems to counteract Grover's algorithm; traditional computers need 100,000 years to solve factorization problems while quantum computers need seconds to days
 - **Target Audience**: CISO; Security Architect; Policy Maker; Government & Public Sector; Financial Platforms; Currency Technology
 - **Implementation Prerequisites**: Establish PQC migration strategy now; inventory sensitive data vulnerable to "store now, decrypt later" attacks; prepare for NIST standardization finalization
-- **Relevant PQC Today Features**: Threats; Migrate; Algorithms; Compliance; digital-id; iot-ot-pqc; digital-assets
+- **Relevant PQC Today Features**: Threats; Migrate; Algorithms; Compliance; digital-id; iot-pqc; digital-assets
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13489,7 +13489,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Atlas availability at 99.95%; Effortlessly handle large certificate/signature volumes
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: APIs; AD integration; MDM connectors
-- **Relevant PQC Today Features**: pki-workshop, digital-id, iot-ot-pqc, code-signing, email-signing
+- **Relevant PQC Today Features**: pki-workshop, digital-id, iot-pqc, code-signing, email-signing
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Atlas Discovery; certificate inventory; key material audit
 - **Testing & Validation Methods**: None detected
@@ -14299,7 +14299,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Functional and code coverage above 90%; 40k+ tests running nightly; Over 29,200 commits since launch
 - **Target Audience**: Security Architect, Developer, Hardware Engineer, Researcher
 - **Implementation Prerequisites**: Access to OpenTitan GitHub repository; Review of documentation and onboarding materials; Commercial partner selection or self-manufacturing capability
-- **Relevant PQC Today Features**: Algorithms, Leaders, stateful-signatures, iot-ot-pqc, code-signing
+- **Relevant PQC Today Features**: Algorithms, Leaders, stateful-signatures, iot-pqc, code-signing
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: commercial-grade design verification, top-level testing, functional and code coverage above 90%, 40k+ tests running nightly, regression testing
@@ -14893,7 +14893,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Go 1.24+; Consul binary or source compilation; Service definitions for registration
-- **Relevant PQC Today Features**: tls-basics, api-security-jwt, migration-program, code-signing, iot-ot-pqc
+- **Relevant PQC Today Features**: tls-basics, api-security-jwt, migration-program, code-signing, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -15379,7 +15379,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Docker; Poetry for dependency management; API key for admin interface protection or deliberate insecure mode configuration
-- **Relevant PQC Today Features**: digital-id, iot-ot-pqc, api-security-jwt
+- **Relevant PQC Today Features**: digital-id, iot-pqc, api-security-jwt
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Aries Agent Test Harness
@@ -16567,7 +16567,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: IoT device lifespan up to 15 or 20 years; limited computing power and memory space in secured elements
 - **Target Audience**: Security Architect, CISO, Developer, Policy Maker
 - **Implementation Prerequisites**: Flexible architecture for secure elements; resistance to side-channel and fault injection attacks; adaptation of protocols and devices
-- **Relevant PQC Today Features**: crypto-agility, digital-id, 5g-security, iot-ot-pqc, hybrid-crypto
+- **Relevant PQC Today Features**: crypto-agility, digital-id, 5g-security, iot-pqc, hybrid-crypto
 - **Implementation Attack Surface**: side-channel attacks, fault injection attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16621,7 +16621,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: significantly boosts both speed and efficiency; rapid execution of quantum-resistant algorithms
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hsm-pqc, iot-ot-pqc, digital-id, migration-program, pqc-business-case
+- **Relevant PQC Today Features**: hsm-pqc, iot-pqc, digital-id, migration-program, pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16675,7 +16675,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms, Leaders, hsm-pqc, crypto-agility, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Leaders, hsm-pqc, crypto-agility, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16783,7 +16783,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: About 100K gates; minimal CPU intervention required
 - **Target Audience**: Security Architect, Developer, Embedded Systems Engineer
 - **Implementation Prerequisites**: TRNG1 core for true random number generation if not included internally
-- **Relevant PQC Today Features**: Algorithms, Leaders, entropy-randomness, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Leaders, entropy-randomness, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Verilog test bench, self-checking test bench, test vectors, expected results
@@ -16837,7 +16837,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Infrastructure Lead; CISO; DevSecOps; IoT system integrator
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Assess; Migrate; Algorithms; Compliance; crypto-agility; hybrid-crypto; pqc-risk-management; iot-ot-pqc
+- **Relevant PQC Today Features**: Assess; Migrate; Algorithms; Compliance; crypto-agility; hybrid-crypto; pqc-risk-management; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: agentless-first discovery across networks, servers, databases, code, CMDBs, KMSs; catalog and monitor cryptographic assets and primitives including algorithms, protocols, devices, certificates, and keys; surfaces hidden dependencies; crypto inventory lifecycle management; algorithm risk profiling
 - **Testing & Validation Methods**: architecture validation; compliance alignment (NIST PQC); continuous posture intelligence
@@ -16891,7 +16891,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: MISRA-C compliant code; OpenSSL / NSS; modified OpenSSL, NSS and Firefox builds for testing; developer tools; validation harnesses
-- **Relevant PQC Today Features**: Migrate, Assess, Algorithms, hybrid-crypto, crypto-agility, iot-ot-pqc
+- **Relevant PQC Today Features**: Migrate, Assess, Algorithms, hybrid-crypto, crypto-agility, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: ISARA Advance® Cryptographic Inventory and Risk Assessment Tool; Crypto agility using interoperable certificates
 - **Testing & Validation Methods**: Performance & Compatibility Validation; Validate performance against defined requirements; test optional hybrid certificates for PQC migration; Access to Validation Tools; Use of modified OpenSSL, NSS and Firefox builds for testing performance, compatibility and interoperability
@@ -17107,7 +17107,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc, vendor-risk, pqc-business-case
+- **Relevant PQC Today Features**: iot-pqc, vendor-risk, pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17161,7 +17161,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: stateful-signatures, iot-ot-pqc, hsm-pqc
+- **Relevant PQC Today Features**: stateful-signatures, iot-pqc, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CC EAL4+
@@ -17215,7 +17215,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: vendor-risk, iot-ot-pqc
+- **Relevant PQC Today Features**: vendor-risk, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CC EAL6 certified
@@ -17269,7 +17269,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 28nm process; 32-bit CPU based on Arm v8-M; cache improves performance by up to 25 percent; space requirements reduced by 70 percent compared to MFF2; 17-year data retention
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-ot-pqc, vendor-risk
+- **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-pqc, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL6+ certification, German Federal Office for Information Security (BSI) certification
@@ -17593,7 +17593,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Low delay; minimal power impact
 - **Target Audience**: Security Architect, Developer, CISO, Policy Maker
 - **Implementation Prerequisites**: ESP32 chips; MQTT traffic environment
-- **Relevant PQC Today Features**: iot-ot-pqc; hybrid-crypto; migration-program; timeline; compliance-strategy
+- **Relevant PQC Today Features**: iot-pqc; hybrid-crypto; migration-program; timeline; compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: encryption tested using only PQC and combining PQC with traditional security; performance testing showing low delay and minimal power impact
@@ -17755,7 +17755,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, CISO
 - **Implementation Prerequisites**: Apple Business Manager; Google Zero-Touch Enrollment; Windows AutoPilot
-- **Relevant PQC Today Features**: vendor-risk, iot-ot-pqc, email-signing, vpn-ssh-pqc
+- **Relevant PQC Today Features**: vendor-risk, iot-pqc, email-signing, vpn-ssh-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18403,7 +18403,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: TLS certificate lifespan reduction from 398 days to 200 days in March 2026; operational load surge of 10x by 2029 due to 47-day lifespans; workload tied to certificate management rises fivefold by March 2026
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Developer, Policy Maker
 - **Implementation Prerequisites**: Unified inventory of cryptographic assets; crypto-agile processes; secure processors or secure elements; secure boot and authenticated firmware update mechanisms; SBOM practices; PKI for device identities
-- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, Leaders, Playground, crypto-agility, iot-ot-pqc, digital-id
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, Leaders, Playground, crypto-agility, iot-pqc, digital-id
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic asset mapping, inventorying all cryptographic assets and dependencies, unified inventory of cryptographic assets algorithms and dependencies, certificate landscape visibility, SBOM (Software Bill of Material) to track vulnerabilities and document dependencies
 - **Testing & Validation Methods**: None detected
@@ -18619,7 +18619,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Stateful traffic generation at 1 Gbps; 10 Gbps; 100 Gbps; 400 Gbps
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Researcher
 - **Implementation Prerequisites**: Cloud-native network security test platform; BreakingPoint System integration via ATI-2025-15 application; Embedded Security Testbench setup
-- **Relevant PQC Today Features**: hybrid-crypto; tls-basics; iot-ot-pqc; compliance-strategy; pqc-risk-management
+- **Relevant PQC Today Features**: hybrid-crypto; tls-basics; iot-pqc; compliance-strategy; pqc-risk-management
 - **Implementation Attack Surface**: side channels (power, timing, EM), fault injection, key-dependent leakage, fault-based key recovery
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Side-Channel Analysis (SCA), Fault Injection (FI), classical TVLA, validation from design to deployment
@@ -19105,7 +19105,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; migration-program; pqc-risk-management; digital-id; code-signing
+- **Relevant PQC Today Features**: iot-pqc; migration-program; pqc-risk-management; digital-id; code-signing
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19321,7 +19321,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Secures 30M+ endpoints; over one million gas meters annually in the UK
 - **Target Audience**: CISO; Security Architect; Policy Maker; Operations
 - **Implementation Prerequisites**: Manufacturing process integration for electric and gas metering devices; offline, distributed, or cloud-native PKI deployment models
-- **Relevant PQC Today Features**: pki-workshop; iot-ot-pqc; migration-program; vendor-risk; pqc-business-case
+- **Relevant PQC Today Features**: pki-workshop; iot-pqc; ot-pqc; migration-program; vendor-risk; pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19375,7 +19375,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Up to 100K logic density; 7.3Mb internal memory; 55Mb dedicated user flash memory; up to 378 I/O pins; 1.0V I/O support
 - **Target Audience**: Security Architect, Developer, Hardware Engineer
 - **Implementation Prerequisites**: Lattice Radiant software; Lattice Propel System Design Environment; TDQ device variants for PQC services
-- **Relevant PQC Today Features**: Algorithms, Compliance, iot-ot-pqc, stateful-signatures, hsm-pqc
+- **Relevant PQC Today Features**: Algorithms, Compliance, iot-pqc, stateful-signatures, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19483,7 +19483,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Kyber keys are an order of magnitude larger than ECDSA; Hybrid SPKI is several times heavier than classical structures; CSR size exceeds previous boundaries; Larger handshake packets trigger buffer issues on IoT devices
 - **Target Audience**: Security Architect, Developer, DevOps Engineer, Compliance Officer
 - **Implementation Prerequisites**: OpenSSL 3.x; updated cryptographic libraries; modernized DevOps pipelines; compatible K8s controllers; HSM resources supporting PQC; updated edge devices
-- **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, iot-ot-pqc
+- **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit, algorithm enumeration, deprecated cipher detection
 - **Testing & Validation Methods**: conformance testing, interoperability testing, regression testing
@@ -19969,7 +19969,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: Utimaco HSM or Securosys Primus PQC HSM hardware; installation of MTG special PQC modules; access to secure testing environment at cloud.securosys.com
-- **Relevant PQC Today Features**: hsm-pqc, kms-pqc, stateful-signatures, hybrid-crypto, iot-ot-pqc
+- **Relevant PQC Today Features**: hsm-pqc, kms-pqc, stateful-signatures, hybrid-crypto, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic Objects table search and filtering; wildcard name search; exact name search; count of Cryptographic Objects matching applied filters; state management of linked cryptographic objects
 - **Testing & Validation Methods**: KMIP profile test cases; Draft of KMIP 3.0 specification conformance; Test button for email server; Test button for SMNP server
@@ -20347,7 +20347,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; stateful-signatures; timeline; algorithms
+- **Relevant PQC Today Features**: iot-pqc; stateful-signatures; timeline; algorithms
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: PSA Client-Server Testing, fuzzing (implied by security vulnerability processes), regression testing (implied by CI Optimization)
@@ -20401,7 +20401,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Hardware replacement required
-- **Relevant PQC Today Features**: iot-ot-pqc; migration-program; vendor-risk; pqc-business-case
+- **Relevant PQC Today Features**: iot-pqc; migration-program; vendor-risk; pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20455,7 +20455,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Arm Cortex-M4F processor running at 96 MHz; 480 KB of SRAM
 - **Target Audience**: Developer, Security Architect, System Architect
 - **Implementation Prerequisites**: MPLAB X Integrated Development Environment (IDE); Zephyr; MEC1753-240 MECC (EV48H83A) development board
-- **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-ot-pqc, stateful-signatures
+- **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-pqc, stateful-signatures
 - **Implementation Attack Surface**: immutable hardware to block attack paths possible on software implementations; Memory Protection Unit (MPU)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20509,7 +20509,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc, vendor-risk, hsm-pqc, pki-workshop, 5g-security
+- **Relevant PQC Today Features**: iot-pqc, vendor-risk, hsm-pqc, pki-workshop, 5g-security
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -21319,7 +21319,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Network Administrator, Developer, Security Architect
 - **Implementation Prerequisites**: Linux kernel; MikroTik hardware or x86 PC; ISO image for installation; License key from MikroTik Account server
-- **Relevant PQC Today Features**: vpn-ssh-pqc, iot-ot-pqc
+- **Relevant PQC Today Features**: vpn-ssh-pqc, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22345,7 +22345,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: SE051A/C user memory 46 kB; personalization options up to 104 kB
 - **Target Audience**: Security Architect; Developer; IoT Engineer; Compliance Officer
 - **Implementation Prerequisites**: EdgeLock Plug & Trust Middleware; GlobalPlatform SCP03 support; I²C bus encryption; contact local NXP representative for proprietary applet development
-- **Relevant PQC Today Features**: iot-ot-pqc, compliance-strategy, hsm-pqc, digital-id, migration-program
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, compliance-strategy, hsm-pqc, digital-id, migration-program
 - **Implementation Attack Surface**: strong protection against the most recent attack scenarios; CC EAL 6+ with AVA_VAN.5 up to the OS level
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL 6+ certified up to OS level; IEC62443-4-1 certified secure process with maturity level 3; certified by an independent lab
@@ -22399,7 +22399,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Developer
 - **Implementation Prerequisites**: Java Card 3.0.5 specifications; GlobalPlatform card specifications; ISO7816 standards; EMV standards
-- **Relevant PQC Today Features**: Algorithms; Compliance; hsm-pqc; iot-ot-pqc; code-signing
+- **Relevant PQC Today Features**: Algorithms; Compliance; hsm-pqc; iot-pqc; code-signing
 - **Implementation Attack Surface**: side-channel countermeasures (ML-DSA)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 L3 certification, Cryptographic Algorithm Validation Program (CAVP), interoperability testing
@@ -22453,7 +22453,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 2.5-gigabit-Ethernet switch; Cortex-A55 cores up to 1.7GHz; Cortex-M7 cores up to 800MHz; Cortex-M33 cores at 333MHz and 300MHz
 - **Target Audience**: Security Architect, Developer, Automotive Engineer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc, Threats, Algorithms, Leaders, hybrid-crypto
+- **Relevant PQC Today Features**: iot-pqc, Threats, Algorithms, Leaders, hybrid-crypto
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22507,7 +22507,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 200-800 MHz core speed; up to 41 MB MRAM; 2.5 G / 1 G / 100 M / 10 BaseT1S Ethernet
 - **Target Audience**: Security Architect; Developer; Operations
 - **Implementation Prerequisites**: S32 Design Studio IDE; Arm Cortex-M7 or Cortex-R52 cores; AEC-Q100 Grade 1 qualification
-- **Relevant PQC Today Features**: hsm-pqc; iot-ot-pqc; vendor-risk
+- **Relevant PQC Today Features**: hsm-pqc; iot-pqc; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22561,7 +22561,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 46 kB user memory with personalization options up to 104 kB; I²C bus encryption supported
 - **Target Audience**: Security Architect; Developer; IoT Engineer; Compliance Officer
 - **Implementation Prerequisites**: EdgeLock Plug & Trust Middleware package; GlobalPlatform SCP03 support; Contact local NXP representative for proprietary applet development; Zephyr OS integration available via nano package
-- **Relevant PQC Today Features**: iot-ot-pqc, compliance-strategy, migration-program, vendor-risk, digital-id
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, compliance-strategy, migration-program, vendor-risk, digital-id
 - **Implementation Attack Surface**: strong protection against the most recent attack scenarios; CC EAL 6+ with AVA_VAN.5 up to the OS level
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL 6+ certified up to OS level; IEC62443-4-1 certified secure process with maturity level 3; certified by an independent lab
@@ -22615,7 +22615,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 0.5 TOPS machine learning performance; 5G speeds for secure communications
 - **Target Audience**: Security Architect; Developer; Industrial Automation Engineer; Automotive Telematics Engineer
 - **Implementation Prerequisites**: NXP PF9455 PMIC; IW612 tri-radio solution
-- **Relevant PQC Today Features**: iot-ot-pqc, 5g-security, code-signing, vendor-risk, pqc-business-case
+- **Relevant PQC Today Features**: iot-pqc, 5g-security, code-signing, vendor-risk, pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22831,7 +22831,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pki-workshop, digital-id, iot-ot-pqc, compliance-strategy, pqc-risk-management
+- **Relevant PQC Today Features**: pki-workshop, digital-id, iot-pqc, compliance-strategy, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: ROCA scanner command-line tool in Certificate Manager; Search for certificates in Certificate Manager; View and verify certificates in Certificate Manager; List slot contents
 - **Testing & Validation Methods**: Common Criteria certification for Certificate Manager; CM requirements and interoperability; Interoperability testing implied by "Requirements and interoperability" sections
@@ -23155,7 +23155,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: 5g-security, iot-ot-pqc, pki-workshop, quantum-threats, vendor-risk
+- **Relevant PQC Today Features**: 5g-security, iot-pqc, pki-workshop, quantum-threats, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: NetGuard Certificate Lifecycle Manager automates all processes of public keys and certificates in a centralized, secure and cost-effective way
 - **Testing & Validation Methods**: None detected
@@ -23317,7 +23317,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Operations; Compliance Officer; CISO
 - **Implementation Prerequisites**: Mirrored network ports or taps; On-prem Nozomi Central Management Console or Nozomi Vantage cloud platform; Hardware appliances, virtual machines, embedded devices, or containers
-- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; data-asset-sensitivity
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; compliance-strategy; data-asset-sensitivity
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, asset inventory management, up-to-date asset inventory, device type, firmware version, serial number
 - **Testing & Validation Methods**: None detected
@@ -24667,7 +24667,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: C90 compiler; Assembly support; Rust environment; AVX2 hardware for specific optimizations; hax toolchain for formal verification
-- **Relevant PQC Today Features**: Algorithms; code-signing; iot-ot-pqc; stateful-signatures
+- **Relevant PQC Today Features**: Algorithms; code-signing; iot-pqc; stateful-signatures
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification, panic freedom, correctness, secret independence
@@ -24937,7 +24937,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 5kb RAM; baremetal PQC library; optimized binary size; memory usage fine-tuning
 - **Target Audience**: Developer, Security Architect, System Integrator
 - **Implementation Prerequisites**: C compiler; ARM or RISC-V microcontrollers; bare metal or real time operating systems; option to include DPA protection
-- **Relevant PQC Today Features**: iot-ot-pqc, tls-basics, code-signing, stateful-signatures, algorithms
+- **Relevant PQC Today Features**: iot-pqc, tls-basics, code-signing, stateful-signatures, algorithms
 - **Implementation Attack Surface**: side-channel (timing, DPA, template attacks, deep learning attacks), memory safety failures (buffer overflows)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP validated (A3011), FIPS 140-3 CMVP in process, extensive functional and security validation
@@ -24991,7 +24991,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Researcher
 - **Implementation Prerequisites**: C programming language; Rust programming language; RISC-V processors; FPGA or ASIC hardware platforms
-- **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-ot-pqc, hsm-pqc
+- **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-pqc, hsm-pqc
 - **Implementation Attack Surface**: side-channel (power, timing, EM leakage)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP / ACVP-Certified Implementations
@@ -25045,7 +25045,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 5KB RAM for embedded devices
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, iot-ot-pqc
+- **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP/CMVP compliance paths, extensive functional and security validation
@@ -25315,7 +25315,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Integration with existing SIEM, load balancers, EDR, and AVM tools; synchronization with CMDB and asset management platforms; hardware and OS capabilities to support post-quantum algorithms
-- **Relevant PQC Today Features**: Assess; Migrate; Threats; Compliance; pqc-governance; iot-ot-pqc
+- **Relevant PQC Today Features**: Assess; Migrate; Threats; Compliance; pqc-governance; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25423,7 +25423,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 14 NGFW models with PQC support
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Existing network infrastructure as sensors; Integration with SIEM, EDR, AVM tools, CMDB, and asset management platforms; Hardware and OS capabilities to support post-quantum algorithms
-- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; Compliance; pqc-risk-management; migration-program; pqc-governance; iot-ot-pqc
+- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; Compliance; pqc-risk-management; migration-program; pqc-governance; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25585,7 +25585,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 1-2% overhead; a couple of ms additional latency
 - **Target Audience**: Security Architect, Operations, Compliance Officer, Developer
 - **Implementation Prerequisites**: Linux operating system (Ubuntu, Redhat, Oracle Linux); ethernet networking; API integration for legacy OT systems
-- **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, compliance-strategy, migration-program
+- **Relevant PQC Today Features**: iot-pqc, hybrid-crypto, crypto-agility, compliance-strategy, migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: PanoQor for scanning and inventory of environments
 - **Testing & Validation Methods**: FIPS 203, third-party tests and certifications, attack simulations for classical and quantum threat models, simple and advanced simulations
@@ -26611,7 +26611,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Compliance Officer, CISO, Developer, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Assess, Algorithms, Compliance, Migrate, Threats, crypto-agility, tls-basics, vpn-ssh-pqc, pki-workshop, hsm-pqc, 5g-security, digital-id, iot-ot-pqc, qkd, code-signing, vendor-risk, pqc-risk-management
+- **Relevant PQC Today Features**: Assess, Algorithms, Compliance, Migrate, Threats, crypto-agility, tls-basics, vpn-ssh-pqc, pki-workshop, hsm-pqc, 5g-security, digital-id, iot-pqc, ot-pqc, qkd, code-signing, vendor-risk, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Q-SCANNER (TLS/PQC vulnerability scanner, 9 scan areas, 117 tests), Q-ASSET (IT asset discovery and inventory, auto-detect endpoints, services, certificates, keys), Q-CERT (X.509 certificate lifecycle management), Q-KPQC-CBOM (KpqC Cryptographic Bill of Materials)
 - **Testing & Validation Methods**: Q-BENCH (CIS Benchmark automated assessment), Q-KPQC-BENCHMARK (KpqC algorithm benchmarking, 500-run performance testing), Q-SIMULATE (Attack simulation platform, quantum attack scenarios, red team exercises)
@@ -26773,7 +26773,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Operations
 - **Implementation Prerequisites**: Evaluation of expected time frames for devices and systems; Plan for post quantum cryptography migration in operations
-- **Relevant PQC Today Features**: qkd, entropy-randomness, hybrid-crypto, pqc-risk-management, iot-ot-pqc
+- **Relevant PQC Today Features**: qkd, entropy-randomness, hybrid-crypto, pqc-risk-management, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27259,7 +27259,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: significantly larger key sizes; larger memory footprints than classical elliptic curve cryptography
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Android 17; KeyPairGenerator API; Trusted Execution Environment (TEE) support
-- **Relevant PQC Today Features**: Timeline, Threats, Algorithms, code-signing, iot-ot-pqc
+- **Relevant PQC Today Features**: Timeline, Threats, Algorithms, code-signing, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27421,7 +27421,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: QEEP symmetric encryption up to 18 times faster than AES-256; MASQ offers significantly smaller digital signature sizes by comparison.
 - **Target Audience**: CISO, Security Architect, Developer, Product Manager, Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc, entropy-randomness, qkd, crypto-agility, pqc-business-case
+- **Relevant PQC Today Features**: iot-pqc, entropy-randomness, qkd, crypto-agility, pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto agility to support a range of available PQC standards
 - **Testing & Validation Methods**: None detected
@@ -27475,7 +27475,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: Integration into ICS with minimal disruption; deployment in electric utility control centers and substations
-- **Relevant PQC Today Features**: iot-ot-pqc, threats, migration-program, pqc-business-case, vendor-risk
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, threats, migration-program, pqc-business-case, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27691,7 +27691,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 1.8 Gbps entropy throughput; scalable to >100 Gbps; 65nm CMOS design; 98% risk reduction in monetary loss for wallets.
 - **Target Audience**: Developer; Security Architect; CISO; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: entropy-randomness, digital-assets, hsm-pqc, iot-ot-pqc, hybrid-crypto
+- **Relevant PQC Today Features**: entropy-randomness, digital-assets, hsm-pqc, iot-pqc, hybrid-crypto
 - **Implementation Attack Surface**: Resistant to prediction, modeling, and side channel attacks; tamper-proof key storage; hardware rooted trust; neutralizing compromised states; eliminating privilege escalation risks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Continuous self test of QRNG; benchmarking simulations using IBM Quantum System One; validated by ÉTS Montréal and Institut Quantique; peer reviewed study; NIST (FIPS 140-3) certification in progress
@@ -28447,7 +28447,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 10x faster than ECC; ultra-low power
 - **Target Audience**: Systems Integrators; OEMs; Property Owners and Managers; Building Controls; Security Architect
 - **Implementation Prerequisites**: Intel Cyclone V SoC FPGAs; Intel MAX 10 FPGAs; Renesas RA MCUs
-- **Relevant PQC Today Features**: iot-ot-pqc, vendor-risk, migration-program, pqc-business-case
+- **Relevant PQC Today Features**: iot-pqc, vendor-risk, migration-program, pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -28771,7 +28771,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust language; no_std environment support for bare-metal or WebAssembly
-- **Relevant PQC Today Features**: Algorithms, code-signing, stateful-signatures, merkle-tree-certs, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, code-signing, stateful-signatures, merkle-tree-certs, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: proptest, criterion
@@ -29095,7 +29095,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Low-latency, high-throughput encryption; energy-efficient operation for resource-constrained environments
 - **Target Audience**: Security Architect; Developer; Compliance Officer; CISO
 - **Implementation Prerequisites**: Client firmware integration; RISC-V-based secure hardware platform; customizable firmware
-- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; iot-ot-pqc; hsm-pqc
+- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; iot-pqc; hsm-pqc
 - **Implementation Attack Surface**: physical attack protection, tamper-resistant security
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: cryptographic toolbox validation, Common Criteria EAL5+ certification process, formal Common Criteria EAL5+ standards alignment
@@ -29149,7 +29149,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: ML-DSA-87 public key size 1,952 bytes; ML-DSA-87 signature size 4,595 bytes; ML-KEM-1024 public key size 1,568 bytes; ML-KEM-1024 ciphertext size 1,568 bytes
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: FIPS 140-2/3 certified hardware; Common Criteria EAL5+ certification; ISO 26262 compliance for automotive applications
-- **Relevant PQC Today Features**: Algorithms, Threats, Compliance, iot-ot-pqc, hsm-pqc
+- **Relevant PQC Today Features**: Algorithms, Threats, Compliance, iot-pqc, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2/3, Common Criteria EAL5+
@@ -29203,7 +29203,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 10× performance gains; stronger side-channel resistance; advanced tamper protection
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker, Researcher
 - **Implementation Prerequisites**: Development kits available to customers; custom firmware support; hybrid cryptography migration planning
-- **Relevant PQC Today Features**: Algorithms, Threats, Compliance, Migrate, Leaders, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Threats, Compliance, Migrate, Leaders, iot-pqc
 - **Implementation Attack Surface**: side-channel resistance, tamper protection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL5+, FIPS 140-3, security validation by SERMA Security Evaluation Laboratory, testing and validating advanced semiconductor solutions by Granite River Labs
@@ -29257,7 +29257,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 22nm process; 70% of CVEs related to memory safety issues
 - **Target Audience**: Security Architect, CISO, Developer, Compliance Officer, OEMs
 - **Implementation Prerequisites**: TSMC 22nm process; CHERI ISA V9 implementation; FIPS 140-3 standards design
-- **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-ot-pqc, hsm-pqc
+- **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-pqc, hsm-pqc
 - **Implementation Attack Surface**: memory safety failures; 70% of CVEs related to memory safety issues
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 standards; NIST standards (FIPS 203, 204 and 205)
@@ -29419,7 +29419,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 10X faster data delivery with SOTI XTreme Technology; up to 60% reduction in time for data and app deployments; deployments can range from hundreds of megabytes to gigabytes.
 - **Target Audience**: Security Architect, Operations, CISO, Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc, digital-id, vendor-risk
+- **Relevant PQC Today Features**: iot-pqc, digital-id, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -29635,7 +29635,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 10-year product lifetime; 20-year product lifetime; -40 to 105 C° operating temperature; UFQFPN32 package; WLCSP24 package; SPI interface; I2C interface
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: TCG TPM 2.0 rev 1.59 specification compliance; JESD-47 qualification; SPI or I2C interface support
-- **Relevant PQC Today Features**: stateful-signatures, iot-ot-pqc, compliance-strategy, migration-program, code-signing
+- **Relevant PQC Today Features**: stateful-signatures, iot-pqc, compliance-strategy, migration-program, code-signing
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL4+ certified, FIPS 140-3 certificate, TCG TPM 2.0 rev 1.59 specification conformance, JESD-47 qualification
@@ -29905,7 +29905,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Developer; Policy Maker
 - **Implementation Prerequisites**: Galaxy S25 series device; One UI 7 operating system; S3SSE2A embedded Secure Element with dual PQC hardware accelerators
-- **Relevant PQC Today Features**: Threats, Algorithms, Migrate, iot-ot-pqc, data-asset-sensitivity
+- **Relevant PQC Today Features**: Threats, Algorithms, Migrate, iot-pqc, data-asset-sensitivity
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -30013,7 +30013,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 17 times faster computation with hardware and software vs software only; ML_DSA65 signature software only 335.97ms; ML_DSA65 signature hardware and software 19.02ms at 200MHz; minimum attack resistance time for EAL 4+ is one week (168 hours)
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats, Algorithms, Compliance, iot-ot-pqc, pqc-risk-management
+- **Relevant PQC Today Features**: Threats, Algorithms, Compliance, iot-pqc, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -30553,7 +30553,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms, Compliance, hsm-pqc, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Compliance, hsm-pqc, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Pre-Silicon Verification (HW), Post-Silicon Evaluation (Device), Security Risk Assessment (SW), Security Evaluation as a Service, Support to Security Certification & Compliance
@@ -30769,7 +30769,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Up to 1 Gbps encrypted throughput; CN7108 weight 420g; CN7107 weight 1.9kg; CN7105 weight 5.8kg; Operating temperature -40°C to 85°C
 - **Target Audience**: Security Architect, Operations, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Senetas CM7 Network Manager (CM7); FIPS 140-3 Level 1 certified module; Cryptographic SDK (CSDK) for custom ciphers; External Key Servers (CipherTrust) optional
-- **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, qkd, iot-ot-pqc, compliance
+- **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, qkd, iot-pqc, compliance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Central configuration and management with Senetas CM7 Network Manager (CM7); Supports Syslog, NTP, SNMPv1 read only monitoring; Alarm, event and audit logs
 - **Testing & Validation Methods**: FIPS 140-3 Level 1 certified; MIL-STD-810G compliance for shock and vibration
@@ -30985,7 +30985,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Compliance Officer
 - **Implementation Prerequisites**: Siemens industrial routers; PKI smartcard; Username/password; ISO/IEC 27001 certified data center
-- **Relevant PQC Today Features**: iot-ot-pqc, vpn-ssh-pqc, compliance-strategy, migration-program, pki-workshop
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, vpn-ssh-pqc, compliance-strategy, migration-program, pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory
 - **Testing & Validation Methods**: None detected
@@ -32119,7 +32119,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Researcher, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms, Leaders, qkd, hybrid-crypto, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Leaders, qkd, hybrid-crypto, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -32281,7 +32281,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Kyber secret keys recovered within minutes for KyberSlash2; Kyber secret keys recovered in a few hours for KyberSlash1
 - **Target Audience**: Researcher, Policy Maker, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: Raspberry Pi 2 (Arm Cortex-A7); Arm Cortex-M4 microprocessor; AVX2 architecture
-- **Relevant PQC Today Features**: Algorithms, Leaders, Migration-program, Assess, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, Leaders, Migration-program, Assess, iot-pqc
 - **Implementation Attack Surface**: timing vulnerabilities in Kyber implementations (KyberSlash1, KyberSlash2), secret-dependent division timings
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -32929,7 +32929,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Developer
 - **Implementation Prerequisites**: Luna HSM firmware v7.9+; Software v7.9.1 or FW v7.9.2 for specific features
-- **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, code-signing, iot-ot-pqc, tls-basics
+- **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, code-signing, iot-pqc, tls-basics
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto resource partitioning, reporting and monitoring
 - **Testing & Validation Methods**: product verification testing, real-world application testing, FIPS 140-3 Level 3 validated
@@ -32983,7 +32983,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Compliance Officer
 - **Implementation Prerequisites**: Luna HSM firmware v7.9; Thales PKI Technology Partners ecosystem validation
-- **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, tls-basics, code-signing, iot-ot-pqc
+- **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, tls-basics, code-signing, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -33361,7 +33361,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, CISO, Operations
 - **Implementation Prerequisites**: Edge Safe™ secure element embedded in IoT devices; Secure Activate Service™ platform for certificate management
-- **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, digital-id, pki-workshop
+- **Relevant PQC Today Features**: iot-pqc, hybrid-crypto, crypto-agility, digital-id, pki-workshop
 - **Implementation Attack Surface**: harvest attacks targeting encryption keys and certificates; unauthorized data extraction via disassembly or analysis of secure elements
 - **Cryptographic Discovery & Inventory**: hybrid certificate issuance and management supporting current digital certificates, PQC certificates, and hybrid certificates; continued use of existing crypto-assets
 - **Testing & Validation Methods**: testing of network environments for PQC-compatible smart card systems
@@ -33847,7 +33847,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: GCC or Clang compilers; GitLab CI / U-Boot runner container; Buildman build tool; Device Tree Overlays support
-- **Relevant PQC Today Features**: iot-ot-pqc, code-signing, entropy-randomness
+- **Relevant PQC Today Features**: iot-pqc, code-signing, entropy-randomness
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Testing, regression testing
@@ -35197,7 +35197,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Policy Maker, Researcher
 - **Implementation Prerequisites**: Integration of SEALSQ Post-Quantum Chips; WISeKey trusted Root of Trust; Hedera Decentralized Ledger Technology (DLT)
-- **Relevant PQC Today Features**: iot-ot-pqc, digital-assets, migration-program, pqc-business-case, leaders
+- **Relevant PQC Today Features**: iot-pqc, digital-assets, migration-program, pqc-business-case, leaders
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -35413,7 +35413,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Single-nanosecond determinism; 99.9999% reliability
 - **Target Audience**: Developer; Security Architect; Safety Engineer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Relevant PQC Today Features**: iot-pqc; compliance-strategy; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: automated testing, simulation, quality assurance via Intel Simics and Virtual Lab
@@ -35899,7 +35899,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Developer; Hardware Engineer
 - **Implementation Prerequisites**: FPGA or ASIC platform; Bus interface configuration
-- **Relevant PQC Today Features**: Algorithms; hsm-pqc; iot-ot-pqc; vendor-risk; pqc-business-case
+- **Relevant PQC Today Features**: Algorithms; hsm-pqc; iot-pqc; vendor-risk; pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Cryptographic Algorithm Validation Program (CAVP)
@@ -36007,7 +36007,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: PKCS#11 support; YubiHSM KSP; native libraries; USB-A or USB-C port; Open source SDK
-- **Relevant PQC Today Features**: hsm-pqc, code-signing, iot-ot-pqc, pki-workshop, compliance-strategy
+- **Relevant PQC Today Features**: hsm-pqc, code-signing, iot-pqc, pki-workshop, compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 L3
@@ -36439,7 +36439,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: PQ/T hybrid doubles latency compared to post-quantum verification alone; PQPerform offers high speed with larger area footprint; PQPlatform optimized for low area footprint.
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Policy Maker, System Integrator
 - **Implementation Prerequisites**: FIPS 140-3 CMVP Level 3 or 4 certification (not yet available for PQC); Two-factor authentication mechanism; Hardware accelerators for optimization; State backup mechanisms for stateful signatures.
-- **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, code-signing, iot-ot-pqc, stateful-signatures
+- **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, code-signing, iot-pqc, stateful-signatures
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -37411,7 +37411,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: CMake 3.20.2 or later; Python 3.8 or later; Perl; C99 toolchain; Doxygen 1.8.14 or later for documentation; Git submodules initialization
-- **Relevant PQC Today Features**: Algorithms, tls-basics, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, tls-basics, iot-pqc
 - **Implementation Attack Surface**: AddressSanitizer, LeakSanitizer, UndefinedSanitizer, MemorySanitizer, ThreadSanitizer
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing, regression testing, fuzzing (via ASan/MemSan/TSan), test suites with generated data files
@@ -38167,7 +38167,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: NUCLEO-L4R5ZI: 2MB Flash, 640KB RAM; STM32F4 Discovery: 1MB Flash, 192KB RAM; NUCLEO-L476RG: 1MB Flash, 128KB RAM; CW308T-STM32F3: 256KB Flash, 40KB RAM; MPS2-AN386: two 4MB RAM blocks
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: arm-none-eabi toolchain; Python >= 3.8; pyserial module; stlink; OpenOCD version 0.12; QEMU >= 5.2; chipwhisperer module (for cw308t-stm32f3); libusb-1.0.0-dev
-- **Relevant PQC Today Features**: Algorithms, iot-ot-pqc, code-signing, stateful-signatures, entropy-randomness
+- **Relevant PQC Today Features**: Algorithms, iot-pqc, code-signing, stateful-signatures, entropy-randomness
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration, deprecated cipher detection
 - **Testing & Validation Methods**: automated functional testing, automated generation of test vectors, comparison against output of a reference implementation, automated benchmarking for speed stack usage and code-size, automated profiling of cycles spent in symmetric primitives, cross-check different implementations using deterministic random number generator
@@ -38437,7 +38437,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Operations
 - **Implementation Prerequisites**: libtpms; QEMU; Kubernetes Confidential Computing
-- **Relevant PQC Today Features**: hsm-pqc; iot-ot-pqc
+- **Relevant PQC Today Features**: hsm-pqc; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -38707,7 +38707,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Faster than Cisco hash-sigs reference
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Download wolfSSL library; configure to enable Dilithium and Kyber; run benchmarks
-- **Relevant PQC Today Features**: Algorithms, stateful-signatures, iot-ot-pqc, code-signing, hsm-pqc
+- **Relevant PQC Today Features**: Algorithms, stateful-signatures, iot-pqc, code-signing, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP and CMVP certification of our post-quantum algorithms; wolfSSL and Crypto4A interoperability between wolfBoot and QXEdget Using LMS demo project; wolfSSL and AWS interoperability between wolfSSH and AWS Transfer Family using ML-KEM and ECDH hybrid scheme
@@ -38761,7 +38761,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: TPM supporting v1.85 specification; wolfTPM source code with unit tests
-- **Relevant PQC Today Features**: Algorithms, hsm-pqc, migration-program, iot-ot-pqc
+- **Relevant PQC Today Features**: Algorithms, hsm-pqc, migration-program, iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: unit tests, test*wolfTPM2_MLDSA*_, test*wolfTPM2_MLKEM*_
@@ -39144,7 +39144,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: shared library of 43kBytes on Intel 64-bit systems (SHA2-256 only); significantly faster compared to other libraries like OpenSSL
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Meson build system; POSIX environment; Linux kernel source tree (for in-tree build); GNU-EFI environment (for EFI build)
-- **Relevant PQC Today Features**: Algorithms; iot-ot-pqc; code-signing; entropy-randomness
+- **Relevant PQC Today Features**: Algorithms; iot-pqc; code-signing; entropy-randomness
 - **Implementation Attack Surface**: side-channel (time-variant code paths based on secret data); Memory Leaks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP; CAVP; Regression testing; Performance testing; Memory Leak testing; Security Scans; Valgrind-based dynamic side channel analysis
@@ -39584,7 +39584,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: wolfSSL v5.8.4-stable; wolfTPM v2.4.0; wolfPKCS11 v2.0.0-stable; wolfHSM v1.3.0; CMake
-- **Relevant PQC Today Features**: iot-ot-pqc; hsm-pqc; stateful-signatures; code-signing
+- **Relevant PQC Today Features**: iot-pqc; hsm-pqc; stateful-signatures; code-signing
 - **Implementation Attack Surface**: IV reuse; partial writes; power faults; clock glitch
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: unit test coverage; CI validation; rollback logic testing; bank-swap test script
@@ -40904,7 +40904,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 28nm process technology
 - **Target Audience**: Security Architect; Developer; CISO
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; iot-ot-pqc; digital-id; crypto-agility
+- **Relevant PQC Today Features**: Algorithms; Compliance; iot-pqc; digital-id; crypto-agility
 - **Implementation Attack Surface**: Side-channel attacks; Fault attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria certification
@@ -41124,7 +41124,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc
+- **Relevant PQC Today Features**: iot-pqc
 - **Implementation Attack Surface**: memory safety failures
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -41894,7 +41894,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Operations; Developer
 - **Implementation Prerequisites**: OpenSSL 3.x; Linux kernel 6.6.138+ or 6.12.87+; specific installer versions for certain devices
-- **Relevant PQC Today Features**: vpn-ssh-pqc; iot-ot-pqc
+- **Relevant PQC Today Features**: vpn-ssh-pqc; iot-pqc
 - **Implementation Attack Surface**: local privilege escalation; buffer overflow; heap buffer overflow
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -43544,7 +43544,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pki-workshop; iot-ot-pqc; algorithms; leaders
+- **Relevant PQC Today Features**: pki-workshop; iot-pqc; algorithms; leaders
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -43819,7 +43819,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-ot-pqc; code-signing; hybrid-crypto; crypto-agility
+- **Relevant PQC Today Features**: iot-pqc; code-signing; hybrid-crypto; crypto-agility
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -44259,7 +44259,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: on-wire, data center level speed; near wire-speed performance with minimal latency
 - **Target Audience**: CISO; Security Architect; Developer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hybrid-crypto; vpn-ssh-pqc; iot-ot-pqc; compliance-strategy
+- **Relevant PQC Today Features**: hybrid-crypto; vpn-ssh-pqc; iot-pqc; compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: QBOM and CBOM inventorying
 - **Testing & Validation Methods**: None detected
@@ -44534,7 +44534,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 96 MHz processor; 480 KB of SRAM; low power consumption
 - **Target Audience**: Security Architect; Developer
 - **Implementation Prerequisites**: MPLAB X Integrated Development Environment (IDE); Zephyr; MEC1753-240 MECC (EV48H83A) development board
-- **Relevant PQC Today Features**: Algorithms; Compliance; iot-ot-pqc; stateful-signatures
+- **Relevant PQC Today Features**: Algorithms; Compliance; iot-pqc; stateful-signatures
 - **Implementation Attack Surface**: attack paths possible on software implementations
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -44589,7 +44589,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 7,100 ML-KEM-1024 decapsulation operations per second; 13,500 ML-KEM-1024 encapsulation operations per second; 1,400 ML-DSA-87 sign operations per second
 - **Target Audience**: Security Architect; Developer; Hardware Engineer
 - **Implementation Prerequisites**: ASIC, SoC or FPGA device; PKE-IP-85 core; TRNG-IP-76 core
-- **Relevant PQC Today Features**: Algorithms; hsm-pqc; iot-ot-pqc; crypto-agility
+- **Relevant PQC Today Features**: Algorithms; hsm-pqc; iot-pqc; crypto-agility
 - **Implementation Attack Surface**: Differential power analysis (DPA)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP; Verification test bench and test vectors
@@ -45854,7 +45854,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Memory Optimizations (code size); Bignum Improvements; EdDSA Performance Optimization
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Mbed TLS 3.6+; TF-PSA-Crypto 1.0+
-- **Relevant PQC Today Features**: Timeline; Algorithms; iot-ot-pqc
+- **Relevant PQC Today Features**: Timeline; Algorithms; iot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: PSA Client-Server Testing; CI Optimization
@@ -46239,7 +46239,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+
-- **Relevant PQC Today Features**: iot-ot-pqc; tls-basics
+- **Relevant PQC Today Features**: iot-pqc; tls-basics
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
