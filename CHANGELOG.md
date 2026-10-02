@@ -50,6 +50,7 @@ The Curious Explorer role now also serves people who need post-quantum cryptogra
 
 ### Fixed
 
+- **Curious home board no longer shows the same chip twice** [view:/] [persona:curious]: four Curious starting points ("The 30-second version", "Watch it break", "Where this touches me", "Is anyone fixing it?") each showed "Plain English by default" twice; each now shows it once.
 - **Two Rust-engine bugs found by Google's Wycheproof tests are fixed** [view:/algorithms] [view:/playground] [persona:cert-engineer] [persona:developer]: everywhere the site runs the Rust engine (the validation workbench, the KMIP and policy-engine tools, and OpenSSL Studio), it no longer signs with an ML-DSA private key whose values are out of range, and no longer turns an empty seed into a random key (ML-DSA, ML-KEM, SLH-DSA, FrodoKEM, Classic McEliece). All 2,458 Wycheproof ML-KEM and ML-DSA cases now pass on both engines, and both entries leave the open-gaps register.
 - **The first search no longer freezes the page** [view:/library] [persona:curious] [persona:developer] [persona:researcher]: the first time you open search (⌘K) or the Assistant, the site builds its search index in small slices instead of all at once, so the page stays responsive while it loads. Results appear only once the index is complete, never half-built.
 
