@@ -316,6 +316,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         name: '@noble/post-quantum (ML-DSA-65 attestation)',
         pkg: '@noble/post-quantum',
       },
+      { name: 'hpke (HPKE for the JWE workshop)', pkg: 'hpke' },
       { name: '@peculiar/x509', pkg: '@peculiar/x509' },
       { name: '@scure/bip32', pkg: '@scure/bip32' },
       { name: '@scure/bip39', pkg: '@scure/bip39' },

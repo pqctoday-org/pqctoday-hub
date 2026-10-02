@@ -1235,16 +1235,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.4',
+    version: '1.1.1',
     name: 'API Security & JWT Workshop',
     description:
-      // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
-      // version was titled "PQ KEMs for JOSE and COSE"; -06 (6 Jul 2026) was
-      // retitled COSE-only and dropped JOSE entirely — 0 occurrences of "JWE",
-      // and §5.1 "Key Derivation for JOSE" is gone. The implementation is
-      // correct against -05, so the citation names the version rather than
-      // pointing at a document that no longer specifies this.
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem-05 (its successor -06 narrowed to COSE only).',
+      // The JWE half names the draft revisions it was verified against
+      // (hpke-encrypt-22, hpke-pq-pqt-01). The earlier direct-KEM JWE
+      // (draft-ietf-jose-pqc-kem-05) was removed when -06 narrowed to COSE.
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01.',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',
@@ -1252,6 +1249,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'ML-DSA-87',
       'SLH-DSA-SHA2-128s',
       'ML-KEM-768',
+      'X-Wing',
+      'HPKE',
       'JWS',
       'JWE',
       'JOSE',
@@ -1271,7 +1270,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'composite',
       'ml-dsa-65-ed25519',
       'rfc 7519',
-      'draft-ietf-jose-pqc-kem',
+      'hpke',
+      'draft-ietf-jose-hpke-encrypt',
+      'draft-ietf-jose-hpke-pq-pqt',
       'noble',
       'softhsmv3',
       'pkcs11',
@@ -1282,7 +1283,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['developer'],
     intro: {
       whatYouWillDo:
-        'Open six sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as ML-KEM-768 JWE, compare token sizes, and run the JOSE known-answer audit.',
+        'Open six sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as an HPKE JWE with ML-KEM-768 or the X25519 hybrid, compare token sizes, and run the JOSE known-answer audit.',
       workedExample:
         "In PQC JWT Signing pick ML-DSA-65 on the @noble/post-quantum backend, Generate Keypair, sign the sample payload for Alice Engineer, then Verify (noble) reports Signature valid with the token's byte sizes.",
     },

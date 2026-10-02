@@ -150,7 +150,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await expect(page.getByText(/Signature valid · ML-DSA-65/)).toBeVisible({ timeout: 25_000 })
   })
 
-  test('JWEEncryption performs a real ML-KEM-768 encap → AES-GCM encrypt → decrypt roundtrip', async ({
+  test('JWEEncryption performs a real HPKE (ML-KEM-768) JWE encrypt → decrypt roundtrip', async ({
     page,
   }) => {
     await openWorkshop(page)
@@ -164,18 +164,67 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     // Wait for the JWE Token Parts panel
     await expect(page.getByText('JWE Token Parts')).toBeVisible({ timeout: 30_000 })
 
-    // ML-KEM-768 ciphertext is exactly 1088 bytes. Per draft-ietf-jose-pqc-kem-05
-    // §6.1 it travels in the protected header's "ek", and the Encrypted Key is empty.
-    await expect(page.getByText(/ek = ML-KEM ciphertext, 1088 B/)).toBeVisible()
-    await expect(page.getByText(/Encrypted Key \(empty in direct key agreement\)/)).toBeVisible()
+    // HPKE Integrated Encryption (draft-ietf-jose-hpke-encrypt-22 §5): the JWE
+    // Encrypted Key IS the 1088-byte ML-KEM-768 encapsulated secret; IV and Tag are empty.
+    await expect(page.getByText(/Encrypted Key = HPKE encapsulated secret, 1088 B/)).toBeVisible()
+    await expect(
+      page.getByText(/Initialization Vector \(empty in Integrated Encryption\)/)
+    ).toBeVisible()
 
-    // Decrypt — real ML-KEM decap + real AES-GCM auth-tag check must succeed
+    // Decrypt — real ML-KEM decap + HPKE key schedule + AES-GCM tag check must succeed
     await page.getByRole('button', { name: /^Decrypt$/ }).click()
     await expect(page.getByText('Decrypted Payload')).toBeVisible({ timeout: 25_000 })
     await expect(page.getByText('GCM tag verified')).toBeVisible()
 
     // The decrypted JSON must be byte-equal to the original payload (contains "sub")
     await expect(page.locator('pre').filter({ hasText: /"sub"/ })).toBeVisible()
+  })
+
+  test('JWEEncryption runs HPKE-12 with ML-KEM-768 inside SoftHSM3 (PKCS#11 encapsulate/decapsulate)', async ({
+    page,
+  }) => {
+    await openWorkshop(page)
+    await page
+      .getByRole('button', { name: /JWE Encryption|Step 4/i })
+      .first()
+      .click()
+
+    await page.getByRole('button', { name: /SoftHSM3 \(PKCS#11 v3\.2 WASM\)/ }).click()
+
+    // Encrypt is enabled only once the PKCS#11 engine has a session.
+    const encrypt = page.getByRole('button', { name: 'Encrypt JWT Payload' })
+    await expect(encrypt).toBeEnabled({ timeout: 40_000 })
+    await encrypt.click()
+
+    await expect(page.getByText(/private key stays in SoftHSM3/)).toBeVisible({ timeout: 40_000 })
+    await expect(page.getByText(/Encrypted Key = HPKE encapsulated secret, 1088 B/)).toBeVisible()
+
+    // C_DecapsulateKey + HPKE key schedule + AES-GCM: a wrong shared secret fails the tag.
+    await page.getByRole('button', { name: /^Decrypt$/ }).click()
+    await expect(page.getByText('GCM tag verified')).toBeVisible({ timeout: 40_000 })
+    await expect(page.getByText(/C_DecapsulateKey → SHAKE256 key schedule/)).toBeVisible()
+  })
+
+  test('JWEEncryption decrypts the published draft-ietf-jose-hpke-pq-pqt-01 examples (HPKE-12 and HPKE-9)', async ({
+    page,
+  }) => {
+    await openWorkshop(page)
+    await page
+      .getByRole('button', { name: /JWE Encryption|Step 4/i })
+      .first()
+      .click()
+
+    await page.getByRole('button', { name: 'Decrypt the published HPKE-12 example' }).click()
+    await expect(page.getByText(/Decrypted the HPKE-12 example .* plaintext matches/)).toBeVisible({
+      timeout: 25_000,
+    })
+
+    // Switch to the X-Wing hybrid suite and repeat
+    await page.getByRole('button', { name: /HPKE-9 · ML-KEM-768 \+ X25519/ }).click()
+    await page.getByRole('button', { name: 'Decrypt the published HPKE-9 example' }).click()
+    await expect(page.getByText(/Decrypted the HPKE-9 example .* plaintext matches/)).toBeVisible({
+      timeout: 25_000,
+    })
   })
 
   test('TokenSizeAnalyzer measures real signature byte counts at mount', async ({ page }) => {
@@ -224,7 +273,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     await expect(page.getByText(/"dimension": "hybridSig"/)).toBeVisible()
   })
 
-  test('JOSE KAT Suite verifies IETF draft-ietf-cose-dilithium-11 vectors + pinned composite snapshot', async ({
+  test('JOSE KAT Suite verifies RFC 9964 vectors + published composite and HPKE JWE examples', async ({
     page,
   }) => {
     await openWorkshop(page)
@@ -235,9 +284,10 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     await page.getByRole('button', { name: /Run JOSE KAT suite/ }).click()
 
-    // 9 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 6 published composite examples
-    // of draft-ietf-jose-pq-composite-sigs-04 Appendix A.1
-    await expect(page.getByText(/9 passed/)).toBeVisible({ timeout: 60_000 })
+    // 11 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 6 published composite examples
+    // of draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 + the 2 published HPKE JWE
+    // examples of draft-ietf-jose-hpke-pq-pqt-01 Appendix A
+    await expect(page.getByText(/11 passed/)).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText(/0 failed/).first()).toBeVisible()
   })
 

@@ -1,11 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { useState, useCallback, useMemo } from 'react'
-import { Lock, Unlock, ArrowRight, Key, XCircle } from 'lucide-react'
-import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
-import { kmac256 } from '@noble/hashes/sha3-addons.js'
-import { JOSE_KEY_AGREEMENT_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
-import { base64urlDecode, base64urlEncode, bytesToHex } from '../jwtUtils'
+import { Lock, Unlock, ArrowRight, Key, XCircle, CheckCircle } from 'lucide-react'
+import { SAMPLE_JWT_PAYLOAD } from '../constants'
+import { base64urlDecode, bytesToHex } from '../jwtUtils'
+import {
+  HPKE_JWE_ALGS,
+  HPKE_JWE_SPEC,
+  HPKE_JWE_SUITES,
+  type HpkeJweAlg,
+  type HpkeKey,
+  generateHpkeKeyPair,
+  hpkeJweDecrypt,
+  hpkeJweEncrypt,
+  hsmKeyPair,
+  hsmMlKem768,
+} from '../hpkeJwe'
+import publishedExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
 import { Button } from '@/components/ui/button'
 import { ShieldCheck } from 'lucide-react'
 import { useHSM } from '@/hooks/useHSM'
@@ -18,101 +29,63 @@ import {
   hsm_destroyObject,
 } from '@/wasm/softhsm'
 
-// ── KDF per draft-ietf-jose-pqc-kem-05 §5.1 ─────────────────────────────────
-//
-// JOSE uses KMAC256(K=SS', X=AlgorithmID || SuppPubInfo || SuppPrivInfo, L, S="")
-// where X is the NIST SP 800-56Ar3 / RFC 7518 §4.6.2 context structure with
-// PartyUInfo and PartyVInfo intentionally omitted (PQ KEMs don't authenticate
-// the sender, and the receiver is bound to the public key already).
-//
-// AlgorithmID = uint32_be(len) || ASCII("enc" value)  e.g. "A256GCM"
-// SuppPubInfo = uint32_be(keydatalen_in_bits)         e.g. 256 for A256GCM
-// SuppPrivInfo = empty
-// L = output length in bits = 256
-// S = "" (empty customization label per §5.1)
-function joseKdfContext(encAlg: string, keyLenBits: number): Uint8Array {
-  const algNameBytes = new TextEncoder().encode(encAlg)
-  const out = new Uint8Array(4 + algNameBytes.length + 4)
-  const dv = new DataView(out.buffer)
-  // AlgorithmID
-  dv.setUint32(0, algNameBytes.length, false)
-  out.set(algNameBytes, 4)
-  // SuppPubInfo = keydatalen in bits
-  dv.setUint32(4 + algNameBytes.length, keyLenBits, false)
-  // SuppPrivInfo intentionally empty
-  return out
-}
-
-function deriveCek(sharedSecret: Uint8Array, encAlg: string, keyLenBytes: number): Uint8Array {
-  const x = joseKdfContext(encAlg, keyLenBytes * 8)
-  // Fixed-length KMAC256 (SP 800-185 right_encode(L)), NOT KMACXOF256
-  // (right_encode(0)): -05 §5.1 specifies KMAC(K, X, L, S) per SP 800-108r1-upd1,
-  // and the two give different keys. This used the XOF variant until 2026-10-01.
-  // Empty customization S=""; dkLen = keyLenBytes.
-  return kmac256(sharedSecret, x, { dkLen: keyLenBytes })
-}
-
 type JwsBackend = 'noble' | 'softhsmv3'
-type JWEStep = 'keygen' | 'encapsulate' | 'derive' | 'encrypt' | 'assemble'
+type JWEStep = 'keygen' | 'header' | 'seal' | 'assemble'
 
-const JWE_STEPS: { id: JWEStep; label: string; description: string }[] = [
-  {
-    id: 'keygen',
-    label: '1. Generate ML-KEM-768 Keypair',
-    description:
-      'The recipient generates a ML-KEM-768 keypair. The public key (1,184 bytes) is shared; the private key is kept secret.',
-  },
-  {
-    id: 'encapsulate',
-    label: '2. Encapsulate Shared Secret',
-    description:
-      'The sender calls ML-KEM.Encaps(pk), which produces a shared secret (32 bytes) and a KEM ciphertext (1,088 bytes). Per draft-ietf-jose-pqc-kem-05 §6.1 (direct key agreement) the ciphertext travels in the "ek" header parameter, and the JWE Encrypted Key is absent — the same shape ECDH-ES uses for its "epk".',
-  },
-  {
-    id: 'derive',
-    label: '3. Derive CEK via KMAC256',
-    description:
-      'Per draft-ietf-jose-pqc-kem-05 §5.1, the Content Encryption Key is KMAC256(K=SS, X=AlgorithmID‖SuppPubInfo, L=256, S=""). AlgorithmID = uint32_be(7) || "A256GCM"; SuppPubInfo = uint32_be(256). PartyUInfo/PartyVInfo are intentionally omitted (PQ KEMs do not authenticate the sender).',
-  },
-  {
-    id: 'encrypt',
-    label: '4. Encrypt Payload with AES-256-GCM',
-    description:
-      'The JWT payload is encrypted with AES-256-GCM via WebCrypto. The Additional Authenticated Data is ASCII(BASE64URL(protected header)) per RFC 7516 §5.1 step 14 — the encoded header, not its JSON — so the header, including "ek", is integrity-protected.',
-  },
-  {
-    id: 'assemble',
-    label: '5. Assemble JWE',
-    description:
-      'The five JWE Compact parts are assembled per RFC 7516 §7.1: protected header (carrying "ek"), an EMPTY Encrypted Key, initialization vector, ciphertext, and authentication tag.',
-  },
-]
+const stepsFor = (alg: HpkeJweAlg): { id: JWEStep; label: string; description: string }[] => {
+  const s = HPKE_JWE_SUITES[alg]
+  return [
+    {
+      id: 'keygen',
+      label: `1. Generate ${s.kemName} Keypair`,
+      description: `The recipient generates a ${s.kemName} keypair and publishes the public key (${s.Npk.toLocaleString()} bytes) as an "AKP" JWK with "alg": "${alg}". The private key is a ${s.Nsk}-byte seed.${
+        s.kind === 'pq-t-hybrid'
+          ? ' MLKEM768-X25519 is the X-Wing hybrid: an attacker has to break both ML-KEM-768 and X25519.'
+          : ''
+      }`,
+    },
+    {
+      id: 'header',
+      label: '2. Build the Protected Header',
+      description: `The header names only "alg" (and here "kid"). In Integrated Encryption, "enc" MUST NOT be present — HPKE itself encrypts the payload, so there is no separate content encryption algorithm — and "ek" MUST NOT be present either (draft-ietf-jose-hpke-encrypt-22 §5). The encoded header becomes the AAD.`,
+    },
+    {
+      id: 'seal',
+      label: '3. HPKE Seal',
+      description: `HPKE runs Encap(pk) to get a shared secret and a ${s.Nenc.toLocaleString()}-byte encapsulated secret, derives the AEAD key and nonce with the single-stage SHAKE256 KDF, and encrypts the payload with AES-256-GCM using AAD = ASCII(BASE64URL(protected header)). The 16-byte GCM tag is part of the HPKE ciphertext.`,
+    },
+    {
+      id: 'assemble',
+      label: '4. Assemble JWE',
+      description:
+        'The five JWE Compact parts: protected header . Encrypted Key (= the HPKE encapsulated secret) . empty IV . HPKE ciphertext . empty Authentication Tag. IV and Tag are empty because HPKE manages its own nonce and tag.',
+    },
+  ]
+}
 
 interface JWEKeys {
+  alg: HpkeJweAlg
   pubKey: Uint8Array
-  secKey: Uint8Array
-  // softhsmv3 handles (0 = not used)
-  pubHandle?: number
-  privHandle?: number
+  /** KEM seed (noble backend); empty when the key lives in the HSM. */
+  seed: Uint8Array
+  hsmKeys?: { publicKey: HpkeKey; privateKey: HpkeKey }
 }
 
 interface JWEResult {
+  alg: HpkeJweAlg
   headerB64: string
-  /** KEM ciphertext as carried in the protected header's "ek" parameter. */
-  ekB64: string
-  ivB64: string
+  encapsulatedKeyB64: string
   ciphertextB64: string
-  tagB64: string
   fullToken: string
-  sharedSecret: Uint8Array
-  cek: Uint8Array
-  pubKey: Uint8Array
+  encapsulatedKeyBytes: number
+  ciphertextBytes: number
 }
 
-const mlKem768Meta = JOSE_KEY_AGREEMENT_ALGORITHMS.find((a) => a.jose === 'ML-KEM-768')!
+const KID = 'workshop-recipient'
 
 export const JWEEncryption: React.FC = () => {
   const [backend, setBackend] = useState<JwsBackend>('noble')
+  const [alg, setAlg] = useState<HpkeJweAlg>('HPKE-12')
   const [activeStep, setActiveStep] = useState<JWEStep>('keygen')
   const [keys, setKeys] = useState<JWEKeys | null>(null)
   const [result, setResult] = useState<JWEResult | null>(null)
@@ -121,13 +94,47 @@ export const JWEEncryption: React.FC = () => {
   const [decryptedPayload, setDecryptedPayload] = useState<string | null>(null)
   const [decryptError, setDecryptError] = useState<string | null>(null)
   const [encryptError, setEncryptError] = useState<string | null>(null)
+  const [exampleCheck, setExampleCheck] = useState<{ ok: boolean; message: string } | null>(null)
 
   const hsm = useHSM('rust')
+  const steps = useMemo(() => stepsFor(alg), [alg])
+  const suite = HPKE_JWE_SUITES[alg]
+  // SoftHSM implements ML-KEM but not the X-Wing hybrid.
+  const hsmAvailable = alg === 'HPKE-12'
+  const useHsm = backend === 'softhsmv3' && hsmAvailable
 
   const hsmCtx = useMemo(() => {
-    if (backend !== 'softhsmv3' || !hsm.isReady || !hsm.moduleRef.current) return undefined
+    if (!useHsm || !hsm.isReady || !hsm.moduleRef.current) return undefined
     return { M: hsm.moduleRef.current, session: hsm.hSessionRef.current }
-  }, [backend, hsm.isReady, hsm.moduleRef, hsm.hSessionRef])
+  }, [useHsm, hsm.isReady, hsm.moduleRef, hsm.hSessionRef])
+
+  const hsmKem = useMemo(() => {
+    if (!hsmCtx) return undefined
+    const { M, session } = hsmCtx
+    return hsmMlKem768({
+      encapsulate(pubHandle) {
+        const r = hsm_pqcEncap(M, session, pubHandle, 'ML-KEM-768')
+        const sharedSecret = hsm_extractKeyValue(M, session, r.secretHandle)
+        hsm_destroyObject(M, session, r.secretHandle)
+        return { enc: r.ciphertextBytes, sharedSecret }
+      },
+      decapsulate(privHandle, enc) {
+        const secretHandle = hsm_pqcDecap(M, session, privHandle, enc, 'ML-KEM-768')
+        const sharedSecret = hsm_extractKeyValue(M, session, secretHandle)
+        hsm_destroyObject(M, session, secretHandle)
+        return sharedSecret
+      },
+    })
+  }, [hsmCtx])
+
+  const reset = () => {
+    setResult(null)
+    setKeys(null)
+    setDecryptedPayload(null)
+    setDecryptError(null)
+    setEncryptError(null)
+    setActiveStep('keygen')
+  }
 
   const handleEncrypt = useCallback(async () => {
     setIsEncrypting(true)
@@ -136,103 +143,60 @@ export const JWEEncryption: React.FC = () => {
     setDecryptError(null)
     setResult(null)
     try {
-      let pubKey: Uint8Array
-      let secKey: Uint8Array
-      let ciphertextBytes: Uint8Array
-      let sharedSecret: Uint8Array
-      let pubHandle: number | undefined
-      let privHandle: number | undefined
-
-      // Step 1: keygen
+      // Step 1: recipient keypair
       setActiveStep('keygen')
-      if (backend === 'softhsmv3' && hsmCtx) {
+      let newKeys: JWEKeys
+      if (useHsm && hsmCtx) {
         const { M, session } = hsmCtx
         const kp = hsm_generateMLKEMKeyPair(M, session, 768, true)
-        pubHandle = kp.pubHandle
-        privHandle = kp.privHandle
-        pubKey = hsm_extractKeyValue(M, session, kp.pubHandle)
-        secKey = new Uint8Array(4) // sentinel — real key stays in HSM
+        const pubKey = hsm_extractKeyValue(M, session, kp.pubHandle)
+        newKeys = {
+          alg,
+          pubKey,
+          seed: new Uint8Array(0),
+          hsmKeys: hsmKeyPair(pubKey, kp.pubHandle, kp.privHandle),
+        }
       } else {
-        const kp = ml_kem768.keygen()
-        pubKey = kp.publicKey
-        secKey = kp.secretKey
+        const kp = await generateHpkeKeyPair(alg)
+        newKeys = { alg, pubKey: kp.publicKey, seed: kp.privateKey }
       }
-      setKeys({ pubKey, secKey, pubHandle, privHandle })
+      setKeys(newKeys)
       await new Promise((r) => setTimeout(r, 250))
 
-      // Step 2: encapsulate (sender side)
-      setActiveStep('encapsulate')
-      if (backend === 'softhsmv3' && hsmCtx && pubHandle !== undefined) {
-        const { M, session } = hsmCtx
-        const encapResult = hsm_pqcEncap(M, session, pubHandle, 'ML-KEM-768')
-        ciphertextBytes = encapResult.ciphertextBytes
-        sharedSecret = hsm_extractKeyValue(M, session, encapResult.secretHandle)
-        hsm_destroyObject(M, session, encapResult.secretHandle)
-      } else {
-        const encapResult = ml_kem768.encapsulate(pubKey)
-        ciphertextBytes = encapResult.cipherText
-        sharedSecret = encapResult.sharedSecret
-      }
+      // Step 2: protected header {alg, kid} — no "enc", no "ek"
+      setActiveStep('header')
       await new Promise((r) => setTimeout(r, 250))
 
-      // Step 3: derive CEK via KMAC256 per draft-ietf-jose-pqc-kem-05 §5.1
-      setActiveStep('derive')
-      const cek = deriveCek(sharedSecret, 'A256GCM', 32)
-      await new Promise((r) => setTimeout(r, 250))
-
-      // Step 4: AES-256-GCM encrypt
-      setActiveStep('encrypt')
-      const iv = crypto.getRandomValues(new Uint8Array(12))
-      const cekBuf = cek.buffer.slice(cek.byteOffset, cek.byteOffset + cek.byteLength)
-      const aesKey = await crypto.subtle.importKey(
-        'raw',
-        cekBuf as ArrayBuffer,
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['encrypt', 'decrypt']
-      )
+      // Step 3: HPKE Seal (Encap → SHAKE256 key schedule → AES-256-GCM)
+      setActiveStep('seal')
       const plaintext = new TextEncoder().encode(JSON.stringify(SAMPLE_JWT_PAYLOAD))
-      // draft-ietf-jose-pqc-kem-05 §6.1: the KEM ciphertext goes in "ek". Compact
-      // Serialization has only a protected header, so that is where it lives.
-      const ekB64 = base64urlEncode(ciphertextBytes)
-      const headerB64 = base64urlEncode(
-        new TextEncoder().encode(JSON.stringify({ alg: 'ML-KEM-768', enc: 'A256GCM', ek: ekB64 }))
-      )
-      // RFC 7516 §5.1 step 14: AAD = ASCII(Encoded Protected Header).
-      const aad = new TextEncoder().encode(headerB64)
-      const encryptedWithTag = new Uint8Array(
-        await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad }, aesKey, plaintext)
-      )
-      const ciphertext = encryptedWithTag.subarray(0, encryptedWithTag.length - 16)
-      const tag = encryptedWithTag.subarray(encryptedWithTag.length - 16)
+      const sealed = await hpkeJweEncrypt({
+        alg,
+        plaintext,
+        publicKey: newKeys.hsmKeys ? newKeys.hsmKeys.publicKey : newKeys.pubKey,
+        kid: KID,
+        kem: newKeys.hsmKeys ? hsmKem : undefined,
+      })
       await new Promise((r) => setTimeout(r, 250))
 
-      // Step 5: assemble
+      // Step 4: assemble
       setActiveStep('assemble')
-      const ivB64 = base64urlEncode(iv)
-      const ciphertextB64 = base64urlEncode(ciphertext)
-      const tagB64 = base64urlEncode(tag)
-      // Direct key agreement: "The JWE Encrypted Key MUST be absent" — an
-      // empty second segment in Compact Serialization.
-      const fullToken = `${headerB64}..${ivB64}.${ciphertextB64}.${tagB64}`
-
+      const [headerB64, encapsulatedKeyB64, , ciphertextB64] = sealed.token.split('.')
       setResult({
+        alg,
         headerB64,
-        ekB64,
-        ivB64,
+        encapsulatedKeyB64,
         ciphertextB64,
-        tagB64,
-        fullToken,
-        sharedSecret,
-        cek,
-        pubKey,
+        fullToken: sealed.token,
+        encapsulatedKeyBytes: sealed.encapsulatedKey.length,
+        ciphertextBytes: sealed.ciphertext.length,
       })
     } catch (e) {
       setEncryptError(e instanceof Error ? e.message : String(e))
     } finally {
       setIsEncrypting(false)
     }
-  }, [backend, hsmCtx])
+  }, [alg, useHsm, hsmCtx, hsmKem])
 
   const handleDecrypt = useCallback(async () => {
     if (!result || !keys) return
@@ -240,97 +204,62 @@ export const JWEEncryption: React.FC = () => {
     setDecryptError(null)
     setDecryptedPayload(null)
     try {
-      // Decrypt from the assembled token itself — on both backends — so the
-      // serialization shown on screen is what actually round-trips.
-      const parts = result.fullToken.split('.')
-      if (parts.length !== 5) throw new Error('JWE Compact Serialization must have 5 parts')
-      const [headerB64, encryptedKeyB64, ivB64, ciphertextB64, tagB64] = parts
-      if (encryptedKeyB64 !== '') {
-        throw new Error('direct key agreement: the JWE Encrypted Key must be absent')
-      }
-      const header = JSON.parse(new TextDecoder().decode(base64urlDecode(headerB64))) as {
-        alg?: string
-        enc?: string
-        ek?: string
-      }
-      if (header.alg !== 'ML-KEM-768' || header.enc !== 'A256GCM' || !header.ek) {
-        throw new Error('unexpected protected header: need alg ML-KEM-768, enc A256GCM, ek')
-      }
-      const kemCiphertext = base64urlDecode(header.ek)
-      const iv = base64urlDecode(ivB64)
-      const ciphertext = base64urlDecode(ciphertextB64)
-      const tag = base64urlDecode(tagB64)
-      // RFC 7516 §5.2 step 15: AAD = ASCII(Encoded Protected Header).
-      const aad = new TextEncoder().encode(headerB64)
-
-      let sharedSecret: Uint8Array
-      if (backend === 'softhsmv3' && hsmCtx && keys.privHandle !== undefined) {
-        const { M, session } = hsmCtx
-        const secretHandle = hsm_pqcDecap(M, session, keys.privHandle, kemCiphertext, 'ML-KEM-768')
-        sharedSecret = hsm_extractKeyValue(M, session, secretHandle)
-        hsm_destroyObject(M, session, secretHandle)
-      } else {
-        sharedSecret = ml_kem768.decapsulate(kemCiphertext, keys.secKey)
-      }
-
-      const cek = deriveCek(sharedSecret, 'A256GCM', 32)
-      const cekBuf = cek.buffer.slice(cek.byteOffset, cek.byteOffset + cek.byteLength)
-      const aesKey = await crypto.subtle.importKey(
-        'raw',
-        cekBuf as ArrayBuffer,
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['encrypt', 'decrypt']
-      )
-      const combined = new Uint8Array(ciphertext.length + tag.length)
-      combined.set(ciphertext, 0)
-      combined.set(tag, ciphertext.length)
-      const combinedBuf = combined.buffer.slice(0, combined.byteLength)
-      const aadBuf = aad.buffer.slice(aad.byteOffset, aad.byteOffset + aad.byteLength)
-      const ivBuf = iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength)
-      const plaintextBytes = new Uint8Array(
-        await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: ivBuf as ArrayBuffer, additionalData: aadBuf as ArrayBuffer },
-          aesKey,
-          combinedBuf as ArrayBuffer
-        )
-      )
-      setDecryptedPayload(new TextDecoder().decode(plaintextBytes))
+      // Decrypt the assembled token itself, with the -22 checks: alg must be the
+      // key's algorithm, no "enc"/"ek", empty IV and Tag.
+      const { plaintext } = await hpkeJweDecrypt({
+        token: result.fullToken,
+        alg: keys.alg,
+        privateKey: keys.hsmKeys ? keys.hsmKeys.privateKey : keys.seed,
+        kem: keys.hsmKeys ? hsmKem : undefined,
+      })
+      setDecryptedPayload(new TextDecoder().decode(plaintext))
     } catch (e) {
       setDecryptError(e instanceof Error ? e.message : String(e))
     } finally {
       setIsDecrypting(false)
     }
-  }, [result, keys, backend, hsmCtx])
+  }, [result, keys, hsmKem])
+
+  const handleCheckExample = useCallback(async () => {
+    setExampleCheck(null)
+    const v = publishedExamples.vectors.find((x) => x.alg === alg)
+    if (!v) return
+    try {
+      const { plaintext } = await hpkeJweDecrypt({
+        token: v.compact,
+        alg,
+        privateKey: base64urlDecode(v.jwk.priv),
+      })
+      const ok = new TextDecoder().decode(plaintext) === publishedExamples.plaintext
+      setExampleCheck({
+        ok,
+        message: ok
+          ? `Decrypted the ${alg} example from ${HPKE_JWE_SPEC.suites} Appendix A with its published private key — plaintext matches.`
+          : `The ${alg} example decrypted, but the plaintext does not match the published one.`,
+      })
+    } catch (e) {
+      setExampleCheck({ ok: false, message: e instanceof Error ? e.message : String(e) })
+    }
+  }, [alg])
+
+  const tabBtn = (active: boolean) =>
+    `px-3 py-1.5 rounded text-xs font-medium border ${
+      active
+        ? 'bg-primary/20 text-primary border-primary/50'
+        : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
+    }`
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">
-          JWE Encryption with ML-KEM{' '}
+          JWE Encryption with HPKE{' '}
           <span className="text-[10px] align-middle px-2 py-0.5 rounded border font-bold bg-warning/20 text-warning border-warning/50">
-            historical draft · not interoperable
+            experimental · {HPKE_JWE_SPEC.suites}
           </span>
         </h3>
         <p className="text-sm text-muted-foreground">
-          Walk through the five-step JWE encryption flow using ML-KEM-768 (
-          {/* Link the -05 ARCHIVE, not the datatracker landing page. That page
-              now serves -06, which was retitled "PQ KEMs for COSE" and contains
-              no JWE algorithms at all — so a reader following it to check this
-              lesson would find nothing matching what they just ran. */}
-          <a
-            href="https://www.ietf.org/archive/id/draft-ietf-jose-pqc-kem-05.txt"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline"
-          >
-            draft-ietf-jose-pqc-kem-05
-          </a>
-          ) for key agreement and AES-256-GCM (WebCrypto) for content encryption. All operations run
-          real crypto in your browser. This flow follows revision <strong>-05</strong>, which
-          covered JOSE and COSE; revision -06 (2026) narrowed the document to COSE only, so no
-          current specification defines these JWE algorithms. PQ encryption for JWE now runs through
-          HPKE:{' '}
+          Post-quantum JWE runs through HPKE.{' '}
           <a
             href="https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/"
             target="_blank"
@@ -339,67 +268,94 @@ export const JWEEncryption: React.FC = () => {
           >
             draft-ietf-jose-hpke-encrypt
           </a>{' '}
-          (in the RFC Editor queue) plus the ML-KEM suites in{' '}
+          (in the RFC Editor queue) defines how HPKE carries a JWE, and{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-hpke-pq-pqt
-          </a>
-          . Use this tab to see how a KEM slots into JWE, not as a format to deploy.
+            draft-ietf-jose-hpke-pq-pqt-01
+          </a>{' '}
+          registers the ML-KEM suites used here. All operations run real crypto in your browser, and
+          the code is checked against the examples published in that draft. It is still an early
+          working-group draft, so the algorithm names may change — not a format to deploy yet. An
+          earlier direct-KEM design (draft-ietf-jose-pqc-kem) was dropped for JOSE in 2026.
         </p>
       </div>
 
-      {/* Backend selector */}
-      <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <ShieldCheck size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">KEM backend</h4>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setBackend('noble')
-              setResult(null)
-              setKeys(null)
-              setDecryptedPayload(null)
-            }}
-            className={`px-3 py-1.5 rounded text-xs font-medium border ${
-              backend === 'noble'
-                ? 'bg-primary/20 text-primary border-primary/50'
-                : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
-            }`}
-          >
-            @noble/post-quantum (pure JS)
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setBackend('softhsmv3')
-              setResult(null)
-              setKeys(null)
-              setDecryptedPayload(null)
-            }}
-            className={`px-3 py-1.5 rounded text-xs font-medium border ${
-              backend === 'softhsmv3'
-                ? 'bg-primary/20 text-primary border-primary/50'
-                : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
-            }`}
-          >
-            SoftHSM3 (PKCS#11 v3.2 WASM)
-          </Button>
-        </div>
-        {backend === 'softhsmv3' && (
-          <div className="mt-3">
-            <LiveHSMToggle
-              hsm={hsm}
-              operations={['C_GenerateKeyPair', 'C_EncapsulateKey', 'C_DecapsulateKey']}
-            />
+      {/* Suite + backend */}
+      <div className="glass-panel p-4 space-y-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Key size={16} className="text-primary" />
+            <h4 className="text-sm font-bold text-foreground">HPKE suite (&quot;alg&quot;)</h4>
           </div>
-        )}
+          <div className="flex flex-wrap gap-2">
+            {HPKE_JWE_ALGS.map((a) => (
+              <Button
+                key={a}
+                variant="ghost"
+                onClick={() => {
+                  setAlg(a)
+                  setExampleCheck(null)
+                  reset()
+                }}
+                className={tabBtn(alg === a)}
+              >
+                {HPKE_JWE_SUITES[a].label}
+              </Button>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">
+            Both use the SHAKE256 KDF and AES-256-GCM. The hybrid keeps a classical X25519
+            component, so a flaw found in ML-KEM alone would not expose the payload.
+          </p>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck size={16} className="text-primary" />
+            <h4 className="text-sm font-bold text-foreground">KEM backend</h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setBackend('noble')
+                reset()
+              }}
+              className={tabBtn(backend === 'noble')}
+            >
+              @noble/post-quantum (pure JS)
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setBackend('softhsmv3')
+                reset()
+              }}
+              disabled={!hsmAvailable}
+              className={`${tabBtn(backend === 'softhsmv3' && hsmAvailable)} disabled:opacity-50`}
+            >
+              SoftHSM3 (PKCS#11 v3.2 WASM)
+            </Button>
+          </div>
+          {!hsmAvailable && (
+            <p className="text-[10px] text-muted-foreground mt-2">
+              SoftHSM3 implements ML-KEM but not the X-Wing hybrid, so {alg} runs on
+              @noble/post-quantum.
+            </p>
+          )}
+          {useHsm && (
+            <div className="mt-3">
+              <LiveHSMToggle
+                hsm={hsm}
+                operations={['C_GenerateKeyPair', 'C_EncapsulateKey', 'C_DecapsulateKey']}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* JWE Format Explainer */}
@@ -413,25 +369,25 @@ export const JWEEncryption: React.FC = () => {
             <span className="text-muted-foreground font-bold">.</span>
             <span className="px-2 py-1 rounded bg-warning/10 text-warning">Encrypted Key</span>
             <span className="text-muted-foreground font-bold">.</span>
-            <span className="px-2 py-1 rounded bg-secondary/10 text-secondary">IV</span>
+            <span className="px-2 py-1 rounded bg-muted text-muted-foreground">IV (empty)</span>
             <span className="text-muted-foreground font-bold">.</span>
             <span className="px-2 py-1 rounded bg-destructive/10 text-status-error">
               Ciphertext
             </span>
             <span className="text-muted-foreground font-bold">.</span>
-            <span className="px-2 py-1 rounded bg-success/10 text-success">Auth Tag</span>
+            <span className="px-2 py-1 rounded bg-muted text-muted-foreground">Tag (empty)</span>
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
-          Unlike JWS (3 parts), JWE has 5 base64url-encoded parts. In direct key agreement the
-          Encrypted Key is empty: the ML-KEM ciphertext (1,088 bytes for ML-KEM-768) rides in the
-          protected header&apos;s <code>ek</code> parameter, where the AAD covers it.
+          JWE keeps its 5 parts. In HPKE Integrated Encryption the Encrypted Key carries the HPKE
+          encapsulated secret ({suite.Nenc.toLocaleString()} bytes for {alg}), and the IV and Tag
+          stay empty because HPKE manages its own nonce and puts the GCM tag inside the ciphertext.
         </p>
       </div>
 
       {/* Step Progress */}
       <div className="flex flex-wrap gap-2">
-        {JWE_STEPS.map((step) => (
+        {steps.map((step) => (
           <Button
             variant="ghost"
             key={step.id}
@@ -450,10 +406,10 @@ export const JWEEncryption: React.FC = () => {
       {/* Step Description */}
       <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
         <div className="text-xs font-bold text-primary mb-1">
-          {JWE_STEPS.find((s) => s.id === activeStep)?.label}
+          {steps.find((s) => s.id === activeStep)?.label}
         </div>
         <p className="text-sm text-foreground">
-          {JWE_STEPS.find((s) => s.id === activeStep)?.description}
+          {steps.find((s) => s.id === activeStep)?.description}
         </p>
       </div>
 
@@ -461,7 +417,7 @@ export const JWEEncryption: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">Encryption Pipeline</h4>
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
-          {JWE_STEPS.map((step, idx) => (
+          {steps.map((step, idx) => (
             <React.Fragment key={step.id}>
               <div
                 role="button"
@@ -476,14 +432,14 @@ export const JWEEncryption: React.FC = () => {
                 className={`flex-1 text-center p-2 rounded-lg border transition-colors cursor-pointer ${
                   activeStep === step.id
                     ? 'bg-primary/10 border-primary/50 text-primary'
-                    : JWE_STEPS.findIndex((s) => s.id === activeStep) > idx
+                    : steps.findIndex((s) => s.id === activeStep) > idx
                       ? 'bg-success/10 border-success/30 text-success'
                       : 'bg-muted/50 border-border text-muted-foreground'
                 }`}
               >
                 <div className="text-[10px] font-bold">{step.label.split('.')[0]}</div>
               </div>
-              {idx < JWE_STEPS.length - 1 && (
+              {idx < steps.length - 1 && (
                 <ArrowRight
                   size={12}
                   className="text-muted-foreground hidden sm:block mx-0.5 shrink-0"
@@ -499,7 +455,7 @@ export const JWEEncryption: React.FC = () => {
         <Button
           variant="gradient"
           onClick={() => void handleEncrypt()}
-          disabled={isEncrypting || (backend === 'softhsmv3' && !hsmCtx)}
+          disabled={isEncrypting || (useHsm && !hsmCtx)}
           className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <Lock size={16} />
@@ -509,7 +465,7 @@ export const JWEEncryption: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => void handleDecrypt()}
-            disabled={isDecrypting || (backend === 'softhsmv3' && !hsmCtx)}
+            disabled={isDecrypting || (keys?.hsmKeys !== undefined && !hsmCtx)}
             className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             <Unlock size={16} />
@@ -524,48 +480,27 @@ export const JWEEncryption: React.FC = () => {
         </div>
       )}
 
-      {/* Intermediate Values */}
+      {/* Recipient key */}
       {keys && (
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-3">
             <Key size={16} className="text-primary" />
-            <h4 className="text-sm font-bold text-foreground">Intermediate Cryptographic Values</h4>
+            <h4 className="text-sm font-bold text-foreground">Recipient Key</h4>
           </div>
-          <div className="space-y-3">
-            <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-[10px] font-bold text-primary mb-1">
-                ML-KEM-768 Public Key ({keys.pubKey.length.toLocaleString()} bytes)
-                {backend === 'softhsmv3' && keys.pubHandle !== undefined && (
-                  <span className="ml-2 text-muted-foreground font-normal">
-                    handle {keys.pubHandle}
-                  </span>
-                )}
-              </div>
-              <code className="text-[10px] font-mono text-foreground/70 break-all">
-                {bytesToHex(keys.pubKey).substring(0, 192)}…
-              </code>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-[10px] font-bold text-primary mb-1">
+              {HPKE_JWE_SUITES[keys.alg].kemName} public key ({keys.pubKey.length.toLocaleString()}{' '}
+              bytes) — JWK {'{'} &quot;kty&quot;: &quot;AKP&quot;, &quot;alg&quot;: &quot;{keys.alg}
+              &quot; {'}'}
+              {keys.hsmKeys && (
+                <span className="ml-2 text-muted-foreground font-normal">
+                  private key stays in SoftHSM3
+                </span>
+              )}
             </div>
-            {result && (
-              <>
-                <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                  <div className="text-[10px] font-bold text-warning mb-1">
-                    Shared Secret ({result.sharedSecret.length} bytes — recovered on both sides)
-                  </div>
-                  <code className="text-[10px] font-mono text-foreground/70 break-all">
-                    {bytesToHex(result.sharedSecret)}
-                  </code>
-                </div>
-                <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                  <div className="text-[10px] font-bold text-success mb-1">
-                    Content Encryption Key / CEK ({result.cek.length} bytes, KMAC256 of shared
-                    secret)
-                  </div>
-                  <code className="text-[10px] font-mono text-foreground/70 break-all">
-                    {bytesToHex(result.cek)}
-                  </code>
-                </div>
-              </>
-            )}
+            <code className="text-[10px] font-mono text-foreground/70 break-all">
+              {bytesToHex(keys.pubKey).substring(0, 192)}…
+            </code>
           </div>
         </div>
       )}
@@ -577,34 +512,34 @@ export const JWEEncryption: React.FC = () => {
           <div className="space-y-3">
             {[
               {
-                label: `Protected header (alg, enc, and ek = ML-KEM ciphertext, ${mlKem768Meta.ctBytes} B)`,
+                label: `Protected header (alg ${result.alg}, kid — no "enc", no "ek")`,
                 value: result.headerB64,
                 color: 'text-primary',
                 bg: 'bg-primary/10',
               },
               {
-                label: 'Encrypted Key (empty in direct key agreement)',
-                value: '',
+                label: `Encrypted Key = HPKE encapsulated secret, ${result.encapsulatedKeyBytes} B`,
+                value: result.encapsulatedKeyB64,
                 color: 'text-warning',
                 bg: 'bg-warning/10',
               },
               {
-                label: 'Initialization Vector (96-bit)',
-                value: result.ivB64,
-                color: 'text-secondary',
-                bg: 'bg-secondary/10',
+                label: 'Initialization Vector (empty in Integrated Encryption)',
+                value: '',
+                color: 'text-muted-foreground',
+                bg: 'bg-muted',
               },
               {
-                label: 'Ciphertext (AES-256-GCM)',
+                label: `Ciphertext (HPKE / AES-256-GCM, ${result.ciphertextBytes} B incl. 16-byte tag)`,
                 value: result.ciphertextB64,
                 color: 'text-destructive',
                 bg: 'bg-destructive/10',
               },
               {
-                label: 'Authentication Tag (128-bit)',
-                value: result.tagB64,
-                color: 'text-success',
-                bg: 'bg-success/10',
+                label: 'Authentication Tag (empty — the tag is inside the ciphertext)',
+                value: '',
+                color: 'text-muted-foreground',
+                bg: 'bg-muted',
               },
             ].map((part) => (
               <div key={part.label} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -652,9 +587,9 @@ export const JWEEncryption: React.FC = () => {
             })()}
           </pre>
           <p className="text-[10px] text-muted-foreground mt-2">
-            {backend === 'softhsmv3'
-              ? 'Decryption: C_DecapsulateKey → shared_secret → KMAC256 → CEK → AES-GCM-Decrypt → plaintext'
-              : 'Decryption: ML-KEM.Decaps(sk, ct) → shared_secret → KMAC256 → CEK → AES-GCM-Decrypt → plaintext'}
+            {keys?.hsmKeys
+              ? 'Decryption: check alg / no enc, ek / empty IV, Tag → C_DecapsulateKey → SHAKE256 key schedule → AES-256-GCM open → plaintext'
+              : `Decryption: check alg / no enc, ek / empty IV, Tag → ${suite.kemName}.Decap → SHAKE256 key schedule → AES-256-GCM open → plaintext`}
           </p>
         </div>
       )}
@@ -665,16 +600,46 @@ export const JWEEncryption: React.FC = () => {
         </div>
       )}
 
+      {/* Published example */}
+      <div className="glass-panel p-4">
+        <h4 className="text-sm font-bold text-foreground mb-2">
+          Check against the draft&apos;s published example
+        </h4>
+        <p className="text-xs text-muted-foreground mb-3">
+          {HPKE_JWE_SPEC.suites} Appendix A publishes, for each algorithm, a private key and a JWE
+          made by the draft authors with a different ML-KEM implementation. Decrypting it here shows
+          this code interoperates with theirs, not just with itself.
+        </p>
+        <Button
+          variant="ghost"
+          onClick={() => void handleCheckExample()}
+          className="px-4 py-2 text-xs font-medium rounded border border-border hover:border-primary/30"
+        >
+          Decrypt the published {alg} example
+        </Button>
+        {exampleCheck && (
+          <div
+            className={`mt-3 rounded-lg p-3 border text-xs flex items-center gap-2 ${
+              exampleCheck.ok
+                ? 'border-success/50 bg-success/10 text-success'
+                : 'border-destructive/50 bg-destructive/10 text-status-error'
+            }`}
+          >
+            {exampleCheck.ok ? <CheckCircle size={14} /> : <XCircle size={14} />}
+            {exampleCheck.message}
+          </div>
+        )}
+      </div>
+
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Key insight:</strong> JWE with ML-KEM replaces the ECDH-ES key agreement step with
-          KEM encapsulation; AES-GCM content encryption is unchanged. Where ECDH-ES puts the
-          sender&apos;s ephemeral public key in the <code>epk</code> header, this draft put the
-          1,088-byte KEM ciphertext in <code>ek</code>, and both leave the Encrypted Key empty. The
-          HPKE design that replaced it (Integrated Encryption) moves the encapsulated key into the
-          Encrypted Key segment instead — one reason a format still in draft is no basis for
-          production tokens.
+          <strong>Key insight:</strong> moving JWE to post-quantum changes the key-establishment
+          step, not the token format. HPKE packages &quot;encapsulate a key, derive a symmetric key,
+          encrypt&quot; as one standard operation, so the same JWE layout works for classical ECDH
+          suites (HPKE-0 to HPKE-7) and for ML-KEM. What does change is size: the{' '}
+          {suite.Nenc.toLocaleString()}-byte encapsulated secret makes every encrypted token roughly
+          1.5 KB larger than its plaintext.
         </p>
       </div>
     </div>

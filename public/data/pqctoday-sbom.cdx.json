@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:5d11bab1-4c6b-51c9-93c3-c46052324370",
+  "serialNumber": "urn:uuid:d40dc230-4b9c-583f-8096-802e0083eba2",
   "version": 1,
   "metadata": {
     "component": {
@@ -4273,6 +4273,35 @@
         {
           "name": "pqctoday:bundles",
           "value": "engine, kmip"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hpke",
+      "version": "1.1.7",
+      "purl": "pkg:npm/hpke@1.1.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c1018e0691411653f687b7aeb8bb9ecbcc89194b49f9cf03fe884fc6d4d0aa920222d16d1c3a5b5e4d81dbdc5f5292053e7d26892f5325539b14601e119cc324"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "bundled into the production build (emitted chunks); version and license from package-lock.json"
+        },
+        {
+          "name": "pqctoday:listed-on-about-page",
+          "value": "true"
         }
       ]
     },
