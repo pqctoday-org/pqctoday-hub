@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.141.0] - 2026-10-02
 
-Talking About PQC Accurately has been reviewed and now has its own quiz questions, the API Security workshop names the draft revision it actually implements, and a new Attack Lab shows why a JWT verifier must check more than the signature.
+Talking About PQC Accurately has been reviewed and now has its own quiz questions, the API Security workshop names the draft revision it actually implements, a new Attack Lab shows why a JWT verifier must check more than the signature, and the Library adds 42 references for the IoT and OT modules.
 
 ### Added
 
@@ -46,6 +46,10 @@ Talking About PQC Accurately has been reviewed and now has its own quiz question
 ### Fixed
 
 - **The API Security workshop names the draft revision it actually implements** [view:/learn/api-security-jwt] [persona:developer] [persona:researcher]: one step still said composite signatures revision -03 while the code follows -04. A new check now keeps the workshop, its test vectors and the Protocol Matrix on the same revision of each JOSE draft, and the weekly protocol-matrix maintenance run now also flags when the JOSE drafts snapshot is out of date.
+
+### Data
+
+- **42 new library references for the IoT and OT modules** [view:/library] [view:/learn] [persona:architect] [persona:grc] [persona:ops] [persona:researcher]: the Library adds references for the IoT and OT Learn modules: EU RED and EN 18031, Cyber Resilience Act companion documents, UK PSTI, the US Cyber Trust Mark, IETF IoT protocols, NERC CIP-010-4 and CIP-012-2, TSA Security Directive 02G, OPC UA, CIP Security, PROFINET, BACnet/SC, and PNNL, Sandia and NIST reports. RFC 9068 (JWT access tokens) and RFC 9864 are also added, and the FCC joins the trusted sources.
 
 ## [4.140.0] - 2026-10-01
 
