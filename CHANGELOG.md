@@ -31,10 +31,11 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.141.0] - 2026-10-02
 
-Talking About PQC Accurately has been reviewed and now has its own quiz questions, and the API Security workshop names the draft revision it actually implements.
+Talking About PQC Accurately has been reviewed and now has its own quiz questions, the API Security workshop names the draft revision it actually implements, and a new Attack Lab shows why a JWT verifier must check more than the signature.
 
 ### Added
 
+- **Attack Lab: see why a JWT verifier must check more than the signature** [view:/learn/api-security-jwt] [view:/playground] [persona:developer] [persona:architect] [persona:ops]: a new Step 7 issues a real ML-DSA-65 access token and tries five attacks on it: "alg": "none", edited claims, a token meant for another API, an expired token, and an ID token used as an access token. A strict validator that follows the JWT best-practice rules rejects all five, each at its own check; a naive verifier that trusts the token's header is fooled by four.
 - **Quiz questions for Talking About PQC Accurately** [view:/learn/quiz] [persona:curious]: seven beginner questions now check what the module teaches — certificate stages, which dates are drafts, and which claims to avoid.
 
 ### Changed
