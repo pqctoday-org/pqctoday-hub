@@ -1,8 +1,8 @@
 ---
 generated: 2026-10-01
 category: Technical Standards
-document_count: 6
-requirement_count: 33
+document_count: 7
+requirement_count: 40
 ---
 
 ## RFC-9068
@@ -32,6 +32,21 @@ requirement_count: 33
     - _T3 Repeatable · all_: Prohibit the use of algorithm identifiers designated as 'Prohibited' and the functionality they reference.
     - _T3 Repeatable · all_: Ensure that the 'alg' value in JOSE encryption specifies all parameters for key establishment or derives them from the 'enc' value, and that the 'enc' value specifies all parameters for symmetric encryption.
     - _T3 Repeatable · all_: Ensure that the outer 'alg' value in COSE encryption specifies all parameters for key establishment, and the inner 'alg' value specifies all parameters for symmetric encryption.
+
+## SAND2022-1118
+- **Source**: Distributed Energy Resource Cybersecurity Standards Development - Final Project Report (SAND2022-1118)
+- **URL**: https://www.osti.gov/servlets/purl/1843109
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T3 Repeatable · certificates_: Use X.509v3 Digital Certificates for identification and authentication, with signing keys generated using RSA, ECDSA, or EdDSA.
+    - _T3 Repeatable · keys_: Use Advanced Encryption Standard (AES) with GCM or CCM modes for bulk traffic encryption, explicitly prohibiting Electronic Codebook (ECB) mode.
+    - _T3 Repeatable · keys_: Derive ephemeral symmetric keys using Diffie-Hellman Ephemeral or Elliptic Curve Diffie-Hellman Ephemeral.
+    - _T3 Repeatable · libraries_: Adopt modern cipher suites possessing strong capabilities and avoid proprietary security technologies.
+    - _T3 Repeatable · software_: Require at least TLS 1.2 and recommend TLS 1.3 for all DER communications.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish a single root of trust for all utilities, DER aggregators, and OEM vendors with a neutral, 3rd-party-operated root CA.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Require key management through PKI with certificate revocation.
 
 ## Security-Considerations-for-ML-DSA
 - **Source**: Security Considerations for ML-DSA

@@ -1,31 +1,87 @@
 ---
 generated: 2026-10-01
 collection: library
-documents_processed: 2
+documents_processed: 5
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## RFC-9068
+## PI-PROFINET-Security-Whitepaper-V105-2019
 
-- **Reference ID**: RFC-9068
-- **Title**: JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
+- **Reference ID**: PI-PROFINET-Security-Whitepaper-V105-2019
+- **Title**: PROFINET Security Whitepaper (PI, V1.05, Feb 2019)
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This specification defines a profile for issuing OAuth 2.0 access tokens in JSON Web Token (JWT) format to enable interoperability between authorization and resource servers.
+- **Main Topic**: This whitepaper outlines the security concept, requirements, and fundamental cryptographic mechanisms for securing the PROFINET industrial communication protocol.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
-- **Leaders Contributions Mentioned**: Vittorio Bertocci (Author); Dominick Baier (provided sample tokens); Brian Campbell (provided sample tokens and early feedback); Daniel Dobalian (provided sample tokens); Karl Guinness (provided sample tokens); Filip Skokan (provided early feedback)
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: PROFIBUS & PROFINET International, PNO
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: OAuth 2.0, JWT
+- **Protocols Covered**: PROFINET
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: PROFIBUS & PROFINET International, IEC
+- **Compliance Frameworks Referenced**: IEC 62443, ISO 27001
+- **Classical Algorithms Referenced**: HMAC-SHA 256
+- **Key Takeaways**: PROFINET security relies on a defense-in-depth approach combining perimeter firewalls and zone division; Protocol-level security requires cryptographic measures for integrity, authenticity, and confidentiality of cyclic and acyclic data; Asymmetric keys are used for initial handshake and symmetric key negotiation, while symmetric keys secure ongoing communication; HMAC-SHA 256 is identified as the best-performing MAC algorithm for PROFINET data packets based on current evaluation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: PI-PROFINET-Security-Whitepaper-V105-2019.pdf (1,572,908 bytes, 13,481 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:19
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+
+---
+
+## EN-18031-3-2024
+
+- **Reference ID**: EN-18031-3-2024
+- **Title**: EN 18031-3:2024 Common security requirements for radio equipment - Part 3: Internet connected radio equipment processing virtual money or monetary value
+- **Authors**: iTeh Standards
+- **Publication Date**: 2024
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document specifies common security requirements and assessment criteria for internet-connected radio equipment that processes virtual money or monetary value.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Europe; Bodies: CEN, CENELEC, European Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RS256
-- **Key Takeaways**: Authorization servers and resource servers must support RS256 for signing JWT access tokens; JWT access tokens must include the "application/at+jwt" media type in the "typ" header parameter; Clients must not inspect the content of the access token to ensure forward compatibility; Resource servers must validate the "typ" header and reject tokens with other values; Asymmetric cryptography is recommended for signing to simplify key validation for resource servers.
+- **Standardization Bodies**: CEN, CENELEC
+- **Compliance Frameworks Referenced**: Directive 2014/53/EU, Delegated Regulation (EU) 2022/30
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The standard applies to radio equipment enabling the transfer of money, monetary value, or virtual currency; It provides common security requirements and related assessment criteria for such equipment; The standard was approved by CEN on 1 August 2024; National standards implementing this European Standard must be withdrawn by February 2025.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -40,9 +96,9 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer, Security Architect
-- **Implementation Prerequisites**: Support for RS256 signature algorithm; Inclusion of "application/at+jwt" in "typ" header parameter
-- **Relevant PQC Today Features**: api-security-jwt
+- **Target Audience**: Compliance Officer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, iot-ot-pqc, digital-assets
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -55,34 +111,34 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: RFC-9068.html (104,974 bytes, 11,272 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:10:15
+- **Source Document**: EN-18031-3-2024.pdf (1,277,759 bytes, 11,797 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:19
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
 
-## RFC-9864
+## PNNL-29313-RADIANCE
 
-- **Reference ID**: RFC-9864
-- **Title**: Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)
+- **Reference ID**: PNNL-29313-RADIANCE
+- **Title**: RADIANCE: Cyber Vulnerabilities and Mitigations Related to Communication Protocols (PNNL-29313)
 - **Authors**: See document
-- **Publication Date**: Not specified
+- **Publication Date**: 2019
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This specification creates fully-specified algorithm identifiers for registered JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) polymorphic algorithm identifiers, enabling applications to use only fully-specified algorithm identifiers.
+- **Main Topic**: An overview of cybersecurity vulnerabilities and available mitigations for communication protocols used in energy delivery systems.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
-- **Leaders Contributions Mentioned**: M.B. Jones; O. Steele
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: U.S. Department of Energy, Pacific Northwest National Laboratory, Battelle Memorial Institute
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: JOSE; COSE
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: IETF
-- **Compliance Frameworks Referenced**: FIPS 140-3
-- **Classical Algorithms Referenced**: RS256; ES256K; ES256; EdDSA; Ed25519; Ed448; ECDSA; P-256; P-384; P-521; SHA-256; SHA-384; SHA-512; RSA; PS*
-- **Key Takeaways**: Polymorphic algorithm identifiers in JOSE and COSE are deprecated in favor of fully-specified identifiers; Fully-specified algorithms enable protocols to specify allow lists that prevent cross-curve key establishment and mismatched KDF sizes; The specification updates RFCs 7518, 8037, and 9053 to provide fully-specified replacements for polymorphic algorithms; Varying algorithm identifiers can be used by malicious software to evade rule-based detection and classification systems.
-- **Security Levels & Parameters**: 2048-bit RSA; 4096-bit RSA; P-256; P-384; P-521; Ed25519; Ed448
+- **Protocols Covered**: Modbus, DNP3, IEC 61850, IEC 60870-5, TLS, IPsec, IEEE 1588, NTP, SNTP, IRIG-B, C37.118
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: NIST, IEC, IETF, IEEE, ISO
+- **Compliance Frameworks Referenced**: FIPS 199, ISO 27000
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Non-secure telemetry and control protocols like Modbus and DNP3 are vulnerable to impersonation and man-in-the-middle attacks due to lack of authentication; Protocol wrappers like TLS and IPsec can secure wide-area communications but may introduce latency and jitter; DNP3 Secure Authentication provides integrity and authentication but not confidentiality; Digital certificates using X.509 are essential for machine-to-machine authentication in secure grid communications; IEEE 1588 time synchronization requires specific network switch capabilities (transparent clocks) and is sensitive to encryption overhead.
+- **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
@@ -94,12 +150,12 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
+- **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
+- **Target Audience**: Security Architect, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: crypto-agility; api-security-jwt
-- **Implementation Attack Surface**: rule-based detection evasion
+- **Relevant PQC Today Features**: iot-ot-pqc, tls-basics, pki-workshop
+- **Implementation Attack Surface**: Impersonation, Man-in-the-middle, Rogue device masquerading
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
@@ -111,8 +167,120 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: RFC-9864.html (123,713 bytes, 10,063 extracted chars)
-- **Extraction Timestamp**: 2026-10-01T19:10:16
+- **Source Document**: PNNL-29313-RADIANCE.pdf (433,028 bytes, 16,926 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:20
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+
+---
+
+## SAND2022-1118
+
+- **Reference ID**: SAND2022-1118
+- **Title**: Distributed Energy Resource Cybersecurity Standards Development - Final Project Report (SAND2022-1118)
+- **Authors**: See document
+- **Publication Date**: 2022
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This report details the development of cybersecurity standards and recommendations for Distributed Energy Resources (DERs), focusing on communication protocol security, access control, and patching guidance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Energy, Sandia National Laboratories, NREL, UL, IEEE, IEC, NIST
+- **Leaders Contributions Mentioned**: Jay Johnson, Ifeoma Onunkwo, Danish Saleem, William Hupp, Jordan Peterson, Ryan Cryar (Authors); Sandia and NREL (Led working groups and standards development)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.2, TLS 1.3, Modbus/TCP, DNP3, IEEE 2030.5, IEEE 1815, SunSpec Modbus, IEC 61850, SNMP
+- **Infrastructure Layers**: PKI, Key Management, Access Control
+- **Standardization Bodies**: UL, IEEE, IEC, NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, AES, SHA-256, SHA-384, ECDSA, ECDHE, 3DES
+- **Key Takeaways**: DER communication protocols must be standardized to prevent malicious control and misuse; Mutual authentication and Role-based Access Control (RBAC) are required for all DER systems; TLS 1.2 is the minimum requirement with TLS 1.3 recommended for all DER communications; Proprietary security technologies should be avoided in favor of cybersecurity standards; Key management must be handled through PKI with certificate revocation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "Require at least TLS 1.2"; TLS-1.3: "recommend TLS 1.3 for all DER communications"; X.509: "Uses X.509v3 Digital Certificates"
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Operations
+- **Implementation Prerequisites**: TLS 1.2 or higher; PKI with certificate revocation; Role-based Access Control (RBAC)
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: SAND2022-1118.pdf (3,690,557 bytes, 15,708 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:21
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+
+---
+
+## Torres-ICREPQ-2024-341
+
+- **Reference ID**: Torres-ICREPQ-2024-341
+- **Title**: A practical implementation of virtualized protection system with IEC61850 under Docker
+- **Authors**: See document
+- **Publication Date**: 2024
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The document presents a practical simulation of a virtualized Substation Automation System (SAS) using Docker to evaluate how the number of virtual IEDs affects communication latency and tripping performance under the IEC 61850 standard.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Spain; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IEC 61850, MMS, SMV, GOOSE
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Increasing the number of virtual IEDs in a Docker-based IEC 61850 system increases network traffic and communication delay; This increased delay can cause the system to fail to meet critical transfer time classes (TT4, TT5, TT6) required for protection functions; Virtualization allows for centralized protection functions but requires careful evaluation of scalability limits regarding latency; Simulation results show a significant increase in tripping operation delay (up to 44 ms) when scaling virtual devices.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Transfer time class TT6 requires <3 ms; Scenario B increased delay by ~3 ms; Scenario C increased delay by 44 ms
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Docker; IEC 61850 SCD configuration file; Wireshark
+- **Relevant PQC Today Features**: iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Torres-ICREPQ-2024-341.pdf (550,067 bytes, 10,254 extracted chars)
+- **Extraction Timestamp**: 2026-10-01T19:43:21
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
 
 ---
@@ -51255,6 +51423,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 
 ---
 
+## RFC-9068
+
+- **Reference ID**: RFC-9068
+- **Title**: JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This specification defines a profile for issuing OAuth 2.0 access tokens in JSON Web Token (JWT) format to enable interoperability between authorization and resource servers.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: Vittorio Bertocci (Author); Dominick Baier (provided sample tokens); Brian Campbell (provided sample tokens and early feedback); Daniel Dobalian (provided sample tokens); Karl Guinness (provided sample tokens); Filip Skokan (provided early feedback)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OAuth 2.0, JWT
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RS256
+- **Key Takeaways**: Authorization servers and resource servers must support RS256 for signing JWT access tokens; JWT access tokens must include the "application/at+jwt" media type in the "typ" header parameter; Clients must not inspect the content of the access token to ensure forward compatibility; Resource servers must validate the "typ" header and reject tokens with other values; Asymmetric cryptography is recommended for signing to simplify key validation for resource servers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: Support for RS256 signature algorithm; Inclusion of "application/at+jwt" in "typ" header parameter
+- **Relevant PQC Today Features**: api-security-jwt
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## RFC-9110
 
 - **Reference ID**: RFC-9110
@@ -52111,6 +52333,60 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Constrained Device & IoT Suitability**: IoT devices mentioned as vulnerable to side-channel and fault injection attacks
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: Obsoletes previous TLS versions; requires negotiation of common version; backward compatibility with TLS 1.2 via legacy extensions
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## RFC-9864
+
+- **Reference ID**: RFC-9864
+- **Title**: Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This specification creates fully-specified algorithm identifiers for registered JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) polymorphic algorithm identifiers, enabling applications to use only fully-specified algorithm identifiers.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF
+- **Leaders Contributions Mentioned**: M.B. Jones; O. Steele
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE; COSE
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RS256; ES256K; ES256; EdDSA; Ed25519; Ed448; ECDSA; P-256; P-384; P-521; SHA-256; SHA-384; SHA-512; RSA; PS*
+- **Key Takeaways**: Polymorphic algorithm identifiers in JOSE and COSE are deprecated in favor of fully-specified identifiers; Fully-specified algorithms enable protocols to specify allow lists that prevent cross-curve key establishment and mismatched KDF sizes; The specification updates RFCs 7518, 8037, and 9053 to provide fully-specified replacements for polymorphic algorithms; Varying algorithm identifiers can be used by malicious software to evade rule-based detection and classification systems.
+- **Security Levels & Parameters**: 2048-bit RSA; 4096-bit RSA; P-256; P-384; P-521; Ed25519; Ed448
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: crypto-agility; api-security-jwt
+- **Implementation Attack Surface**: rule-based detection evasion
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
