@@ -24,6 +24,9 @@ const NOT_IN_SIM: Record<string, string> = {
   'dev-quantum-impact': 'seat-scoped orientation, Resources only (simRelevance)',
   'ops-quantum-impact': 'seat-scoped orientation, Resources only (simRelevance)',
   'research-quantum-impact': 'seat-scoped orientation, Resources only (simRelevance)',
+  // Curious role guide (2026-10-01): how to talk about PQC at work, not a
+  // framework activity, and Curious has no sim seat.
+  'talking-about-pqc': 'role guide for non-technical roles, not a framework activity',
   'automotive-pqc': 'the sim has no automotive sector (simRelevance: never relevant)',
   qkd: 'quantum key distribution is not a PQC migration activity (separate QKD/QRNG category)',
   quiz: 'the question bank itself — the sim uses it through the per-step comprehension check',

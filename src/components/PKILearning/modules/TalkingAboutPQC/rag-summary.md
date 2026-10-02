@@ -1,0 +1,9 @@
+# Talking About PQC Accurately
+
+## Overview
+
+A beginner role guide for non-technical professionals who have to talk about post-quantum cryptography at work — sales, marketing, communications, procurement, policy and press. It covers: the one-minute explanation (harvest now, decrypt later; NIST's FIPS 203, 204 and 205 published in August 2024; migration is the slow part); dates that are real and whose they are (EO 14412 for US federal civilian high-value and high-impact systems and their contractors, CNSA 2.0 for US National Security Systems, NIST IR 8547 as a draft proposal, the arrival of a cryptographically relevant quantum computer as an estimate); what a certificate proves (CAVP algorithm testing vs the CMVP Modules In Process list vs a FIPS 140-3 validation certificate; read scope before level; Common Criteria and EUCC work differently); words to check ("quantum-proof", "unbreakable", "NIST-approved product", "FIPS certified", "PQC-ready", "CNSA 2.0 compliant", and when "quantum-safe", "quantum-resistant" and "hybrid" are fine); and how to answer "are you quantum-safe?" with what is protected today, what is planned and when, and the evidence. The workshop has a Claim Checker (six claims) and Customer Questions (four questions), each with the reason the accurate answer holds up. Draft, awaiting review.
+
+## Sub-topics keywords
+
+quantum-proof, quantum-safe, quantum-resistant, marketing claims, sales claims, overclaiming, accurate wording, NIST-approved, FIPS certified, FIPS 140-3 validated, CAVP certificate, Modules In Process, CMVP certificate number, PQC-ready, CNSA 2.0 compliant, hybrid cryptography explained, harvest now decrypt later, EO 14412, NIST IR 8547 draft, deprecate 2030, disallow 2035, Q-day estimate, customer questions, RFP answer, press release, non-technical, communications, procurement.
