@@ -47,9 +47,11 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import coseDilithiumKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
 import compositeExamples from '@/data/acvp/composite-sigs-04-jose-examples.json'
+import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
+import { type HpkeJweAlg, hpkeJweDecrypt } from '../hpkeJwe'
 
-// In-browser JOSE-KAT runner — same vectors that joseKat.test.ts replays in
-// vitest, exposed as a one-click compliance check in the audit panel.
+// In-browser JOSE-KAT runner — same vectors that joseKat.test.ts, compositeKat.test.ts
+// and hpkeJwe.test.ts replay in vitest, exposed as a one-click check in the audit panel.
 
 interface JoseKatResult {
   id: string
@@ -146,6 +148,42 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
       reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt',
       vector: v.alg,
       description: `Verify the draft's published ${v.alg} JWS under its published AKP public key`,
+      passed,
+      durationMs: performance.now() - start,
+      evidence,
+    })
+  }
+
+  // ── Published HPKE JWE examples (draft-ietf-jose-hpke-pq-pqt-01 Appendix A) ─
+  // Made by the draft authors with a different ML-KEM implementation: decrypting
+  // them is interop evidence for the JWE tab, not a self round-trip.
+  for (const v of hpkeExamples.vectors as {
+    alg: HpkeJweAlg
+    compact: string
+    jwk: { priv: string }
+  }[]) {
+    const start = performance.now()
+    let passed = false
+    let evidence = ''
+    try {
+      const { plaintext } = await hpkeJweDecrypt({
+        token: v.compact,
+        alg: v.alg,
+        privateKey: base64urlDecode(v.jwk.priv),
+      })
+      passed = new TextDecoder().decode(plaintext) === hpkeExamples.plaintext
+      evidence = passed
+        ? `Published ${v.alg} compact JWE decrypts to the published plaintext`
+        : `decrypted, but the plaintext differs from the published one`
+    } catch (e) {
+      evidence = `threw: ${e instanceof Error ? e.message : String(e)}`
+    }
+    out.push({
+      id: `hpke-pq-pqt-01-${v.alg}`,
+      spec: 'draft-ietf-jose-hpke-pq-pqt-01 Appendix A (published example)',
+      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt',
+      vector: v.alg,
+      description: `Decrypt the draft's published ${v.alg} JWE with its published private key`,
       passed,
       durationMs: performance.now() - start,
       evidence,
@@ -991,7 +1029,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
         )}
       </div>
 
-      {/* JOSE KAT Suite — IETF JWS vectors + self-pinned composite */}
+      {/* JOSE KAT Suite — RFC 9964 JWS vectors + published composite and HPKE JWE examples */}
       <div className="glass-panel p-4">
         <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
           <div className="flex items-center gap-2">
@@ -1009,8 +1047,8 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
         </div>
         <p className="text-xs text-muted-foreground mb-3">
           Replays JOSE-layer Known Answer Tests against our{' '}
-          <code className="text-foreground/80">verifyJWS</code> /{' '}
-          <code className="text-foreground/80">signJWS</code> adapter:{' '}
+          <code className="text-foreground/80">verifyJWS</code> and{' '}
+          <code className="text-foreground/80">hpkeJweDecrypt</code> code:{' '}
           <a
             href="https://www.rfc-editor.org/rfc/rfc9964.html"
             target="_blank"
@@ -1019,7 +1057,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           >
             RFC 9964
           </a>{' '}
-          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87) plus the six published
+          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87), the six published
           composite examples in{' '}
           <a
             href="https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt"
@@ -1029,7 +1067,16 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           >
             draft-ietf-jose-pq-composite-sigs-04
           </a>{' '}
-          Appendix A.1 — both are external vectors, written by the drafts' authors .
+          Appendix A.1, and the HPKE-12 and HPKE-9 JWE examples in{' '}
+          <a
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-hpke-pq-pqt-01.txt"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-jose-hpke-pq-pqt-01
+          </a>{' '}
+          Appendix A — all external vectors, written by the RFC and drafts&apos; authors.
         </p>
 
         {joseKatError && (

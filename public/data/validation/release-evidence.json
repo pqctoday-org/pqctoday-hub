@@ -16,41 +16,41 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "c2e04c7ba9dab4aba54a8855adbb0c4af243727dfa9293f0484d598df26dc99e",
+    "public/data/validation/coverage-matrix.json": "95c4520839e4122315cdd12eafe2644155656b8b6cc07a20a297a3ca7f69c583",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "b79a2bc01179c09c48b0628958e7f6bc196261453024e2009dc9e174f9fd75ae",
     "src/data/validation/open-gaps.json": "32fb0bba5047bc4e0194ccefd5e6edb204e1964eb6d420e26403872fb404579b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098",
     "src/data/validation/run-results/wasm-node-katRunner.json": "ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "6b50b60e9c2d0e705d1b5ff9bc37b18457282255b90a7be899f659a510ccb12d",
-    "src/data/validation/validation-counts.generated.json": "524bb10019cf42ee526f6a8da2f4adfc660deb99bcff4867b70d52c9bb8ba61e",
-    "src/data/validation/vector-manifest.json": "4ae588100c5896a7ecb3f7d992f8055549e133e54bd525d80956c5a94fc15f07"
+    "src/data/validation/validation-counts.generated.json": "e5793499ff6e6be58698ce44785586ed1b8c26ba2e8cf5325a5a18f78199960e",
+    "src/data/validation/vector-manifest.json": "8579845d70cfa09c081fa8cea25fd3f4bb336ffa4abdf340702e9dd0866f71ea"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "d78ff115402e39962c4c389f0196c2fdba6946208e6bc14cc9f6a18bbb7ce2d7",
+    "manifestCanonicalSha256": "03bfd46d07f34bf3e66d1824dcb3a90515457f93e9b32227b54715f267454e44",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 964,
     "vectorFiles": {
       "total": 97,
-      "active": 94,
-      "quarantined": 3
+      "active": 93,
+      "quarantined": 4
     },
     "filesByClass": {
       "nist-acvp-reference-sample": 53,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 14,
+      "published-standard-kat": 15,
       "independent-oracle": 29,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 1,
+      "functional-round-trip": 0,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 0,
       "unverified": 0
     },
     "cases": {
-      "total": 5251,
-      "active": 5242,
-      "quarantined": 9
+      "total": 5252,
+      "active": 5241,
+      "quarantined": 11
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 964,
@@ -58,17 +58,17 @@
       "published-standard-kat": 22,
       "independent-oracle": 4253,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 1,
+      "functional-round-trip": 0,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 2,
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 3509,
+      "positive": 3508,
       "negative": 1733
     },
     "filesWithPublishabilityGap": {
-      "oracle-version-not-recorded": 2
+      "oracle-version-not-recorded": 1
     }
   },
   "coverage": {
@@ -3398,7 +3398,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "94 active vector files, 0 without provenance; 9 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×2."
+      "basis": "93 active vector files, 0 without provenance; 11 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
     },
     {
       "n": 3,
