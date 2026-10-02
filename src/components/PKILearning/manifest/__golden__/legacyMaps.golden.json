@@ -669,7 +669,7 @@
     "cc-eucc-certification": 2,
     "code-signing": 5,
     "compliance-strategy": 4,
-    "confidential-computing": 5,
+    "confidential-computing": 6,
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
     "crypto-mgmt-modernization": 9,
@@ -1034,6 +1034,10 @@
       {
         "id": "quantum-threats",
         "label": "Quantum Threats to TEEs"
+      },
+      {
+        "id": "homomorphic-encryption",
+        "label": "Homomorphic Encryption (FHE)"
       }
     ],
     "crypto-agility": [
@@ -2596,6 +2600,10 @@
       {
         "id": "quantum-threat-migration",
         "label": "Quantum Threat Migration"
+      },
+      {
+        "id": "fhe-hsm-flows",
+        "label": "FHE + HSM Flows"
       }
     ],
     "crypto-agility": [
