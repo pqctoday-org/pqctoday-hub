@@ -655,6 +655,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'api-security-jwt',
       'code-signing',
       'iot-pqc',
+      'ot-pqc',
       'automotive-pqc',
       'quiz',
     ],
@@ -764,6 +765,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'api-security-jwt' },
       { type: 'module', moduleId: 'code-signing' },
       { type: 'module', moduleId: 'iot-pqc' },
+      { type: 'module', moduleId: 'ot-pqc' },
       { type: 'module', moduleId: 'automotive-pqc' },
       {
         type: 'checkpoint',
@@ -826,6 +828,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'api-security-jwt',
       'code-signing',
       'iot-pqc',
+      'ot-pqc',
     ],
   },
   researcher: {
