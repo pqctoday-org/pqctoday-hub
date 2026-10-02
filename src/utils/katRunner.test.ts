@@ -51,7 +51,6 @@ vi.mock('../wasm/softhsm', () => ({
   // HSS/LMS (RFC 8554)
   hsm_importStatefulPublicKey: vi.fn(),
   hsm_statefulVerifyBytes: vi.fn(),
-  hsm_getSessionInfo: vi.fn(),
   rvName: (rv: number) => (rv === 0 ? 'CKR_OK' : `CKR_0x${rv.toString(16)}`),
   // SLH-DSA CKP constants
   CKP_SLH_DSA_SHA2_128S: 0x01,
@@ -1350,26 +1349,9 @@ describe("runKAT 'skip' — not tested when the engine does not advertise a need
 describe('lms-sigver', () => {
   const CKR_SIGNATURE_INVALID = 0xc0
 
-  // runLMSSigVerKAT opens its own session (C++ engine known issue, see
-  // katRunner.ts), so it needs a module with the session calls.
-  const LMS_SESSION = 77
-  const LMS_MODULE = {
-    _malloc: () => 8,
-    _free: vi.fn(),
-    _C_OpenSession: vi.fn(() => 0),
-    _C_CloseSession: vi.fn(() => 0),
-    getValue: () => LMS_SESSION,
-  } as unknown as SoftHSMModule
-
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(softhsm.hsm_importStatefulPublicKey).mockReturnValue(31)
-    vi.mocked(softhsm.hsm_getSessionInfo).mockReturnValue({
-      slotID: 4,
-      state: 3,
-      flags: 6,
-      ulDeviceError: 0,
-    })
   })
 
   it.each([
@@ -1411,40 +1393,28 @@ describe('lms-sigver', () => {
     vi.mocked(softhsm.hsm_statefulVerifyBytes)
       .mockReturnValueOnce(0)
       .mockReturnValueOnce(CKR_SIGNATURE_INVALID)
-    const r = await runKAT(LMS_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 2 }))
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 2 }))
     expect(r.status).toBe('pass')
     expect(r.algorithm).toBe('HSS/LMS (L=2, H10/W4 + H5/W8)')
     expect(r.details).toMatch(/RFC 8554 App\. F Test Case 2/)
     expect(softhsm.hsm_importStatefulPublicKey).toHaveBeenCalledWith(
-      LMS_MODULE,
-      LMS_SESSION,
+      FAKE_MODULE,
+      FAKE_SESSION,
       0x46, // CKK_HSS
       expect.any(Uint8Array)
     )
   })
 
-  it("runs in its own session on the caller's slot and closes it", async () => {
-    vi.mocked(softhsm.hsm_statefulVerifyBytes)
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(CKR_SIGNATURE_INVALID)
-    await runKAT(LMS_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
-    expect(LMS_MODULE._C_OpenSession).toHaveBeenCalledWith(4, 0x6, 0, 0, 8)
-    expect(LMS_MODULE._C_CloseSession).toHaveBeenCalledWith(LMS_SESSION)
-    for (const call of vi.mocked(softhsm.hsm_statefulVerifyBytes).mock.calls) {
-      expect(call[1]).toBe(LMS_SESSION)
-    }
-  })
-
   it('fails when the RFC signature does not verify', async () => {
     vi.mocked(softhsm.hsm_statefulVerifyBytes).mockReturnValue(CKR_SIGNATURE_INVALID)
-    const r = await runKAT(LMS_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
     expect(r.status).toBe('fail')
     expect(r.details).toMatch(/expected CKR_OK/)
   })
 
   it('fails when a one-bit-flipped signature is also accepted (a verifier that says yes to everything)', async () => {
     vi.mocked(softhsm.hsm_statefulVerifyBytes).mockReturnValue(0)
-    const r = await runKAT(LMS_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
     expect(r.status).toBe('fail')
     expect(r.details).toMatch(/ALSO accepted/)
   })
@@ -1453,7 +1423,7 @@ describe('lms-sigver', () => {
     vi.mocked(softhsm.hsm_statefulVerifyBytes)
       .mockReturnValueOnce(0)
       .mockReturnValueOnce(CKR_SIGNATURE_INVALID)
-    await runKAT(LMS_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
+    await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'lms-sigver', testCase: 1 }))
     const calls = vi.mocked(softhsm.hsm_statefulVerifyBytes).mock.calls
     const good = calls[0][5] as Uint8Array
     const bad = calls[1][5] as Uint8Array
