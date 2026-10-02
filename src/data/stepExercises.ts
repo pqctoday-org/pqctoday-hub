@@ -922,15 +922,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   // ot-pqc
   'ot-pqc/protocol-security-analyzer': {
-    prompt:
-      'Select IEC 61850 GOOSE and expand it. Which of its two crypto layers is tagged Quantum-safe, and why?',
+    prompt: 'Expand IEC 61850 GOOSE. Which layer is marked quantum-exposed, and why?',
     options: [
-      'Message Authentication — HMAC-SHA256 is symmetric, so no PQC replacement is needed',
-      'Key Distribution — RSA-2048 certificates are already quantum-safe',
-      'Neither; both GOOSE layers are quantum-vulnerable',
+      'The per-frame HMAC/GMAC tag, because a quantum computer breaks HMAC-SHA256',
+      'Group key management: the GDOI key distribution centre registration (IEC 62351-9 / RFC 8052) uses public-key authentication',
+      'Nothing: GOOSE carries no cryptography at all',
     ],
-    answer: 0,
-    why: "Per-message GOOSE authentication is an HMAC, a symmetric construction that Shor's algorithm does not touch; the quantum exposure is the RSA-based key distribution that seeds those HMAC keys, which is why only that layer maps to ML-KEM-768.",
+    answer: 1,
+    why: 'The frame MAC is symmetric (HMAC-SHA256 or AES-GMAC per IEC 62351-6) and stays safe; the exposure is where group keys are handed out, because the GDOI registration with the key distribution centre is authenticated with classical public-key crypto.',
   },
   'ot-pqc/substation-migration-planner': {
     prompt:
@@ -950,16 +949,15 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: 'The key-encryption key exists only to protect the other keys while they travel, which is why it rotates only on provisioning or compromise rather than annually like the global encryption and authentication keys.',
   },
-  'ot-pqc/grid-migration-roadmap': {
-    prompt:
-      'Change Budget Level from Normal to Constrained. What changes on every phase in the Migration Gantt Chart?',
+  'ot-pqc/sector-migration-roadmap': {
+    prompt: 'Raise the number of sites from 50 to 400. What now ends after the 2033 planning year?',
     options: [
-      "Each phase's duration grows by 40%; its cost stays the same",
-      "Each phase's cost grows by 40%; its duration stays the same",
-      'Both cost and duration grow by 40%',
+      'Nothing: every phase still ends before 2033',
+      'The site-rollout phase, which stretches to 192 months so the programme ends in 2043',
+      'Only the inventory phase',
     ],
-    answer: 0,
-    why: "Budget in this planner is a pacing lever: a constrained budget stretches each phase's months by a factor of 1.4, while the dollar estimate is driven only by service-territory size, so the cost labels do not move.",
+    answer: 1,
+    why: 'Site rollout scales with the number of sites; at 400 sites it runs 192 months, pushing the programme end to 2043, ten years past the planning year. This is a model estimate, not a forecast.',
   },
   'iot-pqc/rf-mesh-simulator': {
     prompt: "What condition makes the simulator declare 'Mesh Collapse'?",
@@ -1007,19 +1005,51 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: "Resuming with a pre-shared key skips the certificate exchange entirely, so the chain's size stops mattering on reconnects; the other mitigations still ship a chain, just a smaller one.",
   },
-  'ot-pqc/scada-assessment': {
-    prompt:
-      "Which posture makes a Purdue layer's Migration Priority drop to 0 and show 'Quantum-resistant'?",
-    options: ['PQC Hybrid (ML-KEM + X25519)', 'TLS 1.3 (X25519)', 'ECDSA P-256 / TLS 1.3'],
-    answer: 0,
-    why: "TLS 1.3 on its own still keys the session with X25519, which Shor's algorithm breaks; only the hybrid that adds ML-KEM is treated as non-vulnerable, which zeroes the score regardless of internet exposure or asset lifetime.",
+  'ot-pqc/zone-conduit-planner': {
+    prompt: 'At the defaults, what drives the score of the Basic control zone?',
+    options: [
+      'Harvest-now-decrypt-later exposure (score 90)',
+      'Forgery risk (score 90); its HNDL score is 0',
+      'Internet exposure of the zone',
+    ],
+    answer: 1,
+    why: 'Basic control carries commands and firmware, so the quantum threat is forged commands or forged firmware rather than decrypted traffic; the planner scores it 90 on the forgery axis and 0 on HNDL. Level 0–1 is no longer ranked low.',
   },
-  'iot-pqc/hardware-constraints': {
+  'ot-pqc/safety-consequence-scorer': {
     prompt:
-      'In the Secure Boot Delay Calculator, which algorithm shows the fewest verification Cycles?',
-    options: ['ECDSA P-256', 'ML-DSA-44', 'RSA-3072'],
+      'Pick the gas pipeline scenario and switch its firmware signing to LMS/ML-DSA. What happens to the score?',
+    options: [
+      'It drops from 46 to 9 (low)',
+      'It stays at 46: firmware signing does not change consequence',
+      'It rises, because PQC signatures are larger',
+    ],
+    answer: 0,
+    why: 'Quantum-resistant firmware signatures remove the forged-firmware path, which carried most of the scenario score; the remaining risk is low. This is a model estimate.',
+  },
+  'ot-pqc/firmware-project-signing-lab': {
+    prompt:
+      'Choose LMS H10 for project signing at 5,000 signatures a year with one HSM. How long does the key last?',
+    options: ['About 0.2 years', 'About 2 years', 'About 20 years'],
+    answer: 0,
+    why: 'LMS with tree height 10 has 2^10 = 1,024 one-time signatures; at 5,000 a year the key is exhausted in about 0.2 years, which is why high-volume signing needs a taller tree or HSS.',
+  },
+  'secure-boot-pqc/boot-verify-latency': {
+    prompt:
+      'At the defaults (2 MB/s SPI flash, 120 MHz), which algorithm has the longest Verify time in the comparison table?',
+    options: [
+      'ML-DSA-44 — its 2,420-byte signature makes it the slowest',
+      'LMS H10/W4 — hash-based verification needs thousands of hash calls',
+      'RSA-3072 — about 25 M cycles in software, roughly 211 ms at 120 MHz',
+    ],
     answer: 2,
-    why: 'RSA verification is one modular exponentiation with a tiny public exponent, about 100k cycles here; ECDSA verification needs two scalar multiplications (2M cycles) and ML-DSA-44 sits between at 400k. Verify time is those cycles divided by the MCU clock.',
+    why: 'Verify time is cycles divided by clock. On a Cortex-M4, software RSA-3072 verify costs about 25 M cycles (Oryx STM32G4: 149 ms at 170 MHz), against ~1.42 M for ML-DSA-44 (pqm4) and ~2.66 M for LMS H10/W4 (ePrint 2020/470). Signature size mostly affects flash read time, which is under 2 ms for every algorithm here.',
+  },
+  'automotive-pqc/sensor-data-integrity': {
+    prompt:
+      'In the V2X Channel Load panel, at roughly how many vehicles do ML-DSA-44 signatures alone fill the 6 Mbps channel?',
+    options: ['About 30', 'About 112', 'About 1,171'],
+    answer: 0,
+    why: 'Each vehicle sends 10 BSMs per second, so ML-DSA-44 adds 10 × 2,420 bytes × 8 = 193.6 kbps per vehicle; 6 Mbps divided by that is about 31, so ~30 vehicles saturate the channel on signature bytes alone. 112 is the FN-DSA-512 figure and 1,171 the ECDSA P-256 one; the model ignores payload, headers, certificates and MAC overhead, so real congestion comes sooner.',
   },
   // ai-security-pqc
   'ai-security-pqc/agentic-commerce-simulator': {
