@@ -220,7 +220,11 @@ class Session {
   readonly calls: CallRecord[] = []
   private allocs: number[] = []
 
-  constructor(private readonly E: DiscoveryEngine) {}
+  private readonly E: DiscoveryEngine
+
+  constructor(E: DiscoveryEngine) {
+    this.E = E
+  }
 
   private view(): DataView {
     // Fresh view on every access: wasm memory may grow and detach old buffers.
