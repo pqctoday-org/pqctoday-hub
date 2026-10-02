@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.141.0] - 2026-10-02
+
+Talking About PQC Accurately has been reviewed and now has its own quiz questions, and the API Security workshop names the draft revision it actually implements.
+
+### Added
+
+- **Quiz questions for Talking About PQC Accurately** [view:/learn/quiz] [persona:curious]: seven beginner questions now check what the module teaches — certificate stages, which dates are drafts, and which claims to avoid.
+
+### Changed
+
+- **Talking About PQC Accurately is reviewed** [view:/learn/talking-about-pqc] [persona:curious]: the module has been reviewed and is no longer marked as a work in progress.
+- **Routine library updates** [view:/about] [persona:developer] [persona:ops]: the certificate-parsing, diagram, document-export and icon libraries and the build tools were updated, and the About page's software list shows the new versions.
+
+### Fixed
+
+- **The API Security workshop names the draft revision it actually implements** [view:/learn/api-security-jwt] [persona:developer] [persona:researcher]: one step still said composite signatures revision -03 while the code follows -04. A new check now keeps the workshop, its test vectors and the Protocol Matrix on the same revision of each JOSE draft, and the weekly protocol-matrix maintenance run now also flags when the JOSE drafts snapshot is out of date.
+
 ## [4.140.0] - 2026-10-01
 
 The Curious Explorer role now also serves people who need post-quantum cryptography for their job without a technical background, the JWT module follows the current IETF drafts and passes their published test vectors, and two engine bugs found by Google's Wycheproof tests are fixed.
