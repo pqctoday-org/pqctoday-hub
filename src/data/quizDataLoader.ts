@@ -283,6 +283,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'EST and CMP enrollment, proof-of-possession for KEM keys (RFC 9810 encrCert), and the ML-DSA / ML-KEM X.509 identifiers.',
       icon: 'KeyRound',
     },
+    'talking-about-pqc': {
+      label: 'Talking About PQC Accurately',
+      description:
+        'Which dates are real and whose they are, what a certificate proves, and which claims to avoid.',
+      icon: 'FileCheck',
+    },
     'acvp-lab-workflow': {
       label: 'ACVP Lab Workflow',
       description:

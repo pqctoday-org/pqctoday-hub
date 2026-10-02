@@ -91,6 +91,8 @@ export const QUIZ_CATEGORIES = [
   'government-defense-pqc',
   'pki-enrollment-protocols',
   'acvp-lab-workflow',
+  // 10-01: LM-073, the Curious role guide for non-technical roles.
+  'talking-about-pqc',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

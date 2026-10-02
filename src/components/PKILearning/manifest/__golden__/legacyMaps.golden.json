@@ -655,7 +655,6 @@
       "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
       "duration": "30 min",
       "difficulty": "beginner",
-      "workInProgress": true,
       "frameworkPhase": "foundations"
     }
   },
@@ -3888,7 +3887,6 @@
           "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
           "duration": "30 min",
           "difficulty": "beginner",
-          "workInProgress": true,
           "frameworkPhase": "foundations"
         }
       ]

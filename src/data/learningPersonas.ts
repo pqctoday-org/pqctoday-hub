@@ -1471,6 +1471,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'standards-bodies',
           'crypto-agility',
           'migration-program',
+          'talking-about-pqc',
         ],
       },
       // Phase 4: Practical Foundations (Protocols + Applications + Industries)
@@ -1520,6 +1521,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'standards-bodies',
       'crypto-agility',
       'migration-program',
+      'talking-about-pqc',
       'tls-basics',
       'email-signing',
       'database-encryption-pqc',

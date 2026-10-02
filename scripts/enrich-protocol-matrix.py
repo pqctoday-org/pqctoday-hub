@@ -31,9 +31,17 @@ Usage:
     # Just sanity-check ref shapes vs library CSV cross-references:
     python3 scripts/enrich-protocol-matrix.py --xref-only
 
+JOSE drafts snapshot:
+    Also runs `npx tsx scripts/refresh-jose-drafts-snapshot.ts --check`, so the
+    snapshot the API Security workshop's Matrix Audit panel compares against
+    (public/data/jose-drafts-snapshot.json) is checked on the same cadence as
+    the matrix. A stale snapshot is reported like a stage delta; refresh it by
+    running the same script without --check and review the diff.
+
 Exit codes:
     0 — clean (no proposed changes)
-    1 — proposed changes written to reports/
+    1 — proposed changes written to reports/ (stage drift, xref issues, or a
+        stale JOSE drafts snapshot)
     2 — fatal error (matrix file missing, parse error)
 """
 
@@ -817,9 +825,43 @@ def cross_reference(refs: list[MatrixRef]) -> list[dict[str, str]]:
 # ---------------------------------------------------------------------------
 # Report rendering
 # ---------------------------------------------------------------------------
+JOSE_SNAPSHOT_SCRIPT = REPO_ROOT / "scripts" / "refresh-jose-drafts-snapshot.ts"
+
+
+def jose_snapshot_check(*, timeout: float = 180.0) -> dict[str, str]:
+    """Run the JOSE drafts snapshot refresher in --check mode.
+
+    Returns {"status": "current" | "stale" | "unavailable", "detail": ...}.
+    "unavailable" (datatracker unreachable, npx missing) is reported but does
+    not count as drift: the next run retries, and a false "stale" would send a
+    reviewer to refresh a file that is fine.
+    """
+    import subprocess
+
+    if not JOSE_SNAPSHOT_SCRIPT.exists():
+        return {"status": "unavailable", "detail": f"{JOSE_SNAPSHOT_SCRIPT.name} not found"}
+    try:
+        proc = subprocess.run(
+            ["npx", "tsx", str(JOSE_SNAPSHOT_SCRIPT), "--check"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return {"status": "unavailable", "detail": str(e)}
+    detail = (proc.stdout + proc.stderr).strip()
+    if proc.returncode == 0:
+        return {"status": "current", "detail": detail}
+    if proc.returncode == 1:
+        return {"status": "stale", "detail": detail}
+    return {"status": "unavailable", "detail": detail}
+
+
 def render_markdown(
     deltas: list[StageDelta],
     xref_issues: list[dict[str, str]],
+    jose_snapshot: dict[str, str] | None = None,
 ) -> str:
     lines: list[str] = []
     lines.append("# Protocol Matrix — Enrichment Report")
@@ -853,6 +895,27 @@ def render_markdown(
                 f"`{x.get('ref_id', '')}` | {x.get('issue', '')} |"
             )
     lines.append("")
+    if jose_snapshot is not None:
+        lines.append("## JOSE drafts snapshot (public/data/jose-drafts-snapshot.json)")
+        lines.append("")
+        status = jose_snapshot.get("status", "")
+        if status == "current":
+            lines.append("Matches the datatracker.")
+        elif status == "stale":
+            lines.append(
+                "**Stale.** Refresh with `npx tsx scripts/refresh-jose-drafts-snapshot.ts` "
+                "and review the diff. If a draft the workshop implements moved to a new "
+                "revision, the implementation, its vector file and the Matrix note must "
+                "move together (joseRevisionParity.test.ts)."
+            )
+        else:
+            lines.append("Could not be checked this run (retried next run).")
+        if jose_snapshot.get("detail"):
+            lines.append("")
+            lines.append("```")
+            lines.append(jose_snapshot["detail"])
+            lines.append("```")
+        lines.append("")
     lines.append("---")
     lines.append("")
     lines.append(
@@ -898,6 +961,11 @@ def main() -> int:
 
     xref_issues = cross_reference(refs)
 
+    jose_snapshot: dict[str, str] | None = None
+    if not args.xref_only:
+        jose_snapshot = jose_snapshot_check()
+        print(f"JOSE drafts snapshot: {jose_snapshot['status']}", file=sys.stderr)
+
     args.reports_dir.mkdir(parents=True, exist_ok=True)
     json_path = args.reports_dir / "protocol-matrix-updates.json"
     md_path = args.reports_dir / "protocol-matrix-changes.md"
@@ -907,6 +975,7 @@ def main() -> int:
                 "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 "deltas": [d.__dict__ for d in deltas],
                 "xref_issues": xref_issues,
+                "jose_snapshot": jose_snapshot,
                 # Kept for report-shape compatibility with the applier;
                 # LLM-assisted discovery is a maintainer-side process, not CI.
                 "llm_proposals": [],
@@ -915,12 +984,12 @@ def main() -> int:
             indent=2,
         )
         f.write("\n")
-    md_path.write_text(render_markdown(deltas, xref_issues))
+    md_path.write_text(render_markdown(deltas, xref_issues, jose_snapshot))
 
     print(f"Wrote {json_path.relative_to(REPO_ROOT)}", file=sys.stderr)
     print(f"Wrote {md_path.relative_to(REPO_ROOT)}", file=sys.stderr)
 
-    if deltas or xref_issues:
+    if deltas or xref_issues or (jose_snapshot or {}).get("status") == "stale":
         return 1
     return 0
 
