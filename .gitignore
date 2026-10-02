@@ -439,6 +439,9 @@ scripts/*
 # here needs its own negation; without this line the tests exist locally and
 # nowhere else, which is exactly the failure mode the guard protects against.
 !scripts/apply-protocol-matrix-updates.test.ts
+# Refreshes public/data/jose-drafts-snapshot.json, which the JOSE matrix audit
+# panel compares against (api-security-jwt remediation, 2026-10-01).
+!scripts/refresh-jose-drafts-snapshot.ts
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.

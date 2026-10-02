@@ -8,6 +8,7 @@ import {
   generateJwsKeyPair,
   signJWS,
   verifyJWS,
+  base64urlDecode,
   base64urlEncode,
   isSoftHsmSupported,
   type JwsKeyPair,
@@ -23,9 +24,16 @@ type HybridApproach = 'nested' | 'composite'
 interface NestedResult {
   approach: 'nested'
   innerJwt: string
+  /** The inner token's ES256 verification key — RFC 8725 §3.3 requires both layers be checked. */
+  innerPublicKey: CryptoKey
   outerJwt: SignedJwsResult
   innerSignatureBytes: number
   outerSignatureBytes: number
+}
+
+interface NestedVerifyResult {
+  outer: boolean
+  inner: boolean | null
 }
 
 interface CompositeResult {
@@ -45,6 +53,7 @@ export const HybridJWT: React.FC = () => {
   const [result, setResult] = useState<HybridResult | null>(null)
   const [keyPair, setKeyPair] = useState<JwsKeyPair | null>(null)
   const [verifyValid, setVerifyValid] = useState<boolean | null>(null)
+  const [nestedVerify, setNestedVerify] = useState<NestedVerifyResult | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [step, setStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -99,9 +108,12 @@ export const HybridJWT: React.FC = () => {
         })
         setKeyPair(kp)
 
+        // RFC 7519 §5.2: the outer payload IS the inner compact JWT, and
+        // `cty: "JWT"` tells the recipient to process it as a JWT in turn.
         const outerSigned = await signJWS({
           alg: outerAlg,
-          payload: { jwt: innerJwt },
+          header: { cty: 'JWT' },
+          payload: innerJwt,
           keyPair: kp,
           backend: effectiveBackend,
           hsm: hsmCtx,
@@ -111,12 +123,13 @@ export const HybridJWT: React.FC = () => {
         setResult({
           approach: 'nested',
           innerJwt,
+          innerPublicKey: ecKey.publicKey,
           outerJwt: outerSigned,
           innerSignatureBytes: innerSigBytes.length,
           outerSignatureBytes: outerSigned.signature.length,
         })
       } else {
-        // ── Composite: MLDSA65-Ed25519 per draft-ietf-jose-pq-composite-sigs-03
+        // ── Composite: ML-DSA-65-Ed25519 per draft-ietf-jose-pq-composite-sigs-04
         // Composite always uses noble — no softhsmv3 path for Ed25519 traditional component.
         setStep(1)
         const kp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
@@ -140,6 +153,7 @@ export const HybridJWT: React.FC = () => {
 
   const handleVerify = useCallback(async () => {
     if (!result || !keyPair) return
+    setNestedVerify(null)
     try {
       if (result.approach === 'composite') {
         const v = await verifyJWS({
@@ -149,13 +163,37 @@ export const HybridJWT: React.FC = () => {
         })
         setVerifyValid(v.valid)
       } else {
-        const v = await verifyJWS({
+        // RFC 8725 §3.3: in a nested JWT "both outer and inner operations MUST
+        // be validated using the keys and algorithms supplied by the
+        // application" — so each layer's alg is pinned here, never taken from
+        // the token, and the outer header must declare cty "JWT" (RFC 7519 §5.2).
+        const outer = await verifyJWS({
           token: result.outerJwt.token,
           publicKey: keyPair.publicKey,
           backend: effectiveBackend,
           hsm: hsmCtx,
         })
-        setVerifyValid(v.valid)
+        const outerOk = outer.valid && outer.header.alg === outerAlg && outer.header.cty === 'JWT'
+        let inner: boolean | null = null
+        if (outerOk) {
+          const innerJwt = new TextDecoder().decode(
+            base64urlDecode(result.outerJwt.token.split('.')[1])
+          )
+          const [h, p, sig] = innerJwt.split('.')
+          const innerHeader = JSON.parse(new TextDecoder().decode(base64urlDecode(h))) as {
+            alg?: string
+          }
+          inner =
+            innerHeader.alg === 'ES256' &&
+            (await crypto.subtle.verify(
+              { name: 'ECDSA', hash: 'SHA-256' },
+              result.innerPublicKey,
+              base64urlDecode(sig) as Uint8Array<ArrayBuffer>,
+              new TextEncoder().encode(`${h}.${p}`)
+            ))
+        }
+        setNestedVerify({ outer: outerOk, inner })
+        setVerifyValid(outerOk && inner === true)
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
@@ -171,17 +209,18 @@ export const HybridJWT: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Hybrid JWT Creation</h3>
         <p className="text-sm text-muted-foreground">
-          During the PQC transition, hybrid JWTs provide backwards compatibility by combining a
-          classical and a PQC signature. Composite mode follows{' '}
+          During the PQC transition, a hybrid JWT combines a classical and a PQC signature so the
+          token stays secure if either algorithm fails. Composite mode follows{' '}
           <a
             href="https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-03
-          </a>
-          .
+            draft-ietf-jose-pq-composite-sigs-04
+          </a>{' '}
+          and verifies against that draft&apos;s published examples; it is a work-in-progress
+          Internet-Draft, so treat this tab as experimental.
         </p>
       </div>
 
@@ -210,9 +249,12 @@ export const HybridJWT: React.FC = () => {
             <span className="text-sm font-bold text-foreground">Nested JWT</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Sign the payload with ES256 (WebCrypto), then wrap the entire inner JWT as the payload
-            of an outer ML-DSA-65-signed JWT. Classical verifiers process the inner JWT; PQC
-            verifiers validate the outer.
+            Sign the claims with ES256 (WebCrypto), then make that compact JWT the payload of an
+            outer ML-DSA-65 JWT with{' '}
+            <code className="text-foreground/80">cty: &quot;JWT&quot;</code> (RFC 7519 §5.2). A
+            verifier must check both layers (RFC 8725 §3.3). A classical-only verifier rejects the
+            outer algorithm, so it only reaches the inner token if a gateway or protocol you define
+            unwraps it first.
           </p>
         </Button>
         <Button
@@ -237,12 +279,13 @@ export const HybridJWT: React.FC = () => {
                 selectedApproach === 'composite' ? 'text-primary' : 'text-muted-foreground'
               }
             />
-            <span className="text-sm font-bold text-foreground">Composite (MLDSA65-Ed25519)</span>
+            <span className="text-sm font-bold text-foreground">Composite (ML-DSA-65-Ed25519)</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            A single JWT with <code className="text-foreground/80">alg: MLDSA65-Ed25519</code>. The
-            signature is a length-prefixed concatenation of the Ed25519 and ML-DSA-65 signatures,
-            both over the same signing input.
+            A single JWT with <code className="text-foreground/80">alg: ML-DSA-65-Ed25519</code>.
+            The signature is the ML-DSA-65 signature followed directly by the Ed25519 signature (no
+            length prefix). Both sign M&prime;, a domain-separated hash of the signing input, and
+            both must verify.
           </p>
         </Button>
       </div>
@@ -335,7 +378,7 @@ export const HybridJWT: React.FC = () => {
             <div className="text-[10px] text-muted-foreground">
               {selectedApproach === 'nested'
                 ? 'ML-DSA-65 Outer Sign'
-                : 'Sign with Ed25519 + ML-DSA-65'}
+                : 'Sign M\u2032 with ML-DSA-65 + Ed25519'}
             </div>
           </div>
           <ArrowRight size={14} className="text-muted-foreground hidden sm:block mx-1" />
@@ -387,6 +430,12 @@ export const HybridJWT: React.FC = () => {
           >
             {verifyValid ? <CheckCircle size={12} /> : <XCircle size={12} />}
             {verifyValid ? 'Signature valid' : 'Signature invalid'}
+          </span>
+        )}
+        {verifyValid !== null && result?.approach === 'nested' && nestedVerify && (
+          <span className="flex items-center text-[10px] text-muted-foreground">
+            outer ML-DSA-65: {nestedVerify.outer ? 'valid' : 'invalid'} · inner ES256:{' '}
+            {nestedVerify.inner === null ? 'not checked' : nestedVerify.inner ? 'valid' : 'invalid'}
           </span>
         )}
       </div>
@@ -452,9 +501,9 @@ export const HybridJWT: React.FC = () => {
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle size={16} className="text-success" />
-            <h4 className="text-sm font-bold text-foreground">Composite JWT (MLDSA65-Ed25519)</h4>
-            <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/20 text-success border-success/50">
-              draft-ietf-jose-pq-composite-sigs-03
+            <h4 className="text-sm font-bold text-foreground">Composite JWT (ML-DSA-65-Ed25519)</h4>
+            <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-warning/20 text-warning border-warning/50">
+              draft-ietf-jose-pq-composite-sigs-04 · experimental
             </span>
           </div>
           <div className="bg-background rounded-lg p-3 border border-border overflow-x-auto">
@@ -471,7 +520,7 @@ export const HybridJWT: React.FC = () => {
           </div>
           <div className="mt-2 text-xs text-muted-foreground">
             Size: {result.jwt.token.length} chars · composite signature: {result.signatureBytes}{' '}
-            bytes (4 B length prefix + 64 B Ed25519 + 3309 B ML-DSA-65)
+            bytes (3,309 B ML-DSA-65 + 64 B Ed25519, directly concatenated)
           </div>
         </div>
       )}
@@ -499,7 +548,7 @@ export const HybridJWT: React.FC = () => {
                 <span className="text-muted-foreground">
                   {selectedApproach === 'nested'
                     ? 'Nested Hybrid (ES256 + ML-DSA-65)'
-                    : 'Composite MLDSA65-Ed25519'}
+                    : 'Composite ML-DSA-65-Ed25519'}
                 </span>
                 <span className="font-mono text-foreground">
                   {totalSize.toLocaleString()} chars ({(totalSize / 1024).toFixed(1)} KB)
@@ -519,11 +568,14 @@ export const HybridJWT: React.FC = () => {
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Key insight:</strong> Both approaches give classical-only verifiers a path to
-          validate something. Nested mode keeps the inner JWT verifiable by any RFC 7519 client;
-          composite mode requires draft-ietf-jose-pq-composite-sigs support but produces a single
-          token ({MLDSA65_INFO.sigBytes!.toLocaleString()} B PQ signature + Ed25519 hash). The PQC
-          component is what guarantees quantum resistance.
+          <strong>Key insight:</strong> Neither approach lets an unmodified classical verifier
+          accept the token on its own. Nested mode can serve one only if a gateway or protocol you
+          define unwraps the inner JWT, and that path carries no PQC protection, so it must be
+          retired on a schedule. Composite mode needs every verifier upgraded to
+          draft-ietf-jose-pq-composite-sigs, but yields one token (
+          {MLDSA65_INFO.sigBytes!.toLocaleString()} B ML-DSA-65 + 64 B Ed25519 signature) that stays
+          secure while either algorithm holds. Either way, the verifier&apos;s algorithm allowlist
+          is what stops a downgrade to the classical-only path.
         </p>
       </div>
     </div>

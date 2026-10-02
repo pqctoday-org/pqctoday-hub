@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "19c625562b9e686b44bc1a5f2a4cdfdc7c714d8f56220abb8406a77516221925",
+    "manifestSha256": "d78ff115402e39962c4c389f0196c2fdba6946208e6bc14cc9f6a18bbb7ce2d7",
     "registrySha256": "cbed2db1f7d410a96527620392c065b9e2acc30aa5b651b9d1311d8a2661cc4c"
   },
   "records": {
@@ -3445,8 +3445,9 @@
     "acvp/aesgcm_test.json": "published-standard-kat",
     "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aeskw_test.json": "published-standard-kat",
-    "acvp/composite-sigs-jose-kat.json": "functional-round-trip",
+    "acvp/composite-sigs-04-jose-examples.json": "unverified",
     "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
+    "acvp/cose-sphincs-plus-10-examples.json": "unverified",
     "acvp/ecdsa_keyver_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/ecdsa_p384_test.json": "published-standard-kat",
     "acvp/ecdsa_p521_test.json": "nist-acvp-reference-sample",
@@ -3483,6 +3484,7 @@
     "acvp/pbkdf2_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/pbkdf2_rfc7914_test.json": "published-standard-kat",
     "acvp/pbkdf2_test.json": "independent-oracle",
+    "acvp/rfc7515-a3-es256-jws.json": "unverified",
     "acvp/rsa_oaep_test.json": "nist-acvp-reference-sample",
     "acvp/rsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/sha_acvp_boundary_test.json": "nist-acvp-reference-sample",
