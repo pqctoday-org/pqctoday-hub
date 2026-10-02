@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "7b75600a1679410bc7571f96903e20de95f71b1f5ec68906db6e808db36f2444",
+    "public/data/validation/coverage-matrix.json": "6db2d3fb063e40908dc9f478d625da9d98d785dcf89ed4ba2d214552e26d8f11",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
-    "src/data/validation/native-conformance.generated.json": "935416e9428889bec874552405ce11d55a54fd959ab8b5f6fa728177c461e609",
+    "src/data/validation/native-conformance.generated.json": "2b6c93d2ab3e965b453150bc964a87b91dd2dad4109a20ef028e0cc2fa0ef36a",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "91f6c1df36e31ab7a155aaee7cd94ea1c77c63ef24ab920eb75a3768e8dfe4e1",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "581a4eb48a63d7b8dbd58d7b76fb2c7e254e3ab4177f86330ab0524bcdfdb9fd",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "56ca1fbaec9eda5df629d5bacc56c5068b4dab87fe3a5190d6ea4eb1ffc6f8d5",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "d1b9a526bc7c12e32d2bb74493db204e5676e724325ca85d27c419956a5426d1",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "96c520811f603151456ab35d7abbb641ce4b30400f4c7985ca49ab851c97f014",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "f0dd511c0d7aa69c6efecf419bc9389ca18212d0ea3e1c592b6b16cb7b511675",
     "src/data/validation/validation-counts.generated.json": "2c3c06565f30bc0d41da0223c63cbd3af94aa9b9556aa605b1e23cdbf2ed9ca4",
     "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286"
   },
@@ -331,7 +331,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 63098a492); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 0b50d7dfe); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 0b50d7dfe); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 0b50d7dfe). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -345,12 +345,12 @@
     "engines": {
       "cpp": {
         "label": "C++",
-        "sourceCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
+        "sourceCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
         "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "bc30345f8240c0c10579edf6f50b0fc399fb03cdfa05267dd17d81aa7cc35021"
+            "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410"
           },
           {
             "path": "public/wasm/softhsm.js",
@@ -360,12 +360,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "eda62b31dca307bb478f0a7d596c85d9820f777c",
+        "sourceCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
         "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3"
+            "sha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -391,8 +391,8 @@
     "source": "src/data/validation/native-conformance.generated.json",
     "executedByHub": false,
     "note": "Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.",
-    "hsmPinnedCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
-    "hsmPinnedCommitDate": "2026-09-27",
+    "hsmPinnedCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
+    "hsmPinnedCommitDate": "2026-10-02",
     "hsmPinnedCommitPublished": true,
     "suites": [
       {
@@ -404,31 +404,31 @@
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
           "The report does not record the build target (platform/ABI) of the engine under test.",
-          "The report was produced at an engine commit 8 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 6 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
         ],
         "report": {
           "counts": {
-            "pass": 961,
+            "pass": 963,
             "fail": 0,
             "skip": 2,
             "xfail": 3,
-            "total": 966
+            "total": 968
           },
           "groups": 68,
           "caseIdentity": "suite-assigned",
-          "engineCommit": "7f95629c989a23b197fa1257b5ff1bd179528cc6",
-          "engineCommitDate": "2026-09-27",
-          "reportCommit": "5442887af9c2eac731c19fa9de7d3cc688db0ac8",
-          "reportDate": "2026-09-27 17:23:24 UTC",
+          "engineCommit": "7b4c723613b87e7bffe746ea07c163be12bbd185",
+          "engineCommitDate": "2026-10-02",
+          "reportCommit": "ea0e072bbcf8611dd1832db3b920cf08d05b007c",
+          "reportDate": "2026-10-02 16:34:56 UTC",
           "target": "not recorded",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 8,
+          "commitsBehindPinnedHsmMain": 6,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
-          "wasmBundleHsmCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
+          "wasmBundleHsmCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 13,
+          "commitsFromEngineToWasmBundle": 8,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -440,7 +440,7 @@
         "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
-          "The report was produced at an engine commit 94 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 145 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
           "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
           "The harness has no skip status: an unsupported case can only pass or fail."
@@ -461,12 +461,12 @@
           "reportDate": "2026-09-26T23:06:54.328Z",
           "target": "wasm32 build with `--features acvp`",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 94,
+          "commitsBehindPinnedHsmMain": 145,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "eda62b31dca307bb478f0a7d596c85d9820f777c",
+          "wasmBundleHsmCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 164,
+          "commitsFromEngineToWasmBundle": 179,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -489,7 +489,7 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "hubCommit": "0b50d7dfe3aec4a1788f0356f7ef8dd74d657939",
       "recordedAt": "2026-10-02",
       "results": 4992,
       "byEngine": {
@@ -509,7 +509,7 @@
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "63098a4925d15bedaac510eefb3b174b40956fb6",
+      "hubCommit": "0b50d7dfe3aec4a1788f0356f7ef8dd74d657939",
       "recordedAt": "2026-10-02",
       "results": 96,
       "byEngine": {
@@ -524,7 +524,7 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "hubCommit": "0b50d7dfe3aec4a1788f0356f7ef8dd74d657939",
       "recordedAt": "2026-10-02",
       "results": 13364,
       "byEngine": {

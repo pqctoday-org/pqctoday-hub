@@ -127,7 +127,6 @@ import {
   hsm_importECPrivateKey,
   hsm_importStatefulPublicKey,
   hsm_statefulVerifyBytes,
-  hsm_getSessionInfo,
   writeBytes,
   CKO_SECRET_KEY,
   CKK_AES,
@@ -1612,41 +1611,12 @@ async function runLMSSigVerKAT(
   const pub = hexToBytes(tc.pub_key_hex)
   const msg = hexToBytes(tc.message_hex)
   const sig = hexToBytes(tc.signature_hex)
-  // KNOWN ISSUE, NOT FIXED (C++ softhsm-wasm engine, found 2026-10-02): a valid
-  // C_Verify(CKM_HSS) corrupts later HMAC cases in the SAME session — HMAC
-  // verify rejects the ACVP MAC and HMAC sign returns CKR_KEY_HANDLE_INVALID.
-  // The Rust engine is unaffected. This KAT therefore runs in its own session
-  // on the caller's slot and closes it, which isolates the corruption (checked
-  // with this case registered both before and after the HMAC cases). The
-  // engine bug itself is open; this only keeps it from failing other cases.
-  // Root cause (session 49, read-only repro): StatefulVerifyInit/StatefulSignInit
-  // set the session mechanism to 1000-1002, Session::resetOp()
-  // (src/lib/session_mgr/Session.cpp) never resets it, and C_Sign/C_Verify in
-  // SoftHSM_sign.cpp test that mechanism before getMacOp(), so a later HMAC op is
-  // routed to StatefulSign/StatefulVerify. Affects HSS, XMSS and XMSS^MT; the fix
-  // (reset it in resetOp) is a later softhsm PR.
-  const slotID = hsm_getSessionInfo(M, hSession).slotID
-  const hPtr = M._malloc(4)
-  let hLms: number
-  try {
-    const rvOpen =
-      M._C_OpenSession(slotID, 0x6 /* CKF_RW_SESSION | CKF_SERIAL_SESSION */, 0, 0, hPtr) >>> 0
-    if (rvOpen !== 0) return { status: 'fail', details: `C_OpenSession → ${rvName(rvOpen)}` }
-    hLms = M.getValue(hPtr, 'i32') >>> 0
-  } finally {
-    M._free(hPtr)
-  }
-  let rvGood: number
-  let rvBad: number
-  try {
-    const pubHandle = hsm_importStatefulPublicKey(M, hLms, CKK_HSS, pub)
-    rvGood = hsm_statefulVerifyBytes(M, hLms, CKM_HSS, pubHandle, msg, sig)
-    const tampered = sig.slice()
-    tampered[tampered.length - 1] ^= 0x01
-    rvBad = hsm_statefulVerifyBytes(M, hLms, CKM_HSS, pubHandle, msg, tampered)
-  } finally {
-    M._C_CloseSession(hLms)
-  }
+  const pubHandle = hsm_importStatefulPublicKey(M, hSession, CKK_HSS, pub)
+
+  const rvGood = hsm_statefulVerifyBytes(M, hSession, CKM_HSS, pubHandle, msg, sig)
+  const tampered = sig.slice()
+  tampered[tampered.length - 1] ^= 0x01
+  const rvBad = hsm_statefulVerifyBytes(M, hSession, CKM_HSS, pubHandle, msg, tampered)
 
   const what = `RFC 8554 App. F ${tc.id.replace(/ \(.*$/, '')} (HSS L=${tc.levels}, pk ${pub.length} B, sig ${sig.length} B, msg ${msg.length} B)`
   if (rvGood !== 0) {

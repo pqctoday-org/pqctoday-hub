@@ -43,6 +43,31 @@ Confidential Computing now teaches fully homomorphic encryption, with a workshop
 - **Three homomorphic-encryption libraries in the Library** [view:/library] [persona:developer] [persona:researcher] [persona:architect]: TFHE-rs, Lattigo and OpenFHE now have reference entries, each with its licence and the ISO/IEC 28033 parts that cover its schemes.
 - **New trusted sources for homomorphic encryption** [view:/library] [persona:researcher]: Zama, Tune Insight (Lattigo), OpenFHE and fhe.rs join as supporting sources, used only for claims about their own libraries.
 
+## [4.143.0] - 2026-10-02
+
+A new HSM playground lesson shows how applications discover certificates across slots, the Rust engine follows PKCS#11 v3.2 more closely, HMAC works again after a hash-based signature on the C++ engine, and catalog entries were corrected after a source-by-source accuracy check.
+
+### Added
+
+- **New HSM playground lesson: Discovering certificates across slots** [view:/playground/hsm] [persona:developer] [persona:architect] [persona:ops] [persona:cert-engineer]: watch the two ways an application finds every certificate on a PKCS#11 token — the fewest-calls flow and the defensive flow — run live on three tokens holding 18 certificates and 18 key objects, and compare the real call counts side by side (30 versus 62 calls for the same list).
+- **More questions on industrial protocols and rules** [view:/learn/ot-pqc] [persona:architect] [persona:ops] [persona:grc]: six new Q&A entries cover PROFINET security classes, the TSA pipeline security directive and European train-control key management (SUBSET-137), including which parts need post-quantum cryptography.
+
+### Changed
+
+- **The Rust HSM engine follows PKCS#11 v3.2 more closely when you list objects** [view:/playground/hsm] [persona:developer] [persona:cert-engineer]: labels and IDs that were never set now read as empty instead of "attribute not found", every slot advertises its conformance profiles, searches for an empty value match exactly, and each token reports its own serial number.
+- **Secret keys, private keys and data objects are private by default** [view:/playground/hsm] [persona:developer] [persona:ops] [persona:cert-engineer]: like the C++ engine, the Rust engine now keeps these private unless you say otherwise, and creating one needs a logged-in user; the playground's own flows already log in.
+
+### Fixed
+
+- **HMAC works again after a hash-based signature on the C++ engine** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer]: on the C++ (SoftHSM3 C++) engine, one HSS/LMS or XMSS signature or verification broke every later HMAC operation in the same session (the key was reported invalid, or a correct MAC was rejected). The engine now ends each operation cleanly, and the validation suite checks this order.
+- **Dual-engine checks in the KEM and Sign/Verify tabs use a real Rust session** [view:/playground/hsm] [persona:developer]: in dual-engine mode the Rust side now runs on its own logged-in session instead of borrowing the C++ engine's.
+
+### Data
+
+- **Corrections from a source-by-source accuracy check** [view:/migrate] [view:/algorithms] [persona:architect] [persona:grc] [persona:researcher]: rows whose text went beyond their source now say only what it supports. The US government procurement entry says agencies "should" (not "must") buy PQC-capable products, as CISA's list does. The EU and KT post-quantum roadmaps now cite their real documents (the EU's June 2025 coordinated roadmap and KT's Quantum Korea 2026 announcement). The eduroam entry names its actual source. Two undated release and shipping dates are removed.
+- **General Dynamics KIV-80 shows its post-quantum claim** [view:/migrate] [persona:architect] [persona:ops]: the product was listed as having no PQC support. It now shows "Pending Verification", quoting the vendor datasheet's NSA CM2 quantum-resistant claim, with certification still pending.
+- **NICT post-quantum roadmap** [view:/migrate] [persona:researcher] [persona:architect]: NICT's 9 April 2026 announcement with TOPPAN and ISARA, a demonstration of migrating certificate authorities to post-quantum cryptography, is now on the vendor roadmaps.
+
 ## [4.142.0] - 2026-10-02
 
 The IoT & OT module is now two advanced modules, one for IoT and embedded devices and one for operational technology across five sectors, both checked against their standards; search stays smooth after the first search; the JWT workshop's encrypted tokens can run entirely inside the emulated HSM; and the Library and vendor roadmaps gain new entries.

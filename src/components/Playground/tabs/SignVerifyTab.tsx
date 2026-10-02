@@ -130,8 +130,15 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
   initialAlgo,
   onAlgoChange,
 }) => {
-  const { moduleRef, crossCheckModuleRef, hSessionRef, registerKey, engineMode, addHsmLog } =
-    useHsmContext()
+  const {
+    moduleRef,
+    crossCheckModuleRef,
+    crossCheckSessionRef,
+    hSessionRef,
+    registerKey,
+    engineMode,
+    addHsmLog,
+  } = useHsmContext()
 
   const [variant, setVariant] = useState<44 | 65 | 87>(() => {
     if (initialAlgo === 'ML-DSA-44') return 44
@@ -235,11 +242,16 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
           try {
             // 1. Export pub key from C++ and import into Rust
             const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
-            const rustPub = hsm_importMLDSAPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            const rustPub = hsm_importMLDSAPublicKey(
+              checkM,
+              crossCheckSessionRef.current,
+              variant,
+              pubBytes
+            )
             // 2. Rust verifies C++ signature
             const checkOk = hsm_verify(
               checkM,
-              hSessionRef.current,
+              crossCheckSessionRef.current,
               rustPub,
               message,
               sig,
@@ -289,10 +301,15 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
           const checkM = crossCheckModuleRef.current
           try {
             const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
-            const rustPub = hsm_importMLDSAPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            const rustPub = hsm_importMLDSAPublicKey(
+              checkM,
+              crossCheckSessionRef.current,
+              variant,
+              pubBytes
+            )
             const checkOk = hsm_verify(
               checkM,
-              hSessionRef.current,
+              crossCheckSessionRef.current,
               rustPub,
               message,
               signature!,
@@ -523,6 +540,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   const {
     moduleRef,
     crossCheckModuleRef,
+    crossCheckSessionRef,
     hSessionRef,
     registerKey,
     engineMode,
@@ -632,11 +650,18 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
       const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles.pub)
       const rustPub = hsm_importSLHDSAPublicKey(
         checkM,
-        hSessionRef.current,
+        crossCheckSessionRef.current,
         getParamSetCkp(),
         pubBytes
       )
-      const checkOk = hsm_slhdsaVerify(checkM, hSessionRef.current, rustPub, message, sig, opts)
+      const checkOk = hsm_slhdsaVerify(
+        checkM,
+        crossCheckSessionRef.current,
+        rustPub,
+        message,
+        sig,
+        opts
+      )
       if (!checkOk) {
         setError('Dual-Engine Parity Failure: Rust failed to verify C++ SLH-DSA signature')
       } else {

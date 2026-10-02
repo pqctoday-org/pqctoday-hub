@@ -50,6 +50,19 @@ export type HsmFamily =
 
 export type EngineMode = 'software' | 'cpp' | 'rust' | 'dual'
 
+/**
+ * Dual mode: give the Rust cross-check engine its own token and logged-in
+ * user session, and return that session handle. Without it, cross-check
+ * calls ran on a session the Rust engine never opened (they were passed the
+ * C++ engine's handle) — and private objects such as a generated ML-KEM
+ * private key need a user session to be created or seen at all (PKCS#11
+ * v3.2 Usage Guide Table 3).
+ */
+export const openCrossCheckSession = (cp: SoftHSMModule): number => {
+  const slot = hsm_initToken(cp, hsm_getFirstSlot(cp), '12345678', 'SoftHSM3-check')
+  return hsm_openUserSession(cp, slot, '12345678', 'user1234')
+}
+
 export type HsmKeyRole = 'public' | 'private' | 'secret'
 
 /** Semantic purpose of a key within a provisioning or crypto workflow */
@@ -139,6 +152,10 @@ export interface HsmContextValue {
   rawModuleRef: React.MutableRefObject<SoftHSMModule | null>
   /** Secondary execution engine (fallback verification) */
   crossCheckModuleRef: React.MutableRefObject<SoftHSMModule | null>
+  /** Dual mode only: the Rust cross-check engine's OWN user session. The C++
+   * engine's hSessionRef handle means nothing to the Rust module (it is a
+   * separate engine with its own token and session table). */
+  crossCheckSessionRef: React.MutableRefObject<number>
   hSessionRef: React.MutableRefObject<number>
   slotRef: React.MutableRefObject<number>
   /** Execution Configuration */
@@ -288,6 +305,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const moduleRef = useRef<SoftHSMModule | null>(null)
   const rawModuleRef = useRef<SoftHSMModule | null>(null)
   const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
+  const crossCheckSessionRef = useRef<number>(0)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
   /** Real bug found live (dev-tabs-pkcs11-kmip plan G9, W1): the deep-link
@@ -523,6 +541,9 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Step 3: open session and login
         const hSession = hsm_openUserSession(proxy, newSlot, '12345678', 'user1234')
         hSessionRef.current = hSession
+        if (crossCheckModuleRef.current) {
+          crossCheckSessionRef.current = openCrossCheckSession(crossCheckModuleRef.current)
+        }
         setPhase('session_open')
         return true
       } catch (err) {
@@ -530,6 +551,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         moduleRef.current = null
         rawModuleRef.current = null
         crossCheckModuleRef.current = null
+        crossCheckSessionRef.current = 0
         return false
       }
     },
@@ -564,6 +586,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       moduleRef,
       rawModuleRef,
       crossCheckModuleRef,
+      crossCheckSessionRef,
       hSessionRef,
       slotRef,
       lastInitErrorRef,
