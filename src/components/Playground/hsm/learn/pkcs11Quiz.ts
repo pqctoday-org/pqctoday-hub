@@ -262,4 +262,36 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       why: 'This trips up nearly everyone building their first multi-role PKCS#11 integration: login state lives at the token level, so switching roles on a live session always means C_Logout first.',
     },
   ],
+  'certificate-discovery': [
+    {
+      q: 'Why could the short flow get away with a single C_GetSlotList call?',
+      options: [
+        'Because the playground only ever has one slot',
+        'Because PKCS#11 lets the caller pass a buffer sized in advance; the size query (NULL pSlotList) is only needed when the caller cannot bound the slot count',
+        'Because C_GetSlotList caches its answer between calls',
+      ],
+      answer: 1,
+      why: '§5.5.1: if pSlotList is large enough the list comes back directly, and "multiple calls to C_GetSlotList are by no means required". In this engine the size query also has a side effect — it is the call that adds a spare slot — which the long flow then has to skip.',
+    },
+    {
+      q: 'Both flows filtered on CKA_CLASS = CKO_CERTIFICATE. What did that filter save?',
+      options: [
+        'Nothing — the token returns every object anyway',
+        "The key objects and the token's CKO_PROFILE objects never came back, so no call was spent finding out which handles were certificates",
+        'It made the certificates readable without a login',
+      ],
+      answer: 1,
+      why: 'C_FindObjectsInit matches the template byte for byte inside the token (§5.7.7). Without the filter every object would be returned and the client would need an extra C_GetAttributeValue(CKA_CLASS) per object to sort them.',
+    },
+    {
+      q: 'The long flow used twice as many C_GetAttributeValue calls. Did it return different data?',
+      options: [
+        'Yes — the length query reveals extra attributes',
+        'No — the first call only asks for lengths (pValue = NULL), the second fetches the same values the short flow read in one call with pre-sized buffers',
+        'Yes — it also reads the private keys',
+      ],
+      answer: 1,
+      why: '§5.7.5 case 3: a NULL pValue returns just the exact length. That two-call pattern is the safe default when sizes are unknown; when the caller can bound them (labels, IDs, subject names), one call per object is enough.',
+    },
+  ],
 }
