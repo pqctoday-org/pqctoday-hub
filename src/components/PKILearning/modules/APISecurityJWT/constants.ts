@@ -180,25 +180,41 @@ export const JOSE_KEY_AGREEMENT_ALGORITHMS: JOSEAlgorithm[] = [
     ctBytes: 0,
     broken: true,
   },
+  // PQ JWE runs through HPKE Integrated Encryption (draft-ietf-jose-hpke-encrypt-22);
+  // the `alg` codes are draft-ietf-jose-hpke-pq-pqt-01 §3. ctBytes = the HPKE
+  // encapsulated secret carried as the JWE Encrypted Key.
   {
-    name: 'ML-KEM-768',
-    jose: 'ML-KEM-768',
+    name: 'ML-KEM-768 (HPKE)',
+    jose: 'HPKE-12',
     type: 'pqc',
     category: 'keyAgreement',
     keyBytes: 1184,
     ctBytes: 1088,
     broken: false,
     nistLevel: 3,
+    spec: 'draft-ietf-jose-hpke-pq-pqt-01 (Table 2)',
   },
   {
-    name: 'ML-KEM-1024',
-    jose: 'ML-KEM-1024',
+    name: 'ML-KEM-1024 (HPKE)',
+    jose: 'HPKE-13',
     type: 'pqc',
     category: 'keyAgreement',
     keyBytes: 1568,
     ctBytes: 1568,
     broken: false,
     nistLevel: 5,
+    spec: 'draft-ietf-jose-hpke-pq-pqt-01 (Table 2)',
+  },
+  {
+    name: 'ML-KEM-768 + X25519 (HPKE, X-Wing)',
+    jose: 'HPKE-9',
+    type: 'composite',
+    category: 'keyAgreement',
+    keyBytes: 1216,
+    ctBytes: 1120,
+    broken: false,
+    nistLevel: 3,
+    spec: 'draft-ietf-jose-hpke-pq-pqt-01 (Table 1)',
   },
 ]
 

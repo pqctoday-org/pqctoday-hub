@@ -65,13 +65,13 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
     },
     {
       id: 'jwe-encrypt',
-      title: '4. Encrypt a JWT payload using ML-KEM key agreement',
+      title: '4. Encrypt a JWT payload with HPKE and ML-KEM',
       description:
-        'Walk through the historical direct ML-KEM JWE flow (draft -05) step by step: ML-KEM keypair generation, encapsulation, KMAC256 key derivation, AES-256-GCM encryption with the encoded header as AAD, and JWE assembly with the KEM ciphertext in the "ek" header. Reverse the flow with decryption, then compare it with the HPKE design that replaced it.',
+        'Encrypt a JWT payload as an HPKE JWE (draft-ietf-jose-hpke-pq-pqt-01): generate an ML-KEM-768 recipient key, build a protected header with only "alg" and "kid", let HPKE seal the payload, and assemble the five JWE parts. Decrypt it, switch to the HPKE-9 hybrid (ML-KEM-768 + X25519) and compare the sizes, then decrypt the draft\'s own published example.',
       badge: 'JWE Encryption',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'JWE has 5 parts (vs 3 for JWS): header, encrypted key (KEM ciphertext), IV, ciphertext, and authentication tag. The ML-KEM-768 ciphertext adds ~1,088 bytes.',
+        'JWE keeps its 5 parts (vs 3 for JWS), but in HPKE Integrated Encryption the IV and tag are empty: the Encrypted Key carries the HPKE encapsulated secret (1,088 bytes for ML-KEM-768, 1,120 for the hybrid) and the GCM tag sits inside the ciphertext.',
       config: { step: 3 },
     },
     {

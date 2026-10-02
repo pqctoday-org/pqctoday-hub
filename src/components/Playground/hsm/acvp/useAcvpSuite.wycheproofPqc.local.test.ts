@@ -7,7 +7,9 @@
 // What this test is for: every engine finding is pinned as a NUMBER (or an
 // exact row id) per file and per Wycheproof result class, so a fixed or a
 // regressed engine turns the pin red instead of silently changing published
-// evidence. Measured 2026-09-30 on the bundles built from hsm 68278dfe: the
+// evidence. Measured 2026-09-30 on the bundles built from hsm 68278dfe and
+// re-measured 2026-10-01 on the Rust bundle built from hsm PR #308 (5e28f11a),
+// which fixed the 9 Rust ML-DSA sign findings: zero failures on either engine. The
 // wycheproof_pqc category (both engines) takes ~10 s in Node, but minutes in
 // a browser — hence its own opt-in workbench category.
 //
@@ -209,7 +211,7 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
     expect(lines.length).toBe(1 + FILES.length * 4)
   })
 
-  // ── PINNED ENGINE FINDINGS (measured 2026-09-30, hsm 68278dfe bundles) ────
+  // ── PINNED ENGINE RESULTS (C++ hsm 68278dfe, Rust hsm 5e28f11a; 2026-10-01) ─
 
   it('ML-KEM: both engines pass every case — keyGen, decaps, expanded-dk decaps, ek rejection', () => {
     for (const v of [512, 768, 1024])
@@ -245,27 +247,32 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
     }
   })
 
-  it('ML-DSA sign: C++ passes every case; Rust fails exactly the 9 pinned invalid cases', () => {
+  it('ML-DSA sign: both engines pass every case; the 9 former Rust findings are refused', () => {
     const sign = (engine: string) =>
       rows.filter((r) => /^wyc-mldsa\d+sign(no)?seed-/.test(r.id) && r.id.endsWith(engine))
-    expect(sign('C++').length).toBe(501)
-    expect(
-      sign('C++')
-        .filter((r) => r.status !== 'pass')
-        .map((r) => r.id)
-    ).toEqual([])
-    // Rust FINDINGS (open-gaps.json: wycheproof-rust-mldsa-sk-range and
-    // wycheproof-rust-mldsa-empty-seed). Each row is a Wycheproof `invalid`
-    // case the Rust engine ACCEPTED and signed with; C++ refuses all nine.
-    //  - InvalidPrivateKey: an expanded sk whose s1 or s2 vector is out of range
-    //    is imported (C_CreateObject → CKR_OK) and used to sign. C++ refuses at
-    //    C_Sign (CKR_GENERAL_ERROR).
-    //  - IncorrectPrivateKeyLength, empty seed: a zero-length CKA_SEED is read as
-    //    "no seed" (rust/src/crypto/handlers.rs get_attr_bytes skips
-    //    ulValueLen == 0), so C_GenerateKeyPair takes the random-seed path and
-    //    returns CKR_OK. C++ refuses with CKR_ATTRIBUTE_VALUE_INVALID. The 31- and
-    //    33-byte seeds are refused by both.
-    const RUST_FAILS = [
+    for (const engine of ['C++', 'Rust']) {
+      expect(sign(engine).length, engine).toBe(501)
+      expect(
+        sign(engine)
+          .filter((r) => r.status !== 'pass')
+          .map((r) => r.id),
+        engine
+      ).toEqual([])
+    }
+    // FORMER Rust findings (open-gaps.json wycheproof-rust-mldsa-sk-range and
+    // wycheproof-rust-mldsa-empty-seed, measured 2026-09-30 on hsm 68278dfe,
+    // where the Rust engine ACCEPTED all nine and signed). Fixed by
+    // pqctoday-hsm PR #308 (head 5e28f11a); measured 2026-10-01 on the Rust
+    // bundle built from it. Each is a Wycheproof `invalid` case, and each must
+    // now be refused at the step the fix moved it to:
+    //  - InvalidPrivateKey (s1 or s2 out of range): C_CreateObject(sk) →
+    //    CKR_ATTRIBUTE_VALUE_INVALID (FIPS 204 skDecode range check at import).
+    //    C++ still refuses later, at C_Sign (CKR_GENERAL_ERROR).
+    //  - empty private seed (0-byte CKA_SEED): C_GenerateKeyPair(CKA_SEED) →
+    //    CKR_ATTRIBUTE_VALUE_INVALID (a present-but-empty seed is no longer read
+    //    as "no seed"), the same code C++ returns.
+    // If any of these goes back to `→ CKR_OK … (accepted)`, the fix regressed.
+    const FORMER_RUST_FAILS = [
       'wyc-mldsa44signnoseed-tg4-tc52-Rust',
       'wyc-mldsa44signnoseed-tg5-tc53-Rust',
       'wyc-mldsa44signseed-tg22-tc84-Rust',
@@ -277,26 +284,25 @@ describe('Project Wycheproof (Google / C2SP) ML-KEM + ML-DSA vectors, both engin
       'wyc-mldsa87signseed-tg24-tc82-Rust',
     ]
     const rust = sign('Rust')
-    expect(rust.length).toBe(501)
-    expect(
-      rust
-        .filter((r) => r.status !== 'pass')
-        .map((r) => r.id)
-        .sort()
-    ).toEqual(RUST_FAILS)
-    for (const id of RUST_FAILS) {
+    for (const id of FORMER_RUST_FAILS) {
       const r = rust.find((x) => x.id === id)!
-      expect(r.caseMeta?.parameters?.wycheproofResult).toBe('invalid')
-      expect(r.caseMeta?.observed).toMatch(/→ CKR_OK; C_Sign → CKR_OK \(accepted\)$/)
-      expect(r.details).toMatch(/ACCEPTED a case Wycheproof marks invalid/)
+      expect(r, id).toBeDefined()
+      expect(r.status, id).toBe('pass')
+      expect(r.caseMeta?.parameters?.wycheproofResult, id).toBe('invalid')
+      expect(r.caseMeta?.observed, id).not.toMatch(/→ CKR_OK; C_Sign → CKR_OK|\(accepted\)/)
       const cpp = rows.find((x) => x.id === id.replace(/-Rust$/, '-C++'))!
-      expect(cpp.status).toBe('pass')
+      expect(cpp.status, id).toBe('pass')
     }
-    for (const id of RUST_FAILS.filter((i) => i.includes('signnoseed')))
-      expect(rust.find((x) => x.id === id)!.caseMeta?.parameters?.flags).toBe('InvalidPrivateKey')
-    for (const id of RUST_FAILS.filter((i) => i.includes('signseed')))
-      expect(rust.find((x) => x.id === id)!.caseMeta?.observed).toMatch(
-        /^C_GenerateKeyPair\(CKA_SEED 0B\) → CKR_OK/
+    for (const id of FORMER_RUST_FAILS.filter((i) => i.includes('signnoseed'))) {
+      const r = rust.find((x) => x.id === id)!
+      expect(r.caseMeta?.parameters?.flags, id).toBe('InvalidPrivateKey')
+      expect(r.caseMeta?.observed, id).toMatch(
+        /C_CreateObject\(sk\) → CKR_ATTRIBUTE_VALUE_INVALID$/
+      )
+    }
+    for (const id of FORMER_RUST_FAILS.filter((i) => i.includes('signseed')))
+      expect(rust.find((x) => x.id === id)!.caseMeta?.observed, id).toMatch(
+        /^C_GenerateKeyPair\(CKA_SEED\) → CKR_ATTRIBUTE_VALUE_INVALID$/
       )
   })
 

@@ -205,8 +205,8 @@ export function countCases(file: string, text: string): { count: number; basis: 
   if (arrays.vectors > 0) return { count: arrays.vectors, basis: 'vectors[]' }
   if (arrays.cases > 0) return { count: arrays.cases, basis: 'cases[]' }
   if (arrays.tests > 0) return { count: arrays.tests, basis: 'tests[]' }
-  // A single-case KAT file (src/data/acvp/composite-sigs-jose-kat.json,
-  // jose-pqc-kem-jwe-kat.json) carries one `vector` OBJECT, not an array.
+  // A single-case KAT file carries one `vector` OBJECT, not an array (the
+  // shape of the since-deleted composite-sigs-jose-kat / jose-pqc-kem-jwe-kat).
   if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
     const v = (parsed as Record<string, unknown>).vector
     if (v && typeof v === 'object') return { count: 1, basis: 'vector' }

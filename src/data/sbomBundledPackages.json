@@ -103,6 +103,7 @@
     "node_modules/graphlib",
     "node_modules/hast-util-to-jsx-runtime",
     "node_modules/hast-util-whitespace",
+    "node_modules/hpke",
     "node_modules/html-url-attributes",
     "node_modules/html2canvas",
     "node_modules/immer",

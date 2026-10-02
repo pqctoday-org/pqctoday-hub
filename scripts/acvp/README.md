@@ -25,11 +25,9 @@ verify nothing.
 
 `npm run acvp:crosschecks` runs all four cross-checks.
 
-One citation in the manifest is **not** covered here, deliberately:
-
-- `jose-pqc-kem-jwe-kat`'s `source.generator` ("Node 24 one-shot …"), which names no file
-  at all. It is a one-shot generator of PQC Today's own output, not a verification of an
-  external source, so a replacement script would not make the values externally checkable.
+The one citation that was deliberately not covered here — `jose-pqc-kem-jwe-kat`'s one-shot
+`source.generator` for PQC Today's own output — left with that file on 2026-10-01. Its
+replacement, `jose-hpke-pq-pqt-01-examples`, holds the draft authors' published examples.
 
 ## Recording a source check as the review — `record-source-checks.ts`
 
