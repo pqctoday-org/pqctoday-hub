@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.142.0] - 2026-10-02
+
+The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM, post-quantum HPKE is checked against two more published test-vector sets, and search stays smooth after the first search.
+
+### Changed
+
+- **The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM** [view:/learn/api-security-jwt] [view:/playground] [persona:developer] [persona:architect] [persona:cert-engineer]: with the SoftHSM3 backend selected, both post-quantum JWE suites (ML-KEM-768 and the ML-KEM-768 + X25519 hybrid) now run inside the token. That covers key encapsulation, key derivation and AES-GCM, and neither the private key nor the content key ever leaves it. The hybrid suite was previously browser-only. The draft's published example can also be opened inside SoftHSM3 from its published private key.
+- **Post-quantum HPKE checked against two more published test-vector sets** [view:/learn/api-security-jwt] [persona:researcher] [persona:cert-engineer]: the emulated HSM now reproduces the HPKE post-quantum draft's test vectors and the CFRG hybrid KEM vectors. They are listed as awaiting review until the two-person vector review is done.
+- **Search stays smooth after the first search, and frees 37 MB of browser storage** [view:/] [persona:curious] [persona:developer] [persona:architect] [persona:researcher] [persona:grc] [persona:executive] [persona:ops] [persona:cert-engineer]: the site stopped saving a 37 MB copy of the search index in your browser. Saving it froze the page for up to a second right after the first search, and in Safari a saved copy was slower to restore than rebuilding the index. Your browser frees that space on your next search.
+- **API Security & JWT now lists RFC 9068 and RFC 9864 among its references** [view:/learn/api-security-jwt] [persona:developer] [persona:architect]: the JWT access-token profile and the fully-specified algorithms RFC, which the module's validation lesson teaches from, now appear in the References tab and the Library.
+
+### Fixed
+
+- **The JWT encryption step no longer says the HSM cannot run the X-Wing hybrid** [view:/learn/api-security-jwt] [persona:developer]: that sentence was wrong; the engine now supports it, and the step runs it.
+
 ## [4.141.0] - 2026-10-02
 
 Talking About PQC Accurately has been reviewed and now has its own quiz questions, the API Security workshop names the draft revision it actually implements, a new Attack Lab shows why a JWT verifier must check more than the signature, and the Library adds 42 references for the IoT and OT modules.
