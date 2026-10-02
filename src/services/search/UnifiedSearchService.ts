@@ -6,8 +6,8 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import { chunkToResource, trustTierMultiplier } from './chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { TrustTier } from '@/data/trustScore'
-import { TOOL_ENTRIES_VERSION, toolSearchEntries } from './toolSearchEntries'
-import { PAGE_ENTRIES_VERSION, pageSearchEntries } from './pageSearchEntries'
+import { toolSearchEntries } from './toolSearchEntries'
+import { pageSearchEntries } from './pageSearchEntries'
 
 /**
  * UnifiedSearchService — single MiniSearch instance + entityIndex + corpus map
@@ -18,7 +18,8 @@ import { PAGE_ENTRIES_VERSION, pageSearchEntries } from './pageSearchEntries'
  * - One MiniSearch index with consistent fields and boosts.
  * - One entityIndex so direct entity lookups (acronym, refId, country, toolId,
  *   patentNumber, vendorId, …) work in both consumers.
- * - localforage cache for cold-start performance, version-keyed by `generatedAt`.
+ * - No persisted index: every visit builds in memory, in slices that do not freeze
+ *   the page (see STALE_INDEX_CACHE_KEY for why the saved copy was dropped).
  *
  * Public API (intentionally narrow):
  * - initialize() / initializeWithCorpus(corpus) — load + build
@@ -29,7 +30,15 @@ import { PAGE_ENTRIES_VERSION, pageSearchEntries } from './pageSearchEntries'
  */
 
 const CORPUS_PATH = '/data/rag-corpus.json'
-const CACHE_KEY = 'pqc-search-index-v2'
+/**
+ * Where this service used to save the serialized index (~37 MB of JSON) in
+ * localforage. Dropped 2026-10-01 (owner decision) after measuring in Chromium and
+ * WebKit: saving it froze the page ~0.25 s (Chromium) to ~1 s (WebKit) right after
+ * the first search, the stringify cannot be sliced (an idle-time write only moves the
+ * freeze), and in WebKit restoring it was slower than rebuilding (2.0 s vs 1.45 s).
+ * Kept only so existing visitors' stale copy is deleted once.
+ */
+const STALE_INDEX_CACHE_KEY = 'pqc-search-index-v2'
 
 /**
  * Registry-derived entries appended to the loaded corpus so narrow surfaces are
@@ -63,11 +72,6 @@ const MINISEARCH_CONFIG = {
  * ~35 ms longest stall. See cold-search-index-design-10012026.md.
  */
 const INDEX_BUILD_CHUNK_SIZE = 200
-
-interface CachedIndex {
-  version: string
-  serialized: string
-}
 
 export interface PaletteResult {
   id: string
@@ -119,6 +123,7 @@ export class UnifiedSearchService {
   private _index: MiniSearch<RAGChunk> | null = null
   private _generatedAt: string | null = null
   private initPromise: Promise<void> | null = null
+  private staleCacheCleanup: Promise<void> | null = null
   /** In-flight async index build; concurrent callers (⌘K and the Assistant) share it. */
   private indexBuild: Promise<void> | null = null
   /** Bumped whenever the corpus/index is replaced, so a stale async build never installs. */
@@ -179,11 +184,7 @@ export class UnifiedSearchService {
   }
 
   async invalidateCache(): Promise<void> {
-    try {
-      await localforage.removeItem(CACHE_KEY)
-    } catch {
-      // non-critical
-    }
+    await this.clearStaleIndexCache()
     this._index = null
     this.initPromise = null
     this.indexBuild = null
@@ -324,63 +325,27 @@ export class UnifiedSearchService {
   }
 
   /**
-   * Cached cold-start path used by ⌘K. Loads serialized MiniSearch from
-   * localforage when available, version-keyed by corpus.generatedAt. Falls
-   * back to fresh build + write-through cache.
-   *
-   * Used only by the SearchIndex palette facade — RetrievalService
-   * always rebuilds in-memory because it needs the entityIndex.
+   * Cold-start path used by ⌘K (the SearchIndex facade). Same load and slice-by-slice
+   * build as `initialize()`, so the palette and the Assistant share one build. The
+   * name predates 2026-10-01, when the persisted index was dropped; it is kept so
+   * callers need no change.
    */
   async loadCached(): Promise<void> {
-    if (this._index) return
+    await this.initialize()
+    // After the build, never before it: deleting the old ~37 MB entry is I/O the
+    // first search should not wait for, and a failure here is harmless.
+    void this.clearStaleIndexCache()
+  }
 
-    const response = await fetch(CORPUS_PATH)
-    if (!response.ok) throw new Error(`Failed to fetch corpus: ${response.status}`)
-    const data = await response.json()
-    const chunks: RAGChunk[] = await withRegistryEntries(
-      Array.isArray(data) ? data : (data.chunks ?? [])
-    )
-    const corpusVersion: string =
-      (Array.isArray(data) ? null : (data.generatedAt ?? null)) ?? 'unknown'
-    this._generatedAt = corpusVersion === 'unknown' ? null : corpusVersion
-    // Tool and page entries are registry-derived, not part of the corpus, so
-    // `generatedAt` alone cannot express "this index was built without them".
-    // Compounding the key means an index cached before WS6a is discarded
-    // instead of served — otherwise the first visit after this ships would
-    // restore a tool-less index and search would look unchanged.
-    const version = `${corpusVersion}+tools${TOOL_ENTRIES_VERSION}+pages${PAGE_ENTRIES_VERSION}`
-
-    try {
-      const cached = await localforage.getItem<CachedIndex>(CACHE_KEY)
-      if (cached && cached.version === version) {
-        // Cached MiniSearch JSON — restore directly. We still need to populate
-        // corpusById and entityIndex for Assistant mode, so build those from
-        // the corpus separately.
-        this._corpus = chunks
-        for (const chunk of this._corpus) this._corpusById.set(chunk.id, chunk)
-        this._corpus = Array.from(this._corpusById.values())
-        for (const chunk of this._corpus) this.indexEntity(chunk)
-        this._index = MiniSearch.loadJSON<RAGChunk>(cached.serialized, MINISEARCH_CONFIG)
-        return
-      }
-      if (cached) await localforage.removeItem(CACHE_KEY)
-    } catch {
-      // fall through to rebuild
+  /** Delete the index copy older versions saved (once per session; never throws). */
+  private clearStaleIndexCache(): Promise<void> {
+    if (!this.staleCacheCleanup) {
+      this.staleCacheCleanup = localforage.removeItem(STALE_INDEX_CACHE_KEY).then(
+        () => undefined,
+        () => undefined
+      )
     }
-
-    this._corpus = chunks
-    await this.buildIndexAsync()
-
-    try {
-      if (this._index) {
-        await localforage.setItem(CACHE_KEY, {
-          version,
-          serialized: JSON.stringify(this._index),
-        })
-      }
-    } catch {
-      // non-critical
-    }
+    return this.staleCacheCleanup
   }
 
   /**
