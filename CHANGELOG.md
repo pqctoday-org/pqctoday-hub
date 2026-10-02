@@ -57,6 +57,7 @@ The Curious Explorer role now also serves people who need post-quantum cryptogra
 
 ### Data
 
+- **JOSE standards in the Library are current** [view:/library] [persona:developer] [persona:architect] [persona:researcher]: the HPKE-for-JWE draft now shows revision -22 and its RFC Editor queue status; the post-quantum HPKE suites draft has a full entry; the composite-signatures draft shows revision -04 and its duplicate entry was merged; and the old ML-KEM-for-JOSE draft now says it covers COSE only since revision -06.
 - **Eight more products with NIST-validated post-quantum algorithms** [view:/migrate] [persona:ops] [persona:cert-engineer] [persona:architect] [persona:developer]: IBM CryptoLite for C and the SANCTUAIRE Cryptographic Core (ML-DSA, ML-KEM), the Google Tensor 6th Gen security core (SLH-DSA), and LMS-validated modules from NetApp, AMD, NVIDIA (two) and SK hynix. Each one was checked against its NIST algorithm-validation record.
 - **Library: three new post-quantum documents** [view:/library] [persona:researcher] [persona:developer] [persona:grc]: the IETF draft "Security Considerations for ML-DSA", an IETF draft on choosing post-quantum algorithms for DNSSEC, and ETSI TR 104 239-1 V1.2.1. The library now holds 1,221 documents.
 - **Vendor roadmaps: Cloudflare Workers and MTG** [view:/migrate] [persona:developer] [persona:architect]: Cloudflare Workers' Web Crypto API now offers ML-KEM-768/1024 and ML-DSA-44/65/87 behind an opt-in flag, and MTG's ERS product line adds its post-quantum roadmap.
