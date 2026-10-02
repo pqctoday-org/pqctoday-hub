@@ -10,9 +10,5 @@
   {
     "ref_id": "openfhe-v1.6.0",
     "reason": "Probable landing page, not the document (216,145 bytes of markup, only 6,121 chars of text). Re-fetch the linked document before treating this as covered."
-  },
-  {
-    "ref_id": "fhe-rs-v0.1.1",
-    "reason": "The captured repository page's README covers CI and publishing, not the library; it never mentions homomorphic encryption. Re-capture a document that describes fhe.rs (e.g. its crates.io or docs.rs page) before enriching. (session 31 review, 2026-10-02)"
   }
 ]
