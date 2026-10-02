@@ -87,14 +87,14 @@ describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
   // not about anything the test or the harness is doing wrong.
   it('a persona set globally (top-bar control) narrows the grid to its focus areas (architect ≠ all docs)', () => {
     renderView()
-    const allCount = screen.getByText(/\d+ documents?/i).textContent
+    const allCount = screen.getByText(/^\d+ documents?$/i).textContent
     // The page only reads selectedPersona now — persona changes come from the
     // shared top-bar role switcher, so drive the store directly here rather
     // than clicking a local control (LibraryRoleLens was removed).
     act(() => {
       usePersonaStore.getState().setPersona('architect')
     })
-    const narrowedCount = screen.getByText(/\d+ documents?/i).textContent
+    const narrowedCount = screen.getByText(/^\d+ documents?$/i).textContent
     expect(narrowedCount).not.toBeNull()
     // Architect has a non-empty preferred-category set, so the grid changes.
     expect(narrowedCount).not.toBe(allCount)
