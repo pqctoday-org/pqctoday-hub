@@ -2328,7 +2328,9 @@ const KAT_RUNNER: RegisteredTest[] = [
           // Known issue (open): on the C++ softhsm-wasm engine a valid C_Verify(CKM_HSS)
           // corrupts later HMAC cases in the same session (CKR_KEY_HANDLE_INVALID / MAC
           // rejected); Rust is unaffected. runLMSSigVerKAT runs in its own session for that
-          // reason. See the comment there.
+          // reason. Root cause: Session::resetOp() (softhsm Session.cpp) never resets the
+          // stateful mechanism set by StatefulVerifyInit, and C_Sign/C_Verify check it before
+          // getMacOp(), so later HMAC ops take the stateful path. Fix pending in softhsm.
         }),
         { type: 'lms-sigver', testCase: n }
       )

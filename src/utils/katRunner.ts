@@ -1619,6 +1619,12 @@ async function runLMSSigVerKAT(
   // on the caller's slot and closes it, which isolates the corruption (checked
   // with this case registered both before and after the HMAC cases). The
   // engine bug itself is open; this only keeps it from failing other cases.
+  // Root cause (session 49, read-only repro): StatefulVerifyInit/StatefulSignInit
+  // set the session mechanism to 1000-1002, Session::resetOp()
+  // (src/lib/session_mgr/Session.cpp) never resets it, and C_Sign/C_Verify in
+  // SoftHSM_sign.cpp test that mechanism before getMacOp(), so a later HMAC op is
+  // routed to StatefulSign/StatefulVerify. Affects HSS, XMSS and XMSS^MT; the fix
+  // (reset it in resetOp) is a later softhsm PR.
   const slotID = hsm_getSessionInfo(M, hSession).slotID
   const hPtr = M._malloc(4)
   let hLms: number

@@ -92,7 +92,7 @@ Artifacts:
 ## Recorded runs
 
 - `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 94 results: rust 94 pass.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-02 at hub `b750af710f48`; 96 results: rust 96 pass.
 - `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-01 at hub `b80212388d0b`; 13,364 results: cpp 6,677 pass, 1 fail, 4 skip; rust 6,663 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
@@ -334,12 +334,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `7698ac93c7bf5c1784903eef931b25e03f2f3bba1a24fc5e36cfb3d976ac9317` |
+| `public/data/validation/coverage-matrix.json`                           | `771c41855addc9d9ae91ab9d26a5fbdc852334a87fdfba1c9cff1ef4566f4405` |
 | `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
 | `src/data/validation/native-conformance.generated.json`                 | `fa5caa797140191ab6a470f5b9185014b76081e752083d3f8e4e6aa5ca9be384` |
 | `src/data/validation/open-gaps.json`                                    | `5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `4e5c641128e1c76f26557797644f1e2bfd5c035f75ab7d03421d1ceea5fd77de` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `1dac820ae37b4e261359c392665f4eaf5fbc865917ca8ba34167d135883d7d04` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `c80f94ca9ee273fc8ed2f6355c15ec2c649e3deb03dc40e735f95bc48535ad3d` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `4c97b879521a947d2287cc59ab65bb3c234e9e75670c3068a32cf53cb39f46e7` |
 | `src/data/validation/validation-counts.generated.json`                  | `e5793499ff6e6be58698ce44785586ed1b8c26ba2e8cf5325a5a18f78199960e` |
 | `src/data/validation/vector-manifest.json`                              | `8579845d70cfa09c081fa8cea25fd3f4bb336ffa4abdf340702e9dd0866f71ea` |

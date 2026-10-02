@@ -27,6 +27,10 @@
 // rejects the ACVP MAC; HMAC sign → CKR_KEY_HANDLE_INVALID). Rust is unaffected.
 // kat.lms-sigver runs in its own session for that reason (runLMSSigVerKAT);
 // if this suite's C++ HMAC cases start failing, check that isolation first.
+// Root cause: Session::resetOp() (softhsm src/lib/session_mgr/Session.cpp) never
+// resets the stateful mechanism (1000-1002) that StatefulVerifyInit/SignInit set,
+// and C_Sign/C_Verify (SoftHSM_sign.cpp) test it before getMacOp(), so later HMAC
+// ops are routed to the stateful path. Affects HSS, XMSS, XMSS^MT. Fix pending.
 import { createHash } from 'node:crypto'
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'

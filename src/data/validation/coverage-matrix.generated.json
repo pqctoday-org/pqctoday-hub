@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub b750af710); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -124,13 +124,13 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v22.23.1",
+        "node": "v20.20.2",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "b80212388d0bbcf8dbac1e935e3b570f052ac8d5",
-      "recordedAt": "2026-10-01",
-      "results": 94
+      "hubCommit": "b750af710f485788e67d6a5180769921de813419",
+      "recordedAt": "2026-10-02",
+      "results": 96
     },
     {
       "file": "src/data/validation/run-results/wasm-node-useAcvpSuite.json",
@@ -12841,7 +12841,7 @@
     {"k":"CKM_HKDF_DATA|derive|*|*","c":"CKM_HKDF_DATA","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[6792,6793]]}},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[6792,6793]]}}},"par":"not-established"},
     {"k":"CKM_HSS_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_HSS_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_HSS|sign|*|*","c":"CKM_HSS","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
-    {"k":"CKM_HSS|verify|*|*","c":"CKM_HSS","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["standard-kat","covered",[1950,6727,6728]]},"run":[1,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
+    {"k":"CKM_HSS|verify|*|*","c":"CKM_HSS","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1950]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["standard-kat","covered",[1950,6727,6728]]},"run":[3,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_XMSS_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_XMSS_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1949]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1949]]},"run":[1,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_XMSSMT_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_XMSSMT_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_XMSSMT_KEY_PAIR_GEN"},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_XMSSMT_KEY_PAIR_GEN"}},"par":"not-established"},
     {"k":"CKM_XMSS|sign|*|*","c":"CKM_XMSS","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1949]]},"run":[1,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1949]]},"run":[1,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
