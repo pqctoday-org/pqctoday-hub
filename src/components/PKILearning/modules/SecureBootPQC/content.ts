@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
-  version: '1.0.1',
+  version: '1.1.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-01',
 
   // DECLARED 2026-08-22. This module renders <LibRef> links — clickable, reader-facing
   // citations into the library — for eleven documents while declaring three, so eight of
@@ -63,6 +63,9 @@ export const content: ModuleContent = {
     getStandard('RFC-9909'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('CRYSTALS-Dilithium-Spec-v31'), // m-secure-boot-pqc: wave 4c
+    // 2026-10-01: Boot Verify Latency step (moved from the IoT/OT module) names
+    // LMS sizes from RFC 8554.
+    getStandard('RFC 8554'),
   ],
 
   algorithms: [
@@ -90,9 +93,9 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'UEFI Secure Boot key hierarchy (PK/KEK/db) migration to ML-DSA-65. Firmware signing with post-quantum algorithms. TPM 2.0 path to post-quantum attestation. Vendor roadmaps: AMI, Insyde, EDK2, Dell, HPE. Hardware supply chain integrity at scale',
+      'UEFI Secure Boot key hierarchy (PK/KEK/db) migration to ML-DSA-65. Firmware signing with post-quantum algorithms. TPM 2.0 path to post-quantum attestation. Vendor roadmaps: AMI, Insyde, EDK2, Dell, HPE. Hardware supply chain integrity at scale. Boot-time verify latency on a microcontroller root of trust: flash-read vs software-verify time for ECDSA P-256, RSA-3072, ML-DSA-44 and LMS on a Cortex-M4-class core (model estimate, sourced cycle counts)',
     workshopSummary:
-      'Secure Boot Chain Analyzer. Firmware Signing Migrator. TPM Key Hierarchy Explorer. Firmware Vendor Matrix. Attestation Flow Designer',
+      'Secure Boot Chain Analyzer. Firmware Signing Migrator. TPM Key Hierarchy Explorer. Firmware Vendor Matrix. Attestation Flow Designer. Boot Verify Latency — signature load + verify time on a Cortex-M4-class MCU (Cortex-M4 verify cycles: ECDSA P-256 ~0.98 M optimized asm, RSA-3072 ~25 M per Oryx STM32G4 149 ms @ 170 MHz, ML-DSA-44 ~1.42 M per pqm4 m4f, LMS H10/W4 ~2.66 M per ePrint 2020/470); the 100 ms boot budget is illustrative. See /learn/iot-pqc for wider constrained-device context',
   },
 }
 

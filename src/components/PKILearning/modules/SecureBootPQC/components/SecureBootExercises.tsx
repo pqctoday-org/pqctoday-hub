@@ -85,6 +85,17 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
         'Measured Boot itself is quantum-safe (SHA-256 PCR extends). TPM Quote (RSA AIK) has a 10-year HNDL window — the most urgent attestation migration. Remote TLS attestation has a 15-year HNDL window because both the TLS key exchange AND the embedded attestation signatures are quantum-vulnerable.',
       config: { step: 4 },
     },
+    {
+      id: 'boot-verify-latency',
+      title: '6. Boot Verify Latency on an MCU',
+      description:
+        'Open the Boot Verify Latency calculator at its defaults (2 MB/s SPI flash, 120 MHz Cortex-M4-class core). Compare the load and verify columns for ECDSA P-256, RSA-3072, ML-DSA-44 and LMS H10/W4, then drop the clock to 48 MHz and see which algorithm crosses the illustrative 100 ms budget.',
+      badge: 'Embedded',
+      badgeColor: 'bg-status-info/20 text-status-info border-status-info/30',
+      observe:
+        'Flash read is never the problem: even the largest PQC payload (ML-DSA-44, 3,732 B) loads in under 2 ms at 2 MB/s. Verify time dominates. ML-DSA-44 (~1.42 M cycles, pqm4) and LMS (~2.66 M, ePrint 2020/470) verify in about 12 ms and 22 ms at 120 MHz — the same league as ECDSA P-256 (~0.98 M, ~8 ms). RSA-3072 in software (~25 M cycles, about 211 ms at 120 MHz) is the one that blows the budget. These are model estimates; the 100 ms budget is illustrative, not a standard.',
+      config: { step: 5 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {
@@ -98,8 +109,8 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to master UEFI Secure Boot key migration, firmware signing,
-          TPM attestation, and vendor selection. Each exercise pre-configures the Workshop &mdash;
-          click &quot;Load &amp; Run&quot; to begin.
+          TPM attestation, vendor selection, and boot-time verify latency on a microcontroller. Each
+          exercise pre-configures the Workshop &mdash; click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

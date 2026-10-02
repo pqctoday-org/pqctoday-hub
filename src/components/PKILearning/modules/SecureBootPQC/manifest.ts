@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secure-boot-pqc',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-018',
   title: 'Secure Boot & Firmware PQC',
   description:
@@ -30,6 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'tpm-hierarchy', label: 'TPM Key Hierarchy Explorer' },
     { id: 'vendor-matrix', label: 'Firmware Vendor Matrix' },
     { id: 'attestation-designer', label: 'Attestation Flow Designer' },
+    { id: 'boot-verify-latency', label: 'Boot Verify Latency' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {
