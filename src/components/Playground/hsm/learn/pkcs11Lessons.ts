@@ -41,6 +41,12 @@ import {
   type AttrDef,
 } from '@/wasm/softhsm'
 import { toHex } from '../shared'
+import {
+  resetLessonEngine,
+  runLessonPhase,
+  toLogEntries,
+} from './certDiscovery/certDiscoveryClient'
+import { FIXTURE, LONG_FLOW_BATCH, type FlowResult } from './certDiscovery/certDiscoveryCore'
 import type {
   LessonStepExpect,
   LinearLessonBase,
@@ -90,6 +96,23 @@ const requireModule = (hsm: HsmContextValue) => {
   const M = hsm.moduleRef.current
   if (!M) throw new Error('HSM module not loaded — run the first step of this lesson first.')
   return M
+}
+
+/** Results of the certificate-discovery lesson's two flows, kept for its
+ * comparison step (a step result carries only its display text). */
+const discoveryResults: { short?: FlowResult; long?: FlowResult } = {}
+
+const flowDetail = (r: FlowResult): string => {
+  const perSlot = r.slots
+    .map((s) => `slot ${s}: ${r.rows.filter((x) => x.slot === s).length}`)
+    .filter((t) => !t.endsWith(': 0'))
+    .join(', ')
+  const first = r.rows[0]
+  const sample = first
+    ? ` First row: slot ${first.slot}, label "${first.label}", subject "${first.subject}", CKA_ID ${first.id}.`
+    : ''
+  const bad = r.rows.filter((x) => x.rv !== 0).length
+  return `${r.rows.length} certificates (${perSlot}) in ${r.calls.length} calls.${sample}${bad ? ` ${bad} attribute reads did not return CKR_OK.` : ''}`
 }
 
 export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
@@ -716,5 +739,121 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     whyItMatters:
       'This is the classical baseline the next track modernizes: ECDH → ML-KEM. Understanding why agreement and encapsulation are different shapes — not just different algorithms — is the key insight for that migration.',
     tryRef: ['key_agree', 'key_derive'],
+  },
+  {
+    id: 'certificate-discovery',
+    n: 9,
+    tag: 'Core',
+    tone: 'primary',
+    title: 'Discovering certificates across slots',
+    blurb:
+      'Listing every certificate on every slot — slot ID, CKA_LABEL, CKA_SUBJECT, CKA_ID — is the first thing most PKCS#11 clients do. The same answer can cost a few dozen calls or twice as many, depending on how the client talks to the token.',
+    setup: `This lesson runs on its own engine instance (a dedicated worker), so it can show the full C_Initialize → C_Finalize sequence without touching the playground's session. It builds ${FIXTURE.slots} tokens, each holding ${FIXTURE.certsPerSlot} X.509 certificates and ${FIXTURE.keyPairsPerSlot} EC key pairs (${FIXTURE.keyPairsPerSlot * 2} key objects), then lists only the certificates twice: once with the fewest calls PKCS#11 v3.2 allows, once the defensive way a portable client often does it.`,
+    steps: [
+      {
+        op: 'Isolated engine: C_InitToken ×3, C_CreateObject, C_GenerateKeyPair',
+        label: `Build ${FIXTURE.slots} tokens, each with ${FIXTURE.certsPerSlot} certificates and ${FIXTURE.keyPairsPerSlot} EC key pairs`,
+        run: async (hsm) => {
+          resetLessonEngine()
+          const r = await runLessonPhase('provision')
+          for (const e of toLogEntries(r.calls)) hsm.addHsmLog(e)
+          const objects = r.slots.length * (r.certsPerSlot + r.keyPairsPerSlot * 2)
+          return {
+            detail: `Slots ${r.slots.join(', ')} each hold ${r.certsPerSlot} certificates + ${r.keyPairsPerSlot * 2} key objects — ${objects} application objects, ${r.slots.length * r.certsPerSlot} of them certificates. Each new slot appeared because a C_GetSlotList size query adds a spare, uninitialized slot once every existing token is initialized (§5.5.1 re-checks the slot set on that call). Key pairs share CKA_ID with certificates 0–${r.keyPairsPerSlot - 1}, the pairing Profiles §5.5 describes.`,
+          }
+        },
+      },
+      {
+        op: 'Short flow: C_Initialize … C_Finalize',
+        label: 'List every certificate with the fewest calls',
+        run: async (hsm) => {
+          const r = await runLessonPhase('short')
+          for (const e of toLogEntries(r.calls)) hsm.addHsmLog(e)
+          discoveryResults.short = r
+          return { detail: flowDetail(r) }
+        },
+      },
+      {
+        op: 'Long flow: size query, C_GetTokenInfo, batches, two-call reads',
+        label: 'List the same certificates the defensive way',
+        run: async (hsm) => {
+          const r = await runLessonPhase('long')
+          for (const e of toLogEntries(r.calls)) hsm.addHsmLog(e)
+          discoveryResults.long = r
+          return {
+            detail: `${flowDetail(r)}${r.skipped.length ? ` Slot ${r.skipped.join(', ')} was skipped: the size query added it as a fresh, uninitialized spare, and C_GetTokenInfo showed it has no token data to search.` : ''}`,
+          }
+        },
+      },
+      {
+        op: 'Compare the two traces',
+        label: 'Same answer, different cost',
+        run: () => {
+          const { short, long } = discoveryResults
+          if (!short || !long) throw new Error('Run the short and long flow steps first.')
+          const same =
+            short.rows.length === long.rows.length &&
+            short.rows.every(
+              (r, i) =>
+                r.slot === long.rows[i].slot &&
+                r.handle === long.rows[i].handle &&
+                r.label === long.rows[i].label &&
+                r.subject === long.rows[i].subject &&
+                r.id === long.rows[i].id
+            )
+          if (!same)
+            throw new Error('The two flows returned different certificate lists — unexpected.')
+          const fns = [...new Set([...short.counts, ...long.counts].map(([f]) => f))]
+          const per = (r: FlowResult, f: string) => r.counts.find(([g]) => g === f)?.[1] ?? 0
+          const table = fns.map((f) => `${f} ${per(short, f)} vs ${per(long, f)}`).join(' · ')
+          return {
+            detail: `Identical ${short.rows.length}-certificate listing. Calls: ${short.calls.length} short vs ${long.calls.length} long (${table}).`,
+          }
+        },
+      },
+    ],
+    compareHeaders: ['', 'Short flow', 'Long flow'],
+    compare: [
+      {
+        label: 'C_GetSlotList',
+        a: '1 — buffer sized in advance',
+        b: '2 — size query, then fill',
+        same: false,
+      },
+      {
+        label: 'C_GetTokenInfo',
+        a: 'none',
+        b: '1 per slot (skip uninitialized tokens)',
+        same: false,
+      },
+      {
+        label: 'C_FindObjects',
+        a: '1 per slot — a short count means done',
+        b: `batches of ${LONG_FLOW_BATCH} until it returns 0`,
+        same: false,
+      },
+      {
+        label: 'C_GetAttributeValue',
+        a: '1 per certificate, pre-sized buffers',
+        b: '2 per certificate — lengths, then values',
+        same: false,
+      },
+      { label: 'C_CloseSession', a: 'none — C_Finalize closes them', b: '1 per slot', same: false },
+      {
+        label: 'Class filter {CKA_CLASS=CKO_CERTIFICATE}',
+        a: 'yes — key objects never cross the API',
+        b: 'yes',
+        same: true,
+      },
+    ],
+    notes: [
+      "One session per slot is unavoidable: a search only ever covers the token in its own session's slot (Usage Guide §2.4). PKCS#11 v3.2 also has no batch read across objects, so one C_GetAttributeValue per certificate is the floor.",
+      "The class filter does the heavy lifting: without it, every key object and the token's own CKO_PROFILE objects would come back too, and the client would need an extra C_GetAttributeValue per object just to find out which ones are certificates.",
+      'The long flow is not wrong — it is what a client must do when it cannot bound attribute sizes in advance, or must cope with tokens being inserted between calls. Its extra calls buy robustness, not a different answer.',
+      'Certificates default to CKA_PRIVATE = FALSE, so both flows find them without a login — exactly what the Public Certificates Token profile requires (Profiles §5.5, condition 8a). The private keys stay invisible to these unauthenticated sessions.',
+    ],
+    whyItMatters:
+      'Certificate and key discovery runs every time an application (a browser, an SSH agent, a TLS server) opens a PKCS#11 token. Against a network HSM each call is a round trip, so halving the call count can halve startup latency — while returning exactly the same certificates.',
+    tryRef: ['keystore'],
   },
 ]
