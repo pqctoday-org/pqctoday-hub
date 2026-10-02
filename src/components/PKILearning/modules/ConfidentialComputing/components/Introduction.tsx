@@ -17,12 +17,14 @@ import {
   Layers,
   Link2,
   KeyRound,
+  Sigma,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
+import { HomomorphicEncryptionSection } from './HomomorphicEncryptionSection'
 import {
   MEMORY_ENCRYPTION_ENGINES,
   QUANTUM_THREAT_VECTORS,
@@ -715,6 +717,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </div>
             </div>
           </div>
+        </CollapsibleSection>
+      </div>
+
+      {/* ── Section 7: Homomorphic Encryption ───────────────────────────── */}
+      <div data-section-id="homomorphic-encryption" className="scroll-mt-20">
+        <CollapsibleSection
+          title="Homomorphic Encryption: Compute Without Trusting the Hardware"
+          icon={<Sigma size={24} className="text-primary" />}
+        >
+          <HomomorphicEncryptionSection />
         </CollapsibleSection>
       </div>
 

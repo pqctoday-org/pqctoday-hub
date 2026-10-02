@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Cpu, ShieldCheck, Lock, Link2, AlertTriangle } from 'lucide-react'
+import { Cpu, ShieldCheck, Lock, Link2, AlertTriangle, Sigma } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { ConfidentialComputingExercises } from './components/ConfidentialComputingExercises'
 import { TEEArchitectureExplorer } from './workshop/TEEArchitectureExplorer'
@@ -8,6 +8,7 @@ import { AttestationWorkshop } from './workshop/AttestationWorkshop'
 import { EncryptionMechanisms } from './workshop/EncryptionMechanisms'
 import { TEEHSMTrustedChannel } from './workshop/TEEHSMTrustedChannel'
 import { QuantumThreatMigration } from './workshop/QuantumThreatMigration'
+import { FheHsmFlows } from './workshop/FheHsmFlows'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -47,6 +48,13 @@ const PARTS: WorkshopPart[] = [
       'Assess quantum risks per TEE component and build a prioritized PQC migration plan.',
     icon: AlertTriangle,
   },
+  {
+    id: 'fhe-hsm-flows',
+    title: 'Step 6: FHE + HSM Flows',
+    description:
+      'Step through four ways an HSM supports homomorphic encryption: single-HSM custody, threshold multi-HSM, what fits in the HSM, and AES transciphering. Toggle the quantum overlay to see which links break.',
+    icon: Sigma,
+  },
 ]
 
 export const ConfidentialComputingModule: FC = () => (
@@ -73,6 +81,8 @@ export const ConfidentialComputingModule: FC = () => (
           return <TEEHSMTrustedChannel key={`tee-hsm-${configKey}`} />
         case 4:
           return <QuantumThreatMigration key={`quantum-threat-${configKey}`} />
+        case 5:
+          return <FheHsmFlows key={`fhe-hsm-${configKey}`} />
         default:
           return null
       }

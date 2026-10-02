@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
@@ -22,6 +22,7 @@ const manifest: ModuleManifest = {
     { id: 'memory-encryption', label: 'Memory Encryption' },
     { id: 'tee-hsm', label: 'TEE-HSM Communication' },
     { id: 'quantum-threats', label: 'Quantum Threats to TEEs' },
+    { id: 'homomorphic-encryption', label: 'Homomorphic Encryption (FHE)' },
   ],
   workshopSteps: [
     { id: 'tee-architecture-explorer', label: 'TEE Architecture Explorer' },
@@ -29,6 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'encryption-mechanisms', label: 'Encryption Mechanisms' },
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
+    { id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' },
   ],
   startHere: {
     step: 'tee-hsm-channel',
