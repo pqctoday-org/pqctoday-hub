@@ -14498,7 +14498,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: U.S. critical infrastructure owners and operators; OT vendors and manufacturers; Security Architect; Compliance Officer.
 - **Implementation Prerequisites**: Identifying personnel and resources; inventorying systems; addressing long software patching cycles; managing hardware replacement times; adhering to strict procedures and governance.
-- **Relevant PQC Today Features**: iot-pqc; pqc-risk-management; migration-program; crypto-agility; vendor-risk
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; pqc-risk-management; migration-program; crypto-agility; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: inventorying systems, identifying personnel and resources
 - **Testing & Validation Methods**: safety testing after software updates, validating sources for software or firmware updates, validation requirements

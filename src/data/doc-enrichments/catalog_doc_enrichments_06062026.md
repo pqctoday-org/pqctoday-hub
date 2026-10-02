@@ -7225,7 +7225,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Asset Inventory, Exposure Management, Vulnerability Disclosure Dashboard
 - **Testing & Validation Methods**: None detected
@@ -19321,7 +19321,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Secures 30M+ endpoints; over one million gas meters annually in the UK
 - **Target Audience**: CISO; Security Architect; Policy Maker; Operations
 - **Implementation Prerequisites**: Manufacturing process integration for electric and gas metering devices; offline, distributed, or cloud-native PKI deployment models
-- **Relevant PQC Today Features**: pki-workshop; iot-pqc; migration-program; vendor-risk; pqc-business-case
+- **Relevant PQC Today Features**: pki-workshop; iot-pqc; ot-pqc; migration-program; vendor-risk; pqc-business-case
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22345,7 +22345,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: SE051A/C user memory 46 kB; personalization options up to 104 kB
 - **Target Audience**: Security Architect; Developer; IoT Engineer; Compliance Officer
 - **Implementation Prerequisites**: EdgeLock Plug & Trust Middleware; GlobalPlatform SCP03 support; I²C bus encryption; contact local NXP representative for proprietary applet development
-- **Relevant PQC Today Features**: iot-pqc, compliance-strategy, hsm-pqc, digital-id, migration-program
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, compliance-strategy, hsm-pqc, digital-id, migration-program
 - **Implementation Attack Surface**: strong protection against the most recent attack scenarios; CC EAL 6+ with AVA_VAN.5 up to the OS level
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL 6+ certified up to OS level; IEC62443-4-1 certified secure process with maturity level 3; certified by an independent lab
@@ -22561,7 +22561,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: 46 kB user memory with personalization options up to 104 kB; I²C bus encryption supported
 - **Target Audience**: Security Architect; Developer; IoT Engineer; Compliance Officer
 - **Implementation Prerequisites**: EdgeLock Plug & Trust Middleware package; GlobalPlatform SCP03 support; Contact local NXP representative for proprietary applet development; Zephyr OS integration available via nano package
-- **Relevant PQC Today Features**: iot-pqc, compliance-strategy, migration-program, vendor-risk, digital-id
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, compliance-strategy, migration-program, vendor-risk, digital-id
 - **Implementation Attack Surface**: strong protection against the most recent attack scenarios; CC EAL 6+ with AVA_VAN.5 up to the OS level
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL 6+ certified up to OS level; IEC62443-4-1 certified secure process with maturity level 3; certified by an independent lab
@@ -23317,7 +23317,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Operations; Compliance Officer; CISO
 - **Implementation Prerequisites**: Mirrored network ports or taps; On-prem Nozomi Central Management Console or Nozomi Vantage cloud platform; Hardware appliances, virtual machines, embedded devices, or containers
-- **Relevant PQC Today Features**: iot-pqc; compliance-strategy; data-asset-sensitivity
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; compliance-strategy; data-asset-sensitivity
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, asset inventory management, up-to-date asset inventory, device type, firmware version, serial number
 - **Testing & Validation Methods**: None detected
@@ -26611,7 +26611,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Compliance Officer, CISO, Developer, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Assess, Algorithms, Compliance, Migrate, Threats, crypto-agility, tls-basics, vpn-ssh-pqc, pki-workshop, hsm-pqc, 5g-security, digital-id, iot-pqc, qkd, code-signing, vendor-risk, pqc-risk-management
+- **Relevant PQC Today Features**: Assess, Algorithms, Compliance, Migrate, Threats, crypto-agility, tls-basics, vpn-ssh-pqc, pki-workshop, hsm-pqc, 5g-security, digital-id, iot-pqc, ot-pqc, qkd, code-signing, vendor-risk, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Q-SCANNER (TLS/PQC vulnerability scanner, 9 scan areas, 117 tests), Q-ASSET (IT asset discovery and inventory, auto-detect endpoints, services, certificates, keys), Q-CERT (X.509 certificate lifecycle management), Q-KPQC-CBOM (KpqC Cryptographic Bill of Materials)
 - **Testing & Validation Methods**: Q-BENCH (CIS Benchmark automated assessment), Q-KPQC-BENCHMARK (KpqC algorithm benchmarking, 500-run performance testing), Q-SIMULATE (Attack simulation platform, quantum attack scenarios, red team exercises)
@@ -27475,7 +27475,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: Integration into ICS with minimal disruption; deployment in electric utility control centers and substations
-- **Relevant PQC Today Features**: iot-pqc, threats, migration-program, pqc-business-case, vendor-risk
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, threats, migration-program, pqc-business-case, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -30985,7 +30985,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Compliance Officer
 - **Implementation Prerequisites**: Siemens industrial routers; PKI smartcard; Username/password; ISO/IEC 27001 certified data center
-- **Relevant PQC Today Features**: iot-pqc, vpn-ssh-pqc, compliance-strategy, migration-program, pki-workshop
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, vpn-ssh-pqc, compliance-strategy, migration-program, pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory
 - **Testing & Validation Methods**: None detected

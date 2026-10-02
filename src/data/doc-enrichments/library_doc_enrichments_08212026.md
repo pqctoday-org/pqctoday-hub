@@ -7822,7 +7822,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Researcher
 - **Implementation Prerequisites**: Cryptographic inventory; crypto-agility; supply-chain dependency assessment; governance framework; phased migration strategy
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; data-asset-sensitivity; iot-pqc; pqc-governance; migration-program; pqc-business-case
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; data-asset-sensitivity; iot-pqc; ot-pqc; pqc-governance; migration-program; pqc-business-case
 - **Implementation Attack Surface**: side-channel attacks (timing, power consumption, electromagnetic emissions, error messages); implementation errors; insufficient randomness
 - **Cryptographic Discovery & Inventory**: Establish cryptographic inventory and visibility; Identify all cryptographic assets across applications, infrastructure, cloud services, OT, and embedded systems; Capture algorithms, key sizes, protocols, libraries, certificates, trust anchors, and dependencies; Document ownership, lifecycle, and update mechanisms
 - **Testing & Validation Methods**: None detected
@@ -18730,7 +18730,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; CISO
 - **Implementation Prerequisites**: IEC 62443-2-1 security management system; IEC 62443-3-3 system-level requirements
-- **Relevant PQC Today Features**: iot-pqc; compliance-strategy; pqc-governance
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; compliance-strategy; pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Component-level security capability assessment
 - **Testing & Validation Methods**: IEC 62443-4-2 conformance testing; Security Level verification
@@ -26560,7 +26560,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Compliance Officer, Policy Maker, Operations, Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc, pqc-risk-management, pqc-business-case, pqc-governance
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, pqc-risk-management, pqc-business-case, pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -46432,7 +46432,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: U.S. critical infrastructure owners and operators; OT vendors and manufacturers; Security Architect; Compliance Officer.
 - **Implementation Prerequisites**: Identifying personnel and resources; inventorying systems; addressing long software patching cycles; managing hardware replacement times; adhering to strict procedures and governance.
-- **Relevant PQC Today Features**: iot-pqc; pqc-risk-management; migration-program; crypto-agility; vendor-risk
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; pqc-risk-management; migration-program; crypto-agility; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: inventorying systems; inventorying and prioritization
 - **Testing & Validation Methods**: safety testing after software updates; safety compliance, auditing, or other validation requirements
@@ -47728,7 +47728,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: ML-KEM-768 fits standard Ethernet frames; HQC-256 excluded on constrained links; t_hs,95% <= 50 ms; Delta_t_SOE <= 100 ms
 - **Target Audience**: Security Architect, Compliance Officer, Researcher
 - **Implementation Prerequisites**: Cryptographic inventory; side-channel-resistant implementations; anti-rollback enforcement; authenticated time synchronization
-- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; iot-pqc; code-signing; pqc-risk-management
+- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; iot-pqc; ot-pqc; code-signing; pqc-risk-management
 - **Implementation Attack Surface**: Side-channel (power analysis, timing, EM leakage), fault injection, cold-boot attacks
 - **Cryptographic Discovery & Inventory**: Crypto-agility scanning; certificate inventory; algorithm enumeration
 - **Testing & Validation Methods**: Conformance testing; side-channel hardening criteria; TVLA first-order analysis; constant-time analysis

@@ -1654,7 +1654,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Inventory of systems using public-key cryptography; inventory of organizational data lifecycle; lab environment for testing; interdependence analysis plan; vendor surveys; workforce training
-- **Relevant PQC Today Features**: pqc-risk-management; migration-program; compliance-strategy; iot-pqc; pqc-governance
+- **Relevant PQC Today Features**: pqc-risk-management; migration-program; compliance-strategy; iot-pqc; ot-pqc; pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Automated cryptography discovery and inventory (ACDI) tools; inventorying systems for public-key cryptography usage
 - **Testing & Validation Methods**: Testing new post-quantum cryptographic standard in a lab environment; validation and testing of products incorporating the new standard
@@ -1770,7 +1770,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Policy Maker, Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc, threats, tls-basics, vpn-ssh-pqc, pki-workshop
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, threats, tls-basics, vpn-ssh-pqc, pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2640,7 +2640,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Migrate; iot-pqc
+- **Relevant PQC Today Features**: Threats; Migrate; iot-pqc; ot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4902,7 +4902,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc; compliance-strategy; pqc-risk-management; vendor-risk
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; compliance-strategy; pqc-risk-management; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4960,7 +4960,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Migration-program; iot-pqc; pqc-risk-management
+- **Relevant PQC Today Features**: Threats; Migration-program; iot-pqc; ot-pqc; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5076,7 +5076,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Researcher; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Migrate; Leaders; iot-pqc; pqc-risk-management
+- **Relevant PQC Today Features**: Threats; Migrate; Leaders; iot-pqc; ot-pqc; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5134,7 +5134,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc; compliance-strategy; pqc-governance
+- **Relevant PQC Today Features**: iot-pqc; ot-pqc; compliance-strategy; pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5424,7 +5424,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; iot-pqc; pqc-risk-management
+- **Relevant PQC Today Features**: Threats; iot-pqc; ot-pqc; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8556,7 +8556,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: iot-pqc, compliance-strategy, pqc-governance
+- **Relevant PQC Today Features**: iot-pqc, ot-pqc, compliance-strategy, pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10934,7 +10934,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Policy Maker, Security Architect, Compliance Officer, Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats, Migration-program, iot-pqc, 5g-security, pqc-risk-management
+- **Relevant PQC Today Features**: Threats, Migration-program, iot-pqc, ot-pqc, 5g-security, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11166,7 +11166,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Compliance; iot-pqc
+- **Relevant PQC Today Features**: Threats; Compliance; iot-pqc; ot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12442,7 +12442,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; CISO; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; iot-pqc; pqc-risk-management
+- **Relevant PQC Today Features**: Threats; iot-pqc; ot-pqc; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13022,7 +13022,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats, iot-pqc, compliance-strategy, pqc-risk-management
+- **Relevant PQC Today Features**: Threats, iot-pqc, ot-pqc, compliance-strategy, pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13080,7 +13080,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Threats; Compliance; iot-pqc
+- **Relevant PQC Today Features**: Threats; Compliance; iot-pqc; ot-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
