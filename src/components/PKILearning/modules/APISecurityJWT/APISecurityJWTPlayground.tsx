@@ -32,7 +32,7 @@ const SECTIONS = [
     id: 'jwe-encryption',
     title: 'Step 4 — JWE Encryption',
     description:
-      'ML-KEM-768 JWE encryption per draft-ietf-jose-pqc-kem-05; KMAC256-based CEK derivation (FIPS 203)',
+      'PQ JWE with HPKE Integrated Encryption — HPKE-12 (ML-KEM-768) and HPKE-9 (ML-KEM-768 + X25519) per draft-ietf-jose-hpke-pq-pqt-01, checked against its published examples',
   },
   {
     id: 'token-size',
@@ -63,7 +63,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
     <div className="space-y-4">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
-        ML-KEM-768 JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
+        HPKE-based ML-KEM JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
         <Link
           to="/learn/api-security-jwt?tab=workshop"
           className="text-primary underline underline-offset-2"

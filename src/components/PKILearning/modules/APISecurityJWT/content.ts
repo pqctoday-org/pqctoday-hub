@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'api-security-jwt',
   version: '1.0.0',
   lastReviewed: '2026-10-01',
-  lastEdited: '2026-10-01',
+  lastEdited: '2026-10-02',
 
   standards: [
     getStandard('FIPS 203'),
@@ -71,9 +71,9 @@ export const content: ModuleContent = {
     keyConcepts:
       "JWT/JWS/JWE fundamentals: JWT compact serialization (RFC 7519), JWS signing (RFC 7515), JWE encryption (RFC 7516); three-part structure of base64url-encoded header, payload, and signature. Quantum exposure of current JWT algorithms: RS256, ES256, EdDSA and ECDH-ES would fall to Shor's algorithm on a cryptographically relevant quantum computer; HMAC-based HS256 is symmetric and only weakened by Grover's algorithm. Signed JWTs face a forgery risk, not harvest-now-decrypt-later; HNDL applies to JWE and the TLS channel. Validation basics (RFC 8725, RFC 9700, RFC 9068): pin algorithms to keys, validate iss/aud/exp/nbf, explicit typing, validate every layer of a nested JWT.",
     workshopSummary:
-      'JWT Inspector: Decode a JWT and see the algorithm class its header declares (unverified). PQC JWT Signing: Sign and verify JWTs with ML-DSA (RFC 9964 vectors), SLH-DSA (draft-ietf-cose-sphincs-plus-10 vectors) and composite algorithms; compare sizes. Hybrid JWT: Build a real nested JWT (cty JWT, both layers verified) or a composite ML-DSA-65-Ed25519 JWT checked against draft-ietf-jose-pq-composite-sigs-04 published examples. JWE Encryption: Walk through the historical direct ML-KEM-768 JWE of the -05 draft (not interoperable; current JWE PQ encryption uses HPKE).',
+      'JWT Inspector: Decode a JWT and see the algorithm class its header declares (unverified). PQC JWT Signing: Sign and verify JWTs with ML-DSA (RFC 9964 vectors), SLH-DSA (draft-ietf-cose-sphincs-plus-10 vectors) and composite algorithms; compare sizes. Hybrid JWT: Build a real nested JWT (cty JWT, both layers verified) or a composite ML-DSA-65-Ed25519 JWT checked against draft-ietf-jose-pq-composite-sigs-04 published examples. JWE Encryption: Encrypt a JWT payload as an HPKE JWE with HPKE-12 (ML-KEM-768) or HPKE-9 (ML-KEM-768 + X25519) per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, checked against the published examples of that draft (experimental).',
     relatedStandards:
-      'RFC 7519 (JWT), RFC 7515 (JWS), RFC 7516 (JWE), RFC 7517 (JWK), RFC 7518 (JWA). RFC 9964 (ML-DSA for JOSE and COSE, May 2026), RFC 9864 (Fully-Specified Algorithms). draft-ietf-cose-sphincs-plus-10 (SLH-DSA), draft-ietf-jose-pq-composite-sigs-04 (PQ/T composite signatures), draft-ietf-jose-hpke-encrypt and draft-ietf-jose-hpke-pq-pqt (PQ encryption for JWE); draft-ietf-jose-pqc-kem-05 (historical direct ML-KEM JWE; -06 is COSE-only). RFC 8725 (JWT BCP), RFC 9700 (OAuth 2.0 Security BCP), RFC 9068 (JWT access tokens). FIPS 203, FIPS 204, FIPS 205. OAuth 2.0 (RFC 6749), OpenID Connect Core 1.0, RFC 9449 (DPoP)',
+      'RFC 7519 (JWT), RFC 7515 (JWS), RFC 7516 (JWE), RFC 7517 (JWK), RFC 7518 (JWA). RFC 9964 (ML-DSA for JOSE and COSE, May 2026), RFC 9864 (Fully-Specified Algorithms). draft-ietf-cose-sphincs-plus-10 (SLH-DSA), draft-ietf-jose-pq-composite-sigs-04 (PQ/T composite signatures), draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01 (PQ encryption for JWE; the earlier direct-KEM draft-ietf-jose-pqc-kem is COSE-only since -06). RFC 8725 (JWT BCP), RFC 9700 (OAuth 2.0 Security BCP), RFC 9068 (JWT access tokens). FIPS 203, FIPS 204, FIPS 205. OAuth 2.0 (RFC 6749), OpenID Connect Core 1.0, RFC 9449 (DPoP)',
   },
 }
 
