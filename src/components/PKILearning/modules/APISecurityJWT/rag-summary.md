@@ -24,6 +24,7 @@ This module covers the migration of JSON Web Token (JWT) infrastructure to post-
 3. **Hybrid JWT**: Build a real nested JWT (ES256 inner token as the payload of an ML-DSA-65 outer JWT, cty "JWT", both layers verified) or a composite ML-DSA-65-Ed25519 JWT checked against draft-ietf-jose-pq-composite-sigs-04's published examples
 4. **JWE Encryption**: Encrypt and decrypt a JWT payload as an HPKE JWE with HPKE-12 (ML-KEM-768, optionally in SoftHSM) or HPKE-9 (ML-KEM-768 + X25519), and decrypt the published example of draft-ietf-jose-hpke-pq-pqt-01 (labeled experimental: work-in-progress draft)
 5. **Token Size Analyzer**: Compare JWT sizes across signing algorithms and their impact on headers, cookies and bandwidth
+6. **Attack Lab**: Issue a real ML-DSA-65 access token and try "alg": "none", edited claims, a token for another API, an expired token and an ID token used as an access token; a strict RFC 8725 validator (algorithm pinned to the key, then iss, aud, exp and typ) rejects every attack, while a naive verifier that trusts the header and checks no claims accepts four of the five
 
 ## Related Standards
 

@@ -248,6 +248,40 @@ test.describe('API Security & JWT workshop — real crypto', () => {
     })
   })
 
+  test('Attack Lab: strict validator rejects alg:none and wrong-audience tokens a naive verifier accepts', async ({
+    page,
+  }) => {
+    await openWorkshop(page)
+    await page
+      .getByRole('button', { name: /Attack Lab|Step 7/i })
+      .first()
+      .click()
+
+    await page.getByRole('button', { name: 'Issue tokens and start the lab' }).click()
+
+    // Baseline: a real ML-DSA-65 access token passes every strict check.
+    await expect(page.getByText(/Signature verifies under the pinned ML-DSA-65 key/)).toBeVisible({
+      timeout: 40_000,
+    })
+    await expect(page.getByText('Accepted', { exact: true }).first()).toBeVisible()
+
+    // alg "none": the naive verifier skips the signature, the strict one stops at alg.
+    await page.getByRole('button', { name: '"alg": "none"' }).click()
+    await expect(
+      page.getByText(/token says "alg": "none", but this key only accepts ML-DSA-65/)
+    ).toBeVisible({
+      timeout: 25_000,
+    })
+    await expect(page.getByText('Fooled: accepted')).toBeVisible()
+
+    // A genuine token for another API: signature fine, audience check fails.
+    await page.getByRole('button', { name: 'Token for another API' }).click()
+    await expect(page.getByText(/this API is https:\/\/api\.example\.com/)).toBeVisible({
+      timeout: 25_000,
+    })
+    await expect(page.getByText('Fooled: accepted')).toBeVisible()
+  })
+
   test('TokenSizeAnalyzer measures real signature byte counts at mount', async ({ page }) => {
     await openWorkshop(page)
     await page
