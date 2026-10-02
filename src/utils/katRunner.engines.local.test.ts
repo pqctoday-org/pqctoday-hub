@@ -21,6 +21,12 @@
 // default engine); the C++ pass is asserted here but not recorded.
 //
 // Venue: `*.local.test.ts` — local gate only (directive 2026-07-01).
+//
+// Known engine issue (open, 2026-10-02): on the C++ engine a valid
+// C_Verify(CKM_HSS) corrupts later HMAC cases in the same session (HMAC verify
+// rejects the ACVP MAC; HMAC sign → CKR_KEY_HANDLE_INVALID). Rust is unaffected.
+// kat.lms-sigver runs in its own session for that reason (runLMSSigVerKAT);
+// if this suite's C++ HMAC cases start failing, check that isolation first.
 import { createHash } from 'node:crypto'
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'

@@ -5,12 +5,12 @@
   "artifactKind": "wasm",
   "host": "Node.js via vitest local venue (not a browser)",
   "environment": {
-    "node": "v22.23.1",
+    "node": "v20.20.2",
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "b80212388d0bbcf8dbac1e935e3b570f052ac8d5",
-  "recordedAt": "2026-10-01",
+  "hubCommit": "b750af710f485788e67d6a5180769921de813419",
+  "recordedAt": "2026-10-02",
   "results": [
     {
       "engine": "rust",
@@ -199,6 +199,20 @@
       "artifactKind": "wasm",
       "artifactSha256": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211",
       "registryCase": "kat.hmac-verify#hmac_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211",
+      "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211",
+      "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc2",
       "status": "pass"
     },
     {

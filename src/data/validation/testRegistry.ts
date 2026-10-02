@@ -2325,6 +2325,10 @@ const KAT_RUNNER: RegisteredTest[] = [
             n === 1
               ? 'Inputs in src/data/kat/lms_hss_rfc8554.json (outside the src/data/acvp vector manifest).'
               : 'Inputs transcribed from RFC 8554 Appendix F (RFC8554_TC2 in src/utils/katRunner.ts); outside the src/data/acvp vector manifest.',
+          // Known issue (open): on the C++ softhsm-wasm engine a valid C_Verify(CKM_HSS)
+          // corrupts later HMAC cases in the same session (CKR_KEY_HANDLE_INVALID / MAC
+          // rejected); Rust is unaffected. runLMSSigVerKAT runs in its own session for that
+          // reason. See the comment there.
         }),
         { type: 'lms-sigver', testCase: n }
       )
