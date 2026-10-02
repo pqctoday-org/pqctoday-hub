@@ -21954,6 +21954,51 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T13:51:34.670502+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "tfhe-rs-v1.8.1",
+      "title": "Zama TFHE-rs Library v1.8.1",
+      "url": "https://github.com/zama-ai/tfhe-rs/releases/tag/tfhe-rs-1.8.1",
+      "status": "downloaded",
+      "filename": "tfhe-rs-v1.8.1.html",
+      "sizeBytes": 208751,
+      "contentType": "text/html",
+      "sha256": "04290b2286d43f2be55e63cb79d4c4914298d9ca4952663ef4a39147cdea594a",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T20:58:26.714716+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "lattigo-v6.2.0",
+      "title": "Lattigo v6.2.0",
+      "url": "https://github.com/tuneinsight/lattigo/releases/tag/v6.2.0",
+      "status": "downloaded",
+      "filename": "lattigo-v6.2.0.html",
+      "sizeBytes": 212501,
+      "contentType": "text/html",
+      "sha256": "c2e5aef2bc290f217680e83b66b5843b774d206e5874f29983bbb49613833a1b",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T20:58:44.582176+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "openfhe-v1.6.0",
+      "title": "OpenFHE Library v1.6.0",
+      "url": "https://github.com/openfheorg/openfhe-development/releases/tag/v1.6.0",
+      "status": "downloaded",
+      "filename": "openfhe-v1.6.0.html",
+      "sizeBytes": 216145,
+      "contentType": "text/html",
+      "sha256": "bcfa5406acd364eaa93bcb8891c9db24c957de3092e7d9bb3dc08c844b9f6004",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T20:58:52.479697+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [

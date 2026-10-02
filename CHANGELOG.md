@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.144.0] - 2026-10-02
+
+Confidential Computing now teaches fully homomorphic encryption, with a workshop step showing how an HSM can hold FHE keys.
+
+### Added
+
+- **Homomorphic encryption explained in Confidential Computing** [view:/learn/confidential-computing] [persona:architect] [persona:developer] [persona:researcher] [persona:curious]: a new Learn section covers how fully homomorphic encryption lets a server compute on data it cannot read, the four scheme families in the draft ISO/IEC 28033 (BGV, BFV, CKKS, TFHE), their keys and operations, why FHE does not work directly with AES (and how transciphering bridges it), where FHE stands against quantum attacks, and the open-source libraries that implement it.
+- **New workshop step: FHE + HSM Flows** [view:/learn/confidential-computing] [persona:architect] [persona:ops] [persona:researcher] [persona:developer]: step through six scenarios: CKKS and TFHE key custody in an HSM, OpenFHE and Lattigo threshold FHE, what can and cannot run inside an HSM, and TFHE-rs transciphering. Each step shows the data and compute involved, key sizes against an RSA-2048 key pair, a quantum overlay with its post-quantum fix, a map of where every key sits and whether a secret is exposed, and a label saying what the pqctoday HSM emulator, a software token rather than hardware custody, can do today. Click any step for its input, computation and output.
+
+### Data
+
+- **Three homomorphic-encryption libraries in the Library** [view:/library] [persona:developer] [persona:researcher] [persona:architect]: TFHE-rs, Lattigo and OpenFHE now have reference entries, each with its licence and the ISO/IEC 28033 parts that cover its schemes.
+- **New trusted sources for homomorphic encryption** [view:/library] [persona:researcher]: Zama, Tune Insight (Lattigo), OpenFHE and fhe.rs join as supporting sources, used only for claims about their own libraries.
+
 ## [4.143.0] - 2026-10-02
 
 A new HSM playground lesson shows how applications discover certificates across slots, the Rust engine follows PKCS#11 v3.2 more closely, HMAC works again after a hash-based signature on the C++ engine, and catalog entries were corrected after a source-by-source accuracy check.
