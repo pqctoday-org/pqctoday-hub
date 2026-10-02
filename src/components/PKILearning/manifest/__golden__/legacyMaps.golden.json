@@ -655,13 +655,12 @@
       "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
       "duration": "30 min",
       "difficulty": "beginner",
-      "workInProgress": true,
       "frameworkPhase": "foundations"
     }
   },
   "MODULE_STEP_COUNTS": {
     "ai-security-pqc": 7,
-    "api-security-jwt": 6,
+    "api-security-jwt": 7,
     "acvp-lab-workflow": 3,
     "aerospace-pqc": 6,
     "arch-quantum-impact": 5,
@@ -2401,6 +2400,10 @@
       {
         "id": "matrix-audit",
         "label": "Matrix Audit"
+      },
+      {
+        "id": "attack-lab",
+        "label": "Attack Lab"
       }
     ],
     "acvp-lab-workflow": [
@@ -3884,7 +3887,6 @@
           "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
           "duration": "30 min",
           "difficulty": "beginner",
-          "workInProgress": true,
           "frameworkPhase": "foundations"
         }
       ]

@@ -9,6 +9,7 @@ import { HybridJWT } from './workshop/HybridJWT'
 import { JWEEncryption } from './workshop/JWEEncryption'
 import { TokenSizeAnalyzer } from './workshop/TokenSizeAnalyzer'
 import { JOSEProtocolMatrixAudit } from './workshop/JOSEProtocolMatrixAudit'
+import { JWTAttackLab } from './workshop/JWTAttackLab'
 
 const SECTIONS = [
   {
@@ -26,7 +27,7 @@ const SECTIONS = [
     id: 'hybrid-jwt',
     title: 'Step 3 — Hybrid JWT',
     description:
-      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-03; dual-signature migration pattern',
+      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-04, checked against its published examples; nested-JWT migration pattern',
   },
   {
     id: 'jwe-encryption',
@@ -45,6 +46,12 @@ const SECTIONS = [
     description:
       'Live KAT suite validating RFC 9964 Appendix A.1 vectors and composite pinned snapshots',
   },
+  {
+    id: 'attack-lab',
+    title: 'Step 7 — Attack Lab',
+    description:
+      'alg:none, edited claims, wrong audience, expiry and token-type attacks against a strict (RFC 8725) and a naive verifier, on real ML-DSA-65 tokens',
+  },
 ]
 
 export const APISecurityJWTPlayground: React.FC = () => {
@@ -55,6 +62,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
     'jwe-encryption': true,
     'token-size': false,
     'matrix-audit': false,
+    'attack-lab': false,
   })
 
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -98,6 +106,7 @@ export const APISecurityJWTPlayground: React.FC = () => {
                 {id === 'jwe-encryption' && <JWEEncryption />}
                 {id === 'token-size' && <TokenSizeAnalyzer />}
                 {id === 'matrix-audit' && <JOSEProtocolMatrixAudit />}
+                {id === 'attack-lab' && <JWTAttackLab />}
               </div>
             )}
           </div>
