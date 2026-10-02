@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-011',
   title: 'API Security & JWT',
   description:
@@ -33,7 +33,7 @@ const manifest: ModuleManifest = {
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {
     step: 'jwt-inspector',
-    text: 'Paste a JWT or pick a sample token in the JWT Inspector: the header, payload and signature are decoded, and the algorithm is marked Quantum Vulnerable or Quantum Safe with its key and signature sizes.',
+    text: 'Paste a JWT or pick a sample token in the JWT Inspector: the header, payload and signature are decoded, and the declared algorithm is classed as classical or post-quantum (a claim the token makes, not proof) with its key and signature sizes.',
   },
   playgroundTool: 'api-security-jwt',
   taxonomy: { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },

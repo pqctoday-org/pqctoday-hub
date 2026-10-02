@@ -1,0 +1,22 @@
+{
+  "$schema": "Published ES256 JWS example from RFC 7515 Appendix A.3 (JWS Using ECDSA P-256 SHA-256), transcribed from the RFC text. ECDSA is randomized, so only verification is reproducible.",
+  "spec": "RFC 7515",
+  "source_url": "https://www.rfc-editor.org/rfc/rfc7515.txt",
+  "source_sha256": "ecbf84674118e62526511c1237e1deaa86aada86d25b247623a2a7e04ae62e40",
+  "retrieved_at": "2026-10-01",
+  "fetched_with": "pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient)",
+  "vectors": [
+    {
+      "label": "RFC 7515 Appendix A.3 ES256 JWS",
+      "alg": "ES256",
+      "jwk": {
+        "kty": "EC",
+        "crv": "P-256",
+        "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+        "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+        "d": "jpsQnnGQmL-YBIffH1136cspYG6-0iY7X1fCE9-E9LI"
+      },
+      "jws": "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q"
+    }
+  ]
+}

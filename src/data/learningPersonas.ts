@@ -1401,10 +1401,10 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
   curious: {
     id: 'curious',
     label: 'Curious Explorer',
-    subtitle: 'New to cryptography & quantum computing',
+    subtitle: 'No technical background, for yourself or for your job',
     icon: 'Lightbulb',
     description:
-      'Start from zero — understand what quantum computing means for everyday security, why it matters, and what the world is doing about it. Sample every area from protocols to industries. No technical background required.',
+      'Start from zero — understand what quantum computing means for everyday security, why it matters, and what the world is doing about it. Sample every area from protocols to industries. No technical background required. Whether you sell, write about, buy or approve technology, learn what is true today and how to say it accurately.',
     recommendedPath: [
       'pqc-101',
       'pqc-candidates',
@@ -1418,6 +1418,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'standards-bodies',
       'crypto-agility',
       'migration-program',
+      'talking-about-pqc',
       'tls-basics',
       'email-signing',
       'database-encryption-pqc',
@@ -1460,6 +1461,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'standards-bodies' },
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'migration-program' },
+      { type: 'module', moduleId: 'talking-about-pqc' },
       {
         type: 'checkpoint',
         id: 'curious-cp-3',
@@ -1493,7 +1495,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 815,
+    estimatedMinutes: 845,
     essentials: [
       'pqc-101',
       'pqc-candidates',

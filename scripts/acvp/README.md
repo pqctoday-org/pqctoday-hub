@@ -25,15 +25,11 @@ verify nothing.
 
 `npm run acvp:crosschecks` runs all four cross-checks.
 
-Two citations in the manifest are **not** covered here, deliberately:
+One citation in the manifest is **not** covered here, deliberately:
 
-- `scripts/regen-composite-kat.ts`, named in `composite-sigs-jose-kat`'s
-  `source.generator`. It is a one-shot generator of PQC Today's own output from all-zero
-  seeds, not a verification of an external source, and the manifest already flags its
-  absence itself (`publishabilityGaps: ["generator-script-not-in-repo"]`). Writing a
-  replacement would not make the file's values externally checkable.
 - `jose-pqc-kem-jwe-kat`'s `source.generator` ("Node 24 one-shot …"), which names no file
-  at all. Same reason.
+  at all. It is a one-shot generator of PQC Today's own output, not a verification of an
+  external source, so a replacement script would not make the values externally checkable.
 
 ## Recording a source check as the review — `record-source-checks.ts`
 

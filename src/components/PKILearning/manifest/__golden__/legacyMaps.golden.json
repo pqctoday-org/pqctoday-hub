@@ -647,6 +647,16 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "talking-about-pqc": {
+      "id": "talking-about-pqc",
+      "lm_id": "LM-073",
+      "title": "Talking About PQC Accurately",
+      "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
+      "duration": "30 min",
+      "difficulty": "beginner",
+      "workInProgress": true,
+      "frameworkPhase": "foundations"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -722,7 +732,8 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1
+    "assess": 1,
+    "talking-about-pqc": 2
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -2311,6 +2322,28 @@
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
       }
+    ],
+    "talking-about-pqc": [
+      {
+        "id": "one-minute",
+        "label": "The One-Minute Version"
+      },
+      {
+        "id": "real-dates",
+        "label": "Dates That Are Real"
+      },
+      {
+        "id": "certificates",
+        "label": "What a Certificate Proves"
+      },
+      {
+        "id": "words",
+        "label": "Words to Check"
+      },
+      {
+        "id": "customer-questions",
+        "label": "Answering the Question"
+      }
     ]
   },
   "WORKSHOP_STEPS": {
@@ -3783,6 +3816,16 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
+    ],
+    "talking-about-pqc": [
+      {
+        "id": "claim-checker",
+        "label": "Claim Checker"
+      },
+      {
+        "id": "question-practice",
+        "label": "Customer Questions"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3832,6 +3875,16 @@
           "description": "Quantum threats to research: long-lived data confidentiality, publication integrity, emerging PQC research frontiers, and funding opportunities.",
           "duration": "20 min",
           "difficulty": "beginner",
+          "frameworkPhase": "foundations"
+        },
+        {
+          "id": "talking-about-pqc",
+          "lm_id": "LM-073",
+          "title": "Talking About PQC Accurately",
+          "description": "For anyone who has to say something about post-quantum cryptography at work — sales, marketing, communications, procurement, policy or press: what is true today, which dates are real, what a certificate proves, and which words to avoid.",
+          "duration": "30 min",
+          "difficulty": "beginner",
+          "workInProgress": true,
           "frameworkPhase": "foundations"
         }
       ]
@@ -4810,6 +4863,9 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
+    },
+    "talking-about-pqc": {
+      "standards": ["FIPS 203", "NIST IR 8547", "NSA CNSA 2.0"]
     }
   }
 }
