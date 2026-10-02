@@ -32,8 +32,12 @@ describe('FHE + HSM per-step cost data', () => {
       const actors = new Set([...flow.actors.map((a) => a.id), 'datacenter'])
       for (const pl of FHE_KEY_MAP[id]) {
         expect(actors.has(pl.at)).toBe(true)
+        expect(pl.from).toBeGreaterThanOrEqual(0)
         expect(pl.from).toBeLessThan(flow.steps.length)
-        if (pl.until !== undefined) expect(pl.until).toBeGreaterThanOrEqual(pl.from)
+        if (pl.until !== undefined) {
+          expect(pl.until).toBeGreaterThanOrEqual(pl.from)
+          expect(pl.until).toBeLessThan(flow.steps.length)
+        }
       }
     }
   )

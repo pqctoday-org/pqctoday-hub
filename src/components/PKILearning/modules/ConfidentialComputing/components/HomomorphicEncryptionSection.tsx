@@ -70,13 +70,15 @@ export const HomomorphicEncryptionSection: React.FC = () => (
 
     {/* Schemes */}
     <div className="space-y-2">
-      <h3 className="text-sm font-bold text-foreground">The four standardized schemes</h3>
+      <h3 className="text-sm font-bold text-foreground">
+        The four schemes in ISO/IEC 28033 (drafts)
+      </h3>
       <p className="text-xs text-muted-foreground">
         Every ciphertext carries a small random error (&ldquo;noise&rdquo;). Additions grow it a
         little and multiplications grow it a lot. Once it is too large, decryption fails.{' '}
         <strong>Bootstrapping</strong> refreshes the noise by running decryption homomorphically
         under an encrypted copy of the key. All four schemes are being standardized in ISO/IEC
-        28033.
+        28033; no part is published yet (parts 2 and 3 are DIS, part 4 is FDIS).
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -188,8 +190,9 @@ export const HomomorphicEncryptionSection: React.FC = () => (
       <p className="text-xs text-muted-foreground">
         Not directly. You can only compute on ciphertexts from a homomorphic scheme. An AES-GCM
         ciphertext has no structure a server can exploit, so you can&apos;t add two of them. The
-        bridge is <strong>transciphering</strong>. Its public baseline today is TFHE-rs with the
-        Trivium or Kreyvium stream ciphers, not AES:
+        bridge is <strong>transciphering</strong>: the server runs the symmetric cipher&apos;s
+        decryption inside FHE. TFHE-rs ships it for Kreyvium and AES-128-CTR (tfhe::transciphering);
+        this workshop shows Kreyvium because it is cheaper:
       </p>
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 text-xs">
         {[
@@ -216,9 +219,8 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         This keeps uploads at plaintext size instead of FHE size, which can be 10³ times larger or
         more. TFHE-rs implements it (apps/trivium, TransCiphering trait), and the WAHC 2023 paper
         reports under 300 ms per 64-bit block. Use Kreyvium&apos;s 128-bit key: Trivium&apos;s
-        80-bit key is too short once Grover is taken into account. Homomorphic AES exists only in
-        research implementations so far (for example IACR ePrint 2025/075 over TFHE and 2026/1209
-        over CKKS), so it is not part of the baseline.
+        80-bit key is already below the 112-bit minimum, before Grover. Research pushes homomorphic
+        AES further (IACR ePrint 2025/075 over TFHE and 2026/1209 over CKKS).
       </p>
     </div>
 
@@ -229,10 +231,11 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         FHE against the quantum threat
       </h3>
       <p className="text-xs text-muted-foreground">
-        Lattice FHE is <strong>post-quantum by construction</strong>. It rests on the same Learning
-        With Errors problem as ML-KEM, and harvested ciphertexts give a quantum attacker nothing. An
-        FHE <em>deployment</em> is a different matter, because the parts around the scheme are
-        usually still classical:
+        Lattice FHE has <strong>no known quantum break</strong>. It rests on the (Ring-)Learning
+        With Errors family behind ML-KEM; for a stated post-quantum level, pick parameters from the
+        HE Standard&apos;s quantum tables (common defaults target classical 128-bit security). FHE
+        schemes themselves are not NIST-standardized. An FHE <em>deployment</em> is a different
+        matter, because the parts around the scheme are usually still classical:
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -286,11 +289,11 @@ export const HomomorphicEncryptionSection: React.FC = () => (
           <li>Sign the parameter set and evaluation-key hashes with ML-DSA</li>
           <li>Decrypt inside the HSM, under policy, with an audit log</li>
           <li>
-            Back up the seed (not GBs of keys) only HSM to HSM: a live clone to an authenticated
-            peer, or an offline package that only an enrolled backup HSM can restore. Each HSM
-            proves itself with a manufacturing → device → function certificate chain and fresh
-            attestation evidence (draft-ietf-rats-pkix-key-attestation). The package is pure
-            post-quantum at NIST Category 3: sealed to the recipient’s FIPS 203 ML-KEM-768
+            Target architecture: back up the seed (not GBs of keys) only HSM to HSM: a live clone to
+            an authenticated peer, or an offline package that only an enrolled backup HSM can
+            restore. Each HSM proves itself with a manufacturing → device → function certificate
+            chain and fresh attestation evidence (draft-ietf-rats-pkix-key-attestation). The package
+            is pure post-quantum at NIST Category 3: sealed to the recipient’s FIPS 203 ML-KEM-768
             certificate and signed with FIPS 204 ML-DSA-65, with no classical or hybrid fallback.
           </li>
         </ol>
@@ -311,14 +314,14 @@ export const HomomorphicEncryptionSection: React.FC = () => (
             generation, decryption. Both are small inputs and milliseconds of compute.
           </li>
           <li>
-            <span className="text-status-warning font-bold">Possible:</span> evaluation-key
-            generation. The math is fine, but the output reaches hundreds of MB or GBs and has to be
-            streamed out.
+            <span className="text-status-warning font-bold">Size-limited:</span> evaluation-key
+            generation. TFHE&apos;s ~30 MB server key fits; a CKKS bootstrapping key set (GBs,
+            estimated) does not, and the planned engine refuses it by design.
           </li>
           <li>
             <span className="text-status-error font-bold">No:</span> homomorphic evaluation and
-            bootstrapping. They need GBs of keys in memory plus GPU or FPGA acceleration. Running
-            them in the HSM would also make it the trusted party FHE exists to remove.
+            bootstrapping. They need GBs of keys in memory plus GPU or FPGA acceleration. They need
+            no secret, so running them in the HSM would add nothing but load.
           </li>
         </ul>
         <p className="text-xs text-muted-foreground mt-2">
@@ -334,11 +337,12 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         Design rule: an HSM must not be a raw decryption oracle
       </h3>
       <p className="text-xs text-muted-foreground">
-        If a party can submit chosen ciphertexts and get the decrypted result back, published
-        attacks can recover the secret key (Li &amp; Micciancio 2021 on CKKS; later
-        decryption-failure attacks on BFV, BGV and TFHE). Approximate CKKS outputs leak noise. An
-        HSM that decrypts FHE results has to add noise (&ldquo;noise flooding&rdquo;) and should
-        only release approved result shapes, with rate limits.
+        If a party can get decryptions back, even of ciphertexts honestly computed from inputs it
+        knows, published attacks recover the key (Li &amp; Micciancio 2021 on CKKS;
+        decryption-failure attacks on BFV, BGV and TFHE, e.g. Cheon et al. CCS 2024 and Checri et
+        al. CRYPTO 2024). For CKKS the HSM floods decryption noise (OpenFHE NOISE_FLOODING_DECRYPT);
+        for BFV, BGV and TFHE it uses parameters with negligible failure probability. In every case
+        it releases only approved result shapes, with rate limits.
       </p>
     </div>
 
@@ -346,7 +350,7 @@ export const HomomorphicEncryptionSection: React.FC = () => (
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
         <Server size={16} className="text-primary" />
-        Open-source implementations of the standardized schemes
+        Open-source implementations of the ISO/IEC 28033 draft schemes
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">

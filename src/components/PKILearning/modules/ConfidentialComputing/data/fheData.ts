@@ -24,7 +24,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Exact integers mod t, SIMD-packed',
     bestFor: 'Exact batched arithmetic (counts, matching)',
     bootstrapping: 'Possible but slow — usually run leveled',
-    isoPart: 'ISO/IEC 28033-2',
+    isoPart: 'ISO/IEC DIS 28033-2',
   },
   {
     id: 'bfv',
@@ -33,7 +33,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Exact integers mod t, SIMD-packed',
     bestFor: 'Same as BGV, scale-invariant variant',
     bootstrapping: 'Possible but slow — usually run leveled',
-    isoPart: 'ISO/IEC 28033-2',
+    isoPart: 'ISO/IEC DIS 28033-2',
   },
   {
     id: 'ckks',
@@ -42,7 +42,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Approximate real / complex vectors',
     bestFor: 'Machine learning, statistics, signal processing',
     bootstrapping: 'Yes (approximate)',
-    isoPart: 'ISO/IEC 28033-3',
+    isoPart: 'ISO/IEC DIS 28033-3',
   },
   {
     id: 'tfhe',
@@ -50,8 +50,9 @@ export const FHE_SCHEMES: FheScheme[] = [
     year: 2016,
     dataType: 'Bits and small integers',
     bestFor: 'Arbitrary functions via lookup tables, comparisons, branching logic',
-    bootstrapping: 'Programmable bootstrapping on every gate',
-    isoPart: 'ISO/IEC 28033-4',
+    bootstrapping:
+      'Programmable bootstrapping after every gate (boolean API) or nonlinear operation (integer API)',
+    isoPart: 'ISO/IEC FDIS 28033-4',
   },
 ]
 
@@ -69,14 +70,15 @@ export const FHE_KEYS: FheKey[] = [
     name: 'Secret key',
     secret: true,
     what: 'A polynomial with tiny coefficients ({-1, 0, 1} or small Gaussian) in Z_q[X]/(X^N+1). TFHE adds a short binary LWE key.',
-    sizeOrder: 'KB to a few MB expanded — but regenerable from a 32-byte seed',
+    sizeOrder:
+      '~16 KB packed at N = 2¹⁶, ~16 MB expanded in NTT/RNS form (estimate); regenerable from a 32-byte seed. TFHE: a few hundred bytes of key bits, ~24 KB as stored',
   },
   {
     id: 'pk',
     name: 'Public (encryption) key',
     secret: false,
     what: 'An RLWE sample (b = −a·s + e, a). Anyone holding it can encrypt.',
-    sizeOrder: '~MB',
+    sizeOrder: '~15–30 MB for CKKS/BFV at N = 2¹⁶ (estimate); TFHE compact key tens of KB',
   },
   {
     id: 'relin',
@@ -144,7 +146,7 @@ export const FHE_OPERATIONS: FheOperation[] = [
     name: 'Decrypt / Decode',
     runBy: 'key holder',
     needs: 'secret key',
-    note: 'The only operation that needs the secret — the HSM’s job',
+    note: 'The only evaluation-time operation that needs the secret (key generation needs it too) — the HSM’s job',
   },
 ]
 
@@ -162,7 +164,7 @@ export const FHE_QUANTUM_EXPOSURE: FheQuantumExposure[] = [
     component: 'The FHE scheme itself (BGV/BFV/CKKS/TFHE)',
     typical: 'Ring/Module-LWE lattices',
     broken: false,
-    fix: 'None needed — same hardness family as ML-KEM (FIPS 203)',
+    fix: 'No known quantum break — same (Ring-)LWE family as ML-KEM (FIPS 203); FHE schemes are not NIST-standardized, so pick parameters for a stated PQ level',
   },
   {
     id: 'phe',

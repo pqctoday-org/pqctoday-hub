@@ -5,14 +5,14 @@
 // FHE figures are ORDER-OF-MAGNITUDE ESTIMATES, not measurements. The
 // RLWE flows (CKKS, BFV, BGV) assume ring dimension N = 2^16 (~30 RNS limbs;
 // CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
-// flows assume n ≈ 900, N = 2,048, k = 1. All on a recent multicore CPU or
+// flows assume the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1, KS level 4). All on a recent multicore CPU or
 // datacentre GPU. `SIZE_BASIS` below is shown on screen per flow. Real numbers move by 10x with parameters, library and hardware — the
 // workshop says so on screen. Measure before quoting any of them elsewhere.
 //
 // Exact figures (not estimates): ML-DSA-65 signature 3,309 B and public key
 // 1,952 B (FIPS 204); ML-KEM-768 ciphertext 1,088 B (FIPS 203); X25519MLKEM768
 // key shares 1,216 B / 1,120 B; AES key wrap adds 8 B (RFC 3394 / SP 800-38F).
-// Homomorphic-AES throughput (>200 KB/s, ~34 ms latency per block on an
+// Homomorphic-AES figures (238 KB/s throughput and 26 ms latency, from separate variants, on an
 // RTX 5090) is from IACR ePrint 2026/1209.
 
 import type { FheFlowId, LinkKind } from './fheHsmFlows'
@@ -20,11 +20,13 @@ import type { FheFlowId, LinkKind } from './fheHsmFlows'
 /** What the FHE estimates of each flow assume, shown under the diagram. */
 export const SIZE_BASIS: Record<FheFlowId, string> = {
   'single-hsm': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
-  'tfhe-single-hsm': 'TFHE with LWE n ≈ 900, GLWE N = 2,048, k = 1',
+  'tfhe-single-hsm':
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
   'openfhe-threshold': 'BFV at ring dimension N = 2¹⁶, leveled (no bootstrapping)',
   'lattigo-threshold': 'BGV at ring dimension N = 2¹⁶, refreshed interactively',
   'hsm-compute-limits': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
-  'tfhe-transciphering': 'TFHE with LWE n ≈ 900, GLWE N = 2,048, k = 1',
+  'tfhe-transciphering':
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
 }
 
 /** Log-scale bucket used to draw the per-step bars. 0 = nothing. */
@@ -95,7 +97,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       'too slow',
       'HSM (rejected)',
-      'A bootstrappable CKKS key set is roughly 1 GB or more: relinearization plus dozens of rotation keys at ~100 MB each. At these estimated sizes an HSM can neither hold nor return that through PKCS#11. This is the step that does not scale.'
+      'A bootstrappable CKKS key set is ~1.5–5 GB seeded (estimate): relinearization plus dozens of rotation keys at ~50–90 MB each. At these estimated sizes an HSM can neither hold nor return that through PKCS#11. This is the step that does not scale.'
     ),
     c(
       2,
@@ -103,7 +105,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'HSM → client',
-      'The public key is two ring elements, a few MB. Signing its hash is sub-millisecond.'
+      'The public key is two ring elements, ~15–30 MB at N = 2¹⁶ (estimate). Signing its hash is sub-millisecond.'
     ),
     c(
       2,
@@ -119,7 +121,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       'sec–min',
       'cloud GPU/CPU',
-      'Additions are cheap. A multiply plus relinearize takes tens of ms, and each bootstrap takes seconds on a CPU or ~0.1–1 s on a GPU. The cloud also needs the GB-scale keys in memory.'
+      'Additions are cheap. A multiply plus relinearize takes tens of ms, and each bootstrap takes seconds on a CPU or ~40–330 ms on a GPU (published N = 2¹⁶ figures). The cloud also needs the GB-scale keys in memory.'
     ),
     c(
       2,
@@ -169,7 +171,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'HSM',
-      'Seed plus two binary secrets (~900 + 2,048 bits). An ordinary HSM-sized object.'
+      'Seed plus two binary secrets (918 + 2,048 bits; ~24 KB as stored). An ordinary HSM-sized object.'
     ),
     c(
       3,
@@ -177,7 +179,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM',
-      'About 1,800 GLWE and 10,000 LWE encryptions at N = 2,048. Seconds on an HSM-class CPU (est.), returned in one size-checked export.'
+      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Seconds on an HSM-class CPU (est.), returned in one size-checked export.'
     ),
     c(
       3,
@@ -194,7 +196,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client CPU',
-      'Compact public-key encryption, a few KB per value. The cloud expands each 64-bit value to ~230 KB of blocks.'
+      'Compact public-key encryption, a few KB per value. The cloud expands each 64-bit value to ~0.5 MB of blocks (32 blocks × 2,049 × 8 B).'
     ),
     c(
       3,
@@ -205,7 +207,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'One programmable bootstrap is milliseconds on a CPU core. A 64-bit add takes tens of ms and a multiply hundreds of ms; GPUs are much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
-    c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product of ~900 terms per block, then rounding.'),
+    c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product of 2,048 terms per block, then rounding.'),
     c(1, '≤ KB', 0, '—', 'network', 'A small plaintext result.'),
     c(
       1,
@@ -278,7 +280,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'HSMs → aggregator',
       'Each party sends a full-size share for every Galois key the application needs; no bootstrapping keys (estimate).'
     ),
-    c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary CKKS encryption.'),
+    c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary BGV encryption.'),
     c(3, '~100s MB', 3, 'ms–s', 'cloud CPU', 'Leveled evaluation until the levels run out.'),
     c(
       2,
@@ -316,7 +318,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client → server',
-      '128 FheBool ciphertexts, a few KB each (estimate).'
+      '16 FheUint8 ciphertexts, ~65 KB each expanded (~1 MB in total), smaller as a compact list (estimate).'
     ),
     c(
       2,
@@ -361,9 +363,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '~GB keys',
       3,
-      '~0.1–1 s',
+      '~40–330 ms',
       'GPU / FPGA',
-      'On a GPU a bootstrap takes roughly 0.1–1 s, and cheaper operations take milliseconds.'
+      'On a GPU a CKKS bootstrap at N = 2¹⁶ takes ~40–330 ms in published results, and cheaper operations take milliseconds.'
     ),
     c(2, '~1 MB', 0, '—', 'network', 'One small result ciphertext.'),
     c(1, '~1 MB in', 1, '~ms', 'HSM', 'Fits: one ring multiplication on about 1 MB of input.'),
@@ -377,7 +379,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
 // SubjectPublicKeyInfo + ~1,218 B PKCS#8 private key (CRT form; the exact
 // length varies by a few bytes) ≈ 1,512 B. FHE rows are estimates at the same
 // CKKS N = 2^16 parameter set as above; TFHE rows are computed from TFHE-rs-
-// style defaults (LWE n ≈ 900, GLWE N = 2,048, k = 1, PBS level 1, KS level 5)
+// style defaults (TFHE-rs 1.8.1: LWE n = 918, GLWE N = 2,048, k = 1, PBS level 1, KS level 4)
 // and should be measured before quoting. AES / ML-KEM / ML-DSA rows are exact.
 
 export type KeyId =
@@ -432,9 +434,9 @@ export const KEY_SIZES: KeySize[] = [
     label: 'RSA-2048 key pair (reference)',
     bytes: RSA2048_PAIR_BYTES,
     size: '~1.5 KB',
-    exact: true,
+    exact: false,
     secret: true,
-    note: '294 B public key + ~1,218 B PKCS#8 private key.',
+    note: '294 B public key + ~1,218 B PKCS#8 private key (DER sizes vary by a few bytes).',
   },
   {
     id: 'hpke-kem',
@@ -443,7 +445,7 @@ export const KEY_SIZES: KeySize[] = [
     size: '1.2 KB',
     exact: true,
     secret: true,
-    note: '1,184 B public key (in the recipient function certificate) + 64 B private key (the KEM seed).',
+    note: '1,184 B public key (in the recipient function certificate) + 64 B private key stored as the KEM seed (the expanded FIPS 203 decapsulation key is 2,400 B).',
   },
   {
     id: 'mldsa65',
@@ -466,11 +468,11 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-client',
     label: 'TFHE client (secret) key',
-    bytes: 2_900,
+    bytes: 24_000,
     size: '~3 KB',
     exact: false,
     secret: true,
-    note: '~900-bit LWE key + 2,048-bit GLWE key, bit-packed. Stored as 64-bit words it is ~23 KB. Regenerable from the seed.',
+    note: '918-bit LWE key + 2,048-bit GLWE key: ~371 B of key bits; TFHE-rs stores them as 64-bit words, ~24 KB. Regenerable from the seed.',
   },
   {
     id: 'tfhe-cpk',
@@ -488,7 +490,7 @@ export const KEY_SIZES: KeySize[] = [
     size: '~30 MB',
     exact: false,
     secret: false,
-    note: 'Bootstrapping key + key-switching key with seeded compression. About 130 MB once expanded by the cloud. Estimated for n ≈ 900, N = 2,048, k = 1.',
+    note: 'Bootstrapping key + key-switching key with seeded compression. About 130 MB once expanded by the cloud. Estimated for the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1).',
   },
   {
     id: 'fhe-pk',

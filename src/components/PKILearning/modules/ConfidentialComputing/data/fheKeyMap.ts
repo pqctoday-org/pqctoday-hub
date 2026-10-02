@@ -191,6 +191,7 @@ export const FHE_KEY_MAP: Record<FheFlowId, Placement[]> = {
     p('eval-keys', 'cloud', 'memory', 0),
     atRest('eval-keys', 0),
     p('kreyvium-key', 'client', 'memory', 1),
+    p('fhe-pk', 'client', 'memory', 2),
     p('ct-key', 'cloud', 'memory', 2),
     atRest('ct-key', 2),
     p('stream-ct', 'cloud', 'memory', 3),

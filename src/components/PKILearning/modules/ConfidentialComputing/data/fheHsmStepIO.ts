@@ -65,13 +65,13 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       's and the parameter set.',
       'keygen',
       'Sample a (from a seed) and an error e, compute b = −a·s + e, then sign the hash of (b, a).',
-      'Public key pk = (b, a), a few MB, plus its signature, sent to the data owner.'
+      'Public key pk = (b, a), ~15–30 MB at N = 2¹⁶ (estimate), plus its signature, sent to the data owner.'
     ),
     io(
       'Plaintext values (up to 32,768 reals per ciphertext) and the public key, whose signature the client has verified.',
       'encrypt',
       'Encode: scale the values and map them into a polynomial m with an inverse FFT. Encrypt: sample u, e₀, e₁ and set ct = (u·b + e₀ + m, u·a + e₁).',
-      'Ciphertexts of a few MB each, uploaded over TLS.'
+      'Ciphertexts of ~15–30 MB each at N = 2¹⁶ (estimate), uploaded over TLS.'
     ),
     io(
       'Ciphertexts plus the public evaluation keys. No secret of any kind.',
@@ -86,9 +86,9 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'A ciphertext of about 1 MB, delivered to the HSM.'
     ),
     io(
-      'The result ciphertext plus the request metadata: who is asking and which computation produced it.',
+      'The result ciphertext plus the request metadata: who is asking and the declared output type. The HSM cannot verify which computation produced it.',
       'decrypt',
-      'Check policy (approved computation, result shape, rate limit). Decrypt m′ = c₀ + c₁·s, add flooding noise (CKKS), decode with an FFT, and write an audit record.',
+      'Check policy (allowed output type, result shape, rate limit). Decrypt m′ = c₀ + c₁·s, add flooding noise (CKKS), decode with an FFT, and write an audit record.',
       'Plaintext result values, rounded and noised, inside the HSM.'
     ),
     io(
@@ -112,15 +112,15 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
   ],
   'tfhe-single-hsm': [
     io(
-      'The HSM entropy source and the TFHE parameter set (LWE n ≈ 900, GLWE N = 2,048, k = 1).',
+      'The HSM entropy source and the TFHE parameter set (TFHE-rs 1.8.1 default: LWE n = 918, GLWE N = 2,048, k = 1).',
       'keygen',
       'The DRBG draws a 32-byte seed. A KDF derives TFHE-rs’s 128-bit Seed, and ClientKey::generate_with_seed expands it into a binary LWE key and a binary GLWE key.',
-      'The client key, a few KB, held in the HSM. Only the seed is persisted.'
+      'The client key (a few hundred bytes of key bits, ~24 KB as stored), held in the HSM. Only the seed is persisted.'
     ),
     io(
       'The client key (both secrets).',
       'keygen',
-      'Bootstrapping key: encrypt each LWE key bit as a GGSW ciphertext under the GLWE key, about 1,800 GLWE encryptions with FFT polynomial products. Key-switching key: encrypt the GLWE key coefficients under the LWE key, about 10,000 LWE encryptions. Returned in one size-checked export and hashed; not stored on the token.',
+      'Bootstrapping key: encrypt each LWE key bit as a GGSW ciphertext under the GLWE key, about 1,800 GLWE encryptions with FFT polynomial products. Key-switching key: encrypt the 2,048 GLWE key coefficients under the LWE key at 4 levels, about 8,200 LWE encryptions. Returned in one size-checked export and hashed; not stored on the token.',
       'The server key, ~30 MB compressed, plus its hash. It fits an HSM workflow.'
     ),
     io(
@@ -139,7 +139,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Plaintext integers and the verified compact public key.',
       'encrypt',
       'Split each integer into small blocks (e.g. 2-bit messages with carry space), then encrypt them as a compact ciphertext list.',
-      'A few KB per value, uploaded. The cloud expands it into ~230 KB of LWE blocks per 64-bit integer.'
+      'A few KB per value, uploaded. The cloud expands it into ~0.5 MB of LWE blocks per 64-bit integer.'
     ),
     io(
       'Ciphertext blocks and the server key. No secret.',
@@ -151,12 +151,12 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Result ciphertext blocks.',
       'transfer',
       'Send them over TLS.',
-      'KBs to hundreds of KB, delivered to the HSM.'
+      'About 0.5 MB per FheUint64 unless compressed, delivered to the HSM.'
     ),
     io(
       'Result blocks, the LWE secret key and request metadata.',
       'decrypt',
-      'Policy check. Per block: compute body − ⟨mask, s⟩ (one ~900-term dot product), round to the message space, then recombine the blocks into integers. Microseconds.',
+      'Policy check. Per block: compute body − ⟨mask, s⟩ (one 2,048-term dot product under the big key), round to the message space, then recombine the blocks into integers. Microseconds.',
       'The plaintext result inside the HSM.'
     ),
     io(
@@ -336,7 +336,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
     io(
       'The 128 key bits and the TFHE public key.',
       'encrypt',
-      'Encrypt each bit as an FheBool.',
+      'Encrypt the key as 16 FheUint8 bytes.',
       'FHE(k): 128 encrypted bits, uploaded once.'
     ),
     io(
@@ -382,7 +382,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       's and the list of rotation steps.',
       'rejected',
       'The same key-switching keygen as above. At the estimated GBs of output, an HSM CPU and PKCS#11 are impractical, so the planned engine refuses it before allocating.',
-      'Nothing from the HSM. Alternatives: TFHE (a ~30 MB server key the HSM can make), or an attested confidential VM that generates the keys while the HSM signs their hash.'
+      'Nothing from the HSM. Alternatives: TFHE (a ~30 MB server key the HSM can make), or threshold refresh (Lattigo), which needs no bootstrapping keys.'
     ),
     io(
       'Would need the ciphertexts plus GBs of evaluation keys resident in HSM memory.',

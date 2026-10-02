@@ -85,6 +85,8 @@ export interface FheFlow {
   bgClass: string
   /** The public implementation + paper every library step traces to. */
   baseline: { implementation: string; codeUrl: string; paper: string; paperUrl: string }
+  /** Engine status for every HSM step of a flow the engine will never run (e.g. CKKS). */
+  engineDefault?: { status: EngineStatus; note: string }
   /** Validation the FHE wrapper plan targets. Nothing is validated yet. */
   validation: { target: string; reference: string }
   /** Shown as a banner: does this model fit inside an HSM? */
@@ -100,6 +102,12 @@ export interface FheFlow {
 /** Engine status of a step: explicit, else refused / planned when it touches an HSM, else outside. */
 export function engineStatusOf(flow: FheFlow, step: FlowStep): EngineStatus {
   if (step.engine) return step.engine
+  if (flow.engineDefault) {
+    const touchesHsm = [step.from, step.to].some(
+      (id) => flow.actors.find((a) => a.id === id)?.kind === 'hsm'
+    )
+    if (touchesHsm) return flow.engineDefault.status
+  }
   const isHsm = (id: string) => flow.actors.find((a) => a.id === id)?.kind === 'hsm'
   if (!isHsm(step.from) && !isHsm(step.to)) return 'outside'
   return step.verdict === 'no' ? 'refused' : 'planned'
@@ -107,7 +115,7 @@ export function engineStatusOf(flow: FheFlow, step: FlowStep): EngineStatus {
 
 export const LINK_LABELS: Record<
   LinkKind,
-  { classical: string; pqc: string; threat: string | null }
+  { classical: string; pqc: string; threat: string | null; safeNote?: string }
 > = {
   tls: {
     classical: 'TLS · ECDHE',
@@ -124,8 +132,14 @@ export const LINK_LABELS: Record<
     classical: 'Kreyvium (128-bit key)',
     pqc: 'Kreyvium (128-bit key)',
     threat: null,
+    safeNote: 'symmetric 128-bit key; Grover leaves ~64-bit quantum work, accepted like AES-128',
   },
-  fhe: { classical: 'FHE (RLWE)', pqc: 'FHE (RLWE)', threat: null },
+  fhe: {
+    classical: 'FHE (RLWE)',
+    pqc: 'FHE (RLWE)',
+    threat: null,
+    safeNote: 'lattice-based, no known quantum break',
+  },
 }
 
 export const FHE_HSM_FLOWS: FheFlow[] = [
@@ -138,6 +152,10 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       paper:
         'Cheon, Kim, Kim, Song: Homomorphic Encryption for Arithmetic of Approximate Numbers (ASIACRYPT 2017); OpenFHE design paper (IACR ePrint 2022/915)',
       paperUrl: 'https://eprint.iacr.org/2022/915',
+    },
+    engineDefault: {
+      status: 'refused',
+      note: 'No CKKS mechanism is planned for pqctoday-hsm; this scenario is reference-only in OpenFHE.',
     },
     validation: {
       target:
@@ -309,7 +327,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     bgClass: 'bg-success/10',
     scaling: {
       verdict: 'scales',
-      note: 'Fits an HSM. The secret is a few KB, the server key is tens of MB compressed and generated in seconds, and decryption is a dot product. The trade-off is that TFHE computes on bits and small integers, so heavy numeric workloads run slower than with CKKS.',
+      note: 'Fits an HSM. The secret is a few hundred bytes of key bits (tens of KB as stored), the server key is tens of MB compressed and generated in seconds, and decryption is a dot product. The trade-off is that TFHE computes on bits and small integers, so heavy numeric workloads run slower than with CKKS.',
     },
     layman: {
       analogy:
@@ -334,7 +352,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'Generate the TFHE client key inside the HSM',
         detail:
-          'The HSM keeps a 32-byte seed. A KDF inside the mechanism derives TFHE-rs’s 128-bit Seed from it, which expands into two binary secrets: an LWE key (~900 bits) and a GLWE key (2,048 bits). That is a few KB at most, an ordinary HSM-sized object.',
+          'The HSM keeps a 32-byte seed. A KDF inside the mechanism derives TFHE-rs’s 128-bit Seed from it, which expands into two binary secrets: an LWE key (918 bits) and a GLWE key (2,048 bits). That is a few hundred bytes of key bits, tens of KB as TFHE-rs stores them: an ordinary HSM-sized object.',
         verdict: 'ok',
         link: 'fhe',
       },
@@ -346,7 +364,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'Generate the server key inside the HSM',
         detail:
-          'The bootstrapping key is about 1,800 GLWE encryptions of the LWE key bits; the key-switching key is about 10,000 small LWE encryptions. That is seconds of work and tens of MB, returned in one size-checked export (PKCS#11 asks for the length, then fills the buffer) and hashed for the signed manifest. The token does not store it.',
+          'The bootstrapping key is about 1,800 GLWE encryptions of the LWE key bits; the key-switching key is about 8,200 small LWE encryptions (2,048 coefficients × 4 levels). That is seconds of work and tens of MB, returned in one size-checked export (PKCS#11 asks for the length, then fills the buffer) and hashed for the signed manifest. The token does not store it.',
         verdict: 'ok',
       },
       {
@@ -397,7 +415,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'hsm',
         label: 'FHE(result)',
         title: 'Send the encrypted result to the HSM',
-        detail: 'A few LWE ciphertexts, KBs to hundreds of KB.',
+        detail: 'The result ciphertext blocks: about 0.5 MB per FheUint64 unless compressed.',
         link: 'tls',
       },
       {
@@ -408,7 +426,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'Decrypt under policy',
         detail:
-          'Decryption is one dot product per block between the ciphertext and the ~900-bit LWE key, then rounding: microseconds. Policy checks and audit apply as for CKKS. Choose parameters with a negligible decryption-failure probability to blunt IND-CPA-D attacks.',
+          'Decryption is one dot product per block between the ciphertext and the 2,048-coefficient key (default parameters encrypt under the big key), then rounding: microseconds. Policy checks and audit apply as for CKKS. Choose parameters with a negligible decryption-failure probability to blunt IND-CPA-D attacks.',
         verdict: 'ok',
       },
       {
@@ -457,7 +475,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     id: 'openfhe-threshold',
     baseline: {
       implementation:
-        'OpenFHE threshold FHE, BFV run of src/pke/examples/threshold-fhe.cpp: MultipartyKeyGen, MultiKeySwitchGen, MultiAddEvalKeys, MultiMultEvalKey, MultiAddEvalMultKeys, MultiEvalSumKeyGen, MultipartyDecryptLead / Main / Fusion',
+        'OpenFHE threshold FHE, BFV run of src/pke/examples/threshold-fhe.cpp (2 parties), extended to 3 parties as in threshold-fhe-5p.cpp: MultipartyKeyGen, MultiKeySwitchGen, MultiAddEvalKeys, MultiMultEvalKey, MultiAddEvalMultKeys, MultiEvalSumKeyGen, MultipartyDecryptLead / Main / Fusion',
       codeUrl:
         'https://github.com/openfheorg/openfhe-development/blob/v1.6.0/src/pke/examples/threshold-fhe.cpp',
       paper: 'OpenFHE design paper (IACR ePrint 2022/915), threshold FHE extension',
@@ -624,7 +642,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Token-validated through a Rust port of Lattigo’s protocols behind PKCS#11 v3.2 vendor mechanisms. The port is tested against Lattigo itself in Go (byte-exact fixtures, mixed Rust and Go parties) and needs an independent review.',
+        'Token-validated through a Rust port of Lattigo’s protocols behind PKCS#11 v3.2 vendor mechanisms, only if its feasibility and review gates pass. The port is tested against Lattigo itself in Go (byte-exact fixtures, mixed Rust and Go parties) and needs an independent review.',
       reference: 'Lattigo v6.2.0 (Go), the test oracle',
     },
     label: 'Threshold: Lattigo BGV (2-of-3)',
@@ -877,7 +895,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
     ],
-    hsmDoes: 'Keygen and decrypt. It can generate evaluation keys if it streams them out.',
+    hsmDoes:
+      'Keygen and decrypt. CKKS bootstrapping-key generation is refused by design (estimated GBs).',
     staysSecret: 'The seed and secret key. Evaluation keys leave the HSM, so they must be signed.',
     watchOut:
       'No PKCS#11 v3.2 or KMIP mechanism exists for FHE yet, so these are vendor-defined operations today.',
@@ -946,8 +965,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'cloud',
         label: 'FHE(k), once',
         title: 'Send the stream key encrypted under TFHE',
-        detail: 'The 128 key bits are encrypted as FheBool values, once per key.',
-        api: '[FheBool; 128] encrypted under the TFHE public key',
+        detail: 'The 128-bit key is encrypted as 16 FheUint8 bytes, once per key.',
+        api: '[FheUint8; 16] encrypted under the TFHE public key (KreyviumStreamByte::<FheUint8>::new)',
         link: 'fhe',
       },
       {

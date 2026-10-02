@@ -205,7 +205,7 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
                   <div className="font-bold text-foreground">Crypto protecting this step</div>
                   {!link.threat ? (
                     <p className="text-primary">
-                      {link.classical}: lattice-based, already quantum-safe.
+                      {link.classical}: {link.safeNote}.
                     </p>
                   ) : (
                     <>

@@ -265,7 +265,13 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
           </div>
           {overlay && (
             <div className="flex flex-wrap gap-x-3 sm:gap-x-4 gap-y-1 text-[10px] text-muted-foreground mt-2">
-              <LegendSwatch className="bg-primary" label="FHE (lattice, quantum-safe)" />
+              <LegendSwatch className="bg-primary" label="FHE (lattice, no known quantum break)" />
+              {flow.steps.some((s) => s.link === 'stream') && (
+                <LegendSwatch
+                  className="bg-muted-foreground"
+                  label="Symmetric stream cipher (128-bit key)"
+                />
+              )}
               <LegendSwatch
                 className={pqcFixed ? 'bg-success' : 'bg-destructive'}
                 label={
@@ -317,9 +323,7 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
         <KeySizePanel highlighted={stepKeys} />
 
         <p className="text-[10px] text-muted-foreground leading-snug">
-          Data, compute and FHE key sizes are order-of-magnitude estimates for {SIZE_BASIS[flow.id]}
-          . They shift by 10× with parameters, library and hardware. RSA, AES, ML-KEM and ML-DSA
-          sizes are exact (FIPS 203 / 204).
+          {`Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
@@ -468,7 +472,7 @@ const StepCaption: React.FC<{
           }`}
         >
           <span className="font-bold">{pqcFixed ? link.pqc : link.classical}</span>
-          {!link.threat && <span>lattice-based, already quantum-safe</span>}
+          {!link.threat && <span>{link.safeNote}</span>}
           {exposed && (
             <span>
               {link.threat}. Fix: {link.pqc}
@@ -515,9 +519,10 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
     </div>
     <div className="text-muted-foreground">
       Steps tagged “deployment choice” place a library call inside an HSM. That placement is ours,
-      not part of the library or paper. Each step also shows what pqctoday-hsm (PKCS#11 v3.2 plus
-      vendor mechanisms) can do today: no FHE step runs in it yet; the ML-KEM, ML-DSA, HPKE and
-      AES-GCM building blocks do.
+      not part of the library or paper. pqctoday-hsm is a software token and browser emulator, not
+      hardware custody; its certificates would use a test manufacturing CA and prove no hardware
+      isolation. Each step also shows what pqctoday-hsm (PKCS#11 v3.2 plus vendor mechanisms) can do
+      today: no FHE step runs in it yet; the ML-KEM, ML-DSA, HPKE and AES-GCM building blocks do.
     </div>
   </div>
 )
@@ -805,6 +810,7 @@ function toneFor(s: FlowStep, overlay: boolean, pqcFixed: boolean): Tone {
   if (s.verdict === 'warn') return 'warning'
   if (!overlay || !s.link) return s.verdict === 'ok' ? 'success' : 'primary'
   const threat = LINK_LABELS[s.link as LinkKind].threat
+  if (s.link === 'stream') return 'muted'
   if (!threat) return 'primary'
   return pqcFixed ? 'success' : 'error'
 }

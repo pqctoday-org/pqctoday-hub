@@ -52,7 +52,7 @@ const PARTS: WorkshopPart[] = [
     id: 'fhe-hsm-flows',
     title: 'Step 6: FHE + HSM Flows',
     description:
-      'Step through four ways an HSM supports homomorphic encryption: single-HSM custody, threshold multi-HSM, what fits in the HSM, and AES transciphering. Toggle the quantum overlay to see which links break.',
+      'Step through six scenarios: CKKS and TFHE single-HSM custody, OpenFHE and Lattigo threshold FHE, what fits in the HSM, and Kreyvium transciphering. Toggle the quantum overlay to see which links break.',
     icon: Sigma,
   },
 ]
