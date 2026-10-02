@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Render-parity golden test for the OTPQC ModuleShell conversion.
- * Captured against the PRE-conversion module; must stay green after
- * OTPQC adopts <ModuleShell>, proving the conversion is
- * behaviour-preserving.
+ * Render-parity test for the OTPQC module shell. Originally the golden for
+ * the Energy & Utilities ModuleShell conversion; updated 2026-10-01 for the
+ * IoT/OT split (ot-pqc, "OT & Industrial Control Systems PQC").
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -22,9 +21,13 @@ describe('OTPQC render parity', () => {
       </EmbedProvider>
     )
     // header title (renders the literal "&" — JSX entity in source only)
-    expect(screen.getByRole('heading', { name: 'Energy & Utilities PQC' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'OT & Industrial Control Systems PQC' })
+    ).toBeInTheDocument()
     // in-page description (stable substring)
-    expect(screen.getByText(/PQC migration for power grids and utilities/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/PQC for operational technology across energy, water, rail/)
+    ).toBeInTheDocument()
     // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
