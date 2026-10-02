@@ -83,7 +83,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     sectors: ['energy'],
     transport: 'Layer 2 multicast',
     timingRequirement:
-      'Type 1A trip: TT6, 3 ms or less; TT5 (10 ms or less) covers releases and status changes',
+      'Type 1A trip: class P1 = TT6 (3 ms or less); class P2 = TT5 (10 ms or less)',
     description:
       'Generic Object Oriented Substation Event — Layer 2 multicast for protection trips, interlocks and status. Repeats on change, so it cannot wait for a handshake.',
     standardStatus:
