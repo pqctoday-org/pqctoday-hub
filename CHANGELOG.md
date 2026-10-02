@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.142.0] - 2026-10-02
 
-The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM, post-quantum HPKE is checked against two more published test-vector sets, and search stays smooth after the first search.
+The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM, post-quantum HPKE is checked against two more published test-vector sets, search stays smooth after the first search, and the Library and vendor roadmaps gain new entries.
 
 ### Changed
 
@@ -43,6 +43,12 @@ The JWT workshop's encrypted tokens can now run entirely inside the emulated HSM
 ### Fixed
 
 - **The JWT encryption step no longer says the HSM cannot run the X-Wing hybrid** [view:/learn/api-security-jwt] [persona:developer]: that sentence was wrong; the engine now supports it, and the step runs it.
+- **ETSI TS 103 744 shows the edition it links to** [view:/library] [persona:architect] [persona:researcher]: the entry now carries the V1.2.2 title and its February 2026 date. It had named a V1.3.1 that ETSI never published.
+
+### Data
+
+- **Four more vendor post-quantum roadmaps** [view:/migrate] [persona:architect] [persona:ops]: Threema, SK Telecom, Renesas and Landis+Gyr now have roadmap entries, each taken from the vendor's own dated page.
+- **Two new trusted sources** [view:/library] [persona:grc] [persona:researcher]: Romania's national cybersecurity agency (DNSC) joins as an authoritative source and the Fibre Channel Industry Association as a supporting one.
 
 ## [4.141.0] - 2026-10-02
 
