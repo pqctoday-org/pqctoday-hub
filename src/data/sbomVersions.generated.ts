@@ -392,8 +392,8 @@ export const SBOM_BUILDS: Readonly<
 > = {
   'cacp-kmip': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68278dfe69ad26eddf43ba2d23a76f8a3285528a',
-    sha256: '9c3c990aef1db760ce34d59462e0739a14849afde55ff617495ab103c48e799f',
+    commit: '5e28f11ab6be053a6f26987d49b9eac22558c174',
+    sha256: '9eb00dbcb7da26236968615a962ced9195c24bfba65564aec47b091fc673221f',
   },
   entropy90b: {
     repo: 'usnistgov/SP800-90B_EntropyAssessment',
@@ -412,8 +412,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'openssl-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68278dfe69ad26eddf43ba2d23a76f8a3285528a',
-    sha256: '8a33fc6bf0b080a65abbe09d5532a0efd102d9e52c010e0e7b725b91128adf86',
+    commit: '5e28f11ab6be053a6f26987d49b9eac22558c174',
+    sha256: 'ccdafa7995c1c5fba6b455dedb6b016393090406f615599ebf0529e95e563e8f',
   },
   'pqctoday-tpm': {
     repo: 'pqctoday-org/pqctoday-tpm',

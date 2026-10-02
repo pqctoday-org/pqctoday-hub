@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:3cba25f7-d574-59a5-9d60-ead43b24f3b2",
+  "serialNumber": "urn:uuid:73bd0c8e-17ff-5903-af5f-4df203039ed7",
   "version": 1,
   "metadata": {
     "component": {
@@ -102,13 +102,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "9c3c990aef1db760ce34d59462e0739a14849afde55ff617495ab103c48e799f"
+          "content": "9eb00dbcb7da26236968615a962ced9195c24bfba65564aec47b091fc673221f"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/5e28f11ab6be053a6f26987d49b9eac22558c174"
         }
       ],
       "properties": [
@@ -118,7 +118,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ 68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "value": "built from pqctoday-org/pqctoday-hsm @ 5e28f11ab6be053a6f26987d49b9eac22558c174"
         }
       ]
     },
