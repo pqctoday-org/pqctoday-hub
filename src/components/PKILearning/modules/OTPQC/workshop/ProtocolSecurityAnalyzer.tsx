@@ -315,7 +315,7 @@ export const ProtocolSecurityAnalyzer: React.FC<ProtocolSecurityAnalyzerProps> =
       <KatValidationPanel
         specs={OT_PROTOCOL_KAT_SPECS}
         label="OT symmetric primitive Known Answer Tests"
-        authorityNote="NIST ACVP HMAC-SHA2-256 sample (FIPS 198-1) · RFC 3394 §4.6 AES-256 key wrap"
+        authorityNote="FIPS 198-1 HMAC-SHA2-256 · RFC 3394 §4.6 AES-256 key wrap"
       />
 
       <div className="flex justify-end pt-2">

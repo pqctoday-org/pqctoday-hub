@@ -14,10 +14,10 @@
  *  - ML-DSA sizes come from the algorithm registry (FIPS 204 Table 2).
  *  - XMSS is size-only (registry, RFC 8391); no XMSS code runs here.
  *
- * No LMS or XMSS signature is computed anywhere in this lab: the hub has no
- * vetted LMS verifier wired to a KAT kind yet, so those rows are labelled
- * "Simulated — sizes per RFC 8554 / RFC 8391, no signature computed". ML-DSA
- * is checked by the NIST ACVP ML-DSA sigVer KAT in the step's KAT panel.
+ * No LMS or XMSS signature is computed for the lab's own parameter sets. The
+ * hub's HSS/LMS verifier is checked by the RFC 8554 Appendix F KAT (lms-sigver,
+ * Test Cases 1-2) in the step's KAT panel; XMSS rows stay "Simulated — sizes per
+ * RFC 8391". ML-DSA is checked by the NIST ACVP ML-DSA sigVer KAT.
  */
 import { getAlgorithm } from '@/data/algorithmProperties'
 
@@ -63,7 +63,7 @@ export interface SigningScheme {
   /** total signatures one key can ever make; Infinity for stateless */
   capacity: number
   cnsa2: 'firmware-signing' | 'general-signature' | 'not-cnsa'
-  validation: 'acvp-kat' | 'simulated'
+  validation: 'acvp-kat' | 'rfc8554-kat' | 'simulated'
   note: string
 }
 
@@ -78,7 +78,7 @@ function lmsScheme(h: number, levels: 1 | 2): SigningScheme {
     publicKeyBytes: HSS_PUBLIC_KEY_BYTES,
     capacity: 2 ** (h * levels),
     cnsa2: 'firmware-signing',
-    validation: 'simulated',
+    validation: 'rfc8554-kat',
     note:
       levels === 1
         ? 'One tree: every signature consumes one one-time key, tracked by a counter that must never repeat.'

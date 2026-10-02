@@ -2311,6 +2311,25 @@ const KAT_RUNNER: RegisteredTest[] = [
       { type: 'aesctr-roundtrip' }
     ),
   ]),
+  kat(
+    'lms-sigver',
+    'HSS/LMS verify, RFC 8554 Appendix F Test Cases 1-2',
+    ([1, 2] as const).map((n) =>
+      k(
+        lc(`kat.lms-sigver`, `tc${n}`, STD, 'positive', [x('CKM_HSS', 'verify')], {
+          source: {
+            citation: `RFC 8554 Appendix F, Test Case ${n}`,
+            url: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+          },
+          note:
+            n === 1
+              ? 'Inputs in src/data/kat/lms_hss_rfc8554.json (outside the src/data/acvp vector manifest).'
+              : 'Inputs transcribed from RFC 8554 Appendix F (RFC8554_TC2 in src/utils/katRunner.ts); outside the src/data/acvp vector manifest.',
+        }),
+        { type: 'lms-sigver', testCase: n }
+      )
+    )
+  ),
   kat('aeskw-wrap', 'AES-KW-256 wrap (testIndex 0)', [
     k(
       mc('aeskw_test#/testGroups/0/tests/0', STD, 'positive', [

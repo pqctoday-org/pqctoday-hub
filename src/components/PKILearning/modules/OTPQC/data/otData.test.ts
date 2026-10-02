@@ -115,12 +115,14 @@ describe('KAT labels (plan §4b)', () => {
     for (const s of [...OT_PROTOCOL_KAT_SPECS, ...OT_SIGNING_KAT_SPECS]) {
       const text = `${s.useCase} ${s.standard}`
       expect(text).not.toMatch(/NERC|IEC 62443|SAv6|GOOSE ML-DSA/)
-      expect(s.standard).toMatch(/NIST ACVP|RFC 3394/)
+      expect(s.standard).toMatch(/NIST ACVP|RFC 3394|RFC 8554/)
     }
   })
-  it('use only existing kinds: hmac-verify SHA-256, aeskw-wrap, mldsa-sigver', () => {
+  it('use only registered kinds: hmac-verify SHA-256, aeskw-wrap, mldsa-sigver, lms-sigver', () => {
     const kinds = [...OT_PROTOCOL_KAT_SPECS, ...OT_SIGNING_KAT_SPECS].map((s) => s.kind.type)
-    expect(new Set(kinds)).toEqual(new Set(['hmac-verify', 'aeskw-wrap', 'mldsa-sigver']))
+    expect(new Set(kinds)).toEqual(
+      new Set(['hmac-verify', 'aeskw-wrap', 'mldsa-sigver', 'lms-sigver'])
+    )
   })
 })
 
@@ -243,7 +245,7 @@ describe('Firmware & Project Signing Lab sizes', () => {
     expect(getScheme('ml-dsa-87').signatureBytes).toBe(4627)
     expect(getScheme('ml-dsa-65').signatureBytes).toBe(3309)
   })
-  it('stateless schemes never exhaust; stateful ones are labelled simulated', () => {
+  it('stateless schemes never exhaust; LMS is KAT-checked, XMSS labelled simulated', () => {
     expect(
       planSigning({
         scheme: 'ml-dsa-87',
@@ -253,7 +255,7 @@ describe('Firmware & Project Signing Lab sizes', () => {
         serviceYears: 40,
       }).yearsToExhaustion
     ).toBe(Infinity)
-    expect(getScheme('lms-h20-w8').validation).toBe('simulated')
+    expect(getScheme('lms-h20-w8').validation).toBe('rfc8554-kat')
     expect(getScheme('xmss-h20').validation).toBe('simulated')
     expect(getScheme('ml-dsa-87').validation).toBe('acvp-kat')
   })

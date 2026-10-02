@@ -38,6 +38,14 @@ export const OT_SIGNING_KAT_SPECS: KatTestSpec[] = [
     libraryRefId: 'FIPS 204',
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
+  {
+    id: 'ot-fw-hss-tc1',
+    useCase: 'HSS/LMS firmware verifier, RFC 8554 Test Case 1',
+    standard: 'IETF RFC 8554 Appendix F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+    libraryRefId: 'RFC 8554',
+    kind: { type: 'lms-sigver', testCase: 1 },
+  },
 ]
 
 const USE_OPTIONS: { id: SigningUse; label: string }[] = [
@@ -139,16 +147,18 @@ export const FirmwareSigningLab: React.FC<FirmwareSigningLabProps> = ({ onComple
           <h3 className="text-sm font-bold text-foreground">{result.scheme.label}</h3>
           <span
             className={`text-[10px] rounded px-1.5 py-0.5 border ${
-              result.scheme.validation === 'acvp-kat'
+              result.scheme.validation !== 'simulated'
                 ? 'bg-status-success/10 text-status-success border-status-success/30'
                 : 'bg-muted text-muted-foreground border-border'
             }`}
           >
             {result.scheme.validation === 'acvp-kat'
               ? 'Verified by NIST ACVP KAT below'
-              : result.scheme.family === 'XMSS'
-                ? 'Simulated — sizes per RFC 8391, no signature computed'
-                : 'Simulated — sizes per RFC 8554, no signature computed'}
+              : result.scheme.validation === 'rfc8554-kat'
+                ? 'Verifier checked by the RFC 8554 KAT below; sizes per RFC 8554'
+                : result.scheme.family === 'XMSS'
+                  ? 'Simulated — sizes per RFC 8391, no signature computed'
+                  : 'Simulated — sizes per RFC 8554, no signature computed'}
           </span>
           {result.scheme.cnsa2 !== 'not-cnsa' && (
             <span className="text-[10px] rounded px-1.5 py-0.5 bg-primary/10 text-primary">
@@ -261,7 +271,7 @@ export const FirmwareSigningLab: React.FC<FirmwareSigningLabProps> = ({ onComple
       <KatValidationPanel
         specs={OT_SIGNING_KAT_SPECS}
         label="Firmware signing Known Answer Tests"
-        authorityNote="NIST ACVP ML-DSA sigVer vectors (FIPS 204)"
+        authorityNote="FIPS 204 ML-DSA sigVer vectors · RFC 8554 Appendix F HSS/LMS test cases"
       />
 
       <div className="flex justify-end pt-2">
