@@ -394,8 +394,8 @@ export const SBOM_BUILDS: Readonly<
 > = {
   'cacp-kmip': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68278dfe69ad26eddf43ba2d23a76f8a3285528a',
-    sha256: '9c3c990aef1db760ce34d59462e0739a14849afde55ff617495ab103c48e799f',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
+    sha256: '9eb00dbcb7da26236968615a962ced9195c24bfba65564aec47b091fc673221f',
   },
   entropy90b: {
     repo: 'usnistgov/SP800-90B_EntropyAssessment',
@@ -414,8 +414,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'openssl-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68278dfe69ad26eddf43ba2d23a76f8a3285528a',
-    sha256: '8a33fc6bf0b080a65abbe09d5532a0efd102d9e52c010e0e7b725b91128adf86',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
+    sha256: 'ccdafa7995c1c5fba6b455dedb6b016393090406f615599ebf0529e95e563e8f',
   },
   'pqctoday-tpm': {
     repo: 'pqctoday-org/pqctoday-tpm',
@@ -429,8 +429,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'softhsmrustv3-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68278dfe69ad26eddf43ba2d23a76f8a3285528a',
-    sha256: 'f1f63edb62b48d5ee3d8bbabc0e8578579088d4032a2375f798c87d33a7b0098',
+    commit: 'd09deb33919732dd584123f8dc61f843164eb00d',
+    sha256: '3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211',
   },
   strongswan: {
     repo: 'pqctoday-org/pqctoday-hsm',

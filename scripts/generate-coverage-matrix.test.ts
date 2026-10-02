@@ -113,10 +113,12 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       // rust-kbkdf-iteration-variable-rejected (C++ fixed by hsm #275); Wycheproof —
       // 37.wycheproof-eddsa rust-ed448-accepts-noncanonical-r; 36 (NIST KTS-IFC
       // RSA-OAEP) rust-rsa-private-import-requires-cka-value (exponent limit);
-      // 38.msgmp rust-hash-slh-dsa-deterministic-not-honoured; 37.wycheproof-mldsa
-      // wycheproof-rust-mldsa-sk-range + wycheproof-rust-mldsa-empty-seed.
+      // 38.msgmp rust-hash-slh-dsa-deterministic-not-honoured. (37.wycheproof-mldsa
+      // left this list 2026-10-01: wycheproof-rust-mldsa-sk-range and
+      // wycheproof-rust-mldsa-empty-seed were fixed by pqctoday-hsm PR #308, so a
+      // recorded ML-DSA Wycheproof fail is now unexpected and fails here.)
       expect(f.registryCase, f.registryCase).toMatch(
-        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b|36|37\.wycheproof-(eddsa|mldsa)|38\.msgmp)#/
+        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b|36|37\.wycheproof-eddsa|38\.msgmp)#/
       )
       expect(
         matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)
