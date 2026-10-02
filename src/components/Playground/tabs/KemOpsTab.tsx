@@ -45,6 +45,7 @@ export const HsmKemPanel: React.FC = () => {
   const {
     moduleRef,
     crossCheckModuleRef,
+    crossCheckSessionRef,
     hSessionRef,
     isReady,
     registerKey,
@@ -148,12 +149,22 @@ export const HsmKemPanel: React.FC = () => {
           try {
             // 1. Export pub key from C++ and import into Rust
             const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
-            const rustPub = hsm_importMLKEMPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            const rustPub = hsm_importMLKEMPublicKey(
+              checkM,
+              crossCheckSessionRef.current,
+              variant,
+              pubBytes
+            )
             // 2. Rust encapsulates using C++ public key
-            const rustResult = hsm_encapsulate(checkM, hSessionRef.current, rustPub, variant)
+            const rustResult = hsm_encapsulate(
+              checkM,
+              crossCheckSessionRef.current,
+              rustPub,
+              variant
+            )
             const rustSecret = hsm_extractKeyValue(
               checkM,
-              hSessionRef.current,
+              crossCheckSessionRef.current,
               rustResult.secretHandle
             )
             // 3. C++ decapsulates Rust's ciphertext using C++ private key
@@ -210,11 +221,11 @@ export const HsmKemPanel: React.FC = () => {
             // 1. Generate fresh Rust keypair
             const { pubHandle: rustPub, privHandle: rustPriv } = hsm_generateMLKEMKeyPair(
               checkM,
-              hSessionRef.current,
+              crossCheckSessionRef.current,
               variant
             )
             // 2. Export Rust pub key → import into C++
-            const rustPubBytes = hsm_extractKeyValue(checkM, hSessionRef.current, rustPub)
+            const rustPubBytes = hsm_extractKeyValue(checkM, crossCheckSessionRef.current, rustPub)
             const cppImportedPub = hsm_importMLKEMPublicKey(
               M,
               hSessionRef.current,
@@ -227,12 +238,12 @@ export const HsmKemPanel: React.FC = () => {
             // 4. Rust decapsulates C++'s ciphertext using Rust's private key
             const rustDecapH = hsm_decapsulate(
               checkM,
-              hSessionRef.current,
+              crossCheckSessionRef.current,
               rustPriv,
               cppResult.ciphertextBytes,
               variant
             )
-            const rustSecret = hsm_extractKeyValue(checkM, hSessionRef.current, rustDecapH)
+            const rustSecret = hsm_extractKeyValue(checkM, crossCheckSessionRef.current, rustDecapH)
             // 5. Verify secrets match
             if (!arraysEqual(cppSecret, rustSecret)) {
               setKemError(

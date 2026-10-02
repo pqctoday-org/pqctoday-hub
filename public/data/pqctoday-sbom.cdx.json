@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:831014b0-daef-5860-ab2d-45933cf1bc7b",
+  "serialNumber": "urn:uuid:deb869c3-8d86-5166-88f8-9bf1624a9c53",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.142.0"
+      "version": "4.143.0"
     },
     "properties": [
       {
@@ -102,13 +102,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6c1aec1031ac4dda5ab093afdd2b5f1aff9e7455877f090f2300adf067fb6fba"
+          "content": "d9f89c77501afec46408e6fc612d99d923a2f1611a0b0fb387040a770816c297"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/eda62b31dca307bb478f0a7d596c85d9820f777c"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/b840293655a5f0f46be028b7ba8c5fc71ed72078"
         }
       ],
       "properties": [
@@ -118,7 +118,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ eda62b31dca307bb478f0a7d596c85d9820f777c"
+          "value": "built from pqctoday-org/pqctoday-hsm @ b840293655a5f0f46be028b7ba8c5fc71ed72078"
         }
       ]
     },
@@ -166,13 +166,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3"
+          "content": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/eda62b31dca307bb478f0a7d596c85d9820f777c"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/b840293655a5f0f46be028b7ba8c5fc71ed72078"
         }
       ],
       "properties": [
@@ -182,7 +182,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ eda62b31dca307bb478f0a7d596c85d9820f777c"
+          "value": "built from pqctoday-org/pqctoday-hsm @ b840293655a5f0f46be028b7ba8c5fc71ed72078"
         }
       ]
     },
@@ -199,13 +199,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bc30345f8240c0c10579edf6f50b0fc399fb03cdfa05267dd17d81aa7cc35021"
+          "content": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410"
         }
       ],
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/b840293655a5f0f46be028b7ba8c5fc71ed72078"
         }
       ],
       "properties": [
@@ -215,7 +215,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "built from pqctoday-org/pqctoday-hsm @ 68278dfe69ad26eddf43ba2d23a76f8a3285528a"
+          "value": "built from pqctoday-org/pqctoday-hsm @ b840293655a5f0f46be028b7ba8c5fc71ed72078"
         },
         {
           "name": "pqctoday:note",
@@ -1725,7 +1725,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -1948,7 +1948,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"classic-mceliece-multi\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"classic-mceliece-multi\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",
@@ -3922,7 +3922,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"fips204-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"fips204-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",
@@ -3943,7 +3943,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"fips205-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"fips205-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",
@@ -4066,7 +4066,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -4226,7 +4226,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"hbs-lms-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"hbs-lms-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",
@@ -6314,7 +6314,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"ml-kem-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"ml-kem-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",
@@ -6685,7 +6685,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6706,7 +6706,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6727,7 +6727,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6808,7 +6808,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6876,7 +6876,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -6897,7 +6897,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -8292,7 +8292,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -8313,7 +8313,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "Cargo.lock at eda62b31; leaves no path string in the binary, so not verifiable there"
+          "value": "Cargo.lock at b8402936; leaves no path string in the binary, so not verifiable there"
         },
         {
           "name": "pqctoday:bundles",
@@ -9497,7 +9497,7 @@
       "properties": [
         {
           "name": "pqctoday:evidence",
-          "value": "vendored fork \"xmss-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at eda62b31"
+          "value": "vendored fork \"xmss-patched\": source directory present in the engine binary; version read from the pqctoday-hsm sources at b8402936"
         },
         {
           "name": "pqctoday:bundles",

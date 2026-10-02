@@ -54,8 +54,13 @@ import {
  * commit) now that hsm main itself carries current, PUBLISHED reports.
  * Move the pin — and re-run the importer — when hsm commits regenerated
  * reports; --check says when that has happened on hsm main.
+ *
+ * 2026-10-02: moved to b840293655a5f0f46be028b7ba8c5fc71ed72078, hsm main after
+ * #314, #312 and #313. #312 regenerated cpp_compliance_report.{json,md} (963 PASS,
+ * +2 StatefulThenMac cases for the Session::resetOp fix); the Rust report is
+ * unchanged since the previous pin.
  */
-export const PINNED_HSM_COMMIT = '68278dfe69ad26eddf43ba2d23a76f8a3285528a'
+export const PINNED_HSM_COMMIT = 'b840293655a5f0f46be028b7ba8c5fc71ed72078'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..')
 export const NATIVE_CONFORMANCE_OUT = join(

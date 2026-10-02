@@ -131,8 +131,12 @@ describe('PKCS#11 Learn tab lesson step specs (real wasm engine)', () => {
   }
 
   const ALL_LESSONS = [...FOUNDATIONS_LESSONS, ...V32_LESSONS]
+  // Runs on its own engine instance inside a Web Worker (no Worker in this
+  // Node test); its engine work is replayed against a fresh engine by
+  // certDiscovery/certDiscovery.local.test.ts instead.
+  const WORKER_LESSONS = new Set(['certificate-discovery'])
 
-  for (const lesson of ALL_LESSONS) {
+  for (const lesson of ALL_LESSONS.filter((l) => !WORKER_LESSONS.has(l.id))) {
     it(
       `lesson "${lesson.id}" (${lesson.title}) — every step achieves its declared outcome`,
       { timeout: 30_000 },
