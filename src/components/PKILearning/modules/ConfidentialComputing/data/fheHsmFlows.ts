@@ -924,7 +924,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     bgClass: 'bg-secondary/10',
     scaling: {
       verdict: 'scales',
-      note: 'Built on TFHE, so every key the HSM handles is KB to tens of MB. The public baseline uses Trivium or Kreyvium; AES transciphering exists only in research implementations and is not shown as a flow.',
+      note: 'Built on TFHE, so every key the HSM handles is KB to tens of MB. The public baseline uses Trivium or Kreyvium; TFHE-rs also ships AES-128-CTR transciphering (tfhe::transciphering); this flow shows Kreyvium, the cheaper option.',
     },
     layman: {
       analogy:
@@ -1030,6 +1030,6 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     staysSecret:
       'The TFHE client key (in the HSM) and the Kreyvium key k (only in the clear on the data owner’s device).',
     watchOut:
-      'Use Kreyvium (128-bit key), not Trivium (80-bit), for data that must stay confidential for years. AES transciphering is research-only today.',
+      'Use Kreyvium (128-bit key), not Trivium (80-bit), for data that must stay confidential for years. AES-128-CTR transciphering is available in TFHE-rs but costs more than Kreyvium.',
   },
 ]
