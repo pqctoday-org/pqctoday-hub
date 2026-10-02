@@ -3156,7 +3156,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/learn',
         ctaSecondary: 'The cost of waiting',
         ctaSecondaryHref: '/business/tools/cost-of-inaction',
-        proofChips: ['Plain English by default', 'Plain English by default', 'Nothing to install'],
+        proofChips: ['Plain English by default', 'Nothing to install'],
         sideCard: {
           title: 'The one idea',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3226,11 +3226,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/playground/tls-simulator',
         ctaSecondary: 'See what a breach costs',
         ctaSecondaryHref: '/business/tools/breach-simulator',
-        proofChips: [
-          'Real cryptography, running here',
-          'Plain English by default',
-          'Plain English by default',
-        ],
+        proofChips: ['Real cryptography, running here', 'Plain English by default'],
         sideCard: {
           title: 'The bit that surprises people',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3300,11 +3296,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/playground/digital-id',
         ctaSecondary: 'Follow a Bitcoin transaction',
         ctaSecondaryHref: '/playground/bitcoin-flow',
-        proofChips: [
-          'Real cryptography, running here',
-          'Plain English by default',
-          'Plain English by default',
-        ],
+        proofChips: ['Real cryptography, running here', 'Plain English by default'],
         sideCard: {
           title: 'Three things it touches',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3374,11 +3366,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Meet the people doing the work',
         ctaSecondaryHref: '/leaders',
-        proofChips: [
-          'Plain English by default',
-          'Plain English by default',
-          'Every claim links to its own source',
-        ],
+        proofChips: ['Plain English by default', 'Every claim links to its own source'],
         sideCard: {
           title: 'Where it already stands',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',

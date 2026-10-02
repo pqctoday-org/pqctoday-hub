@@ -212,7 +212,7 @@ curious,break,cta_secondary_label,,See what a breach costs,active,,,2026-08-02,S
 curious,break,cta_secondary_href,,/business/tools/breach-simulator,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,break,proof_chip,0,"Real cryptography, running here",active,,,2026-08-02,
 curious,break,proof_chip,1,Plain English by default,active,,,2026-08-02,
-curious,break,proof_chip,2,Plain English by default,active,,,2026-09-03,"2026-09-03: was 'Every term explained on hover' — PersonaBoardView.tsx renders proof chips, rows and card bodies as plain strings; no hover/glossary mechanism exists on the board itself. Reworded to a claim the board can back (its own headlines/subs are written in plain language)."
+curious,break,proof_chip,2,Plain English by default,deprecated,2026-10-01,"Duplicate of this board's other ""Plain English by default"" chip since the 2026-09-03 rewording; rendered twice and raised a React duplicate-key warning on /. Owner decision 2026-10-01: drop the duplicate (two distinct chips remain).",2026-09-03,"2026-09-03: was 'Every term explained on hover' — PersonaBoardView.tsx renders proof chips, rows and card bodies as plain strings; no hover/glossary mechanism exists on the board itself. Reworded to a claim the board can back (its own headlines/subs are written in plain language)."
 curious,break,side_card_title,,The bit that surprises people,active,,,2026-08-02,
 curious,break,side_card_tone,,bad,active,,,2026-08-02,
 curious,break,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
@@ -577,7 +577,7 @@ curious,short,cta_primary_href,,/learn,active,,,2026-08-02,De-duplicated 2026-08
 curious,short,cta_secondary_label,,The cost of waiting,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 curious,short,cta_secondary_href,,/business/tools/cost-of-inaction,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,short,proof_chip,0,Plain English by default,active,,,2026-08-02,
-curious,short,proof_chip,1,Plain English by default,active,,,2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
+curious,short,proof_chip,1,Plain English by default,deprecated,2026-10-01,"Duplicate of this board's other ""Plain English by default"" chip since the 2026-09-03 rewording; rendered twice and raised a React duplicate-key warning on /. Owner decision 2026-10-01: drop the duplicate (two distinct chips remain).",2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
 curious,short,proof_chip,2,Nothing to install,active,,,2026-08-02,
 curious,short,side_card_title,,The one idea,active,,,2026-08-02,
 curious,short,side_card_tone,,bad,active,,,2026-08-02,
@@ -611,7 +611,7 @@ curious,mylife,cta_secondary_label,,Follow a Bitcoin transaction,active,,,2026-0
 curious,mylife,cta_secondary_href,,/playground/bitcoin-flow,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 curious,mylife,proof_chip,0,"Real cryptography, running here",active,,,2026-08-02,
 curious,mylife,proof_chip,1,Plain English by default,active,,,2026-08-02,
-curious,mylife,proof_chip,2,Plain English by default,active,,,2026-09-03,"2026-09-03: see curious/break's proof_chip,2 note."
+curious,mylife,proof_chip,2,Plain English by default,deprecated,2026-10-01,"Duplicate of this board's other ""Plain English by default"" chip since the 2026-09-03 rewording; rendered twice and raised a React duplicate-key warning on /. Owner decision 2026-10-01: drop the duplicate (two distinct chips remain).",2026-09-03,"2026-09-03: see curious/break's proof_chip,2 note."
 curious,mylife,side_card_title,,Three things it touches,active,,,2026-08-02,
 curious,mylife,side_card_tone,,info,active,,,2026-08-02,
 curious,mylife,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
@@ -1190,7 +1190,7 @@ curious,anyone,cta_primary_href,,/timeline,active,,,2026-08-09,
 curious,anyone,cta_secondary_label,,Meet the people doing the work,active,,,2026-08-09,
 curious,anyone,cta_secondary_href,,/leaders,active,,,2026-08-09,
 curious,anyone,proof_chip,0,Plain English by default,active,,,2026-08-09,
-curious,anyone,proof_chip,1,Plain English by default,active,,,2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
+curious,anyone,proof_chip,1,Plain English by default,deprecated,2026-10-01,"Duplicate of this board's other ""Plain English by default"" chip since the 2026-09-03 rewording; rendered twice and raised a React duplicate-key warning on /. Owner decision 2026-10-01: drop the duplicate (two distinct chips remain).",2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
 curious,anyone,proof_chip,2,Every claim links to its own source,active,,,2026-08-09,
 curious,anyone,side_card_title,,Where it already stands,active,,,2026-08-09,
 curious,anyone,side_card_tone,,info,active,,,2026-08-09,
