@@ -3,9 +3,9 @@
   "$disclaimer": "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
-    "src/data/validation/mechanism-inventory.generated.json": "aa5d6bed48eba36d9be1a860af770958a1c5328d37325fb3f4944a865f4ddb69",
+    "src/data/validation/mechanism-inventory.generated.json": "889ae0aaa05de46ed1e8e4a8c4244a8cf4641f987b30be2206bb4e20aa5c57d7",
     "src/data/validation/capability-map.json": "5e728d04aabfa26aa9c135ca7d78a2716823b1f7f260c2663bb9d516a0416923",
-    "src/data/validation/vector-manifest.json": "8579845d70cfa09c081fa8cea25fd3f4bb336ffa4abdf340702e9dd0866f71ea",
+    "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
     "src/data/validation/testRegistry.ts": "428c12e39b2f7be7cc1b7e6d9ff9b0f49e77b26b7655d5967dd28c36737028df"
@@ -76,11 +76,11 @@
       "label": "Rust",
       "mechanismCount": 175,
       "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
-      "sourceCommit": "d09deb33919732dd584123f8dc61f843164eb00d",
+      "sourceCommit": "eda62b31dca307bb478f0a7d596c85d9820f777c",
       "artifacts": [
         {
           "path": "src/wasm/softhsmrustv3_bg.wasm",
-          "sha256": "3b08e81298d6fed138f08730986d0b98ac0dc3ebd084334b596649e3c2e05211"
+          "sha256": "78d9c3fa61b6230f75ede293a03d35fab2c8ec7890be6c471b3caccc374fa2d3"
         },
         {
           "path": "src/wasm/softhsmrustv3_bg.js",
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-01, hub b80212388). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-02, hub 9d8ee910d). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -110,12 +110,12 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v22.23.1",
+        "node": "v20.20.2",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "b80212388d0bbcf8dbac1e935e3b570f052ac8d5",
-      "recordedAt": "2026-10-01",
+      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "recordedAt": "2026-10-02",
       "results": 4992
     },
     {
@@ -124,12 +124,12 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v22.23.1",
+        "node": "v20.20.2",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "b80212388d0bbcf8dbac1e935e3b570f052ac8d5",
-      "recordedAt": "2026-10-01",
+      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "recordedAt": "2026-10-02",
       "results": 94
     },
     {
@@ -138,12 +138,12 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v22.23.1",
+        "node": "v20.20.2",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "b80212388d0bbcf8dbac1e935e3b570f052ac8d5",
-      "recordedAt": "2026-10-01",
+      "hubCommit": "9d8ee910d98b20080ddb8ed22096d8e6cab8de88",
+      "recordedAt": "2026-10-02",
       "results": 13364
     }
   ],

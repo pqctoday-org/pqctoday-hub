@@ -71,7 +71,8 @@ export const APISecurityJWTPlayground: React.FC = () => {
     <div className="space-y-4">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
-        HPKE-based ML-KEM JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
+        HPKE-based ML-KEM JWE encryption, which can run entirely inside softhsmv3 via PKCS#11
+        CKM_HPKE.{' '}
         <Link
           to="/learn/api-security-jwt?tab=workshop"
           className="text-primary underline underline-offset-2"

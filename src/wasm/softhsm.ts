@@ -686,10 +686,19 @@ export const CKP_HPKE_KEM_DHKEM_X448_HKDF_SHA512 = 0x0021
 export const CKP_HPKE_KEM_MLKEM768_P256 = 0x0050
 export const CKP_HPKE_KEM_MLKEM1024_P384 = 0x0051
 export const CKP_HPKE_KEM_MLKEM768_X25519 = 0x647a
+// Pure ML-KEM HPKE KEMs (draft-ietf-hpke-pq-04 §3). Private key = the 64-byte
+// FIPS 203 seed d ‖ z. Engine support since hsm #310 (eda62b31).
+export const CKP_HPKE_KEM_ML_KEM_512 = 0x0040
+export const CKP_HPKE_KEM_ML_KEM_768 = 0x0041
+export const CKP_HPKE_KEM_ML_KEM_1024 = 0x0042
 // CK_HPKE_KDF_TYPE — equal to RFC 9180 §7.2 kdf_id.
 export const CKD_HPKE_HKDF_SHA256 = 0x0001
 export const CKD_HPKE_HKDF_SHA384 = 0x0002
 export const CKD_HPKE_HKDF_SHA512 = 0x0003
+// One-stage SHAKE256 KDF (draft-ietf-hpke-pq-04 §5; key schedule per
+// draft-ietf-hpke-hpke-03 LabeledDerive / CombineSecrets_OneStage). Base and
+// PSK modes only. Engine support since hsm #310 (eda62b31).
+export const CKD_HPKE_SHAKE256 = 0x0011
 // CK_HPKE_AEAD_TYPE — equal to RFC 9180 §7.3 aead_id.
 export const CKZ_HPKE_AEAD_128_GCM = 0x0001
 export const CKZ_HPKE_AEAD_256_GCM = 0x0002
@@ -4009,7 +4018,14 @@ export interface HpkeMechParams {
   hSenderStaticKey?: number
   /** Auth/AuthPSK, Decap (recipient) side only: the sender's static public key's raw CKA_VALUE bytes. */
   senderPk?: Uint8Array
-  /** Classical KEM ids only; forces the ephemeral keypair for byte-exact RFC 9180 Appendix A reproduction. Test-only — never use for real traffic. */
+  /**
+   * Forces the encapsulation randomness for byte-exact published-vector
+   * replay: the ephemeral keypair seed for classical DHKEMs (RFC 9180 App. A),
+   * FIPS 203 `m` for pure ML-KEM, and the CFRG `randomness` (m ‖ classical
+   * seed) for the PQ/T hybrids (since hsm #310). Test-only — never use for real
+   * traffic; only known-answer test files may set it (guardrail test in
+   * hpkeJweHsm.local.test.ts).
+   */
   ephemeralSeed?: Uint8Array
 }
 
@@ -4093,29 +4109,51 @@ function buildHpkeParams(
 }
 
 /** CKM_HPKE_KEM_KEY_PAIR_GEN → {pubHandle, privHandle}. `kemId` selects a
- * classical or hybrid shape (CKP_HPKE_KEM_* above); the engine reads only
- * CKA_PARAMETER_SET from the public template in this Phase-1 implementation
- * — no other caller template attribute is threaded through yet. */
+ * classical, hybrid or pure ML-KEM shape (CKP_HPKE_KEM_* above); the engine
+ * reads CKA_PARAMETER_SET from the public template.
+ *
+ * `seed` imports a seed-format private key instead of generating a random
+ * one: CKA_SEED in the private template, 64 bytes (d ‖ z) for the pure ML-KEM
+ * suites and 32 bytes for the PQ/T hybrids (draft-ietf-hpke-pq-04 §3/§4). The
+ * public key is derived inside the token. This is how a JOSE "AKP" JWK's
+ * "priv" value (the seed) enters the HSM. */
 export const hsm_generateHpkeKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  kemId: number
+  kemId: number,
+  seed?: Uint8Array
 ): { pubHandle: number; privHandle: number } => {
+  const prvAttrs: AttrDef[] = [{ type: CKA_PARAMETER_SET, ulongVal: kemId }]
+  const seedPtr = seed ? writeBytes(M, seed) : 0
+  if (seed) prvAttrs.push({ type: CKA_SEED, bytesPtr: seedPtr, bytesLen: seed.length })
   const pubTpl = buildTemplate(M, [{ type: CKA_PARAMETER_SET, ulongVal: kemId }])
-  const prvTpl = buildTemplate(M, [{ type: CKA_PARAMETER_SET, ulongVal: kemId }])
+  const prvTpl = buildTemplate(M, prvAttrs)
   const mech = buildMech(M, CKM_HPKE_KEM_KEY_PAIR_GEN)
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 1, prvTpl.ptr, 1, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        1,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(CKM_HPKE_KEM_KEY_PAIR_GEN)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     freeTemplate(M, pubTpl, 1)
-    freeTemplate(M, prvTpl, 1)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    if (seedPtr) {
+      M.HEAPU8.fill(0, seedPtr, seedPtr + seed!.length)
+      M._free(seedPtr)
+    }
     M._free(pubHPtr)
     M._free(prvHPtr)
   }

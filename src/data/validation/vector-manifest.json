@@ -16309,7 +16309,7 @@
             "jose-hpke-pq-pqt-01-examples#/vectors/1"
           ],
           "upstreamOperation": "JWE encryption examples produced by the draft authors with the `hpke` npm package on Node's native WebCrypto ML-KEM",
-          "localOperation": "jwe-decrypt of the compact and flattened (with JWE AAD) examples under the published private JWK, with noble ML-KEM-768 / X-Wing / SHAKE256 plugged into `hpke`; pub re-derived from the priv seed; -22 header rules and tamper cases (hpkeJwe.test.ts)",
+          "localOperation": "jwe-decrypt of the compact and flattened (with JWE AAD) examples under the published private JWK, with noble ML-KEM-768 / X-Wing / SHAKE256 plugged into `hpke`; pub re-derived from the priv seed; -22 header rules and tamper cases (hpkeJwe.test.ts). Also: priv imported into SoftHSM3 as CKA_SEED, pub re-derived in the token, compact example opened with C_DecapsulateKey(CKM_HPKE) + C_Decrypt(AES-256-GCM) (hpkeJweHsm.local.test.ts)",
           "transformations": [
             {
               "type": "subset",
@@ -16324,7 +16324,1006 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; the HPKE key schedule is the same `hpke` package on both sides."
+      "notes": "Added 2026-10-01 (HPKE/JWE follow-up to the api-security-jwt remediation) to replace the self-pinned jose-pqc-kem-jwe-kat snapshot, whose pqc-kem-05 direct-KEM JWE was dropped from JOSE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard. Independence: the KEM, KDF and JOSE wiring are checked against a different implementation; in the browser path the HPKE key schedule is the same `hpke` package on both sides. Since 2026-10-01 both examples also decrypt inside SoftHSM3 (Rust engine, PKCS#11 CKM_HPKE, pqctoday-hsm #310), whose ML-KEM, X-Wing, SHAKE256 key schedule and AES-GCM share no code with `hpke` or the authors' generator (hpkeJweHsm.local.test.ts)."
+    },
+    {
+      "id": "hpke-pq-04-test-vectors",
+      "path": "src/data/acvp/hpke-pq-04-test-vectors.json",
+      "sha256": "a14a415f3730b60c08686f1e7c337089af6649b1baac8e2b9d5be324cdd82823",
+      "status": "quarantined",
+      "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "internet-draft",
+        "citation": "draft-ietf-hpke-pq-04 Appendix A test vectors (the hpkewg/hpke-pq repository's test-vectors.json) — an Internet-Draft (work in progress), not an RFC",
+        "url": "https://raw.githubusercontent.com/hpkewg/hpke-pq/6433c8fce0b8b749dfc86c1095081a88698ccfab/test-vectors.json",
+        "revision": "draft-ietf-hpke-pq-04",
+        "verification": {
+          "date": "2026-10-01",
+          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py from the hpkewg/hpke-pq repository at commit 6433c8fce0b8b749dfc86c1095081a88698ccfab (the generator behind draft-ietf-hpke-pq-04 Appendix A). Byte-identical to pqctoday-hsm rust/kat/hpke/hpke-pq-test-vectors.json (rust/kat/hpke/PROVENANCE.md). Before any engine code existed, an independent Node reference model (noble ML-KEM, hybrids and SHAKE256; not the hsm engine, not the `hpke` package) reproduced every in-scope value.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "hpkewg/hpke-pq test-vectors.json @ 6433c8fc",
+              "url": "https://raw.githubusercontent.com/hpkewg/hpke-pq/6433c8fce0b8b749dfc86c1095081a88698ccfab/test-vectors.json",
+              "sha256": "35c59f4a0132e5631e50ac039d8ca3a72e99f5e92dfd94d45338d6ae243f613c"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "Test vectors from the IETF HPKE working group's draft repository; IETF Internet-Draft material is subject to the IETF Trust Legal Provisions (BCP 78/79). Redistribution of the vector values has not been reviewed.",
+        "reviewed": false
+      },
+      "caseContainers": [
+        {
+          "pointer": "/vectors",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/0",
+          "pointer": "/vectors/0",
+          "algorithm": {
+            "name": "HPKE ML-KEM-512 / HKDF-SHA256 / AES-128-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 64,
+            "kdf_id": 1,
+            "aead_id": 1
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 0 (kem 0x0040, kdf 0x0001, aead 0x0001)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/1",
+          "pointer": "/vectors/1",
+          "algorithm": {
+            "name": "HPKE ML-KEM-768 / HKDF-SHA256 / AES-128-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 65,
+            "kdf_id": 1,
+            "aead_id": 1
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 1 (kem 0x0041, kdf 0x0001, aead 0x0001)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/2",
+          "pointer": "/vectors/2",
+          "algorithm": {
+            "name": "HPKE ML-KEM-1024 / HKDF-SHA384 / AES-256-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 66,
+            "kdf_id": 2,
+            "aead_id": 2
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 2 (kem 0x0042, kdf 0x0002, aead 0x0002)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/3",
+          "pointer": "/vectors/3",
+          "algorithm": {
+            "name": "HPKE MLKEM768-P256 / HKDF-SHA256 / AES-128-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 80,
+            "kdf_id": 1,
+            "aead_id": 1
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 3 (kem 0x0050, kdf 0x0001, aead 0x0001)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/4",
+          "pointer": "/vectors/4",
+          "algorithm": {
+            "name": "HPKE MLKEM768-X25519 / HKDF-SHA256 / ChaCha20Poly1305",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 25722,
+            "kdf_id": 1,
+            "aead_id": 3
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 4 (kem 0x647a, kdf 0x0001, aead 0x0003)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/5",
+          "pointer": "/vectors/5",
+          "algorithm": {
+            "name": "HPKE MLKEM1024-P384 / HKDF-SHA384 / AES-256-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 81,
+            "kdf_id": 2,
+            "aead_id": 2
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 5 (kem 0x0051, kdf 0x0002, aead 0x0002)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/6",
+          "pointer": "/vectors/6",
+          "algorithm": {
+            "name": "HPKE DHKEM(P-256, HKDF-SHA256) / SHAKE128 / AES-128-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 16,
+            "kdf_id": 16,
+            "aead_id": 1
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 6 (kem 0x0010, kdf 0x0010, aead 0x0001)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/7",
+          "pointer": "/vectors/7",
+          "algorithm": {
+            "name": "HPKE DHKEM(P-384, HKDF-SHA384) / SHAKE256 / AES-256-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 17,
+            "kdf_id": 17,
+            "aead_id": 2
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 7 (kem 0x0011, kdf 0x0011, aead 0x0002)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/8",
+          "pointer": "/vectors/8",
+          "algorithm": {
+            "name": "HPKE DHKEM(X25519, HKDF-SHA256) / TurboSHAKE128 / ChaCha20Poly1305",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 32,
+            "kdf_id": 18,
+            "aead_id": 3
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 8 (kem 0x0020, kdf 0x0012, aead 0x0003)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/9",
+          "pointer": "/vectors/9",
+          "algorithm": {
+            "name": "HPKE DHKEM(X448, HKDF-SHA512) / TurboSHAKE256 / ChaCha20Poly1305",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 33,
+            "kdf_id": 19,
+            "aead_id": 3
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 9 (kem 0x0021, kdf 0x0013, aead 0x0003)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/10",
+          "pointer": "/vectors/10",
+          "algorithm": {
+            "name": "HPKE MLKEM768-P256 / SHAKE128 / AES-256-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 80,
+            "kdf_id": 16,
+            "aead_id": 2
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 10 (kem 0x0050, kdf 0x0010, aead 0x0002)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/11",
+          "pointer": "/vectors/11",
+          "algorithm": {
+            "name": "HPKE MLKEM768-X25519 / SHAKE256 / ChaCha20Poly1305",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 25722,
+            "kdf_id": 17,
+            "aead_id": 3
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 11 (kem 0x647a, kdf 0x0011, aead 0x0003)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-1"]
+        },
+        {
+          "caseId": "hpke-pq-04-test-vectors#/vectors/12",
+          "pointer": "/vectors/12",
+          "algorithm": {
+            "name": "HPKE ML-KEM-1024 / TurboSHAKE256 / AES-128-GCM",
+            "revision": "draft-ietf-hpke-pq-04"
+          },
+          "operation": "not-executed",
+          "parameters": {
+            "mode": 0,
+            "kem_id": 66,
+            "kdf_id": 19,
+            "aead_id": 1
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-hpke-pq-04 Appendix A test vector 12 (kem 0x0042, kdf 0x0013, aead 0x0001)"
+          },
+          "lineage": ["hpke-pq-04-test-vectors-2"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "hpke-pq-04-test-vectors-1",
+          "appliesTo": [
+            "hpke-pq-04-test-vectors#/vectors/0",
+            "hpke-pq-04-test-vectors#/vectors/1",
+            "hpke-pq-04-test-vectors#/vectors/2",
+            "hpke-pq-04-test-vectors#/vectors/3",
+            "hpke-pq-04-test-vectors#/vectors/4",
+            "hpke-pq-04-test-vectors#/vectors/5",
+            "hpke-pq-04-test-vectors#/vectors/11"
+          ],
+          "upstreamOperation": "HPKE base-mode test vectors generated by the hpkewg Rust generator: DeriveKeyPair(ikmR), deterministic Encap(ikmE), key schedule, 10 encryptions and 5 exports per suite",
+          "localOperation": "Through the hub's PKCS#11 binding on the SoftHSM3 Rust engine (src/wasm/hpkePqVectors.local.test.ts): skRm imported as CKA_SEED, public key compared with pkRm; C_EncapsulateKey(CKM_HPKE) with the test-only forced randomness ikmE compared with enc; base_nonce and exporter_secret compared on both the sender and the recipient (C_DecapsulateKey) side; every encryption reproduced by C_Encrypt on the non-extractable AEAD key at nonce base_nonce XOR seq and opened by the recipient key. DeriveKeyPair(ikmR), shared_secret, key and the exports are checked by the engine's cargo tests (pqctoday-hsm rust/src/hpke_pq_vectors_tests.rs).",
+          "transformations": [
+            {
+              "type": "field-add",
+              "detail": "The upstream bare JSON array is carried unchanged under /vectors; top-level $schema, spec, upstream_vectors_url, upstream_vectors_sha256 and retrieved_at added."
+            },
+            {
+              "type": "operation-change",
+              "detail": "The hub replay compares pkRm, enc, base_nonce, exporter_secret and every encryption through the PKCS#11 binding; ikmR (DeriveKeyPair), shared_secret, key and exports[] are not compared there (CKM_HPKE never releases shared_secret or the AEAD key, and the binding has no export call) and are checked by the engine's cargo tests instead."
+            }
+          ]
+        },
+        {
+          "id": "hpke-pq-04-test-vectors-2",
+          "appliesTo": [
+            "hpke-pq-04-test-vectors#/vectors/6",
+            "hpke-pq-04-test-vectors#/vectors/7",
+            "hpke-pq-04-test-vectors#/vectors/8",
+            "hpke-pq-04-test-vectors#/vectors/9",
+            "hpke-pq-04-test-vectors#/vectors/10",
+            "hpke-pq-04-test-vectors#/vectors/12"
+          ],
+          "upstreamOperation": "Same generator: classical DHKEM suites with the one-stage SHAKE128/TurboSHAKE KDFs, and PQ suites with those KDFs",
+          "localOperation": "Not executed: the engine implements only the SHAKE256 one-stage KDF (owner decision D1, 2026-10-01). The DHKEM(P-384)/SHAKE256 suite's key schedule is checked by the engine's cargo tests only.",
+          "transformations": [
+            {
+              "type": "field-add",
+              "detail": "Carried unchanged under /vectors, as for the executed cases."
+            },
+            {
+              "type": "subset",
+              "detail": "Not executed in the hub: suites whose KEM is classical DHKEM or whose KDF is SHAKE128/TurboSHAKE128/TurboSHAKE256 (only the SHAKE256 one-stage KDF is implemented, owner decision D1)."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "Added 2026-10-01 with the CKM_HPKE SHAKE256 / pure ML-KEM / seed-key engine work (pqctoday-hsm #310) and the in-token JWE. QUARANTINED pending the WS-I two-person vector-source review. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard."
+    },
+    {
+      "id": "cfrg-concrete-hybrid-kems-test-vectors",
+      "path": "src/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json",
+      "sha256": "80ad6e5509dd7e27255bf999b8575f00c0f24d44e2be4bf1277154ff30aabe85",
+      "status": "quarantined",
+      "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active.",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "internet-draft",
+        "citation": "draft-irtf-cfrg-concrete-hybrid-kems test vectors (the CFRG draft repository's test-vectors.json) — an IRTF Internet-Draft (work in progress), not an RFC",
+        "url": "https://raw.githubusercontent.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/e76e1939fb5bec71d3d6c206de20ca2c008f1f80/test-vectors.json",
+        "revision": "draft-irtf-cfrg-concrete-hybrid-kems (repository commit e76e1939)",
+        "verification": {
+          "date": "2026-10-01",
+          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py from github.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems at commit e76e1939fb5bec71d3d6c206de20ca2c008f1f80. Byte-identical to pqctoday-hsm rust/kat/hpke/cfrg-concrete-hybrid-kems-test-vectors.json (rust/kat/hpke/PROVENANCE.md). An independent Node reference model (noble hybrids) reproduced all 30 vectors before any engine code existed.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "cfrg/draft-irtf-cfrg-concrete-hybrid-kems test-vectors.json @ e76e1939",
+              "url": "https://raw.githubusercontent.com/cfrg/draft-irtf-cfrg-concrete-hybrid-kems/e76e1939fb5bec71d3d6c206de20ca2c008f1f80/test-vectors.json",
+              "sha256": "08b47d9fe5c827f7ceb20dd10a59bc853a949d6eaf0ad835405e86d833f92bad"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "Test vectors from the CFRG draft repository; IRTF Internet-Draft material is subject to the IETF Trust Legal Provisions (BCP 78/79). Redistribution of the vector values has not been reviewed.",
+        "reviewed": false
+      },
+      "caseContainers": [
+        {
+          "pointer": "/vectors",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/0",
+          "pointer": "/vectors/0",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[0]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/1",
+          "pointer": "/vectors/1",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[1]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/2",
+          "pointer": "/vectors/2",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[2]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/3",
+          "pointer": "/vectors/3",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[3]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/4",
+          "pointer": "/vectors/4",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[4]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/5",
+          "pointer": "/vectors/5",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[5]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/6",
+          "pointer": "/vectors/6",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[6]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/7",
+          "pointer": "/vectors/7",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[7]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/8",
+          "pointer": "/vectors/8",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[8]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/9",
+          "pointer": "/vectors/9",
+          "algorithm": {
+            "name": "MLKEM768-P256",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-P256"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_p256[9]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/10",
+          "pointer": "/vectors/10",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[0]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/11",
+          "pointer": "/vectors/11",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[1]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/12",
+          "pointer": "/vectors/12",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[2]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/13",
+          "pointer": "/vectors/13",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[3]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/14",
+          "pointer": "/vectors/14",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[4]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/15",
+          "pointer": "/vectors/15",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[5]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/16",
+          "pointer": "/vectors/16",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[6]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/17",
+          "pointer": "/vectors/17",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[7]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/18",
+          "pointer": "/vectors/18",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[8]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/19",
+          "pointer": "/vectors/19",
+          "algorithm": {
+            "name": "MLKEM768-X25519",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem768_x25519[9]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/20",
+          "pointer": "/vectors/20",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[0]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/21",
+          "pointer": "/vectors/21",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[1]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/22",
+          "pointer": "/vectors/22",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[2]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/23",
+          "pointer": "/vectors/23",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[3]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/24",
+          "pointer": "/vectors/24",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[4]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/25",
+          "pointer": "/vectors/25",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[5]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/26",
+          "pointer": "/vectors/26",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[6]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/27",
+          "pointer": "/vectors/27",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[7]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/28",
+          "pointer": "/vectors/28",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[8]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        },
+        {
+          "caseId": "cfrg-concrete-hybrid-kems-test-vectors#/vectors/29",
+          "pointer": "/vectors/29",
+          "algorithm": {
+            "name": "MLKEM1024-P384",
+            "revision": "draft-irtf-cfrg-concrete-hybrid-kems"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM1024-P384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-irtf-cfrg-concrete-hybrid-kems test vector mlkem1024_p384[9]"
+          },
+          "lineage": ["cfrg-concrete-hybrid-kems-test-vectors-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "cfrg-concrete-hybrid-kems-test-vectors-1",
+          "appliesTo": [
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/0",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/1",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/2",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/3",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/4",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/5",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/6",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/7",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/8",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/9",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/10",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/11",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/12",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/13",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/14",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/15",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/16",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/17",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/18",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/19",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/20",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/21",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/22",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/23",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/24",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/25",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/26",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/27",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/28",
+            "cfrg-concrete-hybrid-kems-test-vectors#/vectors/29"
+          ],
+          "upstreamOperation": "Concrete hybrid KEM vectors from the CFRG reference implementation: seed → keys, randomness → ciphertext and shared secret",
+          "localOperation": "Through the hub's PKCS#11 binding on the SoftHSM3 Rust engine (src/wasm/hpkePqVectors.local.test.ts): seed imported as CKA_SEED on CKM_HPKE_KEM_KEY_PAIR_GEN, public key compared with encapsulation_key; C_EncapsulateKey(CKM_HPKE, HKDF-SHA256/AES-256-GCM) with the test-only forced randomness compared with ciphertext; the recipient's C_DecapsulateKey derives the same base nonce and AEAD key (seal/open round trip). The shared secret itself is checked by the engine's cargo tests (rust/src/hpke_pq_vectors_tests.rs).",
+          "transformations": [
+            {
+              "type": "renumber",
+              "detail": "The three upstream per-KEM arrays (mlkem768_x25519, mlkem768_p256, mlkem1024_p384, 10 each) are concatenated in that order under /vectors: upstream <kem>[j] is local /vectors/(10*kemIndex + j)."
+            },
+            {
+              "type": "field-add",
+              "detail": "Each vector gains a \"kem\" field naming its upstream key; top-level $schema, spec, upstream_vectors_url, upstream_vectors_sha256 and retrieved_at added."
+            },
+            {
+              "type": "operation-change",
+              "detail": "The hub replay compares encapsulation_key (from the imported seed) and ciphertext (from the forced randomness) through the PKCS#11 binding and checks that both sides derive the same AEAD key; decapsulation_key, decapsulation_key_pq, decapsulation_key_t and shared_secret are not compared there (CKM_HPKE never releases them) and are checked by the engine's cargo tests instead."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "Added 2026-10-01 with pqctoday-hsm #310 (seed-format hybrid HPKE keys, forced encapsulation randomness for KATs). QUARANTINED pending the WS-I two-person vector-source review. Internet-Draft: a claim must name the draft, never call it a standard."
     },
     {
       "id": "kbkdf_acvp_test",

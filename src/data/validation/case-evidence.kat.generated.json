@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "03bfd46d07f34bf3e66d1824dcb3a90515457f93e9b32227b54715f267454e44",
+    "manifestSha256": "a66f85bd5fc80426d6f902bbe58bc5be0cb244c352223b196c0f7dae3c834df8",
     "registrySha256": "cbed2db1f7d410a96527620392c065b9e2acc30aa5b651b9d1311d8a2661cc4c"
   },
   "records": {
@@ -3445,6 +3445,7 @@
     "acvp/aesgcm_test.json": "published-standard-kat",
     "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aeskw_test.json": "published-standard-kat",
+    "acvp/cfrg-concrete-hybrid-kems-test-vectors.json": "unverified",
     "acvp/composite-sigs-04-jose-examples.json": "unverified",
     "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
     "acvp/cose-sphincs-plus-10-examples.json": "unverified",
@@ -3465,6 +3466,7 @@
     "acvp/hmac_sha384_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_test.json": "nist-acvp-reference-sample",
+    "acvp/hpke-pq-04-test-vectors.json": "unverified",
     "acvp/jose-hpke-pq-pqt-01-examples.json": "unverified",
     "acvp/kbkdf_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/kmac_acvp_test.json": "nist-acvp-reference-sample",
