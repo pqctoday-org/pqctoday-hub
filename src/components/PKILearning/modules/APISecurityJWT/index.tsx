@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Search, PenLine, Layers, Lock, BarChart3, Activity } from 'lucide-react'
+import { Search, PenLine, Layers, Lock, BarChart3, Activity, ShieldAlert } from 'lucide-react'
 import { APISecurityIntroduction } from './components/APISecurityIntroduction'
 import { APISecurityExercises } from './components/APISecurityExercises'
 import { JWTInspector } from './workshop/JWTInspector'
@@ -9,6 +9,7 @@ import { HybridJWT } from './workshop/HybridJWT'
 import { JWEEncryption } from './workshop/JWEEncryption'
 import { TokenSizeAnalyzer } from './workshop/TokenSizeAnalyzer'
 import { JOSEProtocolMatrixAudit } from './workshop/JOSEProtocolMatrixAudit'
+import { JWTAttackLab } from './workshop/JWTAttackLab'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -49,6 +50,13 @@ const PARTS: WorkshopPart[] = [
     description: 'Audit the JOSE row of the PQC Protocol Matrix and propose a patch.',
     icon: Activity,
   },
+  {
+    id: 'attack-lab',
+    title: 'Step 7: Attack Lab',
+    description:
+      'Try alg:none, edited claims, wrong audience, expiry and token-type attacks against a strict and a naive verifier.',
+    icon: ShieldAlert,
+  },
 ]
 
 export const APISecurityJWTModule: FC = () => (
@@ -78,6 +86,8 @@ export const APISecurityJWTModule: FC = () => (
           return <TokenSizeAnalyzer key={`size-analyzer-${configKey}`} />
         case 5:
           return <JOSEProtocolMatrixAudit key={`matrix-audit-${configKey}`} />
+        case 6:
+          return <JWTAttackLab key={`attack-lab-${configKey}`} />
         default:
           return null
       }

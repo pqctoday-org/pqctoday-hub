@@ -85,6 +85,17 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
         'SLH-DSA-SHA2-128s produces the largest signature (7,856 bytes) but the smallest public key (32 bytes). ML-DSA-87 balances key and signature sizes. Only classical algorithms fit comfortably in standard HTTP headers.',
       config: { step: 4 },
     },
+    {
+      id: 'attack-lab',
+      title: '6. Break a JWT verifier',
+      description:
+        'Issue a real ML-DSA-65 access token, then try five attacks on it: "alg": "none", edited claims under the original signature, a token minted for another API, an expired token, and an ID token presented as an access token. Compare what a strict RFC 8725 validator and a naive verifier each accept.',
+      badge: 'Attack Lab',
+      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
+      observe:
+        'The naive verifier is fooled by four of the five attacks, including a token with no signature at all. Only edited claims fail on the signature; every other attack is stopped by a check the API must do itself: pinning the algorithm, the audience, the expiry and the token type. Changing the signature algorithm to ML-DSA fixes none of them.',
+      config: { step: 6 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {
