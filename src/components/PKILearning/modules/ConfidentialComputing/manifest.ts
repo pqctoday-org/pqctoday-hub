@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
