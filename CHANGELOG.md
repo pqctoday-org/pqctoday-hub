@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [Unreleased]
+## [4.144.0] - 2026-10-02
 
 Confidential Computing now teaches fully homomorphic encryption, with a workshop step showing how an HSM can hold FHE keys.
 
