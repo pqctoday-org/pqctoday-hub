@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-pqc',
   version: '2.0.0',
   lastReviewed: '2026-10-01',
-  lastEdited: '2026-10-01',
+  lastEdited: '2026-10-02',
 
   standards: [
     // The yardstick first: RFC 7228 defines Classes 0-2 and the 7228bis draft
