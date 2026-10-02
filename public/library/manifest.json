@@ -21186,6 +21186,51 @@
       "unified": "converted",
       "admittedAt": "2026-10-01T01:33:58.608408+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "Considerations-for-Selecting-Post-Quantum-Algorithms-for-DNS",
+      "title": "Considerations for Selecting Post-Quantum Algorithms for DNSSEC",
+      "url": "https://www.ietf.org/archive/id/draft-hoffman-pq-dnssec-considerations-01.txt",
+      "status": "downloaded",
+      "filename": "Considerations-for-Selecting-Post-Quantum-Algorithms-for-DNS.html",
+      "sizeBytes": 7754,
+      "contentType": "text/html",
+      "sha256": "c42e0fb4cdda4259f7fa85cf8b125b0604b5b30a7b7f8a0f375e661c55c811fa",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-01T21:50:43.911753+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "Security-Considerations-for-ML-DSA",
+      "title": "Security Considerations for ML-DSA",
+      "url": "https://www.ietf.org/archive/id/draft-connolly-cfrg-ml-dsa-security-considerations-02.txt",
+      "status": "downloaded",
+      "filename": "Security-Considerations-for-ML-DSA.html",
+      "sizeBytes": 32997,
+      "contentType": "text/html",
+      "sha256": "c2ba5d5fa50ea24eb5a37b1701f7ada8a59306dd0fb6a786d3e017c7bc31285c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-01T21:51:17.718783+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "ETSI-TR-104-239-1-V1-2-1",
+      "title": "ETSI TR 104 239-1 V1.2.1",
+      "url": "https://www.etsi.org/deliver/etsi_tr/104200_104299/10423901/01.02.01_60/tr_10423901v010201p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-TR-104-239-1-V1-2-1.pdf",
+      "sizeBytes": 252181,
+      "contentType": "application/pdf",
+      "sha256": "92db1494d4bbd8a127bd3e4eb9ccfcdf851b3f02e23f5108a9e00ae3e217723c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-01T21:53:01.965428+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [

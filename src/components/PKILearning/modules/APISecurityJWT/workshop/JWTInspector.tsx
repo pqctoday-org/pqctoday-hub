@@ -223,18 +223,19 @@ export const JWTInspector: React.FC = () => {
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground">
-                  Algorithm: <span className="font-mono">{String(decoded.header.alg)}</span>
+                  Declared algorithm:{' '}
+                  <span className="font-mono">{String(decoded.header.alg)}</span>
                 </span>
                 {algorithmInfo ? (
                   algorithmInfo.broken ? (
                     <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-destructive/20 text-destructive border-destructive/50 flex items-center gap-1">
                       <AlertTriangle size={10} />
-                      Quantum Vulnerable
+                      Classical: vulnerable to a future quantum computer
                     </span>
                   ) : (
                     <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/20 text-success border-success/50 flex items-center gap-1">
                       <ShieldCheck size={10} />
-                      Quantum Safe
+                      Post-quantum algorithm
                     </span>
                   )
                 ) : (
@@ -243,6 +244,11 @@ export const JWTInspector: React.FC = () => {
                   </span>
                 )}
               </div>
+              <p className="text-[10px] text-muted-foreground">
+                The <code>alg</code> header is chosen by whoever made the token, so this describes
+                what the token claims, not what protects it. Nothing here is trustworthy until the
+                signature verifies against a key you already trust and whose algorithm you expect.
+              </p>
               {algorithmInfo && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                   <div className="bg-muted/50 rounded p-2 border border-border">

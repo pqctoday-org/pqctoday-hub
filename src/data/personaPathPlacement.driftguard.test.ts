@@ -155,8 +155,8 @@ const WS8_PLACEMENTS: { module: string; persona: PersonaId; after: string; why: 
 ]
 
 /**
- * Modules that legitimately reach exactly ONE persona today. Five are the
- * `*QuantumImpact` role guides — single-persona BY DESIGN, since a persona
+ * Modules that legitimately reach exactly ONE persona today. Six are the
+ * role guides (five `*QuantumImpact` plus `talking-about-pqc`) — single-persona BY DESIGN, since a persona
  * overview belongs to its own persona and nowhere else. The rest are a recorded
  * residual for a later pass (WS17), not an endorsement. This list is a RATCHET:
  * a module may leave it by gaining reach, but nothing may join it.
@@ -167,6 +167,10 @@ const SINGLE_PATH_MODULES = new Set([
   'arch-quantum-impact',
   'research-quantum-impact',
   'ops-quantum-impact',
+  // Added 1 Oct 2026 (user decision: broaden Curious instead of adding a
+  // sales/marketing persona). Curious's role guide, in the same Role Guides
+  // track as the five above, so single-persona by design for the same reason.
+  'talking-about-pqc',
   'skills-team-structure',
   'pqc-grc',
   'soc-implementation-pqc',

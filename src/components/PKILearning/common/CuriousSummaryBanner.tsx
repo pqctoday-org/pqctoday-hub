@@ -60,6 +60,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   QuantumThreats: 'quantum-threats',
   HybridCrypto: 'hybrid-crypto',
   CryptoAgility: 'crypto-agility',
+  TalkingAboutPQC: 'talking-about-pqc',
   TLSBasics: 'tls-basics',
   VPNSSHModule: 'vpn-ssh-pqc',
   DNSSECPQC: 'dnssec-pqc',

@@ -1,7 +1,7 @@
 {
-  "$schema": "internal: JOSE/COSE PQC draft snapshot",
-  "generated_at": "2026-05-17",
-  "source": "datatracker.ietf.org (manual transcription — refresh via scripts/audit-jose-matrix.ts)",
+  "$schema": "internal: JOSE/COSE PQC draft snapshot. Refresh with npx tsx scripts/refresh-jose-drafts-snapshot.ts; the audit panel treats a snapshot older than max_age_days as expired.",
+  "generated_at": "2026-10-01",
+  "source": "datatracker.ietf.org doc.json, via scripts/refresh-jose-drafts-snapshot.ts",
   "drafts": {
     "draft-ietf-cose-dilithium": {
       "current_version": "11",
@@ -10,11 +10,15 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/",
       "alg_codes_introduced": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"],
       "key_type_introduced": "AKP",
-      "covers": ["pureSig (JOSE inherits)"]
+      "covers": ["pureSig (JOSE inherits)"],
+      "title": "ML-DSA for JOSE and COSE",
+      "state": "RFC",
+      "iesg_state": "RFC Published",
+      "rfceditor_state": null
     },
     "draft-ietf-jose-pq-composite-sigs": {
-      "current_version": "01",
-      "current_date": "2026-02-27",
+      "current_version": "04",
+      "current_date": "2026-09-11",
       "status": "WG draft",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/",
       "alg_codes_introduced": [
@@ -25,22 +29,57 @@
         "ML-DSA-65-Ed25519",
         "ML-DSA-87-Ed448"
       ],
-      "covers": ["hybridSig"]
+      "covers": ["hybridSig"],
+      "title": "PQ/T Hybrid Composite Signatures for JOSE and COSE",
+      "state": "Active",
+      "iesg_state": "I-D Exists",
+      "rfceditor_state": null
     },
     "draft-ietf-jose-pqc-kem": {
-      "current_version": "05",
-      "current_date": "2025-12-09",
+      "current_version": "06",
+      "current_date": "2026-07-06",
       "status": "WG draft",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
       "alg_codes_introduced": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"],
-      "covers": ["pureKem (JWE)"]
+      "covers": ["historical: direct ML-KEM JWE (-05 and earlier); -06 is COSE-only"],
+      "title": "Post-Quantum Key Encapsulation Mechanisms (PQ KEMs) for COSE",
+      "state": "Active",
+      "iesg_state": "I-D Exists",
+      "rfceditor_state": null
     },
-    "draft-reddy-cose-jose-pqc-hybrid-hpke": {
-      "current_version": "11",
-      "current_date": "2026-02-16",
-      "status": "individual",
-      "url": "https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/",
-      "covers": ["hybridKem"]
+    "draft-ietf-jose-hpke-encrypt": {
+      "current_version": "22",
+      "current_date": "2026-07-06",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/",
+      "covers": ["pureKem", "hybridKem"],
+      "note": "Algorithm-agnostic HPKE plumbing for JWE (Integrated Encryption + Key Encryption modes).",
+      "title": "Use of Hybrid Public Key Encryption (HPKE) with JSON Web Encryption (JWE)",
+      "state": "Active",
+      "iesg_state": "RFC Ed Queue",
+      "rfceditor_state": "Blocked"
+    },
+    "draft-ietf-jose-hpke-pq-pqt": {
+      "current_version": "01",
+      "current_date": "2026-07-06",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/",
+      "covers": ["pureKem", "hybridKem"],
+      "note": "Registers the PQ and PQ/T HPKE suites for JOSE. Replaces draft-reddy-cose-jose-pqc-hybrid-hpke.",
+      "title": "JOSE HPKE PQ & PQ/T Algorithm Registrations",
+      "state": "Active",
+      "iesg_state": "I-D Exists",
+      "rfceditor_state": null
+    },
+    "draft-ietf-cose-sphincs-plus": {
+      "current_version": "10",
+      "current_date": "2026-07-28",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/",
+      "alg_codes_introduced": ["SLH-DSA-SHA2-128s", "SLH-DSA-SHAKE-128s"],
+      "covers": ["pureSig (SLH-DSA)"],
+      "title": "SLH-DSA for JOSE and COSE",
+      "state": "Active",
+      "iesg_state": "AD Evaluation",
+      "rfceditor_state": null
     }
-  }
+  },
+  "max_age_days": 45
 }
