@@ -1909,6 +1909,23 @@
       "admittedAt": "2026-10-02T03:21:52.450598+00:00",
       "admittedBy": "admit.py",
       "superseded_file": "_superseded-10012026/vendor-roadmaps/VND-348_SK_Telecom_Co_Ltd_news_sktelecom_com_en_3147.html"
+    },
+    {
+      "vendorId": "VND-343",
+      "refId": "VND-343",
+      "label": "National Institute of Information and Communications Technology",
+      "file": "vendor-roadmaps/VND-343_National_Institute_of_Information_and_Communications_Technology_www_nict_go_jp_en_press_2026_04_09_1_htm.html",
+      "filename": "VND-343_National_Institute_of_Information_and_Communications_Technology_www_nict_go_jp_en_press_2026_04_09_1_htm.html",
+      "url": "https://www.nict.go.jp/en/press/2026/04/09-1.html",
+      "status": "downloaded",
+      "sizeBytes": 46973,
+      "contentType": "text/html",
+      "sha256": "79fc62d04a5c3cb6c503695da47e7beecd046178426f85cba154c5644953ca32",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T16:07:18.955231+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
