@@ -31,7 +31,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Pick Certification & Validation and choose the question — test the algorithms, the entropy source or the module interface, place a product on the certificate stages, sign firmware, or review the drafts — every result states the evidence level it reached.',
     ops: 'Pick IT Ops and choose the question: capacity, cutover rehearsal, cipher-suite config, supplier timelines, closeout or your standing — sized before renewal day.',
     curious:
-      'You do not need a role: skip the question and the site opens by topic, or pick Curious for what breaks and when, where it touches you, and a thirty-second version.',
+      'You do not need a role: skip the question and the site opens by topic, or pick Curious for what breaks and when, where it touches you, a thirty-second version, and how to talk about it at work.',
   },
   '/patents': {
     executive:
