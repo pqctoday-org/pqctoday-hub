@@ -125,6 +125,13 @@ export function productVerificationBadge(item: SoftwareItem): VerificationBadge 
   switch ((item.verificationStatus || '').toLowerCase()) {
     case 'verified':
       return { label: 'Verified', tone: stale ? 'warning' : 'success', title }
+    case 'evidence reviewed: pqc unknown':
+      // Reviewed evidence that does not establish PQC support — never green.
+      return {
+        label: 'Evidence reviewed: PQC unknown',
+        tone: 'info',
+        title: `The evidence was reviewed but does not establish whether this product supports PQC. ${title}`,
+      }
     case 'verified (no pqc)':
       return { label: 'Verified (No PQC)', tone: stale ? 'warning' : 'success', title }
     case 'needs review':

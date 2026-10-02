@@ -83,6 +83,7 @@ describe('productVerificationBadge', () => {
     const cases: Array<[string, string]> = [
       ['Verified', 'Verified'],
       ['Verified (No PQC)', 'Verified (No PQC)'],
+      ['Evidence reviewed: PQC unknown', 'Evidence reviewed: PQC unknown'],
       ['Partially Verified', 'Partially Verified'],
       ['Pending Verification', 'Pending Verification'],
       ['Needs Review', 'Needs Review'],
@@ -91,6 +92,14 @@ describe('productVerificationBadge', () => {
     for (const [status, label] of cases) {
       expect(productVerificationBadge(item({ verificationStatus: status })).label).toBe(label)
     }
+  })
+
+  it('never shows a reviewed row with unknown PQC status in green, however recent', () => {
+    const badge = productVerificationBadge(
+      item({ verificationStatus: 'Evidence reviewed: PQC unknown', lastVerifiedDate: daysAgo(1) })
+    )
+    expect(badge.tone).toBe('info')
+    expect(badge.title).toContain(daysAgo(1))
   })
 
   it('never shows a withheld row with a success tone', () => {

@@ -95,12 +95,19 @@ function deriveCisaCategory(categoryName: string, layer: string): string {
   return 'Enterprise Security'
 }
 
+/** Status for a reviewed row whose PQC status is unknown (owner decision 12). */
+export const EVIDENCE_REVIEWED_PQC_UNKNOWN = 'Evidence reviewed: PQC unknown'
+
 /**
  * Derive verification_status from proof fields at load time.
  * Rules:
  * - Verified (No PQC): the archived proof verified the ABSENCE of PQC support
  *   (VALIDATED_NO_PQC) — must never present as a plain PQC-'Verified'
  * - Verified: proof_url present + validation confirms PQC (VALIDATED, FIPS_VERIFIED, CORRECTED)
+ * - Evidence reviewed: PQC unknown: the same confirming review, but the row's
+ *   pqc_status_canonical is `unknown` — the evidence was reviewed, yet it does
+ *   not establish PQC support, so the row must not wear a plain green
+ *   "Verified" (KM audit V-0.1(a), owner decision 12, 2026-10-01)
  * - Partially Verified: proof_url present but validation incomplete or evidence indirect
  * - Pending Verification: no proof_url or validation negative
  * - Needs Review: the maintenance flow withheld the row (csv
@@ -117,7 +124,8 @@ export function deriveVerificationStatus(
   proofUrl?: string,
   validationResult?: string,
   evidenceFlags?: string,
-  proofRelevantInfo?: string
+  proofRelevantInfo?: string,
+  pqcStatusCanonical?: string
 ): string {
   const hasProofUrl = !!(proofUrl || '').trim()
   const vr = (validationResult || '').toUpperCase()
@@ -136,7 +144,13 @@ export function deriveVerificationStatus(
 
   // Derive from evidence
   if (hasProofUrl) {
-    if (vr === 'VALIDATED' || vr === 'FIPS_VERIFIED' || vr === 'CORRECTED') return 'Verified'
+    if (vr === 'VALIDATED' || vr === 'FIPS_VERIFIED' || vr === 'CORRECTED') {
+      // "Verified" means the evidence was reviewed. When that review left the
+      // PQC status unknown, say so instead of showing a confident green badge.
+      if ((pqcStatusCanonical || '').trim().toLowerCase() === 'unknown')
+        return EVIDENCE_REVIEWED_PQC_UNKNOWN
+      return 'Verified'
+    }
     if (vr === 'PARTIALLY_VALIDATED' || vr === 'NEEDS_REVIEW') return 'Partially Verified'
     if (hasProofContent && !ef.includes('needs-extraction')) return 'Partially Verified'
     return 'Pending Verification'
@@ -240,7 +254,8 @@ const {
         row.proof_url,
         row.validation_result,
         row.evidence_flags,
-        row.proof_relevant_info
+        row.proof_relevant_info,
+        row.pqc_status_canonical
       ),
       lastVerifiedDate: row.last_verified_date,
       migrationPhases: row.migration_phases || '',

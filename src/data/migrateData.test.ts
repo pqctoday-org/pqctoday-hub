@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { deriveVerificationStatus, softwareData } from './migrateData'
+import {
+  EVIDENCE_REVIEWED_PQC_UNKNOWN,
+  deriveVerificationStatus,
+  softwareData,
+} from './migrateData'
 
 describe('migrateData', () => {
   it('loads without error', () => {
@@ -84,6 +88,57 @@ describe('migrateData', () => {
       // The distinct status actually materializes in the loaded data
       expect(noPqcRows.some((i) => i.verificationStatus === 'Verified (No PQC)')).toBe(true)
     })
+  })
+})
+
+// KM audit V-0.1(a), owner decision 12 (2026-10-01): "Verified" means the
+// evidence was reviewed. A reviewed row whose PQC status stayed `unknown` gets
+// its own state instead of the plain green badge.
+describe('deriveVerificationStatus — reviewed evidence, PQC unknown', () => {
+  const proof = 'https://example.com/proof'
+
+  it('shows "Evidence reviewed: PQC unknown" for a confirming review with unknown PQC status', () => {
+    for (const vr of ['VALIDATED', 'FIPS_VERIFIED', 'CORRECTED']) {
+      expect(deriveVerificationStatus('Pending Verification', proof, vr, '', '', 'unknown')).toBe(
+        EVIDENCE_REVIEWED_PQC_UNKNOWN
+      )
+    }
+    expect(deriveVerificationStatus('Verified', proof, 'VALIDATED', '', '', ' Unknown ')).toBe(
+      EVIDENCE_REVIEWED_PQC_UNKNOWN
+    )
+  })
+
+  it('keeps plain Verified for every known PQC status', () => {
+    for (const cs of ['available', 'partial', 'roadmap', 'planned', 'none', '', undefined]) {
+      expect(deriveVerificationStatus('Verified', proof, 'VALIDATED', '', '', cs)).toBe('Verified')
+    }
+  })
+
+  it('does not touch rows that were not Verified anyway', () => {
+    expect(
+      deriveVerificationStatus('Verified', proof, 'PARTIALLY_VALIDATED', '', '', 'unknown')
+    ).toBe('Partially Verified')
+    expect(deriveVerificationStatus('Verified', proof, 'VALIDATED_NO_PQC', '', '', 'unknown')).toBe(
+      'Verified (No PQC)'
+    )
+    expect(
+      deriveVerificationStatus('Unverified — needs review', proof, 'VALIDATED', '', '', 'unknown')
+    ).toBe('Needs Review')
+    expect(deriveVerificationStatus('Verified', '', 'VALIDATED', '', '', 'unknown')).toBe(
+      'Pending Verification'
+    )
+  })
+
+  it('no loaded row with unknown PQC status shows a plain Verified', () => {
+    const unknownRows = softwareData.filter(
+      (i) => (i.pqcStatusCanonical || '').toLowerCase() === 'unknown'
+    )
+    expect(unknownRows.length).toBeGreaterThan(0)
+    for (const item of unknownRows) expect(item.verificationStatus).not.toBe('Verified')
+    // The state materializes in the loaded data (5 active rows on 2026-10-01).
+    expect(unknownRows.some((i) => i.verificationStatus === EVIDENCE_REVIEWED_PQC_UNKNOWN)).toBe(
+      true
+    )
   })
 })
 
