@@ -1926,6 +1926,40 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T16:07:18.955231+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "vendorId": "VND-220",
+      "refId": "VND-220",
+      "label": "European Commission",
+      "file": "vendor-roadmaps/VND-220_European_Commission_digital_strategy_ec_europa_eu_en_library.html",
+      "filename": "VND-220_European_Commission_digital_strategy_ec_europa_eu_en_library.html",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "status": "downloaded",
+      "sizeBytes": 52650,
+      "contentType": "text/html",
+      "sha256": "c94cd519493ebb8eb653161603a61c85bd854dcc2fd149e97624b9b1e6962c38",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T16:25:15.382259+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "vendorId": "VND-524",
+      "refId": "VND-524",
+      "label": "Korea Telecom Corporation",
+      "file": "vendor-roadmaps/VND-524_Korea_Telecom_Corporation_corp_kt_com_html_promote_news_report_det.html",
+      "filename": "VND-524_Korea_Telecom_Corporation_corp_kt_com_html_promote_news_report_det.html",
+      "url": "https://corp.kt.com/html/promote/news/report_detail.html?datNo=19203",
+      "status": "downloaded",
+      "sizeBytes": 113780,
+      "contentType": "text/html",
+      "sha256": "08764c6e2a28ee2b8f25e40b74e432f8a8dc0afc32c72166deab3dabfd67c8fe",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-02T16:25:27.706815+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
