@@ -67,7 +67,7 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       id: 'jwe-encrypt',
       title: '4. Encrypt a JWT payload using ML-KEM key agreement',
       description:
-        'Walk through the JWE encryption flow step by step: ML-KEM keypair generation, encapsulation, HKDF key derivation, AES-256-GCM encryption, and JWE assembly. Reverse the flow with decryption.',
+        'Walk through the historical direct ML-KEM JWE flow (draft -05) step by step: ML-KEM keypair generation, encapsulation, KMAC256 key derivation, AES-256-GCM encryption with the encoded header as AAD, and JWE assembly with the KEM ciphertext in the "ek" header. Reverse the flow with decryption, then compare it with the HPKE design that replaced it.',
       badge: 'JWE Encryption',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:

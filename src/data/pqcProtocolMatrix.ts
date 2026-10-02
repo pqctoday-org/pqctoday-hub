@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-09-13'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-01'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1589,7 +1589,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'jose',
     name: 'JOSE',
     description:
-      'JSON Object Signing and Encryption (JWS/JWE/JWT) — ML-KEM in JWE and ML-DSA/composite signatures in JWS via active drafts.',
+      'JSON Object Signing and Encryption (JWS/JWE/JWT) — ML-DSA in JWS is RFC 9964; composite signatures, SLH-DSA and HPKE-based ML-KEM encryption for JWE are active drafts.',
     latestRelease: [
       {
         id: 'RFC-7515',
@@ -1620,30 +1620,27 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     latestDraft: [
+      // draft-ietf-jose-pqc-kem dropped 2026-10-01: -06 (2026-07-06) is retitled
+      // "PQ KEMs for COSE" and no longer covers JOSE/JWE. JWE PQ encryption is
+      // the HPKE pair below.
       {
-        id: 'draft-ietf-jose-pqc-kem',
-        title: 'draft-ietf-jose-pqc-kem — ML-KEM for JOSE/JWE',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/',
-        date: '2025-11',
-        localFile: '/library/draft-ietf-jose-pqc-kem.html',
-      },
-      {
-        id: 'draft-ietf-jose-pq-composite-sigs',
-        title: 'draft-ietf-jose-pq-composite-sigs — PQ/T Composite Sigs for JOSE/COSE',
+        id: 'draft-ietf-jose-pq-composite-sigs-04',
+        title:
+          'draft-ietf-jose-pq-composite-sigs-04 — PQ/T Hybrid Composite Signatures for JOSE and COSE',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-        date: '2026-02-27',
-        localFile: '/library/draft-ietf-jose-pq-composite-sigs.html',
+        date: '2026-09-11',
+        localFile: '/library/draft-ietf-jose-pq-composite-sigs-04.html',
       },
       {
         id: 'draft-ietf-jose-hpke-encrypt-22',
-        // Verified live 2026-08-22: latest revision -22, last updated 2026-08-03, WG state
-        // "Submitted to IESG for Publication" with SECDIR/IETF Last Call reviews recorded.
-        // The previous label "IESG-approved, AD Followup" overstated it — that WG-stream
-        // string is the handoff TO the IESG, not an approval by it.
+        // Verified 2026-10-01 against datatracker doc.json: IESG state "RFC Ed Queue",
+        // RFC Editor state "Blocked" (Reference Not Received, i.e. MISSREF). Earlier
+        // labels — "Submitted to IESG for Publication" (08-22) and "Waiting for AD
+        // Go-Ahead" (09-03) — were each true once and are both superseded.
         title:
-          'draft-ietf-jose-hpke-encrypt-22 — HPKE with JOSE (Submitted to IESG for Publication)',
+          'draft-ietf-jose-hpke-encrypt-22 — HPKE with JWE (RFC Editor queue, blocked on a normative reference)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
-        date: '2026-08-03',
+        date: '2026-07-06',
       },
       {
         id: 'draft-ietf-jose-hpke-pq-pqt-01',
@@ -1652,20 +1649,36 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
         date: '2026-07-06',
       },
+      {
+        id: 'draft-ietf-cose-sphincs-plus-10',
+        title:
+          'draft-ietf-cose-sphincs-plus-10 — SLH-DSA for JOSE and COSE (AD Evaluation; SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s only)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/',
+        date: '2026-07-28',
+      },
     ],
     dimensions: {
       pureKem: {
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          'JOSE WG document, "I-D Exists" (draft-06, 2026-07-06) — not yet in WG Last Call',
+          "Corrected 2026-10-01: pure ML-KEM for JWE is registered by draft-ietf-jose-hpke-pq-pqt-01 ('I-D Exists', pre-WG-Last-Call) on top of draft-ietf-jose-hpke-encrypt-22 (RFC Editor queue). The previously cited JOSE PQ-KEM draft (jose-pqc-kem) became COSE-only in its -06 revision (2026-07-06).",
+        note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
             kind: 'draft',
-            id: 'draft-ietf-jose-pqc-kem',
-            title: 'ML-KEM for JOSE/JWE',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/',
-            publishedOn: '2025-11',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title: 'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-jose-hpke-encrypt',
+            title:
+              'Use of Hybrid Public Key Encryption (HPKE) with JWE (dependency: algorithm-agnostic plumbing)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -1673,7 +1686,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          "Corrected 2026-09-03: draft-ietf-jose-hpke-encrypt is real and now 'Waiting for AD Go-Ahead' (past Last Call), but it's algorithm-agnostic HPKE-JOSE plumbing, not PQ-specific — it doesn't register ML-KEM identifiers. draft-ietf-jose-hpke-pq-pqt is the document that actually does, and it remains at 'I-D Exists' — pre-WG-Last-Call. Real PQC support needs both documents, so this cell tracks the lagging, algorithm-defining one rather than the more-advanced plumbing draft.",
+          "draft-ietf-jose-hpke-encrypt is in the RFC Editor queue (blocked on a normative reference, checked 2026-10-01), but it's algorithm-agnostic HPKE-JOSE plumbing — it doesn't register ML-KEM identifiers. draft-ietf-jose-hpke-pq-pqt is the document that actually does, and it remains at 'I-D Exists' — pre-WG-Last-Call. Real PQC support needs both documents, so this cell tracks the lagging, algorithm-defining one.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
@@ -1690,14 +1703,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title:
               'Use of Hybrid Public Key Encryption (HPKE) with JOSE (dependency: algorithm-agnostic plumbing, not PQ-specific)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
-            publishedOn: '2026-06-15',
+            publishedOn: '2026-07-06',
           },
         ],
       },
       pureSig: {
         value: 'rfc',
         stage: 'rfc-published',
-        stageNote: 'RFC 9964 published May 2026 — ML-DSA-44/65/87 for JWS',
+        stageNote:
+          'RFC 9964 published May 2026 — ML-DSA-44/65/87 for JWS. SLH-DSA (SHA2-128s, SHAKE-128s) is still a draft: draft-ietf-cose-sphincs-plus-10, AD Evaluation.',
         refs: [
           {
             kind: 'rfc',
@@ -1711,14 +1725,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'wg-document',
-        stageNote: 'wg document (datatracker 2026-02-27)',
+        stageNote: "WG document, 'I-D Exists' — draft-04 (2026-09-11), checked 2026-10-01",
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-jose-pq-composite-sigs',
             title: 'PQ/T Composite Sigs for JOSE/COSE',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-            publishedOn: '2025-01',
+            publishedOn: '2026-09-11',
           },
         ],
       },
@@ -1727,12 +1741,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'nimbus-jose-jwt',
         name: 'Nimbus JOSE+JWT',
-        versionNote: 'draft-ietf-jose-pqc-kem (contributed)',
+        versionNote:
+          'Classical only in released versions (CHANGELOG lists no PQC algorithms); MONET+ contributed to the withdrawn draft-ietf-jose-pqc-kem',
       },
       {
         productId: 'bouncy-castle-java',
         name: 'Bouncy Castle Java',
-        versionNote: 'JCA provider for PQ JWS',
+        versionNote: 'PQ primitives (ML-DSA, ML-KEM) via its JCA provider; not a JOSE library',
       },
       { productId: 'jose4j', name: 'jose4j', versionNote: 'Classical only; PQ via BC provider' },
       { productId: 'go-jose-v4', name: 'go-jose v4', versionNote: 'Classical only' },
@@ -1747,22 +1762,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'api-security-jwt',
         toolName: 'API Security & JWT Workshop',
         url: '/learn/api-security-jwt?tab=workshop',
-        testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
-        hybridKemNote: 'No HPKE tool yet — only direct ML-KEM-768 JWE encap/decap is covered.',
+        testability: { pureKem: 'partial', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
+        pureKemNote:
+          'Historical construction only: direct ML-KEM-768 JWE per revision -05 of the jose-pqc-kem draft, whose JOSE content was removed in -06. Not interoperable with the current HPKE/JWE path; self-pinned KAT only.',
+        hybridKemNote: 'No HPKE tool yet.',
         pureSigNote:
-          'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s/192s/256s; RFC 9964 KAT vectors verified in-browser.',
+          'ML-DSA-44/65/87 verified against the RFC 9964 Appendix A.1 vectors in-browser. SLH-DSA is exercised as a primitive; only SLH-DSA-SHA2-128s and -SHAKE-128s are JOSE algorithms (draft-ietf-cose-sphincs-plus-10), with no external JOSE vectors here.',
         hybridSigNote:
-          // -01 is NOT stale here and must not be bumped: this describes what the SANDBOX
-          // pinned and verified, not which revision is current. The spec has since moved to
-          // -03 (APISecurityJWT/constants.ts already cites -03 Table 2 for its sizes), so the
-          // revision is named explicitly rather than left to read as 'the current draft'.
-          'MLDSA65-Ed25519 composite per draft-ietf-jose-pq-composite-sigs-01 §4; pinned KAT snapshot verified against that revision. The draft is now at -03.',
+          // Names the revision explicitly: this says what the tool was verified against,
+          // not which revision is current. Bump only together with the implementation
+          // and the fixture.
+          "All six composite algorithms per draft-ietf-jose-pq-composite-sigs-04, verified against that draft's published Appendix A.1 JOSE examples. Work-in-progress draft.",
       },
     ],
     liveDeployments: [
       {
         provider: 'AWS KMS',
-        what: 'ML-DSA signing GA for JWT/JWS (and CMS, COSE, UEFI); launched in US West (N. California) and Europe (Milan), with remaining commercial regions following within days',
+        what: 'ML-DSA signing GA (June 2025), with an AWS Security Blog walkthrough that signs and verifies a JWT (alg ML-DSA-65) through KMS',
         since: '2025-06',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/how-to-create-post-quantum-signatures-using-aws-kms-and-ml-dsa/',
