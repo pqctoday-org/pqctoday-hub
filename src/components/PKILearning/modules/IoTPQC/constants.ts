@@ -1,708 +1,791 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// ── RFC 7228 Constrained Device Classes ──────────────────────────────────────
+/**
+ * IoT & Embedded Device PQC — the single source of every number the module
+ * shows. Learn prose, the workshop steps and the exercises all read from here
+ * (or from utils/sizing.ts, which derives from here), so a figure cannot drift
+ * between the text and the tool. Rewritten 2026-10-01 for the IoT/OT split.
+ *
+ * Three kinds of number live here, and the UI labels them differently:
+ *  - EXACT sizes (keys, ciphertexts, signatures) from FIPS 203 Table 3,
+ *    FIPS 204 Table 2, RFC 8554 §4-6, RFC 8391 §4 and the Falcon v1.2 spec.
+ *    No label: they are the standard. IoTPQC.sizes.test.ts pins them to the
+ *    hub's algorithm registry.
+ *  - BENCHMARKS (stack bytes, cycles, code size) measured on an Arm Cortex-M4
+ *    by a named source at a named commit/date. Always shown with that source.
+ *  - MODELS (fit verdicts, handshake/chain/airtime sizes) computed from the two
+ *    above. Always labelled "Model estimate".
+ */
+
+// ── Benchmark sources ────────────────────────────────────────────────────────
+
+export type BenchSourceId = 'pqm4-2025' | 'pqm4-2021' | 'eprint-2020-470' | 'emill-p256'
+
+export interface BenchSource {
+  id: BenchSourceId
+  label: string
+  detail: string
+  url: string
+}
+
+export const BENCH_SOURCES: Record<BenchSourceId, BenchSource> = {
+  'pqm4-2025': {
+    id: 'pqm4-2025',
+    label: 'Cortex-M4, pqm4 @90bfb63 (2025-05-22)',
+    detail:
+      'mupq/pqm4 benchmarks.md at commit 90bfb630 (2025-05-22): average cycles and stack bytes on an Arm Cortex-M4; code size is the full scheme (.text).',
+    url: 'https://github.com/mupq/pqm4/blob/90bfb630e53603b4e273a131cd09a025e51540a5/benchmarks.md',
+  },
+  'pqm4-2021': {
+    id: 'pqm4-2021',
+    label: 'Cortex-M4, pqm4 @33de42d (2021-09-06)',
+    detail:
+      'mupq/pqm4 benchmarks.md at commit 33de42d9 (2021-09-06), the last pqm4 run that still carried FrodoKEM-640 (SHAKE, m4 implementation).',
+    url: 'https://github.com/mupq/pqm4/blob/33de42d9e965/benchmarks.md',
+  },
+  'eprint-2020-470': {
+    id: 'eprint-2020-470',
+    label: 'Cortex-M4, Campos et al., IACR ePrint 2020/470',
+    detail:
+      'LMS vs XMSS on an STM32F4DISCOVERY (Cortex-M4), SHA-256, w = 16, h = 10, reference implementations (Tables 10 and 12). Stack excludes key, message and signature buffers. The authors attribute the LMS/XMSS gap to the reference code, not the schemes.',
+    url: 'https://eprint.iacr.org/2020/470',
+  },
+  'emill-p256': {
+    id: 'emill-p256',
+    label: 'Cortex-M4, Emill/P256-Cortex-M4 README (nRF52840, 2021)',
+    detail:
+      'Constant-time P-256 assembly library measured on an nRF52840 (Cortex-M4F, GCC -O2). Stack "at most 2 kB"; full library ≈8.9 kB.',
+    url: 'https://github.com/Emill/P256-Cortex-M4',
+  },
+}
+
+/** Clock used to turn cycles into time in every step. A model input, not a measurement. */
+export const MODEL_MCU_HZ = 64_000_000
+
+// ── Device classes (RFC 7228 §3 + draft-ietf-iotops-7228bis-10 Table 1) ─────
+
 export interface DeviceClass {
   id: string
   name: string
-  ramKB: number
-  flashKB: number
+  /** what the standard says, verbatim range */
+  ramSpec: string
+  flashSpec: string
+  /** representative value the fit model uses (bytes) */
+  ramBytes: number
+  flashBytes: number
+  definedIn: 'RFC 7228' | 'draft-ietf-iotops-7228bis'
+  example: string
   description: string
-  examples: string[]
 }
+
+const KIB = 1024
 
 export const DEVICE_CLASSES: DeviceClass[] = [
   {
     id: 'class-0',
     name: 'Class 0',
-    ramKB: 2,
-    flashKB: 25,
+    ramSpec: '≪ 10 KiB',
+    flashSpec: '≪ 100 KiB',
+    ramBytes: 2 * KIB,
+    flashBytes: 32 * KIB,
+    definedIn: 'RFC 7228',
+    example: 'ATtiny-class sensor tags',
     description:
-      'Extremely constrained (≪10 KiB RAM, ≪100 KiB Flash per RFC 7228). Too limited for direct internet communication.',
-    examples: ['Sensor tags', 'RFID sensors', 'Asset trackers'],
+      'Too constrained to talk to the Internet securely on their own; they rely on a gateway or proxy. The model uses 2 KiB RAM / 32 KiB flash as a representative point inside "≪".',
   },
   {
     id: 'class-1',
     name: 'Class 1',
-    ramKB: 10,
-    flashKB: 100,
-    description: 'Can communicate using constrained protocols (CoAP/DTLS).',
-    examples: ['Smart meters', 'Environmental sensors', 'Actuators'],
+    ramSpec: '~ 10 KiB',
+    flashSpec: '~ 100 KiB',
+    ramBytes: 10 * KIB,
+    flashBytes: 100 * KIB,
+    definedIn: 'RFC 7228',
+    example: 'STM32F103CB-class sensors, meters',
+    description:
+      'Can run a stack designed for constrained nodes (CoAP over UDP, OSCORE/EDHOC, DTLS) without a gateway, but must be frugal with RAM, code and energy.',
   },
   {
     id: 'class-2',
     name: 'Class 2',
-    ramKB: 50,
-    flashKB: 250,
-    description: 'Lightweight IP stack. Supports some TLS/DTLS with PQC.',
-    examples: ['Industrial gateways', 'PLCs', 'Camera nodes'],
+    ramSpec: '~ 50 KiB',
+    flashSpec: '~ 250 KiB',
+    ramBytes: 50 * KIB,
+    flashBytes: 250 * KIB,
+    definedIn: 'RFC 7228',
+    example: 'STM32F103RC-class gateways, controllers',
+    description:
+      'Fundamentally able to run most of the protocols a laptop uses, but still benefits from lightweight, energy-efficient protocols.',
   },
   {
     id: 'class-3',
-    name: 'Class 3+',
-    ramKB: 256,
-    flashKB: 1024,
-    description: 'Near-server class. Can run full TLS 1.3 stack with PQC.',
-    examples: ['Edge gateways', 'RTUs', 'Vehicle ECUs'],
+    name: 'Class 3',
+    ramSpec: '~ 100 KiB',
+    flashSpec: '~ 500–1000 KiB',
+    ramBytes: 100 * KIB,
+    flashBytes: 500 * KIB,
+    definedIn: 'draft-ietf-iotops-7228bis',
+    example: 'STM32F103RG-class devices',
+    description:
+      'Added by the 7228bis draft (RFC 7228 stopped at Class 2). The model uses the lower end of the flash range.',
+  },
+  {
+    id: 'class-4',
+    name: 'Class 4',
+    ramSpec: '~ 300–1000 KiB',
+    flashSpec: '~ 1000–2000 KiB',
+    ramBytes: 300 * KIB,
+    flashBytes: 1000 * KIB,
+    definedIn: 'draft-ietf-iotops-7228bis',
+    example: 'STM32F745/767-class devices',
+    description:
+      'Added by the 7228bis draft: powerful enough to run interpreters and fuller network stacks. The model uses the lower end of both ranges.',
   },
 ]
 
-// ── PQC Algorithm Resource Requirements ──────────────────────────────────────
+// ── Algorithms: exact sizes + Cortex-M4 benchmarks ───────────────────────────
+
+export type Op = 'keygen' | 'encaps' | 'decaps' | 'sign' | 'verify'
+export type Build = 'stack' | 'speed'
+
+export interface OpBench {
+  /** stack bytes reported by the source (excludes caller-held buffers) */
+  stackBytes: number
+  /** average cycles reported by the source */
+  cycles: number
+}
+
+export interface BuildBench {
+  /** implementation name as the source reports it */
+  impl: string
+  source: BenchSourceId
+  ops: Partial<Record<Op, OpBench>>
+  /** full-scheme code size (bytes), when the source reports it */
+  codeBytes?: number
+  /** true when the source gives the figure as an upper bound or rounded value */
+  approximate?: boolean
+}
+
 export interface ConstrainedAlgorithm {
+  id: string
   name: string
   type: 'KEM' | 'Signature'
-  ramKB: number
-  publicKeyBytes: number
-  ciphertextOrSigBytes: number
-  nistLevel: number
+  status:
+    'FIPS 203' | 'FIPS 204' | 'SP 800-208' | 'pre-standard' | 'classical' | 'not NIST-standard'
+  nistLevel: number | null
   quantumSafe: boolean
-  suitableForClass: number[]
+  publicKeyBytes: number
+  secretKeyBytes: number
+  /** KEM ciphertext or signature bytes */
+  outputBytes: number
+  sizeSource: string
+  builds: { stack: BuildBench; speed?: BuildBench }
+  stateful?: boolean
   notes: string
 }
 
 export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
-  // KEMs
+  // ── KEMs ──
   {
-    name: 'X25519',
+    id: 'ecdh-p256',
+    name: 'ECDH P-256',
     type: 'KEM',
-    ramKB: 0.3,
-    publicKeyBytes: 32,
-    ciphertextOrSigBytes: 32,
-    nistLevel: 0,
+    status: 'classical',
+    nistLevel: null,
     quantumSafe: false,
-    suitableForClass: [0, 1, 2, 3],
-    notes: 'Classical ECDH baseline. Quantum-vulnerable.',
+    publicKeyBytes: 64,
+    secretKeyBytes: 32,
+    outputBytes: 64,
+    sizeSource: 'SEC 1 (uncompressed point without the 0x04 prefix)',
+    builds: {
+      stack: {
+        impl: 'P256-Cortex-M4',
+        source: 'emill-p256',
+        ops: {
+          keygen: { stackBytes: 2048, cycles: 327_000 },
+          decaps: { stackBytes: 2048, cycles: 906_000 },
+        },
+        codeBytes: 8_900,
+        approximate: true,
+      },
+    },
+    notes:
+      'Classical baseline (the ECDH key agreement inside DTLS, EDHOC, BLE and Matter today). "decaps" here is the shared-secret computation. Broken by Shor’s algorithm.',
   },
   {
+    id: 'ml-kem-512',
     name: 'ML-KEM-512',
     type: 'KEM',
-    ramKB: 3,
-    publicKeyBytes: 800,
-    ciphertextOrSigBytes: 768,
+    status: 'FIPS 203',
     nistLevel: 1,
     quantumSafe: true,
-    suitableForClass: [1, 2, 3],
-    notes: 'Smallest lattice KEM. Fits Class 1+ devices.',
+    publicKeyBytes: 800,
+    secretKeyBytes: 1632,
+    outputBytes: 768,
+    sizeSource: 'FIPS 203 Table 3',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 2_300, cycles: 392_224 },
+          encaps: { stackBytes: 2_348, cycles: 392_864 },
+          decaps: { stackBytes: 2_332, cycles: 430_202 },
+        },
+        codeBytes: 13_328,
+      },
+      speed: {
+        impl: 'm4fspeed',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 4_372, cycles: 392_423 },
+          encaps: { stackBytes: 5_436, cycles: 390_881 },
+          decaps: { stackBytes: 5_412, cycles: 428_167 },
+        },
+        codeBytes: 15_848,
+      },
+    },
+    notes: 'Smallest FIPS 203 parameter set (NIST category 1).',
   },
   {
+    id: 'ml-kem-768',
     name: 'ML-KEM-768',
     type: 'KEM',
-    ramKB: 6,
-    publicKeyBytes: 1184,
-    ciphertextOrSigBytes: 1088,
+    status: 'FIPS 203',
     nistLevel: 3,
     quantumSafe: true,
-    suitableForClass: [2, 3],
-    notes: 'Standard NIST recommendation. ~6 KB stack.',
+    publicKeyBytes: 1184,
+    secretKeyBytes: 2400,
+    outputBytes: 1088,
+    sizeSource: 'FIPS 203 Table 3',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 2_820, cycles: 644_195 },
+          encaps: { stackBytes: 2_860, cycles: 664_654 },
+          decaps: { stackBytes: 2_844, cycles: 714_194 },
+        },
+        codeBytes: 13_320,
+      },
+      speed: {
+        impl: 'm4fspeed',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 5_396, cycles: 642_096 },
+          encaps: { stackBytes: 6_468, cycles: 658_754 },
+          decaps: { stackBytes: 6_452, cycles: 707_827 },
+        },
+        codeBytes: 16_016,
+      },
+    },
+    notes: 'The parameter set inside the X25519MLKEM768 hybrid most TLS stacks deploy.',
   },
   {
+    id: 'ml-kem-1024',
     name: 'ML-KEM-1024',
     type: 'KEM',
-    ramKB: 10,
-    publicKeyBytes: 1568,
-    ciphertextOrSigBytes: 1568,
+    status: 'FIPS 203',
     nistLevel: 5,
     quantumSafe: true,
-    suitableForClass: [3],
-    notes: 'Highest security. ~10 KB stack RAM.',
+    publicKeyBytes: 1568,
+    secretKeyBytes: 3168,
+    outputBytes: 1568,
+    sizeSource: 'FIPS 203 Table 3',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 3_332, cycles: 1_020_202 },
+          encaps: { stackBytes: 3_372, cycles: 1_037_953 },
+          decaps: { stackBytes: 3_356, cycles: 1_100_982 },
+        },
+        codeBytes: 14_016,
+      },
+      speed: {
+        impl: 'm4fspeed',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 6_436, cycles: 1_018_976 },
+          encaps: { stackBytes: 7_500, cycles: 1_031_565 },
+          decaps: { stackBytes: 7_484, cycles: 1_094_008 },
+        },
+        codeBytes: 16_916,
+      },
+    },
+    notes: 'NIST category 5; the CNSA 2.0 key-establishment choice for national security systems.',
   },
   {
+    id: 'frodokem-640',
     name: 'FrodoKEM-640',
     type: 'KEM',
-    // CORRECTED 2026-08-22. ramKB was 180, which is FrodoKEM-1344's figure applied
-    // to FrodoKEM-640 — a threefold overstatement. The algorithm catalogue
-    // (pqc_complete_algorithm_reference) gives stack_ram_bytes ~60000 for -640,
-    // ~120000 for -976 and ~180000 for -1344.
-    //
-    // The verdict survives the correction, which is why it is worth stating
-    // precisely: RFC 7228 Table 1 puts Class 0 at << 10 KiB RAM, Class 1 at
-    // ~10 KiB and Class 2 at ~50 KiB, so ~60 KB is still out of reach for all
-    // three — but by a factor of roughly 1.2 against Class 2, not 3.6. "Infeasible
-    // for IoT" was right for the wrong reason, and a reader sizing a Class 2 device
-    // deserves the real margin.
-    ramKB: 60,
-    publicKeyBytes: 9616,
-    ciphertextOrSigBytes: 9720,
+    status: 'not NIST-standard',
     nistLevel: 1,
     quantumSafe: true,
-    // [3] not [] — same correction as ramKB above. The explorer derives its
-    // red/amber/green badge from THIS array, not from ramKB, so leaving it empty
-    // would have rendered FrodoKEM-640 as "exceeds capabilities" on a 256 KB
-    // Class 3+ device that it uses under a quarter of.
-    suitableForClass: [3],
+    publicKeyBytes: 9616,
+    secretKeyBytes: 19888,
+    outputBytes: 9752,
+    sizeSource: 'FrodoKEM specification (hub algorithm registry)',
+    builds: {
+      stack: {
+        impl: 'frodokem640shake m4',
+        source: 'pqm4-2021',
+        ops: {
+          keygen: { stackBytes: 26_408, cycles: 77_984_424 },
+          encaps: { stackBytes: 51_784, cycles: 78_893_964 },
+          decaps: { stackBytes: 72_408, cycles: 78_341_812 },
+        },
+        codeBytes: 8_644,
+      },
+    },
     notes:
-      'Conservative (no ring structure). ~60 KB stack RAM — still above RFC 7228 Class 2 (~50 KiB), so infeasible across Class 0-2.',
+      'Conservative unstructured-lattice KEM: not selected by NIST, but recommended by BSI and in ISO/IEC standardisation. Its ~10 KB keys and ciphertexts dominate any constrained link.',
   },
-  // Signatures
+  // ── Signatures ──
   {
+    id: 'ecdsa-p256',
     name: 'ECDSA P-256',
     type: 'Signature',
-    ramKB: 0.3,
-    publicKeyBytes: 64,
-    ciphertextOrSigBytes: 64,
-    nistLevel: 0,
+    status: 'classical',
+    nistLevel: null,
     quantumSafe: false,
-    suitableForClass: [0, 1, 2, 3],
-    notes: 'Classical baseline. Quantum-vulnerable.',
+    publicKeyBytes: 64,
+    secretKeyBytes: 32,
+    outputBytes: 64,
+    sizeSource: 'FIPS 186-5 / SEC 1',
+    builds: {
+      stack: {
+        impl: 'P256-Cortex-M4',
+        source: 'emill-p256',
+        ops: {
+          keygen: { stackBytes: 2048, cycles: 327_000 },
+          sign: { stackBytes: 2048, cycles: 375_000 },
+          verify: { stackBytes: 2048, cycles: 976_000 },
+        },
+        codeBytes: 8_900,
+        approximate: true,
+      },
+    },
+    notes:
+      'Classical baseline for firmware, DTLS, Matter (DAC/CASE) and BLE. Broken by Shor’s algorithm.',
   },
   {
+    id: 'lms-h10-w4',
     name: 'LMS (H10/W4)',
     type: 'Signature',
-    ramKB: 0.5,
-    publicKeyBytes: 56,
-    ciphertextOrSigBytes: 2512,
-    nistLevel: 1,
+    status: 'SP 800-208',
+    nistLevel: null,
     quantumSafe: true,
-    suitableForClass: [0, 1, 2, 3],
-    notes: 'Smallest PQC verifier. Stateful — requires monotonic counter.',
+    publicKeyBytes: 60,
+    secretKeyBytes: 64,
+    outputBytes: 2512,
+    sizeSource:
+      'RFC 8554 §5-6: LMS 56 B key / 2,508 B signature; as HSS with L = 1 (what SP 800-208 and COSE carry) 60 B / 2,512 B',
+    stateful: true,
+    builds: {
+      stack: {
+        impl: 'cisco/hash-sigs reference, SHA-256',
+        source: 'eprint-2020-470',
+        ops: {
+          keygen: { stackBytes: 3_780, cycles: 3_774_882_103 },
+          sign: { stackBytes: 2_460, cycles: 3_791_157_911 },
+          verify: { stackBytes: 1_044, cycles: 2_658_884 },
+        },
+      },
+    },
+    notes:
+      'Stateful hash-based signature: the signer must never reuse a leaf (1,024 signatures for H10). Verification is only hashing. The reference signer in this benchmark regenerates the tree for each signature; production signers cache it.',
   },
   {
-    name: 'XMSS (H10)',
+    id: 'xmss-h10',
+    name: 'XMSS (SHA2_10_256)',
     type: 'Signature',
-    ramKB: 1,
+    status: 'SP 800-208',
+    nistLevel: null,
+    quantumSafe: true,
     publicKeyBytes: 68,
-    ciphertextOrSigBytes: 2500,
-    nistLevel: 1,
-    quantumSafe: true,
-    suitableForClass: [1, 2, 3],
-    notes: 'Stateful with forward secrecy. BSI-preferred.',
+    secretKeyBytes: 132,
+    outputBytes: 2500,
+    sizeSource: 'RFC 8391 §4 (XMSS-SHA2_10_256: 68 B public key, 2,500 B signature)',
+    stateful: true,
+    builds: {
+      stack: {
+        impl: 'xmss-reference (RFC 8391, "robust"), SHA-256',
+        source: 'eprint-2020-470',
+        ops: {
+          keygen: { stackBytes: 4_400, cycles: 23_631_706_453 },
+          sign: { stackBytes: 4_288, cycles: 23_642_038_600 },
+          verify: { stackBytes: 3_896, cycles: 13_071_813 },
+        },
+      },
+    },
+    notes:
+      'Stateful like LMS. The RFC 8391 (robust) reference verifier is ~4.9× slower than LMS in this benchmark; an unstandardised "simple" variant narrows that to 1.3–1.6×. The private-key size shown is the compact form; working state is larger.',
   },
   {
-    name: 'FN-DSA-512',
+    id: 'fn-dsa-512',
+    name: 'FN-DSA-512 (Falcon-512)',
     type: 'Signature',
-    ramKB: 1.5,
-    publicKeyBytes: 897,
-    ciphertextOrSigBytes: 690,
+    status: 'pre-standard',
     nistLevel: 1,
     quantumSafe: true,
-    suitableForClass: [1, 2, 3],
-    notes: 'Most compact PQC signature (~666 avg, 690 max). FIPS 206 (in development).',
+    publicKeyBytes: 897,
+    secretKeyBytes: 1281,
+    outputBytes: 666,
+    sizeSource:
+      'Falcon v1.2 specification, padded (fixed-length) signature format — FIPS 206 is not yet published',
+    builds: {
+      stack: {
+        impl: 'fndsa_provisional-512 m4f',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 14_348, cycles: 67_693_338 },
+          sign: { stackBytes: 41_952, cycles: 22_469_685 },
+          verify: { stackBytes: 2_976, cycles: 396_949 },
+        },
+        codeBytes: 103_789,
+      },
+    },
+    notes:
+      'Smallest lattice signature and the fastest verifier here — but signing needs ~42 KB of stack and floating-point-heavy code (~104 KB for the full scheme). Verify on the device, sign elsewhere.',
   },
   {
+    id: 'ml-dsa-44',
     name: 'ML-DSA-44',
     type: 'Signature',
-    ramKB: 2.5,
-    publicKeyBytes: 1312,
-    ciphertextOrSigBytes: 2420,
+    status: 'FIPS 204',
     nistLevel: 2,
     quantumSafe: true,
-    suitableForClass: [2, 3],
-    notes: 'Stateless lattice sig. Larger key than LMS/XMSS.',
+    publicKeyBytes: 1312,
+    secretKeyBytes: 2560,
+    outputBytes: 2420,
+    sizeSource: 'FIPS 204 Table 2',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 4_408, cycles: 1_799_062 },
+          sign: { stackBytes: 5_080, cycles: 12_134_284 },
+          verify: { stackBytes: 2_712, cycles: 3_242_333 },
+        },
+        codeBytes: 24_844,
+      },
+      speed: {
+        impl: 'm4f',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 38_296, cycles: 1_426_025 },
+          sign: { stackBytes: 44_816, cycles: 3_943_121 },
+          verify: { stackBytes: 8_912, cycles: 1_421_623 },
+        },
+        codeBytes: 19_592,
+      },
+    },
+    notes:
+      'Stateless lattice signature. Signing time varies widely run to run (rejection sampling).',
   },
   {
+    id: 'ml-dsa-65',
     name: 'ML-DSA-65',
     type: 'Signature',
-    ramKB: 4,
-    publicKeyBytes: 1952,
-    ciphertextOrSigBytes: 3309,
+    status: 'FIPS 204',
     nistLevel: 3,
     quantumSafe: true,
-    suitableForClass: [3],
-    notes: 'Standard NIST Level 3. ~4 KB stack RAM.',
+    publicKeyBytes: 1952,
+    secretKeyBytes: 4032,
+    outputBytes: 3309,
+    sizeSource: 'FIPS 204 Table 2',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 4_408, cycles: 3_412_622 },
+          sign: { stackBytes: 6_616, cycles: 24_421_526 },
+          verify: { stackBytes: 2_712, cycles: 5_732_397 },
+        },
+        codeBytes: 24_120,
+      },
+      speed: {
+        impl: 'm4f',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 60_824, cycles: 2_516_006 },
+          sign: { stackBytes: 68_872, cycles: 6_193_171 },
+          verify: { stackBytes: 9_888, cycles: 2_415_944 },
+        },
+        codeBytes: 19_328,
+      },
+    },
+    notes: 'NIST category 3.',
+  },
+  {
+    id: 'ml-dsa-87',
+    name: 'ML-DSA-87',
+    type: 'Signature',
+    status: 'FIPS 204',
+    nistLevel: 5,
+    quantumSafe: true,
+    publicKeyBytes: 2592,
+    secretKeyBytes: 4896,
+    outputBytes: 4627,
+    sizeSource: 'FIPS 204 Table 2',
+    builds: {
+      stack: {
+        impl: 'm4fstack',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 4_408, cycles: 5_820_537 },
+          sign: { stackBytes: 8_144, cycles: 33_357_899 },
+          verify: { stackBytes: 2_720, cycles: 9_911_514 },
+        },
+        codeBytes: 24_516,
+      },
+      speed: {
+        impl: 'm4f',
+        source: 'pqm4-2025',
+        ops: {
+          keygen: { stackBytes: 97_688, cycles: 4_275_859 },
+          sign: { stackBytes: 107_892, cycles: 7_947_380 },
+          verify: { stackBytes: 12_060, cycles: 4_193_104 },
+        },
+        codeBytes: 19_500,
+      },
+    },
+    notes:
+      'NIST category 5 — the only ML-DSA parameter set CNSA 2.0 accepts for national security systems.',
   },
 ]
 
-// ── IoT Protocol Comparison ──────────────────────────────────────────────────
+export function algorithmById(id: string): ConstrainedAlgorithm {
+  const a = CONSTRAINED_ALGORITHMS.find((x) => x.id === id)
+  if (!a) throw new Error(`IoTPQC: unknown algorithm id ${id}`)
+  return a
+}
+
+// ── Constrained protocols (Learn: constrained-protocols) ─────────────────────
+
 export interface IoTProtocol {
   name: string
-  transport: string
-  maxPayloadBytes: number
-  handshakeRoundTrips: number
-  pqcFeasibility: 'good' | 'challenging' | 'problematic'
-  notes: string
+  layer: string
+  /** the size limit that actually matters for PQC on this protocol */
+  sizeFact: string
+  publicKeyCrypto: string
+  pqcPath: string
+  status: 'fragment' | 'carry' | 'symmetric' | 'spec-change'
 }
 
 export const IOT_PROTOCOLS: IoTProtocol[] = [
   {
-    name: 'CoAP + DTLS 1.3',
-    transport: 'UDP',
-    maxPayloadBytes: 1024,
-    handshakeRoundTrips: 2,
-    pqcFeasibility: 'challenging',
-    notes:
-      'ML-KEM ciphertext requires DTLS fragmentation. Record layer overhead adds ~13 bytes/record.',
+    name: 'CoAP + DTLS 1.3 (RFC 7252, RFC 9147, RFC 7925 profile)',
+    layer: 'UDP over 6LoWPAN / IPv6',
+    sizeFact:
+      'IPv6 minimum MTU 1,280 B; an IEEE 802.15.4 frame is 127 B with ~80 B left for payload once link security is on (7228bis S1).',
+    publicKeyCrypto: 'ECDHE + ECDSA certificates or raw public keys (RFC 7250)',
+    pqcPath: 'Hybrid or ML-KEM key share and ML-DSA certificates — every flight fragments.',
+    status: 'fragment',
   },
   {
-    name: 'MQTT 5.0 + TLS 1.3',
-    transport: 'TCP',
-    maxPayloadBytes: 65535,
-    handshakeRoundTrips: 1,
-    pqcFeasibility: 'good',
-    notes:
-      'TCP handles fragmentation natively. Larger PQC handshake tolerable for always-on connections.',
+    name: 'EDHOC (RFC 9528) + OSCORE (RFC 8613)',
+    layer: 'CoAP payload (no record layer)',
+    sizeFact:
+      'Three messages; credentials can be sent by reference (a key identifier) so no certificate crosses the air.',
+    publicKeyCrypto: 'ECDH (X25519 / P-256) with signature or static-DH authentication',
+    pqcPath:
+      'draft-ietf-lake-pqsuites: ML-KEM key in message_1, ciphertext in message_2, ML-DSA signatures.',
+    status: 'carry',
+  },
+  {
+    name: 'MQTT 5.0 over TLS 1.3',
+    layer: 'TCP',
+    sizeFact:
+      'Maximum packet size 268,435,455 B (variable-length integer); TCP segments any TLS flight.',
+    publicKeyCrypto: 'TLS 1.3 (ECDHE + certificates)',
+    pqcPath:
+      'Same as web TLS: X25519MLKEM768 today, ML-DSA certificates later. Size is a bandwidth cost, not a limit.',
+    status: 'carry',
+  },
+  {
+    name: 'LwM2M 1.2 (OMA) over DTLS or OSCORE',
+    layer: 'CoAP',
+    sizeFact: 'Inherits CoAP/DTLS fragmentation; bootstrap can use EST-coaps (RFC 9148).',
+    publicKeyCrypto: 'PSK, raw public key or certificate modes',
+    pqcPath: 'Follows the DTLS 1.3 or EDHOC path underneath; PSK mode has no Shor exposure.',
+    status: 'fragment',
+  },
+  {
+    name: 'Matter (CSA)',
+    layer: 'IPv6 over Thread / Wi-Fi; BLE for commissioning',
+    sizeFact: 'Messages ride IPv6 (1,280 B minimum MTU); commissioning starts over BLE.',
+    publicKeyCrypto:
+      'PASE (SPAKE2+ on P-256, setup passcode) then CASE (Sigma with ECDSA P-256 + ECDH); DAC → PAI → PAA attestation chain',
+    pqcPath:
+      'Needs a specification revision: new CASE suites and PQC device-attestation certificates.',
+    status: 'spec-change',
+  },
+  {
+    name: 'Bluetooth Mesh (Mesh Protocol 1.1)',
+    layer: 'BLE advertising (PB-ADV) or GATT',
+    sizeFact:
+      'A provisioning transaction is split into 20 B + 23 B segments, at most 64 segments (1,469 B).',
+    publicKeyCrypto:
+      'ECDH P-256 provisioning with OOB authentication; 1.1 adds certificate-based provisioning (X.509 device certificates)',
+    pqcPath:
+      'No PQC provisioning algorithm is defined; a FIPS 203 key would need tens of segments.',
+    status: 'spec-change',
   },
   {
     name: 'LoRaWAN 1.1',
-    transport: 'LoRa PHY',
-    maxPayloadBytes: 222,
-    handshakeRoundTrips: 0,
-    pqcFeasibility: 'problematic',
-    notes:
-      'Pre-shared keys only. ML-KEM-512 ciphertext (768 B) exceeds max payload. PQC requires out-of-band provisioning.',
-  },
-  {
-    name: 'Matter / Thread',
-    transport: 'UDP/IPv6',
-    maxPayloadBytes: 1280,
-    handshakeRoundTrips: 3,
-    pqcFeasibility: 'challenging',
-    notes: 'CASE protocol uses ECDSA P-256. PQC migration requires protocol specification update.',
-  },
-  {
-    name: 'LwM2M + DTLS 1.2/1.3',
-    transport: 'UDP',
-    maxPayloadBytes: 1024,
-    handshakeRoundTrips: 2,
-    pqcFeasibility: 'challenging',
-    notes: 'OMA lightweight M2M device management. Same DTLS fragmentation challenge as CoAP.',
-  },
-  {
-    name: 'BLE Mesh',
-    transport: 'BLE',
-    maxPayloadBytes: 384,
-    handshakeRoundTrips: 0,
-    pqcFeasibility: 'problematic',
-    notes:
-      'Provisioning-time key exchange. PQC requires out-of-band provisioning or secure element support.',
-  },
-  {
-    name: 'OPC UA',
-    transport: 'TCP',
-    maxPayloadBytes: 65535,
-    handshakeRoundTrips: 1,
-    pqcFeasibility: 'good',
-    notes:
-      'Industrial automation standard. TCP transport handles PQC handshake sizes. Certificate-based security profile needs PQC cert support.',
+    layer: 'LoRa PHY (sub-GHz LPWAN)',
+    sizeFact:
+      'Application payload 51–222 B per uplink depending on data rate (EU868), with duty-cycle limits.',
+    publicKeyCrypto:
+      'None over the air: AES-128 root keys (AppKey/NwkKey) and AES-CMAC/CTR session keys',
+    pqcPath:
+      'The air interface is symmetric and not exposed to Shor. The quantum exposure is the backend: join-server and network-server TLS, and how root keys are provisioned.',
+    status: 'symmetric',
   },
 ]
 
-// ── Simulated IoT Device Types ───────────────────────────────────────────────
+// ── Device types used by the firmware step ───────────────────────────────────
+
 export interface IoTDeviceType {
   id: string
   name: string
-  deviceClass: number
-  firmwareSizeKB: number
-  connectivity: string
-  bandwidthKbps: number
-  updateFrequency: string
-  description: string
+  deviceClassIdx: number
+  firmwareKB: number
+  link: string
+  /** downlink rate used for the firmware-delivery estimate (kbit/s) */
+  downlinkKbps: number
+  linkSource: string
 }
 
 export const IOT_DEVICE_TYPES: IoTDeviceType[] = [
   {
     id: 'smart-meter',
-    name: 'Smart Meter',
-    deviceClass: 1,
-    firmwareSizeKB: 256,
-    connectivity: 'NB-IoT',
-    bandwidthKbps: 62.5,
-    updateFrequency: 'Quarterly',
-    description: 'Utility smart meter with NB-IoT cellular connectivity',
+    name: 'Smart meter',
+    deviceClassIdx: 2,
+    firmwareKB: 256,
+    link: 'NB-IoT (Cat-NB1)',
+    downlinkKbps: 26,
+    linkSource: '3GPP TS 36.306 Cat-NB1 peak downlink (~26 kbit/s)',
   },
   {
-    id: 'industrial-gateway',
-    name: 'Industrial Gateway',
-    deviceClass: 3,
-    firmwareSizeKB: 8192,
-    connectivity: 'Ethernet',
-    bandwidthKbps: 100_000,
-    updateFrequency: 'Monthly',
-    description: 'Edge gateway bridging OT and IT networks',
+    id: 'env-sensor',
+    name: 'Environmental sensor',
+    deviceClassIdx: 1,
+    firmwareKB: 96,
+    link: 'Wi-SUN FAN 1.1 FSK',
+    downlinkKbps: 150,
+    linkSource: 'Wi-SUN FAN 1.1 FSK PHY mode (50–300 kbit/s); 150 kbit/s chosen',
   },
   {
-    id: 'medical-sensor',
-    name: 'Medical Sensor',
-    deviceClass: 1,
-    firmwareSizeKB: 128,
-    connectivity: 'BLE + WiFi',
-    bandwidthKbps: 1000,
-    updateFrequency: 'Annually',
-    description: 'Wearable medical sensor with BLE and WiFi backhaul',
+    id: 'medical-wearable',
+    name: 'Medical wearable',
+    deviceClassIdx: 2,
+    firmwareKB: 192,
+    link: 'BLE 1M PHY',
+    downlinkKbps: 1000,
+    linkSource: 'Bluetooth LE 1M PHY symbol rate (1 Mbit/s); real throughput is lower',
   },
   {
-    id: 'vehicle-ecu',
-    name: 'Vehicle ECU',
-    deviceClass: 2,
-    firmwareSizeKB: 2048,
-    connectivity: 'CAN / Ethernet',
-    bandwidthKbps: 500,
-    updateFrequency: 'Bi-annually',
-    description: 'Automotive electronic control unit with CAN bus',
+    id: 'edge-gateway',
+    name: 'Edge gateway',
+    deviceClassIdx: 4,
+    firmwareKB: 8192,
+    link: 'Ethernet',
+    downlinkKbps: 100_000,
+    linkSource: '100 Mbit/s Ethernet',
   },
 ]
 
-// ── Purdue Model Layers (ICS/SCADA) ─────────────────────────────────────────
-export interface PurdueLayer {
-  level: number | string
-  name: string
-  description: string
-  defaultCrypto: string
-  pqcPriority: 'critical' | 'high' | 'medium' | 'low'
-  internetFacing: boolean
-  assetLifecycleYears: number
-}
+// ── Firmware-signing algorithms (step 2) ─────────────────────────────────────
 
-export const PURDUE_LAYERS: PurdueLayer[] = [
-  {
-    level: 0,
-    name: 'Physical Process',
-    description: 'Sensors, actuators, field instruments',
-    defaultCrypto: 'None / Pre-shared keys',
-    pqcPriority: 'low',
-    internetFacing: false,
-    assetLifecycleYears: 25,
-  },
-  {
-    level: 1,
-    name: 'Basic Control',
-    description: 'PLCs, RTUs, IEDs',
-    defaultCrypto: 'Pre-shared keys / DNP3-SA',
-    pqcPriority: 'medium',
-    internetFacing: false,
-    assetLifecycleYears: 20,
-  },
-  {
-    level: 2,
-    name: 'Area Supervisory',
-    description: 'HMIs, SCADA servers, historians',
-    defaultCrypto: 'RSA-2048 / TLS 1.2',
-    pqcPriority: 'high',
-    internetFacing: false,
-    assetLifecycleYears: 15,
-  },
-  {
-    level: 3,
-    name: 'Site Operations',
-    description: 'Domain controllers, file servers, engineering workstations',
-    defaultCrypto: 'RSA-2048 / TLS 1.2 / IPsec',
-    pqcPriority: 'high',
-    internetFacing: false,
-    assetLifecycleYears: 10,
-  },
-  {
-    level: '3.5',
-    name: 'DMZ',
-    description: 'Data diodes, jump servers, patch management, remote access',
-    defaultCrypto: 'TLS 1.2/1.3',
-    pqcPriority: 'critical',
-    internetFacing: true,
-    assetLifecycleYears: 5,
-  },
-  {
-    level: 4,
-    name: 'Enterprise IT',
-    description: 'ERP, email servers, corporate network',
-    defaultCrypto: 'TLS 1.3 / IPsec',
-    pqcPriority: 'critical',
-    internetFacing: true,
-    assetLifecycleYears: 5,
-  },
-  {
-    level: 5,
-    name: 'Enterprise Network',
-    description: 'Cloud services, remote access, VPN gateways',
-    defaultCrypto: 'TLS 1.3 / VPN',
-    pqcPriority: 'critical',
-    internetFacing: true,
-    assetLifecycleYears: 3,
-  },
-]
+export type FirmwareExecution = 'live-mldsa' | 'live-hss' | 'size-only'
 
-// ── DTLS 1.3 Handshake Message Sizes ─────────────────────────────────────────
-export interface HandshakeAlgorithmOption {
+export interface FirmwareAlgorithm {
   id: string
-  name: string
-  type: 'kem' | 'sig'
-  category: 'classical' | 'pqc' | 'hybrid'
+  /** id in CONSTRAINED_ALGORITHMS for sizes and verify benchmark */
+  algId: string
+  execution: FirmwareExecution
+  mldsaVariant?: 44 | 65 | 87
+  /** COSE algorithm identifier, or null when none is registered */
+  coseAlg: number | null
+  coseSource: string
+  /** CNSA 2.0 acceptability for national-security-system firmware signing */
+  cnsa2: 'allowed' | 'not-allowed'
+  simulatedLabel?: string
 }
 
-export const HANDSHAKE_KEM_OPTIONS: HandshakeAlgorithmOption[] = [
-  { id: 'x25519', name: 'X25519', type: 'kem', category: 'classical' },
-  { id: 'ml-kem-512', name: 'ML-KEM-512', type: 'kem', category: 'pqc' },
-  { id: 'ml-kem-768', name: 'ML-KEM-768', type: 'kem', category: 'pqc' },
-  {
-    id: 'x25519-ml-kem-768',
-    name: 'X25519 + ML-KEM-768',
-    type: 'kem',
-    category: 'hybrid',
-  },
-]
-
-export const HANDSHAKE_SIG_OPTIONS: HandshakeAlgorithmOption[] = [
-  { id: 'ecdsa-p256', name: 'ECDSA P-256', type: 'sig', category: 'classical' },
-  { id: 'ml-dsa-44', name: 'ML-DSA-44', type: 'sig', category: 'pqc' },
-  { id: 'ml-dsa-65', name: 'ML-DSA-65', type: 'sig', category: 'pqc' },
-  {
-    id: 'ecdsa-ml-dsa-44',
-    name: 'ECDSA + ML-DSA-44',
-    type: 'sig',
-    category: 'hybrid',
-  },
-]
-
-/**
- * Pre-calculated DTLS 1.3 handshake component sizes (bytes).
- * Each entry maps algo IDs to byte contributions per handshake message.
- */
-export interface HandshakeSizes {
-  kemId: string
-  sigId: string
-  clientHello: number
-  serverHello: number
-  encryptedExtensions: number
-  certificate: number
-  certificateVerify: number
-  finished: number
-  totalBytes: number
-}
-
-const BASE_OVERHEAD = 200 // DTLS record headers, extensions, etc.
-
-/** Map of KEM ID → { publicKeyBytes, ciphertextBytes } */
-const KEM_SIZES: Record<string, { pk: number; ct: number }> = {
-  x25519: { pk: 32, ct: 32 },
-  'ml-kem-512': { pk: 800, ct: 768 },
-  'ml-kem-768': { pk: 1184, ct: 1088 },
-  'x25519-ml-kem-768': { pk: 32 + 1184, ct: 32 + 1088 },
-}
-
-/** Map of Sig ID → { publicKeyBytes, signatureBytes } */
-const SIG_SIZES: Record<string, { pk: number; sig: number }> = {
-  'ecdsa-p256': { pk: 64, sig: 64 },
-  'ml-dsa-44': { pk: 1312, sig: 2420 },
-  'ml-dsa-65': { pk: 1952, sig: 3309 },
-  'ecdsa-ml-dsa-44': { pk: 64 + 1312, sig: 64 + 2420 },
-}
-
-export function calculateHandshakeSizes(kemId: string, sigId: string): HandshakeSizes {
-  // eslint-disable-next-line security/detect-object-injection
-  const kem = KEM_SIZES[kemId] ?? KEM_SIZES['x25519']
-  // eslint-disable-next-line security/detect-object-injection
-  const sig = SIG_SIZES[sigId] ?? SIG_SIZES['ecdsa-p256']
-
-  const clientHello = BASE_OVERHEAD + kem.pk + 50 // key_share + cipher suites
-  const serverHello = BASE_OVERHEAD + kem.ct + 50
-  const encryptedExtensions = 100
-  // Certificate: ~200 bytes structure + 3 certs (root, intermediate, leaf) with public keys + signatures
-  const certificate = 600 + sig.pk * 3 + sig.sig * 2
-  const certificateVerify = 50 + sig.sig
-  const finished = 80
-
-  return {
-    kemId,
-    sigId,
-    clientHello,
-    serverHello,
-    encryptedExtensions,
-    certificate,
-    certificateVerify,
-    finished,
-    totalBytes:
-      clientHello + serverHello + encryptedExtensions + certificate + certificateVerify + finished,
-  }
-}
-
-// ── Certificate Chain Algorithm Options ──────────────────────────────────────
-export interface CertAlgorithmOption {
-  id: string
-  name: string
-  publicKeyBytes: number
-  signatureBytes: number
-  category: 'classical' | 'pqc' | 'hybrid'
-}
-
-export const CERT_ALGORITHM_OPTIONS: CertAlgorithmOption[] = [
-  {
-    id: 'rsa-2048',
-    name: 'RSA-2048',
-    publicKeyBytes: 256,
-    signatureBytes: 256,
-    category: 'classical',
-  },
-  {
-    id: 'ecdsa-p256',
-    name: 'ECDSA P-256',
-    publicKeyBytes: 64,
-    signatureBytes: 64,
-    category: 'classical',
-  },
-  {
-    id: 'ml-dsa-44',
-    name: 'ML-DSA-44',
-    publicKeyBytes: 1312,
-    signatureBytes: 2420,
-    category: 'pqc',
-  },
-  {
-    id: 'ml-dsa-65',
-    name: 'ML-DSA-65',
-    publicKeyBytes: 1952,
-    signatureBytes: 3309,
-    category: 'pqc',
-  },
-  {
-    id: 'ml-dsa-87',
-    name: 'ML-DSA-87',
-    publicKeyBytes: 2592,
-    signatureBytes: 4627,
-    category: 'pqc',
-  },
-  {
-    id: 'ecdsa-ml-dsa-44',
-    name: 'ECDSA + ML-DSA-44 Hybrid',
-    publicKeyBytes: 64 + 1312,
-    signatureBytes: 64 + 2420,
-    category: 'hybrid',
-  },
-]
-
-export const CERT_BASE_OVERHEAD = 300 // ASN.1 structure, extensions, validity, subject/issuer
-
-// ── Mitigation Options for Cert Chain Bloat ─────────────────────────────────
-export interface CertMitigation {
-  id: string
-  name: string
-  rfc: string
-  reductionPercent: number
-  description: string
-}
-
-export const CERT_MITIGATIONS: CertMitigation[] = [
-  {
-    id: 'mtc',
-    name: 'Merkle Tree Certificates',
-    rfc: 'draft-ietf-tls-merkle-tree-certs',
-    reductionPercent: 85,
-    description:
-      'Replace PQC signatures in leaf certs with compact Merkle inclusion proofs (~300 bytes vs ~3 KB).',
-  },
-  {
-    id: 'compression',
-    name: 'Certificate Compression',
-    rfc: 'RFC 8879',
-    reductionPercent: 30,
-    description:
-      'Zlib/Brotli compress the certificate chain during TLS handshake. 25-35% reduction on PQC certs.',
-  },
-  {
-    id: 'resumption',
-    name: 'Session Resumption (PSK)',
-    rfc: 'RFC 9846 \u00a72.2',
-    reductionPercent: 90,
-    description:
-      'Reuse prior session keys via PSK. Eliminates certificate exchange entirely on reconnection.',
-  },
-  {
-    id: 'raw-keys',
-    name: 'Raw Public Keys',
-    rfc: 'RFC 7250',
-    reductionPercent: 70,
-    description:
-      'Send bare public keys instead of full X.509 certs. Removes signatures, extensions, and metadata.',
-  },
-]
-
-// ── Firmware Signing Algorithm Options (reused from IoT context) ─────────────
-export interface IoTFirmwareAlgorithm {
-  id: string
-  name: string
-  signatureBytes: number
-  publicKeyBytes: number
-  stateful: boolean
-  verifySpeed: 'fastest' | 'fast' | 'moderate'
-  notes: string
-}
-
-export const IOT_FIRMWARE_ALGORITHMS: IoTFirmwareAlgorithm[] = [
+export const FIRMWARE_ALGORITHMS: FirmwareAlgorithm[] = [
   {
     id: 'lms',
-    name: 'LMS / HSS',
-    signatureBytes: 2512,
-    publicKeyBytes: 56,
-    stateful: true,
-    verifySpeed: 'fastest',
-    notes:
-      'Fastest PQC verifier (~4\u00d7 faster than XMSS on Cortex-M4). Requires monotonic counter in TPM or secure element.',
+    algId: 'lms-h10-w4',
+    execution: 'live-hss',
+    coseAlg: -46,
+    coseSource: 'RFC 8778 (HSS-LMS)',
+    cnsa2: 'allowed',
   },
   {
     id: 'xmss',
-    name: 'XMSS',
-    signatureBytes: 2500,
-    publicKeyBytes: 68,
-    stateful: true,
-    verifySpeed: 'moderate',
-    notes: 'Forward secrecy. BSI-preferred. ~4\u00d7 slower than LMS on constrained MCUs.',
+    algId: 'xmss-h10',
+    execution: 'size-only',
+    coseAlg: null,
+    coseSource: 'no COSE algorithm registered in this module’s sources',
+    cnsa2: 'allowed',
+    simulatedLabel: 'Simulated — sizes per RFC 8391, no signature computed',
   },
   {
     id: 'ml-dsa-44',
-    name: 'ML-DSA-44',
-    signatureBytes: 2420,
-    publicKeyBytes: 1312,
-    stateful: false,
-    verifySpeed: 'fast',
-    notes: 'Stateless. Faster than XMSS but slower than LMS on Cortex-M4.',
+    algId: 'ml-dsa-44',
+    execution: 'live-mldsa',
+    mldsaVariant: 44,
+    coseAlg: -48,
+    coseSource: 'RFC 9964 (ML-DSA for JOSE and COSE)',
+    cnsa2: 'not-allowed',
   },
   {
     id: 'ml-dsa-65',
-    name: 'ML-DSA-65',
-    signatureBytes: 3309,
-    publicKeyBytes: 1952,
-    stateful: false,
-    verifySpeed: 'moderate',
-    notes: 'NIST Level 3 stateless. Comparable to XMSS on constrained hardware.',
+    algId: 'ml-dsa-65',
+    execution: 'live-mldsa',
+    mldsaVariant: 65,
+    coseAlg: -49,
+    coseSource: 'RFC 9964 (ML-DSA for JOSE and COSE)',
+    cnsa2: 'not-allowed',
+  },
+  {
+    id: 'ml-dsa-87',
+    algId: 'ml-dsa-87',
+    execution: 'live-mldsa',
+    mldsaVariant: 87,
+    coseAlg: -50,
+    coseSource: 'RFC 9964 (ML-DSA for JOSE and COSE)',
+    cnsa2: 'allowed',
+  },
+  {
+    id: 'fn-dsa-512',
+    algId: 'fn-dsa-512',
+    execution: 'size-only',
+    coseAlg: null,
+    coseSource: 'draft-ietf-cose-falcon (value not yet assigned)',
+    cnsa2: 'not-allowed',
+    simulatedLabel: 'Simulated — sizes per Falcon v1.2 (FIPS 206 not final), no signature computed',
+  },
+  {
+    id: 'ecdsa-p256',
+    algId: 'ecdsa-p256',
+    execution: 'size-only',
+    coseAlg: -7,
+    coseSource: 'RFC 9053 (ES256)',
+    cnsa2: 'not-allowed',
+    simulatedLabel: 'Classical baseline — sizes only, no signature computed',
   },
 ]
 
-// ── SUIT Manifest Structure (RFC 9019) ───────────────────────────────────────
-export interface SUITManifestField {
-  field: string
-  value: string
-  description: string
-}
+/** Bytes the SUIT envelope + COSE_Sign1 add on top of the signature itself. Model estimate. */
+export const SUIT_COSE_OVERHEAD_BYTES = 56
 
-export function buildSUITManifest(
-  deviceType: IoTDeviceType,
-  algorithm: IoTFirmwareAlgorithm,
-  firmwareHash: string
-): SUITManifestField[] {
-  return [
-    {
-      field: 'manifest-version',
-      value: '1',
-      description: 'SUIT manifest format version',
-    },
-    {
-      field: 'manifest-sequence-number',
-      value: String(Date.now()),
-      description: 'Monotonically increasing sequence to prevent rollback',
-    },
-    {
-      field: 'component-id',
-      value: `["${deviceType.id}", "firmware", "v${deviceType.firmwareSizeKB}"]`,
-      description: 'Identifies the firmware slot being updated',
-    },
-    {
-      field: 'payload-digest',
-      value: firmwareHash,
-      description: 'SHA-256 hash of the firmware image',
-    },
-    {
-      field: 'payload-size',
-      value: `${deviceType.firmwareSizeKB * 1024} bytes`,
-      description: 'Firmware image size for pre-flight storage check',
-    },
-    {
-      field: 'signature-algorithm',
-      value: algorithm.name,
-      description: `${algorithm.stateful ? 'Stateful' : 'Stateless'} PQC signature (${algorithm.signatureBytes} bytes)`,
-    },
-    {
-      field: 'signature-size',
-      value: `${algorithm.signatureBytes} bytes`,
-      description: 'Total bandwidth overhead for signature delivery',
-    },
-    {
-      field: 'conditions',
-      value: `vendor-id: "example.com", class-id: "${deviceType.id}"`,
-      description: 'Device must match vendor and class before applying update',
-    },
-  ]
-}
+/** RFC 8554 H10: one LMS key signs at most 2^10 firmware images. */
+export const LMS_H10_SIGNATURES = 1 << 10

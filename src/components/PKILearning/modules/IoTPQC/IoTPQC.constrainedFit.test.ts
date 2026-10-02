@@ -1,94 +1,120 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * The Constrained Algorithm Explorer's fit table, its RAM figures, and its
- * per-class guidance prose must agree.
+ * The Algorithm Explorer's fit verdicts are computed from benchmark stack +
+ * buffers (utils/sizing.ts assessFit), and the summary and Learn prose are
+ * generated from the same function — there is no hand-written fit table or
+ * per-class prose left to drift. These tests pin the model's invariants and
+ * the specific audit findings it resolves (I6, I7, I8, I12).
  *
- * THE FAILURE THIS EXISTS FOR, found 2026-08-22 while reviewing this module
- * against the algorithm catalogue. It was one wrong number with two visible
- * consequences, and neither was caught by types, tests, or the accuracy pass:
- *
- *  - `FrodoKEM-640.ramKB` was 180. That is FrodoKEM-1344's figure; the catalogue
- *    gives ~60000 / ~120000 / ~180000 stack bytes for -640 / -976 / -1344. A
- *    threefold overstatement on the smallest parameter set.
- *  - Built on top of it, the Class 3+ guidance told the reader "Only FrodoKEM
- *    remains infeasible" — on a 256 KB device that FrodoKEM-640 uses under a
- *    quarter of. The reader was steered away from a working option.
- *  - `suitableForClass` was `[]`, and THAT is what the badge reads — not ramKB.
- *    So correcting the number alone would have shipped a paragraph saying
- *    FrodoKEM fits next to a red "exceeds capabilities" badge on the same screen.
- *
- * Assertions derive from the data, never restate it: a test that hardcodes
- * "60" is a second copy of the number that drifts on its own.
+ * History: the pre-split module kept a hand-maintained suitableForClass array
+ * next to hand-written guidance; FrodoKEM-640 was once shown at 180 KB and
+ * "ML-KEM-768 exceeds Class 1" survived until the 2026-10-01 audit.
  */
 import { describe, it, expect } from 'vitest'
-import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS } from './constants'
-// ?raw so the assertion reads the component's real source, wherever vitest is run
-// from — a cwd-relative readFileSync makes the test depend on the invocation.
-import explorerSource from './workshop/ConstrainedAlgorithmExplorer.tsx?raw'
+import { CONSTRAINED_ALGORITHMS, DEVICE_CLASSES, algorithmById } from './constants'
+import { assessFit, fitSummary, type DeviceRole } from './utils/sizing'
 
-const LARGEST_CLASS_IDX = DEVICE_CLASSES.length - 1
+const ROLES: DeviceRole[] = ['verify', 'sign', 'kem']
+const BUILDS = ['stack', 'speed'] as const
 
-describe('constrained algorithm fit table', () => {
-  it('never claims an algorithm suits a class whose RAM it exceeds', () => {
-    const offenders = CONSTRAINED_ALGORITHMS.flatMap((alg) =>
-      alg.suitableForClass
-        .filter((idx) => alg.ramKB > DEVICE_CLASSES[idx].ramKB)
-        .map(
-          (idx) =>
-            `${alg.name}: ${alg.ramKB} KB claimed to suit ${DEVICE_CLASSES[idx].name} (${DEVICE_CLASSES[idx].ramKB} KB)`
-        )
+describe('device classes', () => {
+  it('lists RFC 7228 Classes 0-2 and the 7228bis Classes 3-4, in increasing size', () => {
+    expect(DEVICE_CLASSES.map((c) => c.name)).toEqual([
+      'Class 0',
+      'Class 1',
+      'Class 2',
+      'Class 3',
+      'Class 4',
+    ])
+    expect(DEVICE_CLASSES.slice(0, 3).every((c) => c.definedIn === 'RFC 7228')).toBe(true)
+    expect(DEVICE_CLASSES.slice(3).every((c) => c.definedIn === 'draft-ietf-iotops-7228bis')).toBe(
+      true
     )
-    expect(offenders).toEqual([])
-  })
-
-  it('lists every algorithm that fits the largest class as suiting it', () => {
-    // The direction that caught the real bug. suitableForClass is hand-maintained
-    // and may legitimately exclude a class for reasons beyond RAM (code size, stack
-    // depth) — but an algorithm the top class can hold and that is excluded from it
-    // is an unexplained contradiction between the two fields.
-    const top = DEVICE_CLASSES[LARGEST_CLASS_IDX]
-    const offenders = CONSTRAINED_ALGORITHMS.filter(
-      (alg) => alg.ramKB <= top.ramKB && !alg.suitableForClass.includes(LARGEST_CLASS_IDX)
-    ).map(
-      (alg) => `${alg.name}: ${alg.ramKB} KB fits ${top.name} (${top.ramKB} KB) but is excluded`
-    )
-    expect(offenders).toEqual([])
-  })
-
-  it('no guidance sentence claims an algorithm fits a class the fit table excludes', () => {
-    // The seam. The paragraph and the badge are rendered by the same component from
-    // two different sources — hand-written prose and the fit table — and nothing
-    // else compares them. Read the source rather than rendering: the guidance is an
-    // inline literal keyed by class index, so a static read is exact and the render
-    // would only reach one class at a time.
-    //
-    // Scoped to the SENTENCE, not the paragraph. Class 1's guidance legitimately
-    // names ML-KEM-768 to say it does NOT fit; a paragraph-level check would have to
-    // exempt that whole paragraph and would then miss a fit claim sitting next to it.
-    const guidance = [
-      ...explorerSource.matchAll(/selectedClassIdx === (\d+) &&\s*\n?\s*'([^']*)'/g),
-    ]
-    // Guard the guard: if the literals are refactored out of this file the regex
-    // silently matches nothing and the test passes on an empty set.
-    expect(guidance.length).toBe(DEVICE_CLASSES.length)
-
-    const FIT_CLAIM =
-      /\bfits?\b|\bcan run\b|\bsupports?\b|\bcomfortabl|\bfeasible\b|\bcan only use\b/i
-    const offenders: string[] = []
-    for (const [, idxStr, text] of guidance) {
-      const idx = Number(idxStr)
-      for (const sentence of text.split(/(?<=[.;])\s+/)) {
-        if (!FIT_CLAIM.test(sentence)) continue
-        if (/\bno\b|\bnot\b|\bexceeds?\b|\binfeasible\b/i.test(sentence)) continue
-        for (const alg of CONSTRAINED_ALGORITHMS) {
-          if (!sentence.includes(alg.name)) continue
-          if (alg.suitableForClass.includes(idx)) continue
-          offenders.push(
-            `${DEVICE_CLASSES[idx].name}: "${sentence.trim()}" claims ${alg.name} fits, but the fit table excludes it`
-          )
-        }
-      }
+    for (let i = 1; i < DEVICE_CLASSES.length; i++) {
+      expect(DEVICE_CLASSES[i].ramBytes).toBeGreaterThan(DEVICE_CLASSES[i - 1].ramBytes)
+      expect(DEVICE_CLASSES[i].flashBytes).toBeGreaterThan(DEVICE_CLASSES[i - 1].flashBytes)
     }
-    expect(offenders).toEqual([])
+  })
+})
+
+describe('fit model', () => {
+  it('a "fits" or "tight" verdict never exceeds the class RAM', () => {
+    for (const alg of CONSTRAINED_ALGORITHMS)
+      for (let c = 0; c < DEVICE_CLASSES.length; c++)
+        for (const r of ROLES)
+          for (const b of BUILDS) {
+            const f = assessFit(alg, c, r, b)
+            if (!f.applicable || f.verdict === 'too-large') continue
+            expect(f.peakBytes, `${alg.id} ${r} ${b} class ${c}`).toBeLessThanOrEqual(
+              DEVICE_CLASSES[c].ramBytes
+            )
+          }
+  })
+
+  it('is monotonic: anything that fits a class fits every larger class', () => {
+    const rank = { fits: 0, tight: 1, 'too-large': 2 }
+    for (const alg of CONSTRAINED_ALGORITHMS)
+      for (const r of ROLES)
+        for (const b of BUILDS)
+          for (let c = 1; c < DEVICE_CLASSES.length; c++) {
+            const prev = assessFit(alg, c - 1, r, b)
+            const cur = assessFit(alg, c, r, b)
+            if (!cur.applicable) continue
+            expect(rank[cur.verdict], `${alg.id} ${r} ${b} ${c}`).toBeLessThanOrEqual(
+              rank[prev.verdict]
+            )
+          }
+  })
+
+  it('peak = benchmark stack + the buffers the role holds', () => {
+    const a = algorithmById('ml-dsa-44')
+    const f = assessFit(a, 1, 'verify', 'stack')
+    expect(f.stackBytes).toBe(a.builds.stack.ops.verify!.stackBytes)
+    expect(f.bufferBytes).toBe(a.publicKeyBytes + a.outputBytes)
+    expect(f.peakBytes).toBe(f.stackBytes + f.bufferBytes)
+  })
+
+  it('I6: ML-KEM-768 fits Class 1 with the stack build, not with the speed build', () => {
+    const a = algorithmById('ml-kem-768')
+    expect(assessFit(a, 1, 'kem', 'stack').verdict).not.toBe('too-large')
+    expect(assessFit(a, 1, 'kem', 'speed').verdict).toBe('too-large')
+  })
+
+  it('I7: ML-DSA-44 verify and sign are separate figures', () => {
+    const a = algorithmById('ml-dsa-44')
+    const v = assessFit(a, 1, 'verify', 'stack')
+    const s = assessFit(a, 1, 'sign', 'stack')
+    expect(v.stackBytes).toBeLessThan(s.stackBytes)
+  })
+
+  it('I8: FN-DSA-512 verifies on Class 1 but cannot sign there', () => {
+    const a = algorithmById('fn-dsa-512')
+    expect(assessFit(a, 1, 'verify', 'stack').verdict).toBe('fits')
+    const sign = assessFit(a, 1, 'sign', 'stack')
+    expect(sign.verdict).toBe('too-large')
+    expect(sign.stackBytes).toBeGreaterThan(40_000)
+    expect(sign.codeBytes).toBeGreaterThan(100_000)
+  })
+
+  it('I1: FrodoKEM-640 uses the measured pqm4 figures, not 180 KB, and fits only Class 4', () => {
+    const a = algorithmById('frodokem-640')
+    expect(a.builds.stack.ops.decaps!.stackBytes).toBeLessThan(100_000)
+    const verdicts = DEVICE_CLASSES.map((_, c) => assessFit(a, c, 'kem', 'stack').verdict)
+    expect(verdicts.slice(0, 4).every((v) => v === 'too-large')).toBe(true)
+    expect(verdicts[4]).not.toBe('too-large')
+  })
+
+  it('Class 0 fits nothing — those devices rely on a gateway', () => {
+    for (const r of ROLES) {
+      const s = fitSummary(0, r, 'stack')
+      expect(s.fits).toEqual([])
+      expect(s.tight).toEqual([])
+    }
+  })
+
+  it('the explorer renders its summary from fitSummary, not from per-class literals', async () => {
+    const src = (await import('./workshop/ConstrainedAlgorithmExplorer.tsx?raw')).default as string
+    expect(src).toContain('fitSummary(')
+    expect(src).not.toMatch(/selectedClassIdx === \d+ &&\s*'/)
   })
 })
