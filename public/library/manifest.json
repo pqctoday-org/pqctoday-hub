@@ -21251,7 +21251,7 @@
       "refId": "EN-18031-3-2024",
       "title": "EN 18031-3:2024 Common security requirements for radio equipment - Part 3: Internet connected radio equipment processing virtual money or monetary value",
       "url": "https://standards.iteh.ai/catalog/standards/cen/7b7620a4-c718-4dff-99af-13f0a4809c7f/en-18031-3-2024",
-      "status": "downloaded",
+      "status": "superseded",
       "filename": "EN-18031-3-2024.html",
       "sizeBytes": 174327,
       "contentType": "text/html",
@@ -21433,7 +21433,7 @@
       "admittedBy": "admit.py"
     },
     {
-      "refId": "EN-17927-2024",
+      "refId": "EN-17927-2023",
       "title": "EN 17927:2024 Security Evaluation Standard for IoT Platforms (SESIP)",
       "url": "https://standards.iteh.ai/catalog/standards/cen/e545f156-f87b-4463-a711-9483b31a202d/en-17927-2023",
       "status": "downloaded",
@@ -21535,21 +21535,6 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-01T23:52:09.646784+00:00",
-      "admittedBy": "admit.py"
-    },
-    {
-      "refId": "PI-PROFINET-Design-Guideline-Security-7362",
-      "title": "PROFINET Design Guideline Security v1.00",
-      "url": "https://www.profibus.com/download/profinet-security-guideline",
-      "status": "downloaded",
-      "filename": "PI-PROFINET-Design-Guideline-Security-7362.html",
-      "sizeBytes": 81156,
-      "contentType": "text/html",
-      "sha256": "bc8bbcfa93dbdc81bd69584f8a1e71864772a91328736d703c08483e3ad4fcae",
-      "artefact": "SOURCE",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-10-01T23:52:18.891567+00:00",
       "admittedBy": "admit.py"
     },
     {
