@@ -1,17 +1,15 @@
-# IoT & OT PQC — In Simple Terms
+### What This Is About
 
-## What This Is About
+Smart meters, sensors, wearables and gateways run on tiny chips with a few kilobytes of memory and slow radios. This module looks at how post-quantum cryptography fits on them: which algorithms they can run, how their software updates are signed, and how their networks carry the larger keys.
 
-Internet of Things (IoT) and Operational Technology (OT) devices power SCADA infrastructure with 15–30 year asset lifespans, but face extreme constraints in processing, memory, and bandwidth.
+### Why It Matters
 
-## Why It Matters
+A device sold today may still be working in 15 years. If its update signatures can be forged by a future quantum computer, an attacker could install anything on it — and many devices can only be fixed by replacing them.
 
-Standard PQC algorithms are massive. For example, ML-KEM-768 requires roughly 6 KB of RAM just to execute a single key exchange. This completely exceeds the total memory of many ultra-constrained Class 0/1 sensor modules operating in the field today.
+### The Key Takeaway
 
-## The Key Takeaway
+Small devices mostly check signatures rather than make them, and checking is much cheaper. Many post-quantum algorithms fit when built for low memory; signing and heavy handshakes are best left to servers and gateways.
 
-Because IoT cannot handle thousands of bytes of PQC certificates, lightweight workarounds are mandatory. Networks often rely on "Gateway-Mediated" PQC, where tiny field devices use classic crypto to connect to a powerful gateway, which then handles the heavy PQC encryption up to the cloud.
+### What's Happening
 
-## What's Happening
-
-To bring PQC directly to the edge, hardware vendors (like Infineon and Thales) are rapidly upgrading internal Hardware Secure Elements (like TPMs) to physically accelerate ML-KEM operations, allowing tiny devices to safely run massive algorithms.
+New laws such as the EU Cyber Resilience Act require secure updates for years after sale, and chip makers have started shipping security chips with post-quantum algorithms built in.
