@@ -58,7 +58,7 @@
    "crypto-agility",
    "migration-program",
    "pqc-governance",
-   "iot-ot-pqc"
+   "iot-pqc"
   ],
   "implementationAttackSurface": [
    "side-channel attacks"
@@ -667,7 +667,7 @@
    "Migrate",
    "Algorithms",
    "hsm-pqc",
-   "iot-ot-pqc"
+   "iot-pqc"
   ],
   "implementationAttackSurface": [
    "Side channel attacks (SCA)",
@@ -811,7 +811,7 @@
    "Leaders",
    "vpn-ssh-pqc",
    "code-signing",
-   "iot-ot-pqc"
+   "iot-pqc"
   ],
   "implementationAttackSurface": [
    "Side-channel (power leakage)",
@@ -7458,7 +7458,7 @@
    "adhering to strict procedures and governance."
   ],
   "relevantFeatures": [
-   "iot-ot-pqc",
+   "iot-pqc",
    "pqc-risk-management",
    "migration-program",
    "crypto-agility",
@@ -8877,7 +8877,7 @@
    "hsm-pqc",
    "entropy-randomness",
    "vendor-risk",
-   "iot-ot-pqc"
+   "iot-pqc"
   ],
   "implementationAttackSurface": [
    "side-channel attacks"
@@ -9009,7 +9009,7 @@
   ],
   "relevantFeatures": [
    "Threats",
-   "iot-ot-pqc",
+   "iot-pqc",
    "hsm-pqc",
    "pqc-business-case"
   ],
@@ -16323,7 +16323,7 @@
    "hybrid-crypto",
    "crypto-agility",
    "pki-workshop",
-   "iot-ot-pqc",
+   "iot-pqc",
    "pqc-risk-management"
   ],
   "implementationAttackSurface": [
@@ -16506,7 +16506,7 @@
    "hybrid-crypto",
    "crypto-agility",
    "pki-workshop",
-   "iot-ot-pqc",
+   "iot-pqc",
    "pqc-risk-management"
   ],
   "implementationAttackSurface": [
@@ -21927,7 +21927,7 @@
   "relevantFeatures": [
    "hybrid-crypto",
    "hsm-pqc",
-   "iot-ot-pqc",
+   "iot-pqc",
    "pki-workshop",
    "migration-program"
   ],
@@ -22764,7 +22764,7 @@
    "Integrity Guard 32 security architecture"
   ],
   "relevantFeatures": [
-   "iot-ot-pqc",
+   "iot-pqc",
    "digital-id",
    "hsm-pqc",
    "crypto-agility",
@@ -26566,7 +26566,7 @@
   "relevantFeatures": [
    "Compliance",
    "pqc-governance",
-   "iot-ot-pqc"
+   "iot-pqc"
   ],
   "implementationAttackSurface": [],
   "cryptoDiscovery": [],
@@ -33577,7 +33577,7 @@
    "migration-program",
    "compliance-strategy",
    "hsm-pqc",
-   "iot-ot-pqc",
+   "iot-pqc",
    "crypto-agility"
   ],
   "implementationAttackSurface": [
