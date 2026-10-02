@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'talking-about-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-073',
   title: 'Talking About PQC Accurately',
   description:
@@ -12,9 +12,6 @@ const manifest: ModuleManifest = {
     'Customers, buyers and journalists can now check a quantum claim against public records. A sentence that overstates a deadline or a certificate costs more trust than it ever wins.',
   duration: '30 min',
   difficulty: 'beginner',
-  // 2026-10-01: draft until a reviewer with a product-marketing or compliance
-  // background signs it off — same convention as acvp-lab-workflow.
-  workInProgress: true,
   frameworkPhase: 'foundations',
   track: 'Role Guides',
   trackOrder: 5,

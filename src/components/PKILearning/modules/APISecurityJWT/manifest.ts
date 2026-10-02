@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-011',
   title: 'API Security & JWT',
   description:
@@ -29,6 +29,7 @@ const manifest: ModuleManifest = {
     { id: 'jwe-encryption', label: 'JWE Encryption' },
     { id: 'size-analyzer', label: 'Token Size Analyzer' },
     { id: 'matrix-audit', label: 'Matrix Audit' },
+    { id: 'attack-lab', label: 'Attack Lab' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

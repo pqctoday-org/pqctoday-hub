@@ -660,6 +660,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             ): the <code>alg</code> value alone names the exact algorithm and parameters, which
             makes a per-key allowlist straightforward to write.
           </p>
+          <p className="text-xs text-muted-foreground">
+            To see these checks fail on purpose, open the workshop&apos;s{' '}
+            <strong>Attack Lab</strong> (Step 7): it aims{' '}
+            <code>&quot;alg&quot;: &quot;none&quot;</code>, edited claims, a token for another API,
+            an expired token and an ID token at a strict validator and at a naive verifier that
+            trusts the header.
+          </p>
         </div>
       </section>
 

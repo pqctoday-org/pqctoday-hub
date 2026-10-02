@@ -838,7 +838,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
 
   '/learn/talking-about-pqc': {
-    title: 'Talking About PQC Accurately — A Guide for Non-Technical Roles (Draft) | PQC Today',
+    title: 'Talking About PQC Accurately — A Guide for Non-Technical Roles | PQC Today',
     description:
       'For sales, marketing, communications, procurement and press: what is true about post-quantum cryptography today, which deadlines are real, what a FIPS certificate proves, and which claims to avoid.',
     canonical: `${BASE_URL}/learn/talking-about-pqc`,
