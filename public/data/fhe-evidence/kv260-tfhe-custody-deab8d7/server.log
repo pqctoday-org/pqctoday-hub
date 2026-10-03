@@ -1,0 +1,7 @@
+u8 add: {"n":3,"min_ms":1201.7,"median_ms":1229.3,"max_ms":1313.8}
+u8 mul: {"n":3,"min_ms":3813.1,"median_ms":3891.4,"max_ms":4145.5}
+u8 lt: {"n":3,"min_ms":777.1,"median_ms":874.9,"max_ms":896.6}
+u32 add: {"n":3,"min_ms":5672.5,"median_ms":5889.1,"max_ms":6186.5}
+u32 max: {"n":3,"min_ms":9001.6,"median_ms":9315.9,"max_ms":9877.2}
+u32 eq: {"n":3,"min_ms":2682.8,"median_ms":2805.9,"max_ms":2887.8}
+u64 add: {"n":3,"min_ms":12104.8,"median_ms":12305.6,"max_ms":12840.7}

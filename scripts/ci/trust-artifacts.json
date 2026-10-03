@@ -51,6 +51,11 @@
       "path": "public/data/embeddings-meta.json",
       "required": true,
       "label": "embedding index (metadata)"
+    },
+    {
+      "path": "public/data/fhe-evidence/fhe-evidence.v1.json",
+      "required": false,
+      "label": "FHE evidence manifest"
     }
   ]
 }

@@ -5,7 +5,9 @@
 // FHE figures are ORDER-OF-MAGNITUDE ESTIMATES, not measurements. The
 // RLWE flows (CKKS, BFV, BGV) assume ring dimension N = 2^16 (~30 RNS limbs;
 // CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
-// flows assume the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1, KS level 4). All on a recent multicore CPU or
+// flows assume the TFHE-rs 1.8.1 default parameters (n = 918, N = 2,048, k = 1, KS level 4) in the
+// custody configuration (dedicated OPRF key off). TFHE sizes and M4 Pro timings are measured
+// (pqctoday-fhe reference-runs/tfhe-custody and kv260-tfhe-bench, published). All on a recent multicore CPU or
 // datacentre GPU. `SIZE_BASIS` below is shown on screen per flow. Real numbers move by 10x with parameters, library and hardware — the
 // workshop says so on screen. Measure before quoting any of them elsewhere.
 //
@@ -21,12 +23,19 @@ import type { FheFlowId, LinkKind } from './fheHsmFlows'
 export const SIZE_BASIS: Record<FheFlowId, string> = {
   'single-hsm': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-single-hsm':
-    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
-  'openfhe-threshold': 'BFV at ring dimension N = 2¹⁶, leveled (no bootstrapping)',
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
+  'openfhe-threshold':
+    'BFV at n = 16,384, log2 q = 300 with noise flooding (OpenFHE threshold example)',
   'lattigo-threshold': 'BGV at ring dimension N = 2¹⁶, refreshed interactively',
   'hsm-compute-limits': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-transciphering':
-    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
+}
+
+/** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
+export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
+  'openfhe-threshold':
+    'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
 }
 
 /** Log-scale bucket used to draw the per-step bars. 0 = nothing. */
@@ -188,7 +197,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM',
-      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Seconds on an HSM-class CPU (est.), returned in one size-checked export.'
+      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro; not yet measured on the MX95 custodian board (Cortex-A55). Returned in one size-checked export.'
     ),
     c(
       3,
@@ -196,9 +205,16 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'HSM → cloud',
-      'Compressed server key, about 30 MB (≈130 MB once the cloud expands it), plus one signature.'
+      'Compressed server key: 30.1 MB measured in the custody configuration (the library default adds a 28.7 MB OPRF key, 57.4 MB in total); 120 MB once the cloud expands it (measured), plus one signature.'
     ),
-    c(1, '~10s of KB', 1, '~ms', 'HSM → client', 'Compact public key plus signature.'),
+    c(
+      1,
+      '33 KB',
+      1,
+      '~ms',
+      'HSM → client',
+      'Compact public key: 33 KB measured, plus a signature.'
+    ),
     c(
       1,
       '~KB / value',
@@ -210,11 +226,11 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     c(1, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       3,
-      '~130 MB keys',
+      '~0.1 GB keys',
       3,
-      'ms–s / op',
+      '0.2s–3.5 min',
       'cloud CPU/GPU',
-      'One programmable bootstrap is milliseconds on a CPU core. A 64-bit add takes tens of ms and a multiply hundreds of ms; GPUs are much faster.'
+      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). GPUs are much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
@@ -238,40 +254,75 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     ),
   ],
   'openfhe-threshold': [
-    c(1, '~KB state', 1, '~ms', 'Party A HSM', 'One key pair; the share s₁ is a small polynomial.'),
-    c(2, '~MB', 2, '10s of ms', 'Party B HSM', 'Receives and returns a public key of a few MB.'),
-    c(2, '~MB', 2, '10s of ms', 'Party C HSM', 'Same as Party B.'),
     c(
-      3,
-      '~100 MB/rnd',
-      3,
-      'seconds',
+      2,
+      '656 KB share',
+      1,
+      '~ms',
+      'Party A HSM',
+      'Party A’s secret-key share serializes to 656 KB (measured, OpenFHE v1.6.0, n = 16,384).'
+    ),
+    c(
+      2,
+      '1.31 MB pk',
+      1,
+      '~ms',
+      'Party B HSM',
+      'Receives and returns the joint public key: 1.31 MB. The whole 3-party public-key chain took 9 ms on an M4 Pro and 131 ms on a KV260 Cortex-A53 (measured).'
+    ),
+    c(2, '1.31 MB pk', 1, '~ms', 'Party C HSM', 'Same as Party B.'),
+    c(
+      2,
+      '6.56 MB',
+      2,
+      '10s of ms',
       'all three HSMs',
-      'Each round exchanges key-switching material of roughly relinearization-key size (estimate).'
+      'The joint relinearization key is 6.56 MB; building it across 3 parties took 59 ms on an M4 Pro and 0.78 s on a Cortex-A53 (measured).'
     ),
     c(
       3,
-      '~100s MB',
-      3,
-      'seconds',
+      '78.7 MB',
+      2,
+      '10s of ms',
       'HSMs → cloud',
-      'Summation keys add one key-switching key per rotation used by EvalSum (estimate).'
+      'The joint EvalSum keys are 78.7 MB, generated in 47 ms on an M4 Pro and 1.09 s on a Cortex-A53 for 3 parties, plus the 6.56 MB relinearization key (measured).'
     ),
-    c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary BFV encryption.'),
+    c(
+      2,
+      '1.31 MB / ct',
+      1,
+      '~ms',
+      'client CPU',
+      'One fresh BFV ciphertext is 1.31 MB; encryption took 8 ms on an M4 Pro and 0.15 s on a Cortex-A53 (measured).'
+    ),
     c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       3,
-      '~100s MB',
-      3,
-      'ms–s',
+      '~85 MB keys',
+      2,
+      '10s of ms',
       'cloud CPU',
-      'Leveled evaluation, no bootstrapping in the baseline example.'
+      'Leveled evaluation with the joint keys: one multiplication took 18 ms and an addition 0.1 ms on an M4 Pro; 0.27 s and 10 ms on a Cortex-A53 (measured).'
     ),
-    c(2, '~MB × 3', 0, '—', 'network', 'The result ciphertext goes to every party.'),
-    c(2, '~MB × 3', 0, '—', 'network', 'The result ciphertext goes to every party.'),
-    c(2, '~MB', 1, '~ms', 'Party A HSM', 'One partial decryption, the cost of a decryption.'),
-    c(2, '~MB', 1, '~ms', 'Party B HSM', 'Same.'),
-    c(2, '~MB', 1, '~ms', 'Party C HSM', 'Same.'),
+    c(2, '1.31 MB', 0, '—', 'network', 'The encrypted result returns to the data owner.'),
+    c(
+      2,
+      '1.31 MB × 3',
+      0,
+      '—',
+      'network',
+      'The data owner sends the result ciphertext to every party.'
+    ),
+    c(
+      2,
+      '657 KB',
+      1,
+      '~ms',
+      'Party A HSM',
+      'One partial decryption share is 657 KB; the three took 9 ms together on an M4 Pro and 60 ms on a Cortex-A53 (measured).'
+    ),
+    c(2, '657 KB', 1, '~ms', 'Party B HSM', 'Same.'),
+    c(2, '657 KB', 1, '~ms', 'Party C HSM', 'Same.'),
     c(1, '≤ KB out', 1, '~ms', 'client', 'Adds the partials and decodes.'),
   ],
   'lattigo-threshold': [
@@ -350,7 +401,14 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'server CPU',
       'The WAHC 2023 paper (Balenbois, Orfila, Smart; IACR ePrint 2023/980) reports under 300 ms per 64-bit block with TFHE-rs.'
     ),
-    c(3, '~130 MB keys', 3, 'ms–s / op', 'server CPU/GPU', 'Ordinary TFHE-rs integer operations.'),
+    c(
+      3,
+      '~0.1 GB keys',
+      3,
+      '~s / op',
+      'server CPU/GPU',
+      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s (measured).'
+    ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product per block, then rounding.'),
@@ -412,6 +470,10 @@ export type KeyId =
   | 'tfhe-client'
   | 'tfhe-cpk'
   | 'tfhe-server'
+  | 'bfv16k-share'
+  | 'bfv16k-pk'
+  | 'bfv16k-relin'
+  | 'bfv16k-evalsum'
 
 export interface KeySize {
   id: KeyId
@@ -427,6 +489,42 @@ export interface KeySize {
 export const RSA2048_PAIR_BYTES = 1512
 
 export const KEY_SIZES: KeySize[] = [
+  {
+    id: 'bfv16k-share',
+    label: 'BFV secret-key share (one party, n = 16,384)',
+    bytes: 656_356,
+    size: '656 KB (measured)',
+    exact: true,
+    secret: true,
+    note: 'Measured 2026-10-03 with OpenFHE v1.6.0 (BINARY serialization), BFV n = 16,384, log2 q = 300, noise flooding; pqctoday-fhe de1d2b8d reference run.',
+  },
+  {
+    id: 'bfv16k-pk',
+    label: 'BFV joint public key (n = 16,384)',
+    bytes: 1_311_909,
+    size: '1.31 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with OpenFHE v1.6.0 (BINARY serialization), BFV n = 16,384, log2 q = 300, noise flooding; pqctoday-fhe de1d2b8d reference run.',
+  },
+  {
+    id: 'bfv16k-relin',
+    label: 'BFV joint relinearization key (n = 16,384)',
+    bytes: 6_556_391,
+    size: '6.56 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with OpenFHE v1.6.0 (BINARY serialization), BFV n = 16,384, log2 q = 300, noise flooding; pqctoday-fhe de1d2b8d reference run.',
+  },
+  {
+    id: 'bfv16k-evalsum',
+    label: 'BFV joint EvalSum keys (n = 16,384)',
+    bytes: 78_667_237,
+    size: '78.7 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with OpenFHE v1.6.0 (BINARY serialization), BFV n = 16,384, log2 q = 300, noise flooding; pqctoday-fhe de1d2b8d reference run.',
+  },
   {
     id: 'fhe-seed',
     label: 'FHE seed (what the HSM stores)',
@@ -493,8 +591,8 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-cpk',
     label: 'TFHE compact public key',
-    bytes: 32_000,
-    size: '~16–32 KB',
+    bytes: 33_034,
+    size: '33 KB (measured)',
     exact: false,
     secret: false,
     note: 'Lets clients encrypt compactly without the secret.',
@@ -502,11 +600,11 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-server',
     label: 'TFHE server key (compressed)',
-    bytes: 30_000_000,
-    size: '~30 MB',
+    bytes: 30_147_061,
+    size: '30.1 MB (measured)',
     exact: false,
     secret: false,
-    note: 'Bootstrapping key + key-switching key with seeded compression. About 130 MB once expanded by the cloud. Estimated for the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1).',
+    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). 120.4 MB once expanded by the cloud (measured; loading and expanding it took 1.3 s on a KV260).',
   },
   {
     id: 'fhe-pk',
@@ -578,19 +676,19 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['fhe-seed', 'hpke-kem', 'mldsa65'],
   ],
   'openfhe-threshold': [
-    ['fhe-sk'],
-    ['fhe-pk', 'fhe-sk'],
-    ['fhe-pk', 'fhe-sk'],
-    ['relin'],
-    ['rotation', 'mldsa65'],
-    ['fhe-pk'],
+    ['bfv16k-share'],
+    ['bfv16k-pk', 'bfv16k-share'],
+    ['bfv16k-pk', 'bfv16k-share'],
+    ['bfv16k-relin'],
+    ['bfv16k-evalsum', 'mldsa65'],
+    ['bfv16k-pk'],
     [],
-    ['relin', 'rotation'],
+    ['bfv16k-relin', 'bfv16k-evalsum'],
     [],
     [],
-    ['fhe-sk'],
-    ['fhe-sk'],
-    ['fhe-sk'],
+    ['bfv16k-share'],
+    ['bfv16k-share'],
+    ['bfv16k-share'],
     [],
   ],
   'lattigo-threshold': [

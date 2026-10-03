@@ -1,0 +1,28 @@
+
+=================RUNNING FOR BFVrns=====================
+p = 65537
+n = 8192
+log2 q = 180
+Running key generation (used for source data)...
+Round 1 (party A) started.
+Running evalsum key generation (used for source data)...
+
+ Original Plaintext: 
+
+(1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, ... )
+(1, 0, 0, 1, 1, ... )
+(2, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... )
+
+ Resulting Fused Plaintext: 
+
+(4, 4, 6, 9, 11, 12, 12, 12, 12, 12, 1, ... )
+
+
+ Resulting Fused Plaintext after Multiplication of plaintexts 1 and 3: 
+
+(1, 32, 243, 1024, 3125, 7776, 3125, 1024, 243, 32, 1, ... )
+
+
+ Fused result after summation of ciphertext 3: 
+
+(56, 54, 52, 49, 45, 40, 34, 27, 19, 10, ... )

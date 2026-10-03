@@ -43,11 +43,13 @@ import {
   KEY_SIZES,
   LINK_SIZES,
   RSA2048_PAIR_BYTES,
+  MEASURED_BASIS,
   SIZE_BASIS,
   type KeyId,
   type StepCost,
 } from '../data/fheHsmCosts'
 import { FHE_STEP_IO } from '../data/fheHsmStepIO'
+import { EVIDENCE_MANIFEST, validationsFor } from '@/data/fhe/fheEvidence'
 import { FheStepDetailModal } from './FheStepDetailModal'
 import {
   HOLD_STATUS,
@@ -392,7 +394,8 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
         <KeySizePanel highlighted={stepKeys} />
 
         <p className="text-[10px] text-muted-foreground leading-snug">
-          {`Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
+          {MEASURED_BASIS[flow.id] ??
+            `Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
@@ -507,6 +510,7 @@ const StepCaption: React.FC<{
       <p className="text-xs text-foreground/85 leading-relaxed">{step.detail}</p>
       <StepRef step={step} />
       <EngineStatusLine flow={flow} step={step} />
+      <EvidenceLine flow={flow} step={step} />
       {cost && (
         <div className="grid grid-cols-1 sm:grid-cols-[auto_auto_1fr] gap-x-4 gap-y-1 items-start text-[11px]">
           <span className="inline-flex items-center gap-1.5">
@@ -582,6 +586,17 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
       </a>
     </div>
     <div>
+      <span className="font-bold text-foreground">Validation evidence: </span>
+      <span className="text-muted-foreground">
+        {(() => {
+          const n = EVIDENCE_MANIFEST.records.filter((r) => r.scenarioId === flow.id).length
+          return n
+            ? `${n} signed record(s); each step shows what it covers.`
+            : 'none yet. Planned lab runs: the data owner on a Mac (pqctoday-sandbox), the FHE server on a KV260 (pqctoday-fhe, untrusted compute) and the custodian as a software token on an MX95, with an MX95 Pro as backup and second threshold party (pqctoday-cacp); reference libraries in pqctoday-sandbox. None of it is hardware custody.'
+        })()}
+      </span>
+    </div>
+    <div>
       <span className="font-bold text-foreground">Validation target: </span>
       <span className="text-foreground/85">{flow.validation.target}</span>{' '}
       <span className="text-muted-foreground">Reference: {flow.validation.reference}.</span>
@@ -612,6 +627,36 @@ export const EngineBadge: React.FC<{ status: EngineStatus }> = ({ status }) => (
     {ENGINE_STATUS_LABELS[status].short}
   </span>
 )
+
+/**
+ * Validation evidence for one step: signed, hash-pinned records from pqctoday-sandbox,
+ * pqctoday-fhe (KV260) or pqctoday-cacp (MX95, MX95 Pro). Shows nothing claimed until a
+ * record exists; a board run is labelled "software token on <board>", never hardware custody.
+ */
+export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow, step }) => {
+  const found = validationsFor(flow.id, step.id)
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+      <span className="text-muted-foreground">Validated:</span>
+      {found.length === 0 ? (
+        <span className="text-muted-foreground">not yet (no signed evidence for this step)</span>
+      ) : (
+        found.map((v) => (
+          <a
+            key={v.record.id}
+            href={v.record.artifacts[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`${v.record.producer} · ${v.record.library.name} ${v.record.library.version} · ${v.record.status} ${v.record.measuredAt} · sha256 ${v.record.artifacts[0].sha256.slice(0, 12)}…`}
+            className="rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-status-success hover:underline"
+          >
+            {v.label}
+          </a>
+        ))
+      )}
+    </div>
+  )
+}
 
 /** Engine badge plus the step's note on which building blocks exist today. */
 export const EngineStatusLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow, step }) => {

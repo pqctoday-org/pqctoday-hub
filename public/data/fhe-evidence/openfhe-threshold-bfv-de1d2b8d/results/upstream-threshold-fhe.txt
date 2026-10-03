@@ -1,0 +1,99 @@
+
+=================RUNNING FOR BGVrns - Additive =====================
+p = 65537
+n = 8192
+log2 q = 169.088
+Running key generation (used for source data)...
+
+ Original Plaintext: 
+
+(1, 1, 1, 1, 1, 1, 1, ... )
+(1, 0, 0, 1, 1, ... )
+(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... )
+
+ Resulting Fused Plaintext adding 3 ciphertexts: 
+
+(3, 3, 4, 6, 7, 7, 8, 8, 9, 10, ... )
+
+
+=================RUNNING FOR BFVrns=====================
+p = 65537
+n = 16384
+log2 q = 300
+Running key generation (used for source data)...
+Round 1 (party A) started.
+Round 1 of key generation completed.
+Round 2 (party B) started.
+Joint public key for (s_a + s_b) is generated...
+Joint evaluation multiplication key for (s_a + s_b) is generated...
+Joint evaluation multiplication key (s_a + s_b) is transformed into s_b*(s_a + s_b)...
+Joint evaluation summation key for (s_a + s_b) is generated...
+Round 2 of key generation completed.
+Round 3 (party A) started.
+Joint key (s_a + s_b) is transformed into s_a*(s_a + s_b)...
+Computing the final evaluation multiplication key for (s_a + s_b)*(s_a + s_b)...
+Round 3 of key generation completed.
+
+ Original Plaintext: 
+
+(1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, ... )
+(1, 0, 0, 1, 1, ... )
+(2, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... )
+
+ Resulting Fused Plaintext: 
+
+(4, 4, 6, 9, 11, 12, 12, 12, 12, 12, 1, ... )
+
+
+ Resulting Fused Plaintext after Multiplication of plaintexts 1 and 3: 
+
+(2, 4, 9, 16, 25, 36, 35, 32, 27, 20, ... )
+
+
+ Fused result after summation of ciphertext 3: 
+
+(56, 54, 52, 49, 45, 40, 34, 27, 19, 10, ... )
+
+=================RUNNING FOR CKKS=====================
+p = 50
+n = 16384
+log2 q = 229.087
+Running key generation (used for source data)...
+Round 1 (party A) started.
+Round 1 of key generation completed.
+Round 2 (party B) started.
+Joint public key for (s_a + s_b) is generated...
+Joint evaluation multiplication key for (s_a + s_b) is generated...
+Joint evaluation multiplication key (s_a + s_b) is transformed into s_b*(s_a + s_b)...
+Joint evaluation summation key for (s_a + s_b) is generated...
+Round 2 of key generation completed.
+Round 3 (party A) started.
+Joint key (s_a + s_b) is transformed into s_a*(s_a + s_b)...
+Computing the final evaluation multiplication key for (s_a + s_b)*(s_a + s_b)...
+Round 3 of key generation completed.
+
+ Original Plaintext: 
+
+(1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, ... ); Estimated precision: 50 bits
+
+(1, 0, 0, 1, 1, ... ); Estimated precision: 50 bits
+
+(2, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... ); Estimated precision: 50 bits
+
+
+ Resulting Fused Plaintext: 
+
+(4, 4, 6, 9, 11, 12, 12, 12, 12, 12, 1, -7.1054274e-15, ... ); Estimated precision: 43 bits
+
+
+
+ Resulting Fused Plaintext after Multiplication of plaintexts 1 and 3: 
+
+(2, 4, 9, 16, 25, 36, 35, 32, 27, 20, -1.4921397e-13, 4.8760995e-13, ... ); Estimated precision: 40 bits
+
+
+
+ Fused result after the Summation of ciphertext 3: 
+
+(56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, ... ); Estimated precision: 43 bits
+
