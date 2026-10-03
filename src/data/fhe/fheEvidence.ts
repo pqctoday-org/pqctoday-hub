@@ -18,7 +18,8 @@ import contractJson from './fhe-hsm-scenarios.v1.json'
 import manifestJson from '../../../public/data/fhe-evidence/fhe-evidence.v1.json'
 
 export type EvidenceLevel = 'reference' | 'emulator' | 'device' | 'end-to-end'
-export type EvidenceProducer = 'pqctoday-sandbox' | 'pqctoday-fhe' | 'pqctoday-cacp'
+export type EvidenceProducer =
+  'pqctoday-sandbox' | 'pqctoday-fhe' | 'pqctoday-cacp' | 'pqctoday-hsm'
 export type EvidenceDevice = 'mac-m4pro' | 'kv260' | 'mx95' | 'mx95-pro' | 'ventuno-q'
 export type DeviceRole = 'data-owner' | 'fhe-server' | 'custodian' | 'backup-custodian' | 'party'
 export type EvidenceStatus = 'estimate' | 'measured' | 'reproduced' | 'independently-reviewed'
@@ -46,13 +47,32 @@ export const DEVICE_LABELS: Record<EvidenceDevice, string> = {
 /** Which producer runs on which device, and which roles each device may play. */
 export const DEVICE_RULES: Record<
   EvidenceDevice,
-  { producer: EvidenceProducer; roles: DeviceRole[] }
+  { producers: EvidenceProducer[]; roles: DeviceRole[] }
 > = {
-  'mac-m4pro': { producer: 'pqctoday-sandbox', roles: ['data-owner'] },
-  kv260: { producer: 'pqctoday-fhe', roles: ['fhe-server'] },
-  mx95: { producer: 'pqctoday-cacp', roles: ['custodian', 'party'] },
-  'mx95-pro': { producer: 'pqctoday-cacp', roles: ['backup-custodian', 'party'] },
-  'ventuno-q': { producer: 'pqctoday-cacp', roles: ['custodian', 'backup-custodian', 'party'] },
+  // Owner 2026-10-03: the Mac may also host the custodian token until the MX95 run lands.
+  'mac-m4pro': {
+    producers: ['pqctoday-sandbox', 'pqctoday-fhe', 'pqctoday-hsm'],
+    roles: ['data-owner', 'custodian'],
+  },
+  kv260: { producers: ['pqctoday-fhe'], roles: ['fhe-server'] },
+  mx95: { producers: ['pqctoday-cacp', 'pqctoday-hsm'], roles: ['custodian', 'party'] },
+  'mx95-pro': {
+    producers: ['pqctoday-cacp', 'pqctoday-hsm'],
+    roles: ['backup-custodian', 'party'],
+  },
+  'ventuno-q': {
+    producers: ['pqctoday-cacp', 'pqctoday-hsm'],
+    roles: ['custodian', 'backup-custodian', 'party'],
+  },
+}
+
+/** Which producers may play each role (token roles come from an HSM engine). */
+export const ROLE_PRODUCERS: Record<DeviceRole, EvidenceProducer[]> = {
+  'data-owner': ['pqctoday-sandbox', 'pqctoday-fhe'],
+  'fhe-server': ['pqctoday-fhe'],
+  custodian: ['pqctoday-cacp', 'pqctoday-hsm'],
+  'backup-custodian': ['pqctoday-cacp', 'pqctoday-hsm'],
+  party: ['pqctoday-cacp', 'pqctoday-hsm'],
 }
 
 export const ROLE_SCOPE: Record<DeviceRole, ClaimScope> = {
@@ -66,7 +86,10 @@ export const ROLE_SCOPE: Record<DeviceRole, ClaimScope> = {
 const ROLE_LABEL: Record<DeviceRole, (d: string) => string> = {
   'data-owner': (d) => `data owner on ${d}`,
   'fhe-server': (d) => `FHE server on ${d} (untrusted compute, software-held keys)`,
-  custodian: (d) => `custodian: software token on ${d}`,
+  custodian: (d) =>
+    d.startsWith('Mac')
+      ? 'custodian: software token on Mac (MX95 pending)'
+      : `custodian: software token on ${d}`,
   'backup-custodian': (d) => `backup custodian: software token on ${d}`,
   party: (d) => `key-holder party: software token on ${d}`,
 }
@@ -125,6 +148,10 @@ export interface EvidenceRecord {
   claimScope?: ClaimScope
   /** Free-text label; never "hardware custody" or "HSM-validated". */
   claimLabel?: string
+  /** Short platform name shown in reference badges, e.g. "Apple M4 Pro" or "KV260". */
+  platformLabel?: string
+  /** Provenance caveats, e.g. a binary not built byte-exact from the cited commit. */
+  notes?: string
   artifacts: EvidenceArtifact[]
   measuredAt: string
   /** Per-record signature; without it the record is hash-pinned under the manifest .sig. */
@@ -203,7 +230,8 @@ function checkPart(p: EvidencePart, s: Scenario, recordSteps: string[]): string[
   const e: string[] = []
   const rule = DEVICE_RULES[p.device]
   if (!rule) return [`unknown device "${p.device}"`]
-  if (p.producer !== rule.producer) e.push(`${p.device} runs ${rule.producer}, not ${p.producer}`)
+  if (!rule.producers.includes(p.producer)) e.push(`${p.device} does not run ${p.producer}`)
+  if (!ROLE_PRODUCERS[p.role]?.includes(p.producer)) e.push(`${p.producer} cannot play ${p.role}`)
   if (!rule.roles.includes(p.role)) e.push(`${p.device} cannot play ${p.role}`)
   if (p.claimScope !== ROLE_SCOPE[p.role])
     e.push(`${p.role} claims ${ROLE_SCOPE[p.role]}, not ${p.claimScope}`)
@@ -315,16 +343,33 @@ export interface StepValidation {
   record: EvidenceRecord
 }
 
+/** A step in no part: name the devices of its `from` and `to` actors, or all devices if unknown. */
+function transferLabel(r: EvidenceRecord, s: Scenario | undefined, stepId: string): string {
+  const parts = r.parts ?? []
+  const st = s?.steps.find((x) => x.id === stepId)
+  const deviceOf = (actor: string) =>
+    parts.find((p) => s && roleActors(s, p.role).includes(actor))?.device
+  const from = st && deviceOf(st.from)
+  const to = st && deviceOf(st.to)
+  if (from && to)
+    return from === to
+      ? `transfer on ${DEVICE_LABELS[from]}`
+      : `transfer ${DEVICE_LABELS[from]} → ${DEVICE_LABELS[to]}`
+  const devices = [...new Set(parts.map((p) => DEVICE_LABELS[p.device]))]
+  return `transfer between ${devices.join(' and ')}`
+}
+
 /** Label for one step of a passing record. Never says "hardware" or "HSM-validated". */
 export function stepLabel(r: EvidenceRecord, stepId: string): string {
-  if (r.level === 'reference') return `reference-validated (${r.library.name} ${r.library.version})`
+  if (r.level === 'reference')
+    return `reference-validated (${r.library.name} ${r.library.version}${r.platformLabel ? `, ${r.platformLabel}` : ''})`
   if (r.level === 'emulator') return 'token-validated · software token emulator'
+  const scenario = SCENARIO_CONTRACT.scenarios.find((s) => s.id === r.scenarioId)
   const part = r.parts?.find((p) => p.stepIds.includes(stepId))
   const base = part
     ? ROLE_LABEL[part.role](DEVICE_LABELS[part.device])
-    : `transfer between ${(r.parts ?? []).map((p) => DEVICE_LABELS[p.device]).join(' → ')}`
+    : transferLabel(r, scenario as Scenario | undefined, stepId)
   const e2e = r.level === 'end-to-end' ? ' · end-to-end run' : ''
-  const scenario = SCENARIO_CONTRACT.scenarios.find((s) => s.id === r.scenarioId)
   const shown = (scenario as { label?: string } | undefined)?.label?.match(/\((\d+-of-\d+)\)/)?.[1]
   const ran = r.parties ? `${r.parties.threshold}-of-${r.parties.total}` : ''
   const parties = ran

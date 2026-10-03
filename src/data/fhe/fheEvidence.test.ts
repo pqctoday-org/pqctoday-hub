@@ -91,6 +91,12 @@ const e2e = (over: Partial<EvidenceRecord> = {}): EvidenceRecord => ({
   ...over,
 })
 
+const swap = (i: number, p: Partial<EvidencePart>) => {
+  const r = e2e()
+  r.parts = r.parts!.map((x, k) => (k === i ? { ...x, ...p } : x))
+  return r
+}
+
 describe('FHE scenario contract (fhe-hsm-scenarios.v1)', () => {
   it('lists the same scenarios as the workshop, in order', () => {
     expect(SCENARIO_CONTRACT.schema).toBe('fhe-hsm-scenarios.v1')
@@ -191,9 +197,27 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     expect(at('decrypt-under-policy')).toEqual([
       'custodian: software token on MX95 · end-to-end run',
     ])
-    expect(at('upload-ciphertexts')).toEqual([
-      'transfer between Mac (M4 Pro) → KV260 → MX95 · end-to-end run',
+    expect(at('upload-ciphertexts')).toEqual(['transfer Mac (M4 Pro) → KV260 · end-to-end run'])
+    expect(at('owner-requests-decrypt')).toEqual(['transfer Mac (M4 Pro) → MX95 · end-to-end run'])
+  })
+
+  it('until the MX95 runs, the custodian may be a software token on the Mac, labelled as such', () => {
+    const mac = swap(2, { device: 'mac-m4pro', producer: 'pqctoday-hsm' })
+    expect(validateRecord(mac)).toEqual([])
+    const at = (step: string) => validationsFor('tfhe-single-hsm', step, [mac]).map((v) => v.label)
+    expect(at('decrypt-under-policy')).toEqual([
+      'custodian: software token on Mac (MX95 pending) · end-to-end run',
     ])
+    expect(at('owner-requests-decrypt')).toEqual(['transfer on Mac (M4 Pro) · end-to-end run'])
+  })
+
+  it('each device runs only its own producers', () => {
+    expect(validateRecord(swap(1, { producer: 'pqctoday-hsm' }))).toContain(
+      'kv260 does not run pqctoday-hsm'
+    )
+    expect(validateRecord(swap(0, { producer: 'pqctoday-cacp' }))).toContain(
+      'pqctoday-cacp cannot play data-owner'
+    )
   })
 
   it('the backup HSM is the MX95 Pro; a 2-of-2 threshold run says what it ran', () => {
@@ -272,13 +296,13 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     expect(validationsFor('openfhe-threshold', 'party-a-keygen', [r])[0].label).toBe(
       'reference-validated (OpenFHE v1.6.0)'
     )
+    expect(
+      validationsFor('openfhe-threshold', 'party-a-keygen', [
+        { ...r, platformLabel: 'KV260 Cortex-A53' },
+      ])[0].label
+    ).toBe('reference-validated (OpenFHE v1.6.0, KV260 Cortex-A53)')
   })
 
-  const swap = (i: number, p: Partial<EvidencePart>) => {
-    const r = e2e()
-    r.parts = r.parts!.map((x, k) => (k === i ? { ...x, ...p } : x))
-    return r
-  }
   it.each([
     ['failed run', e2e({ result: 'fail' })],
     ['estimate', e2e({ status: 'estimate' })],

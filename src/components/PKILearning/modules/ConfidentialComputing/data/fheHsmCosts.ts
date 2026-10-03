@@ -35,7 +35,7 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
 /** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
 export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
   'openfhe-threshold':
-    'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d; files linked from the step evidence). Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
+    'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
 }
 
 /** Log-scale bucket used to draw the per-step bars. 0 = nothing. */
@@ -268,7 +268,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'Party B HSM',
-      'Receives and returns the joint public key: 1.31 MB. The whole 3-party public-key chain took 9 ms (measured).'
+      'Receives and returns the joint public key: 1.31 MB. The whole 3-party public-key chain took 9 ms on an M4 Pro and 131 ms on a KV260 Cortex-A53 (measured).'
     ),
     c(2, '1.31 MB pk', 1, '~ms', 'Party C HSM', 'Same as Party B.'),
     c(
@@ -277,7 +277,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       2,
       '10s of ms',
       'all three HSMs',
-      'The joint relinearization key is 6.56 MB; building it across 3 parties took 59 ms (measured).'
+      'The joint relinearization key is 6.56 MB; building it across 3 parties took 59 ms on an M4 Pro and 0.78 s on a Cortex-A53 (measured).'
     ),
     c(
       3,
@@ -285,7 +285,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       2,
       '10s of ms',
       'HSMs → cloud',
-      'The joint EvalSum keys are 78.7 MB, generated in 47 ms for 3 parties, plus the 6.56 MB relinearization key (measured).'
+      'The joint EvalSum keys are 78.7 MB, generated in 47 ms on an M4 Pro and 1.09 s on a Cortex-A53 for 3 parties, plus the 6.56 MB relinearization key (measured).'
     ),
     c(
       2,
@@ -293,7 +293,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client CPU',
-      'One fresh BFV ciphertext is 1.31 MB; encryption took 8 ms (measured).'
+      'One fresh BFV ciphertext is 1.31 MB; encryption took 8 ms on an M4 Pro and 0.15 s on a Cortex-A53 (measured).'
     ),
     c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
@@ -302,7 +302,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       2,
       '10s of ms',
       'cloud CPU',
-      'Leveled evaluation with the joint keys: one multiplication took 18 ms, an addition 0.1 ms (measured).'
+      'Leveled evaluation with the joint keys: one multiplication took 18 ms and an addition 0.1 ms on an M4 Pro; 0.27 s and 10 ms on a Cortex-A53 (measured).'
     ),
     c(2, '1.31 MB', 0, '—', 'network', 'The encrypted result returns to the data owner.'),
     c(
@@ -319,7 +319,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'Party A HSM',
-      'One partial decryption share is 657 KB; the three took 9 ms together (measured).'
+      'One partial decryption share is 657 KB; the three took 9 ms together on an M4 Pro and 60 ms on a Cortex-A53 (measured).'
     ),
     c(2, '657 KB', 1, '~ms', 'Party B HSM', 'Same.'),
     c(2, '657 KB', 1, '~ms', 'Party C HSM', 'Same.'),

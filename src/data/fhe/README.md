@@ -3,15 +3,18 @@
 Owner decisions 2026-10-03: the Hub stays WebAssembly-only. The FHE + HSM flows are validated
 on lab devices, each playing one role in the workshop's lanes:
 
-| Device            | Producer           | Role                                   | Claim scope               | Hub label                                                   |
-| ----------------- | ------------------ | -------------------------------------- | ------------------------- | ----------------------------------------------------------- |
-| Mac (M4 Pro)      | `pqctoday-sandbox` | data owner                             | `owner-device`            | data owner on Mac (M4 Pro)                                  |
-| KV260             | `pqctoday-fhe`     | FHE server (untrusted, no token)       | `board-untrusted-compute` | FHE server on KV260 (untrusted compute, software-held keys) |
-| MX95              | `pqctoday-cacp`    | custodian (primary) or threshold party | `board-software-token`    | custodian: software token on MX95                           |
-| MX95 Pro          | `pqctoday-cacp`    | backup custodian or threshold party    | `board-software-token`    | backup custodian: software token on MX95 Pro                |
-| Ventuno Q (later) | `pqctoday-cacp`    | custodian, backup or party             | `board-software-token`    | as above                                                    |
+| Device            | Producer                        | Role                                   | Claim scope               | Hub label                                                   |
+| ----------------- | ------------------------------- | -------------------------------------- | ------------------------- | ----------------------------------------------------------- |
+| Mac (M4 Pro)      | `pqctoday-sandbox`              | data owner                             | `owner-device`            | data owner on Mac (M4 Pro)                                  |
+| Mac (M4 Pro)      | `pqctoday-hsm`                  | custodian until the MX95 runs          | `board-software-token`    | custodian: software token on Mac (MX95 pending)             |
+| KV260             | `pqctoday-fhe`                  | FHE server (untrusted, no token)       | `board-untrusted-compute` | FHE server on KV260 (untrusted compute, software-held keys) |
+| MX95              | `pqctoday-cacp`, `pqctoday-hsm` | custodian (primary) or threshold party | `board-software-token`    | custodian: software token on MX95                           |
+| MX95 Pro          | `pqctoday-cacp`, `pqctoday-hsm` | backup custodian or threshold party    | `board-software-token`    | backup custodian: software token on MX95 Pro                |
+| Ventuno Q (later) | `pqctoday-cacp`, `pqctoday-hsm` | custodian, backup or party             | `board-software-token`    | as above                                                    |
 
-Reference-library runs come from `pqctoday-sandbox` (`level: reference`).
+The data owner may also run from `pqctoday-fhe`, and the FHE server runs only `pqctoday-fhe`.
+Reference-library runs come from `pqctoday-sandbox` or `pqctoday-fhe` (`level: reference`); a
+`platformLabel` (for example `KV260 Cortex-A53`) tells two runs of one library apart.
 
 A device may claim only steps its role's actor takes part in (the step's `from` or `to`). A run
 spanning devices is one `end-to-end` record with a `parts[]` entry per device; steps in no part
@@ -30,8 +33,8 @@ claim hardware custody or "HSM-validated". Budgets are named per actor
   `disclosures` (stable ids), `budgets` (metric names, null until a versioned P0A update
   freezes them) and `fixtures` (deterministic input/output hashes). Ids are never reused or
   renamed; a changed step gets a new id. The workshop data is tested against this file.
-- `public/data/fhe-evidence/fhe-evidence.v1.json` (published with its artifacts; signed artifacts must live under `public/`): evidence records. It is empty until results arrive, and with no
-  records the Hub shows no validation claim.
+- `public/data/fhe-evidence/fhe-evidence.v1.json` (published with its artifacts; signed artifacts must live under `public/`): evidence records, with each run's files in a folder beside it
+  (byte-exact, excluded from Prettier). With no records the Hub shows no validation claim.
 - `public/data/fhe-evidence/fhe-evidence.v1.json.sig`: the ML-DSA-65 signature (existing maintainer kid), produced by the
   release signer. The file is registered in `scripts/ci/trust-artifacts.json`, and a unit test
   refuses records without it.
@@ -56,7 +59,8 @@ producer, claimScope, stepIds, engine?}]`, with `engine` required for software-t
    - `result` and `status` (an `estimate` never raises a badge);
    - `artifacts[{name, sha256, https url}]`;
    - `measuredAt`;
-   - optionally `claimLabel` and a per-record `signature {keyId, alg: "ML-DSA-65", value}`.
+   - optionally `claimLabel`, `platformLabel`, `notes` (caveats such as a pending byte-exact
+     re-run) and a per-record `signature {keyId, alg: "ML-DSA-65", value}`.
 2. Run `npx vitest run src/data/fhe`. Every record must validate.
 3. Sign it with the release signing step, commit `fhe-evidence.v1.json.sig` and add a revisions
    entry.
