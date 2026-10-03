@@ -1,5 +1,86 @@
 {
   "schema": "fhe-evidence.v1",
   "description": "Signed, hash-pinned evidence that FHE + HSM scenario steps ran. Producers: pqctoday-sandbox (reference libraries), pqctoday-fhe (KV260), pqctoday-cacp (MX95, MX95 Pro; Ventuno Q later). Empty until results arrive: the Hub raises no validation badge without a record here, and a record needs this file's .sig.",
-  "records": []
+  "records": [
+    {
+      "id": "openfhe-threshold-bfv-reference-de1d2b8d",
+      "scenarioId": "openfhe-threshold",
+      "stepIds": [
+        "party-a-keygen",
+        "party-b-multiparty-keygen",
+        "party-c-multiparty-keygen",
+        "build-joint-relinearization-key",
+        "publish-eval-keys",
+        "owner-encrypts-locally",
+        "compute-ciphertexts",
+        "party-a-partial-decrypt",
+        "party-b-partial-decrypt",
+        "party-c-partial-decrypt",
+        "owner-fuses-partials"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "claimLabel": "reference run of OpenFHE v1.6.0 threshold BFV, 3 and 5 parties in one process",
+      "library": {
+        "name": "OpenFHE",
+        "version": "v1.6.0",
+        "commit": "6206d24f9eefefc620b524a4f2b9f308feb91e9f"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "de1d2b8dba03569fc6d4c1e79cbf4bf56bb21e53"
+      },
+      "parameters": "BFVrns p=65537 batch=16 depth=2 n=16384 log2q=300 towers=5",
+      "config": "NOISE_FLOODING_MULTIPARTY; Enable PKE,KEYSWITCH,LEVELEDSHE,ADVANCEDSHE,MULTIPARTY; parties=3 and 5 (N-of-N)",
+      "parameterHash": "69d7227192f8e4142fce2bc9eef6aec3f3ebb030c0fae729bf7c353b1f9f51c5",
+      "environment": {
+        "hardware": "Apple M4 Pro (14 cores, 48 GB)",
+        "os": "debian:bookworm linux/arm64 container (OrbStack, image sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26)",
+        "toolchain": "g++ 12.2.0, cmake 3.25.1, OpenMP on",
+        "features": "BUILD_EXAMPLES=ON, CMAKE_BUILD_TYPE=Release"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run",
+        "peakMemoryMethod": "not measured"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "results/linux-arm64-n3.json",
+          "sha256": "36a50a82012f15df561c31d46ed7aae7213f43cb2493ac4e517b5453be5a0a74",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/linux-arm64-n3.json"
+        },
+        {
+          "name": "results/linux-arm64-n5.json",
+          "sha256": "7c889533a91efd2024e06f9a36683bb03b41c36514d24bd19d276bec7cf2eba9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/linux-arm64-n5.json"
+        },
+        {
+          "name": "results/upstream-threshold-fhe.txt",
+          "sha256": "e23337adba484f484f72ee1a810fd077c4fb48fa6b857ffa5dc87aa7777cefeb",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/upstream-threshold-fhe.txt"
+        },
+        {
+          "name": "results/upstream-threshold-fhe-5p.txt",
+          "sha256": "f779dd9dd8c1ae655a6f97bbbd4e6331c82e15614343a89c9d092c1e0cc05ea1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/upstream-threshold-fhe-5p.txt"
+        },
+        {
+          "name": "results/toolchain.txt",
+          "sha256": "0f987a88cd5c6d075124d805f8b2791248388d7b53a92f7f323ef7e304c8c0a3",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/toolchain.txt"
+        },
+        {
+          "name": "src/main.cpp",
+          "sha256": "ef8c6d197e0b12bbed393406e21b58f6da7fdf7fc7cd753c3f19b747908fe6f9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/src/main.cpp"
+        }
+      ],
+      "measuredAt": "2026-10-03"
+    }
+  ]
 }

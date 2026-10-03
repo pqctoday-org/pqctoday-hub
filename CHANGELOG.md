@@ -31,11 +31,12 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.147.0] - 2026-10-03
 
-The FHE + HSM workshop is ready to show real validation results as they arrive.
+The FHE + HSM workshop now shows which steps have been validated, starting with a measured OpenFHE threshold run.
 
 ### Added
 
-- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line, and each scenario a validation-evidence summary. For now they read "not yet": nothing is claimed until a signed evidence record exists. Results will come from lab runs with the data owner on a Mac, the FHE server on a KV260 (untrusted compute) and the custodian as a software token on an MX95, backed up to an MX95 Pro, plus the reference libraries; none of it is shown as hardware custody.
+- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line and each scenario a validation-evidence summary, backed by signed, hash-pinned evidence records. The OpenFHE threshold scenario is the first one validated: a reference run of OpenFHE v1.6.0 (3 and 5 parties) reproduces the upstream example, and its result files are published for anyone to check. Other steps read "not yet" until lab runs land: the data owner on a Mac, the FHE server on a KV260 (untrusted compute) and the custodian as a software token on an MX95, backed up to an MX95 Pro. None of it is shown as hardware custody.
+- **OpenFHE threshold sizes are now measured** [view:/learn/confidential-computing] [persona:researcher] [persona:developer] [persona:architect]: the scenario uses OpenFHE's real threshold settings (ring dimension 16,384 with noise flooding) and measured sizes: joint public key 1.31 MB, relinearization key 6.56 MB, summation keys 78.7 MB, one partial decryption 657 KB. The earlier estimates were about four times too high.
 
 ## [4.146.0] - 2026-10-03
 

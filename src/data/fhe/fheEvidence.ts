@@ -238,10 +238,11 @@ export function validateRecord(
     if (r.parts?.length) errors.push(`${r.level} runs have no device parts`)
     if (
       r.level === 'reference' &&
-      (r.producer !== 'pqctoday-sandbox' || r.claimScope !== 'reference-library')
+      (!['pqctoday-sandbox', 'pqctoday-fhe'].includes(r.producer ?? '') ||
+        r.claimScope !== 'reference-library')
     )
       errors.push(
-        'reference evidence comes from pqctoday-sandbox with claimScope reference-library'
+        'reference evidence comes from pqctoday-sandbox or pqctoday-fhe with claimScope reference-library'
       )
     if (r.level === 'emulator') {
       if (!['browser-emulator', 'native-software-token'].includes(r.claimScope ?? ''))

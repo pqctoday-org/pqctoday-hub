@@ -43,6 +43,7 @@ import {
   KEY_SIZES,
   LINK_SIZES,
   RSA2048_PAIR_BYTES,
+  MEASURED_BASIS,
   SIZE_BASIS,
   type KeyId,
   type StepCost,
@@ -393,7 +394,8 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
         <KeySizePanel highlighted={stepKeys} />
 
         <p className="text-[10px] text-muted-foreground leading-snug">
-          {`Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
+          {MEASURED_BASIS[flow.id] ??
+            `Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
