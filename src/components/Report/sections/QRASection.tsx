@@ -42,6 +42,7 @@ import { QC_FIRST_YEAR } from '@/data/quantumTimeline'
 import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
 import type { QRAHeatmapCell, QRABacklogItem } from '@/hooks/assessment/qra'
 import clsx from 'clsx'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 /** Heatmap band → colour tokens (higher severity = warmer). */
 const BAND_STYLES: Record<QRAHeatmapCell['band'], { bar: string; text: string; chip: string }> = {
@@ -272,13 +273,16 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
 /** Optimistic / expected / pessimistic CRQC arrival, plus the conservative planning anchor. */
 function CrqcWindow() {
   return (
-    <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-      <span className="font-semibold text-foreground">CRQC arrival window</span> — when a quantum
-      computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} · expected
-      ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This assessment plans
-      against a conservative {QC_FIRST_YEAR} anchor for the most sensitive, long-lived data. Source:
-      GRI Quantum Threat Timeline 2025 (expert probability estimates).
-    </div>
+    <>
+      <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+        <span className="font-semibold text-foreground">CRQC arrival window</span> — when a quantum
+        computer could break today&apos;s RSA/ECC: optimistic ~{CRQC_ESTIMATES.lowerBound} ·
+        expected ~{CRQC_ESTIMATES.moderate} · pessimistic ~{CRQC_ESTIMATES.upperBound}. This
+        assessment plans against a conservative {QC_FIRST_YEAR} anchor for the most sensitive,
+        long-lived data. Source: GRI Quantum Threat Timeline 2025 (expert probability estimates).
+      </div>
+      <UnresolvedEstimatesNotice detail="aRange" />
+    </>
   )
 }
 

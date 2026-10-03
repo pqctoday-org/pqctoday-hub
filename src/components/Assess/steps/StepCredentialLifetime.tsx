@@ -14,6 +14,7 @@ import { PersonaHint } from './PersonaHint'
 import { WhyWeAskHint } from './WhyWeAskHint'
 
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const StepCredentialLifetime = ({
   hideHeading = false,
@@ -144,6 +145,7 @@ const StepCredentialLifetime = ({
         Root CA certificates issued today with a 20-year validity period must be trusted past the
         aggressive planning anchor for a first CRQC (~2029; expert estimates span 2030–2040).
       </p>
+      <UnresolvedEstimatesNotice detail="oneFigure" />
     </div>
   )
 }
