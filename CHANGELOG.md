@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.148.0] - 2026-10-03
 
-The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, and the Lattigo threshold scenario gets its first board measurements.
+The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, the Lattigo threshold scenario gets its first board measurements, Library dates cite their NIST sources, and shared links are now checked every night.
 
 ### Added
 
@@ -43,6 +43,7 @@ The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95
 
 - **Server-key export timed on the custodian board** [view:/learn/confidential-computing] [persona:architect] [persona:ops]: the TFHE cost panel now shows the measured export time on the MX95's Cortex-A55 cores, about 5 s including the 30 MB compressed server key and two signatures, instead of an estimate.
 - **Lattigo threshold sizes corrected from measurements** [view:/learn/confidential-computing] [persona:researcher] [persona:architect] [persona:developer]: the Lattigo scenario's cost panel now uses the measured setup (ring dimension 16,384 with noise flooding). Key shares are a few megabytes, not the ~100 MB the page estimated: a relinearization share is 6.3 MB then 3.1 MB, a Galois-key share 3.1 MB and a ciphertext 1.6 MB. Each step shows the measured time on a Cortex-A53 board beside an Apple M4 Pro.
+- **Shared links are checked every night** [view:/about] [persona:developer] [persona:ops]: an automated run now opens every kind of shared link against the production build each night, on desktop and on phones, for first-time and returning visitors, and reports any link that no longer opens its item.
 
 ### Data
 
