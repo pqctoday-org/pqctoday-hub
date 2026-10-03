@@ -197,7 +197,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM',
-      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro; not yet measured on the MX95 custodian board (Cortex-A55). Returned in one size-checked export.'
+      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro. On the MX95 custodian board (Cortex-A55) the whole export, with the compressed server key, the compact public key and two ML-DSA-65 signatures, took about 5 s (measured). Returned in one size-checked export.'
     ),
     c(
       3,

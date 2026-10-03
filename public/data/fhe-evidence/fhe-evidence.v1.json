@@ -253,7 +253,7 @@
           }
         }
       ],
-      "claimLabel": "custodian: software token on Mac (MX95 pending); FHE server on KV260 (untrusted compute)",
+      "claimLabel": "custodian: software token on Mac (earlier run); FHE server on KV260 (untrusted compute)",
       "notes": "Run twice. The re-run (15:48–15:51 UTC) used a custodian binary built from a clean tree at pqctoday-hsm a0a60b69 (sha256 5e1eb3a5…fe9c) with the same token, and board code 2772e7a (same board code as 7a578fd; only the run script changed). Both runs: 3 of 3 tampered server keys refused, the genuine key accepted, 6 of 6 permitted results released and correct, the FheUint64 result refused by policy. Operation medians agree within a few percent except u8 add (1.23 s, then 1.56 s). In both runs the owner did not verify the token's signer attestation, and files moved over scp, with no network service. Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in kv260-tfhe-custody-r2-da4ea47 (original sha256 a39e73f94105fd29298b9903a6fc88ad51a24f08148257d6f5b72a2002033d28); journal.txt in kv260-tfhe-custody-deab8d7 (original sha256 8b04a740d1b66358188a41256baa5ead97b51717dcb2f00145ace9bed48f5aa7).",
       "library": {
         "name": "TFHE-rs",
@@ -496,6 +496,260 @@
       ],
       "measuredAt": "2026-10-03T15:43:55Z",
       "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal-n3.txt in kv260-openfhe-bench-adab554 (original sha256 489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99); journal-n5.txt in kv260-openfhe-bench-adab554 (original sha256 f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791)."
+    },
+    {
+      "id": "tfhe-custody-mx95-kv260-8848e47",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "generate-client-key",
+        "generate-server-key",
+        "export-server-key",
+        "publish-compact-public-key",
+        "owner-encrypts-locally",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result",
+        "owner-requests-decrypt",
+        "decrypt-under-policy",
+        "release-result"
+      ],
+      "level": "end-to-end",
+      "parts": [
+        {
+          "device": "mx95",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "qualifier": " (board-local, no KMIP)",
+          "stepIds": [
+            "generate-client-key",
+            "generate-server-key",
+            "export-server-key",
+            "publish-compact-public-key",
+            "decrypt-under-policy",
+            "release-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "a0a60b6972135cc3fef58bf43c99f3691e1a849d"
+          }
+        },
+        {
+          "device": "mac-m4pro",
+          "role": "data-owner",
+          "producer": "pqctoday-fhe",
+          "claimScope": "owner-device",
+          "stepIds": ["owner-encrypts-locally"]
+        },
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "77d3b290446f482e5af6885120f1771f65c51403"
+          }
+        }
+      ],
+      "claimLabel": "custodian: software token on the MX95 board (board-local, phase 1; no KMIP); data owner on the Mac; FHE server on the KV260 (untrusted compute)",
+      "notes": "Custodian: the MX95 board (6x Cortex-A55, 8 GB, glibc 2.43) ran the token from a clean aarch64 release build of pqctoday-hsm a0a60b69 (sha256 0d7f4d82…e749); the appliance's own services were untouched. Token setup took 1 s; the export took about 5 s, including the 30,147,061 B compressed server key, the 33,034 B compact public key and two ML-DSA-65 signatures. The KV260 checked the pinned signer, key identity, parameter hash, SHA-384 and signature in 298 ms and refused 3 of 3 bad keys. 7 of 7 results reached the token: 6 released correctly, FheUint64 refused by policy, about 0.45 s each including SSH. The owner reached the MX95 board over the owner's management network over SSH (phase-1 exception; crypto-network-only remains the rule) and the KV260 over the compute board's own network over SSH; the two boards never talked to each other. The signer pin was taken from the export, fetched over the owner's own session; the token's signer attestation was not checked. An earlier attempt the same day is not evidence: a script fault let only 1 of 7 results reach the token; it was fixed in 77d3b29 and the whole flow repeated with a fresh token. The MX95 token's memory was not measured. The run summary is withheld because it names internal hosts; its facts are given here. Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Original: journal.txt (original sha256 10f403ec1635cf77341cbea9e138b567136b83e300b8d875daa97ab344cd5e57).",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "8848e47231f449788c9059b6009d320c33988027"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "MX95 board (NXP FRDM-IMX95, 6x Cortex-A55, 8 GB) as custodian; AMD Kria KV260 revB, 4x Cortex-A53, 4 GB as FHE server; data owner in a linux/arm64 container on an Apple M4 Pro",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image (KV260); MX95 board image with glibc 2.43",
+        "toolchain": "custodian: pqctoday-hsm a0a60b69, aarch64 release build with educational-fhe in rust:1-trixie; board: pqctoday-fhe 77d3b29, hashes in sha256.txt and sha256-on-board.txt",
+        "features": "same KV260 as the other KV260 records; CPU features not re-recorded in this run"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 3,
+        "distribution": "median of 3 per op on the board",
+        "peakMemoryMethod": "systemd cgroup peak from the board journal (203.0M), process peak RSS 211,320 kB; MX95 token memory not measured"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "custodian-init.txt",
+          "sha256": "54af3ee595791817e8a2efb046352aa750c9cf66535d039fc7bca0b190d277c9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/custodian-init.txt"
+        },
+        {
+          "name": "custodian-export.txt",
+          "sha256": "10af1a080ffc26505a71c6fa9f9b995807c6068e6f613c16c8c0ae995e6ee63c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/custodian-export.txt"
+        },
+        {
+          "name": "owner-encrypt.json",
+          "sha256": "43646da6c8a22fa5f2767974f5c245c9ab0d53d79c4274d6e863c48bf82581a9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/owner-encrypt.json"
+        },
+        {
+          "name": "owner-encrypt.out",
+          "sha256": "6bd21766d7b47fc20b97c18c3f31c23fc04e45542e655e5acfdf6682e6321d52",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/owner-encrypt.out"
+        },
+        {
+          "name": "board-negative-checks.txt",
+          "sha256": "2d7e9348c887c1ff73bd6681bb69f9025cd83c28721ac180e6ffa5840577db41",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/board-negative-checks.txt"
+        },
+        {
+          "name": "server.json",
+          "sha256": "d38d06377895b05f4ad66062c0f4268aba9d1e40992053332c574fee5733d7c5",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/server.json"
+        },
+        {
+          "name": "server.log",
+          "sha256": "2fb260b80b0baa97788bca8d0a3fb56a2c14bc63614dd3877fba305780aed76d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/server.log"
+        },
+        {
+          "name": "journal.txt",
+          "sha256": "fd3972cca65cb61221bbad4976c64b92db1f3b2d8122b355298481b750e29d53",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/journal.txt"
+        },
+        {
+          "name": "token-decrypt.txt",
+          "sha256": "0dd4b2cd2d0f730e624958b655881e8581c6cfdac7ab73c6d5d1f5ff7d7bcfba",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/token-decrypt.txt"
+        },
+        {
+          "name": "expected.txt",
+          "sha256": "e6d07f71440f14eca77bff5ccb3c060cb7fb0313519793152697caa267528829",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/expected.txt"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "65e93a48ca12b0899d8f3697641b0a995ff6c7ee747e2d11969088b0faaccf65",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "d77e7115b9e37f190b76affd66792ce79a4585a4ef5a5882b03910d3291425aa",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/sha256-on-board.txt"
+        },
+        {
+          "name": "sha256-results.txt",
+          "sha256": "a254dbae4e7c932651b4c61d202457e3bb138d1e181076fa00539f80165cd5c3",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/sha256-results.txt"
+        },
+        {
+          "name": "sha256-token-export.txt",
+          "sha256": "2f542098d0d8af6aea699f80271ba67e9438e0d4a0bbeb41496a7abaface1b1b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/sha256-token-export.txt"
+        }
+      ],
+      "measuredAt": "2026-10-03T17:05:01Z"
+    },
+    {
+      "id": "lattigo-threshold-bgv-kv260-2819ebf",
+      "scenarioId": "lattigo-threshold",
+      "stepIds": [
+        "shamir-share-secret",
+        "collective-public-key",
+        "collective-relinearization-key",
+        "collective-galois-keys",
+        "owner-encrypts-locally",
+        "compute-ciphertexts",
+        "interactive-refresh",
+        "aggregate-refresh-shares",
+        "key-switch-to-owner",
+        "owner-decrypts-locally"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "KV260 Cortex-A53",
+      "claimLabel": "reference run of Lattigo v6.2.0 t-of-N threshold BGV on a KV260, all parties in one process (per-role compute cost, not a network split); ran 2-of-3 and 2-of-2",
+      "notes": "Spike source pqctoday-fhe 28966bc (lattigo-threshold-bgv), unmodified, built as a static linux/arm64 binary with Go 1.24.13, so its hash differs from the M4 Pro reference build. Checks L1–L6 pass for 2-of-3 and 2-of-2: add, mult and rotate exact with the active parties; another active set exact; with one share missing the result does not decrypt; a refresh from level 1 to 5 still decrypts exactly. The retry-refusal demonstration is not part of this binary. This is a reference run, not the plan's conformance-mapped target, which waits on the P0A and P5 gates. The run log, provenance and board snapshots are withheld because they name internal hosts.",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "2819ebf31dc85f78bd2e0363ba570fdf6793310a"
+      },
+      "parameters": "BGV LogN=14 LogQP=438 levels=6 T=65537 (logQ 56,55,55,54,54,54; logP 55,55)",
+      "config": "t-of-N threshold (Shamir) with noise flooding sigma 2^30 (bound 6*2^30); runs 2-of-3 and 2-of-2",
+      "parameterHash": "51864bce72a234072870d7c2c8b0245b599078c9c312664f946e10b087db1518",
+      "environment": {
+        "hardware": "AMD Kria KV260 revB, 4x Cortex-A53, 4 GB",
+        "os": "KV260 CACP Yocto image; transient systemd unit, MemoryMax=3G, no swap",
+        "toolchain": "go1.24.13 linux/arm64, static CGO_ENABLED=0 build in golang:1.24-bookworm",
+        "features": "pure Go (no CGO); Lattigo v6.2.0 vendored unmodified"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run per configuration (2-of-3 and 2-of-2)",
+        "peakMemoryMethod": "VmHWM sampled during the run (124,608 kB 2-of-3; 97,156 kB 2-of-2), last line of each .err file"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "RESULT.md",
+          "sha256": "4f6718edc650e381d42958d252dd4379e494272919d34082e7493cb70f5e3196",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/RESULT.md"
+        },
+        {
+          "name": "bgv_n3_t2.out",
+          "sha256": "93294bc6a42090b9cbb60aa31bb401a2d4b50447c704b8213c0999e6912b5d36",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/bgv_n3_t2.out"
+        },
+        {
+          "name": "bgv_n3_t2.err",
+          "sha256": "d081b82b15a75ab3c2e29766b4e530b5a93dae9b1f87ac1c071562b3c6842cf4",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/bgv_n3_t2.err"
+        },
+        {
+          "name": "bgv_n2_t2.out",
+          "sha256": "b0d08904c995c14f4f29c1d41047bd8f7c5e200506a30edb16ad8b90d794b36b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/bgv_n2_t2.out"
+        },
+        {
+          "name": "bgv_n2_t2.err",
+          "sha256": "c9ea15a2e06dab3622d0b911cf41bf673da40d9244e7f3c0d968f6889f367e81",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/bgv_n2_t2.err"
+        },
+        {
+          "name": "build.txt",
+          "sha256": "813052172e037cddacf4dc33e0a8532f45c643ee8fdfb69dea6341e843ea0385",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/build.txt"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "438bfca833e77d154d665237209c4f69ee120298c4710aa9ec5b29caf80d0bb5",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "ed9d45650c5e2a374531672b36e982a3c6edd1017d290ab12d85034628ee6656",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/sha256-on-board.txt"
+        }
+      ],
+      "measuredAt": "2026-10-03"
     }
   ]
 }

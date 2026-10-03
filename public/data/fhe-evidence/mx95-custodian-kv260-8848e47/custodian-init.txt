@@ -1,0 +1,2 @@
+initialised /tmp/fhe-custodian/token (PQCTODAY EDUCATIONAL TEST ONLY): seed handle 134, device id e115d43695ce559c28dc477c052a3b5a3de50c11db15b103b87ed687a213e567
+wall_s=1 rc=0

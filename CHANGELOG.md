@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.148.0] - 2026-10-03
+
+The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, and the Lattigo threshold scenario gets its first board measurements.
+
+### Added
+
+- **FHE key custody on the MX95 board** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:ops]: the single-HSM TFHE scenario ran end to end with the client key in a software token on the MX95 appliance board, the data owner on a Mac and the FHE server on a KV260. The board refused tampered and foreign server keys before loading them. The token released the six results its policy allows, all correct, and refused the 64-bit result its policy forbids. Every run now shows on each step, the MX95 run first; the earlier run with the token on a Mac is labelled as such.
+- **Lattigo threshold timings on a small ARM board** [view:/learn/confidential-computing] [persona:researcher] [persona:architect]: the Lattigo threshold scenario is now reference-validated on a KV260 (four Cortex-A53 cores), as 2-of-3 and 2-of-2. A threshold decryption took about 0.35 s and a multiplication about 0.19 s on the board, with every party in one process; a missing share stops decryption, as it should.
+
+### Changed
+
+- **Server-key export timed on the custodian board** [view:/learn/confidential-computing] [persona:architect] [persona:ops]: the TFHE cost panel now shows the measured export time on the MX95's Cortex-A55 cores, about 5 s including the 30 MB compressed server key and two signatures, instead of an estimate.
+
 ## [4.147.0] - 2026-10-03
 
 The FHE + HSM workshop now shows which steps have been validated, with measured runs on a Mac and on a KV260 board, including a first end-to-end run of TFHE key custody in a software token.
