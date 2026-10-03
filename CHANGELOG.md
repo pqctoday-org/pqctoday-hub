@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.148.0] - 2026-10-03
+
+The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, and the Lattigo threshold scenario gets its first board measurements.
+
+### Added
+
+- **FHE key custody on the MX95 board** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:ops]: the single-HSM TFHE scenario ran end to end with the client key in a software token on the MX95 appliance board, the data owner on a Mac and the FHE server on a KV260. The board refused tampered and foreign server keys before loading them. The token released the six results its policy allows, all correct, and refused the 64-bit result its policy forbids. Every run now shows on each step, the MX95 run first; the earlier run with the token on a Mac is labelled as such.
+- **Lattigo threshold timings on a small ARM board** [view:/learn/confidential-computing] [persona:researcher] [persona:architect]: the Lattigo threshold scenario is now reference-validated on a KV260 (four Cortex-A53 cores), as 2-of-3 and 2-of-2. A threshold decryption took about 0.35 s and a multiplication about 0.19 s on the board, with every party in one process; a missing share stops decryption, as it should.
+
+- **8- and 16-bit encrypted arithmetic timed on the KV260** [view:/learn/confidential-computing] [persona:developer] [persona:architect] [persona:researcher]: small integers are much cheaper than 64-bit ones on the board's Cortex-A53 cores. A 16-bit encrypted multiply takes about 15 s, against about 3.5 minutes for 64-bit, and 16-bit additions and comparisons take 1.6–3 s each. All 18 results decrypted correctly; the step badges and cost panel now show these runs.
+
+### Changed
+
+- **Server-key export timed on the custodian board** [view:/learn/confidential-computing] [persona:architect] [persona:ops]: the TFHE cost panel now shows the measured export time on the MX95's Cortex-A55 cores, about 5 s including the 30 MB compressed server key and two signatures, instead of an estimate.
+- **Lattigo threshold sizes corrected from measurements** [view:/learn/confidential-computing] [persona:researcher] [persona:architect] [persona:developer]: the Lattigo scenario's cost panel now uses the measured setup (ring dimension 16,384 with noise flooding). Key shares are a few megabytes, not the ~100 MB the page estimated: a relinearization share is 6.3 MB then 3.1 MB, a Galois-key share 3.1 MB and a ciphertext 1.6 MB. Each step shows the measured time on a Cortex-A53 board beside an Apple M4 Pro.
+
 ## [4.147.0] - 2026-10-03
 
 The FHE + HSM workshop now shows which steps have been validated, with measured runs on a Mac and on a KV260 board, including a first end-to-end run of TFHE key custody in a software token.

@@ -2,8 +2,8 @@
 
 // ── Per-step data volume and compute cost for the FHE + HSM flows ─────────
 //
-// FHE figures are ORDER-OF-MAGNITUDE ESTIMATES, not measurements. The
-// RLWE flows (CKKS, BFV, BGV) assume ring dimension N = 2^16 (~30 RNS limbs;
+// FHE figures are ORDER-OF-MAGNITUDE ESTIMATES unless marked measured (OpenFHE and Lattigo
+// threshold, TFHE: see MEASURED_BASIS). The other RLWE flows (CKKS) assume ring dimension N = 2^16 (~30 RNS limbs;
 // CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
 // flows assume the TFHE-rs 1.8.1 default parameters (n = 918, N = 2,048, k = 1, KS level 4) in the
 // custody configuration (dedicated OPRF key off). TFHE sizes and M4 Pro timings are measured
@@ -26,7 +26,8 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
     'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
   'openfhe-threshold':
     'BFV at n = 16,384, log2 q = 300 with noise flooding (OpenFHE threshold example)',
-  'lattigo-threshold': 'BGV at ring dimension N = 2¹⁶, refreshed interactively',
+  'lattigo-threshold':
+    'BGV at N = 16,384 (LogN 14), LogQP 438, T = 65537 with noise flooding, refreshed interactively (Lattigo threshold reference run)',
   'hsm-compute-limits': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-transciphering':
     'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
@@ -36,6 +37,8 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
 export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
   'openfhe-threshold':
     'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
+  'lattigo-threshold':
+    'Data and key sizes and timings in this scenario are measured: Lattigo v6.2.0 t-of-N threshold BGV at N = 16,384, LogQP 438 with noise flooding, 2-of-3 with every party in one process on a KV260’s Cortex-A53 (pqctoday-fhe 2819ebf, peak RAM about 122 MiB); the M4 Pro timings are from the same spike’s reference run, quoted in the published result. Files linked from the step evidence.',
 }
 
 /** Log-scale bucket used to draw the per-step bars. 0 = nothing. */
@@ -197,7 +200,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM',
-      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro; not yet measured on the MX95 custodian board (Cortex-A55). Returned in one size-checked export.'
+      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro. On the MX95 custodian board (Cortex-A55) the whole export, with the compressed server key, the compact public key and two ML-DSA-65 signatures, took about 5 s (measured). Returned in one size-checked export.'
     ),
     c(
       3,
@@ -230,7 +233,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '0.2s–3.5 min',
       'cloud CPU/GPU',
-      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). GPUs are much faster.'
+      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). Smaller integers are much cheaper on the KV260: a 16-bit add 2.6 s and multiply 14.7 s, an 8-bit add 1.35 s and multiply 4.1 s. GPUs are much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
@@ -326,45 +329,80 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     c(1, '≤ KB out', 1, '~ms', 'client', 'Adds the partials and decodes.'),
   ],
   'lattigo-threshold': [
-    c(1, '~KB–MB', 1, '~ms', '3 HSMs', 'Shamir shares of a small secret polynomial, one per peer.'),
-    c(2, '~MB/party', 2, '10s of ms', 'HSMs → aggregator', 'One public-key-sized share per party.'),
     c(
-      3,
-      '~100 MB ea.',
-      3,
-      'seconds',
-      'HSMs → aggregator',
-      'Two rounds of relinearization-key-sized shares (estimate).'
+      2,
+      '1.05 MB/peer',
+      1,
+      '~ms',
+      '3 HSMs',
+      'Shamir re-sharing of the secret: one 1.05 MB share per peer, 6.2 ms on an M4 Pro and 139 ms on a Cortex-A53 (measured).'
     ),
     c(
-      3,
-      '~100 MB/key',
-      3,
-      'seconds',
+      2,
+      '~1 MB/party',
+      1,
+      '~ms',
       'HSMs → aggregator',
-      'Each party sends a full-size share for every Galois key the application needs; no bootstrapping keys (estimate).'
+      'One 1.05 MB public-key share per party; the joint public key is 2.10 MB. 7.0 ms on an M4 Pro, 201 ms on a Cortex-A53 (measured).'
     ),
-    c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary BGV encryption.'),
+    c(
+      2,
+      '6.3+3.1 MB',
+      2,
+      '10s of ms',
+      'HSMs → aggregator',
+      'Two rounds of relinearization shares per party, 6.29 MB then 3.15 MB; the joint key is 6.29 MB. 44 ms on an M4 Pro, 1.4 s on a Cortex-A53 (measured).'
+    ),
+    c(
+      2,
+      '3.1 MB/key',
+      2,
+      '10s of ms',
+      'HSMs → aggregator',
+      'Each party sends a 3.15 MB share for every Galois key (one per rotation the application needs); the joint key is 6.29 MB per rotation. 21 ms on an M4 Pro, 0.59 s on a Cortex-A53 (measured). No bootstrapping keys.'
+    ),
+    c(
+      2,
+      '1.57 MB / ct',
+      1,
+      '~ms',
+      'client CPU',
+      'Ordinary BGV encryption; a fresh ciphertext is 1.57 MB. 4.8 ms on an M4 Pro, 0.17 s on a Cortex-A53 (measured).'
+    ),
     c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
-    c(3, '~100s MB', 3, 'ms–s', 'cloud CPU', 'Leveled evaluation until the levels run out.'),
     c(
       2,
-      '~MB/party',
+      '~10s MB keys',
+      1,
+      '~ms',
+      'cloud CPU',
+      'Leveled evaluation until the levels run out, with the 6.29 MB joint relinearization key and one 6.29 MB Galois key per rotation. Add 0.1 ms, multiply 5.2 ms and rotate 4.6 ms on an M4 Pro; 2.1 ms, 0.19 s and 0.18 s on a Cortex-A53 (measured).'
+    ),
+    c(
+      2,
+      '~1 MB/party',
       2,
       '10s of ms',
       'Party A, B HSMs',
-      'One ciphertext-sized refresh share per active party.'
+      'One 1.05 MB refresh share per active party; the whole refresh took 0.25 s on a Cortex-A53 (measured, 2-of-3).'
     ),
-    c(2, '~MB', 1, '~ms', 'aggregator', 'Adds the shares and re-encodes at full level.'),
     c(
       2,
-      '~MB/party',
+      '~MB',
+      1,
+      '~ms',
+      'aggregator',
+      'Adds the shares and re-encodes at full level (level 1 back to 5 in the measured run).'
+    ),
+    c(
+      2,
+      '1.6 MB/party',
       2,
       '10s of ms',
       'Party A, B HSMs',
-      'One ciphertext-sized key-switch share per active party.'
+      'One 1.57 MB key-switch share per active party. The threshold decryption, switching to the data owner’s key, took 9.8 ms on an M4 Pro and 0.35 s on a Cortex-A53 (measured).'
     ),
-    c(2, '~MB', 0, '—', 'network', 'One ciphertext under the data owner’s key.'),
+    c(2, '1.57 MB', 0, '—', 'network', 'One 1.57 MB ciphertext under the data owner’s key.'),
     c(1, '≤ KB out', 1, '~ms', 'client', 'Ordinary decryption.'),
   ],
   'tfhe-transciphering': [
@@ -383,7 +421,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client → server',
-      '16 FheUint8 ciphertexts, ~65 KB each expanded (~1 MB in total), smaller as a compact list (estimate).'
+      '16 FheUint8 ciphertexts, 66,101 B each expanded (measured; ~1 MB in total), smaller as a compact list.'
     ),
     c(
       2,
@@ -407,7 +445,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '~s / op',
       'server CPU/GPU',
-      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s (measured).'
+      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s, and for 8-bit values 1.35 s and 4.1 s (measured).'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
@@ -474,6 +512,10 @@ export type KeyId =
   | 'bfv16k-pk'
   | 'bfv16k-relin'
   | 'bfv16k-evalsum'
+  | 'bgv14k-share'
+  | 'bgv14k-pk'
+  | 'bgv14k-relin'
+  | 'bgv14k-galois'
 
 export interface KeySize {
   id: KeyId
@@ -524,6 +566,42 @@ export const KEY_SIZES: KeySize[] = [
     exact: true,
     secret: false,
     note: 'Measured 2026-10-03 with OpenFHE v1.6.0 (BINARY serialization), BFV n = 16,384, log2 q = 300, noise flooding; pqctoday-fhe de1d2b8d reference run.',
+  },
+  {
+    id: 'bgv14k-share',
+    label: 'BGV Shamir secret-key share (one party, N = 16,384)',
+    bytes: 1_048_656,
+    size: '1.05 MB (measured)',
+    exact: true,
+    secret: true,
+    note: 'Measured 2026-10-03 with Lattigo v6.2.0, BGV N = 16,384, LogQP 438, T = 65537, noise flooding; pqctoday-fhe 2819ebf KV260 reference run (2-of-3).',
+  },
+  {
+    id: 'bgv14k-pk',
+    label: 'BGV joint public key (N = 16,384)',
+    bytes: 2_097_320,
+    size: '2.10 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with Lattigo v6.2.0, BGV N = 16,384, LogQP 438, T = 65537, noise flooding; pqctoday-fhe 2819ebf KV260 reference run (2-of-3).',
+  },
+  {
+    id: 'bgv14k-relin',
+    label: 'BGV joint relinearization key (N = 16,384)',
+    bytes: 6_292_000,
+    size: '6.29 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with Lattigo v6.2.0, BGV N = 16,384, LogQP 438, T = 65537, noise flooding; pqctoday-fhe 2819ebf KV260 reference run (2-of-3).',
+  },
+  {
+    id: 'bgv14k-galois',
+    label: 'BGV joint Galois key, one rotation (N = 16,384)',
+    bytes: 6_292_016,
+    size: '6.29 MB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured 2026-10-03 with Lattigo v6.2.0, BGV N = 16,384, LogQP 438, T = 65537, noise flooding; pqctoday-fhe 2819ebf KV260 reference run (2-of-3).',
   },
   {
     id: 'fhe-seed',
@@ -692,16 +770,16 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     [],
   ],
   'lattigo-threshold': [
-    ['fhe-sk'],
-    ['fhe-pk'],
-    ['relin'],
-    ['rotation'],
-    ['fhe-pk'],
+    ['bgv14k-share'],
+    ['bgv14k-pk'],
+    ['bgv14k-relin'],
+    ['bgv14k-galois'],
+    ['bgv14k-pk'],
     [],
-    ['relin', 'rotation'],
-    ['fhe-sk'],
+    ['bgv14k-relin', 'bgv14k-galois'],
+    ['bgv14k-share'],
     [],
-    ['fhe-sk'],
+    ['bgv14k-share'],
     [],
     [],
   ],
