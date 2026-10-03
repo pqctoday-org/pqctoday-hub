@@ -27,7 +27,12 @@ import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySideba
 import { PERSONA_LEADER_GUIDANCE } from './leadersConstants'
 import { PERSONAS } from '@/data/learningPersonas'
 import { LeadersExecutivePanel } from './LeadersExecutivePanel'
-import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
+import {
+  FLAG_CODE_MAP,
+  LEADERS_REGION_COUNTRIES,
+  LEADERS_REGION_LABELS,
+  leaderMatchesCategory,
+} from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileCommunityView } from '@/components/Mobile/screens/MobileCommunityView'
@@ -154,11 +159,7 @@ function useLeaderFilters(
   return { values, set, reset }
 }
 
-const REGION_LABELS: Record<string, string> = {
-  americas: 'Americas',
-  eu: 'Europe',
-  apac: 'Asia-Pacific',
-}
+const REGION_LABELS = LEADERS_REGION_LABELS
 
 type LeaderSortOption = 'name' | 'country' | 'category' | 'relevance'
 

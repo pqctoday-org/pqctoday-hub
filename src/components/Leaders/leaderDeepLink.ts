@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { Leader, LeaderSuccessor } from '@/data/leadersData'
-import { LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
+import {
+  LEADERS_REGION_COUNTRIES,
+  LEADERS_REGION_LABELS,
+  leaderMatchesCategory,
+} from './leadersConstants'
+
+// Re-exported so the phone Community screen (which may import this pure module
+// but not the rest of components/Leaders) reads ?region= the way desktop does.
+export { LEADERS_REGION_COUNTRIES, LEADERS_REGION_LABELS }
 
 /** Honorifics carried by some rows ("Dr.", "Prof. Dr.") and often dropped by links. */
 const HONORIFIC_PREFIX = /^(?:(?:dr|prof|professor|mr|mrs|ms|sir)\.?\s+)+/i
@@ -213,6 +221,38 @@ export function planLeaderDeepLink(
     widened,
     nextParams: widened.length > 0 ? next : null,
   }
+}
+
+/** A `/leaders` filter param is off when absent, empty or desktop's 'All'. */
+function activeFilter(params: URLSearchParams, key: string): string | null {
+  const v = params.get(key)?.trim()
+  return v && v !== 'All' ? v : null
+}
+
+/**
+ * The `/leaders` URL filters (`cat`, `region`, `country`, `sector`, `q`) with
+ * LeadersGrid's `filteredLeaders` semantics: inclusive category match, country
+ * wins over region, exact sector (= leader type), and the lexical search floor
+ * (desktop's semantic supplement needs the RAG index and is not applied here).
+ * Used by the phone Community screen so a desktop filter link narrows the same
+ * people there.
+ */
+export function filterLeadersByParams(
+  leaders: readonly Leader[],
+  params: URLSearchParams
+): Leader[] {
+  const cat = activeFilter(params, 'cat')
+  const country = activeFilter(params, 'country')
+  const region = activeFilter(params, 'region')
+  const sector = activeFilter(params, 'sector')
+  const q = params.get('q')?.trim() || null
+  return leaders.filter(
+    (l) =>
+      (!cat || leaderMatchesCategory(l, cat)) &&
+      (country ? l.country === country : !region || regionIncludes(region, l.country)) &&
+      (!sector || l.type === sector) &&
+      (!q || matchesSearch(l, q))
+  )
 }
 
 function regionIncludes(region: string, country: string): boolean {

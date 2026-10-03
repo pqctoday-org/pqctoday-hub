@@ -6,6 +6,7 @@ import {
   buildWhatsNewRAGChunk,
   type DataSourceSummary,
 } from './dataFingerprint'
+import { leadersData } from '@/data/leadersData'
 
 // We test against actual data — these tests verify the public API shape
 // rather than mocking internals, since the data loaders are module-level singletons.
@@ -93,6 +94,19 @@ describe('dataFingerprint', () => {
             expect(item.tags.length).toBeLessThanOrEqual(3)
           }
         }
+      }
+    })
+  })
+
+  describe('leaders deep links', () => {
+    it('links changed leaders by their stable leader_id, not their display name', () => {
+      const [leaders] = getDataSourceSummaries(['leaders'])
+      const changed = leadersData.filter((l) => l.status === 'New' || l.status === 'Updated')
+      expect(leaders?.items.length ?? 0).toBe(changed.length)
+      for (const item of leaders?.items ?? []) {
+        const leader = changed.find((l) => l.name === item.id)!
+        expect(leader.leaderId).toBeTruthy()
+        expect(item.deepLink).toBe(`/leaders?leader=${encodeURIComponent(leader.leaderId)}`)
       }
     })
   })

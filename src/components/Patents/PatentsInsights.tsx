@@ -3,23 +3,17 @@ import { useMemo, useState } from 'react'
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, InsightsFilter } from '@/types/PatentTypes'
+import { inferRegion, NIST_STATUS_LABELS } from '@/data/patentFilters'
+
+// Moved to the pure data/patentFilters module so the phone Patents screen can
+// apply the same ?region / ?nistStatus filters; re-exported for existing callers.
+export { inferRegion, NIST_STATUS_LABELS }
 
 export type { InsightsFilter }
 
 interface Props {
   patents: PatentItem[]
   onFilter?: (filter: InsightsFilter) => void
-}
-
-export const NIST_STATUS_LABELS: Record<string, string> = {
-  fips_203: 'FIPS 203 (ML-KEM)',
-  fips_204: 'FIPS 204 (ML-DSA)',
-  fips_205: 'FIPS 205 (SLH-DSA)',
-  round4_candidate: 'Round 4 Candidate',
-  withdrawn: 'Withdrawn',
-  stateful_hash_standard: 'Stateful Hash Standard',
-  proprietary: 'Proprietary',
-  classical: 'Classical',
 }
 
 export function BarChart({
@@ -352,57 +346,6 @@ export function countByList<T>(
   return [...map.entries()]
     .map(([label, value]) => ({ label, value }))
     .sort((a, b) => b.value - a.value)
-}
-
-// Best-effort region inference from assignee string
-const REGION_RULES: { pattern: RegExp; region: string }[] = [
-  // Europe
-  {
-    pattern:
-      /siemens|bosch|giesecke|nagravision|swiss re|thales(?! dis cpp usa)|\bsap\b|nokia|ericsson|philips|infineon|st micro|arm limited|entrust.*canada|blackberry|01 communique/i,
-    region: 'Europe',
-  },
-  {
-    pattern: /aktiengesellschaft|gmbh|ltd\b.*\buk\b|\bplc\b|s\.a\.\b|s\.r\.l\b/i,
-    region: 'Europe',
-  },
-  // APAC
-  {
-    pattern: /huawei|alibaba|tencent|baidu|inspur|inventec|hikvision|byd|xiaomi|oppo|vivo/i,
-    region: 'APAC',
-  },
-  { pattern: /samsung|lg electronics|sk hynix|kt corp|hyundai/i, region: 'APAC' },
-  {
-    pattern:
-      /nippon|ntt|fujitsu|hitachi|toshiba|sony|panasonic|sharp|ricoh|softbank|rakuten|nec corp/i,
-    region: 'APAC',
-  },
-  { pattern: /commonwealth scientific|csiro|atlassian/i, region: 'APAC' },
-  { pattern: /jio platforms|wipro|infosys|tata/i, region: 'APAC' },
-  // Oceania
-  { pattern: /commonwealth scientific|csiro|atlassian|canva|afterpay|seek\b/i, region: 'Oceania' },
-  // Middle East & Africa
-  {
-    pattern: /radware|checkpoint|amdocs|elbit|nice systems|lendoit|cellebrite/i,
-    region: 'Middle East & Africa',
-  },
-  { pattern: /saudi|emirates|etisalat|du telecom/i, region: 'Middle East & Africa' },
-  // Americas (catch-all for known US/CA companies and .N.A. / Inc. / LLC / Corp)
-]
-
-export function inferRegion(assignee: string): string {
-  if (!assignee) return 'Unknown'
-  for (const { pattern, region } of REGION_RULES) {
-    if (pattern.test(assignee)) return region
-  }
-  // Heuristic: if it contains common US legal suffixes, it's Americas
-  if (
-    /\b(inc\.|llc|corp\.|n\.a\.|incorporated|limited liability|university of|national lab)/i.test(
-      assignee
-    )
-  )
-    return 'Americas'
-  return 'Unknown'
 }
 
 export function PatentsInsights({ patents, onFilter }: Props) {

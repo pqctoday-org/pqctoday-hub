@@ -11,59 +11,11 @@
 import { useMemo } from 'react'
 import type { PatentItem } from '@/types/PatentTypes'
 import type { SortKey, SortDir } from './PatentsTable'
-import { inferRegion } from './PatentsInsights'
-import { inventorMatches, parsePatentIds, patentIdMatches } from '@/data/patentFilters'
+import { filterPatents } from '@/data/patentFilters'
 
-export function filterPatents(patents: PatentItem[], params: URLSearchParams): PatentItem[] {
-  const q = (params.get('search') ?? '').toLowerCase()
-  const assigneeF = params.get('assignee') ?? ''
-  const inventorF = params.get('inventor') ?? ''
-  const patentIdsF = params.get('patentIds') ?? ''
-  const wantedIds = parsePatentIds(patentIdsF)
-  const agilityF = params.get('agility') ?? ''
-  const domainF = params.get('domain') ?? ''
-  const impactF = params.get('impact') ?? ''
-  const quantumTechF = params.get('quantumTech') ?? ''
-  const quantumRelevanceF = params.get('quantumRelevance') ?? ''
-  const regionF = params.get('region') ?? ''
-  const protocolF = params.get('protocol') ?? ''
-  const classicalAlgorithmF = params.get('classicalAlgorithm') ?? ''
-  const hardwareComponentF = params.get('hardwareComponent') ?? ''
-  const nistStatusF = params.get('nistStatus') ?? ''
-  const pqcF = params.get('pqc') ?? ''
-  const fipsF = params.get('fips') ?? ''
-  const filingYearF = params.get('filingYear') ?? ''
-
-  return patents.filter((p) => {
-    if (
-      q &&
-      !p.title.toLowerCase().includes(q) &&
-      !p.summary.toLowerCase().includes(q) &&
-      !p.primaryInventiveClaim.toLowerCase().includes(q) &&
-      !p.assignee.toLowerCase().includes(q) &&
-      !p.patentNumber.toLowerCase().includes(q)
-    )
-      return false
-    if (assigneeF && p.assignee !== assigneeF) return false
-    if (inventorF && !inventorMatches(p.inventors, inventorF)) return false
-    if (patentIdsF && !patentIdMatches(p.patentNumber, wantedIds)) return false
-    if (agilityF && p.cryptoAgilityMode !== agilityF) return false
-    if (domainF && !p.applicationDomain.includes(domainF)) return false
-    if (impactF && p.impactLevel !== impactF) return false
-    if (quantumTechF && !p.quantumTechnology.includes(quantumTechF)) return false
-    if (quantumRelevanceF && p.quantumRelevance !== quantumRelevanceF) return false
-    if (regionF && inferRegion(p.assignee) !== regionF) return false
-    if (protocolF && !p.protocols.includes(protocolF)) return false
-    if (classicalAlgorithmF && !p.classicalAlgorithms.includes(classicalAlgorithmF)) return false
-    if (hardwareComponentF && !p.hardwareComponents.includes(hardwareComponentF)) return false
-    if (nistStatusF && !p.nistRoundStatus.some((n) => n.status === nistStatusF)) return false
-    // Redesign-only filters (legacy never sets these params):
-    if (pqcF && !p.pqcAlgorithms.includes(pqcF)) return false
-    if (fipsF && !p.nistRoundStatus.some((n) => n.status.startsWith('fips_'))) return false
-    if (filingYearF && p.filingYear !== Number(filingYearF)) return false
-    return true
-  })
-}
+// Moved verbatim to the pure data/patentFilters module (shared with the phone
+// screen); re-exported so existing callers keep importing it from here.
+export { filterPatents }
 
 export function sortPatents(
   patents: PatentItem[],

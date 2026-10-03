@@ -150,13 +150,23 @@ export function PatentsViewRedesign() {
   const activeTab = resolvePatentTab(params, FILTER_PARAMS)
   const selectedPatent = params.get('patent')
 
-  const [pqcOnly, setPqcOnly] = useState<boolean>(() => readScopeParam(params) ?? readPqcOnly())
-  const [columnPreset, setColumnPreset] = useState<PresetKey | 'custom'>(
+  // Scope and columns are DERIVED from the URL when it carries them, so a
+  // same-page link (e.g. /patents?scope=all while already on /patents) takes
+  // effect without a remount. The local state is only the fallback for a URL
+  // without the param; every user toggle writes both, so they never disagree.
+  const [savedPqcOnly, setPqcOnly] = useState<boolean>(
+    () => readScopeParam(params) ?? readPqcOnly()
+  )
+  const pqcOnly = readScopeParam(params) ?? savedPqcOnly
+  const [savedColumnPreset, setColumnPreset] = useState<PresetKey | 'custom'>(
     () => readColumnsParam(params)?.preset ?? readSavedColumns().preset
   )
-  const [visibleColumns, setVisibleColumns] = useState<ColumnId[]>(
+  const [savedVisibleColumns, setVisibleColumns] = useState<ColumnId[]>(
     () => readColumnsParam(params)?.columns ?? readSavedColumns().columns
   )
+  const urlColumns = useMemo(() => readColumnsParam(params), [params])
+  const columnPreset = urlColumns?.preset ?? savedColumnPreset
+  const visibleColumns = urlColumns?.columns ?? savedVisibleColumns
   const [searchResults, setSearchResults] = useState<PatentItem[]>([])
   // Search-tab query (?sq). The drawer's prev/next list follows the active tab,
   // so a reload of a Search-tab link steps through the same hits.

@@ -2,8 +2,9 @@
 import { useEffect } from 'react'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import { PatentsViewRedesign } from './PatentsViewRedesign'
+import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { patentsData } from '@/data/patentsData'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
@@ -17,11 +18,22 @@ function LocationProbe() {
   return null
 }
 
-function renderView(initial = '/patents') {
+/** Stands in for an in-app link to /patents while already on /patents. */
+function SamePageLink({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(to)}>
+      same-page link
+    </Button>
+  )
+}
+
+function renderView(initial = '/patents', linkTo?: string) {
   return render(
     <MemoryRouter initialEntries={[initial]}>
       <PatentsViewRedesign />
       <LocationProbe />
+      {linkTo && <SamePageLink to={linkTo} />}
     </MemoryRouter>
   )
 }
@@ -115,5 +127,33 @@ describe('PatentsViewRedesign', () => {
   it('filter params without ?tab land on Explore', () => {
     renderView('/patents?impact=High')
     expect(screen.getByPlaceholderText(/Search patents — title/i)).toBeInTheDocument()
+  })
+
+  it('a same-page ?scope link takes effect without a remount', () => {
+    renderView('/patents', '/patents?scope=all')
+    const group = screen.getByRole('radiogroup', { name: /corpus scope/i })
+    expect(within(group).getByRole('radio', { name: /PQC & hybrid/i })).toHaveAttribute(
+      'aria-checked',
+      'true'
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'same-page link' }))
+    expect(within(group).getByRole('radio', { name: /All crypto/i })).toHaveAttribute(
+      'aria-checked',
+      'true'
+    )
+    // The reader's own toggle still works afterwards (and writes the URL).
+    fireEvent.click(within(group).getByRole('radio', { name: /PQC & hybrid/i }))
+    expect(within(group).getByRole('radio', { name: /PQC & hybrid/i })).toHaveAttribute(
+      'aria-checked',
+      'true'
+    )
+    expect(new URLSearchParams(lastSearch).get('scope')).toBe('pqc')
+  })
+
+  it('a same-page ?columns link takes effect without a remount', () => {
+    renderView('/patents?tab=explore', '/patents?tab=explore&columns=num,title,inventors')
+    expect(screen.queryByRole('columnheader', { name: /Inventors/ })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'same-page link' }))
+    expect(screen.getByRole('columnheader', { name: /Inventors/ })).toBeInTheDocument()
   })
 })
