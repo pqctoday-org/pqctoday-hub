@@ -404,6 +404,69 @@ describe('MigrationWorkbench (integration)', () => {
       })
     })
 
+    describe('Replace filter / facets in the URL (?rq=, ?facet=)', () => {
+      const filterBox = () => screen.getByLabelText(/Filter products/i)
+      const nonAvailable = productsForDomain('tls').find(
+        (p) => (p.pqcStatusCanonical || '').toLowerCase() !== 'available'
+      )!
+
+      it('typing writes ?rq= (replace) and a reload restores it', () => {
+        const { unmount } = renderStandaloneAt('/migrate')
+        fireEvent.change(filterBox(), { target: { value: 'open' } })
+        expect(search()).toContain('rq=open')
+        const reloaded = `/migrate${search()}`
+        unmount()
+        renderStandaloneAt(reloaded)
+        expect(filterBox()).toHaveValue('open')
+      })
+
+      it('a facet pick writes ?facet= and a reload re-applies it', () => {
+        expect(nonAvailable).toBeDefined()
+        const { unmount } = renderStandaloneAt('/migrate')
+        fireEvent.click(screen.getByRole('button', { name: 'Filter by PQC status' }))
+        fireEvent.click(screen.getByRole('option', { name: 'Available' }))
+        expect(search()).toContain('facet=pqc%3Aavailable')
+        const reloaded = `/migrate${search()}`
+        unmount()
+        renderStandaloneAt(reloaded)
+        expect(screen.queryByText(nonAvailable.softwareName)).not.toBeInTheDocument()
+      })
+
+      it('typing with a link active drops the link params and writes ?rq= in one go', () => {
+        renderStandaloneAt('/migrate?layer=Libraries')
+        fireEvent.change(filterBox(), { target: { value: 'x' } })
+        expect(search()).not.toContain('layer=')
+        expect(search()).toContain('domain=foundations')
+        expect(search()).toContain('rq=x')
+      })
+
+      it('picking another domain clears ?rq= with the filter', () => {
+        renderStandaloneAt('/migrate?rq=open')
+        expect(filterBox()).toHaveValue('open')
+        fireEvent.click(screen.getAllByRole('button', { name: /IPsec \/ IKEv2 VPN/i })[0])
+        expect(search()).toContain('domain=vpn')
+        expect(search()).not.toContain('rq=')
+      })
+
+      it('follows a second ?rq= link while mounted', () => {
+        render(
+          <MemoryRouter initialEntries={['/migrate?rq=open']}>
+            <MigrationWorkbench />
+            <LinkButton to="/migrate?rq=IBM" />
+            <LocationProbe />
+          </MemoryRouter>
+        )
+        fireEvent.click(screen.getByRole('button', { name: 'follow link' }))
+        expect(filterBox()).toHaveValue('IBM')
+      })
+
+      it('?domain= with ?rq= keeps the reader text (domain alone is a link too)', () => {
+        renderStandaloneAt('/migrate?domain=hsm&rq=thales')
+        expect(screen.getByRole('heading', { name: 'HSM-protected keys' })).toBeInTheDocument()
+        expect(filterBox()).toHaveValue('thales')
+      })
+    })
+
     describe('row expand writes ?product=', () => {
       const [a, b] = productsForDomain('tls')
 

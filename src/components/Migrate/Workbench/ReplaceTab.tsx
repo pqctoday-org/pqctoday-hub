@@ -31,6 +31,7 @@ import { FilterDropdown } from '../../common/FilterDropdown'
 import { MobileFilterDrawer } from '../MobileFilterDrawer'
 import { DeepLinkNotice } from '../../common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { parseFacets, serializeFacets, type ReplaceViewState } from './replaceTabParams'
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
 
@@ -62,7 +63,17 @@ interface ReplaceTabProps {
    *  collapsed the linked row / edited the filter or facets while a link was
    *  active. The parent drops the one-off link params and writes ?domain=
    *  (null = reset to the default, which clears it). Deep-link PR 2. */
-  onViewChange?: (domain: DomainId | null) => void
+  onViewChange?: (domain: DomainId | null, state?: ReplaceViewState) => void
+  /** The reader's own text filter (?rq=) and facets (?facet=) from the URL —
+   *  seed the view on mount and re-sync it when the URL changes (Back, a
+   *  second link). Undefined when embedded. */
+  urlFilter?: string
+  urlFacets?: string
+  /** The reader edited the text filter or facets while NO deep link is
+   *  active — the parent mirrors them to ?rq= / ?facet= (replace). With a
+   *  link active the same state rides on onViewChange instead, so both land
+   *  in ONE URL write. */
+  onFilterStateChange?: (state: ReplaceViewState) => void
   /** The product named by the URL's ?product= right now (resolved id) — a
    *  Back that removes it collapses the row that was opened. */
   openProductId?: string
@@ -81,6 +92,9 @@ export function ReplaceTab({
   deepLinkKey,
   expandProductId,
   onViewChange,
+  urlFilter,
+  urlFacets,
+  onFilterStateChange,
   openProductId,
   onProductOpen,
   onProductClose,
@@ -91,12 +105,36 @@ export function ReplaceTab({
   const chooseProduct = useMigrateSelectionStore((s) => s.chooseProduct)
 
   const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(initialDomain ?? 'tls')
-  const [filter, setFilter] = useState(initialFilter ?? '')
+  const [filter, setFilter] = useState(initialFilter ?? urlFilter ?? '')
   const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(initialProductIds)
-  const [facets, setFacets] = useState<ProductFacets>(NO_FACETS)
+  const [facets, setFacets] = useState<ProductFacets>(() =>
+    urlFacets ? parseFacets(urlFacets) : NO_FACETS
+  )
+  // Follow ?rq= / ?facet= when they change under a mounted tab (Back/Forward,
+  // a second shared link). Our own edits write exactly the value they set,
+  // so they are a no-op here; keyed on the raw strings so a deep link's own
+  // filter (?q=, ?product=) is never overwritten unless these change.
+  useEffect(() => {
+    if (urlFilter === undefined) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setFilter((prev) => (prev === urlFilter ? prev : urlFilter))
+  }, [urlFilter])
+  // Facets follow the URL only when ?facet= is PRESENT: in-app links never
+  // carry it, and the reader's facets must survive those (a link that they
+  // hide is revealed with an Undo instead — see the deep-link effect below).
+  useEffect(() => {
+    if (!urlFacets) return
+    const next = parseFacets(urlFacets)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+    setFacets((prev) => (serializeFacets(prev) === serializeFacets(next) ? prev : next))
+  }, [urlFacets])
   // Facets the reader had before a deep link widened them (Undo restores them).
   const [facetsBeforeLink, setFacetsBeforeLink] = useState<ProductFacets | null>(null)
   const facetsRef = useRef(facets)
+  const urlFilterRef = useRef(urlFilter)
+  useEffect(() => {
+    urlFilterRef.current = urlFilter
+  }, [urlFilter])
   useEffect(() => {
     facetsRef.current = facets
   }, [facets])
@@ -121,7 +159,8 @@ export function ReplaceTab({
     // inherit the previous link's exact-id filter or text.
     if (deepLinkKey && !initialProductIds) {
       setProductIdFilter(undefined)
-      if (!initialFilter) setFilter('')
+      // ?domain= alone is a link too: keep the reader's own ?rq= text.
+      if (!initialFilter) setFilter(urlFilterRef.current ?? '')
     }
     if (initialProductIds) {
       setProductIdFilter(initialProductIds)
@@ -148,8 +187,14 @@ export function ReplaceTab({
   )
 
   // Any reader-driven change of domain / filter / facets ends the deep-linked view.
-  const consumeDeepLink = () => {
-    if (deepLinkKey) onViewChange?.(selectedDomain)
+  // The reader's current filter/facets ride along so the URL stays in step.
+  const consumeDeepLink = (state: ReplaceViewState = { filter, facets }) => {
+    if (deepLinkKey) onViewChange?.(selectedDomain, state)
+  }
+  // Filter/facet edit: one URL write either way (see onFilterStateChange).
+  const reportFilterState = (state: ReplaceViewState) => {
+    if (deepLinkKey) consumeDeepLink({ filter, facets, ...state })
+    else onFilterStateChange?.(state)
   }
 
   // Back (a POP) that drops ?product=<id> closes the row that push opened:
@@ -168,7 +213,7 @@ export function ReplaceTab({
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter(undefined)
-    onViewChange?.(d)
+    onViewChange?.(d, { filter: '' })
   }
 
   // A catalog-wide product search (AssetList's top-level search box) jumping
@@ -178,13 +223,14 @@ export function ReplaceTab({
     setSelectedDomain(d)
     setFilter('')
     setProductIdFilter([productId])
-    onViewChange?.(d)
+    onViewChange?.(d, { filter: '' })
   }
 
   const setFacet = (next: (f: ProductFacets) => ProductFacets) => {
-    setFacets(next)
+    const nextFacets = next(facets)
+    setFacets(nextFacets)
     setFacetsBeforeLink(null)
-    consumeDeepLink()
+    reportFilterState({ facets: nextFacets })
   }
 
   const asset = selectedDomain ? (ASSET_BY_ID.get(selectedDomain) ?? null) : null
@@ -239,7 +285,7 @@ export function ReplaceTab({
             setSelectedDomain('tls')
             setFilter('')
             setProductIdFilter(undefined)
-            onViewChange?.(null)
+            onViewChange?.(null, { filter: '' })
           }}
         />
       </div>
@@ -287,7 +333,7 @@ export function ReplaceTab({
                     // Typing a fresh search must win over a stale deep-link id set —
                     // filterProducts() would otherwise keep ignoring it.
                     setProductIdFilter(undefined)
-                    consumeDeepLink()
+                    reportFilterState({ filter: e.target.value })
                   }}
                   placeholder="Filter products…"
                   aria-label="Filter products"
@@ -361,6 +407,8 @@ export function ReplaceTab({
                   onUndo={() => {
                     setFacets(facetsBeforeLink)
                     setFacetsBeforeLink(null)
+                    // Restoring facets is not "moving on" — the link stays.
+                    onFilterStateChange?.({ facets: facetsBeforeLink })
                   }}
                   onDismiss={() => setFacetsBeforeLink(null)}
                 />
@@ -416,7 +464,7 @@ export function ReplaceTab({
                       }
                       onCollapse={
                         isLinked
-                          ? consumeDeepLink
+                          ? () => consumeDeepLink()
                           : onProductClose && p.productId
                             ? () => onProductClose(p.productId)
                             : undefined

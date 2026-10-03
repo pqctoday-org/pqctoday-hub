@@ -216,7 +216,9 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     path: exact('/migrate'),
     // New links use product ids — never the legacy q/layer/cat/industry
     // forms the page merely tolerates.
-    queryKeys: ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share'],
+    // `rq` = Replace-tab filter text, `facet` = its facets
+    // (`pqc:available,certified:linked`; see replaceTabParams.ts).
+    queryKeys: ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share', 'rq', 'facet'],
     description: 'Migrate catalog',
   },
   {

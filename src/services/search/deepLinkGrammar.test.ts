@@ -191,7 +191,7 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'lsort',
     'lq',
   ],
-  '/migrate': ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share'],
+  '/migrate': ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share', 'rq', 'facet'],
   '/patents': [
     'patent',
     'tab',

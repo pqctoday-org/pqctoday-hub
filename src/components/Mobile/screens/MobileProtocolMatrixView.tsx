@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { ExternalLink, Search } from 'lucide-react'
+import { ExternalLink, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -10,6 +10,16 @@ import {
   type ProtocolMatrixRow,
 } from '@/data/pqcProtocolMatrix'
 import { libraryHref } from '@/components/Algorithms/libraryRef'
+import {
+  AVAILABILITY_LABELS,
+  SORT_LABELS,
+  parseMatrixAvailabilityParam,
+  parseMatrixSortParam,
+  parseMatrixStatusParam,
+  passesAvailabilityFilter,
+  passesStatusFilter,
+  sortProtocolRows,
+} from '@/components/Algorithms/protocolMatrixState'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 
@@ -62,14 +72,67 @@ const DIMENSION_LABELS: { key: keyof ProtocolMatrixRow['dimensions']; label: str
  * single Status filter (the same 5 real values) plus free-text search.
  * Tapping a row opens a lightweight detail sheet with the same 4 dimensions
  * + refs + deployment note — not the full 715-line ProtocolDetailModal.
+ *
+ * 2026-10-02 deep-link audit: the desktop matrix's URL state is honoured here
+ * too, so a link shared from a laptop shows the same rows on a phone —
+ * ?matrixQ (search box, mirrored back), ?matrixStatus (the status chips —
+ * multi-select OR, exactly like desktop's Status dropdown, mirrored back),
+ * and ?matrixAvailability / ?matrixSort (no phone controls; applied from the
+ * link and shown as a dismissible "from link" chip). ?matrixView is ignored on
+ * purpose: heatmap vs detailed is a desktop layout choice and the phone has a
+ * single card-list layout, so there is nothing for it to switch.
  */
 export function MobileProtocolMatrixView() {
-  const [query, setQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue | null>(null)
   // The open detail sheet IS ?protocol=<id> — same param desktop's
   // PQCProtocolMatrix reads, so a shared link opens the same protocol on a
   // phone. Opening pushes (Back closes the sheet); closing replaces.
   const [searchParams, setSearchParams] = useSearchParams()
+  // Search text is local (typing must never wait on navigation) but seeded
+  // from, mirrored to and re-synced with ?matrixQ.
+  const rawMatrixQ = searchParams.get('matrixQ') ?? ''
+  const [query, setQuery] = useState(rawMatrixQ)
+  useEffect(() => {
+    setQuery(rawMatrixQ)
+  }, [rawMatrixQ])
+  const rawMatrixStatus = searchParams.get('matrixStatus')
+  const statusFilter = useMemo(() => parseMatrixStatusParam(rawMatrixStatus), [rawMatrixStatus])
+  const availability = parseMatrixAvailabilityParam(searchParams.get('matrixAvailability'))
+  const sort = parseMatrixSortParam(searchParams.get('matrixSort'))
+
+  // Filter writes replace (they're filters, not "opening an item") and pin
+  // tab=support, matching desktop PQCProtocolMatrix's updateMatrixParams.
+  const updateMatrixParams = useCallback(
+    (updates: Record<string, string | null>) =>
+      setSearchParams(
+        (sp) => {
+          const next = new URLSearchParams(sp)
+          for (const [key, value] of Object.entries(updates)) {
+            if (value === null || value === '') next.delete(key)
+            else next.set(key, value)
+          }
+          if (!next.has('tab')) next.set('tab', 'support')
+          return next
+        },
+        { replace: true }
+      ),
+    [setSearchParams]
+  )
+  const handleQueryChange = (value: string) => {
+    setQuery(value)
+    updateMatrixParams({ matrixQ: value || null })
+  }
+  const toggleStatus = (s: DimensionStatusValue) => {
+    const next = statusFilter.includes(s)
+      ? statusFilter.filter((v) => v !== s)
+      : [...statusFilter, s]
+    updateMatrixParams({ matrixStatus: next.length > 0 ? next.join(',') : null })
+  }
+  const linkOnlyLabels = [
+    availability !== 'all' ? AVAILABILITY_LABELS[availability] : null,
+    sort.key !== 'matrix' || sort.direction !== 'asc'
+      ? `Sorted by ${SORT_LABELS[sort.key]} (${sort.direction === 'asc' ? 'ascending' : 'descending'})`
+      : null,
+  ].filter((l): l is string => l !== null)
   const protocolParam = searchParams.get('protocol')
   const selected = useMemo<ProtocolMatrixRow | null>(
     () => (protocolParam ? (PROTOCOL_MATRIX.find((r) => r.id === protocolParam) ?? null) : null),
@@ -103,18 +166,17 @@ export function MobileProtocolMatrixView() {
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return PROTOCOL_MATRIX.filter((row) => {
+    const filtered = PROTOCOL_MATRIX.filter((row) => {
       if (row.historical) return false
       if (q && !row.name.toLowerCase().includes(q) && !row.description.toLowerCase().includes(q)) {
         return false
       }
-      if (statusFilter) {
-        const values = DIMENSION_LABELS.map((d) => row.dimensions[d.key].value)
-        if (!values.includes(statusFilter)) return false
-      }
+      if (!passesStatusFilter(row, statusFilter)) return false
+      if (!passesAvailabilityFilter(row, availability)) return false
       return true
     })
-  }, [query, statusFilter])
+    return sortProtocolRows(filtered, sort.key, sort.direction)
+  }, [query, statusFilter, availability, sort.key, sort.direction])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -139,7 +201,7 @@ export function MobileProtocolMatrixView() {
         <Search size={14} className="shrink-0 text-muted-foreground" aria-hidden="true" />
         <input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => handleQueryChange(e.target.value)}
           placeholder="Search protocols"
           className="w-full bg-transparent text-[12.5px] text-foreground outline-none placeholder:text-muted-foreground"
         />
@@ -151,11 +213,11 @@ export function MobileProtocolMatrixView() {
             key={s}
             type="button"
             variant="ghost"
-            onClick={() => setStatusFilter((cur) => (cur === s ? null : s))}
-            aria-pressed={statusFilter === s}
+            onClick={() => toggleStatus(s)}
+            aria-pressed={statusFilter.includes(s)}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
-              statusFilter === s
+              statusFilter.includes(s)
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
             )}
@@ -164,6 +226,25 @@ export function MobileProtocolMatrixView() {
           </Button>
         ))}
       </div>
+
+      {linkOnlyLabels.length > 0 && (
+        <div
+          data-testid="matrix-link-filters"
+          className="mt-3 flex items-start justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-2.5 py-2 text-[11px] text-foreground"
+        >
+          <span>From link: {linkOnlyLabels.join(' · ')}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => updateMatrixParams({ matrixAvailability: null, matrixSort: null })}
+            aria-label="Clear link filter and sort"
+            className="h-5 w-5 shrink-0"
+          >
+            <X size={12} aria-hidden="true" />
+          </Button>
+        </div>
+      )}
 
       <p className="mt-3 text-[10.5px] text-muted-foreground">
         {rows.length} of {PROTOCOL_MATRIX.filter((r) => !r.historical).length} protocols

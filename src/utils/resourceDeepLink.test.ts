@@ -124,7 +124,7 @@ describe('every grammar key is classified (resource vs view/filter)', () => {
       'gsort',
       'gdir',
     ],
-    '/migrate': ['tab'],
+    '/migrate': ['tab', 'rq', 'facet'],
     '/leaders': [
       'cat',
       'region',

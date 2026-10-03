@@ -6,8 +6,9 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 import { AlgorithmsView } from './AlgorithmsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -102,11 +103,23 @@ function Probe() {
   return <span data-testid="url-search">{useLocation().search}</span>
 }
 const urlSearch = () => screen.getByTestId('url-search').textContent ?? ''
-const renderAt = (entry: string) =>
+/** An in-app link followed while /algorithms is already mounted. */
+function GoTo({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(to)}>
+      {`go ${to}`}
+    </Button>
+  )
+}
+const renderAt = (entry: string, links: string[] = []) =>
   render(
     <MemoryRouter initialEntries={[entry]}>
       <AlgorithmsView />
       <Probe />
+      {links.map((to) => (
+        <GoTo key={to} to={to} />
+      ))}
     </MemoryRouter>
   )
 
@@ -193,5 +206,16 @@ describe('AlgorithmsView — Transition compare panel (?cmp)', () => {
     )
     await waitFor(() => expect(urlSearch()).toContain('cmp=0'))
     expect(screen.queryByTestId('comparison-panel')).not.toBeInTheDocument()
+  })
+
+  it('follows a second ?compare link while already on the page', async () => {
+    const next = '/algorithms?tab=transition&compare=ML-KEM-768,Obscure-Candidate&cmp=1'
+    renderAt('/algorithms?tab=transition&compare=ML-KEM-768,HQC-128&cmp=0', [next])
+    await screen.findByTestId('transition-body')
+    expect(screen.queryByTestId('comparison-panel')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: `go ${next}` }))
+    expect(await screen.findByTestId('comparison-panel')).toHaveTextContent(
+      'ML-KEM-768,Obscure-Candidate'
+    )
   })
 })
