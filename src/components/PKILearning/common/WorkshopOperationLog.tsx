@@ -42,6 +42,8 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
       aria-live="polite"
       aria-label="Operation log"
       aria-busy={hasPending}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making it focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx).
+      tabIndex={0}
       className={clsx(
         'bg-muted rounded-lg p-3 font-mono text-xs max-h-32 overflow-y-auto space-y-1',
         className

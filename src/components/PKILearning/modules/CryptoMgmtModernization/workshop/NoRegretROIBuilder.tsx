@@ -339,7 +339,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           separates benefit streams that pay off <strong>regardless</strong> of quantum arrival from
           the single stream that depends on a CRQC materializing within the horizon.
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {canPullFromCbom && (
             <Button
               variant="outline"

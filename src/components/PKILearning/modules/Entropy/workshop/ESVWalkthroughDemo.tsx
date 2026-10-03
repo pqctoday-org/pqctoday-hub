@@ -428,7 +428,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
                 variant="ghost"
                 key={step.id}
                 onClick={() => goToStep(idx)}
-                className="relative z-10 flex flex-col items-center gap-1.5 group"
+                className="h-auto min-w-0 px-1 sm:px-4 relative z-10 flex flex-col items-center gap-1.5 group"
                 aria-label={`Step ${idx + 1}: ${step.title}`}
                 aria-current={isActive ? 'step' : undefined}
               >

@@ -841,7 +841,13 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           </span>
         </div>
 
-        <div className="flex items-start gap-2">
+        <div
+          className="flex items-start gap-2 overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making it focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Risk heatmap: likelihood by impact"
+        >
           {/* Y-axis label */}
           <div className="flex items-center justify-center w-5 shrink-0 self-center">
             <span

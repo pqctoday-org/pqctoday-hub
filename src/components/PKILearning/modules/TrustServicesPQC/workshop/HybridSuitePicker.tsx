@@ -75,7 +75,13 @@ export const HybridSuitePicker = () => {
       </section>
 
       <section className="glass-panel p-6">
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making it focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Hybrid suite comparison table"
+        >
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">

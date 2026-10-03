@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.146.0] - 2026-10-03
+
+### Fixed
+
+- **Learn workshops fit a phone screen again** [view:/learn] [persona:curious] [persona:developer] [persona:architect] [persona:ops] [persona:grc]: on a 390 px phone, selectable cards, option buttons and long button labels in about 25 workshops ran off the right edge of the screen. Affected workshops include Healthcare, Database Encryption, Crypto Dev APIs, AI Security, KMS, OS, Governance, HSM, Code Signing, API Security (JWT), IAM, PKI Enrollment, Merkle Tree Certificates, Stateful Signatures, Platform Engineering, Confidential Computing, Vendor Risk, Testing & Validation and Entropy. Their text now wraps inside the card. Filter rows and tab strips (HSM status and algorithm filters, IAM directory tabs, Crypto Dev APIs tabs) wrap onto a second line, and dropdown filters with a long selected value stay inside their column.
+- **Wide charts scroll inside their panel on phones** [view:/learn/emv-payment-pqc] [view:/learn/pqc-risk-management] [persona:grc] [persona:executive]: the EMV migration timeline and the risk heatmap now scroll sideways within their own panel instead of making the whole page wider than the screen.
+- **Revision history and long names wrap on phones** [view:/revisions] [view:/learn/vpn-ssh-pqc] [persona:curious] [persona:researcher]: long record names in the revision history and the SSH module's spec-source path now wrap instead of overflowing.
+- **Keyboard and screen-reader fixes in three workshops** [view:/learn/pki-workshop] [view:/learn/api-security-jwt] [view:/learn/trust-services-pqc] [persona:developer] [persona:architect]: the certificate-request attribute checkboxes are announced with their names, and the workshop operation log and the hybrid-suite comparison table can now be reached and scrolled with the keyboard.
+
 ## [4.145.0] - 2026-10-02
 
 The FHE + HSM workshop now shows plainly when data is encrypted, computed on and decrypted, who may decrypt, and where every key sits; every HSM Learn lesson now runs on a fresh page, and the Library adds fhe.rs, the fourth open-source homomorphic-encryption library.

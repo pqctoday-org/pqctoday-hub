@@ -131,7 +131,7 @@ export const EscalationFramework: React.FC = () => {
               >
                 <Button
                   variant="ghost"
-                  className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors h-auto rounded-none"
+                  className="whitespace-normal w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors h-auto rounded-none"
                   onClick={() => setExpandedTier(isOpen ? null : tier.tier)}
                 >
                   <div className="flex items-center gap-3">

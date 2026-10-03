@@ -124,7 +124,7 @@ function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
       {visible.map((id) => {
         const label = getEntityLabels().get(id)
         return (
-          <div key={id} className="relative group">
+          <div key={id} className="relative group max-w-full">
             <Button
               variant="ghost"
               size="sm"
@@ -132,7 +132,7 @@ function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
                 e.stopPropagation()
                 navigate(`/revisions?domain=${domain}&entity=${encodeURIComponent(id)}`)
               }}
-              className={`h-auto text-[10px] px-1.5 py-0.5 rounded border font-mono hover:opacity-80 transition-opacity ${cls}`}
+              className={`whitespace-normal break-all text-left h-auto text-[10px] px-1.5 py-0.5 rounded border font-mono hover:opacity-80 transition-opacity ${cls}`}
             >
               {id}
             </Button>
@@ -176,7 +176,9 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
           <GitMerge className="w-4 h-4 text-status-success" aria-label="Human-reviewed" />
         )}
       </div>
-      <div className="min-w-0 flex-1">
+      {/* max-sm:w-full: in the phone column layout items-start sized this to its
+          content, and long draft names in the chips ran past 390 px. */}
+      <div className="min-w-0 flex-1 max-sm:w-full [overflow-wrap:anywhere]">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-sm font-medium text-foreground">{r.reviewer_display}</span>
           <span className="text-xs text-muted-foreground capitalize">{r.domain}</span>

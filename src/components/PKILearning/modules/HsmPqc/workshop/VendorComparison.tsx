@@ -88,7 +88,7 @@ export const VendorComparison: React.FC = () => {
           </div>
 
           {/* Type Filter */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs text-muted-foreground">Type:</span>
             {(['all', 'on-prem', 'cloud'] as FilterType[]).map((type) => (
               <Button
@@ -107,7 +107,7 @@ export const VendorComparison: React.FC = () => {
           </div>
 
           {/* Status Filter */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs text-muted-foreground">Status:</span>
             {(['all', 'production', 'beta', 'limited', 'roadmap'] as FilterStatus[]).map(
               (status) => (
@@ -128,7 +128,7 @@ export const VendorComparison: React.FC = () => {
           </div>
 
           {/* Sort */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <ArrowUpDown size={12} className="text-muted-foreground" />
             <span className="text-xs text-muted-foreground">Sort:</span>
             {(['name', 'type'] as SortKey[]).map((key) => (
@@ -161,7 +161,7 @@ export const VendorComparison: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => toggleExpand(vendor.id)}
-                className="w-full text-left p-4 flex items-center gap-4"
+                className="h-auto whitespace-normal w-full text-left p-4 flex items-center gap-4"
               >
                 {/* Vendor Info */}
                 <div className="flex-1 min-w-0">

@@ -241,7 +241,7 @@ function RunnerInner({ algorithm }: Props) {
 
       <p className="text-[10px] text-muted-foreground italic">
         Spec sizes from{' '}
-        <span className="font-mono text-foreground">
+        <span className="font-mono text-foreground break-all">
           src/components/PKILearning/modules/VPNSSHModule/data/sshConstants.ts
         </span>
         . Live values come from the shared <span className="font-mono">sshEngine</span> (

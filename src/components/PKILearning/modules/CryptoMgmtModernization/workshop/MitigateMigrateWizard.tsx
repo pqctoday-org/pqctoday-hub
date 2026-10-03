@@ -157,7 +157,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                   key={opt.name}
                   variant={selectedAsset === opt.name ? 'gradient' : 'outline'}
                   onClick={() => setSelectedAsset(opt.name)}
-                  className="w-full h-auto p-3 text-left flex-col items-start text-xs"
+                  className="whitespace-normal w-full h-auto p-3 text-left flex-col items-start text-xs"
                 >
                   <div className="font-bold">{opt.name}</div>
                   <div className="text-[11px] font-normal mt-0.5 opacity-80">{opt.description}</div>

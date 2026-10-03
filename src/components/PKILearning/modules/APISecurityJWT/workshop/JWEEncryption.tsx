@@ -236,7 +236,7 @@ export const JWEEncryption: React.FC = () => {
   }, [alg, useHsm, hsmCtx])
 
   const tabBtn = (active: boolean) =>
-    `px-3 py-1.5 rounded text-xs font-medium border ${
+    `h-auto whitespace-normal px-3 py-1.5 rounded text-xs font-medium border ${
       active
         ? 'bg-primary/20 text-primary border-primary/50'
         : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'

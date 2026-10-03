@@ -190,7 +190,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => toggleExpand(rule.id)}
-                className="w-full text-left p-4 flex items-center gap-3"
+                className="h-auto whitespace-normal w-full text-left p-4 flex items-center gap-3"
               >
                 <div className="shrink-0">
                   {rule.severity === 'error' ? (
