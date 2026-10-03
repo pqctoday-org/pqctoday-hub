@@ -1,0 +1,7 @@
+u8_add 19
+u8_mul 196
+u8_lt 0
+u32_add 2615157863
+u32_max 2309737967
+u32_eq 0
+u64_add refuse
