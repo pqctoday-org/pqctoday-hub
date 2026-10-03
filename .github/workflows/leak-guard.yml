@@ -1,0 +1,55 @@
+name: Leak guard
+
+# Warns when a pull request would publish private internals: paths, internal
+# identifiers or folder references that belong to the private companion
+# repository (owner decision 2026-10-03). Checks only what the pull request
+# ADDS, its commit messages, its title and its body.
+#
+# No dependency install: the script uses only Node built-ins and runs with
+# Node 22's type stripping, so nothing is downloaded at run time.
+#
+# REPORT-ONLY. The job always succeeds and lists findings in the run summary,
+# so it cannot block a merge. It is NOT a required check. Enforcement
+# (`--mode enforce` plus a required status check) is a separate, later change.
+#
+# Output is redacted: a finding names the rule and the location, never the
+# matched text.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: leak-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  leak-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Check added lines and commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --range "$BASE_SHA...$HEAD_SHA" --mode report
+
+      - name: Check pull request title and body
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --pr-text --mode report

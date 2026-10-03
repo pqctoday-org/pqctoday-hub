@@ -11,18 +11,44 @@
 import { isThreatsDeepLink } from '@/components/Threats/threatsUrlParams'
 
 /** Per-route params that name a specific resource. `spec` works on any route
- *  (the global SpecDrawerHost), so it is handled separately below. */
-const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
+ *  (the global SpecDrawerHost), so it is handled separately below.
+ *
+ *  resourceDeepLink.test.ts classifies EVERY key the Assistant grammar allows
+ *  on these routes as either a resource param (listed here) or a view/filter
+ *  param, so a page that gains a new item param fails that test until someone
+ *  decides which it is — this list drifted once already (2026-10-02 audit). */
+export const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
   '/library': ['ref'],
-  '/patents': ['patent', 'patentIds'],
-  '/algorithms': ['protocol', 'highlight', 'algo', 'industry'],
+  '/patents': ['patent', 'patentIds', 'inventor'],
+  '/algorithms': [
+    'protocol',
+    'highlight',
+    'algo',
+    'industry',
+    'usecase',
+    'attack',
+    'engine',
+    'case',
+  ],
   '/timeline': ['event', 'country'],
-  '/migrate': ['product', 'productIds', 'share'],
+  '/migrate': ['product', 'productIds', 'share', 'vendor', 'open', 'domain'],
   '/leaders': ['leader'],
-  '/compliance': ['framework', 'cert', 'evref'],
+  '/compliance': [
+    'framework',
+    'cert',
+    'evref',
+    'reqfw',
+    'prod',
+    'step',
+    'dossier',
+    'mtier',
+    'cswpview',
+  ],
 }
 
-const ANY_ROUTE_PARAMS = ['spec'] as const
+// `spec` opens a Library document and `try` a Playground tool in place, on any
+// page (SpecDrawerHost / TryToolModalHost) — both name one resource.
+const ANY_ROUTE_PARAMS = ['spec', 'try'] as const
 
 function normalizePath(pathname: string): string {
   return pathname.replace(/\/+$/, '') || '/'

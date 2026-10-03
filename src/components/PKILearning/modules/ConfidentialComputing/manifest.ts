@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
     'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.',
   whyThisMatters:
     "TEEs and PQC solve different problems — remote attestation, not confidentiality-at-rest — but a compromised TEE root of trust and a broken classical signature fail the same way: silently, until it's too late.",
-  duration: '60 min',
+  duration: '90 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',

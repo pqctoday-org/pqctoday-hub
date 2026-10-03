@@ -40,6 +40,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   disabled={attr.status === 'mandatory'}
                   onChange={(e) => onAttributeChange(attr.id, 'enabled', e.target.checked)}
                   className="rounded border-border bg-muted text-primary focus:ring-primary cursor-pointer w-4 h-4"
+                  aria-label={`Include ${attr.label}`}
                 />
               </td>
               {showSource && (

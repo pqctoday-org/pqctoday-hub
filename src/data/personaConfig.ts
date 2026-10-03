@@ -779,6 +779,17 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation / Space'],
   'Retail & E-Commerce': ['Retail & E-Commerce'],
+  // Assessment-only industries (AVAILABLE_INDUSTRIES in assessmentData.ts):
+  // without a key here, the report's Threats link passed the raw name, which
+  // matches no Threats label, so the page opened unfiltered.
+  Education: ['Education / Research'],
+  // IEC 62443 OT/ICS, industrial IoT controllers and supply-chain trust roots
+  // (the INDUSTRY_THREAT rationale for Manufacturing).
+  Manufacturing: [
+    'Critical Infrastructure / OT',
+    'Internet of Things (IoT)',
+    'Supply Chain / Logistics',
+  ],
   'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
   Other: [],
 }

@@ -32,6 +32,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { useMigrationPlan } from './useMigrationPlan'
 import { PostureCommandCenter } from './PostureCommandCenter'
 import { ReplaceTab } from './ReplaceTab'
+import {
+  REPLACE_FACET_PARAM,
+  REPLACE_FILTER_PARAM,
+  writeReplaceViewState,
+  type ReplaceViewState,
+} from './replaceTabParams'
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
@@ -230,17 +236,27 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   /** The reader moved on from the linked view (collapsed the row, changed
    *  domain, filter or facets): forget the link and drop its params (replace —
    *  a filter-style change, not a new history entry). The domain they are
-   *  now on is written as ?domain= (null = reset to the default: cleared). */
+   *  now on is written as ?domain= (null = reset to the default: cleared),
+   *  and their own text filter / facets as ?rq= / ?facet= in the same write. */
   const onReplaceViewChange = useCallback(
-    (domain: DomainId | null) => {
+    (domain: DomainId | null, state: ReplaceViewState = {}) => {
       setProductLink(null)
       setElsewhereProducts([])
       writeLinkParams((sp) => {
         for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
         if (domain) sp.set('domain', domain)
         else sp.delete('domain')
+        writeReplaceViewState(sp, state)
       }, true)
     },
+    [writeLinkParams]
+  )
+
+  /** Replace-tab text filter / facets edited with no link active: mirror them
+   *  to ?rq= / ?facet= (replace) so a reload or share keeps them. Neither is a
+   *  link param, so this never re-hydrates or drops anything else. */
+  const onReplaceFilterStateChange = useCallback(
+    (state: ReplaceViewState) => writeLinkParams((sp) => writeReplaceViewState(sp, state), true),
     [writeLinkParams]
   )
 
@@ -300,6 +316,8 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   // The Replace tab's domain survives a tab switch and a reload via ?domain=
   // (ReplaceTab remounts when its tab is re-selected).
   const domainParam = embedded ? null : searchParams.get('domain')
+  const urlReplaceFilter = embedded ? undefined : (searchParams.get(REPLACE_FILTER_PARAM) ?? '')
+  const urlReplaceFacets = embedded ? undefined : (searchParams.get(REPLACE_FACET_PARAM) ?? '')
   const urlDomain = domainParam ? resolveDomainRef(domainParam) : null
   const urlProductId = useMemo(() => {
     const v = embedded ? null : searchParams.get('product')
@@ -527,6 +545,9 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             expandProductId={productLink?.expandId}
             openProductId={urlProductId}
             onViewChange={embedded ? undefined : onReplaceViewChange}
+            urlFilter={urlReplaceFilter}
+            urlFacets={urlReplaceFacets}
+            onFilterStateChange={embedded ? undefined : onReplaceFilterStateChange}
             onProductOpen={embedded ? undefined : onProductOpen}
             onProductClose={embedded ? undefined : onProductClose}
             onGoToRoadmaps={() => setTab('roadmaps')}

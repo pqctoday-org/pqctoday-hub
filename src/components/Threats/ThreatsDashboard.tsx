@@ -190,7 +190,24 @@ export const ThreatsDashboard: React.FC<{
     )
   }, [searchParams, storeIndustries])
 
-  const { myThreats, showOnlyThreats, setShowOnlyThreats } = useBookmarkStore()
+  const {
+    myThreats,
+    showOnlyThreats: savedShowOnlyThreats,
+    setShowOnlyThreats: saveShowOnlyThreats,
+  } = useBookmarkStore()
+  // "Show only my threats" is a SAVED preference. A deep link to a threat it
+  // hides turns it off for this visit only — the saved value is left alone,
+  // so the reader's preference is back next time (same model as Timeline's
+  // "My countries only"). An explicit toggle is a real choice and is saved.
+  const [myThreatsSessionOff, setMyThreatsSessionOff] = useState(false)
+  const showOnlyThreats = savedShowOnlyThreats && !myThreatsSessionOff
+  const setShowOnlyThreats = useCallback(
+    (val: boolean) => {
+      setMyThreatsSessionOff(false)
+      saveShowOnlyThreats(val)
+    },
+    [saveShowOnlyThreats]
+  )
 
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>(initialIndustries)
   const [selectedCriticality, setSelectedCriticality] = useState<string>(
@@ -674,7 +691,7 @@ export const ThreatsDashboard: React.FC<{
     params: string
     selectedIndustries: string[]
     personaScopeExtra: string | null
-    showOnlyThreats: boolean
+    myThreatsSessionOff: boolean
     protocolLens: string | null
   } | null>(null)
   const resolvedIdRef = useRef<string | null>(null)
@@ -726,7 +743,7 @@ export const ThreatsDashboard: React.FC<{
       params: searchParams.toString(),
       selectedIndustries,
       personaScopeExtra,
-      showOnlyThreats,
+      myThreatsSessionOff,
       protocolLens,
     }
     const next = new URLSearchParams(searchParams)
@@ -745,7 +762,7 @@ export const ThreatsDashboard: React.FC<{
       } else if (ex === 'q') {
         setSearchQuery('')
         next.delete('q')
-      } else if (ex === 'mine') setShowOnlyThreats(false)
+      } else if (ex === 'mine') setMyThreatsSessionOff(true)
       else if (ex === 'tier') next.delete('tier')
       else if (ex === 'lens') {
         setProtocolLens(null)
@@ -784,7 +801,7 @@ export const ThreatsDashboard: React.FC<{
     if (!snap) return
     setSelectedIndustries(snap.selectedIndustries)
     setPersonaScopeExtra(snap.personaScopeExtra)
-    setShowOnlyThreats(snap.showOnlyThreats)
+    setMyThreatsSessionOff(snap.myThreatsSessionOff)
     setProtocolLens(snap.protocolLens)
     deepLinkArrivalRef.current = null
     // Restore the reader's URL filters; the threat they hid is closed with them.
@@ -793,7 +810,7 @@ export const ThreatsDashboard: React.FC<{
     restored.delete('threat')
     restored.delete('threattab')
     setSearchParams(restored, { replace: true })
-  }, [setSearchParams, setShowOnlyThreats])
+  }, [setSearchParams])
 
   // ── ?threattab= — the dialog's Detection / Response tab (deep-link PR 2) ──
   // Read from the URL on every render (unknown → detection); a tab click

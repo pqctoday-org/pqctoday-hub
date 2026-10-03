@@ -531,7 +531,11 @@ export function resolveMigrateLink(get: (key: string) => string | null): Migrate
   }
   if (taxDomain) {
     out.domain = taxDomain
-    if (taxValue || text || industry) out.tab = 'replace'
+    // ?domain= alone is an inbound link to a Replace-tab domain (the page's own
+    // tab writes always carry ?tab=, which is how ?domain= rides along on the
+    // other tabs) — without this a returning reader landed on whatever tab
+    // they last used.
+    if (taxValue || text || industry || !val('tab')) out.tab = 'replace'
     if (text) out.filter = text
     return finish()
   }

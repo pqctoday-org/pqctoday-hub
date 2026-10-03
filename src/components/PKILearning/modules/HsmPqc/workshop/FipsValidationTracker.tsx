@@ -172,7 +172,7 @@ export const FipsValidationTracker: React.FC = () => {
           </div>
 
           {/* Cert Type Filter */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs text-muted-foreground">Type:</span>
             <Button
               variant="ghost"
@@ -202,7 +202,7 @@ export const FipsValidationTracker: React.FC = () => {
           </div>
 
           {/* Status Filter */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs text-muted-foreground">Status:</span>
             {(['all', 'Active', 'Pending', 'Planned', 'Historical'] as StatusFilter[]).map(
               (status) => (
@@ -223,7 +223,7 @@ export const FipsValidationTracker: React.FC = () => {
           </div>
 
           {/* Algorithm Filter */}
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs text-muted-foreground">Algorithm:</span>
             <Button
               variant="ghost"
@@ -429,7 +429,7 @@ export const FipsValidationTracker: React.FC = () => {
                       ? 'CC'
                       : entry.certType}
                 </span>
-                <div className="flex gap-1 shrink-0">
+                <div className="flex flex-wrap gap-1 min-w-0">
                   {entry.algorithms.map((alg) => (
                     <span
                       key={alg}

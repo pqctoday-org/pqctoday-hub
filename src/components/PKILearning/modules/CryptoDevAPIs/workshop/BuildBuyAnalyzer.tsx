@@ -92,7 +92,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
               <div key={s.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
                 <Button
                   variant="ghost"
-                  className="w-full text-left p-4"
+                  className="h-auto whitespace-normal w-full text-left p-4"
                   onClick={() => toggleStrategy(s.id)}
                 >
                   <div className="flex items-center justify-between">
@@ -261,7 +261,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
               <div key={cs.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
                 <Button
                   variant="ghost"
-                  className="w-full text-left p-4"
+                  className="h-auto whitespace-normal w-full text-left p-4"
                   onClick={() => toggleCase(cs.id)}
                 >
                   <div className="flex items-center justify-between gap-3">

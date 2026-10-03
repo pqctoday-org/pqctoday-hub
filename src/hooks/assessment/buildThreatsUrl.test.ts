@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { buildThreatsUrl } from './generators'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 
 const industryParam = (url: string) => new URL(url, 'https://x.test').searchParams.get('industry')
 
@@ -25,6 +26,19 @@ describe('buildThreatsUrl', () => {
       if (labels.length === 0) expect(url, industry).toBe('/threats')
       else expect(industryParam(url), industry).toBe(labels.join(','))
     }
+  })
+
+  it('every industry the assessment offers has a Threats mapping', () => {
+    // Iterates the ASSESSMENT's list, not the map's keys: an industry missing
+    // from the map is exactly the gap a map-keyed loop cannot see (Education and
+    // Manufacturing linked to an unfiltered page until 2026-10-02).
+    for (const industry of AVAILABLE_INDUSTRIES) {
+      expect(
+        Object.prototype.hasOwnProperty.call(INDUSTRY_TO_THREATS_MAP, industry),
+        industry
+      ).toBe(true)
+    }
+    expect(industryParam(buildThreatsUrl('Education'))).toBe('Education / Research')
   })
 
   it('passes an existing Threats label through unchanged', () => {

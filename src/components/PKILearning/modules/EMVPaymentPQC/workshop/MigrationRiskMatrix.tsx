@@ -481,139 +481,139 @@ export const MigrationRiskMatrix: React.FC = () => {
       )}
 
       {/* ── Migration Timeline ─────────────────────────────────────── */}
-      <div className="glass-panel p-4">
-        <div className="text-sm font-bold text-foreground mb-3">Migration Timeline Overview</div>
+      {/* relative: the year/deadline labels are absolutely positioned; without a
+          positioned ancestor they escaped to the page and widened it on phones. */}
+      <div
+        className="glass-panel p-4 relative overflow-x-auto"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making it focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx).
+        tabIndex={0}
+        role="region"
+        aria-label="Migration timeline overview"
+      >
+        <div className="min-w-[560px]">
+          <div className="text-sm font-bold text-foreground mb-3">Migration Timeline Overview</div>
 
-        {/* Year axis */}
-        <div className="flex items-center pl-44 pr-2 mb-1">
-          {Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => {
-            const year = TIMELINE_START + i
-            // Only show every other year to avoid clutter
-            if (year % 2 !== 1 && year !== TIMELINE_START && year !== TIMELINE_END) return null
-            return (
-              <div
-                key={year}
-                className="text-[10px] font-mono text-muted-foreground"
-                style={{
-                  position: 'absolute',
-                  left: `calc(176px + ${((year - TIMELINE_START) / TIMELINE_SPAN) * 100}% * (1 - 176px / 100%))`,
-                }}
-              >
-                {year}
+          {/* Year axis */}
+          <div className="flex items-center pl-44 pr-2 mb-1">
+            {/* Simpler inline year labels */}
+            {[2025, 2027, 2029, 2031, 2033, 2035].map((year) => (
+              <div key={year} className="flex-1 text-center">
+                <span className="text-[10px] font-mono text-muted-foreground">{year}</span>
               </div>
-            )
-          })}
-          {/* Simpler inline year labels */}
-          {[2025, 2027, 2029, 2031, 2033, 2035].map((year) => (
-            <div key={year} className="flex-1 text-center">
-              <span className="text-[10px] font-mono text-muted-foreground">{year}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Deadline markers */}
-        <div className="flex items-center pl-44 pr-2 mb-2">
-          {[
-            { year: 2026, label: 'PCI 4.0', color: 'text-status-warning' },
-            { year: 2030, label: 'NIST PQC', color: 'text-status-error' },
-            { year: 2035, label: 'Full PQC', color: 'text-status-error' },
-          ].map((deadline) => (
-            <div
-              key={deadline.label}
-              className="absolute"
-              style={{
-                left: `calc(176px + ${((deadline.year - TIMELINE_START) / TIMELINE_SPAN) * 100}%)`,
-              }}
-            >
-              <div className={`text-[8px] font-bold ${deadline.color}`}>{deadline.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Component bars */}
-        <div className="space-y-1.5">
-          {filteredVectors
-            .sort(
-              (a, b) =>
-                SEVERITY_RANK[b.severity] - SEVERITY_RANK[a.severity] ||
-                a.migrationEffort - b.migrationEffort
-            )
-            .map((v) => {
-              const { start, end } = parseTimelineRange(v.migrationTimeline)
-              const leftPct = ((start - TIMELINE_START) / TIMELINE_SPAN) * 100
-              const widthPct = ((end - start) / TIMELINE_SPAN) * 100
-
-              const barColor =
-                v.severity === 'critical'
-                  ? 'bg-status-error/40'
-                  : v.severity === 'high'
-                    ? 'bg-status-warning/40'
-                    : v.severity === 'medium'
-                      ? 'bg-primary/30'
-                      : 'bg-muted/50'
-
-              return (
-                <Button
-                  variant="ghost"
-                  key={v.id}
-                  onClick={() => setSelectedComponentId(selectedComponentId === v.id ? null : v.id)}
-                  className={`flex items-center gap-2 w-full text-left transition-colors rounded ${
-                    selectedComponentId === v.id ? 'bg-muted/30' : 'hover:bg-muted/20'
-                  }`}
-                >
-                  <div className="w-40 shrink-0 text-right pr-2">
-                    <span className="text-[10px] text-foreground font-medium truncate block">
-                      {v.componentLabel}
-                    </span>
+          {/* Deadline markers — same track geometry as the bars below (button px-4,
+              w-40 label column, gap-2), so a marker sits over its year. */}
+          <div className="flex items-center gap-2 px-4 mb-2">
+            <div className="w-40 shrink-0" />
+            <div className="flex-1 relative h-3">
+              {[
+                { year: 2026, label: 'PCI 4.0', color: 'text-status-warning' },
+                { year: 2030, label: 'NIST PQC', color: 'text-status-error' },
+                { year: 2035, label: 'Full PQC', color: 'text-status-error' },
+              ].map((deadline) => {
+                const pct = ((deadline.year - TIMELINE_START) / TIMELINE_SPAN) * 100
+                return (
+                  <div
+                    key={deadline.label}
+                    className="absolute top-0 whitespace-nowrap"
+                    style={{ left: `${pct}%`, transform: `translateX(-${pct}%)` }}
+                  >
+                    <div className={`text-[8px] font-bold ${deadline.color}`}>{deadline.label}</div>
                   </div>
-                  <div className="flex-1 relative h-5 bg-muted/20 rounded border border-border/50">
-                    <div
-                      className={`absolute top-0 h-full rounded ${barColor}`}
-                      style={{
-                        left: `${leftPct}%`,
-                        width: `${widthPct}%`,
-                      }}
-                    />
-                    {v.hndlExposure && (
-                      <div
-                        className="absolute top-0.5"
-                        style={{ left: `${leftPct + widthPct / 2}%` }}
-                      >
-                        <AlertTriangle size={8} className="text-status-error" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[8px] font-mono text-foreground font-medium">
-                        {v.migrationTimeline}
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Component bars */}
+          <div className="space-y-1.5">
+            {filteredVectors
+              .sort(
+                (a, b) =>
+                  SEVERITY_RANK[b.severity] - SEVERITY_RANK[a.severity] ||
+                  a.migrationEffort - b.migrationEffort
+              )
+              .map((v) => {
+                const { start, end } = parseTimelineRange(v.migrationTimeline)
+                const leftPct = ((start - TIMELINE_START) / TIMELINE_SPAN) * 100
+                const widthPct = ((end - start) / TIMELINE_SPAN) * 100
+
+                const barColor =
+                  v.severity === 'critical'
+                    ? 'bg-status-error/40'
+                    : v.severity === 'high'
+                      ? 'bg-status-warning/40'
+                      : v.severity === 'medium'
+                        ? 'bg-primary/30'
+                        : 'bg-muted/50'
+
+                return (
+                  <Button
+                    variant="ghost"
+                    key={v.id}
+                    onClick={() =>
+                      setSelectedComponentId(selectedComponentId === v.id ? null : v.id)
+                    }
+                    className={`flex items-center gap-2 w-full text-left transition-colors rounded ${
+                      selectedComponentId === v.id ? 'bg-muted/30' : 'hover:bg-muted/20'
+                    }`}
+                  >
+                    <div className="w-40 shrink-0 text-right pr-2">
+                      <span className="text-[10px] text-foreground font-medium truncate block">
+                        {v.componentLabel}
                       </span>
                     </div>
-                  </div>
-                </Button>
+                    <div className="flex-1 relative h-5 bg-muted/20 rounded border border-border/50">
+                      <div
+                        className={`absolute top-0 h-full rounded ${barColor}`}
+                        style={{
+                          left: `${leftPct}%`,
+                          width: `${widthPct}%`,
+                        }}
+                      />
+                      {v.hndlExposure && (
+                        <div
+                          className="absolute top-0.5"
+                          style={{ left: `${leftPct + widthPct / 2}%` }}
+                        >
+                          <AlertTriangle size={8} className="text-status-error" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-[8px] font-mono text-foreground font-medium">
+                          {v.migrationTimeline}
+                        </span>
+                      </div>
+                    </div>
+                  </Button>
+                )
+              })}
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-wrap items-center gap-3 mt-3 pt-2 border-t border-border">
+            {SEVERITY_Y_ORDER.map((sev) => {
+              const barColor =
+                sev === 'critical'
+                  ? 'bg-status-error/40'
+                  : sev === 'high'
+                    ? 'bg-status-warning/40'
+                    : sev === 'medium'
+                      ? 'bg-primary/30'
+                      : 'bg-muted/50'
+              return (
+                <div key={sev} className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded ${barColor} border border-border`} />
+                  <span className="text-[10px] text-muted-foreground">{SEVERITY_LABELS[sev]}</span>
+                </div>
               )
             })}
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-3 mt-3 pt-2 border-t border-border">
-          {SEVERITY_Y_ORDER.map((sev) => {
-            const barColor =
-              sev === 'critical'
-                ? 'bg-status-error/40'
-                : sev === 'high'
-                  ? 'bg-status-warning/40'
-                  : sev === 'medium'
-                    ? 'bg-primary/30'
-                    : 'bg-muted/50'
-            return (
-              <div key={sev} className="flex items-center gap-1">
-                <div className={`w-3 h-3 rounded ${barColor} border border-border`} />
-                <span className="text-[10px] text-muted-foreground">{SEVERITY_LABELS[sev]}</span>
-              </div>
-            )
-          })}
-          <div className="flex items-center gap-1">
-            <AlertTriangle size={10} className="text-status-error" />
-            <span className="text-[10px] text-muted-foreground">HNDL Exposed</span>
+            <div className="flex items-center gap-1">
+              <AlertTriangle size={10} className="text-status-error" />
+              <span className="text-[10px] text-muted-foreground">HNDL Exposed</span>
+            </div>
           </div>
         </div>
       </div>

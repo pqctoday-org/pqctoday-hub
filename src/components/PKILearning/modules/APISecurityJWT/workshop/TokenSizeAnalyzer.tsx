@@ -248,9 +248,9 @@ export const TokenSizeAnalyzer: React.FC = () => {
 
               return (
                 <div key={item.jose}>
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-foreground w-40 truncate">
+                      <span className="text-xs font-medium text-foreground w-28 sm:w-40 truncate">
                         {item.name}
                       </span>
                       {item.broken ? (

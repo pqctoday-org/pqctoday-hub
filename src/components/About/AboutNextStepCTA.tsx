@@ -71,7 +71,7 @@ const PERSONA_CTAS: Record<PersonaId, CtaSpec> = {
     icon: <FlaskConical size={20} className="text-primary" />,
     title: 'Read the source standards',
     body: 'Jump straight to FIPS 203/204/205, RFC 9964, and the active IETF drafts — all cited with passage-level provenance.',
-    to: '/library?cat=Standards',
+    to: '/library?cat=NIST%20Standards',
     destination: 'library-standards',
     cta: 'Open the standards shelf',
   },

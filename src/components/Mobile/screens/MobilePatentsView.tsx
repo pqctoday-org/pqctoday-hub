@@ -12,7 +12,7 @@ import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/Pa
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
-import { filterByPatentLinkParams } from '@/data/patentFilters'
+import { filterPatents, NIST_STATUS_LABELS } from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 
 const AGILITY_ORDER: CryptoAgilityMode[] = [
@@ -22,13 +22,6 @@ const AGILITY_ORDER: CryptoAgilityMode[] = [
   'negotiated',
   'unclear',
 ]
-
-/** Desktop link filters the phone honours (Community → a leader's patents);
- *  matched by the same shared data/patentFilters desktop's filterPatents uses. */
-const LINK_FILTERS = [
-  { key: 'inventor', label: 'Inventor' },
-  { key: 'patentIds', label: 'Patents' },
-] as const
 
 /** `US1,US2,US3` → "3 selected"; a single id is shown as-is (desktop's chip). */
 function patentIdsLabel(value: string): string {
@@ -49,6 +42,41 @@ const RELEVANCE_LABELS: Record<QuantumRelevance, string> = {
   dependent_claim_only: 'Dependent claim',
   background_only: 'Background only',
   none: 'None',
+}
+
+/** Desktop Explore filters the phone has no control for (Community → a
+ *  leader's patents, Insights drill-downs, assistant/search links). They narrow
+ *  the list through the same shared data/patentFilters.filterPatents desktop
+ *  uses, and each shows as a removable chip. `agility` and `impact=High` are
+ *  not here: the agility chips and the High-impact tile ARE their controls. */
+const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string }[] = [
+  { key: 'inventor', label: 'Inventor' },
+  { key: 'patentIds', label: 'Patents', format: patentIdsLabel },
+  { key: 'assignee', label: 'Assignee' },
+  { key: 'region', label: 'Region' },
+  { key: 'domain', label: 'Domain' },
+  { key: 'quantumTech', label: 'Quantum tech' },
+  {
+    key: 'quantumRelevance',
+    label: 'Quantum relevance',
+    format: (v) => RELEVANCE_LABELS[v as QuantumRelevance] ?? v,
+  },
+  { key: 'protocol', label: 'Protocol' },
+  { key: 'classicalAlgorithm', label: 'Classical algorithm' },
+  { key: 'hardwareComponent', label: 'Hardware' },
+  // eslint-disable-next-line security/detect-object-injection -- label lookup; unknown ids fall back to the raw value
+  { key: 'nistStatus', label: 'NIST status', format: (v) => NIST_STATUS_LABELS[v] ?? v },
+  { key: 'pqc', label: 'PQC algorithm' },
+  { key: 'fips', label: 'FIPS-mapped', format: () => 'only' },
+  { key: 'filingYear', label: 'Filing year' },
+]
+
+/** Every URL filter filterPatents reads except `search` (the phone's search
+ *  box owns that, with its own field set). */
+const URL_FILTER_KEYS = [...LINK_FILTERS.map((f) => f.key), 'agility', 'impact']
+
+function isAgilityMode(v: string | null): v is CryptoAgilityMode {
+  return !!v && (AGILITY_ORDER as string[]).includes(v)
 }
 
 function fipsMappedAlgorithms(p: PatentItem): string[] {
@@ -80,9 +108,22 @@ function fipsMappedAlgorithms(p: PatentItem): string[] {
  * verbatim from PatentsViewRedesign.tsx.
  */
 export function MobilePatentsView() {
-  const [highImpactOnly, setHighImpactOnly] = useState(false)
-  const [agilityFilter, setAgilityFilter] = useState<CryptoAgilityMode | null>(null)
   const [params, setParams] = useSearchParams()
+  // The High-impact tile and the agility chips are the phone's controls for
+  // desktop's ?impact=High and ?agility=, so they read and write those params
+  // (replace — a filter, not a place) and a desktop filter link lands on them.
+  const highImpactOnly = params.get('impact') === 'High'
+  const agilityParam = params.get('agility')
+  const agilityFilter = isAgilityMode(agilityParam) ? agilityParam : null
+  const setFilterParam = useCallback(
+    (key: string, value: string | null) => {
+      const next = new URLSearchParams(params)
+      if (value) next.set(key, value)
+      else next.delete(key)
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
   // The search box reads desktop's Search-tab query (?sq), else its Explore
   // text filter (?search), and writes ?sq back (replace), so a phone link
   // opens desktop on the same query and vice versa.
@@ -133,36 +174,31 @@ export function MobilePatentsView() {
     return counts
   }, [scoped])
 
-  const inventorParam = (params.get('inventor') ?? '').trim()
-  const patentIdsParam = (params.get('patentIds') ?? '').trim()
-  const linkChips = LINK_FILTERS.flatMap(({ key, label }) => {
-    const value = key === 'inventor' ? inventorParam : patentIdsParam
-    return value ? [{ key, label, text: key === 'patentIds' ? patentIdsLabel(value) : value }] : []
+  const linkChips = LINK_FILTERS.flatMap(({ key, label, format }) => {
+    const value = (params.get(key) ?? '').trim()
+    return value ? [{ key, label, text: format ? format(value) : value }] : []
   })
+  // An impact / agility value the phone control can't show (impact=Medium,
+  // an unknown agility mode) still filters, so it gets a chip too.
+  const impactParam = (params.get('impact') ?? '').trim()
+  if (impactParam && !highImpactOnly)
+    linkChips.push({ key: 'impact', label: 'Impact', text: impactParam })
+  if (agilityParam?.trim() && !agilityFilter)
+    linkChips.push({ key: 'agility', label: 'Crypto agility', text: agilityParam.trim() })
   // Removing a chip drops its param (replace — it is a filter, not a place).
-  const removeLinkFilter = useCallback(
-    (key: string) => {
-      const next = new URLSearchParams(params)
-      next.delete(key)
-      setParams(next, { replace: true })
-    },
-    [params, setParams]
-  )
+  const removeLinkFilter = useCallback((key: string) => setFilterParam(key, null), [setFilterParam])
 
-  const linkScoped = useMemo(
-    () =>
-      filterByPatentLinkParams(
-        scoped,
-        (params.get('inventor') ?? '').trim(),
-        (params.get('patentIds') ?? '').trim()
-      ),
-    [scoped, params]
-  )
+  const urlFiltered = useMemo(() => {
+    const filterParams = new URLSearchParams()
+    for (const key of URL_FILTER_KEYS) {
+      const value = (params.get(key) ?? '').trim()
+      if (value) filterParams.set(key, value)
+    }
+    return filterPatents(scoped, filterParams)
+  }, [scoped, params])
 
   const filtered = useMemo(() => {
-    let data = linkScoped
-    if (highImpactOnly) data = data.filter((p) => p.impactLevel === 'High')
-    if (agilityFilter) data = data.filter((p) => p.cryptoAgilityMode === agilityFilter)
+    let data = urlFiltered
     if (searchText) {
       const q = searchText.toLowerCase()
       data = data.filter(
@@ -176,7 +212,7 @@ export function MobilePatentsView() {
       )
     }
     return data
-  }, [linkScoped, highImpactOnly, agilityFilter, searchText])
+  }, [urlFiltered, searchText])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -207,7 +243,7 @@ export function MobilePatentsView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setHighImpactOnly((v) => !v)}
+          onClick={() => setFilterParam('impact', highImpactOnly ? null : 'High')}
           aria-pressed={highImpactOnly}
           className={cn(
             'glass-panel h-auto flex-col items-start p-3 text-left',
@@ -244,7 +280,7 @@ export function MobilePatentsView() {
             key={mode}
             type="button"
             variant="ghost"
-            onClick={() => setAgilityFilter((f) => (f === mode ? null : mode))}
+            onClick={() => setFilterParam('agility', agilityFilter === mode ? null : mode)}
             aria-pressed={agilityFilter === mode}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',

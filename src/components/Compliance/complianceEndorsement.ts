@@ -65,7 +65,7 @@ export function buildRecordEndorsementUrl(record: ComplianceRecord): string {
     resourceType: 'Compliance Record',
     resourceId: record.id,
     resourceDetails: recordDetails(record),
-    pageUrl: `/compliance?record=${encodeURIComponent(record.id)}`,
+    pageUrl: `/compliance?cert=${encodeURIComponent(record.id)}`,
   })
 }
 
@@ -76,7 +76,7 @@ export function buildRecordFlagUrl(record: ComplianceRecord): string {
     resourceType: 'Compliance Record',
     resourceId: record.id,
     resourceDetails: recordDetails(record),
-    pageUrl: `/compliance?record=${encodeURIComponent(record.id)}`,
+    pageUrl: `/compliance?cert=${encodeURIComponent(record.id)}`,
   })
 }
 

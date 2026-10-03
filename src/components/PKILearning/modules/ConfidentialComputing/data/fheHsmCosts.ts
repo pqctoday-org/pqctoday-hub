@@ -348,7 +348,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '<300 ms/blk',
       'server CPU',
-      'The paper reports under 300 ms per 64-bit block with TFHE-rs.'
+      'The WAHC 2023 paper (Balenbois, Orfila, Smart; IACR ePrint 2023/980) reports under 300 ms per 64-bit block with TFHE-rs.'
     ),
     c(3, '~130 MB keys', 3, 'ms–s / op', 'server CPU/GPU', 'Ordinary TFHE-rs integer operations.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
@@ -485,7 +485,7 @@ export const KEY_SIZES: KeySize[] = [
     id: 'tfhe-client',
     label: 'TFHE client (secret) key',
     bytes: 24_000,
-    size: '~3 KB',
+    size: '~24 KB as stored',
     exact: false,
     secret: true,
     note: '918-bit LWE key + 2,048-bit GLWE key: ~371 B of key bits; TFHE-rs stores them as 64-bit words, ~24 KB. Regenerable from the seed.',

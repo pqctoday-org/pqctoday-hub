@@ -25,6 +25,10 @@ interface GoldenQuery {
   mustInclude: string[] // chunk ID prefixes
   expectedSources: string[]
   minTop5Hits: number
+  /** Optional: minimum number of top-10 results (chunks, not prefixes) whose id
+   *  starts with a mustInclude prefix — for queries whose right answer is a SET
+   *  of records (e.g. one assignee's patents) rather than one best chunk. */
+  minTop10ChunkHits?: number
   mustExclude?: string[]
 }
 
@@ -504,7 +508,16 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['patent-'],
     expectedSources: ['patents'],
-    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
+    // Re-measured 2026-10-03 on the 4.146.0 corpus (17,082 chunks): the top 5
+    // is the Wells Fargo trusted source, the glossary entry and the two Patents
+    // page guides; the first Wells Fargo patent is #6 and 5 of the top 10 are
+    // Wells Fargo patents. The old top-5 pass was patent-12155774 at #5 — a
+    // DEPRECATED row the Patents page does not list (its link opened "not
+    // found"); 4.146.0 stopped indexing those 1,133 rows. So the floor is now
+    // the set this query should surface: ≥4 patents in the top 10 (old corpus,
+    // live patents only: 4; new: 5).
+    minTop5Hits: 0,
+    minTop10ChunkHits: 4,
   },
   {
     query: 'Patent landscape for post-quantum cryptography',
@@ -790,6 +803,16 @@ describe('Golden Query Suite', () => {
         }
       }
       expect(top5Hits, `top 5: ${top5Ids.join(', ')}`).toBeGreaterThanOrEqual(gq.minTop5Hits)
+
+      if (gq.minTop10ChunkHits !== undefined) {
+        const top10Ids = resultIds.slice(0, 10)
+        const top10ChunkHits = top10Ids.filter((id) =>
+          gq.mustInclude.some((prefix) => id.startsWith(prefix))
+        ).length
+        expect(top10ChunkHits, `top 10: ${top10Ids.join(', ')}`).toBeGreaterThanOrEqual(
+          gq.minTop10ChunkHits
+        )
+      }
 
       // Check source coverage
       for (const source of gq.expectedSources) {

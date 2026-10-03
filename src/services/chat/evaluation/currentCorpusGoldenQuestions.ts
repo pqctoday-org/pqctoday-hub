@@ -29,7 +29,11 @@ export const CURRENT_CORPUS_BASELINE = {
   // not need a bump here. Raise it only when the golden questions are
   // recalibrated against a newer corpus.
   generatedDate: '2026-10-01',
-  minimumChunkCount: 17_990,
+  // Floor against a shrunken corpus. Lowered 2026-10-03 for 4.146.0 (17,082
+  // chunks): that release stopped indexing the 1,133 deprecated patent rows the
+  // Patents page does not show (their links opened "not found") — a deliberate
+  // drop, not a loss. Same ~10-chunk margin as before (18,000 → 17,990).
+  minimumChunkCount: 17_070,
 } as const
 
 export const CURRENT_CORPUS_GOLDEN_QUESTIONS: CurrentCorpusGoldenQuestion[] = [

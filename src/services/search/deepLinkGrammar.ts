@@ -39,7 +39,8 @@ const SLUG = '[a-z0-9][a-z0-9-]*'
 
 export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Landing
-  { path: exact('/'), queryKeys: ['scroll', 'persona', 'ind'], description: 'Landing' },
+  // `picker=open` opens the role switcher (MainLayout), as the prompt teaches.
+  { path: exact('/'), queryKeys: ['scroll', 'persona', 'ind', 'picker'], description: 'Landing' },
 
   // Top-level pages
   //
@@ -215,7 +216,9 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     path: exact('/migrate'),
     // New links use product ids — never the legacy q/layer/cat/industry
     // forms the page merely tolerates.
-    queryKeys: ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share'],
+    // `rq` = Replace-tab filter text, `facet` = its facets
+    // (`pqc:available,certified:linked`; see replaceTabParams.ts).
+    queryKeys: ['tab', 'product', 'productIds', 'domain', 'vendor', 'open', 'share', 'rq', 'facet'],
     description: 'Migrate catalog',
   },
   {
@@ -314,9 +317,11 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
 
 /**
  * Query keys valid on EVERY internal route. `spec=<reference_id>` opens the
- * global library document drawer (SpecDrawerHost) in place on any page.
+ * global library document drawer (SpecDrawerHost) in place on any page;
+ * `try=<playground tool id>` opens a Playground tool in place
+ * (TryToolModalHost, mounted in App — AlgoCtaStrip writes it).
  */
-export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec']
+export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec', 'try']
 
 export type ValidationFailure = {
   url: string

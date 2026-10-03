@@ -215,7 +215,7 @@ const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
     useCase: 'ML-DSA-65 sign/verify functional round-trip (FIPS 204)',
     standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
-    libraryRefId: 'FIPS-204',
+    libraryRefId: 'FIPS 204',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'standards-compliance probe — JOSE matrix audit',
   },
@@ -232,7 +232,7 @@ const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
     useCase: 'ML-KEM-768 encap/decap roundtrip (FIPS 203)',
     standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
-    libraryRefId: 'FIPS-203',
+    libraryRefId: 'FIPS 203',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {

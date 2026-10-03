@@ -385,7 +385,7 @@ export const PackageSigningMigrator: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
-              className="flex items-center justify-between w-full p-4 text-left"
+              className="h-auto whitespace-normal flex items-center justify-between w-full p-4 text-left"
             >
               <div className="flex items-center gap-2">
                 <span

@@ -327,7 +327,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
         variant="gradient"
         onClick={handleRun}
         disabled={busy}
-        className="flex items-center gap-2"
+        className="h-auto whitespace-normal flex items-center gap-2"
       >
         {busy ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
         {busy ? `Working: ${phase}` : 'Run ML-KEM-768 KUR (CMP IR + encrCert POP)'}

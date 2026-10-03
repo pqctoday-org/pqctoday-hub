@@ -1,20 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
+import { Button } from '@/components/ui/button'
 import { MobileProtocolMatrixView } from './MobileProtocolMatrixView'
 import { PROTOCOL_MATRIX } from '@/data/pqcProtocolMatrix'
+import {
+  passesAvailabilityFilter,
+  passesStatusFilter,
+  sortProtocolRows,
+} from '@/components/Algorithms/protocolMatrixState'
 
 // Real data throughout — every assertion derives from the SAME PROTOCOL_MATRIX
 // PQCProtocolMatrix.tsx (desktop) renders from, not invented counts.
 function Probe() {
   return <span data-testid="url-search">{useLocation().search}</span>
 }
-const renderAt = (entry = '/algorithms?tab=support') =>
+function GoTo({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(to)}>
+      {`go ${to}`}
+    </Button>
+  )
+}
+const renderAt = (entry = '/algorithms?tab=support', links: string[] = []) =>
   render(
     <MemoryRouter initialEntries={[entry]}>
       <MobileProtocolMatrixView />
       <Probe />
+      {links.map((to) => (
+        <GoTo key={to} to={to} />
+      ))}
     </MemoryRouter>
   )
 const urlSearch = () => screen.getByTestId('url-search').textContent ?? ''
@@ -89,5 +106,72 @@ describe('MobileProtocolMatrixView', () => {
     fireEvent.click(screen.getByRole('button', { name: /dismiss notice/i }))
     expect(urlSearch()).not.toContain('protocol=')
     expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+  })
+})
+
+describe('MobileProtocolMatrixView — desktop matrix* URL state', () => {
+  const visibleRows = PROTOCOL_MATRIX.filter((r) => !r.historical)
+  const searchBox = () => screen.getByPlaceholderText('Search protocols') as HTMLInputElement
+  const countLine = (n: number) => `${n} of ${visibleRows.length} protocols`
+
+  it('?matrixQ seeds the search box and filters the list', () => {
+    const target = visibleRows.find((r) => r.name.toLowerCase().includes('ssh'))!
+    renderAt('/algorithms?tab=support&matrixQ=ssh')
+    expect(searchBox().value).toBe('ssh')
+    expect(screen.getByText(target.name)).toBeInTheDocument()
+  })
+
+  it('?matrixStatus (multi, OR) presses every listed chip and filters like desktop', () => {
+    renderAt('/algorithms?tab=support&matrixStatus=rfc,experimental')
+    const expected = visibleRows.filter((r) => passesStatusFilter(r, ['rfc', 'experimental']))
+    expect(screen.getByText(countLine(expected.length))).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '✓ RFC' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: '⚠ Experimental' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByRole('button', { name: '⊳ Draft' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('?matrixAvailability + ?matrixSort apply, show a from-link chip, and clear', () => {
+    renderAt('/algorithms?tab=support&matrixAvailability=has-oss&matrixSort=name:desc')
+    const expected = sortProtocolRows(
+      visibleRows.filter((r) => passesAvailabilityFilter(r, 'has-oss')),
+      'name',
+      'desc'
+    )
+    expect(screen.getByText(countLine(expected.length))).toBeInTheDocument()
+    expect(screen.getByTestId('matrix-link-filters')).toHaveTextContent(
+      'Has OSS · Sorted by Name (descending)'
+    )
+    const names = screen
+      .getAllByRole('button')
+      .map((b) => b.textContent ?? '')
+      .filter((t) => expected.some((r) => t.startsWith(r.name)))
+    expect(names[0].startsWith(expected[0].name)).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear link filter and sort' }))
+    expect(urlSearch()).not.toContain('matrixAvailability')
+    expect(urlSearch()).not.toContain('matrixSort')
+    expect(screen.getByText(countLine(visibleRows.length))).toBeInTheDocument()
+  })
+
+  it('typing and chip taps mirror to ?matrixQ / ?matrixStatus (replace)', () => {
+    renderAt()
+    fireEvent.change(searchBox(), { target: { value: 'tls' } })
+    expect(urlSearch()).toContain('matrixQ=tls')
+    fireEvent.click(screen.getByRole('button', { name: '⊳ Draft' }))
+    fireEvent.click(screen.getByRole('button', { name: '✓ RFC' }))
+    expect(urlSearch()).toContain('matrixStatus=draft%2Crfc')
+    fireEvent.click(screen.getByRole('button', { name: '⊳ Draft' }))
+    expect(urlSearch()).toContain('matrixStatus=rfc')
+    expect(urlSearch()).not.toContain('draft')
+  })
+
+  it('follows a second link while mounted', () => {
+    const next = '/algorithms?tab=support&matrixQ=ssh'
+    renderAt('/algorithms?tab=support&matrixQ=tls', [next])
+    expect(searchBox().value).toBe('tls')
+    fireEvent.click(screen.getByRole('button', { name: `go ${next}` }))
+    expect(searchBox().value).toBe('ssh')
   })
 })

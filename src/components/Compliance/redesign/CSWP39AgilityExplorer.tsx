@@ -63,6 +63,13 @@ interface CSWP39AgilityExplorerProps {
     targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
     searchQuery: string
   ) => void
+  /**
+   * Open one framework's drawer (?framework=<id>). Used for the "Frameworks
+   * tagged for this step" list: those rows span every pillar, so a jump to the
+   * Compliance pillar filtered by label landed on an empty table for the ones
+   * that are standards or certification bodies (deep-link refresh, 2026-10-02).
+   */
+  onOpenFramework?: (frameworkId: string) => void
   /** Deep-link into the authoritative-evidence grid, filtered to a source refId. */
   evref?: string
   onClearEvref?: () => void
@@ -79,6 +86,7 @@ interface CSWP39AgilityExplorerProps {
 
 export function CSWP39AgilityExplorer({
   onNavigateToFramework,
+  onOpenFramework,
   evref,
   onClearEvref,
   params: urlParams,
@@ -207,6 +215,7 @@ export function CSWP39AgilityExplorer({
           stepId={stepId}
           onStepChange={setStepId}
           onNavigateToFramework={onNavigateToFramework}
+          onOpenFramework={onOpenFramework}
         />
       )}
       {view === 'maturity' && <MaturityView tier={tier} onTierChange={setTier} />}
@@ -229,11 +238,13 @@ function CycleView({
   stepId,
   onStepChange,
   onNavigateToFramework,
+  onOpenFramework,
 }: {
   persona: ReturnType<typeof usePersonaStore.getState>['selectedPersona']
   stepId: CSWP39Step['id']
   onStepChange: (id: CSWP39Step['id']) => void
   onNavigateToFramework?: CSWP39AgilityExplorerProps['onNavigateToFramework']
+  onOpenFramework?: CSWP39AgilityExplorerProps['onOpenFramework']
 }) {
   const sel = CSWP39_STEPS.find((s) => s.id === stepId) ?? CSWP39_STEPS[0]
   const selTone = STEP_TONE[sel.id]
@@ -356,7 +367,11 @@ function CycleView({
                       key={fw.id}
                       type="button"
                       variant="ghost"
-                      onClick={() => onNavigateToFramework?.('compliance', fw.label)}
+                      onClick={() =>
+                        onOpenFramework
+                          ? onOpenFramework(fw.id)
+                          : onNavigateToFramework?.('compliance', fw.label)
+                      }
                       className="flex h-auto w-full items-center gap-2 whitespace-normal rounded-lg border border-border bg-muted/20 px-3 py-2 text-left hover:border-primary/30"
                     >
                       <span className="text-xs font-semibold text-foreground">{fw.label}</span>

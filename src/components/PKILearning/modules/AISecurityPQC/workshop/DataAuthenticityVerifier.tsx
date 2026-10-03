@@ -130,7 +130,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
                 variant="ghost"
                 type="button"
                 key={layer.id}
-                className={`w-full text-left glass-panel p-4 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                className={`flex-col items-stretch h-auto whitespace-normal w-full text-left glass-panel p-4 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isEnabled ? 'border-primary/50 ring-1 ring-primary/30' : ''
                 }`}
                 onClick={() => toggleLayer(layer.id)}
