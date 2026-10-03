@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion, MotionConfig } from 'framer-motion'
 import {
   ChevronLeft,
@@ -51,6 +51,7 @@ import {
 import { FHE_STEP_IO } from '../data/fheHsmStepIO'
 import { scenarioValidation, validationsFor } from '@/data/fhe/fheEvidence'
 import { FheStepDetailModal } from './FheStepDetailModal'
+import { EvidencePanel } from './EvidencePanel'
 import {
   HOLD_STATUS,
   exposedCount,
@@ -654,6 +655,13 @@ export const EngineBadge: React.FC<{ status: EngineStatus }> = ({ status }) => (
  */
 export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow, step }) => {
   const found = validationsFor(flow.id, step.id)
+  const [openId, setOpenId] = useState<string | null>(null)
+  const opener = useRef<HTMLButtonElement | null>(null)
+  const open = found.find((v) => v.record.id === openId)
+  const close = () => {
+    setOpenId(null)
+    opener.current?.focus()
+  }
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
       <span className="text-muted-foreground">Validated:</span>
@@ -661,18 +669,23 @@ export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow
         <span className="text-muted-foreground">not yet (no signed evidence for this step)</span>
       ) : (
         found.map((v) => (
-          <a
+          <Button
             key={v.record.id}
-            href={v.record.artifacts[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={`${v.record.producer} · ${v.record.library.name} ${v.record.library.version} · ${v.record.status} ${v.record.measuredAt} · sha256 ${v.record.artifacts[0].sha256.slice(0, 12)}…`}
-            className="rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-status-success hover:underline"
+            type="button"
+            variant="ghost"
+            aria-haspopup="dialog"
+            onClick={(e) => {
+              opener.current = e.currentTarget
+              setOpenId(v.record.id)
+            }}
+            title={`Show the results · ${v.record.producer ?? v.record.library.name} · ${v.record.library.name} ${v.record.library.version} · ${v.record.status} ${v.record.measuredAt}`}
+            className="h-auto min-h-0 rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-status-success hover:bg-success/20 hover:underline text-left whitespace-normal"
           >
             {v.label}
-          </a>
+          </Button>
         ))
       )}
+      {open && <EvidencePanel open onClose={close} record={open.record} label={open.label} />}
     </div>
   )
 }
