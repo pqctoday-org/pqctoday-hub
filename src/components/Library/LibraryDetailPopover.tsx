@@ -26,6 +26,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
+import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
@@ -187,6 +188,12 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   <ItemShareButton
                     title={itemShareTitle(item.documentTitle?.trim() || item.referenceId)}
                     path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
+                  />
+                  <OpenOnPageLink
+                    to={`/library?ref=${encodeURIComponent(item.referenceId)}`}
+                    homePath="/library"
+                    pageLabel="Library"
+                    onNavigate={onClose}
                   />
                   <Button
                     variant="ghost"

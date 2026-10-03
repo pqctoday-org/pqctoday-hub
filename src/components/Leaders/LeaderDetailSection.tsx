@@ -18,6 +18,7 @@ import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
 import { Button } from '@/components/ui/button'
 import { leaderPatentsHref } from './leaderDeepLink'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 
 interface LeaderDetailSectionProps {
   leader: Leader
@@ -69,14 +70,22 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
               </span>
             )}
           </div>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            className="h-7 w-7 p-0 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-            aria-label="Collapse details"
-          >
-            <X size={14} />
-          </Button>
+          <div className="flex items-center gap-1 shrink-0">
+            {/* The expanded card is this person's item view — share its clean
+                link (page + ?leader= only), same as the Community pop-up. */}
+            <ItemShareButton
+              title={itemShareTitle(leader.name)}
+              path={`/leaders?leader=${encodeURIComponent(leader.leaderId || leader.name)}`}
+            />
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              className="h-7 w-7 p-0 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+              aria-label="Collapse details"
+            >
+              <X size={14} />
+            </Button>
+          </div>
         </div>
 
         {leader.country && (

@@ -102,6 +102,8 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'attack',
     'engine',
     'case',
+    'polarity',
+    'kat',
     'protocol',
     'matrixView',
     'matrixQ',

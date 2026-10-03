@@ -167,7 +167,7 @@ export function AlgorithmsView() {
   // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
   // tab=support into the URL right after first paint).
   const protocolParam = searchParams.get('protocol')
-  // ?usecase / ?attack imply their tab the same way (pinned right after
+  // ?usecase / ?attack / ?kat / ?polarity imply their tab the same way (pinned right after
   // first paint), so they skip the landing shell too. ?algo does not: the
   // landing shell opens it in its own detail sheet.
   const isMobileShell =
@@ -176,7 +176,9 @@ export function AlgorithmsView() {
     !searchParams.get('highlight') &&
     !protocolParam &&
     !searchParams.get('usecase') &&
-    !searchParams.get('attack')
+    !searchParams.get('attack') &&
+    !searchParams.get('kat') &&
+    !searchParams.get('polarity')
   const isMobileProtocolMatrix =
     isMobile && (tabParam === 'support' || (!tabParam && !!protocolParam))
   const sectionParam = searchParams.get('section')
@@ -184,7 +186,11 @@ export function AlgorithmsView() {
   // The coverage matrix has no distilled phone screen: ?section=coverage on a
   // phone falls through to the real Validation view (below, page chrome
   // stripped) — its tables already scroll horizontally.
-  const isMobileCoverage = isMobile && tabParam === 'validation' && sectionParam === 'coverage'
+  // ?polarity with no ?section implies the coverage section the same way.
+  const isMobileCoverage =
+    isMobile &&
+    tabParam === 'validation' &&
+    (sectionParam === 'coverage' || (!sectionParam && !!searchParams.get('polarity')))
   const isMobileValidation = isMobile && tabParam === 'validation' && !isMobileCoverage
   const isMobileTransition = isMobile && tabParam === 'transition'
   const isMobileDetailed = isMobile && tabParam === 'detailed'
@@ -213,6 +219,8 @@ export function AlgorithmsView() {
       'attack',
       'engine',
       'case',
+      'polarity',
+      'kat',
       'compare',
       'highlight',
       'algo',
@@ -250,6 +258,8 @@ export function AlgorithmsView() {
       'attack',
       'engine',
       'case',
+      'polarity',
+      'kat',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -322,7 +332,8 @@ export function AlgorithmsView() {
   const algoDrawerEl = <AlgorithmDetailDrawer algo={selectedAlgo} onClose={closeAlgorithm} />
 
   // Validation tab URL state: accordions write ?section, profiles ?attack,
-  // the coverage matrix ?engine / ?case (all replace — view state).
+  // the coverage matrix ?engine / ?case / ?polarity, the SLH-DSA KAT tile
+  // ?kat (all replace — view state).
   const attackProfile = matchAttackProfile(attackParam)
   const validationEl = (
     <AlgorithmValidationView
@@ -330,6 +341,8 @@ export function AlgorithmsView() {
       attackParam={attackParam}
       engineParam={searchParams.get('engine')}
       caseParam={searchParams.get('case')}
+      polarityParam={searchParams.get('polarity')}
+      katParam={searchParams.get('kat')}
       onUpdateParams={updateSearchParams}
     />
   )

@@ -8,6 +8,7 @@ import { byRecord, type RevisionEntry, type FieldChange } from '@/hooks/useRevis
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'
 import { diffList, isListColumn } from '@/utils/listDiff'
+import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 
 interface RevisionDrilldownPanelProps {
   domain: string
@@ -15,6 +16,10 @@ interface RevisionDrilldownPanelProps {
   entityLabel: string
   revisions: RevisionEntry[]
   onClose: () => void
+  /** The entity's CLEAN canonical link (e.g. `/library?ref=FIPS-203`). When
+   *  given, the panel carries a Share for it: the panel covers the parent
+   *  overlay's own Share. History itself has no URL; the link reopens the item. */
+  sharePath?: string
 }
 
 function formatDate(iso: string): string {
@@ -208,6 +213,7 @@ export function RevisionDrilldownPanel({
   entityLabel,
   revisions,
   onClose,
+  sharePath,
 }: RevisionDrilldownPanelProps) {
   const matches = byRecord(revisions, domain, entityId)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -242,9 +248,14 @@ export function RevisionDrilldownPanel({
               </p>
               <h2 className="text-sm font-semibold text-foreground truncate">{entityLabel}</h2>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close panel">
-              <X className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-1 shrink-0">
+              {sharePath && (
+                <ItemShareButton title={itemShareTitle(entityLabel)} path={sharePath} />
+              )}
+              <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close panel">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </header>
 
           <div className="flex-1 overflow-y-auto px-4 py-2">

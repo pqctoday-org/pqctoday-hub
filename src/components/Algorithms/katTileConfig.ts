@@ -264,6 +264,18 @@ export const SLH_DSA_VARIANTS: { value: SlhDsaVariant; label: string; level: num
   { value: 'SHAKE-256f', label: 'SHAKE-256f', level: 5 },
 ]
 
+export const DEFAULT_SLH_DSA_VARIANT: SlhDsaVariant = 'SHA2-128s'
+
+/**
+ * `?kat=` (/algorithms Validation tab) → a known SLH-DSA variant,
+ * case-insensitive (e.g. `shake-256f` → `SHAKE-256f`). Anything else falls
+ * back to the default, as an unknown `?engine=` does.
+ */
+export const toSlhDsaVariant = (v: string | null | undefined): SlhDsaVariant => {
+  const q = v?.trim().toLowerCase()
+  return SLH_DSA_VARIANTS.find((x) => x.value.toLowerCase() === q)?.value ?? DEFAULT_SLH_DSA_VARIANT
+}
+
 export const SLH_DSA_DROPDOWN_ITEMS = SLH_DSA_VARIANTS.map((v) => ({
   id: v.value,
   label: `SLH-DSA-${v.label} (Level ${v.level})`,

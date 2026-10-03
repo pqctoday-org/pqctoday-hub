@@ -61,6 +61,15 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
     </ul>
   ),
 }))
+vi.mock('./AlgorithmValidationView', () => ({
+  AlgorithmValidationView: ({
+    katParam,
+    polarityParam,
+  }: {
+    katParam?: string | null
+    polarityParam?: string | null
+  }) => <div data-testid="validation-body">{`kat=${katParam} polarity=${polarityParam}`}</div>,
+}))
 vi.mock('./PQCProtocolMatrix', () => ({
   PQCProtocolMatrix: () => <div data-testid="protocol-matrix" />,
 }))
@@ -158,6 +167,15 @@ describe('AlgorithmsView — deep links', () => {
     renderAt('/algorithms?protocol=ssh')
     expect(await screen.findByTestId('protocol-matrix')).toBeInTheDocument()
     await waitFor(() => expect(urlSearch()).toContain('tab=support'))
+  })
+
+  it.each([
+    ['kat=SHAKE-256f', 'kat=SHAKE-256f polarity=null'],
+    ['polarity=negative', 'kat=null polarity=negative'],
+  ])('treats ?%s without ?tab as the Validation tab', async (query, passed) => {
+    renderAt(`/algorithms?${query}`)
+    expect(await screen.findByTestId('validation-body')).toHaveTextContent(passed)
+    await waitFor(() => expect(urlSearch()).toContain('tab=validation'))
   })
 
   it('a resource link bypasses the Curious preview card', async () => {

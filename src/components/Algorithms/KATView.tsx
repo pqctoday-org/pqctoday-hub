@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   Shield,
   Lock,
@@ -21,6 +21,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
+import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { ValidationDisclaimer, KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
 import { runKAT, advertisedMechanisms, summarizeKatResults } from '@/utils/katRunner'
 import type { KatTestSpec, KATResult, SlhDsaVariant } from '@/utils/katRunner'
@@ -43,6 +44,8 @@ import {
   CLASSICAL_SIG_TILES,
   KDF_TILES,
   SLH_DSA_DROPDOWN_ITEMS,
+  DEFAULT_SLH_DSA_VARIANT,
+  toSlhDsaVariant,
   FIPS_205_URL,
 } from './katTileConfig'
 
@@ -260,12 +263,35 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
 
 // ── SLH-DSA grouped tile ────────────────────────────────────────────────────
 
-const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
-  const [variant, setVariant] = useState<SlhDsaVariant>('SHA2-128s')
+const SLHDSATile: React.FC<{
+  hsm: UseHSMResult
+  katParam?: string | null
+  onUpdateParams?: (updates: Record<string, string | null>) => void
+}> = ({ hsm, katParam, onUpdateParams }) => {
+  const [variant, setVariant] = useState<SlhDsaVariant>(() => toSlhDsaVariant(katParam))
   const [results, setResults] = useState<KATResult[]>([])
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
+
+  // ?kat: re-read on same-route navigation. A different variant drops the
+  // previous variant's results, as picking it in the dropdown does.
+  const linkedVariant = toSlhDsaVariant(katParam)
+  useEffect(() => {
+    if (variant === linkedVariant) return
+
+    setVariant(linkedVariant)
+    setResults([])
+    setError(null)
+    setResultsOpen(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs only when the URL value changes
+  }, [linkedVariant])
+
+  // An arriving ?kat link scrolls to this tile (it sits well below the top of
+  // the KAT section); a variant the reader then picks here does not.
+  const [arrivalKat] = useState(katParam)
+  const scrollKey = katParam && katParam === arrivalKat ? `kat|${katParam}` : null
+  useScrollToDeepLinkTarget(scrollKey, scrollKey ? deepLinkSelector('kat-slhdsa') : null)
 
   const level = variant.includes('128') ? 1 : variant.includes('192') ? 3 : 5
 
@@ -316,14 +342,21 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
   }, [hsm, specs])
 
   const handleVariantChange = (id: string) => {
-    setVariant(id as SlhDsaVariant)
+    // The dropdown's own "default" row reports 'All' — that is the default variant.
+    const next = toSlhDsaVariant(id)
+    setVariant(next)
     setResults([])
     setError(null)
     setResultsOpen(false)
+    onUpdateParams?.({ kat: next === DEFAULT_SLH_DSA_VARIANT ? null : next })
   }
 
   return (
-    <div className="border border-border rounded-lg p-5 bg-muted/30 hover:border-primary/50 transition-colors space-y-4 md:col-span-2 lg:col-span-3">
+    <div
+      className="border border-border rounded-lg p-5 bg-muted/30 hover:border-primary/50 transition-colors space-y-4 md:col-span-2 lg:col-span-3"
+      data-testid="kat-slhdsa-tile"
+      data-deeplink-id="kat-slhdsa"
+    >
       <div className="flex items-start justify-between flex-wrap gap-3">
         <h5 className="font-semibold text-foreground text-lg">SLH-DSA (Stateless Hash-Based)</h5>
         <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
@@ -337,7 +370,7 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
           items={SLH_DSA_DROPDOWN_ITEMS}
           selectedId={variant}
           onSelect={handleVariantChange}
-          defaultLabel="SHA2-128s"
+          defaultLabel={DEFAULT_SLH_DSA_VARIANT}
           variant="ghost"
         />
       </div>
@@ -422,7 +455,14 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
 
 // ── Main KATView ────────────────────────────────────────────────────────────
 
-export const KATView: React.FC = () => {
+interface KATViewProps {
+  /** `?kat=` — the SLH-DSA variant to preselect (default SHA2-128s, omitted). */
+  katParam?: string | null
+  /** URL writer (replace). Omitted → the variant stays local state. */
+  onUpdateParams?: (updates: Record<string, string | null>) => void
+}
+
+export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {}) => {
   const hsm = useHSM()
   const [diagOpen, setDiagOpen] = useState(false)
 
@@ -490,7 +530,7 @@ export const KATView: React.FC = () => {
           {ML_DSA_TILES.map((tile) => (
             <KATTile key={tile.id} config={tile} hsm={hsm} />
           ))}
-          <SLHDSATile hsm={hsm} />
+          <SLHDSATile hsm={hsm} katParam={katParam} onUpdateParams={onUpdateParams} />
         </div>
       </div>
 

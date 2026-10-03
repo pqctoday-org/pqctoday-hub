@@ -302,6 +302,12 @@ export default defineConfig([
                 '!@/components/Migrate/Workbench/waves',
                 '!@/components/Migrate/Workbench/cbomExport',
                 '!@/components/Migrate/Workbench/vendorConcentrationRisk',
+                // replaceTabParams.ts — pure ?rq= / ?facet= parse/serialize
+                // helpers, no JSX (2026-10-03 deep-link addressability): the
+                // phone Replace list reads and writes the same URL state as
+                // desktop's ReplaceTab, so a link shared from either opens
+                // the same filtered list on the other.
+                '!@/components/Migrate/Workbench/replaceTabParams',
                 // obligationsModel.ts / roleLens.ts (Compliance/obligations)
                 // and requirementsModel.ts (Compliance/requirements) — pure
                 // logic, no JSX. cswp39Data.ts (Compliance root) — pure data.

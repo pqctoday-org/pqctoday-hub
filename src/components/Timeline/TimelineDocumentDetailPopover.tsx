@@ -11,6 +11,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
+import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
@@ -195,6 +196,12 @@ export const TimelineDocumentDetailPopover = ({
                 <ItemShareButton
                   title={itemShareTitle(row.title)}
                   path={`/timeline?event=${encodeURIComponent(row.eventId || row.title)}`}
+                />
+                <OpenOnPageLink
+                  to={`/timeline?event=${encodeURIComponent(row.eventId || row.title)}`}
+                  homePath="/timeline"
+                  pageLabel="Timeline"
+                  onNavigate={onClose}
                 />
                 <Button
                   variant="ghost"

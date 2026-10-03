@@ -563,6 +563,7 @@ function DrawerPanel({
             entityLabel={item.documentTitle}
             revisions={byRecord(revisions, 'library', item.referenceId)}
             onClose={() => setDrilldownOpen(false)}
+            sharePath={`/library?ref=${encodeURIComponent(item.referenceId)}`}
           />
         )}
       </div>

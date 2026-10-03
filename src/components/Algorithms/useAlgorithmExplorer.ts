@@ -31,7 +31,7 @@ export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the tran
  * URL, `tab` is written too — even when it equals the sharer's persona
  * default — so a recipient with a different persona lands on the same tab.
  */
-const TAB_BOUND_PARAMS = ['mode', 'compare', 'section', 'algo'] as const
+const TAB_BOUND_PARAMS = ['mode', 'compare', 'section', 'algo', 'polarity', 'kat'] as const
 
 /**
  * Every Algorithms state param. Whenever ANY of these is in the URL, `tab` is
@@ -70,6 +70,8 @@ const IMPLIED_TAB_PARAMS: ReadonlyArray<[string, AlgorithmTabId]> = [
   ['protocol', 'support'],
   ['usecase', 'landscape'],
   ['attack', 'validation'],
+  ['kat', 'validation'],
+  ['polarity', 'validation'],
 ]
 
 // True FIPS validation, grounded in the literal NIST FIPS numbering
