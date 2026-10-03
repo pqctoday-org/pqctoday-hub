@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.150.0] - 2026-10-03
+
+### Fixed
+
+- **Merkle Tree Certificates: the proof steps now use the tree you built** [view:/learn/merkle-tree-certs] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: in the Learn workshop, Step 2 (Inclusion Proof) and Step 3 (Verify Proof) used to start from eight sample certificates even after you built your own tree in Step 1. They now prove and verify the certificates you added, with a note that your tree is loaded. If you skip Step 1, they say so and use the sample set. Resetting the workshop clears the tree.
+
 ## [4.148.0] - 2026-10-03
 
 The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, the Lattigo threshold scenario gets its first board measurements, Library dates cite their NIST sources, and shared links are now checked every night.
