@@ -15,6 +15,19 @@ import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
 import {
+  caseInsensitiveCheck,
+  findUnresolvedLinks,
+  libraryRefCheck,
+  summarizeUnresolved,
+  type LinkResolverTable,
+} from './lib/corpusLinkTargets'
+import {
+  algoMatchesHighlight,
+  transitionMatchesHighlight,
+  transitionPqcName,
+} from '../src/components/Algorithms/highlightMatch'
+import { matchAttackProfile } from '../src/components/Algorithms/attackDeepLink'
+import {
   algorithmDeepLink,
   complianceFrameworkDeepLink,
   leaderDeepLink,
@@ -377,6 +390,8 @@ function getLibraryRefIds(): Set<string> {
  * label the trust scorer and the Gantt know.
  */
 let _timelineRefIds: Map<string, string> | null = null
+/** Current enrichment key → the row's event_id (for /timeline?event= links). */
+const _timelineEventIdByKey = new Map<string, string>()
 function getTimelineRefIds(): Map<string, string> {
   if (_timelineRefIds) return _timelineRefIds
   _timelineRefIds = new Map<string, string>()
@@ -393,6 +408,7 @@ function getTimelineRefIds(): Map<string, string> {
       const current = `${country}:${orgName} — ${title}`
       _timelineRefIds.set(current, current)
       const eid = (row[rows[0].indexOf('event_id')] ?? '').trim()
+      if (eid) _timelineEventIdByKey.set(current, eid)
       // eslint-disable-next-line security/detect-object-injection
       for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || [])
         if (!_timelineRefIds.has(label)) _timelineRefIds.set(label, current)
@@ -408,6 +424,128 @@ function getPublishedThreatIds(): Set<string> {
   const file = findLatestCSV('quantum_threats_hsm_industries_')
   _publishedThreatIds = file ? publishedThreatIds(readCSV(file)) : new Set()
   return _publishedThreatIds
+}
+
+/**
+ * What each page can actually open, built from the same CSVs the pages load:
+ * the value-level half of deep-link validation (the grammar only checks param
+ * names). Mirrors each page's own tolerance — Library separator variants,
+ * product former names, timeline titles, honorific-insensitive leader names,
+ * the Algorithms highlight/attack matchers — and nothing more.
+ */
+function buildLinkResolvers(): LinkResolverTable {
+  const rowsOf = (prefix: string): Record<string, string>[] => {
+    const file = findLatestCSV(prefix)
+    return file ? readCSVWithHeaders(file) : []
+  }
+  const active = (rows: Record<string, string>[]) => rows.filter((r) => !isInactiveRecord(r))
+
+  const library = libraryRefCheck(getLibraryRefIds())
+
+  const patents = new Set(
+    rowsOf('patents_')
+      .filter((r) => {
+        const lifecycle = sanitize(r.status).toLowerCase()
+        return !lifecycle || lifecycle === 'active'
+      })
+      .map((r) => sanitize(r.patent_number).replace(/^US\s*/i, ''))
+      .filter(Boolean)
+  )
+
+  const products = active(rowsOf('pqc_product_catalog_'))
+  const productIds = new Set(products.map((r) => sanitize(r.product_id)).filter(Boolean))
+  const product = caseInsensitiveCheck(
+    productIds,
+    products.flatMap((r) => [sanitize(r.software_name), ...sanitize(r.former_names).split(';')])
+  )
+
+  const roadmapVendors = new Set(
+    active(rowsOf('migrate_vendor_roadmap_'))
+      .map((r) => sanitize(r.vendor_id))
+      .filter(Boolean)
+  )
+
+  const timelineFile = findLatestCSV('timeline_')
+  const timelineKeys: string[] = []
+  if (timelineFile) {
+    const rows = readCSV(timelineFile)
+    const eventIdx = rows[0]?.indexOf('event_id') ?? -1
+    for (let i = 1; i < rows.length; i++) {
+      if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
+      timelineKeys.push(sanitize(rows[i][9]))
+      if (eventIdx !== -1) timelineKeys.push(sanitize(rows[i][eventIdx]))
+    }
+  }
+  const timelineEvent = caseInsensitiveCheck(timelineKeys)
+
+  const honorific = /^(?:(?:dr|prof|professor|mr|mrs|ms|sir)\.?\s+)+/i
+  const leaderName = (n: string) =>
+    n.trim().replace(/\s+/g, ' ').replace(honorific, '').toLowerCase()
+  const leaderRows = rowsOf('leaders_').filter(
+    (r) => !isInactiveRecord(r) || /^duplicate of /i.test(sanitize(r.deprecated_reason))
+  )
+  const leaderIds = new Set(leaderRows.map((r) => sanitize(r.leader_id)).filter(Boolean))
+  const leaderNames = new Set(leaderRows.map((r) => leaderName(sanitize(r.Name))))
+  const leader = (v: string) => leaderIds.has(v.trim()) || leaderNames.has(leaderName(v))
+
+  const frameworks = getComplianceFrameworkIds()
+  const certIds = new Set<string>()
+  const certPath = path.join(OUTPUT_DIR, 'compliance-data.json')
+  if (fs.existsSync(certPath)) {
+    for (const rec of JSON.parse(fs.readFileSync(certPath, 'utf-8')) as { id?: string }[])
+      if (rec.id) certIds.add(String(rec.id))
+  }
+
+  const algoRows = rowsOf('pqc_complete_algorithm_reference_')
+  const algoNames = algoRows.map((r) => sanitize(r.algorithm)).filter(Boolean)
+  const algo = caseInsensitiveCheck(
+    algoRows.map((r) => sanitize(r.algorithm_id)),
+    algoNames
+  )
+  const transitions = rowsOf('algorithms_transitions_').map((r) => ({
+    classical: sanitize(r.classical_algorithm),
+    pqc: sanitize(r.pqc_replacement),
+  }))
+  const highlight = (h: string) =>
+    algoNames.some((n) => algoMatchesHighlight(n, h)) ||
+    transitions.some((t) => t.classical && transitionMatchesHighlight(t, h))
+  const protocols = new Set(PROTOCOL_MATRIX.map((p) => p.id))
+  const threats = getPublishedThreatIds()
+
+  return {
+    '*': { spec: library },
+    '/library': { ref: library },
+    '/patents': { patent: (v) => patents.has(v.replace(/^US\s*/i, '')) },
+    '/migrate': {
+      product,
+      productIds: (v) => productIds.has(v),
+      vendor: (v) => roadmapVendors.has(v),
+    },
+    '/timeline': { event: timelineEvent },
+    '/leaders': { leader },
+    '/compliance': { framework: (v) => frameworks.has(v), cert: (v) => certIds.has(v) },
+    '/algorithms': {
+      algo,
+      highlight,
+      protocol: (v) => protocols.has(v),
+      attack: (v) => matchAttackProfile(v) !== null,
+    },
+    '/threats': { id: (v) => threats.has(v) },
+  }
+}
+
+/** Ids of the active compliance frameworks (the ?framework= drawer's rows). */
+let _complianceFrameworkIds: Set<string> | null = null
+function getComplianceFrameworkIds(): Set<string> {
+  if (_complianceFrameworkIds) return _complianceFrameworkIds
+  const file = findLatestCSV('compliance_')
+  _complianceFrameworkIds = new Set(
+    (file ? readCSVWithHeaders(file) : [])
+      .filter((r) => !isInactiveRecord(r))
+      .map((r) => sanitize(r.id))
+      .filter(Boolean)
+  )
+  return _complianceFrameworkIds
 }
 
 /** Find a library referenceId mentioned in the given text */
@@ -602,6 +740,18 @@ export function getLibraryPriority(refId: string, docType: string, authors: stri
 }
 
 /** Slugify an algorithm name for ?highlight= parameter */
+/**
+ * The ?highlight value that lights THIS transition row. The classical slug
+ * works for a real algorithm ("RSA-2048" → rsa-2048), but placeholder classical
+ * names ("(classical only)", "Any (Firmware Signing)") slug to tokens that match
+ * no row, so those rows highlight by their PQC replacement, which the page
+ * matches exactly.
+ */
+export function transitionHighlightKey(classical: string, pqc: string): string {
+  const slug = algoSlug(classical)
+  return transitionMatchesHighlight({ classical, pqc }, slug) ? slug : transitionPqcName(pqc)
+}
+
 export function algoSlug(name: string): string {
   return name
     .toLowerCase()
@@ -1122,7 +1272,7 @@ function processAlgorithmTransitions(): RAGChunk[] {
         classical: sanitize(classical),
         pqc: sanitize(pqc),
       },
-      deepLink: `/algorithms?tab=transition&highlight=${algoSlug(classical)}`,
+      deepLink: `/algorithms?tab=transition&highlight=${encodeParam(transitionHighlightKey(classical, pqc))}`,
     })
   }
 
@@ -3933,7 +4083,12 @@ function processDocumentEnrichments(): RAGChunk[] {
           : collection === 'threats' && refId
             ? { deepLink: threatDeepLink(refId) }
             : collection === 'catalog' && refId
-              ? { deepLink: migrateProductDeepLink(findProductId(refId), refId) }
+              ? // Only a live product gets ?product= — some catalog enrichments
+                // are keyed by a document title or a retired product, which the
+                // page would answer with a "not found" notice.
+                { deepLink: findProductId(refId)
+                    ? migrateProductDeepLink(findProductId(refId), refId)
+                    : '/migrate' }
               : collection === 'timeline' && refId
                 ? (() => {
                     // Cross-reference: if enrichment title matches a library referenceId,
@@ -3943,7 +4098,12 @@ function processDocumentEnrichments(): RAGChunk[] {
                     if (matchedLibRef) {
                       return { deepLink: `/library?ref=${encodeParam(matchedLibRef)}` }
                     }
+                    // The enrichment key resolves to its row, so link the event
+                    // itself; the country view is only the fallback.
+                    const currentKey = getTimelineRefIds().get(sanitize(refId))
+                    const eventId = currentKey ? (_timelineEventIdByKey.get(currentKey) ?? '') : ''
                     const country = refId.split(':')[0]?.trim() ?? ''
+                    if (eventId) return { deepLink: timelineEventDeepLink(eventId, country) }
                     return country && country !== 'Global'
                       ? { deepLink: `/timeline?country=${encodeParam(country)}` }
                       : { deepLink: '/timeline' }
@@ -4074,7 +4234,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Timeline Page — Global PQC Migration Milestones',
       content:
-        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.\n\nURL filter parameters:\n- ?event=<event_id> — open one specific milestone/phase (its stable event_id; event titles are still accepted)\n- ?region=<region> — filter by region: americas | eu | apac | global (omit for All Regions)\n- ?country=<countryName> — filter to a specific country (e.g., /timeline?country=United+States); when present, region defaults to All\n- ?q=<text> — search/filter within the Gantt chart\n- ?cat=<phase type> — filter by phase type\n\nExample links: /timeline?region=eu (EU countries only), /timeline?country=Germany (Germany timeline only), /timeline?region=apac&country=Japan (Japan within APAC view), /timeline?q=FIPS (search for FIPS events).",
+        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.\n\nURL filter parameters:\n- ?event=<event_id> — open one specific milestone/phase (its stable event_id; event titles are still accepted)\n- ?region=<region> — filter by region: americas | eu | apac | global (omit for All Regions)\n- ?country=<countryName> — filter to a specific country (e.g., /timeline?country=United+States); when present, region defaults to All\n- ?q=<text> — search/filter within the Gantt chart\n- ?phase=<phase type> — filter by phase type (e.g., Migration, Testing); ?deadlines=1 shows deadline bars only\n- ?cat=government|standards|vendor — issuing organisation's category, repeatable (default: government + standards); it is not the phase type\n\nExample links: /timeline?region=eu (EU countries only), /timeline?country=Germany (Germany timeline only), /timeline?region=apac&country=Japan (Japan within APAC view), /timeline?q=FIPS (search for FIPS events).",
       category: 'page-guide',
       metadata: { page: 'timeline' },
       deepLink: '/timeline',
@@ -4870,7 +5030,11 @@ function processImplementationAttacks(): RAGChunk[] {
         .join('\n'),
       category: 'implementation-security',
       metadata: { algorithm, sideChannel: sca, faultInjection: fia, rngFailure: rng, apiMisuse: api },
-      deepLink: `/algorithms?highlight=${encodeParam(algorithm.split(' ')[0])}`,
+      // Opens this algorithm's Implementation Attacks profile (Validation tab)
+      // rather than tinting a row in the algorithm table.
+      deepLink: matchAttackProfile(algorithm)
+        ? `/algorithms?tab=validation&section=attacks&attack=${encodeParam(algorithm)}`
+        : `/algorithms?highlight=${encodeParam(algorithm.split(' ')[0])}`,
       prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
     })
   }
@@ -5159,9 +5323,12 @@ function processCounterClaims(): RAGChunk[] {
 
     if (!claimId || !disagreementSummary) continue
 
+    // record_type 'compliance' names a compliance FRAMEWORK row (not a
+    // certification record), so the link is ?framework= — and only when that id
+    // is a live framework (cc-001 carries 'CNSA-2.0'; the row is 'CNSA-2').
     const deepLink =
-      recordType === 'compliance'
-        ? `/compliance?cert=${encodeParam(recordId)}`
+      recordType === 'compliance' && getComplianceFrameworkIds().has(recordId)
+        ? complianceFrameworkDeepLink(recordId)
         : '/compliance'
 
     chunks.push({
@@ -5438,6 +5605,17 @@ async function main() {
     process.exit(1)
   }
   console.log(`\n  ✓ Deep-link grammar: all ${corpus.filter((c) => c.deepLink).length} deepLinks valid`)
+
+  // Value check — every linked item must exist on its page (a grammar-valid
+  // link to a dropped or mistyped id opens a "not found" notice).
+  const unresolved = findUnresolvedLinks(corpus, buildLinkResolvers())
+  if (unresolved.length > 0) {
+    console.error(`\n❌ Deep-link targets: ${unresolved.length} link(s) name nothing the page has`)
+    for (const line of summarizeUnresolved(unresolved)) console.error(`  ${line}`)
+    for (const u of unresolved.slice(0, 20)) console.error(`  [${u.source}] ${u.id}: ${u.url}`)
+    process.exit(1)
+  }
+  console.log('  ✓ Deep-link targets: every linked item resolves')
 
   const output = {
     generatedAt: new Date().toISOString(),
