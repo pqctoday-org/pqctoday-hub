@@ -91,7 +91,7 @@ const ROLE_LABEL: Record<DeviceRole, (d: string, p: EvidencePart) => string> = {
   // Owner 2026-10-03: the Mac token run is shown as an earlier run now the MX95 has run.
   custodian: (d, p) =>
     p.device === 'mac-m4pro'
-      ? 'custodian: software token on Mac (earlier run)'
+      ? `custodian: software token on Mac${p.qualifier ?? ' (earlier run)'}`
       : `custodian${p.failover ? ' (failover)' : ''}: software token on ${d}${p.qualifier ?? ''}`,
   'backup-custodian': (d, p) => `backup custodian: software token on ${d}${p.qualifier ?? ''}`,
   party: (d, p) => `key-holder party: software token on ${d}${p.qualifier ?? ''}`,
