@@ -85,8 +85,9 @@ export const ROLE_SCOPE: Record<DeviceRole, ClaimScope> = {
 }
 
 const ROLE_LABEL: Record<DeviceRole, (d: string, p: EvidencePart) => string> = {
-  'data-owner': (d) => `data owner on ${d}`,
-  'fhe-server': (d) => `FHE server on ${d} (untrusted compute, software-held keys)`,
+  'data-owner': (d, p) => `data owner on ${d}${p.qualifier ?? ''}`,
+  'fhe-server': (d, p) =>
+    `FHE server on ${d} (untrusted compute, software-held keys)${p.qualifier ?? ''}`,
   // Owner 2026-10-03: the Mac token run is shown as an earlier run now the MX95 has run.
   custodian: (d, p) =>
     p.device === 'mac-m4pro'

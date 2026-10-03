@@ -233,7 +233,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '0.2s–3.5 min',
       'cloud CPU/GPU',
-      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). GPUs are much faster.'
+      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). Smaller integers are much cheaper on the KV260: a 16-bit add 2.6 s and multiply 14.7 s, an 8-bit add 1.35 s and multiply 4.1 s. GPUs are much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
@@ -421,7 +421,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client → server',
-      '16 FheUint8 ciphertexts, ~65 KB each expanded (~1 MB in total), smaller as a compact list (estimate).'
+      '16 FheUint8 ciphertexts, 66,101 B each expanded (measured; ~1 MB in total), smaller as a compact list.'
     ),
     c(
       2,
@@ -445,7 +445,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '~s / op',
       'server CPU/GPU',
-      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s (measured).'
+      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s, and for 8-bit values 1.35 s and 4.1 s (measured).'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),

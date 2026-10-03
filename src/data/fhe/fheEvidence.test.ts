@@ -222,6 +222,13 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     expect(validateRecord(swap(2, { qualifier: ' (hardware token)' }))).toContain(
       'qualifier may not say hardware or HSM-validated'
     )
+    expect(
+      validationsFor('tfhe-single-hsm', 'compute-with-pbs', [
+        swap(1, { qualifier: ', 8- and 16-bit integers' }),
+      ])[0].label
+    ).toBe(
+      'FHE server on KV260 (untrusted compute, software-held keys), 8- and 16-bit integers · end-to-end run with the MX95 custodian'
+    )
     expect(validateRecord(swap(2, { qualifier: 'board-local' }))).toContain(
       'qualifier starts with ", " or " ("'
     )
