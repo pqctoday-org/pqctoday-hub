@@ -13,6 +13,7 @@ import {
   SCENARIO_CONTRACT,
   validateRecord,
   validationsFor,
+  type EvidencePart,
   type EvidenceRecord,
 } from './fheEvidence'
 
@@ -29,36 +30,64 @@ const canonicalJson = (v: unknown): string =>
           .join(',')}}`
       : JSON.stringify(v)
 
-const record = (over: Partial<EvidenceRecord> = {}): EvidenceRecord => ({
-  id: 'ev-1',
-  scenarioId: 'tfhe-single-hsm',
-  stepIds: ['decrypt-under-policy'],
-  level: 'board',
-  producer: 'pqctoday-cacp',
-  board: 'mx95',
-  library: { name: 'TFHE-rs', version: '1.8.1', commit: 'abcdef1' },
-  engine: { repo: 'pqctoday-cacp', commit: '1234567' },
+const base = {
+  library: { name: 'TFHE-rs', version: '1.8.1', commit: '187fc0b95a' },
   parameters: 'V1_4_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128',
   config: 'default',
   parameterHash: HEX('a'),
-  environment: {
-    hardware: 'i.MX 95 (Cortex-A55)',
-    os: 'Yocto',
-    toolchain: 'rustc 1.90',
-    features: 'aarch64-aes',
-  },
+  environment: { hardware: 'lab', os: 'mixed', toolchain: 'rustc 1.90', features: 'default' },
   method: {
-    warmup: 10,
-    samples: 100,
-    distribution: 'median, p95',
+    warmup: 0,
+    samples: 1,
+    distribution: 'single run',
     peakMemoryMethod: 'getrusage maxrss',
   },
-  result: 'pass',
-  status: 'measured',
-  claimScope: 'board-software-token',
-  claimLabel: 'software token on MX95',
+  result: 'pass' as const,
+  status: 'measured' as const,
   artifacts: [{ name: 'run.json', sha256: HEX('b'), url: 'https://example.org/run.json' }],
   measuredAt: '2026-10-10',
+}
+const ENGINE = { repo: 'pqctoday-cacp', commit: '1234567' }
+
+/** TFHE custody end to end: Mac (data owner) → KV260 (FHE server) → MX95 (custodian). */
+const e2e = (over: Partial<EvidenceRecord> = {}): EvidenceRecord => ({
+  ...base,
+  id: 'e2e-1',
+  scenarioId: 'tfhe-single-hsm',
+  level: 'end-to-end',
+  stepIds: [
+    'generate-client-key',
+    'owner-encrypts-locally',
+    'upload-ciphertexts',
+    'compute-with-pbs',
+    'return-encrypted-result',
+    'owner-requests-decrypt',
+    'decrypt-under-policy',
+  ],
+  parts: [
+    {
+      device: 'mac-m4pro',
+      role: 'data-owner',
+      producer: 'pqctoday-sandbox',
+      claimScope: 'owner-device',
+      stepIds: ['owner-encrypts-locally'],
+    },
+    {
+      device: 'kv260',
+      role: 'fhe-server',
+      producer: 'pqctoday-fhe',
+      claimScope: 'board-untrusted-compute',
+      stepIds: ['compute-with-pbs'],
+    },
+    {
+      device: 'mx95',
+      role: 'custodian',
+      producer: 'pqctoday-cacp',
+      claimScope: 'board-software-token',
+      engine: ENGINE,
+      stepIds: ['generate-client-key', 'decrypt-under-policy'],
+    },
+  ],
   ...over,
 })
 
@@ -102,14 +131,12 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     expect(EVIDENCE_MANIFEST.schema).toBe('fhe-evidence.v1')
     for (const r of EVIDENCE_MANIFEST.records) expect(validateRecord(r), r.id).toEqual([])
   })
-
   it('every committed record’s parameterHash is SHA-256 of "parameters\\nconfig"', () => {
     for (const r of EVIDENCE_MANIFEST.records) {
       const h = crypto.createHash('sha256').update(`${r.parameters}\n${r.config}`).digest('hex')
       expect(r.parameterHash, r.id).toBe(h)
     }
   })
-
   it('the TFHE client-key KAT fixture is present', () => {
     const f = SCENARIO_CONTRACT.scenarios
       .find((s) => s.id === 'tfhe-single-hsm')!
@@ -119,7 +146,6 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
       '9f5d847e4d1121eef9d75fcc473e89ee5306523f9cb140384eba5aa85a55b77b'
     )
   })
-
   it('contract v1 fields: §1.1 target labels, disclosures, budget names, fixtures', () => {
     const LABELS = [
       'reference-validated',
@@ -142,78 +168,142 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
       }
     }
   })
-
   it('no claim without a signature: records require the committed .sig', () => {
     const sig = path.resolve(__dirname, 'fhe-evidence.v1.json.sig')
     if (EVIDENCE_MANIFEST.records.length > 0) expect(fs.existsSync(sig)).toBe(true)
   })
-
-  it('a valid passing board record raises "software token on <board>"', () => {
-    const v = validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [record()])
-    expect(v.map((x) => x.label)).toEqual(['software token on MX95'])
-  })
-
-  it('reference evidence names the library', () => {
-    const r = record({
-      level: 'reference',
-      producer: 'pqctoday-sandbox',
-      board: undefined,
-      engine: undefined,
-      library: { name: 'OpenFHE', version: 'v1.6.0', commit: '6206d24f9e' },
-      claimScope: 'reference-library',
-      claimLabel: undefined,
-    })
-    expect(validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [r])[0].label).toBe(
-      'reference-validated (OpenFHE v1.6.0)'
-    )
-  })
-
-  it.each([
-    ['failed run', { result: 'fail' as const }],
-    ['unknown step', { stepIds: ['no-such-step'] }],
-    ['producer claims a board it does not run', { producer: 'pqctoday-fhe' as const }],
-    ['board level without a board', { board: undefined }],
-    ['artifact without a hash', { artifacts: [{ name: 'x', sha256: 'nope', url: 'https://x' }] }],
-    ['hardware custody claim', { claimLabel: 'HSM-validated hardware custody' }],
-    ['claim scope that does not match the level', { claimScope: 'browser-emulator' as const }],
-    ['estimate', { status: 'estimate' as const }],
-    [
-      'method without samples',
-      { method: { warmup: 0, samples: 0, distribution: 'x', peakMemoryMethod: 'x' } },
-    ],
-    ['missing engine commit', { engine: undefined }],
-  ])('raises no badge for a %s', (_name, over) => {
-    expect(validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [record(over)])).toEqual([])
-  })
-  it('KV260 untrusted-compute evidence: pqctoday-fhe, outside-HSM steps only, its own label', () => {
-    const kv = record({
-      producer: 'pqctoday-fhe',
-      board: 'kv260',
-      engine: undefined,
-      claimScope: 'board-untrusted-compute',
-      claimLabel: 'untrusted compute on KV260 (software-held keys)',
-      stepIds: ['compute-with-pbs'],
-    })
-    expect(validationsFor('tfhe-single-hsm', 'compute-with-pbs', [kv]).map((v) => v.label)).toEqual(
-      ['untrusted compute on KV260 (software-held keys)']
-    )
-    expect(validateRecord({ ...kv, stepIds: ['decrypt-under-policy'] })).toContain(
-      'untrusted-compute evidence may cover only steps outside the HSM'
-    )
-    expect(validateRecord({ ...kv, claimScope: 'board-software-token' })).toContain(
-      'software-token board evidence comes from pqctoday-cacp'
-    )
-  })
-
-  it('MX95 software-token evidence may not cover steps outside the HSM', () => {
-    expect(validateRecord(record({ stepIds: ['compute-with-pbs'] }))).toContain(
-      'software-token evidence may not cover steps outside the HSM'
-    )
-  })
-
   it('budgets are named per actor, so a cloud number cannot satisfy an HSM budget', () => {
     for (const s of SCENARIO_CONTRACT.scenarios)
       for (const k of Object.keys(s.budgets))
         expect(s.actors.map((a) => a.id)).toContain(k.split('.')[0])
+  })
+
+  it('an end-to-end run labels each step by the device and role that ran it', () => {
+    const at = (step: string) =>
+      validationsFor('tfhe-single-hsm', step, [e2e()]).map((v) => v.label)
+    expect(at('owner-encrypts-locally')).toEqual(['data owner on Mac (M4 Pro) · end-to-end run'])
+    expect(at('compute-with-pbs')).toEqual([
+      'FHE server on KV260 (untrusted compute, software-held keys) · end-to-end run',
+    ])
+    expect(at('decrypt-under-policy')).toEqual([
+      'custodian: software token on MX95 · end-to-end run',
+    ])
+    expect(at('upload-ciphertexts')).toEqual([
+      'transfer between Mac (M4 Pro) → KV260 → MX95 · end-to-end run',
+    ])
+  })
+
+  it('the backup HSM is the MX95 Pro; a 2-of-2 threshold run says what it ran', () => {
+    const backup: EvidenceRecord = {
+      ...base,
+      id: 'dev-backup',
+      scenarioId: 'tfhe-single-hsm',
+      level: 'device',
+      stepIds: ['offline-backup-restore'],
+      parts: [
+        {
+          device: 'mx95-pro',
+          role: 'backup-custodian',
+          producer: 'pqctoday-cacp',
+          claimScope: 'board-software-token',
+          engine: ENGINE,
+          stepIds: ['offline-backup-restore'],
+        },
+      ],
+    }
+    expect(validationsFor('tfhe-single-hsm', 'offline-backup-restore', [backup])[0].label).toBe(
+      'backup custodian: software token on MX95 Pro'
+    )
+    const thr: EvidenceRecord = {
+      ...base,
+      id: 'thr-2of2',
+      scenarioId: 'openfhe-threshold',
+      level: 'end-to-end',
+      stepIds: ['party-a-partial-decrypt', 'party-b-partial-decrypt'],
+      parties: {
+        threshold: 2,
+        total: 2,
+        placement: [
+          { actor: 'hsmA', device: 'mx95' },
+          { actor: 'hsmB', device: 'mx95-pro' },
+        ],
+      },
+      parts: [
+        {
+          device: 'mx95',
+          role: 'party',
+          producer: 'pqctoday-cacp',
+          claimScope: 'board-software-token',
+          engine: ENGINE,
+          stepIds: ['party-a-partial-decrypt'],
+        },
+        {
+          device: 'mx95-pro',
+          role: 'party',
+          producer: 'pqctoday-cacp',
+          claimScope: 'board-software-token',
+          engine: ENGINE,
+          stepIds: ['party-b-partial-decrypt'],
+        },
+      ],
+    }
+    expect(validationsFor('openfhe-threshold', 'party-a-partial-decrypt', [thr])[0].label).toBe(
+      'key-holder party: software token on MX95 · end-to-end run · 2-of-2 (scenario shows 3-of-3)'
+    )
+    expect(validateRecord({ ...thr, parties: undefined })).toContain(
+      'threshold runs on boards must state parties (threshold, total, placement)'
+    )
+  })
+
+  it('reference evidence names the library', () => {
+    const r: EvidenceRecord = {
+      ...base,
+      id: 'ref-1',
+      scenarioId: 'openfhe-threshold',
+      level: 'reference',
+      producer: 'pqctoday-sandbox',
+      claimScope: 'reference-library',
+      library: { name: 'OpenFHE', version: 'v1.6.0', commit: '6206d24f9e' },
+      stepIds: ['party-a-keygen'],
+    }
+    expect(validationsFor('openfhe-threshold', 'party-a-keygen', [r])[0].label).toBe(
+      'reference-validated (OpenFHE v1.6.0)'
+    )
+  })
+
+  const swap = (i: number, p: Partial<EvidencePart>) => {
+    const r = e2e()
+    r.parts = r.parts!.map((x, k) => (k === i ? { ...x, ...p } : x))
+    return r
+  }
+  it.each([
+    ['failed run', e2e({ result: 'fail' })],
+    ['estimate', e2e({ status: 'estimate' })],
+    ['KV260 claiming a data-owner step', swap(1, { stepIds: ['owner-encrypts-locally'] })],
+    ['KV260 claiming an HSM step', swap(1, { stepIds: ['decrypt-under-policy'] })],
+    [
+      'Mac claiming the FHE server role',
+      swap(0, { role: 'fhe-server', claimScope: 'board-untrusted-compute' }),
+    ],
+    ['KV260 labelled a software token', swap(1, { claimScope: 'board-software-token' })],
+    ['MX95 Pro as primary custodian', swap(2, { device: 'mx95-pro' })],
+    ['software-token part without engine commit', swap(2, { engine: undefined })],
+    ['part step missing from the record', swap(2, { stepIds: ['live-clone-peer-hsm'] })],
+    ['hardware custody claim', e2e({ claimLabel: 'HSM-validated hardware custody' })],
+    [
+      'artifact without a hash',
+      e2e({ artifacts: [{ name: 'x', sha256: 'nope', url: 'https://x' }] }),
+    ],
+    [
+      'method without samples',
+      e2e({ method: { warmup: 0, samples: 0, distribution: 'x', peakMemoryMethod: 'x' } }),
+    ],
+    ['single-device end-to-end', e2e({ parts: e2e().parts!.slice(2) })],
+  ])('raises no badge for a %s', (_name, rec) => {
+    for (const st of rec.stepIds) expect(validationsFor(rec.scenarioId, st, [rec])).toEqual([])
+  })
+
+  it('the valid end-to-end fixture itself passes', () => {
+    expect(validateRecord(e2e())).toEqual([])
   })
 })

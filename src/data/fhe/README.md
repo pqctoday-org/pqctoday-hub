@@ -1,22 +1,26 @@
 # FHE + HSM scenario contract and validation evidence
 
-Owner decision 2026-10-03: the Hub stays WebAssembly-only. The FHE + HSM flows are validated
-by three producers, and each validation appears on the matching workshop step:
+Owner decisions 2026-10-03: the Hub stays WebAssembly-only. The FHE + HSM flows are validated
+on lab devices, each playing one role in the workshop's lanes:
 
-| Producer           | Runs on                                         | Evidence `level`                                        | Hub label                                       |
-| ------------------ | ----------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------- |
-| `pqctoday-sandbox` | reference libraries (OpenFHE, Lattigo, TFHE-rs) | `reference` (or `emulator`)                             | reference-validated (_library version_)         |
-| `pqctoday-fhe`     | KV260                                           | `board`, `board: "kv260"`                               | untrusted compute on KV260 (software-held keys) |
-| `pqctoday-cacp`    | MX95, MX95 Pro (Ventuno Q later)                | `board`, `board: "mx95"` / `"mx95-pro"` / `"ventuno-q"` | software token on MX95 / MX95 Pro               |
+| Device            | Producer           | Role                                   | Claim scope               | Hub label                                                   |
+| ----------------- | ------------------ | -------------------------------------- | ------------------------- | ----------------------------------------------------------- |
+| Mac (M4 Pro)      | `pqctoday-sandbox` | data owner                             | `owner-device`            | data owner on Mac (M4 Pro)                                  |
+| KV260             | `pqctoday-fhe`     | FHE server (untrusted, no token)       | `board-untrusted-compute` | FHE server on KV260 (untrusted compute, software-held keys) |
+| MX95              | `pqctoday-cacp`    | custodian (primary) or threshold party | `board-software-token`    | custodian: software token on MX95                           |
+| MX95 Pro          | `pqctoday-cacp`    | backup custodian or threshold party    | `board-software-token`    | backup custodian: software token on MX95 Pro                |
+| Ventuno Q (later) | `pqctoday-cacp`    | custodian, backup or party             | `board-software-token`    | as above                                                    |
 
-Lattigo's `conformance-mapped` target is conditional on the FHE plan's P0A and P5 gates
-(§6.4); its contract carries the `conformance-gated-p0a-p5` disclosure.
+Reference-library runs come from `pqctoday-sandbox` (`level: reference`).
 
-The KV260 is the untrusted compute server, not a token: its records use claim scope
-`board-untrusted-compute` and may cover only steps outside the HSM. MX95 / MX95 Pro runs are a
-software token on that board (`board-software-token`, HSM-side steps only). Nothing here may
-claim hardware custody or "HSM-validated"; the validator rejects such claims. Budgets are named
-per actor (`hsm.serverKeyExportBytes` vs `cloud.serverKeyBytes`).
+A device may claim only steps its role's actor takes part in (the step's `from` or `to`). A run
+spanning devices is one `end-to-end` record with a `parts[]` entry per device; steps in no part
+are the transfers between devices. Threshold scenarios are validated as 2-of-2 on the two
+custodian boards, and records state `parties {threshold, total, placement}`, so the badge says
+"2-of-2 (scenario shows 3-of-3)" instead of implying the full scenario ran. Lattigo's
+`conformance-mapped` target is conditional on the FHE plan's P0A and P5 gates (§6.4). Nothing may
+claim hardware custody or "HSM-validated". Budgets are named per actor
+(`hsm.serverKeyExportBytes` vs `cloud.serverKeyBytes`).
 
 ## Files
 
@@ -36,23 +40,23 @@ per actor (`hsm.serverKeyExportBytes` vs `cloud.serverKeyBytes`).
 ## Adding results (stage 5 is a data-only change)
 
 1. Append one record per run to `records`. A record needs:
-   - `scenarioId` and `stepIds` taken from the contract;
-   - `level`, `producer` and `board` (board allowed only for that producer);
-   - `library {name, version, commit}`, and `engine {repo, commit}` for emulator and board runs;
-   - `parameters` (the canonical parameter-set name), `config`, and `parameterHash`, which
-     is the SHA-256 (hex) of UTF-8 `parameters + "\n" + config`;
+   - `scenarioId`;
+   - `stepIds` (every step covered, transfers included);
+   - `level` (`reference` / `emulator` / `device` / `end-to-end`);
+   - for `reference` and `emulator`: `producer` and `claimScope`, plus `engine` for an emulator;
+   - for `device` (one part) and `end-to-end` (two or more parts): `parts[{device, role,
+producer, claimScope, stepIds, engine?}]`, with `engine` required for software-token
+     parts;
+   - for threshold scenarios on boards: `parties`;
+   - `library {name, version, commit}`;
+   - `parameters`, `config` and `parameterHash`, which is the SHA-256 (hex) of UTF-8
+     `parameters + "\n" + config`;
    - `environment {hardware, os, browser?, toolchain, features}`;
-   - `method {warmup, samples, distribution, peakMemoryMethod}` (a single run says
-     `samples: 1`);
-   - `result` (`pass`/`fail`) and `status` (`estimate`/`measured`/`reproduced`/
-     `independently-reviewed`; an estimate never raises a badge);
-   - `claimScope` (`reference-library` / `browser-emulator` / `native-software-token` /
-     `board-software-token`, matching the level) and an optional `claimLabel` such as
-     "untrusted compute on KV260 (software-held keys)" or "software token on MX95";
-   - `artifacts[{name, sha256, url}]` with https URLs;
-   - `measuredAt` (ISO date);
-   - an optional per-record `signature {keyId, alg: "ML-DSA-65", value}`. Without it, a
-     record is hash-pinned and covered only by the manifest signature.
+   - `method {warmup, samples ≥ 1, distribution, peakMemoryMethod}`;
+   - `result` and `status` (an `estimate` never raises a badge);
+   - `artifacts[{name, sha256, https url}]`;
+   - `measuredAt`;
+   - optionally `claimLabel` and a per-record `signature {keyId, alg: "ML-DSA-65", value}`.
 2. Run `npx vitest run src/data/fhe`. Every record must validate.
 3. Sign it with the release signing step, commit `fhe-evidence.v1.json.sig` and add a revisions
    entry.

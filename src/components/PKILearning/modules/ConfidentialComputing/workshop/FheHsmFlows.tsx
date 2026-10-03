@@ -590,7 +590,7 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
           const n = EVIDENCE_MANIFEST.records.filter((r) => r.scenarioId === flow.id).length
           return n
             ? `${n} signed record(s); each step shows what it covers.`
-            : 'none yet. Results will come from pqctoday-sandbox (reference libraries), pqctoday-fhe on KV260 (the untrusted compute side) and pqctoday-cacp on MX95 / MX95 Pro (a software token on that board). None of it is hardware custody.'
+            : 'none yet. Planned lab runs: the data owner on a Mac (pqctoday-sandbox), the FHE server on a KV260 (pqctoday-fhe, untrusted compute) and the custodian as a software token on an MX95, with an MX95 Pro as backup and second threshold party (pqctoday-cacp); reference libraries in pqctoday-sandbox. None of it is hardware custody.'
         })()}
       </span>
     </div>
