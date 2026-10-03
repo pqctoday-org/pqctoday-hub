@@ -35,7 +35,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 
-import { corpusContentHash } from '../../scripts/lib/corpusContentHash'
+import { corpusContentHash } from '../utils/corpusContentHash'
 import { chunkToResource } from '@/services/search/chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { RAGChunk } from '@/types/ChatTypes'

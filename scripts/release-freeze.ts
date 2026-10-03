@@ -19,6 +19,10 @@
  *
  *   npx tsx scripts/release-freeze.ts                          # DRY RUN (default): print, write nothing
  *   npx tsx scripts/release-freeze.ts --presentation <dir>     # dry run incl. the deck check
+ *   Add `--evidence-checker <module>` (a module exporting `checkReleaseEvidence`)
+ *   to run the release-evidence check, which is maintained outside this
+ *   repository; without it the check is recorded as failed and --write is refused.
+ *
  *   npx tsx scripts/release-freeze.ts --write --label <label> --presentation <dir>
  *        # write evidence/release-freeze/<label>.freeze.json — refused on a dirty
  *        # tree, a failing release-evidence check, a failing deck check, or an
@@ -31,17 +35,19 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   REPORT_JSON_REL,
   REPORT_MD_REL,
   ROOT,
-  checkReleaseEvidence,
   claimsSha256,
   sha256,
-} from './generate-release-evidence'
+  type EvidenceChecker,
+} from './lib/releaseEvidenceHash'
 
 export const FREEZE_SCHEMA = 'pqctoday.release-freeze/v1'
+export const NO_CHECKER =
+  'release-evidence check not supplied (--evidence-checker <module>); it runs outside this repository'
 export const FREEZE_DIR_REL = 'evidence/release-freeze'
 const PROVENANCE_REL = 'public/wasm/wasm-provenance.json'
 const INVENTORY_REL = 'src/data/validation/mechanism-inventory.generated.json'
@@ -146,7 +152,14 @@ interface ReportShape extends Record<string, unknown> {
 
 export async function buildFreezeManifest(
   root: string = ROOT,
-  opts: { label?: string | null; presentation?: string | null; mode?: 'dry-run' | 'frozen' } = {}
+  opts: {
+    label?: string | null
+    presentation?: string | null
+    mode?: 'dry-run' | 'frozen'
+    /** The release-evidence check. It runs outside this repository; without
+     * it the check is recorded as failed, so a freeze cannot be written. */
+    checkEvidence?: EvidenceChecker | null
+  } = {}
 ): Promise<FreezeManifest> {
   const readJson = <T>(rel: string): T | null => {
     const abs = path.join(root, rel)
@@ -158,6 +171,8 @@ export async function buildFreezeManifest(
   const inv = readJson<InventoryFile>(INVENTORY_REL)
   const report = readJson<ReportShape>(REPORT_JSON_REL)
 
+  const checkReleaseEvidence: EvidenceChecker =
+    opts.checkEvidence ?? (async () => ({ errors: [NO_CHECKER], notes: [] as string[] }))
   const check = await checkReleaseEvidence(root, [])
   let presentation: FreezeManifest['presentation'] = null
   if (opts.presentation) {
@@ -229,7 +244,7 @@ export function refuseToWrite(m: FreezeManifest): string[] {
       `the tree is not clean (${m.hub.uncommitted.length} uncommitted path(s)) — commit first`
     )
   if (m.checks.releaseEvidence !== 'pass')
-    out.push('gen:release-evidence:check fails — regenerate and commit the report first')
+    out.push('the release-evidence check fails — regenerate and commit the report first')
   if (!m.presentation)
     out.push('--presentation <dir> is required: the freeze must record the deck check')
   else if (m.presentation.check !== 'pass')
@@ -332,7 +347,16 @@ async function main(): Promise<void> {
     return
   }
   const write = args.includes('--write')
+  const checkerPath = arg(args, '--evidence-checker')
+  const checkEvidence = checkerPath
+    ? (
+        (await import(pathToFileURL(path.resolve(checkerPath)).href)) as {
+          checkReleaseEvidence: EvidenceChecker
+        }
+      ).checkReleaseEvidence
+    : null
   const m = await buildFreezeManifest(ROOT, {
+    checkEvidence,
     label: arg(args, '--label'),
     presentation: arg(args, '--presentation'),
     mode: write ? 'frozen' : 'dry-run',
