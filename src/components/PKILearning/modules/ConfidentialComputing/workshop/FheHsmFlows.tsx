@@ -590,7 +590,7 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
           const n = EVIDENCE_MANIFEST.records.filter((r) => r.scenarioId === flow.id).length
           return n
             ? `${n} signed record(s); each step shows what it covers.`
-            : 'none yet. Results will come from pqctoday-sandbox (reference libraries), pqctoday-fhe on KV260 and pqctoday-cacp on MX95 / MX95 Pro, each a software token on that board, not hardware custody.'
+            : 'none yet. Results will come from pqctoday-sandbox (reference libraries), pqctoday-fhe on KV260 (the untrusted compute side) and pqctoday-cacp on MX95 / MX95 Pro (a software token on that board). None of it is hardware custody.'
         })()}
       </span>
     </div>

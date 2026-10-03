@@ -185,4 +185,35 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
   ])('raises no badge for a %s', (_name, over) => {
     expect(validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [record(over)])).toEqual([])
   })
+  it('KV260 untrusted-compute evidence: pqctoday-fhe, outside-HSM steps only, its own label', () => {
+    const kv = record({
+      producer: 'pqctoday-fhe',
+      board: 'kv260',
+      engine: undefined,
+      claimScope: 'board-untrusted-compute',
+      claimLabel: 'untrusted compute on KV260 (software-held keys)',
+      stepIds: ['compute-with-pbs'],
+    })
+    expect(validationsFor('tfhe-single-hsm', 'compute-with-pbs', [kv]).map((v) => v.label)).toEqual(
+      ['untrusted compute on KV260 (software-held keys)']
+    )
+    expect(validateRecord({ ...kv, stepIds: ['decrypt-under-policy'] })).toContain(
+      'untrusted-compute evidence may cover only steps outside the HSM'
+    )
+    expect(validateRecord({ ...kv, claimScope: 'board-software-token' })).toContain(
+      'software-token board evidence comes from pqctoday-cacp'
+    )
+  })
+
+  it('MX95 software-token evidence may not cover steps outside the HSM', () => {
+    expect(validateRecord(record({ stepIds: ['compute-with-pbs'] }))).toContain(
+      'software-token evidence may not cover steps outside the HSM'
+    )
+  })
+
+  it('budgets are named per actor, so a cloud number cannot satisfy an HSM budget', () => {
+    for (const s of SCENARIO_CONTRACT.scenarios)
+      for (const k of Object.keys(s.budgets))
+        expect(s.actors.map((a) => a.id)).toContain(k.split('.')[0])
+  })
 })

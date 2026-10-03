@@ -7,7 +7,8 @@
  * produced by pqctoday-sandbox (reference libraries), pqctoday-fhe (KV260) and
  * pqctoday-cacp (MX95, MX95 Pro; Ventuno Q later). The Hub raises a step's validation
  * badge only for a record that validates here; with no records, no claim is shown.
- * A board run is a software token on that board, never hardware custody.
+ * MX95 / MX95 Pro runs are a software token on that board; the KV260 runs the untrusted
+ * compute side (no token). Neither is ever hardware custody.
  */
 import contractJson from './fhe-hsm-scenarios.v1.json'
 import manifestJson from './fhe-evidence.v1.json'
@@ -19,12 +20,16 @@ export type EvidenceStatus = 'estimate' | 'measured' | 'reproduced' | 'independe
 
 /** FHE plan §1.2 claim scopes; each evidence level allows only matching scopes. */
 export type ClaimScope =
-  'reference-library' | 'browser-emulator' | 'native-software-token' | 'board-software-token'
+  | 'reference-library'
+  | 'browser-emulator'
+  | 'native-software-token'
+  | 'board-software-token'
+  | 'board-untrusted-compute'
 
 export const LEVEL_SCOPES: Record<EvidenceLevel, ClaimScope[]> = {
   reference: ['reference-library'],
   emulator: ['browser-emulator', 'native-software-token'],
-  board: ['board-software-token'],
+  board: ['board-software-token', 'board-untrusted-compute'],
 }
 
 /** Statuses that may raise a badge; an estimate never does. */
@@ -156,8 +161,25 @@ export function validateRecord(
     errors.push('reference evidence comes from pqctoday-sandbox')
   if (!r.library?.name || !r.library.version || !COMMIT.test(r.library.commit ?? ''))
     errors.push('library needs name, version and a commit')
-  if (r.level !== 'reference' && (!r.engine || !COMMIT.test(r.engine.commit ?? '')))
-    errors.push('emulator and board evidence need the engine repo and commit')
+  // The KV260 is the untrusted compute server (no token): its runs measure "outside" steps
+  // only and need no engine. Software-token claims (MX95 boards) cover HSM-side steps only.
+  const stepStatus = (id: string) => scenario?.steps.find((s) => s.id === id)?.engineStatus
+  if (r.claimScope === 'board-untrusted-compute') {
+    if (r.producer !== 'pqctoday-fhe' || r.board !== 'kv260')
+      errors.push('untrusted-compute evidence comes from pqctoday-fhe on the KV260')
+    if (r.stepIds?.some((id) => stepStatus(id) !== 'outside'))
+      errors.push('untrusted-compute evidence may cover only steps outside the HSM')
+  }
+  if (r.claimScope === 'board-software-token') {
+    if (r.producer !== 'pqctoday-cacp')
+      errors.push('software-token board evidence comes from pqctoday-cacp')
+    if (r.stepIds?.some((id) => stepStatus(id) === 'outside'))
+      errors.push('software-token evidence may not cover steps outside the HSM')
+  }
+  const needsEngine =
+    r.level === 'emulator' || (r.level === 'board' && r.claimScope !== 'board-untrusted-compute')
+  if (needsEngine && (!r.engine || !COMMIT.test(r.engine.commit ?? '')))
+    errors.push('emulator and software-token evidence need the engine repo and commit')
   if (!r.parameters || typeof r.config !== 'string' || !SHA256.test(r.parameterHash ?? ''))
     errors.push('parameters, config and parameterHash')
   const env = r.environment
@@ -202,6 +224,8 @@ export interface StepValidation {
 export function validationLabel(r: EvidenceRecord): string {
   if (r.level === 'reference') return `reference-validated (${r.library.name} ${r.library.version})`
   if (r.level === 'emulator') return 'token-validated · software token emulator'
+  if (r.claimScope === 'board-untrusted-compute')
+    return `untrusted compute on ${BOARD_LABELS[r.board as EvidenceBoard]} (software-held keys)`
   return `software token on ${BOARD_LABELS[r.board as EvidenceBoard]}`
 }
 

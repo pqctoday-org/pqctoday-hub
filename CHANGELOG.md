@@ -35,7 +35,7 @@ The FHE + HSM workshop is ready to show real validation results as they arrive.
 
 ### Added
 
-- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line, and each scenario a validation-evidence summary. For now they read "not yet": nothing is claimed until a signed evidence record exists. Results will come from the reference libraries (pqctoday-sandbox), the KV260 (pqctoday-fhe) and the MX95 and MX95 Pro (pqctoday-cacp), each shown as a software token on that board, never as hardware custody.
+- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line, and each scenario a validation-evidence summary. For now they read "not yet": nothing is claimed until a signed evidence record exists. Results will come from the reference libraries (pqctoday-sandbox), the KV260 running the untrusted compute side (pqctoday-fhe), and the MX95 and MX95 Pro running a software token (pqctoday-cacp); none of it is shown as hardware custody.
 
 ## [4.146.0] - 2026-10-03
 

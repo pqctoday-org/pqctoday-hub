@@ -3,17 +3,20 @@
 Owner decision 2026-10-03: the Hub stays WebAssembly-only. The FHE + HSM flows are validated
 by three producers, and each validation appears on the matching workshop step:
 
-| Producer           | Runs on                                         | Evidence `level`                                        | Hub label                               |
-| ------------------ | ----------------------------------------------- | ------------------------------------------------------- | --------------------------------------- |
-| `pqctoday-sandbox` | reference libraries (OpenFHE, Lattigo, TFHE-rs) | `reference` (or `emulator`)                             | reference-validated (_library version_) |
-| `pqctoday-fhe`     | KV260                                           | `board`, `board: "kv260"`                               | software token on KV260                 |
-| `pqctoday-cacp`    | MX95, MX95 Pro (Ventuno Q later)                | `board`, `board: "mx95"` / `"mx95-pro"` / `"ventuno-q"` | software token on MX95 / MX95 Pro       |
+| Producer           | Runs on                                         | Evidence `level`                                        | Hub label                                       |
+| ------------------ | ----------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------- |
+| `pqctoday-sandbox` | reference libraries (OpenFHE, Lattigo, TFHE-rs) | `reference` (or `emulator`)                             | reference-validated (_library version_)         |
+| `pqctoday-fhe`     | KV260                                           | `board`, `board: "kv260"`                               | untrusted compute on KV260 (software-held keys) |
+| `pqctoday-cacp`    | MX95, MX95 Pro (Ventuno Q later)                | `board`, `board: "mx95"` / `"mx95-pro"` / `"ventuno-q"` | software token on MX95 / MX95 Pro               |
 
 Lattigo's `conformance-mapped` target is conditional on the FHE plan's P0A and P5 gates
 (§6.4); its contract carries the `conformance-gated-p0a-p5` disclosure.
 
-A board run is a software token on that board. Nothing here may claim hardware custody or
-"HSM-validated"; the validator rejects such claim scopes.
+The KV260 is the untrusted compute server, not a token: its records use claim scope
+`board-untrusted-compute` and may cover only steps outside the HSM. MX95 / MX95 Pro runs are a
+software token on that board (`board-software-token`, HSM-side steps only). Nothing here may
+claim hardware custody or "HSM-validated"; the validator rejects such claims. Budgets are named
+per actor (`hsm.serverKeyExportBytes` vs `cloud.serverKeyBytes`).
 
 ## Files
 
@@ -45,7 +48,7 @@ A board run is a software token on that board. Nothing here may claim hardware c
      `independently-reviewed`; an estimate never raises a badge);
    - `claimScope` (`reference-library` / `browser-emulator` / `native-software-token` /
      `board-software-token`, matching the level) and an optional `claimLabel` such as
-     "software token on KV260";
+     "untrusted compute on KV260 (software-held keys)" or "software token on MX95";
    - `artifacts[{name, sha256, url}]` with https URLs;
    - `measuredAt` (ISO date);
    - an optional per-record `signature {keyId, alg: "ML-DSA-65", value}`. Without it, a

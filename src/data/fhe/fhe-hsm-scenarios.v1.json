@@ -1,6 +1,6 @@
 {
   "schema": "fhe-hsm-scenarios.v1",
-  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id. v1 fields per the FHE plan (§1.1, §1.2, §2, §9): validationTarget uses the §1.1 labels; disclosures are stable ids; budgets list metric names, with values frozen later by a versioned P0A update (null until then); fixtures hold deterministic input/output hashes.",
+  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id. v1 fields per the FHE plan (§1.1, §1.2, §2, §9): validationTarget uses the §1.1 labels; disclosures are stable ids; budgets list metric names prefixed by the actor that must meet them (e.g. hsm.serverKeyExportBytes vs cloud.serverKeyBytes), with values frozen later by a versioned P0A update (null until then); fixtures hold deterministic input/output hashes.",
   "scenarios": [
     {
       "id": "single-hsm",
@@ -161,10 +161,11 @@
         "decrypt-oracle-limits"
       ],
       "budgets": {
-        "evalKeyBytes": null,
-        "publicKeyBytes": null,
-        "decryptMs": null,
-        "peakRssMb": null
+        "hsm.evalKeyGenBytes": null,
+        "hsm.publicKeyExportBytes": null,
+        "hsm.decryptMs": null,
+        "hsm.peakRssMb": null,
+        "cloud.evalKeyBytes": null
       },
       "fixtures": []
     },
@@ -337,12 +338,14 @@
         "decrypt-oracle-limits"
       ],
       "budgets": {
-        "clientKeyGenMs": null,
-        "serverKeyBytes": null,
-        "serverKeyGenMs": null,
-        "decryptMs": null,
-        "peakRssMb": null,
-        "bundleBytes": null
+        "hsm.clientKeyGenMs": null,
+        "hsm.serverKeyGenMs": null,
+        "hsm.serverKeyExportBytes": null,
+        "hsm.decryptMs": null,
+        "hsm.peakRssMb": null,
+        "cloud.serverKeyBytes": null,
+        "cloud.peakRssMb": null,
+        "client.bundleBytes": null
       },
       "fixtures": [
         {
@@ -566,10 +569,11 @@
         "honest-but-curious-parties"
       ],
       "budgets": {
-        "shareBytes": null,
-        "evalKeyBytes": null,
-        "partialDecryptMs": null,
-        "peakRssMb": null
+        "hsmA.shareBytes": null,
+        "hsmA.partialDecryptMs": null,
+        "hsmA.peakRssMb": null,
+        "cloud.evalKeyBytes": null,
+        "cloud.peakRssMb": null
       },
       "fixtures": []
     },
@@ -741,10 +745,11 @@
         "conformance-gated-p0a-p5"
       ],
       "budgets": {
-        "shareBytes": null,
-        "galoisShareBytes": null,
-        "refreshShareMs": null,
-        "peakRssMb": null
+        "hsmA.shareBytes": null,
+        "hsmA.galoisShareBytes": null,
+        "hsmA.refreshShareMs": null,
+        "hsmA.peakRssMb": null,
+        "cloud.peakRssMb": null
       },
       "fixtures": []
     },
@@ -862,9 +867,10 @@
         "sizes-are-estimates"
       ],
       "budgets": {
-        "evalKeyBytes": null,
-        "decryptMs": null,
-        "peakRssMb": null
+        "hsm.evalKeyGenBytes": null,
+        "hsm.decryptMs": null,
+        "hsm.peakRssMb": null,
+        "gpu.evalKeyBytes": null
       },
       "fixtures": []
     },
@@ -1002,10 +1008,10 @@
         "decrypt-oracle-limits"
       ],
       "budgets": {
-        "serverKeyBytes": null,
-        "transcipherMsPerBlock": null,
-        "decryptMs": null,
-        "bundleBytes": null
+        "cloud.serverKeyBytes": null,
+        "cloud.transcipherMsPerBlock": null,
+        "hsm.decryptMs": null,
+        "client.bundleBytes": null
       },
       "fixtures": []
     }
