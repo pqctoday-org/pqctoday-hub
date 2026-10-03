@@ -74,21 +74,33 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Ciphertexts of ~15–30 MB each at N = 2¹⁶ (estimate), uploaded over TLS.'
     ),
     io(
+      'The ciphertexts from the previous step.',
+      'transfer',
+      'Upload over TLS. No cryptographic work beyond the channel.',
+      'Ciphertexts at the third party, which cannot read them.'
+    ),
+    io(
       'Ciphertexts plus the public evaluation keys. No secret of any kind.',
       'homomorphic',
       'Additions; ct × ct multiplication followed by relinearization (key switching) and rescaling; rotations with Galois keys; bootstrapping once the modulus levels run out.',
       'Result ciphertext(s), still under s. The cloud learns nothing about inputs or result.'
     ),
     io(
-      'The result ciphertext.',
+      'The result ciphertext. No secret.',
       'transfer',
-      'Optionally mod-switch to the lowest level to shrink it, then send it over TLS.',
-      'A ciphertext of about 1 MB, delivered to the HSM.'
+      'Send it back over TLS. The third party never had a key that could open it.',
+      'The encrypted result, back at the data owner.'
+    ),
+    io(
+      'The encrypted result plus the data owner’s authenticated request.',
+      'transfer',
+      'The data owner (or its authorized application) submits the ciphertext to its own HSM over an authenticated channel. The third party has no access to the HSM.',
+      'The ciphertext inside the HSM, ready for the policy check.'
     ),
     io(
       'The result ciphertext plus the request metadata: who is asking and the declared output type. The HSM cannot verify which computation produced it.',
       'decrypt',
-      'Check policy (allowed output type, result shape, rate limit). Decrypt m′ = c₀ + c₁·s, add flooding noise (CKKS), decode with an FFT, and write an audit record.',
+      'Policy gate before decryption: authenticated requester; ciphertext must match an allowed result shape (slots, level, scale). Decrypt m′ = c₀ + c₁·s, add flooding noise, decode with an FFT, check the allowed range, and write an audit record.',
       'Plaintext result values, rounded and noised, inside the HSM.'
     ),
     io(
@@ -142,21 +154,33 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'A few KB per value, uploaded. The cloud expands it into ~0.5 MB of LWE blocks per 64-bit integer.'
     ),
     io(
+      'The ciphertexts from the previous step.',
+      'transfer',
+      'Upload over TLS. No cryptographic work beyond the channel.',
+      'Ciphertexts at the third party, which cannot read them.'
+    ),
+    io(
       'Ciphertext blocks and the server key. No secret.',
       'homomorphic',
       'Linear operations on blocks, each followed by key switching and a programmable bootstrap that refreshes noise and evaluates a lookup table (carries, comparisons, any function of a block).',
       'Result ciphertext blocks.'
     ),
     io(
-      'Result ciphertext blocks.',
+      'The result ciphertext. No secret.',
       'transfer',
-      'Send them over TLS.',
-      'About 0.5 MB per FheUint64 unless compressed, delivered to the HSM.'
+      'Send it back over TLS. The third party never had a key that could open it.',
+      'The encrypted result, back at the data owner.'
+    ),
+    io(
+      'The encrypted result plus the data owner’s authenticated request.',
+      'transfer',
+      'The data owner (or its authorized application) submits the ciphertext to its own HSM over an authenticated channel. The third party has no access to the HSM.',
+      'The ciphertext inside the HSM, ready for the policy check.'
     ),
     io(
       'Result blocks, the LWE secret key and request metadata.',
       'decrypt',
-      'Policy check. Per block: compute body − ⟨mask, s⟩ (one 2,048-term dot product under the big key), round to the message space, then recombine the blocks into integers. Microseconds.',
+      'Policy gate before decryption: authenticated requester; ciphertext type must be an allowed result type (inputs use a type never released). Then per block: body − ⟨mask, s⟩ (one 2,048-term dot product under the big key), round, recombine. Release only if the value fits the allowed shape; rate limit and audit.',
       'The plaintext result inside the HSM.'
     ),
     io(
@@ -216,16 +240,28 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Ciphertexts under the joint key.'
     ),
     io(
+      'The ciphertexts from the previous step.',
+      'transfer',
+      'Upload over TLS. No cryptographic work beyond the channel.',
+      'Ciphertexts at the third party, which cannot read them.'
+    ),
+    io(
       'Ciphertexts and the joint evaluation keys.',
       'homomorphic',
       'EvalAdd, EvalMult, EvalSum (leveled).',
       'Result ciphertext.'
     ),
     io(
-      'The result ciphertext.',
+      'The result ciphertext. No secret.',
       'transfer',
-      'Distribute it to all parties.',
-      'One copy per party.'
+      'Send it back over TLS. The third party never had a key that could open it.',
+      'The encrypted result, back at the data owner.'
+    ),
+    io(
+      'The encrypted result plus the data owner’s authenticated request.',
+      'transfer',
+      'The data owner (or its authorized application) submits the ciphertext to its own HSM over an authenticated channel. The third party has no access to the HSM.',
+      'The ciphertext inside the HSM, ready for the policy check.'
     ),
     io(
       'The result ciphertext and s₁.',
@@ -282,6 +318,12 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'encrypt',
       'Encode and encrypt.',
       'Ciphertexts under the joint secret.'
+    ),
+    io(
+      'The ciphertexts from the previous step.',
+      'transfer',
+      'Upload over TLS. No cryptographic work beyond the channel.',
+      'Ciphertexts at the third party, which cannot read them.'
     ),
     io(
       'Ciphertexts and the collective evaluation keys.',
@@ -357,11 +399,22 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'TFHE-rs integer operations.',
       'FheUint64 result ciphertexts.'
     ),
-    io('The result ciphertexts.', 'transfer', 'Send them over TLS.', 'Delivered to the HSM.'),
+    io(
+      'The result ciphertext. No secret.',
+      'transfer',
+      'Send it back over TLS. The third party never had a key that could open it.',
+      'The encrypted result, back at the data owner.'
+    ),
+    io(
+      'The encrypted result plus the data owner’s authenticated request.',
+      'transfer',
+      'The data owner (or its authorized application) submits the ciphertext to its own HSM over an authenticated channel. The third party has no access to the HSM.',
+      'The ciphertext inside the HSM, ready for the policy check.'
+    ),
     io(
       'The result ciphertexts and the client key.',
       'decrypt',
-      'FheUint64::decrypt under policy.',
+      'Policy gate before decryption: authenticated requester; ciphertext type must be an allowed result type. Then decrypt the result blocks with the client key, check the value against the allowed shape, and audit.',
       'The plaintext result inside the HSM.'
     ),
     io(
@@ -397,10 +450,16 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Result ciphertext(s).'
     ),
     io(
-      'The result ciphertext.',
+      'The result ciphertext. No secret.',
       'transfer',
-      'Send it over TLS.',
-      'About 1 MB, delivered to the HSM.'
+      'Send it back over TLS. The third party never had a key that could open it.',
+      'The encrypted result, back at the data owner.'
+    ),
+    io(
+      'The encrypted result plus the data owner’s authenticated request.',
+      'transfer',
+      'The data owner (or its authorized application) submits the ciphertext to its own HSM over an authenticated channel. The third party has no access to the HSM.',
+      'The ciphertext inside the HSM, ready for the policy check.'
     ),
     io(
       'The result ciphertext and s.',

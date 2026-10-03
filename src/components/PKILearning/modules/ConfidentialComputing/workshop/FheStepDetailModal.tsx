@@ -8,7 +8,7 @@ import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useModalPosition } from '@/hooks/useModalPosition'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { LINK_LABELS, type FheFlow } from '../data/fheHsmFlows'
-import { EngineStatusLine, StepRef } from './FheHsmFlows'
+import { EngineStatusLine, HoldingsList, StepRef } from './FheHsmFlows'
 import {
   KEY_SIZES,
   LINK_SIZES,
@@ -60,6 +60,8 @@ interface FheStepDetailModalProps {
   keys: KeyId[]
   overlay: boolean
   pqcFixed: boolean
+  persisted: boolean
+  shared: boolean
   onNavigate: (i: number) => void
 }
 
@@ -74,6 +76,8 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
   keys,
   overlay,
   pqcFixed,
+  persisted,
+  shared,
   onNavigate,
 }) => {
   const isEmbedded = useIsEmbedded()
@@ -177,6 +181,21 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
                 <p className="text-[11px] text-muted-foreground">
                   Baseline: {flow.baseline.implementation}
                 </p>
+              </div>
+
+              {/* Where keys and data sit at this step */}
+              <div className="rounded-lg border border-border p-3 space-y-1">
+                <div className="text-xs font-bold text-foreground">
+                  Where keys and data are at this step
+                </div>
+                <HoldingsList
+                  flow={flow}
+                  step={index}
+                  persisted={persisted}
+                  shared={shared}
+                  overlay={overlay}
+                  pqcFixed={pqcFixed}
+                />
               </div>
 
               {/* Cost */}
