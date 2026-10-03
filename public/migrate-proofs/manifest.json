@@ -24077,10 +24077,10 @@
       "artefact": "SOURCE",
       "unified": "converted",
       "admittedAt": "2026-10-03T21:32:43.816732+00:00",
-      "admittedBy": "admit.py",
+      "admittedBy": "evidence admission",
       "identity": "MATCH",
       "replacedAt": "2026-10-03T21:32:41.789212+00:00",
-      "replacedBy": "replace_evidence.py",
+      "replacedBy": "evidence replacement",
       "replaceReason": "row's proof_url now names this document"
     },
     {
@@ -24094,10 +24094,10 @@
       "artefact": "SOURCE",
       "unified": "converted",
       "admittedAt": "2026-10-03T21:32:44.572146+00:00",
-      "admittedBy": "admit.py",
+      "admittedBy": "evidence admission",
       "identity": "MATCH",
       "replacedAt": "2026-10-03T21:32:44.391491+00:00",
-      "replacedBy": "replace_evidence.py",
+      "replacedBy": "evidence replacement",
       "replaceReason": "row's proof_url now names this document"
     }
   ],
