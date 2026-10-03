@@ -1,0 +1,36 @@
+## u8_add (want: 19)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint8 = 19
+exit=0
+wall_ms=620 (includes the ssh round trip)
+## u8_mul (want: 196)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint8 = 196
+exit=0
+wall_ms=497 (includes the ssh round trip)
+## u8_lt (want: 0)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheBool = 0
+exit=0
+wall_ms=645 (includes the ssh round trip)
+## u32_add (want: 2615157863)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint32 = 2615157863
+exit=0
+wall_ms=611 (includes the ssh round trip)
+## u32_max (want: 2309737967)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint32 = 2309737967
+exit=0
+wall_ms=673 (includes the ssh round trip)
+## u32_eq (want: 0)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheBool = 0
+exit=0
+wall_ms=509 (includes the ssh round trip)
+## u64_add (want: refuse)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+refused by policy or input check (CK_RV 0x0000001b; reason in the token audit log only)
+exit=1
+wall_ms=554 (includes the ssh round trip)
+decided=7/7 failures=0
