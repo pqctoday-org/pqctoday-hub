@@ -31,13 +31,17 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.145.0] - 2026-10-02
 
-The FHE + HSM workshop now shows plainly when data is encrypted, computed on and decrypted, who may decrypt, and where every key sits; and the Library adds fhe.rs, the fourth open-source homomorphic-encryption library.
+The FHE + HSM workshop now shows plainly when data is encrypted, computed on and decrypted, who may decrypt, and where every key sits; every HSM Learn lesson now runs on a fresh page, and the Library adds fhe.rs, the fourth open-source homomorphic-encryption library.
 
 ### Changed
 
 - **FHE + HSM Flows: encrypt, compute on encrypted data, decrypt, in plain sight** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:developer] [persona:curious]: every scenario is grouped into phases (key setup, encrypt, compute on encrypted data, decrypt, backup) with a "data is" tag on each step, and trust zones separate the data owner's side from the untrusted third party. The data owner now encrypts on its own device, the third party returns the result still encrypted, and only the data owner asks its own HSM to decrypt. A toggle shows the clear result going to the data owner only or, by the owner's policy, to the third party too.
 - **Where keys and data are, inside the flow** [view:/learn/confidential-computing] [persona:architect] [persona:ops] [persona:researcher]: the separate key map is merged into the diagram. Each lane shows what it holds at the current step, colour-coded as protected, owner only, exposed, public, encrypted or released; on phones the same list appears under the current step and in the step details.
 - **What an HSM decryption policy can and cannot do** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: the decrypt steps explain the typed-ciphertext policy (authenticated requester, allowed result types checked before decrypting, a plaintext check before release, rate limits), that FHE ciphertexts carry no access-control metadata, and its limits: it caps how much one release reveals but cannot prove which computation produced a ciphertext.
+
+### Fixed
+
+- **Every HSM Learn lesson now runs on a fresh page** [view:/playground/hsm] [persona:developer] [persona:researcher] [persona:cert-engineer]: opening the HSM playground and starting any lesson other than the first of each track (for example "Trust & wrapping policy") used to fail every step with "HSM module not loaded", because only the first lesson booted the HSM engine. The lesson runner now boots the engine for you, using whichever engine is selected, and the boot calls show in that step's log.
 
 ### Data
 
