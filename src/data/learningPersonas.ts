@@ -556,7 +556,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1970,
+    estimatedMinutes: 2000,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -775,7 +775,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2340,
+    estimatedMinutes: 2370,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -1058,7 +1058,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3015,
+    estimatedMinutes: 3045,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -1343,7 +1343,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2055,
+    estimatedMinutes: 2085,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',
