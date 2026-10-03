@@ -21999,6 +21999,22 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T20:58:52.479697+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "fhe-rs-v0.1.1",
+      "title": "fhe.rs v0.1.1",
+      "url": "https://docs.rs/fhe/0.1.1/fhe/",
+      "status": "downloaded",
+      "filename": "fhe-rs-v0.1.1.html",
+      "sizeBytes": 33865,
+      "contentType": "text/html",
+      "sha256": "0f451f83505c0adf561c3e510cbf08924b82bb5adb8b7181dbad6dec8718425c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-03T03:17:06.677059+00:00",
+      "admittedBy": "admit.py",
+      "superseded_file": "_superseded-10022026/library/fhe-rs-v0.1.1.html"
     }
   ],
   "archivedEntries": [

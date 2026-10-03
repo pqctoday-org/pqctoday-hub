@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.145.0] - 2026-10-02
+
+The Library adds fhe.rs, the fourth open-source homomorphic-encryption library, now that its entry cites a page that describes the library.
+
+### Data
+
+- **fhe.rs joins the homomorphic-encryption libraries** [view:/library] [persona:developer] [persona:researcher]: the Library now has a reference entry for fhe.rs, an experimental Rust library implementing an RNS variant of the BFV scheme, with its MIT licence and the ISO/IEC 28033 part that covers its scheme. Its source is the library's own documentation.
+
 ## [4.144.0] - 2026-10-02
 
 Confidential Computing now teaches fully homomorphic encryption, with a workshop step showing how an HSM can hold FHE keys.
