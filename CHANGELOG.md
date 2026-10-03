@@ -46,6 +46,7 @@ FHE key custody now runs across two appliance boards with a backup and a failove
 ### Fixed
 
 - **Learn pages and the report link to the exact topic** [view:/learn] [view:/report] [persona:curious] [persona:developer] [persona:architect] [persona:ops]: 23 links in Learn module introductions, the assessment report and workshop pages now open the matching Library filter, compliance framework, timeline event, Migrate category or threat industry instead of the page's start; a Learn link to the G7 financial-sector milestone that pointed at a misspelled event now opens it.
+- **Corrected the German BSI migration dates on the Threats page** [view:/threats] [persona:executive] [persona:grc] [persona:architect] [persona:researcher]: the CRQC sources list showed BSI's migration range as 2030–2040, but BSI states no 2040. It now names BSI's current guideline (TR-02102-1, January 2026) and shows 2030–2035: systems with very high protection needs move to quantum-safe mechanisms by the end of 2030, classical key agreement alone ends in 2031, and classical signatures in 2035. The entry is labelled as migration recommendations, not a forecast of when a quantum computer will exist.
 
 ### Data
 
