@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.146.0] - 2026-10-03
+
+### Fixed
+
+- **Assistant and search links to patents open the patent** [view:/patents] [persona:researcher] [persona:architect]: 1,133 patent links in the PQC Assistant and site search pointed at patents the Patents page no longer lists and opened a "not found" notice; the search index now only links patents the page shows, and every link it carries is checked against the live data before it ships.
+- **Shared links skip the "Who's asking?" picker on phones for every kind of item** [view:/migrate] [view:/compliance] [view:/algorithms] [persona:executive] [persona:grc] [persona:architect] [persona:ops]: links to a vendor roadmap, a requirements framework, a CSWP.39 step, an industry use case, an attack profile or a Playground tool now open straight on a first visit, as document and threat links already did.
+- **Highlighted algorithms show on phones** [view:/algorithms] [persona:developer] [persona:curious]: a Transition link that highlights an algorithm (for example 3DES) opens the list on that row instead of the step-by-step wizard.
+- **Library links tolerate hyphens** [view:/library] [persona:researcher] [persona:developer]: `FIPS-203` and similar spellings now open the document (FIPS 203) instead of "not found", including links from the Assistant and the JWT workshop.
+- **Assessment report → Threats for Education and Manufacturing** [view:/report] [view:/threats] [persona:executive] [persona:grc]: the report's Threats link now filters to education/research and OT, industrial IoT and supply-chain threats instead of opening the unfiltered page.
+- **Migrate category links land on the catalog** [view:/migrate] [persona:architect] [persona:ops]: a link to a product category opens the Replace tab on that category, even if you last used the Plan or Roadmaps tab.
+- **Phones follow the same filter links as desktop** [view:/timeline] [view:/compliance] [view:/patents] [view:/leaders] [view:/algorithms] [persona:grc] [persona:researcher] [persona:ops]: region and search on Timeline, a linked requirements framework or evidence source on Compliance, every Patents filter, Community category/region/country/sector/search, and Protocol Support search, status, availability and sort.
+- **A second link on the same page works** [view:/algorithms] [view:/patents] [persona:developer] [persona:architect]: following a link to another Protocol Support filter, comparison, CNSA view or patents scope while already on the page now applies it; a shared Algorithms link always keeps its tab.
+- **More links open the exact item** [view:/compliance] [view:/timeline] [view:/report] [view:/leaders] [view:/migrate] [persona:grc] [persona:cert-engineer] [persona:architect]: "Frameworks tagged for this step" in CSWP.39 opens that framework; Compliance Endorse/Flag issues link the certificate record; report threat IDs open the threat; Timeline cards and Compliance landscape entries open the event; a merged Community profile forwards from its old link; the About page's standards shelf shows the NIST standards.
+- **Your saved settings survive a shared link** [view:/threats] [persona:grc] [persona:executive]: when a link has to switch off "My threats only" to show a threat, it does so for that visit only.
+- **The Migrate catalog filter is shareable** [view:/migrate] [persona:architect] [persona:ops]: the Replace tab's search text and filters stay in the address, so they survive a reload and can be shared.
+
 ## [4.145.0] - 2026-10-02
 
 The FHE + HSM workshop now shows plainly when data is encrypted, computed on and decrypted, who may decrypt, and where every key sits; every HSM Learn lesson now runs on a fresh page, and the Library adds fhe.rs, the fourth open-source homomorphic-encryption library.
