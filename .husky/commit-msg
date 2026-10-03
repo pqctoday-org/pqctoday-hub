@@ -1,0 +1,3 @@
+# Leak guard (report-only): warn when a commit message mentions private
+# internals. Never blocks the commit; CI repeats the check on the PR.
+npx --no-install tsx scripts/ci/leak-guard.ts --message-file "$1" --mode report 2>/dev/null | grep -v '^leak-guard: clean$' || true
