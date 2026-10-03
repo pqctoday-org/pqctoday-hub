@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.147.0] - 2026-10-03
 
-The FHE + HSM workshop now shows which steps have been validated, starting with a measured OpenFHE threshold run.
+The FHE + HSM workshop now shows which steps have been validated, with measured runs on a Mac and on a KV260 board, including a first end-to-end run of TFHE key custody in a software token.
 
 ### Added
 
