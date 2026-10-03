@@ -117,6 +117,12 @@ export interface EvidencePart {
   failover?: boolean
 }
 
+/** What the workshop's results panel shows first; optional and additive. */
+export interface EvidenceSummary {
+  headline: string
+  keyNumbers: { label: string; value: string; unit?: string }[]
+}
+
 export interface EvidenceRecord {
   id: string
   scenarioId: string
@@ -159,6 +165,8 @@ export interface EvidenceRecord {
   platformLabel?: string
   /** Provenance caveats, e.g. a binary not built byte-exact from the cited commit. */
   notes?: string
+  /** Reader-facing result: one sentence plus the headline numbers, taken from the pinned artifacts. */
+  summary?: EvidenceSummary
   artifacts: EvidenceArtifact[]
   measuredAt: string
   /** Per-record signature; without it the record is hash-pinned under the manifest .sig. */
@@ -265,6 +273,19 @@ function checkPart(p: EvidencePart, s: Scenario, recordSteps: string[]): string[
   return e
 }
 
+const MAX_KEY_NUMBERS = 12
+
+function summaryErrors(sm: EvidenceSummary): string[] {
+  const text = (v: unknown) => typeof v === 'string' && v.trim().length > 0
+  if (!sm || !text(sm.headline)) return ['summary needs a headline']
+  if (!Array.isArray(sm.keyNumbers) || sm.keyNumbers.length > MAX_KEY_NUMBERS)
+    return [`summary keyNumbers is a list of at most ${MAX_KEY_NUMBERS} rows`]
+  const bad = sm.keyNumbers.some(
+    (k) => !text(k?.label) || !text(k?.value) || (k.unit !== undefined && !text(k.unit))
+  )
+  return bad ? ['every summary key number needs a label and a value (unit optional, text)'] : []
+}
+
 /** Every problem with one record; an empty list means it may raise a badge. */
 export function validateRecord(
   r: EvidenceRecord,
@@ -349,6 +370,7 @@ export function validateRecord(
       if (!a.name || !SHA256.test(a.sha256) || !/^https:\/\//.test(a.url))
         errors.push(`artifact "${a.name}" needs a sha256 and an https url`)
   if (!ISO_DATE.test(r.measuredAt ?? '')) errors.push('measuredAt must be an ISO date')
+  if (r.summary !== undefined) errors.push(...summaryErrors(r.summary))
   return errors
 }
 
