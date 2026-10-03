@@ -56,9 +56,10 @@ export const DEVICE_RULES: Record<
   },
   kv260: { producers: ['pqctoday-fhe'], roles: ['fhe-server'] },
   mx95: { producers: ['pqctoday-cacp', 'pqctoday-hsm'], roles: ['custodian', 'party'] },
+  // Owner 2026-10-03: the MX95 Pro plays custodian only in a failover run (part.failover).
   'mx95-pro': {
     producers: ['pqctoday-cacp', 'pqctoday-hsm'],
-    roles: ['backup-custodian', 'party'],
+    roles: ['backup-custodian', 'custodian', 'party'],
   },
   'ventuno-q': {
     producers: ['pqctoday-cacp', 'pqctoday-hsm'],
@@ -83,15 +84,17 @@ export const ROLE_SCOPE: Record<DeviceRole, ClaimScope> = {
   party: 'board-software-token',
 }
 
-const ROLE_LABEL: Record<DeviceRole, (d: string) => string> = {
-  'data-owner': (d) => `data owner on ${d}`,
-  'fhe-server': (d) => `FHE server on ${d} (untrusted compute, software-held keys)`,
-  custodian: (d) =>
-    d.startsWith('Mac')
-      ? 'custodian: software token on Mac (MX95 pending)'
-      : `custodian: software token on ${d}`,
-  'backup-custodian': (d) => `backup custodian: software token on ${d}`,
-  party: (d) => `key-holder party: software token on ${d}`,
+const ROLE_LABEL: Record<DeviceRole, (d: string, p: EvidencePart) => string> = {
+  'data-owner': (d, p) => `data owner on ${d}${p.qualifier ?? ''}`,
+  'fhe-server': (d, p) =>
+    `FHE server on ${d} (untrusted compute, software-held keys)${p.qualifier ?? ''}`,
+  // Owner 2026-10-03: the Mac token run is shown as an earlier run now the MX95 has run.
+  custodian: (d, p) =>
+    p.device === 'mac-m4pro'
+      ? 'custodian: software token on Mac (earlier run)'
+      : `custodian${p.failover ? ' (failover)' : ''}: software token on ${d}${p.qualifier ?? ''}`,
+  'backup-custodian': (d, p) => `backup custodian: software token on ${d}${p.qualifier ?? ''}`,
+  party: (d, p) => `key-holder party: software token on ${d}${p.qualifier ?? ''}`,
 }
 
 export interface EvidenceArtifact {
@@ -108,6 +111,10 @@ export interface EvidencePart {
   stepIds: string[]
   claimScope: ClaimScope
   engine?: { repo: string; commit: string }
+  /** Appended to the badge to tell runs apart, e.g. " (board-local, no KMIP)". */
+  qualifier?: string
+  /** The backup board acting as custodian after a failover. */
+  failover?: boolean
 }
 
 export interface EvidenceRecord {
@@ -245,6 +252,16 @@ function checkPart(p: EvidencePart, s: Scenario, recordSteps: string[]): string[
   }
   if (p.claimScope === 'board-software-token' && !COMMIT.test(p.engine?.commit ?? ''))
     e.push(`software-token part on ${p.device} needs the engine repo and commit`)
+  if (p.device === 'mx95-pro' && p.role === 'custodian' && !p.failover)
+    e.push('the MX95 Pro is the backup custodian; it plays custodian only in a failover run')
+  if (p.failover && (p.role !== 'custodian' || p.device === 'mac-m4pro'))
+    e.push('failover applies only to a board playing custodian')
+  if (p.qualifier !== undefined) {
+    if (p.qualifier.length > 80) e.push('qualifier is longer than 80 characters')
+    if (!/^(,| \()/.test(p.qualifier)) e.push('qualifier starts with ", " or " ("')
+    if (/hardware|hsm-validated/i.test(p.qualifier))
+      e.push('qualifier may not say hardware or HSM-validated')
+  }
   return e
 }
 
@@ -367,9 +384,15 @@ export function stepLabel(r: EvidenceRecord, stepId: string): string {
   const scenario = SCENARIO_CONTRACT.scenarios.find((s) => s.id === r.scenarioId)
   const part = r.parts?.find((p) => p.stepIds.includes(stepId))
   const base = part
-    ? ROLE_LABEL[part.role](DEVICE_LABELS[part.device])
+    ? ROLE_LABEL[part.role](DEVICE_LABELS[part.device], part)
     : transferLabel(r, scenario as Scenario | undefined, stepId)
-  const e2e = r.level === 'end-to-end' ? ' · end-to-end run' : ''
+  // Several end-to-end runs share the owner and server; name the run's custodian on their badges.
+  const custodian = r.parts?.find((p) => p.role === 'custodian')
+  const withCustodian =
+    part && part.role !== 'custodian' && custodian
+      ? ` with the ${DEVICE_LABELS[custodian.device]} custodian`
+      : ''
+  const e2e = r.level === 'end-to-end' ? ` · end-to-end run${withCustodian}` : ''
   const shown = (scenario as { label?: string } | undefined)?.label?.match(/\((\d+-of-\d+)\)/)?.[1]
   const ran = r.parties ? `${r.parties.threshold}-of-${r.parties.total}` : ''
   const parties = ran
@@ -393,10 +416,30 @@ export function validationsFor(
         BADGE_STATUSES.includes(r.status) &&
         validateRecord(r).length === 0
     )
+    .sort(
+      (a, b) =>
+        layoutRank(b) - layoutRank(a) ||
+        Number(isFailover(a)) - Number(isFailover(b)) ||
+        b.measuredAt.localeCompare(a.measuredAt)
+    )
     .map((r) => ({
       level: r.level,
       label: stepLabel(r, stepId),
       device: r.parts?.find((p) => p.stepIds.includes(stepId))?.device,
       record: r,
     }))
+}
+
+const isFailover = (r: EvidenceRecord) => !!r.parts?.some((p) => p.failover)
+
+/**
+ * Owner 2026-10-03: every run shows, the designed device layout first. A custodian on an MX95
+ * board with the MX95 Pro as backup ranks 3, an MX95 board alone 2, records without a custodian
+ * 1, and the Mac token run 0.
+ */
+function layoutRank(r: EvidenceRecord): number {
+  const custodian = r.parts?.find((p) => p.role === 'custodian')
+  if (!custodian) return 1
+  if (custodian.device === 'mac-m4pro') return 0
+  return r.parts!.some((p) => p.device === 'mx95-pro') ? 3 : 2
 }

@@ -1,0 +1,6 @@
+go version go1.24.13 linux/arm64
+total 38860
+-rwxr-xr-x 1 root root 10219311 Oct  3 16:59 bgv_n2_t2
+-rwxr-xr-x 1 root root 10219311 Oct  3 16:59 bgv_n3_t2
+-rwxr-xr-x 1 root root 10048760 Oct  3 16:50 int_psi
+-rwxr-xr-x 1 root root  9299241 Oct  3 16:50 thresh_eval_key_gen

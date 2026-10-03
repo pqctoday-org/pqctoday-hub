@@ -1,0 +1,210 @@
+name: Deep links (nightly)
+
+# The deep-link spec (e2e/deeplinks.local.spec.ts, 71 tests) against the
+# PRODUCTION build served by `vite preview`: every shared-link kind opens its
+# item on desktop and on phones, for first-time and returning visitors, and
+# the Share control inside each item overlay copies the clean item link.
+# It lives in the `local` Playwright project, so neither PR CI nor the
+# nightly full suite (`chromium` project) runs it; until this workflow it ran
+# only by hand before a release (owner decision 2026-10-03: nightly against
+# the preview build, report-only).
+#
+# REPORT-ONLY. Not a required check, and deliberately separate from
+# e2e-nightly.yml: a red run here opens its own issue, "Nightly deep links are
+# red", and does NOT trigger the "nightly E2E is red" merge rule in GATES.md.
+# It never pushes, merges, deploys or writes to the repository — `contents:
+# read` only; the notify job may only open/update/close that one issue.
+on:
+  schedule:
+    - cron: '30 7 * * *' # 07:30 UTC daily, after e2e-nightly's 07:00 start
+  workflow_dispatch: {}
+
+concurrency:
+  group: deeplinks-nightly
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deeplinks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: Deep-link spec against the preview build
+        # playwright.config.ts serves `vite preview` (not the dev server) when
+        # E2E_SERVER is unset, and uses CI retries/workers under CI=true.
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-results-deeplinks.json
+        run: >-
+          npx playwright test --project=local e2e/deeplinks.local.spec.ts
+          --reporter=list,html,json
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-deeplinks-nightly
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload JSON results (for the notify job)
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-json-deeplinks
+          path: playwright-results-deeplinks.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  notify:
+    # ONE issue titled "Nightly deep links are red": opened (or updated with a
+    # fresh comment) when the spec fails, closed when it is green again.
+    needs: deeplinks
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+      actions: read # download the job's artifact
+    steps:
+      - name: Download JSON results
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: playwright-json-deeplinks
+          path: results
+          merge-multiple: true
+
+      - name: Open, update or close the "Nightly deep links are red" issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RESULT: ${{ needs.deeplinks.result }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const TITLE = 'Nightly deep links are red';
+            const result = process.env.RESULT; // success | failure | cancelled | skipped
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+
+            // Playwright JSON: suites[] (nested) → specs[] { title, tests[] { status } };
+            // status 'unexpected' = failed, 'flaky' = passed on retry.
+            const failing = [];
+            const flaky = [];
+            let haveJson = false;
+            const walk = (suite, trail) => {
+              const here = suite.title && !suite.title.endsWith('.ts') ? [...trail, suite.title] : trail;
+              for (const spec of suite.specs ?? []) {
+                const name = [...here, spec.title].join(' › ');
+                const statuses = (spec.tests ?? []).map((t) => t.status);
+                if (statuses.includes('unexpected')) failing.push(name);
+                else if (statuses.includes('flaky')) flaky.push(name);
+              }
+              for (const child of suite.suites ?? []) walk(child, here);
+            };
+            if (fs.existsSync('results')) {
+              for (const f of fs.readdirSync('results').filter((n) => n.endsWith('.json'))) {
+                try {
+                  const report = JSON.parse(fs.readFileSync(path.join('results', f), 'utf8'));
+                  haveJson = true;
+                  for (const s of report.suites ?? []) walk(s, []);
+                } catch (e) {
+                  core.warning(`could not parse ${f}: ${e.message}`);
+                }
+              }
+            }
+
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const issue = open.find((i) => !i.pull_request && i.title === TITLE);
+
+            if (result === 'success') {
+              if (issue) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `Green again on ${today}: ${runUrl}\n\nClosing.`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed',
+                  state_reason: 'completed',
+                });
+              }
+              return;
+            }
+
+            const lines = [`**Run:** ${runUrl} — result \`${result}\` (${today})`, ''];
+            if (failing.length) {
+              lines.push(`**Failing tests (${failing.length}):**`);
+              for (const n of failing.sort()) lines.push(`- ${n}`);
+            } else {
+              lines.push(
+                haveJson
+                  ? '_No failing test in the JSON report — the run failed outside a test (install, build, timeout). Open the run._'
+                  : '_The job produced no JSON report (aborted or timed out). Open the run._'
+              );
+            }
+            if (flaky.length) {
+              lines.push('', `<details><summary>Flaky (${flaky.length}, passed on retry)</summary>\n`);
+              for (const n of flaky.sort()) lines.push(`- ${n}`);
+              lines.push('\n</details>');
+            }
+            lines.push(
+              '',
+              'The Playwright HTML report is attached to the run as `playwright-report-deeplinks-nightly`.',
+              'Reproduce locally: `npm run build`, then `npx playwright test --project=local e2e/deeplinks.local.spec.ts` (see GATES.md).'
+            );
+            const section = lines.join('\n');
+            const intro =
+              'The nightly deep-link spec (.github/workflows/deeplinks-nightly.yml) is failing: some shared links no longer open their item. Report-only — this does not block merges. Kept up to date by the workflow and closed on the next green run.';
+
+            if (issue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `${intro}\n\n### Latest red run\n\n${section}`,
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Still red on ${today}.\n\n${section}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: TITLE,
+                body: `${intro}\n\n### Latest red run\n\n${section}`,
+              });
+            }

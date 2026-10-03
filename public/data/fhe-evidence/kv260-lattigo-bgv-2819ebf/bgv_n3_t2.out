@@ -1,0 +1,82 @@
+{
+ "checks": [
+  {
+   "id": "L1",
+   "pass": true,
+   "detail": "active parties [1 2] of 3: add exact=true, mult exact=true, rotate exact=true"
+  },
+  {
+   "id": "L2",
+   "pass": true,
+   "detail": "other active set [2 3]: add exact=true"
+  },
+  {
+   "id": "L3",
+   "pass": true,
+   "detail": "active set [1 2] with the last share missing reproduces the plaintext=false"
+  },
+  {
+   "id": "L4",
+   "pass": true,
+   "detail": "refresh by [1 2]: level 1 -\u003e 5 (max 5), decrypts exactly=true"
+  },
+  {
+   "id": "L5",
+   "pass": true,
+   "detail": "serialized sizes in bytes: see sizes"
+  },
+  {
+   "id": "L6",
+   "pass": true,
+   "detail": "LogN=14 LogQP=438.0 levels=6 T=65537 slots=16384; flooding sigma=2^30"
+  }
+ ],
+ "failures": 0,
+ "lattigo": "v6.2.0",
+ "params": {
+  "T": 65537,
+  "logN": 14,
+  "logP": [
+   55,
+   55
+  ],
+  "logQ": [
+   56,
+   55,
+   55,
+   54,
+   54,
+   54
+  ],
+  "logQP": 438,
+  "noiseFlooding": "DiscreteGaussian{Sigma: 2^30, Bound: 6*2^30}"
+ },
+ "parties": 3,
+ "sizes": {
+  "fresh_ciphertext": 1573262,
+  "galois_key_share": 3146040,
+  "joint_galois_key_one_rotation": 6292016,
+  "joint_public_key": 2097320,
+  "joint_relinearization_key": 6292000,
+  "key_switch_share": 1573262,
+  "public_key_share": 1048656,
+  "refresh_share": 1048933,
+  "relin_share_round1": 6292000,
+  "relin_share_round2": 3146032,
+  "shamir_secret_share": 1048656
+ },
+ "spike": "lattigo-threshold-bgv",
+ "threshold": 2,
+ "timing_ms": {
+  "add_ms": 2.095,
+  "encrypt_ms": 169.688,
+  "galois_key_ms": 590.065,
+  "mul_relin_ms": 193.612,
+  "public_key_ms": 200.9,
+  "refresh_ms": 251.075,
+  "relinearization_key_ms": 1415.772,
+  "rotate_ms": 182.789,
+  "shamir_resharing_ms": 138.82,
+  "threshold_decrypt_ms": 352.991
+ }
+}

@@ -48,7 +48,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      "Thales's Luna T7 module certificate #5450 (29 Jul 2026) does list ML-KEM and ML-DSA as approved; check which module certificate your appliance and firmware map to. Firmware-bound cert; upgrade requires re-validation path.",
+      "Thales's Luna T7 module (NIST CMVP Certificate #5450, 29 Jul 2026) does list ML-KEM and ML-DSA as approved; check which module certificate your appliance and firmware map to. Firmware-bound cert; upgrade requires re-validation path.",
   },
   {
     id: 'entrust-nshield-5',
@@ -66,7 +66,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'SLH-DSA coverage distinguishes nShield 5 from Luna 7. CodeSafe apps for PQC workloads. CMVP cert #5329 covers the 5s form factor; another nShield 5s entry is on the Modules in Process list (Review, 30 Jul 2026), which is not evidence of the outcome. Verify 5c cert status separately at csrc.nist.gov.',
+      'SLH-DSA coverage distinguishes nShield 5 from Luna 7. CodeSafe apps for PQC workloads. CMVP cert #5329 covers the 5s form factor; another nShield 5s entry is on the NIST CMVP Modules In Process (MIP) List (Review, 30 Jul 2026), which is not evidence of the outcome. Verify 5c cert status separately at csrc.nist.gov.',
   },
   {
     id: 'utimaco-cp5',
@@ -84,7 +84,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      "No Se-Series entry is on the CMVP Modules-in-Process list (checked 2026-09-24). Utimaco's newer u.trust Anchor holds FIPS 140-3 L3 certificate #5223 (1 Apr 2026) with no PQC algorithm approved, and a 'u.trust Anchor CSe' entry is on the MIP list (Comment Resolution - Lab), which is not evidence of the outcome. ESV: E108 Utimaco Entropy Source. Non-FIPS path usable today with customer risk-acceptance.",
+      "No Se-Series entry is on the CMVP Modules-in-Process list (checked 2026-09-24). Utimaco's newer u.trust Anchor holds a FIPS 140-3 L3 certificate (NIST CMVP Certificate #5223, 1 Apr 2026) with no PQC algorithm approved, and a 'u.trust Anchor CSe' entry is on the MIP list (Comment Resolution - Lab), which is not evidence of the outcome. ESV: E108 Utimaco Entropy Source. Non-FIPS path usable today with customer risk-acceptance.",
   },
   {
     id: 'crypto4a-qxhsm',
@@ -120,7 +120,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary. ESV: E232/E233 Fortanix DRNG RDSEED entropy sources (14 Mar 2025).',
+      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary. NIST ESV Certificate E232, with E233 (Fortanix DRNG RDSEED entropy sources, 14 Mar 2025).',
   },
   {
     id: 'yubihsm2',
