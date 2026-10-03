@@ -24065,6 +24065,40 @@
       "superseded_file": "_superseded-10012026/migrate-proofs/NetApp-CryptoMod-e6d3dedc-3.html",
       "identity": "SKIPPED",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "whatsapp",
+      "refId": "whatsapp",
+      "file": "whatsapp-b24ff95f.pdf",
+      "sizeBytes": 1879555,
+      "content_type": "application/pdf",
+      "url": "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf",
+      "sha256": "4cc7bf38d91abf7fefd1957fc9259f63fcc8aaa2d79c97d2bed3d11948e3a386",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-03T21:32:43.816732+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-10-03T21:32:41.789212+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "row's proof_url now names this document"
+    },
+    {
+      "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "refId": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "file": "azure-dedicated-hsm-marvell-liquidsecurity-94989fc6.html",
+      "sizeBytes": 144384,
+      "content_type": "text/html",
+      "url": "https://thalesdocs.com/gphsm/luna/7/docs/network/Content/CRN/Luna/firmware/7-9-2.htm",
+      "sha256": "0c2ce2ce1bb144feae3d0f0d07da738dbd5195a12799808f4970966005b32c7d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-03T21:32:44.572146+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-10-03T21:32:44.391491+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "row's proof_url now names this document"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
