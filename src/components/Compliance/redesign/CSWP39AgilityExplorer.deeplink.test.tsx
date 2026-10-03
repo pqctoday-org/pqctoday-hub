@@ -2,7 +2,7 @@
 //
 // Deep-link PR 2 (2026-09-29): `?cswpview=`, `?step=`, `?mtier=`, `?dossier=`.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { CSWP39AgilityExplorer } from './CSWP39AgilityExplorer'
@@ -102,5 +102,34 @@ describe('CSWP39AgilityExplorer URL state', () => {
       'aria-selected',
       'true'
     )
+  })
+})
+
+describe('CSWP39AgilityExplorer — "Frameworks tagged for this step"', () => {
+  it('opens the framework drawer by id instead of filtering one pillar by label', () => {
+    // Those rows span every pillar; the old jump (tab=compliance, lq=<label>)
+    // landed on an empty table for standards and certification bodies.
+    const onOpenFramework = vi.fn()
+    const onNavigateToFramework = vi.fn()
+    render(
+      <MemoryRouter>
+        <CSWP39AgilityExplorer
+          params={{}}
+          onParamsChange={vi.fn()}
+          onOpenFramework={onOpenFramework}
+          onNavigateToFramework={onNavigateToFramework}
+        />
+      </MemoryRouter>
+    )
+    const heading = screen.getByRole('heading', {
+      level: 4,
+      name: /Frameworks tagged for this step/,
+    })
+    const list = heading.nextElementSibling as HTMLElement
+    const first = within(list).getAllByRole('button')[0]
+    fireEvent.click(first)
+    expect(onOpenFramework).toHaveBeenCalledTimes(1)
+    expect(onOpenFramework.mock.calls[0][0]).toMatch(/\S/)
+    expect(onNavigateToFramework).not.toHaveBeenCalled()
   })
 })

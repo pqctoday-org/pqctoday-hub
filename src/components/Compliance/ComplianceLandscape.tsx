@@ -49,10 +49,22 @@ import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
 import { conceptIdForFramework, deadlinePhasesFor } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
-import { resolveTimelineRef } from '@/utils/timelineResolver'
+import { resolveTimelineRef, type ResolvedTimelineRef } from '@/utils/timelineResolver'
+import { eventLinkKey, timelineEventPageUrl } from '@/data/timelineData'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 import { useTrustTierFilter } from '@/components/common/TrustTierFilter'
+
+/**
+ * Where a `country:org` timeline chip points: the event itself when the ref
+ * resolves to exactly one (so the link opens it), else that country's
+ * timeline (several events — no single one to pick), else /timeline.
+ */
+function timelineRefHref(resolved: ResolvedTimelineRef): string {
+  if (!resolved.country) return '/timeline'
+  const only = resolved.events.length === 1 ? resolved.events[0] : null
+  return timelineEventPageUrl(resolved.country, only ? eventLinkKey(only) : null)
+}
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -733,10 +745,7 @@ function FrameworkCard({
           {fw.timelineRefs.length > 0 &&
             (() => {
               const first = resolveTimelineRef(fw.timelineRefs[0])
-              const country = first.country
-              const href = country
-                ? `/timeline?country=${encodeURIComponent(country)}`
-                : '/timeline'
+              const href = timelineRefHref(first)
               const label =
                 first.events.length > 0
                   ? `${first.country} — ${first.org}: ${first.events.length} event${first.events.length > 1 ? 's' : ''} (${first.earliestYear}-${first.latestYear})`
@@ -899,7 +908,12 @@ function FrameworkCard({
                               key={`${e.title}-${e.startYear}`}
                               className="text-[10px] text-muted-foreground"
                             >
-                              <span className="font-medium text-foreground/80">{e.title}</span>
+                              <Link
+                                to={timelineEventPageUrl(resolved.country, eventLinkKey(e))}
+                                className="font-medium text-foreground/80 underline-offset-2 hover:text-accent hover:underline"
+                              >
+                                {e.title}
+                              </Link>
                               <span className="ml-1">
                                 ({e.startYear}
                                 {e.endYear !== e.startYear ? `–${e.endYear}` : ''})
@@ -1051,9 +1065,7 @@ function FrameworkTableRow({
           {fw.timelineRefs.length > 0 &&
             (() => {
               const first = resolveTimelineRef(fw.timelineRefs[0])
-              const href = first.country
-                ? `/timeline?country=${encodeURIComponent(first.country)}`
-                : '/timeline'
+              const href = timelineRefHref(first)
               const title =
                 first.events.length > 0
                   ? `${first.country} — ${first.org}: ${first.events.length} event${first.events.length > 1 ? 's' : ''} (${first.earliestYear}-${first.latestYear})`

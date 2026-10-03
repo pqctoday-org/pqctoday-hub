@@ -61,7 +61,7 @@ const EXCLUSION_LABELS: Record<ThreatExclusion, string> = {
   criticality: 'cleared the criticality filter',
   class: 'cleared the threat-class filter',
   q: 'cleared the search',
-  mine: 'turned off “My threats only”',
+  mine: 'turned off “My threats only” for this visit',
   tier: 'cleared the trust-tier filter',
   lens: 'cleared the protocol lens',
 }

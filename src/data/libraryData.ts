@@ -713,10 +713,33 @@ export const REFERENCE_ID_ALIASES: Record<string, string> = {
   'NIST-CSWP-39': 'NIST CSWP 39',
 }
 
-/** Resolve a `?ref=` value to a live library item, tolerating known reference_id renames. */
+/** `FIPS-203`, `fips_203` and `FIPS 203` all key to `fips203`. */
+const separatorInsensitiveKey = (ref: string): string => ref.toLowerCase().replace(/[\s\-_.]+/g, '')
+
+let _refsBySeparatorInsensitiveKey: Map<string, LibraryItem[]> | null = null
+function refsBySeparatorInsensitiveKey(): Map<string, LibraryItem[]> {
+  if (_refsBySeparatorInsensitiveKey) return _refsBySeparatorInsensitiveKey
+  const map = new Map<string, LibraryItem[]>()
+  for (const item of libraryData) {
+    const key = separatorInsensitiveKey(item.referenceId)
+    map.set(key, [...(map.get(key) ?? []), item])
+  }
+  _refsBySeparatorInsensitiveKey = map
+  return map
+}
+
+/**
+ * Resolve a `?ref=` value to a live library item, tolerating known reference_id
+ * renames and, as a last resort, separator/case variants (`FIPS-203` for
+ * `FIPS 203` — the form hand-written links and the Assistant tend to produce).
+ * The fallback only answers when exactly one document matches.
+ */
 export function findLibraryItemByRef(ref: string): LibraryItem | undefined {
   const resolved = REFERENCE_ID_ALIASES[ref] ?? ref
-  return libraryData.find((item) => item.referenceId === resolved)
+  const exact = libraryData.find((item) => item.referenceId === resolved)
+  if (exact) return exact
+  const loose = refsBySeparatorInsensitiveKey().get(separatorInsensitiveKey(resolved))
+  return loose?.length === 1 ? loose[0] : undefined
 }
 
 /**

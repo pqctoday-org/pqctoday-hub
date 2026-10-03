@@ -13,7 +13,7 @@ import {
   ExternalLink,
   Package,
 } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { rowsToCsv } from '@/services/export/csvExport'
@@ -22,6 +22,7 @@ import { softwareData } from '@/data/migrateData'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { CountryData } from '@/data/timelineData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { migrateProductHref } from '@/utils/migrateLinks'
 
 import { JURISDICTIONS, type JurisdictionConfig } from '../data/jurisdictions'
 
@@ -161,6 +162,24 @@ function detectConflicts(
   return conflicts
 }
 
+/** Above this many ids the ?productIds= URL gets unwieldy; fall back to the catalog. */
+const MAX_LINKED_PRODUCT_IDS = 40
+
+/**
+ * Where "Browse Migrate Catalog" goes for a framework's matched products: the
+ * one product (?product=), the exact set (?productIds=, which the workbench
+ * filters by exact id and spreads across domains with a notice), or — for a
+ * very large set — the bare catalog.
+ */
+function migrateHrefForProducts(products: SoftwareItem[]): string {
+  const ids = [...new Set(products.map((p) => p.productId).filter(Boolean))]
+  if (ids.length === 1) return migrateProductHref(ids[0])
+  if (ids.length > 1 && ids.length <= MAX_LINKED_PRODUCT_IDS) {
+    return `/migrate?productIds=${ids.map(encodeURIComponent).join(',')}`
+  }
+  return '/migrate'
+}
+
 function ProductPreviewCard({ product }: { product: SoftwareItem }) {
   const support = product.pqcSupport.toLowerCase()
   const isFullPqc = support.startsWith('yes')
@@ -173,9 +192,19 @@ function ProductPreviewCard({ product }: { product: SoftwareItem }) {
   return (
     <div className="p-3 rounded-lg border border-border bg-background/50 space-y-1.5">
       <div className="flex items-start justify-between gap-2">
-        <span className="text-sm font-medium text-foreground line-clamp-1">
-          {product.softwareName}
-        </span>
+        {product.productId ? (
+          <Link
+            to={migrateProductHref(product.productId)}
+            className="text-sm font-medium text-foreground line-clamp-1 hover:text-primary hover:underline"
+            title={`Open ${product.softwareName} in the Migrate catalog`}
+          >
+            {product.softwareName}
+          </Link>
+        ) : (
+          <span className="text-sm font-medium text-foreground line-clamp-1">
+            {product.softwareName}
+          </span>
+        )}
         <div className="flex items-center gap-1 shrink-0">
           {isFullPqc && (
             <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success/15 text-status-success font-medium">
@@ -659,7 +688,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                                       size="sm"
                                       onClick={(e) => {
                                         e.stopPropagation()
-                                        navigate('/migrate')
+                                        navigate(migrateHrefForProducts(products))
                                       }}
                                     >
                                       <ExternalLink size={12} className="mr-1" />

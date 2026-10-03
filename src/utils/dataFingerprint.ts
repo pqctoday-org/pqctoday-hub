@@ -179,7 +179,8 @@ function getLeadersSummary(): DataSourceSummary {
       id: i.name,
       label: i.name,
       status: i.status as 'New' | 'Updated',
-      deepLink: `/leaders?leader=${encodeURIComponent(i.name)}`,
+      // Stable leader_id (survives renames/honorific edits); name only as a fallback.
+      deepLink: `/leaders?leader=${encodeURIComponent(i.leaderId || i.name)}`,
       description: i.bio ? (i.bio.length > 100 ? i.bio.slice(0, 97) + '...' : i.bio) : undefined,
       organization: i.organizations?.[0] || undefined,
       tags: [i.type, i.category].filter(Boolean),

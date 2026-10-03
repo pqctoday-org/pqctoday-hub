@@ -112,7 +112,7 @@ const SectionHeader: React.FC<{
   <Button
     variant="ghost"
     onClick={() => onToggle(sectionKey)}
-    className="w-full flex items-center justify-between p-4 pb-0 text-left"
+    className="h-auto whitespace-normal w-full flex items-center justify-between p-4 pb-0 text-left"
     aria-expanded={expanded}
   >
     <div className="flex items-center gap-2">

@@ -3,17 +3,15 @@
  * ProtocolMatrixEmbed (C5 — vertical slice) — renders the Algorithms page's
  * "Protocol Support" tab (PQCProtocolMatrix) inside the simulation.
  *
- * PQCProtocolMatrix owns all its filter/view state and only READS `?highlight=`
- * on mount for the auto-scroll — that part renders cleanly inside the app's
- * existing Router with no isolation needed. NOTE: PQCProtocolMatrix's protocol
- * detail modal DOES write `?protocol=<id>` via setSearchParams when opened/closed
- * (pushes a history entry on open, replaces on close) — this was true when this
- * comment was first written to say otherwise; not yet re-verified inside the
- * Simulation embed's own navigation/history handling.
+ * Rendered with `embedded`: on /algorithms the matrix mirrors its view/filter/
+ * sort state (?matrixView/matrixQ/matrixStatus/matrixAvailability/matrixSort)
+ * and the open protocol detail (?protocol=<id>) to the URL; embedded, all of
+ * that stays LOCAL, so the simulation's own URL is never written (nor read —
+ * a stray ?protocol on /simulation can't open a modal). Same contract as the
+ * Timeline Gantt's `embedded` flag.
  * It must NOT wrap itself in a <Router>, since the app already has one (React
  * Router forbids nesting: "You cannot render a <Router> inside another
- * <Router>"). In `/simulation` the `highlight` param simply isn't present, so
- * the auto-scroll no-ops.
+ * <Router>").
  *
  * Per the C5-a decision, Protocol Support completes as a "reviewed" reference-mark
  * (visited-on-open), wired through the existing `reference` completion path.
@@ -27,7 +25,7 @@ import { PQCProtocolMatrix } from '@/components/Algorithms/PQCProtocolMatrix'
 export function ProtocolMatrixEmbed() {
   return (
     <div className="min-h-0 flex-1 overflow-auto p-4">
-      <PQCProtocolMatrix />
+      <PQCProtocolMatrix embedded />
     </div>
   )
 }

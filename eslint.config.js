@@ -342,6 +342,10 @@ export default defineConfig([
                 '!@/components/Algorithms',
                 '@/components/Algorithms/*',
                 '!@/components/Algorithms/libraryRef',
+                // protocolMatrixState.ts — pure matrix filter/sort/URL-param
+                // helpers (no JSX), shared so a ?matrixStatus/matrixSort/…
+                // link selects the same rows on the phone as on desktop.
+                '!@/components/Algorithms/protocolMatrixState',
                 // Glossary.tsx / UserManualPanel.tsx (common) — same category
                 // as RoleHomeView: self-contained isOpen/onClose content
                 // panels already responsive (w-full with a max-w cap), reused

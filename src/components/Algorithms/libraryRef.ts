@@ -23,7 +23,7 @@ function normalizeRefKey(id: string): string {
 // too much for the normalizer (different vendor/version naming). Each target is
 // verified to exist in the loaded Library.
 const SPEC_ALIASES: Record<string, string> = {
-  'PKCS11-v3.2-OS': 'PKCS11-V32-OASIS',
+  'PKCS11-v3.2-OS': 'PKCS11-V32-OS-OASIS',
   // No KMIP 3.0 entry exists in the Library — only KMIP 2.1 (2021, pre-PQC).
   // Deliberately NOT aliased to KMIP-V2-1-OASIS: that would present a
   // pre-quantum spec as if it were the cited v3.0 CSD01. Falls through to the

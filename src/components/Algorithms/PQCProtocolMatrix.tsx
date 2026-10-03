@@ -51,6 +51,20 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { libraryHref } from './libraryRef'
+import {
+  matrixSortParam,
+  parseMatrixAvailabilityParam,
+  parseMatrixSortParam,
+  parseMatrixStatusParam,
+  passesAvailabilityFilter,
+  passesStatusFilter,
+  rowMaturity,
+  rowMaturityMax,
+  sortProtocolRows,
+  type AvailabilityFilter,
+  type SortDirection,
+  type SortKey,
+} from './protocolMatrixState'
 
 // Resolve the canonical destination for a matrix PlaygroundTool cell.
 // Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
@@ -62,61 +76,6 @@ const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
 function resolveToolLink(tool: PlaygroundTool): string {
   return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
 }
-type SortKey = 'matrix' | 'name' | 'maturity' | 'oss' | 'commercial' | 'deployments'
-type SortDirection = 'asc' | 'desc'
-type AvailabilityFilter =
-  | 'all'
-  | 'has-oss'
-  | 'has-commercial'
-  | 'has-playground'
-  | 'has-deployment'
-  | 'no-oss'
-  | 'no-commercial'
-  | 'no-deployment'
-
-const DIMENSION_MATURITY: Record<DimensionStatusValue, number> = {
-  rfc: 4,
-  draft: 3,
-  experimental: 2,
-  none: 1,
-  na: 0,
-}
-
-function rowDimensionValues(row: ProtocolMatrixRow): DimensionStatusValue[] {
-  return [
-    row.dimensions.pureKem.value,
-    row.dimensions.hybridKem.value,
-    row.dimensions.pureSig.value,
-    row.dimensions.hybridSig.value,
-  ]
-}
-
-function rowMaturity(row: ProtocolMatrixRow): number {
-  return (
-    DIMENSION_MATURITY[row.dimensions.pureKem.value] +
-    DIMENSION_MATURITY[row.dimensions.hybridKem.value] +
-    DIMENSION_MATURITY[row.dimensions.pureSig.value] +
-    DIMENSION_MATURITY[row.dimensions.hybridSig.value]
-  )
-}
-
-/** Max possible maturity score for this row — 4 points per dimension that
- *  actually applies (`na` dimensions don't count against the row). Prevents
- *  signature-only or KEM-only protocols (DNSSEC, Signal PQXDH, PKCS#11) from
- *  reading as structurally immature purely for having fewer applicable
- *  dimensions than a full 4-dimension protocol like TLS 1.3. */
-function rowMaturityMax(row: ProtocolMatrixRow): number {
-  return rowDimensionValues(row).filter((v) => v !== 'na').length * 4
-}
-
-/** Normalized 0..1 maturity ratio — 0 when no dimension applies at all. Use
- *  this (not the raw score) for sorting and percentage-bar width so rows with
- *  different applicable-dimension counts compare fairly. */
-function rowMaturityRatio(row: ProtocolMatrixRow): number {
-  const max = rowMaturityMax(row)
-  return max === 0 ? 0 : rowMaturity(row) / max
-}
-
 type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
@@ -759,41 +718,38 @@ const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
 /** Deprecated migration-source rows (WS12) — hidden unless explicitly shown. */
 const HISTORICAL_COUNT = PROTOCOL_MATRIX.filter((r) => r.historical).length
 
-const VALID_STATUS_VALUES: DimensionStatusValue[] = ['rfc', 'draft', 'experimental', 'none', 'na']
-const VALID_AVAILABILITY_FILTERS: AvailabilityFilter[] = [
-  'all',
-  'has-oss',
-  'has-commercial',
-  'has-playground',
-  'has-deployment',
-  'no-oss',
-  'no-commercial',
-  'no-deployment',
-]
-const VALID_SORT_KEYS: SortKey[] = [
-  'matrix',
-  'name',
-  'maturity',
-  'oss',
-  'commercial',
-  'deployments',
-]
+/** The matrix* view/filter/sort params — any of them pins `tab=support`. */
+const MATRIX_STATE_PARAMS = [
+  'matrixView',
+  'matrixQ',
+  'matrixStatus',
+  'matrixAvailability',
+  'matrixSort',
+] as const
 
-/** Serializes sort state to `?matrixSort=key:direction`; omitted at the default (matrix:asc). */
-function matrixSortParam(key: SortKey, direction: SortDirection): string | null {
-  if (key === 'matrix' && direction === 'asc') return null
-  return `${key}:${direction}`
+const NO_PARAMS = new URLSearchParams()
+
+export interface PQCProtocolMatrixProps {
+  /**
+   * Rendered inside /simulation (ProtocolMatrixEmbed). View/filter/sort state
+   * and the open protocol detail stay LOCAL — nothing is read from or written
+   * to the host page's URL (same contract as SimpleGanttChart's `embedded`).
+   */
+  embedded?: boolean
 }
 
-function parseMatrixSortParam(raw: string | null): { key: SortKey; direction: SortDirection } {
-  const [rawKey, rawDir] = (raw ?? '').split(':')
-  const key = VALID_SORT_KEYS.includes(rawKey as SortKey) ? (rawKey as SortKey) : 'matrix'
-  const direction: SortDirection = rawDir === 'desc' ? 'desc' : 'asc'
-  return { key, direction }
-}
-
-export function PQCProtocolMatrix() {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps = {}) {
+  const [realSearchParams, realSetSearchParams] = useSearchParams()
+  // Embedded: read an empty param set and drop every write, so the matrix
+  // never seeds from — or leaks matrix*/protocol into — /simulation's URL.
+  const searchParams = embedded ? NO_PARAMS : realSearchParams
+  const setSearchParams = useCallback<typeof realSetSearchParams>(
+    (nextInit, navOpts) => {
+      if (embedded) return
+      realSetSearchParams(nextInit, navOpts)
+    },
+    [embedded, realSetSearchParams]
+  )
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const personaGranularity = granularityForPersona(selectedPersona)
   // User-side override; null means "follow persona default". Researcher / no
@@ -811,27 +767,41 @@ export function PQCProtocolMatrix() {
     searchParams.get('matrixView') === 'detailed' ? 'detailed' : 'heatmap'
   )
   const [searchText, setSearchText] = useState(() => searchParams.get('matrixQ') ?? '')
-  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>(() => {
-    const raw = searchParams.get('matrixStatus')
-    if (!raw) return []
-    return raw
-      .split(',')
-      .filter((s): s is DimensionStatusValue =>
-        VALID_STATUS_VALUES.includes(s as DimensionStatusValue)
-      )
-  })
-  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(() => {
-    const raw = searchParams.get('matrixAvailability')
-    return raw && VALID_AVAILABILITY_FILTERS.includes(raw as AvailabilityFilter)
-      ? (raw as AvailabilityFilter)
-      : 'all'
-  })
+  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>(() =>
+    parseMatrixStatusParam(searchParams.get('matrixStatus'))
+  )
+  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(() =>
+    parseMatrixAvailabilityParam(searchParams.get('matrixAvailability'))
+  )
   const [sortKey, setSortKey] = useState<SortKey>(
     () => parseMatrixSortParam(searchParams.get('matrixSort')).key
   )
   const [sortDirection, setSortDirection] = useState<SortDirection>(
     () => parseMatrixSortParam(searchParams.get('matrixSort')).direction
   )
+
+  // Re-sync view/filter/sort when the URL changes under a mounted matrix — a
+  // second deep link followed while already on /algorithms (in-app link,
+  // chat answer, Back/Forward) used to do nothing because the state above is
+  // only seeded once. Keyed on the raw param strings, so the user's own
+  // clicks — which write the same value they set — are a no-op here.
+  const rawMatrixView = searchParams.get('matrixView')
+  const rawMatrixQ = searchParams.get('matrixQ')
+  const rawMatrixStatus = searchParams.get('matrixStatus')
+  const rawMatrixAvailability = searchParams.get('matrixAvailability')
+  const rawMatrixSort = searchParams.get('matrixSort')
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- URL→state sync */
+    setViewMode(rawMatrixView === 'detailed' ? 'detailed' : 'heatmap')
+    setSearchText(rawMatrixQ ?? '')
+    const nextStatus = parseMatrixStatusParam(rawMatrixStatus)
+    setStatusFilter((prev) => (prev.join(',') === nextStatus.join(',') ? prev : nextStatus))
+    setAvailabilityFilter(parseMatrixAvailabilityParam(rawMatrixAvailability))
+    const sort = parseMatrixSortParam(rawMatrixSort)
+    setSortKey(sort.key)
+    setSortDirection(sort.direction)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [rawMatrixView, rawMatrixQ, rawMatrixStatus, rawMatrixAvailability, rawMatrixSort])
   const [showStageHelp, setShowStageHelp] = useState(false)
   // ?protocol=<id> preselects that row's detail modal (powers the
   // "Related: Protocol Matrix" breadcrumb from sandbox scenarios). Resolved
@@ -868,6 +838,12 @@ export function PQCProtocolMatrix() {
           for (const [key, value] of Object.entries(updates)) {
             if (value === null || value === '') next.delete(key)
             else next.set(key, value)
+          }
+          // A share carrying matrix state must land the recipient on this
+          // tab even when Protocol Support is only the sharer's persona
+          // default (and so absent from the URL).
+          if (!next.has('tab') && MATRIX_STATE_PARAMS.some((k) => next.has(k))) {
+            next.set('tab', 'support')
           }
           return next
         },
@@ -962,10 +938,12 @@ export function PQCProtocolMatrix() {
   // Reconcile the open modal with ?protocol= on back/forward / external nav.
   const protocolParam = searchParams.get('protocol')
   useEffect(() => {
+    // Embedded: the modal is local state only; there is no URL to follow.
+    if (embedded) return
     const row = protocolParam ? (PROTOCOL_MATRIX.find((r) => r.id === protocolParam) ?? null) : null
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
     setSelectedProtocol((prev) => (prev?.id === row?.id ? prev : row))
-  }, [protocolParam])
+  }, [protocolParam, embedded])
 
   // ?protocol=<id> that matches no row (retired, renamed or mistyped) — say so
   // instead of silently opening nothing. Dismissing strips the dead param.
@@ -1012,42 +990,11 @@ export function PQCProtocolMatrix() {
       ) {
         return false
       }
-      if (statusFilter.length > 0) {
-        const rowValues = rowDimensionValues(row)
-        if (!statusFilter.some((s) => rowValues.includes(s))) return false
-      }
-      if (availabilityFilter === 'has-oss' && row.ossLibraries.length === 0) return false
-      if (availabilityFilter === 'no-oss' && row.ossLibraries.length > 0) return false
-      if (availabilityFilter === 'has-commercial' && row.commercialLibraries.length === 0)
-        return false
-      if (availabilityFilter === 'no-commercial' && row.commercialLibraries.length > 0) return false
-      if (availabilityFilter === 'has-playground' && row.playgrounds.length === 0) return false
-      if (availabilityFilter === 'has-deployment' && (row.liveDeployments?.length ?? 0) === 0)
-        return false
-      if (availabilityFilter === 'no-deployment' && (row.liveDeployments?.length ?? 0) > 0)
-        return false
+      if (!passesStatusFilter(row, statusFilter)) return false
+      if (!passesAvailabilityFilter(row, availabilityFilter)) return false
       return true
     })
-
-    if (sortKey === 'matrix') return filtered
-
-    const dir = sortDirection === 'asc' ? 1 : -1
-    return [...filtered].sort((a, b) => {
-      switch (sortKey) {
-        case 'name':
-          return a.name.localeCompare(b.name) * dir
-        case 'maturity':
-          return (rowMaturityRatio(a) - rowMaturityRatio(b)) * dir
-        case 'oss':
-          return (a.ossLibraries.length - b.ossLibraries.length) * dir
-        case 'commercial':
-          return (a.commercialLibraries.length - b.commercialLibraries.length) * dir
-        case 'deployments':
-          return ((a.liveDeployments?.length ?? 0) - (b.liveDeployments?.length ?? 0)) * dir
-        default:
-          return 0
-      }
-    })
+    return sortProtocolRows(filtered, sortKey, sortDirection)
   }, [searchText, statusFilter, availabilityFilter, sortKey, sortDirection, showHistorical])
 
   const hasActiveFilters =

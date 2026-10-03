@@ -478,14 +478,14 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         {/* Hash family — single-tree only; the XMSS^MT sets offered here are all SHA-256 */}
         <div className={`flex items-center gap-3 ${isMulti ? 'hidden' : ''}`}>
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(['SHA-256', 'SHAKE-128', 'SHAKE256'] as XMSSHash[]).map((h) => (
               <Button
                 variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
                 title={`XMSS parameter sets using ${h}: ${XMSS_PARAM_SET_APPROVAL[h].note}`}
-                className={`flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`h-auto flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   xmssHash === h
                     ? 'bg-secondary/20 text-secondary border border-secondary/50'
                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
@@ -560,7 +560,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         <Button
           variant="ghost"
           onClick={() => setShowAlgoInfo(!showAlgoInfo)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
+          className="h-auto whitespace-normal w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
         >
           <span className="flex items-center gap-2">
             <Info size={14} className="text-secondary" />

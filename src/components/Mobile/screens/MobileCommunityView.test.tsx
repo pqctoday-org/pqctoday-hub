@@ -6,6 +6,7 @@ import { MemoryRouter, useLocation } from 'react-router'
 import { MobileCommunityView } from './MobileCommunityView'
 import { leadersData } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
+import { LEADERS_REGION_COUNTRIES } from '@/components/Leaders/leaderDeepLink'
 
 // Real data throughout — leadersData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural, not hardcoded counts.
@@ -184,6 +185,78 @@ describe('MobileCommunityView', () => {
       renderView('/leaders?leader=Nobody%20Atall')
       expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('Nobody Atall')
       expect(screen.queryByTestId('leader-detail-sheet')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('desktop /leaders filters (?cat, ?region, ?country, ?sector, ?q)', () => {
+    const cardCount = () => screen.queryAllByRole('heading', { level: 2 }).length
+
+    it("?cat selects that chip with desktop's inclusive match, and All clears it", () => {
+      renderView('/leaders?cat=Patent%20Inventor')
+      expect(screen.getByRole('button', { name: 'Patent Inventor' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      )
+      // Inclusive: primary category OR a real patentRefs entry (LeadersGrid semantics).
+      const expected = CURATED.filter(
+        (l) => l.category === 'Patent Inventor' || (l.patentRefs?.length ?? 0) > 0
+      )
+      expect(expected.length).toBeGreaterThan(0)
+      expect(cardCount()).toBe(expected.length)
+      fireEvent.click(screen.getByRole('button', { name: 'All' }))
+      expect(new URLSearchParams(probe.search).get('cat')).toBeNull()
+      expect(cardCount()).toBe(CURATED.length)
+    })
+
+    it('tapping a category chip writes ?cat', () => {
+      renderView()
+      fireEvent.click(screen.getByRole('button', { name: 'Government' }))
+      expect(new URLSearchParams(probe.search).get('cat')).toBe('Government')
+    })
+
+    it('?region and ?sector narrow the list with removable, labelled chips', () => {
+      const sector = CURATED[0].type
+      renderView(`/leaders?region=eu&sector=${encodeURIComponent(sector)}`)
+      const euCountries = new Set(LEADERS_REGION_COUNTRIES.eu)
+      const expected = CURATED.filter((l) => euCountries.has(l.country) && l.type === sector)
+      expect(cardCount()).toBe(expected.length)
+      const chips = screen.getByTestId('leader-link-filters')
+      expect(chips).toHaveTextContent('Region:Europe')
+      expect(chips).toHaveTextContent(`Sector:${sector}`)
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Region filter' }))
+      const sp = new URLSearchParams(probe.search)
+      expect(sp.get('region')).toBeNull()
+      expect(sp.get('sector')).toBe(sector)
+      expect(cardCount()).toBe(CURATED.filter((l) => l.type === sector).length)
+    })
+
+    it('?country wins over ?region, as on desktop', () => {
+      const country = CURATED.find((l) => l.country === 'USA') ? 'USA' : CURATED[0].country
+      renderView(`/leaders?region=apac&country=${encodeURIComponent(country)}`)
+      expect(cardCount()).toBe(CURATED.filter((l) => l.country === country).length)
+    })
+
+    it('?q filters by the lexical search fields and shows a Search chip', () => {
+      const org = CURATED.find((l) => l.organizations.length > 0)!.organizations[0]
+      renderView(`/leaders?q=${encodeURIComponent(org)}`)
+      const q = org.toLowerCase()
+      const expected = CURATED.filter(
+        (l) =>
+          l.name.toLowerCase().includes(q) ||
+          l.title.toLowerCase().includes(q) ||
+          l.organizations.some((o) => o.toLowerCase().includes(q)) ||
+          l.bio.toLowerCase().includes(q) ||
+          l.category.toLowerCase().includes(q)
+      )
+      expect(cardCount()).toBe(expected.length)
+      expect(cardCount()).toBeLessThan(CURATED.length)
+      expect(screen.getByTestId('leader-link-filters')).toHaveTextContent(`Search:${org}`)
+    })
+
+    it("treats desktop's 'All' values as no filter", () => {
+      renderView('/leaders?cat=All&region=All&country=All&sector=All')
+      expect(cardCount()).toBe(CURATED.length)
+      expect(screen.queryByTestId('leader-link-filters')).not.toBeInTheDocument()
     })
   })
 })

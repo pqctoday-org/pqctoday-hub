@@ -204,11 +204,11 @@ export const SigstoreFlow: React.FC = () => {
                 </div>
 
                 {/* Step content */}
-                <div className={`flex-1 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
+                <div className={`flex-1 min-w-0 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
                   <Button
                     variant="ghost"
                     onClick={() => setActiveStep(idx)}
-                    className="text-left w-full"
+                    className="h-auto whitespace-normal flex-col items-start text-left w-full"
                   >
                     <div
                       className={`text-sm font-bold ${

@@ -146,7 +146,7 @@ export const SizeComparison: React.FC = () => {
                   key={mark.exp}
                   onClick={() => cfg.setExponent(mark.exp)}
                   variant="link"
-                  className={`text-[9px] h-auto p-0 text-left transition-colors ${
+                  className={`whitespace-normal text-[9px] h-auto p-0 text-left transition-colors ${
                     cfg.exponent === mark.exp
                       ? 'text-primary font-bold'
                       : 'text-muted-foreground hover:text-foreground'

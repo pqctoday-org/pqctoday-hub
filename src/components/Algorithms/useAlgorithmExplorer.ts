@@ -34,6 +34,32 @@ export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the tran
 const TAB_BOUND_PARAMS = ['mode', 'compare', 'section', 'algo'] as const
 
 /**
+ * Every Algorithms state param. Whenever ANY of these is in the URL, `tab` is
+ * written too — a share carrying only ?family= / ?q= used to omit the tab when
+ * it was the sharer's persona default, so the recipient's filters landed on
+ * THEIR default tab. A superset of TAB_BOUND_PARAMS (kept separate: those are
+ * the params that only mean something on one tab).
+ */
+const TAB_PINNING_PARAMS = [
+  ...TAB_BOUND_PARAMS,
+  'family',
+  'fn',
+  'level',
+  'region',
+  'status',
+  'q',
+  'quickview',
+  'cnsa',
+  'gap',
+  'cmp',
+  'matrixView',
+  'matrixQ',
+  'matrixStatus',
+  'matrixAvailability',
+  'matrixSort',
+] as const
+
+/**
  * A link carrying one of these without `?tab` implies the tab its resource
  * lives on (and the tab is pinned into the URL right after first paint).
  * `?algo` is deliberately absent: it opens a page-level drawer (and, on the
@@ -440,6 +466,27 @@ export function useAlgorithmExplorer(
     return qv === 'nist-picks' || qv === 'fips-validated' || qv === 'none' ? qv : 'nist-picks'
   })
 
+  // Follow ?cnsa / ?gap / ?quickview when the URL changes under a mounted
+  // page (a second link while already on /algorithms), the same way ?mode
+  // re-syncs above. Each handler writes exactly the value it sets, so the
+  // user's own clicks are a no-op here. ?quickview only syncs when PRESENT:
+  // an absent value means "default" on arrival, but ?from_search clears it
+  // while setting 'none', so following its absence would undo that reset.
+  const cnsaParam = searchParams.get('cnsa')
+  const gapParam = searchParams.get('gap')
+  const quickviewParam = searchParams.get('quickview')
+  useEffect(() => {
+    setCnsaLens(cnsaParam === '1')
+    setResearchGapOnly(gapParam === '1')
+    if (
+      quickviewParam === 'nist-picks' ||
+      quickviewParam === 'fips-validated' ||
+      quickviewParam === 'none'
+    ) {
+      setQuickView(quickviewParam)
+    }
+  }, [cnsaParam, gapParam, quickviewParam])
+
   // --- Comparison state (synced to URL) ---
   const [compareKeys, setCompareKeys] = useState<string[]>(() => {
     const raw = searchParams.get('compare')
@@ -460,6 +507,22 @@ export function useAlgorithmExplorer(
       searchParams.get('cmp') !== '0' &&
       (searchParams.get('compare') ?? '').split(',').filter((s) => s.trim()).length >= 2
   )
+
+  // Follow ?compare / ?cmp on same-page navigation (see the cnsa/gap sync
+  // above). Tray clicks write the exact joined list they set, so they are a
+  // no-op here. cmp=1 opens the panel (≥2 algorithms), cmp=0 closes it, and
+  // an absent cmp leaves whatever the reader has open alone.
+  const compareParam = searchParams.get('compare')
+  const cmpParam = searchParams.get('cmp')
+  useEffect(() => {
+    const keys = (compareParam ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    setCompareKeys((prev) => (prev.join(',') === keys.join(',') ? prev : keys))
+    if (cmpParam === '1' && keys.length >= 2) setShowComparisonState(true)
+    else if (cmpParam === '0') setShowComparisonState(false)
+  }, [compareParam, cmpParam])
 
   // Determine the locked type from the first compared algorithm
   const compareType = useMemo<'KEM' | 'Signature' | null>(() => {
@@ -513,7 +576,7 @@ export function useAlgorithmExplorer(
               next.set(key, value)
             }
           }
-          if (!next.has('tab') && TAB_BOUND_PARAMS.some((k) => next.has(k))) {
+          if (!next.has('tab') && TAB_PINNING_PARAMS.some((k) => next.has(k))) {
             next.set('tab', activeTabRef.current)
           }
           return next
@@ -628,9 +691,9 @@ export function useAlgorithmExplorer(
       activeTabRef.current = tab
       // Persist tabs that differ from the persona default; clear the param
       // when the user returns to their default so the URL stays clean —
-      // unless a tab-bound param (mode/compare/section/algo) is set, which
-      // always pins the tab (a recipient's persona default may differ).
-      const pinned = TAB_BOUND_PARAMS.some((k) => searchParams.has(k))
+      // unless any other Algorithms state param is set, which always pins
+      // the tab (a recipient's persona default may differ).
+      const pinned = TAB_PINNING_PARAMS.some((k) => searchParams.has(k))
       updateSearchParams({ tab: tab !== personaDefaults.tab || pinned ? tab : null })
     },
     [updateSearchParams, personaDefaults.tab, searchParams]

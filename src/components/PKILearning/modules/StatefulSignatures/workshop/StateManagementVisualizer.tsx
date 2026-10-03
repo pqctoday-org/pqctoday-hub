@@ -742,7 +742,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         <Button
           variant="ghost"
           onClick={() => setShowAlgoInfo(!showAlgoInfo)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
+          className="h-auto whitespace-normal w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
         >
           <span className="flex items-center gap-2">
             <Info size={14} className="text-primary" />

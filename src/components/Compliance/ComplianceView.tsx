@@ -1085,6 +1085,9 @@ export const ComplianceView = ({
           <div className="mt-0 space-y-4">
             <CSWP39AgilityExplorer
               onNavigateToFramework={handleCswp39Jump}
+              onOpenFramework={(id) => {
+                if (id !== frameworkParam) openFrameworkParam(id)
+              }}
               evref={evref}
               onClearEvref={handleClearEvref}
               params={cswp39Params}

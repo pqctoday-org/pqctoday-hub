@@ -61,6 +61,14 @@ export const FLAG_CODE_MAP: Record<string, string> = {
   'Netherlands/USA': 'nl',
 }
 
+/** Display labels for the `?region=` ids (LeadersGrid's Region dropdown, and the
+ *  phone Community screen's filter chip). */
+export const LEADERS_REGION_LABELS: Record<string, string> = {
+  americas: 'Americas',
+  eu: 'Europe',
+  apac: 'Asia-Pacific',
+}
+
 /** Maps region IDs to the country name values used in the leaders CSV. */
 export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
   americas: [

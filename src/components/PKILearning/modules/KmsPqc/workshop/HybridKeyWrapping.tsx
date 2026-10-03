@@ -244,7 +244,7 @@ export const HybridKeyWrapping: React.FC = () => {
                   variant="ghost"
                   key={mode.id}
                   onClick={() => setSelectedMode(mode.id)}
-                  className={`text-left p-4 rounded-lg border transition-colors ${
+                  className={`h-auto whitespace-normal text-left p-4 rounded-lg border transition-colors ${
                     selectedMode === mode.id
                       ? 'bg-primary/10 border-primary/50'
                       : 'bg-muted/50 border-border hover:border-primary/30'

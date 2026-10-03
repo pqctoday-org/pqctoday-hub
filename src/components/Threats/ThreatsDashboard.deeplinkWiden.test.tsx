@@ -67,7 +67,7 @@ describe('ThreatsDashboard ?id= deep links', () => {
   afterEach(() => {
     vi.restoreAllMocks()
     usePersonaStore.getState().setPersona(null)
-    useBookmarkStore.setState({ showOnlyThreats: false })
+    useBookmarkStore.setState({ showOnlyThreats: false, myThreats: [] })
   })
 
   it('a draft id shows a not-found notice that says it is unpublished', async () => {
@@ -98,14 +98,34 @@ describe('ThreatsDashboard ?id= deep links', () => {
     expect(param('id')).toBeNull()
   })
 
-  it('turns off a saved "My threats only" that hides the threat', async () => {
-    useBookmarkStore.setState({ showOnlyThreats: true, myThreats: [] })
+  // The override is per-visit (same model as Timeline's "My countries only"):
+  // the saved setting in the pqc-bookmarks store is never rewritten by a link.
+  it('turns off a saved "My threats only" for this visit only, keeping the saved setting', async () => {
+    const other = threatsData[1]
+    useBookmarkStore.setState({ showOnlyThreats: true, myThreats: [other.threatId] })
     const t = threatsData[0]
     renderAt(`?id=${t.threatId}`)
     expect(await screen.findByTestId('deeplink-notice-widened')).toHaveTextContent(
-      /My threats only/
+      /My threats only” for this visit/
     )
-    expect(useBookmarkStore.getState().showOnlyThreats).toBe(false)
+    expect(useBookmarkStore.getState().showOnlyThreats).toBe(true)
+    // The page itself shows the filter as off while the link is honoured.
+    expect(screen.getByRole('button', { name: /My \(1\)/ })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
+
+  it('Undo turns "My threats only" back on for the visit', async () => {
+    const other = threatsData[1]
+    useBookmarkStore.setState({ showOnlyThreats: true, myThreats: [other.threatId] })
+    const t = threatsData[0]
+    renderAt(`?id=${t.threatId}`)
+    await screen.findByTestId('deeplink-notice-widened')
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+    await waitFor(() => expect(param('id')).toBeNull())
+    expect(screen.getByRole('button', { name: /My \(1\)/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(useBookmarkStore.getState().showOnlyThreats).toBe(true)
   })
 
   it("adds the threat's industry to the persona-default scope", async () => {

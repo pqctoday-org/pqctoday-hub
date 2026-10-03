@@ -287,7 +287,7 @@ export const BinarySigning: React.FC = () => {
                 setKeyPair(null)
                 setSignatureResult(null)
               }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`h-auto whitespace-normal px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedAlgorithm === alg.name
                   ? 'bg-primary/20 text-primary border border-primary/50'
                   : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'

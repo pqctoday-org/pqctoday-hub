@@ -8,6 +8,7 @@ import { patentsData } from '@/data/patentsData'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { computePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import { PQC_ONLY_LS_KEY } from '@/data/patentsScope'
+import { filterPatents, inferRegion } from '@/data/patentFilters'
 
 // Real data throughout — patentsData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -196,6 +197,64 @@ describe('MobilePatentsView', () => {
       expect(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i)).toHaveValue(
         'lattice'
       )
+    })
+  })
+
+  describe('desktop Explore filters (parity with filterPatents)', () => {
+    const count = () => Number(screen.getByText(/^\d+ patents$/).textContent!.split(' ')[0])
+    const pqc = patentsData.filter(isPqcPatent)
+    const expected = (qs: string) => filterPatents(pqc, new URLSearchParams(qs)).length
+
+    it('?assignee narrows to the same patents desktop shows, with a removable chip', () => {
+      const assignee = pqc[0].assignee
+      const qs = `assignee=${encodeURIComponent(assignee)}`
+      renderView(`/patents?${qs}`)
+      expect(count()).toBe(expected(qs))
+      expect(count()).toBeLessThan(pqc.length)
+      expect(screen.getByTestId('patent-link-filters')).toHaveTextContent(`Assignee:${assignee}`)
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Assignee filter' }))
+      expect(new URLSearchParams(lastSearch).get('assignee')).toBeNull()
+      expect(count()).toBe(pqc.length)
+    })
+
+    it('?region and ?domain combine exactly as on desktop', () => {
+      const region = inferRegion(pqc[0].assignee)
+      const domain = pqc[0].applicationDomain[0]
+      const qs = `region=${encodeURIComponent(region)}&domain=${encodeURIComponent(domain)}`
+      renderView(`/patents?${qs}`)
+      expect(count()).toBe(expected(qs))
+      expect(count()).toBeGreaterThan(0)
+      const chips = screen.getByTestId('patent-link-filters')
+      expect(chips).toHaveTextContent(`Region:${region}`)
+      expect(chips).toHaveTextContent(`Domain:${domain}`)
+    })
+
+    it('?agility selects the matching agility chip; tapping it clears the param', () => {
+      renderView('/patents?agility=hybrid')
+      const hybridCount = pqc.filter((p) => p.cryptoAgilityMode === 'hybrid').length
+      expect(count()).toBe(hybridCount)
+      const chip = screen.getByRole('button', { name: new RegExp(`· ${hybridCount}$`) })
+      expect(chip).toHaveAttribute('aria-pressed', 'true')
+      fireEvent.click(chip)
+      expect(new URLSearchParams(lastSearch).get('agility')).toBeNull()
+      expect(count()).toBe(pqc.length)
+    })
+
+    it('?impact=High presses the High-impact tile; tapping the tile writes ?impact', () => {
+      renderView('/patents?impact=High')
+      const tile = screen.getByText('High migration impact').closest('button')!
+      expect(tile).toHaveAttribute('aria-pressed', 'true')
+      expect(count()).toBe(expected('impact=High'))
+      fireEvent.click(tile)
+      expect(new URLSearchParams(lastSearch).get('impact')).toBeNull()
+      fireEvent.click(tile)
+      expect(new URLSearchParams(lastSearch).get('impact')).toBe('High')
+    })
+
+    it('an impact the tile cannot show (Medium) still filters, as a chip', () => {
+      renderView('/patents?impact=Medium')
+      expect(count()).toBe(expected('impact=Medium'))
+      expect(screen.getByTestId('patent-link-filters')).toHaveTextContent('Impact:Medium')
     })
   })
 })

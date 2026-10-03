@@ -198,7 +198,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                       variant="ghost"
                       key={item.id}
                       type="button"
-                      className={`w-full text-left rounded-lg border p-3 transition-colors ${
+                      className={`h-auto whitespace-normal w-full text-left rounded-lg border p-3 transition-colors ${
                         isChecked
                           ? 'border-status-success/30 bg-status-success/5'
                           : 'border-border bg-muted/20 hover:bg-muted/40'

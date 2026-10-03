@@ -41,6 +41,7 @@ import {
   totalFor,
 } from '@/components/Compliance/requirements/requirementsModel'
 import { CSWP39_STEPS, CSWP39_SOURCE_METADATA } from '@/components/Compliance/cswp39Data'
+import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/redesign/pillarModel'
 import { pillClasses, TONES } from '@/components/Compliance/redesign/tones'
 import { MobileSheet } from '../primitives/Sheet'
@@ -53,6 +54,9 @@ function safeHostname(url: string): string {
     return url
   }
 }
+
+/** Linked-evidence rows listed on the phone before deferring to a laptop. */
+const EVREF_PHONE_LIMIT = 8
 
 type Section = 'obligations' | 'requirements' | 'landscape' | 'records' | 'cswp39'
 
@@ -274,6 +278,16 @@ export function MobileComplianceView({
     () => (selectedRow ? documentsFor(selectedRow.framework, index) : []),
     [selectedRow, index]
   )
+  // The out-of-scope note is informational; dismissing it keeps the pick.
+  const [dismissedReqNoteFor, setDismissedReqNoteFor] = useState<string | null>(null)
+
+  // `?evref=<library ref id>` — desktop filters the CSWP.39 evidence map to
+  // that document's extracted requirements. The phone has no pillar × tier
+  // grid, so it lists the same rows (capped) and says the map is on a laptop.
+  const evrefRequirements = useMemo(
+    () => (evrefParam ? (maturityByRefId.get(evrefParam) ?? []) : []),
+    [evrefParam]
+  )
 
   const emphasisSet = useMemo(
     () =>
@@ -339,7 +353,7 @@ export function MobileComplianceView({
         />
       )}
 
-      {isEmpty && (section === 'obligations' || section === 'requirements') && (
+      {isEmpty && (section === 'obligations' || (section === 'requirements' && !selectedRow)) && (
         <div className="glass-panel p-4 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-[11px] text-muted-foreground">
@@ -424,31 +438,46 @@ export function MobileComplianceView({
         />
       )}
 
-      {section === 'requirements' && !isEmpty && (
+      {section === 'requirements' &&
+        reqfwStatus === 'out-of-scope' &&
+        selectedRow &&
+        dismissedReqNoteFor !== reqfwParam && (
+          <DeepLinkNotice
+            kind="widened"
+            message={`${selectedRow.framework.label} is not among the instruments for your current country and sector — it is shown because the link named it.`}
+            onDismiss={() => setDismissedReqNoteFor(reqfwParam)}
+          />
+        )}
+
+      {/* A linked framework (`?reqfw=`) is shown even with an empty profile or
+          outside the reader's scope — same as desktop RequirementsTab. */}
+      {section === 'requirements' && (!isEmpty || selectedRow) && (
         <div className="flex flex-col gap-3">
           {!selectedRow ? (
             <p className="text-[12.5px] text-muted-foreground">Nothing in scope yet.</p>
           ) : (
             <>
-              <div className="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
-                {rows.map((r) => (
-                  <Button
-                    key={r.framework.id}
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setSectionParams('requirements', { reqfw: r.framework.id })}
-                    aria-pressed={selectedRow?.framework.id === r.framework.id}
-                    className={cn(
-                      'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
-                      selectedRow?.framework.id === r.framework.id
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border bg-card text-foreground'
-                    )}
-                  >
-                    {r.framework.label}
-                  </Button>
-                ))}
-              </div>
+              {rows.length > 0 && (
+                <div className="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
+                  {rows.map((r) => (
+                    <Button
+                      key={r.framework.id}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setSectionParams('requirements', { reqfw: r.framework.id })}
+                      aria-pressed={selectedRow?.framework.id === r.framework.id}
+                      className={cn(
+                        'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
+                        selectedRow?.framework.id === r.framework.id
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border bg-card text-foreground'
+                      )}
+                    >
+                      {r.framework.label}
+                    </Button>
+                  ))}
+                </div>
+              )}
 
               {selectedRow && (
                 <div className="glass-panel p-3.5">
@@ -567,6 +596,67 @@ export function MobileComplianceView({
             </div>
           ))}
         </div>
+      )}
+
+      {section === 'cswp39' && evrefParam && evrefRequirements.length === 0 && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No CSWP.39 evidence is extracted for the document “${evrefParam}” — it may not be in the corpus yet.`}
+          onDismiss={() => setSectionParams('cswp39', { evref: null })}
+        />
+      )}
+
+      {section === 'cswp39' && evrefRequirements.length > 0 && (
+        <section
+          aria-label="Linked evidence"
+          className="glass-panel mb-3 flex flex-col gap-2 p-3.5"
+        >
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                Linked evidence
+              </p>
+              <h2 className="text-[13px] font-bold text-foreground">
+                {evrefRequirements[0].sourceName}
+              </h2>
+              <p className="text-[11px] text-muted-foreground">
+                <span className="font-mono">{evrefParam}</span> · {evrefRequirements.length}{' '}
+                extracted requirement{evrefRequirements.length === 1 ? '' : 's'}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSectionParams('cswp39', { evref: null })}
+              className="h-7 shrink-0 px-2 text-xs"
+            >
+              Close
+            </Button>
+          </div>
+          <ul className="flex flex-col gap-1.5">
+            {evrefRequirements.slice(0, EVREF_PHONE_LIMIT).map((r) => (
+              <li
+                key={`${r.pillar}:${r.maturityLevel}:${r.requirement}`}
+                className="rounded-lg border border-border bg-card p-2.5"
+              >
+                <p className="text-sim-chip font-bold uppercase text-muted-foreground">
+                  {r.pillar} · tier {r.maturityLevel}
+                </p>
+                <p className="mt-0.5 text-[11px] leading-relaxed text-foreground">
+                  {r.requirement}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[10.5px] text-muted-foreground">
+            {evrefRequirements.length > EVREF_PHONE_LIMIT
+              ? `${evrefRequirements.length - EVREF_PHONE_LIMIT} more, and `
+              : ''}
+            the pillar × tier evidence map{' '}
+            {evrefRequirements.length > EVREF_PHONE_LIMIT ? 'are' : 'is'} on a larger screen.
+          </p>
+        </section>
       )}
 
       {section === 'cswp39' && (
