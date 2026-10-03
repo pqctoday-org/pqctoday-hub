@@ -154,7 +154,7 @@ describe('ModuleMigrateTab', () => {
   it('includes intro text with link to Migrate Catalog', () => {
     renderTab('tls-basics')
     const catalogLink = screen.getByRole('link', { name: 'Migrate Catalog' })
-    expect(catalogLink).toHaveAttribute('href', '/migrate')
+    expect(catalogLink).toHaveAttribute('href', '/migrate?productIds=testproduct')
   })
 
   it('shows license type badge', () => {

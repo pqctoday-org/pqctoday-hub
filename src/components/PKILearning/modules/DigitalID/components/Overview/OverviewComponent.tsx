@@ -311,7 +311,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
-            to="/compliance"
+            to="/compliance?framework=EIDAS"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <FileText size={16} className="text-primary shrink-0" />
