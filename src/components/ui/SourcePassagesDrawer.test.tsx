@@ -8,6 +8,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { SourcePassagesDrawer } from './SourcePassagesDrawer'
+import { attributionLabel } from './attributionLabel'
 
 function seedCorpus(chunks: RAGChunk[]): void {
   UnifiedSearchService.resetInstance()
@@ -58,8 +59,23 @@ describe('SourcePassagesDrawer', () => {
     seedCorpus([sampleChunk])
     render(<SourcePassagesDrawer chunkId="library-FIPS 203" />)
     expect(screen.getByRole('button', { name: /Source evidence/i })).toBeInTheDocument()
-    expect(screen.getByText(/qwen3\.6:27b/)).toBeInTheDocument()
+    expect(screen.getByText(/automated extraction/)).toBeInTheDocument()
     expect(screen.getByText(/2 passages from FIPS_203\.pdf/)).toBeInTheDocument()
+  })
+
+  it('never shows the extraction tool identifier to readers', () => {
+    seedCorpus([sampleChunk])
+    render(<SourcePassagesDrawer chunkId="library-FIPS 203" />)
+    const toggle = screen.getByRole('button', { name: /Source evidence/i })
+    expect(toggle.textContent).not.toContain(sampleChunk.prov!.was_attributed_to)
+  })
+
+  it('maps attribution values to reader-facing labels', () => {
+    expect(attributionLabel('human')).toBe('human')
+    expect(attributionLabel('Human')).toBe('human')
+    expect(attributionLabel(undefined)).toBe('unknown')
+    expect(attributionLabel('  ')).toBe('unknown')
+    expect(attributionLabel('some-extractor:v2')).toBe('automated extraction')
   })
 
   it('expands and renders passages when toggle is clicked', () => {
