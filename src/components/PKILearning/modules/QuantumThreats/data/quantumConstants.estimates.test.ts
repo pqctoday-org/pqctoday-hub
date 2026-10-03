@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { CRQC_ESTIMATES, getCrqcMigrationDeadlines } from './quantumConstants'
+import { CRQC_ESTIMATES, formatEstimateYears, getCrqcMigrationDeadlines } from './quantumConstants'
 
 describe('CRQC_ESTIMATES (the Threats sources list)', () => {
   it('every source label is unique (the list keys rows by it)', () => {
@@ -39,5 +39,21 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
     expect(nsa.notes).toMatch(/December 2024 FAQ is the newer/)
     expect([nsa.yearLow, nsa.yearHigh]).toEqual([2030, 2033])
     expect(nsa.kind).toBe('migration-deadline')
+  })
+
+  it('ANSSI shows one year, 2030, from its FAQ, and marks the 2022 paper as still standing', () => {
+    const a = CRQC_ESTIMATES.find((e) => e.source.startsWith('ANSSI'))!
+    expect(a.source).toBe('ANSSI France (2022 paper; current FAQ)')
+    expect([a.yearLow, a.yearHigh]).toEqual([2030, 2030])
+    expect(a.notes).toMatch(/2022 position paper .* still stands/)
+    expect(a.notes).toMatch(/not a regulatory obligation today/)
+    expect(a.kind).toBe('migration-deadline')
+  })
+})
+
+describe('formatEstimateYears', () => {
+  it('prints a range, or a single year when both ends are equal', () => {
+    expect(formatEstimateYears({ yearLow: 2030, yearHigh: 2035 })).toBe('2030–2035')
+    expect(formatEstimateYears({ yearLow: 2030, yearHigh: 2030 })).toBe('2030')
   })
 })
