@@ -31,6 +31,8 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.146.0] - 2026-10-03
 
+Links from the Assistant, search and shared URLs now open the item they name, and the Confidential Computing FHE content gets small accuracy fixes.
+
 ### Fixed
 
 - **Assistant and search links to patents open the patent** [view:/patents] [persona:researcher] [persona:architect]: 1,133 patent links in the PQC Assistant and site search pointed at patents the Patents page no longer lists and opened a "not found" notice; the search index now only links patents the page shows, and every link it carries is checked against the live data before it ships.
@@ -44,6 +46,7 @@ first time (don't ship dev-speak and reformat later):
 - **More links open the exact item** [view:/compliance] [view:/timeline] [view:/report] [view:/leaders] [view:/migrate] [persona:grc] [persona:cert-engineer] [persona:architect]: "Frameworks tagged for this step" in CSWP.39 opens that framework; Compliance Endorse/Flag issues link the certificate record; report threat IDs open the threat; Timeline cards and Compliance landscape entries open the event; a merged Community profile forwards from its old link; the About page's standards shelf shows the NIST standards.
 - **Your saved settings survive a shared link** [view:/threats] [persona:grc] [persona:executive]: when a link has to switch off "My threats only" to show a threat, it does so for that visit only.
 - **The Migrate catalog filter is shareable** [view:/migrate] [persona:architect] [persona:ops]: the Replace tab's search text and filters stay in the address, so they survive a reload and can be shared.
+- **FHE + HSM Flows: corrected TFHE client-key size and a named source** [view:/learn/confidential-computing] [persona:researcher] [persona:developer]: the key-size panel now shows the TFHE client key at about 24 KB as TFHE-rs stores it (it said 3 KB), the Kreyvium transciphering cost note names its source paper (IACR ePrint 2023/980, WAHC 2023), and the Confidential Computing module's estimated time is now 90 minutes to account for the FHE section and workshop step.
 
 ## [4.145.0] - 2026-10-02
 

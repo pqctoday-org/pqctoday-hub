@@ -55,13 +55,17 @@ describe('FHE + HSM per-step cost data', () => {
     }
   )
 
+  // Flows that back up the FHE seed must do it through the vendor replication capability
+  // (live clone + offline backup); the others have no backup step at all.
+  const BACKUP_FLOWS = new Set(['single-hsm', 'tfhe-single-hsm'])
   it.each(FHE_HSM_FLOWS.map((f) => [f.id, f] as const))(
     '%s never wraps the seed: backups go through the vendor replication capability',
-    (_id, flow) => {
-      for (const st of flow.steps) {
-        expect(st.api ?? '').not.toMatch(/C_WrapKey/)
-        if (st.link === 'wrap') expect(st.api).toMatch(/vendor replication capability/)
-      }
+    (id, flow) => {
+      const wraps = flow.steps.filter((st) => st.link === 'wrap')
+      if (BACKUP_FLOWS.has(id)) expect(wraps.length).toBe(2)
+      else expect(wraps).toHaveLength(0)
+      for (const st of flow.steps) expect(st.api ?? '').not.toMatch(/C_WrapKey/)
+      for (const st of wraps) expect(st.api).toMatch(/vendor replication capability/)
     }
   )
 
@@ -91,4 +95,18 @@ describe('FHE + HSM per-step cost data', () => {
       }
     }
   )
+
+  // Every KEY_SIZES entry's bytes must agree with its human-readable size string (within 2×
+  // of the stated range), so a bits-vs-bytes slip cannot hide behind a plausible label.
+  it.each(KEY_SIZES.map((k) => [k.id, k] as const))('%s bytes match its size string', (_id, k) => {
+    const UNIT: Record<string, number> = { B: 1, KB: 1e3, MB: 1e6, GB: 1e9 }
+    const m = k.size.match(/([\d.,]+)(?:\s*[–-]\s*([\d.,]+))?\s*(B|KB|MB|GB)\b/)
+    expect(m, `unparseable size "${k.size}"`).not.toBeNull()
+    const [, lo, hi, unit] = m as RegExpMatchArray
+    const u = UNIT[unit]
+    const low = parseFloat(lo.replace(/,/g, '')) * u
+    const high = parseFloat((hi ?? lo).replace(/,/g, '')) * u
+    expect(k.bytes).toBeGreaterThanOrEqual(low / 2)
+    expect(k.bytes).toBeLessThanOrEqual(high * 2)
+  })
 })
