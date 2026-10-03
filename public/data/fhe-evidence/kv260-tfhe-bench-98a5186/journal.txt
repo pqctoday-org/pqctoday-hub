@@ -1,3 +1,3 @@
-2026-10-03T14:47:41+00:00 pqc-kv260 systemd[1]: Started /tmp/fhe/kv260-tfhe-bench server-bench /tmp/fhe --reps 3.
-2026-10-03T15:07:09+00:00 pqc-kv260 systemd[1]: fhe-bench-144730.service: Deactivated successfully.
-2026-10-03T15:07:09+00:00 pqc-kv260 systemd[1]: fhe-bench-144730.service: Consumed 1h 4min 55.459s CPU time, 203.0M memory peak, 0B memory swap peak.
+2026-10-03T14:47:41+00:00 kv260-board systemd[1]: Started /tmp/fhe/kv260-tfhe-bench server-bench /tmp/fhe --reps 3.
+2026-10-03T15:07:09+00:00 kv260-board systemd[1]: fhe-bench-144730.service: Deactivated successfully.
+2026-10-03T15:07:09+00:00 kv260-board systemd[1]: fhe-bench-144730.service: Consumed 1h 4min 55.459s CPU time, 203.0M memory peak, 0B memory swap peak.

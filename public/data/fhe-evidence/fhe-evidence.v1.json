@@ -156,7 +156,7 @@
         },
         {
           "name": "journal.txt",
-          "sha256": "9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128",
+          "sha256": "8ba5f9dcd71c677fd159ef1f436bf9f7d41edb70292eb91cd9e5783e0293bdc3",
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/journal.txt"
         },
         {
@@ -190,7 +190,8 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/CLAIMS-CHECK.md"
         }
       ],
-      "measuredAt": "2026-10-03T14:47:41Z"
+      "measuredAt": "2026-10-03T14:47:41Z",
+      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in kv260-tfhe-bench-98a5186 (original sha256 9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128)."
     },
     {
       "id": "tfhe-custody-mac-token-kv260-da4ea47",
@@ -253,7 +254,7 @@
         }
       ],
       "claimLabel": "custodian: software token on Mac (MX95 pending); FHE server on KV260 (untrusted compute)",
-      "notes": "Run twice. The re-run (15:48–15:51 UTC) used a custodian binary built from a clean tree at pqctoday-hsm a0a60b69 (sha256 5e1eb3a5…fe9c) with the same token, and board code 2772e7a (same board code as 7a578fd; only the run script changed). Both runs: 3 of 3 tampered server keys refused, the genuine key accepted, 6 of 6 permitted results released and correct, the FheUint64 result refused by policy. Operation medians agree within a few percent except u8 add (1.23 s, then 1.56 s). In both runs the owner did not verify the token's signer attestation, and files moved over scp, with no network service.",
+      "notes": "Run twice. The re-run (15:48–15:51 UTC) used a custodian binary built from a clean tree at pqctoday-hsm a0a60b69 (sha256 5e1eb3a5…fe9c) with the same token, and board code 2772e7a (same board code as 7a578fd; only the run script changed). Both runs: 3 of 3 tampered server keys refused, the genuine key accepted, 6 of 6 permitted results released and correct, the FheUint64 result refused by policy. Operation medians agree within a few percent except u8 add (1.23 s, then 1.56 s). In both runs the owner did not verify the token's signer attestation, and files moved over scp, with no network service. Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in kv260-tfhe-custody-r2-da4ea47 (original sha256 a39e73f94105fd29298b9903a6fc88ad51a24f08148257d6f5b72a2002033d28); journal.txt in kv260-tfhe-custody-deab8d7 (original sha256 8b04a740d1b66358188a41256baa5ead97b51717dcb2f00145ace9bed48f5aa7).",
       "library": {
         "name": "TFHE-rs",
         "version": "1.8.1",
@@ -308,7 +309,7 @@
         },
         {
           "name": "run2/journal.txt",
-          "sha256": "a39e73f94105fd29298b9903a6fc88ad51a24f08148257d6f5b72a2002033d28",
+          "sha256": "ec6810d968037b158ed5d6a59060b0df151174dd8e4920c589e9d58de797ef9a",
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/journal.txt"
         },
         {
@@ -363,7 +364,7 @@
         },
         {
           "name": "run1/journal.txt",
-          "sha256": "8b04a740d1b66358188a41256baa5ead97b51717dcb2f00145ace9bed48f5aa7",
+          "sha256": "1ef66e2962e57f82df06c030bfc33ee6e54d5c848257066f4401ffece703ba45",
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/journal.txt"
         },
         {
@@ -469,12 +470,12 @@
         },
         {
           "name": "journal-n3.txt",
-          "sha256": "489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99",
+          "sha256": "75f4c69bca6ac99eb8e67b3e0db483f90076421e8e518b7d4ce1c720d9d0db68",
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/journal-n3.txt"
         },
         {
           "name": "journal-n5.txt",
-          "sha256": "f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791",
+          "sha256": "3d9e39574132d03320d19d46f5c2428c2800109081002d976fa744f3fdb65918",
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/journal-n5.txt"
         },
         {
@@ -493,7 +494,8 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/sha256-on-board.txt"
         }
       ],
-      "measuredAt": "2026-10-03T15:43:55Z"
+      "measuredAt": "2026-10-03T15:43:55Z",
+      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal-n3.txt in kv260-openfhe-bench-adab554 (original sha256 489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99); journal-n5.txt in kv260-openfhe-bench-adab554 (original sha256 f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791)."
     }
   ]
 }

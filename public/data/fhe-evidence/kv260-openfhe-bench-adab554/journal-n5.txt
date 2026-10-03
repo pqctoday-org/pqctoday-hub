@@ -1,3 +1,3 @@
-2026-10-03T15:44:02+00:00 pqc-kv260 systemd[1]: Started /usr/bin/python3 /tmp/fhe-ofhe/maxrss.py /tmp/fhe-ofhe/openfhe-threshold-bfv-spike 5.
-2026-10-03T15:44:07+00:00 pqc-kv260 systemd[1]: fhe-ofhe-n5-154402.service: Deactivated successfully.
-2026-10-03T15:44:07+00:00 pqc-kv260 systemd[1]: fhe-ofhe-n5-154402.service: Consumed 10.435s CPU time, 14.9M memory peak, 0B memory swap peak.
+2026-10-03T15:44:02+00:00 kv260-board systemd[1]: Started /usr/bin/python3 /tmp/fhe-ofhe/maxrss.py /tmp/fhe-ofhe/openfhe-threshold-bfv-spike 5.
+2026-10-03T15:44:07+00:00 kv260-board systemd[1]: fhe-ofhe-n5-154402.service: Deactivated successfully.
+2026-10-03T15:44:07+00:00 kv260-board systemd[1]: fhe-ofhe-n5-154402.service: Consumed 10.435s CPU time, 14.9M memory peak, 0B memory swap peak.
