@@ -294,11 +294,19 @@ describe('migrate link params (deep-link PR 2)', () => {
     expect(link({ domain: 'bogus' }).notice).toMatch(/bogus/)
   })
 
-  it('?domain= alone selects the domain without forcing a tab', () => {
+  it('?domain= alone lands on Replace, not on the tab the reader last used', () => {
     const r = link({ domain: 'kms' })
     expect(r.domain).toBe('kms')
-    expect(r.tab).toBeUndefined()
+    expect(r.tab).toBe('replace')
     expect(r.notice).toBeNull()
+  })
+
+  it('?domain= riding along with an explicit tab keeps that tab', () => {
+    // The page writes ?domain= while the reader is on Plan/Roadmaps too; a
+    // reload of such a URL must not bounce them to Replace.
+    const r = link({ domain: 'kms', tab: 'plan' })
+    expect(r.domain).toBe('kms')
+    expect(r.tab).toBeUndefined()
   })
 
   it('?industry= is ignored gracefully but still lands on Replace', () => {

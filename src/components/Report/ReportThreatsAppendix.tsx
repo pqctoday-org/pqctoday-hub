@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
+import { Link } from 'react-router'
 import { ExternalLink, EyeOff } from 'lucide-react'
 import type { ThreatData } from '../../data/threatsData'
 import { useThreatsData } from '../../hooks/useThreatsData'
@@ -78,20 +79,28 @@ const ThreatRow: React.FC<{
         )}
       </td>
       <td className="py-2.5 pr-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
-        {threat.sourceUrl ? (
-          <a
-            href={threat.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-primary hover:underline"
-            aria-label={`Source for ${threat.threatId}`}
+        <span className="flex items-center gap-1.5">
+          {/* The id opens the threat on /threats (its detail dialog); the
+              icon beside it keeps the external source link. */}
+          <Link
+            to={`/threats?id=${encodeURIComponent(threat.threatId)}`}
+            className="text-primary hover:underline"
+            aria-label={`Open ${threat.threatId} on the Threats page`}
           >
             {threat.threatId}
-            <ExternalLink size={10} />
-          </a>
-        ) : (
-          threat.threatId
-        )}
+          </Link>
+          {threat.sourceUrl && (
+            <a
+              href={threat.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-muted-foreground hover:text-primary"
+              aria-label={`Source for ${threat.threatId}`}
+            >
+              <ExternalLink size={10} />
+            </a>
+          )}
+        </span>
       </td>
       <td className="py-2.5 pr-3">
         <span

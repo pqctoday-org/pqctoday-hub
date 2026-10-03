@@ -433,6 +433,7 @@ export function AlgorithmsView() {
         {highlightNoticeEl}
         <AlgorithmComparison
           highlightAlgorithms={highlightAlgorithms}
+          highlightFromLink={!!searchParams.get('highlight')}
           filteredData={filteredTransitions}
           compareSet={compareSet}
           compareType={compareType}
@@ -724,6 +725,7 @@ export function AlgorithmsView() {
               >
                 <AlgorithmComparison
                   highlightAlgorithms={highlightAlgorithms}
+                  highlightFromLink={!!searchParams.get('highlight')}
                   filteredData={filteredTransitions}
                   compareSet={compareSet}
                   compareType={compareType}

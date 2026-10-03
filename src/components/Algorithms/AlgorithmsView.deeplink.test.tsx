@@ -7,10 +7,12 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 import { AlgorithmsView } from './AlgorithmsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { getAlgorithmDefaults } from '@/data/personaConfig'
 
 const { algo } = vi.hoisted(() => ({
   algo: (name: string, fipsStandard: string, statusTier: string, status = 'Standardized') => ({
@@ -86,11 +88,23 @@ function Probe() {
   return <span data-testid="url-search">{useLocation().search}</span>
 }
 const urlSearch = () => screen.getByTestId('url-search').textContent ?? ''
-const renderAt = (entry: string) =>
+/** An in-app link followed while /algorithms is already mounted. */
+function GoTo({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <Button type="button" onClick={() => navigate(to)}>
+      {`go ${to}`}
+    </Button>
+  )
+}
+const renderAt = (entry: string, links: string[] = []) =>
   render(
     <MemoryRouter initialEntries={[entry]}>
       <AlgorithmsView />
       <Probe />
+      {links.map((to) => (
+        <GoTo key={to} to={to} />
+      ))}
     </MemoryRouter>
   )
 
@@ -161,5 +175,30 @@ describe('AlgorithmsView — deep links', () => {
     expect(
       await screen.findByRole('heading', { name: /three you actually need to know/ })
     ).toBeInTheDocument()
+  })
+
+  it('a filter change on the persona-default tab still pins ?tab (share carries it)', async () => {
+    const defaultTab = getAlgorithmDefaults('developer').tab
+    renderAt('/algorithms')
+    await screen.findByTestId(defaultTab === 'detailed' ? 'detailed-body' : 'transition-body')
+    expect(urlSearch()).not.toContain('tab=')
+    fireEvent.click(screen.getAllByRole('button', { name: /Everything/ })[0])
+    await waitFor(() => expect(urlSearch()).toContain('quickview=none'))
+    expect(urlSearch()).toContain(`tab=${defaultTab}`)
+  })
+
+  it('follows ?quickview and ?cnsa on a second link while already on the page', async () => {
+    const detailed = '/algorithms?tab=detailed'
+    renderAt(`${detailed}&quickview=none`, [
+      `${detailed}&quickview=nist-picks`,
+      `${detailed}&quickview=none&cnsa=1`,
+    ])
+    expect(await screen.findByText('HQC-128')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: `go ${detailed}&quickview=nist-picks` }))
+    await waitFor(() => expect(screen.queryByText('HQC-128')).not.toBeInTheDocument())
+    expect(screen.getByText('ML-KEM-768')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: `go ${detailed}&quickview=none&cnsa=1` }))
+    // CNSA 2.0 admits ML-KEM-1024 only, so the -768 row drops out.
+    await waitFor(() => expect(screen.queryByText('ML-KEM-768')).not.toBeInTheDocument())
   })
 })

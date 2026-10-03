@@ -66,6 +66,13 @@ describe('findLibraryItemByRef', () => {
     expect(findLibraryItemByRef('DOES-NOT-EXIST')).toBeUndefined()
   })
 
+  it('tolerates separator and case variants of a reference_id (FIPS-203 → FIPS 203)', () => {
+    // The Assistant's page guide and a JWT workshop linked ?ref=FIPS-203,
+    // which opened a "not found" notice (deep-link refresh audit, 2026-10-02).
+    expect(findLibraryItemByRef('FIPS-203')?.referenceId).toBe('FIPS 203')
+    expect(findLibraryItemByRef('fips_204')?.referenceId).toBe('FIPS 204')
+  })
+
   it('every alias target that is currently active resolves to a live item', () => {
     // Aliases whose target has itself been deprecated/orphaned in the current
     // CSV snapshot are a separate data-integrity issue (see revisions.jsonl /

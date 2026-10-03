@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { buildForceClusterGraph, type ForceClusterNodeType } from './forceClusterGraph'
+import { leadersData } from './leadersData'
 
 describe('buildForceClusterGraph', () => {
   it('derives a real, non-trivial graph from live hub data', async () => {
@@ -57,5 +58,16 @@ describe('buildForceClusterGraph', () => {
     expect(rels.has('subset_of')).toBe(true) // concept_xwalk
     expect(rels.has('migrating-to')).toBe(true) // algorithms_transitions
     expect(rels.has('sells')).toBe(true) // vendor -> product, via vendor_id
+  })
+
+  it('leader nodes link by stable leader_id, not by display name', async () => {
+    const graph = await buildForceClusterGraph()
+    const ids = new Set(leadersData.map((l) => l.leaderId).filter(Boolean))
+    const leaderNodes = graph.nodes.filter((n) => n.type === 'leader')
+    expect(leaderNodes.length).toBeGreaterThan(0)
+    for (const n of leaderNodes) {
+      const value = new URL(n.href!, 'https://x.test').searchParams.get('leader')
+      expect(ids.has(value!)).toBe(true)
+    }
   })
 })

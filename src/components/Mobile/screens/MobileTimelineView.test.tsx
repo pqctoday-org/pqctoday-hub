@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { MobileTimelineView } from './MobileTimelineView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { timelineData, transformToGanttData } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
+import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 
 // Real data throughout — timelineData is parsed synchronously from a bundled
 // CSV at module load (no fixture needed, matching TimelineView.test.tsx's
@@ -152,6 +154,71 @@ describe('MobileTimelineView', () => {
       renderView(`/timeline?country=${encodeURIComponent(name)}`)
       expect(screen.getByText(`${name} PQC timeline`)).toBeInTheDocument()
       expect(screen.getByText('1 country tracked', { exact: false })).toBeInTheDocument()
+    })
+
+    it('?region= overrides the stored region (same precedence as desktop)', () => {
+      usePersonaStore.getState().setRegion('americas')
+      renderView('/timeline?region=eu')
+      const eu = new Set(REGION_COUNTRIES_MAP.eu)
+      const expected = REAL_GANTT_DATA.filter((d) => eu.has(d.country.countryName))
+      expect(screen.getByText('EU PQC timeline')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          `${expected.length} countr${expected.length === 1 ? 'y' : 'ies'} tracked`,
+          {
+            exact: false,
+          }
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('an unknown ?region= is ignored and the stored region applies', () => {
+      usePersonaStore.getState().setRegion('americas')
+      renderView('/timeline?region=atlantis')
+      expect(screen.getByText('Americas PQC timeline')).toBeInTheDocument()
+    })
+
+    it('?q= narrows the list with the desktop lexical match and can be cleared', async () => {
+      usePersonaStore.getState().setRegion('global')
+      const name = REAL_GANTT_DATA[0].country.countryName
+      const q = name.slice(0, Math.min(5, name.length))
+      const qLc = q.toLowerCase()
+      const expected = REAL_GANTT_DATA.filter(
+        (d) =>
+          d.country.countryName.toLowerCase().includes(qLc) ||
+          d.country.bodies.some((b) => b.name.toLowerCase().includes(qLc))
+      )
+      renderView(`/timeline?q=${encodeURIComponent(q)}`)
+      expect(screen.getByText(/Showing countries matching/)).toHaveTextContent(q)
+      expect(
+        screen.getByText(
+          `${expected.length} countr${expected.length === 1 ? 'y' : 'ies'} tracked`,
+          {
+            exact: false,
+          }
+        )
+      ).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
+      expect(screen.queryByText(/Showing countries matching/)).toBeNull()
+      expect(
+        screen.getByText(`${REAL_GANTT_DATA.length} countries tracked`, { exact: false })
+      ).toBeInTheDocument()
+    })
+
+    it('a ?q= that matches nothing says so', () => {
+      renderView('/timeline?q=zzqqxx-no-match')
+      expect(screen.getByText(/No countries match/)).toBeInTheDocument()
+    })
+
+    it('?event= hidden by ?q= switches to its country and sets the search aside', () => {
+      renderView(
+        `/timeline?q=zzqqxx-no-match&event=${encodeURIComponent(target.eventId ?? target.title)}`
+      )
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(
+        'set aside the search'
+      )
+      expect(screen.getByText(`${target.countryName} PQC timeline`)).toBeInTheDocument()
     })
 
     // The phone screen has no phase/type/deadlines filters, sort, Documents

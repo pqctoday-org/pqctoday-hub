@@ -59,6 +59,9 @@ function jurisdictionStanceChip(stance: JurisdictionStance): string {
 
 interface AlgorithmComparisonProps {
   highlightAlgorithms?: Set<string>
+  /** True when the highlight came from a ?highlight= link (not a role
+   *  default): on a phone, open the full list on that row instead of the wizard. */
+  highlightFromLink?: boolean
   filteredData: AlgorithmTransition[]
   compareSet: Set<string>
   compareType: 'KEM' | 'Signature' | null
@@ -68,6 +71,7 @@ interface AlgorithmComparisonProps {
 
 export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   highlightAlgorithms,
+  highlightFromLink = false,
   filteredData,
   compareSet,
   compareType,
@@ -76,7 +80,16 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 }) => {
   const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
-  const [showFullTable, setShowFullTable] = useState(false)
+  // Phone: the wizard hides every row, so a ?highlight link (search, Learn,
+  // role boards) opens the full list on the highlighted row instead. A new
+  // link arriving while mounted does the same. Role-default highlights
+  // (executive/curious) keep the wizard.
+  const [showFullTable, setShowFullTable] = useState(highlightFromLink)
+  const [prevFromLink, setPrevFromLink] = useState(highlightFromLink)
+  if (highlightFromLink !== prevFromLink) {
+    setPrevFromLink(highlightFromLink)
+    if (highlightFromLink) setShowFullTable(true)
+  }
 
   useEffect(() => {
     loadPQCAlgorithmsData()
@@ -279,6 +292,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                 <MobileAlgorithmList
                   data={sortedData}
                   pqcDetailMap={pqcDetailMap}
+                  highlightAlgorithms={highlightAlgorithms}
                   onBackToWizard={() => setShowFullTable(false)}
                 />
               </>

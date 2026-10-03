@@ -346,7 +346,8 @@ function buildNodes(
           ? `${leader.title} — ${leader.organizations.join(', ')}`
           : leader.title,
       degree: 0,
-      href: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+      // Stable leader_id (survives renames/honorific edits); name only as a fallback.
+      href: `/leaders?leader=${encodeURIComponent(leader.leaderId || leader.name)}`,
     })
   }
 

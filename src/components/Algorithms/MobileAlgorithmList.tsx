@@ -7,16 +7,21 @@ import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 
 interface MobileAlgorithmListProps {
   data: AlgorithmTransition[]
   pqcDetailMap?: Map<string, AlgorithmDetail>
+  /** ?highlight names — matching cards are tinted and carry the same
+   *  data-deeplink-id as the desktop row, so the shared scroll hook finds them. */
+  highlightAlgorithms?: Set<string>
   onBackToWizard?: () => void
 }
 
 export const MobileAlgorithmList = ({
   data,
   pqcDetailMap,
+  highlightAlgorithms,
   onBackToWizard,
 }: MobileAlgorithmListProps) => {
   // Helper to clean mechanism name (remove parens)
@@ -39,10 +44,17 @@ export const MobileAlgorithmList = ({
       {data.map((algo, index) => {
         const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
         const pqcDetail = pqcDetailMap?.get(pqcName.toLowerCase())
+        const isHighlighted =
+          !!highlightAlgorithms &&
+          Array.from(highlightAlgorithms).some((h) => transitionMatchesHighlight(algo, h))
         return (
           <div
             key={`${algo.classical}-${algo.function}-${index}`}
-            className="glass-panel p-4 flex items-center justify-between active:scale-[0.98] transition-transform"
+            data-deeplink-id={transitionRowId(algo)}
+            className={clsx(
+              'glass-panel p-4 flex items-center justify-between active:scale-[0.98] transition-transform',
+              isHighlighted && 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+            )}
           >
             <div className="flex items-center gap-4">
               {/* Icon */}

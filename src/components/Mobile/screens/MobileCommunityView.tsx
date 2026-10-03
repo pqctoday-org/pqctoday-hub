@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { ShieldCheck, Building2, ExternalLink } from 'lucide-react'
+import { ShieldCheck, Building2, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { leadersData, deprecatedLeaderSuccessors, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
-import { leaderForwardedMessage, resolveLeaderParam } from '@/components/Leaders/leaderDeepLink'
+import {
+  filterLeadersByParams,
+  leaderForwardedMessage,
+  LEADERS_REGION_LABELS,
+  resolveLeaderParam,
+} from '@/components/Leaders/leaderDeepLink'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -26,6 +31,18 @@ function humanizeDate(iso: string): string {
   if (Number.isNaN(d.getTime())) return iso
   return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
 }
+
+/** Desktop `/leaders` filters the phone has no control for. They narrow the
+ *  list (same semantics, via leaderDeepLink.filterLeadersByParams) and each
+ *  shows as a removable chip. `cat` is not here: the category chips ARE its
+ *  control. */
+const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string }[] = [
+  { key: 'sector', label: 'Sector' },
+  // eslint-disable-next-line security/detect-object-injection -- region is a filter id
+  { key: 'region', label: 'Region', format: (v) => LEADERS_REGION_LABELS[v] ?? v },
+  { key: 'country', label: 'Country' },
+  { key: 'q', label: 'Search' },
+]
 
 /**
  * Mobile Community (handoff Phase 7 — Reference set, design handoff §21).
@@ -60,7 +77,6 @@ function humanizeDate(iso: string): string {
  * imported stubs are a stated cut, not a hidden filter.
  */
 export function MobileCommunityView() {
-  const [category, setCategory] = useState<string | null>(null)
   // The open profile lives in ?leader=<leader_id> (old name links still resolve),
   // the same param desktop reads, so
   // shared links, Assistant citations and cross-page links open it on a phone
@@ -99,10 +115,37 @@ export function MobileCommunityView() {
     [setSearchParams]
   )
 
+  // The category chips are the phone's control for desktop's ?cat= (same
+  // inclusive leaderMatchesCategory semantics), so they read and write it
+  // (replace — a filter, not a place) and a desktop category link lands here.
+  const catParam = searchParams.get('cat')?.trim()
+  const category = catParam && catParam !== 'All' ? catParam : null
+  const setFilterParam = useCallback(
+    (key: string, value: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (value) next.set(key, value)
+          else next.delete(key)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+  const linkChips = LINK_FILTERS.flatMap(({ key, label, format }) => {
+    const value = searchParams.get(key)?.trim()
+    return value && value !== 'All' ? [{ key, label, text: format ? format(value) : value }] : []
+  })
+  // A ?cat the chip row can't show (not one of the 8 categories) still filters.
+  if (category && !(LEADER_CATEGORIES as readonly string[]).includes(category))
+    linkChips.unshift({ key: 'cat', label: 'Category', text: category })
+
   const curated = useMemo(() => leadersData.filter((l) => l.sourceKind === 'curated'), [])
   const filtered = useMemo(
-    () => (category ? curated.filter((l) => l.category === category) : curated),
-    [curated, category]
+    () => filterLeadersByParams(curated, searchParams),
+    [curated, searchParams]
   )
 
   return (
@@ -131,7 +174,7 @@ export function MobileCommunityView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setCategory(null)}
+          onClick={() => setFilterParam('cat', null)}
           aria-pressed={category === null}
           className={cn(
             'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
@@ -147,7 +190,7 @@ export function MobileCommunityView() {
             type="button"
             variant="ghost"
             key={cat}
-            onClick={() => setCategory((c) => (c === cat ? null : cat))}
+            onClick={() => setFilterParam('cat', category === cat ? null : cat)}
             aria-pressed={category === cat}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
@@ -161,9 +204,36 @@ export function MobileCommunityView() {
         ))}
       </div>
 
+      {linkChips.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-1.5" data-testid="leader-link-filters">
+          {linkChips.map(({ key, label, text }) => (
+            <span
+              key={key}
+              className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]"
+            >
+              <span className="text-muted-foreground">{label}:</span>
+              <span className="truncate font-medium text-foreground">{text}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label={`Remove ${label} filter`}
+                onClick={() => setFilterParam(key, null)}
+                className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-col gap-2.5">
         {filtered.length === 0 && (
-          <p className="text-[12.5px] text-muted-foreground">No one matches this category.</p>
+          <p className="text-[12.5px] text-muted-foreground">
+            {linkChips.length > 0
+              ? 'No one matches these filters.'
+              : 'No one matches this category.'}
+          </p>
         )}
         {filtered.map((leader) => (
           <Button
