@@ -81,7 +81,43 @@
         }
       ],
       "measuredAt": "2026-10-03",
-      "platformLabel": "Apple M4 Pro"
+      "platformLabel": "Apple M4 Pro",
+      "summary": {
+        "headline": "OpenFHE threshold BFV reference run: 3-party and 5-party results exact, and one share short does not decrypt.",
+        "keyNumbers": [
+          {
+            "label": "Parties tested",
+            "value": "3 and 5"
+          },
+          {
+            "label": "Add, multiply and sum, all shares fused",
+            "value": "exact in both runs"
+          },
+          {
+            "label": "One share missing",
+            "value": "does not decrypt"
+          },
+          {
+            "label": "Relinearization keys, 3 parties",
+            "value": "59",
+            "unit": "ms"
+          },
+          {
+            "label": "Multiply with relinearization, 3 parties",
+            "value": "17.7",
+            "unit": "ms"
+          },
+          {
+            "label": "Joint sum keys size",
+            "value": "78,667,237",
+            "unit": "bytes"
+          },
+          {
+            "label": "Checks failed",
+            "value": "0"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-kv260-fhe-server-98a5186",
@@ -191,7 +227,44 @@
         }
       ],
       "measuredAt": "2026-10-03T14:47:41Z",
-      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in kv260-tfhe-bench-98a5186 (original sha256 9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128)."
+      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in kv260-tfhe-bench-98a5186 (original sha256 9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128).",
+      "summary": {
+        "headline": "KV260 as the FHE server: all 27 encrypted results decrypt correctly; a 64-bit multiply takes 3.5 minutes on this small board.",
+        "keyNumbers": [
+          {
+            "label": "Results decrypting correctly",
+            "value": "27 of 27"
+          },
+          {
+            "label": "8-bit add / multiply",
+            "value": "1.51 / 3.86",
+            "unit": "s"
+          },
+          {
+            "label": "64-bit add",
+            "value": "12.66",
+            "unit": "s"
+          },
+          {
+            "label": "64-bit multiply",
+            "value": "210.59",
+            "unit": "s"
+          },
+          {
+            "label": "Server key load and decompress",
+            "value": "133 ms and 1.13 s"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.0",
+            "unit": "MiB"
+          },
+          {
+            "label": "Runs per operation",
+            "value": "3 (median shown)"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-custody-mac-token-kv260-da4ea47",
@@ -393,7 +466,38 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/sha256-results.txt"
         }
       ],
-      "measuredAt": "2026-10-03T15:32:42Z"
+      "measuredAt": "2026-10-03T15:32:42Z",
+      "summary": {
+        "headline": "Mac software token as custodian, KV260 computing: 3 of 3 tampered server keys refused, 6 of 6 permitted results released and correct, in two runs.",
+        "keyNumbers": [
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "Permitted results released and correct",
+            "value": "6 of 6"
+          },
+          {
+            "label": "64-bit result",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Runs",
+            "value": "2, medians agree within a few percent"
+          },
+          {
+            "label": "Compressed server key size",
+            "value": "30,147,061",
+            "unit": "bytes"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.5",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "openfhe-threshold-bfv-kv260-adab554",
@@ -495,7 +599,44 @@
         }
       ],
       "measuredAt": "2026-10-03T15:43:55Z",
-      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal-n3.txt in kv260-openfhe-bench-adab554 (original sha256 489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99); journal-n5.txt in kv260-openfhe-bench-adab554 (original sha256 f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791)."
+      "notes": "Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal-n3.txt in kv260-openfhe-bench-adab554 (original sha256 489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99); journal-n5.txt in kv260-openfhe-bench-adab554 (original sha256 f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791).",
+      "summary": {
+        "headline": "OpenFHE threshold BFV on the KV260: 3-party and 5-party results exact, with every party running on one small board.",
+        "keyNumbers": [
+          {
+            "label": "Add, multiply and sum, all shares fused",
+            "value": "exact (3 and 5 parties)"
+          },
+          {
+            "label": "One share missing",
+            "value": "does not decrypt"
+          },
+          {
+            "label": "Multiply with relinearization, 3 parties",
+            "value": "274",
+            "unit": "ms"
+          },
+          {
+            "label": "Relinearization keys, 3 / 5 parties",
+            "value": "776 / 1,358",
+            "unit": "ms"
+          },
+          {
+            "label": "All partial decryptions, 3 / 5 parties",
+            "value": "60 / 99",
+            "unit": "ms"
+          },
+          {
+            "label": "Memory peak, 3 / 5 parties",
+            "value": "384 / 388",
+            "unit": "MiB"
+          },
+          {
+            "label": "Checks failed",
+            "value": "0"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-custody-mx95-kv260-8848e47",
@@ -658,7 +799,42 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-custodian-kv260-8848e47/sha256-token-export.txt"
         }
       ],
-      "measuredAt": "2026-10-03T17:05:01Z"
+      "measuredAt": "2026-10-03T17:05:01Z",
+      "summary": {
+        "headline": "MX95 software token as custodian (board-local, no KMIP): 7 of 7 results reached the token, 6 released correctly and the 64-bit result was refused by policy.",
+        "keyNumbers": [
+          {
+            "label": "Results reaching the token",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Released correctly",
+            "value": "6 of 6"
+          },
+          {
+            "label": "64-bit result",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "KV260 server-key check",
+            "value": "298",
+            "unit": "ms"
+          },
+          {
+            "label": "Token setup / export",
+            "value": "1 s / about 5 s"
+          },
+          {
+            "label": "Per-result decision, including SSH",
+            "value": "about 0.45",
+            "unit": "s"
+          }
+        ]
+      }
     },
     {
       "id": "lattigo-threshold-bgv-kv260-2819ebf",
@@ -749,7 +925,38 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-lattigo-bgv-2819ebf/sha256-on-board.txt"
         }
       ],
-      "measuredAt": "2026-10-03"
+      "measuredAt": "2026-10-03",
+      "summary": {
+        "headline": "Lattigo threshold BGV on the KV260: all checks pass for 2-of-3 and 2-of-2, and a share missing means no decryption.",
+        "keyNumbers": [
+          {
+            "label": "Configurations tested",
+            "value": "2-of-3 and 2-of-2"
+          },
+          {
+            "label": "Add, multiply and rotate",
+            "value": "exact"
+          },
+          {
+            "label": "One share missing",
+            "value": "does not decrypt"
+          },
+          {
+            "label": "Refresh from level 1 to 5",
+            "value": "still exact"
+          },
+          {
+            "label": "Threshold decrypt, 2-of-3",
+            "value": "353",
+            "unit": "ms"
+          },
+          {
+            "label": "Memory peak, 2-of-3 / 2-of-2",
+            "value": "122 / 95",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-kv260-u8u16-a668b9c",
@@ -870,7 +1077,41 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-u8u16-a668b9c/systemd-unit.txt"
         }
       ],
-      "measuredAt": "2026-10-03T18:15:57Z"
+      "measuredAt": "2026-10-03T18:15:57Z",
+      "summary": {
+        "headline": "KV260 as the FHE server with 8- and 16-bit integers: 18 of 18 results decrypt correctly.",
+        "keyNumbers": [
+          {
+            "label": "Results decrypting correctly",
+            "value": "18 of 18"
+          },
+          {
+            "label": "8-bit add / multiply",
+            "value": "1.35 / 4.09",
+            "unit": "s"
+          },
+          {
+            "label": "16-bit add / multiply",
+            "value": "2.63 / 14.67",
+            "unit": "s"
+          },
+          {
+            "label": "16-bit max / less-than",
+            "value": "4.46 / 1.59",
+            "unit": "s"
+          },
+          {
+            "label": "16-bit ciphertext size",
+            "value": "132,101",
+            "unit": "bytes"
+          },
+          {
+            "label": "Memory peak",
+            "value": "202.7",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-custody-mx95-backup-mx95pro-7d4510e",
@@ -1181,7 +1422,43 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-phase2-boards-6db6e64/trust/src-device.der"
         }
       ],
-      "measuredAt": "2026-10-03T17:27:00Z"
+      "measuredAt": "2026-10-03T17:27:00Z",
+      "summary": {
+        "headline": "MX95 custodian with a backup on the MX95 Pro restored over KMIP: both software tokens made the same 7 decisions on the same results.",
+        "keyNumbers": [
+          {
+            "label": "Results decided by the MX95",
+            "value": "7 of 7 (6 released correctly)"
+          },
+          {
+            "label": "Same decisions by the MX95 Pro backup",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Backup ceremony negative checks refused",
+            "value": "6 of 6"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "KV260 check of both signers",
+            "value": "296",
+            "unit": "ms"
+          },
+          {
+            "label": "64-bit add",
+            "value": "12.78",
+            "unit": "s"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.1",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-custody-mx95pro-failover-7d4510e",
@@ -1340,7 +1617,39 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-phase2-failover-7d4510e/token-decrypt-backup.txt"
         }
       ],
-      "measuredAt": "2026-10-03T17:31:00Z"
+      "measuredAt": "2026-10-03T17:31:00Z",
+      "summary": {
+        "headline": "Failover to the MX95 Pro software token: it made the same 7 decisions as the MX95 on the same results.",
+        "keyNumbers": [
+          {
+            "label": "Results decided by the MX95 Pro",
+            "value": "7 of 7 (6 released correctly)"
+          },
+          {
+            "label": "MX95 on the same results",
+            "value": "same 7 decisions"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "KV260 signer check",
+            "value": "295",
+            "unit": "ms"
+          },
+          {
+            "label": "64-bit add",
+            "value": "12.47",
+            "unit": "s"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.3",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-kv260-fhe-service-04b502c",
@@ -1451,7 +1760,39 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-fhe-service-04b502c/sha256-results.txt"
         }
       ],
-      "measuredAt": "2026-10-03T18:03:00Z"
+      "measuredAt": "2026-10-03T18:03:00Z",
+      "summary": {
+        "headline": "KV260 FHE service over mutual TLS: a 6-step program ran in 23.3 s and all 5 decrypted outputs were correct.",
+        "keyNumbers": [
+          {
+            "label": "Program run on the board",
+            "value": "23.3 s (estimated 27.0 s)"
+          },
+          {
+            "label": "Outputs decrypted correctly",
+            "value": "5 of 5"
+          },
+          {
+            "label": "Tampered server key",
+            "value": "refused (403)"
+          },
+          {
+            "label": "Genuine signed key admitted",
+            "value": "241",
+            "unit": "ms"
+          },
+          {
+            "label": "Server key load and decompress",
+            "value": "1.42",
+            "unit": "s"
+          },
+          {
+            "label": "Memory peak",
+            "value": "279",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-custody-mac-k3-owner-16b5a93",
@@ -1625,7 +1966,37 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-k3-owner-16b5a93/sha256-token-export.txt"
         }
       ],
-      "measuredAt": "2026-10-03T19:12:00Z"
+      "measuredAt": "2026-10-03T19:12:00Z",
+      "summary": {
+        "headline": "Mac software token with the owner checking the key attestation first: the signer is pinned only after a passing check, and 4 of 4 tampered attestations were refused.",
+        "keyNumbers": [
+          {
+            "label": "Attestation tampering refused",
+            "value": "4 of 4"
+          },
+          {
+            "label": "Tampered server keys refused by the KV260",
+            "value": "3 of 3"
+          },
+          {
+            "label": "Results reaching the token",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Released correctly",
+            "value": "6 of 6"
+          },
+          {
+            "label": "64-bit result",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.1",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-kv260-service-mx95-b8857fc",
@@ -1785,7 +2156,44 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-token-export.txt"
         }
       ],
-      "measuredAt": "2026-10-03T22:24:00Z"
+      "measuredAt": "2026-10-03T22:24:00Z",
+      "summary": {
+        "headline": "MX95 custodian with the KV260 as a mutual-TLS service: a 7-step program ran in 42.7 s and the token released 5 of 6 outputs, all correct.",
+        "keyNumbers": [
+          {
+            "label": "Program run on the board",
+            "value": "42.7",
+            "unit": "s"
+          },
+          {
+            "label": "Outputs released correctly",
+            "value": "5 of 6, all correct"
+          },
+          {
+            "label": "64-bit output",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Tampered server key",
+            "value": "refused (403)"
+          },
+          {
+            "label": "Signed key verified",
+            "value": "242",
+            "unit": "ms"
+          },
+          {
+            "label": "Server key load and decompress",
+            "value": "1.30",
+            "unit": "s"
+          },
+          {
+            "label": "Memory peak",
+            "value": "280",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "library": {
@@ -1977,7 +2385,42 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-a1-normal-7d083e7/token-decrypt.txt"
         }
       ],
-      "measuredAt": "2026-10-03T22:00:00Z"
+      "measuredAt": "2026-10-03T22:00:00Z",
+      "summary": {
+        "headline": "Normal run with the MX95 and its MX95 Pro backup, final binaries: the owner checked the attestation and both tokens made the same 7 decisions.",
+        "keyNumbers": [
+          {
+            "label": "Attestation",
+            "value": "passed (MX95 signer)"
+          },
+          {
+            "label": "Results decided by the MX95",
+            "value": "7 of 7 (6 released correctly)"
+          },
+          {
+            "label": "Same decisions by the MX95 Pro backup",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Backup ceremony negative checks refused",
+            "value": "6 of 6"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "KV260 server-key check",
+            "value": "about 296",
+            "unit": "ms"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.1-203.3",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "library": {
@@ -2148,7 +2591,38 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-a2-failover-7d083e7/token-decrypt.txt"
         }
       ],
-      "measuredAt": "2026-10-03T22:04:00Z"
+      "measuredAt": "2026-10-03T22:04:00Z",
+      "summary": {
+        "headline": "Failover to the MX95 Pro, final binaries: the owner checked the Pro's own attestation and it decided 7 of 7 like the MX95.",
+        "keyNumbers": [
+          {
+            "label": "Attestation",
+            "value": "passed (MX95 Pro signer)"
+          },
+          {
+            "label": "Results decided by the MX95 Pro",
+            "value": "7 of 7 (6 released correctly)"
+          },
+          {
+            "label": "Same decisions by the MX95",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          },
+          {
+            "label": "KV260 server-key check",
+            "value": "about 296",
+            "unit": "ms"
+          },
+          {
+            "label": "Memory peak",
+            "value": "203.1-203.3",
+            "unit": "MiB"
+          }
+        ]
+      }
     },
     {
       "library": {
@@ -2620,7 +3094,40 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/w2-restore/ceremony.log"
         }
       ],
-      "measuredAt": "2026-10-03T22:08:00Z"
+      "measuredAt": "2026-10-03T22:08:00Z",
+      "summary": {
+        "headline": "Destroy and restore: after the seed was removed from the MX95 it answered nothing, the Pro still decided 7 of 7, and the restored MX95 decided 7 of 7 again.",
+        "keyNumbers": [
+          {
+            "label": "MX95 after the seed was removed",
+            "value": "all 7 results answered with an error"
+          },
+          {
+            "label": "MX95 Pro on the same results",
+            "value": "7 of 7"
+          },
+          {
+            "label": "Restore over KMIP",
+            "value": "MX95 key count 0 to 1, receipt verified"
+          },
+          {
+            "label": "Clone under a policy without the FHE constraint",
+            "value": "refused (nothing installed)"
+          },
+          {
+            "label": "Restored MX95 on the earlier results",
+            "value": "7 of 7, hashes match"
+          },
+          {
+            "label": "Restored MX95 new export, fresh run",
+            "value": "attested, 7 of 7"
+          },
+          {
+            "label": "Tampered server keys refused",
+            "value": "3 of 3"
+          }
+        ]
+      }
     },
     {
       "id": "tfhe-kv260-service-mx95pro-failover-73de58e",
@@ -2787,7 +3294,38 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256-token-export.txt"
         }
       ],
-      "measuredAt": "2026-10-03T22:35:00Z"
+      "measuredAt": "2026-10-03T22:35:00Z",
+      "summary": {
+        "headline": "Failover with the KV260 as a mutual-TLS service: the MX95 Pro released 5 of 6 outputs, all correct, in a 42.5 s program run.",
+        "keyNumbers": [
+          {
+            "label": "Program run on the board",
+            "value": "42.5",
+            "unit": "s"
+          },
+          {
+            "label": "Outputs released correctly",
+            "value": "5 of 6, all correct"
+          },
+          {
+            "label": "64-bit output",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Tampered server key",
+            "value": "refused (403)"
+          },
+          {
+            "label": "Original MX95 on the same outputs",
+            "value": "same decisions, hashes match"
+          },
+          {
+            "label": "Memory peak",
+            "value": "280",
+            "unit": "MiB"
+          }
+        ]
+      }
     }
   ]
 }
