@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.149.0] - 2026-10-03
+
+FHE key custody now runs across two appliance boards with a backup and a failover, the data owner checks the custodian's attestation before trusting its keys, and the FHE compute service runs on a small Arm board over mutual TLS.
+
+### Added
+
+- **FHE key custody with a backup board** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:ops]: the client key for the encrypted-computation demo is now held in a software token on one i.MX 95 appliance board, with a protected backup on a second board made over KMIP. On the same encrypted inputs both boards made identical decisions: six results released, all correct, and the 64-bit result its policy forbids refused. The KV260 compute board refused tampered and foreign keys before any computation. The same boards also passed a signed administration test over KMIP, accepting only properly signed requests and refusing every forged, replayed or wrong-role one. All of this is an educational test on software tokens, not certified hardware custody.
+- **Failover to the backup board** [view:/learn/confidential-computing] [persona:architect] [persona:ops]: when the backup board takes over and publishes its own signed keys, encrypted computation continues and both boards still make the same decisions.
+- **The data owner checks the custodian's attestation** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: before trusting a custodian's keys, the data owner now verifies its attestation, including the certificate chain, current revocation lists, a check tied to this export, and proof that the signing key was generated in the token and can never leave it. Tampered or mismatched evidence is refused, each time with a reason.
+- **An FHE compute service on a small Arm board** [view:/learn/confidential-computing] [persona:developer] [persona:architect] [persona:ops]: the compute service runs on an AMD Kria KV260 (four Cortex-A53 cores), accepts encrypted inputs over mutually authenticated TLS with a post-quantum hybrid key exchange, computes on them without ever seeing the data, and returns encrypted results. A six-step job over 32- and 8-bit values took 23 s, and every result decrypted correctly.
+
+### Fixed
+
+- **Learn pages and the report link to the exact topic** [view:/learn] [view:/report] [persona:curious] [persona:developer] [persona:architect] [persona:ops]: 23 links in Learn module introductions, the assessment report and workshop pages now open the matching Library filter, compliance framework, timeline event, Migrate category or threat industry instead of the page's start; a Learn link to the G7 financial-sector milestone that pointed at a misspelled event now opens it.
+
+### Data
+
+- **ISO/IEC 28033 in the Library** [view:/library] [persona:researcher] [persona:architect]: the multi-part fully homomorphic encryption standard in development that Confidential Computing cites, listed by name with ISO's catalogue page, since the standard itself is sold.
+
 ## [4.148.0] - 2026-10-03
 
 The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95 appliance board, the Lattigo threshold scenario gets its first board measurements, Library dates cite their NIST sources, and shared links are now checked every night.
