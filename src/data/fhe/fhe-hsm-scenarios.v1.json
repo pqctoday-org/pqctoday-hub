@@ -1,0 +1,825 @@
+{
+  "schema": "fhe-hsm-scenarios.v1",
+  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id.",
+  "scenarios": [
+    {
+      "id": "single-hsm",
+      "label": "CKKS single-HSM custody",
+      "scheme": "CKKS",
+      "baseline": {
+        "implementation": "OpenFHE CKKS (KeyGen, EvalMultKeyGen, EvalRotateKeyGen, EvalBootstrapKeyGen, NOISE_FLOODING_DECRYPT)",
+        "codeUrl": "https://github.com/openfheorg/openfhe-development/tree/v1.6.0",
+        "paper": "Cheon, Kim, Kim, Song: Homomorphic Encryption for Arithmetic of Approximate Numbers (ASIACRYPT 2017); OpenFHE design paper (IACR ePrint 2022/915)",
+        "paperUrl": "https://eprint.iacr.org/2022/915"
+      },
+      "validationTarget": "Reference only: evaluation-key sizes measured with OpenFHE CKKS. The planned engine refuses the evaluation-key export by design.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsm",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "dr",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "generate-fhe-secret",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "KeyGen()"
+        },
+        {
+          "id": "export-evaluation-keys",
+          "from": "hsm",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen"
+        },
+        {
+          "id": "publish-public-key",
+          "from": "hsm",
+          "to": "client",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "KeyGen() → publicKey"
+        },
+        {
+          "id": "owner-encrypts-locally",
+          "from": "client",
+          "to": "client",
+          "phase": "encrypt",
+          "data": "encrypting",
+          "deployment": false,
+          "api": "MakeCKKSPackedPlaintext · Encrypt"
+        },
+        {
+          "id": "upload-ciphertexts",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "compute-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "EvalAdd · EvalMult · EvalRotate · EvalBootstrap"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "owner-requests-decrypt",
+          "from": "client",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "decrypt-under-policy",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "api": "Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT"
+        },
+        {
+          "id": "release-result",
+          "from": "hsm",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "result",
+          "deployment": false
+        },
+        {
+          "id": "live-clone-peer-hsm",
+          "from": "hsm",
+          "to": "dr",
+          "phase": "backup",
+          "data": "keys",
+          "deployment": true,
+          "api": "vendor replication capability: live clone (planned; names fixed in P0B)"
+        },
+        {
+          "id": "offline-backup-restore",
+          "from": "hsm",
+          "to": "dr",
+          "phase": "backup",
+          "data": "keys",
+          "deployment": true,
+          "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
+        }
+      ]
+    },
+    {
+      "id": "tfhe-single-hsm",
+      "label": "TFHE single-HSM custody",
+      "scheme": "TFHE",
+      "baseline": {
+        "implementation": "TFHE-rs high-level API (ClientKey, CompressedServerKey, CompactPublicKey, FheUint)",
+        "codeUrl": "https://github.com/zama-ai/tfhe-rs",
+        "paper": "Chillotti, Gama, Georgieva, Izabachène: TFHE: Fast Fully Homomorphic Encryption over the Torus (Journal of Cryptology, 2020)",
+        "paperUrl": "https://eprint.iacr.org/2018/421"
+      },
+      "validationTarget": "Token-validated: every HSM step through PKCS#11 v3.2 vendor mechanisms in pqctoday-hsm, plus reference-validated with TFHE-rs.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsm",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "dr",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "generate-client-key",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "ClientKey::generate_with_seed(config, Seed)"
+        },
+        {
+          "id": "generate-server-key",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "CompressedServerKey::new(&client_key)"
+        },
+        {
+          "id": "export-server-key",
+          "from": "hsm",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "CompressedServerKey → decompress() on the server"
+        },
+        {
+          "id": "publish-compact-public-key",
+          "from": "hsm",
+          "to": "client",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "CompactPublicKey::new(&client_key)"
+        },
+        {
+          "id": "owner-encrypts-locally",
+          "from": "client",
+          "to": "client",
+          "phase": "encrypt",
+          "data": "encrypting",
+          "deployment": false,
+          "api": "CompactCiphertextList::builder(&public_key)"
+        },
+        {
+          "id": "upload-ciphertexts",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "compute-with-pbs",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "set_server_key · FheUint64 arithmetic and comparisons"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "owner-requests-decrypt",
+          "from": "client",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "decrypt-under-policy",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "api": "FheUint64::decrypt(&client_key)"
+        },
+        {
+          "id": "release-result",
+          "from": "hsm",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "result",
+          "deployment": false
+        },
+        {
+          "id": "live-clone-peer-hsm",
+          "from": "hsm",
+          "to": "dr",
+          "phase": "backup",
+          "data": "keys",
+          "deployment": true,
+          "api": "vendor replication capability: live clone (planned; names fixed in P0B)"
+        },
+        {
+          "id": "offline-backup-restore",
+          "from": "hsm",
+          "to": "dr",
+          "phase": "backup",
+          "data": "keys",
+          "deployment": true,
+          "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
+        }
+      ]
+    },
+    {
+      "id": "openfhe-threshold",
+      "label": "Threshold: OpenFHE BFV (3-of-3)",
+      "scheme": "BFV",
+      "baseline": {
+        "implementation": "OpenFHE threshold FHE, BFV run of src/pke/examples/threshold-fhe.cpp (2 parties), extended to 3 parties as in threshold-fhe-5p.cpp: MultipartyKeyGen, MultiKeySwitchGen, MultiAddEvalKeys, MultiMultEvalKey, MultiAddEvalMultKeys, MultiEvalSumKeyGen, MultipartyDecryptLead / Main / Fusion",
+        "codeUrl": "https://github.com/openfheorg/openfhe-development/blob/v1.6.0/src/pke/examples/threshold-fhe.cpp",
+        "paper": "OpenFHE design paper (IACR ePrint 2022/915), threshold FHE extension",
+        "paperUrl": "https://eprint.iacr.org/2022/915"
+      },
+      "validationTarget": "Reference-validated with OpenFHE BFV. A PKCS#11 path through a Rust BFV backend (fhe.rs multiparty) only if its feasibility and independent-review gates pass.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        },
+        {
+          "id": "hsmA",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "hsmB",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "hsmC",
+          "kind": "hsm",
+          "zone": "party"
+        }
+      ],
+      "steps": [
+        {
+          "id": "party-a-keygen",
+          "from": "hsmA",
+          "to": "hsmA",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "KeyGen()"
+        },
+        {
+          "id": "party-b-multiparty-keygen",
+          "from": "hsmA",
+          "to": "hsmB",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "MultipartyKeyGen(pk₁)"
+        },
+        {
+          "id": "party-c-multiparty-keygen",
+          "from": "hsmB",
+          "to": "hsmC",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "MultipartyKeyGen(pk₁₂)"
+        },
+        {
+          "id": "build-joint-relinearization-key",
+          "from": "hsmA",
+          "to": "hsmC",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "KeySwitchGen · MultiKeySwitchGen · MultiAddEvalKeys · MultiMultEvalKey · MultiAddEvalMultKeys"
+        },
+        {
+          "id": "publish-eval-keys",
+          "from": "hsmC",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "EvalSumKeyGen · MultiEvalSumKeyGen · MultiAddEvalSumKeys"
+        },
+        {
+          "id": "owner-encrypts-locally",
+          "from": "client",
+          "to": "client",
+          "phase": "encrypt",
+          "data": "encrypting",
+          "deployment": false,
+          "api": "Encrypt(jointPublicKey, plaintext)"
+        },
+        {
+          "id": "upload-ciphertexts",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "compute-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "EvalAdd · EvalMult · EvalSum"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "owner-requests-partials",
+          "from": "client",
+          "to": "hsmC",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "party-a-partial-decrypt",
+          "from": "hsmA",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "MultipartyDecryptLead({ct}, s₁)"
+        },
+        {
+          "id": "party-b-partial-decrypt",
+          "from": "hsmB",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "MultipartyDecryptMain({ct}, s₂)"
+        },
+        {
+          "id": "party-c-partial-decrypt",
+          "from": "hsmC",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "MultipartyDecryptMain({ct}, s₃)"
+        },
+        {
+          "id": "owner-fuses-partials",
+          "from": "client",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": false,
+          "api": "MultipartyDecryptFusion({partials})"
+        }
+      ]
+    },
+    {
+      "id": "lattigo-threshold",
+      "label": "Threshold: Lattigo BGV (2-of-3)",
+      "scheme": "BGV",
+      "baseline": {
+        "implementation": "Lattigo v6.2.0 multiparty + mpbgv over schemes/bgv (one implementation of BGV and BFV): Thresholdizer / Combiner, PublicKeyGenProtocol, RelinearizationKeyGenProtocol, GaloisKeyGenProtocol, mpbgv.RefreshProtocol, PublicKeySwitchProtocol",
+        "codeUrl": "https://pkg.go.dev/github.com/tuneinsight/lattigo/v6/multiparty",
+        "paper": "Mouchet, Troncoso-Pastoriza, Bossuat, Hubaux: Multiparty Homomorphic Encryption from Ring-Learning-with-Errors (PoPETs 2021)",
+        "paperUrl": "https://petsymposium.org/popets/2021/popets-2021-0071.php"
+      },
+      "validationTarget": "Token-validated through a Rust port of Lattigo’s protocols behind PKCS#11 v3.2 vendor mechanisms, only if its feasibility and review gates pass. The port is tested against Lattigo itself in Go (byte-exact fixtures, mixed Rust and Go parties) and needs an independent review.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        },
+        {
+          "id": "hsmA",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "hsmB",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "hsmC",
+          "kind": "hsm",
+          "zone": "party"
+        }
+      ],
+      "steps": [
+        {
+          "id": "shamir-share-secret",
+          "from": "hsmA",
+          "to": "hsmC",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "Thresholdizer.GenShamirPolynomial · GenShamirSecretShare · Combiner.GenAdditiveShare"
+        },
+        {
+          "id": "collective-public-key",
+          "from": "hsmA",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "PublicKeyGenProtocol.GenShare · AggregateShares · GenPublicKey"
+        },
+        {
+          "id": "collective-relinearization-key",
+          "from": "hsmB",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "RelinearizationKeyGenProtocol (round 1 + round 2)"
+        },
+        {
+          "id": "collective-galois-keys",
+          "from": "hsmC",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "api": "GaloisKeyGenProtocol (one run per automorphism)"
+        },
+        {
+          "id": "owner-encrypts-locally",
+          "from": "client",
+          "to": "client",
+          "phase": "encrypt",
+          "data": "encrypting",
+          "deployment": false,
+          "api": "rlwe Encryptor (bgv.Parameters) with the collective public key"
+        },
+        {
+          "id": "upload-ciphertexts",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "compute-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "bgv Evaluator"
+        },
+        {
+          "id": "interactive-refresh",
+          "from": "cloud",
+          "to": "hsmB",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "mpbgv.RefreshProtocol.GenShare (noise flooding set in NewRefreshProtocol)"
+        },
+        {
+          "id": "aggregate-refresh-shares",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "RefreshProtocol.AggregateShares · Finalize"
+        },
+        {
+          "id": "key-switch-to-owner",
+          "from": "hsmA",
+          "to": "cloud",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "PublicKeySwitchProtocol.GenShare (target: owner public key)"
+        },
+        {
+          "id": "deliver-result-to-owner",
+          "from": "cloud",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "PublicKeySwitchProtocol.AggregateShares · KeySwitch"
+        },
+        {
+          "id": "owner-decrypts-locally",
+          "from": "client",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": false,
+          "api": "rlwe Decryptor"
+        }
+      ]
+    },
+    {
+      "id": "hsm-compute-limits",
+      "label": "What can run in the HSM?",
+      "scheme": "CKKS",
+      "baseline": {
+        "implementation": "OpenFHE / Lattigo CKKS key and operation types (sizes are estimates)",
+        "codeUrl": "https://github.com/openfheorg/openfhe-development/tree/v1.6.0",
+        "paper": "OpenFHE design paper (IACR ePrint 2022/915)",
+        "paperUrl": "https://eprint.iacr.org/2022/915"
+      },
+      "validationTarget": "Evidence-scoped measurements only; no absolute claims.",
+      "actors": [
+        {
+          "id": "app",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsm",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "gpu",
+          "kind": "gpu",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "key-generation-fits",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "KeyGen()"
+        },
+        {
+          "id": "eval-keygen-in-hsm",
+          "from": "hsm",
+          "to": "gpu",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "EvalRotateKeyGen · EvalBootstrapKeyGen"
+        },
+        {
+          "id": "evaluation-in-hsm",
+          "from": "app",
+          "to": "hsm",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": true,
+          "api": "EvalBootstrap"
+        },
+        {
+          "id": "evaluation-on-accelerators",
+          "from": "app",
+          "to": "gpu",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "EvalAdd · EvalMult · EvalBootstrap"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "gpu",
+          "to": "app",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "app-requests-decrypt",
+          "from": "app",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "decrypt-in-hsm",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "api": "Decrypt"
+        },
+        {
+          "id": "release-result",
+          "from": "hsm",
+          "to": "app",
+          "phase": "decrypt",
+          "data": "result",
+          "deployment": false
+        }
+      ]
+    },
+    {
+      "id": "tfhe-transciphering",
+      "label": "Transciphering: TFHE-rs Kreyvium",
+      "scheme": "TFHE",
+      "baseline": {
+        "implementation": "TFHE-rs apps/trivium: KreyviumStream / TriviumStream and the TransCiphering trait (trans_decrypt_64); transciphering input mechanism in TFHE-rs 1.8",
+        "codeUrl": "https://github.com/zama-ai/tfhe-rs/tree/main/apps/trivium",
+        "paper": "Balenbois, Orfila, Smart: Trivial Transciphering With Trivium and TFHE (WAHC 2023)",
+        "paperUrl": "https://dl.acm.org/doi/10.1145/3605759.3625255"
+      },
+      "validationTarget": "HSM steps token-validated as in TFHE custody; server steps reference-validated with TFHE-rs apps/trivium.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsm",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "tfhe-keys-from-hsm",
+          "from": "hsm",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "api": "generate_keys(config) → (ClientKey, ServerKey)"
+        },
+        {
+          "id": "owner-kreyvium-setup",
+          "from": "client",
+          "to": "client",
+          "phase": "encrypt",
+          "data": "keys",
+          "deployment": false,
+          "api": "KreyviumStream::<bool>::new(key, iv)"
+        },
+        {
+          "id": "send-encrypted-stream-key",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "[FheUint8; 16] encrypted under the TFHE public key (KreyviumStreamByte::<FheUint8>::new)"
+        },
+        {
+          "id": "upload-kreyvium-data",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypting",
+          "deployment": false,
+          "api": "KreyviumStream::<bool>::next_64"
+        },
+        {
+          "id": "transcipher",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "KreyviumStreamByte::<FheUint8>::new(FHE(k), iv, &server_key) · trans_decrypt_64"
+        },
+        {
+          "id": "compute-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "api": "set_server_key · FheUint64 operations"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "owner-requests-decrypt",
+          "from": "client",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": false
+        },
+        {
+          "id": "decrypt-under-policy",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "api": "FheUint64::decrypt(&client_key)"
+        },
+        {
+          "id": "release-result",
+          "from": "hsm",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "result",
+          "deployment": false
+        }
+      ]
+    }
+  ]
+}

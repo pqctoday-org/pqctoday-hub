@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.147.0] - 2026-10-03
+
+The FHE + HSM workshop is ready to show real validation results as they arrive.
+
+### Added
+
+- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line, and each scenario a validation-evidence summary. For now they read "not yet": nothing is claimed until a signed evidence record exists. Results will come from the reference libraries (pqctoday-sandbox), the KV260 (pqctoday-fhe) and the MX95 and MX95 Pro (pqctoday-cacp), each shown as a software token on that board, never as hardware custody.
+
 ## [4.146.0] - 2026-10-03
 
 Small accuracy fixes to the Confidential Computing FHE content.

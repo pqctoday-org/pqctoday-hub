@@ -8,7 +8,7 @@ import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useModalPosition } from '@/hooks/useModalPosition'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { LINK_LABELS, type FheFlow } from '../data/fheHsmFlows'
-import { EngineStatusLine, HoldingsList, StepRef } from './FheHsmFlows'
+import { EngineStatusLine, EvidenceLine, HoldingsList, StepRef } from './FheHsmFlows'
 import {
   KEY_SIZES,
   LINK_SIZES,
@@ -178,6 +178,7 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
               <div className="space-y-1">
                 <StepRef step={step} />
                 <EngineStatusLine flow={flow} step={step} />
+                <EvidenceLine flow={flow} step={step} />
                 <p className="text-[11px] text-muted-foreground">
                   Baseline: {flow.baseline.implementation}
                 </p>

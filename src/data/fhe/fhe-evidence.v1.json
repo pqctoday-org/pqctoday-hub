@@ -1,0 +1,5 @@
+{
+  "schema": "fhe-evidence.v1",
+  "description": "Signed, hash-pinned evidence that FHE + HSM scenario steps ran. Producers: pqctoday-sandbox (reference libraries), pqctoday-fhe (KV260), pqctoday-cacp (MX95, MX95 Pro; Ventuno Q later). Empty until results arrive: the Hub raises no validation badge without a record here, and a record needs this file's .sig.",
+  "records": []
+}

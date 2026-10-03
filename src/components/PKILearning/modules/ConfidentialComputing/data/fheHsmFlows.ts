@@ -88,6 +88,8 @@ export const ENGINE_STATUS_LABELS: Record<EngineStatus, { short: string; long: s
 }
 
 export interface FlowStep {
+  /** Stable step id, unique within its flow; evidence records point at it. Never reuse or rename. */
+  id: string
   /** Library call(s) this step maps to in the scenario's baseline implementation. */
   api?: string
   /** HSM-specific step: a deployment choice, not part of the FHE library or paper. */
@@ -230,6 +232,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'generate-fhe-secret',
         from: 'hsm',
         to: 'hsm',
         label: 'seed → sk',
@@ -241,6 +244,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'export-evaluation-keys',
         from: 'hsm',
         to: 'cloud',
         label: 'GB eval keys + sig',
@@ -255,6 +259,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'publish-public-key',
         from: 'hsm',
         to: 'client',
         label: 'pk + sig',
@@ -266,6 +271,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'owner-encrypts-locally',
         from: 'client',
         to: 'client',
         label: 'encrypt locally',
@@ -276,6 +282,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'upload-ciphertexts',
         from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
@@ -285,6 +292,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'compute-ciphertexts',
         from: 'cloud',
         to: 'cloud',
         label: 'f( ) on ciphertexts',
@@ -295,6 +303,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'return-encrypted-result',
         from: 'cloud',
         to: 'client',
         label: 'FHE(result) → owner',
@@ -304,6 +313,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-requests-decrypt',
         from: 'client',
         to: 'hsm',
         label: 'decrypt request',
@@ -313,6 +323,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'decrypt-under-policy',
         from: 'hsm',
         to: 'hsm',
         label: 'policy · shape · decrypt',
@@ -323,6 +334,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
           'Policy first, then decryption. This policy is not defined by ISO/IEC 28033 or by OpenFHE; it is the HSM’s deployment layer. (1) Only the data owner’s authenticated session may ask. (2) The HSM checks the ciphertext’s metadata (slot count, level, scale) against an allowed result shape before decrypting; this limits how much one release can reveal, not where the ciphertext came from. (3) It decrypts inside the HSM, adds noise flooding (OpenFHE NOISE_FLOODING_DECRYPT) so the approximate output does not leak the key, and releases the value only if it fits the allowed range; a refusal still counts against the rate limit. (4) Rate limit and audit. The HSM cannot verify which computation produced a ciphertext.',
       },
       {
+        id: 'release-result',
         from: 'hsm',
         to: 'client',
         label: 'result',
@@ -332,6 +344,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         shareWith: 'cloud',
       },
       {
+        id: 'live-clone-peer-hsm',
         from: 'hsm',
         to: 'dr',
         label: 'live clone → peer',
@@ -345,6 +358,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'wrap',
       },
       {
+        id: 'offline-backup-restore',
         from: 'hsm',
         to: 'dr',
         label: 'offline backup → restore',
@@ -413,6 +427,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'generate-client-key',
         from: 'hsm',
         to: 'hsm',
         label: 'seed → client key',
@@ -425,6 +440,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'generate-server-key',
         from: 'hsm',
         to: 'hsm',
         label: 'server key',
@@ -436,6 +452,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'ok',
       },
       {
+        id: 'export-server-key',
         from: 'hsm',
         to: 'cloud',
         label: 'server key + sig',
@@ -448,6 +465,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'publish-compact-public-key',
         from: 'hsm',
         to: 'client',
         label: 'public key + sig',
@@ -459,6 +477,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'owner-encrypts-locally',
         from: 'client',
         to: 'client',
         label: 'encrypt locally',
@@ -469,6 +488,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'upload-ciphertexts',
         from: 'client',
         to: 'cloud',
         label: 'FHE(values)',
@@ -478,6 +498,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'compute-with-pbs',
         from: 'cloud',
         to: 'cloud',
         label: 'PBS on every op',
@@ -488,6 +509,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'return-encrypted-result',
         from: 'cloud',
         to: 'client',
         label: 'FHE(result) → owner',
@@ -497,6 +519,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-requests-decrypt',
         from: 'client',
         to: 'hsm',
         label: 'decrypt request',
@@ -506,6 +529,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'decrypt-under-policy',
         from: 'hsm',
         to: 'hsm',
         label: 'policy · type · decrypt',
@@ -517,6 +541,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'ok',
       },
       {
+        id: 'release-result',
         from: 'hsm',
         to: 'client',
         label: 'result',
@@ -526,6 +551,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         shareWith: 'cloud',
       },
       {
+        id: 'live-clone-peer-hsm',
         from: 'hsm',
         to: 'dr',
         label: 'live clone → peer',
@@ -539,6 +565,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'wrap',
       },
       {
+        id: 'offline-backup-restore',
         from: 'hsm',
         to: 'dr',
         label: 'offline backup → restore',
@@ -619,6 +646,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'party-a-keygen',
         from: 'hsmA',
         to: 'hsmA',
         label: 'KeyGen',
@@ -629,6 +657,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
       },
       {
+        id: 'party-b-multiparty-keygen',
         from: 'hsmA',
         to: 'hsmB',
         label: 'pk₁ → MultipartyKeyGen',
@@ -639,6 +668,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'party-c-multiparty-keygen',
         from: 'hsmB',
         to: 'hsmC',
         label: 'pk₁₂ → MultipartyKeyGen',
@@ -649,6 +679,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'build-joint-relinearization-key',
         from: 'hsmA',
         to: 'hsmC',
         label: 'joint relin key (multi-round)',
@@ -659,6 +690,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'publish-eval-keys',
         from: 'hsmC',
         to: 'cloud',
         label: 'joint eval keys + sig',
@@ -669,6 +701,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'owner-encrypts-locally',
         from: 'client',
         to: 'client',
         label: 'encrypt locally',
@@ -679,6 +712,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'upload-ciphertexts',
         from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
@@ -688,6 +722,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'compute-ciphertexts',
         from: 'cloud',
         to: 'cloud',
         label: 'EvalAdd · EvalMult · EvalSum',
@@ -697,6 +732,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'return-encrypted-result',
         from: 'cloud',
         to: 'client',
         label: 'FHE(result) → owner',
@@ -706,6 +742,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-requests-partials',
         from: 'client',
         to: 'hsmC',
         label: 'FHE(result) → A, B, C',
@@ -715,6 +752,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'party-a-partial-decrypt',
         from: 'hsmA',
         to: 'client',
         label: 'partial (Lead)',
@@ -725,6 +763,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'party-b-partial-decrypt',
         from: 'hsmB',
         to: 'client',
         label: 'partial (Main)',
@@ -735,6 +774,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'party-c-partial-decrypt',
         from: 'hsmC',
         to: 'client',
         label: 'partial (Main)',
@@ -745,6 +785,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-fuses-partials',
         from: 'client',
         to: 'client',
         label: 'Fusion',
@@ -829,6 +870,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'shamir-share-secret',
         from: 'hsmA',
         to: 'hsmC',
         label: 'Shamir shares (2-of-3)',
@@ -841,6 +883,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'collective-public-key',
         from: 'hsmA',
         to: 'cloud',
         label: 'CKG shares',
@@ -851,6 +894,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'collective-relinearization-key',
         from: 'hsmB',
         to: 'cloud',
         label: 'RKG shares (2 rounds)',
@@ -861,6 +905,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'collective-galois-keys',
         from: 'hsmC',
         to: 'cloud',
         label: 'GKG shares',
@@ -871,6 +916,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-encrypts-locally',
         from: 'client',
         to: 'client',
         label: 'encrypt locally',
@@ -881,6 +927,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'upload-ciphertexts',
         from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
@@ -890,6 +937,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'compute-ciphertexts',
         from: 'cloud',
         to: 'cloud',
         label: 'f( ) on ciphertexts',
@@ -900,6 +948,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'interactive-refresh',
         from: 'cloud',
         to: 'hsmB',
         label: 'refresh request → A, B',
@@ -911,6 +960,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'aggregate-refresh-shares',
         from: 'cloud',
         to: 'cloud',
         label: 'aggregate → fresh ct',
@@ -921,6 +971,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'key-switch-to-owner',
         from: 'hsmA',
         to: 'cloud',
         label: 'PCKS shares (A, B)',
@@ -932,6 +983,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'deliver-result-to-owner',
         from: 'cloud',
         to: 'client',
         label: 'ct under owner key',
@@ -941,6 +993,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-decrypts-locally',
         from: 'client',
         to: 'client',
         label: 'decrypt (own key)',
@@ -1002,6 +1055,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'key-generation-fits',
         from: 'hsm',
         to: 'hsm',
         label: 'seed + sk',
@@ -1013,6 +1067,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'ok',
       },
       {
+        id: 'eval-keygen-in-hsm',
         from: 'hsm',
         to: 'gpu',
         label: 'GB eval keys?',
@@ -1025,6 +1080,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'evaluation-in-hsm',
         from: 'app',
         to: 'hsm',
         label: 'evaluate f( )?',
@@ -1036,6 +1092,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'no',
       },
       {
+        id: 'evaluation-on-accelerators',
         from: 'app',
         to: 'gpu',
         label: 'evaluate f( )',
@@ -1047,6 +1104,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'return-encrypted-result',
         from: 'gpu',
         to: 'app',
         label: 'FHE(result) → owner',
@@ -1056,6 +1114,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'app-requests-decrypt',
         from: 'app',
         to: 'hsm',
         label: 'decrypt request',
@@ -1065,6 +1124,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'decrypt-in-hsm',
         from: 'hsm',
         to: 'hsm',
         label: 'decrypt',
@@ -1076,6 +1136,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'ok',
       },
       {
+        id: 'release-result',
         from: 'hsm',
         to: 'app',
         label: 'result',
@@ -1138,6 +1199,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     ],
     steps: [
       {
+        id: 'tfhe-keys-from-hsm',
         from: 'hsm',
         to: 'cloud',
         label: 'server key + sig',
@@ -1149,6 +1211,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'sig',
       },
       {
+        id: 'owner-kreyvium-setup',
         from: 'client',
         to: 'client',
         label: 'Kreyvium key k + IV',
@@ -1158,6 +1221,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'stream',
       },
       {
+        id: 'send-encrypted-stream-key',
         from: 'client',
         to: 'cloud',
         label: 'FHE(k), once',
@@ -1167,6 +1231,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'upload-kreyvium-data',
         from: 'client',
         to: 'cloud',
         label: 'data ⊕ keystream',
@@ -1177,6 +1242,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'stream',
       },
       {
+        id: 'transcipher',
         from: 'cloud',
         to: 'cloud',
         label: 'trans_decrypt_64',
@@ -1187,6 +1253,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'compute-ciphertexts',
         from: 'cloud',
         to: 'cloud',
         label: 'f( ) on FheUint64',
@@ -1196,6 +1263,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'fhe',
       },
       {
+        id: 'return-encrypted-result',
         from: 'cloud',
         to: 'client',
         label: 'FHE(result) → owner',
@@ -1205,6 +1273,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'owner-requests-decrypt',
         from: 'client',
         to: 'hsm',
         label: 'decrypt request',
@@ -1214,6 +1283,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         link: 'tls',
       },
       {
+        id: 'decrypt-under-policy',
         from: 'hsm',
         to: 'hsm',
         label: 'policy · type · decrypt',
@@ -1225,6 +1295,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         verdict: 'ok',
       },
       {
+        id: 'release-result',
         from: 'hsm',
         to: 'client',
         label: 'result',
