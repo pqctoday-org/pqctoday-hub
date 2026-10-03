@@ -14,7 +14,7 @@ on:
   # cost about one run; the newest main run still triggers deploy.yml.
   # Skip the job for pure docs/non-code
   # changes. NOTE: data/** is deliberately NOT ignored — data changes must
-  # still run the data gate.
+  # still build. Data checks run outside this repository before merge.
   #
   # The ignore list names files individually rather than `**/*.md`: since
   # 2026-09-21 deploy.yml runs only after a successful CI run, and CHANGELOG.md
@@ -121,18 +121,6 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
         run: npm run lint
-
-      - name: Data gate
-        # ONE step for every data-truth check (a visitor sees wrong data if any
-        # of these fail): referential integrity, archival, loader coverage,
-        # regressions, publication dates, evidence, proof gates, freshness and
-        # the 140+-check unified validator (which also carries TP-2/TP-3 — the
-        # inline threats-proof step that used to live here duplicated it).
-        # See package.json `gate:data` for the exact list and GATES.md
-        # for what each guards. The unified validator runs with the checks
-        # that read gitignored pqctoday-priv evidence caches excluded
-        # (validate:data:without-priv) — they cannot pass on a clean checkout.
-        run: npm run gate:data
 
       - name: Verify trust-engine attestations
         # ML-DSA-65 signatures on committed trust artifacts (revisions.jsonl,

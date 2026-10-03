@@ -6,11 +6,12 @@ name: PR check
 # only run on push to main — and every PR sat BLOCKED; see GATES.md).
 #
 # What must be proven on a clean machine BEFORE merge and cannot be faked from
-# a developer machine: install, the security lint, signature verification, the
-# data gate, a clean build (`pr-check`, ~8–10 min) and the sharded unit suite
+# a developer machine: install, the security lint, signature verification, a
+# clean build (`pr-check`, ~8–10 min) and the sharded unit suite
 # (`pr-test`, ~8 min, in parallel). Since 2026-09-29 the pre-push hook runs
 # only the fast local tier; the machine-dependent `test:local` tier runs once
 # per release (GATES.md). E2E stays in CI on main (smoke) and nightly (full).
+# Data checks run outside this repository before merge (GATES.md).
 #
 # NO paths-ignore on purpose: a required check that is skipped for some PRs
 # (docs-only) leaves those PRs BLOCKED forever — the exact failure this file
@@ -35,12 +36,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Full commit graph, as in ci.yml `checks`: the data gate's LN-1/LN-3/
-          # LN-4 checks and the version-bump checks compare against
-          # origin/main. A shallow checkout has no origin/main, so LN-3 treats
-          # every row as new (210 false findings — the first run of this
-          # workflow, 2026-09-30). No historical file contents needed: partial
-          # clone, because .git is dominated by regenerated artefacts.
+          # Full commit graph, as in ci.yml `checks`: checks that compare
+          # against origin/main need it. No historical file contents needed:
+          # partial clone, because .git is dominated by regenerated artefacts.
           fetch-depth: 0
           filter: blob:none
 
@@ -78,11 +76,6 @@ jobs:
       - name: Install Playwright Chromium
         # `npm run build` prerenders routes with Playwright.
         run: npx playwright install chromium --with-deps
-
-      - name: Data gate
-        # Same data-truth checks ci.yml `checks` runs (clean-machine variant,
-        # without the pqctoday-priv evidence caches).
-        run: npm run gate:data
 
       - name: Build
         # Clean-checkout `tsc -b` (the type check) + vite + prerender + budgets.
