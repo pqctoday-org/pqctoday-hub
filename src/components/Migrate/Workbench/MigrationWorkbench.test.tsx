@@ -302,10 +302,13 @@ describe('MigrationWorkbench (integration)', () => {
       screen.getByRole('button', { name: new RegExp(`details for ${escapeRe(name)}$`) })
 
     describe('?domain=', () => {
-      it('selects the Replace-tab domain on load without changing the tab', () => {
+      it('selects the Replace-tab domain on load and pins the Replace tab', () => {
+        // A returning reader's stored tab (Plan, Roadmaps…) must not win over
+        // an inbound domain link.
+        useMigrateSelectionStore.setState({ tab: 'plan' })
         renderStandaloneAt('/migrate?domain=hsm')
         expect(screen.getByRole('heading', { name: 'HSM-protected keys' })).toBeInTheDocument()
-        expect(search()).not.toContain('tab=')
+        expect(search()).toContain('tab=replace')
       })
 
       it('follows a second ?domain= link while mounted', () => {
