@@ -33,6 +33,10 @@ first time (don't ship dev-speak and reformat later):
 
 Links from the Assistant, search and shared URLs now open the item they name, and the Confidential Computing FHE content gets small accuracy fixes.
 
+### Changed
+
+- **Pull requests get an automatic privacy check (report-only)** [view:/about] [persona:developer] [persona:ops]: every pull request is checked for internal paths and identifiers that should not be published; findings are listed in the check summary without blocking the merge.
+
 ### Fixed
 
 - **Assistant and search links to patents open the patent** [view:/patents] [persona:researcher] [persona:architect]: 1,133 patent links in the PQC Assistant and site search pointed at patents the Patents page no longer lists and opened a "not found" notice; the search index now only links patents the page shows, and every link it carries is checked against the live data before it ships.
