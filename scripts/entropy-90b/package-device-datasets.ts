@@ -38,6 +38,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { format, resolveConfig } from 'prettier'
+import { redactLocalPaths } from './redact-local-paths'
 
 const SIZE_BUDGET_BYTES = 8_000_000
 const EXTRACTLSB_URL =
@@ -335,7 +336,7 @@ for (const p of PICKS) {
     conditionDetail: e.condition_detail,
     caveats: p.caveats,
     tool: e.tool,
-    command: e.command,
+    command: redactLocalPaths(e.command),
     startUtc: e.start_utc,
     endUtc: e.end_utc,
     wallSeconds: e.wall_seconds,
@@ -428,7 +429,7 @@ const manifest = {
     'Real measurements taken for teaching (plan §1 item 9). Not a validated entropy source, not an ESV submission, and no min-entropy claim about these devices beyond what the estimator output shows for each dataset under its recorded conditions.',
   generatedBy: 'scripts/entropy-90b/package-device-datasets.ts',
   sourceManifest: {
-    path: 'pqctoday-priv/local-evidence-cache/entropy/0924/datasets.json (not published)',
+    path: 'datasets.json (private evidence manifest, not published)',
     sha256: sha(evidenceManifestText),
     generatedUtc: evidence.generated_utc,
   },
