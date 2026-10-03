@@ -41,6 +41,7 @@ The FHE + HSM workshop's key-custody flow now runs with the key held on the MX95
 ### Changed
 
 - **Server-key export timed on the custodian board** [view:/learn/confidential-computing] [persona:architect] [persona:ops]: the TFHE cost panel now shows the measured export time on the MX95's Cortex-A55 cores, about 5 s including the 30 MB compressed server key and two signatures, instead of an estimate.
+- **Lattigo threshold sizes corrected from measurements** [view:/learn/confidential-computing] [persona:researcher] [persona:architect] [persona:developer]: the Lattigo scenario's cost panel now uses the measured setup (ring dimension 16,384 with noise flooding). Key shares are a few megabytes, not the ~100 MB the page estimated: a relinearization share is 6.3 MB then 3.1 MB, a Galois-key share 3.1 MB and a ciphertext 1.6 MB. Each step shows the measured time on a Cortex-A53 board beside an Apple M4 Pro.
 
 ## [4.147.0] - 2026-10-03
 
