@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.145.0] - 2026-10-02
+
+### Fixed
+
+- **Every HSM Learn lesson now runs on a fresh page** [view:/playground/hsm] [persona:developer] [persona:researcher] [persona:cert-engineer]: opening the HSM playground and starting any lesson other than the first of each track (for example "Trust & wrapping policy") used to fail every step with "HSM module not loaded", because only the first lesson booted the HSM engine. The lesson runner now boots the engine for you, using whichever engine is selected, and the boot calls show in that step's log.
+
 ## [4.144.0] - 2026-10-02
 
 Confidential Computing now teaches fully homomorphic encryption, with a workshop step showing how an HSM can hold FHE keys.

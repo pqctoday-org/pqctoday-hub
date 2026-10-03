@@ -6,7 +6,12 @@
 // local-only), matching pkcs11Lessons.local.test.ts's own venue even though
 // this particular suite has no engine dependency that would require it.
 import { describe, it, expect } from 'vitest'
-import { classifyStepOutcome } from './lessonRunner'
+import {
+  classifyStepOutcome,
+  ensureEngineForStep,
+  engineIsRunning,
+  type EngineBootTarget,
+} from './lessonRunner'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 
 const header = (fn = 'header'): Pkcs11LogEntry => ({
@@ -88,5 +93,67 @@ describe('classifyStepOutcome', () => {
       header(),
     ]
     expect(classifyStepOutcome('refusal', entries)).toBe('refused-ok')
+  })
+})
+
+// Bug 2026-10-02 (found in the 4.143.0 live check): on a fresh page the Learn
+// tab never booted the engine, so B10 — and every lesson except A1/B1 — failed
+// every step with "HSM module not loaded". The runner now boots first.
+describe('ensureEngineForStep', () => {
+  const target = (opts: {
+    booted: boolean
+    bootResult?: boolean
+    bootError?: string | null
+  }): EngineBootTarget & { calls: number } => {
+    const t = {
+      calls: 0,
+      moduleRef: { current: opts.booted ? ({} as never) : null },
+      hSessionRef: { current: opts.booted ? 7 : 0 },
+      lastInitErrorRef: { current: null as string | null },
+      autoInit: async () => {
+        t.calls++
+        if (opts.bootResult === false) {
+          t.lastInitErrorRef.current = opts.bootError ?? null
+          return false
+        }
+        t.moduleRef.current = {} as never
+        t.hSessionRef.current = 7
+        return true
+      },
+    }
+    return t as unknown as EngineBootTarget & { calls: number }
+  }
+
+  it('boots the engine once when a step runs on a fresh page', async () => {
+    const t = target({ booted: false })
+    expect(await ensureEngineForStep(t, {})).toBe(true)
+    expect(t.calls).toBe(1)
+    expect(engineIsRunning(t)).toBe(true)
+  })
+
+  it('does nothing when the engine is already running', async () => {
+    const t = target({ booted: true })
+    expect(await ensureEngineForStep(t, {})).toBe(false)
+    expect(t.calls).toBe(0)
+  })
+
+  it('never pre-boots a step that boots the engine itself (A1/B1 step 1)', async () => {
+    const t = target({ booted: false })
+    expect(await ensureEngineForStep(t, { bootsEngine: true })).toBe(false)
+    expect(t.calls).toBe(0)
+  })
+
+  it('a module without an open session still counts as not running', async () => {
+    const t = target({ booted: false })
+    t.moduleRef.current = {} as never
+    expect(engineIsRunning(t)).toBe(false)
+    expect(await ensureEngineForStep(t, {})).toBe(true)
+  })
+
+  it('a failed boot throws with the engine error, so the step fails visibly', async () => {
+    const t = target({ booted: false, bootResult: false, bootError: 'wasm fetch failed' })
+    await expect(ensureEngineForStep(t, {})).rejects.toThrow(
+      'Engine boot failed: wasm fetch failed.'
+    )
   })
 })

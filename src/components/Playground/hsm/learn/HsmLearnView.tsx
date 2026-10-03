@@ -26,7 +26,7 @@ import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
 import { useHsmContext } from '../HsmContext'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
-import { classifyStepOutcome } from './lessonRunner'
+import { classifyStepOutcome, ensureEngineForStep } from './lessonRunner'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
 import { QUIZZES } from './pkcs11Quiz'
@@ -202,6 +202,10 @@ function LessonRunner({
         .filter((e) => !e.isStepHeader)
         .reverse()
     try {
+      // Boot the engine first if this is the first step run on a fresh page
+      // (the Learn tab does not auto-boot). Inside this step's log window, so
+      // the boot calls show in its inline log.
+      await ensureEngineForStep(hsm, lesson.steps[i])
       const result = await lesson.steps[i].run(hsm, resultsRef.current)
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
       const entries = stepEntries()

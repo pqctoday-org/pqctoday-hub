@@ -94,6 +94,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
     steps: [
       {
         op: 'C_Initialize / C_InitToken / C_OpenSession',
+        bootsEngine: true,
         label: 'Boot the engine if it is not already running',
         spot: {
           rail: 'kem',
