@@ -495,23 +495,6 @@ export const MigrationRiskMatrix: React.FC = () => {
 
           {/* Year axis */}
           <div className="flex items-center pl-44 pr-2 mb-1">
-            {Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => {
-              const year = TIMELINE_START + i
-              // Only show every other year to avoid clutter
-              if (year % 2 !== 1 && year !== TIMELINE_START && year !== TIMELINE_END) return null
-              return (
-                <div
-                  key={year}
-                  className="text-[10px] font-mono text-muted-foreground"
-                  style={{
-                    position: 'absolute',
-                    left: `calc(176px + ${((year - TIMELINE_START) / TIMELINE_SPAN) * 100}% * (1 - 176px / 100%))`,
-                  }}
-                >
-                  {year}
-                </div>
-              )
-            })}
             {/* Simpler inline year labels */}
             {[2025, 2027, 2029, 2031, 2033, 2035].map((year) => (
               <div key={year} className="flex-1 text-center">
@@ -520,23 +503,28 @@ export const MigrationRiskMatrix: React.FC = () => {
             ))}
           </div>
 
-          {/* Deadline markers */}
-          <div className="flex items-center pl-44 pr-2 mb-2">
-            {[
-              { year: 2026, label: 'PCI 4.0', color: 'text-status-warning' },
-              { year: 2030, label: 'NIST PQC', color: 'text-status-error' },
-              { year: 2035, label: 'Full PQC', color: 'text-status-error' },
-            ].map((deadline) => (
-              <div
-                key={deadline.label}
-                className="absolute"
-                style={{
-                  left: `calc(176px + ${((deadline.year - TIMELINE_START) / TIMELINE_SPAN) * 100}%)`,
-                }}
-              >
-                <div className={`text-[8px] font-bold ${deadline.color}`}>{deadline.label}</div>
-              </div>
-            ))}
+          {/* Deadline markers — same track geometry as the bars below (button px-4,
+              w-40 label column, gap-2), so a marker sits over its year. */}
+          <div className="flex items-center gap-2 px-4 mb-2">
+            <div className="w-40 shrink-0" />
+            <div className="flex-1 relative h-3">
+              {[
+                { year: 2026, label: 'PCI 4.0', color: 'text-status-warning' },
+                { year: 2030, label: 'NIST PQC', color: 'text-status-error' },
+                { year: 2035, label: 'Full PQC', color: 'text-status-error' },
+              ].map((deadline) => {
+                const pct = ((deadline.year - TIMELINE_START) / TIMELINE_SPAN) * 100
+                return (
+                  <div
+                    key={deadline.label}
+                    className="absolute top-0 whitespace-nowrap"
+                    style={{ left: `${pct}%`, transform: `translateX(-${pct}%)` }}
+                  >
+                    <div className={`text-[8px] font-bold ${deadline.color}`}>{deadline.label}</div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Component bars */}
