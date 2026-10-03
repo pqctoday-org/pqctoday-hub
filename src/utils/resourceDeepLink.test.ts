@@ -23,6 +23,7 @@ describe('isResourceDeepLink', () => {
     ['/compliance', '?cert=5528'],
     ['/compliance', '?tab=cswp39&evref=CMMC-2.0-MODEL'],
     ['/timeline', '?spec=KpqC-Competition-Results'],
+    ['/algorithms', '?try=ml-kem-demo'],
   ])('%s%s is a resource link', (path, search) => {
     expect(isResourceDeepLink(path, search)).toBe(true)
   })

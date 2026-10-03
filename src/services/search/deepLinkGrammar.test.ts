@@ -331,3 +331,65 @@ describe('deep-link grammar ↔ page source guard', () => {
     expect(Object.keys(PAGE_SOURCES).sort()).toEqual(Object.keys(EXPECTED_KEYS).sort())
   })
 })
+
+// ── Reverse guard: every URL param a page reads is in its grammar ──────────
+// The forward guard above cannot see a page that starts reading a NEW param:
+// the grammar would silently strip it from every Assistant link (and the
+// phone role picker would never learn about it). This scans the desktop page
+// AND its phone screen for direct URLSearchParams reads —
+// `<x>.get('k')`, `.getAll('k')`, `.has('k')` on a params-like receiver — and
+// requires each key to be in the grammar or listed below with a reason.
+// Heuristic by design (reads through helper functions are not seen), but it
+// catches the common case: a component calling searchParams.get('new-key').
+const PHONE_SCREENS: Record<string, readonly string[]> = {
+  '/timeline': ['src/components/Mobile/screens/MobileTimelineView.tsx'],
+  '/algorithms': [
+    'src/components/Mobile/screens/MobileAlgorithmsView.tsx',
+    'src/components/Mobile/screens/MobileProtocolMatrixView.tsx',
+  ],
+  '/library': ['src/components/Mobile/screens/MobileLibraryView.tsx'],
+  '/threats': ['src/components/Mobile/screens/MobileThreatsView.tsx'],
+  '/leaders': ['src/components/Mobile/screens/MobileCommunityView.tsx'],
+  '/compliance': ['src/components/Mobile/screens/MobileComplianceView.tsx'],
+  '/migrate': ['src/components/Mobile/screens/MobileMigrateView.tsx'],
+  '/patents': ['src/components/Mobile/screens/MobilePatentsView.tsx'],
+}
+
+/** Params a page reads on purpose but the Assistant must never emit. */
+const READ_BUT_NOT_EMITTED: Record<string, readonly string[]> = {
+  // Set by in-app search results to clear every filter once; not a share param.
+  '/algorithms': ['from_search'],
+  // Legacy alias of ?id=, kept so old links still open the threat.
+  '/threats': ['threat'],
+  // Legacy aliases of ?ind= / ?country= (canonical forms are in the grammar).
+  '/compliance': ['industry', 'sector', 'geo'],
+}
+
+const URL_READ =
+  /\b(?:searchParams|params|sp|urlParams|search|query|next)\.(?:get|getAll|has)\(\s*['"]([A-Za-z_][A-Za-z0-9_]*)['"]\s*\)/g
+
+describe('deep-link grammar ↔ page reads (reverse guard)', () => {
+  it.each(Object.keys(PAGE_SOURCES))('every param %s reads is in its grammar', (route) => {
+    const src = [...PAGE_SOURCES[route], ...(PHONE_SCREENS[route] ?? [])]
+      .map(collectSource)
+      .join('\n')
+    const allowed = new Set([
+      ...keysFor(route),
+      ...GLOBAL_QUERY_KEYS,
+      ...(READ_BUT_NOT_EMITTED[route] ?? []),
+    ])
+    const read = new Set([...src.matchAll(URL_READ)].map((m) => m[1]))
+    const unlisted = [...read].filter((k) => !allowed.has(k)).sort()
+    expect(unlisted, `${route}: params the page reads that the grammar would strip`).toEqual([])
+  })
+
+  it('every listed exception is still read (no rotted entries)', () => {
+    for (const [route, keys] of Object.entries(READ_BUT_NOT_EMITTED)) {
+      const src = [...PAGE_SOURCES[route], ...(PHONE_SCREENS[route] ?? [])]
+        .map(collectSource)
+        .join('\n')
+      const read = new Set([...src.matchAll(URL_READ)].map((m) => m[1]))
+      for (const k of keys) expect(read.has(k), `${route} ${k}`).toBe(true)
+    }
+  })
+})

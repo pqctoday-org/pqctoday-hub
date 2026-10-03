@@ -46,7 +46,9 @@ export const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
   ],
 }
 
-const ANY_ROUTE_PARAMS = ['spec'] as const
+// `spec` opens a Library document and `try` a Playground tool in place, on any
+// page (SpecDrawerHost / TryToolModalHost) — both name one resource.
+const ANY_ROUTE_PARAMS = ['spec', 'try'] as const
 
 function normalizePath(pathname: string): string {
   return pathname.replace(/\/+$/, '') || '/'
