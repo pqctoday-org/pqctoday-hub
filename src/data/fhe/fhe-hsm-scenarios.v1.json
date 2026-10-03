@@ -1,6 +1,6 @@
 {
   "schema": "fhe-hsm-scenarios.v1",
-  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id.",
+  "description": "Canonical FHE + HSM scenario contract (owner decision 2026-10-03). Stable scenario and step ids for the Hub workshop, evidence records (fhe-evidence.v1) and the producers pqctoday-sandbox, pqctoday-fhe (KV260) and pqctoday-cacp (MX95, MX95 Pro). Ids are never reused or renamed; a changed step gets a new id. v1 fields per the FHE plan (§1.1, §1.2, §2, §9): validationTarget uses the §1.1 labels; disclosures are stable ids; budgets list metric names, with values frozen later by a versioned P0A update (null until then); fixtures hold deterministic input/output hashes.",
   "scenarios": [
     {
       "id": "single-hsm",
@@ -43,6 +43,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "KeyGen()"
         },
         {
@@ -52,6 +53,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {
@@ -61,6 +63,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "KeyGen() → publicKey"
         },
         {
@@ -70,6 +73,7 @@
           "phase": "encrypt",
           "data": "encrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "MakeCKKSPackedPlaintext · Encrypt"
         },
         {
@@ -78,7 +82,8 @@
           "to": "cloud",
           "phase": "encrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "compute-ciphertexts",
@@ -87,6 +92,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "EvalAdd · EvalMult · EvalRotate · EvalBootstrap"
         },
         {
@@ -95,7 +101,8 @@
           "to": "client",
           "phase": "compute",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "owner-requests-decrypt",
@@ -103,7 +110,8 @@
           "to": "hsm",
           "phase": "decrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "refused"
         },
         {
           "id": "decrypt-under-policy",
@@ -112,6 +120,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT"
         },
         {
@@ -120,7 +129,8 @@
           "to": "client",
           "phase": "decrypt",
           "data": "result",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "refused"
         },
         {
           "id": "live-clone-peer-hsm",
@@ -129,6 +139,7 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "vendor replication capability: live clone (planned; names fixed in P0B)"
         },
         {
@@ -138,9 +149,24 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
         }
-      ]
+      ],
+      "validationTargetLabel": "reference-only",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "test-manufacturing-ca",
+        "host-rollback-possible",
+        "decrypt-oracle-limits"
+      ],
+      "budgets": {
+        "evalKeyBytes": null,
+        "publicKeyBytes": null,
+        "decryptMs": null,
+        "peakRssMb": null
+      },
+      "fixtures": []
     },
     {
       "id": "tfhe-single-hsm",
@@ -183,6 +209,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "ClientKey::generate_with_seed(config, Seed)"
         },
         {
@@ -192,6 +219,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "CompressedServerKey::new(&client_key)"
         },
         {
@@ -201,6 +229,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "CompressedServerKey → decompress() on the server"
         },
         {
@@ -210,6 +239,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "CompactPublicKey::new(&client_key)"
         },
         {
@@ -219,6 +249,7 @@
           "phase": "encrypt",
           "data": "encrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "CompactCiphertextList::builder(&public_key)"
         },
         {
@@ -227,7 +258,8 @@
           "to": "cloud",
           "phase": "encrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "compute-with-pbs",
@@ -236,6 +268,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "set_server_key · FheUint64 arithmetic and comparisons"
         },
         {
@@ -244,7 +277,8 @@
           "to": "client",
           "phase": "compute",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "owner-requests-decrypt",
@@ -252,7 +286,8 @@
           "to": "hsm",
           "phase": "decrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         },
         {
           "id": "decrypt-under-policy",
@@ -261,6 +296,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "FheUint64::decrypt(&client_key)"
         },
         {
@@ -269,7 +305,8 @@
           "to": "client",
           "phase": "decrypt",
           "data": "result",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         },
         {
           "id": "live-clone-peer-hsm",
@@ -278,6 +315,7 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "vendor replication capability: live clone (planned; names fixed in P0B)"
         },
         {
@@ -287,9 +325,26 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
         }
-      ]
+      ],
+      "validationTargetLabel": "token-validated",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "test-manufacturing-ca",
+        "host-rollback-possible",
+        "decrypt-oracle-limits"
+      ],
+      "budgets": {
+        "clientKeyGenMs": null,
+        "serverKeyBytes": null,
+        "serverKeyGenMs": null,
+        "decryptMs": null,
+        "peakRssMb": null,
+        "bundleBytes": null
+      },
+      "fixtures": []
     },
     {
       "id": "openfhe-threshold",
@@ -337,6 +392,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "KeyGen()"
         },
         {
@@ -346,6 +402,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "MultipartyKeyGen(pk₁)"
         },
         {
@@ -355,6 +412,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "MultipartyKeyGen(pk₁₂)"
         },
         {
@@ -364,6 +422,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "KeySwitchGen · MultiKeySwitchGen · MultiAddEvalKeys · MultiMultEvalKey · MultiAddEvalMultKeys"
         },
         {
@@ -373,6 +432,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "EvalSumKeyGen · MultiEvalSumKeyGen · MultiAddEvalSumKeys"
         },
         {
@@ -382,6 +442,7 @@
           "phase": "encrypt",
           "data": "encrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "Encrypt(jointPublicKey, plaintext)"
         },
         {
@@ -390,7 +451,8 @@
           "to": "cloud",
           "phase": "encrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "compute-ciphertexts",
@@ -399,6 +461,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "EvalAdd · EvalMult · EvalSum"
         },
         {
@@ -407,7 +470,8 @@
           "to": "client",
           "phase": "compute",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "owner-requests-partials",
@@ -415,7 +479,8 @@
           "to": "hsmC",
           "phase": "decrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         },
         {
           "id": "party-a-partial-decrypt",
@@ -424,6 +489,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "MultipartyDecryptLead({ct}, s₁)"
         },
         {
@@ -433,6 +499,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "MultipartyDecryptMain({ct}, s₂)"
         },
         {
@@ -442,6 +509,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "MultipartyDecryptMain({ct}, s₃)"
         },
         {
@@ -451,9 +519,23 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "MultipartyDecryptFusion({partials})"
         }
-      ]
+      ],
+      "validationTargetLabel": "reference-validated",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "host-rollback-possible",
+        "honest-but-curious-parties"
+      ],
+      "budgets": {
+        "shareBytes": null,
+        "evalKeyBytes": null,
+        "partialDecryptMs": null,
+        "peakRssMb": null
+      },
+      "fixtures": []
     },
     {
       "id": "lattigo-threshold",
@@ -501,6 +583,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "Thresholdizer.GenShamirPolynomial · GenShamirSecretShare · Combiner.GenAdditiveShare"
         },
         {
@@ -510,6 +593,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "PublicKeyGenProtocol.GenShare · AggregateShares · GenPublicKey"
         },
         {
@@ -519,6 +603,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "RelinearizationKeyGenProtocol (round 1 + round 2)"
         },
         {
@@ -528,6 +613,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "planned",
           "api": "GaloisKeyGenProtocol (one run per automorphism)"
         },
         {
@@ -537,6 +623,7 @@
           "phase": "encrypt",
           "data": "encrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "rlwe Encryptor (bgv.Parameters) with the collective public key"
         },
         {
@@ -545,7 +632,8 @@
           "to": "cloud",
           "phase": "encrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "compute-ciphertexts",
@@ -554,6 +642,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "bgv Evaluator"
         },
         {
@@ -563,6 +652,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "mpbgv.RefreshProtocol.GenShare (noise flooding set in NewRefreshProtocol)"
         },
         {
@@ -572,6 +662,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "RefreshProtocol.AggregateShares · Finalize"
         },
         {
@@ -581,6 +672,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "PublicKeySwitchProtocol.GenShare (target: owner public key)"
         },
         {
@@ -590,6 +682,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "PublicKeySwitchProtocol.AggregateShares · KeySwitch"
         },
         {
@@ -599,9 +692,24 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "rlwe Decryptor"
         }
-      ]
+      ],
+      "validationTargetLabel": "conformance-mapped",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "host-rollback-possible",
+        "honest-but-curious-parties",
+        "lattigo-retry-key-recovery"
+      ],
+      "budgets": {
+        "shareBytes": null,
+        "galoisShareBytes": null,
+        "refreshShareMs": null,
+        "peakRssMb": null
+      },
+      "fixtures": []
     },
     {
       "id": "hsm-compute-limits",
@@ -639,6 +747,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "KeyGen()"
         },
         {
@@ -648,6 +757,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {
@@ -657,6 +767,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": true,
+          "engineStatus": "refused",
           "api": "EvalBootstrap"
         },
         {
@@ -666,6 +777,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "EvalAdd · EvalMult · EvalBootstrap"
         },
         {
@@ -674,7 +786,8 @@
           "to": "app",
           "phase": "compute",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "app-requests-decrypt",
@@ -682,7 +795,8 @@
           "to": "hsm",
           "phase": "decrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         },
         {
           "id": "decrypt-in-hsm",
@@ -691,6 +805,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "Decrypt"
         },
         {
@@ -699,9 +814,22 @@
           "to": "app",
           "phase": "decrypt",
           "data": "result",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         }
-      ]
+      ],
+      "validationTargetLabel": "reference-only",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "decrypt-oracle-limits",
+        "sizes-are-estimates"
+      ],
+      "budgets": {
+        "evalKeyBytes": null,
+        "decryptMs": null,
+        "peakRssMb": null
+      },
+      "fixtures": []
     },
     {
       "id": "tfhe-transciphering",
@@ -739,6 +867,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "generate_keys(config) → (ClientKey, ServerKey)"
         },
         {
@@ -748,6 +877,7 @@
           "phase": "encrypt",
           "data": "keys",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "KreyviumStream::<bool>::new(key, iv)"
         },
         {
@@ -757,6 +887,7 @@
           "phase": "encrypt",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "[FheUint8; 16] encrypted under the TFHE public key (KreyviumStreamByte::<FheUint8>::new)"
         },
         {
@@ -766,6 +897,7 @@
           "phase": "encrypt",
           "data": "encrypting",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "KreyviumStream::<bool>::next_64"
         },
         {
@@ -775,6 +907,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "KreyviumStreamByte::<FheUint8>::new(FHE(k), iv, &server_key) · trans_decrypt_64"
         },
         {
@@ -784,6 +917,7 @@
           "phase": "compute",
           "data": "encrypted",
           "deployment": false,
+          "engineStatus": "outside",
           "api": "set_server_key · FheUint64 operations"
         },
         {
@@ -792,7 +926,8 @@
           "to": "client",
           "phase": "compute",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "outside"
         },
         {
           "id": "owner-requests-decrypt",
@@ -800,7 +935,8 @@
           "to": "hsm",
           "phase": "decrypt",
           "data": "encrypted",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         },
         {
           "id": "decrypt-under-policy",
@@ -809,6 +945,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
+          "engineStatus": "planned",
           "api": "FheUint64::decrypt(&client_key)"
         },
         {
@@ -817,9 +954,23 @@
           "to": "client",
           "phase": "decrypt",
           "data": "result",
-          "deployment": false
+          "deployment": false,
+          "engineStatus": "planned"
         }
-      ]
+      ],
+      "validationTargetLabel": "token-validated",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "host-rollback-possible",
+        "decrypt-oracle-limits"
+      ],
+      "budgets": {
+        "serverKeyBytes": null,
+        "transcipherMsPerBlock": null,
+        "decryptMs": null,
+        "bundleBytes": null
+      },
+      "fixtures": []
     }
   ]
 }

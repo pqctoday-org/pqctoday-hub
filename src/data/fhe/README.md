@@ -15,7 +15,10 @@ A board run is a software token on that board. Nothing here may claim hardware c
 ## Files
 
 - `fhe-hsm-scenarios.v1.json`: the canonical scenario contract, with stable scenario and step
-  ids, actors and trust zones, phases, data states and library calls. Ids are never reused or
+  ids, actors and trust zones, phases, data states, the engine status per step and library
+  calls. Per scenario it also holds the FHE plan §1.1 validation target label,
+  `disclosures` (stable ids), `budgets` (metric names, null until a versioned P0A update
+  freezes them) and `fixtures` (deterministic input/output hashes). Ids are never reused or
   renamed; a changed step gets a new id. The workshop data is tested against this file.
 - `fhe-evidence.v1.json`: evidence records. It is empty until results arrive, and with no
   records the Hub shows no validation claim.
@@ -30,11 +33,20 @@ A board run is a software token on that board. Nothing here may claim hardware c
    - `scenarioId` and `stepIds` taken from the contract;
    - `level`, `producer` and `board` (board allowed only for that producer);
    - `library {name, version, commit}`, and `engine {repo, commit}` for emulator and board runs;
-   - `parameters` and `parameterHash` (sha256);
-   - `method`, `result` (`pass`/`fail`) and `status` (`measured`/`reproduced`/`reviewed`);
-   - `claimScope`;
+   - `parameters` (the canonical parameter-set name), `config`, and `parameterHash`, which
+     is the SHA-256 (hex) of UTF-8 `parameters + "\n" + config`;
+   - `environment {hardware, os, browser?, toolchain, features}`;
+   - `method {warmup, samples, distribution, peakMemoryMethod}` (a single run says
+     `samples: 1`);
+   - `result` (`pass`/`fail`) and `status` (`estimate`/`measured`/`reproduced`/
+     `independently-reviewed`; an estimate never raises a badge);
+   - `claimScope` (`reference-library` / `browser-emulator` / `native-software-token` /
+     `board-software-token`, matching the level) and an optional `claimLabel` such as
+     "software token on KV260";
    - `artifacts[{name, sha256, url}]` with https URLs;
-   - `measuredAt` (ISO date).
+   - `measuredAt` (ISO date);
+   - an optional per-record `signature {keyId, alg: "ML-DSA-65", value}`. Without it, a
+     record is hash-pinned and covered only by the manifest signature.
 2. Run `npx vitest run src/data/fhe`. Every record must validate.
 3. Sign it with the release signing step, commit `fhe-evidence.v1.json.sig` and add a revisions
    entry.

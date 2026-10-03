@@ -15,7 +15,20 @@ import manifestJson from './fhe-evidence.v1.json'
 export type EvidenceLevel = 'reference' | 'emulator' | 'board'
 export type EvidenceProducer = 'pqctoday-sandbox' | 'pqctoday-fhe' | 'pqctoday-cacp'
 export type EvidenceBoard = 'kv260' | 'mx95' | 'mx95-pro' | 'ventuno-q'
-export type EvidenceStatus = 'measured' | 'reproduced' | 'reviewed'
+export type EvidenceStatus = 'estimate' | 'measured' | 'reproduced' | 'independently-reviewed'
+
+/** FHE plan §1.2 claim scopes; each evidence level allows only matching scopes. */
+export type ClaimScope =
+  'reference-library' | 'browser-emulator' | 'native-software-token' | 'board-software-token'
+
+export const LEVEL_SCOPES: Record<EvidenceLevel, ClaimScope[]> = {
+  reference: ['reference-library'],
+  emulator: ['browser-emulator', 'native-software-token'],
+  board: ['board-software-token'],
+}
+
+/** Statuses that may raise a badge; an estimate never does. */
+export const BADGE_STATUSES: EvidenceStatus[] = ['measured', 'reproduced', 'independently-reviewed']
 
 export const BOARD_LABELS: Record<EvidenceBoard, string> = {
   kv260: 'KV260',
@@ -46,14 +59,29 @@ export interface EvidenceRecord {
   board?: EvidenceBoard
   library: { name: string; version: string; commit: string }
   engine?: { repo: string; commit: string }
+  /** Canonical parameter-set name, e.g. V1_4_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128. */
   parameters: string
+  /** Library configuration, e.g. "default, use_dedicated_oprf_key(false)". */
+  config: string
+  /** SHA-256 (hex) of UTF-8 `${parameters}\n${config}`. */
   parameterHash: string
-  method: string
+  environment: {
+    hardware: string
+    os: string
+    browser?: string
+    toolchain: string
+    features: string
+  }
+  method: { warmup: number; samples: number; distribution: string; peakMemoryMethod: string }
   result: 'pass' | 'fail'
   status: EvidenceStatus
-  claimScope: string
+  claimScope: ClaimScope
+  /** Free-text label, e.g. "software token on KV260". Never "hardware custody". */
+  claimLabel?: string
   artifacts: EvidenceArtifact[]
   measuredAt: string
+  /** Per-record signature; without it the record is hash-pinned, unsigned (manifest .sig aside). */
+  signature?: { keyId: string; alg: 'ML-DSA-65'; value: string }
 }
 
 export interface EvidenceManifest {
@@ -65,6 +93,15 @@ export interface ScenarioContract {
   schema: 'fhe-hsm-scenarios.v1'
   scenarios: {
     id: string
+    validationTargetLabel:
+      | 'reference-validated'
+      | 'token-validated'
+      | 'conformance-mapped'
+      | 'wire-interoperable'
+      | 'reference-only'
+    disclosures: string[]
+    budgets: Record<string, number | null>
+    fixtures: { id: string; description: string; inputHash: string; expectedOutputHash: string }[]
     actors: { id: string; kind: string; zone: string }[]
     steps: {
       id: string
@@ -73,6 +110,8 @@ export interface ScenarioContract {
       phase: string
       data: string
       deployment: boolean
+      engineStatus: 'engine' | 'planned' | 'refused' | 'outside'
+      mechanism?: string
       api?: string
     }[]
   }[]
@@ -111,13 +150,29 @@ export function validateRecord(
     errors.push('library needs name, version and a commit')
   if (r.level !== 'reference' && (!r.engine || !COMMIT.test(r.engine.commit ?? '')))
     errors.push('emulator and board evidence need the engine repo and commit')
-  if (!r.parameters || !SHA256.test(r.parameterHash ?? '')) errors.push('parameters and hash')
-  if (!r.method) errors.push('missing method')
+  if (!r.parameters || typeof r.config !== 'string' || !SHA256.test(r.parameterHash ?? ''))
+    errors.push('parameters, config and parameterHash')
+  const env = r.environment
+  if (!env?.hardware || !env.os || !env.toolchain || typeof env.features !== 'string')
+    errors.push('environment needs hardware, os, toolchain and features')
+  const m = r.method
+  if (
+    !m ||
+    !Number.isInteger(m.warmup) ||
+    !Number.isInteger(m.samples) ||
+    m.samples < 1 ||
+    !m.distribution ||
+    !m.peakMemoryMethod
+  )
+    errors.push('method needs warmup, samples ≥ 1, distribution and peakMemoryMethod')
   if (r.result !== 'pass' && r.result !== 'fail') errors.push('result must be pass or fail')
-  if (!['measured', 'reproduced', 'reviewed'].includes(r.status)) errors.push('bad status')
-  if (!r.claimScope) errors.push('missing claimScope')
-  if (/hardware custody|hsm-validated/i.test(r.claimScope ?? ''))
-    errors.push('claimScope may not claim hardware custody')
+  if (!['estimate', ...BADGE_STATUSES].includes(r.status)) errors.push('bad status')
+  if (!LEVEL_SCOPES[r.level]?.includes(r.claimScope))
+    errors.push(`claimScope "${r.claimScope}" does not match level ${r.level}`)
+  if (/hardware custody|hsm-validated/i.test(`${r.claimScope} ${r.claimLabel ?? ''}`))
+    errors.push('claims may not say hardware custody or HSM-validated')
+  if (r.signature && (r.signature.alg !== 'ML-DSA-65' || !r.signature.keyId || !r.signature.value))
+    errors.push('signature needs keyId, alg ML-DSA-65 and value')
   if (!Array.isArray(r.artifacts) || r.artifacts.length === 0) errors.push('no artifacts')
   else
     for (const a of r.artifacts)
@@ -154,6 +209,7 @@ export function validationsFor(
         r.scenarioId === scenarioId &&
         r.stepIds.includes(stepId) &&
         r.result === 'pass' &&
+        BADGE_STATUSES.includes(r.status) &&
         validateRecord(r).length === 0
     )
     .map((r) => ({ level: r.level, label: validationLabel(r), board: r.board, record: r }))
