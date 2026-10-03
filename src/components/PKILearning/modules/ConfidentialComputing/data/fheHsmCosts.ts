@@ -5,7 +5,9 @@
 // FHE figures are ORDER-OF-MAGNITUDE ESTIMATES, not measurements. The
 // RLWE flows (CKKS, BFV, BGV) assume ring dimension N = 2^16 (~30 RNS limbs;
 // CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
-// flows assume the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1, KS level 4). All on a recent multicore CPU or
+// flows assume the TFHE-rs 1.8.1 default parameters (n = 918, N = 2,048, k = 1, KS level 4) in the
+// custody configuration (dedicated OPRF key off). TFHE sizes and M4 Pro timings are measured
+// (pqctoday-fhe reference-runs/tfhe-custody, published). All on a recent multicore CPU or
 // datacentre GPU. `SIZE_BASIS` below is shown on screen per flow. Real numbers move by 10x with parameters, library and hardware — the
 // workshop says so on screen. Measure before quoting any of them elsewhere.
 //
@@ -21,13 +23,13 @@ import type { FheFlowId, LinkKind } from './fheHsmFlows'
 export const SIZE_BASIS: Record<FheFlowId, string> = {
   'single-hsm': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-single-hsm':
-    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
   'openfhe-threshold':
     'BFV at n = 16,384, log2 q = 300 with noise flooding (OpenFHE threshold example)',
   'lattigo-threshold': 'BGV at ring dimension N = 2¹⁶, refreshed interactively',
   'hsm-compute-limits': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-transciphering':
-    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default, KS level 4)',
+    'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
 }
 
 /** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
@@ -195,7 +197,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM',
-      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Seconds on an HSM-class CPU (est.), returned in one size-checked export.'
+      'About 1,800 GLWE and 8,200 LWE encryptions at N = 2,048. Measured 195 ms on an Apple M4 Pro; not yet measured on the MX95 custodian board (Cortex-A55). Returned in one size-checked export.'
     ),
     c(
       3,
@@ -203,9 +205,16 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'HSM → cloud',
-      'Compressed server key, about 30 MB (≈130 MB once the cloud expands it), plus one signature.'
+      'Compressed server key: 30.1 MB measured in the custody configuration (the library default adds a 28.7 MB OPRF key, 57.4 MB in total); roughly 120–130 MB once the cloud expands it (estimate), plus one signature.'
     ),
-    c(1, '~10s of KB', 1, '~ms', 'HSM → client', 'Compact public key plus signature.'),
+    c(
+      1,
+      '33 KB',
+      1,
+      '~ms',
+      'HSM → client',
+      'Compact public key: 33 KB measured, plus a signature.'
+    ),
     c(
       1,
       '~KB / value',
@@ -217,11 +226,11 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     c(1, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       3,
-      '~130 MB keys',
+      '~0.1 GB keys',
       3,
-      'ms–s / op',
+      '0.2–2.6 s/op',
       'cloud CPU/GPU',
-      'One programmable bootstrap is milliseconds on a CPU core. A 64-bit add takes tens of ms and a multiply hundreds of ms; GPUs are much faster.'
+      'Measured on an Apple M4 Pro (14 cores): a 64-bit add took 0.19 s and a multiply 2.6 s (pqctoday-fhe tfhe-custody). Small ARM boards are far slower and GPUs much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
@@ -392,7 +401,14 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'server CPU',
       'The WAHC 2023 paper (Balenbois, Orfila, Smart; IACR ePrint 2023/980) reports under 300 ms per 64-bit block with TFHE-rs.'
     ),
-    c(3, '~130 MB keys', 3, 'ms–s / op', 'server CPU/GPU', 'Ordinary TFHE-rs integer operations.'),
+    c(
+      3,
+      '~0.1 GB keys',
+      3,
+      '~s / op',
+      'server CPU/GPU',
+      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s (measured).'
+    ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product per block, then rounding.'),
@@ -575,8 +591,8 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-cpk',
     label: 'TFHE compact public key',
-    bytes: 32_000,
-    size: '~16–32 KB',
+    bytes: 33_034,
+    size: '33 KB (measured)',
     exact: false,
     secret: false,
     note: 'Lets clients encrypt compactly without the secret.',
@@ -584,11 +600,11 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-server',
     label: 'TFHE server key (compressed)',
-    bytes: 30_000_000,
-    size: '~30 MB',
+    bytes: 30_147_061,
+    size: '30.1 MB (measured)',
     exact: false,
     secret: false,
-    note: 'Bootstrapping key + key-switching key with seeded compression. About 130 MB once expanded by the cloud. Estimated for the TFHE-rs 1.8.1 default (n = 918, N = 2,048, k = 1).',
+    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). Roughly 120–130 MB once expanded by the cloud (estimate).',
   },
   {
     id: 'fhe-pk',
