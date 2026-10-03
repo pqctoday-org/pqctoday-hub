@@ -432,6 +432,62 @@ export function validationsFor(
 
 const isFailover = (r: EvidenceRecord) => !!r.parts?.some((p) => p.failover)
 
+const BOARDS = new Set<EvidenceDevice>(['kv260', 'mx95', 'mx95-pro', 'ventuno-q'])
+
+/**
+ * One line per scenario (owner 2026-10-03): "Validated on boards: … (software token)" from the
+ * best board run by device layout, else the reference runs, else null. Links to that run's
+ * evidence. Never claims hardware-protected keys.
+ */
+export function scenarioValidation(
+  scenarioId: string,
+  records: EvidenceRecord[] = EVIDENCE_MANIFEST.records
+): { label: string; url: string; count: number } | null {
+  const ok = records.filter(
+    (r) =>
+      r.scenarioId === scenarioId &&
+      r.result === 'pass' &&
+      BADGE_STATUSES.includes(r.status) &&
+      validateRecord(r).length === 0
+  )
+  if (!ok.length) return null
+  const board = ok
+    .filter((r) => r.parts?.some((p) => BOARDS.has(p.device)))
+    .sort(
+      (a, b) =>
+        layoutRank(b) - layoutRank(a) ||
+        Number(isFailover(a)) - Number(isFailover(b)) ||
+        b.measuredAt.localeCompare(a.measuredAt)
+    )[0]
+  if (board) {
+    const parts = board.parts ?? []
+    const of = (role: DeviceRole) => parts.find((p) => p.role === role)
+    const custodian = of('custodian')
+    const backup = of('backup-custodian')
+    const server = of('fhe-server')
+    const roles = [
+      custodian &&
+        `${DEVICE_LABELS[custodian.device]} custodian${backup ? ` + ${DEVICE_LABELS[backup.device]} backup` : ''}`,
+      server && `${DEVICE_LABELS[server.device]} server`,
+    ].filter(Boolean)
+    const token = parts.some((p) => p.claimScope === 'board-software-token')
+    return {
+      label: `Validated on boards: ${roles.join(', ')} (${token ? 'software token' : 'software-held keys'})`,
+      url: board.artifacts[0].url,
+      count: ok.length,
+    }
+  }
+  const refs = ok.filter((r) => r.level === 'reference')
+  if (!refs.length) return null
+  const lib = `${refs[0].library.name} ${refs[0].library.version}`
+  const platforms = [...new Set(refs.map((r) => r.platformLabel).filter(Boolean))]
+  return {
+    label: `Validated by reference runs: ${lib}${platforms.length ? ` on ${platforms.join(' and ')}` : ''}`,
+    url: refs[0].artifacts[0].url,
+    count: ok.length,
+  }
+}
+
 /**
  * Owner 2026-10-03: every run shows, the designed device layout first. A custodian on an MX95
  * board with the MX95 Pro as backup ranks 3, an MX95 board alone 2, records without a custodian
