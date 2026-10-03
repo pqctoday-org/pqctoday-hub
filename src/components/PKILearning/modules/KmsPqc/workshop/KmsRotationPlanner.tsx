@@ -18,6 +18,7 @@ import {
 import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS, getKmsPqcStatus } from '../data/kmsProviderData'
 import { Button } from '@/components/ui/button'
+import { migrateDomainHref } from '@/utils/migrateLinks'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
 
@@ -514,7 +515,7 @@ export const KmsRotationPlanner: React.FC = () => {
           </div>
         </Link>
         <Link
-          to="/migrate"
+          to={migrateDomainHref('kms')}
           className="flex items-center gap-3 glass-panel p-4 hover:border-primary/30 transition-colors"
         >
           <Route size={20} className="text-primary shrink-0" />

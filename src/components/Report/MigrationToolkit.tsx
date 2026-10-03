@@ -11,6 +11,7 @@ import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './sections/reportContentShared'
 import clsx from 'clsx'
+import { migrateLayerHref } from '@/utils/migrateLinks'
 
 const priorityConfig = {
   Critical: { color: 'text-destructive', bg: 'bg-destructive/10' },
@@ -58,6 +59,12 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
 
   // "Selected" mode: user has explicitly bookmarked products AND the import toggle is ON
   const useSelectedMode = importProductSelection && myProducts.length > 0
+  // One assessed infrastructure layer → land on its Migrate domain; otherwise
+  // there is no single domain to pick, so the catalog opens as-is.
+  const profileHref =
+    !useSelectedMode && assessmentInfrastructure.length === 1
+      ? migrateLayerHref(assessmentInfrastructure[0])
+      : '/migrate'
 
   const { selectedProducts, groupedByLayer } = useMemo(() => {
     const hiddenSet = new Set(hiddenProducts)
@@ -237,7 +244,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
             <>
               Products from the Migrate catalog matching your infrastructure profile. Manage
               selections in the{' '}
-              <Link to="/migrate" className="text-primary hover:underline">
+              <Link to={profileHref} className="text-primary hover:underline">
                 Migrate view
               </Link>
               .
@@ -356,7 +363,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
 
         <div className="mt-4 pt-3 border-t border-border flex items-center justify-between print:hidden">
           <Link
-            to="/migrate"
+            to={profileHref}
             className="text-sm text-primary hover:underline flex items-center gap-1"
           >
             {useSelectedMode ? 'Manage product selections' : 'Explore more tools'}

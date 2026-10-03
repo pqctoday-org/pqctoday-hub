@@ -103,6 +103,10 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
   }
 
   const layerGroups = groupByLayer(items)
+  // The catalog link opens on exactly this module's products (?productIds=).
+  const catalogHref = `/migrate?productIds=${[...new Set(items.map((i) => i.productId))]
+    .map(encodeURIComponent)
+    .join(',')}`
 
   return (
     <div className="space-y-6">
@@ -111,7 +115,7 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
         {/* `underline`, not `hover:underline`: this link sits inside a
             paragraph, so colour alone is not a sufficient affordance
             (axe link-in-text-block / WCAG 1.4.1). */}
-        <Link to="/migrate" className="text-primary underline">
+        <Link to={catalogHref} className="text-primary underline">
           Migrate Catalog
         </Link>
         .

@@ -670,7 +670,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             </div>
           </Link>
           <Link
-            to="/library"
+            to="/library?cat=Digital%20Signature"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Library size={18} className="text-primary shrink-0" />

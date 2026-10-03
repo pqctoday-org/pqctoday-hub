@@ -499,7 +499,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </div>
           </Link>
           <Link
-            to="/library"
+            to="/library?cat=Protocols"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <FlaskConical size={18} className="text-primary shrink-0" />
