@@ -62,7 +62,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'OpenSSL 3.5 LTS is the recommended production target. Its PQC algorithms are not yet inside a validated boundary: another OpenSSL FIPS Provider entry is on the CMVP Modules-in-Process list (Comment Resolution - Lab, 21 Sep 2026), which is not evidence of the outcome. No ESV certificate is held by the OpenSSL project itself; several distributions hold ESV certificates for their own OpenSSL jitter entropy sources.',
+      'OpenSSL 3.5 LTS is the recommended production target. Its PQC algorithms are not yet inside a validated boundary: another OpenSSL FIPS Provider entry is on the NIST CMVP Modules In Process (MIP) List (Comment Resolution - Lab, 21 Sep 2026), which is not evidence of the outcome. No ESV certificate is held by the OpenSSL project itself; several distributions hold ESV certificates for their own OpenSSL jitter entropy sources.',
   },
   {
     id: 'openssl-1.1.1',
@@ -95,7 +95,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'Google does not offer official external support contracts. FIPS validation bound to specific snapshot tags. ESV: E321 BoringCrypto Jitter Entropy (11 Mar 2026).',
+      'Google does not offer official external support contracts. FIPS validation bound to specific snapshot tags. NIST ESV Certificate E321 (BoringCrypto Jitter Entropy, 11 Mar 2026).',
   },
   {
     id: 'liboqs',
@@ -129,7 +129,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify CAVP algorithm validation status at csrc.nist.gov. ESV: E335 wolfEntropy (1 Jul 2026).',
+      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify CAVP algorithm validation status at csrc.nist.gov. NIST ESV Certificate E335 (wolfEntropy, 1 Jul 2026).',
   },
   {
     id: 'bc-fips',
@@ -146,7 +146,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'ML-KEM and ML-DSA are not inside the #4943 boundary. A BC-FJA entry is on the CMVP Modules-in-Process list (Review, 4 Sep 2026), which is not evidence of the outcome. ESV: E266 Jentropy Engine (27 Jun 2025).',
+      'ML-KEM and ML-DSA are not inside the #4943 boundary. A BC-FJA entry is on the NIST CMVP Modules In Process (MIP) List (Review, 4 Sep 2026), which is not evidence of the outcome. NIST ESV Certificate E266 (Jentropy Engine, 27 Jun 2025).',
   },
   {
     id: 'mbedtls',
