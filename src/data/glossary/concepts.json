@@ -219,7 +219,7 @@
     "term": "NTRU Lattice",
     "acronym": "NTRU",
     "definition": "A lattice-based cryptographic family using polynomial rings, providing the mathematical basis for FN-DSA (Falcon). One of the earliest PQC proposals (1996).",
-    "relatedModule": "/algorithms?highlight=NTRU",
+    "relatedModule": "/algorithms?highlight=FN-DSA,NTRU%2B",
     "complexity": "advanced",
     "category": "concept"
   },

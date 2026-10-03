@@ -129,6 +129,9 @@ export function AlgorithmsView() {
     algoNotFound,
     openAlgorithm,
     closeAlgorithm,
+    selectedTransitionId,
+    transitionNotFound,
+    closeTransition,
   } = useAlgorithmExplorer(personaDefaults)
 
   // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
@@ -167,6 +170,9 @@ export function AlgorithmsView() {
   // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
   // tab=support into the URL right after first paint).
   const protocolParam = searchParams.get('protocol')
+  // ?transition=<row slug> without ?tab means the Transition Guide (pinned
+  // right after first paint, like ?protocol).
+  const transitionParam = searchParams.get('transition')
   // ?usecase / ?attack / ?kat / ?polarity imply their tab the same way (pinned right after
   // first paint), so they skip the landing shell too. ?algo does not: the
   // landing shell opens it in its own detail sheet.
@@ -174,6 +180,7 @@ export function AlgorithmsView() {
     isMobile &&
     !tabParam &&
     !searchParams.get('highlight') &&
+    !transitionParam &&
     !protocolParam &&
     !searchParams.get('usecase') &&
     !searchParams.get('attack') &&
@@ -192,7 +199,8 @@ export function AlgorithmsView() {
     tabParam === 'validation' &&
     (sectionParam === 'coverage' || (!sectionParam && !!searchParams.get('polarity')))
   const isMobileValidation = isMobile && tabParam === 'validation' && !isMobileCoverage
-  const isMobileTransition = isMobile && tabParam === 'transition'
+  const isMobileTransition =
+    isMobile && (tabParam === 'transition' || (!tabParam && !!transitionParam))
   const isMobileDetailed = isMobile && tabParam === 'detailed'
 
   const [infoOpen, setInfoOpen] = useState(false)
@@ -224,6 +232,7 @@ export function AlgorithmsView() {
       'compare',
       'highlight',
       'algo',
+      'transition',
       'matrixHighlight',
     ].some((k) => searchParams.has(k)) || searchParams.get('mode') === 'compare'
   const isCuriousPreview =
@@ -260,6 +269,7 @@ export function AlgorithmsView() {
       'case',
       'polarity',
       'kat',
+      'transition',
     ]
     return watched.some((key) => searchParams.has(key))
   }, [searchParams])
@@ -289,8 +299,25 @@ export function AlgorithmsView() {
     () => parseHighlight(searchParams.get('highlight')),
     [searchParams]
   )
+  // ?transition: the one linked Transition row (all rows sharing its id are
+  // tinted; the scroll goes to the first) once it's visible —
+  // useAlgorithmExplorer widens the filters first when it's hidden. It wins
+  // over a ?highlight scroll on the same tab.
+  const transitionRowVisible =
+    !!selectedTransitionId &&
+    activeTab === 'transition' &&
+    filteredTransitions.some((t) => transitionRowId(t) === selectedTransitionId)
+  useScrollToDeepLinkTarget(
+    transitionRowVisible ? `transition-row|${selectedTransitionId}` : null,
+    transitionRowVisible ? highlightRowSelector(deepLinkSelector(selectedTransitionId)) : null
+  )
+  // A ?highlight or ?transition link (not a role default): on a phone the
+  // Transition tab opens its full list on the row instead of the wizard.
+  const rowLinkArrived = !!searchParams.get('highlight') || !!transitionParam
+
   const highlightTargetId = useMemo(() => {
     if (isLoading || urlHighlightNames.length === 0) return null
+    if (transitionRowVisible) return null
     if (activeTab === 'detailed') {
       const row = filteredAlgorithms.find((a) =>
         urlHighlightNames.some((h) => algoMatchesHighlight(a.name, h))
@@ -304,7 +331,14 @@ export function AlgorithmsView() {
       return row ? transitionRowId(row) : null
     }
     return null
-  }, [isLoading, urlHighlightNames, activeTab, filteredAlgorithms, filteredTransitions])
+  }, [
+    isLoading,
+    urlHighlightNames,
+    activeTab,
+    filteredAlgorithms,
+    filteredTransitions,
+    transitionRowVisible,
+  ])
   useScrollToDeepLinkTarget(
     highlightTargetId ? `${activeTab}|${highlightTargetId}` : null,
     highlightTargetId ? highlightRowSelector(deepLinkSelector(highlightTargetId)) : null
@@ -326,6 +360,14 @@ export function AlgorithmsView() {
       kind="not-found"
       message={`No algorithm matches "${algoNotFound}" — it may have been renamed or retired.`}
       onDismiss={closeAlgorithm}
+    />
+  ) : null
+
+  const transitionNotFoundEl = transitionNotFound ? (
+    <DeepLinkNotice
+      kind="not-found"
+      message={`No Transition Guide row matches "${transitionNotFound}" — it may have been renamed or retired.`}
+      onDismiss={closeTransition}
     />
   ) : null
 
@@ -443,10 +485,12 @@ export function AlgorithmsView() {
   if (isMobileTransition) {
     return (
       <div className="px-4 pb-4 pt-4">
+        {transitionNotFoundEl}
         {highlightNoticeEl}
         <AlgorithmComparison
           highlightAlgorithms={highlightAlgorithms}
-          highlightFromLink={!!searchParams.get('highlight')}
+          highlightFromLink={rowLinkArrived}
+          selectedRowId={selectedTransitionId}
           filteredData={filteredTransitions}
           compareSet={compareSet}
           compareType={compareType}
@@ -688,6 +732,9 @@ export function AlgorithmsView() {
           )}
 
           {algoNotFoundEl && <div className="mt-4">{algoNotFoundEl}</div>}
+          {activeTab === 'transition' && transitionNotFoundEl && (
+            <div className="mt-4">{transitionNotFoundEl}</div>
+          )}
           {(activeTab === 'detailed' || activeTab === 'transition') && highlightNoticeEl && (
             <div className="mt-4">{highlightNoticeEl}</div>
           )}
@@ -738,7 +785,8 @@ export function AlgorithmsView() {
               >
                 <AlgorithmComparison
                   highlightAlgorithms={highlightAlgorithms}
-                  highlightFromLink={!!searchParams.get('highlight')}
+                  highlightFromLink={rowLinkArrived}
+                  selectedRowId={selectedTransitionId}
                   filteredData={filteredTransitions}
                   compareSet={compareSet}
                   compareType={compareType}

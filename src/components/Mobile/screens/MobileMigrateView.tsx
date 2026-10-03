@@ -11,6 +11,7 @@ import {
   BookText,
   Plus,
   Search,
+  Users,
   X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -55,6 +56,11 @@ import {
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
+import {
+  leaderProfileHref,
+  maintainerLinksFor,
+  useLeadersRoster,
+} from '@/components/Migrate/Workbench/maintainerLeaders'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
@@ -1052,6 +1058,10 @@ function MobileProductDetailSheet({
   // real text now, alongside the capabilities it qualifies.
   const proof = product ? proofFreshness(product) : null
 
+  // Same maintainer → Community profile links as desktop's ProductDetail.
+  const leadersRoster = useLeadersRoster((product?.openSourceMaintainers?.length ?? 0) > 0)
+  const maintainers = product ? maintainerLinksFor(product, leadersRoster) : []
+
   // Real production feedback, 2026-08-27: the row shows the PQC-support tier
   // (Yes/Partial/No) and FIPS badge, but tapping into this sheet never
   // repeated them — a reader scrolling the sheet had no way to recheck that
@@ -1164,6 +1174,31 @@ function MobileProductDetailSheet({
               </p>
             )}
           </div>
+
+          {maintainers.length > 0 && (
+            <div data-testid="product-maintainers">
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Open-source maintainers
+              </p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-foreground/90">
+                {maintainers.map((m, i) => (
+                  <li key={`${m.name}-${i}`}>
+                    {m.leader ? (
+                      <Link
+                        to={leaderProfileHref(m.leader)}
+                        className="inline-flex min-h-[32px] items-center gap-1 font-semibold text-primary hover:underline"
+                      >
+                        <Users size={12} aria-hidden="true" />
+                        {m.name}
+                      </Link>
+                    ) : (
+                      m.name
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (
             <div className="flex flex-wrap items-center gap-3">

@@ -25,6 +25,7 @@ import {
   algoMatchesHighlight,
   transitionMatchesHighlight,
   transitionPqcName,
+  transitionRowSlug,
 } from '../src/components/Algorithms/highlightMatch'
 import { matchAttackProfile } from '../src/components/Algorithms/attackDeepLink'
 import {
@@ -503,9 +504,11 @@ function buildLinkResolvers(): LinkResolverTable {
     algoNames
   )
   const transitions = rowsOf('algorithms_transitions_').map((r) => ({
+    function: sanitize(r.Function),
     classical: sanitize(r.classical_algorithm),
     pqc: sanitize(r.pqc_replacement),
   }))
+  const transitionSlugs = new Set(transitions.map(transitionRowSlug))
   const highlight = (h: string) =>
     algoNames.some((n) => algoMatchesHighlight(n, h)) ||
     transitions.some((t) => t.classical && transitionMatchesHighlight(t, h))
@@ -527,6 +530,7 @@ function buildLinkResolvers(): LinkResolverTable {
     '/algorithms': {
       algo,
       highlight,
+      transition: (v) => transitionSlugs.has(v.toLowerCase()),
       protocol: (v) => protocols.has(v),
       attack: (v) => matchAttackProfile(v) !== null,
     },

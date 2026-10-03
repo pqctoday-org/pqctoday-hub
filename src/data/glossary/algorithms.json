@@ -287,7 +287,7 @@
     "term": "P-256",
     "definition": "A NIST standard elliptic curve (also called secp256r1 or prime256v1) widely used in TLS, FIDO2, and government systems. Quantum-vulnerable.",
     "technicalNote": "Part of the Suite B / CNSA 1.0 algorithms. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange.",
-    "relatedModule": "/algorithms?highlight=P-256",
+    "relatedModule": "/algorithms?highlight=ECDH%20P-256,ECDSA%20P-256",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -295,7 +295,7 @@
     "term": "P-384",
     "definition": "A NIST standard elliptic curve (secp384r1) offering 192-bit security. Used in high-security TLS configurations and government systems. Quantum-vulnerable.",
     "technicalNote": "Combined with ML-KEM-1024 in the SecP384r1MLKEM1024 hybrid key exchange for NIST Level 5 security.",
-    "relatedModule": "/algorithms?highlight=P-384",
+    "relatedModule": "/algorithms?highlight=ECDH%20P-384,ECDSA%20P-384",
     "complexity": "intermediate",
     "category": "algorithm"
   },

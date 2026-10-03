@@ -15,6 +15,8 @@ interface MobileAlgorithmListProps {
   /** ?highlight names — matching cards are tinted and carry the same
    *  data-deeplink-id as the desktop row, so the shared scroll hook finds them. */
   highlightAlgorithms?: Set<string>
+  /** transitionRowId of the ?transition-linked row (tinted on its own). */
+  selectedRowId?: string | null
   onBackToWizard?: () => void
 }
 
@@ -22,6 +24,7 @@ export const MobileAlgorithmList = ({
   data,
   pqcDetailMap,
   highlightAlgorithms,
+  selectedRowId = null,
   onBackToWizard,
 }: MobileAlgorithmListProps) => {
   // Helper to clean mechanism name (remove parens)
@@ -44,13 +47,15 @@ export const MobileAlgorithmList = ({
       {data.map((algo, index) => {
         const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
         const pqcDetail = pqcDetailMap?.get(pqcName.toLowerCase())
+        const rowId = transitionRowId(algo)
         const isHighlighted =
-          !!highlightAlgorithms &&
-          Array.from(highlightAlgorithms).some((h) => transitionMatchesHighlight(algo, h))
+          (!!selectedRowId && rowId === selectedRowId) ||
+          (!!highlightAlgorithms &&
+            Array.from(highlightAlgorithms).some((h) => transitionMatchesHighlight(algo, h)))
         return (
           <div
             key={`${algo.classical}-${algo.function}-${index}`}
-            data-deeplink-id={transitionRowId(algo)}
+            data-deeplink-id={rowId}
             className={clsx(
               'glass-panel p-4 flex items-center justify-between active:scale-[0.98] transition-transform',
               isHighlighted && 'bg-primary/15 ring-1 ring-inset ring-primary/30'

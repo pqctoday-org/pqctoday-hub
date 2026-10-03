@@ -46,6 +46,7 @@ interface RawSoftwareItem {
   product_brief: string
   product_brief_url?: string
   user_manual_url?: string
+  open_source_maintainers?: string
   source_type: string
   verification_status: string
   last_verified_date: string
@@ -234,6 +235,11 @@ const {
       productBrief: row.product_brief,
       productBriefUrl: row.product_brief_url?.trim() || undefined,
       userManualUrl: row.user_manual_url?.trim() || undefined,
+      // `;`-separated, never `,` — a name may itself carry one ("Lim, Thing-han").
+      openSourceMaintainers: (row.open_source_maintainers || '')
+        .split(';')
+        .map((m) => m.trim())
+        .filter(Boolean),
       sourceType: row.source_type,
       verificationStatus: deriveVerificationStatus(
         row.verification_status,

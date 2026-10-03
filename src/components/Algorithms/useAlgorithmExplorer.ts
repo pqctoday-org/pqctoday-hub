@@ -22,7 +22,13 @@ import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaConfig'
-import { algoMatchesHighlight, parseHighlight, transitionMatchesHighlight } from './highlightMatch'
+import {
+  algoMatchesHighlight,
+  findTransitionRows,
+  parseHighlight,
+  transitionMatchesHighlight,
+  transitionRowId,
+} from './highlightMatch'
 
 export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
@@ -31,7 +37,15 @@ export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the tran
  * URL, `tab` is written too — even when it equals the sharer's persona
  * default — so a recipient with a different persona lands on the same tab.
  */
-const TAB_BOUND_PARAMS = ['mode', 'compare', 'section', 'algo', 'polarity', 'kat'] as const
+const TAB_BOUND_PARAMS = [
+  'mode',
+  'compare',
+  'section',
+  'algo',
+  'polarity',
+  'kat',
+  'transition',
+] as const
 
 /**
  * Every Algorithms state param. Whenever ANY of these is in the URL, `tab` is
@@ -72,6 +86,7 @@ const IMPLIED_TAB_PARAMS: ReadonlyArray<[string, AlgorithmTabId]> = [
   ['attack', 'validation'],
   ['kat', 'validation'],
   ['polarity', 'validation'],
+  ['transition', 'transition'],
 ]
 
 // True FIPS validation, grounded in the literal NIST FIPS numbering
@@ -989,6 +1004,39 @@ export function useAlgorithmExplorer(
 
   const dismissHighlightNotice = useCallback(() => setHighlightNotice(null), [])
 
+  // Widen the filters so a single linked row (?algo / ?transition) is
+  // visible, with the same Undo notice ?highlight uses (keeps any not-found).
+  const widenForLinkedRow = (widenTo: ExplorerFilterState, label: string) => {
+    const onlyQuickView =
+      JSON.stringify({ ...filterState, quickView: 'none' }) === JSON.stringify(widenTo)
+    setHighlightNotice((n) => ({
+      notFound: n?.notFound ?? null,
+      widened: {
+        message: onlyQuickView
+          ? `Switched the quick view to "Everything" so the linked ${label} is visible.`
+          : `Filters were cleared so the linked ${label} is visible.`,
+        prev: filterState,
+        prevParams: Object.fromEntries(
+          ['quickview', 'family', 'fn', 'level', 'region', 'status', 'cnsa', 'gap', 'q'].map(
+            (k) => [k, searchParams.get(k)]
+          )
+        ),
+      },
+    }))
+    applyFilterState(widenTo)
+    updateSearchParams({
+      quickview: 'none',
+      family: widenTo.family,
+      fn: widenTo.fn,
+      level: widenTo.level,
+      region: widenTo.region,
+      status: widenTo.status,
+      cnsa: widenTo.cnsa ? '1' : null,
+      gap: widenTo.gap ? '1' : null,
+      q: widenTo.q || null,
+    })
+  }
+
   // --- ?algo=<algorithm_id> detail drawer ---
   // Accepts the stable id or (for links minted before the id column) an
   // exact, case-insensitive algorithm name. Opening pushes a history entry
@@ -1022,38 +1070,53 @@ export function useAlgorithmExplorer(
       (r, f) => passesAlgoFilterState(r, f, semanticAlgoNameSet),
       (r, n) => r.name === n
     )
-    if (!plan.widenTo) return
-    const onlyQuickView =
-      JSON.stringify({ ...filterState, quickView: 'none' }) === JSON.stringify(plan.widenTo)
-    setHighlightNotice((n) => ({
-      notFound: n?.notFound ?? null,
-      widened: {
-        message: onlyQuickView
-          ? `Switched the quick view to "Everything" so the linked ${selectedAlgo.name} is visible.`
-          : `Filters were cleared so the linked ${selectedAlgo.name} is visible.`,
-        prev: filterState,
-        prevParams: Object.fromEntries(
-          ['quickview', 'family', 'fn', 'level', 'region', 'status', 'cnsa', 'gap', 'q'].map(
-            (k) => [k, searchParams.get(k)]
-          )
-        ),
-      },
-    }))
-    applyFilterState(plan.widenTo)
-    updateSearchParams({
-      quickview: 'none',
-      family: plan.widenTo.family,
-      fn: plan.widenTo.fn,
-      level: plan.widenTo.level,
-      region: plan.widenTo.region,
-      status: plan.widenTo.status,
-      cnsa: plan.widenTo.cnsa ? '1' : null,
-      gap: plan.widenTo.gap ? '1' : null,
-      q: plan.widenTo.q || null,
-    })
+    if (plan.widenTo) widenForLinkedRow(plan.widenTo, selectedAlgo.name)
     // Only the (tab, algo) pair triggers this; filter state is read, not tracked.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAlgo, activeTab, algorithmData])
+
+  // --- ?transition=<row slug> (one Transition Guide row) ---
+  // The slug is derived from function|classical|pqc (transitionRowSlug) — no
+  // ID column exists. Opens the Transition tab (IMPLIED_TAB_PARAMS), widens
+  // the filters like ?algo when the row is hidden, and the page highlights +
+  // scrolls to it. An unknown slug gets the not-found notice; dismissing it
+  // strips the param in place.
+  const transitionParam = searchParams.get('transition')
+  const selectedTransitionRows = useMemo(
+    () => findTransitionRows(transitionData, transitionParam),
+    [transitionData, transitionParam]
+  )
+  const selectedTransition = selectedTransitionRows[0] ?? null
+  const selectedTransitionId = selectedTransition ? transitionRowId(selectedTransition) : null
+  const transitionNotFound =
+    !isLoading && !!transitionParam && !selectedTransition ? transitionParam : null
+  const closeTransition = useCallback(
+    () => updateSearchParams({ transition: null }),
+    [updateSearchParams]
+  )
+
+  const handledTransitionKeyRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!selectedTransition || !selectedTransitionId || activeTab !== 'transition') return
+    const key = `${activeTab}|${selectedTransitionId}`
+    if (handledTransitionKeyRef.current === key) return
+    handledTransitionKeyRef.current = key
+    const plan = planHighlightWidening(
+      [selectedTransitionId],
+      transitionData,
+      filterState,
+      (r, f) => passesTransitionFilterState(r, f, semanticAlgoNameSet),
+      (r, id) => transitionRowId(r) === id
+    )
+    if (plan.widenTo) {
+      widenForLinkedRow(
+        plan.widenTo,
+        `${selectedTransition.classical} → ${selectedTransition.pqc} row`
+      )
+    }
+    // Only the (tab, row) pair triggers this; filter state is read, not tracked.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTransitionId, activeTab, transitionData])
 
   // --- Available security levels ---
   // Derived from the dataset filtered by everything EXCEPT the active level
@@ -1147,6 +1210,10 @@ export function useAlgorithmExplorer(
     algoNotFound,
     openAlgorithm,
     closeAlgorithm,
+    // ?transition row link
+    selectedTransitionId,
+    transitionNotFound,
+    closeTransition,
     // tab
     activeTab,
     setActiveTab,
