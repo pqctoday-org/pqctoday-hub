@@ -1,8 +1,67 @@
 ---
 generated: 2026-10-02
 collection: library
-documents_processed: 3
+documents_processed: 4
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
+---
+
+## fhe-rs-v0.1.1
+
+- **Reference ID**: fhe-rs-v0.1.1
+- **Title**: fhe.rs v0.1.1
+- **Authors**: Tancrède Lepoint
+- **Publication Date**: 2025-11-23
+- **Last Updated**: 2025-11-23
+- **Document Status**: Released
+- **Main Topic**: An experimental Rust library implementing Ring-LWE-based fully homomorphic encryption schemes, specifically an RNS variant of the BFV scheme.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Christian Mouchet (described in context of Multiparty BFV scheme)
+- **PQC Products Mentioned**: fhe.rs
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The library implements a leveled variant of the HPS RNS-variant of the BFV homomorphic encryption scheme; Operations are performed modulo the plaintext modulus, which affects the result of homomorphic multiplications; The library provides both poly() and simd() encodings, with simd() requiring the plaintext modulus to be congruent to 1 modulo twice the polynomial degree; The implementations have not been independently audited for security and should be used at one's own risk.
+- **Security Levels & Parameters**: Polynomial degree 2048; Plaintext modulus 1024; Moduli 0x3fffffff000001
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Micro benchmarks available via cargo bench; criterion.rs used for benchmarks
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Rust; Cargo; fhe-math =0.1.1; fhe-traits =0.1.1; fhe-util =0.1.1
+- **Relevant PQC Today Features**: Algorithms; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Unit tests; Micro benchmarks
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: fhe-rs-v0.1.1.html (33,865 bytes, 5,010 extracted chars)
+- **Extraction Timestamp**: 2026-10-02T22:18:58
+- **Evidence SHA-256**: 0f451f83505c0adf561c3e510cbf08924b82bb5adb8b7181dbad6dec8718425c
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 0f451f83505c0adf
+- **Window Chars**: 5010
+
 ---
 
 ## tfhe-rs-v1.8.1

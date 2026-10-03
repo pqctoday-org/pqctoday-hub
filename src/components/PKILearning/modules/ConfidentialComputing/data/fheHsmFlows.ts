@@ -22,6 +22,39 @@ export interface FlowActor {
   kind: ActorKind
   /** Holds (part of) the FHE secret — drawn with a lock and a secret boundary. */
   holdsSecret?: boolean
+  /** Trust zone: the data owner's side, the untrusted third party, or an independent key holder. */
+  zone: TrustZone
+}
+
+export type TrustZone = 'owner' | 'third' | 'party'
+
+export const ZONE_LABELS: Record<TrustZone, string> = {
+  owner: 'Data owner’s side (trusted)',
+  third: 'Third party (untrusted compute)',
+  party: 'Independent key holders',
+}
+
+/** The FHE life cycle every flow walks through, shown as bands down the diagram. */
+export type Phase = 'setup' | 'encrypt' | 'compute' | 'decrypt' | 'backup'
+
+export const PHASE_LABELS: Record<Phase, string> = {
+  setup: 'Key setup',
+  encrypt: 'Encrypt',
+  compute: 'Compute on encrypted data',
+  decrypt: 'Decrypt',
+  backup: 'Backup',
+}
+
+/** What state the data itself is in at a step (keys-only steps carry no data). */
+export type DataState = 'keys' | 'clear' | 'encrypting' | 'encrypted' | 'decrypting' | 'result'
+
+export const DATA_STATE_LABELS: Record<DataState, string> = {
+  keys: 'keys only',
+  clear: 'data in clear',
+  encrypting: 'clear → encrypted',
+  encrypted: 'encrypted',
+  decrypting: 'encrypted → clear',
+  result: 'result in clear',
 }
 
 /** Crypto carried by a step, for the quantum overlay. `fhe` is lattice-based and never flagged. */
@@ -73,6 +106,8 @@ export interface FlowStep {
   engine?: EngineStatus
   /** For HSM steps: which building blocks exist in the engine today and what is missing. */
   engineNote?: string
+  /** Release step: the third party that also gets the clear result when the owner's policy allows it. */
+  shareWith?: string
 }
 
 export interface FheFlow {
@@ -181,10 +216,17 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'The HSM becomes the one place that can decrypt anything. If it decrypts whatever it is sent, an attacker can use it as an oracle to learn the key, so decryption needs a policy.',
     },
     actors: [
-      { id: 'client', label: 'Data owner', sub: 'app / analyst', kind: 'client' },
-      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud' },
-      { id: 'hsm', label: 'HSM', sub: 'FHE key custodian', kind: 'hsm', holdsSecret: true },
-      { id: 'dr', label: 'Peer / backup HSM', sub: 'same trust chain', kind: 'hsm' },
+      { id: 'client', label: 'Data owner', sub: 'app / analyst', kind: 'client', zone: 'owner' },
+      {
+        id: 'hsm',
+        label: 'HSM',
+        sub: 'FHE key custodian',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'owner',
+      },
+      { id: 'dr', label: 'Peer / backup HSM', sub: 'same trust chain', kind: 'hsm', zone: 'owner' },
+      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud', zone: 'third' },
     ],
     steps: [
       {
@@ -225,12 +267,21 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'client',
+        to: 'client',
+        label: 'encrypt locally',
+        api: 'MakeCKKSPackedPlaintext · Encrypt',
+        title: 'The data owner encrypts on its own device',
+        detail:
+          'The data owner encodes its values and encrypts them with the FHE public key on its own device. No secret is needed to encrypt. From here on the data never leaves the data owner in the clear.',
+        link: 'fhe',
+      },
+      {
+        from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
-        api: 'MakeCKKSPackedPlaintext · Encrypt',
-        title: 'Upload encrypted data',
+        title: 'Upload ciphertexts to the third party',
         detail:
-          'The client encrypts under the FHE public key and uploads the ciphertexts. The FHE layer is post-quantum. The TLS session around it often is not.',
+          'Only ciphertexts leave the data owner. The third party stores and computes on them but cannot read them. The FHE layer is post-quantum; the TLS session around it often is not.',
         link: 'tls',
       },
       {
@@ -245,22 +296,31 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'cloud',
-        to: 'hsm',
-        label: 'FHE(result)',
-        title: 'Send the encrypted result for decryption',
+        to: 'client',
+        label: 'FHE(result) → owner',
+        title: 'Return the encrypted result to the data owner',
         detail:
-          'Only the result ciphertext travels to the HSM, which is small compared with the evaluation keys.',
+          'The third party sends the result back still encrypted. It never held a key that could open it.',
+        link: 'tls',
+      },
+      {
+        from: 'client',
+        to: 'hsm',
+        label: 'decrypt request',
+        title: 'The data owner asks its HSM to decrypt',
+        detail:
+          'The data owner (or its authorized application) sends the encrypted result to its own HSM over an authenticated channel. Only the data owner can ask; the third party has no access to the HSM.',
         link: 'tls',
       },
       {
         from: 'hsm',
         to: 'hsm',
-        label: 'policy · flood · decrypt',
+        label: 'policy · shape · decrypt',
         api: 'Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT',
         deployment: true,
         title: 'Decrypt under policy',
         detail:
-          'The HSM checks that the request matches an approved result shape and rate limit. For CKKS it adds noise flooding, so the approximate output does not leak the key. It decrypts and writes an audit record.',
+          'Policy first, then decryption. This policy is not defined by ISO/IEC 28033 or by OpenFHE; it is the HSM’s deployment layer. (1) Only the data owner’s authenticated session may ask. (2) The HSM checks the ciphertext’s metadata (slot count, level, scale) against an allowed result shape before decrypting; this limits how much one release can reveal, not where the ciphertext came from. (3) It decrypts inside the HSM, adds noise flooding (OpenFHE NOISE_FLOODING_DECRYPT) so the approximate output does not leak the key, and releases the value only if it fits the allowed range; a refusal still counts against the rate limit. (4) Rate limit and audit. The HSM cannot verify which computation produced a ciphertext.',
       },
       {
         from: 'hsm',
@@ -269,6 +329,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         title: 'Release the result',
         detail: 'Only the authorized party gets the plaintext result.',
         link: 'tls',
+        shareWith: 'cloud',
       },
       {
         from: 'hsm',
@@ -338,10 +399,17 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Each TFHE operation is a bootstrap, so wide arithmetic (64-bit multiplies, big matrix maths) is slower than CKKS. It suits comparisons, lookups and business logic, not large-scale ML training.',
     },
     actors: [
-      { id: 'client', label: 'Data owner', sub: 'app / analyst', kind: 'client' },
-      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud' },
-      { id: 'hsm', label: 'HSM', sub: 'TFHE key custodian', kind: 'hsm', holdsSecret: true },
-      { id: 'dr', label: 'Peer / backup HSM', sub: 'same trust chain', kind: 'hsm' },
+      { id: 'client', label: 'Data owner', sub: 'app / analyst', kind: 'client', zone: 'owner' },
+      {
+        id: 'hsm',
+        label: 'HSM',
+        sub: 'TFHE key custodian',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'owner',
+      },
+      { id: 'dr', label: 'Peer / backup HSM', sub: 'same trust chain', kind: 'hsm', zone: 'owner' },
+      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud', zone: 'third' },
     ],
     steps: [
       {
@@ -392,12 +460,21 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'client',
+        to: 'client',
+        label: 'encrypt locally',
+        api: 'CompactCiphertextList::builder(&public_key)',
+        title: 'The data owner encrypts on its own device',
+        detail:
+          'The data owner splits each integer into small blocks and encrypts them with the compact public key on its own device. No secret is needed to encrypt. From here on the data never leaves the data owner in the clear.',
+        link: 'fhe',
+      },
+      {
+        from: 'client',
         to: 'cloud',
         label: 'FHE(values)',
-        api: 'CompactCiphertextList::builder(&public_key)',
-        title: 'Encrypt values and upload',
+        title: 'Upload ciphertexts to the third party',
         detail:
-          'Each integer is encrypted as a list of small blocks. Compact public-key encryption keeps the upload to KBs per value. The cloud expands them on arrival.',
+          'Only ciphertexts leave the data owner. The third party stores and computes on them but cannot read them. The FHE layer is post-quantum; the TLS session around it often is not.',
         link: 'tls',
       },
       {
@@ -412,21 +489,31 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'cloud',
+        to: 'client',
+        label: 'FHE(result) → owner',
+        title: 'Return the encrypted result to the data owner',
+        detail:
+          'The third party sends the result back still encrypted. It never held a key that could open it.',
+        link: 'tls',
+      },
+      {
+        from: 'client',
         to: 'hsm',
-        label: 'FHE(result)',
-        title: 'Send the encrypted result to the HSM',
-        detail: 'The result ciphertext blocks: about 0.5 MB per FheUint64 unless compressed.',
+        label: 'decrypt request',
+        title: 'The data owner asks its HSM to decrypt',
+        detail:
+          'The data owner (or its authorized application) sends the encrypted result to its own HSM over an authenticated channel. Only the data owner can ask; the third party has no access to the HSM.',
         link: 'tls',
       },
       {
         from: 'hsm',
         to: 'hsm',
-        label: 'policy · decrypt',
+        label: 'policy · type · decrypt',
         api: 'FheUint64::decrypt(&client_key)',
         deployment: true,
         title: 'Decrypt under policy',
         detail:
-          'Decryption is one dot product per block between the ciphertext and the 2,048-coefficient key (default parameters encrypt under the big key), then rounding: microseconds. Policy checks and audit apply as for CKKS. Choose parameters with a negligible decryption-failure probability to blunt IND-CPA-D attacks.',
+          'Policy first, then decryption. This policy is not defined by ISO/IEC 28033 or by TFHE-rs; it is the HSM’s deployment layer built on TFHE-rs building blocks. The serialized ciphertext carries no access-control metadata (no owner, purpose or recipient, and nothing in it is authenticated), so control comes from the HSM’s policy object and the requester. (1) Only the data owner’s authenticated session may ask. (2) A conformance-checked type gate (TFHE-rs safe_deserialize_conformant) refuses a ciphertext whose type, block count or parameter set is not an allowed result type, before decrypting. Marking input types as never releasable stops a raw input being released whole, but not a slice of it: the HSM limits how many bits each release can reveal, and the rate limit caps the total. (3) After decrypting inside the HSM, the value must fit the allowed shape (a yes/no, a score from 0 to 100) or nothing is released; a refusal still counts against the rate limit, because refusing is itself an answer. (4) Rate limit and audit. Decryption itself is a 2,048-term dot product per block: microseconds. The HSM cannot verify which computation produced a ciphertext; only verifiable-computation proofs could, and those are research.',
         verdict: 'ok',
       },
       {
@@ -436,6 +523,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         title: 'Release the result',
         detail: 'Only the authorized party gets the plaintext.',
         link: 'tls',
+        shareWith: 'cloud',
       },
       {
         from: 'hsm',
@@ -502,11 +590,32 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'N-of-N means every party must be online for every decryption: one unavailable HSM blocks everything. OpenFHE’s example uses leveled evaluation (no bootstrapping keys).',
     },
     actors: [
-      { id: 'client', label: 'Data owner', sub: 'fuses result', kind: 'client' },
-      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud' },
-      { id: 'hsmA', label: 'Party A', sub: 'HSM · lead', kind: 'hsm', holdsSecret: true },
-      { id: 'hsmB', label: 'Party B', sub: 'HSM · share s₂', kind: 'hsm', holdsSecret: true },
-      { id: 'hsmC', label: 'Party C', sub: 'HSM · share s₃', kind: 'hsm', holdsSecret: true },
+      { id: 'client', label: 'Data owner', sub: 'fuses result', kind: 'client', zone: 'owner' },
+      { id: 'cloud', label: 'FHE cloud', sub: 'untrusted compute', kind: 'cloud', zone: 'third' },
+      {
+        id: 'hsmA',
+        label: 'Party A',
+        sub: 'HSM · lead',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
+      {
+        id: 'hsmB',
+        label: 'Party B',
+        sub: 'HSM · share s₂',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
+      {
+        id: 'hsmC',
+        label: 'Party C',
+        sub: 'HSM · share s₃',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
     ],
     steps: [
       {
@@ -561,11 +670,21 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'client',
+        to: 'client',
+        label: 'encrypt locally',
+        api: 'Encrypt(jointPublicKey, plaintext)',
+        title: 'The data owner encrypts on its own device',
+        detail:
+          'The data owner encrypts its data with the joint public key on its own device. No single party can decrypt it.',
+        link: 'fhe',
+      },
+      {
+        from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
-        title: 'Encrypt under the joint public key',
-        detail: 'An ordinary Encrypt call with the joint public key.',
-        api: 'Encrypt(jointPublicKey, plaintext)',
+        title: 'Upload ciphertexts to the third party',
+        detail:
+          'Only ciphertexts leave the data owner. The third party stores and computes on them but cannot read them. The FHE layer is post-quantum; the TLS session around it often is not.',
         link: 'tls',
       },
       {
@@ -579,10 +698,20 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'cloud',
+        to: 'client',
+        label: 'FHE(result) → owner',
+        title: 'Return the encrypted result to the data owner',
+        detail:
+          'The third party sends the result back still encrypted. It never held a key that could open it.',
+        link: 'tls',
+      },
+      {
+        from: 'client',
         to: 'hsmC',
         label: 'FHE(result) → A, B, C',
-        title: 'Send the result to all three parties',
-        detail: 'N-of-N: every party must take part in decryption.',
+        title: 'The data owner asks the three parties for partial decryptions',
+        detail:
+          'The data owner sends the encrypted result to all three parties over authenticated channels and asks each for its partial decryption. Only the data owner can fuse them.',
         link: 'tls',
       },
       {
@@ -665,11 +794,38 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Every refresh is a round-trip to the key holders, so latency depends on them being online. Lattigo’s protocols assume honest-but-curious parties.',
     },
     actors: [
-      { id: 'client', label: 'Data owner', sub: 'own key pair', kind: 'client' },
-      { id: 'cloud', label: 'FHE cloud', sub: 'aggregator · compute', kind: 'cloud' },
-      { id: 'hsmA', label: 'Party A', sub: 'HSM · share', kind: 'hsm', holdsSecret: true },
-      { id: 'hsmB', label: 'Party B', sub: 'HSM · share', kind: 'hsm', holdsSecret: true },
-      { id: 'hsmC', label: 'Party C', sub: 'HSM · share', kind: 'hsm', holdsSecret: true },
+      { id: 'client', label: 'Data owner', sub: 'own key pair', kind: 'client', zone: 'owner' },
+      {
+        id: 'cloud',
+        label: 'FHE cloud',
+        sub: 'aggregator · compute',
+        kind: 'cloud',
+        zone: 'third',
+      },
+      {
+        id: 'hsmA',
+        label: 'Party A',
+        sub: 'HSM · share',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
+      {
+        id: 'hsmB',
+        label: 'Party B',
+        sub: 'HSM · share',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
+      {
+        id: 'hsmC',
+        label: 'Party C',
+        sub: 'HSM · share',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'party',
+      },
     ],
     steps: [
       {
@@ -716,17 +872,27 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'client',
+        to: 'client',
+        label: 'encrypt locally',
+        api: 'rlwe Encryptor (bgv.Parameters) with the collective public key',
+        title: 'The data owner encrypts on its own device',
+        detail:
+          'The data owner encrypts its data with the collective public key on its own device. No single key holder can decrypt it.',
+        link: 'fhe',
+      },
+      {
+        from: 'client',
         to: 'cloud',
         label: 'FHE(data)',
-        title: 'Encrypt under the joint public key',
-        detail: 'Standard BGV encryption with the collective public key.',
-        api: 'rlwe Encryptor (bgv.Parameters) with the collective public key',
+        title: 'Upload ciphertexts to the third party',
+        detail:
+          'Only ciphertexts leave the data owner. The third party stores and computes on them but cannot read them. The FHE layer is post-quantum; the TLS session around it often is not.',
         link: 'tls',
       },
       {
         from: 'cloud',
         to: 'cloud',
-        label: 'f( ) until levels run out',
+        label: 'f( ) on ciphertexts',
         title: 'Compute on ciphertexts',
         detail:
           'Additions, multiplications, relinearization and rotations with the collective keys.',
@@ -817,9 +983,22 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Even "public" evaluation-key generation needs the secret, so it has to happen inside the HSM. The output is huge and must be streamed out.',
     },
     actors: [
-      { id: 'app', label: 'Application', sub: 'requests ops', kind: 'client' },
-      { id: 'hsm', label: 'HSM', sub: 'small RAM, modest CPU', kind: 'hsm', holdsSecret: true },
-      { id: 'gpu', label: 'GPU / FPGA cluster', sub: 'FHE accelerator', kind: 'gpu' },
+      { id: 'app', label: 'Application', sub: 'requests ops', kind: 'client', zone: 'owner' },
+      {
+        id: 'hsm',
+        label: 'HSM',
+        sub: 'small RAM, modest CPU',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'owner',
+      },
+      {
+        id: 'gpu',
+        label: 'GPU / FPGA cluster',
+        sub: 'FHE accelerator',
+        kind: 'gpu',
+        zone: 'third',
+      },
     ],
     steps: [
       {
@@ -869,10 +1048,20 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'gpu',
+        to: 'app',
+        label: 'FHE(result) → owner',
+        title: 'Return the encrypted result to the data owner',
+        detail:
+          'The third party sends the result back still encrypted. It never held a key that could open it.',
+        link: 'tls',
+      },
+      {
+        from: 'app',
         to: 'hsm',
-        label: 'FHE(result)',
-        title: 'Result back to the HSM',
-        detail: 'One small ciphertext.',
+        label: 'decrypt request',
+        title: 'The application asks the HSM to decrypt',
+        detail:
+          'The application, acting for the data owner, sends the encrypted result to the HSM over an authenticated channel. The accelerators have no access to the HSM.',
         link: 'tls',
       },
       {
@@ -883,7 +1072,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'Decryption: fits',
         detail:
-          'An inner product (TFHE) or one ring multiplication (CKKS/BFV) on a small input. Cheap enough for the HSM, and it must stay there because it needs the secret.',
+          'Decryption fits easily: microseconds to milliseconds. The policy around it matters more: only the application’s authenticated session may ask, only allowed result types or shapes are decrypted, and the plaintext must fit the allowed form before release.',
         verdict: 'ok',
       },
       {
@@ -893,6 +1082,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         title: 'Release under policy',
         detail: 'Same policy and noise-flooding rules as single-HSM custody.',
         link: 'tls',
+        shareWith: 'gpu',
       },
     ],
     hsmDoes:
@@ -935,9 +1125,16 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'The paper reports under 300 ms per 64-bit block, so bulk data costs real server time. Trivium’s 80-bit key is too short for long-lived data; use Kreyvium’s 128-bit key.',
     },
     actors: [
-      { id: 'client', label: 'Data owner', sub: 'light device', kind: 'client' },
-      { id: 'cloud', label: 'FHE server', sub: 'untrusted compute', kind: 'cloud' },
-      { id: 'hsm', label: 'HSM', sub: 'TFHE client key', kind: 'hsm', holdsSecret: true },
+      { id: 'client', label: 'Data owner', sub: 'light device', kind: 'client', zone: 'owner' },
+      {
+        id: 'hsm',
+        label: 'HSM',
+        sub: 'TFHE client key',
+        kind: 'hsm',
+        holdsSecret: true,
+        zone: 'owner',
+      },
+      { id: 'cloud', label: 'FHE server', sub: 'untrusted compute', kind: 'cloud', zone: 'third' },
     ],
     steps: [
       {
@@ -1000,18 +1197,29 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
       {
         from: 'cloud',
+        to: 'client',
+        label: 'FHE(result) → owner',
+        title: 'Return the encrypted result to the data owner',
+        detail:
+          'The third party sends the result back still encrypted. It never held a key that could open it.',
+        link: 'tls',
+      },
+      {
+        from: 'client',
         to: 'hsm',
-        label: 'FHE(result)',
-        title: 'Send the result to the HSM',
-        detail: 'A few FheUint64 ciphertexts.',
+        label: 'decrypt request',
+        title: 'The data owner asks its HSM to decrypt',
+        detail:
+          'The data owner (or its authorized application) sends the encrypted result to its own HSM over an authenticated channel. Only the data owner can ask; the third party has no access to the HSM.',
         link: 'tls',
       },
       {
         from: 'hsm',
         to: 'hsm',
-        label: 'policy · decrypt',
+        label: 'policy · type · decrypt',
         title: 'Decrypt under policy',
-        detail: 'One dot product per block with the LWE key, inside the HSM.',
+        detail:
+          'Policy first, then decryption. This policy is not defined by ISO/IEC 28033 or by TFHE-rs; it is the HSM’s deployment layer built on TFHE-rs building blocks. The serialized ciphertext carries no access-control metadata (no owner, purpose or recipient, and nothing in it is authenticated), so control comes from the HSM’s policy object and the requester. (1) Only the data owner’s authenticated session may ask. (2) A conformance-checked type gate (TFHE-rs safe_deserialize_conformant) refuses a ciphertext whose type, block count or parameter set is not an allowed result type, before decrypting. Marking input types as never releasable stops a raw input being released whole, but not a slice of it: the HSM limits how many bits each release can reveal, and the rate limit caps the total. (3) After decrypting inside the HSM, the value must fit the allowed shape (a yes/no, a score from 0 to 100) or nothing is released; a refusal still counts against the rate limit, because refusing is itself an answer. (4) Rate limit and audit. Decryption itself is a 2,048-term dot product per block: microseconds. The HSM cannot verify which computation produced a ciphertext; only verifiable-computation proofs could, and those are research.',
         api: 'FheUint64::decrypt(&client_key)',
         deployment: true,
         verdict: 'ok',
@@ -1023,6 +1231,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         title: 'Release the result',
         detail: 'Only the authorized party gets the plaintext.',
         link: 'tls',
+        shareWith: 'cloud',
       },
     ],
     hsmDoes:
@@ -1033,3 +1242,172 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       'Use Kreyvium (128-bit key), not Trivium (80-bit), for data that must stay confidential for years. AES-128-CTR transciphering is available in TFHE-rs but costs more than Kreyvium.',
   },
 ]
+
+/** Phase and data state of every step, aligned with each flow's `steps` (checked by tests). */
+export const FLOW_STEP_META: Record<FheFlowId, { phase: Phase[]; data: DataState[] }> = {
+  'single-hsm': {
+    phase: [
+      'setup',
+      'setup',
+      'setup',
+      'encrypt',
+      'encrypt',
+      'compute',
+      'compute',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+      'backup',
+      'backup',
+    ],
+    data: [
+      'keys',
+      'keys',
+      'keys',
+      'encrypting',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+      'result',
+      'keys',
+      'keys',
+    ],
+  },
+  'tfhe-single-hsm': {
+    phase: [
+      'setup',
+      'setup',
+      'setup',
+      'setup',
+      'encrypt',
+      'encrypt',
+      'compute',
+      'compute',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+      'backup',
+      'backup',
+    ],
+    data: [
+      'keys',
+      'keys',
+      'keys',
+      'keys',
+      'encrypting',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+      'result',
+      'keys',
+      'keys',
+    ],
+  },
+  'openfhe-threshold': {
+    phase: [
+      'setup',
+      'setup',
+      'setup',
+      'setup',
+      'setup',
+      'encrypt',
+      'encrypt',
+      'compute',
+      'compute',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+    ],
+    data: [
+      'keys',
+      'keys',
+      'keys',
+      'keys',
+      'keys',
+      'encrypting',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+    ],
+  },
+  'lattigo-threshold': {
+    phase: [
+      'setup',
+      'setup',
+      'setup',
+      'setup',
+      'encrypt',
+      'encrypt',
+      'compute',
+      'compute',
+      'compute',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+    ],
+    data: [
+      'keys',
+      'keys',
+      'keys',
+      'keys',
+      'encrypting',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+    ],
+  },
+  'hsm-compute-limits': {
+    phase: ['setup', 'setup', 'compute', 'compute', 'compute', 'decrypt', 'decrypt', 'decrypt'],
+    data: [
+      'keys',
+      'keys',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+      'result',
+    ],
+  },
+  'tfhe-transciphering': {
+    phase: [
+      'setup',
+      'encrypt',
+      'encrypt',
+      'encrypt',
+      'compute',
+      'compute',
+      'compute',
+      'decrypt',
+      'decrypt',
+      'decrypt',
+    ],
+    data: [
+      'keys',
+      'keys',
+      'encrypted',
+      'encrypting',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'encrypted',
+      'decrypting',
+      'result',
+    ],
+  },
+}

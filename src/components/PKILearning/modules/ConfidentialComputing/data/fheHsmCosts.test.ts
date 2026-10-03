@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { FHE_HSM_FLOWS, engineStatusOf } from './fheHsmFlows'
+import { FHE_HSM_FLOWS, FLOW_STEP_META, engineStatusOf } from './fheHsmFlows'
 import { FHE_STEP_COSTS, FHE_STEP_KEYS, KEY_SIZES } from './fheHsmCosts'
 import { FHE_STEP_IO } from './fheHsmStepIO'
 import { FHE_KEY_MAP } from './fheKeyMap'
@@ -61,6 +61,33 @@ describe('FHE + HSM per-step cost data', () => {
       for (const st of flow.steps) {
         expect(st.api ?? '').not.toMatch(/C_WrapKey/)
         if (st.link === 'wrap') expect(st.api).toMatch(/vendor replication capability/)
+      }
+    }
+  )
+
+  it.each(FHE_HSM_FLOWS.map((f) => [f.id, f] as const))(
+    '%s gives every step a phase and a data state, and every actor a trust zone',
+    (id, flow) => {
+      expect(FLOW_STEP_META[id].phase).toHaveLength(flow.steps.length)
+      expect(FLOW_STEP_META[id].data).toHaveLength(flow.steps.length)
+      for (const a of flow.actors) expect(['owner', 'third', 'party']).toContain(a.zone)
+      for (const st of flow.steps) {
+        if (!st.shareWith) continue
+        const target = flow.actors.find((a) => a.id === st.shareWith)
+        expect(target?.zone).toBe('third')
+      }
+    }
+  )
+
+  it.each(FHE_HSM_FLOWS.map((f) => [f.id, f] as const))(
+    '%s never lets the third party talk to an HSM directly',
+    (_id, flow) => {
+      const third = new Set(flow.actors.filter((a) => a.zone === 'third').map((a) => a.id))
+      const hsm = new Set(flow.actors.filter((a) => a.kind === 'hsm').map((a) => a.id))
+      // Lattigo's protocol is aggregator-driven by design (refresh / key switch requests).
+      if (flow.id === 'lattigo-threshold') return
+      for (const st of flow.steps) {
+        if (third.has(st.from) && hsm.has(st.to)) throw new Error(`${flow.id}: ${st.label}`)
       }
     }
   )
