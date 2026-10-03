@@ -16,7 +16,7 @@
             "sha256": "367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547"
           }
         ],
-        "sourceCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
+        "sourceCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-10-02",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -3489,16 +3489,16 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c"
+            "sha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "b840293655a5f0f46be028b7ba8c5fc71ed72078",
+        "sourceCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-10-02",
+        "builtAt": "2026-10-03",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {
