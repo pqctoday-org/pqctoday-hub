@@ -30,9 +30,9 @@ claim hardware custody or "HSM-validated". Budgets are named per actor
   `disclosures` (stable ids), `budgets` (metric names, null until a versioned P0A update
   freezes them) and `fixtures` (deterministic input/output hashes). Ids are never reused or
   renamed; a changed step gets a new id. The workshop data is tested against this file.
-- `fhe-evidence.v1.json`: evidence records. It is empty until results arrive, and with no
+- `public/data/fhe-evidence/fhe-evidence.v1.json` (published with its artifacts; signed artifacts must live under `public/`): evidence records. It is empty until results arrive, and with no
   records the Hub shows no validation claim.
-- `fhe-evidence.v1.json.sig`: the ML-DSA-65 signature (existing maintainer kid), produced by the
+- `public/data/fhe-evidence/fhe-evidence.v1.json.sig`: the ML-DSA-65 signature (existing maintainer kid), produced by the
   release signer. The file is registered in `scripts/ci/trust-artifacts.json`, and a unit test
   refuses records without it.
 - `fheEvidence.ts`: types, the record validator and the per-step lookup used by the workshop.

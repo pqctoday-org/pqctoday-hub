@@ -15,7 +15,7 @@
  * hardware custody. The Hub raises a step's badge only for a record that validates here.
  */
 import contractJson from './fhe-hsm-scenarios.v1.json'
-import manifestJson from './fhe-evidence.v1.json'
+import manifestJson from '../../../public/data/fhe-evidence/fhe-evidence.v1.json'
 
 export type EvidenceLevel = 'reference' | 'emulator' | 'device' | 'end-to-end'
 export type EvidenceProducer = 'pqctoday-sandbox' | 'pqctoday-fhe' | 'pqctoday-cacp'

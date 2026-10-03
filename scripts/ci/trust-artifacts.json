@@ -53,7 +53,7 @@
       "label": "embedding index (metadata)"
     },
     {
-      "path": "src/data/fhe/fhe-evidence.v1.json",
+      "path": "public/data/fhe-evidence/fhe-evidence.v1.json",
       "required": false,
       "label": "FHE evidence manifest"
     }

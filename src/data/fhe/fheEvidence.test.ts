@@ -169,7 +169,10 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     }
   })
   it('no claim without a signature: records require the committed .sig', () => {
-    const sig = path.resolve(__dirname, 'fhe-evidence.v1.json.sig')
+    const sig = path.resolve(
+      __dirname,
+      '../../../public/data/fhe-evidence/fhe-evidence.v1.json.sig'
+    )
     if (EVIDENCE_MANIFEST.records.length > 0) expect(fs.existsSync(sig)).toBe(true)
   })
   it('budgets are named per actor, so a cloud number cannot satisfy an HSM budget', () => {
