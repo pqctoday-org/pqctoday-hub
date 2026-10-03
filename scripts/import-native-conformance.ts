@@ -59,8 +59,12 @@ import {
  * #314, #312 and #313. #312 regenerated cpp_compliance_report.{json,md} (963 PASS,
  * +2 StatefulThenMac cases for the Session::resetOp fix); the Rust report is
  * unchanged since the previous pin.
+ *
+ * 2026-10-03: moved to 272c9b0426e610812acfe49f97dc9e1905a7327f, hsm main for the
+ * 4.148.0 engine re-pin. Neither cpp_compliance_report.{json,md} nor the Rust
+ * report changed since b8402936, so the imported data does not change.
  */
-export const PINNED_HSM_COMMIT = 'b840293655a5f0f46be028b7ba8c5fc71ed72078'
+export const PINNED_HSM_COMMIT = '272c9b0426e610812acfe49f97dc9e1905a7327f'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..')
 export const NATIVE_CONFORMANCE_OUT = join(
