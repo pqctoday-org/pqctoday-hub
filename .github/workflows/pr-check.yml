@@ -120,3 +120,8 @@ jobs:
 
       - name: Unit tests (shard ${{ matrix.shard }}/2)
         run: npx vitest run --shard=${{ matrix.shard }}/2
+        # Headroom above Node's ~4 GB default heap (owner decision 2026-10-03). The
+        # Library view tests render the whole corpus per test; one worker hit the
+        # heap limit (SIGABRT) twice on #826. Vitest workers inherit NODE_OPTIONS.
+        env:
+          NODE_OPTIONS: '--max-old-space-size=6144'
