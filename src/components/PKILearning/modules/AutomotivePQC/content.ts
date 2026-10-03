@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
   version: '1.1.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-02',
+  lastEdited: '2026-10-03',
 
   standards: [
     getStandard('FIPS 203'),
@@ -91,7 +91,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'Vehicle electrical architecture evolution: Domain-based architecture (separate ECUs per domain: powertrain, chassis, ADAS, body, infotainment, connectivity, each with domain controller) vs. zonal architecture (physical zones with high-performance central compute nodes — HPCs — aggregating control from multiple domains). ADAS zone is the most security-critical domain in both architectures; zonal HPCs introduce new PQC upgrade points at zone boundaries.',
     workshopSummary:
-      'VehicleArchitectureMapper — Compare domain-based vs. zonal architectures; identify crypto upgrade points at domain controllers, zone HPCs, and gateway ECUs; map PQC feasibility to each internal bus type. SensorDataIntegritySimulator — Configure signing strategies per sensor type (LiDAR, camera, radar, fusion); calculate bandwidth overhead at operating frequency; evaluate HMAC vs. ML-DSA tradeoffs for real-time data streams; V2X Channel Load panel (model estimate) sums BSM signature bytes across vehicles in range at 10 Hz (SAE J2945/1) against the 6 Mbps IEEE 802.11p default rate — ML-DSA-44 signatures alone fill it at ~30 vehicles, FN-DSA-512 at ~112, ECDSA P-256 at ~1,171; ignores payload, 1609.2 headers, certificate attachment and MAC/PHY/CSMA overhead, so congestion starts lower. US V2X has moved from DSRC to C-V2X (FCC ET Docket 19-138, 2020 and November 2024 orders). See /learn/iot-pqc for constrained-device context.',
+      'VehicleArchitectureMapper — Compare domain-based vs. zonal architectures; identify crypto upgrade points at domain controllers, zone HPCs, and gateway ECUs; map PQC feasibility to each internal bus type. SensorDataIntegritySimulator — Configure signing strategies per sensor type (LiDAR, camera, radar, fusion); calculate bandwidth overhead at operating frequency; evaluate HMAC vs. ML-DSA tradeoffs for real-time data streams; V2X Channel Load panel (model estimate) sums BSM signature bytes across vehicles in range at 10 Hz (SAE J2945/1) against the 6 Mbps IEEE 802.11p default rate — ML-DSA-44 signatures alone fill it at ~30 vehicles, FN-DSA-512 at ~112, ECDSA P-256 at ~1,171; ignores payload, IEEE 1609.2 headers, certificate attachment and MAC/PHY/CSMA overhead, so congestion starts lower. US V2X has moved from DSRC to C-V2X (a 2020 FCC order, then the FCC Second Report and Order, ET Docket 19-138, adopted November 2024). See /learn/iot-pqc for constrained-device context.',
     relatedStandards:
       'ISO 26262 — Functional Safety for Road Vehicles (ASIL A–D classification). ISO/SAE 21434:2021 — Road Vehicles Cybersecurity Engineering. ISO 21448 (SOTIF) — Safety of the Intended Functionality. UNECE WP.29 Regulation 155 — Cybersecurity Management System (CSMS). UNECE WP.29 Regulation 156 — Software Update Management System (SUMS). AUTOSAR SecOC — Secure Onboard Communication specification. CCC Digital Key 3.0 — Car Connectivity Consortium specification.',
   },

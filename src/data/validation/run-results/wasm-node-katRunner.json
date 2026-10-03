@@ -9,678 +9,678 @@
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "0b50d7dfe3aec4a1788f0356f7ef8dd74d657939",
-  "recordedAt": "2026-10-02",
+  "hubCommit": "1b061793ea247d9098fc449125b4cfe175a7ed6e",
+  "recordedAt": "2026-10-03",
   "results": [
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aescbc-decrypt#aescbc_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aescmac-verify#aescmac_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aesctr-roundtrip#aesctr_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aesgcm-functional#local:kat.aesgcm-functional/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.aeskw-wrap#aeskw_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.digest-multipart#sha256_test#/testGroups/0/tests/0@multipart",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.digest-multipart#sha384_test#/testGroups/0/tests/0@multipart",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.digest-multipart#sha512_test#/testGroups/0/tests/0@multipart",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdh-derive#local:kat.ecdh-derive/P-256",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdh-derive#local:kat.ecdh-derive/P-384",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdsa-functional#local:kat.ecdsa-functional/P-256",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdsa-functional#local:kat.ecdsa-functional/P-384",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdsa-sigver#ecdsa_p384_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdsa-sigver#ecdsa_p521_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.ecdsa-sigver#ecdsa_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.eddsa-functional#local:kat.eddsa-functional/Ed25519",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.eddsa-sigver#eddsa_ed448_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.eddsa-sigver#eddsa_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hkdf-derive#hkdf_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-generate#hmac_sha384_test#/testGroups/0/tests/0@generate",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-generate#hmac_sha512_test#/testGroups/0/tests/0@generate",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-generate#hmac_test#/testGroups/0/tests/0@generate",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-verify#hmac_sha384_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-verify#hmac_sha512_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.hmac-verify#hmac_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.lms-sigver#local:kat.lms-sigver/tc2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-44",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-65",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-functional#local:kat.mldsa-functional/ML-DSA-87",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/1/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver-nist#mldsa_sigver_test#/testGroups/2/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver#mldsa_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver#mldsa_test#/testGroups/1/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mldsa-sigver#mldsa_test#/testGroups/2/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-decap#mlkem_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-decap#mlkem_test#/testGroups/1/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-decap#mlkem_test#/testGroups/2/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-1024",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-512",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-768",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.rsa-functional#local:kat.rsa-functional/2048",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.rsa-functional#local:kat.rsa-functional/3072",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha256-hash#sha256_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha256-hash#sha256_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha256-hash#sha256_test#/testGroups/0/tests/2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-256-hash#sha3_256_test#/testGroups/0/tests/2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha3-512-hash#sha3_512_test#/testGroups/0/tests/2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha384-hash#sha384_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha384-hash#sha384_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha384-hash#sha384_test#/testGroups/0/tests/2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha512-hash#sha512_test#/testGroups/0/tests/0",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha512-hash#sha512_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.sha512-hash#sha512_test#/testGroups/0/tests/2",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-128s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-192s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHA2-256s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-128s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-192s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-functional#local:kat.slhdsa-functional/SLH-DSA-SHAKE-256s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.suci-profile-b#local:kat.suci-profile-b/3-ecdh",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.suci-profile-b#local:kat.suci-profile-b/4-kdf",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.suci-profile-b#local:kat.suci-profile-b/5-encrypt",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.suci-profile-b#local:kat.suci-profile-b/6-mac",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
-      "artifactSha256": "dd13a4ea92e68658c9bdd911b4f29c4a10e9a637159cec97fc5c3ca64b00a40c",
+      "artifactSha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3",
       "registryCase": "kat.suci-profile-b#local:kat.suci-profile-b/7-e2e",
       "status": "pass"
     }

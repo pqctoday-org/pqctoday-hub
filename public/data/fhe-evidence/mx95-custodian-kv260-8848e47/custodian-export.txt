@@ -1,0 +1,4 @@
+compressed_server_key: 30147061 B, manifest 140 B, signature 3309 B
+compact_public_key: 33034 B, manifest 140 B, signature 3309 B
+exported to /tmp/fhe-custodian/token/out
+wall_s=5 rc=0

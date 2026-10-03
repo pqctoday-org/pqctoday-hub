@@ -1,0 +1,3 @@
+2026-10-03T18:15:57+00:00 kv260-board systemd[1]: Started /tmp/fhe/kv260-tfhe-bench server-bench /tmp/fhe --reps 3 --types u8,u16.
+2026-10-03T18:18:19+00:00 kv260-board systemd[1]: fhe-bench-181547.service: Deactivated successfully.
+2026-10-03T18:18:19+00:00 kv260-board systemd[1]: fhe-bench-181547.service: Consumed 6min 56.047s CPU time, 202.7M memory peak, 0B memory swap peak.

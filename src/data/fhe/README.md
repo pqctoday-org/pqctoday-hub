@@ -3,18 +3,24 @@
 Owner decisions 2026-10-03: the Hub stays WebAssembly-only. The FHE + HSM flows are validated
 on lab devices, each playing one role in the workshop's lanes:
 
-| Device            | Producer                        | Role                                   | Claim scope               | Hub label                                                   |
-| ----------------- | ------------------------------- | -------------------------------------- | ------------------------- | ----------------------------------------------------------- |
-| Mac (M4 Pro)      | `pqctoday-sandbox`              | data owner                             | `owner-device`            | data owner on Mac (M4 Pro)                                  |
-| Mac (M4 Pro)      | `pqctoday-hsm`                  | custodian until the MX95 runs          | `board-software-token`    | custodian: software token on Mac (MX95 pending)             |
-| KV260             | `pqctoday-fhe`                  | FHE server (untrusted, no token)       | `board-untrusted-compute` | FHE server on KV260 (untrusted compute, software-held keys) |
-| MX95              | `pqctoday-cacp`, `pqctoday-hsm` | custodian (primary) or threshold party | `board-software-token`    | custodian: software token on MX95                           |
-| MX95 Pro          | `pqctoday-cacp`, `pqctoday-hsm` | backup custodian or threshold party    | `board-software-token`    | backup custodian: software token on MX95 Pro                |
-| Ventuno Q (later) | `pqctoday-cacp`, `pqctoday-hsm` | custodian, backup or party             | `board-software-token`    | as above                                                    |
+| Device            | Producer                        | Role                                                             | Claim scope               | Hub label                                                                                      |
+| ----------------- | ------------------------------- | ---------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------- |
+| Mac (M4 Pro)      | `pqctoday-sandbox`              | data owner                                                       | `owner-device`            | data owner on Mac (M4 Pro)                                                                     |
+| Mac (M4 Pro)      | `pqctoday-hsm`                  | custodian (earlier run, before the MX95)                         | `board-software-token`    | custodian: software token on Mac (earlier run)                                                 |
+| KV260             | `pqctoday-fhe`                  | FHE server (untrusted, no token)                                 | `board-untrusted-compute` | FHE server on KV260 (untrusted compute, software-held keys)                                    |
+| MX95              | `pqctoday-cacp`, `pqctoday-hsm` | custodian (primary) or threshold party                           | `board-software-token`    | custodian: software token on MX95                                                              |
+| MX95 Pro          | `pqctoday-cacp`, `pqctoday-hsm` | backup custodian, custodian after a failover, or threshold party | `board-software-token`    | backup custodian: software token on MX95 Pro; custodian (failover): software token on MX95 Pro |
+| Ventuno Q (later) | `pqctoday-cacp`, `pqctoday-hsm` | custodian, backup or party                                       | `board-software-token`    | as above                                                                                       |
 
 The data owner may also run from `pqctoday-fhe`, and the FHE server runs only `pqctoday-fhe`.
 Reference-library runs come from `pqctoday-sandbox` or `pqctoday-fhe` (`level: reference`); a
 `platformLabel` (for example `KV260 Cortex-A53`) tells two runs of one library apart.
+
+A part may add a short `qualifier` (starting with ", " or " (") to tell runs apart, e.g.
+" (board-local, no KMIP)", and `failover: true` lets the MX95 Pro play custodian. Every passing run
+shows on a step, ordered by device layout: MX95 with the MX95 Pro backup, then MX95 alone, then
+records without a custodian, then the Mac token run. In end-to-end runs the owner and server badges
+name the run's custodian.
 
 A device may claim only steps its role's actor takes part in (the step's `from` or `to`). A run
 spanning devices is one `end-to-end` record with a `parts[]` entry per device; steps in no part

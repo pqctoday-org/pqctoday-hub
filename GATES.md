@@ -124,6 +124,17 @@ The full Playwright suite, 2 shards. Not a required check. The `notify` job
 opens/updates one issue, **"Nightly E2E is red"**, with the run URL and the
 failing test names, and closes it on the next green run.
 
+## GitHub — nightly deep links (`.github/workflows/deeplinks-nightly.yml`, 07:30 UTC)
+
+`e2e/deeplinks.local.spec.ts` (the `local` Playwright project, so neither PR
+CI nor the full nightly runs it) against the production build via `vite
+preview`. It guards that every shared-link kind opens its item, on desktop and
+phones, first-time and returning, and that each item overlay's Share copies the
+clean link. Report-only (owner decision 2026-10-03): not a required check, and
+its own issue, **"Nightly deep links are red"** — it does not trigger the
+nightly-E2E merge rule above. Reproduce: `npm run build`, then
+`npx playwright test --project=local e2e/deeplinks.local.spec.ts`.
+
 ## GitHub — nightly vector suites (`.github/workflows/validation-nightly.yml`, 05:00 UTC)
 
 `npm run test:nightly` — the `*.nightly.test.{ts,tsx}` tier, unscoped, via

@@ -190,9 +190,11 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
   it('an end-to-end run labels each step by the device and role that ran it', () => {
     const at = (step: string) =>
       validationsFor('tfhe-single-hsm', step, [e2e()]).map((v) => v.label)
-    expect(at('owner-encrypts-locally')).toEqual(['data owner on Mac (M4 Pro) · end-to-end run'])
+    expect(at('owner-encrypts-locally')).toEqual([
+      'data owner on Mac (M4 Pro) · end-to-end run with the MX95 custodian',
+    ])
     expect(at('compute-with-pbs')).toEqual([
-      'FHE server on KV260 (untrusted compute, software-held keys) · end-to-end run',
+      'FHE server on KV260 (untrusted compute, software-held keys) · end-to-end run with the MX95 custodian',
     ])
     expect(at('decrypt-under-policy')).toEqual([
       'custodian: software token on MX95 · end-to-end run',
@@ -201,14 +203,73 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     expect(at('owner-requests-decrypt')).toEqual(['transfer Mac (M4 Pro) → MX95 · end-to-end run'])
   })
 
-  it('until the MX95 runs, the custodian may be a software token on the Mac, labelled as such', () => {
+  it('a custodian token on the Mac is shown as an earlier run', () => {
     const mac = swap(2, { device: 'mac-m4pro', producer: 'pqctoday-hsm' })
     expect(validateRecord(mac)).toEqual([])
     const at = (step: string) => validationsFor('tfhe-single-hsm', step, [mac]).map((v) => v.label)
     expect(at('decrypt-under-policy')).toEqual([
-      'custodian: software token on Mac (MX95 pending) · end-to-end run',
+      'custodian: software token on Mac (earlier run) · end-to-end run',
     ])
     expect(at('owner-requests-decrypt')).toEqual(['transfer on Mac (M4 Pro) · end-to-end run'])
+  })
+
+  it('a run qualifier tells runs apart and cannot claim hardware', () => {
+    const q = swap(2, { qualifier: ' (board-local, no KMIP)' })
+    expect(validateRecord(q)).toEqual([])
+    expect(validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [q])[0].label).toBe(
+      'custodian: software token on MX95 (board-local, no KMIP) · end-to-end run'
+    )
+    expect(validateRecord(swap(2, { qualifier: ' (hardware token)' }))).toContain(
+      'qualifier may not say hardware or HSM-validated'
+    )
+    expect(
+      validationsFor('tfhe-single-hsm', 'compute-with-pbs', [
+        swap(1, { qualifier: ', 8- and 16-bit integers' }),
+      ])[0].label
+    ).toBe(
+      'FHE server on KV260 (untrusted compute, software-held keys), 8- and 16-bit integers · end-to-end run with the MX95 custodian'
+    )
+    expect(validateRecord(swap(2, { qualifier: 'board-local' }))).toContain(
+      'qualifier starts with ", " or " ("'
+    )
+  })
+
+  it('the MX95 Pro plays custodian only in a failover run, and says so', () => {
+    expect(validateRecord(swap(2, { device: 'mx95-pro' }))).toContain(
+      'the MX95 Pro is the backup custodian; it plays custodian only in a failover run'
+    )
+    const fo = swap(2, { device: 'mx95-pro', failover: true })
+    expect(validateRecord(fo)).toEqual([])
+    expect(validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [fo])[0].label).toBe(
+      'custodian (failover): software token on MX95 Pro · end-to-end run'
+    )
+    expect(validateRecord(swap(0, { failover: true }))).toContain(
+      'failover applies only to a board playing custodian'
+    )
+  })
+
+  it('every run shows on a step, the designed device layout first', () => {
+    const mac = { ...swap(2, { device: 'mac-m4pro', producer: 'pqctoday-hsm' }), id: 'mac' }
+    const mx95 = { ...e2e(), id: 'mx95', measuredAt: '2026-10-01' }
+    const withPro: EvidenceRecord = {
+      ...e2e(),
+      id: 'mx95+pro',
+      measuredAt: '2026-09-01',
+      stepIds: [...e2e().stepIds, 'offline-backup-restore'],
+      parts: [
+        ...e2e().parts!,
+        {
+          device: 'mx95-pro',
+          role: 'backup-custodian',
+          producer: 'pqctoday-hsm',
+          claimScope: 'board-software-token',
+          engine: ENGINE,
+          stepIds: ['offline-backup-restore'],
+        },
+      ],
+    }
+    const order = validationsFor('tfhe-single-hsm', 'decrypt-under-policy', [mac, mx95, withPro])
+    expect(order.map((v) => v.record.id)).toEqual(['mx95+pro', 'mx95', 'mac'])
   })
 
   it('each device runs only its own producers', () => {

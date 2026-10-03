@@ -1,0 +1,12 @@
+## 1. server key with one byte flipped
+REFUSED: compressed_server_key: SHA-384 of the blob does not match valueSha384
+exit=2
+## 2. wrong signer pin
+REFUSED: signer_spki.der sha256 b612aceabaa3a5622f1d0f3507135b42b5cafc1e61d47149141329782dd1da69 is not the pinned 0000000000000000000000000000000000000000000000000000000000000000
+exit=2
+## 3. wrong lineage pin (a key from another token)
+REFUSED: compressed_server_key: lineage 63d108fa2596e21eaa5eeacbe3166eb177cc49a03e95fd17f0512b52b193d0ea is not the pinned ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+exit=2
+## 4. genuine export (must be ACCEPTED, exit 0)
+{"mode":"verify-only","accepted":true,"server_key":{"object":"compressed_server_key","bytes":30147061,"kind":1,"signer_spki_sha256":"b612aceabaa3a5622f1d0f3507135b42b5cafc1e61d47149141329782dd1da69","lineage":"63d108fa2596e21eaa5eeacbe3166eb177cc49a03e95fd17f0512b52b193d0ea","param_hash":"2ce455537b3c792053ca3c7a0cf98a4e3bfb5569054f69eedd32a3607da06ed0f6a469d6e891fd9c8c19d55fa6c778b5","value_sha384":"57cd3d34553e1b0904166377a6f84f86c4d34b5dc48853e2ca334721653851f05b96079d86581d0635a07b2cc4ad3a2b","signature":"ML-DSA-65 valid (fips204 0.4.6, empty context)","verify_ms":295}}
+exit=0
