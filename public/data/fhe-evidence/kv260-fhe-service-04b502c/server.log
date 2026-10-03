@@ -1,0 +1,4 @@
+kv260-fhe-server listening on https://127.0.0.1:5730 (mTLS, TLS 1.3, X25519MLKEM768 / SecP256r1MLKEM768)
+key refused: SHA-384 of the server key does not match the manifest
+key admitted: lineage 1492bcc82ecf935c499703267f1a5794e82b19a0102925be7c844e2b1d8cb107 signer 891ce509f6bfab71cc40f6c15f9612d3fd7b39c36b0fafa1650b597bb995c3bc (verify 241 ms, load+decompress 1415 ms)
+job e35591aa29c62e44cd8a2c24 done in 23.3 s

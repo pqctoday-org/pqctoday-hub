@@ -1,0 +1,88 @@
+== 2026-10-03T17:26:11Z FHE stage F phase 2 (pre-ceremony-ABI)
+110626ae0b557e6cb917ba69566481b4045f0272434019d77b11df9315e260f1  /bin-in/repl_edu_board
+11ab7ca953ab1a30bdf9e276da954d7ac101fb7bd66d6f6bb4def97c01a35313  /bin-in/pqctoday-kmip
+c924ea6b642b634de9e01d156d4c6b2dc84cc0d8c3779ced18930971e75b510a  /bin-in/repl_edu_courier
+== preflight
+  mx95-board: NXP FRDM-IMX95 ntp=yes mem=7169448kB
+  mx95pro-board: NXP FRDM-IMX95-PRO ntp=yes mem=15344244kB
+== deploy to /tmp/repl-test
+== bootstrap --fhe (board-local enrollment)
+PQCTODAY EDUCATIONAL TEST ONLY — pre-ceremony-ABI
+  [mx95-board] repl_edu_board init
+    token initialised on slot 0
+  [mx95-board] repl_edu_board csr /tmp/repl-test/x/csr.der
+    wrote /tmp/repl-test/x/csr.der (5373 B)
+  [mx95-board] repl_edu_board complete /tmp/repl-test/x/root.der /tmp/repl-test/x/device-issued.der /tmp/repl-test/x/root-crl.der /tmp/repl-test/x
+    wrote /tmp/repl-test/x/device.der (5615 B)
+    wrote /tmp/repl-test/x/device-crl.der (3492 B)
+    wrote /tmp/repl-test/x/device-id.bin (32 B)
+  [mx95pro-board] repl_edu_board init
+    token initialised on slot 0
+  [mx95pro-board] repl_edu_board csr /tmp/repl-test/x/csr.der
+    wrote /tmp/repl-test/x/csr.der (5373 B)
+  [mx95pro-board] repl_edu_board complete /tmp/repl-test/x/root.der /tmp/repl-test/x/device-issued.der /tmp/repl-test/x/root-crl.der /tmp/repl-test/x
+    wrote /tmp/repl-test/x/device.der (5615 B)
+    wrote /tmp/repl-test/x/device-crl.der (3492 B)
+    wrote /tmp/repl-test/x/device-id.bin (32 B)
+  [mx95-board] repl_edu_board peer /tmp/repl-test/x/peer-device.der /tmp/repl-test/x/peer-crl.der
+
+  [mx95pro-board] repl_edu_board peer /tmp/repl-test/x/peer-device.der /tmp/repl-test/x/peer-crl.der
+
+  [mx95-board] repl_edu_board fhe-policy /tmp/repl-test/x/fhe-dp-id.bin
+    wrote /tmp/repl-test/x/fhe-dp-id.bin (48 B)
+  [mx95pro-board] repl_edu_board fhe-policy /tmp/repl-test/x/fhe-dp-id.bin
+    wrote /tmp/repl-test/x/fhe-dp-id.bin (48 B)
+  [mx95-board] repl_edu_board policy /tmp/repl-test/x/policy.der /tmp/repl-test/x/policy-id.bin
+    wrote /tmp/repl-test/x/policy-id.bin (48 B)
+  [mx95pro-board] repl_edu_board policy /tmp/repl-test/x/policy.der /tmp/repl-test/x/policy-id.bin
+    wrote /tmp/repl-test/x/policy-id.bin (48 B)
+bootstrap OK: both boards enrolled under one test root; policy id 181dfbab9e49c56e
+== custodian mx95-board: FHE seed + export (board-local)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-genkey
+wrote /tmp/repl-test/x/fhe/uid.txt (36 B)
+wrote /tmp/repl-test/x/fhe/lineage.bin (32 B)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-export
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.bin (30147061 B)
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.bin (33034 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export/signer_spki.der (1974 B)
+wrote /tmp/repl-test/x/fhe/export/signer_evidence.der (15317 B)
+wrote /tmp/repl-test/x/fhe/export/crls/device.crl.der (3492 B)
+== WINDOW START 2026-10-03T17:26:38Z: stopping appliance pqctoday-kmip on both boards
+  mx95-board: appliance kmip stopped
+  mx95pro-board: appliance kmip stopped
+== offline backup of the FHE seed mx95-board -> mx95pro-board over KMIP (crypto network)
+PQCTODAY EDUCATIONAL TEST ONLY — pre-ceremony-ABI
+src IssueSourceChallenge     CK_RV=0x00000000 out=    32 B    347.2 ms  kx=X25519MLKEM768
+dst BeginReceive             CK_RV=0x00000000 out= 26200 B    317.5 ms  kx=X25519MLKEM768
+src CreateReplicationPackage CK_RV=0x00000000 out= 31882 B     20.8 ms  kx=X25519MLKEM768
+dst ImportReplicationPackage CK_RV=0x00000000 out= 14866 B     22.9 ms  kx=X25519MLKEM768
+PASS receipt verified on the operator host against the test root and both device CRLs
+NEG exact retry → same receipt              PASS
+NEG tampered package                     CK_RV=0x0000001b
+NEG wrong recipient (package to source)  CK_RV=0x0000001b
+NEG function value 0                     CK_RV=0x00000007
+NEG CloneKey over KMIP                   CK_RV=0x00000054
+NEG unknown CKA_UNIQUE_ID                CK_RV=0x00000060
+== RESTORE appliance pqctoday-kmip (2026-10-03T17:26:42Z)
+  mx95-board: active
+  mx95pro-board: active
+== backup mx95pro-board: re-derive and export its own public material (attested signer generated on restore)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-export
+note: no manifest signer on this token; generating a new one (new signer SPKI, label fhe-manifest-signer generated-on-restore)
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.bin (30147061 B)
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export/compressed_server_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.bin (33034 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export/compact_public_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export/signer_spki.der (1974 B)
+wrote /tmp/repl-test/x/fhe/export/signer_evidence.der (15317 B)
+wrote /tmp/repl-test/x/fhe/export/crls/device.crl.der (3492 B)
+== signer pins (send to e5 out of band)
+  mx95-board signer_spki sha256 4193d908c645021c3b4bf983f38294302053a99e1b69eafc6207292994716dbc
+  mx95pro-board signer_spki sha256 fcfc2a4b6716388759b0534280f37fa00a8b478a9b579aa9d3fdfe65a7314368
+== PHASE 2 BOARD STEP DONE; /tmp/repl-test left on both boards for e5 (paths: /tmp/repl-test/x/fhe/export, /tmp/repl-test/x/fhe/lineage.bin)
