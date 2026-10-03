@@ -1,7 +1,7 @@
 {
   "$comment": [
     "Single source of truth for 'this publisher SELLS its documents'.",
-    "Read by BOTH the hub's C4P validator (scripts/validators/cross-ref-checks.ts)",
+    "Read by BOTH the hub's C4P validator (the cross-reference data check)",
     "and the maintenance agent's paid_sources.py, which resolves the hub checkout",
     "and loads this file. It lives in the hub because the hub cannot read the",
     "private repo, but the private repo can read the hub.",

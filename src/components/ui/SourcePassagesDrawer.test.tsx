@@ -23,7 +23,7 @@ const sampleChunk: RAGChunk = {
   metadata: {},
   prov: {
     entity_id: 'abc123',
-    was_generated_by: 'generate-rag-corpus.ts@2026-05-20',
+    was_generated_by: 'corpus-generator@2026-05-20',
     was_attributed_to: 'qwen3.6:27b',
     was_derived_from: 'library_05192026.csv:10',
     source_doc: 'public/library/FIPS_203.pdf',

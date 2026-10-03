@@ -2,7 +2,7 @@
 //
 // NativeConformanceEvidence — WS-G G-6: the pqctoday-hsm engines' own PKCS#11
 // v3.2 conformance suites, shown from src/data/validation/
-// native-conformance.generated.json (scripts/import-native-conformance.ts),
+// native-conformance.generated.json (the native-conformance importer),
 // never from hand-written numbers. Every count is shown with the engine
 // commit and report date it belongs to, how far that commit is behind the
 // pinned hsm commit, whether it is the commit this page's own WASM was built from, and the

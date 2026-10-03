@@ -22,7 +22,7 @@ export const timelineToLibraryRef: Record<string, string> = Object.fromEntries(
 
 // The merged lookup over ALL timeline enrichment generations — the live
 // directory and all three archive tiers — precomputed at build time by
-// scripts/generate-timeline-enrichments.ts (27 Sep 2026). Reading the 40 raw
+// the timeline-enrichment generator (27 Sep 2026). Reading the 40 raw
 // markdown files here (34.2 MB) made this module an 86 MB app chunk; the merged
 // result is 338 entries, 1.1 MB. The merge-all semantics are unchanged: the
 // archive tiers must stay in (excluding them once lost 6 live, non-deprecated

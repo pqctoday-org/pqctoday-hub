@@ -9,7 +9,7 @@
  *
  * The drafts snapshot (public/data/jose-drafts-snapshot.json) is allowed to be
  * AHEAD of the implementation — that is upstream drift, reported on the
- * maintenance pipeline's protocol-matrix run (scripts/enrich-protocol-matrix.py)
+ * protocol-matrix refresh
  * — but never behind it: an implementation newer than the snapshot means the
  * snapshot was not refreshed when the implementation moved.
  *

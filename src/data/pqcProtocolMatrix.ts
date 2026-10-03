@@ -388,7 +388,7 @@ export interface ProtocolMatrixRow {
    * deprecated protocols" toggle so it cannot swamp the readiness heatmap;
    * excluded from the completeness metric (counting frozen rows would inflate
    * "N/N cells have an explicit value" while meaning less); excluded from the
-   * IETF datatracker poll in enrich-protocol-matrix.py, where re-resolving a
+   * IETF datatracker poll in the protocol-matrix refresh, where re-resolving a
    * frozen ref is pure churn; never `recommended`.
    */
   historical?: boolean
@@ -2012,7 +2012,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still pre-RFC at the X.509 layer (IESG Evaluation) (see X.509 row).',
         refs: [
           {

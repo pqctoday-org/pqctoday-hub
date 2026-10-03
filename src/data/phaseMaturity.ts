@@ -221,7 +221,7 @@ export const PHASE_MATURITY: Partial<Record<PhaseId, MaturityLevel[]>> = {
     },
   ],
   // Terminal Verification & Closure phase — indicators mirror the generator's
-  // INDICATORS['verify-close'] (gen-sim-trees.mjs) so the ladder and the played
+  // INDICATORS['verify-close'] (the sim-tree generator) so the ladder and the played
   // tree stay in lock-step.
   'verify-close': [
     {

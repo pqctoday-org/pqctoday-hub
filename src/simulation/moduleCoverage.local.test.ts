@@ -4,7 +4,7 @@
  * Simulation, or an explicit reason not to.
  *
  * The trees are generated from a hand-written framework (scripts/
- * gen-sim-trees.mjs), and the only guards checked that referenced modules
+ * the sim-tree generator), and the only guards checked that referenced modules
  * EXIST — never that new modules were placed. Nine modules shipped after the
  * July generation and seven never reached the sim. This test makes a new
  * module fail until someone decides: a tree step, a sector-track step, a tip

@@ -10,7 +10,7 @@
  * quietly broke" looked identical from the outside, and where a deliberate
  * absence (ops without Patents) was indistinguishable from a bug.
  *
- * This registry makes both visible and, via `scripts/audit-persona-lens.ts`,
+ * This registry makes both visible and, via the persona-lens check,
  * enforceable. The audit fails the build when:
  *
  *   1. a route declared in `App.tsx` has no entry here;

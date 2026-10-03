@@ -201,7 +201,7 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('Next move — pick the right play')).toBeInTheDocument()
     // default phase p0, fresh state → first unlocked activity is 0.1, whose
     // correct decision card shows its WP2.6 `decision` phrasing (not the raw
-    // "Learn: PQC Business Case" step label — see sections.tsx/gen-sim-trees.mjs).
+    // "Learn: PQC Business Case" step label — see sections.tsx and the sim-tree generator).
     // Target the DecisionSection's choice card (aria-label "Option <X>: <label>") —
     // the active-band ladder now ALSO offers the same step (any-order completion),
     // so the plain label is no longer unique.

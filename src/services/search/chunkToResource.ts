@@ -62,7 +62,7 @@ export function chunkToResource(chunk: RAGChunk): ResourceRef | null {
       if (!refId) return null
       // metadata.collection records which dataset the refId belongs to
       // (library / timeline / threats / catalog), set by
-      // scripts/generate-rag-corpus.ts processDocumentEnrichments.
+      // the corpus generator processDocumentEnrichments.
       // Without this, timeline/threats/catalog enrichments orphan against
       // library trust scores.
       const collection = metaString(chunk, 'collection')

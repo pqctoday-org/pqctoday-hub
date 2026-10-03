@@ -4,7 +4,7 @@
  * self-contained snapshots under ./trees (one file per phase). The latest dated
  * file per phase wins, mirroring the hub's other dated-snapshot loaders.
  *
- * Snapshots are emitted by scripts/gen-sim-trees.mjs; older dates live in
+ * Snapshots are emitted by the sim-tree generator; older dates live in
  * ./trees/archive. trees.test.ts guards every leaf against the live hub
  * registries so the trees can never reference a resource that no longer exists.
  */

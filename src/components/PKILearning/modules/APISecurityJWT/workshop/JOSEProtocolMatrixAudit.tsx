@@ -12,10 +12,8 @@
  *  2. diff `latestDraft` vs. public/data/jose-drafts-snapshot.json
  *  3. diff library claims vs. public/data/jose-library-pqc-status.json
  *
- * Then emits a JSON patch in the exact shape that
- * scripts/apply-protocol-matrix-updates.ts consumes — the maintainer drops it
- * into `reports/protocol-matrix-updates.json` and runs the existing
- * `npx tsx scripts/apply-protocol-matrix-updates.ts --apply` flow. Per project
+ * Then emits a JSON patch in the exact shape the protocol-matrix apply step
+ * consumes; the maintainer applies it outside this repository. Per project
  * policy, only `stage` and `stageNote` are applied automatically; everything
  * else (refs, libraries, deployments) requires a human PR.
  */
@@ -725,7 +723,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       }
 
       // 4b. Build proposed patch — pureSig + hybridSig deltas. The applier
-      //     [scripts/apply-protocol-matrix-updates.ts] only touches `stage`
+      //     [the protocol-matrix apply step] only touches `stage`
       //     and `stageNote`, never refs/libraries/deployments, so this stays
       //     safe to auto-apply.
       const today = new Date().toISOString().slice(0, 10)
@@ -841,8 +839,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Read the current JOSE entry, run an in-browser ML-DSA-65 sign/verify roundtrip, diff
           against the latest IETF draft + library snapshots, and download a JSON patch in the shape
-          consumed by{' '}
-          <code className="text-foreground/80">scripts/apply-protocol-matrix-updates.ts</code>.
+          the maintainers' protocol-matrix update step consumes.
         </p>
       </div>
 
@@ -1180,7 +1177,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
               Standards snapshot taken {report.snapshot_generated_at} (
               {ageInDays(report.snapshot_generated_at)} days ago).{' '}
               {report.snapshotExpired
-                ? 'EXPIRED — every row below is treated as unverified until the snapshot is refreshed (npx tsx scripts/refresh-jose-drafts-snapshot.ts).'
+                ? 'EXPIRED — every row below is treated as unverified until the snapshot is refreshed (the maintainers refresh it).'
                 : 'A green "current" means current as of that date, not today.'}
             </p>
             <div className="overflow-x-auto">
@@ -1287,15 +1284,10 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             <p className="text-[11px] text-muted-foreground mt-2">
               Covers <code className="text-foreground/80">pureSig</code> (via RFC 9964) and{' '}
               <code className="text-foreground/80">hybridSig</code> (via
-              draft-ietf-jose-pq-composite-sigs). Drop this file at{' '}
-              <code className="text-foreground/80">reports/protocol-matrix-updates.json</code> and
-              run{' '}
-              <code className="text-foreground/80">
-                npx tsx scripts/apply-protocol-matrix-updates.ts --apply
-              </code>
-              . Only <code className="text-foreground/80">stage</code> and{' '}
-              <code className="text-foreground/80">stageNote</code> are applied automatically; ref,
-              library, and deployment changes still require a human PR by design.
+              draft-ietf-jose-pq-composite-sigs). The maintainers apply this patch with their
+              protocol-matrix update step. Only <code className="text-foreground/80">stage</code>{' '}
+              and <code className="text-foreground/80">stageNote</code> are applied automatically;
+              ref, library, and deployment changes still require a human PR by design.
             </p>
           </div>
         </>

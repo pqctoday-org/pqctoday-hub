@@ -23,7 +23,7 @@ describe('simMissions (CSV-backed)', () => {
 
   it('each phase has a mission and a goal for every maturity level 0–4', () => {
     // p6 is the one deliberate exception: its framework activities cap at
-    // Level 3 (gen-sim-trees.mjs's own comment documents that a candidate
+    // Level 3 (the sim-tree generator's own comment documents that a candidate
     // Level-4 activity was drafted, then reverted after frameworkFidelity.test.ts
     // correctly rejected it as non-framework-sourced — the Applied Quantum
     // Framework v2.1 defines no real p6 activity beyond 6.5). Keeping a Level-4

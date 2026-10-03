@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://pqctoday.com/schemas/validation-case-manifest/1.0.0.json",
   "title": "ValidationCaseManifest",
-  "$comment": "Machine contract for src/data/validation/vector-manifest.json (plan WS-B). Mirrored by validationCaseManifest.ts. The evidenceClass enum must equal EVIDENCE_CLASS_IDS in evidenceClasses.ts plus 'unverified' — scripts/audit-validation-manifest.ts fails on drift.",
+  "$comment": "Machine contract for src/data/validation/vector-manifest.json (plan WS-B). Mirrored by validationCaseManifest.ts. The evidenceClass enum must equal EVIDENCE_CLASS_IDS in evidenceClasses.ts plus 'unverified' — the vector-manifest check fails on drift.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "vectorRoot", "files"],

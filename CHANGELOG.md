@@ -4111,7 +4111,7 @@ Refreshed [`src/components/About/sections/SbomSection.tsx`](src/components/About
 - **`XwalkRationaleType` enum now matches doc §3.2 closed set exactly:** `syntactic | semantic | functional | technical_dependency | policy_reference | implementation_guidance | timeline_anchor`. Previously the enum was missing the first three doc-named values and carried two custom values (`equivalence`, `specialization`) instead — rows authored against the doc's vocabulary were being silently dropped at load.
 - **17 rows rewritten** in a one-shot migration (`/tmp/migrate-xwalk-rationale.ts`): 14 × `equivalence` → `semantic`, 3 × `specialization` → `functional`. New CSV `concept_xwalks_05112026.csv` per `CSVmaintenance.md §1` (never edit in place).
 - **12 candidate rows rewritten** the same way in the LLM-staging `concept_xwalk_candidates_05112026.csv` so the next `merge-xwalk-candidates.ts` run doesn't trip the new validator gate.
-- **Loader + validator vocab sets** updated in `conceptXwalkData.ts` and both `CM-2` / `CM-Xwalk-VOCAB` checks in `trust-engine-checks.ts`.
+- **Loader + validator vocab sets** updated in `conceptXwalkData.ts` and both `CM-2` / `CM-Xwalk-VOCAB` checks in the trust-engine data checks.
 
 ### Trust Engine — algorithm parameter-set xref (PR 2)
 
@@ -4154,7 +4154,7 @@ Refreshed [`src/components/About/sections/SbomSection.tsx`](src/components/About
 
 ### Known pre-existing issue (not addressed in this release)
 
-- `scripts/validators/__tests__/duplicate-checks.test.ts` and `qa-semantic-checks.test.ts` overwrite `public/data/rag-corpus.json` with synthetic data during their setup phase. They do attempt a backup/restore (`.qa-semantic-test-backup`) but there's no SIGTERM handler — if the test is killed mid-run (CI timeout, OOM, manual abort), the production corpus is left corrupted. Will be fixed in a separate PR.
+- The duplicate-check tests and the Q&A semantic-check tests overwrite `public/data/rag-corpus.json` with synthetic data during their setup phase. They do attempt a backup/restore (`.qa-semantic-test-backup`) but there's no SIGTERM handler — if the test is killed mid-run (CI timeout, OOM, manual abort), the production corpus is left corrupted. Will be fixed in a separate PR.
 
 ### Behind the scenes
 
@@ -4269,7 +4269,7 @@ _Internal detail: `SectorFilter.tsx` exports `NAICS_LABELS` and a `resolveToNaic
 ### Fixed
 
 - The **"Why shown?" popover** on derived compliance standards no longer gets clipped by the page shell. Renders via React portal with viewport-aware positioning (flips above/below the trigger based on available space, clamps horizontally to viewport).
-- **Test runs no longer silently corrupt the RAG corpus.** `scripts/generate-rag-corpus.ts` called `main()` at module top level, so anything that imported its helper functions (including the unit test for `sanitize` and friends) silently rewrote `public/data/rag-corpus.json` as a side effect. Wrapped in the standard `if (import.meta.url === ...)` guard.
+- **Test runs no longer silently corrupt the RAG corpus.** The corpus generator called `main()` at module top level, so anything that imported its helper functions (including the unit test for `sanitize` and friends) silently rewrote `public/data/rag-corpus.json` as a side effect. Wrapped in the standard `if (import.meta.url === ...)` guard.
 - **The RAG corpus and its embedding sidecar now stay byte-stable through commits.** Prettier's pre-commit hook had been reformatting `public/data/rag-corpus.json` from minified to pretty-printed, which changed the file's `sha256` hash and broke the `corpusHash` invariant verified by `corpus-trust-invariants.test.ts`. The corpus and `embeddings-meta.json` are now in `.prettierignore`.
 
 ### Behind the scenes
@@ -4343,7 +4343,7 @@ _Internal detail: `src/components/common/TrustTierFilter.tsx`, `ChatMessage.tsx`
 
 Five distinct fixes diagnosed and applied:
 
-- **Deprecated leaders no longer appear in the corpus.** `generate-rag-corpus.ts` now matches the loader's `filterActive` filter (closes 1 orphan).
+- **Deprecated leaders no longer appear in the corpus.** The corpus generator now matches the loader's `filterActive` filter (closes 1 orphan).
 - **Timeline events register all their lookup keys** — `${country} — ${title}`, `${country}:${body} — ${title}`, and the "United States" un-rename for NSA-organised events (closes 235 timeline + most doc-enrichment orphans).
 - **Enrichment chunks routed by their collection** — document-enrichment chunks were always being mapped to "library" regardless of their actual source. Now read `metadata.collection` (library / timeline / threats / catalog) (closes 982 orphans).
 - **Classical algorithms excluded from trust scoring** — RSA, ECDH, ECDSA, Ed25519/Ed448 etc. are migration sources, not trust subjects (closes 15 algorithm orphans).
@@ -4408,7 +4408,7 @@ _Internal detail: validator codes touched — CM-T-01, GC-3, N23-E, CM-ORPHAN, N
 - **Eight new validators in CI** — CSV self-containment, MD-enrichment self-containment, collision-aware status checks, four controlled-vocabulary gates (countries, industries, region-scope, threat-industries, roles), and a trust-path orphan check.
 - **All eight ship as WARNING.** A staged `DS_SEVERITY=ERROR` environment variable will flip them to hard fails in CI once the residual count is acceptable.
 
-_Internal detail: spec at `pqctoday-priv/docs/platform/data/csv-status-schema.md`; CSV management protocol updated in `CSVmaintenance.md §11`. Validator gates live in `scripts/validators/self-containment-checks.ts` and are wired through `scripts/validate-data-integrity.ts`._
+_Internal detail: validator gates live in the self-containment data checks and are wired through the data-integrity validator._
 
 ### Writer-side protections (eight scripts)
 
@@ -4493,7 +4493,7 @@ _Internal detail: 22-task implementation plan + tracker + schema spec at `pqctod
   relationship types, varying caps. Researcher: all types, 2-hop, cap 25.
 
 - **Timeline claims evidence** (`src/components/Timeline/TimelineEvidenceBadge.tsx`,
-  `scripts/backfill-timeline-confidence.ts`) — evidence badge on timeline
+  the timeline confidence backfill) — evidence badge on timeline
   events surfacing the `confidence_score` from the timeline CSV.
   `confidence_score` column added to `timeline_05092026.csv`. Badge uses
   status-colour tokens (green ≥80, amber 50–79, red <50).
@@ -4529,7 +4529,7 @@ _Internal detail: 22-task implementation plan + tracker + schema spec at `pqctod
   Materials) from the algorithm and migrate CSVs. Both artifacts are
   served at `/data/pqctoday-oscal.json` and `/data/pqctoday-cbom.json`.
 
-- **CM-G and CM-E validator gates** in `scripts/validators/trust-engine-checks.ts`
+- **CM-G and CM-E validator gates** in the trust-engine data checks
   — CM-G checks that ≥80% of compliance/library records carry controlled-vocab
   `countries`/`industries` tags; CM-E checks that ≥80% carry a
   `confidence_score`. Both gate on Plan 11 normalization state and emit
@@ -4549,7 +4549,7 @@ _Internal detail: 22-task implementation plan + tracker + schema spec at `pqctod
   (Vendor type gains `status`, `deprecatedAt`, `deprecatedReason`). Other
   13 loaders pick up the pattern during DS14 per-family backfill.
 
-- **CM-SC + CM-SC-MD validators** (DS03) — `self-containment-checks.ts`
+- **CM-SC + CM-SC-MD validators** (DS03) — the self-containment data checks
   detects records present in an older CSV version but absent from the latest
   (638 CSV-row findings, 632 MD-file findings — all WARNING until DS17).
   CM-STATUS validates that any row with a `status` column uses only
@@ -4557,7 +4557,7 @@ _Internal detail: 22-task implementation plan + tracker + schema spec at `pqctod
 
 - **CM-VT-\* vocab-tag validators** (DS19) — six checks: CM-VT-COUNTRIES,
   CM-VT-INDUSTRIES, CM-VT-REGION-SCOPE, CM-VT-THREAT-INDUSTRY, CM-VT-ROLES,
-  CM-STATUS. All wired into `validate-data-integrity.ts`. Current baseline:
+  CM-STATUS. All wired into the data-integrity validator. Current baseline:
   countries/industries/threat-industry pass; region-scope 2 G7 findings;
   roles 232 `legal` alias findings.
 
@@ -4798,7 +4798,7 @@ _Internal detail: 22-task implementation plan + tracker + schema spec at `pqctod
 - **Golden-queries Recall@15 regression after corpus growth** — corpus grew from
   9 929 to 10 068 chunks after promotion, pushing `assessment-guide` entries past
   rank 15. Fixed by adding a `+0.15` `categoryBump` for the `assessment-guide`
-  category in the corpus generator. (`generate-rag-corpus.ts`)
+  category in the corpus generator.
 - **Migrate filter drawer clipped inside sticky toolbar** — `backdrop-blur` on
   the sticky filter bar creates a CSS containing block that confined
   `FilterDrawer` and `MobileFilterDrawer`'s `fixed inset-0` dialog to the
@@ -5097,7 +5097,7 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
   `module-topic-summaries` RAG chunks (priority 1.1) plus a `?raw` markdown
   import wired into the dashboard filter predicate. Corpus grows from 12,156
   to 12,209 chunks. (`src/data/module-topic-summaries.md`,
-  `moduleTopicSummaries.ts`, `Dashboard.tsx`, `generate-rag-corpus.ts`)
+  `moduleTopicSummaries.ts`, `Dashboard.tsx`, the corpus generator)
 - **RAG search index regenerated** (12,209 chunks) to reflect all data updates.
 
 ### Internal

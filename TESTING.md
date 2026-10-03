@@ -4,32 +4,21 @@ This document describes the testing strategy and how to run tests for PQC Today 
 
 ## Local gate (run before every push)
 
-The local gate is the enforcement layer for data integrity — it runs checks
-that are deliberately **not** in CI (new suites stay local-only by policy):
+The local gate runs checks that are deliberately **not** in CI:
 
 ```bash
-npm run gate:data     # the data-truth audits + the unified validate:data
-                      # (this is also CI's single "Data gate" step)
-npm run gate:local    # format + lint + data audits + FULL validate:data +
-                      # editorial audits + wasm provenance + unit tests —
-                      # what .husky/pre-push runs
+npm run gate:prepush  # format + lint + version bumps + protocol-matrix and
+                      # role-board checks + generated-file freshness + test
+                      # reachability — what .husky/pre-push runs
+npm run gate:local    # gate:prepush's checks + the unit suites
 npm run gate:e2e      # build + the full Playwright suite
 npm run gate:release  # gate:local + gate:e2e + gate:cacp, then the receipt
 ```
 
 The authoritative map of what runs where (pre-commit, pre-push, GitHub,
-nightly, release) is [GATES.md](GATES.md). Since 2026-09-21 the
-GitHub `checks` job runs `gate:data` as one step and the editorial audits run
-only locally.
-
-`npm run validate:data` runs the unified validator on its own
-(`--json` / `--verbose` / `--staleness N` supported). The migrate proof gate
-(MP-1..MP-4), threats proof gate (TP-1..3), and DS03/DS19/DS20 lifecycle
-checks only run here — CI does not cover them, so a red `gate:data` must
-block a push even when CI would be green. Note: proof directories
-(`public/library/`, `public/migrate-proofs/`, `public/threats/`,
-`public/timeline/`) are untracked working-tree assets — run the gate in a
-checkout that has them (the main checkout, or copy them into your worktree).
+nightly, release) is [GATES.md](GATES.md). Data checks (data integrity,
+evidence, editorial and validation-evidence checks) run outside this
+repository on each PR head before merge.
 
 ### `gate:cacp` — the KMIP crypto-agility control plane
 
@@ -235,7 +224,6 @@ job branch protection requires), runs — see [GATES.md](GATES.md)
 for the full list and what each step guards:
 
 - ✅ Linting
-- ✅ `npm run gate:data` (one step: the data-truth audits + `validate:data`)
 - ✅ Trust-engine attestation verification
 - ✅ Build verification (its `dist/` is what deploy.yml publishes on main)
 - ✅ **E2E smoke tier** (`npm run test:e2e:ci-smoke` = `playwright test --project=smoke`)
@@ -269,7 +257,7 @@ The `local`-only tier (`*.local.spec.ts`) never runs in CI at all — see
 wired up but **not yet added to `ci.yml`**; run it locally via
 `npx playwright test --project=mobile-smoke`.
 
-See `npm run gate:data` / `npm run gate:local` above for checks that run
+See `npm run gate:local` above for checks that run
 locally (pre-push) but not in CI at all — a red local gate can and should
 block a push even when this CI pipeline would be green.
 

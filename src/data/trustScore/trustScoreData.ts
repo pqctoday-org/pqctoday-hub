@@ -328,7 +328,7 @@ function computeAllScores(): Map<string, TrustScore> {
         scores.set(`timeline:${enrichmentKey}`, computed)
         scores.set(`timeline:${compositeId}`, computed)
         // Corpus chunks use `${country} — ${title}` as title; map that too so
-        // chunkToResource() lookups resolve. Matches generate-rag-corpus.ts
+        // chunkToResource() lookups resolve. Matches the corpus generator
         // processTimeline title format.
         scores.set(`timeline:${country.countryName} — ${title}`, computed)
         // Doc-enrichment chunks use `${country}:${org} — ${title}` as refId

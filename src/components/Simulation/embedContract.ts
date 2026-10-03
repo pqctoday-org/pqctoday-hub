@@ -46,7 +46,7 @@ import type { TreeStep } from '@/simulation'
  *   4. An embed-pane mount arm in `SimulationView` that renders the component.
  *   5. A completion branch in `isStepComplete` (the standard completion
  *      convention — one predicate for all kinds).
- *   6. Generator support in `scripts/gen-sim-trees.mjs` (helper + URL/registry
+ *   6. Generator support in the sim-tree generator (helper + URL/registry
  *      maps) so authored trees can reference the kind.
  *
  * `embedContract.test.ts` enforces (3) + (5) for every kind and asserts every
@@ -93,7 +93,7 @@ export function isAlgorithmTabStep(s: TreeStep): boolean {
 
 /**
  * Valid sandbox scenario ids (C3). Read-only projection of the scenario catalog
- * (itself generated from the sandbox repo via `npm run sync:sandbox`). A scenario
+ * (itself generated from the sandbox repo). A scenario
  * STEP is embeddable when its id resolves here — but whether the lab can actually
  * run is a RUNTIME health question (`useSandboxStore`), gated at the call site so
  * the static public build hides offline labs (C3-a). The contract only answers

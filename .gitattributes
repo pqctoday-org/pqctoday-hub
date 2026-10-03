@@ -1,4 +1,4 @@
-# Generated RAG search index — rebuilt from source via `npm run refresh-index`
+# Generated RAG search index — rebuilt from source when the corpus is refreshed
 # (corpus → embeddings → sign), which must run LOCALLY because the embedding
 # model is too slow on CI runners. These large blobs are never hand-merged:
 # the `ours` merge driver auto-resolves any overlap so concurrent data PRs do

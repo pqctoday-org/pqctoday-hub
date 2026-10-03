@@ -3,7 +3,7 @@
  * katEvidence — the evidence class and source of every katRunner test kind,
  * read from the GENERATED per-case evidence records
  * (src/data/validation/case-evidence.kat.generated.json, built by
- * scripts/generate-case-evidence.ts from the reviewed vector manifest and the
+ * the case-evidence generator from the reviewed vector manifest and the
  * static test registry). ACVP validation remediation plan 2026-09-24, WS-A
  * A-1/A-2 and WS-I ("same case has the same label and source everywhere").
  *

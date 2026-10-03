@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * The generated timeline enrichment lookup (scripts/generate-timeline-enrichments.ts)
+ * The generated timeline enrichment lookup (the timeline-enrichment generator)
  * must be EXACTLY what the pre-27-Sep loader computed at runtime: every
  * timeline_doc_enrichments_*.md in the live directory and all three archive
  * tiers, read through Vite's glob in the same order, merged by

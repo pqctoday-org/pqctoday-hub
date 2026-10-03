@@ -149,7 +149,7 @@ export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioI
       <EmptyState
         icon={<ServerCrash className="w-6 h-6" />}
         title="Unknown sandbox scenario"
-        description={`No scenario matches id "${scenarioId ?? ''}". Regenerate the manifest via npm run sync:sandbox.`}
+        description={`No scenario matches id "${scenarioId ?? ''}". The scenario manifest may need regenerating.`}
       />
     )
   }

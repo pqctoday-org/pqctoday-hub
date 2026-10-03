@@ -281,7 +281,7 @@ describe('committed mechanism-inventory.generated.json is self-consistent', () =
   // raw fields it records must reproduce the recorded inventorySha256, and the
   // derived fields must match what this module derives today. (Whether the
   // record still matches the SHIPPED engines is checked by
-  // `npm run gen:mechanism-inventory:check` and mechanismInventory.local.test.ts.)
+  // the mechanism-inventory check and mechanismInventory.local.test.ts.)
   it.each(['cpp', 'rust'] as const)('%s: recorded hash + derived fields reproduce', async (e) => {
     const rec = (generated as unknown as GeneratedMechanismInventoryFile).engines[e]
     const raw: RawMechanismRecord[] = rec.inventory.mechanisms.map((m) => ({

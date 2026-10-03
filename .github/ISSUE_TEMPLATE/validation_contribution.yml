@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you. Every expected value in the Hub must trace to an immutable source, and every new trusted vector needs **two independent reviewers** (source verification + implementation review, plan J-5). The manifest gate (`npm run audit:validation-manifest`) rejects a contributed vector whose record lacks provenance, a reviewed license note, per-case expectations, or an approved two-person review record — see CONTRIBUTING.md › "Contributing validation vectors, adapters and test cases".
+        Thank you. Every expected value in the Hub must trace to an immutable source, and every new trusted vector needs **two independent reviewers** (source verification + implementation review, plan J-5). The manifest gate rejects a contributed vector whose record lacks provenance, a reviewed license note, per-case expectations, or an approved two-person review record — see CONTRIBUTING.md › "Contributing validation vectors, adapters and test cases".
 
         **Do not paste vectors issued to an ACVTS session or other access-controlled lab material.** Public reference material only.
 
