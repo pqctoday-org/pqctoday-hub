@@ -115,6 +115,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'client CPU',
       'Each ciphertext is several MB and packs up to 32,768 values, roughly 100× larger than the raw data. Encrypting one takes tens of milliseconds.'
     ),
+    c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       4,
       '~GB keys',
@@ -122,6 +123,14 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'sec–min',
       'cloud GPU/CPU',
       'Additions are cheap. A multiply plus relinearize takes tens of ms, and each bootstrap takes seconds on a CPU or ~40–330 ms on a GPU (published N = 2¹⁶ figures). The cloud also needs the GB-scale keys in memory.'
+    ),
+    c(
+      2,
+      '~1 MB',
+      0,
+      '—',
+      'network',
+      'After computation the result sits at a low modulus level, so it shrinks to about 1 MB per ciphertext.'
     ),
     c(
       2,
@@ -198,6 +207,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'client CPU',
       'Compact public-key encryption, a few KB per value. The cloud expands each 64-bit value to ~0.5 MB of blocks (32 blocks × 2,049 × 8 B).'
     ),
+    c(1, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       3,
       '~130 MB keys',
@@ -206,6 +216,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'cloud CPU/GPU',
       'One programmable bootstrap is milliseconds on a CPU core. A 64-bit add takes tens of ms and a multiply hundreds of ms; GPUs are much faster.'
     ),
+    c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product of 2,048 terms per block, then rounding.'),
     c(1, '≤ KB', 0, '—', 'network', 'A small plaintext result.'),
@@ -247,6 +258,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'Summation keys add one key-switching key per rotation used by EvalSum (estimate).'
     ),
     c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary BFV encryption.'),
+    c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
       3,
       '~100s MB',
@@ -255,6 +267,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'cloud CPU',
       'Leveled evaluation, no bootstrapping in the baseline example.'
     ),
+    c(2, '~MB × 3', 0, '—', 'network', 'The result ciphertext goes to every party.'),
     c(2, '~MB × 3', 0, '—', 'network', 'The result ciphertext goes to every party.'),
     c(2, '~MB', 1, '~ms', 'Party A HSM', 'One partial decryption, the cost of a decryption.'),
     c(2, '~MB', 1, '~ms', 'Party B HSM', 'Same.'),
@@ -281,6 +294,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'Each party sends a full-size share for every Galois key the application needs; no bootstrapping keys (estimate).'
     ),
     c(2, '~MB / ct', 2, '10s of ms', 'client CPU', 'Ordinary BGV encryption.'),
+    c(2, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(3, '~100s MB', 3, 'ms–s', 'cloud CPU', 'Leveled evaluation until the levels run out.'),
     c(
       2,
@@ -338,6 +352,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     ),
     c(3, '~130 MB keys', 3, 'ms–s / op', 'server CPU/GPU', 'Ordinary TFHE-rs integer operations.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
+    c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 1, 'µs', 'HSM', 'One dot product per block, then rounding.'),
     c(1, '≤ KB', 0, '—', 'network', 'A small plaintext result.'),
   ],
@@ -367,6 +382,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       'GPU / FPGA',
       'On a GPU a CKKS bootstrap at N = 2¹⁶ takes ~40–330 ms in published results, and cheaper operations take milliseconds.'
     ),
+    c(2, '~1 MB', 0, '—', 'network', 'One small result ciphertext.'),
     c(2, '~1 MB', 0, '—', 'network', 'One small result ciphertext.'),
     c(1, '~1 MB in', 1, '~ms', 'HSM', 'Fits: one ring multiplication on about 1 MB of input.'),
     c(1, '≤ KB', 0, '—', 'network', 'A small plaintext result.'),
@@ -537,7 +553,9 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['eval-set', 'relin', 'rotation', 'mldsa65'],
     ['fhe-pk', 'mldsa65'],
     ['fhe-pk'],
+    [],
     ['eval-set'],
+    [],
     [],
     ['fhe-sk'],
     [],
@@ -550,7 +568,9 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['tfhe-server', 'mldsa65'],
     ['tfhe-cpk', 'mldsa65'],
     ['tfhe-cpk'],
+    [],
     ['tfhe-server'],
+    [],
     [],
     ['tfhe-client'],
     [],
@@ -564,7 +584,9 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['relin'],
     ['rotation', 'mldsa65'],
     ['fhe-pk'],
+    [],
     ['relin', 'rotation'],
+    [],
     [],
     ['fhe-sk'],
     ['fhe-sk'],
@@ -577,6 +599,7 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['relin'],
     ['rotation'],
     ['fhe-pk'],
+    [],
     ['relin', 'rotation'],
     ['fhe-sk'],
     [],
@@ -592,6 +615,7 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['tfhe-server'],
     ['tfhe-server'],
     [],
+    [],
     ['tfhe-client'],
     [],
   ],
@@ -600,6 +624,7 @@ export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
     ['eval-set', 'mldsa65'],
     ['eval-set'],
     ['eval-set'],
+    [],
     [],
     ['fhe-sk'],
     [],
