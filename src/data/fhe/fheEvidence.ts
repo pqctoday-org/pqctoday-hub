@@ -101,7 +101,15 @@ export interface ScenarioContract {
       | 'reference-only'
     disclosures: string[]
     budgets: Record<string, number | null>
-    fixtures: { id: string; description: string; inputHash: string; expectedOutputHash: string }[]
+    fixtures: {
+      id: string
+      stepId: string
+      description: string
+      /** The canonical input; inputHash is SHA-256 of its sorted-key, whitespace-free JSON. */
+      input: unknown
+      inputHash: string
+      expectedOutputHash: string
+    }[]
     actors: { id: string; kind: string; zone: string }[]
     steps: {
       id: string

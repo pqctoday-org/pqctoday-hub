@@ -9,6 +9,9 @@ by three producers, and each validation appears on the matching workshop step:
 | `pqctoday-fhe`     | KV260                                           | `board`, `board: "kv260"`                               | software token on KV260                 |
 | `pqctoday-cacp`    | MX95, MX95 Pro (Ventuno Q later)                | `board`, `board: "mx95"` / `"mx95-pro"` / `"ventuno-q"` | software token on MX95 / MX95 Pro       |
 
+Lattigo's `conformance-mapped` target is conditional on the FHE plan's P0A and P5 gates
+(§6.4); its contract carries the `conformance-gated-p0a-p5` disclosure.
+
 A board run is a software token on that board. Nothing here may claim hardware custody or
 "HSM-validated"; the validator rejects such claim scopes.
 

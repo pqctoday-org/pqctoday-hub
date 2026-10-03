@@ -153,7 +153,7 @@
           "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
         }
       ],
-      "validationTargetLabel": "reference-only",
+      "validationTargetLabel": "reference-validated",
       "disclosures": [
         "emulator-not-hardware-custody",
         "test-manufacturing-ca",
@@ -344,7 +344,43 @@
         "peakRssMb": null,
         "bundleBytes": null
       },
-      "fixtures": []
+      "fixtures": [
+        {
+          "id": "client-key-kat-v1",
+          "stepId": "generate-client-key",
+          "description": "Client-key regeneration KAT: TEST seed 0x00..0x1f -> SP 800-108r1 (HMAC-SHA-384) -> TFHE-rs Seed -> ClientKey::generate_with_seed; output is SHA-256 of safe_serialize(ClientKey), 24,087 bytes. Source: pqctoday-fhe ebda5c3d reference-runs/tfhe-custody, identical on macOS arm64, Linux arm64/x86-64 and wasm32. inputHash = SHA-256 of the canonical JSON (sorted keys, no whitespace) of `input`.",
+          "input": {
+            "seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+            "kdf": {
+              "standard": "NIST SP 800-108r1 counter mode",
+              "prf": "HMAC-SHA-384",
+              "counterBits": 32,
+              "counter": 1,
+              "label": "pqctoday-fhe/tfhe-client-key-seed",
+              "separator": "00",
+              "lBits": 128,
+              "output": "first 16 bytes, big-endian u128"
+            },
+            "context": [
+              "TFHE",
+              "PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+              "cfg:no-dedicated-oprf",
+              "client",
+              "v1"
+            ],
+            "derivedSeed": "0xf6eb1c9a88a4442c8a7449536c3d12dc",
+            "library": {
+              "name": "TFHE-rs",
+              "version": "1.8.1",
+              "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db",
+              "config": "ConfigBuilder::default().use_dedicated_oprf_key(false)",
+              "call": "ClientKey::generate_with_seed"
+            }
+          },
+          "inputHash": "977aaa7a03ae411e4b220102fbe70f5477ac9646317435e7cd59fe0ed9b12723",
+          "expectedOutputHash": "9f5d847e4d1121eef9d75fcc473e89ee5306523f9cb140384eba5aa85a55b77b"
+        }
+      ]
     },
     {
       "id": "openfhe-threshold",
@@ -701,7 +737,8 @@
         "emulator-not-hardware-custody",
         "host-rollback-possible",
         "honest-but-curious-parties",
-        "lattigo-retry-key-recovery"
+        "lattigo-retry-key-recovery",
+        "conformance-gated-p0a-p5"
       ],
       "budgets": {
         "shareBytes": null,

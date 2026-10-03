@@ -18,6 +18,17 @@ import {
 
 const HEX = (c: string) => c.repeat(64)
 
+/** Sorted-key, whitespace-free JSON: the canonical form fixture input hashes are taken over. */
+const canonicalJson = (v: unknown): string =>
+  Array.isArray(v)
+    ? `[${v.map(canonicalJson).join(',')}]`
+    : v && typeof v === 'object'
+      ? `{${Object.keys(v)
+          .sort()
+          .map((k) => `${JSON.stringify(k)}:${canonicalJson((v as Record<string, unknown>)[k])}`)
+          .join(',')}}`
+      : JSON.stringify(v)
+
 const record = (over: Partial<EvidenceRecord> = {}): EvidenceRecord => ({
   id: 'ev-1',
   scenarioId: 'tfhe-single-hsm',
@@ -99,6 +110,16 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
     }
   })
 
+  it('the TFHE client-key KAT fixture is present', () => {
+    const f = SCENARIO_CONTRACT.scenarios
+      .find((s) => s.id === 'tfhe-single-hsm')!
+      .fixtures.find((x) => x.id === 'client-key-kat-v1')!
+    expect(f.stepId).toBe('generate-client-key')
+    expect(f.expectedOutputHash).toBe(
+      '9f5d847e4d1121eef9d75fcc473e89ee5306523f9cb140384eba5aa85a55b77b'
+    )
+  })
+
   it('contract v1 fields: §1.1 target labels, disclosures, budget names, fixtures', () => {
     const LABELS = [
       'reference-validated',
@@ -113,7 +134,10 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
       for (const d of s.disclosures) expect(d).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
       expect(Object.keys(s.budgets).length).toBeGreaterThan(0)
       for (const f of s.fixtures) {
-        expect(f.inputHash).toMatch(/^[0-9a-f]{64}$/)
+        expect(s.steps.map((st) => st.id)).toContain(f.stepId)
+        expect(f.inputHash).toBe(
+          crypto.createHash('sha256').update(canonicalJson(f.input), 'utf8').digest('hex')
+        )
         expect(f.expectedOutputHash).toMatch(/^[0-9a-f]{64}$/)
       }
     }
