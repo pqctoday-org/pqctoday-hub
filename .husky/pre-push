@@ -1,6 +1,5 @@
-# pre-push — the LOCAL gate. Everything that is editorial, style-only, or needs
-# this machine (sibling checkouts, evidence caches, the full unit suite) runs
-# here; GitHub's `checks`/`test` jobs carry only what must be
+# pre-push — the LOCAL gate. Style and generated-file checks that need this
+# machine run here; GitHub's `checks`/`test` jobs carry only what must be
 # proven on a clean runner. The split is written down in GATES.md; a
 # check runs in exactly one of the two places.
 # Bypass with `git push --no-verify` for an intentional WIP push — knowingly,
@@ -51,18 +50,11 @@ if [ -f "$RECEIPT" ]; then
   fi
 fi
 
-# The local gate: format, lint, the data audits, the FULL unified validator
-# (only TP-1/MP-2 excluded — they verify on-disk proof files that exist only
-# after a manual download run), the editorial audits (revision coverage,
-# role boards, persona lens, changelog tags, content freshness, infographics,
-# tokens, workshop flows), wasm provenance against the sibling pqctoday-hsm
-# checkout, landing counts, CSV copy-forward, and the unit suite. See
-# package.json `gate:local` for the exact chain and GATES.md for what
-# each step guards.
-# FAST tier only since 2026-09-29 (owner decision): format, lint, data and
-# editorial audits, generated-file checks (~3–5 min; `gate:prepush` writes the
-# receipt itself). The unit suite runs on GitHub for every PR (pr-check.yml,
-# sharded), and the ~19 min `test:local` tier runs once per release
-# (`npm run gate:release-local`) before the owner's merge yes — not on every
-# push. `npm run gate:local` still runs everything, by hand.
+# The fast local gate (`gate:prepush`): format, lint, version bumps, the
+# protocol-matrix and role-board checks, generated-file freshness and test
+# reachability; it writes the receipt itself. The unit suite runs on GitHub for
+# every PR (pr-check.yml, sharded), and the `test:local` tier runs once per
+# release (`npm run gate:release-local`). Data checks run outside this
+# repository before merge. `npm run gate:local` runs everything here, by hand.
+# See package.json and GATES.md.
 npm run gate:prepush

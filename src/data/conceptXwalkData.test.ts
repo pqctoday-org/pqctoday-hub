@@ -147,7 +147,7 @@ describe('conceptXwalkData', () => {
     // (100% resolved). The 2026-07-14 compliance-to-library merge legitimately
     // cites entities (e.g. draft-ietf-cose-dilithium) concept_registry hasn't
     // caught up to yet — real CM-CONCEPT-FROM/TO WARNING findings in
-    // validate-data-integrity.ts, not a resolver bug (verified: normalised
+    // the data-integrity validator, not a resolver bug (verified: normalised
     // fallback already rescues the pure-format-mismatch cases). CM-CONCEPT's
     // own design tolerates this as WARNING until a dedicated SME review sweep
     // closes the gap — this unit test's bar should match that, not be

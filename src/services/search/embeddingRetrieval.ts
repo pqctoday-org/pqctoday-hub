@@ -7,7 +7,7 @@
  * the chat citation path, and a generic `cosineSearch` for any other code
  * that needs to find the K nearest corpus chunks to a query string.
  *
- * Build-time generation lives in `scripts/build-embedding-index.ts` and is
+ * Build-time generation lives in the embedding-index builder and is
  * local-only (see pqctoday-priv/docs/platform/data/embedding-optimization.md
  * §6.1). This module reads the committed artifacts as static assets.
  *

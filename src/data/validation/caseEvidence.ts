@@ -5,12 +5,12 @@
  *
  * The records are GENERATED from the reviewed vector manifest
  * (vector-manifest.json) joined with the static test registry
- * (testRegistry.ts) by scripts/generate-case-evidence.ts, into two small
+ * (testRegistry.ts) by the case-evidence generator, into two small
  * files so no UI ships the ~300 KB manifest:
  *   - case-evidence.acvp.generated.json  — workbench rows (useAcvpSuite), keyed
  *     by row-id template (`…-{engine}`)
  *   - case-evidence.kat.generated.json   — katRunner specs, keyed by KatKind
- * `npm run gen:case-evidence:check` fails when either file is stale.
+ * The case-evidence check fails when either file is stale.
  *
  * Nothing here infers provenance from a producer string, a button label or
  * an algorithm name: a row or spec that is not in the registry has NO record

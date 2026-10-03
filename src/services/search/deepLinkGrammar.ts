@@ -4,7 +4,7 @@
  * emitted by the RAG corpus generator and consumed by the PQC Assistant.
  *
  * Used by:
- * - scripts/generate-rag-corpus.ts (build-time validator)
+ * - the corpus generator (build-time validator)
  * - scripts/corpus-invariants.test.ts (vitest gate)
  * - src/services/chat/promptBuilder.ts (prose grammar block in system prompt
  *   should mirror these patterns; see RoutePattern.docExample)

@@ -20,7 +20,7 @@ import { ALGORITHM_REGISTRY } from '../../data/algorithmProperties'
 // FIPS_ALGORITHM and SECURITY_LEVELS are DERIVED from ALGORITHM_REGISTRY
 // (src/data/algorithmProperties.ts), itself auto-generated from the latest
 // pqc_complete_algorithm_reference_*.csv by
-// scripts/generate-algorithm-properties.ts. This keeps both tables in sync
+// the algorithm-properties generator. This keeps both tables in sync
 // with the CSV automatically — no separate allowlist file, no drift risk.
 //
 // STANDARD_DATES and NON_PQC_STANDARDS below are NOT CSV-derived — the

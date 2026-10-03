@@ -37,10 +37,11 @@ import {
   PROTOCOL_MATRIX,
   type DimensionRef,
   type DimensionStatus,
-  type DimensionStatusValue,
-  type DraftStage,
   type ProtocolMatrixRow,
 } from '../src/data/pqcProtocolMatrix'
+import { STAGE_VALUE_CONSISTENCY } from '../src/data/pqcProtocolMatrixStageConsistency'
+
+export { STAGE_VALUE_CONSISTENCY }
 
 const RFC_RE = /\bRFC[\s-]?(\d{4,5})\b/gi
 const DRAFT_RE = /\b(draft-[a-z]+(?:-[a-z0-9]+)+(?:-\d+)?)/gi
@@ -124,21 +125,6 @@ function normalizeRefId(id: string): string {
   // hyphenated latestRelease/latestDraft id (not a space-form dimension ref).
   const draftNoVer = id.startsWith('draft-') ? id.replace(/-\d+$/, '') : id
   return draftNoVer.replace(/^RFC[-\s]?/, 'RFC ')
-}
-
-/** Stage ↔ value consistency table. Exported for unit-test KATs. */
-export const STAGE_VALUE_CONSISTENCY: Record<DraftStage, DimensionStatusValue[]> = {
-  none: ['na', 'none'],
-  na: ['na'],
-  identified: ['experimental', 'none'],
-  experimental: ['experimental'],
-  'individual-draft': ['draft', 'experimental'],
-  'wg-document': ['draft'],
-  'wg-last-call': ['draft'],
-  'iesg-submitted': ['draft'],
-  'ietf-last-call': ['draft'],
-  'rfc-editor-queue': ['draft', 'rfc'],
-  'rfc-published': ['rfc'],
 }
 
 export function auditStageValueConsistency(

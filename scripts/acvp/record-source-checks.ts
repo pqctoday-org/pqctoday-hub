@@ -44,7 +44,7 @@ import {
   type SourceCheckRecord,
 } from '../../src/data/validation/reviewRecords'
 import type { VectorFileEntry } from '../../src/data/validation/validationCaseManifest'
-import { canonical } from '../generate-release-evidence'
+import { canonical } from '../lib/releaseEvidenceHash'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const MANIFEST = path.join(ROOT, 'src/data/validation/vector-manifest.json')

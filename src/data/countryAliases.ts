@@ -6,7 +6,7 @@
  * pages and external chatbots) to the canonical `countryName` values that
  * appear in the Timeline CSV's `Country` column.
  *
- * Hygiene gated by `npm run audit:timeline-aliases` — that script enforces:
+ * Hygiene gated by the timeline-alias check, which enforces:
  *   1. Every alias value resolves to a real Timeline CSV country row.
  *   2. Every distinct CSV Country either matches itself canonically or is
  *      reachable through at least one alias entry.

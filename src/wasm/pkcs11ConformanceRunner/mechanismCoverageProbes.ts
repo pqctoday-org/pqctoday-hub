@@ -10,7 +10,7 @@
 // much larger, separate undertaking. Their current counts are NOT written
 // here: they are imported from pqctoday-hsm's committed reports into
 // src/data/validation/native-conformance.generated.json
-// (scripts/import-native-conformance.ts). This is a narrower, product-specific
+// (the native-conformance importer). This is a narrower, product-specific
 // gap-closure pass, surfaced in the UI as its own "Mechanism Coverage"
 // section, not part of the OASIS A/B/C tier sequence at all.
 //

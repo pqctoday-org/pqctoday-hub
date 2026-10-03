@@ -17,7 +17,7 @@
  * Do not edit either wording without updating both this file's pinning test
  * (`educationNotice.test.tsx`) and the copies that cannot import TypeScript —
  * `src/vendor/softhsm-wasm/{package.json,NOTICE,index.js,index.d.ts}` — which
- * `scripts/audit-education-notice.ts` holds to these strings.
+ * the education-notice check holds to these strings.
  */
 
 /** Platform-level status notice, for the UI and for human-read artefacts. */

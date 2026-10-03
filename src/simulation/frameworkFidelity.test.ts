@@ -6,7 +6,7 @@
  * Applied Quantum PQC Migration Framework v2.1 at `pqc-references/framework-2.1.yaml`
  * (machine-readable twin `framework-2.1.json`, the single source of truth — see
  * the `reference-framework-yaml-extraction` note). Trees are emitted by
- * `scripts/gen-sim-trees.mjs`, which HARDCODES the framework content; without this
+ * the sim-tree generator, which HARDCODES the framework content; without this
  * guard a hand-edit can silently drift the sim away from the published framework
  * (this is exactly how Phase 0's activity labels and two L4 maturity clauses
  * rotted before the 2026-06-21 audit).
@@ -137,7 +137,7 @@ describe('framework fidelity (drift guard vs framework-2.1.yaml)', () => {
     // The guard above is one-directional (no INVENTED activities). This is the other
     // direction — no framework activity silently UNMAPPED — so coverage gaps like the
     // ones the 2026-06-22 sim audit found can't reappear untested. 0.2b/0.2c are folded
-    // into 0.2 by design (see gen-sim-trees.mjs), so they are exempt.
+    // into 0.2 by design (see the sim-tree generator), so they are exempt.
     const FOLDED = new Set(['0.2b', '0.2c'])
     const missing: string[] = []
     for (const phase of FRAMEWORK_PHASE_IDS) {

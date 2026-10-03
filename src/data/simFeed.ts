@@ -3,7 +3,7 @@
  * simFeed — the Simulation's scripted live-feed, loaded from a dated CSV
  * (`sim_feed_<MMDDYYYY>.csv`) with records for every quarter Q1 2026 → Q4 2040.
  * Latest-dated file wins (same convention as the other hub CSVs). Emitted by
- * scripts/gen-sim-feed.mjs; edit/regenerate to retune the timeline.
+ * the sim-feed generator; edit/regenerate to retune the timeline.
  */
 import { loadLatestCSV } from './csvUtils'
 import type { EventSeverity } from './simEvents'

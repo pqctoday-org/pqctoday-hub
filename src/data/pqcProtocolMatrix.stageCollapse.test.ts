@@ -9,7 +9,7 @@ import {
   type DraftStage,
   type PersonaStageGranularity,
 } from './pqcProtocolMatrix'
-import { STAGE_VALUE_CONSISTENCY } from '../../scripts/audit-matrix-refs'
+import { STAGE_VALUE_CONSISTENCY } from './pqcProtocolMatrixStageConsistency'
 import type { PersonaId } from './learningPersonas'
 
 const ALL_STAGES: DraftStage[] = [

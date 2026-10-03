@@ -2,7 +2,7 @@
 export type ChatProvider = 'gemini' | 'local'
 
 /**
- * W3C PROV-DM block attached to every chunk by `scripts/generate-rag-corpus.ts`.
+ * W3C PROV-DM block attached to every chunk by the corpus generator.
  * Carries the evidence chain back to the originating CSV row and the cached
  * source document. See trust-engine-explainability §13 for the full schema.
  *

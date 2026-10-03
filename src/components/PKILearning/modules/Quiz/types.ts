@@ -6,7 +6,7 @@ export type QuestionType = 'multiple-choice' | 'true-false' | 'multi-select'
  *
  * Single source of truth for quiz categories: the `QuizCategory` type is
  * derived from this array, and the data-integrity validator
- * (scripts/validators/cross-ref-checks.ts, check C8) imports it so the
+ * (the cross-reference data check, check C8) imports it so the
  * validator can never drift from the app vocabulary.
  * Add new categories HERE (and give them metadata in
  * src/data/quizDataLoader.ts CATEGORY_CONFIG, which is exhaustively typed).

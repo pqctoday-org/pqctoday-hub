@@ -30,8 +30,8 @@ import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareBu
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
  *
- * These keys and `scripts/validators/document-type-checks.ts`'s allowed set are
- * the same ten strings, and a test asserts they stay that way — a described
+ * These keys and the document-type data check's allowed set are the same ten
+ * strings, and a test run with the data checks asserts they stay that way — a described
  * type the data cannot hold, or a stored type with no description, are the two
  * ways this drifts.
  *

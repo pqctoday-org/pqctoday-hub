@@ -6,7 +6,7 @@
 // committed in src/data/validation/mechanism-inventory.generated.json — and is
 // stable across two captures of the same engine. A mismatch means the shipped
 // engine advertises something the committed denominator does not describe:
-// regenerate with `npm run gen:mechanism-inventory`.
+// regenerate the mechanism inventory.
 //
 // Engine loading mirrors mechanismNames.local.test.ts (Rust: the playground's
 // own getSoftHSMRustModule singleton; C++: the vendored Emscripten glue with a

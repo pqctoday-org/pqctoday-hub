@@ -508,43 +508,6 @@ export const NON_EXECUTING_READERS: {
       'readdirSync over src/data/acvp to assert every file agrees with vector-manifest.json (provenance/evidence-class agreement). Reads the bytes; executes no case.',
   },
   {
-    module: 'scripts/audit-validation-manifest.ts',
-    kind: 'provenance',
-    reason:
-      'the manifest gate: re-hashes each vector file and validates its manifest entry. Reads the bytes; executes no case.',
-  },
-  {
-    module: 'scripts/audit-validation-manifest.test.ts',
-    kind: 'provenance',
-    reason: 'proves the manifest gate above can fail. Reads vector bytes; executes no case.',
-  },
-  {
-    module: 'scripts/generate-validation-counts.ts',
-    kind: 'provenance',
-    reason: 'derives validation-counts.generated.json from the manifest. Counts cases; runs none.',
-  },
-  {
-    module: 'scripts/generate-validation-counts.test.ts',
-    kind: 'provenance',
-    reason: 'proves the counts generator against the manifest. Counts cases; runs none.',
-  },
-  {
-    module: 'scripts/generate-case-evidence.ts',
-    kind: 'provenance',
-    reason: 'derives case-evidence.*.generated.json from the manifest. Counts cases; runs none.',
-  },
-  {
-    module: 'scripts/generate-coverage-matrix.ts',
-    kind: 'provenance',
-    reason:
-      'joins the manifest with testRegistry into coverage-matrix.generated.json. A row here is a CLAIM about execution, not execution.',
-  },
-  {
-    module: 'scripts/generate-release-evidence.ts',
-    kind: 'provenance',
-    reason: 'derives the published release-evidence artifacts from the manifest. Runs no case.',
-  },
-  {
     module: 'src/wasm/kmip/ttlv/codepointTable.ts',
     kind: 'spec-table',
     reason:

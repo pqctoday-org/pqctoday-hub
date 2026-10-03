@@ -8,7 +8,7 @@
  * a passing result is that class's `permittedClaim`.
  *
  * The ids are mirrored as an enum in validationCaseManifest.schema.json; the
- * manifest gate (scripts/audit-validation-manifest.ts) fails if the two lists
+ * manifest gate (the vector-manifest check) fails if the two lists
  * ever drift apart.
  *
  * `UNVERIFIED` is deliberately NOT an evidence class: it marks a vector file
