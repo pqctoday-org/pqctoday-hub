@@ -370,6 +370,11 @@ export default defineConfig([
                 // Every mobile screen that honours a resource deep link shows
                 // the same "widened / not found" notice desktop does.
                 '!@/components/common/DeepLinkNotice',
+                // UnresolvedEstimatesNotice.tsx (common, 2026-10-03) — same category:
+                // a small shared note with no desktop-view dependencies. The phone
+                // Threats screen shows the same "estimates are still open" wording
+                // desktop does, from this one component.
+                '!@/components/common/UnresolvedEstimatesNotice',
                 // ItemShareButton.tsx (common, 2026-09-29) — the per-item Share
                 // control every item overlay carries; mobile sheets use it too.
                 '!@/components/common/ItemShareButton',
