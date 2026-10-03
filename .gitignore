@@ -301,12 +301,11 @@ docs/repomanagement.md
 docs/design-document*
 docs/pqctoday-investor*
 
-# All scripts (private — tooling, scrapers, extractors; data is pre-committed)
+# All scripts are private by default; the public set is the build, the
+# release / deploy / evidence tooling and their tests.
 # Note: `scripts/*` (not `scripts/`) so per-file re-include rules below work.
 # Git refuses to un-ignore files inside a fully-ignored directory.
 scripts/*
-# Current-corpus RAG benchmark (invoked by `npm run evaluate:rag-embeddings`)
-!scripts/evaluate-embedding-retrieval.ts
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
 # WS-F ACVP-format prototype CLI (thin entry; logic in src/services/acvp/node/cli.ts)
@@ -317,63 +316,11 @@ scripts/*
 !scripts/acvp-xplat-wasm.ts
 !scripts/acvp-xplat-compare.ts
 !scripts/gen-acvp-native-constants.ts
-# Unified data-integrity validator — runs in the local gate (npm run
-# validate:data / gate:data, see TESTING.md); its check modules and their
-# tests must be tracked or new files silently can't be added (existing
-# validator files stayed tracked only because they predated this ignore
-# rule — a real gap, found 2026-07-10 adding a new test file here).
-!scripts/validators/
-!scripts/validate-data-integrity.ts
-# Keeps validate:data:without-priv's --exclude-checks list honest against
-# ci.yml's own copy (dev-tabs-pkcs11-kmip plan G9, W5) — same "every new
-# scripts/ file needs its own re-include line, on the same commit" gap this
-# whole section exists to prevent, caught here before the file was ever
-# committed rather than after.
-!scripts/validate-data-priv-exclusions.driftguard.test.ts
-
-# Role-board CTA gate — runs in the local gate (npm run audit:role-board-ctas)
-# and is referenced by a committed package.json script, so it MUST be tracked
-# or `npm run audit:role-board-ctas` fails file-not-found for everyone but the
-# machine that wrote it. Its .local.test.ts must be tracked for the same reason
-# `scripts/validators/` is: otherwise the suite proving the gate can fail is
-# invisible to every other checkout. (Found 2026-08-02 the same way the
-# validators gap was — the commit silently dropped both files.)
-!scripts/audit-role-board-ctas.ts
-!scripts/audit-role-board-ctas.local.test.ts
-
-# B+ remediation gates (2026-08-10) — the SAME gap again. All three were wired
-# into ci.yml and package.json and all three files were silently dropped by
-# `git add`, because `scripts/*` above makes git skip them without a word. The
-# branch was green locally (the files exist here) and red in CI with
-# ERR_MODULE_NOT_FOUND, which is the only signal this failure mode ever gives.
-# Every future gate under scripts/ needs a line here on the SAME commit that
-# adds its ci.yml step.
-!scripts/audit-persona-lens.ts
-!scripts/audit-changelog-persona-tags.ts
-!scripts/audit-migrate-proof-freshness.ts
-
 # The check that stops occurrence five (2026-08-10). Local-only, wired into
 # .husky/pre-push rather than ci.yml — a CI step that checks whether CI's files
 # are present can only run once they are. Needs its own re-include here for the
 # obvious reason.
 !scripts/audit-ci-workflow-files.ts
-
-# Mobile UX layer's Rule 1 gate (IMPLEMENTATION-PLAN.md §5.6) — manually run
-# per phase via `npx tsx scripts/mobile-ux/dom-golden.ts compare`, not wired
-# into ci.yml (no CI changes without an explicit go-ahead, per the plan).
-# `__golden__/desktop.json` is a committed snapshot fixture, same idea as
-# `src/components/PKILearning/manifest/__golden__/legacyMaps.golden.json`.
-!scripts/mobile-ux/
-!scripts/mobile-ux/__golden__/
-
-# Role-board coverage gate — the SAME gap, third occurrence (found 2026-08-09
-# merging the six-use-cases-per-role work). The 08-09 commit added both the
-# ci.yml step and the package.json script but not the file they invoke, because
-# `scripts/*` swallowed it: CI would have hard-failed with file-not-found on a
-# fresh clone while every local run stayed green. Adding a gate to ci.yml or
-# package.json without a matching `!scripts/...` line here is the recurring
-# defect — check for one whenever a new scripts/ entry point lands.
-!scripts/audit-role-board-coverage.ts
 
 # SBOM version-drift gate (scripts/audit-sbom-versions.ts, 2026-08-09) was the
 # FOURTH occurrence of the trap described directly above; `git check-ignore`
@@ -399,21 +346,6 @@ scripts/*
 # token registry both this script and any future role-board tooling shares.
 !scripts/generate-role-board-content.ts
 !scripts/lib/
-!scripts/lib/roleBoardTokens.ts
-!scripts/lib/threatsCorpus.ts
-!scripts/lib/threatsCorpus.test.ts
-
-# Role-board content maintenance aid — npm run audit:role-board-content,
-# backing the audit-role-board-content skill. Same reason: referenced by a
-# committed package.json script.
-!scripts/audit-role-board-content.ts
-
-# Role-board literal-drift gate — npm run audit:role-board-literals, added
-# 2026-08-23 (checked with `git check-ignore -v` per the habit two entries
-# above, before adding this line — it printed a match). Referenced by a
-# committed package.json script; without this line every checkout but the
-# one that wrote it gets file-not-found.
-!scripts/audit-role-board-literals.ts
 
 # Data-filename generator — runs in `npm run build` and `predev`
 # (npm run generate:data-filenames) and emits src/data/generated/
@@ -423,41 +355,16 @@ scripts/*
 # while staying green on the machine that wrote it.
 !scripts/generate-data-filenames.ts
 
-# NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
-# CI), must be tracked or that workflow fails with "No such file or directory"
-# (as it silently did for weeks — see git history). Reads public CPE xref CSV,
-# calls the public NVD API, writes public cve-snapshot.json: nothing private.
-# Weekly-cron CI scripts — invoked on GitHub runners by
-# .github/workflows/trusted-source-freshness.yml and update-protocol-matrix.yml;
-# must be tracked or those workflows fail file-not-found (the scrape-nvd.py
-# failure mode above). Sanitized ports: public inputs (trusted_sources CSV,
-# pqcProtocolMatrix.ts, IETF datatracker), public outputs. No LLM phase.
-!scripts/enrich-protocol-matrix.py
-!scripts/apply-protocol-matrix-updates.ts
-# Its unit tests — the downgrade guard (F8, 2026-07-25) is the reason this
-# script needs any. scripts/* is ignored wholesale, so every tracked file
-# here needs its own negation; without this line the tests exist locally and
-# nowhere else, which is exactly the failure mode the guard protects against.
-!scripts/apply-protocol-matrix-updates.test.ts
-# Refreshes public/data/jose-drafts-snapshot.json, which the JOSE matrix audit
-# panel compares against (api-security-jwt remediation, 2026-10-01).
-!scripts/refresh-jose-drafts-snapshot.ts
 # Build-pipeline generators are public — `npm run build` invokes them to
 # produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
 # emitting public output: nothing private to protect.
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
-# Derives algorithmProperties.ts from the committed algorithm reference CSV;
-# CI-relevant --check mode. Public input, public output.
-!scripts/generate-algorithm-properties.ts
 # SEO build steps — `npm run build` invokes both: generate-sitemap emits
 # public/sitemap.xml, and prerender writes per-route static HTML into dist/.
 # Read public routeMeta, emit public output: nothing private to protect.
 !scripts/generate-sitemap.ts
 !scripts/prerender.ts
-# Simulation activity-tree generator — emits the committed dated trees in
-# src/simulation/trees from the public framework + hub registries.
-!scripts/gen-sim-trees.mjs
 # Timeline single-source codegen — derives sim/page facts from the timeline CSV.
 # Tracked: runs in prebuild and the CI freshness gate.
 !scripts/gen-timeline-facts.mjs
@@ -465,30 +372,6 @@ scripts/*
 # algorithms/timeline/library CSVs. Tracked: runs in prebuild and the local
 # pre-push freshness gate (same pattern as gen-timeline-facts.mjs above).
 !scripts/gen-landing-counts.mjs
-# Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
-!scripts/gen-sim-feed.mjs
-
-# Workshop flow static audit — runs in CI, must be tracked. Reads
-# public/workshop/*.json + src/. The companion timing fixer
-# (scripts/fix-workshop-caption-timing.ts) stays private since it mutates
-# authored content.
-!scripts/audit-workshop-flows.ts
-
-# Reference-cache drift audit — runs in the reference-cache-drift CI
-# workflow weekly. Reads public/{library,timeline,threats}/manifest.json,
-# re-fetches each entry, compares SHA-256 against the stored hash. Pure
-# read-only inputs, public report output — nothing private to protect.
-!scripts/audit-reference-cache-drift.ts
-!scripts/audit-reference-cache-drift.test.ts
-
-# Migration-phases hygiene gate — runs in ci.yml (npm run audit:migration-phases,
-# also part of gate:data). The .ts was tracked only because it predated the
-# `scripts/*` rule and had no re-include of its own; its test could not be added
-# at all until 2026-07-29, which is exactly the silent gap the validators comment
-# above describes. Both are listed now so neither can be lost on a re-add.
-# Reads the public product catalog CSV, writes nothing — nothing private.
-!scripts/audit-migration-phases.ts
-!scripts/audit-migration-phases.local.test.ts
 
 # RAG index freshness report — regenerated each run by the scheduled
 # rag-index-freshness workflow (uploaded as a build artifact, not committed).
@@ -498,139 +381,11 @@ public/data/rag-index-freshness.json
 # against doc-ID citations leaking into note / deploymentNote / playground /
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
-# Jurisdiction-refs gate — CI check that all jurisdiction data consumers import
-# from the canonical CSV-driven source (jurisdictionsData.ts).
-!scripts/audit-jurisdiction-refs.ts
-
-# Sandbox scenario sync generator — CI gate (sync:sandbox:check) that keeps
-# src/data/sandboxScenarios.ts regenerated from the public sandbox source repo
-# (pqctoday-sandbox/ui/src/data/scenarios.ts). Pure read-only against public
-# data; must be tracked so CI and other devs can run `npm run sync:sandbox`.
-!scripts/sync-sandbox-scenarios.ts
-
-# Module infographic coverage audit — CI gate that fails the build if any
-# MODULE_CATALOG entry lacks public/images/infographics/pqcstd_<id>.png.
-# CuriousSummaryBanner has no fallback chain; missing PNG = broken image.
-!scripts/audit-module-infographics.ts
-
-# Content revision-coverage audit (LEARN-MODULE-REVISION-HISTORY-REMEDIATION-
-# PLAN-07312026.md Phase 2, covers Learn modules + Playground tools) — CI
-# gate, `npm run audit:content-revision-coverage`.
-!scripts/audit-content-revision-coverage.ts
-
-# Learn-module snapshot exporter — emits the JSON snapshot the maintainer
-# agent's Python validators consume (learn-modules maintenance Phase 0).
-# Execute-imports real manifests + AST-extracts content.ts/component text:
-# public inputs, JSON output written outside the repo. Must be tracked so
-# `npm run export:learn-snapshot` works from a fresh checkout.
-!scripts/export-learn-manifest-snapshot.ts
-!scripts/lib/jsxEntities.ts
-!scripts/lib/jsxEntities.test.ts
-# Its .local.test.ts for the same reason audit-role-board-ctas' is tracked
-# (see that note above): the suite proving this exporter collects the right
-# module text is what stops the fact-checker's INPUT from silently narrowing,
-# and an untracked suite is invisible to every checkout but the one that wrote
-# it. Added 2026-08-22, after `git add` dropped it exactly as that note
-# predicts — the warning is easy to miss when the rest of the commit succeeds.
-!scripts/export-learn-manifest-snapshot.local.test.ts
-
-# Timeline country-alias audit — CI gate that validates countryAliases.ts
-# against the latest Timeline CSV. Pure read-only against public data.
-!scripts/audit-timeline-aliases.ts
 
 # Parallel-session worktree helper — developer tooling, no crypto or data
 # secrets. Documented in CLAUDE.md ("Parallel sessions: use git worktrees").
 !scripts/new-worktree.sh
-!scripts/refresh-index.sh
 
-# Compliance country-token audit — runs in CI. Validates every country/region
-# token in the latest compliance CSV resolves through COUNTRY_CODE_TO_NAME and
-# COUNTRY_TO_REGION in src/data/complianceData.ts. Pure read-only.
-!scripts/audit-compliance-countries.ts
-
-# Semantic-token audit — CI gate that scans src/ for hardcoded Tailwind palette
-# classes that violate ux-standard.md §S1.2. Pure read-only against public src.
-!scripts/audit-semantic-tokens.ts
-
-# Timeline electronic-evidence pipeline — mirrors the threats-evidence pattern.
-# Downloads SourceUrl content per active CSV row to public/timeline/ and emits
-# public/timeline/evidence/manifest.json so the Gantt popover can prove its
-# claims are backed by on-disk documents. Audit script is the CI gate.
-#
-# 2026-08-09: the two snapshotters (wayback-snapshot-timeline.ts,
-# snapshot-timeline-via-playwright.ts) were REMOVED from this list and deleted
-# here — scrapers live in pqctoday-priv, which already held byte-identical
-# copies of both. Nothing referenced them: no npm script, no CI step, no test.
-# The rest of the pipeline stays public for now because the hub copies of
-# download-timeline-evidence.ts and enrich-protocol-matrix.py are AHEAD of
-# pqctoday-priv's (by 22 and 305 lines), so moving them means syncing content
-# first, not deleting. audit-timeline-evidence.ts must stay public regardless —
-# CI runs it.
-!scripts/audit-timeline-evidence.ts
-!scripts/sync-timeline-csv-from-manifest.ts
-!scripts/audit-timeline-enrichment-freshness.ts
-!scripts/audit-timeline-enrichment-freshness.test.ts
-
-# Content-freshness audit — CI gate that flags time-sensitive sim claims
-# (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
-# Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
-!scripts/audit-content-freshness.ts
-
-# Module review-freshness gate (WS22 Stage 4) — the absolute-age half of
-# audit:content-freshness, which is already whitelisted above. Same
-# `scripts/*` trap: without these two lines `git add` is a silent no-op, the
-# gate's own helper never leaves the machine that wrote it, and
-# audit-content-freshness.ts fails module-not-found in CI and every other
-# checkout while staying green locally.
-!scripts/moduleReviewFreshness.ts
-!scripts/audit-content-freshness.local.test.ts
-
-# Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
-# the product catalog against the vendor roadmap CSV. Catches wrong VND-*
-# assignments (deprecated refs, name mismatches). Pure read-only against public data.
-!scripts/audit-vendor-refs.ts
-# Proof-gate: every curated leader row's KeyResourceRefs must resolve to a
-# real, non-deprecated library reference_id. Pure read-only against public data.
-!scripts/audit-leaders-refs.ts
-# CSV-archival gate: every dated-CSV loader eager-globs its whole prefix into
-# the JS bundle, so un-archived old revisions silently bloat the production
-# build (broke it outright on 2026-07-26). Pure read-only against src/data/.
-!scripts/audit-csv-archival.ts
-!scripts/audit-csv-archival.test.ts
-# Banned validation-claims gate (ACVP remediation WS-A A-6) — runs in
-# gate:data:audits, so the script, its fixtures test and its allowlist must be
-# tracked or CI fails ERR_MODULE_NOT_FOUND.
-!scripts/audit-validation-claims.ts
-!scripts/audit-validation-claims.test.ts
-!scripts/audit-validation-claims.allowlist.json
-
-# CSV copy-forward gate: dated generations are different FILENAMES, so two
-# sessions each writing one merge cleanly with no conflict while the loader
-# serves only the newest — rows present in one and absent from the other just
-# disappear, with no conflict, error or failing test. Runs in the local gate
-# (npm run audit:csv-copy-forward, wired into .husky/pre-push).
-# The .test.ts line is not decoration: `scripts/*` above made `git add` a
-# silent no-op for it, so the tests were written, passed, and were left out of
-# the commit that added them. Same failure this file already records for the
-# validators (2026-07-10) and the role-board gates.
-!scripts/audit-csv-copy-forward.ts
-!scripts/audit-csv-copy-forward.test.ts
-
-# Publication-date gate: library.initial_publication_date, timeline.SourceDate
-# and vendor-roadmaps.publish_date all mean "the source document's own
-# publication date" — add_row.py used to fill them with the ingest timestamp
-# instead, undetected, until the 2026-08-11 remediation. Blocks a future date
-# and an unexplained same-day cluster (the shape an ingest batch makes).
-!scripts/audit-publication-dates.ts
-
-# Merge-all coverage gate: the sibling failure mode to the above — a loader
-# that MERGES every dated file (not "newest wins") silently loses a document
-# the moment it's archived out of a directory the loader's glob doesn't cover.
-# Broke the CSWP.39 maturity corpus for 12 days starting 2026-07-26; see
-# archive-sweep-audit-08072026.md. Pure read-only against src/data/ + the
-# registered loader source files.
-!scripts/audit-merge-all-coverage.ts
-!scripts/audit-merge-all-coverage.test.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
@@ -775,61 +530,15 @@ pki/issued/
 !pki/vendors/*.pem
 src/.!*!.DS_Store
 
-# Capture-integrity guard — npm run audit:capture-integrity, plus its
-# local-gate suite. Referenced by a committed package.json script, so it has
-# the same `scripts/*` trap as every entry above: without these two negations
-# `git add scripts/audit-capture-integrity.ts` is a SILENT no-op and the gate
-# exists only on the machine that wrote it. Public input (public/*/manifest.json
-# hashes, src/data/library_*.csv read-only), stdout output, no network unless
-# --upstream is passed explicitly.
-!scripts/audit-capture-integrity.ts
-!scripts/audit-capture-integrity.local.test.ts
-# ACVP remediation WS-G mechanism inventory (G-1/G-2) + advertise-vs-dispatch
-# analysis (G-7). Referenced by committed package.json scripts and they emit
-# the committed src/data/validation/mechanism-*.generated.json — same
-# `scripts/*` trap as above. Public input (the shipped wasm, public hsm source
-# read by commit), public output.
-!scripts/generate-mechanism-inventory.ts
-!scripts/analyze-mechanism-dispatch.ts
-!scripts/analyze-mechanism-dispatch.test.ts
-
 # Local-gate receipts: `.gate-ok-<short sha>` is written by `npm run
 # gate:release` / .husky/pre-push only when every step passed on that commit,
 # and read by the pre-push hook to skip a gate it already ran. Per-machine;
 # never committed. See GATES.md.
 .gate-ok-*
 
-# Validation-vector provenance gate (plan WS-B): every src/data/acvp vector
-# file is registered in src/data/validation/vector-manifest.json with its
-# SHA-256, evidence class, NIST upstream identity, lineage and declared
-# copies; the counts generator derives the public numbers from it. Both run
-# in gate:data (CI) — they MUST be tracked, same reason as the gates above.
-!scripts/audit-validation-manifest.ts
-!scripts/audit-validation-manifest.test.ts
-!scripts/generate-validation-counts.ts
-!scripts/generate-validation-counts.test.ts
-# WS-C coverage matrix generator + coverage-diff gate (gen:coverage-matrix:check,
-# run by gate:data:audits) and its tests — must be tracked or the gate is
-# file-not-found for everyone else.
-!scripts/generate-coverage-matrix.ts
-!scripts/generate-coverage-matrix.test.ts
-# WS-I per-case evidence records generator
-!scripts/generate-case-evidence.ts
-# Merged timeline enrichment lookup (27 Sep 2026, 86 MB chunk fix)
-!scripts/generate-timeline-enrichments.ts
-# WS-J release evidence report (gen:release-evidence:check, in gate:data:audits)
-# and the release freeze manifest tool (release:freeze) + their tests.
-!scripts/generate-release-evidence.ts
-!scripts/generate-release-evidence.test.ts
+# Release freeze manifest tool (release:freeze) and its test.
 !scripts/release-freeze.ts
 !scripts/release-freeze.test.ts
-# Education / not-for-production status gate (audit:education-notice, in
-# gate:data:audits) + its sabotage test. Same "every new scripts/ file needs
-# its own re-include line, on the same commit" rule as the rest of this
-# section — checked with `git check-ignore -v` before committing
-# (education-notice remediation 2026-09-26).
-!scripts/audit-education-notice.ts
-!scripts/audit-education-notice.test.ts
 # NIST SP 800-90B estimator tool -> WebAssembly (entropy workshop W0/W1/D4,
 # 2026-09-24). Reproducible build (Dockerfile.wasm + build/stage scripts), the
 # glibc ldbl-128 shim, the D4 synthetic-dataset generator and the W1 parity
