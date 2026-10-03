@@ -92,9 +92,11 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  *
  * Region scope: reader's stored region if set, else their persona's default
  * (`PERSONA_TIMELINE_REGION`), else every country — same precedence chain
- * TimelineView.tsx uses for its own regionFilter initial state, minus the
- * URL-param branches. 'global' is treated as "no region filter," matching
- * TimelineView's own check.
+ * TimelineView.tsx uses for its own regionFilter: `?region=` (a known
+ * region) first, `?prefs=off` → every country, then stored region, then
+ * persona default. 'global' is treated as "no region filter," matching
+ * TimelineView's own check. `?q=` narrows the list with desktop's lexical
+ * match (country or body name), shown with a Clear search control.
  *
  * Deep links (same params as desktop): `?country=` shows just that country;
  * `?event=<event_id|title>` is resolved against the unscoped data, widened
@@ -103,18 +105,47 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  * get a not-found notice and the param is dropped. Opening a phase writes
  * `?event=` (push); closing clears it (replace).
  */
+const KNOWN_REGIONS = new Set<string>([...Object.keys(REGION_COUNTRIES_MAP), 'global'])
+
+/** ?region= → a known Region; unknown values are ignored (fall back to stored/persona). */
+function parseRegionParam(raw: string | null): Region | 'All' | null {
+  if (!raw) return null
+  if (raw === 'All') return 'All'
+  return KNOWN_REGIONS.has(raw) ? (raw as Region) : null
+}
+
+/** Desktop TimelineView's lexical ?q= match: country name or any body name. */
+function matchesTimelineSearch(d: GanttCountryData, q: string): boolean {
+  const qLc = q.toLowerCase()
+  return (
+    d.country.countryName.toLowerCase().includes(qLc) ||
+    d.country.bodies.some((b) => b.name.toLowerCase().includes(qLc))
+  )
+}
+
 export function MobileTimelineView() {
   const storeSelectedRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
-  const region: Region | 'All' =
-    storeSelectedRegion ??
-    (selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null) ??
-    'All'
-
   const [searchParams, setSearchParams] = useSearchParams()
   const eventParam = searchParams.get('event')
   const countryParam = searchParams.get('country')
+  // ?q= — the same lexical match desktop's search box applies (country name
+  // or any body/organization name, case-insensitive).
+  const searchText = searchParams.get('q') ?? ''
+
+  // Region precedence matches TimelineView.tsx: ?region= (when it names a
+  // known region) wins, ?prefs=off means no region, otherwise the reader's
+  // stored region, then their persona's default. ?country= is applied on top
+  // (country wins over region, as on desktop).
+  const urlRegion = parseRegionParam(searchParams.get('region'))
+  const region: Region | 'All' =
+    urlRegion ??
+    (searchParams.get('prefs') === 'off'
+      ? 'All'
+      : (storeSelectedRegion ??
+        (selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null) ??
+        'All'))
   const linkedCountry = useMemo(() => {
     const { resolved } = resolveCountryParam(
       countryParam,
@@ -164,19 +195,37 @@ export function MobileTimelineView() {
     return ganttData.filter((d) => allowed.has(d.country.countryName))
   }, [ganttData, region])
 
+  const searchedData = useMemo(
+    () =>
+      searchText ? regionData.filter((d) => matchesTimelineSearch(d, searchText)) : regionData,
+    [regionData, searchText]
+  )
+
+  // A linked event hidden by the region, ?country= or ?q= scope: show its
+  // country instead (and drop the search for this view), as desktop does.
   const eventCountryHidden =
     !!targetEvent &&
     (linkedCountry
       ? linkedCountry !== targetEvent.countryName
       : !regionData.some((d) => d.country.countryName === targetEvent.countryName))
-  const displayCountry = targetEvent && eventCountryHidden ? targetEvent.countryName : linkedCountry
-  const listData = useMemo(
-    () =>
-      displayCountry
-        ? ganttData.filter((d) => d.country.countryName === displayCountry)
-        : regionData,
-    [ganttData, regionData, displayCountry]
-  )
+  const eventHiddenBySearch =
+    !!targetEvent &&
+    !!searchText &&
+    !ganttData.some(
+      (d) =>
+        d.country.countryName === targetEvent.countryName && matchesTimelineSearch(d, searchText)
+    )
+  const eventSwitchCountry = eventCountryHidden || eventHiddenBySearch
+  const displayCountry = targetEvent && eventSwitchCountry ? targetEvent.countryName : linkedCountry
+  const listData = useMemo(() => {
+    if (targetEvent && eventSwitchCountry)
+      return ganttData.filter((d) => d.country.countryName === targetEvent.countryName)
+    if (displayCountry) {
+      const one = ganttData.filter((d) => d.country.countryName === displayCountry)
+      return searchText ? one.filter((d) => matchesTimelineSearch(d, searchText)) : one
+    }
+    return searchedData
+  }, [ganttData, searchedData, displayCountry, targetEvent, eventSwitchCountry, searchText])
 
   const selection = useMemo(() => findEventInGantt(listData, eventParam), [listData, eventParam])
   // The ?event value this screen wrote itself; any other value is an arrival.
@@ -198,17 +247,18 @@ export function MobileTimelineView() {
     )
   }
 
-  const widened = !!targetEvent && (widenCategory || eventCountryHidden)
+  const widened = !!targetEvent && (widenCategory || eventSwitchCountry)
   const showWidenNotice = widened && widenDismissed !== eventParam
-  const clearCountry = () =>
+  const clearParam = (key: 'country' | 'q') =>
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
-        next.delete('country')
+        next.delete(key)
         return next
       },
       { replace: true }
     )
+  const showSearch = !!searchText && !(targetEvent && eventSwitchCountry)
 
   const readerCountry = storeSelectedRegion
     ? (REGION_COUNTRY_MAP[storeSelectedRegion] ?? null)
@@ -242,11 +292,32 @@ export function MobileTimelineView() {
           </p>
         </div>
         {linkedCountry && !widened && (
-          <Button variant="ghost" size="sm" onClick={clearCountry} className="ml-auto text-xs">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => clearParam('country')}
+            className="ml-auto text-xs"
+          >
             All countries
           </Button>
         )}
       </div>
+
+      {showSearch && (
+        <div className="mb-3 flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
+          <p className="text-[12px] text-foreground">
+            Showing countries matching <span className="font-semibold">“{searchText}”</span>
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => clearParam('q')}
+            className="ml-auto text-xs"
+          >
+            Clear search
+          </Button>
+        </div>
+      )}
 
       {notFound && (
         <DeepLinkNotice
@@ -259,7 +330,8 @@ export function MobileTimelineView() {
         <DeepLinkNotice
           kind="widened"
           message={`"${targetEvent.title}" was outside this view, so we ${[
-            eventCountryHidden && `switched to ${targetEvent.countryName}`,
+            eventSwitchCountry && `switched to ${targetEvent.countryName}`,
+            eventHiddenBySearch && 'set aside the search',
             widenCategory && 'added its category',
           ]
             .filter(Boolean)
@@ -291,7 +363,11 @@ export function MobileTimelineView() {
       <WhenDoesThisReachMe data={ganttData} countryName={readerCountry} />
 
       {listData.length === 0 ? (
-        <p className="text-[12.5px] text-muted-foreground">No countries tracked for this region.</p>
+        <p className="text-[12.5px] text-muted-foreground">
+          {showSearch
+            ? `No countries match “${searchText}” here.`
+            : 'No countries tracked for this region.'}
+        </p>
       ) : (
         <MobileTimelineList
           data={listData}
@@ -303,7 +379,8 @@ export function MobileTimelineView() {
 
       <p className="mt-2 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
         Switching region, a deadlines-only filter, phase-type color coding, category/trust-tier
-        filters, search, calendar export, and the full country-comparison chart are on a laptop.
+        filters, a search box, calendar export, and the full country-comparison chart are on a
+        laptop.
       </p>
     </div>
   )

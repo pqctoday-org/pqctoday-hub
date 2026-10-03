@@ -12,6 +12,7 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { complianceFrameworks } from '@/data/complianceData'
 import { CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
 import { buildObligations } from '@/components/Compliance/obligations/obligationsModel'
+import { maturityByRefId } from '@/data/maturityGovernanceData'
 
 function LocationProbe() {
   return <output data-testid="location-search">{useLocation().search}</output>
@@ -84,6 +85,46 @@ describe('MobileComplianceView — deep-link PR 2', () => {
   it('?cswpview= alone lands on CSWP.39', () => {
     renderAt('/compliance?cswpview=maturity')
     pressed('CSWP.39')
+  })
+
+  // Browser-verified gap (2026-10-02): with no country/sector set, the phone
+  // showed "Nothing in scope yet" and no framework for a ?reqfw= link.
+  it('?reqfw= shows the linked framework even with an empty profile', () => {
+    useAssessmentStore.setState({ country: '', industry: '' })
+    usePersonaStore.setState({ selectedRegion: null })
+    const fw = complianceFrameworks.find((f) => f.id === 'CNSA-2') ?? complianceFrameworks[0]
+    renderAt(`/compliance?reqfw=${encodeURIComponent(fw.id)}`)
+    pressed('Requirements')
+    expect(screen.queryByText('Nothing in scope yet')).toBeNull()
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(fw.label)
+    expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(
+      'shown because the link named it'
+    )
+  })
+
+  it('an empty profile without ?reqfw= still says nothing is in scope', () => {
+    useAssessmentStore.setState({ country: '', industry: '' })
+    renderAt('/compliance?tab=requirements')
+    expect(screen.getByText('Nothing in scope yet')).toBeInTheDocument()
+  })
+
+  it('?evref= lists that document’s CSWP.39 evidence and Close clears it', () => {
+    const [refId, reqs] = [...maturityByRefId.entries()][0]
+    renderAt(`/compliance?evref=${encodeURIComponent(refId)}`)
+    pressed('CSWP.39')
+    const panel = screen.getByRole('region', { name: 'Linked evidence' })
+    expect(panel).toHaveTextContent(reqs[0].sourceName)
+    expect(panel).toHaveTextContent(`${reqs.length} extracted requirement`)
+    expect(panel).toHaveTextContent('on a larger screen')
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(urlParams().get('evref')).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Linked evidence' })).toBeNull()
+  })
+
+  it('an unknown ?evref= says not-found instead of being ignored', () => {
+    renderAt('/compliance?evref=NO-SUCH-REF')
+    pressed('CSWP.39')
+    expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('NO-SUCH-REF')
   })
 
   it.each(['landscape', 'frameworks'])('legacy tab=%s lands on Landscape', (tab) => {

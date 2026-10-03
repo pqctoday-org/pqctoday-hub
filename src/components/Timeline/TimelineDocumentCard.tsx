@@ -7,7 +7,7 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import type { Phase } from '../../types/timeline'
-import { phaseColors } from '../../data/timelineData'
+import { phaseColors, timelineEventPageUrl } from '../../data/timelineData'
 import {
   getTimelineEnrichment,
   hasSubstantiveEnrichment,
@@ -199,7 +199,7 @@ export const TimelineDocumentCard = ({
                 `**Title:** ${row.title}`,
                 `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
               ].join('\n'),
-              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+              pageUrl: timelineEventPageUrl(row.countryName, row.eventId || row.title),
             })}
             resourceLabel={row.title}
             resourceType="Timeline"
@@ -217,7 +217,7 @@ export const TimelineDocumentCard = ({
                 `**Title:** ${row.title}`,
                 `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
               ].join('\n'),
-              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+              pageUrl: timelineEventPageUrl(row.countryName, row.eventId || row.title),
             })}
             resourceLabel={row.title}
             resourceType="Timeline"
