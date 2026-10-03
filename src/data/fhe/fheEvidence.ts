@@ -390,7 +390,9 @@ export function stepLabel(r: EvidenceRecord, stepId: string): string {
   const custodian = r.parts?.find((p) => p.role === 'custodian')
   const withCustodian =
     part && part.role !== 'custodian' && custodian
-      ? ` with the ${DEVICE_LABELS[custodian.device]} custodian`
+      ? ` with the ${DEVICE_LABELS[custodian.device]} custodian${
+          custodian.qualifier ? ` (${custodian.qualifier.replace(/^[,\s(]+|\)$/g, '')})` : ''
+        }`
       : ''
   const e2e = r.level === 'end-to-end' ? ` · end-to-end run${withCustodian}` : ''
   const shown = (scenario as { label?: string } | undefined)?.label?.match(/\((\d+-of-\d+)\)/)?.[1]
