@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.146.0] - 2026-10-03
+
+Small accuracy fixes to the Confidential Computing FHE content.
+
+### Fixed
+
+- **FHE + HSM Flows: corrected TFHE client-key size and a named source** [view:/learn/confidential-computing] [persona:researcher] [persona:developer]: the key-size panel now shows the TFHE client key at about 24 KB as TFHE-rs stores it (it said 3 KB), the Kreyvium transciphering cost note names its source paper (IACR ePrint 2023/980, WAHC 2023), and the Confidential Computing module's estimated time is now 90 minutes to account for the FHE section and workshop step.
+
 ## [4.145.0] - 2026-10-02
 
 The FHE + HSM workshop now shows plainly when data is encrypted, computed on and decrypted, who may decrypt, and where every key sits; every HSM Learn lesson now runs on a fresh page, and the Library adds fhe.rs, the fourth open-source homomorphic-encryption library.

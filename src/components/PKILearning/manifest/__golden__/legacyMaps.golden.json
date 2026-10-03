@@ -96,7 +96,7 @@
       "lm_id": "LM-019",
       "title": "Confidential Computing & TEEs",
       "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.",
-      "duration": "60 min",
+      "duration": "90 min",
       "difficulty": "advanced",
       "frameworkPhase": "p6"
     },
@@ -4146,7 +4146,7 @@
           "lm_id": "LM-019",
           "title": "Confidential Computing & TEEs",
           "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.",
-          "duration": "60 min",
+          "duration": "90 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"
         },
