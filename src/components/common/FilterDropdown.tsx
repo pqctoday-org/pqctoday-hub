@@ -455,7 +455,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   )
 
   return (
-    <div className={clsx('relative z-10', className)} ref={dropdownRef}>
+    // max-w-full min-w-0 (2026-10-03): as a flex/grid child the root sized to its
+    // content, so a long selected label (avionics system, settlement rail) pushed
+    // it past a 390 px column even though the inner box is max-w-full.
+    <div className={clsx('relative z-10 max-w-full min-w-0', className)} ref={dropdownRef}>
       {noContainer ? (
         <>
           {label && (

@@ -391,7 +391,7 @@ export const SystemTLSConfigurator: React.FC = () => {
         <Button
           variant="ghost"
           onClick={() => setShowAfter((prev) => !prev)}
-          className="flex items-center justify-between w-full text-left"
+          className="h-auto whitespace-normal flex items-center justify-between w-full text-left"
         >
           <span className="text-sm font-bold text-foreground">
             {showAfter ? 'After: PQC Configuration' : 'Before: Current Configuration'}

@@ -100,13 +100,13 @@ function FunctionCard({
       variant="ghost"
       size="tile"
       onClick={onSelect}
-      className={`text-left rounded-lg border p-3 transition-all ${
+      className={`min-w-0 text-left rounded-lg border p-3 transition-all ${
         isSelected
           ? 'border-primary ring-1 ring-primary/40'
           : 'border-border hover:border-primary/30'
       } bg-card`}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
         <h4 className="text-sm font-bold text-foreground leading-tight">{fn.name}</h4>
         <span
           className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded border ${ASIL_COLORS[fn.asilLevel]}`}

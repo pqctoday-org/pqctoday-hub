@@ -411,7 +411,7 @@ const FDAChecklistSection: React.FC<{
               variant="ghost"
               key={item.id}
               onClick={() => onToggle(item.id)}
-              className={`w-full text-left p-3 rounded-lg border transition-colors ${
+              className={`h-auto whitespace-normal w-full text-left p-3 rounded-lg border transition-colors ${
                 isChecked
                   ? 'border-status-success/40 bg-status-success/5'
                   : 'border-border bg-muted/20 hover:bg-muted/40'

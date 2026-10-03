@@ -336,7 +336,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
         <Button
           variant="ghost"
           onClick={() => setShowHybrid(!showHybrid)}
-          className="flex items-center gap-2 w-full text-left"
+          className="h-auto whitespace-normal flex items-center gap-2 w-full text-left"
         >
           <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
           <h4 className="text-sm font-bold text-foreground flex-1">

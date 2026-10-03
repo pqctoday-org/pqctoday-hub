@@ -312,7 +312,7 @@ export const FIPSCompatibilityChecker: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => setExpandedId(isExpanded ? null : platform.id)}
-                className="flex items-center gap-3 w-full p-4 text-left"
+                className="h-auto whitespace-normal flex items-center gap-3 w-full p-4 text-left"
               >
                 <Shield size={18} className="text-primary shrink-0" />
                 <div className="flex-1">

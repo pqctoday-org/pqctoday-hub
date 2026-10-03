@@ -139,7 +139,7 @@ export const PackageSigning: React.FC = () => {
                 setSelectedMode(mode.id as SigningModeId)
                 setSigningResult(null)
               }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`h-auto whitespace-normal px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedMode === mode.id
                   ? mode.id === 'classical'
                     ? 'bg-warning/20 text-warning border border-warning/50'

@@ -60,7 +60,7 @@ export const MigrationDecisionLab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Tab selector */}
-      <div className="flex gap-1 bg-muted/50 rounded-lg p-1 w-fit">
+      <div className="flex flex-wrap gap-1 bg-muted/50 rounded-lg p-1 w-fit max-w-full">
         {(['wizard', 'paths', 'interop'] as const).map((tab) => (
           <Button
             variant="ghost"
@@ -193,7 +193,7 @@ export const MigrationDecisionLab: React.FC = () => {
                 variant="ghost"
                 key={path.id}
                 type="button"
-                className={`glass-panel p-4 cursor-pointer transition-all text-left w-full ${selectedPath?.id === path.id ? 'ring-2 ring-primary' : 'hover:border-primary/50'}`}
+                className={`h-auto whitespace-normal glass-panel p-4 cursor-pointer transition-all text-left w-full ${selectedPath?.id === path.id ? 'ring-2 ring-primary' : 'hover:border-primary/50'}`}
                 onClick={() => setSelectedPath(selectedPath?.id === path.id ? null : path)}
               >
                 <div className="flex items-start justify-between gap-2">

@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.146.0] - 2026-10-03
 
-Links from the Assistant, search and shared URLs now open the item they name, and the Confidential Computing FHE content gets small accuracy fixes.
+Links from the Assistant, search and shared URLs now open the item they name, Learn workshops and wide charts fit a phone screen again, and the Confidential Computing FHE content gets small accuracy fixes.
 
 ### Changed
 
@@ -51,6 +51,10 @@ Links from the Assistant, search and shared URLs now open the item they name, an
 - **Your saved settings survive a shared link** [view:/threats] [persona:grc] [persona:executive]: when a link has to switch off "My threats only" to show a threat, it does so for that visit only.
 - **The Migrate catalog filter is shareable** [view:/migrate] [persona:architect] [persona:ops]: the Replace tab's search text and filters stay in the address, so they survive a reload and can be shared.
 - **FHE + HSM Flows: corrected TFHE client-key size and a named source** [view:/learn/confidential-computing] [persona:researcher] [persona:developer]: the key-size panel now shows the TFHE client key at about 24 KB as TFHE-rs stores it (it said 3 KB), the Kreyvium transciphering cost note names its source paper (IACR ePrint 2023/980, WAHC 2023), and the Confidential Computing module's estimated time is now 90 minutes to account for the FHE section and workshop step.
+- **Learn workshops fit a phone screen again** [view:/learn] [persona:curious] [persona:developer] [persona:architect] [persona:ops] [persona:grc]: on a 390 px phone, selectable cards, option buttons and long button labels in about 25 workshops ran off the right edge of the screen. Affected workshops include Healthcare, Database Encryption, Crypto Dev APIs, AI Security, KMS, OS, Governance, HSM, Code Signing, API Security (JWT), IAM, PKI Enrollment, Merkle Tree Certificates, Stateful Signatures, Platform Engineering, Confidential Computing, Vendor Risk, Testing & Validation and Entropy. Their text now wraps inside the card. Filter rows and tab strips (HSM status and algorithm filters, IAM directory tabs, Crypto Dev APIs tabs) wrap onto a second line, and dropdown filters with a long selected value stay inside their column.
+- **Wide charts scroll inside their panel on phones** [view:/learn/emv-payment-pqc] [view:/learn/pqc-risk-management] [persona:grc] [persona:executive]: the EMV migration timeline and the risk heatmap now scroll sideways within their own panel instead of making the whole page wider than the screen.
+- **Revision history and long names wrap on phones** [view:/revisions] [view:/learn/vpn-ssh-pqc] [persona:curious] [persona:researcher]: long record names in the revision history and the SSH module's spec-source path now wrap instead of overflowing.
+- **Keyboard and screen-reader fixes in three workshops** [view:/learn/pki-workshop] [view:/learn/api-security-jwt] [view:/learn/trust-services-pqc] [persona:developer] [persona:architect]: the certificate-request attribute checkboxes are announced with their names, and the workshop operation log and the hybrid-suite comparison table can now be reached and scrolled with the keyboard.
 
 ## [4.145.0] - 2026-10-02
 

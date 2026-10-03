@@ -61,7 +61,7 @@ export const SettlementExposureModeller = () => {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3 [&>*]:min-w-0">
           <div>
             <FilterDropdown
               label="Settlement rail"

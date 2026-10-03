@@ -133,7 +133,7 @@ export const EncryptionMechanisms: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => toggleExpand(engine.id)}
-                className="w-full text-left p-4 flex items-center gap-3"
+                className="h-auto whitespace-normal w-full text-left p-4 flex items-center gap-3"
               >
                 <Lock size={16} className="text-primary shrink-0" />
 
