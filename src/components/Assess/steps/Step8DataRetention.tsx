@@ -20,6 +20,7 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const Step8DataRetention = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
@@ -64,6 +65,7 @@ const Step8DataRetention = ({ hideHeading = false, hideHints = false }: Embedded
           </p>
         </div>
       </div>
+      <UnresolvedEstimatesNotice detail="oneFigure" className="mb-4" />
 
       {/* I don't know escape hatch */}
       <Button

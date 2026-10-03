@@ -11,6 +11,7 @@ import {
   getCrqcSiteDerivedScenarios,
   type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 /**
  * Consolidated CRQC-timeline / capability strip (PER-PAGE-CHANGES Threats #5).
@@ -122,6 +123,8 @@ export const CrqcCapabilityStrip: React.FC<{
           />
         </Button>
       </div>
+
+      <UnresolvedEstimatesNotice detail="sourcesListed" className="mt-3" />
 
       {/* Headline strip — always visible */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">

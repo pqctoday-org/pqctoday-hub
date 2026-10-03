@@ -53,6 +53,7 @@ import {
 } from '@/components/Threats/threatDeepLink'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
@@ -431,6 +432,8 @@ export function MobileThreatsView() {
           {urgencyMessage(worstDeadline)}
         </p>
       </section>
+
+      <UnresolvedEstimatesNotice detail="oneFigure" className="mb-4" />
 
       <section className="mb-4 rounded-xl border border-border bg-card p-4">
         <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
