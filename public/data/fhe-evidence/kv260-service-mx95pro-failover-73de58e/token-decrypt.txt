@@ -1,0 +1,25 @@
+## r (want: 2615157863)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint32 = 2615157863
+exit=0
+## big (want: 1)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheBool = 1
+exit=0
+## m (want: 92)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint8 = 92
+exit=0
+## x (want: 72)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheUint8 = 72
+exit=0
+## e (want: 0)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+released FheBool = 0
+exit=0
+## t (want: refuse)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-decrypt
+refused by policy or input check (CK_RV 0x0000001b; reason in the token audit log only)
+exit=1
+decided=6/6 failures=0

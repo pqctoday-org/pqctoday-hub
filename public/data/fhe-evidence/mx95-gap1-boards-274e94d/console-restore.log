@@ -1,0 +1,49 @@
+== 2026-10-03T22:11:55Z FHE gaps 1+2, stage restore (pre-ceremony-ABI)
+== preconditions (board-local)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board count-lineage
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board count-lineage
+  counts: mx95-board=0 mx95pro-board=1
+PASS mx95-board holds no key of this lineage (destroyed)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board uid-of-lineage
+== N2 setup: mx95pro-board enrolls a replication policy WITHOUT the FHE constraint
+PQCTODAY EDUCATIONAL TEST ONLY — pre-ceremony-ABI
+wrote /out/plain-policy.der (213 B, fhe=false)
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board policy
+wrote /tmp/repl-test/x/plain-policy-id.bin (48 B)
+== WINDOW START 2026-10-03T22:11:58Z: stopping appliance pqctoday-kmip on both boards
+  mx95-board: appliance kmip stopped
+  mx95pro-board: appliance kmip stopped
+== WINDOW 2: RESTORE the FHE seed mx95pro-board -> mx95-board over KMIP (crypto network)
+PQCTODAY EDUCATIONAL TEST ONLY — pre-ceremony-ABI
+src IssueSourceChallenge     CK_RV=0x00000000 out=    32 B    360.4 ms  kx=X25519MLKEM768
+dst BeginReceive             CK_RV=0x00000000 out= 26200 B    300.0 ms  kx=X25519MLKEM768
+src CreateReplicationPackage CK_RV=0x00000000 out= 32122 B     27.8 ms  kx=X25519MLKEM768
+dst ImportReplicationPackage CK_RV=0x00000000 out= 14866 B     26.4 ms  kx=X25519MLKEM768
+PASS receipt verified on the operator host against the test root and both device CRLs
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board uid-of-lineage
+== N2: live clone mx95-board -> mx95pro-board under the policy without the FHE constraint (must be refused)
+PQCTODAY EDUCATIONAL TEST ONLY — pre-ceremony-ABI
+src IssueSourceChallenge     CK_RV=0x00000000 out=    32 B    355.8 ms  kx=X25519MLKEM768
+dst BeginReceive             CK_RV=0x00000000 out= 26200 B     17.3 ms  kx=X25519MLKEM768
+src CreateReplicationPackage CK_RV=0x0000001b out=     0 B     10.1 ms  kx=X25519MLKEM768
+PASS refused as expected — CreateReplicationPackage: CK_RV 0x0000001b
+== RESTORE appliance pqctoday-kmip (2026-10-03T22:12:05Z)
+  mx95-board: active
+  mx95pro-board: active
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board count-lineage
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board count-lineage
+PASS mx95-board holds exactly one restored key of this lineage
+PASS N2 nothing installed on mx95pro-board (count still 1)
+== restored custodian mx95-board: fresh export
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board fhe-export
+wrote /tmp/repl-test/x/fhe/export-restored/compressed_server_key.bin (30147061 B)
+wrote /tmp/repl-test/x/fhe/export-restored/compressed_server_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export-restored/compressed_server_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export-restored/compact_public_key.bin (33034 B)
+wrote /tmp/repl-test/x/fhe/export-restored/compact_public_key.manifest.der (140 B)
+wrote /tmp/repl-test/x/fhe/export-restored/compact_public_key.manifest.sig (3309 B)
+wrote /tmp/repl-test/x/fhe/export-restored/signer_spki.der (1974 B)
+wrote /tmp/repl-test/x/fhe/export-restored/signer_evidence.der (15317 B)
+wrote /tmp/repl-test/x/fhe/export-restored/crls/device.crl.der (3492 B)
+  mx95-board-restored signer_spki sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315
+== RESTORE STAGE DONE: hand over to the KV260 legs (same ciphertexts, then fresh export)

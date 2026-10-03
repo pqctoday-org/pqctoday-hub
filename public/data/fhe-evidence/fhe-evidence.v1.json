@@ -1628,6 +1628,166 @@
       "measuredAt": "2026-10-03T19:12:00Z"
     },
     {
+      "id": "tfhe-kv260-service-mx95-b8857fc",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "generate-client-key",
+        "generate-server-key",
+        "export-server-key",
+        "publish-compact-public-key",
+        "owner-encrypts-locally",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result",
+        "owner-requests-decrypt",
+        "decrypt-under-policy",
+        "release-result"
+      ],
+      "level": "end-to-end",
+      "parts": [
+        {
+          "device": "mx95",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "qualifier": ", network-service run",
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "496f9e529d3d92248dc414e153b06afca8d3ff4f"
+          },
+          "stepIds": [
+            "generate-client-key",
+            "generate-server-key",
+            "export-server-key",
+            "publish-compact-public-key",
+            "decrypt-under-policy",
+            "release-result"
+          ]
+        },
+        {
+          "device": "mac-m4pro",
+          "role": "data-owner",
+          "producer": "pqctoday-fhe",
+          "claimScope": "owner-device",
+          "qualifier": ", after verifying the custodian attestation",
+          "stepIds": ["owner-encrypts-locally"]
+        },
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "qualifier": ", network service over mutual TLS",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "fed2dd315040f000a9f812c0b0e495ae00a40a77"
+          }
+        }
+      ],
+      "claimLabel": "custodian: software token on MX95; untrusted compute: KV260 network service over mutual TLS; owner verified the attestation",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software tokens on the boards, not hardware custody. Custodian: token tool repl_edu_board from pqctoday-hsm 76551268 (engine source = main 496f9e52; sha256 82cf57b1...), set up fresh for this run (seed, export, and a backup on the MX95 Pro that this run did not use). The owner verified the MX95 export attestation with pqctoday-hsm 1bc4f859 verify-signer (sha256 cddf4df9...) and pinned the signer. The service (pqctoday-fhe fed2dd3) ran on the KV260 loopback behind an SSH tunnel with the board's own certificates: mutual TLS 1.3, hybrid ML-KEM groups only. A tampered server key was refused (403); the signed MX95 server key was admitted (verify 242 ms, conformant load and decompress 1.30 s). A 7-step program over u32, u8 and u64 ran in 42.7 s on the board. The MX95 token released 5 of 6 outputs, all correct, and refused the u64 output by policy (CK_RV 0x1b). cgroup peak 280 MiB.",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "b8857fc231622d347a17e9d4b41ed3a68d726bd9"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "MX95 board (NXP FRDM-IMX95) as custodian; AMD Kria KV260 revB, 4x Cortex-A53, 4 GB as FHE network service; data owner and attestation check on an Apple M4 Pro Mac",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image (KV260); MX95 board image",
+        "toolchain": "token pqctoday-hsm 76551268 (engine = main 496f9e52); verify-signer pqctoday-hsm 1bc4f859; service pqctoday-fhe fed2dd3 (build.txt)",
+        "features": "same KV260 as the other KV260 records"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "one demo program run",
+        "peakMemoryMethod": "systemd cgroup MemoryPeak 293,806,080 B (memory.txt)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "RESULT.md",
+          "sha256": "591c6921689b72322f3ae386fb36adb8721347ba0ac15020b6c17124f58cba1b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/RESULT.md"
+        },
+        {
+          "name": "client.txt",
+          "sha256": "6ad88bd8bfa50baefb41d65102f2f20db4f483eb5382699f6a70448ca40c7d80",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/client.txt"
+        },
+        {
+          "name": "job.json",
+          "sha256": "7392800426e6651b44c66c4a90d47b111ad84205483c9173021751e0a40df84e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/job.json"
+        },
+        {
+          "name": "server.log",
+          "sha256": "48638d90ebe2f38014c29bf98788055308aea6352af2671c02cbc9c2f0bdf7f7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/server.log"
+        },
+        {
+          "name": "token-decrypt.txt",
+          "sha256": "9ecd52b72800fae48bf0256f4d7507f5f382eee1684443606e785e2901d71a3a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/token-decrypt.txt"
+        },
+        {
+          "name": "owner-k3-verify.json",
+          "sha256": "3bd0e280c81bd02416c844a5a9512b6c2b70dfe21013ba5cea153f25ee5378f6",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/owner-k3-verify.json"
+        },
+        {
+          "name": "owner-encrypt.json",
+          "sha256": "4ae8cad6e3258c2722e8f9efa4148e51d4f12f2c6f90c6eb1472b4f745366674",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/owner-encrypt.json"
+        },
+        {
+          "name": "memory.txt",
+          "sha256": "b9c808f9a3e0eb031ed03143b825af5d178cc46b421174a5b6995e79dea6fb1a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/memory.txt"
+        },
+        {
+          "name": "build.txt",
+          "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/build.txt"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "d2ccc4ae9df9740526ec23c33dd6a6353d5da9040489b075823044342ab9538b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "9dad7668a4524334a3e9539023c572e257249a27d9ded6b8a1235b2176951cfe",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-on-board.txt"
+        },
+        {
+          "name": "sha256-results.txt",
+          "sha256": "5a0609b3fe5d2157760312034be0c6a3e89e5fbd99f2bbf841639e44eb9a3985",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-results.txt"
+        },
+        {
+          "name": "sha256-token-export.txt",
+          "sha256": "3680a0ad51e3c61ccab17b72243966881a1de5b431b228cd6a7acc98ad228e72",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-token-export.txt"
+        }
+      ],
+      "measuredAt": "2026-10-03T22:24:00Z"
+    },
+    {
       "library": {
         "name": "TFHE-rs",
         "version": "1.8.1",
@@ -2092,7 +2252,7 @@
         }
       ],
       "claimLabel": "custodian: software token on MX95, destroyed and restored from the MX95 Pro backup over KMIP; owner verified the attestation; FHE server on the KV260",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software tokens on the boards, not hardware custody. Token tool repl_edu_board from pqctoday-hsm 76551268 (engine source identical to main 496f9e52; sha256 82cf57b1...b980, educational-fhe, no test-support); owner-side attestation with pqctoday-hsm 1bc4f859 verify-signer (macOS, sha256 cddf4df9...419d), trust anchors on the owner's Mac; board code pqctoday-fhe a279e31. Before the runs the MX95 generated the seed and exported, and the seed was backed up to the MX95 Pro over KMIP (receipt verified; 6 of 6 ceremony negative checks refused); the Pro then re-derived its own export. A3, destroy: after the KV260 computed, the destroy command of the token removed the FHE seed from the MX95; the MX95 then answered all 7 results with an error that it holds no replica of this key, while the MX95 Pro still decided 7 of 7 on the same ciphertexts. B, restore (run by the replication session): Pro to MX95 over KMIP, MX95 key count 0 to 1, receipt verified; a clone under a policy without the FHE constraint was refused (CKR 0x1b, nothing installed). C: the restored MX95 decided A3's ciphertexts 7 of 7, hashes matching A3's. D: the restored MX95's new export passed attestation and the run went 7 of 7. The restored MX95 kept its manifest signer, because the destroy command removes only the FHE seed. KV260 in every run: server-key verification about 296 ms, 3 of 3 bad keys refused; medians u8 add 1.4 s, mul 3.8 s; u32 add 6.0 s; u64 add 12.4 s; cgroup peak 203.1-203.3M. \"7 of 7\" means all 7 results reached the token: 6 released with the correct values, the FheUint64 result refused by policy.  Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in mx95-gap1-a3-destroy-7d083e7 (original sha256 218119dadbebdc10673edb8ff376154d01d7be640135b7f577507daf529bd3d9); journal.txt in mx95-gap1-d-restored-fresh-7d083e7 (original sha256 b501587ab2bd30cd8d413dedd574e2b3ad8e7bdd8f6b2738377d40728077e0b2).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software tokens on the boards, not hardware custody. Token tool repl_edu_board from pqctoday-hsm 76551268 (engine source identical to main 496f9e52; sha256 82cf57b1...b980, educational-fhe, no test-support); owner-side attestation with pqctoday-hsm 1bc4f859 verify-signer (macOS, sha256 cddf4df9...419d), trust anchors on the owner's Mac; board code pqctoday-fhe a279e31. Before the runs the MX95 generated the seed and exported, and the seed was backed up to the MX95 Pro over KMIP (receipt verified; 6 of 6 ceremony negative checks refused); the Pro then re-derived its own export. A3, destroy: after the KV260 computed, the destroy command of the token removed the FHE seed from the MX95; the MX95 then answered all 7 results with an error that it holds no replica of this key, while the MX95 Pro still decided 7 of 7 on the same ciphertexts. B, restore (run by the replication session): Pro to MX95 over KMIP, MX95 key count 0 to 1, receipt verified; a clone under a policy without the FHE constraint was refused (CKR 0x1b, nothing installed). C: the restored MX95 decided A3's ciphertexts 7 of 7, hashes matching A3's. D: the restored MX95's new export passed attestation and the run went 7 of 7. The restored MX95 kept its manifest signer, because the destroy command removes only the FHE seed. KV260 in every run: server-key verification about 296 ms, 3 of 3 bad keys refused; medians u8 add 1.4 s, mul 3.8 s; u32 add 6.0 s; u64 add 12.4 s; cgroup peak 203.1-203.3M. \"7 of 7\" means all 7 results reached the token: 6 released with the correct values, the FheUint64 result refused by policy.  Journal files are published redacted: the board's host name is replaced by \"kv260-board\", byte for byte otherwise. Originals: journal.txt in mx95-gap1-a3-destroy-7d083e7 (original sha256 218119dadbebdc10673edb8ff376154d01d7be640135b7f577507daf529bd3d9); journal.txt in mx95-gap1-d-restored-fresh-7d083e7 (original sha256 b501587ab2bd30cd8d413dedd574e2b3ad8e7bdd8f6b2738377d40728077e0b2). Board-side files of these runs (pqctoday-cacp 274e94dc) are attached under boards/: board host names and addresses are replaced by \"mx95-board\", \"mx95pro-board\" or \"mx95-board-restored\", byte for byte otherwise; originals: README.md (original sha256 145efdc4b018fda33a122e4d6bf80b6f63c104018f84a22c134e1a6af67c2706); console-prep.log (original sha256 5b282c376fc09f72c3cdd35bd30b8705581ff5201e55ae367b5b213161ff5a49); console-restore.log (original sha256 c7e5a2ab8132fc61b2654056889b2e1007ac822371990ae422e8ee2dd0db4b0e); exports/mx95-board/compact_public_key.manifest.der (original sha256 ab607576653f09f928d0d4504d096b718b2cf265bcdfae5b9e218587f256ec39); exports/mx95-board/compact_public_key.manifest.sig (original sha256 882b3c2bf85ea91df83b7edac9ca0ba6a583c9a28fb6627d539c9d3ba7ccbd15); exports/mx95-board/compressed_server_key.manifest.der (original sha256 e450d1199a2c2040719635501c9d873b14e03a093866fb443034b1b3097afdf0); exports/mx95-board/compressed_server_key.manifest.sig (original sha256 5925cc1f737eb9d3549be3da4b7972b5cf20b06bad9532f2a1ac4b3c7f43f8f8); exports/mx95-board/signer_evidence.der (original sha256 f91462d334c024dda547af4a5702c7b1c4b939ea6430b0d8b50d9651981c8f66); exports/mx95-board/signer_spki.der (original sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315); exports/mx95-board-restored/compact_public_key.manifest.der (original sha256 a10e0f714cf0091d4eb45e279fcbe38e19a9d3c04cf42a024819eceb86137f1e); exports/mx95-board-restored/compact_public_key.manifest.sig (original sha256 5288d742997cd1130d1b2d969d6fbc1facb1dff5fd7692dae09902aed1177444); exports/mx95-board-restored/compressed_server_key.manifest.der (original sha256 5d3cfdf669a5c388593f2a64f1d9ce6398b2b7477ca821bbcaca80409dbed638); exports/mx95-board-restored/compressed_server_key.manifest.sig (original sha256 b118f15a8af83fdcd816a940505421c24a370de10b5e34158603c7ef5a42276c); exports/mx95-board-restored/signer_evidence.der (original sha256 f1e52778b584a524855c476446699b1a555a3a2002c5bf1d7a49729930120498); exports/mx95-board-restored/signer_spki.der (original sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315); exports/mx95pro-board/compact_public_key.manifest.der (original sha256 01a506256e561fe46da71c013d280ced29462e2e61af645b9dcd2a3dd0581fa5); exports/mx95pro-board/compact_public_key.manifest.sig (original sha256 5b126fb3a2a3314c12372f3e097479437e101f3594719641f5db72fd15be6480); exports/mx95pro-board/compressed_server_key.manifest.der (original sha256 3660d75d6630f6667c1f491d2424a37cc16e7743f4642d84e74fb279b2069562); exports/mx95pro-board/compressed_server_key.manifest.sig (original sha256 e4b5c905f04a37b6ba5f2ebf929362e8ae7e72d958f96c4fe784a5828b27f05e); exports/mx95pro-board/signer_evidence.der (original sha256 b4c9461c52443f6c3a9e81c4784c83d9e2e5412d8c17cfee437e48dacad302ba); exports/mx95pro-board/signer_spki.der (original sha256 02b379072d4a0e8884968944ec6da4a129ff6ea1f841dcae91546e15ea6480eb); signer-pins.txt (original sha256 fe66d2250a18544ea0d062d50d81dfb20afbfb9f3ce4226cca0dbbf903b74022).",
       "artifacts": [
         {
           "name": "summary/RESULT.md",
@@ -2273,16 +2433,199 @@
           "name": "restored-fresh/token-decrypt.txt",
           "sha256": "ee9f04d5767648caf9a89e98534edaa819e0aa17be91cc0f80cfc0b445a6dd9c",
           "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-d-restored-fresh-7d083e7/token-decrypt.txt"
+        },
+        {
+          "name": "boards/README.md",
+          "sha256": "307f38682d185ba8b219a6064d8f46f71ebd2c65eb12bfb315487b9030489d29",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/README.md"
+        },
+        {
+          "name": "boards/console-prep.log",
+          "sha256": "5b3cac1a08bb29c88dd7e9a7683ab5f410ef79aefed816d5d009e2304e098331",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/console-prep.log"
+        },
+        {
+          "name": "boards/console-restore.log",
+          "sha256": "aabacf3d429dd929ec20ee3fa2d2640b8c6e25640af50d1d86c151504a415398",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/console-restore.log"
+        },
+        {
+          "name": "boards/exports/mx95-board/compact_public_key.manifest.der",
+          "sha256": "ab607576653f09f928d0d4504d096b718b2cf265bcdfae5b9e218587f256ec39",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/compact_public_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95-board/compact_public_key.manifest.sig",
+          "sha256": "882b3c2bf85ea91df83b7edac9ca0ba6a583c9a28fb6627d539c9d3ba7ccbd15",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/compact_public_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95-board/compressed_server_key.manifest.der",
+          "sha256": "e450d1199a2c2040719635501c9d873b14e03a093866fb443034b1b3097afdf0",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/compressed_server_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95-board/compressed_server_key.manifest.sig",
+          "sha256": "5925cc1f737eb9d3549be3da4b7972b5cf20b06bad9532f2a1ac4b3c7f43f8f8",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/compressed_server_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95-board/signer_evidence.der",
+          "sha256": "f91462d334c024dda547af4a5702c7b1c4b939ea6430b0d8b50d9651981c8f66",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/signer_evidence.der"
+        },
+        {
+          "name": "boards/exports/mx95-board/signer_spki.der",
+          "sha256": "cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board/signer_spki.der"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/compact_public_key.manifest.der",
+          "sha256": "a10e0f714cf0091d4eb45e279fcbe38e19a9d3c04cf42a024819eceb86137f1e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/compact_public_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/compact_public_key.manifest.sig",
+          "sha256": "5288d742997cd1130d1b2d969d6fbc1facb1dff5fd7692dae09902aed1177444",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/compact_public_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/compressed_server_key.manifest.der",
+          "sha256": "5d3cfdf669a5c388593f2a64f1d9ce6398b2b7477ca821bbcaca80409dbed638",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/compressed_server_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/compressed_server_key.manifest.sig",
+          "sha256": "b118f15a8af83fdcd816a940505421c24a370de10b5e34158603c7ef5a42276c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/compressed_server_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/signer_evidence.der",
+          "sha256": "f1e52778b584a524855c476446699b1a555a3a2002c5bf1d7a49729930120498",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/signer_evidence.der"
+        },
+        {
+          "name": "boards/exports/mx95-board-restored/signer_spki.der",
+          "sha256": "cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95-board-restored/signer_spki.der"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/compact_public_key.manifest.der",
+          "sha256": "01a506256e561fe46da71c013d280ced29462e2e61af645b9dcd2a3dd0581fa5",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/compact_public_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/compact_public_key.manifest.sig",
+          "sha256": "5b126fb3a2a3314c12372f3e097479437e101f3594719641f5db72fd15be6480",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/compact_public_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/compressed_server_key.manifest.der",
+          "sha256": "3660d75d6630f6667c1f491d2424a37cc16e7743f4642d84e74fb279b2069562",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/compressed_server_key.manifest.der"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/compressed_server_key.manifest.sig",
+          "sha256": "e4b5c905f04a37b6ba5f2ebf929362e8ae7e72d958f96c4fe784a5828b27f05e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/compressed_server_key.manifest.sig"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/signer_evidence.der",
+          "sha256": "b4c9461c52443f6c3a9e81c4784c83d9e2e5412d8c17cfee437e48dacad302ba",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/signer_evidence.der"
+        },
+        {
+          "name": "boards/exports/mx95pro-board/signer_spki.der",
+          "sha256": "02b379072d4a0e8884968944ec6da4a129ff6ea1f841dcae91546e15ea6480eb",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/exports/mx95pro-board/signer_spki.der"
+        },
+        {
+          "name": "boards/plain-policy.der",
+          "sha256": "704f7e01d7206272f7193271f163ec59d0072d49f492f89e0bc7c23753d8b129",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/plain-policy.der"
+        },
+        {
+          "name": "boards/signer-pins.txt",
+          "sha256": "c9bf02fe85e9018f8b8a2ea52e08fb74349e9b4c1974a9d32f4d73933ed0fab5",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/signer-pins.txt"
+        },
+        {
+          "name": "boards/trust/dst-device-crl.der",
+          "sha256": "4fff9f51e6f8946b39baad37e61f0ede032d42e27b3a6dbc70e288c771299525",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/dst-device-crl.der"
+        },
+        {
+          "name": "boards/trust/dst-device-id.bin",
+          "sha256": "b5ffe63148aa0edd887ab3f3d567aa8d2677be6af2a69c35f8f9a043f2620c51",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/dst-device-id.bin"
+        },
+        {
+          "name": "boards/trust/dst-device.der",
+          "sha256": "6b773b9ab18ad2e0c97e1d050d2c77b670a5e84cb6dc1fee66ad153eea492d07",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/dst-device.der"
+        },
+        {
+          "name": "boards/trust/fhe-dp-id.bin",
+          "sha256": "c41d7a338acf21868577b80e363d4bdca171fa885c9e615d45d7d6c55d199dd2",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/fhe-dp-id.bin"
+        },
+        {
+          "name": "boards/trust/policy-id.bin",
+          "sha256": "21e54bbb5a17afcd1218ff6fd4f11499e5f63975657fcbfc28b1b674a5303533",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/policy-id.bin"
+        },
+        {
+          "name": "boards/trust/policy.der",
+          "sha256": "abe9d4d03f2939eadb961c12e9d0b1aae9ae1fcb1f672bf231faf1aa7817ae9b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/policy.der"
+        },
+        {
+          "name": "boards/trust/root-crl.der",
+          "sha256": "6d90c25e7b9795796cff873825ee0b8d2ddd736aa4248a657bc2e8d174a074f9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/root-crl.der"
+        },
+        {
+          "name": "boards/trust/root.der",
+          "sha256": "c1e2e9144c508ead884ebf2e90a3c2ef634052eee595025aa02e870ce234b860",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/root.der"
+        },
+        {
+          "name": "boards/trust/src-device-crl.der",
+          "sha256": "098e1ee00431c51b00e755b2d097ffc3738aa241121bc1c177b2adbfd568671c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/src-device-crl.der"
+        },
+        {
+          "name": "boards/trust/src-device-id.bin",
+          "sha256": "fec899dff6a71f6ff677cb8afcf1a50cce647c161b2d35c39873fa75a54428ad",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/src-device-id.bin"
+        },
+        {
+          "name": "boards/trust/src-device.der",
+          "sha256": "bd7af80d4247221fab048edfa33823860744cde1e4379463087348e67372037e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/trust/src-device.der"
+        },
+        {
+          "name": "boards/w1-backup/ceremony.log",
+          "sha256": "81fad01c4bf81f011b96157197416cc6f35e2c7508d618028f07386e9ded0a45",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/w1-backup/ceremony.log"
+        },
+        {
+          "name": "boards/w2-n2/ceremony.log",
+          "sha256": "257c9ca7867d3426ee696833556ea24a44d69bd25172eae32ec85462a54e6227",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/w2-n2/ceremony.log"
+        },
+        {
+          "name": "boards/w2-restore/ceremony.log",
+          "sha256": "f1e7ba3534b22bb9b9846376045f59e92f1f087e9d73a6c69d2709d1fe762647",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/mx95-gap1-boards-274e94d/w2-restore/ceremony.log"
         }
       ],
       "measuredAt": "2026-10-03T22:08:00Z"
     },
     {
-      "id": "tfhe-kv260-service-mx95-b8857fc",
+      "id": "tfhe-kv260-service-mx95pro-failover-73de58e",
       "scenarioId": "tfhe-single-hsm",
       "stepIds": [
-        "generate-client-key",
-        "generate-server-key",
         "export-server-key",
         "publish-compact-public-key",
         "owner-encrypts-locally",
@@ -2296,18 +2639,17 @@
       "level": "end-to-end",
       "parts": [
         {
-          "device": "mx95",
+          "device": "mx95-pro",
           "role": "custodian",
           "producer": "pqctoday-hsm",
           "claimScope": "board-software-token",
+          "failover": true,
           "qualifier": ", network-service run",
           "engine": {
             "repo": "pqctoday-org/pqctoday-hsm",
             "commit": "496f9e529d3d92248dc414e153b06afca8d3ff4f"
           },
           "stepIds": [
-            "generate-client-key",
-            "generate-server-key",
             "export-server-key",
             "publish-compact-public-key",
             "decrypt-under-policy",
@@ -2340,8 +2682,8 @@
           }
         }
       ],
-      "claimLabel": "custodian: software token on MX95; untrusted compute: KV260 network service over mutual TLS; owner verified the attestation",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software tokens on the boards, not hardware custody. Custodian: token tool repl_edu_board from pqctoday-hsm 76551268 (engine source = main 496f9e52; sha256 82cf57b1...), set up fresh for this run (seed, export, and a backup on the MX95 Pro that this run did not use). The owner verified the MX95 export attestation with pqctoday-hsm 1bc4f859 verify-signer (sha256 cddf4df9...) and pinned the signer. The service (pqctoday-fhe fed2dd3) ran on the KV260 loopback behind an SSH tunnel with the board's own certificates: mutual TLS 1.3, hybrid ML-KEM groups only. A tampered server key was refused (403); the signed MX95 server key was admitted (verify 242 ms, conformant load and decompress 1.30 s). A 7-step program over u32, u8 and u64 ran in 42.7 s on the board. The MX95 token released 5 of 6 outputs, all correct, and refused the u64 output by policy (CK_RV 0x1b). cgroup peak 280 MiB.",
+      "claimLabel": "custodian (failover): backup software token on MX95 Pro, seed restored over KMIP; untrusted compute: KV260 network service over mutual TLS; owner verified the attestation",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software tokens on the boards, not hardware custody. Failover counterpart of the MX95 network-service run: the data owner switched to the backup token on the MX95 Pro, which holds the same FHE seed backed up over KMIP (token tool pqctoday-hsm 76551268, engine source = main 496f9e52). The owner verified the attestation of the Pro export with pqctoday-hsm 1bc4f859 verify-signer and pinned the backup signer generated on restore. The KV260 service (same build as the MX95 run, build.txt identical) refused a tampered key (403) and admitted the Pro-signed server key under the same key identity. A 7-step program over u32, u8 and u64 ran in 42.5 s. The MX95 Pro released 5 of 6 outputs, all correct, and refused the u64 output; the original MX95 made the same decisions on the same outputs (token-decrypt-mx95-crosscheck.txt, result hashes matching).",
       "library": {
         "name": "TFHE-rs",
         "version": "1.8.1",
@@ -2349,7 +2691,7 @@
       },
       "engine": {
         "repo": "pqctoday-org/pqctoday-fhe",
-        "commit": "b8857fc231622d347a17e9d4b41ed3a68d726bd9"
+        "commit": "73de58edc047af74d2e57dec1aecc8f58b0c828b"
       },
       "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
       "config": "default, use_dedicated_oprf_key(false)",
@@ -2371,71 +2713,81 @@
       "artifacts": [
         {
           "name": "RESULT.md",
-          "sha256": "591c6921689b72322f3ae386fb36adb8721347ba0ac15020b6c17124f58cba1b",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/RESULT.md"
+          "sha256": "4dee28c27c7ee8e1d9e0503d478e6f3796f7f1236094f4a66bfe16859ba3380e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/RESULT.md"
         },
         {
           "name": "client.txt",
-          "sha256": "6ad88bd8bfa50baefb41d65102f2f20db4f483eb5382699f6a70448ca40c7d80",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/client.txt"
+          "sha256": "685201d226087f0ab9d68b237ae91c780bc46996133f5f56c622c3b7270f3c56",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/client.txt"
         },
         {
           "name": "job.json",
-          "sha256": "7392800426e6651b44c66c4a90d47b111ad84205483c9173021751e0a40df84e",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/job.json"
+          "sha256": "8e5759c2ca97b4000319b20fee90bc8372bfff2e0c97f9cdd74eb59c92afd882",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/job.json"
         },
         {
           "name": "server.log",
-          "sha256": "48638d90ebe2f38014c29bf98788055308aea6352af2671c02cbc9c2f0bdf7f7",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/server.log"
+          "sha256": "c5baf92fa3379f187b4c64f8d1b7b4d777400f8d649055caf392ef0151de8c5c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/server.log"
         },
         {
           "name": "token-decrypt.txt",
           "sha256": "9ecd52b72800fae48bf0256f4d7507f5f382eee1684443606e785e2901d71a3a",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/token-decrypt.txt"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/token-decrypt.txt"
+        },
+        {
+          "name": "token-decrypt-mx95-crosscheck.txt",
+          "sha256": "9ecd52b72800fae48bf0256f4d7507f5f382eee1684443606e785e2901d71a3a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/token-decrypt-mx95-crosscheck.txt"
         },
         {
           "name": "owner-k3-verify.json",
-          "sha256": "3bd0e280c81bd02416c844a5a9512b6c2b70dfe21013ba5cea153f25ee5378f6",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/owner-k3-verify.json"
+          "sha256": "50119804578a563c887febb0886578e436c449f3e2d57348609e7cf2910d23e0",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/owner-k3-verify.json"
         },
         {
           "name": "owner-encrypt.json",
-          "sha256": "4ae8cad6e3258c2722e8f9efa4148e51d4f12f2c6f90c6eb1472b4f745366674",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/owner-encrypt.json"
+          "sha256": "569993b453dcd160860a8d59f87a2147d11dfc48a087e486ea001bda1fb9d863",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/owner-encrypt.json"
         },
         {
           "name": "memory.txt",
-          "sha256": "b9c808f9a3e0eb031ed03143b825af5d178cc46b421174a5b6995e79dea6fb1a",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/memory.txt"
+          "sha256": "a2ef3ed7857c5c35289746a44b0bbc35288df63dfdc95df0c9eb5821cb115180",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/memory.txt"
         },
         {
           "name": "build.txt",
           "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/build.txt"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/build.txt"
         },
         {
           "name": "sha256.txt",
           "sha256": "d2ccc4ae9df9740526ec23c33dd6a6353d5da9040489b075823044342ab9538b",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256.txt"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256.txt"
         },
         {
           "name": "sha256-on-board.txt",
           "sha256": "9dad7668a4524334a3e9539023c572e257249a27d9ded6b8a1235b2176951cfe",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-on-board.txt"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256-on-board.txt"
         },
         {
           "name": "sha256-results.txt",
-          "sha256": "5a0609b3fe5d2157760312034be0c6a3e89e5fbd99f2bbf841639e44eb9a3985",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-results.txt"
+          "sha256": "5e5619ec6a56e2270891395c6f2577c74ab78e899da5f2b024669acd4387fa63",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256-results.txt"
+        },
+        {
+          "name": "sha256-results-crosscheck.txt",
+          "sha256": "5e5619ec6a56e2270891395c6f2577c74ab78e899da5f2b024669acd4387fa63",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256-results-crosscheck.txt"
         },
         {
           "name": "sha256-token-export.txt",
-          "sha256": "3680a0ad51e3c61ccab17b72243966881a1de5b431b228cd6a7acc98ad228e72",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95-b8857fc/sha256-token-export.txt"
+          "sha256": "6abc3426b8b7b42166d15fe15a22fa14382e254cf40a6380986d6da02799e542",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-mx95pro-failover-73de58e/sha256-token-export.txt"
         }
       ],
-      "measuredAt": "2026-10-03T22:24:00Z"
+      "measuredAt": "2026-10-03T22:35:00Z"
     }
   ]
 }
