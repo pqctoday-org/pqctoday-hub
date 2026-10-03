@@ -92,6 +92,14 @@ export function resolveLeaderParam(
   }
   const byName = findLeaderByName(leaders, raw)
   if (byName) return { leader: byName }
+  // A merged-away row's display name ("Kris Kwiatkowski" → the kept
+  // "Krzysztof (Kris) Kwiatkowski"): old name-keyed links forward too.
+  const wanted = normalizeLeaderName(value)
+  for (const s of successors.values()) {
+    if (normalizeLeaderName(s.name) !== wanted) continue
+    const kept = findActiveId(leaders, s.successorId)
+    if (kept) return { leader: kept, forwardedFrom: s.name }
+  }
   const slug = leaderNameSlug(value)
   if (!slug) return undefined
   const matches = leaders.filter((l) => leaderNameSlug(l.name) === slug)

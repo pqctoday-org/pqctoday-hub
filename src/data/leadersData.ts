@@ -163,6 +163,9 @@ export interface LeaderSuccessor {
 }
 
 const DUPLICATE_OF = /^duplicate of (\S+)$/i
+/** Older merges name the kept row instead: "Duplicate of 'Krzysztof (Kris)
+ *  Kwiatkowski' row -- same person …". Resolved to that row's leader_id. */
+const DUPLICATE_OF_NAMED_ROW = /^duplicate of '([^']+)'/i
 
 /**
  * Deprecated `leader_id` → the profile it was merged into. Duplicate rows are
@@ -175,7 +178,11 @@ export const deprecatedLeaderSuccessors: ReadonlyMap<string, LeaderSuccessor> = 
   loadLatestCSV<RawLeaderRow, [string, LeaderSuccessor]>(modules, LEADERS_FILE, (row) => {
     if (!row.status || row.status === 'active') return null
     const id = row.leader_id?.trim()
-    const successorId = DUPLICATE_OF.exec(row.deprecated_reason?.trim() ?? '')?.[1]
+    const reason = row.deprecated_reason?.trim() ?? ''
+    const namedRow = DUPLICATE_OF_NAMED_ROW.exec(reason)?.[1]
+    const successorId =
+      DUPLICATE_OF.exec(reason)?.[1] ??
+      (namedRow ? leadersData.find((l) => l.name === namedRow)?.leaderId : undefined)
     if (!id || !successorId || successorId === id) return null
     return [id, { successorId: successorId.toLowerCase(), name: row.Name }]
   }).data

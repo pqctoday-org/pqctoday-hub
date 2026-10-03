@@ -174,7 +174,7 @@ describe('MobileLibraryView', () => {
       renderAt('/library?ref=PKCS11-V32-OASIS')
       expect(refParam()).toBe('PKCS11-V32-OS-OASIS')
       expect(screen.getByTestId('library-detail-sheet')).toBeInTheDocument()
-      expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(/superseded/)
+      expect(screen.getByTestId('deeplink-notice-moved')).toHaveTextContent(/superseded/)
     })
 
     it('shows a not-found notice for an unknown ref instead of failing silently', () => {

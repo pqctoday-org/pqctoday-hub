@@ -54,6 +54,11 @@ describe('leadersData', () => {
     expect(deprecatedLeaderSuccessors.get('tanja-lange-tu-eindhoven-3')?.successorId).toBe(
       'tanja-lange-tu-eindhoven'
     )
+    // Older merges name the kept ROW ("Duplicate of '<Name>' row -- …"); the
+    // link to the merged-away id used to open "not found" (refresh, 2026-10-02).
+    expect(deprecatedLeaderSuccessors.get('kris-kwiatkowski')?.successorId).toBe(
+      'krzysztof-kris-kwiatkowski'
+    )
     // Deprecated rows never appear in the active list.
     const active = new Set(leadersData.map((l) => l.leaderId))
     for (const id of deprecatedLeaderSuccessors.keys()) expect(active.has(id)).toBe(false)

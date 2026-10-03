@@ -114,21 +114,25 @@ export function MobileLibraryView() {
 
   // Retired ref → swap to its successor and say so; unknown ref → say so,
   // rather than opening nothing. Scroll the list to the linked card.
-  const [notice, setNotice] = useState<string | null>(null)
+  const [notice, setNotice] = useState<{ kind: 'not-found' | 'moved'; message: string } | null>(
+    null
+  )
   const [scrollTarget, setScrollTarget] = useState<string | null>(null)
   useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
   useEffect(() => {
     if (!detailRef) return
     if (!selected) {
-      setNotice(
-        `No library document matches “${detailRef}”. It may have been retired, renamed or mistyped.`
-      )
+      setNotice({
+        kind: 'not-found',
+        message: `No library document matches “${detailRef}”. It may have been retired, renamed or mistyped.`,
+      })
       return
     }
     if (selected.referenceId !== detailRef && !findLibraryItemByRef(detailRef)) {
-      setNotice(
-        `“${detailRef}” has been superseded by ${selected.referenceId}. Showing it instead.`
-      )
+      setNotice({
+        kind: 'moved',
+        message: `“${detailRef}” has been superseded by ${selected.referenceId}. Showing it instead.`,
+      })
       const next = new URLSearchParams(params)
       next.set('ref', selected.referenceId)
       setParams(next, { replace: true })
@@ -178,8 +182,8 @@ export function MobileLibraryView() {
 
       {notice && (
         <DeepLinkNotice
-          kind="not-found"
-          message={notice}
+          kind={notice.kind}
+          message={notice.message}
           onDismiss={() => {
             // An unknown ref is still in the URL; drop it along with the notice.
             if (detailRef && !selected) setDetailRef(null)
