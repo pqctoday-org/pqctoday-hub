@@ -81,6 +81,115 @@
         }
       ],
       "measuredAt": "2026-10-03"
+    },
+    {
+      "id": "tfhe-kv260-fhe-server-98a5186",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "export-server-key",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result"
+      ],
+      "level": "device",
+      "parts": [
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "98a5186a165d7a041ce4d148f61b45fc5f1b6672"
+          }
+        }
+      ],
+      "claimLabel": "FHE server on KV260 (untrusted compute, software-held keys)",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "98a5186a165d7a041ce4d148f61b45fc5f1b6672"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "AMD Kria KV260 (ZynqMP KV260 revB), 4x Cortex-A53, 4 GB DDR4",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image (glibc 2.39), HSM services idle",
+        "toolchain": "rustc 1.95.0, rust:1.95-bookworm@sha256:6258907abe69656e41cd992e0b705cdcfabcbbe3db374f92ed2d47121282d4a1 linux/arm64, opt-level 3, thin LTO",
+        "features": "fp asimd aes pmull sha1 sha2 crc32"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 3,
+        "distribution": "min/median/max",
+        "peakMemoryMethod": "systemd cgroup memory peak from the unit journal (203.0M), plus VmHWM 211,104 kB"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "server.json",
+          "sha256": "bde5b470c7a7bbbc5c2755e2e69f8952e8846bdfe430751c8eec0823eccbd2a1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/server.json"
+        },
+        {
+          "name": "client-gen.json",
+          "sha256": "7f61ed6dc2e7084f4cb5e0a368bff4a64a918fc80e5b4a640539d41bfde03f00",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/client-gen.json"
+        },
+        {
+          "name": "client-verify.json",
+          "sha256": "37680368f40ea60b137b9ad0f582e52ee20c9ed325ed0b248bfe6e92f8c4d037",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/client-verify.json"
+        },
+        {
+          "name": "journal.txt",
+          "sha256": "9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/journal.txt"
+        },
+        {
+          "name": "manifest.json",
+          "sha256": "78d299140b7f9a358dc92b513c94d2a9eb59b5e172eac909b2d65b1815db05dc",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/manifest.json"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "64ba63acb9961ee3d8e6b82307660099dda5312bf06fc912e458406484e79a73",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "f4210fb6ab11b853e8ac8ad837e9ccb51e3a9041b3ef12dd29959614feaa7d4c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256-on-board.txt"
+        },
+        {
+          "name": "sha256-results.txt",
+          "sha256": "0d39a61fb77b8ec30d006b1f010e26c3c24f371a10aa3c36ec42a69d7e0350e7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256-results.txt"
+        },
+        {
+          "name": "systemd-unit.txt",
+          "sha256": "a84a35d235b27a66833a7c112f06749a66848b5faa10f13ce817ffc9373779d2",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/systemd-unit.txt"
+        },
+        {
+          "name": "CLAIMS-CHECK.md",
+          "sha256": "20e84779edb4696073ff991ab2294903fc2e9b6517714e8a94b215912d6f2d89",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/CLAIMS-CHECK.md"
+        }
+      ],
+      "measuredAt": "2026-10-03T14:47:41Z"
     }
   ]
 }

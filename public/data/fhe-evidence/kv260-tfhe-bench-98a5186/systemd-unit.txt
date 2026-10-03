@@ -1,0 +1,7 @@
+Result=success
+ExecMainStartTimestamp=
+ExecMainExitTimestamp=
+ExecMainStatus=0
+MemoryPeak=[not set]
+MemorySwapPeak=[not set]
+CPUUsageNSec=[not set]

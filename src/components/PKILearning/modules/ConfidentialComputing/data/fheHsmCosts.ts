@@ -7,7 +7,7 @@
 // CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
 // flows assume the TFHE-rs 1.8.1 default parameters (n = 918, N = 2,048, k = 1, KS level 4) in the
 // custody configuration (dedicated OPRF key off). TFHE sizes and M4 Pro timings are measured
-// (pqctoday-fhe reference-runs/tfhe-custody, published). All on a recent multicore CPU or
+// (pqctoday-fhe reference-runs/tfhe-custody and kv260-tfhe-bench, published). All on a recent multicore CPU or
 // datacentre GPU. `SIZE_BASIS` below is shown on screen per flow. Real numbers move by 10x with parameters, library and hardware — the
 // workshop says so on screen. Measure before quoting any of them elsewhere.
 //
@@ -205,7 +205,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'HSM → cloud',
-      'Compressed server key: 30.1 MB measured in the custody configuration (the library default adds a 28.7 MB OPRF key, 57.4 MB in total); roughly 120–130 MB once the cloud expands it (estimate), plus one signature.'
+      'Compressed server key: 30.1 MB measured in the custody configuration (the library default adds a 28.7 MB OPRF key, 57.4 MB in total); 120 MB once the cloud expands it (measured), plus one signature.'
     ),
     c(
       1,
@@ -228,9 +228,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '~0.1 GB keys',
       3,
-      '0.2–2.6 s/op',
+      '0.2s–3.5 min',
       'cloud CPU/GPU',
-      'Measured on an Apple M4 Pro (14 cores): a 64-bit add took 0.19 s and a multiply 2.6 s (pqctoday-fhe tfhe-custody). Small ARM boards are far slower and GPUs much faster.'
+      'Measured: a 64-bit add took 0.19 s and a multiply 2.6 s on an Apple M4 Pro (14 cores), and 12.7 s and 211 s on a KV260 (4× Cortex-A53, peak RAM 203 MB). GPUs are much faster.'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few LWE ciphertexts.'),
@@ -407,7 +407,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       '~s / op',
       'server CPU/GPU',
-      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s (measured).'
+      'Ordinary TFHE-rs integer operations: on an Apple M4 Pro a 64-bit add took 0.19 s and a multiply 2.6 s; on a KV260 (Cortex-A53) 12.7 s and 211 s (measured).'
     ),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
     c(1, '≤ 100s KB', 0, '—', 'network', 'A few FheUint64 ciphertexts.'),
@@ -604,7 +604,7 @@ export const KEY_SIZES: KeySize[] = [
     size: '30.1 MB (measured)',
     exact: false,
     secret: false,
-    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). Roughly 120–130 MB once expanded by the cloud (estimate).',
+    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). 120.4 MB once expanded by the cloud (measured; loading and expanding it took 1.3 s on a KV260).',
   },
   {
     id: 'fhe-pk',
