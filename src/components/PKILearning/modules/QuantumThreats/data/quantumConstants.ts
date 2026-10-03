@@ -413,15 +413,15 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-07-30',
   },
   {
-    source: 'BSI Germany (2024)',
+    source: 'BSI Germany (TR-02102-1, 2026-01)',
     kind: 'planning-guidance',
     yearLow: 2030,
-    yearHigh: 2040,
-    confidence: 'Recommend migration now',
+    yearHigh: 2035,
+    confidence: 'Migration recommendations, not a forecast',
     notes:
-      'Recommends hybrid crypto today. Assumes CRQC within planning horizon. TR-02102-1 (2026-01 edition): very-high-protection systems migrate by end of 2030; classical-only key agreement ends 2031.',
-    url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2',
-    lastReviewed: '2026-07-30',
+      'Source: BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026). Classical key agreement alone is recommended only until the end of 2031. For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030. Classical signature mechanisms are recommended only until the end of 2035. BSI recommends using quantum-safe mechanisms in hybrid form, combined with a classical method. These are BSI migration recommendations, not a prediction of when a quantum computer will exist. Separately, BSI\'s 2021 brochure "Quantum-safe cryptography – fundamentals, current developments and recommendations" says BSI works under the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s, and describes this as a timeline for risk assessment, not a forecast of availability.',
+    url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile',
+    lastReviewed: '2026-10-03',
   },
   {
     source: 'Google Quantum AI & Ethereum Foundation (2026)',
