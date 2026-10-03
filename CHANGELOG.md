@@ -29,6 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.148.0] - 2026-10-03
+
+### Data
+
+- **FIPS and entropy-certificate dates now name their NIST source** [view:/learn/crypto-mgmt-modernization] [view:/business/tools/crypto-cbom-builder] [persona:cert-engineer] [persona:ops] [persona:architect] [persona:grc]: the library and HSM notes behind the Crypto Management Modernization module and the CBOM Builder now say where each date comes from: the NIST CMVP certificate (#5450 Luna T7, #5223 u.trust Anchor), the NIST CMVP Modules In Process (MIP) List, or the NIST entropy-source (ESV) certificate (E321, E335, E266, E232/E233). Every date was re-checked against NIST's own pages on 3 October 2026 and all were correct; the Library adds those seven NIST records and a fresh copy of the MIP list.
+- **New Library references** [view:/library] [persona:developer] [persona:researcher] [persona:architect]: RFC 5903 (the elliptic-curve groups IKE and IKEv2 use, cited by the VPN simulator's classical baseline), the IACR paper on running AES over TFHE in under a second (cited by Confidential Computing), and the FCC's November 2024 Second Report and Order moving US V2X from DSRC to C-V2X (cited by Automotive PQC, which now names it).
+
 ## [4.146.0] - 2026-10-03
 
 Links from the Assistant, search and shared URLs now open the item they name, Learn workshops and wide charts fit a phone screen again, and the Confidential Computing FHE content gets small accuracy fixes.
