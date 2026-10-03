@@ -196,6 +196,28 @@ test.describe('desktop — resource links open the resource', () => {
       name: 'compliance ?reqfw preselects the requirements framework',
       url: '/compliance?reqfw=CNSA-2',
       visible: 'CNSA 2.0',
+    },
+    // Deep-link refresh (2026-10-02)
+    {
+      name: 'library ?ref tolerates a hyphenated id (FIPS-203 → FIPS 203)',
+      url: '/library?ref=FIPS-203',
+      open: 'Module-Lattice-Based Key-Encapsulation',
+    },
+    {
+      name: 'community: a duplicate merged by name forwards to the kept profile',
+      url: '/leaders?leader=kris-kwiatkowski',
+      notice: 'moved',
+    },
+    {
+      name: 'migrate ?domain lands on Replace even when the reader was last on Plan',
+      url: '/migrate?domain=hsm',
+      visible: 'SoftHSM2',
+      storage: {
+        'pqc-migrate-selection': JSON.stringify({
+          state: { plan: [], choice: {}, tab: 'plan' },
+          version: 11, // useMigrateSelectionStore persist version
+        }),
+      },
     }
   )
 
@@ -249,7 +271,8 @@ test.describe('desktop — resource links open the resource', () => {
   })
 
   test('timeline shows every country to a first-time desktop visitor', async ({ page }) => {
-    await seed(page, 'returning')
+    // Was seeded as a RETURNING visitor despite its name (refresh audit 2026-10-02).
+    await seed(page, 'first-visit')
     await page.goto('/timeline')
     await expect
       .poll(async () => page.locator('tr[data-deeplink-id]').count(), { timeout: 30_000 })
@@ -302,6 +325,37 @@ test.describe('phone — resource links open the resource, even on a first visit
       })
     }
   }
+})
+
+test.describe('phone — newer item links (deep-link refresh, 2026-10-02)', () => {
+  test.use({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+  })
+
+  // Every item param skips the first-visit role picker, not only PR 1's.
+  for (const url of [
+    '/migrate?tab=roadmaps&vendor=VND-001',
+    '/compliance?reqfw=CNSA-2',
+    '/algorithms?tab=landscape&industry=Finance%20%26%20Banking',
+  ]) {
+    test(`no role picker on a first visit: ${url}`, async ({ page }) => {
+      await seed(page, 'first-visit')
+      await page.goto(url)
+      await expect(page.locator('main').first()).toBeVisible({ timeout: 30_000 })
+      await expect(page.getByText(/who.s asking/i)).toHaveCount(0)
+    })
+  }
+
+  test('transition ?highlight opens the list on the highlighted card, not the wizard', async ({
+    page,
+  }) => {
+    await seed(page, 'returning')
+    await page.goto('/algorithms?tab=transition&highlight=3des')
+    await expect(page.getByText('← Back to wizard')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('div[data-deeplink-id*="3DES"]:visible').first()).toBeVisible()
+  })
 })
 
 // PR 4 — while an item drawer / modal / sheet is open, the overlay covers the
