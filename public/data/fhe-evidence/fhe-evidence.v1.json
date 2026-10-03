@@ -1,0 +1,499 @@
+{
+  "schema": "fhe-evidence.v1",
+  "description": "Signed, hash-pinned evidence that FHE + HSM scenario steps ran. Producers: pqctoday-sandbox (reference libraries), pqctoday-fhe (KV260), pqctoday-cacp (MX95, MX95 Pro; Ventuno Q later). Empty until results arrive: the Hub raises no validation badge without a record here, and a record needs this file's .sig.",
+  "records": [
+    {
+      "id": "openfhe-threshold-bfv-reference-de1d2b8d",
+      "scenarioId": "openfhe-threshold",
+      "stepIds": [
+        "party-a-keygen",
+        "party-b-multiparty-keygen",
+        "party-c-multiparty-keygen",
+        "build-joint-relinearization-key",
+        "publish-eval-keys",
+        "owner-encrypts-locally",
+        "compute-ciphertexts",
+        "party-a-partial-decrypt",
+        "party-b-partial-decrypt",
+        "party-c-partial-decrypt",
+        "owner-fuses-partials"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "claimLabel": "reference run of OpenFHE v1.6.0 threshold BFV, 3 and 5 parties in one process",
+      "library": {
+        "name": "OpenFHE",
+        "version": "v1.6.0",
+        "commit": "6206d24f9eefefc620b524a4f2b9f308feb91e9f"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "de1d2b8dba03569fc6d4c1e79cbf4bf56bb21e53"
+      },
+      "parameters": "BFVrns p=65537 batch=16 depth=2 n=16384 log2q=300 towers=5",
+      "config": "NOISE_FLOODING_MULTIPARTY; Enable PKE,KEYSWITCH,LEVELEDSHE,ADVANCEDSHE,MULTIPARTY; parties=3 and 5 (N-of-N)",
+      "parameterHash": "69d7227192f8e4142fce2bc9eef6aec3f3ebb030c0fae729bf7c353b1f9f51c5",
+      "environment": {
+        "hardware": "Apple M4 Pro (14 cores, 48 GB)",
+        "os": "debian:bookworm linux/arm64 container (OrbStack, image sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26)",
+        "toolchain": "g++ 12.2.0, cmake 3.25.1, OpenMP on",
+        "features": "BUILD_EXAMPLES=ON, CMAKE_BUILD_TYPE=Release"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run",
+        "peakMemoryMethod": "not measured"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "results/linux-arm64-n3.json",
+          "sha256": "36a50a82012f15df561c31d46ed7aae7213f43cb2493ac4e517b5453be5a0a74",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/linux-arm64-n3.json"
+        },
+        {
+          "name": "results/linux-arm64-n5.json",
+          "sha256": "7c889533a91efd2024e06f9a36683bb03b41c36514d24bd19d276bec7cf2eba9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/linux-arm64-n5.json"
+        },
+        {
+          "name": "results/upstream-threshold-fhe.txt",
+          "sha256": "e23337adba484f484f72ee1a810fd077c4fb48fa6b857ffa5dc87aa7777cefeb",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/upstream-threshold-fhe.txt"
+        },
+        {
+          "name": "results/upstream-threshold-fhe-5p.txt",
+          "sha256": "f779dd9dd8c1ae655a6f97bbbd4e6331c82e15614343a89c9d092c1e0cc05ea1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/upstream-threshold-fhe-5p.txt"
+        },
+        {
+          "name": "results/toolchain.txt",
+          "sha256": "0f987a88cd5c6d075124d805f8b2791248388d7b53a92f7f323ef7e304c8c0a3",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/results/toolchain.txt"
+        },
+        {
+          "name": "src/main.cpp",
+          "sha256": "ef8c6d197e0b12bbed393406e21b58f6da7fdf7fc7cd753c3f19b747908fe6f9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-threshold-bfv-de1d2b8d/src/main.cpp"
+        }
+      ],
+      "measuredAt": "2026-10-03",
+      "platformLabel": "Apple M4 Pro"
+    },
+    {
+      "id": "tfhe-kv260-fhe-server-98a5186",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "export-server-key",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result"
+      ],
+      "level": "device",
+      "parts": [
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "98a5186a165d7a041ce4d148f61b45fc5f1b6672"
+          }
+        }
+      ],
+      "claimLabel": "FHE server on KV260 (untrusted compute, software-held keys)",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "98a5186a165d7a041ce4d148f61b45fc5f1b6672"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "AMD Kria KV260 (ZynqMP KV260 revB), 4x Cortex-A53, 4 GB DDR4",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image (glibc 2.39), HSM services idle",
+        "toolchain": "rustc 1.95.0, rust:1.95-bookworm@sha256:6258907abe69656e41cd992e0b705cdcfabcbbe3db374f92ed2d47121282d4a1 linux/arm64, opt-level 3, thin LTO",
+        "features": "fp asimd aes pmull sha1 sha2 crc32"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 3,
+        "distribution": "min/median/max",
+        "peakMemoryMethod": "systemd cgroup memory peak from the unit journal (203.0M), plus VmHWM 211,104 kB"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "server.json",
+          "sha256": "bde5b470c7a7bbbc5c2755e2e69f8952e8846bdfe430751c8eec0823eccbd2a1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/server.json"
+        },
+        {
+          "name": "client-gen.json",
+          "sha256": "7f61ed6dc2e7084f4cb5e0a368bff4a64a918fc80e5b4a640539d41bfde03f00",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/client-gen.json"
+        },
+        {
+          "name": "client-verify.json",
+          "sha256": "37680368f40ea60b137b9ad0f582e52ee20c9ed325ed0b248bfe6e92f8c4d037",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/client-verify.json"
+        },
+        {
+          "name": "journal.txt",
+          "sha256": "9e831e480020f96b54cc4d1724528a78c5732c8efd96a9f861df1bd514618128",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/journal.txt"
+        },
+        {
+          "name": "manifest.json",
+          "sha256": "78d299140b7f9a358dc92b513c94d2a9eb59b5e172eac909b2d65b1815db05dc",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/manifest.json"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "64ba63acb9961ee3d8e6b82307660099dda5312bf06fc912e458406484e79a73",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "f4210fb6ab11b853e8ac8ad837e9ccb51e3a9041b3ef12dd29959614feaa7d4c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256-on-board.txt"
+        },
+        {
+          "name": "sha256-results.txt",
+          "sha256": "0d39a61fb77b8ec30d006b1f010e26c3c24f371a10aa3c36ec42a69d7e0350e7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/sha256-results.txt"
+        },
+        {
+          "name": "systemd-unit.txt",
+          "sha256": "a84a35d235b27a66833a7c112f06749a66848b5faa10f13ce817ffc9373779d2",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/systemd-unit.txt"
+        },
+        {
+          "name": "CLAIMS-CHECK.md",
+          "sha256": "20e84779edb4696073ff991ab2294903fc2e9b6517714e8a94b215912d6f2d89",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-bench-98a5186/CLAIMS-CHECK.md"
+        }
+      ],
+      "measuredAt": "2026-10-03T14:47:41Z"
+    },
+    {
+      "id": "tfhe-custody-mac-token-kv260-da4ea47",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "generate-client-key",
+        "generate-server-key",
+        "export-server-key",
+        "publish-compact-public-key",
+        "owner-encrypts-locally",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result",
+        "owner-requests-decrypt",
+        "decrypt-under-policy",
+        "release-result"
+      ],
+      "level": "end-to-end",
+      "parts": [
+        {
+          "device": "mac-m4pro",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "stepIds": [
+            "generate-client-key",
+            "generate-server-key",
+            "export-server-key",
+            "publish-compact-public-key",
+            "decrypt-under-policy",
+            "release-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "a0a60b6972135cc3fef58bf43c99f3691e1a849d"
+          }
+        },
+        {
+          "device": "mac-m4pro",
+          "role": "data-owner",
+          "producer": "pqctoday-fhe",
+          "claimScope": "owner-device",
+          "stepIds": ["owner-encrypts-locally"]
+        },
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "2772e7ae21859fc0db986c149fa5b59aa52236db"
+          }
+        }
+      ],
+      "claimLabel": "custodian: software token on Mac (MX95 pending); FHE server on KV260 (untrusted compute)",
+      "notes": "Run twice. The re-run (15:48–15:51 UTC) used a custodian binary built from a clean tree at pqctoday-hsm a0a60b69 (sha256 5e1eb3a5…fe9c) with the same token, and board code 2772e7a (same board code as 7a578fd; only the run script changed). Both runs: 3 of 3 tampered server keys refused, the genuine key accepted, 6 of 6 permitted results released and correct, the FheUint64 result refused by policy. Operation medians agree within a few percent except u8 add (1.23 s, then 1.56 s). In both runs the owner did not verify the token's signer attestation, and files moved over scp, with no network service.",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "da4ea475f1d451c30afeec1ef160853f18349fb9"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "Apple M4 Pro Mac (custodian software token and data owner) + AMD Kria KV260 revB, 4x Cortex-A53, 4 GB (FHE server)",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image (board); custodian and owner on the Mac",
+        "toolchain": "board: aarch64-linux build of pqctoday-fhe 7a578fd, binary hashes in sha256.txt and sha256-on-board.txt (compiler version not restated in this run's files)",
+        "features": "same KV260 as tfhe-kv260-fhe-server-98a5186; CPU features not re-recorded in this run"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 3,
+        "distribution": "median of 3 per op on the board, in each of two runs",
+        "peakMemoryMethod": "systemd cgroup memory peak from the unit journal (203.5M), plus VmHWM 211,196 kB"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "run2/RESULT.md",
+          "sha256": "e72122e1730b8dbf44e8b913a93b4ad1e52e7ccecbad6431375ac0c53f660d2c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/RESULT.md"
+        },
+        {
+          "name": "run2/owner-encrypt.json",
+          "sha256": "f5f6d7b193a3c8ced17a9a07e747447a3ad49a89140161ece5a9640a54030e67",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/owner-encrypt.json"
+        },
+        {
+          "name": "run2/board-negative-checks.txt",
+          "sha256": "bdca9c4297df4b9ca7dafb99be82f2ec11a4e8be5175d7c4013bdfc5e76b06b7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/board-negative-checks.txt"
+        },
+        {
+          "name": "run2/server.json",
+          "sha256": "d4a62b605072655af7dad8a8c671a7911319a14aaaf49af502e7e402a17e889d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/server.json"
+        },
+        {
+          "name": "run2/server.log",
+          "sha256": "6bb5a73cb16fe3d5a9a84af124e56d1bc6dc30cbbe5bc00ffdbdc3bb1d5fa784",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/server.log"
+        },
+        {
+          "name": "run2/journal.txt",
+          "sha256": "a39e73f94105fd29298b9903a6fc88ad51a24f08148257d6f5b72a2002033d28",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/journal.txt"
+        },
+        {
+          "name": "run2/token-decrypt.txt",
+          "sha256": "c9e0d0cdfc5c292665f0e88c34cf279365e8ea5e75512d00f714789ee1b22cca",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/token-decrypt.txt"
+        },
+        {
+          "name": "run2/expected.txt",
+          "sha256": "e6d07f71440f14eca77bff5ccb3c060cb7fb0313519793152697caa267528829",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/expected.txt"
+        },
+        {
+          "name": "run2/sha256.txt",
+          "sha256": "5befce08c4fe6762ced9e9599b344de5ecc63496b5205415570c79a9bfc97815",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/sha256.txt"
+        },
+        {
+          "name": "run2/sha256-on-board.txt",
+          "sha256": "6603ac7f87b916b17e1324f3a89a0d1402bb36e5753e5d1865363226a3d6096f",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/sha256-on-board.txt"
+        },
+        {
+          "name": "run2/sha256-results.txt",
+          "sha256": "c7097ecfbb042c02b509d3ee46e8d35a082fb72614102d695680ef9516d83696",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-r2-da4ea47/sha256-results.txt"
+        },
+        {
+          "name": "run1/RESULT.md",
+          "sha256": "926bfabb055660cbce1e93930e19492e75513b35c0d2d86794341a6ff64e3a65",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/RESULT.md"
+        },
+        {
+          "name": "run1/owner-encrypt.json",
+          "sha256": "7dbf0d91df59596cbefe841f3a897958bd754e9f075d2a9a774c0636be9f4636",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/owner-encrypt.json"
+        },
+        {
+          "name": "run1/board-negative-checks.txt",
+          "sha256": "53ccf7d0ca994e921e064c3380a90a2ccdc63b5343283c66ac0179b32a2ce37d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/board-negative-checks.txt"
+        },
+        {
+          "name": "run1/server.json",
+          "sha256": "4e83a1db02c882b2aed99144c098264740891a3c45ce6936b046bc215b6e57e4",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/server.json"
+        },
+        {
+          "name": "run1/server.log",
+          "sha256": "94fba366a4bf9d541a46a50c360e4479c8cb4e9f234f12bcc5f7eab909e5ea9c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/server.log"
+        },
+        {
+          "name": "run1/journal.txt",
+          "sha256": "8b04a740d1b66358188a41256baa5ead97b51717dcb2f00145ace9bed48f5aa7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/journal.txt"
+        },
+        {
+          "name": "run1/token-decrypt.txt",
+          "sha256": "c9e0d0cdfc5c292665f0e88c34cf279365e8ea5e75512d00f714789ee1b22cca",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/token-decrypt.txt"
+        },
+        {
+          "name": "run1/expected.txt",
+          "sha256": "e6d07f71440f14eca77bff5ccb3c060cb7fb0313519793152697caa267528829",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/expected.txt"
+        },
+        {
+          "name": "run1/sha256.txt",
+          "sha256": "103b23f55247765c32e15853d41cc177cb216a99420c775415e804afa6e6a8c9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/sha256.txt"
+        },
+        {
+          "name": "run1/sha256-on-board.txt",
+          "sha256": "f704601f40d5f96dd757d16123deb3f30b37fcd0f528256cf239d8504238ee64",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/sha256-on-board.txt"
+        },
+        {
+          "name": "run1/sha256-results.txt",
+          "sha256": "d13d653d8f3d4c113b597b152de99196985b02f13736388ce3bba937f03019c1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-tfhe-custody-deab8d7/sha256-results.txt"
+        }
+      ],
+      "measuredAt": "2026-10-03T15:32:42Z"
+    },
+    {
+      "id": "openfhe-threshold-bfv-kv260-adab554",
+      "scenarioId": "openfhe-threshold",
+      "stepIds": [
+        "party-a-keygen",
+        "party-b-multiparty-keygen",
+        "party-c-multiparty-keygen",
+        "build-joint-relinearization-key",
+        "publish-eval-keys",
+        "owner-encrypts-locally",
+        "compute-ciphertexts",
+        "party-a-partial-decrypt",
+        "party-b-partial-decrypt",
+        "party-c-partial-decrypt",
+        "owner-fuses-partials"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "KV260 Cortex-A53",
+      "claimLabel": "reference run of OpenFHE v1.6.0 threshold BFV on a KV260, all parties on the board (per-role compute cost, not an untrusted-server split)",
+      "library": {
+        "name": "OpenFHE",
+        "version": "v1.6.0",
+        "commit": "6206d24f9eefefc620b524a4f2b9f308feb91e9f"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "32fbadbd6a098668a22312e7486d2722222ff40c"
+      },
+      "parameters": "BFVrns p=65537 batch=16 depth=2 n=16384 log2q=300 towers=5",
+      "config": "NOISE_FLOODING_MULTIPARTY; Enable PKE,KEYSWITCH,LEVELEDSHE,ADVANCEDSHE,MULTIPARTY; parties=3 and 5 (N-of-N)",
+      "parameterHash": "69d7227192f8e4142fce2bc9eef6aec3f3ebb030c0fae729bf7c353b1f9f51c5",
+      "environment": {
+        "hardware": "AMD Kria KV260 revB, 4x Cortex-A53, 4 GB",
+        "os": "Linux 6.18.10-xilinx, CACP Yocto image; transient systemd unit, MemoryMax=3G, no swap",
+        "toolchain": "g++ 12.2.0, cmake 3.25.1 (debian:bookworm arm64 build container)",
+        "features": "OpenFHE v1.6.0 shared libraries + OpenMP (libgomp)"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run per party count (N = 3 and N = 5)",
+        "peakMemoryMethod": "VmHWM sampled every 10 ms (392,996 kB N = 3; 396,960 kB N = 5)"
+      },
+      "result": "pass",
+      "status": "reproduced",
+      "artifacts": [
+        {
+          "name": "CLAIMS-CHECK.md",
+          "sha256": "0be8f6946f0e81fd576bacfa1564a2fa9b8d9ff24a581bff060e8bbdcf6ddd15",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/CLAIMS-CHECK.md"
+        },
+        {
+          "name": "n3.json",
+          "sha256": "0fb7cace6e0a97e5341ed85060f8cd5627d3ef5f1c6dadfd6b8d6313127ef99a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/n3.json"
+        },
+        {
+          "name": "n5.json",
+          "sha256": "2b8c7996c8cadfbd88e6e98e9bc83b617d5ff8c6a38ead5fe41715ae40684f8c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/n5.json"
+        },
+        {
+          "name": "n3.log",
+          "sha256": "45cbf4824a9a2e318850504a9c2d9e18ff0134101a0df04f4fa5a0a9d127711b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/n3.log"
+        },
+        {
+          "name": "n5.log",
+          "sha256": "629fdd2b18fb82b9794db79c0a06303df5f118b592b363bbc2fd1cfe7f792fab",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/n5.log"
+        },
+        {
+          "name": "journal-n3.txt",
+          "sha256": "489a183dcda55f2abdd7bb8d94b7e99ca0f064403da62146e11c2d8a31cb1a99",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/journal-n3.txt"
+        },
+        {
+          "name": "journal-n5.txt",
+          "sha256": "f076088c61e5b1194df3683e431c38890d61ca646f9c235b830def7d6abc3791",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/journal-n5.txt"
+        },
+        {
+          "name": "build.txt",
+          "sha256": "660af97e487bebf6dbd7ecedec60b02dc61544b17c21d41b2bc121f47f6340da",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/build.txt"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "d876bdb258336a30907400d0d383901eedbf71ce253ee0237055c28ee5fd713e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/sha256.txt"
+        },
+        {
+          "name": "sha256-on-board.txt",
+          "sha256": "d876bdb258336a30907400d0d383901eedbf71ce253ee0237055c28ee5fd713e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-openfhe-bench-adab554/sha256-on-board.txt"
+        }
+      ],
+      "measuredAt": "2026-10-03T15:43:55Z"
+    }
+  ]
+}

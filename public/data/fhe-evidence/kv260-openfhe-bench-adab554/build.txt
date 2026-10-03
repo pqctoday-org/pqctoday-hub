@@ -1,0 +1,12 @@
+toolchain: g++ (Debian 12.2.0-14+deb12u1) 12.2.0; cmake version 3.25.1
+build/bundle:
+total 1684
+drwxr-xr-x 1 root root     192 Oct  3 15:43 lib
+-rwxr-xr-x 1 root root 1720856 Oct  3 15:43 openfhe-threshold-bfv-spike
+
+build/bundle/lib:
+total 6936
+-rw-r--r-- 1 root root  734128 Oct  3 15:43 libOPENFHEbinfhe.so.1
+-rw-r--r-- 1 root root 2673808 Oct  3 15:43 libOPENFHEcore.so.1
+-rw-r--r-- 1 root root 3357592 Oct  3 15:43 libOPENFHEpke.so.1
+-rw-r--r-- 1 root root  331264 Oct  3 15:43 libgomp.so.1

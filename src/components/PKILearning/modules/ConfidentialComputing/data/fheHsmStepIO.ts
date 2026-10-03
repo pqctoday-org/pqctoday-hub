@@ -124,7 +124,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
   ],
   'tfhe-single-hsm': [
     io(
-      'The HSM entropy source and the TFHE parameter set (TFHE-rs 1.8.1 default: LWE n = 918, GLWE N = 2,048, k = 1).',
+      'The HSM entropy source and the TFHE parameter set (TFHE-rs 1.8.1 default parameters, custody configuration: LWE n = 918, GLWE N = 2,048, k = 1).',
       'keygen',
       'The DRBG draws a 32-byte seed. A KDF derives TFHE-rs’s 128-bit Seed, and ClientKey::generate_with_seed expands it into a binary LWE key and a binary GLWE key.',
       'The client key (a few hundred bytes of key bits, ~24 KB as stored), held in the HSM. Only the seed is persisted.'

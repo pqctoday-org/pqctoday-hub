@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.147.0] - 2026-10-03
+
+The FHE + HSM workshop now shows which steps have been validated, starting with a measured OpenFHE threshold run.
+
+### Added
+
+- **FHE + HSM Flows show what has actually been validated** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: every step now has a "Validated" line and each scenario a validation-evidence summary, backed by signed, hash-pinned evidence records. The OpenFHE threshold scenario is the first one validated: a reference run of OpenFHE v1.6.0 (3 and 5 parties) reproduces the upstream example, and its result files are published for anyone to check. Other steps read "not yet" until lab runs land: the data owner on a Mac, the FHE server on a KV260 (untrusted compute) and the custodian as a software token on an MX95, backed up to an MX95 Pro. None of it is shown as hardware custody.
+- **OpenFHE threshold sizes are now measured** [view:/learn/confidential-computing] [persona:researcher] [persona:developer] [persona:architect]: the scenario uses OpenFHE's real threshold settings (ring dimension 16,384 with noise flooding) and measured sizes: joint public key 1.31 MB, relinearization key 6.56 MB, summation keys 78.7 MB, one partial decryption 657 KB. The earlier estimates were about four times too high.
+- **TFHE figures corrected from measurements** [view:/learn/confidential-computing] [persona:researcher] [persona:developer]: on an Apple M4 Pro a 64-bit encrypted add takes about 0.2 s and a multiply about 2.6 s (the page said tens and hundreds of milliseconds); the 30 MB server key is for the custody configuration (the library default is 57.4 MB); the compact public key is 33 KB, and the server key expands to 120 MB.
+- **First hardware numbers: the FHE server on a KV260** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:ops]: the TFHE scenario's server steps are now validated on a KV260 board (four Cortex-A53 cores) running the untrusted compute side with software-held keys: all 27 encrypted operations decrypted correctly, a 64-bit add took about 13 s and a multiply about 3.5 minutes, and peak memory was 203 MB. The result files are published with the evidence.
+- **First end-to-end run of TFHE key custody** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:ops]: the single-HSM TFHE scenario ran end to end with the client key held in a software token on a Mac (the MX95 board will take this role later), the data owner on the same Mac and the FHE server on a KV260. The board checked the signed server key before loading it and refused a tampered key, a wrong signer and a different token's key. The token released the six results its policy allows, all correct, and refused the 64-bit result its policy forbids. A second run, with the token program rebuilt exactly from its published source, gave the same results, so the steps are marked "reproduced".
+- **OpenFHE threshold timings on a small ARM board** [view:/learn/confidential-computing] [persona:researcher] [persona:architect]: the OpenFHE threshold scenario's costs now show KV260 (Cortex-A53) timings beside the M4 Pro ones. For example, a multiplication takes 0.27 s on the board against 18 ms on the M4 Pro, and peak memory with every party on the one board was about 384 MiB. Key and ciphertext sizes match the M4 Pro run exactly.
+
 ## [4.146.0] - 2026-10-03
 
 Links from the Assistant, search and shared URLs now open the item they name, Learn workshops and wide charts fit a phone screen again, and the Confidential Computing FHE content gets small accuracy fixes.

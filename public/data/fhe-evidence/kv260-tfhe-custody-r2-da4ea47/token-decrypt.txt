@@ -1,0 +1,23 @@
+## u8_add (want: 19)
+released FheUint8 = 19
+exit=0
+## u8_mul (want: 196)
+released FheUint8 = 196
+exit=0
+## u8_lt (want: 0)
+released FheBool = 0
+exit=0
+## u32_add (want: 2615157863)
+released FheUint32 = 2615157863
+exit=0
+## u32_max (want: 2309737967)
+released FheUint32 = 2309737967
+exit=0
+## u32_eq (want: 0)
+released FheBool = 0
+exit=0
+## u64_add (want: refuse)
+refused by policy or input check (reason in the token audit log only)
+error: C_Decrypt(CKM_PQCTODAY_FHE_DECRYPT): CKR 0x1b
+exit=1
+failures=0
