@@ -13,14 +13,24 @@ import {
   StepBack,
   StepForward,
   Info,
+  Database,
+  HardDrive,
+  Share2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
+  DATA_STATE_LABELS,
   ENGINE_STATUS_LABELS,
   FHE_HSM_FLOWS,
+  FLOW_STEP_META,
   LINK_LABELS,
+  PHASE_LABELS,
+  ZONE_LABELS,
   engineStatusOf,
+  type DataState,
   type EngineStatus,
+  type Phase,
+  type TrustZone,
   type FheFlow,
   type FheFlowId,
   type FlowStep,
@@ -39,7 +49,14 @@ import {
 } from '../data/fheHsmCosts'
 import { FHE_STEP_IO } from '../data/fheHsmStepIO'
 import { FheStepDetailModal } from './FheStepDetailModal'
-import { FheKeyMap } from './FheKeyMap'
+import {
+  HOLD_STATUS,
+  exposedCount,
+  holdingColumns,
+  holdingsAt,
+  maxHoldings,
+  type HoldStatus,
+} from './fheHoldings'
 
 interface FheHsmFlowsProps {
   initialFlowId?: FheFlowId
@@ -58,6 +75,8 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
   const [overlay, setOverlay] = useState(true)
   const [pqcFixed, setPqcFixed] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
+  const [persisted, setPersisted] = useState(true)
+  const [shared, setShared] = useState(false)
 
   const flow = FHE_HSM_FLOWS[idx] // eslint-disable-line security/detect-object-injection
   const last = flow.steps.length - 1
@@ -79,6 +98,7 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
   }
 
   const exposed = flow.steps.filter((s) => s.link && LINK_LABELS[s.link].threat).length
+  const canShare = flow.steps.some((s) => s.shareWith)
   const costs = FHE_STEP_COSTS[flow.id]
   const stepKeys = FHE_STEP_KEYS[flow.id][step] ?? [] // eslint-disable-line security/detect-object-injection
   const goTo = (i: number) => {
@@ -238,6 +258,51 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
             </Button>
           </div>
         </div>
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2 -mt-2">
+          <span className="text-[11px] text-muted-foreground mr-1">Clear result goes to:</span>
+          <Button
+            variant={shared ? 'ghost' : 'outline'}
+            size="sm"
+            onClick={() => setShared(false)}
+            aria-pressed={!shared}
+            className="gap-1 text-xs h-7"
+          >
+            Data owner only
+          </Button>
+          <Button
+            variant={shared ? 'outline' : 'ghost'}
+            size="sm"
+            onClick={() => setShared(true)}
+            aria-pressed={shared}
+            disabled={!canShare}
+            title={
+              canShare
+                ? undefined
+                : 'In this flow the data owner decrypts or fuses the result itself and decides what to share.'
+            }
+            className="gap-1 text-xs h-7"
+          >
+            <Share2 size={13} /> Owner + third party
+          </Button>
+          <Button
+            variant={persisted ? 'outline' : 'ghost'}
+            size="sm"
+            onClick={() => setPersisted((v) => !v)}
+            aria-pressed={persisted}
+            className="gap-1 text-xs h-7 sm:ml-auto"
+          >
+            {persisted ? <Database size={13} /> : <HardDrive size={13} />}
+            {persisted ? 'Third party stores at rest' : 'Third party keeps RAM only'}
+          </Button>
+        </div>
+        {shared && canShare && (
+          <p className="text-[11px] text-status-warning -mt-2">
+            The data owner’s HSM policy also releases the clear result to the third party. It still
+            never sees the data, but a result can leak inputs if the function is too revealing or
+            queries are unlimited (e.g. averages over tiny groups), so the policy restricts what, to
+            whom and how often.
+          </p>
+        )}
 
         {/* Sequence diagram */}
         <div className="rounded-lg border border-border bg-card/40 p-2 sm:p-3 overflow-hidden">
@@ -250,6 +315,8 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
               step={step}
               overlay={overlay}
               pqcFixed={pqcFixed}
+              persisted={persisted}
+              shared={shared}
               onSelect={openDetail}
             />
           </div>
@@ -260,9 +327,12 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
               step={step}
               overlay={overlay}
               pqcFixed={pqcFixed}
+              persisted={persisted}
+              shared={shared}
               onSelect={openDetail}
             />
           </div>
+          <HoldingsLegend />
           {overlay && (
             <div className="flex flex-wrap gap-x-3 sm:gap-x-4 gap-y-1 text-[10px] text-muted-foreground mt-2">
               <LegendSwatch className="bg-primary" label="FHE (lattice, no known quantum break)" />
@@ -278,7 +348,6 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
                   pqcFixed ? 'Classical link replaced by PQC' : 'Classical link exposed to a CRQC'
                 }
               />
-              <LegendSwatch className="bg-success/40" label="Holds the FHE secret" />
               {flow.steps.some((s) => s.verdict === 'ok') && <span>✓ = fits in the HSM</span>}
               {flow.steps.some((s) => s.verdict === 'warn') && (
                 <LegendSwatch className="bg-warning" label="Possible in the HSM, streamed" />
@@ -305,8 +374,6 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
           onDetails={() => setDetailOpen(true)}
         />
 
-        <FheKeyMap flow={flow} step={step} overlay={overlay} pqcFixed={pqcFixed} />
-
         <FheStepDetailModal
           open={detailOpen}
           onClose={() => setDetailOpen(false)}
@@ -317,6 +384,8 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
           keys={stepKeys}
           overlay={overlay}
           pqcFixed={pqcFixed}
+          persisted={persisted}
+          shared={shared}
           onNavigate={goTo}
         />
 
@@ -604,29 +673,132 @@ const TONE_TEXT: Record<Tone, string> = {
   muted: 'text-muted-foreground',
 }
 
-/** Phone layout: one tappable row per step instead of the swimlane diagram. */
+const STATE_CHIP: Record<DataState, string> = {
+  keys: 'border-border bg-muted/40 text-muted-foreground',
+  clear: 'border-warning/40 bg-warning/10 text-status-warning',
+  encrypting: 'border-primary/40 bg-primary/5 text-primary',
+  encrypted: 'border-primary/50 bg-primary/15 text-primary',
+  decrypting: 'border-success/40 bg-success/10 text-status-success',
+  result: 'border-warning/40 bg-warning/10 text-status-warning',
+}
+
+const PHASE_TEXT: Record<Phase, string> = {
+  setup: 'text-muted-foreground',
+  encrypt: 'text-primary',
+  compute: 'text-status-warning',
+  decrypt: 'text-status-success',
+  backup: 'text-muted-foreground',
+}
+
+const ZONE_CHIP: Record<TrustZone, string> = {
+  owner: 'border-success/40 bg-success/5 text-status-success',
+  third: 'border-destructive/40 bg-destructive/5 text-status-error',
+  party: 'border-primary/40 bg-primary/5 text-primary',
+}
+
+/** Who holds what at one step, as chips per column: the key map, inline. */
+export const HoldingsList: React.FC<{
+  flow: FheFlow
+  step: number
+  persisted: boolean
+  shared: boolean
+  overlay: boolean
+  pqcFixed: boolean
+}> = ({ flow, step, persisted, shared, overlay, pqcFixed }) => {
+  const holdings = holdingsAt(flow, step, { persisted, shared, overlay, pqcFixed })
+  const exposedNow = exposedCount(holdings)
+  return (
+    <div className="space-y-1">
+      <p
+        className={`text-[10px] font-medium ${exposedNow ? 'text-status-error' : 'text-status-success'}`}
+      >
+        {exposedNow
+          ? `${exposedNow} secret item(s) are outside an HSM or the data owner’s device.`
+          : 'No secret is outside an HSM or the data owner’s device.'}
+      </p>
+      {holdingColumns(flow).map((c) => {
+        const list = holdings[c.id] ?? []
+        if (!list.length) return null
+        return (
+          <div key={c.id} className="flex flex-wrap items-center gap-1 text-[10px]">
+            <span className="text-muted-foreground">{c.label}:</span>
+            {list.map((h) => (
+              <span
+                key={h.item}
+                title={`${h.label} · ${h.mode}`}
+                className={`rounded border px-1 py-px whitespace-nowrap ${HOLD_STATUS[h.status].chip}`}
+              >
+                {h.isNew ? '● ' : ''}
+                {h.short}
+                {h.status === 'exposed' || h.status === 'released'
+                  ? ` · ${HOLD_STATUS[h.status].tag}`
+                  : ''}
+              </span>
+            ))}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Legend for trust zones and the holding chips. */
+const HoldingsLegend: React.FC = () => (
+  <div className="flex flex-wrap gap-x-2 gap-y-1 text-[10px] text-muted-foreground mt-2">
+    {(Object.keys(ZONE_LABELS) as TrustZone[]).map((z) => (
+      <span key={z} className={`rounded border px-1 ${ZONE_CHIP[z]}`}>
+        {ZONE_LABELS[z]}
+      </span>
+    ))}
+    <span>· chips:</span>
+    {(['protected', 'owner', 'exposed', 'public', 'safe', 'released'] as HoldStatus[]).map((st) => (
+      <span key={st} className={`rounded border px-1 ${HOLD_STATUS[st].chip}`}>
+        {HOLD_STATUS[st].tag}
+      </span>
+    ))}
+    <span>· ● new at this step</span>
+  </div>
+)
+
+/** Phone layout: one tappable row per step, grouped by phase, instead of the swimlane diagram. */
 const CompactStepList: React.FC<{
   flow: FheFlow
   costs: StepCost[]
   step: number
   overlay: boolean
   pqcFixed: boolean
+  persisted: boolean
+  shared: boolean
   onSelect: (i: number) => void
-}> = ({ flow, costs, step, overlay, pqcFixed, onSelect }) => {
+}> = ({ flow, costs, step, overlay, pqcFixed, persisted, shared, onSelect }) => {
   const name = (id: string) => flow.actors.find((a) => a.id === id)?.label ?? id
+  const meta = FLOW_STEP_META[flow.id]
+  let phaseNo = 0
   return (
     <ol className="space-y-1" aria-label={`${flow.label} steps`}>
       {flow.steps.map((s, i) => {
         const tone = toneFor(s, overlay, pqcFixed)
         const cost = costs[i] // eslint-disable-line security/detect-object-injection
+        const phase = meta.phase[i] // eslint-disable-line security/detect-object-injection
+        const st = meta.data[i] // eslint-disable-line security/detect-object-injection
+        const newPhase = i === 0 || phase !== meta.phase[i - 1]
+        if (newPhase) phaseNo++
         const linkText =
           overlay && s.link
             ? pqcFixed
               ? LINK_LABELS[s.link].pqc
               : LINK_LABELS[s.link].classical
             : null
+        const third = shared && s.shareWith ? name(s.shareWith) : null
         return (
           <li key={`${flow.id}-${i}`}>
+            {newPhase && (
+              <div
+                className={`text-[10px] font-bold uppercase tracking-wide pt-1 ${PHASE_TEXT[phase]}`}
+              >
+                {phaseNo}. {PHASE_LABELS[phase]}
+              </div>
+            )}
             <Button
               variant="ghost"
               size="tile"
@@ -645,13 +817,12 @@ const CompactStepList: React.FC<{
                 <span className="truncate">
                   {s.from === s.to
                     ? `${name(s.from)} · internal`
-                    : `${name(s.from)} → ${name(s.to)}`}
+                    : `${name(s.from)} → ${name(s.to)}${third ? ` + ${third}` : ''}`}
                 </span>
-                {linkText && (
-                  <span className={`ml-auto shrink-0 font-medium ${TONE_TEXT[tone]}`}>
-                    {linkText}
-                  </span>
-                )}
+                <span className={`ml-auto shrink-0 rounded border px-1 ${STATE_CHIP[st]}`}>
+                  {st === 'encrypted' ? '🔒 ' : ''}
+                  {DATA_STATE_LABELS[st]}
+                </span>
               </div>
               <div className="text-xs font-semibold text-foreground leading-tight">
                 {s.verdict === 'no' ? '✗ ' : s.verdict === 'ok' ? '✓ ' : ''}
@@ -665,19 +836,38 @@ const CompactStepList: React.FC<{
                   · {ENGINE_STATUS_LABELS[engineStatusOf(flow, s)].short}
                 </span>
               </div>
-              {cost && (
-                <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-0.5">
-                  <span className="inline-flex items-center gap-1">
-                    <Meter level={cost.dataLevel} className="bg-primary" />
-                    {cost.dataShort}
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-0.5">
+                {cost && (
+                  <>
+                    <span className="inline-flex items-center gap-1">
+                      <Meter level={cost.dataLevel} className="bg-primary" />
+                      {cost.dataShort}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Meter level={cost.computeLevel} className="bg-warning" />
+                      {cost.computeShort}
+                    </span>
+                  </>
+                )}
+                {linkText && (
+                  <span className={`ml-auto shrink-0 font-medium ${TONE_TEXT[tone]}`}>
+                    {linkText}
                   </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Meter level={cost.computeLevel} className="bg-warning" />
-                    {cost.computeShort}
-                  </span>
-                </div>
-              )}
+                )}
+              </div>
             </Button>
+            {i === step && (
+              <div className="ml-3 mt-1 mb-1 border-l-2 border-primary/40 pl-2">
+                <HoldingsList
+                  flow={flow}
+                  step={step}
+                  persisted={persisted}
+                  shared={shared}
+                  overlay={overlay}
+                  pqcFixed={pqcFixed}
+                />
+              </div>
+            )}
           </li>
         )
       })}
@@ -776,17 +966,23 @@ const KeySizePanel: React.FC<{ highlighted: KeyId[] }> = ({ highlighted }) => {
 // ── Sequence diagram ───────────────────────────────────────────────────────
 
 // Lanes take the left part of the viewBox; two narrow cost columns sit on the right.
-const LANES_W = 590
+const LANES_W = 640
 const COL_W = 72
 const COL_GAP = 10
-const VB_W = LANES_W + 2 * COL_W + 3 * COL_GAP
-const DATA_X = LANES_W + COL_GAP
+const VB_W = LANES_W + 3 * COL_W + 4 * COL_GAP
+const STATE_X = LANES_W + COL_GAP
+const DATA_X = STATE_X + COL_W + COL_GAP
 const COMPUTE_X = DATA_X + COL_W + COL_GAP
-const HEAD_Y = 8
-const HEAD_H = 40
-const ROW0 = 78
-const ROW_H = 34
-const MARGIN_X = 72
+const ZONE_Y = 2
+const HEAD_Y = 18
+const HEAD_H = 38
+const HOLD_Y = HEAD_Y + HEAD_H + 6
+const HOLD_TITLE = 12
+const CHIP_H = 12
+const CHIP_GAP = 2
+const PHASE_H = 16
+const ROW_H = 32
+const MARGIN_X = 70
 
 type Tone = 'primary' | 'error' | 'success' | 'warning' | 'muted'
 
@@ -805,6 +1001,35 @@ const FILL: Record<Tone, string> = {
   muted: 'fill-muted-foreground',
 }
 
+const ZONE_STYLE: Record<TrustZone, { box: string; text: string }> = {
+  owner: { box: 'fill-success/5 stroke-success/30', text: 'fill-success' },
+  third: { box: 'fill-destructive/5 stroke-destructive/30', text: 'fill-destructive' },
+  party: { box: 'fill-primary/5 stroke-primary/30', text: 'fill-primary' },
+}
+
+const ZONE_SHORT: Record<TrustZone, string> = {
+  owner: 'Data owner',
+  third: 'Third party',
+  party: 'Key holders',
+}
+
+const PHASE_TONE: Record<Phase, Tone> = {
+  setup: 'muted',
+  encrypt: 'primary',
+  compute: 'warning',
+  decrypt: 'success',
+  backup: 'muted',
+}
+
+const STATE_STYLE: Record<DataState, { box: string; text: string }> = {
+  keys: { box: 'fill-muted/50 stroke-border', text: 'fill-muted-foreground' },
+  clear: { box: 'fill-warning/10 stroke-warning/50', text: 'fill-warning' },
+  encrypting: { box: 'fill-primary/5 stroke-primary/50', text: 'fill-primary' },
+  encrypted: { box: 'fill-primary/15 stroke-primary/60', text: 'fill-primary' },
+  decrypting: { box: 'fill-success/10 stroke-success/50', text: 'fill-success' },
+  result: { box: 'fill-warning/10 stroke-warning/50', text: 'fill-warning' },
+}
+
 function toneFor(s: FlowStep, overlay: boolean, pqcFixed: boolean): Tone {
   if (s.verdict === 'no') return 'error'
   if (s.verdict === 'warn') return 'warning'
@@ -815,21 +1040,51 @@ function toneFor(s: FlowStep, overlay: boolean, pqcFixed: boolean): Tone {
   return pqcFixed ? 'success' : 'error'
 }
 
+/** Vertical layout: one row per step, plus a header band where each new phase starts. */
+function rowLayout(flow: FheFlow, holdH: number) {
+  const phases = FLOW_STEP_META[flow.id].phase
+  const starts = phases.map((p, i) => i === 0 || p !== phases[i - 1])
+  const row0 = HOLD_Y + holdH + PHASE_H + ROW_H / 2
+  const ys: number[] = []
+  let bands = 0
+  phases.forEach((_, i) => {
+    if (starts[i]) bands++ // eslint-disable-line security/detect-object-injection
+    ys.push(row0 + i * ROW_H + (bands - 1) * PHASE_H)
+  })
+  return { phases, starts, ys, height: (ys[ys.length - 1] ?? row0) + ROW_H / 2 + 6 }
+}
+
 const SequenceDiagram: React.FC<{
   flow: FheFlow
   costs: StepCost[]
   step: number
   overlay: boolean
   pqcFixed: boolean
+  persisted: boolean
+  shared: boolean
   onSelect: (i: number) => void
-}> = ({ flow, costs, step, overlay, pqcFixed, onSelect }) => {
-  const n = flow.actors.length
-  const xs = flow.actors.map(
-    (_, i) => MARGIN_X + (i * (LANES_W - 2 * MARGIN_X)) / Math.max(1, n - 1)
-  )
-  const xOf = (id: string) => xs[flow.actors.findIndex((a) => a.id === id)] ?? MARGIN_X
-  const height = ROW0 + flow.steps.length * ROW_H + 8
-  const headW = Math.min(112, (LANES_W - 2 * 8) / n - 8)
+}> = ({ flow, costs, step, overlay, pqcFixed, persisted, shared, onSelect }) => {
+  const cols = holdingColumns(flow)
+  const n = cols.length
+  const spacing = (LANES_W - 2 * MARGIN_X) / Math.max(1, n - 1)
+  const xs = cols.map((_, i) => MARGIN_X + i * spacing)
+  const xOf = (id: string) => xs[cols.findIndex((c) => c.id === id)] ?? MARGIN_X
+  const headW = Math.min(112, spacing - 8)
+  const chipW = Math.min(112, spacing - 6)
+  const holdH = HOLD_TITLE + maxHoldings(flow) * (CHIP_H + CHIP_GAP) + 4
+  const { phases, starts, ys, height } = rowLayout(flow, holdH)
+  const holdings = holdingsAt(flow, step, { persisted, shared, overlay, pqcFixed })
+  const exposedNow = exposedCount(holdings)
+  const data = FLOW_STEP_META[flow.id].data
+
+  // Contiguous trust-zone groups across the actor lanes (the data-center lane has no zone).
+  const zones: { zone: TrustZone; first: number; last: number }[] = []
+  flow.actors.forEach((a, i) => {
+    const prev = zones[zones.length - 1]
+    if (prev && prev.zone === a.zone && prev.last === i - 1) prev.last = i
+    else zones.push({ zone: a.zone, first: i, last: i })
+  })
+  let phaseNo = 0
 
   return (
     <MotionConfig reducedMotion="user">
@@ -855,27 +1110,39 @@ const SequenceDiagram: React.FC<{
           ))}
         </defs>
 
-        {/* Secret boundary behind secret-holding actors */}
-        {flow.actors.map((a, i) =>
-          a.holdsSecret ? (
-            <rect
-              key={`sb-${a.id}`}
-              x={xs[i] - headW / 2 - 2} // eslint-disable-line security/detect-object-injection
-              y={HEAD_Y - 2}
-              width={headW + 4}
-              height={height - HEAD_Y}
-              rx={8}
-              className="fill-success/5 stroke-success/40"
-              strokeDasharray="4 3"
-            />
-          ) : null
-        )}
-
-        {/* Actor heads + lifelines */}
-        {flow.actors.map((a, i) => {
-          const x = xs[i] // eslint-disable-line security/detect-object-injection
+        {/* Trust zones */}
+        {zones.map((z) => {
+          const x1 = xs[z.first] - spacing / 2 + 3
+          const x2 = xs[z.last] + spacing / 2 - 3
           return (
-            <g key={a.id}>
+            <g key={`zone-${z.zone}-${z.first}`}>
+              <rect
+                x={x1}
+                y={ZONE_Y}
+                width={x2 - x1}
+                height={height - ZONE_Y - 2}
+                rx={8}
+                className={ZONE_STYLE[z.zone].box}
+              />
+              <text
+                x={x1 + 6}
+                y={ZONE_Y + 11}
+                className={`${ZONE_STYLE[z.zone].text} text-[9px] font-bold`}
+              >
+                {ZONE_LABELS[z.zone].length * 5.2 + 12 < x2 - x1
+                  ? ZONE_LABELS[z.zone]
+                  : ZONE_SHORT[z.zone]}
+              </text>
+            </g>
+          )
+        })}
+
+        {/* Lane heads + lifelines */}
+        {cols.map((c, i) => {
+          const x = xs[i] // eslint-disable-line security/detect-object-injection
+          const actor = flow.actors.find((a) => a.id === c.id)
+          return (
+            <g key={c.id}>
               <line
                 x1={x}
                 y1={HEAD_Y + HEAD_H}
@@ -891,30 +1158,104 @@ const SequenceDiagram: React.FC<{
                 height={HEAD_H}
                 rx={6}
                 className={
-                  a.kind === 'hsm'
+                  c.kind === 'hsm'
                     ? 'fill-card stroke-success'
-                    : a.kind === 'gpu'
-                      ? 'fill-card stroke-warning'
-                      : 'fill-card stroke-border'
+                    : c.kind === 'datacenter'
+                      ? 'fill-card stroke-muted-foreground'
+                      : c.kind === 'gpu'
+                        ? 'fill-card stroke-warning'
+                        : 'fill-card stroke-border'
                 }
                 strokeWidth={1.5}
+                strokeDasharray={c.kind === 'datacenter' ? '4 3' : undefined}
               />
               <text
                 x={x}
-                y={HEAD_Y + 17}
+                y={HEAD_Y + 16}
                 textAnchor="middle"
                 className="fill-foreground text-[11px] font-bold"
               >
-                {a.holdsSecret ? '🔒 ' : ''}
-                {a.label}
+                {actor?.holdsSecret ? '🔒 ' : ''}
+                {c.label}
               </text>
               <text
                 x={x}
-                y={HEAD_Y + 31}
+                y={HEAD_Y + 29}
                 textAnchor="middle"
                 className="fill-muted-foreground text-[9px]"
               >
-                {a.sub}
+                {c.sub}
+              </text>
+            </g>
+          )
+        })}
+
+        {/* What each lane holds right now: the key map, merged into the flow */}
+        <text x={6} y={HOLD_Y + 9} className="fill-foreground text-[9px] font-bold">
+          {`Holding at step ${step + 1}`}
+        </text>
+        <text
+          x={LANES_W - 4}
+          y={HOLD_Y + 9}
+          textAnchor="end"
+          className={`${exposedNow ? 'fill-destructive' : 'fill-success'} text-[9px] font-semibold`}
+        >
+          {exposedNow
+            ? `${exposedNow} secret item(s) exposed`
+            : 'No secret outside an HSM or the owner'}
+        </text>
+        {cols.map((c, i) =>
+          (holdings[c.id] ?? []).map((h, k) => {
+            const x = xs[i] - chipW / 2 // eslint-disable-line security/detect-object-injection
+            const y = HOLD_Y + HOLD_TITLE + k * (CHIP_H + CHIP_GAP)
+            return (
+              <motion.g
+                key={`hold-${c.id}-${h.item}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <title>{`${h.label} · ${h.mode} · ${HOLD_STATUS[h.status].tag}`}</title>
+                <rect
+                  x={x}
+                  y={y}
+                  width={chipW}
+                  height={CHIP_H}
+                  rx={3}
+                  className={HOLD_STATUS[h.status].svg}
+                  strokeWidth={h.isNew ? 1.6 : 0.8}
+                />
+                <text x={x + 4} y={y + 9} className="fill-foreground text-[8px]">
+                  {h.isNew ? '● ' : ''}
+                  {h.short}
+                  {h.status === 'exposed'
+                    ? ' · EXPOSED'
+                    : h.status === 'released'
+                      ? ' · released'
+                      : ''}
+                </text>
+              </motion.g>
+            )
+          })
+        )}
+
+        {/* Phase bands */}
+        {phases.map((p, i) => {
+          if (!starts[i]) return null // eslint-disable-line security/detect-object-injection
+          phaseNo++
+          const y = ys[i] - ROW_H / 2 - 4 // eslint-disable-line security/detect-object-injection
+          return (
+            <g key={`phase-${i}`}>
+              <line
+                x1={4}
+                y1={y + 3}
+                x2={VB_W - 4}
+                y2={y + 3}
+                className="stroke-border"
+                strokeDasharray="2 3"
+              />
+              <text x={6} y={y} className={`${FILL[PHASE_TONE[p]]} text-[9px] font-bold uppercase`}>
+                {`${phaseNo}. ${PHASE_LABELS[p]}`}
               </text>
             </g>
           )
@@ -923,7 +1264,7 @@ const SequenceDiagram: React.FC<{
         {/* Steps */}
         {flow.steps.map((s, i) => {
           // Future steps stay faintly visible so any step can be clicked.
-          const y = ROW0 + i * ROW_H
+          const y = ys[i] // eslint-disable-line security/detect-object-injection
           const isCurrent = i === step
           const tone = toneFor(s, overlay, pqcFixed)
           const opacity = isCurrent ? 1 : i < step ? 0.45 : 0.15
@@ -933,10 +1274,12 @@ const SequenceDiagram: React.FC<{
                 ? LINK_LABELS[s.link].pqc
                 : LINK_LABELS[s.link].classical
               : null
+          // eslint-disable-next-line security/detect-object-injection
+          const onCipher = phases[i] === 'compute' && s.from === s.to
 
           if (s.from === s.to) {
-            const w = Math.max(70, s.label.length * 5.6 + 18)
-            // Keep the box (and its step number) inside the lanes for edge actors.
+            const label = `${s.verdict === 'no' ? '✗ ' : s.verdict === 'ok' ? '✓ ' : ''}${onCipher ? '🔒 ' : ''}${s.label}`
+            const w = Math.max(70, label.length * 5.6 + 18)
             const x = Math.min(Math.max(xOf(s.from), w / 2 + 22), LANES_W - w / 2 - 4)
             return (
               <motion.g
@@ -952,8 +1295,9 @@ const SequenceDiagram: React.FC<{
                   width={w}
                   height={22}
                   rx={5}
-                  className={`fill-card ${STROKE[tone]}`}
+                  className={`${onCipher ? 'fill-warning/10' : 'fill-card'} ${STROKE[tone]}`}
                   strokeWidth={isCurrent ? 2 : 1.2}
+                  strokeDasharray={onCipher ? '4 2' : undefined}
                 />
                 <text
                   x={x}
@@ -961,9 +1305,13 @@ const SequenceDiagram: React.FC<{
                   textAnchor="middle"
                   className="fill-foreground text-[10px] font-semibold"
                 >
-                  {s.verdict === 'no' ? '✗ ' : s.verdict === 'ok' ? '✓ ' : ''}
-                  {s.label}
+                  {label}
                 </text>
+                {onCipher && (
+                  <text x={x} y={y + 19} textAnchor="middle" className="fill-warning text-[8px]">
+                    on encrypted data · never sees plaintext
+                  </text>
+                )}
                 <StepNumber x={x - w / 2 - 10} y={y} n={i + 1} tone={tone} />
               </motion.g>
             )
@@ -972,9 +1320,8 @@ const SequenceDiagram: React.FC<{
           const x1 = xOf(s.from)
           const x2 = xOf(s.to)
           const dir = x2 > x1 ? 1 : -1
-          const sx = x1 + dir * 4
-          const ex = x2 - dir * 4
           const mid = (x1 + x2) / 2
+          const third = shared && s.shareWith ? xOf(s.shareWith) : null
           return (
             <motion.g
               key={`${flow.id}-${i}`}
@@ -983,9 +1330,9 @@ const SequenceDiagram: React.FC<{
               transition={{ duration: 0.25 }}
             >
               <motion.line
-                x1={sx}
+                x1={x1 + dir * 4}
                 y1={y}
-                x2={ex}
+                x2={x2 - dir * 4}
                 y2={y}
                 className={STROKE[tone]}
                 strokeWidth={isCurrent ? 2.2 : 1.4}
@@ -1009,12 +1356,34 @@ const SequenceDiagram: React.FC<{
                   {linkText}
                 </text>
               )}
+              {third !== null && (
+                <g>
+                  <line
+                    x1={x1 + (third > x1 ? 4 : -4)}
+                    y1={y + 7}
+                    x2={third - (third > x1 ? 4 : -4)}
+                    y2={y + 7}
+                    className={STROKE.warning}
+                    strokeWidth={1.4}
+                    strokeDasharray="4 3"
+                    markerEnd="url(#fhehsm-arrow-warning)"
+                  />
+                  <text
+                    x={third + (third > x1 ? -6 : 6)}
+                    y={y + 4}
+                    textAnchor={third > x1 ? 'end' : 'start'}
+                    className="fill-warning text-[8px] font-semibold"
+                  >
+                    also to third party (policy)
+                  </text>
+                </g>
+              )}
               <StepNumber x={Math.min(x1, x2) - 12} y={y} n={i + 1} tone={tone} />
             </motion.g>
           )
         })}
 
-        {/* Per-step cost columns */}
+        {/* Side columns: data state, data volume, compute */}
         <line
           x1={LANES_W + 2}
           y1={HEAD_Y}
@@ -1023,13 +1392,14 @@ const SequenceDiagram: React.FC<{
           className="stroke-border"
         />
         {[
-          { x: DATA_X, title: 'Data', sub: 'moved / held' },
-          { x: COMPUTE_X, title: 'Compute', sub: 'per step' },
+          { x: STATE_X, title: 'Data is', sub: 'at this step' },
+          { x: DATA_X, title: 'Data', sub: 'moved / held · log' },
+          { x: COMPUTE_X, title: 'Compute', sub: 'per step · log' },
         ].map((h) => (
           <g key={h.title}>
             <text
               x={h.x + COL_W / 2}
-              y={HEAD_Y + 17}
+              y={HEAD_Y + 16}
               textAnchor="middle"
               className="fill-foreground text-[11px] font-bold"
             >
@@ -1037,16 +1407,47 @@ const SequenceDiagram: React.FC<{
             </text>
             <text
               x={h.x + COL_W / 2}
-              y={HEAD_Y + 31}
+              y={HEAD_Y + 29}
               textAnchor="middle"
               className="fill-muted-foreground text-[9px]"
             >
-              {h.sub} · log
+              {h.sub}
             </text>
           </g>
         ))}
+        {flow.steps.map((_, i) => {
+          const y = ys[i] // eslint-disable-line security/detect-object-injection
+          const st = data[i] // eslint-disable-line security/detect-object-injection
+          const opacity = i === step ? 1 : i < step ? 0.45 : 0.15
+          return (
+            <motion.g
+              key={`state-${flow.id}-${i}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity }}
+              transition={{ duration: 0.3 }}
+            >
+              <rect
+                x={STATE_X}
+                y={y - 8}
+                width={COL_W}
+                height={15}
+                rx={4}
+                className={STATE_STYLE[st].box}
+              />
+              <text
+                x={STATE_X + COL_W / 2}
+                y={y + 3}
+                textAnchor="middle"
+                className={`${STATE_STYLE[st].text} text-[8px] font-semibold`}
+              >
+                {st === 'encrypted' ? '🔒 ' : ''}
+                {DATA_STATE_LABELS[st]}
+              </text>
+            </motion.g>
+          )
+        })}
         {costs.map((cst, i) => {
-          const y = ROW0 + i * ROW_H
+          const y = ys[i] // eslint-disable-line security/detect-object-injection
           const opacity = i === step ? 1 : i < step ? 0.45 : 0.15
           return (
             <motion.g
@@ -1096,7 +1497,7 @@ const SequenceDiagram: React.FC<{
           <rect
             key={`hit-${flow.id}-${i}`}
             x={0}
-            y={ROW0 + i * ROW_H - ROW_H / 2}
+            y={ys[i] - ROW_H / 2} // eslint-disable-line security/detect-object-injection
             width={VB_W}
             height={ROW_H}
             rx={4}

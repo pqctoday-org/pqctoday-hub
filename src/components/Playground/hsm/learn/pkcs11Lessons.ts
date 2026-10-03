@@ -88,6 +88,11 @@ export interface Pkcs11LessonStep {
   ) => Promise<Pkcs11StepResult> | Pkcs11StepResult
   expect?: LessonStepExpect
   spot?: LessonSpot
+  /** True for a step whose own job is to boot the engine (the first step of
+   * A1 and B1). The runner boots the engine before every other step when it
+   * is not running yet (see lessonRunner.ensureEngineForStep), and must skip
+   * these so they do not boot twice. */
+  bootsEngine?: boolean
 }
 
 export type Pkcs11Lesson = LinearLessonBase<Pkcs11LessonStep>
@@ -129,6 +134,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     steps: [
       {
         op: 'C_Initialize / C_InitToken / C_OpenSession',
+        bootsEngine: true,
         label: 'Boot the library, format a token, and open an authenticated session',
         spot: {
           rail: 'kem',
