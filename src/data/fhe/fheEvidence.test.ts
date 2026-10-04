@@ -7,7 +7,7 @@ import {
   FHE_HSM_FLOWS,
   FLOW_STEP_META,
   engineStatusOf,
-} from '../../components/PKILearning/modules/ConfidentialComputing/data/fheHsmFlows'
+} from '../../components/PKILearning/modules/HomomorphicEncryption/data/fheHsmFlows'
 import {
   EVIDENCE_MANIFEST,
   SCENARIO_CONTRACT,

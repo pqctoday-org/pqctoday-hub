@@ -24,7 +24,6 @@ import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
-import { HomomorphicEncryptionSection } from './HomomorphicEncryptionSection'
 import {
   MEMORY_ENCRYPTION_ENGINES,
   QUANTUM_THREAT_VECTORS,
@@ -720,15 +719,33 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </CollapsibleSection>
       </div>
 
-      {/* ── Section 7: Homomorphic Encryption ───────────────────────────── */}
-      <div data-section-id="homomorphic-encryption" className="scroll-mt-20">
-        <CollapsibleSection
-          title="Homomorphic Encryption: Compute Without Trusting the Hardware"
-          icon={<Sigma size={24} className="text-primary" />}
-        >
-          <HomomorphicEncryptionSection />
-        </CollapsibleSection>
-      </div>
+      {/* ── Alternative to trusting the hardware: FHE (its own module) ───── */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <Sigma size={20} className="text-primary" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="font-bold text-foreground">
+                Protect data in use without trusting the hardware
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                A TEE asks you to trust the chip vendor and an attestation chain. Fully homomorphic
+                encryption (FHE) trusts the mathematics instead: the server computes on ciphertexts
+                and never sees the data, at the cost of speed. It has its own module, including how
+                an HSM holds the FHE keys.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/learn/homomorphic-encryption"
+            className="shrink-0 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            Homomorphic Encryption <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
 
       {/* ── Workshop CTA ────────────────────────────────────────────────── */}
       <div className="glass-panel p-6 border-primary/20">
