@@ -5,8 +5,7 @@
  * ProductDetail and the phone product sheet). Pure logic plus one loader hook,
  * no JSX.
  *
- * `open_source_maintainers` (catalogue column, populated by the
- * enrich-migrate-open-source-maintainers skill) is `;`-separated, never `,` —
+ * `open_source_maintainers` (a catalogue column) is `;`-separated, never `,` —
  * a name may itself carry a comma. Measured 2026-10-03 on
  * pqc_product_catalog_10022026_r1.csv: 18 of 1038 rows filled, 46 entries,
  * two shapes:
@@ -16,8 +15,8 @@
  *
  * A maintainer links to a profile when, in order:
  *  1. a leader whose `MigrateCatalogRefs` credits THIS product has the same
- *     name (normalized, accent-folded, or "Surname, Given" re-ordered) — the
- *     crosscheck-migrate-leaders skill writes that reverse edge, so it is the
+ *     name (normalized, accent-folded, or "Surname, Given" re-ordered) — that
+ *     reverse edge is recorded in the Community data, so it is the
  *     authoritative anchor; or
  *  2. the name resolves via the Community page's own tolerant matcher
  *     (findLeaderByName: exact, then normalized), as written or re-ordered.
