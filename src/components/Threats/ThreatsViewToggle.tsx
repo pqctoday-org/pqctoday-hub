@@ -2,8 +2,9 @@
 import { LayoutGrid, Table } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import type { ThreatsViewMode } from './threatsUrlParams'
 
-export type ThreatsViewMode = 'cards' | 'table'
+export type { ThreatsViewMode }
 
 interface ThreatsViewToggleProps {
   mode: ThreatsViewMode

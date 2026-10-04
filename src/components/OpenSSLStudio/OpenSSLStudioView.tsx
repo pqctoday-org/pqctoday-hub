@@ -36,7 +36,7 @@ import { AlgorithmExplorerPanel } from './learn/AlgorithmExplorerPanel'
 
 import { useOpenSSLStore } from './store'
 import { useOpenSSL } from './hooks/useOpenSSL'
-import type { OpenSSLCategory } from './categories'
+import { OPENSSL_CATEGORIES, type OpenSSLCategory } from './categories'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 type QuickCmd = { label: string; cmd: OpenSSLCategory; hint: string }
@@ -110,23 +110,7 @@ const CMD_ALIASES: Record<string, OpenSSLCategory> = {
   key: 'genpkey',
 }
 
-const VALID_CATEGORIES = new Set<string>([
-  'genpkey',
-  'req',
-  'x509',
-  'enc',
-  'dgst',
-  'hash',
-  'rand',
-  'version',
-  'files',
-  'kem',
-  'pkcs12',
-  'lms',
-  'configutl',
-  'kdf',
-  'pkcs11',
-])
+const VALID_CATEGORIES = new Set<string>(OPENSSL_CATEGORIES)
 
 function resolveCmd(param: string | null): OpenSSLCategory {
   if (!param) return 'genpkey'

@@ -4,6 +4,11 @@ import type { LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
 import { SettingsContext } from './SettingsContext'
 import type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } from './types'
+import {
+  DEFAULT_INTERACTIVE_TAB,
+  INTERACTIVE_TAB_IDS,
+  type InteractiveTabId,
+} from './interactiveTabs'
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // State definitions — ?algo= deep link pre-selects algorithm on mount
@@ -91,11 +96,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'key_wrap' | 'hashing'
   >(() => {
     const tab = new URLSearchParams(window.location.search).get('tab')
-    const valid = ['data', 'kem_ops', 'sign_verify', 'keystore', 'logs', 'symmetric', 'hashing']
-    if (tab && valid.includes(tab))
-      return tab as
-        'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
-    return 'keystore'
+    if (tab && (INTERACTIVE_TAB_IDS as readonly string[]).includes(tab))
+      return tab as InteractiveTabId
+    return DEFAULT_INTERACTIVE_TAB
   })
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
 

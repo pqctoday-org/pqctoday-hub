@@ -5,6 +5,22 @@ import { useStructuredCitations } from '@/services/featureFlags'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import {
+  CRYPTO_FAMILY_ITEMS,
+  FUNCTION_ITEMS,
+  LEVEL_ITEMS,
+  REGION_ITEMS,
+  STATUS_ITEMS,
+} from '@/components/Algorithms/algorithmFilterOptions'
+import { TIMELINE_REGION_LABELS } from '@/components/Timeline/timelineRegions'
+import { LEADER_CATEGORIES } from '@/components/Leaders/leadersConstants'
+import {
+  CLASS_PARAM_VALUES,
+  DETAIL_TAB_VALUES,
+  THREATS_VIEW_MODES,
+} from '@/components/Threats/threatsUrlParams'
+import { INTERACTIVE_TAB_IDS } from '@/components/Playground/contexts/interactiveTabs'
+import { OPENSSL_CATEGORIES } from '@/components/OpenSSLStudio/categories'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
@@ -295,6 +311,88 @@ export function countPlaygroundTools(): { total: number; native: number; sandbox
   return { total: WORKSHOP_TOOLS.length, native: WORKSHOP_TOOLS.length - sandbox, sandbox }
 }
 
+/**
+ * The criticality values /threats?criticality= accepts, most severe first. Typed
+ * here (the Threats page lists only the levels its data has, and loading that
+ * data into the prompt would be far too heavy); promptBuilder.test.ts fails
+ * when the data and this list disagree.
+ */
+export const THREAT_CRITICALITY_LEVELS = ['Critical', 'High', 'Medium', 'Low'] as const
+
+/**
+ * The pages the "Main pages" line links, in the order shown. Typed here because
+ * the route metadata that lists every page is far too large to import into the
+ * assistant's code; promptBuilder.test.ts checks this list against that
+ * metadata, so a page added to the site cannot be left out without a decision.
+ */
+export const MAIN_PAGES: ReadonlyArray<{ label: string; path: string }> = [
+  { label: 'Algorithms', path: '/algorithms' },
+  { label: 'Timeline', path: '/timeline' },
+  { label: 'Library', path: '/library' },
+  { label: 'Threats', path: '/threats' },
+  { label: 'Leaders', path: '/leaders' },
+  { label: 'Compliance', path: '/compliance' },
+  { label: 'Migrate', path: '/migrate' },
+  { label: 'Assessment', path: '/assess' },
+  { label: 'Report', path: '/report' },
+  { label: 'Playground', path: '/playground' },
+  { label: 'OpenSSL Studio', path: '/openssl' },
+  { label: 'Learn', path: '/learn' },
+  { label: 'Quiz', path: '/learn/quiz' },
+  { label: 'Command Center', path: '/business' },
+  { label: 'Planning Tools', path: '/business/tools' },
+  { label: 'Patents', path: '/patents' },
+  { label: 'Simulation', path: '/simulation' },
+  { label: 'Explore', path: '/explore' },
+  { label: 'FAQ', path: '/faq' },
+  { label: 'Terms', path: '/terms' },
+  { label: 'Changelog', path: '/changelog' },
+  { label: 'About', path: '/about' },
+  { label: 'Sponsor', path: '/sponsor' },
+  { label: 'Editorial Independence', path: '/editorial-independence' },
+  { label: 'Revisions', path: '/revisions' },
+  { label: 'Navigate', path: '/navigate' },
+]
+
+/** The "Main pages" line: each page as a markdown link. */
+export function buildMainPageList(): string {
+  return MAIN_PAGES.map((page) => `[${page.label}](${page.path})`).join(', ')
+}
+
+/**
+ * The filter ids a dropdown offers, for a link's value list: without the "All"
+ * placeholder, and with a space written as %20 so the value stays one token in
+ * a markdown link (the page decodes it).
+ */
+function filterValues(items: ReadonlyArray<{ id: string }>): string[] {
+  return items.filter((item) => item.id !== 'All').map((item) => item.id.replace(/ /g, '%20'))
+}
+
+/**
+ * The values the prompt tells the assistant to put after `?param=` for the
+ * pages whose filters take a fixed set. Each comes from the page's own list, so
+ * the prompt cannot name a value the page does not accept or leave one out. A
+ * typed list said `fn=<sig|kem>`, but the Algorithms page compares the exact
+ * strings KEM and Signature, so those links showed an empty table.
+ */
+export function buildLinkValueLists() {
+  return {
+    algorithmFamily: filterValues(CRYPTO_FAMILY_ITEMS),
+    algorithmFunction: filterValues(FUNCTION_ITEMS),
+    algorithmLevel: filterValues(LEVEL_ITEMS),
+    algorithmStatus: filterValues(STATUS_ITEMS),
+    algorithmRegion: filterValues(REGION_ITEMS),
+    timelineRegion: Object.keys(TIMELINE_REGION_LABELS),
+    leaderCategory: [...LEADER_CATEGORIES],
+    threatClass: [...CLASS_PARAM_VALUES],
+    threatMode: [...THREATS_VIEW_MODES],
+    threatTab: [...DETAIL_TAB_VALUES],
+    threatCriticality: [...THREAT_CRITICALITY_LEVELS],
+    playgroundTab: [...INTERACTIVE_TAB_IDS],
+    opensslCategory: [...OPENSSL_CATEGORIES],
+  }
+}
+
 export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   // See featureFlags.ts: plain flag check, not a React Hook — the `use`
   // prefix is this module's naming convention for every flag, including
@@ -321,6 +419,8 @@ export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageCo
   const moduleList = buildModuleLinkList()
   const businessToolIds = buildBusinessToolIdList()
   const playgroundTools = countPlaygroundTools()
+  const values = buildLinkValueLists()
+  const mainPages = buildMainPageList()
 
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
 ${pageNote}${personaSection}${experienceSection}${profileSection}${assessmentSection}
@@ -350,26 +450,26 @@ GUIDELINES:
    - /algorithms?algo=<algorithm id or exact name> (open one algorithm's detail, e.g. ML-KEM-768), /algorithms?highlight=<name[,name]> (tint rows in the table, e.g. ml-kem-768, ml-dsa-65)
    - /algorithms?tab=transition&highlight=<classical-slug> — **MUST** use this exact form for any classical → PQC transition (e.g. rsa, diffie-hellman, ecdsa, ecdh, dsa, 3des). Omitting \`?tab=transition\` lands on the detailed tab where classical algos do not exist. Correct: [RSA → ML-KEM transition](/algorithms?tab=transition&highlight=rsa). Wrong: \`/algorithms?highlight=rsa\`.
    - /algorithms?tab=detailed&mode=compare (Detailed tab's Compare view — side-by-side matrix; omit \`mode\` for the default Browse table)
-   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>, /algorithms?level=<1|3|5>, /algorithms?fn=<sig|kem>, /algorithms?q=<text>, /algorithms?status=<Certified|Candidate>, /algorithms?region=<name>, /algorithms?cnsa=1 (CNSA 2.0 lens), /algorithms?gap=1 (research-gap-only filter), /algorithms?quickview=<nist-picks|fips-validated|none>
+   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<${values.algorithmFamily.join('|')}>, /algorithms?level=<${values.algorithmLevel.join('|')}>, /algorithms?fn=<${values.algorithmFunction.join('|')}>, /algorithms?q=<text>, /algorithms?status=<${values.algorithmStatus.join('|')}>, /algorithms?region=<${values.algorithmRegion.join('|')}> (family, level, fn, status and region take exactly these values, case-sensitive — any other value, such as fn=kem or fn=sig, matches nothing and shows an empty table), /algorithms?cnsa=1 (CNSA 2.0 lens), /algorithms?gap=1 (research-gap-only filter), /algorithms?quickview=<nist-picks|fips-validated|none>
    - /algorithms?tab=support (Protocol Support matrix — PQC readiness per protocol), /algorithms?tab=support&protocol=<id> (open one protocol's support detail, e.g. tls-1-3, ssh, ike-ipsec, smime, dnssec, kmip, mls)
    - /algorithms?tab=support&matrixView=detailed (Protocol Support's card view; default is heatmap — omit for heatmap), /algorithms?tab=support&matrixQ=<text> (search protocols), /algorithms?tab=support&matrixStatus=<rfc|draft|experimental|none|na> (comma-separated), /algorithms?tab=support&matrixAvailability=<has-oss|no-oss|has-commercial|no-commercial|has-playground|has-deployment|no-deployment>, /algorithms?tab=support&matrixSort=<name|maturity|oss|commercial|deployments>:<asc|desc>
    - /algorithms?tab=validation (validation evidence tab), /algorithms?tab=validation&section=<attacks|kat|coverage> (open that Validation section — \`section\` ONLY works paired with \`tab=validation\`), /algorithms?tab=validation&section=attacks&attack=<algorithm> (one algorithm's implementation-attack profile)
    - /algorithms?tab=landscape (industry landscape), /algorithms?tab=landscape&industry=<label>, /algorithms?usecase=<useCaseId> (open one landscape use case)
-   - /timeline?event=<event_id> (open one milestone/phase — use the event id from the chunk's Deep Link), /timeline?country=<name>, /timeline?region=<americas|eu|apac|global>, /timeline?q=<text>
+   - /timeline?event=<event_id> (open one milestone/phase — use the event id from the chunk's Deep Link), /timeline?country=<name>, /timeline?region=<${values.timelineRegion.join('|')}>, /timeline?q=<text>
    - /library?ref=<id>, /library?cat=<category>&org=<org>, /library?sector=<NAICS code, e.g. 52 finance, 92 public administration>, /library?view=<cards|table>, /library?sort=<field>. Any page also accepts ?spec=<referenceId> to open that document in place.
    - /migrate?product=<product_id> (open one product — use the id from the chunk's Deep Link), /migrate?productIds=<id,id>, /migrate?tab=<replace|plan|roadmaps|vendorrisk> (Replace what you own / Plan & sequence / Vendor roadmaps / Vendor risk), /migrate?tab=roadmaps&vendor=<VND-id>, /migrate?domain=<domain id>. Never use ?q= on /migrate.
-   - /leaders?leader=<leader id or name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category — singular: Standards, Algorithm Inventor, Industry Adopter, Industry Vendor, Government, Open Source Maintainer, Patent Inventor>, /leaders?region=<americas|eu|apac>, /leaders?q=<text>, /leaders?mode=<cards|table|stack>, /leaders?layer=<Public|Private|Academic> (stack view layer)
+   - /leaders?leader=<leader id or name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category — singular: ${values.leaderCategory.join(', ')}>, /leaders?region=<americas|eu|apac>, /leaders?q=<text>, /leaders?mode=<cards|table|stack>, /leaders?layer=<Public|Private|Academic> (stack view layer)
    - /compliance?framework=<id> (open one framework, e.g. CNSA-2, FIPS-140-3), /compliance?cert=<recordId> (open one certification record), /compliance?evref=<library ref> (CSWP.39 evidence reference; tab=cswp39 optional), /compliance?tab=<obligations|requirements|progress|products|standards|certification|compliance|records|foryou|cswp39>, /compliance?q=<text>, /compliance?pqc=<algorithm name, e.g. ML-KEM>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<tab>
-   - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?class=<hndl|hnfl>, /threats?q=<text>, /threats?sort=<industry|threatId|criticality|evidence>&dir=<asc|desc>, /threats?view=horizon (CRQC Threat Horizon)
+   - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<${values.threatCriticality.join('|')}>, /threats?class=<${values.threatClass.join('|')}>, /threats?q=<text>, /threats?sort=<industry|threatId|criticality|evidence>&dir=<asc|desc>, /threats?mode=<${values.threatMode.join('|')}> (list layout; default table), /threats?protocol=<protocol slug, e.g. tls-https, ssh, vpn-ipsec> (developer protocol lens), /threats?id=<threatId>&threattab=<${values.threatTab.join('|')}> (open that threat on its Detection or Response tab; default detection), /threats?view=horizon (CRQC Threat Horizon)
    - /playground/<toolId> (one page per tool — ${playgroundTools.total} tools: ${playgroundTools.native} native + ${playgroundTools.sandbox} Docker-sandbox; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
-   - /playground/interactive?tab=<tab>&algo=<algo> (multi-tab lab), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
+   - /playground/interactive?tab=<${values.playgroundTab.join('|')}>&algo=<algo> (multi-tab lab; opens on keystore when tab is omitted), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
    - /business/tools/<toolId> — actual toolIds: ${businessToolIds}
    - /learn (catalog) — /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules). Track filtering only applies in Browse mode, so ALWAYS pair it: /learn?mode=browse&track=<trackName> (track names: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Executive, Industries). /learn?persona=<id> presets the persona path/lens (executive|grc|developer|architect|researcher|cert-engineer|ops|curious).
    - /learn/<module-id> (learning content), /learn/<module-id>?tab=workshop (hands-on workshop/simulation)
    - /learn/<module-id>?tab=workshop&step=<n>, /learn/<module-id>?category=<cat>, /learn/<module-id>?diveDeeper=<topic>
    - /assess?step=<n> — 0-based wizard step. Comprehensive mode steps in order: 0=industry, 1=country, 2=crypto, 3=sensitivity, 4=compliance, 5=migration, 6=use-cases, 7=retention, 8=credential-lifetime, 9=scale, 10=agility, 11=infra, 12=timeline.
-   - /openssl?cmd=<category> (genpkey, req, x509, enc, dgst, hash, rand, kem, pkcs12, lms, kdf)
+   - /openssl?cmd=<category> (${values.opensslCategory.join(', ')})
    - /learn/quiz?category=<id> (comma-separated quiz categories, e.g. ?category=pqc-fundamentals,nist-standards)
    - /patents (Patent landscape & CSWP.39 maturity-evidence), /patents?tab=<insights|explore|search>, /patents?patent=US<number> (e.g. US12676741)
    - /patents?search=<text>, /patents?assignee=<name>, /patents?agility=<level>, /patents?domain=<name>, /patents?impact=<level>, /patents?quantumTech=<family>, /patents?quantumRelevance=<level>, /patents?region=<name>, /patents?protocol=<name>, /patents?classicalAlgorithm=<name>, /patents?hardwareComponent=<name>, /patents?nistStatus=<status>
@@ -377,7 +477,7 @@ GUIDELINES:
    - / (Landing) — supports /?picker=open to open the role switcher (region/industry picker retired 2026-08-01 in favor of the top-bar pill); embed mode supports /?persona=<id>&ind=<industry>
    **Self-check before emitting any link**: verify the path appears in this grammar AND every \`?param=\` you include is listed for that route. If unsure, link to the bare path.
    Every named item (product, leader, document, algorithm, threat, patent) MUST be a markdown link. Never output bare names or paths.
-4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz), [Command Center](/business), [Planning Tools](/business/tools), [Patents](/patents), [Simulation](/simulation), [Explore](/explore), [FAQ](/faq), [Terms](/terms), [Changelog](/changelog), [About](/about)
+4. Main pages: ${mainPages}
 5. Learning modules (${moduleList.count} total): ${moduleList.links}
 6. Keep answers to 2–5 short, evidence-backed sentences or bullets. Use markdown formatting. Do not generate follow-up questions; the UI derives those separately. This is an educational assistant — never provide production security advice.
 

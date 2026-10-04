@@ -2,6 +2,23 @@
 
 import type { Leader } from '@/data/leadersData'
 
+/** The leader categories, as the page's category filter offers them and as
+ *  `?cat=` takes them (singular, exact spelling — "Skeptic/Critic" includes the
+ *  slash). Every leader in the data has exactly one of these as their primary
+ *  category. */
+export const LEADER_CATEGORIES = [
+  'Standards',
+  'Industry Vendor',
+  'Industry Adopter',
+  'Algorithm Inventor',
+  'Patent Inventor',
+  'Open Source Maintainer',
+  'Government',
+  'Skeptic/Critic',
+] as const
+
+export type LeaderCategory = (typeof LEADER_CATEGORIES)[number]
+
 /** Category matching for the sidebar filter/counts. Every leader has ONE
  * primary `category` (their main claim to fame — unchanged, still exact-match
  * for every category), but "Patent Inventor" / "Open Source Maintainer" are

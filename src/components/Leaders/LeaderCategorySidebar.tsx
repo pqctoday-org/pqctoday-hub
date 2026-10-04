@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable react-refresh/only-export-components */
 import {
   Scale,
   Briefcase,
@@ -14,18 +13,9 @@ import {
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
-export const LEADER_CATEGORIES = [
-  'Standards',
-  'Industry Vendor',
-  'Industry Adopter',
-  'Algorithm Inventor',
-  'Patent Inventor',
-  'Open Source Maintainer',
-  'Government',
-  'Skeptic/Critic',
-] as const
-
-export type LeaderCategory = (typeof LEADER_CATEGORIES)[number]
+// Re-exported so existing importers of the category list keep working; the
+// list itself lives in leadersConstants.ts, free of this file's icon imports.
+export { LEADER_CATEGORIES, type LeaderCategory } from './leadersConstants'
 
 interface CategoryInfo {
   name: string
