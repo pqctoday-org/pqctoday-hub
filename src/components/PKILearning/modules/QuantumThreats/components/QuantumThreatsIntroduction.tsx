@@ -278,7 +278,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             },
             {
               org: 'ANSSI France',
-              timeline: 'Mandate hybrid for government by 2025',
+              timeline:
+                'Recommends hybrid now; no regulatory obligation today; obligations for product qualification targeted from 2027',
               color: 'secondary',
             },
           ].map((entry) => (

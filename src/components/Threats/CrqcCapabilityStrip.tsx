@@ -8,6 +8,7 @@ import {
   CURRENT_QUANTUM_COMPUTERS,
   getCrqcForecast,
   getCrqcMigrationDeadlines,
+  formatEstimateYears,
   getCrqcSiteDerivedScenarios,
   type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
@@ -144,8 +145,8 @@ export const CrqcCapabilityStrip: React.FC<{
           <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
             {deadlines.map((e) => (
               <li key={e.source}>
-                <span className="font-semibold text-foreground">{e.source}</span>: {e.yearLow}–
-                {e.yearHigh}
+                <span className="font-semibold text-foreground">{e.source}</span>:{' '}
+                {formatEstimateYears(e)}
               </li>
             ))}
           </ul>
@@ -253,7 +254,7 @@ function EstimateList({ title, items }: { title: string; items: CRQCEstimate[] }
             className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs"
           >
             <span className="font-mono font-semibold text-warning w-24 shrink-0">
-              {e.yearLow}–{e.yearHigh}
+              {formatEstimateYears(e)}
             </span>
             <a
               href={e.url}
