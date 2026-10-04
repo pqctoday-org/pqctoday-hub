@@ -18,14 +18,27 @@ import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
  * three or more industries is treated as broadly applicable, and a framework
  * that is not in the config is never dropped.
  */
-export function filterComplianceRequirements(
+/** The selected frameworks that apply to the visitor, and the ones that were left out. */
+export interface ComplianceSplit {
+  kept: string[]
+  /** Selected but left out because they do not apply to the visitor's industry or country. */
+  omitted: string[]
+}
+
+export function splitComplianceRequirements(
   requirements: string[],
   industry: string,
   country: string | undefined
-): string[] {
-  return requirements.filter((fw) => {
+): ComplianceSplit {
+  const kept: string[] = []
+  const omitted: string[] = []
+  for (const fw of requirements) {
     const framework = industryComplianceConfigs.find((f) => f.label === fw)
-    if (!framework) return true // don't silently drop unknowns
+    // don't silently drop unknowns
+    if (!framework) {
+      kept.push(fw)
+      continue
+    }
 
     const industryMatch =
       framework.industries.includes(industry) ||
@@ -40,6 +53,15 @@ export function filterComplianceRequirements(
       framework.countries.includes(country) ||
       (framework.countries.includes('European Union') && EU_MEMBER_COUNTRIES.has(country))
 
-    return industryMatch && countryMatch
-  })
+    ;(industryMatch && countryMatch ? kept : omitted).push(fw)
+  }
+  return { kept, omitted }
+}
+
+export function filterComplianceRequirements(
+  requirements: string[],
+  industry: string,
+  country: string | undefined
+): string[] {
+  return splitComplianceRequirements(requirements, industry, country).kept
 }

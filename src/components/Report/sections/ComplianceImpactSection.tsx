@@ -13,11 +13,14 @@ import { CollapsibleSection } from './reportContentShared'
 
 export const ComplianceImpactSection = ({
   complianceImpacts,
+  omitted = [],
   industry,
   country,
   defaultOpen,
 }: {
   complianceImpacts: ComplianceImpact[]
+  /** Selected frameworks left out because they do not apply to this industry or country. */
+  omitted?: string[]
   industry: string
   country: string
   defaultOpen: boolean
@@ -119,6 +122,14 @@ export const ComplianceImpactSection = ({
           })()}
         </div>
       ))}
+      {omitted.length > 0 && (
+        <p className="text-xs text-muted-foreground" data-testid="compliance-omitted">
+          <span className="font-medium text-foreground">
+            Left out because they do not apply to your country or industry:
+          </span>{' '}
+          {omitted.join(', ')}.
+        </p>
+      )}
       <Link
         to={`/compliance?tab=compliance${industry ? `&industry=${encodeURIComponent(industry)}` : ''}${country ? `&country=${encodeURIComponent(country)}` : ''}`}
         className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
