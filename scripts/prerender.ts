@@ -29,6 +29,7 @@ import {
   validateSnapshot,
   type ReadinessFacts,
 } from './lib/prerenderChecks'
+import { boundSnapshot, type BoundResult } from './lib/snapshotBudget'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = join(__dirname, '..', 'dist')
@@ -142,6 +143,14 @@ function outputPathsFor(route: string): string[] {
 
 const normalize = (p: string) => (p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p)
 
+/** "0.98 MB", plus what was compacted when the page was over the target size. */
+function sizeNote({ bytes, originalBytes, compacted }: BoundResult): string {
+  const mb = (n: number) => `${(n / 1048576).toFixed(2)} MB`
+  return compacted
+    ? `${mb(bytes)}, compacted from ${mb(originalBytes)}: first ${compacted.intact} of ${compacted.items} items kept as captured`
+    : mb(bytes)
+}
+
 /** Collect what the page shows right now, for the error message when a route never becomes ready. */
 function readinessFacts(page: Page, contentRegion: string): Promise<ReadinessFacts> {
   return page.evaluate((selector) => {
@@ -164,7 +173,7 @@ async function renderRoute(
   browser: Browser,
   baseUrl: string,
   route: SearchRoute
-): Promise<{ chars: number; h1Count: number }> {
+): Promise<{ chars: number; h1Count: number; saved: BoundResult }> {
   const page = await browser.newPage()
   try {
     // Belt-and-suspenders: never let the COI reload guard fire mid-capture.
@@ -239,13 +248,16 @@ async function renderRoute(
       }
     })
 
-    const html = stripRuntimeInjectedPreloads(await page.content())
-    const result = validateSnapshot(html, route)
+    // A page that is one very long list is compacted below the fold (nothing is dropped; boundSnapshot
+    // proves it), and what is saved is the compacted copy, so the size gate in validateSnapshot judges
+    // the page as published.
+    const saved = boundSnapshot(stripRuntimeInjectedPreloads(await page.content()))
+    const result = validateSnapshot(saved.html, route)
     if (result.errors.length > 0) {
       throw new Error(result.errors.join('; '))
     }
-    for (const out of outputPathsFor(route.path)) writeFileSync(out, html, 'utf-8')
-    return { chars: result.chars, h1Count: result.h1Count }
+    for (const out of outputPathsFor(route.path)) writeFileSync(out, saved.html, 'utf-8')
+    return { chars: result.chars, h1Count: result.h1Count, saved }
   } finally {
     await page.close()
   }
@@ -281,14 +293,14 @@ async function prerender(): Promise<void> {
       try {
         const result = await renderRoute(browser, baseUrl, route)
         console.log(
-          `  ✓ ${route.path}  (${result.chars} chars, h1 ${result.h1Count})  (${++done}/${ROUTES.length})`
+          `  ✓ ${route.path}  (${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)})  (${++done}/${ROUTES.length})`
         )
       } catch {
         // One retry — these failures are almost always transient timeouts.
         try {
           const result = await renderRoute(browser, baseUrl, route)
           console.log(
-            `  ✓ ${route.path}  (retry; ${result.chars} chars, h1 ${result.h1Count}) (${++done}/${ROUTES.length})`
+            `  ✓ ${route.path}  (retry; ${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)}) (${++done}/${ROUTES.length})`
           )
         } catch (err2) {
           const error = err2 instanceof Error ? err2.message : String(err2)

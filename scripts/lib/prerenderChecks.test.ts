@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { describeReadinessFailure, validateSnapshot, type ReadinessFacts } from './prerenderChecks'
+import { SNAPSHOT_MAX_BYTES } from './snapshotBudget'
 import type { SearchRoute } from '../../src/seo/searchRoutes'
 
 /**
@@ -183,6 +184,32 @@ describe('validateSnapshot: each rule rejects on its own', () => {
 
   it('a non-indexed route that lacks noindex', () => {
     expect(errorsOf({}, { ...route, index: false })).toEqual(['non-indexed route lacks noindex'])
+  })
+})
+
+describe('validateSnapshot: the size of the saved page', () => {
+  const pageOf = (chars: number) => `<main><h1>Example</h1><p>${'x'.repeat(chars)}</p></main>`
+
+  it('rejects a page over the limit, because search engines read only the first 2 MB', () => {
+    const errors = errorsOf({ body: pageOf(2_000_000) })
+    expect(errors).toHaveLength(1)
+    expect(errors[0]).toMatch(
+      /^saved page is 1\.9\d MB; the limit is 1\.9 MB because search engines read only the first 2 MB$/
+    )
+  })
+
+  it('accepts a page just under the limit', () => {
+    const result = validateSnapshot(snapshot({ body: pageOf(1_980_000) }), route)
+    expect(result.errors).toEqual([])
+    expect(result.bytes).toBeGreaterThan(1_980_000)
+    expect(result.bytes).toBeLessThanOrEqual(SNAPSHOT_MAX_BYTES)
+  })
+
+  it('counts bytes, not characters, so accented and symbol text cannot slip under', () => {
+    // 700,000 three-byte characters are 2.1 MB although they are far fewer characters.
+    expect(errorsOf({ body: pageOf(0).replace('</p>', `${'€'.repeat(700_000)}</p>`) })).toEqual([
+      expect.stringMatching(/^saved page is 2\.\d\d MB/),
+    ])
   })
 })
 

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { JSDOM } from 'jsdom'
 import { minimumContentCharacters, type SearchRoute } from '../../src/seo/searchRoutes'
+import { SNAPSHOT_MAX_BYTES, byteLength } from './snapshotBudget'
 
 export interface SnapshotCheckResult {
   route: string
   chars: number
   h1Count: number
+  /** Size of the saved page, uncompressed. */
+  bytes: number
   errors: string[]
 }
 
@@ -21,6 +24,7 @@ export function validateSnapshot(html: string, route: SearchRoute): SnapshotChec
   const description = document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content
   const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')?.content ?? ''
   const errors: string[] = []
+  const bytes = byteLength(html)
 
   if (!root) errors.push('missing #root')
   if (root?.dataset.prerenderRoute !== route.path)
@@ -41,7 +45,12 @@ export function validateSnapshot(html: string, route: SearchRoute): SnapshotChec
   if (route.index && /noindex/i.test(robots)) errors.push('indexable route has noindex')
   if (!route.index && !/noindex/i.test(robots)) errors.push('non-indexed route lacks noindex')
 
-  return { route: route.path, chars: text.length, h1Count: headings.length, errors }
+  if (bytes > SNAPSHOT_MAX_BYTES)
+    errors.push(
+      `saved page is ${(bytes / 1048576).toFixed(2)} MB; the limit is ${(SNAPSHOT_MAX_BYTES / 1048576).toFixed(1)} MB because search engines read only the first 2 MB`
+    )
+
+  return { route: route.path, chars: text.length, h1Count: headings.length, bytes, errors }
 }
 
 /** What the page looked like when a route never reached its ready state. */
