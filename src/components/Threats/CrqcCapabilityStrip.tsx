@@ -12,6 +12,9 @@ import {
   type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { ClaimCard, ClaimStateMark } from '@/components/common/ClaimCard'
+import { openQuestions, type OpenClaim } from '@/data/openClaimsData'
+import { headStatement, headStatements } from '@/data/openClaimsView'
 
 /**
  * Consolidated CRQC-timeline / capability strip (PER-PAGE-CHANGES Threats #5).
@@ -26,9 +29,38 @@ import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimat
  * Additive: the headline strip is always visible; the per-source / per-machine
  * detail is collapsed by default, so nothing else on the page is affected when
  * it is not expanded.
+ *
+ * Each estimate that has a published claim (`claimId`) shows that claim's card under its
+ * line: the state in words, the newest statement first with the earlier one a step away,
+ * and the sources side by side where they disagree. Estimates are never averaged and no
+ * one source is picked as the answer. Estimates with no claim, or no claims file, read
+ * as they always did.
  */
 
 const CURRENT_YEAR = new Date().getFullYear()
+
+/**
+ * The Google Quantum AI and Ethereum Foundation paper is a resource estimate, not an arrival
+ * date, so it has no row in CRQC_ESTIMATES. This is the published claim that describes it.
+ */
+const GOOGLE_EF_CLAIM_ID = 'crqc-google-ef-secp256k1-resources'
+
+/**
+ * The statement to show for an estimate: the newest one that replaces or updates its claim
+ * (the older statement stays one link away inside the card). Nothing when the estimate has no
+ * claim, or the published claims file is not there.
+ */
+function claimFor(e: Pick<CRQCEstimate, 'claimId'>): OpenClaim | undefined {
+  return e.claimId ? headStatement(e.claimId) : undefined
+}
+
+/**
+ * At a glance the strip flags only what is not settled (an open question, a claim that did not
+ * hold, one replaced by a newer statement); the full card for every estimate is under Sources.
+ * The state is always words next to the icon, never colour alone.
+ */
+const UnsettledMark: React.FC<{ claim: OpenClaim | undefined }> = ({ claim }) =>
+  claim && claim.state !== 'Settled' ? <ClaimStateMark state={claim.state} /> : null
 
 export const CrqcCapabilityStrip: React.FC<{
   defaultExpanded?: boolean
@@ -60,6 +92,25 @@ export const CrqcCapabilityStrip: React.FC<{
   const forecast = useMemo(() => getCrqcForecast(), [])
   const deadlines = useMemo(() => getCrqcMigrationDeadlines(), [])
   const yearsToLow = forecast.low - CURRENT_YEAR
+
+  // Claims shown with the estimates, and the open questions that have no estimate of their own.
+  // Both are empty if the published claims file is absent, and then the strip reads as before.
+  const googleClaim = useMemo(() => headStatement(GOOGLE_EF_CLAIM_ID), [])
+  const otherOpenQuestions = useMemo(() => {
+    const cards = [...forecast.sources, ...deadlines]
+      .map((e) => claimFor(e))
+      .filter((c): c is OpenClaim => c !== undefined)
+    if (googleClaim) cards.push(googleClaim)
+    // An open claim reached through a card above (as its earlier statement) is not listed again.
+    const shown = new Set(cards.flatMap((c) => [c.id, ...(c.earlier ?? []).map((e) => e.claim)]))
+    return headStatements(openQuestions().map((c) => c.id)).filter(
+      (c) => c.state === 'Open' && !shown.has(c.id)
+    )
+  }, [forecast.sources, deadlines, googleClaim])
+  const showsClaims =
+    googleClaim !== undefined ||
+    otherOpenQuestions.length > 0 ||
+    [...forecast.sources, ...deadlines].some((e) => claimFor(e) !== undefined)
 
   const leadMachine = useMemo(
     () =>
@@ -123,13 +174,21 @@ export const CrqcCapabilityStrip: React.FC<{
         </Button>
       </div>
 
-      <UnresolvedEstimatesNotice detail="sourcesListed" className="mt-3" />
+      <UnresolvedEstimatesNotice
+        detail={showsClaims ? 'claimsShown' : 'sourcesListed'}
+        className="mt-3"
+      />
 
       {/* Headline strip — always visible */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
         <div className="rounded-lg border border-border bg-muted/30 p-3">
-          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            CRQC expert survey
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              CRQC expert survey
+            </div>
+            {forecast.sources.map((e) => (
+              <UnsettledMark key={e.source} claim={claimFor(e)} />
+            ))}
           </div>
           <div className="text-2xl font-bold text-warning">{forecast.headline}</div>
           <div className="text-xs text-muted-foreground mt-0.5">{forecast.label}</div>
@@ -142,7 +201,7 @@ export const CrqcCapabilityStrip: React.FC<{
             {deadlines.map((e) => (
               <li key={e.source}>
                 <span className="font-semibold text-foreground">{e.source}</span>:{' '}
-                {formatEstimateYears(e)}
+                {formatEstimateYears(e)} <UnsettledMark claim={claimFor(e)} />
               </li>
             ))}
           </ul>
@@ -200,25 +259,8 @@ export const CrqcCapabilityStrip: React.FC<{
             title="Migration deadlines and planning guidance — dates to finish migrating, not forecasts"
             items={deadlines}
           />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-semibold text-foreground">
-              Resource estimates, not arrival dates.
-            </span>{' '}
-            Google Quantum AI and collaborators (paper dated 30 March 2026) estimate that breaking
-            the elliptic-curve cryptography used by Bitcoin and Ethereum needs at most 1,200 logical
-            qubits (at most 1,450 in a variant) and, on superconducting machines with 10
-            <sup>&minus;3</sup> physical error rates and planar connectivity, fewer than half a
-            million physical qubits. No reliable estimate of when such a machine could exist is
-            established.{' '}
-            <a
-              href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline underline-offset-2 hover:text-primary/80"
-            >
-              The paper
-            </a>
-          </p>
+          <ResourceEstimates claim={googleClaim} />
+          <OpenQuestions claims={otherOpenQuestions} />
           <div>
             <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
               Current modality progress (logical-qubit estimates)
@@ -250,35 +292,95 @@ export const CrqcCapabilityStrip: React.FC<{
   )
 }
 
-/** One attributed list of CRQC_ESTIMATES entries, each tagged with its kind. */
+const GROUP_TITLE_CLASS =
+  'text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2'
+
+/**
+ * One attributed list of CRQC_ESTIMATES entries, each tagged with its kind. An estimate that has
+ * a published claim shows that claim's card under its line (state, sources in their own words,
+ * the earlier statement one step away); an estimate without one shows only its line.
+ */
 function EstimateList({ title, items }: { title: string; items: CRQCEstimate[] }) {
   if (items.length === 0) return null
+  const rows = items.map((e) => ({ e, claim: claimFor(e) }))
   return (
     <div>
-      <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-        {title}
-      </h3>
-      <ul className="space-y-1.5">
-        {items.map((e) => (
-          <li
-            key={e.source}
-            className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs"
-          >
-            <span className="font-mono font-semibold text-warning w-24 shrink-0">
-              {formatEstimateYears(e)}
-            </span>
-            <a
-              href={e.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-foreground sm:w-64 shrink-0 hover:text-primary hover:underline"
-            >
-              {e.source}
-            </a>
-            <span className="text-muted-foreground">
-              <span className="font-semibold">{CRQC_ESTIMATE_KIND_LABELS[e.kind]}</span> ·{' '}
-              {e.confidence}
-            </span>
+      <h3 className={GROUP_TITLE_CLASS}>{title}</h3>
+      <ul className={rows.some((r) => r.claim !== undefined) ? 'space-y-3' : 'space-y-1.5'}>
+        {rows.map(({ e, claim }) => (
+          <li key={e.source} className="space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs">
+              <span className="font-mono font-semibold text-warning w-24 shrink-0">
+                {formatEstimateYears(e)}
+              </span>
+              <a
+                href={e.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground sm:w-64 shrink-0 hover:text-primary hover:underline"
+              >
+                {e.source}
+              </a>
+              <span className="text-muted-foreground">
+                <span className="font-semibold">{CRQC_ESTIMATE_KIND_LABELS[e.kind]}</span> ·{' '}
+                {e.confidence}
+              </span>
+            </div>
+            {claim && <ClaimCard claim={claim} headingLevel={4} />}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/**
+ * The Google Quantum AI and Ethereum Foundation paper: what a machine would need, not when one
+ * could exist. With its published claim the figures and the source come from the claim card;
+ * without it the page keeps the paragraph it had.
+ */
+function ResourceEstimates({ claim }: { claim: OpenClaim | undefined }) {
+  if (claim) {
+    return (
+      <div data-testid="crqc-resource-estimates">
+        <h3 className={GROUP_TITLE_CLASS}>Resource estimates, not arrival dates.</h3>
+        <ClaimCard claim={claim} headingLevel={4} />
+        <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+          No reliable estimate of when such a machine could exist is established.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <p className="text-xs text-muted-foreground leading-relaxed">
+      <span className="font-semibold text-foreground">Resource estimates, not arrival dates.</span>{' '}
+      Google Quantum AI and collaborators (paper dated 30 March 2026) estimate that breaking the
+      elliptic-curve cryptography used by Bitcoin and Ethereum needs at most 1,200 logical qubits
+      (at most 1,450 in a variant) and, on superconducting machines with 10
+      <sup>&minus;3</sup> physical error rates and planar connectivity, fewer than half a million
+      physical qubits. No reliable estimate of when such a machine could exist is established.{' '}
+      <a
+        href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary underline underline-offset-2 hover:text-primary/80"
+      >
+        The paper
+      </a>
+    </p>
+  )
+}
+
+/** Open questions that have no estimate row above, each as a claim card. */
+function OpenQuestions({ claims }: { claims: readonly OpenClaim[] }) {
+  if (claims.length === 0) return null
+  return (
+    <div data-testid="crqc-other-open-questions">
+      <h3 className={GROUP_TITLE_CLASS}>Other open questions</h3>
+      <ul className="space-y-3">
+        {claims.map((c) => (
+          <li key={c.id}>
+            <ClaimCard claim={c} headingLevel={4} />
           </li>
         ))}
       </ul>

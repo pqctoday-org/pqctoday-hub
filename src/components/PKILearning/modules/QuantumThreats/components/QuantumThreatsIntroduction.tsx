@@ -19,7 +19,8 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
-import { getCrqcForecast } from '../data/quantumConstants'
+import { CRQC_ESTIMATES, getCrqcForecast } from '../data/quantumConstants'
+import { EstimateClaims } from './EstimateClaims'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 interface QuantumThreatsIntroductionProps {
@@ -292,6 +293,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             </div>
           ))}
         </div>
+        <EstimateClaims estimates={CRQC_ESTIMATES} headingLevel={4} includeOtherOpenQuestions />
         <div className="mt-4 bg-destructive/5 rounded-lg p-3 border border-destructive/20">
           <p className="text-xs text-muted-foreground">
             <strong className="text-destructive">Bottom line:</strong> Whether a CRQC arrives in

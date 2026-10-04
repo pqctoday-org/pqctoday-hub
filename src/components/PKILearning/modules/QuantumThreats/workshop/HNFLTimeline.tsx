@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES, CRQC_ESTIMATE_KIND_LABELS } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
+import { EstimateClaims } from '../components/EstimateClaims'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -181,6 +182,7 @@ export const HNFLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
+            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={4} collapsible />
             <p className="text-[10px] text-muted-foreground mt-2">
               <strong>Fast-clock CRQCs</strong> (superconducting, photonic) enable
               &quot;on-setup&quot; key compromise during handshakes. Once a CRQC can forge

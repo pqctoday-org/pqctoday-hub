@@ -25,9 +25,11 @@ describe('UnresolvedEstimatesNotice', () => {
   })
 
   it('stays calm and never claims a mechanism that does not exist yet', () => {
-    for (const detail of Object.keys(
-      UNRESOLVED_ESTIMATES_DETAIL
-    ) as (keyof typeof UNRESOLVED_ESTIMATES_DETAIL)[]) {
+    // `claimsShown` is the one variant that may speak of an open-question mark: it is for pages
+    // that render claim cards (covered by its own test below).
+    for (const detail of (
+      Object.keys(UNRESOLVED_ESTIMATES_DETAIL) as (keyof typeof UNRESOLVED_ESTIMATES_DETAIL)[]
+    ).filter((d) => d !== 'claimsShown')) {
       const { unmount } = render(<UnresolvedEstimatesNotice detail={detail} />)
       const text = screen.getByRole('note').textContent ?? ''
       expect(text).not.toMatch(/open question|we say that|rather than pick/i)
@@ -39,6 +41,13 @@ describe('UnresolvedEstimatesNotice', () => {
   it('the range variant speaks of a planning range', () => {
     render(<UnresolvedEstimatesNotice detail="aRange" />)
     expect(screen.getByRole('note')).toHaveTextContent(UNRESOLVED_ESTIMATES_DETAIL.aRange)
+  })
+
+  it('the claims-shown variant is the approved sentence, word for word', () => {
+    render(<UnresolvedEstimatesNotice detail="claimsShown" />)
+    expect(screen.getByRole('note').textContent).toContain(
+      'Some published estimates are still unresolved, because they depend on technical assumptions and on machines that do not exist yet. Where credible sources differ, we show each one with its source and date, and say that the question is open, rather than pick a single answer.'
+    )
   })
 
   it('passes a class through', () => {
