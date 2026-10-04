@@ -51,6 +51,15 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
   })
 })
 
+describe('withdrawn range', () => {
+  it('the site publishes no CRQC range of its own: only the survey is an arrival forecast', () => {
+    expect(CRQC_ESTIMATES.some((e) => e.kind === 'site-derived-scenario')).toBe(false)
+    expect(CRQC_ESTIMATES.some((e) => e.yearLow === 2029 && e.yearHigh === 2036)).toBe(false)
+    const arrival = CRQC_ESTIMATES.filter((e) => e.kind === 'arrival-forecast')
+    expect(arrival.map((e) => e.source)).toEqual(['Global Risk Institute (2025)'])
+  })
+})
+
 describe('formatEstimateYears', () => {
   it('prints a range, or a single year when both ends are equal', () => {
     expect(formatEstimateYears({ yearLow: 2030, yearHigh: 2035 })).toBe('2030–2035')
