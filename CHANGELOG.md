@@ -31,6 +31,13 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.151.0] - 2026-10-04
 
+### Added
+
+- **Link to one Transition row, one landscape standard, a KAT variant or a coverage case** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: shared links can now open a single classical→PQC transition row, an industry standard on the Landscape tab (with Share on each), the SLH-DSA test-vector variant, or the coverage matrix's case polarity.
+- **Who maintains an open-source product** [view:/migrate] [persona:architect] [persona:developer] [persona:researcher]: product details list the open-source maintainers, linked to their Community profiles where we have one.
+- **Certificates on phones** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:ops]: the phone Records section adds a searchable list of certification records, and a certificate opens with the same details as on a computer.
+- **Share and "open on its page" from more places** [view:/leaders] [view:/compliance] [persona:grc] [persona:researcher]: Community cards and revision-history panels can be shared, and Library, threat and timeline pop-ups inside "For You" link to their own page; on phones, the Migrate catalog filter now travels in shared links too.
+
 ### Changed
 
 - **The Privacy and Terms pages now say plainly that analytics run on every visit** [view:/terms] [view:/about] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: the Terms page and the About page's privacy section used to say that no personal data is collected and that we never know you visited. They now say that Google Analytics 4 runs on every visit, that there is no consent prompt or on/off switch yet, what it records (page views, interaction events, the role, region and industry you pick, summary labels, basic browser details and a random cookie identifier), that Google also receives your IP address, and how to block it. The Terms date is now October 4, 2026.
@@ -40,6 +47,7 @@ first time (don't ship dev-speak and reformat later):
 
 - **Typed search text no longer reaches Google Analytics unscrubbed** [view:/leaders] [view:/migrate] [view:/timeline] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: text typed into the Leaders search, the Migrate workbench asset search and the Timeline text filter is now cleaned before it is counted: email addresses, web addresses, IP addresses and long key-like strings are replaced and the rest is cut to 80 characters.
 - **The page address sent to Google Analytics no longer includes anything after a "?"** [persona:executive] [persona:grc] [persona:architect] [persona:curious]: page views and events used to carry the full address, including a Leaders search term and the data in a shared-report link. They now carry only the site and the page path, and the same applies to the previous page. The Terms page says what, if anything, can still be recorded.
+- **Highlight links tint only the algorithm named** [view:/algorithms] [persona:developer] [persona:curious]: a link that highlights 3DES no longer also highlights DES, and ML-KEM-768 no longer tints its composite variants.
 
 ## [4.150.0] - 2026-10-04
 
