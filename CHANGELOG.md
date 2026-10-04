@@ -31,6 +31,8 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.151.0] - 2026-10-04
 
+The Privacy and Terms pages now say plainly that analytics run on every visit, and Google Analytics no longer receives unscrubbed search text or anything after a "?" in a page address; the About page, Command Center text and README quote the real counts; shared links can open a single transition row, landscape standard, test-vector variant or coverage case; the landing role boards call the quantum-computer year our own planning year; and the FHE workshop gains a validated run with the service installed in the shipped board image. [SEO placeholder: phase 2]
+
 ### Added
 
 - **Link to one Transition row, one landscape standard, a KAT variant or a coverage case** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: shared links can now open a single classical→PQC transition row, an industry standard on the Landscape tab (with Share on each), the SLH-DSA test-vector variant, or the coverage matrix's case polarity.
