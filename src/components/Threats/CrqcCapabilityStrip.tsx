@@ -129,11 +129,9 @@ export const CrqcCapabilityStrip: React.FC<{
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            CRQC expert forecast
+            CRQC expert survey
           </div>
-          <div className="text-2xl font-bold text-warning">
-            {forecast.low}–{forecast.high}
-          </div>
+          <div className="text-2xl font-bold text-warning">{forecast.headline}</div>
           <div className="text-xs text-muted-foreground mt-0.5">{forecast.label}</div>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">
@@ -150,8 +148,8 @@ export const CrqcCapabilityStrip: React.FC<{
           </ul>
           <div className="text-[10px] text-muted-foreground mt-1">
             {yearsToLow > 0
-              ? `The forecast's low end is ${yearsToLow} year${yearsToLow === 1 ? '' : 's'} out.`
-              : 'The forecast window has opened.'}
+              ? `Calculators on this page start their ${forecast.rangeLabel} ${yearsToLow} year${yearsToLow === 1 ? '' : 's'} out.`
+              : `Calculators on this page use a ${forecast.rangeLabel}, which has already begun.`}
           </div>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">

@@ -177,7 +177,7 @@ export const SectorExposureHero = ({
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
               <div className="text-2xl font-extrabold text-status-warning tabular-nums">
-                {forecast.low}–{forecast.high}
+                {forecast.headline}
               </div>
               <div className="text-[10px] text-muted-foreground">{forecast.label}</div>
             </div>

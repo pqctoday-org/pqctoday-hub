@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { CRQC_ESTIMATES, formatEstimateYears, getCrqcMigrationDeadlines } from './quantumConstants'
+import {
+  CRQC_ESTIMATES,
+  formatEstimateYears,
+  getCrqcForecast,
+  getCrqcMigrationDeadlines,
+} from './quantumConstants'
 
 describe('CRQC_ESTIMATES (the Threats sources list)', () => {
   it('every source label is unique (the list keys rows by it)', () => {
@@ -64,5 +69,22 @@ describe('formatEstimateYears', () => {
   it('prints a range, or a single year when both ends are equal', () => {
     expect(formatEstimateYears({ yearLow: 2030, yearHigh: 2035 })).toBe('2030–2035')
     expect(formatEstimateYears({ yearLow: 2030, yearHigh: 2030 })).toBe('2030')
+  })
+  it("the forecast wording is the survey's own words, with no year span and no invented claim", () => {
+    const f = getCrqcForecast()
+    expect(f.label).toContain('28\u201349%')
+    expect(f.label).toContain('51\u201370%')
+    expect(f.label).toContain('26 experts')
+    expect(f.label).not.toMatch(/20[34]\d/) // no 2030-2041 style span in the survey's words
+    expect(f.headline).toBe('28\u201349%')
+    const gri = CRQC_ESTIMATES.find((e) => e.source.startsWith('Global Risk Institute'))!
+    expect(gri.notes).not.toMatch(/Majority consider CRQC by 2035/)
+  })
+
+  it("the calculators' years are labelled as a planning range set by this site", () => {
+    const f = getCrqcForecast()
+    expect(f.rangeLabel).toBe(`planning range ${f.low}\u2013${f.high}, set by this site`)
+    expect(f.low).toBeLessThan(f.planningYear)
+    expect(f.planningYear).toBeLessThan(f.high)
   })
 })

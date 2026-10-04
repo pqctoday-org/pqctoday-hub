@@ -466,7 +466,9 @@ export function MobileThreatsView() {
             <Plus size={14} aria-hidden="true" />
           </Button>
         </div>
-        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">{forecast.label}</p>
+        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">
+          {forecast.label}. The year buttons span a {forecast.rangeLabel}.
+        </p>
       </section>
 
       <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">

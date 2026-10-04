@@ -246,7 +246,7 @@ export const CrqcTrajectoryChart: React.FC = () => {
             className="inline-block h-2 w-3 rounded-sm"
             style={{ background: 'var(--color-destructive)', opacity: 0.2 }}
           />
-          {FORECAST.label}
+          {FORECAST.rangeLabel}
           {FORECAST.high > X_MAX && ' — shaded to the chart edge'}
         </span>
       </div>

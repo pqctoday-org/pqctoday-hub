@@ -344,8 +344,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <em>Y</em> years, and a CRQC is expected in <em>Z</em> years, you must start migrating{' '}
             within <strong>Z &minus; X &minus; Y</strong> years. For data with 25-year sensitivity,
             a 5-year migration time, and a CRQC in {crqc.planningYear} (the midpoint of the{' '}
-            {crqc.low}&ndash;{crqc.high} expert forecast), migration should have started by{' '}
-            {crqc.planningYear - 25 - 5}.
+            {crqc.low}&ndash;{crqc.high} planning range this site uses), migration should have
+            started by {crqc.planningYear - 25 - 5}.
           </p>
         </div>
         <UnresolvedEstimatesNotice detail="oneFigure" className="mt-3" />
@@ -406,9 +406,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-xs font-bold text-foreground mb-1">Why it&apos;s urgent now</div>
             <p className="text-xs text-muted-foreground">
               A Root CA issued today with a 20-year validity period will still be trusted in 2046.
-              If a CRQC arrives within the expert forecast window ({crqc.low}&ndash;{crqc.high}),
-              that CA&apos;s RSA or ECDSA key is breakable — and every certificate it ever signed
-              becomes forgeable. Migration to{' '}
+              If a CRQC arrives within the planning range this site uses ({crqc.low}&ndash;
+              {crqc.high}), that CA&apos;s RSA or ECDSA key is breakable — and every certificate it
+              ever signed becomes forgeable. Migration to{' '}
               <strong>
                 <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> or{' '}
                 <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
