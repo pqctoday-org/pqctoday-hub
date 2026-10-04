@@ -60,11 +60,18 @@
  *     before its own exports are assigned.
  *   - The start-up set relies on index.html naming its chunks with /assets/ links and on the App
  *     chunk being called App-<hash>.js.
- *   - The bundler's module-namespace object (`Object.freeze(Object.defineProperty({ __proto__: null,
- *     ... }, Symbol.toStringTag, { value: "Module" }))`) copies the values of the bindings it lists.
- *     That is not a failure, because it is generated and nothing here can say whether its members are
- *     used before they exist, but each late binding it captures is reported as a note. At the time
- *     of writing the HSM engine's `pqc` chunk captures four of them (stateful-signature functions).
+ *
+ * THE BUNDLER'S NAMESPACE OBJECT
+ *   A module that is loaded with `import()` while its chunk holds other modules gets a namespace
+ *     `Object.freeze(Object.defineProperty({ __proto__: null, a: x, ... }, Symbol.toStringTag,
+ *     { value: "Module" }))`
+ *   in which each member is a COPY of the value at that moment, not a live binding. Built in a chunk
+ *   that is not itself wrapped, from a binding of a wrapped chunk that has not been assigned yet, it
+ *   keeps `undefined` for good, even when read much later as `import("./x.js").then(m => m.ns)`.
+ *   That is an eager read like any other and fails the build. In the saved 4.150.0 build the HSM
+ *   engine's `pqc` chunk did this with four stateful-signature functions, which worked only because
+ *   the one screen reading them needed the engine ready before it loaded; the screen now loads them
+ *   from the module that defines them.
  */
 import path from 'node:path'
 import * as acorn from 'acorn'
@@ -111,8 +118,6 @@ export interface BuildAnalysis {
   lateWrapped: string[]
   /** Reads that fail the build. */
   findings: Finding[]
-  /** Late bindings copied into a bundler namespace object: reported, not failing. */
-  notes: Finding[]
   /** The chunks that are late wherever they sit (the HSM engine), and which of them are wrapped. */
   alwaysLate: { found: string[]; wrapped: string[] }
 }
@@ -158,46 +163,6 @@ const isFunctionNode = (node: AstNode): boolean =>
   node?.type === 'FunctionDeclaration' ||
   node?.type === 'FunctionExpression' ||
   node?.type === 'ArrowFunctionExpression'
-
-/** `Object.freeze(...)`, `Object.defineProperty(...)`, `Promise.all(...)` */
-const isStaticCall = (node: AstNode, object: string, method: string): boolean =>
-  node?.type === 'CallExpression' &&
-  node.callee?.type === 'MemberExpression' &&
-  node.callee.object?.type === 'Identifier' &&
-  node.callee.object.name === object &&
-  node.callee.property?.type === 'Identifier' &&
-  node.callee.property.name === method
-
-/**
- * The bundler's own module-namespace object:
- * `Object.freeze(Object.defineProperty({ __proto__: null, a: x, ... }, Symbol.toStringTag,
- * { value: "Module" }))`. Only this exact shape; any other `Object.freeze` is code someone wrote.
- */
-function isModuleNamespaceObject(node: AstNode): boolean {
-  if (!isStaticCall(node, 'Object', 'freeze')) return false
-  const inner = node.arguments?.[0]
-  if (!isStaticCall(inner, 'Object', 'defineProperty')) return false
-  const [object, tag, descriptor] = inner.arguments ?? []
-  const first = object?.type === 'ObjectExpression' ? object.properties?.[0] : undefined
-  return (
-    first?.type === 'Property' &&
-    nameOf(first.key) === '__proto__' &&
-    first.value?.type === 'Literal' &&
-    first.value.value === null &&
-    tag?.type === 'MemberExpression' &&
-    tag.object?.type === 'Identifier' &&
-    tag.object.name === 'Symbol' &&
-    tag.property?.name === 'toStringTag' &&
-    descriptor?.type === 'ObjectExpression' &&
-    descriptor.properties?.some(
-      (p: AstNode) =>
-        p.type === 'Property' &&
-        nameOf(p.key) === 'value' &&
-        p.value?.type === 'Literal' &&
-        p.value.value === 'Module'
-    )
-  )
-}
 
 /** Chunks named by an import() written inside a function (not at the top level, not in the wrapper). */
 function collectDeferredLoads(ast: AstNode): Set<string> {
@@ -361,9 +326,8 @@ function findEagerReads(
   chunk: ParsedChunk,
   unsafe: Map<string, Unsafe>,
   namespaces: Map<string, { source: string; target: ParsedChunk }>
-): { reads: Finding[]; captured: Finding[] } {
+): Finding[] {
   const reads: Finding[] = []
-  const captured: Finding[] = []
   const record = (into: Finding[], node: AstNode, localName: string, info: Unsafe) => {
     into.push({
       file: chunk.file,
@@ -373,9 +337,8 @@ function findEagerReads(
       line: node.loc?.start?.line ?? 0,
     })
   }
-  const walk = (node: AstNode, deferred: boolean, parent: AstNode, inNamespace: boolean): void => {
+  const walk = (node: AstNode, deferred: boolean, parent: AstNode): void => {
     if (!node || typeof node.type !== 'string') return
-    const into = inNamespace ? captured : reads
 
     if (!deferred && node.type === 'Identifier' && unsafe.has(node.name) && parent) {
       // `import { X as local }` and `export { local as Y }` are wiring, not reads: a re-export
@@ -386,7 +349,7 @@ function findEagerReads(
         parent.type !== 'ImportNamespaceSpecifier' &&
         parent.type !== 'ExportSpecifier'
       ) {
-        record(into, node, node.name, unsafe.get(node.name)!)
+        record(reads, node, node.name, unsafe.get(node.name)!)
         return
       }
     }
@@ -404,12 +367,14 @@ function findEagerReads(
           : undefined
         : node.property?.name
       if (member !== undefined && isDelayedExport(ns.target, member)) {
-        record(into, node, `${node.object.name}.${member}`, { imported: member, source: ns.source })
+        record(reads, node, `${node.object.name}.${member}`, {
+          imported: member,
+          source: ns.source,
+        })
         return
       }
     }
 
-    const entersNamespace = isModuleNamespaceObject(node)
     const isInvokedAtOnce =
       isFunctionNode(node) && parent?.type === 'CallExpression' && parent.callee === node
     const isCalledBeforeReturn =
@@ -444,16 +409,16 @@ function findEagerReads(
       if (Array.isArray(value)) {
         for (const child of value) {
           if (child && typeof child.type === 'string') {
-            walk(child, nextDeferred, node, inNamespace || entersNamespace)
+            walk(child, nextDeferred, node)
           }
         }
       } else if (value && typeof value.type === 'string') {
-        walk(value, nextDeferred, node, inNamespace || entersNamespace)
+        walk(value, nextDeferred, node)
       }
     }
   }
-  walk(chunk.ast, false, null, false)
-  return { reads, captured }
+  walk(chunk.ast, false, null)
+  return reads
 }
 
 /**
@@ -522,7 +487,6 @@ export function analyzeBuild(
   }
 
   const findings: Finding[] = []
-  const notes: Finding[] = []
   for (const chunk of chunks.values()) {
     const awaited = new Set<string>()
     for (const { imported, source } of chunk.imports.values()) {
@@ -550,9 +514,7 @@ export function analyzeBuild(
       unsafe.set(local, { imported, source })
     }
     if (unsafe.size === 0 && namespaces.size === 0) continue
-    const { reads, captured } = findEagerReads(chunk, unsafe, namespaces)
-    findings.push(...reads)
-    notes.push(...captured)
+    findings.push(...findEagerReads(chunk, unsafe, namespaces))
   }
 
   // One finding per chunk and binding is enough to act on.
@@ -571,7 +533,6 @@ export function analyzeBuild(
     startup: startup.size,
     lateWrapped,
     findings: unique(findings),
-    notes: unique(notes),
     alwaysLate: { found, wrapped: found.filter((f) => chunks.get(f)!.isWrapped) },
   }
 }

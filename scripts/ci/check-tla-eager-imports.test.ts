@@ -19,6 +19,9 @@ const WRAPPED =
 const PLAIN = 'const h = () => 1\nexport { h as a }\n'
 const LATE_READER = 'import { a as p } from "./softhsm-0002.js"\nexport const f = () => p()\n'
 const EAGER_READER = 'import { a as p } from "./softhsm-0002.js"\nexport const T = { k: p }\n'
+// What the bundler emits for the namespace of a module loaded with import(): copies, not live bindings.
+const NAMESPACE_READER =
+  'import { a as p } from "./softhsm-0002.js"\nexport const Rt = Object.freeze(Object.defineProperty({ __proto__: null, member: p }, Symbol.toStringTag, { value: "Module" }))\n'
 
 const dirs: string[] = []
 afterEach(() => {
@@ -56,6 +59,13 @@ describe('check-tla-eager-imports: exit codes', () => {
     expect(r.code).toBe(1)
     expect(r.out).toContain('READ(S) OF AN EXPORT THAT IS NOT READY YET')
     expect(r.out).toContain('page-0003.js:2')
+  }, 60_000)
+
+  it('1 when a bundler namespace object copies a late export', () => {
+    const r = run({ 'softhsm-0002.js': WRAPPED, 'pqc-0003.js': NAMESPACE_READER })
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('pqc-0003.js:2')
+    expect(r.out).toContain('import that binding from the module that defines it')
   }, 60_000)
 
   it('1 when the HSM engine chunk is gone, so the check would examine nothing', () => {

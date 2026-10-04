@@ -69,18 +69,6 @@ if (analysis.lateWrapped.length === 0) {
   )
 }
 
-// Values the bundler copied into a namespace object while they were not ready yet.
-if (analysis.notes.length > 0) {
-  console.warn(
-    `\n⚠ ${analysis.notes.length} late binding(s) are copied into a bundler namespace object, so the copy may be ` +
-      'undefined if that object is\n  read before the source chunk has finished (not a failure; see the limits in ' +
-      'scripts/lib/tlaEagerImports.ts):'
-  )
-  for (const n of analysis.notes) {
-    console.warn(`  • ${n.file}:${n.line}: \`${n.importedName}\` from ${n.source}`)
-  }
-}
-
 if (analysis.findings.length === 0) {
   if (vacuous) process.exit(1)
   console.log('\n✔ no chunk reads an export of a still-starting chunk while it starts up\n')
@@ -99,6 +87,9 @@ console.error(
   '\n  In production the binding is undefined (or not a function) at that moment, although dev and\n' +
     '  vitest never see it, and the page that needs this chunk never finishes loading. Fix: read it\n' +
     '  inside a function that runs later, or keep the dynamic import() out of any module that several\n' +
-    "  chunks import statically (load it with React.lazy). See this script's header comment.\n"
+    '  chunks import statically (load it with React.lazy). If the read is a bundler namespace object\n' +
+    '  (`Object.freeze(Object.defineProperty({ __proto__: null, ... }))`), the module is loaded with import()\n' +
+    '  and re-exports a binding of the wrapped chunk: import that binding from the module that defines it.\n' +
+    "  See this script's header comment.\n"
 )
 process.exit(1)

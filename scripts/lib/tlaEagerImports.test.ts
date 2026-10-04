@@ -36,7 +36,6 @@ describe('analyzeBuild: a clean build', () => {
     expect(a.chunks).toBe(3)
     expect(a.startup).toBe(1)
     expect(a.lateWrapped).toEqual(['src-0002.js'])
-    expect(a.notes).toEqual([])
   })
 })
 
@@ -268,7 +267,8 @@ describe('analyzeBuild: chunks the source itself loads after it has run', () => 
 })
 
 describe('analyzeBuild: Object.freeze and the bundler namespace object', () => {
-  // The shape the bundler emits for a module's namespace, as found in a saved build.
+  // The shape the bundler emits for the namespace of a module loaded with import(), as found in a
+  // saved build: every member is a copy of the value at that moment, not a live binding.
   const NAMESPACE = (members: string) =>
     `export const Rt = Object.freeze(Object.defineProperty({ __proto__: null, ${members} }, Symbol.toStringTag, { value: "Module" }))`
 
@@ -278,40 +278,22 @@ describe('analyzeBuild: Object.freeze and the bundler namespace object', () => {
     ])
   })
 
-  it.each([
-    [
-      'no __proto__ first',
-      'Object.freeze(Object.defineProperty({ other: null, compare: p }, Symbol.toStringTag, { value: "Module" }))',
-    ],
-    [
-      'a tag that is not Symbol.toStringTag',
-      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, "tag", { value: "Module" }))',
-    ],
-    [
-      'a tag value that is not Module',
-      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, Symbol.toStringTag, { value: "Other" }))',
-    ],
-    [
-      'Symbol.iterator instead of the tag',
-      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, Symbol.iterator, { value: "Module" }))',
-    ],
-    ['no defineProperty', 'Object.freeze({ __proto__: null, compare: p })'],
-  ])('an object that only looks like the namespace shape (%s) is still a read', (_name, expr) => {
-    expect(found(withRead(`export const t = ${expr}`))).toEqual(['page-0003.js:p'])
-  })
-
-  it('the namespace object is not a failure, but the late binding it copies is a note', () => {
+  it('the exact namespace shape fails too: its copy of a late binding stays undefined for good', () => {
     const a = withRead(NAMESPACE('local: 1, member: p'))
-    expect(a.findings).toEqual([])
-    expect(a.notes).toEqual<Finding[]>([
+    expect(a.findings).toEqual<Finding[]>([
       { file: 'page-0003.js', localName: 'p', importedName: 'a', source: SOURCE, line: 2 },
     ])
   })
 
-  it('a namespace object that copies nothing late has no notes', () => {
-    const a = withRead(NAMESPACE('local: 1, member: p'), PLAIN)
-    expect(a.notes).toEqual([])
-    expect(a.findings).toEqual([])
+  it('copies of bindings that are ready, or of a source that is not wrapped, are fine', () => {
+    expect(withRead(NAMESPACE('local: 1, member: p'), PLAIN).findings).toEqual([])
+    expect(withRead(NAMESPACE('local: 1')).findings).toEqual([])
+  })
+
+  it('a version that reads through a getter looks the binding up later, so it is fine', () => {
+    const getter =
+      'export const Rt = Object.freeze(Object.defineProperty({ __proto__: null, get member() { return p } }, Symbol.toStringTag, { value: "Module" }))'
+    expect(withRead(getter).findings).toEqual([])
   })
 })
 
