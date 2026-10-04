@@ -175,7 +175,7 @@ export const HNDLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
-            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={5} collapsible />
+            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={4} collapsible />
             <p className="text-[10px] text-muted-foreground mt-2">
               <strong>Fast-clock CRQCs</strong> (superconducting, photonic) arriving first enable
               &quot;on-spend&quot; interception of unconfirmed transactions. Slow-clock CRQCs

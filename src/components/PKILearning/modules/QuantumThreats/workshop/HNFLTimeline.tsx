@@ -182,7 +182,7 @@ export const HNFLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
-            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={5} collapsible />
+            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={4} collapsible />
             <p className="text-[10px] text-muted-foreground mt-2">
               <strong>Fast-clock CRQCs</strong> (superconducting, photonic) enable
               &quot;on-setup&quot; key compromise during handshakes. Once a CRQC can forge

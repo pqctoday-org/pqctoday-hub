@@ -119,8 +119,9 @@ const Sources: React.FC<{ claim: OpenClaim; level: HeadingLevel }> = ({ claim, l
         data-testid={sideBySide ? 'claim-sources-side-by-side' : 'claim-sources'}
         className={cn('gap-3', sideBySide ? 'grid grid-cols-1 sm:grid-cols-2' : 'flex flex-col')}
       >
-        {claim.sources.map((s) => (
-          <SourceBlock key={`${s.name}|${s.url}`} source={s} />
+        {claim.sources.map((s, i) => (
+          // the same source can appear twice with different quotes, so the position joins the key
+          <SourceBlock key={`${i}|${s.name}|${s.url}`} source={s} />
         ))}
       </ul>
     </div>
@@ -136,8 +137,8 @@ const WhatChanged: React.FC<{ changes: ClaimChange[] }> = ({ changes }) => (
       What changed ({changes.length} {changes.length === 1 ? 'point' : 'points'})
     </summary>
     <ul className="space-y-3 px-3 pb-3 pt-1">
-      {changes.map((c) => (
-        <li key={c.point} className="space-y-1.5">
+      {changes.map((c, i) => (
+        <li key={`${i}|${c.point}`} className="space-y-1.5">
           <p className="font-medium text-foreground">{c.point}</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="space-y-1 rounded border border-border bg-card p-2">
@@ -280,9 +281,9 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({
         <div className="space-y-2">
           <Sub className="text-xs font-semibold text-foreground">Earlier statements</Sub>
           <ul className="space-y-3">
-            {claim.earlier.map((e) => (
+            {claim.earlier.map((e, i) => (
               <EarlierStatement
-                key={e.claim}
+                key={`${i}|${e.claim}`}
                 link={e}
                 headingLevel={headingLevel}
                 lookup={lookup}

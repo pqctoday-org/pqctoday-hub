@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { ClaimCard, ClaimList, ClaimStateMark } from './ClaimCard'
@@ -132,6 +132,50 @@ describe('ClaimCard', () => {
   it('shows a Superseded claim as replaced, not as the answer', () => {
     render(<ClaimCard claim={claim({ id: 'old', state: 'Superseded', supersededBy: 'new' })} />)
     expect(screen.getByTestId('claim-state')).toHaveTextContent('Replaced by a newer statement')
+  })
+})
+
+describe('ClaimCard with repeated sources', () => {
+  it('renders two quotes from the same document without a duplicate-key warning', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const same = {
+      name: 'Same Report',
+      url: 'https://example.org/same',
+      states: 'It says A',
+      quote: 'first words',
+    }
+    render(
+      <ClaimCard
+        claim={claim({
+          id: 'dup',
+          sources: [same, { ...same, states: 'It says B', quote: 'second words' }],
+          earlier: [
+            {
+              claim: 'dup',
+              relation: 'updates',
+              detail: 'detail',
+              madeBy: 'Same Body',
+              url: null,
+              changes: [
+                {
+                  point: 'Same point',
+                  before: { text: 'a', quote: 'qa' },
+                  after: { text: 'b', quote: 'qb' },
+                },
+                {
+                  point: 'Same point',
+                  before: { text: 'c', quote: 'qc' },
+                  after: { text: 'd', quote: 'qd' },
+                },
+              ],
+            },
+          ],
+        })}
+      />
+    )
+    expect(screen.getAllByTestId('claim-source')).toHaveLength(2)
+    expect(spy.mock.calls.flat().join(' ')).not.toMatch(/same key/i)
+    spy.mockRestore()
   })
 })
 
