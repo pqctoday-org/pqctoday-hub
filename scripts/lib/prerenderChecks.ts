@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { JSDOM } from 'jsdom'
 import { minimumContentCharacters, type SearchRoute } from '../../src/seo/searchRoutes'
+import { SNAPSHOT_MAX_BYTES, byteLength } from './snapshotBudget'
 
 export interface SnapshotCheckResult {
   route: string
   chars: number
   h1Count: number
+  /** Size of the saved page, uncompressed. */
+  bytes: number
   errors: string[]
 }
 
@@ -21,6 +24,7 @@ export function validateSnapshot(html: string, route: SearchRoute): SnapshotChec
   const description = document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content
   const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')?.content ?? ''
   const errors: string[] = []
+  const bytes = byteLength(html)
 
   if (!root) errors.push('missing #root')
   if (root?.dataset.prerenderRoute !== route.path)
@@ -41,5 +45,54 @@ export function validateSnapshot(html: string, route: SearchRoute): SnapshotChec
   if (route.index && /noindex/i.test(robots)) errors.push('indexable route has noindex')
   if (!route.index && !/noindex/i.test(robots)) errors.push('non-indexed route lacks noindex')
 
-  return { route: route.path, chars: text.length, h1Count: headings.length, errors }
+  if (bytes > SNAPSHOT_MAX_BYTES)
+    errors.push(
+      `saved page is ${(bytes / 1048576).toFixed(2)} MB; the limit is ${(SNAPSHOT_MAX_BYTES / 1048576).toFixed(1)} MB because search engines read only the first 2 MB`
+    )
+
+  return { route: route.path, chars: text.length, h1Count: headings.length, bytes, errors }
+}
+
+/** What the page looked like when a route never reached its ready state. */
+export interface ReadinessFacts {
+  /** `data-prerender-route` on #root, or null when absent. */
+  routeMarker: string | null
+  /** `data-prerender-state` on #root, or null when absent. */
+  state: string | null
+  regionFound: boolean
+  h1Count: number
+  chars: number
+  disclaimerOpen: boolean
+  /** First characters of the content region's text. */
+  opening: string
+}
+
+/**
+ * Plain-language reason a route never became ready, for the build log. "Timeout 30000ms exceeded"
+ * says nothing about which condition was unmet; this names it and points at the likeliest cause.
+ */
+export function describeReadinessFailure(route: SearchRoute, facts: ReadinessFacts): string {
+  const minimum = minimumContentCharacters(route)
+  const seen = [
+    `route marker ${facts.routeMarker ?? 'absent'} (wanted ${route.path})`,
+    `state ${facts.state ?? 'absent'} (wanted ready)`,
+    facts.regionFound
+      ? `region ${route.contentRegion} present`
+      : `region ${route.contentRegion} missing`,
+    `${facts.h1Count} <h1> (wanted 1)`,
+    `${facts.chars} characters (wanted at least ${minimum})`,
+    facts.disclaimerOpen ? 'disclaimer dialog open' : 'no disclaimer dialog',
+  ].join('; ')
+
+  let hint = ''
+  if (facts.disclaimerOpen) hint = 'the first-visit dialog was not suppressed'
+  else if (facts.routeMarker !== null && facts.routeMarker !== route.path)
+    hint = 'the page ended up on a different route'
+  else if (!facts.regionFound) hint = 'the page never rendered its content region'
+  else if (PLACEHOLDER.test(facts.opening)) hint = 'the page is still showing a loading state'
+  else if (facts.h1Count !== 1) hint = 'the content region does not have exactly one <h1>'
+  else if (facts.chars < minimum) hint = 'the content region is too short'
+
+  const opening = facts.opening ? `; content starts "${facts.opening}"` : ''
+  return `route readiness never reached: ${seen}${hint ? `; likely cause: ${hint}` : ''}${opening}`
 }

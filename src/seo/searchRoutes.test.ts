@@ -2,7 +2,9 @@
 import { describe, expect, it } from 'vitest'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { ROUTE_META } from './routeMeta'
+import { TOOL_ROUTE_META } from './toolRouteMeta.generated'
 import { SEARCH_ROUTES, getSearchRoute, indexableRoutes } from './searchRoutes'
 
 const LAB_PATHS = [
@@ -36,7 +38,11 @@ describe('search route manifest', () => {
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'browser-tool')).toHaveLength(34)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'sandbox-tool')).toHaveLength(24)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'lab')).toHaveLength(4)
-    expect(indexableRoutes()).toHaveLength(186)
+    // Pages other than Learn modules are pinned; the Learn module pages and the total follow from the
+    // module catalog and the two sources, so adding a module or a tool does not need a second edit here.
+    expect(SEARCH_ROUTES.filter((route) => route.kind === 'page')).toHaveLength(26)
+    expect(SEARCH_ROUTES.filter((route) => route.kind === 'learn')).toHaveLength(MANIFESTS.length)
+    expect(indexableRoutes()).toHaveLength(Object.keys(ROUTE_META).length + TOOL_ROUTE_META.length)
   })
 
   it('gives tool routes unique metadata and a content region', () => {
@@ -47,5 +53,13 @@ describe('search route manifest', () => {
       expect(route.contentRegion).toBe('#main-content')
       expect(getSearchRoute(`${route.path}/`)).toEqual(route)
     }
+  })
+})
+
+describe('the tool count quoted in page copy is the real one', () => {
+  it('is the number of Business Tools in the registry', () => {
+    expect(ROUTE_META['/business/tools']!.description).toContain(
+      `${BUSINESS_TOOLS.length} interactive business planning tools`
+    )
   })
 })

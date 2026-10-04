@@ -132,6 +132,32 @@ describe('Crypto Lab Workbench', () => {
     expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
   })
 
+  describe('card interactions', () => {
+    const renderBlockchainTools = () =>
+      renderWorkbench('/playground?cat=Blockchain%20%26%20Digital%20Assets')
+
+    it('opens the preview when any part of the card is clicked, as it always has', () => {
+      renderBlockchainTools()
+      const description = WORKSHOP_TOOLS.find((t) => t.id === 'bitcoin-flow')!.description
+      fireEvent.click(screen.getByText(description))
+      expect(screen.getByRole('dialog', { name: 'Bitcoin Transaction' })).toBeInTheDocument()
+    })
+
+    it('keeps the tool name a real link to the tool page, and following it does not open the preview', () => {
+      renderBlockchainTools()
+      const link = screen.getByRole('link', { name: 'Bitcoin Transaction' })
+      expect(link).toHaveAttribute('href', '/playground/bitcoin-flow')
+      fireEvent.click(link)
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+
+    it('opens one preview, not two, when the Preview button is used', () => {
+      renderBlockchainTools()
+      fireEvent.click(screen.getAllByRole('button', { name: 'Preview' })[0])
+      expect(screen.getAllByRole('dialog')).toHaveLength(1)
+    })
+  })
+
   it('defaults to the browser catalogue and keeps the hidden container count visible', () => {
     // WS6a-bis: WORKSHOP_TOOLS carries 24 Docker scenarios, so an 'all' default
     // meant ~41% of the cards on screen could not run in the browser at all.

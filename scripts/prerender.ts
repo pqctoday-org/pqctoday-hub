@@ -17,14 +17,19 @@
  * with the sitemap generator) so it can never drift out of sync with the app.
  */
 
-import { chromium, type Browser } from 'playwright'
+import { chromium, type Browser, type Page } from 'playwright'
 import { createServer, type Server } from 'http'
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname, extname } from 'path'
 import { fileURLToPath } from 'url'
 import { SEARCH_ROUTES, type SearchRoute } from '../src/seo/searchRoutes'
 import { chromiumLaunchArgs } from './lib/chromiumLaunchArgs'
-import { validateSnapshot } from './lib/prerenderChecks'
+import {
+  describeReadinessFailure,
+  validateSnapshot,
+  type ReadinessFacts,
+} from './lib/prerenderChecks'
+import { boundSnapshot, type BoundResult } from './lib/snapshotBudget'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = join(__dirname, '..', 'dist')
@@ -138,11 +143,37 @@ function outputPathsFor(route: string): string[] {
 
 const normalize = (p: string) => (p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p)
 
+/** "0.98 MB", plus what was compacted when the page was over the target size. */
+function sizeNote({ bytes, originalBytes, compacted }: BoundResult): string {
+  const mb = (n: number) => `${(n / 1048576).toFixed(2)} MB`
+  return compacted
+    ? `${mb(bytes)}, compacted from ${mb(originalBytes)}: first ${compacted.intact} of ${compacted.items} items kept as captured`
+    : mb(bytes)
+}
+
+/** Collect what the page shows right now, for the error message when a route never becomes ready. */
+function readinessFacts(page: Page, contentRegion: string): Promise<ReadinessFacts> {
+  return page.evaluate((selector) => {
+    const root = document.querySelector<HTMLElement>('#root')
+    const region = document.querySelector(selector)
+    const text = region?.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+    return {
+      routeMarker: root?.dataset.prerenderRoute ?? null,
+      state: root?.dataset.prerenderState ?? null,
+      regionFound: region !== null,
+      h1Count: region?.querySelectorAll('h1').length ?? 0,
+      chars: text.length,
+      disclaimerOpen: document.querySelector('#disclaimer-title') !== null,
+      opening: text.slice(0, 70),
+    }
+  }, contentRegion)
+}
+
 async function renderRoute(
   browser: Browser,
   baseUrl: string,
   route: SearchRoute
-): Promise<{ chars: number; h1Count: number }> {
+): Promise<{ chars: number; h1Count: number; saved: BoundResult }> {
   const page = await browser.newPage()
   try {
     // Belt-and-suspenders: never let the COI reload guard fire mid-capture.
@@ -179,18 +210,28 @@ async function renderRoute(
         return page.waitForSelector('main, [role="main"], h1', { timeout: 4000 }).catch(() => {})
       })
 
-    await page.waitForFunction(
-      ({ path, selector }) => {
-        const root = document.querySelector<HTMLElement>('#root')
-        return (
-          root?.dataset.prerenderRoute === path &&
-          root.dataset.prerenderState === 'ready' &&
-          document.querySelector(selector) !== null
-        )
-      },
-      { path: route.path, selector: route.contentRegion },
-      { timeout: 30000 }
-    )
+    try {
+      await page.waitForFunction(
+        ({ path, selector }) => {
+          const root = document.querySelector<HTMLElement>('#root')
+          return (
+            root?.dataset.prerenderRoute === path &&
+            root.dataset.prerenderState === 'ready' &&
+            document.querySelector(selector) !== null
+          )
+        },
+        { path: route.path, selector: route.contentRegion },
+        { timeout: 30000 }
+      )
+    } catch (timeout) {
+      // "Timeout 30000ms exceeded" does not say which condition was unmet; report what the page showed.
+      const facts = await readinessFacts(page, route.contentRegion).catch(() => null)
+      throw new Error(
+        facts
+          ? describeReadinessFailure(route, facts)
+          : `route readiness never reached: the page could not be inspected (${String(timeout).split('\n')[0]})`
+      )
+    }
 
     // Let any remaining synchronous render flush.
     await page.waitForTimeout(250)
@@ -207,13 +248,16 @@ async function renderRoute(
       }
     })
 
-    const html = stripRuntimeInjectedPreloads(await page.content())
-    const result = validateSnapshot(html, route)
+    // A page that is one very long list is compacted below the fold (nothing is dropped; boundSnapshot
+    // proves it), and what is saved is the compacted copy, so the size gate in validateSnapshot judges
+    // the page as published.
+    const saved = boundSnapshot(stripRuntimeInjectedPreloads(await page.content()))
+    const result = validateSnapshot(saved.html, route)
     if (result.errors.length > 0) {
       throw new Error(result.errors.join('; '))
     }
-    for (const out of outputPathsFor(route.path)) writeFileSync(out, html, 'utf-8')
-    return { chars: result.chars, h1Count: result.h1Count }
+    for (const out of outputPathsFor(route.path)) writeFileSync(out, saved.html, 'utf-8')
+    return { chars: result.chars, h1Count: result.h1Count, saved }
   } finally {
     await page.close()
   }
@@ -249,14 +293,14 @@ async function prerender(): Promise<void> {
       try {
         const result = await renderRoute(browser, baseUrl, route)
         console.log(
-          `  ✓ ${route.path}  (${result.chars} chars, h1 ${result.h1Count})  (${++done}/${ROUTES.length})`
+          `  ✓ ${route.path}  (${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)})  (${++done}/${ROUTES.length})`
         )
       } catch {
         // One retry — these failures are almost always transient timeouts.
         try {
           const result = await renderRoute(browser, baseUrl, route)
           console.log(
-            `  ✓ ${route.path}  (retry; ${result.chars} chars, h1 ${result.h1Count}) (${++done}/${ROUTES.length})`
+            `  ✓ ${route.path}  (retry; ${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)}) (${++done}/${ROUTES.length})`
           )
         } catch (err2) {
           const error = err2 instanceof Error ? err2.message : String(err2)
