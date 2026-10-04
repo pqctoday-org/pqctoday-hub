@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/** Product → maintainer Community links (open_source_maintainers). Real data. */
+/**
+ * Product → maintainer Community links (open_source_maintainers). Real data. The list is a lazily
+ * loaded component (see ProductMaintainers.tsx), so each test waits for it to appear.
+ */
 import { describe, it, expect } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
@@ -31,7 +34,7 @@ describe('ProductDetail — open-source maintainers', () => {
 
   it('links each maintainer with a Community profile to /leaders?leader=<leader_id>', async () => {
     renderDetail()
-    const section = screen.getByTestId('product-maintainers')
+    const section = await screen.findByTestId('product-maintainers')
     for (const m of links.filter((l) => l.leader)) {
       const a = await within(section).findByRole('link', { name: m.name })
       expect(a).toHaveAttribute('href', `/leaders?leader=${encodeURIComponent(m.leader!.leaderId)}`)
@@ -40,7 +43,7 @@ describe('ProductDetail — open-source maintainers', () => {
 
   it('shows the rest as plain text, without the forge handle', async () => {
     renderDetail()
-    const section = screen.getByTestId('product-maintainers')
+    const section = await screen.findByTestId('product-maintainers')
     const linked = links.find((l) => l.leader)!
     await within(section).findByRole('link', { name: linked.name })
     for (const m of links.filter((l) => !l.leader)) {

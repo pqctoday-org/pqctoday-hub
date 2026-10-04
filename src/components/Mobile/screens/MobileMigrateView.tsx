@@ -1,5 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   ArrowRight,
@@ -11,7 +20,6 @@ import {
   BookText,
   Plus,
   Search,
-  Users,
   X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,11 +64,6 @@ import {
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
-import {
-  leaderProfileHref,
-  maintainerLinksFor,
-  useLeadersRoster,
-} from '@/components/Migrate/Workbench/maintainerLeaders'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
@@ -74,6 +77,9 @@ import type {
 } from '@/types/MigrateTypes'
 import { deriveVendorRoadmapDisplay } from '@/components/Migrate/vendorRoadmapDisplay'
 import { MobileSheet } from '../primitives/Sheet'
+
+// Its own chunk, never a static import: see ProductMaintainers.tsx.
+const ProductMaintainers = lazy(() => import('@/components/Migrate/Workbench/ProductMaintainers'))
 
 const CERT_TYPE_ORDER: CertificationXref['certType'][] = [
   'FIPS 140-3',
@@ -1058,10 +1064,6 @@ function MobileProductDetailSheet({
   // real text now, alongside the capabilities it qualifies.
   const proof = product ? proofFreshness(product) : null
 
-  // Same maintainer → Community profile links as desktop's ProductDetail.
-  const leadersRoster = useLeadersRoster((product?.openSourceMaintainers?.length ?? 0) > 0)
-  const maintainers = product ? maintainerLinksFor(product, leadersRoster) : []
-
   // Real production feedback, 2026-08-27: the row shows the PQC-support tier
   // (Yes/Partial/No) and FIPS badge, but tapping into this sheet never
   // repeated them — a reader scrolling the sheet had no way to recheck that
@@ -1175,29 +1177,10 @@ function MobileProductDetailSheet({
             )}
           </div>
 
-          {maintainers.length > 0 && (
-            <div data-testid="product-maintainers">
-              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                Open-source maintainers
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-foreground/90">
-                {maintainers.map((m, i) => (
-                  <li key={`${m.name}-${i}`}>
-                    {m.leader ? (
-                      <Link
-                        to={leaderProfileHref(m.leader)}
-                        className="inline-flex min-h-[32px] items-center gap-1 font-semibold text-primary hover:underline"
-                      >
-                        <Users size={12} aria-hidden="true" />
-                        {m.name}
-                      </Link>
-                    ) : (
-                      m.name
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {(product.openSourceMaintainers?.length ?? 0) > 0 && (
+            <Suspense fallback={null}>
+              <ProductMaintainers product={product} variant="phone" />
+            </Suspense>
           )}
 
           {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (

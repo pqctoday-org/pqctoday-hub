@@ -25,7 +25,7 @@ describe('MobileMigrateView — product sheet maintainers', () => {
       </MemoryRouter>
     )
     const sheet = screen.getByTestId('migrate-product-detail-sheet')
-    const section = within(sheet).getByTestId('product-maintainers')
+    const section = await within(sheet).findByTestId('product-maintainers')
     const linked = maintainerLinksFor(product, leadersData).find((m) => m.leader)!
     const a = await within(section).findByRole('link', { name: linked.name })
     expect(a).toHaveAttribute(
