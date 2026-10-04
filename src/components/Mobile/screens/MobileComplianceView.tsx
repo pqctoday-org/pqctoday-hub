@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   ArrowRight,
   ChevronDown,
   ExternalLink,
   Globe,
+  FileText,
   ListChecks,
+  Search,
   ShieldCheck,
   Users,
 } from 'lucide-react'
@@ -44,6 +46,18 @@ import { CSWP39_STEPS, CSWP39_SOURCE_METADATA } from '@/components/Compliance/cs
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/redesign/pillarModel'
 import { pillClasses, TONES } from '@/components/Compliance/redesign/tones'
+import {
+  applyRecordScope,
+  cavpValidationUrl,
+  formatIsoDate,
+  isSecurityTargetType,
+  pqcCoverageState,
+  pqcEvidenceLabel,
+  pqcNames,
+  recordTypeDescription,
+  recordTypeLabel,
+  statusBadgeClass,
+} from '@/components/Compliance/recordSemantics'
 import { MobileSheet } from '../primitives/Sheet'
 
 /** Never let a malformed URL crash the sheet — falls back to the raw string. */
@@ -116,7 +130,8 @@ function sectionFromTabParam(
 /**
  * The record fields this screen shows for a `?cert=` link — structurally a
  * subset of Compliance's ComplianceRecord (the desktop record popover and the
- * record type live behind the mobile import boundary).
+ * record type live behind the mobile import boundary), covering every field
+ * the desktop ComplianceDetailPopover renders.
  */
 export interface MobileCertRecord {
   id: string
@@ -129,6 +144,61 @@ export interface MobileCertRecord {
   productCategory: string
   vendor: string
   certificationLevel?: string
+  pqcCoverage?: boolean | string
+  classicalAlgorithms?: string
+  lab?: string
+  certificationReportUrls?: readonly string[]
+  securityTargetUrls?: readonly string[]
+  additionalDocuments?: ReadonlyArray<{ name: string; url: string }>
+  sourceConflicts?: ReadonlyArray<{
+    field: string
+    note?: string
+    values: ReadonlyArray<{ value: string; source: string; url?: string }>
+  }>
+  ccArchivedDate?: string | null
+  // FIPS 140-3 (NIST CMVP certificate page)
+  cmvpStandard?: string
+  cmvpStatus?: string
+  cmvpHistoricalReason?: string | null
+  cmvpDetailsFetchedAt?: string
+  cmvpApprovedAlgorithms?: ReadonlyArray<{ name: string; cavpRefs: readonly string[] }>
+  sunsetDate?: string | null
+  overallLevel?: number | null
+  caveat?: string
+  embodiment?: string
+  moduleType?: string
+  operationalEnvironments?: readonly string[] | null
+  // NIST CAVP validation details page
+  cavpFirstValidated?: string
+  cavpImplementationVersion?: string
+  cavpImplementationType?: string
+  cavpProductUrl?: string
+  cavpCapabilities?: ReadonlyArray<{
+    algorithm: string
+    operatingEnvironment: string
+    parameterSets: readonly string[]
+    functions: readonly string[]
+  }>
+}
+
+/** Records listed on the phone before asking the reader to refine the search. */
+const RECORD_PHONE_LIMIT = 20
+
+/**
+ * Same match as desktop's matchesRecordText (Compliance/recordFilters.ts —
+ * behind the mobile import boundary because it also pulls in a desktop
+ * filter component): product, vendor, source, type label, certificate id.
+ */
+function matchesRecordSearch(record: MobileCertRecord, text: string): boolean {
+  const s = text.trim().toLowerCase()
+  if (!s) return true
+  return (
+    record.productName.toLowerCase().includes(s) ||
+    record.vendor.toLowerCase().includes(s) ||
+    record.source.toLowerCase().includes(s) ||
+    recordTypeLabel(record.type).toLowerCase().includes(s) ||
+    record.id.toLowerCase().includes(s)
+  )
 }
 
 const TIER_TONE: Record<ApplicabilityTier, string> = {
@@ -258,6 +328,27 @@ export function MobileComplianceView({
 
   const certRecord = certParam ? (records?.find((r) => r.id === certParam) ?? null) : null
   const certNotFound = !!certParam && recordsLoaded && !certRecord
+
+  // Records search — the same `?q=` / `?rstatus=all` params desktop's records
+  // table reads (default scope: current records only, newest first), so a
+  // link shared from either opens the same list on the other.
+  const recordQuery = searchParams.get('q') ?? ''
+  const recordScope = searchParams.get('rstatus') === 'all' ? 'all' : 'current'
+  const recordMatches = useMemo(
+    () =>
+      records
+        ? applyRecordScope(records, recordScope)
+            .filter((r) => matchesRecordSearch(r, recordQuery))
+            .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+        : [],
+    [records, recordScope, recordQuery]
+  )
+  const hasRecordList = !!records && records.length > 0
+  // The glossary is the whole section when there is no record list; with one,
+  // it folds away under a toggle below the list.
+  const [glossaryToggled, setGlossaryToggled] = useState<boolean | null>(null)
+  const glossaryOpen = glossaryToggled ?? !hasRecordList
+  const openRecord = (id: string) => setParam('cert', id, false)
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const { profile, isEmpty } = useApplicability()
@@ -583,18 +674,106 @@ export function MobileComplianceView({
 
       {section === 'records' && (
         <div className="flex flex-col gap-3">
-          <p className="text-[11.5px] leading-relaxed text-muted-foreground">
-            {RECORDS_GLOSSARY.length} terms that gate the rest of this tab.
-          </p>
-          {RECORDS_GLOSSARY.map((t) => (
-            <div key={t.term} className="glass-panel p-3">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-[12.5px] font-bold text-foreground">{t.term}</span>
-                <span className="text-[10.5px] text-muted-foreground">{t.short}</span>
+          {records && !hasRecordList && !recordsLoaded && (
+            <p className="text-[11.5px] text-muted-foreground">Loading certification records…</p>
+          )}
+          {hasRecordList && (
+            <section aria-label="Certification records" className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 rounded-[10px] border border-border bg-card px-3">
+                <Search size={14} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <input
+                  type="search"
+                  value={recordQuery}
+                  onChange={(e) => setSectionParams('records', { q: e.target.value || null })}
+                  placeholder="Search product, vendor or certificate #"
+                  aria-label="Search certification records"
+                  className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
               </div>
-              <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">{t.def}</p>
-            </div>
-          ))}
+              <div className="flex gap-1.5">
+                {(['current', 'all'] as const).map((scope) => (
+                  <Button
+                    key={scope}
+                    type="button"
+                    variant="ghost"
+                    onClick={() =>
+                      setSectionParams('records', { rstatus: scope === 'all' ? 'all' : null })
+                    }
+                    aria-pressed={recordScope === scope}
+                    className={cn(
+                      'h-7 shrink-0 rounded-full border px-3 text-[11px] font-semibold',
+                      recordScope === scope
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-foreground'
+                    )}
+                  >
+                    {scope === 'current' ? 'Current' : 'Include historical'}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-[10.5px] text-muted-foreground" aria-live="polite">
+                {recordMatches.length === 0
+                  ? 'No records match.'
+                  : recordMatches.length > RECORD_PHONE_LIMIT
+                    ? `Showing the newest ${RECORD_PHONE_LIMIT} of ${recordMatches.length} — search to narrow.`
+                    : `${recordMatches.length} record${recordMatches.length === 1 ? '' : 's'}.`}
+              </p>
+              <ul className="flex flex-col gap-1.5">
+                {recordMatches.slice(0, RECORD_PHONE_LIMIT).map((r) => (
+                  <li key={r.id}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openRecord(r.id)}
+                      className="h-auto w-full flex-col items-start gap-0.5 whitespace-normal rounded-lg border border-border bg-card p-2.5 text-left"
+                    >
+                      <span className="text-[12px] font-bold text-foreground">{r.productName}</span>
+                      <span className="text-[10.5px] text-muted-foreground">
+                        {r.vendor} · {recordTypeLabel(r.type)} #{r.id} · {r.date}
+                      </span>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {hasRecordList && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setGlossaryToggled(!glossaryOpen)}
+              aria-expanded={glossaryOpen}
+              className="h-8 justify-between rounded-lg border border-border bg-card px-3 text-[11.5px] font-semibold"
+            >
+              Terms used in these records ({RECORDS_GLOSSARY.length})
+              <ChevronDown
+                size={14}
+                className={cn(
+                  'text-muted-foreground transition-transform',
+                  glossaryOpen && 'rotate-180'
+                )}
+                aria-hidden="true"
+              />
+            </Button>
+          )}
+          {glossaryOpen && (
+            <>
+              <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+                {RECORDS_GLOSSARY.length} terms that gate the rest of this tab.
+              </p>
+              {RECORDS_GLOSSARY.map((t) => (
+                <div key={t.term} className="glass-panel p-3">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-[12.5px] font-bold text-foreground">{t.term}</span>
+                    <span className="text-[10.5px] text-muted-foreground">{t.short}</span>
+                  </div>
+                  <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+                    {t.def}
+                  </p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
 
@@ -728,10 +907,90 @@ export function MobileComplianceView({
   )
 }
 
+/** One stacked label-over-value fact (phone layout of the desktop Field). */
+function RecordFact({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <dt className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-0.5 break-words text-[11.5px] text-foreground">{children}</dd>
+    </div>
+  )
+}
+
+function RecordLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 font-semibold text-primary"
+    >
+      {children}
+      <ExternalLink size={10} className="shrink-0" aria-hidden="true" />
+    </a>
+  )
+}
+
+/** Same PQC wording as desktop's ComplianceDetailPopover PqcSection. */
+function RecordPqcFact({ record }: { record: MobileCertRecord }) {
+  const state = pqcCoverageState(record.pqcCoverage)
+  if (state === 'none') return null
+  if (state === 'not-read') {
+    // pqcUnknownReason() (recordSemantics) inlined: it is typed to the
+    // ComplianceRecord type, which sits behind the mobile import boundary.
+    const sourceListsNone = record.type === 'FIPS 140-3' && !!record.cmvpDetailsFetchedAt
+    return (
+      <RecordFact label="PQC mechanisms">
+        <span className="italic text-muted-foreground">
+          {sourceListsNone
+            ? 'Unknown — NIST publishes this certificate page without an Approved Algorithms list, so it does not say which algorithms the module approves.'
+            : record.type === 'FIPS 140-3'
+              ? "Unknown — the certificate page's Approved Algorithms list could not be read."
+              : 'Unknown — the source page could not be read.'}
+        </span>
+      </RecordFact>
+    )
+  }
+  const fromSt = isSecurityTargetType(record.type)
+  const names = pqcNames(record.pqcCoverage)
+  return (
+    <RecordFact
+      label={
+        state === 'named'
+          ? `PQC — ${pqcEvidenceLabel(record.type).toLowerCase()}`
+          : 'PQC mechanisms'
+      }
+    >
+      {typeof record.pqcCoverage === 'boolean'
+        ? 'PQC indicated (no algorithm names recorded).'
+        : names.length > 0
+          ? names.join(', ')
+          : String(record.pqcCoverage)}
+      {fromSt && state === 'named' && (
+        <span className="mt-0.5 block text-[10.5px] text-muted-foreground">
+          A claim in the evaluated Security Target, not a validation of PQC support.
+          {record.securityTargetUrls?.[0] && (
+            <>
+              {' '}
+              <RecordLink href={record.securityTargetUrls[0]}>Open the Security Target</RecordLink>
+            </>
+          )}
+        </span>
+      )}
+    </RecordFact>
+  )
+}
+
 /**
- * A `?cert=` record on a phone. Desktop opens its full record popover; this
- * screen has no record list (only the glossary), so it shows the record's
- * identifying facts and links to the source — the link used to be ignored.
+ * A `?cert=` record on a phone — the same record facts as desktop's
+ * ComplianceDetailPopover (type, category, lab, level, source conflicts,
+ * dates, PQC + classical algorithms, the FIPS 140-3 certificate and NIST CAVP
+ * validation details, documents, official source), stacked for a narrow
+ * screen and formatted with the same recordSemantics helpers. Dropped vs.
+ * desktop: Ask/Endorse/Flag (desktop power-user actions, as on the framework
+ * sheet); Share is the sheet's own.
  */
 function MobileRecordDetailSheet({
   record,
@@ -740,16 +999,25 @@ function MobileRecordDetailSheet({
   record: MobileCertRecord | null
   onClose: () => void
 }) {
-  const rows: [string, string | undefined][] = record
+  const observed = formatIsoDate(record?.cmvpDetailsFetchedAt)
+  const sunset = formatIsoDate(record?.sunsetDate ?? undefined)
+  const archived = formatIsoDate(record?.ccArchivedDate ?? undefined)
+  const firstValidated = formatIsoDate(record?.cavpFirstValidated)
+  const algos = record?.cmvpApprovedAlgorithms ?? []
+  const envs = record?.operationalEnvironments ?? []
+  const caps = record?.cavpCapabilities ?? []
+  const cavpProductUrl = record?.cavpProductUrl || record?.link
+  const docs = record
     ? [
-        ['Certificate', record.id],
-        ['Type', record.type],
-        ['Status', record.status || 'No status'],
-        ['Vendor', record.vendor],
-        ['Category', record.productCategory],
-        ['Level', record.certificationLevel],
-        ['Source', record.source],
-        ['Date', record.date],
+        ...(record.certificationReportUrls ?? []).map((url, i) => ({
+          url,
+          name: `Certification Report ${i + 1}`,
+        })),
+        ...(record.securityTargetUrls ?? []).map((url, i) => ({
+          url,
+          name: `Security Target ${i + 1}`,
+        })),
+        ...(record.additionalDocuments ?? []),
       ]
     : []
   return (
@@ -757,37 +1025,222 @@ function MobileRecordDetailSheet({
       open={!!record}
       onClose={onClose}
       title={record?.productName}
+      large
       shareUrl={record ? `/compliance?cert=${encodeURIComponent(record.id)}` : undefined}
       testId="compliance-record-detail-sheet"
     >
       {record && (
         <div className="flex flex-col gap-3">
-          <dl className="flex flex-col gap-1 text-[11px]">
-            {rows
-              .filter(([, v]) => !!v)
-              .map(([k, v]) => (
-                <div key={k} className="flex items-start justify-between gap-2">
-                  <dt className="shrink-0 text-muted-foreground">{k}</dt>
-                  <dd className="min-w-0 break-words text-right font-semibold text-foreground">
-                    {v}
-                  </dd>
-                </div>
-              ))}
-          </dl>
-          {record.link && (
-            <a
-              href={record.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary"
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span
+              className={cn(
+                'inline-flex items-center rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                statusBadgeClass(record.status)
+              )}
             >
-              View on {safeHostname(record.link)} <ExternalLink size={10} aria-hidden="true" />
-            </a>
+              {record.status || 'No status'}
+            </span>
+            <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+          </div>
+          {record.vendor && <p className="text-[11.5px] text-muted-foreground">{record.vendor}</p>}
+
+          <dl className="flex flex-col gap-2.5">
+            <RecordFact label="Type">{recordTypeDescription(record.type)}</RecordFact>
+            {record.productCategory && (
+              <RecordFact label="Category">{record.productCategory}</RecordFact>
+            )}
+            {record.lab && <RecordFact label="Evaluation lab">{record.lab}</RecordFact>}
+            {record.certificationLevel && (
+              <RecordFact label="Certification level">{record.certificationLevel}</RecordFact>
+            )}
+            <RecordFact label="Certification date">{record.date}</RecordFact>
+            {archived && <RecordFact label="Archived">{archived}</RecordFact>}
+            <RecordFact label="Source">{record.source}</RecordFact>
+            <RecordPqcFact record={record} />
+            {record.classicalAlgorithms && (
+              <RecordFact label="Classical algorithms">{record.classicalAlgorithms}</RecordFact>
+            )}
+          </dl>
+
+          {record.sourceConflicts?.map((conflict) => (
+            <div
+              key={conflict.field}
+              className="rounded-lg border border-border bg-status-warning/10 p-2.5"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-status-warning">
+                Official sources disagree
+              </p>
+              <ul className="mt-1 flex flex-col gap-1 text-[11px]">
+                {conflict.values.map((v) => (
+                  <li key={v.source} className="break-words text-foreground">
+                    <span className="font-semibold">{v.value}</span>
+                    <span className="text-muted-foreground"> — </span>
+                    {v.url ? (
+                      <RecordLink href={v.url}>{v.source}</RecordLink>
+                    ) : (
+                      <span className="text-muted-foreground">{v.source}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {conflict.note && (
+                <p className="mt-1 text-[10.5px] text-muted-foreground">{conflict.note}</p>
+              )}
+            </div>
+          ))}
+
+          {record.type === 'FIPS 140-3' && (
+            <section
+              aria-label="NIST CMVP certificate"
+              className="flex flex-col gap-2.5 border-t border-border pt-2.5"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                NIST CMVP certificate
+              </p>
+              <dl className="flex flex-col gap-2.5">
+                {record.cmvpStandard && (
+                  <RecordFact label="Standard">{record.cmvpStandard}</RecordFact>
+                )}
+                <RecordFact label="Status">
+                  {record.cmvpStatus || record.status || 'Not stated'}
+                  {observed && (
+                    <span className="block text-[10.5px] text-muted-foreground">
+                      status observed {observed}
+                    </span>
+                  )}
+                </RecordFact>
+                {record.cmvpHistoricalReason && (
+                  <RecordFact label="Historical reason">{record.cmvpHistoricalReason}</RecordFact>
+                )}
+                {sunset && <RecordFact label="Sunset date">{sunset}</RecordFact>}
+                {record.overallLevel != null && (
+                  <RecordFact label="Overall level">{String(record.overallLevel)}</RecordFact>
+                )}
+                {record.moduleType && (
+                  <RecordFact label="Module type">{record.moduleType}</RecordFact>
+                )}
+                {record.embodiment && (
+                  <RecordFact label="Embodiment">{record.embodiment}</RecordFact>
+                )}
+                {record.caveat && <RecordFact label="Caveat">{record.caveat}</RecordFact>}
+                {envs.length > 0 && (
+                  <RecordFact label="Operational environments">
+                    <ul className="list-disc pl-4">
+                      {envs.map((e) => (
+                        <li key={e}>{e}</li>
+                      ))}
+                    </ul>
+                  </RecordFact>
+                )}
+                {algos.length > 0 && (
+                  <RecordFact label="Approved Algorithms (certificate page)">
+                    <ul className="flex flex-col gap-0.5">
+                      {algos.map((a, i) => (
+                        <li key={`${a.name}-${i}`} className="flex flex-wrap items-baseline gap-1">
+                          <span>{a.name}</span>
+                          {(a.cavpRefs ?? []).map((ref) => (
+                            <RecordLink key={ref} href={cavpValidationUrl(ref)}>
+                              <span className="font-mono">{ref}</span>
+                            </RecordLink>
+                          ))}
+                        </li>
+                      ))}
+                    </ul>
+                  </RecordFact>
+                )}
+              </dl>
+            </section>
           )}
-          <p className="text-[10.5px] leading-relaxed text-muted-foreground">
-            The full record — algorithms, evidence and the searchable record list — is on a larger
-            screen.
-          </p>
+
+          {record.type === 'ACVP' && (
+            <section
+              aria-label="NIST CAVP algorithm validation"
+              className="flex flex-col gap-2.5 border-t border-border pt-2.5"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                NIST CAVP algorithm validation
+              </p>
+              <dl className="flex flex-col gap-2.5">
+                {firstValidated && (
+                  <RecordFact label="First validated">{firstValidated}</RecordFact>
+                )}
+                {record.cavpImplementationVersion && (
+                  <RecordFact label="Implementation version">
+                    {record.cavpImplementationVersion}
+                  </RecordFact>
+                )}
+                {record.cavpImplementationType && (
+                  <RecordFact label="Implementation type">
+                    {record.cavpImplementationType}
+                  </RecordFact>
+                )}
+              </dl>
+              {caps.length > 0 && (
+                <ul aria-label="Capabilities" className="flex flex-col gap-1.5">
+                  {caps.map((c, i) => (
+                    <li
+                      key={`${c.algorithm}-${i}`}
+                      className="rounded-lg border border-border bg-card p-2.5 text-[11px]"
+                    >
+                      <p className="font-bold text-foreground">{c.algorithm}</p>
+                      <p className="text-muted-foreground">
+                        Parameter sets: {(c.parameterSets ?? []).join(', ') || '—'}
+                      </p>
+                      <p className="text-muted-foreground">
+                        Functions: {(c.functions ?? []).join(', ') || '—'}
+                      </p>
+                      <p className="text-muted-foreground">
+                        Operating environment: {c.operatingEnvironment || '—'}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {cavpProductUrl && (
+                <p className="text-[11px]">
+                  <RecordLink href={cavpProductUrl}>NIST CAVP product page</RecordLink>
+                </p>
+              )}
+            </section>
+          )}
+
+          {docs.length > 0 && (
+            <section
+              aria-label="Documentation"
+              className="flex flex-col gap-1.5 border-t border-border pt-2.5"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Documentation
+              </p>
+              {docs.map((d, i) => (
+                <a
+                  key={`${d.url}-${i}`}
+                  href={d.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 p-2.5 text-[11px] text-primary"
+                >
+                  <FileText size={13} className="shrink-0" aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate">{d.name}</span>
+                  <ExternalLink size={10} className="shrink-0" aria-hidden="true" />
+                </a>
+              ))}
+            </section>
+          )}
+
+          {record.link && (
+            <p className="border-t border-border pt-2.5 text-[11.5px]">
+              <RecordLink href={record.link}>
+                {record.link.includes('?expand#')
+                  ? 'View Product Details'
+                  : record.type === 'FIPS 140-3'
+                    ? 'View the NIST CMVP certificate page'
+                    : record.type === 'ACVP'
+                      ? 'View the NIST CAVP validation page'
+                      : `View on ${safeHostname(record.link)}`}
+              </RecordLink>
+            </p>
+          )}
         </div>
       )}
     </MobileSheet>

@@ -11,6 +11,7 @@ import {
   BookText,
   Plus,
   Search,
+  Users,
   X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -41,11 +42,25 @@ import {
   migrateLinkKey,
   MIGRATE_LINK_PARAMS,
   MIGRATE_TRANSIENT_LINK_PARAMS,
+  applyProductFacets,
   type MigrateLinkIntent,
+  type ProductFacets,
 } from '@/components/Migrate/Workbench/workbenchCatalog'
+import {
+  REPLACE_FACET_PARAM,
+  REPLACE_FILTER_PARAM,
+  parseFacets,
+  writeReplaceViewState,
+  type ReplaceViewState,
+} from '@/components/Migrate/Workbench/replaceTabParams'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
+import {
+  leaderProfileHref,
+  maintainerLinksFor,
+  useLeadersRoster,
+} from '@/components/Migrate/Workbench/maintainerLeaders'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
@@ -82,6 +97,36 @@ type Tab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
 
 const isTab = (v: string | null): v is Tab =>
   v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
+
+// Desktop ReplaceTab.tsx's facet dropdown labels, so a ?facet= chip reads the
+// same words on the phone as the dropdown that wrote it on desktop.
+type FacetLabel = { name: string; values: Record<string, string> }
+const FACET_LABELS: Record<keyof ProductFacets, FacetLabel> = {
+  population: {
+    name: 'Products',
+    values: {
+      pqc_relevant: 'PQC capability or plan',
+      migration_baseline: 'Migration baseline (no confirmed PQC)',
+    },
+  },
+  pqc: {
+    name: 'PQC status',
+    values: {
+      available: 'Available',
+      partial: 'Partial',
+      planned: 'Planned / roadmap',
+      none: 'None',
+      unknown: 'Not yet determined',
+    },
+  },
+  certified: {
+    name: 'Certification',
+    values: { linked: 'Has a certification link', none: 'No certification link' },
+  },
+}
+const FACET_KEYS = Object.keys(FACET_LABELS) as (keyof ProductFacets)[]
+
+const hasCertLink = (p: SoftwareItem) => getCertsForProduct(p.productId, p.softwareName).length > 0
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'replace', label: 'Replace' },
@@ -228,6 +273,14 @@ export function MobileMigrateView() {
   const productParam = searchParams.get('product')
   const productIdsParam = searchParams.get('productIds')
   const openParam = searchParams.get('open')
+  // Desktop Replace tab's own view state (replaceTabParams.ts): ?rq= is the
+  // "Filter products…" text, ?facet= the population/PQC/certification facets.
+  // The phone has no facet dropdowns, so ?facet= is read straight from the
+  // URL (shown as removable chips) and removing a chip rewrites it.
+  const rqParam = searchParams.get(REPLACE_FILTER_PARAM) ?? ''
+  const facetParam = searchParams.get(REPLACE_FACET_PARAM)
+  const facets = useMemo(() => parseFacets(facetParam), [facetParam])
+  const activeFacetKeys = FACET_KEYS.filter((k) => facets[k] !== 'all')
   const linkKey = migrateLinkKey((k) => searchParams.get(k))
   const hasLinkParams = MIGRATE_LINK_PARAMS.some((k) => searchParams.has(k))
   const linkKeyRef = useRef<string | null>(null)
@@ -259,6 +312,14 @@ export function MobileMigrateView() {
     if (!productParam && !productIdsParam) setSelectedProduct(null)
   }, [productParam, productIdsParam])
 
+  // Follow ?rq= on load and when it changes under the mounted screen
+  // (Back/Forward, a second shared link). Our own writes set exactly the
+  // value already typed, so they are a no-op here. Declared before the link
+  // effect so a link's own filter (?q=) wins on first load.
+  useEffect(() => {
+    setFilter((prev) => (prev === rqParam ? prev : rqParam))
+  }, [rqParam])
+
   useEffect(() => {
     if (!hasLinkParams) {
       linkKeyRef.current = null
@@ -273,7 +334,8 @@ export function MobileMigrateView() {
     if (intent.vendorId) setPendingVendorId(intent.vendorId)
     if (intent.domain) {
       setSelectedDomain(intent.domain)
-      setFilter(intent.filter ?? '')
+      // ?domain= alone is a link too: keep the reader's own ?rq= text.
+      setFilter(intent.filter ?? searchParams.get(REPLACE_FILTER_PARAM) ?? '')
       setCatalogQuery('')
       setProductIdFilter(intent.productIds)
     }
@@ -306,6 +368,7 @@ export function MobileMigrateView() {
         sp.delete('open')
         sp.set('tab', 'replace')
         sp.set('domain', riskDomain)
+        writeReplaceViewState(sp, { filter: '' })
       }, true)
     } else if (!product) {
       setLinkNotice(
@@ -358,16 +421,34 @@ export function MobileMigrateView() {
   }
 
   /** Reader narrowed/changed the list themselves: drop a lingering link and
-   *  record the domain they are on (?domain=, replace). */
-  const leaveLink = (domain: DomainId) => {
+   *  record the domain they are on (?domain=, replace), plus their own filter
+   *  text / facets (?rq= / ?facet=) in the same write. */
+  const leaveLink = (domain: DomainId, state: ReplaceViewState = {}) => {
     setProductIdFilter(undefined)
     setElsewhere([])
     const hasTransient = MIGRATE_TRANSIENT_LINK_PARAMS.some((k) => searchParams.has(k))
-    if (!hasTransient && searchParams.get('domain') === domain) return
+    const probe = new URLSearchParams(searchParams)
+    writeReplaceViewState(probe, state)
+    const viewChanged = probe.toString() !== searchParams.toString()
+    if (!hasTransient && searchParams.get('domain') === domain && !viewChanged) return
     updateParams((sp) => {
       for (const k of MIGRATE_TRANSIENT_LINK_PARAMS) sp.delete(k)
       sp.set('domain', domain)
+      writeReplaceViewState(sp, state)
     }, true)
+  }
+
+  /** The reader typed in "Filter products…" or removed a facet chip: mirror it
+   *  to ?rq= / ?facet= (replace). With a link active this also ends the link;
+   *  otherwise only the view params change (same split as desktop's
+   *  onViewChange / onFilterStateChange in MigrationWorkbench.tsx). */
+  const writeViewState = (state: ReplaceViewState) => {
+    if (productIdFilter || hasLinkParams) leaveLink(selectedDomain, state)
+    else updateParams((sp) => writeReplaceViewState(sp, state), true)
+  }
+
+  const removeFacet = (key: keyof ProductFacets) => {
+    writeViewState({ facets: { ...facets, [key]: 'all' } })
   }
 
   /** Vendors tab: a vendor's roadmap sheet opened by tap (push ?vendor=) or
@@ -408,10 +489,15 @@ export function MobileMigrateView() {
   )
 
   const products = useMemo(() => productsForDomain(selectedDomain), [selectedDomain])
-  const filteredProducts = useMemo(
-    () => filterProducts(products, filter, productIdFilter),
-    [products, filter, productIdFilter]
-  )
+  // Facets narrow the domain list like desktop's dropdowns do — except while
+  // an exact-id link (?product=/?productIds=) is showing, which a facet must
+  // never hide (desktop clears the facets in that case; the phone simply
+  // doesn't apply them, and hides their chips, until the reader moves on).
+  const facetsApplied = !productIdFilter && activeFacetKeys.length > 0
+  const filteredProducts = useMemo(() => {
+    const base = filterProducts(products, filter, productIdFilter)
+    return facetsApplied ? applyProductFacets(base, facets, hasCertLink) : base
+  }, [products, filter, productIdFilter, facets, facetsApplied])
 
   // Shared by both chip rows (the 10 replace assets and the 8 foundation
   // domains below) so switching domains always clears a stale filter —
@@ -419,7 +505,7 @@ export function MobileMigrateView() {
   const handleSelectDomain = (id: DomainId) => {
     setSelectedDomain(id)
     setFilter('')
-    leaveLink(id)
+    leaveLink(id, { filter: '' })
   }
 
   // Catalog-wide search results (all ~1,011 products, not just one domain's
@@ -740,7 +826,7 @@ export function MobileMigrateView() {
                     value={filter}
                     onChange={(e) => {
                       setFilter(e.target.value)
-                      if (productIdFilter || hasLinkParams) leaveLink(selectedDomain)
+                      writeViewState({ filter: e.target.value })
                     }}
                     placeholder="Filter products…"
                     aria-label="Filter products"
@@ -753,9 +839,36 @@ export function MobileMigrateView() {
                * you type, so it can't double as filter feedback. This
                * sr-only line is the only thing that reports the filtered
                * count to a screen reader. */}
-              {filter.trim() && (
+              {products.length > 0 && facetsApplied && (
+                <div
+                  role="group"
+                  aria-label="Active product filters"
+                  data-testid="migrate-facet-chips"
+                  className="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1"
+                >
+                  {activeFacetKeys.map((k) => {
+                    const { name, values } = FACET_LABELS[k]
+                    const label = `${name}: ${values[facets[k]] ?? facets[k]}`
+                    return (
+                      <Button
+                        key={k}
+                        type="button"
+                        variant="ghost"
+                        onClick={() => removeFacet(k)}
+                        aria-label={`Remove filter ${label}`}
+                        className="h-8 shrink-0 snap-start rounded-full border border-primary bg-primary px-3 text-[11px] font-semibold text-primary-foreground"
+                      >
+                        {label}
+                        <X size={12} className="ml-1" aria-hidden="true" />
+                      </Button>
+                    )
+                  })}
+                </div>
+              )}
+              {(filter.trim() || facetsApplied) && (
                 <p className="sr-only" aria-live="polite" aria-atomic="true">
-                  {filteredProducts.length} of {products.length} products match "{filter}".
+                  {filteredProducts.length} of {products.length} products match
+                  {filter.trim() ? ` "${filter}"` : ' the active filters'}.
                 </p>
               )}
               <div className="flex flex-col gap-2">
@@ -765,7 +878,9 @@ export function MobileMigrateView() {
                   </p>
                 ) : filteredProducts.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-border p-3 text-center text-[11.5px] text-muted-foreground">
-                    No matches for "{filter}".
+                    {filter.trim()
+                      ? `No matches for "${filter}".`
+                      : 'No products match these filters.'}
                   </p>
                 ) : (
                   filteredProducts.map((p) => (
@@ -943,6 +1058,10 @@ function MobileProductDetailSheet({
   // real text now, alongside the capabilities it qualifies.
   const proof = product ? proofFreshness(product) : null
 
+  // Same maintainer → Community profile links as desktop's ProductDetail.
+  const leadersRoster = useLeadersRoster((product?.openSourceMaintainers?.length ?? 0) > 0)
+  const maintainers = product ? maintainerLinksFor(product, leadersRoster) : []
+
   // Real production feedback, 2026-08-27: the row shows the PQC-support tier
   // (Yes/Partial/No) and FIPS badge, but tapping into this sheet never
   // repeated them — a reader scrolling the sheet had no way to recheck that
@@ -1055,6 +1174,31 @@ function MobileProductDetailSheet({
               </p>
             )}
           </div>
+
+          {maintainers.length > 0 && (
+            <div data-testid="product-maintainers">
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Open-source maintainers
+              </p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-foreground/90">
+                {maintainers.map((m, i) => (
+                  <li key={`${m.name}-${i}`}>
+                    {m.leader ? (
+                      <Link
+                        to={leaderProfileHref(m.leader)}
+                        className="inline-flex min-h-[32px] items-center gap-1 font-semibold text-primary hover:underline"
+                      >
+                        <Users size={12} aria-hidden="true" />
+                        {m.name}
+                      </Link>
+                    ) : (
+                      m.name
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (
             <div className="flex flex-wrap items-center gap-3">

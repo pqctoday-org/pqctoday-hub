@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/** `?section=` write-back / re-read and `?attack=` on the Validation tab. */
+/** `?section=` write-back / re-read, `?attack=`, `?kat=` and `?polarity=` on the Validation tab. */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
@@ -8,8 +8,14 @@ import { matchAttackProfile, attackProfileId } from './attackDeepLink'
 import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
-vi.mock('./KATView', () => ({ KATView: () => <div>kat</div> }))
-vi.mock('./CoverageMatrixView', () => ({ CoverageMatrixView: () => <div>coverage</div> }))
+vi.mock('./KATView', () => ({
+  KATView: ({ katParam }: { katParam?: string | null }) => <div>kat {katParam ?? '-'}</div>,
+}))
+vi.mock('./CoverageMatrixView', () => ({
+  CoverageMatrixView: ({ polarityParam }: { polarityParam?: string | null }) => (
+    <div>coverage {polarityParam ?? '-'}</div>
+  ),
+}))
 
 const sectionButton = (name: RegExp) => screen.getByRole('button', { name })
 
@@ -49,7 +55,8 @@ describe('AlgorithmValidationView — deep links', () => {
     fireEvent.click(sectionButton(/KAT Validation/))
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'kat' })
     fireEvent.click(sectionButton(/KAT Validation/))
-    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null })
+    // Closing KAT also drops its variant (?kat) so it can't reopen the section.
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, kat: null })
   })
 
   it('closing the linked section falls back to another open one', () => {
@@ -57,7 +64,7 @@ describe('AlgorithmValidationView — deep links', () => {
     render(<AlgorithmValidationView sectionParam="kat" onUpdateParams={onUpdateParams} />)
     fireEvent.click(sectionButton(/Implementation Attacks/))
     fireEvent.click(sectionButton(/KAT Validation/))
-    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'attacks' })
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'attacks', kat: null })
   })
 
   it('re-reads ?section on same-route change', () => {
@@ -89,5 +96,40 @@ describe('AlgorithmValidationView — deep links', () => {
     render(<AlgorithmValidationView attackParam="ML-KEM-768" onUpdateParams={onUpdateParams} />)
     fireEvent.click(sectionButton(/Implementation Attacks/))
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, attack: null })
+  })
+
+  it('?kat opens KAT Validation and passes the variant through', () => {
+    render(<AlgorithmValidationView katParam="SHAKE-256f" />)
+    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('kat SHAKE-256f')).toBeInTheDocument()
+  })
+
+  it('?polarity opens the Coverage Matrix and passes the polarity through', async () => {
+    render(<AlgorithmValidationView polarityParam="negative" />)
+    expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'true')
+    expect(await screen.findByText('coverage negative')).toBeInTheDocument()
+  })
+
+  it('re-reads ?kat / ?polarity on same-route change', () => {
+    const { rerender } = render(<AlgorithmValidationView />)
+    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'false')
+    expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'false')
+    rerender(<AlgorithmValidationView katParam="SHA2-256s" polarityParam="boundary" />)
+    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'true')
+    expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('closing KAT Validation also clears ?kat', () => {
+    const onUpdateParams = vi.fn()
+    render(<AlgorithmValidationView katParam="SHA2-256s" onUpdateParams={onUpdateParams} />)
+    fireEvent.click(sectionButton(/KAT Validation/))
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, kat: null })
+  })
+
+  it('closing the Coverage Matrix also clears ?case and ?polarity', () => {
+    const onUpdateParams = vi.fn()
+    render(<AlgorithmValidationView polarityParam="negative" onUpdateParams={onUpdateParams} />)
+    fireEvent.click(sectionButton(/Coverage Matrix/))
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, case: null, polarity: null })
   })
 })

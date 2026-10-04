@@ -30,6 +30,10 @@ interface AlgorithmValidationViewProps {
   /** `?engine=` / `?case=` — passed through to the coverage matrix. */
   engineParam?: string | null
   caseParam?: string | null
+  /** `?polarity=` — passed through to the coverage matrix; implies section=coverage. */
+  polarityParam?: string | null
+  /** `?kat=` — the SLH-DSA KAT variant; implies section=kat. */
+  katParam?: string | null
   /** URL writer (replace). Omitted → the view keeps its state locally. */
   onUpdateParams?: (updates: Record<string, string | null>) => void
 }
@@ -48,36 +52,59 @@ export function AlgorithmValidationView({
   attackParam,
   engineParam,
   caseParam,
+  polarityParam,
+  katParam,
   onUpdateParams,
 }: AlgorithmValidationViewProps = {}) {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const attackProfile = matchAttackProfile(attackParam)
+  // Params that live inside one section open it, as ?attack opens attacks.
+  const impliedSections = (): ValidationSection[] => [
+    ...(attackParam ? (['attacks'] as const) : []),
+    ...(katParam ? (['kat'] as const) : []),
+    ...(polarityParam ? (['coverage'] as const) : []),
+  ]
   const [open, setOpen] = useState<Set<ValidationSection>>(() => {
     const defaults = new Set<ValidationSection>(getAlgorithmDefaults(selectedPersona).openSections)
     if (isSection(sectionParam)) defaults.add(sectionParam)
-    if (attackParam) defaults.add('attacks')
+    for (const s of impliedSections()) defaults.add(s)
     return defaults
   })
 
   // Same-route navigation (Back/Forward, an in-app link) changes ?section /
-  // ?attack without remounting — open the named section then too.
+  // ?attack / ?kat / ?polarity without remounting — open the named section(s)
+  // then too.
   useEffect(() => {
-    const want: ValidationSection | null = isSection(sectionParam)
-      ? sectionParam
-      : attackParam
-        ? 'attacks'
-        : null
-    if (!want) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
-    setOpen((prev) => (prev.has(want) ? prev : new Set(prev).add(want)))
-  }, [sectionParam, attackParam])
+    const want: ValidationSection[] = [
+      ...(isSection(sectionParam) ? [sectionParam] : []),
+      ...impliedSections(),
+    ]
+    if (want.length === 0) return
+
+    setOpen((prev) => (want.every((w) => prev.has(w)) ? prev : new Set([...prev, ...want])))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- impliedSections reads these params
+  }, [sectionParam, attackParam, katParam, polarityParam])
 
   // Scroll to the linked section — but not when the reader just toggled it
-  // here (their click already put it where they are looking).
+  // here (their click already put it where they are looking). With no
+  // ?section, an arriving ?polarity link scrolls to the coverage section —
+  // but not a polarity the reader later picks there.
   const [selfWrittenSection, setSelfWrittenSection] = useState<string | null>(null)
+  const [arrivalPolarity] = useState(polarityParam)
+  const linkedSection: ValidationSection | null = isSection(sectionParam)
+    ? sectionParam
+    : sectionParam
+      ? null
+      : polarityParam && polarityParam === arrivalPolarity
+        ? 'coverage'
+        : null
+  // ?attack and ?kat scroll to their own target inside the section instead.
   const scrollSection =
-    isSection(sectionParam) && !attackParam && selfWrittenSection !== sectionParam
-      ? sectionParam
+    linkedSection &&
+    !attackParam &&
+    !(linkedSection === 'kat' && katParam) &&
+    selfWrittenSection !== linkedSection
+      ? linkedSection
       : null
   useScrollToDeepLinkTarget(
     scrollSection ? `section|${scrollSection}` : null,
@@ -103,7 +130,8 @@ export function AlgorithmValidationView({
     onUpdateParams({
       section,
       ...(id === 'attacks' && !willOpen ? { attack: null } : {}),
-      ...(id === 'coverage' && !willOpen ? { case: null } : {}),
+      ...(id === 'coverage' && !willOpen ? { case: null, polarity: null } : {}),
+      ...(id === 'kat' && !willOpen ? { kat: null } : {}),
     })
   }
 
@@ -137,7 +165,7 @@ export function AlgorithmValidationView({
       icon: <FlaskConical size={16} />,
       label: 'KAT Validation',
       caption: 'Run pinned known-answer-test vectors live in your browser via WASM.',
-      content: <KATView />,
+      content: <KATView katParam={katParam} onUpdateParams={onUpdateParams} />,
     },
     {
       id: 'coverage',
@@ -150,6 +178,7 @@ export function AlgorithmValidationView({
           <CoverageMatrixView
             engineParam={engineParam}
             caseParam={caseParam}
+            polarityParam={polarityParam}
             onUpdateParams={onUpdateParams}
           />
         </Suspense>

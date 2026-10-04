@@ -15,6 +15,7 @@ import {
   BookText,
   AlertTriangle,
   Info,
+  Users,
 } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
@@ -32,6 +33,7 @@ import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareBu
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Pill } from './workbenchUi'
 import { productVerificationBadge } from './productStatus'
+import { leaderProfileHref, maintainerLinksFor, useLeadersRoster } from './maintainerLeaders'
 // ADDED 2026-08-01: migrate-catalog had 907/907 active rows carrying a
 // trusted_source_id and real revision entries in revisions.jsonl, but no
 // page on the app displayed either — TrustScoreBadge/ReviewedBadge are
@@ -114,6 +116,13 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // elements existed in this directory. Every id here is verified to resolve
   // to a real MODULE_CATALOG entry (see migrateData.ts's row.learning_modules
   // sourcing), so this is a safe, real /learn/<id> deep link, not a guess.
+  // open_source_maintainers was loaded by nothing and shown nowhere before
+  // 2026-10-03. A maintainer with a Community profile links to it; the rest
+  // (organisations, people not on the roster) stay plain text.
+  const hasMaintainers = (product.openSourceMaintainers?.length ?? 0) > 0
+  const leadersRoster = useLeadersRoster(hasMaintainers)
+  const maintainers = maintainerLinksFor(product, leadersRoster)
+
   const learningModuleIds = (product.learningModules || '')
     .split(';')
     .map((id) => id.trim())
@@ -284,6 +293,32 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
               </a>
             )}
           </div>
+        </div>
+      )}
+
+      {maintainers.length > 0 && (
+        <div data-testid="product-maintainers">
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Open-source maintainers
+          </p>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1">
+            {maintainers.map((m, i) => (
+              <li key={`${m.name}-${i}`} className="text-foreground/80">
+                {m.leader ? (
+                  <Link
+                    to={leaderProfileHref(m.leader)}
+                    title={`${m.leader.name} — Community profile`}
+                    className="inline-flex items-center gap-1 text-primary hover:underline"
+                  >
+                    <Users size={11} aria-hidden />
+                    {m.name}
+                  </Link>
+                ) : (
+                  m.name
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

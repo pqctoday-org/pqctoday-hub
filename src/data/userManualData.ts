@@ -76,7 +76,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?transition=<row> to open and highlight one Transition Guide row, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [

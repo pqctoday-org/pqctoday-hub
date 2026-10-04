@@ -138,6 +138,9 @@ export interface SoftwareItem {
   productBrief: string
   productBriefUrl?: string
   userManualUrl?: string
+  /** Credited open-source maintainers (catalogue `open_source_maintainers`),
+   *  one entry each as written: "Name (github:handle)" or an organisation. */
+  openSourceMaintainers?: string[]
   sourceType: string
   verificationStatus: string
   lastVerifiedDate: string
