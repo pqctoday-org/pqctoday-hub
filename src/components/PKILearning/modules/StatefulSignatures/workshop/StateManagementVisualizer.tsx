@@ -180,7 +180,9 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       // Yield so React paints the progress bar at 0% before the CSS animation
       // begins — the compositor thread continues the animation while WASM blocks JS.
       await new Promise((r) => setTimeout(r, 100))
-      const { hsm_generateStatefulKeyPair } = await import('@/wasm/softhsm/pqc')
+      // From the module that defines it, not the pqc re-export: loading pqc with import() makes the
+      // bundler copy its members into a namespace object, and these members may not exist yet.
+      const { hsm_generateStatefulKeyPair } = await import('@/wasm/softhsm/stateful')
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
       const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
@@ -221,7 +223,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   const signBackend = useCallback(
     async (handle: number, msgBytes: Uint8Array) => {
       if (!hsm || !hsm.isReady || !hsm.moduleRef?.current) return false
-      const { hsm_statefulSignBytes } = await import('@/wasm/softhsm/pqc')
+      const { hsm_statefulSignBytes } = await import('@/wasm/softhsm/stateful')
       const { hsm_getKeysRemaining } = await import('@/wasm/softhsm/stateful')
       try {
         const t0 = performance.now()

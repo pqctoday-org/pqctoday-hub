@@ -93,6 +93,49 @@ describe('productVerificationBadge', () => {
     }
   })
 
+  // A reviewed row whose PQC status is unknown must not read as a green
+  // "PQC verified"; rows with a known status keep the plain badge.
+  it('labels a reviewed row with an unknown PQC status "Evidence reviewed: PQC unknown"', () => {
+    const badge = productVerificationBadge(
+      item({
+        verificationStatus: 'Verified',
+        pqcStatusCanonical: 'unknown',
+        lastVerifiedDate: daysAgo(5),
+      })
+    )
+    expect(badge.label).toBe('Evidence reviewed: PQC unknown')
+    expect(badge.tone).not.toBe('success')
+    expect(badge.title).toContain('does not establish')
+    expect(badge.title).toContain('Evidence fetched')
+  })
+
+  it('keeps the plain Verified badge for every known canonical status', () => {
+    for (const canonical of ['available', 'partial', 'roadmap', 'none', '']) {
+      const badge = productVerificationBadge(
+        item({
+          verificationStatus: 'Verified',
+          pqcStatusCanonical: canonical,
+          lastVerifiedDate: daysAgo(5),
+        })
+      )
+      expect(badge.label).toBe('Verified')
+      expect(badge.tone).toBe('success')
+    }
+  })
+
+  it('leaves non-Verified statuses unchanged when the PQC status is unknown', () => {
+    expect(
+      productVerificationBadge(
+        item({ verificationStatus: 'Pending Verification', pqcStatusCanonical: 'unknown' })
+      ).label
+    ).toBe('Pending Verification')
+    expect(
+      productVerificationBadge(
+        item({ verificationStatus: 'Verified (No PQC)', pqcStatusCanonical: 'unknown' })
+      ).label
+    ).toBe('Verified (No PQC)')
+  })
+
   it('never shows a withheld row with a success tone', () => {
     const badge = productVerificationBadge(
       item({ verificationStatus: 'Needs Review', lastVerifiedDate: daysAgo(1) })

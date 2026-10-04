@@ -3,10 +3,10 @@ import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
 import {
-  getDocumentStatusBucket,
-  getGroupStatusBucket,
-  type DocumentStatusBucket,
-} from '../utils/documentStatusBucket'
+  getGroupLifecycleLabel,
+  resolveLifecycleLabel,
+  type LifecycleLabel,
+} from '../utils/libraryLifecycle'
 
 /**
  * A prior (deprecated) revision of a document, attached to its surviving active
@@ -17,7 +17,7 @@ export interface PriorRevision {
   referenceId: string
   documentTitle: string
   documentStatus: string
-  documentStatusBucket: DocumentStatusBucket
+  lifecycleLabel: LifecycleLabel
   downloadUrl: string
   supersededBy: string
   deprecatedAt?: string
@@ -41,7 +41,21 @@ export interface LibraryItem {
    *  of either a blank or an invented publication date. */
   lastVerified?: string
   documentStatus: string
-  documentStatusBucket: DocumentStatusBucket
+  /** CSV `lifecycle_state`, as written (blank when the row has none). It can hold
+   *  free text from before the six labels existed; `lifecycleLabel` is the value
+   *  to show and filter on. */
+  lifecycleState?: string
+  /** One of the six lifecycle labels (Released, Draft, Expired, Historical,
+   *  Research Paper, Misc): `lifecycle_state` when it holds one, else read from
+   *  `documentStatus`. See `resolveLifecycleLabel`. */
+  lifecycleLabel: LifecycleLabel
+  /** The newer document(s) that update or replace this one (CSV `superseded_by`
+   *  on an active row), keeping only ids of documents in the library, so a
+   *  link built from one always resolves. Set by `attachSuccessionLinks`. */
+  supersededByRefs?: string[]
+  /** The older documents this one updates or replaces: the reverse of
+   *  `supersededByRefs`, built once at load. Set by `attachSuccessionLinks`. */
+  replacesRefs?: string[]
   shortDescription: string
   documentType: string
   applicableIndustries: string[]
@@ -96,10 +110,10 @@ export interface LibraryItem {
   /** Older (deprecated) revisions of this same document, collapsed into this
    *  surviving tile. Present only when this record superseded ≥1 other. */
   priorRevisions?: PriorRevision[]
-  /** Most-advanced lifecycle bucket across this record and its priorRevisions.
-   *  Tiles render this (falling back to documentStatusBucket) so a collapsed
-   *  group shows the furthest stage reached. */
-  groupStatusBucket?: DocumentStatusBucket
+  /** Furthest lifecycle label across this record and its priorRevisions. Tiles
+   *  render this (falling back to lifecycleLabel) so a collapsed group shows the
+   *  furthest stage reached. */
+  groupLifecycleLabel?: LifecycleLabel
 }
 
 // C-001: Single source of truth for categories
@@ -291,7 +305,7 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
 // R-002: Export error state for UI consumption
 export const libraryError: string | null = null
 
-interface RawLibraryRow {
+export interface RawLibraryRow {
   reference_id: string
   document_title: string
   download_url: string
@@ -331,6 +345,8 @@ interface RawLibraryRow {
   deprecated_at?: string
   deprecated_reason?: string
   superseded_by?: string
+  /** One of the six lifecycle labels, or older free text. See `resolveLifecycleLabel`. */
+  lifecycle_state?: string
   /** Optional dedicated purpose-door assignment, overriding the manual_category
    *  heuristic when present. Sparse — most rows still fall back to the
    *  heuristic. See `resolvePurpose` for the resolution logic. */
@@ -350,7 +366,10 @@ function transformDeprecatedRow(row: RawLibraryRow): PriorRevision | null {
     referenceId: row.reference_id,
     documentTitle: row.document_title,
     documentStatus: row.document_status,
-    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
+    lifecycleLabel: resolveLifecycleLabel({
+      lifecycleState: row.lifecycle_state,
+      documentStatus: row.document_status ?? '',
+    }),
     downloadUrl: row.download_url,
     supersededBy: (row.superseded_by ?? '').trim(),
     deprecatedAt: row.deprecated_at || undefined,
@@ -369,7 +388,7 @@ function rfcNumber(rec: { referenceId: string; downloadUrl: string }): string | 
 
 /**
  * Attach prior (deprecated) revisions to their surviving active record, keyed by
- * `supersededBy`, and compute `groupStatusBucket`. Deprecated rows are never
+ * `supersededBy`, and compute `groupLifecycleLabel`. Deprecated rows are never
  * added to the returned array — they only enrich the survivor — so the grid
  * still renders one tile per logical document. Exported for unit testing.
  *
@@ -397,15 +416,48 @@ export function attachPriorRevisions(items: LibraryItem[], priors: PriorRevision
     return {
       ...item,
       priorRevisions: sorted,
-      groupStatusBucket: getGroupStatusBucket(
-        item.documentStatusBucket,
-        sorted.map((r) => r.documentStatusBucket)
+      groupLifecycleLabel: getGroupLifecycleLabel(
+        item.lifecycleLabel,
+        sorted.map((r) => r.lifecycleLabel)
       ),
     }
   })
 }
 
-function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
+/**
+ * Link each document to the newer one that replaces it, and back. An ACTIVE row
+ * names its newer document(s) in `superseded_by` (the older document stays in the
+ * library, labelled Historical); the newer document gets the reverse list as
+ * `replacesRefs`. Only ids that are in `items` are kept, so no link can dangle,
+ * and a document is never linked to itself. Deprecated rows are not here: they
+ * collapse into their survivor as `priorRevisions` instead. Exported for unit testing.
+ */
+export function attachSuccessionLinks(items: LibraryItem[]): LibraryItem[] {
+  const known = new Set(items.map((item) => item.referenceId))
+  const newerOf = new Map<string, string[]>()
+  const replaces = new Map<string, string[]>()
+  for (const item of items) {
+    const newer = (item.supersededByRefs ?? []).filter(
+      (ref, i, all) => ref !== item.referenceId && known.has(ref) && all.indexOf(ref) === i
+    )
+    if (newer.length === 0) continue
+    newerOf.set(item.referenceId, newer)
+    for (const ref of newer) replaces.set(ref, [...(replaces.get(ref) ?? []), item.referenceId])
+  }
+  return items.map((item) => ({
+    ...item,
+    supersededByRefs: newerOf.get(item.referenceId),
+    replacesRefs: replaces.get(item.referenceId),
+  }))
+}
+
+/** `superseded_by` cell → the ids it names (a `;`-separated list), or undefined when blank. */
+function parseSupersededBy(raw: string | undefined): string[] | undefined {
+  const ids = splitSemicolon(raw ?? '')
+  return ids.length > 0 ? ids : undefined
+}
+
+export function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
   if (row.status && row.status !== 'active') return null
   const moduleIds =
     row.module_ids && row.module_ids.trim() ? splitSemicolon(row.module_ids) : undefined
@@ -418,7 +470,12 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     lastUpdateDate: row.last_update_date,
     lastVerified: row.last_verified || undefined,
     documentStatus: row.document_status,
-    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
+    lifecycleState: row.lifecycle_state?.trim() || undefined,
+    lifecycleLabel: resolveLifecycleLabel({
+      lifecycleState: row.lifecycle_state,
+      documentStatus: row.document_status ?? '',
+    }),
+    supersededByRefs: parseSupersededBy(row.superseded_by),
     shortDescription: row.short_description,
     documentType: row.document_type,
     applicableIndustries: splitSemicolon(row.applicable_industries),
@@ -492,7 +549,7 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
 
   // Attach prior revisions to the FLAT list; the dependency tree is built last
   // (in the export below) so children share the fully-enriched object references.
-  return attachPriorRevisions(items, priors)
+  return attachSuccessionLinks(attachPriorRevisions(items, priors))
 }
 
 function buildTree(items: LibraryItem[]): LibraryItem[] {
@@ -594,7 +651,7 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
   }
 
   // Keep currentItems FLAT + enriched; buildTree runs last (in the export below).
-  currentItems = attachPriorRevisions(result.data, priorResult.data)
+  currentItems = attachSuccessionLinks(attachPriorRevisions(result.data, priorResult.data))
   supersededByRef = new Map(priorResult.data.map((p) => [p.referenceId, p.supersededBy]))
   previousItems = result.previousData ? result.previousData : []
   parsedMetadata = result.metadata
@@ -672,7 +729,7 @@ const nowMs = Date.now()
 
 // Inject status + citationCount, THEN build the dependency tree as the final step
 // so `children[]` reference the same fully-enriched objects as the top-level array
-// (priorRevisions/groupStatusBucket/status/citationCount all present). This is what
+// (priorRevisions/groupLifecycleLabel/status/citationCount all present). This is what
 // lets findByRef(...) resolve a child and still see priorRevisions in the detail view.
 export const libraryData: LibraryItem[] = buildTree(
   currentItems.map((item) => ({

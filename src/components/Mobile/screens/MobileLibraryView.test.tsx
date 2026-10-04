@@ -130,6 +130,31 @@ describe('MobileLibraryView', () => {
     expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
   })
 
+  describe('lifecycle label', () => {
+    // A document whose label is not the common one, so the check cannot pass by luck.
+    const unusual = libraryData.find((i) => i.lifecycleLabel !== 'Released')!
+
+    it("shows each document's own lifecycle label on its card", () => {
+      renderView()
+      const card = screen.getAllByText(unusual.referenceId)[0].closest('article')
+      expect(card).not.toBeNull()
+      expect(
+        within(card as HTMLElement).getByText(new RegExp(`^${unusual.lifecycleLabel}`))
+      ).toBeTruthy()
+      expect(screen.queryByText(/^(Published|Proposed|Superseded)( ·.*)?$/)).toBeNull()
+    })
+
+    it('shows it in the detail sheet too', () => {
+      render(
+        <MemoryRouter initialEntries={[`/library?ref=${encodeURIComponent(unusual.referenceId)}`]}>
+          <MobileLibraryView />
+        </MemoryRouter>
+      )
+      const sheet = screen.getByTestId('library-detail-sheet')
+      expect(within(sheet).getByText(new RegExp(`${unusual.lifecycleLabel}`))).toBeTruthy()
+    })
+  })
+
   describe('?ref deep link (same param as desktop)', () => {
     function LocationProbe() {
       const loc = useLocation()

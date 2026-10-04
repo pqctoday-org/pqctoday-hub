@@ -564,6 +564,15 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Step 3 covers memory encryption engines, sealing-key derivation and the Grover margin on symmetric keys; the attestation flows in Step 2 are per vendor, which is where the differences live.',
     ops: "Step 5's per-component quantum risk assessment and migration plan is the operational output; Step 1's architecture comparison says which TEE features your platforms expose today.",
   },
+  '/learn/homomorphic-encryption': {
+    developer:
+      'The CKKS and TFHE single-HSM scenarios show which calls the data owner, the cloud and the HSM each make: key generation, encryption, computing on ciphertexts and decryption under policy.',
+    architect:
+      'Each workshop scenario shows where the secret key, the public keys and the data sit at every step, and "What can run in the HSM?" says what belongs in the HSM and what belongs on GPUs: the placement decisions an FHE design has to make.',
+    researcher:
+      'The learn sections cover the four ISO/IEC 28033 draft schemes, the lattice basis of FHE against the quantum threat and the decryption attacks that shape HSM policy; the threshold scenarios (OpenFHE and Lattigo) show where no single party holds the key.',
+    ops: 'The custody steps cover what an operator has to run: a non-extractable seed in the HSM, decryption under policy with an audit log and rate limits, and an HSM-to-HSM backup so the key survives the loss of a device.',
+  },
   '/learn/crypto-agility': {
     executive:
       'Score your organisation across four crypto-agility dimensions in the last step: the result says whether the next algorithm change is a configuration change or a rebuild.',

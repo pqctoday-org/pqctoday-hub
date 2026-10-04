@@ -19,6 +19,7 @@ import path from 'path'
 import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { glob } from 'glob'
+import { reviewerDisplay } from '../src/data/reviewerDisplay'
 
 const DATA_DIR = path.resolve(process.cwd(), 'src/data')
 const REVISIONS_PATH = path.resolve(process.cwd(), 'public/data/revisions.jsonl')
@@ -109,8 +110,8 @@ function loadReviewerMap(): Map<string, string> {
   for (const line of lines) {
     try {
       const entry: RevisionEntry = JSON.parse(line)
-      const display = entry.reviewer_display
-      if (!display) continue
+      if (!entry.reviewer_display) continue
+      const display = reviewerDisplay(entry.reviewer_display)
       const ids = entry.record_ids ?? (entry.record_id ? [entry.record_id] : [])
       for (const id of ids) {
         map.set(`${entry.domain ?? ''}:${id}`, display)

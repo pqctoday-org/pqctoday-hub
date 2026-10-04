@@ -55,6 +55,7 @@ const GOLDEN_ROUTE_PATHS = [
   'pci-certification',
   'government-defense-pqc',
   'healthcare-pqc',
+  'homomorphic-encryption',
   'hsm-pqc',
   'hybrid-crypto',
   'iam-pqc',

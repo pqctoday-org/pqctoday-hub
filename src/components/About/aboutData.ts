@@ -14,26 +14,29 @@ import {
 } from 'lucide-react'
 
 /**
- * Mission tags shown on the vision panel. Three entries embed live counts
- * (learning modules, assessment steps, patents) that previously drifted from
- * the real data — the caller supplies the current computed values (same
- * loaders Landing already uses) so this list can never silently go stale.
+ * Mission tags shown on the vision panel. Five entries embed live counts
+ * (learning modules, business tools, assessment steps, migration catalog
+ * products, patents) that previously drifted from the real data — the caller
+ * supplies the current computed values (same loaders Landing already uses) so
+ * this list can never silently go stale.
  */
 export function buildMissionTags(counts: {
   moduleCount: number
+  toolCount: number
   stepCount: number
+  catalogCount: number
   patentCount: number
 }): string[] {
   return [
     `${counts.moduleCount} learning modules`,
-    '34 business planning tools',
+    `${counts.toolCount} business planning tools`,
     `${counts.stepCount}-step risk assessment`,
-    '800+ migration catalog',
+    `${counts.catalogCount.toLocaleString()} migration catalog products`,
     `${counts.patentCount.toLocaleString()} PQC patents`,
     'PKCS#11 v3.2 simulator',
     'FIPS 203 / 204 / 205',
     'AI assistant — local or cloud',
-    'Zero data collected',
+    'No accounts, anonymous usage analytics',
   ]
 }
 
@@ -52,7 +55,7 @@ export const PRINCIPLES = [
   },
   {
     label: 'Private by design',
-    text: 'No registration. No data collection. Processing runs on your device. We never know you visited.',
+    text: 'No registration. Processing runs on your device. Google Analytics 4 counts anonymous usage on every visit; the Privacy section below says what it records and how to block it.',
   },
   {
     label: 'Free at the core',
@@ -75,7 +78,7 @@ export const NOT_ITEMS = [
   },
   {
     label: 'Not a surveillance platform',
-    text: 'We collect zero user data. We do not know who you are. We never will.',
+    text: 'We have no accounts and ask for no personal details. Google Analytics 4 counts anonymous usage on every visit; the Privacy section says what it records and how to block it.',
   },
   {
     label: 'Not US-only',
@@ -103,7 +106,7 @@ export interface DataFoundationRow {
 }
 
 const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'records'>> = {
-  timeline: { dataset: 'Timeline Events', sources: '80+ orgs, 37 countries' },
+  timeline: { dataset: 'Timeline Events', sources: '80+ orgs' },
   library: { dataset: 'Library Resources', sources: '30+ standards bodies' },
   algorithms: { dataset: 'Algorithm Reference', sources: 'FIPS 203/204/205 (+206 draft)' },
   compliance: { dataset: 'Compliance Frameworks', sources: 'NIST, CAVP, CC, ANSSI' },
@@ -112,7 +115,7 @@ const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'r
   leaders: { dataset: 'Industry Leaders', sources: 'Public, Private, Academic' },
   quiz: { dataset: 'Quiz Questions', sources: 'All PQC topic areas' },
   sources: { dataset: 'Authoritative Sources', sources: 'Gov, Academic, Industry' },
-  modules: { dataset: 'Learning Modules', sources: '2,800+ min of content' },
+  modules: { dataset: 'Learning Modules', sources: '3,800+ min of content' },
   patents: { dataset: 'PQC Patents', sources: 'USPTO, EPO, WIPO' },
 }
 
@@ -138,10 +141,13 @@ const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
  * there); the wiring decisions live in DataFoundationSection.tsx.
  */
 export function buildDataFoundation(
-  records: Record<DataFoundationKey, number | string>
+  records: Record<DataFoundationKey, number | string>,
+  /** Replaces the Timeline row's fixed `sources` text, whose country figure is derived from the data. */
+  timelineSources?: string
 ): DataFoundationRow[] {
   return DATA_FOUNDATION_ORDER.map((key) => ({
     ...DATA_FOUNDATION_META[key],
+    ...(key === 'timeline' && timelineSources ? { sources: timelineSources } : {}),
     records: records[key],
   }))
 }

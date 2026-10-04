@@ -359,6 +359,13 @@ export interface CRQCEstimate {
    * probabilities within 10 and 15 years of its publication, not years.
    */
   survey?: { within10: string; within15: string; experts: number; name: string }
+  /**
+   * The published claim this estimate is (see `@/data/openClaimsData`). The Quantum Threats
+   * module and the Threats page show that claim's card (state, sources with their exact words,
+   * what changed from an earlier statement) next to the estimate. Only the claim's state and
+   * quotes come from the claims file; the years above are unchanged.
+   */
+  claimId?: string
 }
 
 /**
@@ -375,6 +382,7 @@ export interface CRQCEstimate {
 export const CRQC_ESTIMATES: CRQCEstimate[] = [
   {
     source: 'Global Risk Institute (2025)',
+    claimId: 'crqc-gri-2025-timeline',
     kind: 'arrival-forecast',
     yearLow: 2030,
     yearHigh: 2041,
@@ -393,6 +401,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'NIST IR 8547 (IPD, Nov 2024)',
+    claimId: 'crqc-nist-ir8547-dates',
     kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2035,
@@ -404,6 +413,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'NSA CNSA 2.0 (2022; FAQ version 2.1, December 2024)',
+    claimId: 'crqc-nsa-cnsa2-dates',
     kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2033,
@@ -415,6 +425,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'ANSSI France (2022 paper; current FAQ)',
+    claimId: 'crqc-anssi-phase3',
     kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2030,
@@ -426,6 +437,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'BSI Germany (TR-02102-1, 2026-01)',
+    claimId: 'crqc-bsi-tr02102-2026-dates',
     kind: 'planning-guidance',
     yearLow: 2030,
     yearHigh: 2035,

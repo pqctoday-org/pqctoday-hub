@@ -30,6 +30,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
+import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
@@ -141,6 +142,12 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               <ItemShareButton
                 title={itemShareTitle(threat.threatId)}
                 path={`/threats?id=${encodeURIComponent(threat.threatId)}`}
+              />
+              <OpenOnPageLink
+                to={`/threats?id=${encodeURIComponent(threat.threatId)}`}
+                homePath="/threats"
+                pageLabel="Threats"
+                onNavigate={onClose}
               />
               <Button
                 variant="ghost"

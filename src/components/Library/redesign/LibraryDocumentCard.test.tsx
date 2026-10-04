@@ -12,7 +12,7 @@ function makeItem(overrides: Partial<LibraryItem>): LibraryItem {
     initialPublicationDate: '2025-01-01',
     lastUpdateDate: '2025-01-01',
     documentStatus: 'Final',
-    documentStatusBucket: 'Published',
+    lifecycleLabel: 'Released',
     shortDescription: '',
     documentType: '',
     applicableIndustries: [],
@@ -58,5 +58,40 @@ describe('LibraryDocumentCard — source affordance', () => {
     )
     expect(screen.getByText(/source not available/i)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /open/i })).toBeNull()
+  })
+
+  it('shows the lifecycle label, in the new wording', () => {
+    for (const lifecycleLabel of [
+      'Released',
+      'Draft',
+      'Expired',
+      'Historical',
+      'Research Paper',
+      'Misc',
+    ] as const) {
+      const { unmount } = render(
+        <LibraryDocumentCard
+          item={makeItem({ lifecycleLabel })}
+          bookmarked={false}
+          onToggleBookmark={noop}
+          onOpen={noop}
+        />
+      )
+      expect(screen.getByText(lifecycleLabel)).toBeInTheDocument()
+      unmount()
+    }
+  })
+
+  it("shows the furthest label of a revision group instead of the current row's own", () => {
+    render(
+      <LibraryDocumentCard
+        item={makeItem({ lifecycleLabel: 'Draft', groupLifecycleLabel: 'Released' })}
+        bookmarked={false}
+        onToggleBookmark={noop}
+        onOpen={noop}
+      />
+    )
+    expect(screen.getByText('Released')).toBeInTheDocument()
+    expect(screen.queryByText('Draft')).toBeNull()
   })
 })

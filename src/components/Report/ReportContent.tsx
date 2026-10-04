@@ -649,10 +649,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Compliance Impact */}
                     {phaseVisible('complianceImpact') &&
-                      result.complianceImpacts.length > 0 &&
+                      (result.complianceImpacts.length > 0 ||
+                        (result.omittedCompliance?.length ?? 0) > 0) &&
                       cfg('complianceImpact').state !== 'hidden' && (
                         <ComplianceImpactSection
                           complianceImpacts={result.complianceImpacts}
+                          omitted={result.omittedCompliance}
                           industry={industry}
                           country={country}
                           defaultOpen={cfg('complianceImpact').state === 'open'}

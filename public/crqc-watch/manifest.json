@@ -80,6 +80,45 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T19:13:58.615503+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:BSI Germany (TR-02102-1, 2026-01)",
+      "file": "estimates-bsi-germany-tr-02102-1-2026-01-efc8563f.pdf",
+      "bytes": 568388,
+      "content_type": "application/pdf",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-04T00:02:49.775702+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "estimates:NSA CNSA 2.0 (2022; FAQ version 2.1, December 2024)",
+      "file": "estimates-nsa-cnsa-2-0-2022-faq-version-2-1-december-2024-c512ff8b.pdf",
+      "bytes": 441742,
+      "content_type": "application/pdf",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-04T00:02:50.279247+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "estimates:ANSSI France (2022 paper; current FAQ)",
+      "file": "estimates-anssi-france-2022-paper-current-faq-4608939b.html",
+      "bytes": 64010,
+      "content_type": "text/html",
+      "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/",
+      "sha256": "96fffb45a4ef429e1b2537a32769465a64e740fe801223ad0e3a8ce4c3e49a67",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-04T00:02:50.356953+00:00",
+      "admittedBy": "evidence admission"
     }
   ]
 }

@@ -480,6 +480,7 @@ export function ComplianceDetailDrawer({
           entityLabel={framework.label}
           revisions={byRecord(revisions, 'compliance', framework.id)}
           onClose={() => setDrilldownOpen(false)}
+          sharePath={`/compliance?framework=${encodeURIComponent(framework.id)}`}
         />
       )}
     </FocusLock>,

@@ -16,8 +16,8 @@ const RUN_BY_COLORS: Record<string, string> = {
   'key holder': 'bg-success/10 text-status-success border-success/30',
 }
 
-/** Body of the "Homomorphic Encryption" learn section (rendered inside a CollapsibleSection). */
-export const HomomorphicEncryptionSection: React.FC = () => (
+/** Learn section 1: why FHE, how it differs from a TEE, and the four ISO/IEC 28033 schemes. */
+export const FheFundamentalsSection: React.FC = () => (
   <div className="space-y-6 text-sm text-foreground/80">
     <p>
       A TEE protects data in use by trusting <strong>hardware</strong>. Fully homomorphic encryption
@@ -107,7 +107,12 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         </table>
       </div>
     </div>
+  </div>
+)
 
+/** Learn section 2: the FHE key set, who runs each operation, and how AES data gets into FHE. */
+export const FheKeysOperationsSection: React.FC = () => (
+  <div className="space-y-6 text-sm text-foreground/80">
     {/* Keys */}
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -223,7 +228,12 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         AES further (IACR ePrint 2025/075 over TFHE and 2026/1209 over CKKS).
       </p>
     </div>
+  </div>
+)
 
+/** Learn section 3: FHE against the quantum threat. */
+export const FheQuantumSection: React.FC = () => (
+  <div className="space-y-6 text-sm text-foreground/80">
     {/* Quantum exposure */}
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -266,7 +276,12 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         </table>
       </div>
     </div>
+  </div>
+)
 
+/** Learn section 4: the HSM as FHE key custodian and what it must never become. */
+export const FheCustodySection: React.FC = () => (
+  <div className="space-y-6 text-sm text-foreground/80">
     {/* HSM role */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -345,7 +360,12 @@ export const HomomorphicEncryptionSection: React.FC = () => (
         it releases only approved result shapes, with rate limits.
       </p>
     </div>
+  </div>
+)
 
+/** Learn section 5: open-source implementations of the draft schemes. */
+export const FheImplementationsSection: React.FC = () => (
+  <div className="space-y-6 text-sm text-foreground/80">
     {/* Implementations */}
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">

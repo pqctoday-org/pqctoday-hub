@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { TOOL_ROUTE_META } from './toolRouteMeta.generated'
+
 const BASE_URL = 'https://www.pqctoday.com'
 
 export interface RouteMeta {
@@ -61,7 +63,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '62 Hands-on Learning Modules',
+            '{modules} Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
             'PQC Patent Landscape',
@@ -267,7 +269,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/migrate': {
     title: 'PQC Migration Workbench — Software & Infrastructure PQC Readiness | PQC Today',
     description:
-      'Navigate every step of your PQC migration. Track software and infrastructure readiness across 7 technology layers, with FIPS validation status and migration phases mapped to your regulatory obligations.',
+      'Navigate every step of your PQC migration. Track software and infrastructure readiness across 9 infrastructure layers, with FIPS validation status and migration phases mapped to your regulatory obligations.',
     canonical: `${BASE_URL}/migrate`,
   },
 
@@ -281,7 +283,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/business/tools': {
     title: 'Business Tools — PQC Planning & Governance Toolkit | PQC Today',
     description:
-      '34 interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
+      '{businessTools} interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
     canonical: `${BASE_URL}/business/tools`,
   },
 
@@ -417,25 +419,10 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 62 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — {modules} Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 62 guided learning modules across 9 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with {modules} guided learning modules across 9 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Course',
-      name: 'Post-Quantum Cryptography Learning Path',
-      description:
-        '62 interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.',
-      provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
-      isAccessibleForFree: true,
-      numberOfCredits: 62,
-      hasCourseInstance: {
-        '@type': 'CourseInstance',
-        courseMode: 'online',
-        courseWorkload: 'PT61H',
-      },
-    },
   },
 
   '/learn/pqc-101': {
@@ -445,7 +432,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/pqc-101`,
     structuredData: buildModuleSchema(
       'PQC 101 — Introduction to Post-Quantum Cryptography',
-      'PT15M',
+      'PT10M',
       'Beginner'
     ),
   },
@@ -455,7 +442,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       "Understand how Shor's and Grover's algorithms break RSA and AES. CRQC timeline estimates, harvest-now-decrypt-later mechanics, and security level degradation.",
     canonical: `${BASE_URL}/learn/quantum-threats`,
-    structuredData: buildModuleSchema('Quantum Threats to Cryptography', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Quantum Threats to Cryptography', 'PT40M', 'Intermediate'),
   },
 
   '/learn/hybrid-crypto': {
@@ -463,7 +450,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Combine classical and post-quantum algorithms for safe migration. Hybrid KEMs, composite signatures, and interactive certificate format comparison.',
     canonical: `${BASE_URL}/learn/hybrid-crypto`,
-    structuredData: buildModuleSchema('Hybrid Cryptography', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Hybrid Cryptography', 'PT40M', 'Intermediate'),
   },
 
   '/learn/crypto-agility': {
@@ -471,7 +458,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Design crypto-agile architectures for PQC transition. Abstraction layers, CBOM scanning, and the 7-phase migration framework from assessment to optimization.',
     canonical: `${BASE_URL}/learn/crypto-agility`,
-    structuredData: buildModuleSchema('Crypto Agility', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Crypto Agility', 'PT40M', 'Intermediate'),
   },
 
   '/learn/tls-basics': {
@@ -479,7 +466,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Deep dive into TLS 1.3 handshake protocol, cipher suite negotiation, and how ML-KEM integrates into post-quantum TLS connections.',
     canonical: `${BASE_URL}/learn/tls-basics`,
-    structuredData: buildModuleSchema('TLS 1.3 Basics', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('TLS 1.3 Basics', 'PT40M', 'Intermediate'),
   },
 
   '/learn/vpn-ssh-pqc': {
@@ -487,7 +474,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum VPN and SSH: IKEv2 hybrid ML-KEM key exchange, WireGuard Rosenpass integration, and protocol overhead comparison for IPsec tunnels.',
     canonical: `${BASE_URL}/learn/vpn-ssh-pqc`,
-    structuredData: buildModuleSchema('VPN/IPsec & SSH PQC', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('VPN/IPsec & SSH PQC', 'PT60M', 'Advanced'),
   },
   '/learn/dnssec-pqc': {
     title: 'DNSSEC & Post-Quantum Signatures — ML-DSA-44, Algorithm 18 | PQC Today',
@@ -502,7 +489,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum email security: S/MIME signing workflows, KEM-based CMS encryption (RFC 9629), and PQC migration path for enterprise email.',
     canonical: `${BASE_URL}/learn/email-signing`,
-    structuredData: buildModuleSchema('Email & Document Signing', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Email & Document Signing', 'PT40M', 'Intermediate'),
   },
 
   '/learn/pki-workshop': {
@@ -510,7 +497,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Hands-on PKI fundamentals: build certificate chains, explore X.509 extensions, and plan post-quantum PKI infrastructure migration.',
     canonical: `${BASE_URL}/learn/pki-workshop`,
-    structuredData: buildModuleSchema('PKI Workshop', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('PKI Workshop', 'PT40M', 'Intermediate'),
   },
 
   '/learn/kms-pqc': {
@@ -518,7 +505,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master PQC key management patterns: ML-KEM envelope encryption, hybrid key wrapping combiners, multi-provider rotation planning across AWS, Google, Azure, and on-prem KMS.',
     canonical: `${BASE_URL}/learn/kms-pqc`,
-    structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT75M', 'Intermediate'),
+    structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT60M', 'Intermediate'),
   },
 
   '/learn/pqc-hw-acceleration': {
@@ -534,7 +521,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Deep dive into Hardware Security Modules for PQC: PKCS#11 v3.2 mechanisms, vendor comparison, firmware migration planning, and FIPS 140-3 validation tracking.',
     canonical: `${BASE_URL}/learn/hsm-pqc`,
-    structuredData: buildModuleSchema('HSM & PQC Operations', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('HSM & PQC Operations', 'PT60M', 'Advanced'),
   },
 
   '/learn/crypto-product-certification': {
@@ -583,7 +570,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter selection, state management, and when to choose stateful over stateless schemes.',
     canonical: `${BASE_URL}/learn/stateful-signatures`,
-    structuredData: buildModuleSchema('Stateful Hash Signatures', 'PT60M', 'Advanced'),
+    structuredData: buildModuleSchema('Stateful Hash Signatures', 'PT40M', 'Advanced'),
   },
 
   '/learn/merkle-tree-certs': {
@@ -591,7 +578,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Build Merkle trees interactively, generate and verify inclusion proofs, and compare MTC efficiency versus traditional PKI for post-quantum TLS.',
     canonical: `${BASE_URL}/learn/merkle-tree-certs`,
-    structuredData: buildModuleSchema('Merkle Tree Certificates', 'PT60M', 'Advanced'),
+    structuredData: buildModuleSchema('Merkle Tree Certificates', 'PT40M', 'Advanced'),
   },
 
   '/learn/digital-assets': {
@@ -599,7 +586,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Quantum threats to blockchain: how PQC impacts Bitcoin, Ethereum, and Solana. Key derivation, address generation, and post-quantum migration paths.',
     canonical: `${BASE_URL}/learn/digital-assets`,
-    structuredData: buildModuleSchema('Digital Assets & PQC', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Digital Assets & PQC', 'PT50M', 'Intermediate'),
   },
 
   '/learn/5g-security': {
@@ -607,7 +594,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Explore 3GPP 5G security architecture: SUCI deconcealment, 5G-AKA protocol, subscriber provisioning, and post-quantum migration for mobile networks.',
     canonical: `${BASE_URL}/learn/5g-security`,
-    structuredData: buildModuleSchema('5G Security', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('5G Security', 'PT60M', 'Advanced'),
   },
 
   '/learn/digital-id': {
@@ -615,7 +602,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master the EU Digital Identity Wallet: activation flows, PID issuance, qualified electronic signatures (QES), and post-quantum readiness for eIDAS 2.0.',
     canonical: `${BASE_URL}/learn/digital-id`,
-    structuredData: buildModuleSchema('Digital ID & EUDI Wallet', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('Digital ID & EUDI Wallet', 'PT80M', 'Advanced'),
   },
 
   '/learn/entropy-randomness': {
@@ -623,7 +610,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master entropy sources and random number generation: NIST SP 800-90 DRBGs, hardware TRNGs, quantum random number generators, and entropy testing.',
     canonical: `${BASE_URL}/learn/entropy-randomness`,
-    structuredData: buildModuleSchema('Entropy & Randomness', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Entropy & Randomness', 'PT40M', 'Intermediate'),
   },
 
   '/learn/qkd': {
@@ -631,7 +618,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Explore QKD fundamentals: BB84 protocol simulation with Eve interception, classical post-processing, hybrid key derivation, and real-world QKD network data.',
     canonical: `${BASE_URL}/learn/qkd`,
-    structuredData: buildModuleSchema('Quantum Key Distribution', 'PT150M', 'Advanced'),
+    structuredData: buildModuleSchema('Quantum Key Distribution', 'PT100M', 'Advanced'),
   },
 
   '/learn/vendor-risk': {
@@ -639,7 +626,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       "Evaluate your supply chain's quantum readiness. Build PQC vendor scorecards across 6 dimensions, demand CycloneDX CBOM inventories, generate contract clauses, and map cryptographic risk across infrastructure layers.",
     canonical: `${BASE_URL}/learn/vendor-risk`,
-    structuredData: buildModuleSchema('Vendor & Supply Chain PQC Risk', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Vendor & Supply Chain PQC Risk', 'PT30M', 'Advanced'),
   },
 
   '/learn/compliance-strategy': {
@@ -648,7 +635,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Build a multi-jurisdiction PQC compliance strategy. Map CNSA 2.0, NIST IR 8547, ANSSI, and BSI requirements across your operating regions, build audit readiness checklists, and construct compliance timelines for key deadlines through 2035.',
     canonical: `${BASE_URL}/learn/compliance-strategy`,
-    structuredData: buildModuleSchema('PQC Compliance & Regulatory Strategy', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('PQC Compliance & Regulatory Strategy', 'PT30M', 'Advanced'),
   },
 
   '/learn/migration-program': {
@@ -657,7 +644,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Structure your enterprise PQC migration as a multi-year program. Apply the 7-phase CISA/NIST framework — from discovery and CBOM to validation — with roadmap builder, stakeholder communications planner, and KPI tracker.',
     canonical: `${BASE_URL}/learn/migration-program`,
-    structuredData: buildModuleSchema('PQC Migration Program Management', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('PQC Migration Program Management', 'PT30M', 'Advanced'),
   },
 
   '/learn/pqc-risk-management': {
@@ -665,7 +652,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       "Quantify your organization's quantum risk exposure. Model CRQC arrival scenarios, build a cryptographic risk register with likelihood × impact scoring, and visualize migration priorities on a 5×5 risk heatmap.",
     canonical: `${BASE_URL}/learn/pqc-risk-management`,
-    structuredData: buildModuleSchema('PQC Risk Management', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('PQC Risk Management', 'PT30M', 'Intermediate'),
   },
 
   '/learn/pqc-business-case': {
@@ -674,7 +661,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Make the financial case for PQC migration. Calculate risk-adjusted ROI, model HNDL breach costs with industry data, quantify compliance penalty exposure, and generate a board-ready investment memo with executive summary.',
     canonical: `${BASE_URL}/learn/pqc-business-case`,
-    structuredData: buildModuleSchema('Building the PQC Business Case', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Building the PQC Business Case', 'PT30M', 'Intermediate'),
   },
 
   '/learn/pqc-governance': {
@@ -682,7 +669,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Establish enterprise governance for your PQC transition. Build RACI matrices for migration responsibilities, generate cryptographic policy templates across 4 layers, choose a governance model, and design a KPI dashboard for board reporting.',
     canonical: `${BASE_URL}/learn/pqc-governance`,
-    structuredData: buildModuleSchema('PQC Governance & Policy', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('PQC Governance & Policy', 'PT30M', 'Advanced'),
   },
 
   '/learn/code-signing': {
@@ -690,7 +677,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum code signing: sign binaries and packages with ML-DSA, build PQC certificate chains, simulate Sigstore keyless signing, and explore secure boot firmware trust chains with LMS/XMSS vs ML-DSA trade-offs.',
     canonical: `${BASE_URL}/learn/code-signing`,
-    structuredData: buildModuleSchema('Code Signing & Supply Chain Security', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Code Signing & Supply Chain Security', 'PT50M', 'Advanced'),
   },
 
   '/learn/api-security-jwt': {
@@ -698,7 +685,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Migrate API authentication to post-quantum cryptography. Decode JWTs, replace RS256/ES256 with ML-DSA signing, swap ECDH-ES for ML-KEM key agreement in JWE, analyze PQC token size impacts, and plan OAuth 2.0/OIDC migration.',
     canonical: `${BASE_URL}/learn/api-security-jwt`,
-    structuredData: buildModuleSchema('API Security & JWT with PQC', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('API Security & JWT with PQC', 'PT60M', 'Advanced'),
   },
 
   '/learn/iot-pqc': {
@@ -716,7 +703,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/data-asset-sensitivity`,
     structuredData: buildModuleSchema(
       'Data & Asset Sensitivity Assessment',
-      'PT75M',
+      'PT50M',
       'Intermediate'
     ),
   },
@@ -728,7 +715,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/standards-bodies`,
     structuredData: buildModuleSchema(
       'Standards, Certification & Compliance Bodies',
-      'PT60M',
+      'PT40M',
       'Intermediate'
     ),
   },
@@ -738,7 +725,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Explore Trusted Execution Environments for PQC: Intel SGX, AMD SEV-SNP, ARM CCA architectures, remote attestation flows, sealing key migration, and quantum threat timelines for TEE-based systems.',
     canonical: `${BASE_URL}/learn/confidential-computing`,
-    structuredData: buildModuleSchema('Confidential Computing & TEEs', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Confidential Computing & TEEs', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/homomorphic-encryption': {
+    title: 'Homomorphic Encryption (FHE) & HSM Key Custody — ISO/IEC 28033 & PQC | PQC Today',
+    description:
+      'Compute on encrypted data without trusting the hardware: the ISO/IEC 28033 draft FHE schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM holds the FHE secret key without becoming a decryption oracle.',
+    canonical: `${BASE_URL}/learn/homomorphic-encryption`,
+    structuredData: buildModuleSchema(
+      'Homomorphic Encryption (FHE) & HSM Key Custody',
+      'PT45M',
+      'Advanced'
+    ),
   },
 
   '/learn/web-gateway-pqc': {
@@ -746,7 +745,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Plan PQC migration for web infrastructure: CDN edge TLS, WAF inspection with ML-KEM, load balancer cipher suite updates, and reverse proxy certificate chain management.',
     canonical: `${BASE_URL}/learn/web-gateway-pqc`,
-    structuredData: buildModuleSchema('Web Gateway PQC', 'PT90M', 'Intermediate'),
+    structuredData: buildModuleSchema('Web Gateway PQC', 'PT60M', 'Intermediate'),
   },
 
   '/learn/emv-payment-pqc': {
@@ -755,7 +754,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum migration across payments and banking: EMV SDA/DDA/CDA authentication, tokenization, POS and DUKPT key injection, Swift and RTGS settlement rails, ANSI X9.143 key blocks, and the sector regulation setting the pace.',
     canonical: `${BASE_URL}/learn/emv-payment-pqc`,
-    structuredData: buildModuleSchema('Financial Services & Payments PQC', 'PT110M', 'Advanced'),
+    structuredData: buildModuleSchema('Financial Services & Payments PQC', 'PT120M', 'Advanced'),
   },
   '/learn/government-defense-pqc': {
     title: 'Government & Defense PQC — CNSA 2.0, Federal PKI & NSS Mandates | PQC Today',
@@ -783,7 +782,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/crypto-dev-apis`,
     structuredData: buildModuleSchema(
       'Cryptographic APIs & Developer Languages',
-      'PT120M',
+      'PT80M',
       'Intermediate'
     ),
   },
@@ -794,7 +793,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Migrate your platform to post-quantum: CI/CD pipeline crypto inventory, container signing with ML-DSA via cosign/Notation, IaC defaults, OPA/Kyverno policy enforcement, and crypto posture monitoring.',
     canonical: `${BASE_URL}/learn/platform-eng-pqc`,
-    structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT80M', 'Advanced'),
   },
 
   '/learn/ot-pqc': {
@@ -810,7 +809,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum migration for healthcare: HIPAA compliance, HL7 FHIR API security, medical device firmware signing, EHR encryption, and clinical data protection strategies.',
     canonical: `${BASE_URL}/learn/healthcare-pqc`,
-    structuredData: buildModuleSchema('Healthcare PQC', 'PT90M', 'Intermediate'),
+    structuredData: buildModuleSchema('Healthcare PQC', 'PT60M', 'Intermediate'),
   },
 
   '/learn/aerospace-pqc': {
@@ -818,7 +817,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum cryptography for aerospace: satellite communication links, CCSDS protocol security, DO-326A airworthiness, ground station upgrades, and long-lifecycle mission planning.',
     canonical: `${BASE_URL}/learn/aerospace-pqc`,
-    structuredData: buildModuleSchema('Aerospace PQC', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('Aerospace PQC', 'PT80M', 'Advanced'),
   },
 
   '/learn/automotive-pqc': {
@@ -826,7 +825,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum migration for automotive: V2X communication security, AUTOSAR crypto stack, ISO 21434 compliance, ECU firmware signing, and connected vehicle PKI.',
     canonical: `${BASE_URL}/learn/automotive-pqc`,
-    structuredData: buildModuleSchema('Automotive PQC', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('Automotive PQC', 'PT80M', 'Advanced'),
   },
 
   '/learn/exec-quantum-impact': {
@@ -850,7 +849,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'A 30-minute developer guide to post-quantum cryptography. Learn which libraries support PQC, how to integrate ML-KEM/ML-DSA, and what changes in your code.',
     canonical: `${BASE_URL}/learn/dev-quantum-impact`,
-    structuredData: buildModuleSchema('Developer Quantum Impact Guide', 'PT30M', 'Beginner'),
+    structuredData: buildModuleSchema('Developer Quantum Impact Guide', 'PT20M', 'Beginner'),
   },
 
   '/learn/arch-quantum-impact': {
@@ -858,7 +857,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'A 30-minute architect guide to post-quantum system design. Crypto agility patterns, hybrid deployment strategies, and infrastructure migration sequencing.',
     canonical: `${BASE_URL}/learn/arch-quantum-impact`,
-    structuredData: buildModuleSchema('Architect Quantum Impact Guide', 'PT30M', 'Beginner'),
+    structuredData: buildModuleSchema('Architect Quantum Impact Guide', 'PT20M', 'Beginner'),
   },
 
   '/learn/ops-quantum-impact': {
@@ -866,7 +865,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'A 30-minute operations guide to PQC migration. Certificate rotation, HSM firmware updates, monitoring for algorithm deprecation, and incident response planning.',
     canonical: `${BASE_URL}/learn/ops-quantum-impact`,
-    structuredData: buildModuleSchema('Operations Quantum Impact Guide', 'PT30M', 'Beginner'),
+    structuredData: buildModuleSchema('Operations Quantum Impact Guide', 'PT20M', 'Beginner'),
   },
 
   '/learn/research-quantum-impact': {
@@ -874,7 +873,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'A 30-minute guide for security researchers on post-quantum cryptography. Lattice-based security proofs, side-channel considerations, and open research questions.',
     canonical: `${BASE_URL}/learn/research-quantum-impact`,
-    structuredData: buildModuleSchema('Researcher Quantum Impact Guide', 'PT30M', 'Beginner'),
+    structuredData: buildModuleSchema('Researcher Quantum Impact Guide', 'PT20M', 'Beginner'),
   },
 
   '/learn/ai-security-pqc': {
@@ -883,7 +882,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum security for AI systems: model weight encryption, federated learning channel protection, ML pipeline integrity, inference API authentication, and adversarial robustness in a quantum era.',
     canonical: `${BASE_URL}/learn/ai-security-pqc`,
-    structuredData: buildModuleSchema('AI Security & PQC', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('AI Security & PQC', 'PT80M', 'Advanced'),
   },
 
   '/learn/secrets-management-pqc': {
@@ -891,7 +890,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum secrets management: HashiCorp Vault transit encryption, AWS/Azure/GCP secrets migration, rotation policy design, and CI/CD pipeline integration with PQC-safe key wrapping.',
     canonical: `${BASE_URL}/learn/secrets-management-pqc`,
-    structuredData: buildModuleSchema('Secrets Management & PQC', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Secrets Management & PQC', 'PT60M', 'Advanced'),
   },
 
   '/learn/network-security-pqc': {
@@ -907,7 +906,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum database encryption: TDE migration planning, column-level encryption with ML-KEM, queryable encryption patterns, BYOK/HYOK key management, and database vendor readiness.',
     canonical: `${BASE_URL}/learn/database-encryption-pqc`,
-    structuredData: buildModuleSchema('Database Encryption & PQC', 'PT75M', 'Intermediate'),
+    structuredData: buildModuleSchema('Database Encryption & PQC', 'PT50M', 'Intermediate'),
   },
 
   '/learn/iam-pqc': {
@@ -917,7 +916,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/iam-pqc`,
     structuredData: buildModuleSchema(
       'Identity & Access Management with PQC',
-      'PT90M',
+      'PT60M',
       'Intermediate'
     ),
   },
@@ -927,7 +926,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum secure boot: UEFI PK/KEK/db key migration to ML-DSA, TPM 2.0 key hierarchy, DICE attestation, firmware vendor readiness, and boot chain integrity verification.',
     canonical: `${BASE_URL}/learn/secure-boot-pqc`,
-    structuredData: buildModuleSchema('Secure Boot & Firmware PQC', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Secure Boot & Firmware PQC', 'PT60M', 'Advanced'),
   },
 
   '/learn/os-pqc': {
@@ -937,7 +936,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/os-pqc`,
     structuredData: buildModuleSchema(
       'Operating System & Platform Crypto PQC',
-      'PT75M',
+      'PT50M',
       'Intermediate'
     ),
   },
@@ -954,6 +953,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
     canonical: `${BASE_URL}/learn/pqc-testing-validation`,
+    structuredData: buildModuleSchema('PQC Network Testing & Validation', 'PT120M', 'Advanced'),
   },
 
   '/learn/acvp-lab-workflow': {
@@ -968,10 +968,116 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     ),
   },
 
+  // --- Modules that were in the catalog but had no page entry (title and description are the module's own) ---
+
+  '/learn/cbom': {
+    title: 'Cryptography Bill of Materials (CBOM) | PQC Today',
+    description:
+      'Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.',
+    canonical: `${BASE_URL}/learn/cbom`,
+    structuredData: buildModuleSchema(
+      'Cryptography Bill of Materials (CBOM)',
+      'PT60M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/crypto-mgmt-modernization': {
+    title: 'Cryptographic Management Modernization | PQC Today',
+    description:
+      'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
+    canonical: `${BASE_URL}/learn/crypto-mgmt-modernization`,
+    structuredData: buildModuleSchema(
+      'Cryptographic Management Modernization',
+      'PT55M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/crypto-registry': {
+    title: 'CycloneDX Cryptography Registry | PQC Today',
+    description:
+      'One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.',
+    canonical: `${BASE_URL}/learn/crypto-registry`,
+    structuredData: buildModuleSchema('CycloneDX Cryptography Registry', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/mls-group-messaging': {
+    title: 'MLS — Group Messaging | PQC Today',
+    description:
+      'Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.',
+    canonical: `${BASE_URL}/learn/mls-group-messaging`,
+    structuredData: buildModuleSchema('MLS — Group Messaging', 'PT40M', 'Intermediate'),
+  },
+
+  '/learn/pki-enrollment-protocols': {
+    title: 'PKI Enrollment Protocols (EST & CMP) | PQC Today',
+    description:
+      'RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
+    canonical: `${BASE_URL}/learn/pki-enrollment-protocols`,
+    structuredData: buildModuleSchema('PKI Enrollment Protocols (EST & CMP)', 'PT50M', 'Advanced'),
+  },
+
+  '/learn/pqc-candidates': {
+    title: 'PQC Candidates & Lifecycle | PQC Today',
+    description:
+      'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
+    canonical: `${BASE_URL}/learn/pqc-candidates`,
+    structuredData: buildModuleSchema('PQC Candidates & Lifecycle', 'PT55M', 'Intermediate'),
+  },
+
+  '/learn/pqc-grc': {
+    title: 'PQC GRC | PQC Today',
+    description:
+      'Wire post-quantum risk into governance, risk, and compliance: cascade Key Risk Indicators from board to operational level, triage a deferral exception register into SOC suppression, and hand off cleanly between GRC and the SOC.',
+    canonical: `${BASE_URL}/learn/pqc-grc`,
+    structuredData: buildModuleSchema('PQC GRC', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/sbom': {
+    title: 'Software Bill of Materials (SBOM) | PQC Today',
+    description:
+      'Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.',
+    canonical: `${BASE_URL}/learn/sbom`,
+    structuredData: buildModuleSchema('Software Bill of Materials (SBOM)', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/skills-team-structure': {
+    title: 'Skills & Team Structure | PQC Today',
+    description:
+      'Size and staff the PQC migration program: convert your cryptographic estate into an FTE estimate with the 1-FTE-per-500-instances heuristic, build a federated Crypto Champion roster, and track each champion’s readiness commitments.',
+    canonical: `${BASE_URL}/learn/skills-team-structure`,
+    structuredData: buildModuleSchema('Skills & Team Structure', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/slh-dsa': {
+    title: 'SLH-DSA: Stateless Hash Signatures | PQC Today',
+    description:
+      'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
+    canonical: `${BASE_URL}/learn/slh-dsa`,
+    structuredData: buildModuleSchema('SLH-DSA: Stateless Hash Signatures', 'PT45M', 'Advanced'),
+  },
+
+  '/learn/soc-implementation-pqc': {
+    title: 'SOC Implementation for PQC | PQC Today',
+    description:
+      'Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on.',
+    canonical: `${BASE_URL}/learn/soc-implementation-pqc`,
+    structuredData: buildModuleSchema('SOC Implementation for PQC', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/verification-closure': {
+    title: 'Decommissioning & Program Closure | PQC Today',
+    description:
+      'Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.',
+    canonical: `${BASE_URL}/learn/verification-closure`,
+    structuredData: buildModuleSchema('Decommissioning & Program Closure', 'PT40M', 'Intermediate'),
+  },
+
   '/explore': {
     title: 'Explore | PQC Today',
     description:
-      'Discover post-quantum cryptography resources — interactive timelines, 62 learning modules, compliance tools, migration guides, and the PQC risk assessment.',
+      'Discover post-quantum cryptography resources — interactive timelines, {modules} learning modules, compliance tools, migration guides, and the PQC risk assessment.',
     canonical: `${BASE_URL}/explore`,
   },
 
@@ -987,6 +1093,70 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Interactive 3D map of the post-quantum cryptography landscape — standards, algorithms, protocols, compliance mandates, industries, use cases, products, vendors, patents, and community leaders, linked by how they relate.',
     canonical: `${BASE_URL}/navigate`,
+  },
+}
+
+// --- Counts quoted in page copy -------------------------------------------------------------------
+// A title or description writes "{modules}" where it quotes the number of Learn modules and
+// "{businessTools}" where it quotes the number of Business Tools, in titles, descriptions and structured
+// data alike. The /learn course data carries the
+// module count and the total study time. They all come from the pages themselves (the module pages
+// below, counted the way the app counts them: the catalog without the quiz, and the generated tool
+// list), so adding a module or a tool updates every place at once. learnRoutes.test.ts and
+// searchRoutes.test.ts tie those sources to the real catalog and registry.
+const moduleStudyMinutes = (iso: unknown): number => {
+  const text = String(iso ?? '')
+  return Number(/(\d+)H/.exec(text)?.[1] ?? 0) * 60 + Number(/(\d+)M/.exec(text)?.[1] ?? 0)
+}
+const modulePages = Object.entries(ROUTE_META).filter(
+  ([path]) => path.startsWith('/learn/') && path !== '/learn/quiz'
+)
+export const LEARN_MODULE_COUNT = modulePages.length
+const LEARN_STUDY_MINUTES = modulePages.reduce(
+  (sum, [, meta]) => sum + moduleStudyMinutes(meta.structuredData?.timeRequired),
+  0
+)
+
+const BUSINESS_TOOL_COUNT = TOOL_ROUTE_META.filter((tool) => tool.kind === 'business-tool').length
+const QUOTED_COUNTS: Record<string, number> = {
+  '{modules}': LEARN_MODULE_COUNT,
+  '{businessTools}': BUSINESS_TOOL_COUNT,
+}
+
+/** Fill the count placeholders in a string, or in every string inside structured data. */
+function fillCounts(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return Object.entries(QUOTED_COUNTS).reduce(
+      (text, [token, count]) => text.replaceAll(token, String(count)),
+      value
+    )
+  }
+  if (Array.isArray(value)) return value.map(fillCounts)
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, inner]) => [key, fillCounts(inner)]))
+  }
+  return value
+}
+
+for (const meta of Object.values(ROUTE_META)) {
+  meta.title = fillCounts(meta.title) as string
+  meta.description = fillCounts(meta.description) as string
+  if (meta.structuredData)
+    meta.structuredData = fillCounts(meta.structuredData) as Record<string, unknown>
+}
+
+ROUTE_META['/learn']!.structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'Post-Quantum Cryptography Learning Path',
+  description: `${LEARN_MODULE_COUNT} interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.`,
+  provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
+  isAccessibleForFree: true,
+  numberOfCredits: LEARN_MODULE_COUNT,
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    courseWorkload: `PT${Math.round(LEARN_STUDY_MINUTES / 60)}H`,
   },
 }
 
@@ -1016,13 +1186,25 @@ const PARENT_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['/library/', '/library'],
 ]
 
+const TOOL_META_BY_PATH = new Map(TOOL_ROUTE_META.map((route) => [route.path, route]))
+
 /**
  * Routes that exist but must not be indexed: legacy duplicates of redesigned
  * pages and the signed embed surface. They still resolve to real metadata so the
  * canonical stays self-referential, but PageMeta marks them noindex.
  */
 export function isNoindexRoute(pathname: string): boolean {
-  return pathname.endsWith('/legacy') || pathname === '/embed' || pathname.startsWith('/embed/')
+  const normalized =
+    pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+  const tool = TOOL_META_BY_PATH.get(normalized)
+  return (
+    tool?.index === false ||
+    normalized.endsWith('/legacy') ||
+    normalized === '/embed' ||
+    normalized.startsWith('/embed/') ||
+    (normalized.startsWith('/business/tools/') && !tool) ||
+    (normalized.startsWith('/playground/') && !tool && !Object.hasOwn(ROUTE_META, normalized))
+  )
 }
 
 /**
@@ -1046,6 +1228,16 @@ export function getRouteMeta(pathname: string): RouteMeta {
     // eslint-disable-next-line security/detect-object-injection
     const meta = ROUTE_META[normalized]!
     return noindex ? { ...meta, noindex } : meta
+  }
+
+  const tool = TOOL_META_BY_PATH.get(normalized)
+  if (tool) {
+    return {
+      title: tool.title,
+      description: tool.description,
+      canonical: selfCanonical,
+      noindex: tool.index ? undefined : true,
+    }
   }
 
   // Dynamic/child routes — inherit the parent section's title + description, but

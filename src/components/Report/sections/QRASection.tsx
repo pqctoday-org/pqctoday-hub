@@ -294,7 +294,8 @@ function RegulatoryGaps({ gaps }: { gaps: ReturnType<typeof buildQRA>['regulator
         <CrqcWindow />
         <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
           <CheckCircle2 size={16} className="text-success" aria-hidden="true" />
-          No frameworks in scope explicitly mandate PQC yet — but track the regulatory horizon.
+          Among the frameworks you selected that apply to you, none explicitly mandates PQC yet —
+          but track the regulatory horizon.
         </p>
       </div>
     )

@@ -302,6 +302,15 @@ export default defineConfig([
                 '!@/components/Migrate/Workbench/waves',
                 '!@/components/Migrate/Workbench/cbomExport',
                 '!@/components/Migrate/Workbench/vendorConcentrationRisk',
+                // replaceTabParams.ts — pure ?rq= / ?facet= parse/serialize
+                // helpers, no JSX (2026-10-03 deep-link addressability): the
+                // phone Replace list reads and writes the same URL state as
+                // desktop's ReplaceTab, so a link shared from either opens
+                // the same filtered list on the other.
+                '!@/components/Migrate/Workbench/replaceTabParams',
+                // maintainerLeaders.ts — pure maintainer → Community-profile
+                // matching plus its roster loader hook, no JSX (2026-10-03).
+                '!@/components/Migrate/Workbench/maintainerLeaders',
                 // obligationsModel.ts / roleLens.ts (Compliance/obligations)
                 // and requirementsModel.ts (Compliance/requirements) — pure
                 // logic, no JSX. cswp39Data.ts (Compliance root) — pure data.
@@ -312,6 +321,11 @@ export default defineConfig([
                 '!@/components/Compliance',
                 '@/components/Compliance/*',
                 '!@/components/Compliance/cswp39Data',
+                // recordSemantics.ts — pure status/type/PQC-coverage/date
+                // helpers, no JSX (type-only imports). The phone `?cert=`
+                // sheet formats a record with the same functions as the
+                // desktop ComplianceDetailPopover (2026-10-03 deep links).
+                '!@/components/Compliance/recordSemantics',
                 '!@/components/Compliance/obligations',
                 '@/components/Compliance/obligations/*',
                 '!@/components/Compliance/obligations/obligationsModel',
@@ -375,6 +389,18 @@ export default defineConfig([
                 // Threats screen shows the same "estimates are still open" wording
                 // desktop does, from this one component.
                 '!@/components/common/UnresolvedEstimatesNotice',
+                // EstimateClaims.tsx (common, 2026-10-04) — same category: a self-contained,
+                // collapsed-by-default panel of claim cards with no desktop-only layout (cards
+                // stack on a phone; pure-moved out of the Quantum Threats module). The phone
+                // Threats screen shows the same cards desktop does, from this one component.
+                '!@/components/common/EstimateClaims',
+                // SuccessionLinks.tsx (common, 2026-10-04) — same category: a small,
+                // self-contained "Newer document" / "Replaces" list of links with no
+                // desktop-only layout (it stacks on a phone; kept out of the Library
+                // folder so Mobile does not import a desktop view). The phone Library
+                // sheet shows the same links the desktop drawer does, from this one
+                // component.
+                '!@/components/common/SuccessionLinks',
                 // ItemShareButton.tsx (common, 2026-09-29) — the per-item Share
                 // control every item overlay carries; mobile sheets use it too.
                 '!@/components/common/ItemShareButton',

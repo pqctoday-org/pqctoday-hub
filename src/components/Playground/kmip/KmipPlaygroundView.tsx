@@ -11,7 +11,7 @@
 //   Plane 3 · PKCS#11  — the keystore the engine actually populated, plus the
 //                        cross-plane audit trail every op emits.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useLocation, useSearchParams } from 'react-router'
 import {
   Cpu,
   KeyRound,
@@ -128,6 +128,19 @@ const LEGACY_PLANES: Record<string, Plane> = {
   kmip3: 'learn',
   migration: 'migration',
   developer: 'dev',
+}
+
+function CacpStaticIntro() {
+  return (
+    <header className="mb-4 rounded-lg border border-border bg-muted/20 p-4">
+      <h1 className="text-xl font-bold text-foreground">Crypto-Agility Control Plane</h1>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        Explore how a KMIP policy permits, denies or migrates cryptographic operations as an estate
+        moves to post-quantum algorithms. The explanatory workflow is available immediately; the
+        interactive KMIP and PKCS#11 engine then starts locally in WebAssembly in this browser.
+      </p>
+    </header>
+  )
 }
 
 type OperateMode = 'single' | 'batch'
@@ -268,6 +281,7 @@ function whatThisMeans(r: OpResult): string | null {
 }
 
 export function KmipPlaygroundView() {
+  const { pathname } = useLocation()
   const role = usePersonaStore((s) => s.selectedPersona)
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
@@ -1057,6 +1071,7 @@ export function KmipPlaygroundView() {
   if (bootError) {
     return (
       <div className="p-6">
+        <CacpStaticIntro />
         <div className="flex items-center gap-2 text-destructive">
           <AlertTriangle size={18} />{' '}
           <span className="font-semibold">Couldn’t start the in-browser KMIP engine</span>
@@ -1067,9 +1082,12 @@ export function KmipPlaygroundView() {
   }
   if (!engine) {
     return (
-      <div className="flex items-center gap-2 text-muted-foreground p-6">
-        <Loader2 size={18} className="animate-spin" /> Booting the KMIP + PKCS#11 engine in your
-        browser…
+      <div className="p-6">
+        <CacpStaticIntro />
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 size={18} className="animate-spin" /> Booting the KMIP + PKCS#11 engine in your
+          browser…
+        </div>
       </div>
     )
   }
@@ -1107,6 +1125,7 @@ export function KmipPlaygroundView() {
       <WorkshopShell<Plane>
         icon={Cpu}
         title="KMIP Control Plane"
+        headingLevel={pathname === '/playground/cacp' ? 'h1' : 'h2'}
         badge={
           <Button
             variant="ghost"

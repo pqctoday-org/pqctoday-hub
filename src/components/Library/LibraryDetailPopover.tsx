@@ -18,7 +18,8 @@ import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from './FrameworkCrosswalkPanel'
-import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
+import { LIFECYCLE_STYLES } from '../../utils/libraryLifecycle'
+import { SuccessionLinks } from '../common/SuccessionLinks'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { relatedLeadersFor } from './relatedLeaders'
 import clsx from 'clsx'
@@ -26,6 +27,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
+import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
@@ -188,6 +190,12 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     title={itemShareTitle(item.documentTitle?.trim() || item.referenceId)}
                     path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
                   />
+                  <OpenOnPageLink
+                    to={`/library?ref=${encodeURIComponent(item.referenceId)}`}
+                    homePath="/library"
+                    pageLabel="Library"
+                    onNavigate={onClose}
+                  />
                   <Button
                     variant="ghost"
                     onClick={onClose}
@@ -239,6 +247,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </p>
                 </div>
 
+                <SuccessionLinks item={item} />
+
                 {/* CSWP 39 governance requirements extracted from this doc */}
                 {(() => {
                   const reqs = maturityByRefId.get(item.referenceId) ?? []
@@ -283,12 +293,9 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       {cswp39Open && (
                         <div className="mt-3 pl-1">
                           <p className="text-xs text-muted-foreground/80 mb-3">
-                            Governance obligations extracted from this source document by{' '}
-                            <code className="text-[10px] bg-muted/40 px-1 rounded">
-                              qwen3.6:27b
-                            </code>
-                            , grouped by Crypto Posture Management pillar and tagged with the
-                            maturity tier each one represents.
+                            Governance obligations extracted from this source document by automated
+                            extraction, grouped by Crypto Posture Management pillar and tagged with
+                            the maturity tier each one represents.
                           </p>
                           <div className="space-y-3">
                             {grouped.map(({ pillar, items }) => {
@@ -425,11 +432,11 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                               <span
                                 className={clsx(
                                   'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
-                                  BUCKET_STYLES[rev.documentStatusBucket].badge
+                                  LIFECYCLE_STYLES[rev.lifecycleLabel].badge
                                 )}
                                 title={rev.documentStatus}
                               >
-                                {BUCKET_STYLES[rev.documentStatusBucket].label}
+                                {LIFECYCLE_STYLES[rev.lifecycleLabel].label}
                               </span>
                               <span className="text-[11px] text-muted-foreground truncate">
                                 {rev.referenceId}

@@ -17,22 +17,31 @@
  * with the sitemap generator) so it can never drift out of sync with the app.
  */
 
-import { chromium, type Browser } from 'playwright'
+import { chromium, type Browser, type Page } from 'playwright'
 import { createServer, type Server } from 'http'
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, dirname, extname } from 'path'
 import { fileURLToPath } from 'url'
-import { ROUTE_META, isNoindexRoute } from '../src/seo/routeMeta'
+import { SEARCH_ROUTES, type SearchRoute } from '../src/seo/searchRoutes'
 import { chromiumLaunchArgs } from './lib/chromiumLaunchArgs'
+import {
+  describeReadinessFailure,
+  validateSnapshot,
+  type ReadinessFacts,
+} from './lib/prerenderChecks'
+import { boundSnapshot, type BoundResult } from './lib/snapshotBudget'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = join(__dirname, '..', 'dist')
 const CONCURRENCY = 4
 
-/** Every indexable route, from the same source of truth the sitemap uses. */
-const ROUTES = Object.keys(ROUTE_META)
-  .filter((r) => !isNoindexRoute(r))
-  .sort()
+/** Every supported search route. Non-indexed routes are rendered as real 200 pages too. */
+const ROUTES = [...SEARCH_ROUTES]
+const APP_MAJOR = Number(
+  /^\d+/.exec(
+    JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8')).version
+  )?.[0] ?? 0
+)
 
 const MIME = new Map<string, string>([
   ['.html', 'text/html; charset=utf-8'],
@@ -134,19 +143,54 @@ function outputPathsFor(route: string): string[] {
 
 const normalize = (p: string) => (p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p)
 
-async function renderRoute(browser: Browser, baseUrl: string, route: string): Promise<void> {
+/** "0.98 MB", plus what was compacted when the page was over the target size. */
+function sizeNote({ bytes, originalBytes, compacted }: BoundResult): string {
+  const mb = (n: number) => `${(n / 1048576).toFixed(2)} MB`
+  return compacted
+    ? `${mb(bytes)}, compacted from ${mb(originalBytes)}: first ${compacted.intact} of ${compacted.items} items kept as captured`
+    : mb(bytes)
+}
+
+/** Collect what the page shows right now, for the error message when a route never becomes ready. */
+function readinessFacts(page: Page, contentRegion: string): Promise<ReadinessFacts> {
+  return page.evaluate((selector) => {
+    const root = document.querySelector<HTMLElement>('#root')
+    const region = document.querySelector(selector)
+    const text = region?.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+    return {
+      routeMarker: root?.dataset.prerenderRoute ?? null,
+      state: root?.dataset.prerenderState ?? null,
+      regionFound: region !== null,
+      h1Count: region?.querySelectorAll('h1').length ?? 0,
+      chars: text.length,
+      disclaimerOpen: document.querySelector('#disclaimer-title') !== null,
+      opening: text.slice(0, 70),
+    }
+  }, contentRegion)
+}
+
+async function renderRoute(
+  browser: Browser,
+  baseUrl: string,
+  route: SearchRoute
+): Promise<{ chars: number; h1Count: number; saved: BoundResult }> {
   const page = await browser.newPage()
   try {
     // Belt-and-suspenders: never let the COI reload guard fire mid-capture.
-    await page.addInitScript(() => {
+    await page.addInitScript((appMajor) => {
       try {
         sessionStorage.setItem('coi-reload', '1')
+        localStorage.setItem(
+          'pqc-disclaimer-storage',
+          JSON.stringify({ state: { acknowledgedMajorVersion: appMajor }, version: 1 })
+        )
+        localStorage.setItem('pqc-tour-completed', 'true')
       } catch {
         /* sandboxed storage — ignore */
       }
-    })
+    }, APP_MAJOR)
 
-    await page.goto(`${baseUrl}${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 })
+    await page.goto(`${baseUrl}${route.path}`, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
     // Wait until PageMeta has hoisted THIS route's canonical into <head> — proof
     // that React rendered the route-specific metadata before we snapshot.
@@ -158,13 +202,36 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
           const got = new URL(link.href).pathname.replace(/\/$/, '') || '/'
           return got === expected
         },
-        normalize(route),
+        normalize(route.path),
         { timeout: 12000 }
       )
       .catch(() => {
         // Fall back to a content selector if canonical detection times out.
         return page.waitForSelector('main, [role="main"], h1', { timeout: 4000 }).catch(() => {})
       })
+
+    try {
+      await page.waitForFunction(
+        ({ path, selector }) => {
+          const root = document.querySelector<HTMLElement>('#root')
+          return (
+            root?.dataset.prerenderRoute === path &&
+            root.dataset.prerenderState === 'ready' &&
+            document.querySelector(selector) !== null
+          )
+        },
+        { path: route.path, selector: route.contentRegion },
+        { timeout: 30000 }
+      )
+    } catch (timeout) {
+      // "Timeout 30000ms exceeded" does not say which condition was unmet; report what the page showed.
+      const facts = await readinessFacts(page, route.contentRegion).catch(() => null)
+      throw new Error(
+        facts
+          ? describeReadinessFailure(route, facts)
+          : `route readiness never reached: the page could not be inspected (${String(timeout).split('\n')[0]})`
+      )
+    }
 
     // Let any remaining synchronous render flush.
     await page.waitForTimeout(250)
@@ -181,8 +248,16 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
       }
     })
 
-    const html = stripRuntimeInjectedPreloads(await page.content())
-    for (const out of outputPathsFor(route)) writeFileSync(out, html, 'utf-8')
+    // A page that is one very long list is compacted below the fold (nothing is dropped; boundSnapshot
+    // proves it), and what is saved is the compacted copy, so the size gate in validateSnapshot judges
+    // the page as published.
+    const saved = boundSnapshot(stripRuntimeInjectedPreloads(await page.content()))
+    const result = validateSnapshot(saved.html, route)
+    if (result.errors.length > 0) {
+      throw new Error(result.errors.join('; '))
+    }
+    for (const out of outputPathsFor(route.path)) writeFileSync(out, saved.html, 'utf-8')
+    return { chars: result.chars, h1Count: result.h1Count, saved }
   } finally {
     await page.close()
   }
@@ -216,17 +291,21 @@ async function prerender(): Promise<void> {
       const route = queue.shift()
       if (route === undefined) return
       try {
-        await renderRoute(browser, baseUrl, route)
-        console.log(`  ✓ ${route}  (${++done}/${ROUTES.length})`)
+        const result = await renderRoute(browser, baseUrl, route)
+        console.log(
+          `  ✓ ${route.path}  (${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)})  (${++done}/${ROUTES.length})`
+        )
       } catch {
         // One retry — these failures are almost always transient timeouts.
         try {
-          await renderRoute(browser, baseUrl, route)
-          console.log(`  ✓ ${route}  (retry) (${++done}/${ROUTES.length})`)
+          const result = await renderRoute(browser, baseUrl, route)
+          console.log(
+            `  ✓ ${route.path}  (retry; ${result.chars} chars, h1 ${result.h1Count}, ${sizeNote(result.saved)}) (${++done}/${ROUTES.length})`
+          )
         } catch (err2) {
           const error = err2 instanceof Error ? err2.message : String(err2)
-          failures.push({ route, error })
-          console.error(`  ✗ ${route}: ${error}`)
+          failures.push({ route: route.path, error })
+          console.error(`  ✗ ${route.path}: ${error}`)
           done++
         }
       }

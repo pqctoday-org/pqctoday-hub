@@ -28,9 +28,11 @@ export function CloudSyncPrivacySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">No personal data is collected.</strong> We do not
-              request your name, email address, or profile picture. The consent screen only asks for
-              access to your Google Drive app data folder.
+              <strong className="text-foreground">
+                The sync feature collects no personal data.
+              </strong>{' '}
+              We do not request your name, email address, or profile picture. The consent screen
+              only asks for access to your Google Drive app data folder.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

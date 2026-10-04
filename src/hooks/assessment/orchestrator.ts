@@ -9,7 +9,7 @@ import {
   MIGRATION_STATUS_SCORES,
 } from '../assessmentData'
 
-import { industryComplianceConfigs } from '../../data/industryAssessConfig'
+import { splitComplianceRequirements } from './complianceFilter'
 
 import type {
   AssessmentInput,
@@ -80,22 +80,11 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
         }
       })
   // Filter compliance requirements to only include frameworks relevant to the user's industry AND country
-  const filteredCompliance = input.complianceRequirements.filter((fw) => {
-    const framework = industryComplianceConfigs.find((f) => f.label === fw)
-    if (!framework) return true // don't silently drop unknowns
-
-    const industryMatch =
-      framework.industries.includes(input.industry) || framework.industries.length >= 3
-
-    const countryMatch =
-      !input.country ||
-      input.country === 'Global' ||
-      framework.countries.length === 0 ||
-      framework.countries.includes('Global') ||
-      framework.countries.includes(input.country)
-
-    return industryMatch && countryMatch
-  })
+  const { kept: filteredCompliance, omitted: omittedCompliance } = splitComplianceRequirements(
+    input.complianceRequirements,
+    input.industry,
+    input.country
+  )
   const complianceImpacts: ComplianceImpact[] = filteredCompliance.map((fw) => {
     // eslint-disable-next-line security/detect-object-injection
     const info = COMPLIANCE_DB[fw]
@@ -368,6 +357,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
+    ...(omittedCompliance.length > 0 ? { omittedCompliance } : {}),
     recommendedActions: recommendedActions.map((a) => ({
       ...a,
       cswp39Step: classifyCswp39Step(a),
@@ -455,22 +445,9 @@ export async function computeAssessmentAsync(
   })
 
   // Stage 2 — compliance impact filtering
-  const filteredCompliance = await stage(
+  const { kept: filteredCompliance, omitted: omittedCompliance } = await stage(
     'Filtering compliance frameworks by industry/country',
-    () =>
-      input.complianceRequirements.filter((fw) => {
-        const framework = industryComplianceConfigs.find((f) => f.label === fw)
-        if (!framework) return true
-        const industryMatch =
-          framework.industries.includes(input.industry) || framework.industries.length >= 3
-        const countryMatch =
-          !input.country ||
-          input.country === 'Global' ||
-          framework.countries.length === 0 ||
-          framework.countries.includes('Global') ||
-          framework.countries.includes(input.country)
-        return industryMatch && countryMatch
-      })
+    () => splitComplianceRequirements(input.complianceRequirements, input.industry, input.country)
   )
   const complianceImpacts: ComplianceImpact[] = filteredCompliance.map((fw) => {
     // eslint-disable-next-line security/detect-object-injection
@@ -631,6 +608,7 @@ export async function computeAssessmentAsync(
     riskLevel,
     algorithmMigrations,
     complianceImpacts,
+    ...(omittedCompliance.length > 0 ? { omittedCompliance } : {}),
     recommendedActions: recommendedActions.map((a) => ({
       ...a,
       cswp39Step: classifyCswp39Step(a),

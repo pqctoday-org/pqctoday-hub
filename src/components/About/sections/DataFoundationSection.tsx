@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Database } from 'lucide-react'
 import { buildDataFoundation } from '../aboutData'
 import { timelineData } from '@/data/timelineData'
+import { countSovereignCountries } from '@/data/timelineCountries'
 import { libraryData } from '@/data/libraryData'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
 import { softwareData } from '@/data/migrateData'
@@ -18,6 +19,8 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 // Excludes the synthetic 'quiz' entry — matches the count Landing already shows.
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 const TIMELINE_EVENT_COUNT = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length
+// Sovereign countries only: blocs, bodies and territories are left out (see timelineCountries.ts).
+const TIMELINE_COUNTRY_COUNT = countSovereignCountries(timelineData)
 
 function formatLastUpdate(date: Date | null | undefined): string | null {
   if (!date) return null
@@ -34,19 +37,22 @@ export function DataFoundationSection() {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
   }, [])
 
-  const dataFoundation = buildDataFoundation({
-    timeline: TIMELINE_EVENT_COUNT,
-    library: libraryData.length,
-    algorithms: algorithmCount !== null ? algorithmCount : '…',
-    compliance: complianceFrameworks.length,
-    migrate: softwareData.length,
-    threats: threatsData.length,
-    leaders: leadersData.length,
-    quiz: quizQuestions.length,
-    sources: authoritativeSources.length,
-    modules: MODULE_COUNT,
-    patents: patentsData.length,
-  })
+  const dataFoundation = buildDataFoundation(
+    {
+      timeline: TIMELINE_EVENT_COUNT,
+      library: libraryData.length,
+      algorithms: algorithmCount !== null ? algorithmCount : '…',
+      compliance: complianceFrameworks.length,
+      migrate: softwareData.length,
+      threats: threatsData.length,
+      leaders: leadersData.length,
+      quiz: quizQuestions.length,
+      sources: authoritativeSources.length,
+      modules: MODULE_COUNT,
+      patents: patentsData.length,
+    },
+    `80+ orgs, ${TIMELINE_COUNTRY_COUNT} countries`
+  )
 
   const totalRecords = dataFoundation.reduce(
     (sum, row) => sum + (typeof row.records === 'number' ? row.records : 0),

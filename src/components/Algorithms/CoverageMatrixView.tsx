@@ -81,6 +81,11 @@ const DEFAULT_ENGINE: EngineId = 'cpp'
 const toEngine = (v: string | null | undefined): EngineId =>
   (ENGINES as readonly string[]).includes(v ?? '') ? (v as EngineId) : DEFAULT_ENGINE
 
+const DEFAULT_POLARITY: Polarity = 'positive'
+/** `?polarity=` → a known polarity; anything else falls back to the default. */
+const toPolarity = (v: string | null | undefined): Polarity =>
+  (POLARITIES as readonly string[]).includes(v ?? '') ? (v as Polarity) : DEFAULT_POLARITY
+
 /**
  * `?case=` → the (mechanism × operation) groups it names. The full group key
  * `<mechanism>|<operation>` (e.g. `CKM_ML_KEM|encapsulate`) names one row; a
@@ -100,6 +105,8 @@ interface CoverageMatrixViewProps {
   /** `?engine=` (cpp | rust) and `?case=` (group key or mechanism) from the URL. */
   engineParam?: string | null
   caseParam?: string | null
+  /** `?polarity=` (positive | negative | boundary | state-error); default omitted. */
+  polarityParam?: string | null
   /** URL writer (replace). Omitted → engine/expansion stay local state. */
   onUpdateParams?: (updates: Record<string, string | null>) => void
 }
@@ -108,12 +115,13 @@ export function CoverageMatrixView({
   loader = loadCoverageMatrix,
   engineParam,
   caseParam,
+  polarityParam,
   onUpdateParams,
 }: CoverageMatrixViewProps = {}) {
   const [matrix, setMatrix] = useState<CoverageMatrix | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [engine, setEngine] = useState<EngineId>(() => toEngine(engineParam))
-  const [polarity, setPolarity] = useState<Polarity>('positive')
+  const [polarity, setPolarity] = useState<Polarity>(() => toPolarity(polarityParam))
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [query, setQuery] = useState('')
   const [limit, setLimit] = useState(PAGE)
@@ -141,9 +149,13 @@ export function CoverageMatrixView({
 
   // ?engine: re-read on same-route navigation.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
     setEngine(toEngine(engineParam))
   }, [engineParam])
+
+  // ?polarity: re-read on same-route navigation.
+  useEffect(() => {
+    setPolarity(toPolarity(polarityParam))
+  }, [polarityParam])
 
   // ?case: expand the named row(s) once the matrix is in, page far enough to
   // show them, and scroll to the first. A key that names no row says so.
@@ -152,7 +164,7 @@ export function CoverageMatrixView({
   useEffect(() => {
     if (!caseKeys) return
     const keys = caseKeys.split('\n')
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync
+
     setExpanded((prev) => new Set([...prev, ...keys]))
     const lastIndex = Math.max(...keys.map((k) => groups.findIndex((g) => g.key === k)))
     setLimit((l) => Math.max(l, Math.ceil((lastIndex + 1) / PAGE) * PAGE))
@@ -385,7 +397,12 @@ export function CoverageMatrixView({
           label="Polarity"
           items={POLARITIES.map((p) => ({ id: p, label: POLARITY_LABEL[p] }))} // eslint-disable-line security/detect-object-injection
           selectedId={polarity}
-          onSelect={(id) => setPolarity(id as Polarity)}
+          onSelect={(id) => {
+            // The dropdown's own "All" row is not a polarity — it means the default.
+            const next = toPolarity(id)
+            setPolarity(next)
+            onUpdateParams?.({ polarity: next === DEFAULT_POLARITY ? null : next })
+          }}
           size="sm"
         />
         <FilterDropdown

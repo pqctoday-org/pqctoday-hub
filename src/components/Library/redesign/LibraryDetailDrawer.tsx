@@ -35,6 +35,7 @@ import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
+import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -211,10 +212,10 @@ function DrawerPanel({
                 </span>
                 <span
                   className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-                    item.groupStatusBucket ?? item.documentStatusBucket
+                    item.groupLifecycleLabel ?? item.lifecycleLabel
                   )}`}
                 >
-                  {lifecycleLabel(item.groupStatusBucket ?? item.documentStatusBucket)}
+                  {lifecycleLabel(item.groupLifecycleLabel ?? item.lifecycleLabel)}
                 </span>
                 {item.status && (
                   <span
@@ -293,6 +294,8 @@ function DrawerPanel({
               </p>
             )}
 
+            <SuccessionLinks item={item} onOpenRef={onOpenRef} />
+
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
               <KeyFact label="Type" value={item.documentType} />
               <KeyFact label="Algorithm family" value={item.algorithmFamily} />
@@ -357,10 +360,10 @@ function DrawerPanel({
                         <div className="mt-1 flex items-center gap-2">
                           <span
                             className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${lifecyclePillClass(
-                              rev.documentStatusBucket
+                              rev.lifecycleLabel
                             )}`}
                           >
-                            {lifecycleLabel(rev.documentStatusBucket)}
+                            {lifecycleLabel(rev.lifecycleLabel)}
                           </span>
                           <RefLink
                             refId={rev.referenceId}
@@ -563,6 +566,7 @@ function DrawerPanel({
             entityLabel={item.documentTitle}
             revisions={byRecord(revisions, 'library', item.referenceId)}
             onClose={() => setDrilldownOpen(false)}
+            sharePath={`/library?ref=${encodeURIComponent(item.referenceId)}`}
           />
         )}
       </div>

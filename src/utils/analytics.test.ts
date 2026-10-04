@@ -15,6 +15,11 @@ import {
   logFaqExpand,
   logBusinessToolsSearch,
   logBusinessToolsFilter,
+  logComplianceSearch,
+  logLeadersSearch,
+  logLibrarySearch,
+  logMigrateAssetSearch,
+  logTimelineFilterText,
   logExploreTileClick,
   logExploreUnlock,
   logReportViewed,
@@ -32,6 +37,7 @@ vi.mock('react-ga4', () => ({
     initialize: vi.fn(),
     send: vi.fn(),
     event: vi.fn(),
+    set: vi.fn(),
   },
 }))
 
@@ -145,11 +151,12 @@ describe('analytics', () => {
       expect(ReactGA.send).not.toHaveBeenCalled()
     })
 
-    it('logs page view with current window location when no path provided', () => {
+    it('logs page view with the current path, without the query, when no path provided', () => {
       // Mock window.location
       Object.defineProperty(window, 'location', {
         value: {
           hostname: 'example.com',
+          origin: 'https://example.com',
           pathname: '/current-page',
           search: '?query=test',
         },
@@ -168,7 +175,7 @@ describe('analytics', () => {
       ) {
         expect(ReactGA.send).toHaveBeenCalledWith({
           hitType: 'pageview',
-          page: '/current-page?query=test',
+          page: '/current-page',
         })
       }
     })
@@ -530,6 +537,173 @@ describe('analytics', () => {
       })
       logQuizSession(1, 1)
       expect(useHistoryStore.getState().events).toHaveLength(1)
+    })
+  })
+
+  // Every logger that takes text a visitor typed must scrub it. The query is a
+  // mix of an email, a URL, an IPv4 address and a long key-like token around
+  // the one harmless word each assertion expects to survive.
+  describe('typed-text loggers never send the raw query', () => {
+    const TOKEN = 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8'
+    const RAW = `lattice user@example.com https://x.example/path 10.0.0.12 ${TOKEN}`
+    type GaCall = [{ category: string; action: string; label?: string }]
+    const lastCall = () => {
+      const calls = (ReactGA.event as unknown as { mock: { calls: GaCall[] } }).mock.calls
+      return calls[calls.length - 1][0]
+    }
+    const expectScrubbed = (label: string | undefined) => {
+      expect(label).toContain('lattice')
+      expect(label).not.toContain('user@example.com')
+      expect(label).not.toContain('https://')
+      expect(label).not.toContain('10.0.0.12')
+      expect(label).not.toContain(TOKEN)
+    }
+
+    it.each([
+      ['logLibrarySearch', logLibrarySearch, 'Library', 'Search'],
+      ['logComplianceSearch', logComplianceSearch, 'Compliance', 'Search'],
+      ['logLeadersSearch', logLeadersSearch, 'Leaders', 'Search'],
+      ['logTimelineFilterText', logTimelineFilterText, 'Timeline', 'Filter Text'],
+      ['logMigrateAssetSearch', logMigrateAssetSearch, 'Migrate', 'Search Assets'],
+      ['logPatentSearch', logPatentSearch, 'Patents', 'Search'],
+      ['logFaqSearch', logFaqSearch, 'FAQ', 'Search'],
+      ['logBusinessToolsSearch', logBusinessToolsSearch, 'Business', 'Tools Search'],
+    ])('%s scrubs email, URL, IP and token', (_name, logger, category, action) => {
+      logger(RAW)
+      const call = lastCall()
+      expect(call.category).toBe(category)
+      expect(call.action).toBe(action)
+      expectScrubbed(call.label)
+    })
+
+    it('caps the label at 80 characters before any persona suffix', () => {
+      const long = 'ab '.repeat(60)
+      logLeadersSearch(long)
+      expect(lastCall().label).toBe(long.slice(0, 80))
+    })
+  })
+
+  // GA4 reads the full page address and referrer by default. Only origin + path
+  // may be sent: ?q= on Leaders holds typed text and /report?share= holds an
+  // encoded assessment result. The module keeps the last address it sent, so
+  // each test loads a fresh copy of it.
+  describe('page address sent to GA', () => {
+    const stubLocation = (pathname: string, search = '', hash = '') =>
+      Object.defineProperty(window, 'location', {
+        value: {
+          hostname: 'example.com',
+          origin: 'https://example.com',
+          pathname,
+          search,
+          hash,
+          href: `https://example.com${pathname}${search}${hash}`,
+        },
+        writable: true,
+        configurable: true,
+      })
+    const stubReferrer = (value: string) =>
+      Object.defineProperty(document, 'referrer', { value, configurable: true })
+    const load = async () => {
+      vi.resetModules()
+      const ga = (await import('react-ga4')).default
+      const analytics = await import('./analytics')
+      return { ga, ...analytics }
+    }
+    const setCalls = (ga: { set: unknown }) =>
+      (ga.set as { mock: { calls: Array<[Record<string, string>]> } }).mock.calls.map((c) => c[0])
+
+    afterEach(() => {
+      // Restore the prototype getter that stubReferrer shadowed.
+      delete (document as unknown as { referrer?: string }).referrer
+    })
+
+    it('sends only origin + path as page_location, never the query or fragment', async () => {
+      stubLocation('/leaders', '?q=jane.doe%40example.com', '#top')
+      stubReferrer('')
+      const { ga, logPageView } = await load()
+      logPageView('/leaders')
+      expect(setCalls(ga)).toEqual([{ page_location: 'https://example.com/leaders' }])
+      expect(JSON.stringify(setCalls(ga))).not.toMatch(/[?#]|jane/)
+    })
+
+    it('does not send the share token on /report?share=', async () => {
+      stubLocation('/report', '?share=SECRETTOKEN')
+      stubReferrer('')
+      const { ga, logPageView } = await load()
+      logPageView('/report')
+      expect(JSON.stringify(setCalls(ga))).not.toContain('SECRETTOKEN')
+      expect(setCalls(ga)[0].page_location).toBe('https://example.com/report')
+    })
+
+    it('strips the browser referrer to origin + path for the first page', async () => {
+      stubLocation('/leaders', '?q=x')
+      stubReferrer('https://example.com/report?share=SECRETTOKEN#frag')
+      const { ga, logPageView } = await load()
+      logPageView('/leaders')
+      expect(setCalls(ga)).toEqual([
+        {
+          page_location: 'https://example.com/leaders',
+          page_referrer: 'https://example.com/report',
+        },
+      ])
+    })
+
+    it('uses the previous page, path only, as the referrer on later navigations', async () => {
+      stubLocation('/a', '?x=1')
+      stubReferrer('')
+      const { ga, logPageView } = await load()
+      logPageView('/a')
+      stubLocation('/b', '?y=2')
+      logPageView('/b')
+      expect(setCalls(ga)[1]).toEqual({
+        page_location: 'https://example.com/b',
+        page_referrer: 'https://example.com/a',
+      })
+    })
+
+    it('events carry the same path-only address and only update it when the path changes', async () => {
+      stubLocation('/a')
+      stubReferrer('')
+      const { ga, logPageView, logEvent } = await load()
+      logPageView('/a')
+      stubLocation('/a', '?q=typed+text')
+      logEvent('Leaders', 'Search', 'typed text')
+      expect(setCalls(ga)).toHaveLength(1)
+      stubLocation('/c', '?q=typed+text')
+      logEvent('Leaders', 'Search', 'typed text')
+      expect(setCalls(ga)[1].page_location).toBe('https://example.com/c')
+      expect(JSON.stringify(setCalls(ga))).not.toContain('typed')
+    })
+
+    it('initGA sets the path-only address straight after initialising', async () => {
+      stubLocation('/leaders', '?q=secret')
+      stubReferrer('')
+      const { ga, initGA } = await load()
+      initGA()
+      expect(ga.initialize).toHaveBeenCalled()
+      expect(setCalls(ga)).toEqual([{ page_location: 'https://example.com/leaders' }])
+    })
+
+    it('a page view with no path falls back to the path alone, without the query', async () => {
+      stubLocation('/leaders', '?q=secret')
+      stubReferrer('')
+      const { ga, logPageView } = await load()
+      logPageView()
+      const sent = (ga.send as unknown as { mock: { calls: Array<[{ page: string }]> } }).mock
+        .calls[0][0]
+      expect(sent.page).toBe('/leaders')
+    })
+
+    it('does not touch GA on localhost', async () => {
+      Object.defineProperty(window, 'location', {
+        value: { hostname: 'localhost', origin: 'http://localhost', pathname: '/x', search: '' },
+        writable: true,
+        configurable: true,
+      })
+      const { ga, logPageView, logEvent } = await load()
+      logPageView('/x')
+      logEvent('a', 'b')
+      expect(ga.set).not.toHaveBeenCalled()
     })
   })
 })

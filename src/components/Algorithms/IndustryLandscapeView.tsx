@@ -7,6 +7,8 @@
 //                                        mechanisms, standards, market size
 //   ?tab=landscape&mechanism=<family>  — pick a crypto mechanism, see every
 //                                        industry/use case that relies on it
+// Item links: ?usecase=<use_case_id> and ?standard=<standard_id> open the
+// item's industry (unless the mechanism lens already lists it) and ring it.
 // Standard chips deep-link to the in-app Library entry via libraryRef.ts —
 // the same resolver Protocol Support uses. Protocol chips deep-link into the
 // Protocol Support tab.
@@ -60,6 +62,7 @@ import { threatsData } from '../../data/threatsData'
 import { threatsIndustryHref } from '../Threats/threatsUrlParams'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
+import { ShareButton } from '@/components/ui/ShareButton'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { learnHref } from './learnHref'
 import { MANIFEST_BY_ID } from '../PKILearning/manifest/registry'
@@ -530,6 +533,36 @@ function landscapeUseCaseHref(useCaseId: string): string {
   return `/algorithms?tab=landscape&usecase=${encodeURIComponent(useCaseId)}`
 }
 
+/** Clean share link for one standard: the landscape tab plus its standard_id
+ *  (the same stable key use cases cite in `related_standards`). */
+function landscapeStandardHref(standardId: string): string {
+  return `/algorithms?tab=landscape&standard=${encodeURIComponent(standardId)}`
+}
+
+/**
+ * A standard chip that is itself a deep-link target (`?standard=`) and carries
+ * its own Share. Used where a standard is LISTED (the industry rollup and the
+ * mechanism lens), not on use-case cards, so each standard has one target per
+ * view. The share button is compact (h-6) because it sits in a wrapping chip
+ * row; ItemShareButton's h-8 square doubled the row height.
+ */
+function AddressableStandardChip({ std }: { std: IndustryStandard }) {
+  return (
+    <span
+      className="inline-flex items-center gap-0.5 rounded"
+      data-deeplink-id={`standard-${std.standardId}`}
+    >
+      <StandardChip std={std} />
+      <ShareButton
+        title={itemShareTitle(std.standardLabel)}
+        url={landscapeStandardHref(std.standardId)}
+        portal
+        buttonClassName="h-6 w-6"
+      />
+    </span>
+  )
+}
+
 function UseCaseCard({
   uc,
   standards,
@@ -825,7 +858,7 @@ function IndustryCrossRefs({
             <span key={g.body} className="inline-flex flex-wrap items-center gap-1">
               <span className="text-[11px] text-muted-foreground">{g.body}</span>
               {g.standards.map((s) => (
-                <StandardChip key={s.standardId} std={s} />
+                <AddressableStandardChip key={s.standardId} std={s} />
               ))}
             </span>
           ))
@@ -1064,11 +1097,11 @@ export function IndustryLandscapeView() {
     )
   }
 
-  // Picking another industry or mechanism moves off the linked use case.
+  // Picking another industry or mechanism moves off the linked use case/standard.
   const pickIndustry = (industry: string | null) =>
-    update({ industry, mechanism: null, usecase: null })
+    update({ industry, mechanism: null, usecase: null, standard: null })
   const pickMechanism = (mechanism: string | null) =>
-    update({ mechanism, industry: null, usecase: null })
+    update({ mechanism, industry: null, usecase: null, standard: null })
 
   // ?usecase=<useCaseId>: open its industry (unless the mechanism lens
   // already lists it), then scroll to and ring its card. Case-insensitive.
@@ -1098,6 +1131,40 @@ export function IndustryLandscapeView() {
   const usecaseTarget = linkedUseCaseShown ? `usecase-${linkedUseCase.useCaseId}` : null
   useScrollToDeepLinkTarget(usecaseTarget, usecaseTarget ? deepLinkSelector(usecaseTarget) : null)
 
+  // ?standard=<standard_id>: same contract as ?usecase. standard_id is the
+  // standards CSV's key (unique, and the FK use cases cite in
+  // related_standards), so a link survives label edits. A standard belongs to
+  // one industry; the mechanism lens keeps it when the lens lists it.
+  // A ?usecase link wins if both are present — it is the more specific target.
+  const standardParam = searchParams.get('standard')
+  const linkedStandard = useMemo(() => {
+    const q = standardParam?.trim().toLowerCase()
+    return q ? (standards.find((s) => s.standardId.toLowerCase() === q) ?? null) : null
+  }, [standards, standardParam])
+  const linkedStandardShown =
+    !!linkedStandard &&
+    (mode === 'mechanism'
+      ? linkedStandard.mechanismsReferenced.includes(selectedMechanism ?? '')
+      : selectedIndustry === linkedStandard.industry)
+  useEffect(() => {
+    if (!linkedStandard || linkedStandardShown || linkedUseCase) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('industry', linkedStandard.industry)
+        next.delete('mechanism')
+        return next
+      },
+      { replace: true }
+    )
+  }, [linkedStandard, linkedStandardShown, linkedUseCase, setSearchParams])
+  const standardTarget =
+    linkedStandardShown && !usecaseTarget ? `standard-${linkedStandard.standardId}` : null
+  useScrollToDeepLinkTarget(
+    standardTarget,
+    standardTarget ? deepLinkSelector(standardTarget) : null
+  )
+
   const mechanismDef = selectedMechanism ? getMechanismFamily(selectedMechanism) : undefined
   const mechanismHits = useMemo(() => {
     if (!selectedMechanism) return []
@@ -1121,6 +1188,13 @@ export function IndustryLandscapeView() {
           onDismiss={() => update({ usecase: null })}
         />
       )}
+      {standardParam && !linkedStandard && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No industry standard matches "${standardParam}" — it may have been renamed or retired.`}
+          onDismiss={() => update({ standard: null })}
+        />
+      )}
       {/* Mode toggle */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="text-sm text-muted-foreground">Explore by</span>
@@ -1128,7 +1202,7 @@ export function IndustryLandscapeView() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => update({ mechanism: null, usecase: null })}
+            onClick={() => update({ mechanism: null, usecase: null, standard: null })}
             className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Industry
@@ -1260,7 +1334,7 @@ export function IndustryLandscapeView() {
                     Referenced by
                   </span>
                   {standardsForMechanism.map((s) => (
-                    <StandardChip key={`${s.industry}-${s.standardId}`} std={s} />
+                    <AddressableStandardChip key={`${s.industry}-${s.standardId}`} std={s} />
                   ))}
                 </div>
               )}

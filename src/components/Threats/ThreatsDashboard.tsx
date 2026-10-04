@@ -106,6 +106,7 @@ import {
   resolveProtocolParam,
   threatDetailTabParam,
   threatIdParam,
+  threatsViewModeParam,
   wantsHorizonView,
   type ThreatDetailTab,
 } from './threatsUrlParams'
@@ -238,12 +239,11 @@ export const ThreatsDashboard: React.FC<{
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
   const tierFilter = useTrustTierFilter()
-  const [viewMode, setViewMode] = useState<ThreatsViewMode>(() => {
-    const param = searchParams.get('mode')
-    // A bookmarked/shared `?mode=stack` link (the removed Industry Stack view)
-    // falls back to Table rather than rendering nothing.
-    return param === 'cards' || param === 'table' ? param : 'table'
-  })
+  // A bookmarked/shared `?mode=stack` link (the removed Industry Stack view)
+  // falls back to Table rather than rendering nothing.
+  const [viewMode, setViewMode] = useState<ThreatsViewMode>(() =>
+    threatsViewModeParam(searchParams)
+  )
   const [activeNavIndustry, setActiveNavIndustry] = useState<string | null>(null)
   // Below `lg` the Industries TOC stacks full-width above the content instead
   // of sitting in the sticky side rail, so it collapses behind a toggle there
@@ -267,9 +267,7 @@ export const ThreatsDashboard: React.FC<{
     const nextQ = searchParams.get('q') ?? ''
     const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
-    const modeParam = searchParams.get('mode')
-    const nextMode: ThreatsViewMode =
-      modeParam === 'cards' || modeParam === 'table' ? modeParam : 'table'
+    const nextMode = threatsViewModeParam(searchParams)
     const nextLens = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
 
     if (indParam) {

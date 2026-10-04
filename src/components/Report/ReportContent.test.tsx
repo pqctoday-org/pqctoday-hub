@@ -276,6 +276,31 @@ describe('ReportContent', () => {
       renderReport({ ...baseResult, complianceImpacts: [] })
       expect(screen.queryByText('Compliance Impact')).not.toBeInTheDocument()
     })
+
+    it('names the frameworks that were left out', () => {
+      renderReport({
+        ...baseResult,
+        omittedCompliance: ['DORA (EU Digital Operational Resilience)'],
+      })
+      expect(screen.getByTestId('compliance-omitted')).toHaveTextContent(
+        'DORA (EU Digital Operational Resilience)'
+      )
+    })
+
+    it('shows no left-out line when nothing was left out', () => {
+      renderReport()
+      expect(screen.queryByTestId('compliance-omitted')).not.toBeInTheDocument()
+    })
+
+    it('still shows the section, with the left-out line, when every selected framework was left out', () => {
+      renderReport({
+        ...baseResult,
+        complianceImpacts: [],
+        omittedCompliance: ['DORA (EU Digital Operational Resilience)'],
+      })
+      expect(screen.getAllByText('Compliance Impact').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getByTestId('compliance-omitted')).toBeInTheDocument()
+    })
   })
 
   describe('recommended actions', () => {

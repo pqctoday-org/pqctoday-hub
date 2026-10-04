@@ -17,7 +17,7 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { leadersData, leadersMetadata, deprecatedLeaderSuccessors } from '../../data/leadersData'
 import type { Leader } from '../../data/leadersData'
-import { logEvent, personaLabel } from '../../utils/analytics'
+import { logEvent, logLeadersSearch, personaLabel } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { EmptyState } from '../ui/empty-state'
 import { CountryFlag } from '../common/CountryFlag'
@@ -847,7 +847,7 @@ export const LeadersGrid = () => {
                   },
                   { replace: true }
                 )
-                if (q.length > 2) logEvent('Leaders', 'Search', q)
+                if (q.length > 2) logLeadersSearch(q)
               }}
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />

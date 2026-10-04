@@ -51,10 +51,7 @@ export const pageManuals: Record<PageId, PageManual> = {
         body: 'Click Sources to see the authoritative government documents behind each data point. Use the Endorse/Flag buttons to provide community feedback on data accuracy.',
       },
     ],
-    tips: [
-      'Bookmark a filtered URL to quickly return to a specific region view.',
-      'Timeline data updates automatically when new government milestones are published.',
-    ],
+    tips: ['Bookmark a filtered URL to quickly return to a specific region view.'],
   },
 
   algorithms: {
@@ -76,7 +73,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?transition=<row> to open and highlight one Transition Guide row, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [
@@ -89,11 +86,11 @@ export const pageManuals: Record<PageId, PageManual> = {
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse 680+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse 1,200+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
     sections: [
       {
         heading: 'Search & Filters',
-        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
+        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 13 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research, Compliance & Certification, Blockchain Standards, Implementations). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
       },
       {
         heading: 'View Toggle',
@@ -232,36 +229,44 @@ export const pageManuals: Record<PageId, PageManual> = {
   compliance: {
     title: 'Compliance Frameworks',
     summary:
-      'Map compliance and certification frameworks to PQC requirements across industries. Track FIPS 140-3, Common Criteria, ACVP, and other certification schemes across 4 tabs.',
+      'See which rules, standards and certifications apply to your country and sector, what they say about post-quantum cryptography, and the dates they state. The page has eight views: Rules & Standards, Requirements, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility.',
     sections: [
       {
-        heading: 'Five Tabs',
-        body: 'The page has 5 tabs: Standardization Bodies (standards orgs), Technical Standards (technical specifications), Certification Schemes (FIPS 140-3/CAVP/CC programs), Compliance Frameworks (regulatory requirements), and Cert Records (searchable FIPS 140-3/CAVP/CC product certification records with pagination).',
+        heading: 'Eight Views',
+        body: 'The tab bar has eight views: Rules & Standards, Requirements, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility. Rules & Standards opens first for most roles, and operations roles open on Progress. A link that carries a certificate, a requirement, a product or a CSWP.39 reference opens the view it belongs to. On a narrow screen the tab bar scrolls sideways.',
       },
       {
-        heading: 'Landscape Tabs (Bodies, Standards, Schemes, Frameworks)',
-        body: 'Each landscape tab shows cards for compliance entries, filterable by organization, industry, and search. Persona and industry context hints appear at the top to guide exploration.',
+        heading: 'Rules & Standards, Requirements and Progress',
+        body: 'Rules & Standards lists the instruments that apply to your country and sector, why each one applies, and what it says about post-quantum cryptography. Each item carries a tier (Mandatory, Recognized, Cross-border, Advisory, Related via IR 8477 or Informational) from the same applicability engine as For You. Mandatory means a body in your country issues or enforces the item; this includes guidance and drafts, so check each item\u2019s status. Requirements shows what each obligation requires, taken from the documents it cites, with the verbatim quote, where it appears and which model extracted it; it is a reading list, not a checklist. Progress puts every date that the instruments in your scope state into one ordered list.',
       },
       {
-        heading: 'Cert Records Tab',
-        body: 'Searchable database of FIPS, ACVP, and Common Criteria certification records. Filter by PQC algorithm, category, source, vendor, and module category (?mcat=). Supports pagination and deep-linking via ?cert= to open a specific record.',
+        heading: 'Products and Product Records',
+        body: 'Products shows which of the products you run hold a certificate, under which scheme, and whether it covers post-quantum algorithms or only classical ones; the inventory comes from the list you keep on Migrate. Product Records is a searchable snapshot of NIST CMVP (FIPS 140-3) module validations, NIST CAVP algorithm validations, Common Criteria and EUCC certificates, and ANSSI CSPN certificates. Search by product, vendor or type, and filter by source, product category, Migrate category, vendor and PQC status. A link with ?cert= opens one specific record.',
+      },
+      {
+        heading: 'Landscape',
+        body: 'Landscape lays the field out as a chain of three groups. Standardization Bodies define the algorithms and publish the standards. Certification Schemes (FIPS 140-3, ACVP, Common Criteria, EUCC) test that products implement them correctly. Compliance Frameworks (for example CNSA 2.0, NIS2 and DORA) set the requirements and deadlines. Switch between the three groups at the top, filter by organization, industry or search, and sort by name, deadline or finish date.',
+      },
+      {
+        heading: 'For You and CSWP.39 Agility',
+        body: 'For You lists the standards, threats, library documents and timeline milestones that apply to your industry, country and region, tuned by your role (top bar) and your assessment profile; it can export the list as CSV. CSWP.39 Agility presents NIST CSWP.39, Achieving Cryptographic Agility: a continuously repeated 5-step process and a 4-tier maturity model, with a link to the PDF and to the related Learn module.',
       },
       {
         heading: 'Framework Details',
-        body: 'Click any framework row to see full details: requirements, timelines, affected algorithms, and references to related library documents and timeline milestones.',
+        body: 'Click any framework to open its details drawer: source and trust information, a Learn this link, the traceability chain, deadline phases, and related and overlapping frameworks.',
       },
     ],
     tips: [
-      'Compliance data is automatically updated daily via the compliance scraper.',
       'Framework entries cross-reference both Library documents and Timeline milestones.',
-      'URL params: ?framework=<id> opens a framework, ?cert=<id> a certification record; ?tab=obligations|requirements|progress|products|standards|certification|compliance|records|cswp39, ?org=, ?ind=, ?q=, ?mcat=.',
+      'Old links still work: ?tab=standards, ?tab=certification and ?tab=compliance open Landscape.',
+      'URL params: ?tab=obligations|requirements|progress|products|foryou|records|cswp39 chooses a view; ?framework=<id> opens a framework, ?cert=<id> a certification record, ?reqfw=<id> a framework in Requirements, ?prod=<id> a product, ?evref= a CSWP.39 reference; ?org=, ?ind=, ?q= and ?mcat= filter.',
     ],
   },
 
   migrate: {
     title: 'Migration Workbench',
     summary:
-      'Browse 830+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
+      'Browse 880+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',
@@ -294,7 +299,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
+      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~3 min) or Comprehensive (13 steps, ~5 min) mode.",
     sections: [
       {
         heading: 'Assessment Modes',
@@ -378,15 +383,15 @@ export const pageManuals: Record<PageId, PageManual> = {
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education with 62 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
+      'Structured PQC education with 73 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
     sections: [
       {
         heading: 'Module Tracks',
-        body: 'Modules are organized into tracks: Foundations, Applied Crypto, Industry, Advanced, and Role Guides. Use the sidebar or dashboard to browse by track. Each track builds on the previous one.',
+        body: 'Modules are organized into nine tracks: Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Industries, Executive and Role Guides. Use the sidebar or dashboard to browse by track.',
       },
       {
-        heading: 'Learn & Workshop Tabs',
-        body: 'Each module has two tabs: Learn (educational content with step-by-step lessons) and Workshop (hands-on interactive exercises). Complete both to earn full module credit.',
+        heading: 'Module Tabs',
+        body: 'Each module opens on Learn (the lessons). Depending on the module it also has Visual, Workshop (hands-on exercises), Exercises, References and Tools & Products tabs.',
       },
       {
         heading: 'Progress Tracking',

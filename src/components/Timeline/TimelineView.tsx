@@ -58,14 +58,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
-
-const REGION_LABELS: Record<string, string> = {
-  americas: 'Americas',
-  eu: 'EU',
-  mena: 'MENA',
-  apac: 'APAC',
-  global: 'Global',
-}
+import { TIMELINE_REGION_LABELS as REGION_LABELS } from './timelineRegions'
 
 export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   executive:
@@ -323,8 +316,7 @@ export const TimelineView = () => {
         storedRegionDefault(storeSelectedRegion) ??
         (storeSelectedRegion
           ? null
-          : // eslint-disable-next-line security/detect-object-injection
-            storedRegionDefault(
+          : storedRegionDefault(
               selectedPersona ? PERSONA_TIMELINE_REGION[selectedPersona] : null
             )) ??
         'All'

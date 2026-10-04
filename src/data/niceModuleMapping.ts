@@ -525,6 +525,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     workRoles: ['security-architect'],
     isCommonGround: false,
   },
+  {
+    moduleId: 'homomorphic-encryption',
+    competencyAreas: ['CA-SYSARCH', 'CA-CRYPTO'],
+    tier: 'expert',
+    workRoles: ['security-architect'],
+    isCommonGround: false,
+  },
 
   // -----------------------------------------------------------------------
   // Developer APIs

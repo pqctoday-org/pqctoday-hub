@@ -1,0 +1,36 @@
+## health
+{"config":"default (PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128), use_dedicated_oprf_key(false)","keys":[],"limits":{"max_cost_s":900.0,"max_inputs":16,"max_list_len":16,"max_outputs":8,"max_steps":64},"max_queue":4,"pins":{"lineages":["1492bcc82ecf935c499703267f1a5794e82b19a0102925be7c844e2b1d8cb107"],"param_hash":"2ce455537b3c792053ca3c7a0cf98a4e3bfb5569054f69eedd32a3607da06ed0f6a469d6e891fd9c8c19d55fa6c778b5","signers":["891ce509f6bfab71cc40f6c15f9612d3fd7b39c36b0fafa1650b597bb995c3bc"]},"queued":0,"service":"kv260-fhe-server","tfhe_rs":"tfhe-rs-1.8.1"}
+## tampered key
+HTTP 403 Forbidden: {"error":"SHA-384 of the server key does not match the manifest"}
+exit=1
+## genuine key
+{"lineage":"1492bcc82ecf935c499703267f1a5794e82b19a0102925be7c844e2b1d8cb107","load_decompress_ms":1499.119857,"signer_sha256":"891ce509f6bfab71cc40f6c15f9612d3fd7b39c36b0fafa1650b597bb995c3bc","verify_ms":234.829323}
+exit=0
+## demo job
+submitted job c922f9f5a2018dca2422d8d2, estimated 39.650000000000006 s
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "0/7"
+  "running" "1/7"
+  "running" "2/7"
+  "running" "2/7"
+  "running" "2/7"
+  "running" "3/7"
+  "running" "3/7"
+  "running" "5/7"
+  "running" "5/7"
+  "running" "6/7"
+  "running" "6/7"
+  "running" "6/7"
+  "running" "6/7"
+  "running" "6/7"
+  "running" "6/7"
+  "done" "7/7"
+exit=0

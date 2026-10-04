@@ -13,11 +13,14 @@ import { CollapsibleSection } from './reportContentShared'
 
 export const ComplianceImpactSection = ({
   complianceImpacts,
+  omitted = [],
   industry,
   country,
   defaultOpen,
 }: {
   complianceImpacts: ComplianceImpact[]
+  /** Selected frameworks left out because they do not apply to this industry or country. */
+  omitted?: string[]
   industry: string
   country: string
   defaultOpen: boolean
@@ -119,6 +122,14 @@ export const ComplianceImpactSection = ({
           })()}
         </div>
       ))}
+      {omitted.length > 0 && (
+        <p className="text-xs text-muted-foreground" data-testid="compliance-omitted">
+          <span className="font-medium text-foreground">
+            Left out because they do not apply to your country or industry:
+          </span>{' '}
+          {omitted.join(', ')}.
+        </p>
+      )}
       <Link
         to={`/compliance?tab=compliance${industry ? `&industry=${encodeURIComponent(industry)}` : ''}${country ? `&country=${encodeURIComponent(country)}` : ''}`}
         className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
@@ -131,7 +142,9 @@ export const ComplianceImpactSection = ({
       <h4 className="text-sm font-semibold text-foreground mb-2">Profile-driven applicability</h4>
       <p className="text-xs text-muted-foreground mb-3">
         Frameworks, threats, library docs, and milestones the engine identifies as applicable to
-        your industry and country.
+        your industry and country. This list does not depend on the frameworks you selected above,
+        and &ldquo;mandatory&rdquo; here means issued or enforced by a body in your country, which
+        includes guidance and drafts, so check each item&apos;s status.
       </p>
       <ApplicabilityPanel variant="report-section" />
     </div>

@@ -20,7 +20,8 @@
  * map is for the common 1→1 rename going forward.
  */
 import type { LearningProgress } from '@/services/storage/types'
-import { MANIFESTS } from './registry'
+import { MANIFESTS, MANIFEST_BY_ID } from './registry'
+import { requiredLearnSectionIds, requiredWorkshopStepIds } from './learnPathScope'
 
 type ModuleEntry = LearningProgress['modules'][string]
 type Modules = LearningProgress['modules']
@@ -84,6 +85,151 @@ export function applyModuleRenames(
     out[newId] = existing ? mergeEntry(existing, old) : old
     // eslint-disable-next-line security/detect-object-injection -- ids are our own declared constants
     delete out[oldId]
+  }
+  return out
+}
+
+/**
+ * Progress for CONTENT that moved from one live module to another (the old id
+ * stays). MODULE_ID_RENAMES moves a whole module id; this moves single workshop
+ * steps and learn sections.
+ *
+ *  - `steps`: workshop step ids that moved (same id in the new module).
+ *  - `sections`: old learn-section id → the new module's section ids that
+ *    replace it. One old section can become several; reading the old one counts
+ *    as reading all of them.
+ *
+ * confidential-computing → homomorphic-encryption (2026-10-04): the FHE section
+ * (one learn section, now five) and the "FHE + HSM Flows" workshop step moved to
+ * Homomorphic Encryption (LM-076).
+ */
+export interface ContentMove {
+  from: string
+  to: string
+  steps: readonly string[]
+  sections: Readonly<Record<string, readonly string[]>>
+}
+
+export const MODULE_CONTENT_MOVES: readonly ContentMove[] = [
+  {
+    from: 'confidential-computing',
+    to: 'homomorphic-encryption',
+    steps: ['fhe-hsm-flows'],
+    sections: {
+      'homomorphic-encryption': [
+        'fhe-fundamentals',
+        'fhe-keys-operations',
+        'fhe-quantum',
+        'fhe-hsm-custody',
+        'fhe-implementations',
+      ],
+    },
+  },
+]
+
+/** Whether the manifest's required workshop steps or learn sections are all done. */
+function isModuleDone(moduleId: string, entry: ModuleEntry): boolean {
+  const manifest = MANIFEST_BY_ID[moduleId]
+  const steps = requiredWorkshopStepIds(manifest, entry.activeLearnPath)
+  const sections = requiredLearnSectionIds(manifest, entry.activeLearnPath)
+  const checks = entry.learnSectionChecks ?? {}
+  const stepsDone = steps.length > 0 && steps.every((id) => entry.completedSteps.includes(id))
+  const sectionsDone = sections.length > 0 && sections.every((id) => checks[id])
+  return stepsDone || sectionsDone
+}
+
+/**
+ * Carry progress for moved content to the module that now holds it (idempotent;
+ * pure — returns a new map). Moved steps and read sections leave the old
+ * module's entry and join the new module's, created in-progress when it has no
+ * entry yet. Time spent stays with the old module: it cannot be attributed.
+ *
+ * Each module that received or lost progress is then re-checked once with the
+ * store's own completion rule (all required steps done, or all required
+ * sections read), so a learner is never left "in progress" on a module whose
+ * remaining content they have finished. A completed module is never demoted.
+ * Nothing moves when the old module has no progress for the moved content, so a
+ * second run changes nothing.
+ */
+export function applyContentMoves(
+  modules: Modules,
+  moves: readonly ContentMove[] = MODULE_CONTENT_MOVES
+): Modules {
+  const out: Modules = { ...modules }
+  for (const move of moves) {
+    const old = out[move.from]
+    if (!old) continue
+    const movedSteps = old.completedSteps.filter((id) => move.steps.includes(id))
+    const oldChecks = old.learnSectionChecks ?? {}
+    const movedSections = Object.keys(move.sections).filter((id) =>
+      Object.prototype.hasOwnProperty.call(oldChecks, id)
+    )
+    if (movedSteps.length === 0 && movedSections.length === 0) continue
+
+    const readSections = movedSections.filter((id) => oldChecks[id]) // eslint-disable-line security/detect-object-injection -- ids from our own constants
+    const incoming: ModuleEntry = {
+      status: 'in-progress',
+      lastVisited: old.lastVisited,
+      timeSpent: 0,
+      completedSteps: movedSteps,
+      quizScores: {},
+      learnSectionChecks: Object.fromEntries(
+        // eslint-disable-next-line security/detect-object-injection -- ids from our own constants
+        readSections.flatMap((id) => move.sections[id].map((newId) => [newId, true]))
+      ),
+    }
+
+    const existing = out[move.to]
+    const merged = existing ? mergeEntry(existing, incoming) : incoming
+
+    out[move.to] = {
+      ...merged,
+      status:
+        merged.status !== 'completed' && isModuleDone(move.to, merged)
+          ? 'completed'
+          : merged.status,
+    }
+
+    const keptChecks = Object.fromEntries(
+      Object.entries(oldChecks).filter(([id]) => !movedSections.includes(id))
+    )
+    const trimmed: ModuleEntry = {
+      ...old,
+      completedSteps: old.completedSteps.filter((id) => !move.steps.includes(id)),
+      learnSectionChecks: keptChecks,
+    }
+
+    out[move.from] = {
+      ...trimmed,
+      status:
+        trimmed.status === 'in-progress' && isModuleDone(move.from, trimmed)
+          ? 'completed'
+          : trimmed.status,
+    }
+  }
+  return out
+}
+
+/**
+ * One-time reconcile for the module that gave content away: a learner who had
+ * finished everything the module still teaches but not the part that moved
+ * (steps 1-5 of Confidential Computing, never the FHE step) was never "completed"
+ * and would stay "in progress" until their next click. Run once, in the store
+ * migration that introduced the move, not on every load: after that a learner
+ * can legitimately sit "in progress" with every step done (a section unchecked).
+ */
+export function reconcileMovedContentStatus(
+  modules: Modules,
+  moves: readonly ContentMove[] = MODULE_CONTENT_MOVES
+): Modules {
+  const out: Modules = { ...modules }
+  for (const { from } of moves) {
+    // eslint-disable-next-line security/detect-object-injection -- ids are our own declared constants
+    const entry = out[from]
+    if (entry && entry.status === 'in-progress' && isModuleDone(from, entry)) {
+      // eslint-disable-next-line security/detect-object-injection -- ids are our own declared constants
+      out[from] = { ...entry, status: 'completed' }
+    }
   }
   return out
 }

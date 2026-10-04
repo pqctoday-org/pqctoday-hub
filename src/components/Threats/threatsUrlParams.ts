@@ -76,12 +76,27 @@ export function threatsIndustryHref(
     : null
 }
 
-const CLASS_PARAM_VALUES: readonly ThreatClass[] = ['hndl', 'hnfl', 'both']
+/** The threat classes `?class=` accepts. */
+export const CLASS_PARAM_VALUES: readonly ThreatClass[] = ['hndl', 'hnfl', 'both']
 
 /** `?class=` → a threat class, or null for absent/unknown values. */
 export function threatClassParam(params: URLSearchParams): ThreatClass | null {
   const v = params.get('class')?.toLowerCase()
   return (CLASS_PARAM_VALUES as readonly string[]).includes(v ?? '') ? (v as ThreatClass) : null
+}
+
+/** The list layouts `?mode=` accepts; Table is the default. */
+export const THREATS_VIEW_MODES = ['cards', 'table'] as const
+export type ThreatsViewMode = (typeof THREATS_VIEW_MODES)[number]
+
+/** `?mode=` → the list layout. Anything else — absent, or a link to the removed
+ *  Industry Stack view (`?mode=stack`) — falls back to Table rather than
+ *  rendering nothing. */
+export function threatsViewModeParam(params: URLSearchParams): ThreatsViewMode {
+  const v = params.get('mode')
+  return (THREATS_VIEW_MODES as readonly string[]).includes(v ?? '')
+    ? (v as ThreatsViewMode)
+    : 'table'
 }
 
 /** Queries this short are matched at word starts, not anywhere (UX-16). */
@@ -181,7 +196,8 @@ export function industryAnchorFromHash(
 
 /** The threat dialog's Detection / Response inner tabs. */
 export type ThreatDetailTab = 'detection' | 'response'
-const DETAIL_TAB_VALUES: readonly ThreatDetailTab[] = ['detection', 'response']
+/** The inner tabs `?threattab=` accepts (the first is the default). */
+export const DETAIL_TAB_VALUES: readonly ThreatDetailTab[] = ['detection', 'response']
 
 /** `?threattab=` → the dialog's inner tab; unknown or absent → `detection`. */
 export function threatDetailTabParam(params: URLSearchParams): ThreatDetailTab {

@@ -93,6 +93,17 @@ const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 // marquee cards, never as single-concept tools).
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
 
+const ALL_PLAYGROUND_ROUTES = Array.from(
+  new Map(
+    [
+      ...FEATURE_PLAYGROUNDS.map(({ to, title }) => [to, { to, title }] as const),
+      ...WORKSHOP_TOOLS.map(
+        ({ id, name }) => [`/playground/${id}`, { to: `/playground/${id}`, title: name }] as const
+      ),
+    ].map(([to, route]) => [to, route])
+  ).values()
+)
+
 type DifficultyValue = 'All' | ToolDifficulty
 const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
   { value: 'All', label: 'All' },
@@ -281,16 +292,13 @@ const ToolCardView: React.FC<ToolCardProps> = ({
   const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
   return (
     <div className="relative">
+      {/* The whole card opens the preview, as it always has. The tool name is a real link to the
+          tool's own page (so crawlers can follow it) and the Preview button is the keyboard route,
+          so this container is a pointer convenience, not a control of its own. */}
       <div
-        role="button"
-        tabIndex={0}
+        role="presentation"
+        data-tool-card={tool.id}
         onClick={() => onOpen(tool)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onOpen(tool)
-          }
-        }}
         className={cn(
           'glass-panel p-3.5 rounded-xl cursor-pointer transition-colors hover:border-primary/50',
           locked && 'opacity-60'
@@ -302,7 +310,13 @@ const ToolCardView: React.FC<ToolCardProps> = ({
           </span>
           <div className="min-w-0 flex-1 pr-6">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <p className="font-semibold text-[13px] text-foreground">{tool.name}</p>
+              <Link
+                to={`/playground/${tool.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-[13px] text-foreground underline-offset-2 hover:text-primary hover:underline"
+              >
+                {tool.name}
+              </Link>
               <DifficultyBadge level={tool.difficulty} />
               {tool.sandbox && <SandboxBadge />}
               {tool.wip && !tool.sandbox && <WipBadge />}
@@ -314,6 +328,16 @@ const ToolCardView: React.FC<ToolCardProps> = ({
               {tool.description}
             </p>
             <AlgoChips algorithms={tool.algorithms} locked={locked} />
+            <Button
+              variant="ghost"
+              className="mt-2 h-7 px-2 text-[11px]"
+              onClick={(e) => {
+                e.stopPropagation()
+                onOpen(tool)
+              }}
+            >
+              Preview
+            </Button>
           </div>
         </div>
       </div>
@@ -1733,6 +1757,22 @@ export const PlaygroundWorkshop = () => {
           />
         )}
       </div>
+
+      <details className="mt-6 rounded-xl border border-border bg-muted/20 p-4">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground">
+          Browse all {ALL_PLAYGROUND_ROUTES.length} Crypto Lab pages
+        </summary>
+        <nav
+          aria-label="All Crypto Lab pages"
+          className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {ALL_PLAYGROUND_ROUTES.map(({ to, title }) => (
+            <Link key={to} to={to} className="text-sm text-primary hover:underline">
+              {title} page
+            </Link>
+          ))}
+        </nav>
+      </details>
     </div>
   )
 }

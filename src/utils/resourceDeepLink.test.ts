@@ -102,6 +102,8 @@ describe('every grammar key is classified (resource vs view/filter)', () => {
       'cnsa',
       'gap',
       'section',
+      'polarity',
+      'kat',
       'matrixView',
       'matrixQ',
       'matrixStatus',

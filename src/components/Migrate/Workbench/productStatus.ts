@@ -124,6 +124,17 @@ export function productVerificationBadge(item: SoftwareItem): VerificationBadge 
 
   switch ((item.verificationStatus || '').toLowerCase()) {
     case 'verified':
+      // "Verified" means the evidence was reviewed. When that review left the
+      // PQC status unknown, a plain green "Verified" reads as "PQC verified",
+      // so say what the review established instead. Keyed on the canonical
+      // status only: rows with a known status keep their badge.
+      if ((item.pqcStatusCanonical || '').trim().toLowerCase() === 'unknown') {
+        return {
+          label: 'Evidence reviewed: PQC unknown',
+          tone: stale ? 'warning' : 'info',
+          title: `The cited evidence was reviewed and does not establish whether this product supports PQC. ${title}`,
+        }
+      }
       return { label: 'Verified', tone: stale ? 'warning' : 'success', title }
     case 'verified (no pqc)':
       return { label: 'Verified (No PQC)', tone: stale ? 'warning' : 'success', title }

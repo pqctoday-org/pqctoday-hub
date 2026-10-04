@@ -15,6 +15,7 @@ import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipe
 import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
+import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 import { cn } from '@/lib/utils'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
@@ -313,7 +314,7 @@ export function MobileLibraryView() {
                   </h2>
                 </div>
                 <p className="text-[10.5px] text-muted-foreground">
-                  {lifecycleLabel(item.documentStatusBucket)}
+                  {lifecycleLabel(item.lifecycleLabel)}
                   {dateLabel && ` · ${dateLabel}`}
                   {item.status && (
                     <span
@@ -356,7 +357,7 @@ export function MobileLibraryView() {
               <p className="mt-1 text-[11px] text-muted-foreground">
                 {selected.authorsOrOrganization || 'Unknown'}
                 {' · '}
-                {lifecycleLabel(selected.documentStatusBucket)}
+                {lifecycleLabel(selected.lifecycleLabel)}
                 {selected.initialPublicationDate &&
                   ` · ${formatLibDate(selected.initialPublicationDate)}`}
               </p>
@@ -366,6 +367,7 @@ export function MobileLibraryView() {
                 {selected.shortDescription}
               </p>
             )}
+            <SuccessionLinks item={selected} onOpenRef={setDetailRef} />
             <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3">
               {[
                 ['Type', selected.documentType],

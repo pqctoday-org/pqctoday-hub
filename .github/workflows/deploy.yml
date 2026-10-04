@@ -130,3 +130,32 @@ jobs:
 
       - name: Check the live site against the SBOM
         run: npx tsx scripts/sbom/check-production.ts --base='${{ needs.deploy.outputs.page_url }}' --wait=15
+
+  # Reporting check: deployment has already completed, so a red job identifies
+  # a live static-HTML regression but does not roll Pages back.
+  verify-seo:
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip
+        run: npm ci
+
+      - name: Check live static route integrity
+        run: npm run check:seo-production -- --base='${{ needs.deploy.outputs.page_url }}' --wait=15

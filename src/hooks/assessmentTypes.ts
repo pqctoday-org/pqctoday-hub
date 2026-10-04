@@ -216,6 +216,14 @@ export interface AssessmentResult {
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
   algorithmMigrations: AlgorithmMigration[]
   complianceImpacts: ComplianceImpact[]
+  /**
+   * Frameworks the visitor selected that were left out of `complianceImpacts`
+   * because they do not apply to their industry or country (for example DORA
+   * for a US bank). Absent when nothing was left out, and on reports computed
+   * before this field existed. It is part of the result, so shared report
+   * links carry it.
+   */
+  omittedCompliance?: string[]
   recommendedActions: RecommendedAction[]
   narrative: string
   generatedAt: string

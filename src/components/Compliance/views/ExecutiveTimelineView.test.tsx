@@ -65,7 +65,7 @@ vi.mock('../../../hooks/useApplicability', () => ({
           initialPublicationDate: '2025-06-01',
           lastUpdateDate: '2025-06-01',
           documentStatus: 'Final',
-          documentStatusBucket: 'active',
+          lifecycleLabel: 'Released',
           shortDescription: '',
           documentType: '',
           applicableIndustries: ['Government & Defense'],

@@ -5,7 +5,7 @@
 // is lost in the redesign: vendor PQC roadmap, certifications, validation
 // proof, evidence flags, capability text, vendor + repo links.
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { Link } from 'react-router'
 import {
   ExternalLink,
@@ -44,6 +44,12 @@ import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { OptionalSection } from '@/components/ui/OptionalSection'
+import { lazyWithRetry } from '@/utils/lazyWithRetry'
+
+// Its own chunk, never a static import (see ProductMaintainers.tsx): the import() stays written out
+// here so this view's chunk is the one the build makes wait for it.
+const ProductMaintainers = lazyWithRetry(() => import('./ProductMaintainers'))
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
@@ -114,6 +120,9 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // elements existed in this directory. Every id here is verified to resolve
   // to a real MODULE_CATALOG entry (see migrateData.ts's row.learning_modules
   // sourcing), so this is a safe, real /learn/<id> deep link, not a guess.
+  // open_source_maintainers was loaded by nothing and shown nowhere before 2026-10-03.
+  const hasMaintainers = (product.openSourceMaintainers?.length ?? 0) > 0
+
   const learningModuleIds = (product.learningModules || '')
     .split(';')
     .map((id) => id.trim())
@@ -285,6 +294,15 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             )}
           </div>
         </div>
+      )}
+
+      {hasMaintainers && (
+        // A side list must not take the product view down if its chunk cannot be loaded.
+        <OptionalSection>
+          <Suspense fallback={<div aria-hidden="true" className="min-h-10" />}>
+            <ProductMaintainers product={product} variant="desktop" />
+          </Suspense>
+        </OptionalSection>
       )}
 
       {learningModuleIds.length > 0 && (

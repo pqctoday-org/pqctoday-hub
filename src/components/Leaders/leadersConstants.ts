@@ -2,6 +2,23 @@
 
 import type { Leader } from '@/data/leadersData'
 
+/** The leader categories, as the page's category filter offers them and as
+ *  `?cat=` takes them (singular, exact spelling — "Skeptic/Critic" includes the
+ *  slash). Every leader in the data has exactly one of these as their primary
+ *  category. */
+export const LEADER_CATEGORIES = [
+  'Standards',
+  'Industry Vendor',
+  'Industry Adopter',
+  'Algorithm Inventor',
+  'Patent Inventor',
+  'Open Source Maintainer',
+  'Government',
+  'Skeptic/Critic',
+] as const
+
+export type LeaderCategory = (typeof LEADER_CATEGORIES)[number]
+
 /** Category matching for the sidebar filter/counts. Every leader has ONE
  * primary `category` (their main claim to fame — unchanged, still exact-match
  * for every category), but "Patent Inventor" / "Open Source Maintainer" are
@@ -24,7 +41,16 @@ export function leaderMatchesCategory(leader: Leader, category: string): boolean
  *  Dual-country entries use the first-listed country's code. */
 export const FLAG_CODE_MAP: Record<string, string> = {
   USA: 'us',
+  'United States': 'us',
   UK: 'gb',
+  'United Kingdom': 'gb',
+  Brazil: 'br',
+  Estonia: 'ee',
+  'Czech Republic': 'cz',
+  Norway: 'no',
+  'Hong Kong': 'hk',
+  Taiwan: 'tw',
+  'European Union': 'eu',
   France: 'fr',
   Germany: 'de',
   Switzerland: 'ch',
@@ -59,6 +85,7 @@ export const FLAG_CODE_MAP: Record<string, string> = {
   'Germany/Netherlands': 'de',
   'Japan/USA': 'jp',
   'Netherlands/USA': 'nl',
+  'Israel/USA': 'il',
 }
 
 /** Display labels for the `?region=` ids (LeadersGrid's Region dropdown, and the
@@ -69,11 +96,17 @@ export const LEADERS_REGION_LABELS: Record<string, string> = {
   apac: 'Asia-Pacific',
 }
 
-/** Maps region IDs to the country name values used in the leaders CSV. */
+/** Maps region IDs to the country name values used in the leaders CSV. The CSV
+ *  spells some countries two ways ("USA" and "United States", "UK" and
+ *  "United Kingdom"), so both spellings are listed; a leader whose country is in
+ *  no list silently drops out of `?region=` (95 of 402 did until 2026-10-04).
+ *  leadersConstants.test.ts fails when a country in the data is in no list. */
 export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
   americas: [
     'USA',
+    'United States',
     'Canada',
+    'Brazil',
     'Belgium/USA',
     'France/USA',
     'Japan/USA',
@@ -84,15 +117,22 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
     'USA/Israel',
     'USA/Netherlands',
     'USA/Switzerland',
+    'Israel/USA',
   ],
   eu: [
     'UK',
+    'United Kingdom',
     'France',
     'Germany',
     'Switzerland',
     'Belgium',
     'Portugal',
     'Estonia/EU',
+    'Estonia',
+    'Czech Republic',
+    'Norway',
+    'Austria',
+    'European Union',
     'Netherlands',
     'Sweden',
     'Russia',
@@ -104,7 +144,17 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
     'Germany/Netherlands',
     'Israel',
   ],
-  apac: ['Singapore', 'Japan', 'South Korea', 'Australia', 'India', 'China', 'New Zealand'],
+  apac: [
+    'Singapore',
+    'Japan',
+    'South Korea',
+    'Australia',
+    'India',
+    'China',
+    'New Zealand',
+    'Hong Kong',
+    'Taiwan',
+  ],
 }
 
 /** migrate-catalog product_ids are kebab-case slugs ("bouncy-castle-java") —

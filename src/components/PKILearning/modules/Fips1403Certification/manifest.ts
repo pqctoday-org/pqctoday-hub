@@ -30,7 +30,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
-  trackOrder: 6,
+  trackOrder: 7,
   learnSections: [
     { id: 'fips-what-it-is', label: 'FIPS 140-3 and the CMVP' },
     { id: 'fips-requirement-areas', label: 'The eleven requirement areas' },

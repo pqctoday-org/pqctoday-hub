@@ -42,7 +42,7 @@ function parseRows(path: string): Record<string, string>[] {
 // Grade-A remediation Phase 2 (PLAN-04-ALGORITHMS.md §6): the region filter
 // bar is shared across both Algorithms sub-tabs, but Detailed Comparison and
 // Transition Guide read from two DIFFERENT CSVs with two different `region`
-// vocabularies (see the comment above REGION_ITEMS in AlgorithmFilters.tsx
+// vocabularies (see the comment above REGION_ITEMS in algorithmFilterOptions.ts
 // for the full history). This guard fails loudly — instead of silently
 // shipping a zero-result dropdown option — the moment either:
 //  (1) a REGION_ITEMS id stops matching any row in BOTH wired CSVs, or

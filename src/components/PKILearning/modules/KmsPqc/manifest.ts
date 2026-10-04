@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
-  trackOrder: 3,
+  trackOrder: 4,
   learnSections: [
     { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
     { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
