@@ -738,7 +738,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Explore Trusted Execution Environments for PQC: Intel SGX, AMD SEV-SNP, ARM CCA architectures, remote attestation flows, sealing key migration, and quantum threat timelines for TEE-based systems.',
     canonical: `${BASE_URL}/learn/confidential-computing`,
-    structuredData: buildModuleSchema('Confidential Computing & TEEs', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Confidential Computing & TEEs', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/homomorphic-encryption': {
+    title: 'Homomorphic Encryption (FHE) & HSM Key Custody — ISO/IEC 28033 & PQC | PQC Today',
+    description:
+      'Compute on encrypted data without trusting the hardware: the ISO/IEC 28033 draft FHE schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM holds the FHE secret key without becoming a decryption oracle.',
+    canonical: `${BASE_URL}/learn/homomorphic-encryption`,
+    structuredData: buildModuleSchema(
+      'Homomorphic Encryption (FHE) & HSM Key Custody',
+      'PT45M',
+      'Advanced'
+    ),
   },
 
   '/learn/web-gateway-pqc': {
