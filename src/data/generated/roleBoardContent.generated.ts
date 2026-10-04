@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10012026.csv
+ * Source: src/data/role_board_content_10042026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -41,7 +41,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Data must stay secret', value: '12 yrs' },
             { label: 'Your migration takes', value: '5 yrs' },
-            { label: 'Cryptographically relevant quantum computer', value: '2035 (2030–2041)' },
+            { label: 'Planning year for a quantum computer (our own)', value: '2035 (2030–2041)' },
           ],
           punchline: 'Your start-by year was 2018 — you are eight years past it.',
           footnote:
@@ -107,13 +107,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
-            { label: 'CRQC expert forecast', value: '2035 (2030–2041)' },
+            { label: 'Planning year for a quantum computer (our own)', value: '2035 (2030–2041)' },
             { label: 'Your migration takes', value: '5 yrs' },
             { label: 'All national-security systems', value: '2035' },
           ],
           punchline: 'Three of these four are not yours to move.',
           footnote:
-            'Mandate dates are read from the published timeline; the CRQC window is the consensus estimate with its range shown, not a point forecast.',
+            "Mandate dates are read from the published timeline; the quantum-computer year is this site's own planning year, with the range it plans across shown, not a forecast.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Dates with sources attached',
@@ -2473,7 +2473,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Researcher / Academic · the estimate and its sources',
 
         headline: 'Argue with the threat model.',
-        sub: 'CRQC arrival is a distribution, not a date. The consensus window and every source behind it are on file and dated.',
+        sub: 'CRQC arrival is a distribution, not a date. The published survey and every source behind it are on file and dated.',
         ctaPrimary: 'Plan a CRQC scenario',
         ctaPrimaryHref: '/business/tools/crqc-scenario',
         ctaSecondary: 'Read the threat economics',
@@ -2485,11 +2485,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
-          title: 'The CRQC expert forecast',
+          title: 'The CRQC survey and our planning year',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Consensus estimate', value: '2035 (2030–2041)' },
+            { label: 'Our planning year (range set by this site)', value: '2035 (2030–2041)' },
             { label: 'Assumed secrecy need', value: '12 yrs' },
             { label: 'Assumed migration time', value: '5 yrs' },
           ],
@@ -3037,7 +3037,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Why the question is being asked',
-            body: 'The threat landscape: the CRQC capability watch and the expert forecast behind it, with the source behind each figure.',
+            body: 'The threat landscape: the CRQC capability watch and the expert survey behind it, with the source behind each figure.',
             href: '/threats',
           },
         ] as [
@@ -3234,7 +3234,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Encrypted data captured today', value: 'still readable later' },
             { label: 'If it must stay secret for', value: '12 years' },
-            { label: 'And the machine arrives in', value: '2035 (2030–2041)' },
+            { label: 'We plan for a machine around', value: '2035 (2030–2041)' },
           ],
           punchline: 'The deadline already passed for some data.',
           footnote:
