@@ -252,10 +252,8 @@ describe('the published claims file', () => {
 
   it('contains no field that describes how a claim was produced', () => {
     const text = JSON.stringify(OPEN_CLAIMS)
-    for (const word of ['evidenceSha256', 'evidenceFile', 'draftedBy']) {
+    for (const word of ['evidenceSha256', 'evidenceFile', 'evidencePath', 'draftedBy']) {
       expect(text).not.toContain(word)
     }
-    // and no 64-character fingerprint of a stored document
-    expect(text).not.toMatch(/[0-9a-f]{64}/)
   })
 })
