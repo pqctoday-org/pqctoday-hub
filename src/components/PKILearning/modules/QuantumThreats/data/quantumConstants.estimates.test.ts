@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
+import { getOpenClaim } from '@/data/openClaimsData'
+import { headStatement } from '@/data/openClaimsView'
 import {
   CRQC_ESTIMATES,
   formatEstimateYears,
@@ -86,5 +88,33 @@ describe('formatEstimateYears', () => {
     expect(f.rangeLabel).toBe(`planning range ${f.low}\u2013${f.high}, set by this site`)
     expect(f.low).toBeLessThan(f.planningYear)
     expect(f.planningYear).toBeLessThan(f.high)
+  })
+})
+
+describe('CRQC_ESTIMATES and the published claims', () => {
+  it('every estimate names a published claim, and no two estimates share one', () => {
+    const ids = CRQC_ESTIMATES.map((e) => e.claimId)
+    for (const e of CRQC_ESTIMATES) {
+      expect(e.claimId, e.source).toBeTruthy()
+      expect(getOpenClaim(e.claimId!), `${e.source} -> ${e.claimId}`).toBeDefined()
+    }
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it("the estimate's own source link is one of the sources of the claim shown for it", () => {
+    for (const e of CRQC_ESTIMATES) {
+      const shown = headStatement(e.claimId!)!
+      const own = getOpenClaim(e.claimId!)!
+      const links = [...shown.sources, ...own.sources].map((s) => s.url)
+      expect(links, e.source).toContain(e.url)
+    }
+  })
+
+  it('a forecast is an open question; a migration deadline is never marked as a forecast', () => {
+    for (const e of CRQC_ESTIMATES) {
+      const claim = headStatement(e.claimId!)!
+      if (e.kind === 'arrival-forecast') expect(claim.state, e.source).toBe('Open')
+      else expect(claim.state, e.source).toBe('Settled')
+    }
   })
 })
