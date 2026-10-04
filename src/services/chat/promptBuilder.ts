@@ -2,6 +2,7 @@
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { useStructuredCitations } from '@/services/featureFlags'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
@@ -260,6 +261,20 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
 /*  Gemini system prompt — full instructions (for large cloud models) */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The Learn modules for the prompt's link list, built from the same catalog the
+ * site counts from, so the list and its total can never drift from the modules
+ * that exist (a typed list said "51 total" while the catalog had 73). The
+ * synthetic Quiz entry is not a module; the main-pages list links /learn/quiz.
+ */
+export function buildModuleLinkList(): { count: number; links: string } {
+  const modules = Object.values(MODULE_CATALOG).filter((m) => m.id !== 'quiz')
+  return {
+    count: modules.length,
+    links: modules.map((m) => `[${m.title}](/learn/${m.id})`).join(', '),
+  }
+}
+
 export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   // See featureFlags.ts: plain flag check, not a React Hook — the `use`
   // prefix is this module's naming convention for every flag, including
@@ -283,6 +298,7 @@ export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageCo
     assessmentSection,
     inventorySection,
   } = buildSharedSections(chunks, pageContext)
+  const moduleList = buildModuleLinkList()
 
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
 ${pageNote}${personaSection}${experienceSection}${profileSection}${assessmentSection}
@@ -340,7 +356,7 @@ GUIDELINES:
    **Self-check before emitting any link**: verify the path appears in this grammar AND every \`?param=\` you include is listed for that route. If unsure, link to the bare path.
    Every named item (product, leader, document, algorithm, threat, patent) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz), [Command Center](/business), [Planning Tools](/business/tools), [Patents](/patents), [Simulation](/simulation), [Explore](/explore), [FAQ](/faq), [Terms](/terms), [Changelog](/changelog), [About](/about)
-5. Learning modules (51 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [KMS & PQC Key Management](/learn/kms-pqc), [HSM & PQC Operations](/learn/hsm-pqc), [Data & Asset Sensitivity](/learn/data-asset-sensitivity), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance), [Crypto Dev APIs](/learn/crypto-dev-apis), [Web Gateway PQC](/learn/web-gateway-pqc), [Standards Bodies](/learn/standards-bodies), [Confidential Computing](/learn/confidential-computing), [Database Encryption](/learn/database-encryption-pqc), [Energy & Utilities](/learn/ot-pqc), [EMV Payments](/learn/emv-payment-pqc), [AI Security & PQC](/learn/ai-security-pqc), [Platform Engineering](/learn/platform-eng-pqc), [Healthcare PQC](/learn/healthcare-pqc), [Aerospace PQC](/learn/aerospace-pqc), [Automotive PQC](/learn/automotive-pqc), [Executive Quantum Impact](/learn/exec-quantum-impact), [Developer Quantum Impact](/learn/dev-quantum-impact), [Architect Quantum Impact](/learn/arch-quantum-impact), [Ops Quantum Impact](/learn/ops-quantum-impact), [Researcher Quantum Impact](/learn/research-quantum-impact), [Secrets Management](/learn/secrets-management-pqc), [Network Security](/learn/network-security-pqc), [IAM & Identity](/learn/iam-pqc), [Secure Boot & Firmware](/learn/secure-boot-pqc), [OS Crypto Stacks](/learn/os-pqc), [Cryptographic Bill of Materials (CBOM)](/learn/cbom), [Verification & Closure](/learn/verification-closure)
+5. Learning modules (${moduleList.count} total): ${moduleList.links}
 6. Keep answers to 2–5 short, evidence-backed sentences or bullets. Use markdown formatting. Do not generate follow-up questions; the UI derives those separately. This is an educational assistant — never provide production security advice.
 
 ${citationsSection}

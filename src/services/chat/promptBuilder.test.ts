@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { buildLocalSystemPrompt, buildGeminiSystemPrompt } from './promptBuilder'
+import {
+  buildLocalSystemPrompt,
+  buildGeminiSystemPrompt,
+  buildModuleLinkList,
+} from './promptBuilder'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { validateDeepLink } from '@/services/search/deepLinkGrammar'
 
@@ -179,5 +184,49 @@ describe('advertised deep-link params match the grammar', () => {
       '/timeline?event=<title>',
     ])
       expect(prompt).not.toContain(dead)
+  })
+})
+
+// The prompt's list of Learn modules is built from the module catalog, so the
+// assistant can link to every module that exists and states the same total the
+// site shows. It used to be typed by hand: it said "51 total" while the catalog
+// had 73, and the newest modules had no link at all.
+describe('buildGeminiSystemPrompt — Learn module list parity', () => {
+  const modules = Object.values(MODULE_CATALOG).filter((m) => m.id !== 'quiz')
+  const prompt = buildGeminiSystemPrompt([])
+  const listLine = prompt.split('\n').find((l) => l.startsWith('5. Learning modules (')) ?? ''
+  const linkedIds = [...listLine.matchAll(/\]\(\/learn\/([a-z0-9-]+)\)/g)].map((m) => m[1])
+
+  it('has the module list line', () => {
+    expect(listLine).not.toBe('')
+  })
+
+  it('states the catalog total, without the synthetic Quiz entry', () => {
+    expect(listLine).toContain(`5. Learning modules (${modules.length} total):`)
+    expect(modules.length).toBe(Object.keys(MODULE_CATALOG).length - 1)
+  })
+
+  it('links every module in the catalog — none is missing from the prompt', () => {
+    const missing = modules.map((m) => m.id).filter((id) => !linkedIds.includes(id))
+    expect(missing).toEqual([])
+  })
+
+  it('links nothing that is not a module, and lists each module once', () => {
+    const known = new Set(modules.map((m) => m.id))
+    expect(linkedIds.filter((id) => !known.has(id))).toEqual([])
+    expect(new Set(linkedIds).size).toBe(linkedIds.length)
+    expect(linkedIds).toHaveLength(modules.length)
+  })
+
+  it("uses each module's catalog title as its link text", () => {
+    for (const m of modules) {
+      expect(listLine).toContain(`[${m.title}](/learn/${m.id})`)
+    }
+  })
+
+  it('buildModuleLinkList agrees with the prompt', () => {
+    const { count, links } = buildModuleLinkList()
+    expect(count).toBe(modules.length)
+    expect(listLine).toContain(links)
   })
 })
