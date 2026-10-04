@@ -13,6 +13,7 @@ function makeItem(overrides: Partial<LibraryItem>): LibraryItem {
     lastUpdateDate: '2025-01-01',
     documentStatus: 'Final',
     documentStatusBucket: 'Published',
+    lifecycleLabel: 'Released',
     shortDescription: '',
     documentType: '',
     applicableIndustries: [],

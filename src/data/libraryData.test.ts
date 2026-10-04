@@ -3,6 +3,9 @@ import {
   libraryData,
   computeCitationCounts,
   attachPriorRevisions,
+  attachSuccessionLinks,
+  transformLibraryRow,
+  type RawLibraryRow,
   detectPurpose,
   resolvePurpose,
   findLibraryItemByRef,
@@ -11,6 +14,7 @@ import {
   type LibraryItem,
   type PriorRevision,
 } from './libraryData'
+import { LIFECYCLE_LABELS, resolveLifecycleLabel } from '../utils/libraryLifecycle'
 import { LIBRARY_EXECUTIVE_PICKS } from './libraryExecutivePicks'
 import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
 import { LIBRARY_CURIOUS_PICKS } from './libraryCuriousPicks'
@@ -177,6 +181,7 @@ describe('attachPriorRevisions', () => {
       lastUpdateDate: '',
       documentStatus: 'Draft',
       documentStatusBucket: 'Draft',
+      lifecycleLabel: 'Draft',
       shortDescription: '',
       documentType: '',
       applicableIndustries: [],
@@ -200,6 +205,7 @@ describe('attachPriorRevisions', () => {
     documentTitle: referenceId,
     documentStatus: 'Internet-Draft',
     documentStatusBucket: 'Draft',
+    lifecycleLabel: 'Draft',
     downloadUrl: `https://example.org/${referenceId}`,
     supersededBy,
     deprecatedAt: '2026-06-06',
@@ -336,5 +342,137 @@ describe('computeCitationCounts', () => {
       { referenceId: 'B', dependencies: '' },
     ]
     expect(computeCitationCounts(items).size).toBe(0)
+  })
+})
+
+describe('library lifecycle labels (loader)', () => {
+  const rawRow = (extra: Partial<RawLibraryRow> = {}): RawLibraryRow =>
+    ({
+      reference_id: 'DOC-1',
+      document_title: 'Doc 1',
+      document_status: 'Published',
+      document_type: 'Standard',
+      applicable_industries: '',
+      dependencies: '',
+      status: 'active',
+      ...extra,
+    }) as RawLibraryRow
+
+  it('shows the label written in lifecycle_state', () => {
+    for (const label of LIFECYCLE_LABELS) {
+      const item = transformLibraryRow(rawRow({ lifecycle_state: label }))
+      expect(item?.lifecycleLabel).toBe(label)
+      expect(item?.lifecycleState).toBe(label)
+    }
+  })
+
+  it('falls back to the status text where lifecycle_state is blank or free text', () => {
+    expect(transformLibraryRow(rawRow({ document_status: 'Final' }))?.lifecycleLabel).toBe(
+      'Released'
+    )
+    expect(
+      transformLibraryRow(
+        rawRow({ document_status: 'Proposed Standard', lifecycle_state: 'current' })
+      )?.lifecycleLabel
+    ).toBe('Draft')
+    expect(transformLibraryRow(rawRow({ lifecycle_state: '' }))?.lifecycleState).toBeUndefined()
+  })
+
+  it('keeps an old spelling in the column working', () => {
+    expect(transformLibraryRow(rawRow({ lifecycle_state: 'Superseded' }))?.lifecycleLabel).toBe(
+      'Historical'
+    )
+  })
+
+  it('reads the newer document(s) from superseded_by on an active row', () => {
+    expect(transformLibraryRow(rawRow({ superseded_by: 'NEW-1' }))?.supersededByRefs).toEqual([
+      'NEW-1',
+    ])
+    expect(
+      transformLibraryRow(rawRow({ superseded_by: 'NEW-1; NEW-2 ' }))?.supersededByRefs
+    ).toEqual(['NEW-1', 'NEW-2'])
+    expect(transformLibraryRow(rawRow({ superseded_by: '' }))?.supersededByRefs).toBeUndefined()
+  })
+
+  it('still skips deprecated rows (they collapse into their survivor instead)', () => {
+    expect(transformLibraryRow(rawRow({ status: 'deprecated', superseded_by: 'NEW-1' }))).toBeNull()
+  })
+
+  it('gives every document in the real data one of the six labels, read by the same rule', () => {
+    for (const item of libraryData) {
+      expect(LIFECYCLE_LABELS, item.referenceId).toContain(item.lifecycleLabel)
+      expect(item.lifecycleLabel, item.referenceId).toBe(resolveLifecycleLabel(item))
+    }
+  })
+
+  it('collapses a revision group to its furthest label', () => {
+    for (const item of libraryData.filter((i) => i.priorRevisions?.length)) {
+      expect(LIFECYCLE_LABELS, item.referenceId).toContain(item.groupLifecycleLabel)
+    }
+  })
+})
+
+describe('attachSuccessionLinks', () => {
+  const item = (referenceId: string, supersededByRefs?: string[]): LibraryItem =>
+    ({ referenceId, supersededByRefs }) as LibraryItem
+
+  it('links an older document to the newer one, and the newer one back', () => {
+    const [older, newer] = attachSuccessionLinks([item('OLD', ['NEW']), item('NEW')])
+    expect(older.supersededByRefs).toEqual(['NEW'])
+    expect(older.replacesRefs).toBeUndefined()
+    expect(newer.replacesRefs).toEqual(['OLD'])
+    expect(newer.supersededByRefs).toBeUndefined()
+  })
+
+  it('lists every older document the newer one replaces, in library order', () => {
+    const out = attachSuccessionLinks([item('A', ['NEW']), item('NEW'), item('B', ['NEW'])])
+    expect(out.find((i) => i.referenceId === 'NEW')?.replacesRefs).toEqual(['A', 'B'])
+  })
+
+  it('keeps several newer documents and drops repeats', () => {
+    const out = attachSuccessionLinks([item('OLD', ['N1', 'N2', 'N1']), item('N1'), item('N2')])
+    expect(out[0].supersededByRefs).toEqual(['N1', 'N2'])
+    expect(out[1].replacesRefs).toEqual(['OLD'])
+    expect(out[2].replacesRefs).toEqual(['OLD'])
+  })
+
+  it('drops a newer document that is not in the library, so no link can dangle', () => {
+    const out = attachSuccessionLinks([
+      item('OLD', ['GONE']),
+      item('B', ['B2', 'GONE']),
+      item('B2'),
+    ])
+    expect(out[0].supersededByRefs).toBeUndefined()
+    expect(out[1].supersededByRefs).toEqual(['B2'])
+  })
+
+  it('never links a document to itself', () => {
+    const out = attachSuccessionLinks([item('SELF', ['SELF'])])
+    expect(out[0].supersededByRefs).toBeUndefined()
+    expect(out[0].replacesRefs).toBeUndefined()
+  })
+
+  it('leaves documents with no succession untouched', () => {
+    const out = attachSuccessionLinks([item('A'), item('B')])
+    expect(out.map((i) => [i.supersededByRefs, i.replacesRefs])).toEqual([
+      [undefined, undefined],
+      [undefined, undefined],
+    ])
+  })
+
+  it('holds in the real data: every link resolves and every link has its way back', () => {
+    const byId = new Map(libraryData.map((i) => [i.referenceId, i]))
+    for (const doc of libraryData) {
+      for (const ref of doc.supersededByRefs ?? []) {
+        expect(byId.get(ref)?.replacesRefs, `${doc.referenceId} -> ${ref}`).toContain(
+          doc.referenceId
+        )
+      }
+      for (const ref of doc.replacesRefs ?? []) {
+        expect(byId.get(ref)?.supersededByRefs, `${ref} <- ${doc.referenceId}`).toContain(
+          doc.referenceId
+        )
+      }
+    }
   })
 })
