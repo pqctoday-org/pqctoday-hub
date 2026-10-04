@@ -133,7 +133,7 @@ export function WorkshopShell<TId extends string>({
             unchanged. */}
         <Heading className="text-xl md:text-2xl font-bold flex items-center gap-2 min-w-0">
           <Icon className="text-secondary shrink-0" aria-hidden="true" />
-          {title}
+          <span className="truncate">{title}</span>
           {badge}
         </Heading>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
