@@ -131,7 +131,9 @@ export const ComplianceImpactSection = ({
       <h4 className="text-sm font-semibold text-foreground mb-2">Profile-driven applicability</h4>
       <p className="text-xs text-muted-foreground mb-3">
         Frameworks, threats, library docs, and milestones the engine identifies as applicable to
-        your industry and country.
+        your industry and country. This list does not depend on the frameworks you selected above,
+        and &ldquo;mandatory&rdquo; here means issued or enforced by a body in your country, which
+        includes guidance and drafts, so check each item&apos;s status.
       </p>
       <ApplicabilityPanel variant="report-section" />
     </div>
