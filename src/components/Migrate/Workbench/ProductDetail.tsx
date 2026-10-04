@@ -5,7 +5,7 @@
 // is lost in the redesign: vendor PQC roadmap, certifications, validation
 // proof, evidence flags, capability text, vendor + repo links.
 
-import { lazy, Suspense, useState } from 'react'
+import { Suspense, useState } from 'react'
 import { Link } from 'react-router'
 import {
   ExternalLink,
@@ -44,9 +44,12 @@ import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { OptionalSection } from '@/components/ui/OptionalSection'
+import { lazyWithRetry } from '@/utils/lazyWithRetry'
 
-// Its own chunk, never a static import: see ProductMaintainers.tsx.
-const ProductMaintainers = lazy(() => import('./ProductMaintainers'))
+// Its own chunk, never a static import (see ProductMaintainers.tsx): the import() stays written out
+// here so this view's chunk is the one the build makes wait for it.
+const ProductMaintainers = lazyWithRetry(() => import('./ProductMaintainers'))
 
 export function ProductDetail({ product }: { product: SoftwareItem }) {
   const certs = getCertsForProduct(product.productId, product.softwareName)
@@ -294,9 +297,12 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
       )}
 
       {hasMaintainers && (
-        <Suspense fallback={null}>
-          <ProductMaintainers product={product} variant="desktop" />
-        </Suspense>
+        // A side list must not take the product view down if its chunk cannot be loaded.
+        <OptionalSection>
+          <Suspense fallback={<div aria-hidden="true" className="min-h-10" />}>
+            <ProductMaintainers product={product} variant="desktop" />
+          </Suspense>
+        </OptionalSection>
       )}
 
       {learningModuleIds.length > 0 && (

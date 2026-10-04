@@ -1,14 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   ArrowRight,
@@ -77,9 +68,14 @@ import type {
 } from '@/types/MigrateTypes'
 import { deriveVendorRoadmapDisplay } from '@/components/Migrate/vendorRoadmapDisplay'
 import { MobileSheet } from '../primitives/Sheet'
+import { OptionalSection } from '@/components/ui/OptionalSection'
+import { lazyWithRetry } from '@/utils/lazyWithRetry'
 
-// Its own chunk, never a static import: see ProductMaintainers.tsx.
-const ProductMaintainers = lazy(() => import('@/components/Migrate/Workbench/ProductMaintainers'))
+// Its own chunk, never a static import (see ProductMaintainers.tsx): the import() stays written out
+// here so this view's chunk is the one the build makes wait for it.
+const ProductMaintainers = lazyWithRetry(
+  () => import('@/components/Migrate/Workbench/ProductMaintainers')
+)
 
 const CERT_TYPE_ORDER: CertificationXref['certType'][] = [
   'FIPS 140-3',
@@ -1178,9 +1174,12 @@ function MobileProductDetailSheet({
           </div>
 
           {(product.openSourceMaintainers?.length ?? 0) > 0 && (
-            <Suspense fallback={null}>
-              <ProductMaintainers product={product} variant="phone" />
-            </Suspense>
+            // A side list must not take the product sheet down if its chunk cannot be loaded.
+            <OptionalSection>
+              <Suspense fallback={<div aria-hidden="true" className="min-h-10" />}>
+                <ProductMaintainers product={product} variant="phone" />
+              </Suspense>
+            </OptionalSection>
           )}
 
           {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (
