@@ -31,9 +31,14 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.150.0] - 2026-10-04
 
+### Added
+
+- **Notes that estimates are still open, on more pages** [view:/faq] [view:/report] [view:/simulation] [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the FAQ answers that quote a quantum-computer year or qubit count, the Simulation's years-to-Q-Day figure in the report, and the Learn exercises where you set a quantum-computer year now say that these are published estimates or example figures, not settled answers. The 2029 year the Simulation and the assessment report plan against is now labelled as this site's own planning anchor, not a figure from a source.
+
 ### Changed
 
 - **The Threats page no longer shows a CRQC range of its own** [view:/threats] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the expanded source list used to show a 2029–2036 range that this site had worked out from a Google Quantum AI paper, but the paper gives no arrival date. The list now states what the paper does estimate (at most 1,200 logical qubits, fewer than half a million physical qubits on the stated machine assumptions) and says plainly that no reliable estimate of when such a machine could exist is established.
+- **The Assess steps no longer claim a 2030–2040 expert range** [view:/assess] [persona:executive] [persona:grc] [persona:architect] [persona:researcher]: the data-retention and credential-lifetime steps now say that 2029 is this site's own planning anchor for a first CRQC, not a source figure, and quote the Global Risk Institute's 2025 survey of 26 experts, which found a CRQC "quite possible" (28–49%) within 10 years. The AI security scale-encryption exercise now calls its risk bands an example planning window instead of a range of estimates.
 
 ## [4.149.0] - 2026-10-03
 
