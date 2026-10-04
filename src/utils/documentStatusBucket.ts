@@ -2,7 +2,13 @@
 
 export type DocumentStatusBucket = 'Published' | 'Proposed' | 'Draft' | 'Expired' | 'Superseded'
 
-/** Map a raw documentStatus string from the library CSV to one of five lifecycle buckets. */
+/**
+ * Map a raw documentStatus string from the library CSV to one of five buckets.
+ * This is the rule set that ran before the six lifecycle labels. It now only
+ * answers for a document whose `lifecycle_state` is blank, through
+ * `resolveLifecycleLabel` in libraryLifecycle.ts, which maps the five buckets onto
+ * the six labels (Published to Released, Proposed to Draft, Superseded to Historical).
+ */
 export function getDocumentStatusBucket(raw: string): DocumentStatusBucket {
   const s = raw.toLowerCase().trim()
 
@@ -45,68 +51,3 @@ export function getDocumentStatusBucket(raw: string): DocumentStatusBucket {
   // Default — published, active, final, in force, enacted, etc.
   return 'Published'
 }
-
-/** Rank of each bucket by lifecycle advancement (higher = more advanced). */
-const BUCKET_RANK: Record<DocumentStatusBucket, number> = {
-  Published: 5,
-  Proposed: 4,
-  Draft: 3,
-  Expired: 1,
-  Superseded: 0,
-}
-
-/**
- * Compute the most-advanced bucket across a revision group: the surviving
- * record's own bucket plus its prior (deprecated) revisions' buckets. Used so a
- * collapsed multi-revision tile shows the furthest lifecycle stage reached
- * (e.g. an AUTH48 revision) even when the canonical survivor row is less advanced.
- */
-export function getGroupStatusBucket(
-  primary: DocumentStatusBucket,
-  priorBuckets: DocumentStatusBucket[]
-): DocumentStatusBucket {
-  return [primary, ...priorBuckets].reduce(
-    (best, cur) => (BUCKET_RANK[cur] > BUCKET_RANK[best] ? cur : best),
-    primary
-  )
-}
-
-export const BUCKET_STYLES: Record<
-  DocumentStatusBucket,
-  { badge: string; label: string; dot: string }
-> = {
-  Published: {
-    badge: 'bg-success/15 text-success border border-success/40',
-    label: 'Published',
-    dot: 'bg-success',
-  },
-  Draft: {
-    badge: 'bg-warning/15 text-warning border border-warning/40',
-    label: 'Draft',
-    dot: 'bg-warning',
-  },
-  Proposed: {
-    badge: 'bg-status-info/15 text-status-info border border-status-info/40',
-    label: 'Proposed',
-    dot: 'bg-status-info',
-  },
-  Expired: {
-    badge: 'bg-destructive/15 text-destructive border border-destructive/40',
-    label: 'Expired',
-    dot: 'bg-destructive',
-  },
-  Superseded: {
-    badge: 'bg-muted text-muted-foreground border border-border',
-    label: 'Superseded',
-    dot: 'bg-muted-foreground',
-  },
-}
-
-export const LIFECYCLE_FILTER_OPTIONS: Array<{ id: string; label: string }> = [
-  { id: 'All', label: 'All Statuses' },
-  { id: 'Published', label: 'Published' },
-  { id: 'Proposed', label: 'Proposed' },
-  { id: 'Draft', label: 'Draft' },
-  { id: 'Expired', label: 'Expired' },
-  { id: 'Superseded', label: 'Superseded' },
-]

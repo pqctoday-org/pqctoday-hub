@@ -3,17 +3,17 @@
  * Shared pill/label helpers for the Library redesign cards + drawer. Token-only
  * styling (per the app's semantic-token standard).
  */
-import { BUCKET_STYLES, type DocumentStatusBucket } from '@/utils/documentStatusBucket'
+import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
 import { getTrustScore } from '@/data/trustScore'
 
-export function lifecycleLabel(bucket: DocumentStatusBucket): string {
-  // eslint-disable-next-line security/detect-object-injection -- bucket is a typed enum key
-  return BUCKET_STYLES[bucket]?.label ?? bucket
+export function lifecycleLabel(label: LifecycleLabel): string {
+  // eslint-disable-next-line security/detect-object-injection -- label is a typed enum key
+  return LIFECYCLE_STYLES[label]?.label ?? label
 }
 
-export function lifecyclePillClass(bucket: DocumentStatusBucket): string {
-  // eslint-disable-next-line security/detect-object-injection -- bucket is a typed enum key
-  return BUCKET_STYLES[bucket]?.badge ?? 'bg-muted text-muted-foreground'
+export function lifecyclePillClass(label: LifecycleLabel): string {
+  // eslint-disable-next-line security/detect-object-injection -- label is a typed enum key
+  return LIFECYCLE_STYLES[label]?.badge ?? 'bg-muted text-muted-foreground'
 }
 
 /** Urgency pill — only Critical/High are shown on cards (per the design). */

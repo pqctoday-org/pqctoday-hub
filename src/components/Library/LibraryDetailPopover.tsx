@@ -18,7 +18,7 @@ import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from './FrameworkCrosswalkPanel'
-import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
+import { LIFECYCLE_STYLES } from '../../utils/libraryLifecycle'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { relatedLeadersFor } from './relatedLeaders'
 import clsx from 'clsx'
@@ -429,11 +429,11 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                               <span
                                 className={clsx(
                                   'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
-                                  BUCKET_STYLES[rev.documentStatusBucket].badge
+                                  LIFECYCLE_STYLES[rev.lifecycleLabel].badge
                                 )}
                                 title={rev.documentStatus}
                               >
-                                {BUCKET_STYLES[rev.documentStatusBucket].label}
+                                {LIFECYCLE_STYLES[rev.lifecycleLabel].label}
                               </span>
                               <span className="text-[11px] text-muted-foreground truncate">
                                 {rev.referenceId}

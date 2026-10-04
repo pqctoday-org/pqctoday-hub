@@ -18,7 +18,7 @@ import {
 import type { SortOption } from './SortControl'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
+import { LIFECYCLE_STYLES } from '../../utils/libraryLifecycle'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
@@ -278,11 +278,11 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             <span
               className={clsx(
                 'inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
-                BUCKET_STYLES[item.documentStatusBucket].badge
+                LIFECYCLE_STYLES[item.lifecycleLabel].badge
               )}
               title={item.documentStatus}
             >
-              {BUCKET_STYLES[item.documentStatusBucket].label}
+              {LIFECYCLE_STYLES[item.lifecycleLabel].label}
             </span>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">

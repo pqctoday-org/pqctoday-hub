@@ -50,10 +50,10 @@ export function LibraryStartHere({ persona, onOpen }: LibraryStartHereProps) {
                 {item && (
                   <span
                     className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-semibold ${lifecyclePillClass(
-                      item.documentStatusBucket
+                      item.lifecycleLabel
                     )}`}
                   >
-                    {lifecycleLabel(item.documentStatusBucket)}
+                    {lifecycleLabel(item.lifecycleLabel)}
                   </span>
                 )}
               </span>

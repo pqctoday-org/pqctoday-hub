@@ -26,7 +26,6 @@ import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamil
 import type { TrustTier } from '@/data/trustScore'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { PersonaId } from '@/data/learningPersonas'
-import type { DocumentStatusBucket } from '@/utils/documentStatusBucket'
 import { matchesAllWords } from '@/utils/searchMatch'
 
 const URGENCY_ORDER: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
@@ -156,7 +155,7 @@ export interface LibraryPipelineInput {
   cswp39Only: boolean
   certRelevantOnly: boolean
   certRelevantIdSet: Set<string>
-  lifecycleBucket: string // 'All' or a DocumentStatusBucket
+  lifecycleBucket: string // 'All' or a LifecycleLabel
   sortBy: SortOption
   /** True when the reader picked the sort themselves (?sort= is present) rather
    *  than falling back to the persona default. Suppresses the persona re-sort. */
@@ -256,11 +255,7 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
   if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
   if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
   if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
-  if (
-    lifecycleBucket !== 'All' &&
-    item.documentStatusBucket !== (lifecycleBucket as DocumentStatusBucket)
-  )
-    return false
+  if (lifecycleBucket !== 'All' && item.lifecycleLabel !== lifecycleBucket) return false
   if (!filterText) return true
   const searchLower = filterText.toLowerCase()
   // Every meaningful word of the query must appear somewhere in title / id /

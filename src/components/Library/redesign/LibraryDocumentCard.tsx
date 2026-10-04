@@ -37,7 +37,7 @@ export function LibraryDocumentCard({
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
   // The lifecycle pill reflects the most-advanced edition across this record and
   // its prior revisions (matches the live card), not just the current row.
-  const lifecycleBucket = item.groupStatusBucket ?? item.documentStatusBucket
+  const lifecycle = item.groupLifecycleLabel ?? item.lifecycleLabel
   const revisionCount = item.priorRevisions?.length ?? 0
 
   return (
@@ -113,10 +113,10 @@ export function LibraryDocumentCard({
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span
           className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-            lifecycleBucket
+            lifecycle
           )}`}
         >
-          {lifecycleLabel(lifecycleBucket)}
+          {lifecycleLabel(lifecycle)}
         </span>
         {cats.map((c) => (
           <span

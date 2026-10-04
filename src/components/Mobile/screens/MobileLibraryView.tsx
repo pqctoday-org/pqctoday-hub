@@ -313,7 +313,7 @@ export function MobileLibraryView() {
                   </h2>
                 </div>
                 <p className="text-[10.5px] text-muted-foreground">
-                  {lifecycleLabel(item.documentStatusBucket)}
+                  {lifecycleLabel(item.lifecycleLabel)}
                   {dateLabel && ` · ${dateLabel}`}
                   {item.status && (
                     <span
@@ -356,7 +356,7 @@ export function MobileLibraryView() {
               <p className="mt-1 text-[11px] text-muted-foreground">
                 {selected.authorsOrOrganization || 'Unknown'}
                 {' · '}
-                {lifecycleLabel(selected.documentStatusBucket)}
+                {lifecycleLabel(selected.lifecycleLabel)}
                 {selected.initialPublicationDate &&
                   ` · ${formatLibDate(selected.initialPublicationDate)}`}
               </p>

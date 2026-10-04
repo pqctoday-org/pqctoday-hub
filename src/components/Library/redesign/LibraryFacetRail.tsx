@@ -7,7 +7,7 @@
  */
 import { Bookmark, Sparkles, ShieldCheck, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { LIFECYCLE_FILTER_OPTIONS } from '@/utils/documentStatusBucket'
+import { LIFECYCLE_FILTER_OPTIONS } from '@/utils/libraryLifecycle'
 
 export type LibraryQuickView = 'all' | 'new' | 'cert' | 'bookmarked'
 

@@ -180,7 +180,6 @@ describe('attachPriorRevisions', () => {
       initialPublicationDate: '',
       lastUpdateDate: '',
       documentStatus: 'Draft',
-      documentStatusBucket: 'Draft',
       lifecycleLabel: 'Draft',
       shortDescription: '',
       documentType: '',
@@ -204,7 +203,6 @@ describe('attachPriorRevisions', () => {
     referenceId,
     documentTitle: referenceId,
     documentStatus: 'Internet-Draft',
-    documentStatusBucket: 'Draft',
     lifecycleLabel: 'Draft',
     downloadUrl: `https://example.org/${referenceId}`,
     supersededBy,
@@ -224,11 +222,11 @@ describe('attachPriorRevisions', () => {
     expect(out.map((i) => i.referenceId)).toEqual(['SURV', 'OTHER'])
   })
 
-  it('computes the most-advanced groupStatusBucket across the group', () => {
-    const items = [item('SURV', { documentStatusBucket: 'Draft' })]
-    const priors = [prior('OLD', 'SURV', { documentStatusBucket: 'Published' })]
+  it('computes the furthest groupLifecycleLabel across the group', () => {
+    const items = [item('SURV', { lifecycleLabel: 'Draft' })]
+    const priors = [prior('OLD', 'SURV', { lifecycleLabel: 'Released' })]
     const out = attachPriorRevisions(items, priors)
-    expect(out[0].groupStatusBucket).toBe('Published')
+    expect(out[0].groupLifecycleLabel).toBe('Released')
   })
 
   it('ignores priors with no supersededBy', () => {
@@ -270,7 +268,7 @@ describe('libraryData revision collapse (real data)', () => {
     expect(ids.has('draft-ietf-plants-merkle-tree-certs-00')).toBe(false)
     const surv = libraryData.find((i) => i.referenceId === 'draft-ietf-plants-merkle-tree-certs')!
     expect(surv.priorRevisions?.length ?? 0).toBeGreaterThanOrEqual(2)
-    expect(surv.groupStatusBucket).toBeDefined()
+    expect(surv.groupLifecycleLabel).toBeDefined()
   })
 
   it('child instances in the dependency tree carry the same enrichment (priorRevisions)', () => {

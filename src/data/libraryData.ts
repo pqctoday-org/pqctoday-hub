@@ -3,11 +3,6 @@ import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
 import {
-  getDocumentStatusBucket,
-  getGroupStatusBucket,
-  type DocumentStatusBucket,
-} from '../utils/documentStatusBucket'
-import {
   getGroupLifecycleLabel,
   resolveLifecycleLabel,
   type LifecycleLabel,
@@ -22,7 +17,6 @@ export interface PriorRevision {
   referenceId: string
   documentTitle: string
   documentStatus: string
-  documentStatusBucket: DocumentStatusBucket
   lifecycleLabel: LifecycleLabel
   downloadUrl: string
   supersededBy: string
@@ -47,7 +41,6 @@ export interface LibraryItem {
    *  of either a blank or an invented publication date. */
   lastVerified?: string
   documentStatus: string
-  documentStatusBucket: DocumentStatusBucket
   /** CSV `lifecycle_state`, as written (blank when the row has none). It can hold
    *  free text from before the six labels existed; `lifecycleLabel` is the value
    *  to show and filter on. */
@@ -117,12 +110,9 @@ export interface LibraryItem {
   /** Older (deprecated) revisions of this same document, collapsed into this
    *  surviving tile. Present only when this record superseded ≥1 other. */
   priorRevisions?: PriorRevision[]
-  /** Most-advanced lifecycle bucket across this record and its priorRevisions.
-   *  Tiles render this (falling back to documentStatusBucket) so a collapsed
-   *  group shows the furthest stage reached. */
-  groupStatusBucket?: DocumentStatusBucket
-  /** Furthest lifecycle label across this record and its priorRevisions: the
-   *  six-label counterpart of `groupStatusBucket`. */
+  /** Furthest lifecycle label across this record and its priorRevisions. Tiles
+   *  render this (falling back to lifecycleLabel) so a collapsed group shows the
+   *  furthest stage reached. */
   groupLifecycleLabel?: LifecycleLabel
 }
 
@@ -376,7 +366,6 @@ function transformDeprecatedRow(row: RawLibraryRow): PriorRevision | null {
     referenceId: row.reference_id,
     documentTitle: row.document_title,
     documentStatus: row.document_status,
-    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
     lifecycleLabel: resolveLifecycleLabel({
       lifecycleState: row.lifecycle_state,
       documentStatus: row.document_status ?? '',
@@ -399,7 +388,7 @@ function rfcNumber(rec: { referenceId: string; downloadUrl: string }): string | 
 
 /**
  * Attach prior (deprecated) revisions to their surviving active record, keyed by
- * `supersededBy`, and compute `groupStatusBucket`. Deprecated rows are never
+ * `supersededBy`, and compute `groupLifecycleLabel`. Deprecated rows are never
  * added to the returned array — they only enrich the survivor — so the grid
  * still renders one tile per logical document. Exported for unit testing.
  *
@@ -427,10 +416,6 @@ export function attachPriorRevisions(items: LibraryItem[], priors: PriorRevision
     return {
       ...item,
       priorRevisions: sorted,
-      groupStatusBucket: getGroupStatusBucket(
-        item.documentStatusBucket,
-        sorted.map((r) => r.documentStatusBucket)
-      ),
       groupLifecycleLabel: getGroupLifecycleLabel(
         item.lifecycleLabel,
         sorted.map((r) => r.lifecycleLabel)
@@ -485,7 +470,6 @@ export function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     lastUpdateDate: row.last_update_date,
     lastVerified: row.last_verified || undefined,
     documentStatus: row.document_status,
-    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
     lifecycleState: row.lifecycle_state?.trim() || undefined,
     lifecycleLabel: resolveLifecycleLabel({
       lifecycleState: row.lifecycle_state,
@@ -745,7 +729,7 @@ const nowMs = Date.now()
 
 // Inject status + citationCount, THEN build the dependency tree as the final step
 // so `children[]` reference the same fully-enriched objects as the top-level array
-// (priorRevisions/groupStatusBucket/status/citationCount all present). This is what
+// (priorRevisions/groupLifecycleLabel/status/citationCount all present). This is what
 // lets findByRef(...) resolve a child and still see priorRevisions in the detail view.
 export const libraryData: LibraryItem[] = buildTree(
   currentItems.map((item) => ({

@@ -10,11 +10,7 @@ import {
   parseLifecycleParam,
   resolveLifecycleLabel,
 } from './libraryLifecycle'
-import {
-  LIFECYCLE_FILTER_OPTIONS as OLD_FILTER_OPTIONS,
-  getDocumentStatusBucket,
-  type DocumentStatusBucket,
-} from './documentStatusBucket'
+import { getDocumentStatusBucket, type DocumentStatusBucket } from './documentStatusBucket'
 
 describe('the six lifecycle labels', () => {
   it('are exactly Released, Draft, Expired, Historical, Research Paper and Misc', () => {
@@ -151,9 +147,9 @@ describe('the old five buckets map to the new labels', () => {
 
 describe('parseLifecycleParam (the ?lifecycle= URL value)', () => {
   it('keeps every old link working: each old filter value opens with the matching new label', () => {
-    const opened = Object.fromEntries(
-      OLD_FILTER_OPTIONS.map((o) => [o.id, parseLifecycleParam(o.id)])
-    )
+    // Every value the old Lifecycle filter wrote into a shared link.
+    const oldValues = ['All', 'Published', 'Proposed', 'Draft', 'Expired', 'Superseded']
+    const opened = Object.fromEntries(oldValues.map((v) => [v, parseLifecycleParam(v)]))
     expect(opened).toEqual({
       All: 'All',
       Published: 'Released',
