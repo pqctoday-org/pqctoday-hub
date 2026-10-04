@@ -16,6 +16,25 @@ import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { LibraryViewRedesign } from '@/components/Library/redesign/LibraryViewRedesign'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 
+// The Library page tests below render the real page. Over the whole data set (about
+// 1,275 documents) that took 15 s alone and hit its 60 s limit on a loaded machine,
+// so the page is given a small fixed set instead: the FIPS 203 / 204 pair and a few
+// others. Everything else is real; lookups by reference still resolve against all of
+// the data, and the documents are the same objects, so marking two of them still works.
+const PAGE_DOCUMENTS = vi.hoisted(() => [
+  'FIPS 203',
+  'FIPS 204',
+  'FIPS 205',
+  'NIST IR 8547',
+  'NIST SP 800-227',
+])
+vi.mock('@/data/libraryData', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/data/libraryData')>()
+  const small = PAGE_DOCUMENTS.map((id) => actual.libraryData.find((d) => d.referenceId === id))
+  if (small.some((d) => !d))
+    throw new Error(`a page document is missing from the library: ${PAGE_DOCUMENTS}`)
+  return { ...actual, libraryData: small as typeof actual.libraryData }
+})
 vi.mock('@/embed/platform', () => ({ isNativeApp: () => false }))
 vi.mock('react-hot-toast', () => ({ default: { success: vi.fn() } }))
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
