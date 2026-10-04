@@ -5,7 +5,7 @@ import { ToolExercise } from '@/components/shared/ToolExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { businessToolRelations } from '@/data/toolRelations'
-import { useParams, useNavigate, Navigate } from 'react-router'
+import { useParams, useNavigate, Link } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
@@ -48,7 +48,20 @@ export const BusinessToolRoute = () => {
     return () => clearPageActions()
   }, [tool])
 
-  if (!tool) return <Navigate to="/business/tools" replace />
+  if (!tool) {
+    return (
+      <section className="mx-auto max-w-2xl space-y-4 px-4 py-12 text-center">
+        <h1 className="text-3xl font-bold text-foreground">Business tool not found</h1>
+        <p className="text-muted-foreground">
+          No supported business tool matches this address. It may have moved or the link may be
+          incomplete.
+        </p>
+        <Link className="inline-flex text-primary hover:underline" to="/business/tools">
+          Browse all business tools
+        </Link>
+      </section>
+    )
+  }
 
   const handleBack = () => navigate('/business/tools')
 
@@ -130,6 +143,20 @@ export const BusinessToolRoute = () => {
             {tool.workedExample}
           </p>
         )}
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">Runtime and privacy:</span> This planning
+          tool runs in your browser. Use synthetic or approved organizational data and review the
+          site privacy terms before entering sensitive material.
+        </p>
+        <p className="mt-2 text-sm">
+          <Link className="text-primary underline-offset-2 hover:underline" to="/business/tools">
+            Browse all Business tools
+          </Link>
+          {' · '}
+          <Link className="text-primary underline-offset-2 hover:underline" to="/learn">
+            Browse PQC learning modules
+          </Link>
+        </p>
       </section>
 
       {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts). */}

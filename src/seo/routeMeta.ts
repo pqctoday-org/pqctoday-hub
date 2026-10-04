@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { TOOL_ROUTE_META } from './toolRouteMeta.generated'
+
 const BASE_URL = 'https://www.pqctoday.com'
 
 export interface RouteMeta {
@@ -1028,13 +1030,25 @@ const PARENT_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['/library/', '/library'],
 ]
 
+const TOOL_META_BY_PATH = new Map(TOOL_ROUTE_META.map((route) => [route.path, route]))
+
 /**
  * Routes that exist but must not be indexed: legacy duplicates of redesigned
  * pages and the signed embed surface. They still resolve to real metadata so the
  * canonical stays self-referential, but PageMeta marks them noindex.
  */
 export function isNoindexRoute(pathname: string): boolean {
-  return pathname.endsWith('/legacy') || pathname === '/embed' || pathname.startsWith('/embed/')
+  const normalized =
+    pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+  const tool = TOOL_META_BY_PATH.get(normalized)
+  return (
+    tool?.index === false ||
+    normalized.endsWith('/legacy') ||
+    normalized === '/embed' ||
+    normalized.startsWith('/embed/') ||
+    (normalized.startsWith('/business/tools/') && !tool) ||
+    (normalized.startsWith('/playground/') && !tool && !Object.hasOwn(ROUTE_META, normalized))
+  )
 }
 
 /**
@@ -1058,6 +1072,16 @@ export function getRouteMeta(pathname: string): RouteMeta {
     // eslint-disable-next-line security/detect-object-injection
     const meta = ROUTE_META[normalized]!
     return noindex ? { ...meta, noindex } : meta
+  }
+
+  const tool = TOOL_META_BY_PATH.get(normalized)
+  if (tool) {
+    return {
+      title: tool.title,
+      description: tool.description,
+      canonical: selfCanonical,
+      noindex: tool.index ? undefined : true,
+    }
   }
 
   // Dynamic/child routes — inherit the parent section's title + description, but

@@ -666,9 +666,9 @@ export const PQC101Module: React.FC = () => {
 
   return (
     <div className="w-full">
-      <h1 className="text-3xl font-bold text-gradient mb-2">
+      <h2 className="text-3xl font-bold text-gradient mb-2">
         PQC 101 — The Quantum Threat & What To Do About It
-      </h1>
+      </h2>
       <p className="text-muted-foreground mb-8">
         A beginner-friendly introduction to Post-Quantum Cryptography in 5 steps.
       </p>

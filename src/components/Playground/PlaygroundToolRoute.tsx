@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect, useState } from 'react'
-import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router'
 import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextStepCard } from '@/components/shared/NextStepCard'
@@ -60,8 +60,20 @@ export const PlaygroundToolRoute = () => {
     return () => clearPageActions()
   }, [tool])
 
-  // Unknown toolId → back to workshop grid
-  if (!tool) return <Navigate to="/playground" replace />
+  if (!tool) {
+    return (
+      <section className="mx-auto max-w-2xl space-y-4 py-12 text-center">
+        <h1 className="text-3xl font-bold text-foreground">Crypto Lab tool not found</h1>
+        <p className="text-muted-foreground">
+          No supported Crypto Lab tool matches this address. It may have moved or the link may be
+          incomplete.
+        </p>
+        <Link className="inline-flex text-primary hover:underline" to="/playground">
+          Browse all Crypto Lab tools
+        </Link>
+      </section>
+    )
+  }
 
   const handleBack = () => navigate('/playground')
 
@@ -106,10 +118,7 @@ export const PlaygroundToolRoute = () => {
           document's top-level heading instead of a bare span.
         */}
         <h1 className="text-sm font-normal text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:truncate">
-          <span className="sr-only">{tool.name} — </span>
-          <span aria-hidden="true">
-            {tool.category} / {tool.name}
-          </span>
+          {tool.category} / {tool.name}
         </h1>
         <div className="ml-auto flex items-center gap-1 max-sm:w-full max-sm:justify-end">
           <EndorseButton
@@ -159,21 +168,44 @@ export const PlaygroundToolRoute = () => {
       {/* B+ round 8, Wave C (2026-09-18): intro strip — what you will do, and one
           concrete run written from the tool's real steps. Mirrors the business
           tools' "What this is for" section so both tool families open the same way. */}
-      {tool.intro && (
-        <section
-          aria-label="What you will do"
-          className="rounded-lg border border-border bg-muted/20 p-3"
-        >
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            <span className="font-semibold text-foreground">What you will do:</span>{' '}
-            {tool.intro.whatYouWillDo}
-          </p>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-            <span className="font-semibold text-foreground">Worked example:</span>{' '}
-            {tool.intro.workedExample}
-          </p>
-        </section>
-      )}
+      <section
+        aria-label="What you will do"
+        className="rounded-lg border border-border bg-muted/20 p-3"
+      >
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">What you will do:</span>{' '}
+          {tool.intro?.whatYouWillDo ?? tool.description}
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">Worked example:</span>{' '}
+          {tool.intro?.workedExample ??
+            (tool.sandbox
+              ? `Connect the separately operated Docker sandbox, open the ${tool.name} scenario, and compare its ${tool.algorithms.join(', ') || 'cryptographic'} workflow with the stated migration goal.`
+              : `Choose the supplied example inputs, run the ${tool.name} workflow, and inspect the resulting ${tool.algorithms.join(', ') || 'cryptographic'} operations before changing one input and comparing the output.`)}
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">Runtime and privacy:</span>{' '}
+          {tool.sandbox
+            ? 'This scenario requires a separately operated, access-gated Docker runtime. The public page explains the exercise but does not send inputs to or start a container unless you configure and connect that runtime.'
+            : 'The cryptographic exercise runs in this browser. Review the site privacy terms before entering sensitive material; use synthetic inputs for learning and evaluation.'}
+        </p>
+        <p className="mt-2 text-sm">
+          <Link className="text-primary underline-offset-2 hover:underline" to="/playground">
+            Browse all Crypto Lab tools
+          </Link>
+          {relatedModuleId && relatedModuleTitle && (
+            <>
+              {' · '}
+              <Link
+                className="text-primary underline-offset-2 hover:underline"
+                to={`/learn/${relatedModuleId}`}
+              >
+                Learn with {relatedModuleTitle}
+              </Link>
+            </>
+          )}
+        </p>
+      </section>
 
       {/* Round 9, wave 2 — "For your role", one paragraph per claimed persona (src/data/personaBlocks.ts). */}
       <PersonaBlock route={`/playground/${tool.id}`} />

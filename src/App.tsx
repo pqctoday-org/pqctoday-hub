@@ -13,6 +13,7 @@ import { useAchievementChecker } from './hooks/useAchievementChecker'
 import { AchievementSectionTracker } from './components/AchievementSectionTracker'
 import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
+import { PrerenderRouteState } from './seo/PrerenderRouteState'
 import { EmbedLayout } from './components/Layout/EmbedLayout'
 import { EmbedRouteGuard } from './embed/EmbedRouteGuard'
 import { EmbedNavigationGuard } from './embed/EmbedNavigationGuard'
@@ -485,6 +486,7 @@ function App() {
       <HistorySeeder />
       <CrossOriginIsolationGuard />
       <PageMeta />
+      <PrerenderRouteState />
       <Suspense
         fallback={
           <div className="flex h-screen w-full items-center justify-center bg-black">

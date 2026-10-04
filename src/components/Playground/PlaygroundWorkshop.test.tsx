@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router'
 import { PlaygroundWorkshop } from './PlaygroundWorkshop'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
 import { isEnvironmentTool } from './cryptoLabTaxonomy'
+import { FEATURE_PLAYGROUNDS } from './cryptoLabMeta'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore } from '@/store/useSandboxStore'
@@ -71,6 +72,21 @@ describe('Crypto Lab Workbench', () => {
     )
   })
 
+  it('renders a static directory link for every supported Crypto Lab route', () => {
+    renderWorkbench()
+    const directory = screen.getByRole('navigation', { name: 'All Crypto Lab pages' })
+    const expected = new Set([
+      ...FEATURE_PLAYGROUNDS.map(({ to }) => to),
+      ...WORKSHOP_TOOLS.map(({ id }) => `/playground/${id}`),
+    ])
+    const actual = new Set(
+      within(directory)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href'))
+    )
+    expect(actual).toEqual(expected)
+  })
+
   it('has no page-local persona control and defaults to the no-role Overview heading', () => {
     renderWorkbench()
     // No page-local persona control (Phase 0.2 — the top-bar switcher is the
@@ -107,7 +123,8 @@ describe('Crypto Lab Workbench', () => {
 
   it('opens the tool-detail modal with an "Open tool" action and run-context explainer', () => {
     renderWorkbench('/playground?cat=Blockchain%20%26%20Digital%20Assets')
-    fireEvent.click(screen.getByText('Bitcoin Transaction'))
+    const card = screen.getByText('Bitcoin Transaction').closest('[data-tool-card]') as HTMLElement
+    fireEvent.click(within(card).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog', { name: 'Bitcoin Transaction' })
     expect(within(dialog).getByRole('button', { name: /Open tool/i })).toBeInTheDocument()
     expect(within(dialog).getByText('Algorithms')).toBeInTheDocument()
@@ -132,7 +149,7 @@ describe('Crypto Lab Workbench', () => {
     revealSandboxScenarios()
     // Offline (beforeEach): once revealed, the sandbox demo stays in the grid,
     // dimmed/locked (Phase 9.4) — never removed from the list entirely.
-    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
+    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[data-tool-card]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
     expect(card).toHaveClass('opacity-60')
@@ -142,7 +159,7 @@ describe('Crypto Lab Workbench', () => {
 
     // Clicking the locked card opens the detail modal but gates it behind
     // "Start sandbox runtime" rather than navigating into a broken tool.
-    fireEvent.click(card as HTMLElement)
+    fireEvent.click(within(card as HTMLElement).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog')
     expect(
       within(dialog).getByRole('button', { name: /Start sandbox runtime/i })
@@ -154,12 +171,12 @@ describe('Crypto Lab Workbench', () => {
     useSandboxStore.setState({ status: 'online' })
     renderWorkbench('/playground?cat=Protocol%20Simulations')
     revealSandboxScenarios()
-    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
+    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[data-tool-card]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
 
     // Online → opening it offers "Open tool", not a runtime prompt.
-    fireEvent.click(card as HTMLElement)
+    fireEvent.click(within(card as HTMLElement).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).getByRole('button', { name: /Open tool/i })).toBeInTheDocument()
   })
@@ -191,7 +208,7 @@ describe('Crypto Lab Workbench', () => {
 
   it('toggles a bookmark into the My tools view', () => {
     renderWorkbench('/playground?cat=Blockchain%20%26%20Digital%20Assets')
-    const card = screen.getByText('Bitcoin Transaction').closest('[role="button"]')
+    const card = screen.getByText('Bitcoin Transaction').closest('[data-tool-card]')
       ?.parentElement as HTMLElement
     fireEvent.click(within(card).getByRole('button', { name: /Add to My tools/i }))
     expect(useBookmarkStore.getState().myPlaygroundTools).toContain('bitcoin-flow')
@@ -226,14 +243,14 @@ describe('WS8c — device fitness badge', () => {
   it('badges a tool whose declared requirements this device does not meet', () => {
     renderWorkbench('/playground?cat=Protocol%20Simulations')
     // PQC VPN Simulator declares ['sab','threads','chromium'].
-    const card = screen.getByText('PQC VPN Simulator').closest('[role="button"]')
+    const card = screen.getByText('PQC VPN Simulator').closest('[data-tool-card]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Needs a desktop')).toBeInTheDocument()
   })
 
   it('names the missing capability rather than only saying no', () => {
     renderWorkbench('/playground?cat=Protocol%20Simulations')
-    const card = screen.getByText('PQC VPN Simulator').closest('[role="button"]')
+    const card = screen.getByText('PQC VPN Simulator').closest('[data-tool-card]')
     const badge = within(card as HTMLElement).getByText('Needs a desktop')
     expect(badge).toHaveAttribute('title', expect.stringContaining('SharedArrayBuffer'))
   })
@@ -242,7 +259,7 @@ describe('WS8c — device fitness badge', () => {
     // 26 of the 34 browser tools declare nothing — a badge on those would be
     // noise, and would also be a lie.
     renderWorkbench('/playground?cat=Entropy%20%26%20Random')
-    const card = screen.getByText('Random Generation').closest('[role="button"]')
+    const card = screen.getByText('Random Generation').closest('[data-tool-card]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).queryByText('Needs a desktop')).toBeNull()
   })
@@ -251,7 +268,7 @@ describe('WS8c — device fitness badge', () => {
     // A Docker scenario runs elsewhere; it is not failing a browser check.
     renderWorkbench('/playground?cat=Protocol%20Simulations')
     revealSandboxScenarios()
-    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
+    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[data-tool-card]')
     expect(within(card as HTMLElement).queryByText('Needs a desktop')).toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
   })
@@ -260,7 +277,8 @@ describe('WS8c — device fitness badge', () => {
 describe('WS8c — the modal explains why a tool cannot run', () => {
   it('names the missing capability instead of offering a spinner that cannot resolve', () => {
     renderWorkbench('/playground?cat=Protocol%20Simulations')
-    fireEvent.click(screen.getByText('PQC VPN Simulator').closest('[role="button"]') as HTMLElement)
+    const card = screen.getByText('PQC VPN Simulator').closest('[data-tool-card]') as HTMLElement
+    fireEvent.click(within(card).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).getByText(/will not run on this device/i)).toBeInTheDocument()
     expect(within(dialog).getByText(/SharedArrayBuffer/i)).toBeInTheDocument()
@@ -268,7 +286,8 @@ describe('WS8c — the modal explains why a tool cannot run', () => {
 
   it('stays silent for a tool this device can run', () => {
     renderWorkbench('/playground?cat=Entropy%20%26%20Random')
-    fireEvent.click(screen.getByText('Random Generation').closest('[role="button"]') as HTMLElement)
+    const card = screen.getByText('Random Generation').closest('[data-tool-card]') as HTMLElement
+    fireEvent.click(within(card).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).queryByText(/will not run on this device/i)).toBeNull()
   })
