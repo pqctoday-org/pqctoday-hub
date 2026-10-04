@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-03',
+  lastEdited: '2026-10-04',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes

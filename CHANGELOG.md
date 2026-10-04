@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.149.0] - 2026-10-03
 
-FHE key custody now runs across two appliance boards with a backup and a failover, the data owner checks the custodian's attestation before trusting its keys, and the FHE compute service runs on a small Arm board over mutual TLS.
+FHE key custody now runs across two appliance boards with a backup and a failover, the data owner checks the custodian's attestation before trusting its keys, and the FHE compute service runs on a small Arm board over mutual TLS. Every "Validated" badge in the workshop now opens its results on the page, and the Threats and related pages now say plainly that some quantum estimates are still unresolved, with the BSI, NSA and ANSSI entries corrected to what those organisations actually state.
 
 ### Added
 
