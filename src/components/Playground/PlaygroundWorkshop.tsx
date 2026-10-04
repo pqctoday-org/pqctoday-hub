@@ -292,10 +292,15 @@ const ToolCardView: React.FC<ToolCardProps> = ({
   const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
   return (
     <div className="relative">
+      {/* The whole card opens the preview, as it always has. The tool name is a real link to the
+          tool's own page (so crawlers can follow it) and the Preview button is the keyboard route,
+          so this container is a pointer convenience, not a control of its own. */}
       <div
+        role="presentation"
         data-tool-card={tool.id}
+        onClick={() => onOpen(tool)}
         className={cn(
-          'glass-panel p-3.5 rounded-xl transition-colors hover:border-primary/50',
+          'glass-panel p-3.5 rounded-xl cursor-pointer transition-colors hover:border-primary/50',
           locked && 'opacity-60'
         )}
       >
@@ -307,6 +312,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
                 to={`/playground/${tool.id}`}
+                onClick={(e) => e.stopPropagation()}
                 className="font-semibold text-[13px] text-foreground underline-offset-2 hover:text-primary hover:underline"
               >
                 {tool.name}
@@ -325,7 +331,10 @@ const ToolCardView: React.FC<ToolCardProps> = ({
             <Button
               variant="ghost"
               className="mt-2 h-7 px-2 text-[11px]"
-              onClick={() => onOpen(tool)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onOpen(tool)
+              }}
             >
               Preview
             </Button>
