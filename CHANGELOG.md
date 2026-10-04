@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.150.0] - 2026-10-04
+
+### Changed
+
+- **The Threats page no longer shows a CRQC range of its own** [view:/threats] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the expanded source list used to show a 2029–2036 range that this site had worked out from a Google Quantum AI paper, but the paper gives no arrival date. The list now states what the paper does estimate (at most 1,200 logical qubits, fewer than half a million physical qubits on the stated machine assumptions) and says plainly that no reliable estimate of when such a machine could exist is established.
+
 ## [4.149.0] - 2026-10-03
 
 FHE key custody now runs across two appliance boards with a backup and a failover, the data owner checks the custodian's attestation before trusting its keys, and the FHE compute service runs on a small Arm board over mutual TLS. Every "Validated" badge in the workshop now opens its results on the page, and the Threats and related pages now say plainly that some quantum estimates are still unresolved, with the BSI, NSA and ANSSI entries corrected to what those organisations actually state.
