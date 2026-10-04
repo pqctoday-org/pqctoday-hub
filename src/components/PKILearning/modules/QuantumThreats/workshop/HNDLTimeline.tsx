@@ -6,6 +6,7 @@ import {
   getCrqcForecast,
 } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
+import { EstimateClaims } from '../components/EstimateClaims'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -174,6 +175,7 @@ export const HNDLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
+            <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={5} collapsible />
             <p className="text-[10px] text-muted-foreground mt-2">
               <strong>Fast-clock CRQCs</strong> (superconducting, photonic) arriving first enable
               &quot;on-spend&quot; interception of unconfirmed transactions. Slow-clock CRQCs
