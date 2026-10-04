@@ -33,7 +33,7 @@ import {
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { DocumentTable } from './DocumentTable'
 import type { TimelineDocumentRow } from './TimelineDocumentDetailPopover'
-import { logEvent } from '../../utils/analytics'
+import { logEvent, logTimelineFilterText } from '../../utils/analytics'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
@@ -285,7 +285,7 @@ export const SimpleGanttChart = ({
   }, [embedded, eventParam, resolveEventPhase, updateView])
 
   const handleFilterBlur = () => {
-    if (filterText) logEvent('Timeline', 'Filter Text', filterText)
+    if (filterText) logTimelineFilterText(filterText)
   }
 
   const processedData = useMemo(() => {

@@ -11,6 +11,39 @@ const isLocalhost = () => {
   return hostname === 'localhost' || hostname === '127.0.0.1'
 }
 
+// --- Page address privacy ---
+//
+// GA4 reads the full page address (page_location) and the referrer from the
+// browser by default, including everything after a "?" or "#". Some pages put
+// text a visitor typed there (the Leaders ?q=) or an encoded assessment result
+// (/report?share=), and GA4's own site-search event reads ?q= as the search
+// term. Only origin + path may reach GA, so both are set explicitly before any
+// hit and refreshed whenever the path changes (query-only changes need no
+// update, because the query is never sent).
+
+let lastSafeLocation = ''
+
+/** origin + path of an address; '' when it is empty or not a valid address. */
+function toPathOnly(address: string): string {
+  if (!address) return ''
+  try {
+    const url = new URL(address, window.location.origin)
+    return url.origin + url.pathname
+  } catch {
+    return ''
+  }
+}
+
+function syncSafeLocation() {
+  const location = window.location.origin + window.location.pathname
+  if (location === lastSafeLocation) return
+  // The previous page is the referrer for a navigation inside the app; the
+  // browser's own referrer (stripped the same way) only applies to the first.
+  const referrer = lastSafeLocation || toPathOnly(document.referrer)
+  ReactGA.set({ page_location: location, ...(referrer ? { page_referrer: referrer } : {}) })
+  lastSafeLocation = location
+}
+
 export const initGA = () => {
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
 
@@ -21,6 +54,7 @@ export const initGA = () => {
     // first (and every) pageview on route change, so letting GA4 also auto-send
     // one double-counts the landing page.
     ReactGA.initialize(measurementId, { gtagOptions: { send_page_view: false } })
+    syncSafeLocation()
   } else {
     console.warn('[Analytics] Google Analytics Measurement ID is missing.')
   }
@@ -31,7 +65,8 @@ export const logPageView = (path?: string) => {
 
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
   if (measurementId) {
-    const page = path || window.location.pathname + window.location.search
+    const page = path || window.location.pathname
+    syncSafeLocation()
     ReactGA.send({
       hitType: 'pageview',
       page,
@@ -44,6 +79,7 @@ export const logEvent = (category: string, action: string, label?: string) => {
 
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
   if (measurementId) {
+    syncSafeLocation()
     ReactGA.event({
       category,
       action,
@@ -176,7 +212,7 @@ export const logAlgorithmView = (algorithmName: string) => {
 }
 
 export const logComplianceSearch = (query: string) => {
-  logEvent('Compliance', 'Search', personaLabel(query))
+  logEvent('Compliance', 'Search', personaLabel(sanitizeQuery(query)))
 }
 
 export const logComplianceFilter = (filterType: string, value: string) => {
@@ -187,8 +223,21 @@ export const logMigrateAction = (action: string, label?: string) => {
   logEvent('Migrate', action, personaLabel(label))
 }
 
+/** Typed text from the Migrate workbench asset search — scrubbed like every other query. */
+export const logMigrateAssetSearch = (query: string) => {
+  logMigrateAction('Search Assets', sanitizeQuery(query))
+}
+
 export const logLibrarySearch = (query: string) => {
-  logEvent('Library', 'Search', query)
+  logEvent('Library', 'Search', sanitizeQuery(query))
+}
+
+export const logLeadersSearch = (query: string) => {
+  logEvent('Leaders', 'Search', sanitizeQuery(query))
+}
+
+export const logTimelineFilterText = (text: string) => {
+  logEvent('Timeline', 'Filter Text', sanitizeQuery(text))
 }
 
 export const logLibraryDownload = (fileName: string) => {
@@ -289,11 +338,15 @@ export const logReportCta = (
   logEvent('Report', 'CTA Click', personaLabel(target))
 }
 
-// Scrub PII (emails, URLs) before sending query strings to GA4
+// Scrub PII (emails, URLs, IPv4 addresses, long key/hash-like tokens) before
+// sending query strings to GA4. Every logger that takes text a visitor typed
+// must go through this — never pass a typed string to logEvent directly.
 function sanitizeQuery(q: string): string {
   return q
     .replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, '[email]')
     .replace(/https?:\/\/\S+/gi, '[url]')
+    .replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '[ip]')
+    .replace(/[A-Za-z0-9+/_=-]{32,}/g, '[token]')
     .slice(0, 80)
 }
 

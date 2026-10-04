@@ -3,7 +3,7 @@ import { Scale, ExternalLink } from 'lucide-react'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
-const EFFECTIVE_DATE = 'March 22, 2026'
+const EFFECTIVE_DATE = 'October 4, 2026'
 
 const TOC_SECTIONS = [
   { number: 1, slug: 'acceptance', title: 'Acceptance of Terms' },
@@ -313,17 +313,29 @@ export function TermsView() {
 
         <Section number={10} slug="privacy-analytics" title="Privacy and Analytics">
           <p>
-            The Platform collects <strong>no personal data</strong>. There are no user accounts, no
-            login credentials, and no server-side data processing. All cryptographic operations and
-            assessments run entirely in your browser using client-side WebAssembly.
+            The Platform has no user accounts and no login credentials, and no server of its own
+            that processes your data. All cryptographic operations and assessments run entirely in
+            your browser using client-side WebAssembly.
           </p>
           <p>
-            We use <strong>Google Analytics 4 (GA4)</strong> to collect anonymous usage data,
-            including page views and aggregated interaction events (e.g., which learning modules are
-            started or completed, search queries with PII scrubbed). GA4 may set cookies on your
-            device to distinguish unique visitors. No personally identifiable information is
-            collected or transmitted. Analytics are disabled entirely when the Platform is accessed
-            on localhost.
+            We use <strong>Google Analytics 4 (GA4)</strong> on every visit. It starts when a page
+            loads, and the Platform has no consent prompt or on/off switch yet. GA4 collects
+            anonymous usage data: page views, aggregated interaction events (e.g., which learning
+            modules are started or completed, and searches, with the text you type scrubbed of email
+            addresses, web addresses, IP addresses and long key-like strings), and basic browser
+            details such as language and screen size. GA4 sets cookies that give your browser a
+            random identifier so repeat visits can be counted. The page address we send has nothing
+            after a &ldquo;?&rdquo; or &ldquo;#&rdquo;. Two automatic GA4 features (site search and
+            navigation tracking) read the browser&apos;s own address instead, and can record text
+            after a &ldquo;?&rdquo;, such as a search term or the data in a shared-report link.
+            Google also receives your IP address when your browser sends these events. We do not
+            send names, email addresses or account details. Analytics are disabled entirely when the
+            Platform is accessed on localhost.
+          </p>
+          <p>
+            To stop analytics, block them in your browser: use a content blocker that blocks Google
+            Analytics requests (google-analytics.com), block cookies for this site, or install
+            Google&apos;s opt-out browser add-on.
           </p>
           <p>
             For details on how Google processes analytics data, see{' '}

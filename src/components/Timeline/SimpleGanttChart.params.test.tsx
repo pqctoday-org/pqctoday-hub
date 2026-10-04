@@ -35,7 +35,7 @@ vi.mock('./TimelineDocumentDetailPopover', () => ({
     ) : null,
 }))
 vi.mock('../common/CountryFlag', () => ({ CountryFlag: () => null }))
-vi.mock('../../utils/analytics', () => ({ logEvent: vi.fn() }))
+vi.mock('../../utils/analytics', () => ({ logEvent: vi.fn(), logTimelineFilterText: vi.fn() }))
 vi.mock('../common/FilterDropdown', () => ({
   FilterDropdown: ({
     items,

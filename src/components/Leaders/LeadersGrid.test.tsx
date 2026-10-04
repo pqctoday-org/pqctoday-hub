@@ -123,6 +123,7 @@ vi.mock('../common/CountryFlag', () => ({
 
 vi.mock('../../utils/analytics', () => ({
   logEvent: vi.fn(),
+  logLeadersSearch: vi.fn(),
 }))
 
 // Mock Framer Motion

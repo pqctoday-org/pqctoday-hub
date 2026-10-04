@@ -15,7 +15,11 @@ import type { Leader } from '../../data/leadersData'
 vi.mock('@/services/search/useSemanticSearch', () => ({
   useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
 }))
-vi.mock('../../utils/analytics', () => ({ logEvent: vi.fn(), personaLabel: (s: string) => s }))
+vi.mock('../../utils/analytics', () => ({
+  logEvent: vi.fn(),
+  logLeadersSearch: vi.fn(),
+  personaLabel: (s: string) => s,
+}))
 vi.mock(
   'framer-motion',
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
