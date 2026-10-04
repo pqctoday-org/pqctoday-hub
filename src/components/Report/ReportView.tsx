@@ -371,6 +371,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
               ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
               : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations — or open a worked example first.'}
           </p>
+          {!simEmbed && (
+            <p className="mx-auto mb-6 max-w-2xl text-sm text-muted-foreground">
+              The report turns your assessment answers into an executive-ready view of cryptographic
+              exposure, prioritized remediation work, and practical next steps. Use the example to
+              understand the output, then complete the assessment when you are ready to create
+              recommendations tailored to your organization.
+            </p>
+          )}
           <div className="flex flex-wrap items-center justify-center gap-3">
             {/* RP-5: the worked example used to render only for the curious
                 persona. Every other persona hit this screen with no way to

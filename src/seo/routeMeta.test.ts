@@ -24,8 +24,9 @@ describe('getRouteMeta', () => {
     expect(meta.canonical).not.toBe(`${BASE}/`)
   })
 
-  it('inherits the parent section title for a child route', () => {
-    expect(getRouteMeta('/playground/cacp').title).toBe(ROUTE_META['/playground']!.title)
+  it('uses unique metadata for a registered tool or lab route', () => {
+    expect(getRouteMeta('/playground/cacp').title).not.toBe(ROUTE_META['/playground']!.title)
+    expect(getRouteMeta('/business/tools/roi-calculator').title).toContain('ROI Calculator')
   })
 
   it('gives an unknown top-level route a self-referential canonical', () => {
@@ -34,6 +35,11 @@ describe('getRouteMeta', () => {
 
   it('does not leak the parent structured data onto child routes', () => {
     expect(getRouteMeta('/business/tools/some-tool').structuredData).toBeUndefined()
+  })
+
+  it('marks an unknown tool route noindex', () => {
+    expect(getRouteMeta('/business/tools/some-tool').noindex).toBe(true)
+    expect(getRouteMeta('/playground/not-a-tool').noindex).toBe(true)
   })
 
   it('marks legacy routes noindex with a self canonical', () => {

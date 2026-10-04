@@ -16,7 +16,7 @@ import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { execFileSync } from 'child_process'
-import { ROUTE_META, isNoindexRoute } from '../src/seo/routeMeta'
+import { getSearchRoute, indexableRoutes } from '../src/seo/searchRoutes'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO = join(__dirname, '..')
@@ -94,6 +94,8 @@ function moduleDirs(): Map<string, string> {
 }
 
 function sourcesFor(route: string, modules: Map<string, string>): string[] {
+  const manifestRoute = getSearchRoute(route)
+  if (manifestRoute?.sourceGlobs?.length) return manifestRoute.sourceGlobs
   if (route.startsWith('/learn/')) {
     const dir = modules.get(route.slice('/learn/'.length))
     if (!dir) throw new Error(`sitemap: no module directory found for ${route}`)
@@ -138,7 +140,12 @@ function buildLastmodResolver(): (route: string, loc: string) => string {
 
 function priorityFor(route: string): { priority: string; changefreq: string } {
   if (route === '/') return { priority: '1.0', changefreq: 'weekly' }
-  if (route.startsWith('/learn/')) return { priority: '0.6', changefreq: 'monthly' }
+  if (
+    route.startsWith('/learn/') ||
+    route.startsWith('/playground/') ||
+    route.startsWith('/business/tools/')
+  )
+    return { priority: '0.6', changefreq: 'monthly' }
   const weekly = new Set(['/timeline', '/compliance', '/threats', '/changelog', '/library'])
   if (weekly.has(route)) return { priority: '0.9', changefreq: 'weekly' }
   const flagship = new Set([
@@ -155,8 +162,8 @@ function priorityFor(route: string): { priority: string; changefreq: string } {
 
 const lastmodFor = buildLastmodResolver()
 
-const entries: Entry[] = Object.keys(ROUTE_META)
-  .filter((r) => !isNoindexRoute(r))
+const entries: Entry[] = indexableRoutes()
+  .map(({ path }) => path)
   .sort()
   .map((route) => {
     const loc = `${BASE_URL}${route === '/' ? '/' : route}`
