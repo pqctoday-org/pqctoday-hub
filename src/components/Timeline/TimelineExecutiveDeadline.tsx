@@ -144,7 +144,7 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
             </p>
           )}
           <div className="flex flex-wrap gap-2">
-            <Link to="/migrate">
+            <Link to="/migrate?tab=plan">
               <Button variant="gradient" size="sm" className="h-7 px-2 text-xs gap-1">
                 Build your migration plan
                 <ArrowRight size={12} aria-hidden="true" />

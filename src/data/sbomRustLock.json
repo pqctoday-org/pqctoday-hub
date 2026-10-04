@@ -1,7 +1,7 @@
 {
   "_comment": "Rust crates that a wasm scan cannot see: (1) vendored forks, whose source directory name is in the binary but whose version is not, and (2) crates that compiled with no panic path and so left no `registry/src/<crate>-<version>/` string. Presence of every fork is verified against the binary by `gen:sbom-versions:check`; versions here are read from the pqctoday-hsm sources at `commit` (rust/Cargo.lock and each fork's Cargo.toml). The check fails unless `commit` equals the hsmCommit that public/wasm/wasm-provenance.json records for `bundle`, so rebuilding the engine forces this file to be re-read. Licenses come from each crate's own Cargo.toml.",
   "bundle": "softhsmrustv3-engine",
-  "commit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
+  "commit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
   "forks": {
     "fips204-patched": { "crate": "fips204", "version": "0.4.6", "license": "MIT / Apache-2.0" },
     "fips205-patched": { "crate": "fips205", "version": "0.4.1", "license": "MIT / Apache-2.0" },

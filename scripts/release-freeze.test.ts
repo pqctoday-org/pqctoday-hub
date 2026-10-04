@@ -14,7 +14,7 @@ import {
   refuseToWrite,
   type FreezeManifest,
 } from './release-freeze'
-import { REPORT_JSON_REL, claimsSha256, sha256 } from './generate-release-evidence'
+import { REPORT_JSON_REL, claimsSha256, sha256 } from './lib/releaseEvidenceHash'
 
 const REPO = process.cwd()
 
@@ -65,7 +65,7 @@ describe('release:freeze — dry run on the real tree', () => {
         engines: m.engines,
         checks: { releaseEvidence: 'fail', errors: ['x'] },
       }).join()
-    ).toMatch(/gen:release-evidence:check fails/)
+    ).toMatch(/release-evidence check fails/)
     expect(refuseToWrite({ ...tampered, engines: m.engines })).toEqual([])
     expect(
       refuseToWrite({

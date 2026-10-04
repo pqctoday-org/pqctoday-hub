@@ -680,7 +680,7 @@ function buildEdges(
   }
 
   // vendor -> product, via the product catalog's own vendor_id (a clean FK,
-  // audited for collisions/dangling refs by scripts/audit-vendor-refs.ts).
+  // audited for collisions/dangling refs by the vendor-ref check).
   // algoProductXrefs-origin product nodes carry no vendor_id of their own —
   // same reason the certbody->product edge above only iterates softwareData.
   for (const sw of softwareData) {

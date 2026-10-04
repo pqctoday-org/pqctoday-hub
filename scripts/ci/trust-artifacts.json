@@ -13,7 +13,7 @@
     "required: true  — sign-all/verify-all/CI error when the artifact or its .sig is missing",
     "required: false — skipped silently when absent (an artifact not built on every run)",
     "",
-    "Adding an artifact: append one entry here, then re-run `npm run trust-engine:sign`",
+    "Adding an artifact: append one entry here, then re-sign the artifacts",
     "and commit the new .sig alongside it."
   ],
   "artifacts": [

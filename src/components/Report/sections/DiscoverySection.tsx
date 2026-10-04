@@ -18,6 +18,7 @@
 import { Search, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
 import { CollapsibleSection } from './reportContentShared'
+import { migrateDomainHref } from '@/utils/migrateLinks'
 
 interface DiscoverySectionProps {
   algorithmsSelected: string[]
@@ -100,7 +101,7 @@ export function DiscoverySection({
             Learn how to run a real crypto discovery pass (CBOM)
           </Link>
           <Link
-            to="/migrate"
+            to={migrateDomainHref('discovery')}
             className="flex items-center gap-1.5 text-xs text-primary hover:underline print:hidden"
           >
             <ArrowRight size={12} />

@@ -1,0 +1,4 @@
+src IssueSourceChallenge     CK_RV=0x00000000 out=    32 B    355.8 ms  kx=X25519MLKEM768
+dst BeginReceive             CK_RV=0x00000000 out= 26200 B     17.3 ms  kx=X25519MLKEM768
+src CreateReplicationPackage CK_RV=0x0000001b out=     0 B     10.1 ms  kx=X25519MLKEM768
+PASS EXPECTED-REFUSAL CreateReplicationPackage: CK_RV 0x0000001b

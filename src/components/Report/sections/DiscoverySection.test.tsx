@@ -49,6 +49,6 @@ describe('DiscoverySection', () => {
     ).toHaveAttribute('href', '/learn/cbom')
     expect(
       screen.getByRole('link', { name: /Explore discovery & inventory tooling/i })
-    ).toHaveAttribute('href', '/migrate')
+    ).toHaveAttribute('href', '/migrate?domain=discovery')
   })
 })

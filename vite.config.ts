@@ -188,6 +188,34 @@ function wasmVitestAware(): Plugin {
 }
 
 /**
+ * Vitest only: load `*.md?raw` as a bare string export with an empty source map.
+ *
+ * The library enrichment loader eagerly imports 16 dated markdown files (~4.6 MB
+ * each, all containing non-Latin-1 characters, so V8 stores them as two-byte
+ * strings). Through the default `?raw` path the test runner kept several
+ * transformed and source-mapped copies of each: importing the loader cost
+ * ~1.7 GB of live heap in a test worker, against ~14 MB for the parsed result in
+ * plain Node, and pushed LibraryViewRedesign.test.tsx past the 4 GB worker heap
+ * (2026-10-03, #826). A `vite build` / `vite dev` never sees VITEST, so browser
+ * behaviour is unchanged.
+ */
+function leanRawMarkdownForVitest(): Plugin | null {
+  if (!process.env.VITEST) return null
+  return {
+    name: 'lean-raw-markdown-vitest',
+    enforce: 'pre',
+    load(id) {
+      const [file, query] = id.split('?')
+      if (query !== 'raw' || !file.endsWith('.md')) return null
+      return {
+        code: `export default ${JSON.stringify(readFileSync(file, 'utf8'))}`,
+        map: { mappings: '' },
+      }
+    },
+  }
+}
+
+/**
  * Injects the cross-origin-isolation guard into index.html, generated from
  * src/utils/crossOriginIsolation.ts — so the pre-app reload and the in-app
  * navigation guard read one route list (see that module's doc comment).
@@ -209,6 +237,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     wasmVitestAware(),
+    leanRawMarkdownForVitest(),
     topLevelAwait(),
     VitePWA({
       strategies: 'injectManifest',
@@ -511,6 +540,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    // Per-test heap budget (src/test/heapBudgetReporter.ts): a test past
+    // 85% of the worker heap limit fails by name before the worker crashes (#826).
+    logHeapUsage: true,
+    reporters: ['default', './src/test/heapBudgetReporter.ts'],
     // Budgets, raised from the 5s/10s defaults on 2026-08-11 after measuring
     // rather than guessing. Several suites build a genuinely expensive fixture:
     //   • 5 test files each load public/data/rag-corpus.json and build a

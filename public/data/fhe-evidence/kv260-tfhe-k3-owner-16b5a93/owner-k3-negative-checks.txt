@@ -1,0 +1,15 @@
+## tampered_manifest (must FAIL, exit 1)
+{"dir":"/tmp/k3n/tampered_manifest","now":1791054956,"reason":"evidence: nonce","result":"fail"}
+exit=1
+## wrong_signer_spki (must FAIL, exit 1)
+{"dir":"/tmp/k3n/wrong_signer_spki","now":1791054956,"reason":"attested key is not signer_spki.der","result":"fail"}
+exit=1
+## missing_device_crl (must FAIL, exit 1)
+{"dir":"/tmp/k3n/missing_device_crl","now":1791054956,"reason":"evidence: no current CRL for issuer","result":"fail"}
+exit=1
+## --now after CRL expiry (must FAIL)
+{"dir":"/tmp/k3n/good","now":1893456000,"reason":"evidence: no current CRL for issuer","result":"fail"}
+exit=1
+## genuine (must PASS, exit 0)
+{"chain":["CN=PQCTODAY EDUCATIONAL TEST ONLY key attestation fbeee82a","CN=PQCTODAY EDUCATIONAL TEST ONLY Device bb4b1cc
+exit=0

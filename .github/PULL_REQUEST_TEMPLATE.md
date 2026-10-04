@@ -45,7 +45,7 @@ Evidence reference:
 - [ ] 2. Reviewed license / redistribution note (`license.reviewed: true`)
 - [ ] 3. Every case states operation, expectation (positive/negative) and test type; transformations recorded in `lineage`
 - [ ] 4. Two-person review record `src/data/validation/reviews/<id>.review.json` (source verification + implementation review, two distinct named people, approved, matching subject SHA-256)
-- [ ] 5. Registered in `src/data/validation/testRegistry.ts`; `npm run gen:case-evidence` / `gen:coverage-matrix` outputs regenerated
+- [ ] 5. Registered in `src/data/validation/testRegistry.ts`; case-evidence and coverage-matrix outputs regenerated
 - [ ] 6. Proposal issue linked (template: "Propose a validation vector, adapter, correction or test case")
 
 Proposal issue:

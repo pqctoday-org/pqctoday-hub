@@ -8,6 +8,7 @@ import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData, softwareMetadata } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
 import { DOMAINS, type DomainId } from '@/data/migrationAssets'
+import { migrateDomainHref } from '@/utils/migrateLinks'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
@@ -1502,7 +1503,10 @@ export const SupplyChainRiskMatrix: React.FC<{
                 {selectedItems.length === 0 && stat.products.length > UNSELECTED_LAYER_ROW_CAP ? (
                   <p className="text-xs text-muted-foreground">
                     {stat.products.length} catalog products sit in this domain.{' '}
-                    <Link to="/migrate" className="text-primary hover:underline">
+                    <Link
+                      to={migrateDomainHref(stat.domainId)}
+                      className="text-primary hover:underline"
+                    >
                       Pick your infrastructure on Migrate
                     </Link>{' '}
                     to list the ones that are yours.

@@ -488,7 +488,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </div>
           </Link>
           <Link
-            to="/migrate"
+            to="/migrate?domain=platform"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Route size={18} className="text-primary shrink-0" />

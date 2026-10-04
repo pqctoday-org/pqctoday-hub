@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion, MotionConfig } from 'framer-motion'
 import {
   ChevronLeft,
@@ -49,8 +49,9 @@ import {
   type StepCost,
 } from '../data/fheHsmCosts'
 import { FHE_STEP_IO } from '../data/fheHsmStepIO'
-import { EVIDENCE_MANIFEST, validationsFor } from '@/data/fhe/fheEvidence'
+import { scenarioValidation, validationsFor } from '@/data/fhe/fheEvidence'
 import { FheStepDetailModal } from './FheStepDetailModal'
+import { EvidencePanel } from './EvidencePanel'
 import {
   HOLD_STATUS,
   exposedCount,
@@ -587,14 +588,31 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
     </div>
     <div>
       <span className="font-bold text-foreground">Validation evidence: </span>
-      <span className="text-muted-foreground">
-        {(() => {
-          const n = EVIDENCE_MANIFEST.records.filter((r) => r.scenarioId === flow.id).length
-          return n
-            ? `${n} signed record(s); each step shows what it covers.`
-            : 'none yet. Planned lab runs: the data owner on a Mac (pqctoday-sandbox), the FHE server on a KV260 (pqctoday-fhe, untrusted compute) and the custodian as a software token on an MX95, with an MX95 Pro as backup and second threshold party (pqctoday-cacp); reference libraries in pqctoday-sandbox. None of it is hardware custody.'
-        })()}
-      </span>
+      {(() => {
+        const v = scenarioValidation(flow.id)
+        return v ? (
+          <>
+            <a
+              href={v.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[11px] font-medium text-status-success hover:underline"
+            >
+              {v.label}
+            </a>{' '}
+            <span className="text-muted-foreground">
+              {v.count} signed record(s); each step shows what it covers. Software tokens, not
+              hardware custody.
+            </span>
+          </>
+        ) : (
+          <span className="text-muted-foreground">
+            not yet. Planned lab runs: the data owner on a Mac, the FHE server on a KV260 (untrusted
+            compute) and the custodian as a software token on an MX95, with an MX95 Pro as backup
+            and second threshold party. None of it is hardware custody.
+          </span>
+        )
+      })()}
     </div>
     <div>
       <span className="font-bold text-foreground">Validation target: </span>
@@ -606,7 +624,9 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
       not part of the library or paper. pqctoday-hsm is a software token and browser emulator, not
       hardware custody; its certificates would use a test manufacturing CA and prove no hardware
       isolation. Each step also shows what pqctoday-hsm (PKCS#11 v3.2 plus vendor mechanisms) can do
-      today: no FHE step runs in it yet; the ML-KEM, ML-DSA, HPKE and AES-GCM building blocks do.
+      today: its educational build runs the TFHE custody steps as a software token on the lab
+      boards, the browser emulator runs no FHE step, and the ML-KEM, ML-DSA, HPKE and AES-GCM
+      building blocks run in both.
     </div>
   </div>
 )
@@ -635,6 +655,13 @@ export const EngineBadge: React.FC<{ status: EngineStatus }> = ({ status }) => (
  */
 export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow, step }) => {
   const found = validationsFor(flow.id, step.id)
+  const [openId, setOpenId] = useState<string | null>(null)
+  const opener = useRef<HTMLButtonElement | null>(null)
+  const open = found.find((v) => v.record.id === openId)
+  const close = () => {
+    setOpenId(null)
+    opener.current?.focus()
+  }
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
       <span className="text-muted-foreground">Validated:</span>
@@ -642,18 +669,23 @@ export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow
         <span className="text-muted-foreground">not yet (no signed evidence for this step)</span>
       ) : (
         found.map((v) => (
-          <a
+          <Button
             key={v.record.id}
-            href={v.record.artifacts[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={`${v.record.producer} · ${v.record.library.name} ${v.record.library.version} · ${v.record.status} ${v.record.measuredAt} · sha256 ${v.record.artifacts[0].sha256.slice(0, 12)}…`}
-            className="rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-status-success hover:underline"
+            type="button"
+            variant="ghost"
+            aria-haspopup="dialog"
+            onClick={(e) => {
+              opener.current = e.currentTarget
+              setOpenId(v.record.id)
+            }}
+            title={`Show the results · ${v.record.producer ?? v.record.library.name} · ${v.record.library.name} ${v.record.library.version} · ${v.record.status} ${v.record.measuredAt}`}
+            className="h-auto min-h-0 rounded border border-success/40 bg-success/10 px-1.5 py-0.5 text-[10px] font-medium text-status-success hover:bg-success/20 hover:underline text-left whitespace-normal"
           >
             {v.label}
-          </a>
+          </Button>
         ))
       )}
+      {open && <EvidencePanel open onClose={close} record={open.record} label={open.label} />}
     </div>
   )
 }

@@ -10,7 +10,7 @@
  * that lexical search would miss.
  *
  * Self-skip when the artifact is absent (e.g., on a fresh feature
- * branch before `npm run generate-embeddings` has been run). When the
+ * branch before the embeddings have been regenerated). When the
  * artifact is present, ~30 sec runtime.
  *
  * Compared to embeddingRetrieval.test.ts (unit tests with synthetic

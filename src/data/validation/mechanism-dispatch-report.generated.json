@@ -7,8 +7,8 @@
     "cpp": {
       "source": {
         "repo": "pqctoday-org/pqctoday-hsm",
-        "recordedCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
-        "commitRead": "272c9b0426e610812acfe49f97dc9e1905a7327f",
+        "recordedCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+        "commitRead": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
         "commitMatchesWasmBuild": true,
         "readMethod": "git show <commitRead>:<path> (no checkout; hsm working tree untouched)",
         "dispatchFiles": [
@@ -3278,18 +3278,18 @@
     "rust": {
       "source": {
         "repo": "pqctoday-org/pqctoday-hsm",
-        "recordedCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
-        "commitRead": "272c9b0426e610812acfe49f97dc9e1905a7327f",
+        "recordedCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+        "commitRead": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
         "commitMatchesWasmBuild": true,
         "readMethod": "git show <commitRead>:<path> (no checkout; hsm working tree untouched)",
         "dispatchFiles": [
           {
             "path": "rust/src/ffi.rs",
-            "blob": "dd3c952566ad69146e4bfb22f106e99e408665f1"
+            "blob": "f7532ad02f709a9a4cdeca627d75a53f2ea879fc"
           },
           {
             "path": "rust/src/crypto/handlers.rs",
-            "blob": "902f973317282612d609bec8d8dfe1b72ce44894"
+            "blob": "ad2081bcab5734258f088487c83d630c0ce2d08a"
           },
           {
             "path": "rust/src/crypto/multipart.rs",
@@ -3319,7 +3319,7 @@
         "constantFiles": [
           {
             "path": "rust/src/constants.rs",
-            "blob": "92ce3b797cb6649c8a5cd544938498bf16ef3cb3"
+            "blob": "d9be4b7f5aef1f9393532df8693bf876fe21c1de"
           }
         ]
       },
@@ -3328,7 +3328,7 @@
         "advertised": 175,
         "advertisedAndDispatched": 175,
         "advertisedMinusDispatched": 0,
-        "dispatchedMinusAdvertised": 0,
+        "dispatchedMinusAdvertised": 4,
         "byStatus": {
           "dispatched": 175,
           "referenced-not-dispatched": 0,
@@ -3337,7 +3337,40 @@
         }
       },
       "advertisedMinusDispatched": [],
-      "dispatchedMinusAdvertised": [],
+      "dispatchedMinusAdvertised": [
+        {
+          "typeHex": "0x80000018",
+          "sourceNames": ["CKM_PQCTODAY_FHE_KEY_GEN"],
+          "dispatchOnlyUnderCondition": false,
+          "dispatchKinds": ["comparison"],
+          "dispatchFunctions": ["C_GenerateKey"],
+          "dispatchSites": ["rust/src/ffi.rs:4529 (C_GenerateKey)"]
+        },
+        {
+          "typeHex": "0x80000019",
+          "sourceNames": ["CKM_PQCTODAY_FHE_DERIVE_PUBLIC"],
+          "dispatchOnlyUnderCondition": false,
+          "dispatchKinds": ["comparison"],
+          "dispatchFunctions": ["C_DeriveKey"],
+          "dispatchSites": ["rust/src/ffi.rs:12190 (C_DeriveKey)"]
+        },
+        {
+          "typeHex": "0x8000001a",
+          "sourceNames": ["CKM_PQCTODAY_FHE_DECRYPT"],
+          "dispatchOnlyUnderCondition": false,
+          "dispatchKinds": ["comparison"],
+          "dispatchFunctions": ["C_DecryptInit"],
+          "dispatchSites": ["rust/src/ffi.rs:10325 (C_DecryptInit)"]
+        },
+        {
+          "typeHex": "0x8000001b",
+          "sourceNames": ["CKM_PQCTODAY_FHE_ENCRYPT"],
+          "dispatchOnlyUnderCondition": false,
+          "dispatchKinds": ["comparison"],
+          "dispatchFunctions": ["C_EncryptInit"],
+          "dispatchSites": ["rust/src/ffi.rs:9475 (C_EncryptInit)"]
+        }
+      ],
       "unresolvedTokens": [],
       "advertised": [
         {
@@ -3349,12 +3382,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2467 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:2986 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2513 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3032 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3045 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3062 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3091 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3108 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -3383,22 +3416,22 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7730 (C_SignInit_impl)",
-            "rust/src/ffi.rs:8399 (C_Sign_impl)",
-            "rust/src/ffi.rs:8790 (C_Verify_impl)",
-            "rust/src/ffi.rs:9598 (C_EncryptInit)",
-            "rust/src/ffi.rs:10102 (C_Encrypt)",
-            "rust/src/ffi.rs:10423 (C_DecryptInit)",
-            "rust/src/ffi.rs:10566 (C_Decrypt)",
-            "rust/src/ffi.rs:10856 (C_Decrypt)",
-            "rust/src/ffi.rs:13726 (C_WrapKey)",
-            "rust/src/ffi.rs:14043 (C_UnwrapKey)",
-            "rust/src/ffi.rs:15671 (C_SignRecoverInit)",
-            "rust/src/ffi.rs:15711 (C_SignRecover)"
+            "rust/src/ffi.rs:7792 (C_SignInit_impl)",
+            "rust/src/ffi.rs:8461 (C_Sign_impl)",
+            "rust/src/ffi.rs:8852 (C_Verify_impl)",
+            "rust/src/ffi.rs:9671 (C_EncryptInit)",
+            "rust/src/ffi.rs:10179 (C_Encrypt)",
+            "rust/src/ffi.rs:10522 (C_DecryptInit)",
+            "rust/src/ffi.rs:10669 (C_Decrypt)",
+            "rust/src/ffi.rs:10959 (C_Decrypt)",
+            "rust/src/ffi.rs:13847 (C_WrapKey)",
+            "rust/src/ffi.rs:14164 (C_UnwrapKey)",
+            "rust/src/ffi.rs:15804 (C_SignRecoverInit)",
+            "rust/src/ffi.rs:15844 (C_SignRecover)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7496 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:15712 (C_SignRecover) [reference]"
+            "rust/src/ffi.rs:7558 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15845 (C_SignRecover) [reference]"
           ]
         },
         {
@@ -3410,10 +3443,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_SignRecoverInit", "C_VerifyRecoverInit"],
           "dispatchSites": [
-            "rust/src/ffi.rs:15671 (C_SignRecoverInit)",
-            "rust/src/ffi.rs:15756 (C_VerifyRecoverInit)"
+            "rust/src/ffi.rs:15804 (C_SignRecoverInit)",
+            "rust/src/ffi.rs:15889 (C_VerifyRecoverInit)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7496 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7558 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000005",
@@ -3430,15 +3463,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8400 (C_Sign_impl)",
-            "rust/src/ffi.rs:8791 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2207 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3080 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3582 (verify_rsa)"
+            "rust/src/ffi.rs:8462 (C_Sign_impl)",
+            "rust/src/ffi.rs:8853 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2215 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3088 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3590 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7497 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14858 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14979 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -3456,15 +3489,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8400 (C_Sign_impl)",
-            "rust/src/ffi.rs:8791 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2208 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3080 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3583 (verify_rsa)"
+            "rust/src/ffi.rs:8462 (C_Sign_impl)",
+            "rust/src/ffi.rs:8853 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2216 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3088 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3591 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7497 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14856 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14977 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -3483,15 +3516,15 @@
             "C_WrapKey"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9584 (C_EncryptInit)",
-            "rust/src/ffi.rs:10062 (C_Encrypt)",
-            "rust/src/ffi.rs:10410 (C_DecryptInit)",
-            "rust/src/ffi.rs:10566 (C_Decrypt)",
-            "rust/src/ffi.rs:10776 (C_Decrypt)",
-            "rust/src/ffi.rs:13717 (C_WrapKey)",
-            "rust/src/ffi.rs:14041 (C_UnwrapKey)"
+            "rust/src/ffi.rs:9657 (C_EncryptInit)",
+            "rust/src/ffi.rs:10139 (C_Encrypt)",
+            "rust/src/ffi.rs:10509 (C_DecryptInit)",
+            "rust/src/ffi.rs:10669 (C_Decrypt)",
+            "rust/src/ffi.rs:10879 (C_Decrypt)",
+            "rust/src/ffi.rs:13838 (C_WrapKey)",
+            "rust/src/ffi.rs:14162 (C_UnwrapKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7496 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7558 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000000d",
@@ -3502,11 +3535,11 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "parse_sign_mech_params"],
           "dispatchSites": [
-            "rust/src/ffi.rs:7972 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8427 (C_Sign_impl)",
-            "rust/src/ffi.rs:8817 (C_Verify_impl)"
+            "rust/src/ffi.rs:8034 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8489 (C_Sign_impl)",
+            "rust/src/ffi.rs:8879 (C_Verify_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7496 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7558 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000000e",
@@ -3524,16 +3557,16 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7634 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8400 (C_Sign_impl)",
-            "rust/src/ffi.rs:8791 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2209 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3080 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3589 (verify_rsa)"
+            "rust/src/ffi.rs:7696 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8462 (C_Sign_impl)",
+            "rust/src/ffi.rs:8853 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2217 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3088 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3597 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7498 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14857 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7560 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14978 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -3545,12 +3578,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2464 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:2542 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2510 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:2588 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:2566 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:2583 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:2612 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:2629 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -3562,10 +3595,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DecapsulateKey_impl", "C_EncapsulateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:5365 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5869 (C_DecapsulateKey_impl)"
+            "rust/src/ffi.rs:5427 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5931 (C_DecapsulateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7520 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7582 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000001c",
@@ -3576,12 +3609,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2465 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:2684 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2511 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:2730 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:2708 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:2725 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:2754 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:2771 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -3600,17 +3633,17 @@
             "verify_ml_dsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7826 (takes_sign_additional_ctx)",
-            "rust/src/ffi.rs:8328 (C_Sign_impl)",
-            "rust/src/ffi.rs:8581 (C_Verify_impl)",
-            "rust/src/ffi.rs:8695 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:1374 (sign_ml_dsa)",
-            "rust/src/crypto/handlers.rs:2911 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3186 (verify_ml_dsa)"
+            "rust/src/ffi.rs:7888 (takes_sign_additional_ctx)",
+            "rust/src/ffi.rs:8390 (C_Sign_impl)",
+            "rust/src/ffi.rs:8643 (C_Verify_impl)",
+            "rust/src/ffi.rs:8757 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:1382 (sign_ml_dsa)",
+            "rust/src/crypto/handlers.rs:2919 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3194 (verify_ml_dsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7516 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14906 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7578 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15027 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -3628,15 +3661,15 @@
             "takes_sign_additional_ctx"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7793 (remap_generic_hash_mech)",
-            "rust/src/ffi.rs:7829 (takes_sign_additional_ctx)",
-            "rust/src/ffi.rs:8316 (C_Sign_impl)",
-            "rust/src/ffi.rs:8683 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2942 (get_sig_len)"
+            "rust/src/ffi.rs:7855 (remap_generic_hash_mech)",
+            "rust/src/ffi.rs:7891 (takes_sign_additional_ctx)",
+            "rust/src/ffi.rs:8378 (C_Sign_impl)",
+            "rust/src/ffi.rs:8745 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2950 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7516 (mech_key_types) [match-arm: base]",
-            "rust/src/crypto/handlers.rs:1200 (map_generic_hash_mech) [comparison: base]"
+            "rust/src/ffi.rs:7578 (mech_key_types) [match-arm: base]",
+            "rust/src/crypto/handlers.rs:1208 (map_generic_hash_mech) [comparison: base]"
           ]
         },
         {
@@ -3648,11 +3681,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_ml_dsa_ph", "is_prehash_ml_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:569 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1218 (is_prehash_ml_dsa)",
-            "rust/src/crypto/handlers.rs:1253 (prehash_message)"
+            "rust/src/crypto/handlers.rs:577 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1226 (is_prehash_ml_dsa)",
+            "rust/src/crypto/handlers.rs:1261 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1202 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1210 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000024",
@@ -3663,11 +3696,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_ml_dsa_ph", "is_prehash_ml_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:565 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1219 (is_prehash_ml_dsa)",
-            "rust/src/crypto/handlers.rs:1256 (prehash_message)"
+            "rust/src/crypto/handlers.rs:573 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1227 (is_prehash_ml_dsa)",
+            "rust/src/crypto/handlers.rs:1264 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1203 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1211 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000025",
@@ -3678,11 +3711,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_ml_dsa_ph", "is_prehash_ml_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:570 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1220 (is_prehash_ml_dsa)",
-            "rust/src/crypto/handlers.rs:1259 (prehash_message)"
+            "rust/src/crypto/handlers.rs:578 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1228 (is_prehash_ml_dsa)",
+            "rust/src/crypto/handlers.rs:1267 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1204 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1212 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000026",
@@ -3693,11 +3726,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_ml_dsa_ph", "is_prehash_ml_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:566 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1221 (is_prehash_ml_dsa)",
-            "rust/src/crypto/handlers.rs:1262 (prehash_message)"
+            "rust/src/crypto/handlers.rs:574 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1229 (is_prehash_ml_dsa)",
+            "rust/src/crypto/handlers.rs:1270 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1205 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1213 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000027",
@@ -3708,12 +3741,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:571 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1265 (prehash_message)"
+            "rust/src/crypto/handlers.rs:579 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1273 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1206 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1222 (is_prehash_ml_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1214 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1230 (is_prehash_ml_dsa) [reference]"
           ]
         },
         {
@@ -3725,12 +3758,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:572 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1268 (prehash_message)"
+            "rust/src/crypto/handlers.rs:580 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1276 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1207 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1223 (is_prehash_ml_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1215 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1231 (is_prehash_ml_dsa) [reference]"
           ]
         },
         {
@@ -3742,12 +3775,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:573 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1271 (prehash_message)"
+            "rust/src/crypto/handlers.rs:581 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1279 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1208 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1224 (is_prehash_ml_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1216 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1232 (is_prehash_ml_dsa) [reference]"
           ]
         },
         {
@@ -3759,12 +3792,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:574 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1274 (prehash_message)"
+            "rust/src/crypto/handlers.rs:582 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1282 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1209 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1225 (is_prehash_ml_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1217 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1233 (is_prehash_ml_dsa) [reference]"
           ]
         },
         {
@@ -3776,10 +3809,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:567 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1277 (prehash_message)"
+            "rust/src/crypto/handlers.rs:575 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1285 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1226 (is_prehash_ml_dsa) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1234 (is_prehash_ml_dsa) [reference]"]
         },
         {
           "typeHex": "0x0000002c",
@@ -3790,10 +3823,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_ml_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:575 (get_ml_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1285 (prehash_message)"
+            "rust/src/crypto/handlers.rs:583 (get_ml_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1293 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1227 (is_prehash_ml_dsa) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1235 (is_prehash_ml_dsa) [reference]"]
         },
         {
           "typeHex": "0x0000002d",
@@ -3804,12 +3837,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2466 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:2829 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2512 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:2875 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:2853 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:2870 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:2899 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:2916 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -3826,15 +3859,15 @@
             "takes_sign_additional_ctx"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7827 (takes_sign_additional_ctx)",
-            "rust/src/ffi.rs:8350 (C_Sign_impl)",
-            "rust/src/ffi.rs:8583 (C_Verify_impl)",
-            "rust/src/ffi.rs:8709 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2947 (get_sig_len)"
+            "rust/src/ffi.rs:7889 (takes_sign_additional_ctx)",
+            "rust/src/ffi.rs:8412 (C_Sign_impl)",
+            "rust/src/ffi.rs:8645 (C_Verify_impl)",
+            "rust/src/ffi.rs:8771 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2955 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7518 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14908 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7580 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15029 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -3852,13 +3885,13 @@
             "takes_sign_additional_ctx"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7793 (remap_generic_hash_mech)",
-            "rust/src/ffi.rs:7830 (takes_sign_additional_ctx)",
-            "rust/src/ffi.rs:8322 (C_Sign_impl)",
-            "rust/src/ffi.rs:8689 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2967 (get_sig_len)"
+            "rust/src/ffi.rs:7855 (remap_generic_hash_mech)",
+            "rust/src/ffi.rs:7892 (takes_sign_additional_ctx)",
+            "rust/src/ffi.rs:8384 (C_Sign_impl)",
+            "rust/src/ffi.rs:8751 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2975 (get_sig_len)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7518 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7580 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000036",
@@ -3869,11 +3902,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_slh_dsa_ph", "is_prehash_slh_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:587 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1235 (is_prehash_slh_dsa)",
-            "rust/src/crypto/handlers.rs:1253 (prehash_message)"
+            "rust/src/crypto/handlers.rs:595 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1243 (is_prehash_slh_dsa)",
+            "rust/src/crypto/handlers.rs:1261 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1202 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1210 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000037",
@@ -3884,11 +3917,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_slh_dsa_ph", "is_prehash_slh_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:582 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1236 (is_prehash_slh_dsa)",
-            "rust/src/crypto/handlers.rs:1256 (prehash_message)"
+            "rust/src/crypto/handlers.rs:590 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1244 (is_prehash_slh_dsa)",
+            "rust/src/crypto/handlers.rs:1264 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1203 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1211 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000038",
@@ -3899,11 +3932,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_slh_dsa_ph", "is_prehash_slh_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:588 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1237 (is_prehash_slh_dsa)",
-            "rust/src/crypto/handlers.rs:1259 (prehash_message)"
+            "rust/src/crypto/handlers.rs:596 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1245 (is_prehash_slh_dsa)",
+            "rust/src/crypto/handlers.rs:1267 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1204 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1212 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x00000039",
@@ -3914,11 +3947,11 @@
           "dispatchKinds": ["match-arm", "matches-macro"],
           "dispatchFunctions": ["get_slh_dsa_ph", "is_prehash_slh_dsa", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:583 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1238 (is_prehash_slh_dsa)",
-            "rust/src/crypto/handlers.rs:1262 (prehash_message)"
+            "rust/src/crypto/handlers.rs:591 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1246 (is_prehash_slh_dsa)",
+            "rust/src/crypto/handlers.rs:1270 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1205 (map_generic_hash_mech) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1213 (map_generic_hash_mech) [reference]"]
         },
         {
           "typeHex": "0x0000003a",
@@ -3929,12 +3962,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:589 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1265 (prehash_message)"
+            "rust/src/crypto/handlers.rs:597 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1273 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1206 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1239 (is_prehash_slh_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1214 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1247 (is_prehash_slh_dsa) [reference]"
           ]
         },
         {
@@ -3946,12 +3979,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:590 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1268 (prehash_message)"
+            "rust/src/crypto/handlers.rs:598 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1276 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1207 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1240 (is_prehash_slh_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1215 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1248 (is_prehash_slh_dsa) [reference]"
           ]
         },
         {
@@ -3963,12 +3996,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:591 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1271 (prehash_message)"
+            "rust/src/crypto/handlers.rs:599 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1279 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1208 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1241 (is_prehash_slh_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1216 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1249 (is_prehash_slh_dsa) [reference]"
           ]
         },
         {
@@ -3980,12 +4013,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:592 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1274 (prehash_message)"
+            "rust/src/crypto/handlers.rs:600 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1282 (prehash_message)"
           ],
           "otherSites": [
-            "rust/src/crypto/handlers.rs:1209 (map_generic_hash_mech) [reference]",
-            "rust/src/crypto/handlers.rs:1242 (is_prehash_slh_dsa) [reference]"
+            "rust/src/crypto/handlers.rs:1217 (map_generic_hash_mech) [reference]",
+            "rust/src/crypto/handlers.rs:1250 (is_prehash_slh_dsa) [reference]"
           ]
         },
         {
@@ -3997,10 +4030,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:584 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1277 (prehash_message)"
+            "rust/src/crypto/handlers.rs:592 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1285 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1243 (is_prehash_slh_dsa) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1251 (is_prehash_slh_dsa) [reference]"]
         },
         {
           "typeHex": "0x0000003f",
@@ -4011,10 +4044,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["get_slh_dsa_ph", "prehash_message"],
           "dispatchSites": [
-            "rust/src/crypto/handlers.rs:585 (get_slh_dsa_ph)",
-            "rust/src/crypto/handlers.rs:1285 (prehash_message)"
+            "rust/src/crypto/handlers.rs:593 (get_slh_dsa_ph)",
+            "rust/src/crypto/handlers.rs:1293 (prehash_message)"
           ],
-          "otherSites": ["rust/src/crypto/handlers.rs:1244 (is_prehash_slh_dsa) [reference]"]
+          "otherSites": ["rust/src/crypto/handlers.rs:1252 (is_prehash_slh_dsa) [reference]"]
         },
         {
           "typeHex": "0x00000040",
@@ -4032,14 +4065,14 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8397 (C_Sign_impl)",
-            "rust/src/ffi.rs:8788 (C_Verify_impl)",
-            "rust/src/ffi.rs:14849 (sign_mech_supports_multipart)",
-            "rust/src/crypto/handlers.rs:2199 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3077 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3575 (verify_rsa)"
+            "rust/src/ffi.rs:8459 (C_Sign_impl)",
+            "rust/src/ffi.rs:8850 (C_Verify_impl)",
+            "rust/src/ffi.rs:14970 (sign_mech_supports_multipart)",
+            "rust/src/crypto/handlers.rs:2207 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3085 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3583 (verify_rsa)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7499 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000041",
@@ -4057,14 +4090,14 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8397 (C_Sign_impl)",
-            "rust/src/ffi.rs:8788 (C_Verify_impl)",
-            "rust/src/ffi.rs:14850 (sign_mech_supports_multipart)",
-            "rust/src/crypto/handlers.rs:2200 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3077 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3576 (verify_rsa)"
+            "rust/src/ffi.rs:8459 (C_Sign_impl)",
+            "rust/src/ffi.rs:8850 (C_Verify_impl)",
+            "rust/src/ffi.rs:14971 (sign_mech_supports_multipart)",
+            "rust/src/crypto/handlers.rs:2208 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3085 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3584 (verify_rsa)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7499 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000042",
@@ -4082,14 +4115,14 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8397 (C_Sign_impl)",
-            "rust/src/ffi.rs:8788 (C_Verify_impl)",
-            "rust/src/ffi.rs:14851 (sign_mech_supports_multipart)",
-            "rust/src/crypto/handlers.rs:2201 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3077 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3577 (verify_rsa)"
+            "rust/src/ffi.rs:8459 (C_Sign_impl)",
+            "rust/src/ffi.rs:8850 (C_Verify_impl)",
+            "rust/src/ffi.rs:14972 (sign_mech_supports_multipart)",
+            "rust/src/crypto/handlers.rs:2209 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3085 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3585 (verify_rsa)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7500 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7562 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000043",
@@ -4108,17 +4141,17 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7630 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8398 (C_Sign_impl)",
-            "rust/src/ffi.rs:8789 (C_Verify_impl)",
-            "rust/src/ffi.rs:14852 (sign_mech_supports_multipart)",
-            "rust/src/crypto/handlers.rs:2202 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3078 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3578 (verify_rsa)"
+            "rust/src/ffi.rs:7692 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8460 (C_Sign_impl)",
+            "rust/src/ffi.rs:8851 (C_Verify_impl)",
+            "rust/src/ffi.rs:14973 (sign_mech_supports_multipart)",
+            "rust/src/crypto/handlers.rs:2210 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3086 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3586 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7499 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:7652 (pss_hash_mgf_pairing_valid) [reference]"
+            "rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:7714 (pss_hash_mgf_pairing_valid) [reference]"
           ]
         },
         {
@@ -4137,17 +4170,17 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7631 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8398 (C_Sign_impl)",
-            "rust/src/ffi.rs:8789 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2203 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3078 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3579 (verify_rsa)"
+            "rust/src/ffi.rs:7693 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8460 (C_Sign_impl)",
+            "rust/src/ffi.rs:8851 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2211 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3086 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3587 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7500 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:7653 (pss_hash_mgf_pairing_valid) [reference]",
-            "rust/src/ffi.rs:14853 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7562 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:7715 (pss_hash_mgf_pairing_valid) [reference]",
+            "rust/src/ffi.rs:14974 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4166,17 +4199,17 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7632 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8398 (C_Sign_impl)",
-            "rust/src/ffi.rs:8789 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2204 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3078 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3580 (verify_rsa)"
+            "rust/src/ffi.rs:7694 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8460 (C_Sign_impl)",
+            "rust/src/ffi.rs:8851 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2212 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3086 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3588 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7500 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:7654 (pss_hash_mgf_pairing_valid) [reference]",
-            "rust/src/ffi.rs:14854 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7562 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:7716 (pss_hash_mgf_pairing_valid) [reference]",
+            "rust/src/ffi.rs:14975 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4194,15 +4227,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8401 (C_Sign_impl)",
-            "rust/src/ffi.rs:8792 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2210 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3081 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3584 (verify_rsa)"
+            "rust/src/ffi.rs:8463 (C_Sign_impl)",
+            "rust/src/ffi.rs:8854 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2218 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3089 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3592 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7498 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14859 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7560 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14980 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4221,16 +4254,16 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7635 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8401 (C_Sign_impl)",
-            "rust/src/ffi.rs:8792 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2211 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3081 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3590 (verify_rsa)"
+            "rust/src/ffi.rs:7697 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8463 (C_Sign_impl)",
+            "rust/src/ffi.rs:8854 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2219 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3089 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3598 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7498 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14860 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7560 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14981 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4241,11 +4274,11 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11016 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11119 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:12928 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12965 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12988 (C_DeriveKey) [match-arm: prf]"
+            "rust/src/ffi.rs:13049 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13086 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13109 (C_DeriveKey) [match-arm: prf]"
           ]
         },
         {
@@ -4257,20 +4290,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8354 (C_Sign_impl)",
-            "rust/src/ffi.rs:8603 (C_Verify_impl)",
-            "rust/src/ffi.rs:8713 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2052 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3072 (get_sig_len)"
+            "rust/src/ffi.rs:8416 (C_Sign_impl)",
+            "rust/src/ffi.rs:8665 (C_Verify_impl)",
+            "rust/src/ffi.rs:8775 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2060 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3080 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7536 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11493 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11940 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11985 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12039 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14882 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2897 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7598 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11596 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12043 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12088 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12142 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15003 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2905 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4281,7 +4314,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2897 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2905 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4292,8 +4325,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12497 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7562 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12618 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7624 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000004c",
@@ -4303,11 +4336,11 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11017 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11120 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:12929 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12966 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12989 (C_DeriveKey) [match-arm: prf]"
+            "rust/src/ffi.rs:13050 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13087 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13110 (C_DeriveKey) [match-arm: prf]"
           ]
         },
         {
@@ -4319,20 +4352,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8604 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2058 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3073 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8666 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2066 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3081 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7537 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11494 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11943 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11988 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12042 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14883 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2898 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7599 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11597 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12046 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12091 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12145 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15004 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2906 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4343,7 +4376,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2898 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2906 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4354,8 +4387,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12498 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7562 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12619 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7624 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000060",
@@ -4372,15 +4405,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8403 (C_Sign_impl)",
-            "rust/src/ffi.rs:8794 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2214 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3083 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3586 (verify_rsa)"
+            "rust/src/ffi.rs:8465 (C_Sign_impl)",
+            "rust/src/ffi.rs:8856 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2222 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3091 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3594 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7501 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14863 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7563 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14984 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4398,15 +4431,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8399 (C_Sign_impl)",
-            "rust/src/ffi.rs:8790 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2205 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3079 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3581 (verify_rsa)"
+            "rust/src/ffi.rs:8461 (C_Sign_impl)",
+            "rust/src/ffi.rs:8852 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2213 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3087 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3589 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7502 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14855 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7564 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14976 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4424,15 +4457,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8404 (C_Sign_impl)",
-            "rust/src/ffi.rs:8795 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2216 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3084 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3587 (verify_rsa)"
+            "rust/src/ffi.rs:8466 (C_Sign_impl)",
+            "rust/src/ffi.rs:8857 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2224 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3092 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3595 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7503 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14865 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7565 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14986 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4451,16 +4484,16 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7637 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8403 (C_Sign_impl)",
-            "rust/src/ffi.rs:8794 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2215 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3083 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3592 (verify_rsa)"
+            "rust/src/ffi.rs:7699 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8465 (C_Sign_impl)",
+            "rust/src/ffi.rs:8856 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2223 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3091 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3600 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7502 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14864 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7564 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14985 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4479,17 +4512,17 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7633 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8399 (C_Sign_impl)",
-            "rust/src/ffi.rs:8790 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2206 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3079 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3588 (verify_rsa)"
+            "rust/src/ffi.rs:7695 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8461 (C_Sign_impl)",
+            "rust/src/ffi.rs:8852 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2214 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3087 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3596 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7502 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:7655 (pss_hash_mgf_pairing_valid) [reference]",
-            "rust/src/ffi.rs:14867 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7564 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:7717 (pss_hash_mgf_pairing_valid) [reference]",
+            "rust/src/ffi.rs:14988 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4508,16 +4541,16 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7638 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8404 (C_Sign_impl)",
-            "rust/src/ffi.rs:8795 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2217 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3084 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3593 (verify_rsa)"
+            "rust/src/ffi.rs:7700 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8466 (C_Sign_impl)",
+            "rust/src/ffi.rs:8857 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2225 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3092 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3601 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7503 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14866 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7565 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14987 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4535,15 +4568,15 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8402 (C_Sign_impl)",
-            "rust/src/ffi.rs:8793 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2212 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3082 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3585 (verify_rsa)"
+            "rust/src/ffi.rs:8464 (C_Sign_impl)",
+            "rust/src/ffi.rs:8855 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2220 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3090 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3593 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7501 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14861 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7563 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14982 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4562,16 +4595,16 @@
             "verify_rsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7636 (rsa_pss_mech_params)",
-            "rust/src/ffi.rs:8402 (C_Sign_impl)",
-            "rust/src/ffi.rs:8793 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2213 (sign_rsa)",
-            "rust/src/crypto/handlers.rs:3082 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3591 (verify_rsa)"
+            "rust/src/ffi.rs:7698 (rsa_pss_mech_params)",
+            "rust/src/ffi.rs:8464 (C_Sign_impl)",
+            "rust/src/ffi.rs:8855 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2221 (sign_rsa)",
+            "rust/src/crypto/handlers.rs:3090 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3599 (verify_rsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7501 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14862 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7563 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14983 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -4582,7 +4615,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11021 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11124 (C_DigestInit)"],
           "otherSites": []
         },
         {
@@ -4594,16 +4627,16 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8609 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2034 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3065 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8671 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2042 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3073 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7529 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14888 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2903 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7591 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15009 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2911 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4614,7 +4647,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2903 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2911 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4625,14 +4658,14 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11020 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11123 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7634 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7670 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9315 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12923 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12960 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12983 (C_DeriveKey) [match-arm: prf]"
+            "rust/src/ffi.rs:7696 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7732 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9377 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13044 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13081 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13104 (C_DeriveKey) [match-arm: prf]"
           ]
         },
         {
@@ -4644,20 +4677,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8608 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2040 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3064 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8670 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2048 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3072 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7530 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11488 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11925 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11980 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12024 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14887 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2902 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7592 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11591 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12028 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12083 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12127 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15008 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2910 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4668,7 +4701,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2902 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2910 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4679,7 +4712,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11023 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11126 (C_DigestInit)"],
           "otherSites": []
         },
         {
@@ -4691,14 +4724,14 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8354 (C_Sign_impl)",
-            "rust/src/ffi.rs:8713 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2088 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3064 (get_sig_len)"
+            "rust/src/ffi.rs:8416 (C_Sign_impl)",
+            "rust/src/ffi.rs:8775 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2096 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3072 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7531 (mech_key_types) [match-arm: base]",
-            "rust/src/crypto/handlers.rs:2901 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7593 (mech_key_types) [match-arm: base]",
+            "rust/src/crypto/handlers.rs:2909 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4709,7 +4742,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2901 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2909 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4720,20 +4753,20 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11010 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11113 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7630 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7672 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9300 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9300 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9301 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9302 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12925 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12962 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12985 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:608 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:623 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1203 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7692 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7734 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9362 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9362 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9363 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9364 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13046 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13083 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13106 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:616 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:631 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1211 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -4745,20 +4778,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8353 (C_Sign_impl)",
-            "rust/src/ffi.rs:8598 (C_Verify_impl)",
-            "rust/src/ffi.rs:8712 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:1980 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3063 (get_sig_len)"
+            "rust/src/ffi.rs:8415 (C_Sign_impl)",
+            "rust/src/ffi.rs:8660 (C_Verify_impl)",
+            "rust/src/ffi.rs:8774 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:1988 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3071 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7533 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11490 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11931 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11982 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12030 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14877 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2888 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7595 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11593 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12034 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12085 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12133 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:14998 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2896 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4769,7 +4802,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2888 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2896 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4780,17 +4813,17 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11015 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11118 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7635 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7671 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9316 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12924 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12961 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12984 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:607 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:622 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1202 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7697 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7733 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9378 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13045 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13082 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13105 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:615 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:630 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1210 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -4802,20 +4835,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8607 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2046 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3072 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8669 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2054 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3080 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7532 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11489 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11928 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11981 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12027 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14886 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2896 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7594 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11592 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12031 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12084 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12130 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15007 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2904 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4826,7 +4859,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2896 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2904 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4837,20 +4870,20 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11011 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11114 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7631 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7673 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9303 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9304 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9304 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9305 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12926 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12963 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12986 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:609 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:624 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1204 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7693 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7735 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9365 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9366 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9366 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9367 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13047 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13084 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13107 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:617 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:632 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1212 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -4862,20 +4895,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8353 (C_Sign_impl)",
-            "rust/src/ffi.rs:8599 (C_Verify_impl)",
-            "rust/src/ffi.rs:8712 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:1986 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3067 (get_sig_len)"
+            "rust/src/ffi.rs:8415 (C_Sign_impl)",
+            "rust/src/ffi.rs:8661 (C_Verify_impl)",
+            "rust/src/ffi.rs:8774 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:1994 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3075 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7534 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11491 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11934 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11983 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12033 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14878 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2889 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7596 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11594 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12037 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12086 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12136 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:14999 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2897 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4886,7 +4919,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2889 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2897 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4897,20 +4930,20 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11012 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11115 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7632 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7674 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9306 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9307 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9308 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:9308 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12927 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12964 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12987 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:610 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:625 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1205 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7694 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7736 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9368 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9369 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9370 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:9370 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13048 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13085 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13108 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:618 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:633 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1213 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -4922,20 +4955,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8353 (C_Sign_impl)",
-            "rust/src/ffi.rs:8600 (C_Verify_impl)",
-            "rust/src/ffi.rs:8712 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:1992 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3068 (get_sig_len)"
+            "rust/src/ffi.rs:8415 (C_Sign_impl)",
+            "rust/src/ffi.rs:8662 (C_Verify_impl)",
+            "rust/src/ffi.rs:8774 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2000 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3076 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7535 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11492 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11937 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11984 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12036 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14879 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2890 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7597 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11595 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12040 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12087 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12139 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15000 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2898 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -4946,7 +4979,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2890 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2898 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -4957,17 +4990,17 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11013 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11116 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7637 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7672 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9318 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12931 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12968 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12991 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:612 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:627 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1207 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7699 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7734 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9380 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13052 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13089 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13112 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:620 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:635 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1215 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -4979,20 +5012,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8353 (C_Sign_impl)",
-            "rust/src/ffi.rs:8601 (C_Verify_impl)",
-            "rust/src/ffi.rs:8712 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2070 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3063 (get_sig_len)"
+            "rust/src/ffi.rs:8415 (C_Sign_impl)",
+            "rust/src/ffi.rs:8663 (C_Verify_impl)",
+            "rust/src/ffi.rs:8774 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2078 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3071 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7539 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11496 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11952 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11997 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12051 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14880 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2891 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7601 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11599 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12055 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12100 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12154 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15001 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2899 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -5003,7 +5036,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2891 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2899 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -5014,17 +5047,17 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11018 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11121 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7636 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7671 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9317 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12930 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12967 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12990 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:611 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:626 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1206 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7698 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7733 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9379 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13051 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13088 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13111 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:619 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:634 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1214 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -5036,20 +5069,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8605 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2064 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3072 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8667 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2072 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3080 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7538 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11495 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11946 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11991 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12045 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14884 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2899 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7600 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11598 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12049 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12094 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12148 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15005 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2907 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -5060,7 +5093,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2899 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2907 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -5071,19 +5104,19 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11019 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11122 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7633 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7673 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9319 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12932 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12969 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12992 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:613 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:628 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1208 (map_generic_hash_mech) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:2262 (sign_rsa_pss_bare) [match-arm: hash_alg]",
-            "rust/src/crypto/handlers.rs:3633 (verify_rsa_pss_bare) [match-arm: hash_alg]"
+            "rust/src/ffi.rs:7695 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7735 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9381 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13053 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13090 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13113 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:621 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:636 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1216 (map_generic_hash_mech) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:2270 (sign_rsa_pss_bare) [match-arm: hash_alg]",
+            "rust/src/crypto/handlers.rs:3641 (verify_rsa_pss_bare) [match-arm: hash_alg]"
           ]
         },
         {
@@ -5095,20 +5128,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8606 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2076 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3074 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8668 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2084 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3082 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7540 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11497 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11949 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11994 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12048 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14885 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2900 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7602 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11600 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12052 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12097 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12151 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15006 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2908 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -5119,7 +5152,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2900 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2908 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -5130,17 +5163,17 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11014 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11117 (C_DigestInit)"],
           "otherSites": [
-            "rust/src/ffi.rs:7638 (rsa_pss_mech_params) [reference]",
-            "rust/src/ffi.rs:7674 (pss_salt_len_fits) [match-arm: hash_alg]",
-            "rust/src/ffi.rs:9320 (oaep_padding) [match-arm: (hash_alg, mgf)]",
-            "rust/src/ffi.rs:12933 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12970 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/ffi.rs:12993 (C_DeriveKey) [match-arm: prf]",
-            "rust/src/crypto/handlers.rs:614 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:629 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
-            "rust/src/crypto/handlers.rs:1209 (map_generic_hash_mech) [match-arm: hash]"
+            "rust/src/ffi.rs:7700 (rsa_pss_mech_params) [reference]",
+            "rust/src/ffi.rs:7736 (pss_salt_len_fits) [match-arm: hash_alg]",
+            "rust/src/ffi.rs:9382 (oaep_padding) [match-arm: (hash_alg, mgf)]",
+            "rust/src/ffi.rs:13054 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13091 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/ffi.rs:13114 (C_DeriveKey) [match-arm: prf]",
+            "rust/src/crypto/handlers.rs:622 (ph_from_digest_mech_ml_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:637 (ph_from_digest_mech_slh_dsa) [match-arm: hash]",
+            "rust/src/crypto/handlers.rs:1217 (map_generic_hash_mech) [match-arm: hash]"
           ]
         },
         {
@@ -5152,20 +5185,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8354 (C_Sign_impl)",
-            "rust/src/ffi.rs:8602 (C_Verify_impl)",
-            "rust/src/ffi.rs:8713 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2082 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3068 (get_sig_len)"
+            "rust/src/ffi.rs:8416 (C_Sign_impl)",
+            "rust/src/ffi.rs:8664 (C_Verify_impl)",
+            "rust/src/ffi.rs:8775 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2090 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3076 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7541 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11498 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11955 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12000 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12054 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14881 (sign_mech_supports_multipart) [reference]",
-            "rust/src/crypto/handlers.rs:2892 (hmac_general_base) [reference]"
+            "rust/src/ffi.rs:7603 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11601 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12058 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12103 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12157 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15002 (sign_mech_supports_multipart) [reference]",
+            "rust/src/crypto/handlers.rs:2900 (hmac_general_base) [reference]"
           ]
         },
         {
@@ -5176,7 +5209,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["hmac_general_base"],
-          "dispatchSites": ["rust/src/crypto/handlers.rs:2892 (hmac_general_base)"],
+          "dispatchSites": ["rust/src/crypto/handlers.rs:2900 (hmac_general_base)"],
           "otherSites": []
         },
         {
@@ -5188,10 +5221,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:4518 (C_GenerateKey_impl)",
-            "rust/src/ffi.rs:4654 (C_GenerateKey_impl)"
+            "rust/src/ffi.rs:4580 (C_GenerateKey_impl)",
+            "rust/src/ffi.rs:4716 (C_GenerateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:4686 (C_GenerateKey_impl) [reference]"]
+          "otherSites": ["rust/src/ffi.rs:4748 (C_GenerateKey_impl) [reference]"]
         },
         {
           "typeHex": "0x00000360",
@@ -5201,8 +5234,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12322 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12443 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7621 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000362",
@@ -5212,8 +5245,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12351 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7560 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12472 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7622 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000363",
@@ -5223,8 +5256,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12466 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7560 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12587 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7622 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000393",
@@ -5234,8 +5267,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12491 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12612 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7623 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000394",
@@ -5245,8 +5278,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12492 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12613 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7623 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000395",
@@ -5256,8 +5289,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12493 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7561 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12614 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7623 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000397",
@@ -5267,8 +5300,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12494 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7563 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12615 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7625 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00000399",
@@ -5278,8 +5311,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12495 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7563 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12616 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7625 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000039a",
@@ -5289,8 +5322,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12496 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7564 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12617 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7626 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000039c",
@@ -5300,8 +5333,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12530 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7564 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12651 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7626 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x000003ac",
@@ -5311,8 +5344,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:13006 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7565 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:13127 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7627 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x000003ad",
@@ -5322,8 +5355,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:13050 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7565 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:13171 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7627 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x000003ae",
@@ -5333,8 +5366,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:13096 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7566 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:13217 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7628 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x000003b0",
@@ -5345,8 +5378,8 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:12108 (C_DeriveKey)",
-            "rust/src/ffi.rs:12782 (C_DeriveKey)"
+            "rust/src/ffi.rs:12229 (C_DeriveKey)",
+            "rust/src/ffi.rs:12903 (C_DeriveKey)"
           ],
           "otherSites": []
         },
@@ -5359,12 +5392,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2468 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3177 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2514 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3223 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3230 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3243 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3276 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3289 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -5376,20 +5409,20 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "sign_ecdsa", "verify_ecdsa"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8442 (C_Sign_impl)",
-            "rust/src/ffi.rs:8834 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2610 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2610 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2619 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2628 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2639 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2642 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3752 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3752 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3761 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3770 (verify_ecdsa)"
+            "rust/src/ffi.rs:8504 (C_Sign_impl)",
+            "rust/src/ffi.rs:8896 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2618 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2618 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2627 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2636 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2647 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2650 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3760 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3760 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3769 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3778 (verify_ecdsa)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7505 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7567 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001042",
@@ -5407,21 +5440,21 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8442 (C_Sign_impl)",
-            "rust/src/ffi.rs:8589 (C_Verify_impl)",
-            "rust/src/ffi.rs:8834 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2278 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2565 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2566 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2576 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3096 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3712 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3713 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3725 (verify_ecdsa)"
+            "rust/src/ffi.rs:8504 (C_Sign_impl)",
+            "rust/src/ffi.rs:8651 (C_Verify_impl)",
+            "rust/src/ffi.rs:8896 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2286 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2573 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2574 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2584 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3104 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3720 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3721 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3733 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7505 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14868 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7567 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14989 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5440,21 +5473,21 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8442 (C_Sign_impl)",
-            "rust/src/ffi.rs:8590 (C_Verify_impl)",
-            "rust/src/ffi.rs:8834 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2277 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2563 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2564 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2575 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3095 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3710 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3711 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3724 (verify_ecdsa)"
+            "rust/src/ffi.rs:8504 (C_Sign_impl)",
+            "rust/src/ffi.rs:8652 (C_Verify_impl)",
+            "rust/src/ffi.rs:8896 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2285 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2571 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2572 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2583 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3103 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3718 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3719 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3732 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7505 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14869 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7567 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14990 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5473,21 +5506,21 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8442 (C_Sign_impl)",
-            "rust/src/ffi.rs:8591 (C_Verify_impl)",
-            "rust/src/ffi.rs:8834 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2273 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2506 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2506 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2553 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3091 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3647 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3647 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3699 (verify_ecdsa)"
+            "rust/src/ffi.rs:8504 (C_Sign_impl)",
+            "rust/src/ffi.rs:8653 (C_Verify_impl)",
+            "rust/src/ffi.rs:8896 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2281 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2514 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2514 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2561 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3099 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3655 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3655 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3707 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7505 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14870 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7567 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14991 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5506,18 +5539,18 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8442 (C_Sign_impl)",
-            "rust/src/ffi.rs:8592 (C_Verify_impl)",
-            "rust/src/ffi.rs:8834 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2274 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2513 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3092 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3655 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3655 (verify_ecdsa)"
+            "rust/src/ffi.rs:8504 (C_Sign_impl)",
+            "rust/src/ffi.rs:8654 (C_Verify_impl)",
+            "rust/src/ffi.rs:8896 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2282 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2521 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3100 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3663 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3663 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7506 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14871 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7568 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14992 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5536,22 +5569,22 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8443 (C_Sign_impl)",
-            "rust/src/ffi.rs:8593 (C_Verify_impl)",
-            "rust/src/ffi.rs:8835 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2275 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2520 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2529 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2529 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2542 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3093 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3663 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3673 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3673 (verify_ecdsa)"
+            "rust/src/ffi.rs:8505 (C_Sign_impl)",
+            "rust/src/ffi.rs:8655 (C_Verify_impl)",
+            "rust/src/ffi.rs:8897 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2283 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2528 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2537 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2537 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2550 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3101 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3671 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3681 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3681 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7506 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14872 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7568 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14993 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5570,21 +5603,21 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8443 (C_Sign_impl)",
-            "rust/src/ffi.rs:8594 (C_Verify_impl)",
-            "rust/src/ffi.rs:8835 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2276 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2561 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2562 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2574 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3094 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3708 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3709 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3723 (verify_ecdsa)"
+            "rust/src/ffi.rs:8505 (C_Sign_impl)",
+            "rust/src/ffi.rs:8656 (C_Verify_impl)",
+            "rust/src/ffi.rs:8897 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2284 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2569 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2570 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2582 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3102 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3716 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3717 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3731 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7506 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14873 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7568 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14994 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5603,19 +5636,19 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8443 (C_Sign_impl)",
-            "rust/src/ffi.rs:8595 (C_Verify_impl)",
-            "rust/src/ffi.rs:8835 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2279 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2567 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2568 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3097 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3714 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3715 (verify_ecdsa)"
+            "rust/src/ffi.rs:8505 (C_Sign_impl)",
+            "rust/src/ffi.rs:8657 (C_Verify_impl)",
+            "rust/src/ffi.rs:8897 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2287 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2575 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2576 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3105 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3722 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3723 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7506 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14874 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7568 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14995 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5634,17 +5667,17 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8443 (C_Sign_impl)",
-            "rust/src/ffi.rs:8596 (C_Verify_impl)",
-            "rust/src/ffi.rs:8835 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2280 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2586 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3098 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3732 (verify_ecdsa)"
+            "rust/src/ffi.rs:8505 (C_Sign_impl)",
+            "rust/src/ffi.rs:8658 (C_Verify_impl)",
+            "rust/src/ffi.rs:8897 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2288 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2594 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3106 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3740 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7507 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14875 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7569 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14996 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5663,19 +5696,19 @@
             "verify_ecdsa"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:8444 (C_Sign_impl)",
-            "rust/src/ffi.rs:8597 (C_Verify_impl)",
-            "rust/src/ffi.rs:8836 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2281 (ecdsa_mech_digest)",
-            "rust/src/crypto/handlers.rs:2586 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:2592 (sign_ecdsa)",
-            "rust/src/crypto/handlers.rs:3099 (get_sig_len)",
-            "rust/src/crypto/handlers.rs:3732 (verify_ecdsa)",
-            "rust/src/crypto/handlers.rs:3742 (verify_ecdsa)"
+            "rust/src/ffi.rs:8506 (C_Sign_impl)",
+            "rust/src/ffi.rs:8659 (C_Verify_impl)",
+            "rust/src/ffi.rs:8898 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2289 (ecdsa_mech_digest)",
+            "rust/src/crypto/handlers.rs:2594 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:2600 (sign_ecdsa)",
+            "rust/src/crypto/handlers.rs:3107 (get_sig_len)",
+            "rust/src/crypto/handlers.rs:3740 (verify_ecdsa)",
+            "rust/src/crypto/handlers.rs:3750 (verify_ecdsa)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7507 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14876 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7569 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:14997 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5687,11 +5720,11 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_DecapsulateKey_impl", "C_DeriveKey", "C_EncapsulateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:5163 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5718 (C_DecapsulateKey_impl)",
-            "rust/src/ffi.rs:12543 (C_DeriveKey)"
+            "rust/src/ffi.rs:5225 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5780 (C_DecapsulateKey_impl)",
+            "rust/src/ffi.rs:12664 (C_DeriveKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7512 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7574 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001051",
@@ -5702,10 +5735,10 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:12543 (C_DeriveKey)",
-            "rust/src/ffi.rs:12586 (C_DeriveKey)"
+            "rust/src/ffi.rs:12664 (C_DeriveKey)",
+            "rust/src/ffi.rs:12707 (C_DeriveKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7513 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7575 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001054",
@@ -5716,10 +5749,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_UnwrapKey", "C_WrapKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:13728 (C_WrapKey)",
-            "rust/src/ffi.rs:14045 (C_UnwrapKey)"
+            "rust/src/ffi.rs:13849 (C_WrapKey)",
+            "rust/src/ffi.rs:14166 (C_UnwrapKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7497 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001055",
@@ -5730,12 +5763,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2473 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3573 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2519 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3619 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3638 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3655 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3684 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3701 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -5747,12 +5780,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2474 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3722 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2520 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3768 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3767 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3783 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3813 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3829 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -5772,18 +5805,18 @@
             "parse_sign_mech_params"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7736 (C_SignInit_impl)",
-            "rust/src/ffi.rs:7902 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8455 (C_Sign_impl)",
-            "rust/src/ffi.rs:8522 (C_VerifyInit_impl)",
-            "rust/src/ffi.rs:8585 (C_Verify_impl)",
-            "rust/src/ffi.rs:8843 (C_Verify_impl)",
-            "rust/src/ffi.rs:9166 (C_VerifySignatureInit)",
-            "rust/src/crypto/handlers.rs:3113 (get_sig_len)"
+            "rust/src/ffi.rs:7798 (C_SignInit_impl)",
+            "rust/src/ffi.rs:7964 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8517 (C_Sign_impl)",
+            "rust/src/ffi.rs:8584 (C_VerifyInit_impl)",
+            "rust/src/ffi.rs:8647 (C_Verify_impl)",
+            "rust/src/ffi.rs:8905 (C_Verify_impl)",
+            "rust/src/ffi.rs:9228 (C_VerifySignatureInit)",
+            "rust/src/crypto/handlers.rs:3121 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7509 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14909 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7571 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15030 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -5801,13 +5834,13 @@
             "build_multipart_cipher"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9573 (C_EncryptInit)",
-            "rust/src/ffi.rs:10014 (C_Encrypt)",
-            "rust/src/ffi.rs:10399 (C_DecryptInit)",
-            "rust/src/ffi.rs:10734 (C_Decrypt)",
-            "rust/src/ffi.rs:15167 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9646 (C_EncryptInit)",
+            "rust/src/ffi.rs:10091 (C_Encrypt)",
+            "rust/src/ffi.rs:10498 (C_DecryptInit)",
+            "rust/src/ffi.rs:10837 (C_Decrypt)",
+            "rust/src/ffi.rs:15288 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7552 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7614 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001072",
@@ -5818,10 +5851,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:4516 (C_GenerateKey_impl)",
-            "rust/src/ffi.rs:4610 (C_GenerateKey_impl)"
+            "rust/src/ffi.rs:4578 (C_GenerateKey_impl)",
+            "rust/src/ffi.rs:4672 (C_GenerateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:4644 (C_GenerateKey_impl) [reference]"]
+          "otherSites": ["rust/src/ffi.rs:4706 (C_GenerateKey_impl) [reference]"]
         },
         {
           "typeHex": "0x00001080",
@@ -5832,12 +5865,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:4515 (C_GenerateKey_impl)",
-            "rust/src/ffi.rs:4564 (C_GenerateKey_impl)"
+            "rust/src/ffi.rs:4577 (C_GenerateKey_impl)",
+            "rust/src/ffi.rs:4626 (C_GenerateKey_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:4600 (C_GenerateKey_impl) [reference]",
-            "rust/src/ffi.rs:17295 (generate_aes_key) [reference]"
+            "rust/src/ffi.rs:4662 (C_GenerateKey_impl) [reference]",
+            "rust/src/ffi.rs:17430 (generate_aes_key) [reference]"
           ]
         },
         {
@@ -5856,16 +5889,16 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9544 (C_EncryptInit)",
-            "rust/src/ffi.rs:9781 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:10169 (C_Encrypt)",
-            "rust/src/ffi.rs:10177 (C_Encrypt)",
-            "rust/src/ffi.rs:10370 (C_DecryptInit)",
-            "rust/src/ffi.rs:10924 (C_Decrypt)",
-            "rust/src/ffi.rs:10932 (C_Decrypt)",
-            "rust/src/ffi.rs:15095 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9617 (C_EncryptInit)",
+            "rust/src/ffi.rs:9854 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10246 (C_Encrypt)",
+            "rust/src/ffi.rs:10254 (C_Encrypt)",
+            "rust/src/ffi.rs:10469 (C_DecryptInit)",
+            "rust/src/ffi.rs:11027 (C_Decrypt)",
+            "rust/src/ffi.rs:11035 (C_Decrypt)",
+            "rust/src/ffi.rs:15216 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7545 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7607 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001082",
@@ -5885,16 +5918,16 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9545 (C_EncryptInit)",
-            "rust/src/ffi.rs:9781 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:10169 (C_Encrypt)",
-            "rust/src/ffi.rs:10371 (C_DecryptInit)",
-            "rust/src/ffi.rs:10924 (C_Decrypt)",
-            "rust/src/ffi.rs:13727 (C_WrapKey)",
-            "rust/src/ffi.rs:14044 (C_UnwrapKey)",
-            "rust/src/ffi.rs:15096 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9618 (C_EncryptInit)",
+            "rust/src/ffi.rs:9854 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10246 (C_Encrypt)",
+            "rust/src/ffi.rs:10470 (C_DecryptInit)",
+            "rust/src/ffi.rs:11027 (C_Decrypt)",
+            "rust/src/ffi.rs:13848 (C_WrapKey)",
+            "rust/src/ffi.rs:14165 (C_UnwrapKey)",
+            "rust/src/ffi.rs:15217 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7545 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7607 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001085",
@@ -5913,17 +5946,17 @@
             "build_multipart_cipher"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9545 (C_EncryptInit)",
-            "rust/src/ffi.rs:9902 (C_Encrypt)",
-            "rust/src/ffi.rs:10371 (C_DecryptInit)",
-            "rust/src/ffi.rs:10622 (C_Decrypt)",
-            "rust/src/ffi.rs:13727 (C_WrapKey)",
-            "rust/src/ffi.rs:13835 (C_WrapKey)",
-            "rust/src/ffi.rs:14044 (C_UnwrapKey)",
-            "rust/src/ffi.rs:14090 (C_UnwrapKey)",
-            "rust/src/ffi.rs:15101 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9618 (C_EncryptInit)",
+            "rust/src/ffi.rs:9979 (C_Encrypt)",
+            "rust/src/ffi.rs:10470 (C_DecryptInit)",
+            "rust/src/ffi.rs:10725 (C_Decrypt)",
+            "rust/src/ffi.rs:13848 (C_WrapKey)",
+            "rust/src/ffi.rs:13956 (C_WrapKey)",
+            "rust/src/ffi.rs:14165 (C_UnwrapKey)",
+            "rust/src/ffi.rs:14211 (C_UnwrapKey)",
+            "rust/src/ffi.rs:15222 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7545 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7607 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001086",
@@ -5941,17 +5974,17 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9558 (C_EncryptInit)",
-            "rust/src/ffi.rs:9781 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9936 (C_Encrypt)",
-            "rust/src/ffi.rs:10384 (C_DecryptInit)",
-            "rust/src/ffi.rs:10655 (C_Decrypt)",
-            "rust/src/ffi.rs:15106 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9631 (C_EncryptInit)",
+            "rust/src/ffi.rs:9854 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10013 (C_Encrypt)",
+            "rust/src/ffi.rs:10483 (C_DecryptInit)",
+            "rust/src/ffi.rs:10758 (C_Decrypt)",
+            "rust/src/ffi.rs:15227 (build_multipart_cipher)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7545 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:17323 (aes_ctr_encrypt) [reference]",
-            "rust/src/ffi.rs:17359 (aes_ctr_decrypt) [reference]"
+            "rust/src/ffi.rs:7607 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:17458 (aes_ctr_encrypt) [reference]",
+            "rust/src/ffi.rs:17494 (aes_ctr_decrypt) [reference]"
           ]
         },
         {
@@ -5973,17 +6006,17 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9443 (C_EncryptInit)",
-            "rust/src/ffi.rs:9781 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9877 (C_Encrypt)",
-            "rust/src/ffi.rs:10269 (C_DecryptInit)",
-            "rust/src/ffi.rs:10597 (C_Decrypt)",
-            "rust/src/ffi.rs:14432 (C_WrapKeyAuthenticated)",
-            "rust/src/ffi.rs:14591 (C_UnwrapKeyAuthenticated)",
-            "rust/src/ffi.rs:15141 (build_multipart_cipher)",
-            "rust/src/ffi.rs:16575 (msg_encrypt_init_internal)"
+            "rust/src/ffi.rs:9516 (C_EncryptInit)",
+            "rust/src/ffi.rs:9854 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:9954 (C_Encrypt)",
+            "rust/src/ffi.rs:10368 (C_DecryptInit)",
+            "rust/src/ffi.rs:10700 (C_Decrypt)",
+            "rust/src/ffi.rs:14553 (C_WrapKeyAuthenticated)",
+            "rust/src/ffi.rs:14712 (C_UnwrapKeyAuthenticated)",
+            "rust/src/ffi.rs:15262 (build_multipart_cipher)",
+            "rust/src/ffi.rs:16710 (msg_encrypt_init_internal)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7545 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7607 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001088",
@@ -6000,13 +6033,13 @@
             "build_multipart_cipher"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9496 (C_EncryptInit)",
-            "rust/src/ffi.rs:10004 (C_Encrypt)",
-            "rust/src/ffi.rs:10322 (C_DecryptInit)",
-            "rust/src/ffi.rs:10723 (C_Decrypt)",
-            "rust/src/ffi.rs:15151 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9569 (C_EncryptInit)",
+            "rust/src/ffi.rs:10081 (C_Encrypt)",
+            "rust/src/ffi.rs:10421 (C_DecryptInit)",
+            "rust/src/ffi.rs:10826 (C_Decrypt)",
+            "rust/src/ffi.rs:15272 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7546 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7608 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000108a",
@@ -6017,19 +6050,19 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len", "sign_hmac"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8355 (C_Sign_impl)",
-            "rust/src/ffi.rs:8610 (C_Verify_impl)",
-            "rust/src/ffi.rs:8714 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2009 (sign_hmac)",
-            "rust/src/crypto/handlers.rs:3066 (get_sig_len)"
+            "rust/src/ffi.rs:8417 (C_Sign_impl)",
+            "rust/src/ffi.rs:8672 (C_Verify_impl)",
+            "rust/src/ffi.rs:8776 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2017 (sign_hmac)",
+            "rust/src/crypto/handlers.rs:3074 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7547 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:11502 (sp800_108_prf_output_len) [match-arm: prf_type]",
-            "rust/src/ffi.rs:11958 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12004 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:12058 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
-            "rust/src/ffi.rs:14889 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7609 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:11605 (sp800_108_prf_output_len) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12061 (sp800_108_double_pipeline_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12107 (sp800_108_counter_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:12161 (sp800_108_feedback_kbkdf) [match-arm: prf_type]",
+            "rust/src/ffi.rs:15010 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -6041,14 +6074,14 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "parse_sign_mech_params"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8024 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8141 (C_Sign_impl)",
-            "rust/src/ffi.rs:8384 (C_Sign_impl)",
-            "rust/src/ffi.rs:8765 (C_Verify_impl)"
+            "rust/src/ffi.rs:8086 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8203 (C_Sign_impl)",
+            "rust/src/ffi.rs:8446 (C_Sign_impl)",
+            "rust/src/ffi.rs:8827 (C_Verify_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7547 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14905 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7609 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15026 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -6060,11 +6093,11 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:12379 (C_DeriveKey)",
-            "rust/src/ffi.rs:12386 (C_DeriveKey)",
-            "rust/src/ffi.rs:12433 (C_DeriveKey)"
+            "rust/src/ffi.rs:12500 (C_DeriveKey)",
+            "rust/src/ffi.rs:12507 (C_DeriveKey)",
+            "rust/src/ffi.rs:12554 (C_DeriveKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7548 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7610 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001105",
@@ -6074,8 +6107,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12379 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7548 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12500 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7610 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00001225",
@@ -6086,10 +6119,10 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:4517 (C_GenerateKey_impl)",
-            "rust/src/ffi.rs:4529 (C_GenerateKey_impl)"
+            "rust/src/ffi.rs:4579 (C_GenerateKey_impl)",
+            "rust/src/ffi.rs:4591 (C_GenerateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:4554 (C_GenerateKey_impl) [reference]"]
+          "otherSites": ["rust/src/ffi.rs:4616 (C_GenerateKey_impl) [reference]"]
         },
         {
           "typeHex": "0x00001226",
@@ -6100,12 +6133,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Decrypt", "C_DecryptInit", "C_Encrypt", "C_EncryptInit"],
           "dispatchSites": [
-            "rust/src/ffi.rs:9636 (C_EncryptInit)",
-            "rust/src/ffi.rs:10160 (C_Encrypt)",
-            "rust/src/ffi.rs:10461 (C_DecryptInit)",
-            "rust/src/ffi.rs:10915 (C_Decrypt)"
+            "rust/src/ffi.rs:9709 (C_EncryptInit)",
+            "rust/src/ffi.rs:10237 (C_Encrypt)",
+            "rust/src/ffi.rs:10560 (C_DecryptInit)",
+            "rust/src/ffi.rs:11018 (C_Decrypt)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7554 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7616 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000140b",
@@ -6116,12 +6149,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2469 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3370 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2515 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3416 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3417 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3433 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3463 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3479 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6140,14 +6173,14 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9573 (C_EncryptInit)",
-            "rust/src/ffi.rs:9781 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9952 (C_Encrypt)",
-            "rust/src/ffi.rs:10399 (C_DecryptInit)",
-            "rust/src/ffi.rs:10671 (C_Decrypt)",
-            "rust/src/ffi.rs:15113 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9646 (C_EncryptInit)",
+            "rust/src/ffi.rs:9854 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10029 (C_Encrypt)",
+            "rust/src/ffi.rs:10498 (C_DecryptInit)",
+            "rust/src/ffi.rs:10774 (C_Decrypt)",
+            "rust/src/ffi.rs:15234 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7546 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7608 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00002106",
@@ -6165,14 +6198,14 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9573 (C_EncryptInit)",
-            "rust/src/ffi.rs:9782 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9978 (C_Encrypt)",
-            "rust/src/ffi.rs:10399 (C_DecryptInit)",
-            "rust/src/ffi.rs:10697 (C_Decrypt)",
-            "rust/src/ffi.rs:15127 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9646 (C_EncryptInit)",
+            "rust/src/ffi.rs:9855 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10055 (C_Encrypt)",
+            "rust/src/ffi.rs:10498 (C_DecryptInit)",
+            "rust/src/ffi.rs:10800 (C_Decrypt)",
+            "rust/src/ffi.rs:15248 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7546 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7608 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00002107",
@@ -6190,14 +6223,14 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9573 (C_EncryptInit)",
-            "rust/src/ffi.rs:9782 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9965 (C_Encrypt)",
-            "rust/src/ffi.rs:10399 (C_DecryptInit)",
-            "rust/src/ffi.rs:10684 (C_Decrypt)",
-            "rust/src/ffi.rs:15120 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9646 (C_EncryptInit)",
+            "rust/src/ffi.rs:9855 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10042 (C_Encrypt)",
+            "rust/src/ffi.rs:10498 (C_DecryptInit)",
+            "rust/src/ffi.rs:10787 (C_Decrypt)",
+            "rust/src/ffi.rs:15241 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7546 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7608 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00002108",
@@ -6215,14 +6248,14 @@
             "uses_cached_aes_key"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:9573 (C_EncryptInit)",
-            "rust/src/ffi.rs:9782 (uses_cached_aes_key)",
-            "rust/src/ffi.rs:9991 (C_Encrypt)",
-            "rust/src/ffi.rs:10399 (C_DecryptInit)",
-            "rust/src/ffi.rs:10710 (C_Decrypt)",
-            "rust/src/ffi.rs:15134 (build_multipart_cipher)"
+            "rust/src/ffi.rs:9646 (C_EncryptInit)",
+            "rust/src/ffi.rs:9855 (uses_cached_aes_key)",
+            "rust/src/ffi.rs:10068 (C_Encrypt)",
+            "rust/src/ffi.rs:10498 (C_DecryptInit)",
+            "rust/src/ffi.rs:10813 (C_Decrypt)",
+            "rust/src/ffi.rs:15255 (build_multipart_cipher)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7546 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7608 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00002109",
@@ -6233,10 +6266,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_UnwrapKey", "C_WrapKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:13716 (C_WrapKey)",
-            "rust/src/ffi.rs:14040 (C_UnwrapKey)"
+            "rust/src/ffi.rs:13837 (C_WrapKey)",
+            "rust/src/ffi.rs:14161 (C_UnwrapKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7547 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7609 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000210a",
@@ -6247,10 +6280,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_UnwrapKey", "C_WrapKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:13715 (C_WrapKey)",
-            "rust/src/ffi.rs:14039 (C_UnwrapKey)"
+            "rust/src/ffi.rs:13836 (C_WrapKey)",
+            "rust/src/ffi.rs:14160 (C_UnwrapKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7547 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7609 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000210b",
@@ -6261,10 +6294,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_UnwrapKey", "C_WrapKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:13715 (C_WrapKey)",
-            "rust/src/ffi.rs:14039 (C_UnwrapKey)"
+            "rust/src/ffi.rs:13836 (C_WrapKey)",
+            "rust/src/ffi.rs:14160 (C_UnwrapKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7548 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7610 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00004021",
@@ -6275,12 +6308,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_Decrypt", "C_DecryptInit", "C_Encrypt", "C_EncryptInit"],
           "dispatchSites": [
-            "rust/src/ffi.rs:9599 (C_EncryptInit)",
-            "rust/src/ffi.rs:10142 (C_Encrypt)",
-            "rust/src/ffi.rs:10426 (C_DecryptInit)",
-            "rust/src/ffi.rs:10902 (C_Decrypt)"
+            "rust/src/ffi.rs:9672 (C_EncryptInit)",
+            "rust/src/ffi.rs:10219 (C_Encrypt)",
+            "rust/src/ffi.rs:10525 (C_DecryptInit)",
+            "rust/src/ffi.rs:11005 (C_Decrypt)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7554 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7616 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000402a",
@@ -6290,8 +6323,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12843 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12964 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7621 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000402b",
@@ -6302,10 +6335,10 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:12843 (C_DeriveKey)",
-            "rust/src/ffi.rs:13141 (C_DeriveKey)"
+            "rust/src/ffi.rs:12964 (C_DeriveKey)",
+            "rust/src/ffi.rs:13262 (C_DeriveKey)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7559 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7621 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00004032",
@@ -6316,12 +6349,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2484 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3860 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2530 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:3906 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:3908 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:3922 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:3954 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:3968 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6333,11 +6366,11 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8156 (C_Sign_impl)",
-            "rust/src/ffi.rs:8630 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:3055 (get_sig_len)"
+            "rust/src/ffi.rs:8218 (C_Sign_impl)",
+            "rust/src/ffi.rs:8692 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:3063 (get_sig_len)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7524 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7586 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00004034",
@@ -6348,12 +6381,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2485 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:3970 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2531 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:4016 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:4036 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:4068 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:4082 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:4114 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6365,12 +6398,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2486 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:4111 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2532 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:4157 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:4141 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:4172 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:4187 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:4218 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6382,13 +6415,13 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8189 (C_Sign_impl)",
-            "rust/src/ffi.rs:8203 (C_Sign_impl)",
-            "rust/src/ffi.rs:8630 (C_Verify_impl)",
-            "rust/src/ffi.rs:8639 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2976 (get_sig_len)"
+            "rust/src/ffi.rs:8251 (C_Sign_impl)",
+            "rust/src/ffi.rs:8265 (C_Sign_impl)",
+            "rust/src/ffi.rs:8692 (C_Verify_impl)",
+            "rust/src/ffi.rs:8701 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2984 (get_sig_len)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7525 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7587 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x00004037",
@@ -6399,13 +6432,13 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_Verify_impl", "get_sig_len"],
           "dispatchSites": [
-            "rust/src/ffi.rs:8189 (C_Sign_impl)",
-            "rust/src/ffi.rs:8255 (C_Sign_impl)",
-            "rust/src/ffi.rs:8630 (C_Verify_impl)",
-            "rust/src/ffi.rs:8646 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:3024 (get_sig_len)"
+            "rust/src/ffi.rs:8251 (C_Sign_impl)",
+            "rust/src/ffi.rs:8317 (C_Sign_impl)",
+            "rust/src/ffi.rs:8692 (C_Verify_impl)",
+            "rust/src/ffi.rs:8708 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:3032 (get_sig_len)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7526 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7588 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x0000403b",
@@ -6415,7 +6448,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11024 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11127 (C_DigestInit)"],
           "otherSites": []
         },
         {
@@ -6432,14 +6465,14 @@
             "takes_sign_additional_ctx"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7828 (takes_sign_additional_ctx)",
-            "rust/src/ffi.rs:8331 (C_Sign_impl)",
-            "rust/src/ffi.rs:8698 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2924 (get_sig_len)"
+            "rust/src/ffi.rs:7890 (takes_sign_additional_ctx)",
+            "rust/src/ffi.rs:8393 (C_Sign_impl)",
+            "rust/src/ffi.rs:8760 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2932 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7516 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14907 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7578 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15028 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -6451,12 +6484,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2487 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:4217 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2533 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:4263 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:4248 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:4260 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:4294 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:4306 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6468,14 +6501,14 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DecapsulateKey_impl", "C_EncapsulateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:5046 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5049 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5067 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5601 (C_DecapsulateKey_impl)",
-            "rust/src/ffi.rs:5604 (C_DecapsulateKey_impl)",
-            "rust/src/ffi.rs:5622 (C_DecapsulateKey_impl)"
+            "rust/src/ffi.rs:5108 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5111 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5129 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5663 (C_DecapsulateKey_impl)",
+            "rust/src/ffi.rs:5666 (C_DecapsulateKey_impl)",
+            "rust/src/ffi.rs:5684 (C_DecapsulateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7521 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7583 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x80000003",
@@ -6486,12 +6519,12 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2488 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:4309 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2534 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:4355 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:4343 (C_GenerateKeyPair_impl) [reference]",
-            "rust/src/ffi.rs:4359 (C_GenerateKeyPair_impl) [reference]"
+            "rust/src/ffi.rs:4389 (C_GenerateKeyPair_impl) [reference]",
+            "rust/src/ffi.rs:4405 (C_GenerateKeyPair_impl) [reference]"
           ]
         },
         {
@@ -6503,10 +6536,10 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DecapsulateKey_impl", "C_EncapsulateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:5047 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5602 (C_DecapsulateKey_impl)"
+            "rust/src/ffi.rs:5109 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5664 (C_DecapsulateKey_impl)"
           ],
-          "otherSites": ["rust/src/ffi.rs:7522 (mech_key_types) [match-arm: base]"]
+          "otherSites": ["rust/src/ffi.rs:7584 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x80000010",
@@ -6516,7 +6549,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DigestInit"],
-          "dispatchSites": ["rust/src/ffi.rs:11022 (C_DigestInit)"],
+          "dispatchSites": ["rust/src/ffi.rs:11125 (C_DigestInit)"],
           "otherSites": []
         },
         {
@@ -6527,8 +6560,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12543 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7514 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12664 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7576 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x80000013",
@@ -6539,8 +6572,8 @@
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_GenerateKeyPair_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:2489 (C_GenerateKeyPair_impl)",
-            "rust/src/ffi.rs:2510 (C_GenerateKeyPair_impl)"
+            "rust/src/ffi.rs:2535 (C_GenerateKeyPair_impl)",
+            "rust/src/ffi.rs:2556 (C_GenerateKeyPair_impl)"
           ],
           "otherSites": []
         },
@@ -6553,8 +6586,8 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DecapsulateKey_impl", "C_EncapsulateKey_impl"],
           "dispatchSites": [
-            "rust/src/ffi.rs:4945 (C_EncapsulateKey_impl)",
-            "rust/src/ffi.rs:5529 (C_DecapsulateKey_impl)"
+            "rust/src/ffi.rs:5007 (C_EncapsulateKey_impl)",
+            "rust/src/ffi.rs:5591 (C_DecapsulateKey_impl)"
           ],
           "otherSites": []
         },
@@ -6567,13 +6600,13 @@
           "dispatchKinds": ["comparison", "match-arm"],
           "dispatchFunctions": ["C_Sign_impl", "C_VerifyInit_impl", "parse_sign_mech_params"],
           "dispatchSites": [
-            "rust/src/ffi.rs:7941 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8446 (C_Sign_impl)",
-            "rust/src/ffi.rs:8506 (C_VerifyInit_impl)"
+            "rust/src/ffi.rs:8003 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8508 (C_Sign_impl)",
+            "rust/src/ffi.rs:8568 (C_VerifyInit_impl)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7507 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:8871 (C_MessageSignInit) [reference]"
+            "rust/src/ffi.rs:7569 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:8933 (C_MessageSignInit) [reference]"
           ]
         },
         {
@@ -6592,17 +6625,17 @@
             "sign_kmac_ext"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7998 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8099 (kmac_requested_len)",
-            "rust/src/ffi.rs:8371 (C_Sign_impl)",
-            "rust/src/ffi.rs:8611 (C_Verify_impl)",
-            "rust/src/ffi.rs:8742 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2113 (sign_kmac_ext)",
-            "rust/src/crypto/handlers.rs:3075 (get_sig_len)"
+            "rust/src/ffi.rs:8060 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8161 (kmac_requested_len)",
+            "rust/src/ffi.rs:8433 (C_Sign_impl)",
+            "rust/src/ffi.rs:8673 (C_Verify_impl)",
+            "rust/src/ffi.rs:8804 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2121 (sign_kmac_ext)",
+            "rust/src/crypto/handlers.rs:3083 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7543 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14890 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7605 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15011 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -6621,17 +6654,17 @@
             "sign_kmac_ext"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7998 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8099 (kmac_requested_len)",
-            "rust/src/ffi.rs:8371 (C_Sign_impl)",
-            "rust/src/ffi.rs:8612 (C_Verify_impl)",
-            "rust/src/ffi.rs:8742 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:2120 (sign_kmac_ext)",
-            "rust/src/crypto/handlers.rs:3076 (get_sig_len)"
+            "rust/src/ffi.rs:8060 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8161 (kmac_requested_len)",
+            "rust/src/ffi.rs:8433 (C_Sign_impl)",
+            "rust/src/ffi.rs:8674 (C_Verify_impl)",
+            "rust/src/ffi.rs:8804 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:2128 (sign_kmac_ext)",
+            "rust/src/crypto/handlers.rs:3084 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7543 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:14891 (sign_mech_supports_multipart) [reference]"
+            "rust/src/ffi.rs:7605 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:15012 (sign_mech_supports_multipart) [reference]"
           ]
         },
         {
@@ -6648,17 +6681,17 @@
             "parse_sign_mech_params"
           ],
           "dispatchSites": [
-            "rust/src/ffi.rs:7902 (parse_sign_mech_params)",
-            "rust/src/ffi.rs:8467 (C_Sign_impl)",
-            "rust/src/ffi.rs:8586 (C_Verify_impl)",
-            "rust/src/ffi.rs:8850 (C_Verify_impl)",
-            "rust/src/crypto/handlers.rs:3113 (get_sig_len)"
+            "rust/src/ffi.rs:7964 (parse_sign_mech_params)",
+            "rust/src/ffi.rs:8529 (C_Sign_impl)",
+            "rust/src/ffi.rs:8648 (C_Verify_impl)",
+            "rust/src/ffi.rs:8912 (C_Verify_impl)",
+            "rust/src/crypto/handlers.rs:3121 (get_sig_len)"
           ],
           "otherSites": [
-            "rust/src/ffi.rs:7509 (mech_key_types) [match-arm: base]",
-            "rust/src/ffi.rs:7738 (C_SignInit_impl) [reference]",
-            "rust/src/ffi.rs:8524 (C_VerifyInit_impl) [reference]",
-            "rust/src/ffi.rs:9168 (C_VerifySignatureInit) [reference]"
+            "rust/src/ffi.rs:7571 (mech_key_types) [match-arm: base]",
+            "rust/src/ffi.rs:7800 (C_SignInit_impl) [reference]",
+            "rust/src/ffi.rs:8586 (C_VerifyInit_impl) [reference]",
+            "rust/src/ffi.rs:9230 (C_VerifySignatureInit) [reference]"
           ]
         },
         {
@@ -6669,8 +6702,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12544 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7514 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12665 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7576 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x80001059",
@@ -6680,8 +6713,8 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["match-arm"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12544 (C_DeriveKey)"],
-          "otherSites": ["rust/src/ffi.rs:7514 (mech_key_types) [match-arm: base]"]
+          "dispatchSites": ["rust/src/ffi.rs:12665 (C_DeriveKey)"],
+          "otherSites": ["rust/src/ffi.rs:7576 (mech_key_types) [match-arm: base]"]
         },
         {
           "typeHex": "0x8000105b",
@@ -6692,8 +6725,8 @@
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DeriveKey"],
           "dispatchSites": [
-            "rust/src/ffi.rs:12123 (C_DeriveKey)",
-            "rust/src/ffi.rs:12147 (C_DeriveKey)"
+            "rust/src/ffi.rs:12244 (C_DeriveKey)",
+            "rust/src/ffi.rs:12268 (C_DeriveKey)"
           ],
           "otherSites": []
         },
@@ -6705,7 +6738,7 @@
           "dispatchOnlyUnderCondition": false,
           "dispatchKinds": ["comparison"],
           "dispatchFunctions": ["C_DeriveKey"],
-          "dispatchSites": ["rust/src/ffi.rs:12123 (C_DeriveKey)"],
+          "dispatchSites": ["rust/src/ffi.rs:12244 (C_DeriveKey)"],
           "otherSites": []
         }
       ]

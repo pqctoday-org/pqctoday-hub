@@ -878,7 +878,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
-            to="/algorithms"
+            to="/algorithms?tab=detailed&q=hybrid"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Cpu size={18} className="text-primary shrink-0" />
@@ -902,7 +902,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
           </Link>
           <Link
-            to="/library"
+            to="/library?q=composite"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Library size={18} className="text-primary shrink-0" />

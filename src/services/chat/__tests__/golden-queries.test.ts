@@ -652,7 +652,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     // 2026-08-17: id gained a hyphen. MODULE_DIR_TO_ID used to be a
     // hand-maintained 55-entry literal; VerificationClosure wasn't in it, so
     // this chunk's id fell back to moduleDir.name.toLowerCase() (no hyphen).
-    // generate-rag-corpus.ts's feat(learn) fix (same commit that added the
+    // the corpus generator's feat(learn) fix (same commit that added the
     // 2 missing module summaries) now hydrates the map from each module's
     // own manifest before processors run, so this id resolves to the
     // module's real declared id, 'verification-closure' — matching

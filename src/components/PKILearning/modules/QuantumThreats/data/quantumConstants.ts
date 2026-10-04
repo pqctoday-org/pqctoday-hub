@@ -391,37 +391,37 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-07-30',
   },
   {
-    source: 'NSA CNSA 2.0 (2022)',
+    source: 'NSA CNSA 2.0 (2022; FAQ version 2.1, December 2024)',
     kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2033,
     confidence: 'Mandate',
     notes:
-      'Migration MANDATE dates (not a CRQC-arrival prediction): support-and-prefer from 2025 (sw/fw signing) and 2026 (networking); exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS). NSM-10 targets all NSS quantum-resistant by 2035. New NSS acquisitions must be CNSA 2.0-compliant from 2027-01-01.',
-    url: 'https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF',
-    lastReviewed: '2026-07-30',
+      "Migration MANDATE dates (not a CRQC-arrival prediction). NSA's September 2022 announcement (version 1.0): support and prefer CNSA 2.0 from 2025 (software and firmware signing) and 2026 (networking); exclusive use by 2030 (software and firmware signing, traditional networking) and by 2033 (web browsers and servers, cloud services, operating systems). NSA's December 2024 FAQ (version 2.1, the newer document) updates this: by 31 December 2030 all equipment and services that cannot support CNSA 2.0 must be phased out, and by 31 December 2031 CNSA 2.0 algorithms are mandated for use, in both cases unless otherwise noted. The FAQ also states that all new acquisitions for national security systems are to be CNSA 2.0-compliant from 1 January 2027 (CNSSP 15). Both documents stand; where their dates differ, the December 2024 FAQ is the newer. NSM-10 targets all national security systems quantum-resistant by 2035.",
+    url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF',
+    lastReviewed: '2026-10-03',
   },
   {
-    source: 'ANSSI France (2022, upd. 2023)',
+    source: 'ANSSI France (2022 paper; current FAQ)',
     kind: 'migration-deadline',
     yearLow: 2030,
-    yearHigh: 2035,
-    confidence: 'Migration milestone, not a CRQC forecast',
+    yearHigh: 2030,
+    confidence: 'Purchasing recommendation and milestones, not a CRQC forecast',
     notes:
-      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems. ANSSI is targeting 2027 for PQC obligations to begin applying to security qualifications/certifications.',
-    url: 'https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition',
-    lastReviewed: '2026-07-30',
+      "ANSSI gives no CRQC arrival date. Its current FAQ on post-quantum cryptography states: « L'ANSSI indique qu'il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030 » (it will not be reasonable to buy products that do not include post-quantum cryptography after 2030). ANSSI aims to introduce post-quantum obligations for product qualification from 2027, and its post-quantum recommendations, including hybridisation, are not a regulatory obligation today. It strongly insists on hybrid protection wherever post-quantum protection is needed. The FAQ updates ANSSI's 2022 position paper (updated 2023), which still stands: a three-phase roadmap in which standalone post-quantum cryptography becomes an option \"probably not earlier than 2030\". FAQ read 3 October 2026; it refers to events of early October 2025.",
+    url: 'https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/',
+    lastReviewed: '2026-10-03',
   },
   {
-    source: 'BSI Germany (2024)',
+    source: 'BSI Germany (TR-02102-1, 2026-01)',
     kind: 'planning-guidance',
     yearLow: 2030,
-    yearHigh: 2040,
-    confidence: 'Recommend migration now',
+    yearHigh: 2035,
+    confidence: 'Migration recommendations, not a forecast',
     notes:
-      'Recommends hybrid crypto today. Assumes CRQC within planning horizon. TR-02102-1 (2026-01 edition): very-high-protection systems migrate by end of 2030; classical-only key agreement ends 2031.',
-    url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2',
-    lastReviewed: '2026-07-30',
+      'Source: BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026). Classical key agreement alone is recommended only until the end of 2031. For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030. Classical signature mechanisms are recommended only until the end of 2035. BSI recommends using quantum-safe mechanisms in hybrid form, combined with a classical method. These are BSI migration recommendations, not a prediction of when a quantum computer will exist. Separately, BSI\'s 2021 brochure "Quantum-safe cryptography – fundamentals, current developments and recommendations" says BSI works under the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s, and describes this as a timeline for risk assessment, not a forecast of availability.',
+    url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile',
+    lastReviewed: '2026-10-03',
   },
   {
     source: 'Google Quantum AI & Ethereum Foundation (2026)',
@@ -489,6 +489,11 @@ export function getCrqcMigrationDeadlines(): CRQCEstimate[] {
   return CRQC_ESTIMATES.filter(
     (e) => e.kind === 'migration-deadline' || e.kind === 'planning-guidance'
   )
+}
+
+/** "2030–2035", or just "2030" when the source gives a single year. */
+export function formatEstimateYears(e: Pick<CRQCEstimate, 'yearLow' | 'yearHigh'>): string {
+  return e.yearLow === e.yearHigh ? `${e.yearLow}` : `${e.yearLow}\u2013${e.yearHigh}`
 }
 
 /** Ranges this site derived from a source that makes no arrival claim. */

@@ -1,0 +1,5 @@
+src IssueSourceChallenge     CK_RV=0x00000000 out=    32 B    360.4 ms  kx=X25519MLKEM768
+dst BeginReceive             CK_RV=0x00000000 out= 26200 B    300.0 ms  kx=X25519MLKEM768
+src CreateReplicationPackage CK_RV=0x00000000 out= 32122 B     27.8 ms  kx=X25519MLKEM768
+dst ImportReplicationPackage CK_RV=0x00000000 out= 14866 B     26.4 ms  kx=X25519MLKEM768
+PASS host_verify::verify_receipt

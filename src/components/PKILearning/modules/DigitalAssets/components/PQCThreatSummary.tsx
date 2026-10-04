@@ -216,7 +216,7 @@ export const PQCThreatSummary: React.FC = () => {
       {/* Explore Further */}
       <div className="flex flex-wrap justify-center gap-3">
         <Link
-          to="/threats"
+          to="/threats?industry=Cryptocurrency%20%2F%20Blockchain"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 text-sm font-medium text-foreground transition-colors"
         >
           <ExternalLink size={16} />

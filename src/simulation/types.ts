@@ -10,7 +10,7 @@
  * reference page).
  *
  * Trees are date-stamped, self-contained snapshots under ./trees, emitted by
- * scripts/gen-sim-trees.mjs and loaded latest-date-wins by ./index.ts. They
+ * the sim-tree generator and loaded latest-date-wins by ./index.ts. They
  * evolve as hub coverage and/or the framework evolve — re-run the generator,
  * archive the older dated files.
  */

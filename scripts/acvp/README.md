@@ -116,5 +116,5 @@ Python 3.11+ and `cryptography` (for the AES and CMAC primitives in
 `crosscheck_aescbc_mct.py` and `crosscheck_kbkdf_segments.py`). Everything else is stdlib.
 Network access to `raw.githubusercontent.com` on the first run; `--offline` afterwards.
 
-These are not wired into `gate:data` — they reach the network and the ACVP-Server
+These are not wired into any gate — they reach the network and the ACVP-Server
 projections are large. Run them when the manifest's provenance records change.

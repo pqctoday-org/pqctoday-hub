@@ -20,6 +20,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { getCrqcForecast } from '../data/quantumConstants'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -277,7 +278,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             },
             {
               org: 'ANSSI France',
-              timeline: 'Mandate hybrid for government by 2025',
+              timeline:
+                'Recommends hybrid now; no regulatory obligation today; obligations for product qualification targeted from 2027',
               color: 'secondary',
             },
           ].map((entry) => (
@@ -346,6 +348,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             {crqc.planningYear - 25 - 5}.
           </p>
         </div>
+        <UnresolvedEstimatesNotice detail="oneFigure" className="mt-3" />
       </section>
 
       {/* HNFL Attack Model */}

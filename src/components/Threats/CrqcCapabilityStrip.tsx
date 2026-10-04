@@ -8,9 +8,11 @@ import {
   CURRENT_QUANTUM_COMPUTERS,
   getCrqcForecast,
   getCrqcMigrationDeadlines,
+  formatEstimateYears,
   getCrqcSiteDerivedScenarios,
   type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 /**
  * Consolidated CRQC-timeline / capability strip (PER-PAGE-CHANGES Threats #5).
@@ -123,6 +125,8 @@ export const CrqcCapabilityStrip: React.FC<{
         </Button>
       </div>
 
+      <UnresolvedEstimatesNotice detail="sourcesListed" className="mt-3" />
+
       {/* Headline strip — always visible */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
         <div className="rounded-lg border border-border bg-muted/30 p-3">
@@ -141,8 +145,8 @@ export const CrqcCapabilityStrip: React.FC<{
           <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
             {deadlines.map((e) => (
               <li key={e.source}>
-                <span className="font-semibold text-foreground">{e.source}</span>: {e.yearLow}–
-                {e.yearHigh}
+                <span className="font-semibold text-foreground">{e.source}</span>:{' '}
+                {formatEstimateYears(e)}
               </li>
             ))}
           </ul>
@@ -250,7 +254,7 @@ function EstimateList({ title, items }: { title: string; items: CRQCEstimate[] }
             className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs"
           >
             <span className="font-mono font-semibold text-warning w-24 shrink-0">
-              {e.yearLow}–{e.yearHigh}
+              {formatEstimateYears(e)}
             </span>
             <a
               href={e.url}

@@ -890,7 +890,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </div>
           </Link>
           <Link
-            to="/compliance"
+            to="/compliance?framework=DORA"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
@@ -902,7 +902,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </div>
           </Link>
           <Link
-            to="/timeline"
+            to="/timeline?event=g7-g7-ceg-g7-financial-sector-critical-systems-pqc-transition"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <ArrowRightLeft size={18} className="text-primary shrink-0" aria-hidden="true" />

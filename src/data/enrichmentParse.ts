@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Pure enrichment-sidecar parsing and merging: no import.meta.glob, so build
-// scripts (scripts/generate-timeline-enrichments.ts) can import it under Node.
+// tooling (the timeline-enrichment generator) can import it under Node.
 // libraryEnrichmentData.ts re-exports everything here.
 export interface LibraryEnrichment {
   mainTopic: string
@@ -117,7 +117,7 @@ function parseRegionsBodies(val: string | undefined): LibraryEnrichment['regions
 export function parseEnrichmentMarkdown(raw: string): EnrichmentLookup {
   const lookup: EnrichmentLookup = {}
 
-  // Split by ## headings — each is one document (same approach as generate-rag-corpus.ts)
+  // Split by ## headings — each is one document (same approach as the corpus generator)
   const sections = raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))
 
   for (const section of sections) {

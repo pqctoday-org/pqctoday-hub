@@ -11,14 +11,14 @@
  *
  * Registering a NEW vector file (e.g. a dedicated ML-DSA sigVer file):
  *   1. Add the file under src/data/acvp/ — the gate fails until it is registered.
- *   2. `npx tsx scripts/audit-validation-manifest.ts --scaffold src/data/acvp/<file>.json`
+ *   2. Generate a skeleton entry with the maintainers' vector-manifest tool
  *      prints a skeleton entry with the file's SHA-256, case containers and
  *      one case record per test case.
  *   3. Paste it into `files[]` and fill every TODO: evidence class, source
  *      (for NIST ACVP-Server material: commit, upstream path, retrieval date,
  *      upstream SHA-256), per-case operation/parameters/expectation, and a
  *      lineage record for any subset / rename / operation change.
- *   4. `npm run audit:validation-manifest` and `npm run gen:validation-counts`.
+ *   4. Run the vector-manifest check and regenerate the validation counts.
  * Changing a vector byte later requires updating `sha256` in the same reviewed
  * commit — that is the point: the gate makes the change visible.
  */

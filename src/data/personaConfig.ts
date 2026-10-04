@@ -341,7 +341,7 @@ export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
  *
  * `insteadPath` MUST be reachable by that same persona — an absence notice
  * that points at another closed door is worse than no notice. Enforced by
- * `scripts/audit-persona-lens.ts`.
+ * the persona-lens check.
  */
 export interface PersonaAbsence {
   /** One plain sentence: why this role isn't offered this route. */
@@ -1811,7 +1811,7 @@ export interface PersonaJourneyBoard {
    * does not go there was also a small, repeated dead end.
    *
    * Every href is registered and proof-gated in `role_board_ctas_*.csv` on the
-   * same terms as a CTA — see `scripts/audit-role-board-ctas.ts`.
+   * same terms as a CTA — see the role-board CTA check.
    */
   gridCards: [
     { title: string; body: string; href?: string },
@@ -2064,7 +2064,7 @@ export const ASSESS_QUICK_MINUTES = TRACK_INFO.quick.minutes
  * so a board claim like "22 sectors" can be tokenised against the same count
  * `getLandscapeIndustries()` returns everywhere else, rather than a literal
  * that silently goes stale when a sector is added or retired. Added
- * 2026-08-23 as the first fix driven by audit-role-board-literals.ts's
+ * 2026-08-23 as the first fix driven by the role-board literal check's
  * backfill run.
  *
  * Excludes `isCrossIndustry()` labels (2026-08-29): 'Cross-Industry' and its

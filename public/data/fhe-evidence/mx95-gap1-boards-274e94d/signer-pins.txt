@@ -1,0 +1,3 @@
+  mx95-board signer_spki sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315
+  mx95pro-board signer_spki sha256 02b379072d4a0e8884968944ec6da4a129ff6ea1f841dcae91546e15ea6480eb
+  mx95-board-restored signer_spki sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315

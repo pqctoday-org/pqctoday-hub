@@ -23,11 +23,7 @@ describe('chromiumLaunchArgs', () => {
 
 // Guard against a future script (or a refactor) dropping the block: each script
 // that launches Chromium against app pages must pass chromiumLaunchArgs().
-describe.each([
-  'scripts/prerender.ts',
-  'scripts/audit-role-board-content.ts',
-  'scripts/mobile-ux/dom-golden.ts',
-])('%s', (file) => {
+describe.each(['scripts/prerender.ts'])('%s', (file) => {
   const src = readFileSync(resolve(__dirname, '../..', file), 'utf8')
   it('launches Chromium with chromiumLaunchArgs()', () => {
     const launches = src.match(/chromium\.launch\([^)]*\)/g) ?? []

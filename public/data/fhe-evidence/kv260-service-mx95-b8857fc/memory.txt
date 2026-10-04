@@ -1,0 +1,3 @@
+MemoryCurrent=211636224
+MemoryPeak=293806080
+214916 672208

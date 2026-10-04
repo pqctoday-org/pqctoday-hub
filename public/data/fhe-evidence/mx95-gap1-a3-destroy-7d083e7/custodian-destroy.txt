@@ -1,0 +1,3 @@
+PQCTODAY EDUCATIONAL TEST ONLY — repl_edu_board destroy-lineage
+destroyed the key with this lineage on slot 0
+wall_s=1 rc=0

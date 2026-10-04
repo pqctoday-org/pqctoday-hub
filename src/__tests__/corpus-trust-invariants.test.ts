@@ -35,7 +35,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 
-import { corpusContentHash } from '../../scripts/lib/corpusContentHash'
+import { corpusContentHash } from '../utils/corpusContentHash'
 import { chunkToResource } from '@/services/search/chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { RAGChunk } from '@/types/ChatTypes'
@@ -134,7 +134,7 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
  */
 const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // After 2026-05-10 fixes:
-  //   - generate-rag-corpus.ts skips deprecated leaders (matches loader)
+  //   - the corpus generator skips deprecated leaders (matches loader)
   //   - trustScoreData.ts maps `${country} — ${title}`,
   //     `${country}:${body} — ${title}`, `United States` un-rename aliases
   //     for timeline; hyphenated variant alias for algorithms
@@ -175,34 +175,34 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     2026-06-18: bumped 0 → 6 — timeline audit deprecated 6 fabricated/inverted
   //     rows (EU inventory-mandate, EU 2027 migration, SG 2028, HK 2027/2030, BSI
   //     standalone-required) in timeline_06182026.csv. generate-rag-corpus skips
-  //     deprecated rows, so a local `npm run refresh-index` drops these chunks and
+  //     deprecated rows, so a local corpus refresh drops these chunks and
   //     drives this back to 0; the committed corpus lags per the data-PR convention.
   //     2026-06-19: bumped 6 → 7 — run-2 audit deprecated OpenSSL 3.6.1 row
   //     (CVE bugfix; no PQC content; PQC landed in 3.5). corpus lags until
-  //     refresh-index.
+  //     corpus refresh.
   //     2026-06-19: bumped 7 → 10 — run-4 audit deprecated CZ Key Establishment
   //     Migration, CZ Encryption Migration Complete (both unsourced inferences from
   //     NUKIB doc which has no migration dates), and HK HKMA Fintech Adoption Report
   //     (URL points to PQC-free speech; source confusion). corpus lags until
-  //     refresh-index.
+  //     corpus refresh.
   //     2026-06-19: also IBM Cloud HSM (Utimaco) row renamed to IBM Hyper Protect
   //     Crypto Services; stale corpus had the old "IBM Cloud HSM (Utimaco)" chunk.
-  //     2026-06-21: driven back to 0 on the integration branch — refresh-index
+  //     2026-06-21: driven back to 0 on the integration branch — corpus refresh
   //     regenerates the corpus, flushing all deprecated + renamed-row chunks.
   //     2026-06-30: bumped 0 → 1 — 06302026_r1 catalog audit added
   //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
-  //     will resolve to 0 on the next refresh-index run.
+  //     will resolve to 0 on the next corpus refresh run.
   //     2026-08-19: bumped 1 → 4 — vendor-remediation pass deprecated 3 migrate
   //     rows (software-id-quantique-cerberis-xgr-qkd: discontinued product,
   //     vendor-confirmed; software-utimaco-securityserver,
   //     software-utimaco-quantum-protect-suite: duplicates of
   //     utimaco-utrust-hsm, details folded into the survivor). Ran
-  //     refresh-index locally to confirm this drives back to 0 — it does, but
+  //     corpus refresh locally to confirm this drives back to 0 — it does, but
   //     the same run also regenerates ~900 orphaned source_passages entries
   //     (the documented, unrelated C4 PROV-chain gap this file's
   //     MAX_DOC_WITHOUT_PASSAGES comment already warns against triggering via
   //     an unrelated data change), so the refreshed corpus was not committed.
-  //     Will resolve to 0 on the next refresh-index run authorized on its own.
+  //     Will resolve to 0 on the next corpus refresh run authorized on its own.
   migrate: 4,
   timeline: 3,
   //     2026-09-13: bumped 1 → 3 — the data-maintenance/lineage-replacements
@@ -215,17 +215,17 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     (Kenya:ODPC — ODPC Guidance on Data Protection by Design) was not
   //     individually traced to a specific commit — not investigated further
   //     tonight, matching the 2026-08-19 entry below's same call: a real
-  //     refresh-index run resolves this but was not authorized/committed
+  //     corpus refresh run resolves this but was not authorized/committed
   //     this session. Will resolve to 1 (only the pre-existing FAA gap) on
-  //     the next real refresh-index commit.
+  //     the next real corpus refresh commit.
   //     2026-07-29: DRIVEN DOWN 3 → 1 (maintenance-flow remediation WP-0.1).
   //     The 07-24 entry below predicted this would "resolve to 1 on the next
-  //     real refresh-index commit". It did not, and could not: that backfill
+  //     real corpus refresh commit". It did not, and could not: that backfill
   //     filled Country/FlagCode/OrgName/OrgFullName on the two NUKIB rows but
   //     left StartYear/EndYear blank, and timelineData.ts drops a row on
   //     unparseable years (:227-229) exactly as firmly as on a blank Country
   //     (:225). The rows stayed invisible to trustScoreData.ts for five more
-  //     days, and nothing said so — because refresh-index itself had been
+  //     days, and nothing said so — because corpus refresh itself had been
   //     failing since, so the corpus these invariants test never changed.
   //     Now fixed for real in timeline_07292026.csv: the 2 NUKIB rows plus 3
   //     further Phase-2 intake stubs (BSI, NCSC, FAA) that had blank Country.
@@ -238,25 +238,25 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     2026-07-24: bumped 1 → 3 — 2 NUKIB (Czech Republic) Phase-2 intake
   //     rows landed with Country/OrgName blank (S5 of the E2E remediation
   //     plan only backfilled trusted_source_id, not the rest); the just-run
-  //     refresh-index corpus predates the same-day follow-up fix that
+  //     corpus refresh corpus predates the same-day follow-up fix that
   //     backfilled Country=Czech Republic/OrgName=NUKIB (evidenced by 3
   //     sibling rows in this exact file + the row's own Title, not a guess).
   //     Same precedent as the 2026-07-16 entry below — confirmed via direct
-  //     re-test that the CSV fix is real, but a second ~30-min refresh-index
+  //     re-test that the CSV fix is real, but a second ~30-min corpus refresh
   //     regen wasn't re-run just for these 2 rows. Resolves to 1 (only the
   //     pre-existing, unrelated Malaysia gap below) on the next real
-  //     refresh-index commit.
+  //     corpus refresh commit.
   //     2026-07-16: bumped 0 → 1 — timeline maintainer-process remediation
   //     (TIMELINE-PROCESS-REMEDIATION-PLAN-07162026.md Phase 1.2) linked the
   //     Indonesia BSSN row's trusted_source_id to a brand-new registry stub
   //     (id-bsn-bssn, trust_tier=1_Authoritative — a real, precedent-matched
   //     value, not a guess) that the COMMITTED corpus doesn't know about yet.
-  //     A local `npm run refresh-index` run confirmed this resolves to 0 once
+  //     A local corpus refresh run confirmed this resolves to 0 once
   //     the corpus is regenerated — but that same run also surfaced an
   //     unrelated, pre-existing ~717-chunk library source_passages gap (see
   //     MAX_DOC_WITHOUT_PASSAGES below) with no connection to this change, so
   //     the corpus refresh was deliberately NOT committed here to keep this
-  //     diff scoped to timeline. Resolves to 0 on the next real refresh-index
+  //     diff scoped to timeline. Resolves to 0 on the next real corpus refresh
   //     commit (whenever the library gap is separately investigated).
   //     2026-07-11: bumped 0 → 2 — the rag-index revision-chain repair correctly
   //     deprecated the two superseded PKCS#11 revisions (PKCS11-V3-OASIS = v3.1,
@@ -279,7 +279,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //         — see library-stub-completion-proposals-07292026.md). Each carries
   //         a corpus chunk from before deprecation; DS19/DS21 confirm all five
   //         rows carry proper deprecation/supersession metadata.
-  //     Resolves toward 0 on the next refresh-index run per the standing
+  //     Resolves toward 0 on the next corpus refresh run per the standing
   //     data-PR-lag convention documented throughout this file.
   library: 5,
   //     2026-07-08: bumped 0 → 2 — NGCC-BC and NGCC-CH (China's NGCC program
@@ -316,11 +316,11 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     more unresolved doc-enrichment chunk (AERO sector threat). Same gap.
   //     2026-06-30: bumped 120 → 121 — one additional AERO sector-threat
   //     enrichment chunk surfaced; same chunkToResource routing gap.
-  //     2026-07-07: bumped 121 → 124 — migrate-data-remediation refresh-index
+  //     2026-07-07: bumped 121 → 124 — migrate-data-remediation corpus refresh
   //     surfaced 3 more unresolved AERO sector-threat enrichment chunks (same
   //     chunkToResource routing gap; unrelated to the migrate/vendor catalog
   //     changes in this pass).
-  //     2026-07-10: bumped 124 → 127 — data-pipelines-remediation refresh-index
+  //     2026-07-10: bumped 124 → 127 — data-pipelines-remediation corpus refresh
   //     surfaced 3 more unresolved sector-threat enrichment chunks (incl. more
   //     AERO-* doc-enrichment ids). Same chunkToResource routing gap as every
   //     entry above; unrelated to this pass's threats/library/timeline content
@@ -335,13 +335,13 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     UNREADABLE rows per the standing proof-gate rule. Each carries a
   //     doc-enrichment chunk that is now unscored for the same deprecation
   //     reason as the PKCS#11 entry above. Expected, not a routing gap; drops
-  //     to 0 on the next refresh-index run per the data-PR-lag convention.
+  //     to 0 on the next corpus refresh run per the data-PR-lag convention.
   //   2026-08-09: 165 -> 150. Not a change aimed at this source — the library
   //   supersession aliasing added to trustScoreData.ts for governance-maturity
   //   resolves 15 doc-enrichment chunks too, since several enrichment refIds
   //   also name a superseded IETF draft. Tightened to the measured value so the
   //   ratchet keeps its teeth.
-  //   2026-08-11: 150 -> 151. One more, surfaced by the first refresh-index
+  //   2026-08-11: 150 -> 151. One more, surfaced by the first corpus refresh
   //   run in a while — the committed corpus was 605 records stale, so this
   //   refresh pulled in maturity/library data merged since the last one. Same
   //   deprecated-row class as the entries above, not a routing change.
@@ -352,7 +352,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   (a homepage/index page, not the claimed one) with no correct
   //   replacement obtainable — deprecated per the standing proof-gate rule
   //   rather than left mis-cited. (b) surfaced by the migrate-catalog
-  //   spotcheck run's refresh-index (batches 39-64 + product_brief_url/
+  //   spotcheck run's corpus refresh (batches 39-64 + product_brief_url/
   //   user_manual_url UI wiring) — the committed corpus was stale since
   //   2026-08-11, so this refresh separately caught up on AERO-* sector-
   //   threat enrichment chunks unrelated to the migrate/product-catalog
@@ -374,13 +374,13 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // draft-ietf-lamps-kyber-certificates — 3 titles overlap across both
   // buckets' "first 3", though the total counts (+2 here, +2 there) aren't
   // necessarily the identical 2 rows). Not traced further tonight; resolves
-  // on the next real refresh-index commit, same as above.
+  // on the next real corpus refresh commit, same as above.
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
   // 404 link) — same proof-gate deprecation pattern as the timeline/library
   // entries above. Deprecated rows aren't tier-scored, so they surface here.
-  // Expected; corpus lags until the next refresh-index run.
+  // Expected; corpus lags until the next corpus refresh run.
   threats: 38,
   // 2026-08-07: governance-maturity — 168 chunks across 29 distinct ref_ids,
   // ALL because processGovernanceMaturity() switched from findLatestCSV to a
@@ -393,7 +393,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // so a snapshot from an earlier run date cites a now-superseded version.
   // Verified: every failing chunk resolves to a real (not absent) library row
   // with status=deprecated. Not a routing gap and not corpus lag — this is the
-  // number after a full local `npm run refresh-index`. Drive down by re-citing
+  // number after a full local corpus refresh. Drive down by re-citing
   // each requirement against its document's current `superseded_by` successor,
   // or by teaching chunkToResource to follow that single hop for this source.
   //
@@ -436,7 +436,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   should cover it, but does not — for a reason not yet diagnosed, so it
   //   still reads as the same unscored-gap category as an empty-
   //   superseded_by row. findAllMaturityCSVs() merges current + archive
-  //   requirement CSVs, and this is the first fresh refresh-index run
+  //   requirement CSVs, and this is the first fresh corpus refresh run
   //   against this data in a while, so it pulled in more archived rows
   //   citing the same broken alias. Confirmed NOT caused by any of the
   //   three branches' own changes (crypto-blockchain content, inline-JSX
@@ -456,7 +456,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   superseded_by resolution would retire most of this pin rather than
   //   grow it.
   //   2026-08-31: 95 -> 96 (+1) on the integration/all-changes-20260830 branch
-  //   (4 parallel workstreams' worth of merged commits + a first refresh-index
+  //   (4 parallel workstreams' worth of merged commits + a first corpus refresh
   //   run in a while). Same already-tracked "IETF RFC 9763" one-hop-alias case
   //   as every entry above — the extra unscored chunk is gov-maturity-IETF RFC
   //   9763-L2-lifecycle-3, one more archived requirement row citing RFC-9763
@@ -477,34 +477,34 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               source_passages — enrich via the standard library pipeline
  *               to drive this back down).
  *   2026-06-19: 672 (bumped after corpus refresh brought in ~224 new library
- *               entries added since the previous refresh-index — KpqC,
+ *               entries added since the previous corpus refresh — KpqC,
  *               NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025, liboqs-v0.15.0,
  *               and many more unenriched docs. Enrich via the standard library
  *               pipeline to drive back down).
- *   2026-06-23: 676 (bumped +4 after the integration merge's refresh-index —
+ *   2026-06-23: 676 (bumped +4 after the integration merge's corpus refresh —
  *               new EO-2026-06-22-Securing-the-Nation row plus Phase-D library
  *               catalog changes added 4 unenriched docs. Enrich to drive down).
- *   2026-07-02: 678 (bumped +2 after the accuracy re-audit refresh-index —
+ *   2026-07-02: 678 (bumped +2 after the accuracy re-audit corpus refresh —
  *               library_r4 + product-catalog data changes brought in 2 more
  *               unenriched reference docs. Enrich to drive down).
  *   2026-07-07: 686 (bumped +8 after the migrate-data-remediation
- *               refresh-index — the committed corpus had been stale since
+ *               corpus refresh — the committed corpus had been stale since
  *               the last refresh, silently hiding this drift; refreshing it
  *               surfaced pre-existing unenriched library docs unrelated to
  *               the migrate/vendor catalog changes in this pass. Enrich to
  *               drive down).
  *   2026-07-08: 687 (bumped +1 after the crypto-registry + SBOM module
- *               consolidation's refresh-index — 5 new library catalog rows
+ *               consolidation's corpus refresh — 5 new library catalog rows
  *               (CycloneDX Cryptography Registry, CycloneDX Spec Overview,
  *               NTIA SBOM Minimum Elements, OASIS CSAF/VEX, SPDX spec)
  *               landed without enrichment passages yet. Enrich to drive
  *               down).
  *   2026-07-10: 693 (bumped +6 after the data-pipelines-remediation
- *               refresh-index — library proof recovery filled 18 previously
+ *               corpus refresh — library proof recovery filled 18 previously
  *               missing/broken local_file rows and the trust-registry rebuild
  *               added source rows; several landed without enrichment
  *               passages yet. Enrich to drive down).
- *   2026-07-13: 695 (bumped +2 after a main-merge reconciliation refresh-index
+ *   2026-07-13: 695 (bumped +2 after a main-merge reconciliation corpus refresh
  *               — corrected library.local_file for 868 rows (removed a stale
  *               public/ prefix left over from the local-evidence-cache
  *               relocation) and added 3 new library rows (EO-14413,
@@ -515,7 +515,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               liboqs-v0.15.0, TCG-TPM-V185-Part0 — never actually enriched
  *               since). Enrich to drive down).
  *   2026-07-16: 717 (bumped +22 after the migrate-process-remediation
- *               (4th pass) refresh-index — committed corpus was stale again
+ *               (4th pass) corpus refresh — committed corpus was stale again
  *               since the last refresh; the same 2026-07-13 gap
  *               (KpqC, NIST-FIPS140-3-IG-PQC, 3GPP-PQC-Study-2025,
  *               liboqs-v0.15.0, TCG-TPM-V185-Part0) re-surfaced, unrelated to
@@ -540,7 +540,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *   2026-07-29: 186 (DRIVEN DOWN from 752 — maintenance-flow remediation
  *               WP-0.1. Enrichment was never the cause of ANY bump above.
  *
- *               generate-rag-corpus.ts reads passages from
+ *               the corpus generator reads passages from
  *               `scripts/source-passages-*.json`, which is GITIGNORED
  *               (.gitignore `scripts/*`) and therefore exists ONLY in the main
  *               hub checkout. loadSourcePassages() returned an empty Map
@@ -665,7 +665,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               raised to make a number go green — each of the seven is a deliberate,
  *               reviewed decision to hold a reference a reader can pursue themselves
  *               rather than pretend the document does not exist. Driving this DOWN
- *               requires manual acquisition, not another refresh-index run.
+ *               requires manual acquisition, not another corpus refresh run.
  *
  *               Do not bump this again without naming the specific rows and why
  *               extraction cannot serve them, as every entry above does.
@@ -782,7 +782,7 @@ describe('corpus trust invariants — PROV chain (C4)', () => {
         path.join(REPO_ROOT, 'src', 'data', file),
         path.join(REPO_ROOT, 'src', 'data', 'archive', file),
         // Module Q&A CSVs live in their own subdirectory and are referenced
-        // by the corpus generator from there (see scripts/generate-rag-corpus.ts).
+        // by the corpus generator from there.
         path.join(REPO_ROOT, 'src', 'data', 'module-qa', file),
       ]
       if (!candidates.some((p) => fs.existsSync(p))) missing.push(file)

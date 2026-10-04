@@ -3,7 +3,7 @@
   "$disclaimer": "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
-    "src/data/validation/mechanism-inventory.generated.json": "ed7772b673d1bb998fbcc3336d5e8e6e0bdb3498dadf5b966198a32abb074106",
+    "src/data/validation/mechanism-inventory.generated.json": "9f17d2fedfdbef8d1fc0b407dc93a28e29bd264a7331f7713f93df586724a215",
     "src/data/validation/capability-map.json": "5e728d04aabfa26aa9c135ca7d78a2716823b1f7f260c2663bb9d516a0416923",
     "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
@@ -60,7 +60,7 @@
       "label": "C++",
       "mechanismCount": 166,
       "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
-      "sourceCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
+      "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "artifacts": [
         {
           "path": "public/wasm/softhsm.wasm",
@@ -76,11 +76,11 @@
       "label": "Rust",
       "mechanismCount": 175,
       "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
-      "sourceCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
+      "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "artifacts": [
         {
           "path": "src/wasm/softhsmrustv3_bg.wasm",
-          "sha256": "a5d5a0363d38412282cd3be77a035a37bc559dba29682eda7ee921c23a9a31c3"
+          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25"
         },
         {
           "path": "src/wasm/softhsmrustv3_bg.js",
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub 1b061793e); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-03, hub 1b061793e); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub 1b061793e). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -114,7 +114,7 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "1b061793ea247d9098fc449125b4cfe175a7ed6e",
+      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
       "recordedAt": "2026-10-03",
       "results": 4992
     },
@@ -128,7 +128,7 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "1b061793ea247d9098fc449125b4cfe175a7ed6e",
+      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
       "recordedAt": "2026-10-03",
       "results": 96
     },
@@ -142,7 +142,7 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "1b061793ea247d9098fc449125b4cfe175a7ed6e",
+      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
       "recordedAt": "2026-10-03",
       "results": 13364
     }

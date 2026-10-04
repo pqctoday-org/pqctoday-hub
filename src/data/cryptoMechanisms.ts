@@ -83,7 +83,7 @@ export interface CryptoMechanismFamily {
  *     `lastUpdated`, and registered in `contentFreshness.ts` so the 90-day
  *     audit surfaces the pin when it ages.
  *
- * NOTE the ceiling on (3): `npm run audit:content-freshness` runs in CI with
+ * NOTE the ceiling on (3): the content-freshness check runs with
  * `continue-on-error: true`. It reports; it does not gate.
  */
 export const CYCLONEDX_REGISTRY = {
@@ -197,7 +197,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     // scheme (BLS12-381, min-pubkey-size variant) and the aggregation
     // primitive several other chains and DeFi threshold-signature schemes
     // build on. Not yet an ALGORITHM_REGISTRY member before this change —
-    // added alongside (scripts/generate-algorithm-properties.ts,
+    // added alongside (the algorithm-properties generator,
     // pqc_complete_algorithm_reference_08162026.csv).
     family: 'BLS',
     classical: true,
@@ -226,7 +226,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     classical: true,
     kinds: ['signature'],
     // sr25519 added to ALGORITHM_REGISTRY alongside this change
-    // (scripts/generate-algorithm-properties.ts,
+    // (the algorithm-properties generator,
     // pqc_complete_algorithm_reference_08162026.csv) — byte sizes verified
     // against w3f/schnorrkel's own PUBLIC_KEY_LENGTH/SIGNATURE_LENGTH
     // constants, not assumed.
@@ -281,7 +281,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     classical: true,
     kinds: ['signature'],
     // Added to ALGORITHM_REGISTRY alongside this change
-    // (scripts/generate-algorithm-properties.ts,
+    // (the algorithm-properties generator,
     // pqc_complete_algorithm_reference_08162026.csv) — 64-byte uncompressed
     // public key (x||y), 32-byte private key, 64-byte signature (r||s),
     // verified against RFC 9563 §4.1/§4.2 directly.

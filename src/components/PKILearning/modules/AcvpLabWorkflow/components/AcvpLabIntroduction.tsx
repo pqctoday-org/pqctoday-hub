@@ -878,12 +878,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
         <ol className="list-decimal space-y-1 pl-5">
           <li>Add the vector file under src/data/acvp/.</li>
           <li>
-            Print a skeleton entry with{' '}
-            <code>
-              npx tsx scripts/audit-validation-manifest.ts --scaffold
-              src/data/acvp/&lt;file&gt;.json
-            </code>{' '}
-            — it records the file’s SHA-256 and one case record per test case.
+            Generate a skeleton entry with the maintainers’ vector-manifest tool — it records the
+            file’s SHA-256 and one case record per test case.
           </li>
           <li>
             Fill every TODO: the evidence class; the source (for NIST ACVP-Server material the
@@ -892,8 +888,7 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             rename or change of operation.
           </li>
           <li>
-            Run <code>npm run audit:validation-manifest</code> and{' '}
-            <code>npm run gen:validation-counts</code>.
+            The maintainers then run the vector-manifest check and regenerate the validation counts.
           </li>
         </ol>
         <Callout title="What a reviewer will check">

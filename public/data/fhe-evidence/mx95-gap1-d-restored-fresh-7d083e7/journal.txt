@@ -1,0 +1,3 @@
+2026-10-03T22:12:51+00:00 kv260-board systemd[1]: Started /tmp/fhe/kv260-tfhe-bench server-custody /tmp/fhe --spki-sha256 cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315,cb7719e2ab018ffb0c008384931d385a5cd2b0ac6da8d35b72ec901e24401315,02b379072d4a0e8884968944ec6da4a129ff6ea1f841dcae91546e15ea6480eb --lineage 7651d012ecea49cb9828c7223026b1f215771e56cb0b570364a45c1f3e518936 --param-hash 2ce455537b3c792053ca3c7a0cf98a4e3bfb5569054f69eedd32a3607da06ed0f6a469d6e891fd9c8c19d55fa6c778b5 --reps 3.
+2026-10-03T22:14:56+00:00 kv260-board systemd[1]: fhe-custody-221237.service: Deactivated successfully.
+2026-10-03T22:14:56+00:00 kv260-board systemd[1]: fhe-custody-221237.service: Consumed 6min 29.087s CPU time, 203.3M memory peak, 0B memory swap peak.

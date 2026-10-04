@@ -23,7 +23,7 @@ import type { ZoneId, Cswp39StepId } from './cswp39ZoneData'
  * Canonical Applied Quantum framework version this phase model is derived from.
  * The simulation trees stamp it into each `PhaseTree.source`; the sim drift guard
  * (`trees.test.ts`) fails when this moves ahead of the snapshots, signalling
- * "regenerate the sim trees" (run `node scripts/gen-sim-trees.mjs`). Bump this
+ * "regenerate the sim trees" (run the sim-tree generator). Bump this
  * only when the framework itself revises.
  */
 export const FRAMEWORK_VERSION = 'v2.1'

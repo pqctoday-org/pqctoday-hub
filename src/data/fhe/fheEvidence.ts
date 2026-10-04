@@ -91,7 +91,7 @@ const ROLE_LABEL: Record<DeviceRole, (d: string, p: EvidencePart) => string> = {
   // Owner 2026-10-03: the Mac token run is shown as an earlier run now the MX95 has run.
   custodian: (d, p) =>
     p.device === 'mac-m4pro'
-      ? 'custodian: software token on Mac (earlier run)'
+      ? `custodian: software token on Mac${p.qualifier ?? ' (earlier run)'}`
       : `custodian${p.failover ? ' (failover)' : ''}: software token on ${d}${p.qualifier ?? ''}`,
   'backup-custodian': (d, p) => `backup custodian: software token on ${d}${p.qualifier ?? ''}`,
   party: (d, p) => `key-holder party: software token on ${d}${p.qualifier ?? ''}`,
@@ -115,6 +115,12 @@ export interface EvidencePart {
   qualifier?: string
   /** The backup board acting as custodian after a failover. */
   failover?: boolean
+}
+
+/** What the workshop's results panel shows first; optional and additive. */
+export interface EvidenceSummary {
+  headline: string
+  keyNumbers: { label: string; value: string; unit?: string }[]
 }
 
 export interface EvidenceRecord {
@@ -159,6 +165,8 @@ export interface EvidenceRecord {
   platformLabel?: string
   /** Provenance caveats, e.g. a binary not built byte-exact from the cited commit. */
   notes?: string
+  /** Reader-facing result: one sentence plus the headline numbers, taken from the pinned artifacts. */
+  summary?: EvidenceSummary
   artifacts: EvidenceArtifact[]
   measuredAt: string
   /** Per-record signature; without it the record is hash-pinned under the manifest .sig. */
@@ -265,6 +273,19 @@ function checkPart(p: EvidencePart, s: Scenario, recordSteps: string[]): string[
   return e
 }
 
+const MAX_KEY_NUMBERS = 12
+
+function summaryErrors(sm: EvidenceSummary): string[] {
+  const text = (v: unknown) => typeof v === 'string' && v.trim().length > 0
+  if (!sm || !text(sm.headline)) return ['summary needs a headline']
+  if (!Array.isArray(sm.keyNumbers) || sm.keyNumbers.length > MAX_KEY_NUMBERS)
+    return [`summary keyNumbers is a list of at most ${MAX_KEY_NUMBERS} rows`]
+  const bad = sm.keyNumbers.some(
+    (k) => !text(k?.label) || !text(k?.value) || (k.unit !== undefined && !text(k.unit))
+  )
+  return bad ? ['every summary key number needs a label and a value (unit optional, text)'] : []
+}
+
 /** Every problem with one record; an empty list means it may raise a badge. */
 export function validateRecord(
   r: EvidenceRecord,
@@ -349,6 +370,7 @@ export function validateRecord(
       if (!a.name || !SHA256.test(a.sha256) || !/^https:\/\//.test(a.url))
         errors.push(`artifact "${a.name}" needs a sha256 and an https url`)
   if (!ISO_DATE.test(r.measuredAt ?? '')) errors.push('measuredAt must be an ISO date')
+  if (r.summary !== undefined) errors.push(...summaryErrors(r.summary))
   return errors
 }
 
@@ -390,7 +412,9 @@ export function stepLabel(r: EvidenceRecord, stepId: string): string {
   const custodian = r.parts?.find((p) => p.role === 'custodian')
   const withCustodian =
     part && part.role !== 'custodian' && custodian
-      ? ` with the ${DEVICE_LABELS[custodian.device]} custodian`
+      ? ` with the ${DEVICE_LABELS[custodian.device]} custodian${
+          custodian.qualifier ? ` (${custodian.qualifier.replace(/^[,\s(]+|\)$/g, '')})` : ''
+        }`
       : ''
   const e2e = r.level === 'end-to-end' ? ` · end-to-end run${withCustodian}` : ''
   const shown = (scenario as { label?: string } | undefined)?.label?.match(/\((\d+-of-\d+)\)/)?.[1]
@@ -431,6 +455,62 @@ export function validationsFor(
 }
 
 const isFailover = (r: EvidenceRecord) => !!r.parts?.some((p) => p.failover)
+
+const BOARDS = new Set<EvidenceDevice>(['kv260', 'mx95', 'mx95-pro', 'ventuno-q'])
+
+/**
+ * One line per scenario (owner 2026-10-03): "Validated on boards: … (software token)" from the
+ * best board run by device layout, else the reference runs, else null. Links to that run's
+ * evidence. Never claims hardware-protected keys.
+ */
+export function scenarioValidation(
+  scenarioId: string,
+  records: EvidenceRecord[] = EVIDENCE_MANIFEST.records
+): { label: string; url: string; count: number } | null {
+  const ok = records.filter(
+    (r) =>
+      r.scenarioId === scenarioId &&
+      r.result === 'pass' &&
+      BADGE_STATUSES.includes(r.status) &&
+      validateRecord(r).length === 0
+  )
+  if (!ok.length) return null
+  const board = ok
+    .filter((r) => r.parts?.some((p) => BOARDS.has(p.device)))
+    .sort(
+      (a, b) =>
+        layoutRank(b) - layoutRank(a) ||
+        Number(isFailover(a)) - Number(isFailover(b)) ||
+        b.measuredAt.localeCompare(a.measuredAt)
+    )[0]
+  if (board) {
+    const parts = board.parts ?? []
+    const of = (role: DeviceRole) => parts.find((p) => p.role === role)
+    const custodian = of('custodian')
+    const backup = of('backup-custodian')
+    const server = of('fhe-server')
+    const roles = [
+      custodian &&
+        `${DEVICE_LABELS[custodian.device]} custodian${backup ? ` + ${DEVICE_LABELS[backup.device]} backup` : ''}`,
+      server && `${DEVICE_LABELS[server.device]} server`,
+    ].filter(Boolean)
+    const token = parts.some((p) => p.claimScope === 'board-software-token')
+    return {
+      label: `Validated on boards: ${roles.join(', ')} (${token ? 'software token' : 'software-held keys'})`,
+      url: board.artifacts[0].url,
+      count: ok.length,
+    }
+  }
+  const refs = ok.filter((r) => r.level === 'reference')
+  if (!refs.length) return null
+  const lib = `${refs[0].library.name} ${refs[0].library.version}`
+  const platforms = [...new Set(refs.map((r) => r.platformLabel).filter(Boolean))]
+  return {
+    label: `Validated by reference runs: ${lib}${platforms.length ? ` on ${platforms.join(' and ')}` : ''}`,
+    url: refs[0].artifacts[0].url,
+    count: ok.length,
+  }
+}
 
 /**
  * Owner 2026-10-03: every run shows, the designed device layout first. A custodian on an MX95

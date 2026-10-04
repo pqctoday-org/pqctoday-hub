@@ -6,7 +6,7 @@
 // This module holds the TYPES of src/data/validation/
 // native-conformance.generated.json and the PURE parsers that turn the
 // committed report files into it. All git access (which commit, which blob,
-// how stale) lives in scripts/import-native-conformance.ts; everything here
+// how stale) lives in the native-conformance importer; everything here
 // is text in, data out, so it can be pinned with fixture snippets copied from
 // the real reports.
 //

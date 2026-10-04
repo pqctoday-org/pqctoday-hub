@@ -288,7 +288,7 @@ describe('SIM_TREES — coverage & shape', () => {
         tree.source.includes(FRAMEWORK_VERSION),
         `${phase}: tree source "${tree.source}" is not pinned to framework ${FRAMEWORK_VERSION} — ` +
           `the framework version moved ahead of the snapshots. Regenerate the sim trees ` +
-          `(node scripts/gen-sim-trees.mjs) so each PhaseTree.source carries ${FRAMEWORK_VERSION}.`
+          `(the sim-tree generator) so each PhaseTree.source carries ${FRAMEWORK_VERSION}.`
       ).toBe(true)
     }
   })
