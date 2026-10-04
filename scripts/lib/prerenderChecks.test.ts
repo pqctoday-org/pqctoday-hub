@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { validateSnapshot } from './prerenderChecks'
+import { describeReadinessFailure, validateSnapshot, type ReadinessFacts } from './prerenderChecks'
 import type { SearchRoute } from '../../src/seo/searchRoutes'
 
 /**
@@ -215,5 +215,67 @@ describe('validateSnapshot: route kinds use their own minimum length', () => {
       tooShort(299, 300),
     ])
     expect(errorsOf({ body: withTotal(300), root, canonical }, special)).toEqual([])
+  })
+})
+
+describe('describeReadinessFailure', () => {
+  const facts = (over: Partial<ReadinessFacts> = {}): ReadinessFacts => ({
+    routeMarker: '/example',
+    state: 'pending',
+    regionFound: true,
+    h1Count: 1,
+    chars: 800,
+    disclaimerOpen: false,
+    opening: 'Example Useful explanatory content',
+    ...over,
+  })
+  const say = (over: Partial<ReadinessFacts>, r: SearchRoute = route) =>
+    describeReadinessFailure(r, facts(over))
+
+  it('always opens with the same words so a build log can be searched for it', () => {
+    expect(say({})).toMatch(/^route readiness never reached: /)
+  })
+
+  it('lists what was found against what was wanted', () => {
+    const message = say({ state: 'pending', chars: 120, h1Count: 0 })
+    expect(message).toContain('route marker /example (wanted /example)')
+    expect(message).toContain('state pending (wanted ready)')
+    expect(message).toContain('0 <h1> (wanted 1)')
+    expect(message).toContain('120 characters (wanted at least 600)')
+  })
+
+  it('uses the minimum for the route kind', () => {
+    expect(say({ chars: 10 }, { ...route, kind: 'lab' })).toContain('wanted at least 400')
+  })
+
+  it.each([
+    [{ disclaimerOpen: true }, 'likely cause: the first-visit dialog was not suppressed'],
+    [{ routeMarker: '/other' }, 'likely cause: the page ended up on a different route'],
+    [{ regionFound: false }, 'likely cause: the page never rendered its content region'],
+    [
+      { opening: 'Loading Module... Learning module content' },
+      'likely cause: the page is still showing a loading state',
+    ],
+    [{ h1Count: 2 }, 'likely cause: the content region does not have exactly one <h1>'],
+    [{ chars: 50 }, 'likely cause: the content region is too short'],
+  ] as [Partial<ReadinessFacts>, string][])('names the likely cause for %j', (over, cause) => {
+    expect(say(over)).toContain(cause)
+  })
+
+  it('says what is absent when the page has no readiness markers at all', () => {
+    const message = say({
+      routeMarker: null,
+      state: null,
+      regionFound: false,
+      chars: 0,
+      opening: '',
+    })
+    expect(message).toContain('route marker absent (wanted /example)')
+    expect(message).toContain('state absent (wanted ready)')
+    expect(message).not.toContain('content starts')
+  })
+
+  it('shows how the content starts, to recognise a placeholder at a glance', () => {
+    expect(say({ opening: 'Loading...' })).toContain('content starts "Loading..."')
   })
 })
