@@ -10,6 +10,14 @@ import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+
+/** Answers that quote a CRQC year or a qubit count; each carries the open-estimates notice. */
+export const FAQ_ESTIMATE_QUESTIONS: readonly string[] = [
+  'What is a CRQC and when might one exist?',
+  "What is Mosca's Theorem?",
+  'What is the difference between physical and logical qubits?',
+]
 
 function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: boolean }) {
   const [open, setOpen] = useState(false)
@@ -41,6 +49,9 @@ function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: b
       {open && (
         <div className="pb-4 pl-7">
           <p className="text-sm leading-relaxed text-secondary">{item.answer}</p>
+          {FAQ_ESTIMATE_QUESTIONS.includes(item.question) && (
+            <UnresolvedEstimatesNotice detail="faq" className="mt-3" />
+          )}
           <Link
             to={item.deepLink}
             className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"

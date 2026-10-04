@@ -23,6 +23,7 @@ import {
   type DrugPhase,
   type DrugPipelineEntry,
 } from '../data/healthcareConstants'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 // ── Constants ────────────────────────────────────────────────────────────
 
@@ -149,6 +150,7 @@ export const PharmaIPCalculator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       <p className="text-sm text-foreground/80">
         Model the financial exposure of your pharmaceutical IP portfolio to
         harvest-now-decrypt-later (HNDL) attacks. Add compounds, set their development phase and

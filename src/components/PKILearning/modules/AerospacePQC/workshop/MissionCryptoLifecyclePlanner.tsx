@@ -5,6 +5,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { SEGMENT_CADENCES } from '../data/aerospaceConstants'
 import type { PlatformCategory } from '../data/aerospaceConstants'
 import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 interface PlatformOption {
   id: PlatformCategory
@@ -169,6 +170,7 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       {/* Configuration */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>

@@ -112,7 +112,7 @@ import {
 } from '@/data/frameworkPhases'
 import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/phaseMaturity'
 import { SIM_MISSIONS } from '@/data/simMissions'
-import { SECTORS } from '@/data/moscaClock'
+import { SECTORS, SIM_CRQC_YEAR } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
 import { JURISDICTION_RULES, checkChoice } from '@/data/jurisdiction'
 import { deadlineScopeFor } from '@/data/moscaClock'
@@ -3393,7 +3393,7 @@ export function SimulationView() {
                 <PlanningBadge
                   tip={
                     `Years to the planning anchor (${horizonYear}) — the EARLIER of two different things, shown apart because they mean different things:` +
-                    ` • Threat horizon ${threatHorizonYear} — this scenario's illustrative CRQC planning estimate. Not a published date, and not moved by any regulation.` +
+                    ` • Threat horizon ${threatHorizonYear} — this scenario's illustrative CRQC planning estimate, which starts from this site's own planning anchor (${SIM_CRQC_YEAR}), not a source figure. Not a published date, and not moved by any regulation.` +
                     (regulatoryDueYear !== null
                       ? ` • Regulatory due date ${regulatoryDueYear} — a dated obligation, not a forecast.` +
                         (deadlineScopeFor(country)

@@ -14,6 +14,7 @@ import { SETTLEMENT_RAILS } from '../data/bankingData'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 /** Conservative / central / optimistic CRQC arrival bands, in calendar years. */
 const CRQC_BANDS = [
@@ -47,6 +48,7 @@ export const SettlementExposureModeller = () => {
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       <section className="glass-panel p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
