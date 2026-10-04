@@ -178,10 +178,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 1,111 questions across 78 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 1,125 questions across 79 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, PQC Testing & Validation, and additional topic categories covering all 72 learning modules
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, PQC Testing & Validation, and additional topic categories covering all 73 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Module cross-linking**: 26+ learning modules include a "Related Modules" navigation panel
     with contextual deep-links to prerequisite and follow-on modules; all 5 Role Guide modules
@@ -520,7 +520,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
-  - **Inline tooltips** on key terms throughout all 72 learning modules — portal-rendered with
+  - **Inline tooltips** on key terms throughout all 73 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
 - **Personalization System**: 4-step onboarding wizard on the home page that adapts the entire
@@ -599,7 +599,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Phase 3 — Feature tour (up to 13 persona-filtered slides) with swipeable cards
   - Remembers completion status; re-trigger with `?tour` query parameter
 - **Community Endorse/Flag System**: Stamp and Flag icon buttons on every resource — library
-  documents, threats, leaders, timeline milestones, and all 72 learning module workshop steps.
+  documents, threats, leaders, timeline milestones, and all 73 learning module workshop steps.
   Endorse opens a prefilled GitHub Discussion for community validation; Flag opens a prefilled
   report for inaccuracies, broken links, or outdated content. Activation state persisted via
   `useEndorsementStore` (localStorage); re-clicking an activated button navigates to the existing
@@ -645,7 +645,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
     quiz content, assessment config, certifications, priority matrix, document enrichments, and
-    all 72 learning modules
+    all 73 learning modules
   - **Precision deep links**: 10 views accept URL params for direct navigation — Library `?ref=`,
     Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
     Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`, OpenSSL `?cmd=`,
@@ -856,7 +856,7 @@ audit:*` — data-integrity validators, CI audit gates (the `audit-*.ts` family,
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: TypeScript wrappers for WebAssembly cryptographic libraries (`liboqs`, ML-KEM, ML-DSA, LMS). `softhsm/` provides the Phase 6 PKCS#11 singleton loader and modular sub-modules; `inspect/` decodes PKCS#11 call parameters for the call log.
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 72 modules across 8 tracks — foundations, strategy, protocols, infrastructure, applications, industries, role guides, and executive.
+- **`src/components/PKILearning`**: Educational platform with 73 modules across 9 tracks — foundations, strategy, protocols, hardware infrastructure, software infrastructure, applications, industries, role guides, and executive.
 - **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
@@ -894,8 +894,8 @@ audit:*` — data-integrity validators, CI audit gates (the `audit-*.ts` family,
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.3 workbench (WASM)
 │   │   ├── BusinessCenter/  # GRC command center dashboard
-│   │   ├── PKILearning/     # Learning platform with 72 modules across 8 tracks
-│   │   │   ├── modules/     # 72 module directories + Quiz
+│   │   ├── PKILearning/     # Learning platform with 73 modules across 9 tracks
+│   │   │   ├── modules/     # 73 module directories + Quiz
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet

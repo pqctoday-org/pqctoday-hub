@@ -338,7 +338,7 @@
 
 ## quiz — PQC Quiz
 
-**Scope.** Test knowledge across all PQC topics including algorithms, standards, compliance, migration, and applications through interactive question bank covering module content. Covers formative quizzes (per-module knowledge checks) and summative quiz (comprehensive 10-minute assessment across all 63 modules). Questions span basic comprehension (identify NIST FIPS standards, recognize algorithm families), intermediate application (select appropriate PQC algorithm for use case), and advanced synthesis (design migration strategy, risk assessment). Out of scope: Detailed algorithm cryptanalysis, complex mathematical proofs, and real-time coding challenges.
+**Scope.** Test knowledge across all PQC topics including algorithms, standards, compliance, migration, and applications through interactive question bank covering module content. Covers formative quizzes (per-module knowledge checks) and summative quiz (comprehensive 10-minute assessment across all 73 modules). Questions span basic comprehension (identify NIST FIPS standards, recognize algorithm families), intermediate application (select appropriate PQC algorithm for use case), and advanced synthesis (design migration strategy, risk assessment). Out of scope: Detailed algorithm cryptanalysis, complex mathematical proofs, and real-time coding challenges.
 
 **Sub-topics keywords:** PQC quiz, knowledge assessment, algorithm identification, standards recognition, compliance mapping, migration strategy, use case matching, formative quizzes, summative assessment, question bank, interactive learning, knowledge check.
 

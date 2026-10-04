@@ -115,7 +115,7 @@ const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'r
   leaders: { dataset: 'Industry Leaders', sources: 'Public, Private, Academic' },
   quiz: { dataset: 'Quiz Questions', sources: 'All PQC topic areas' },
   sources: { dataset: 'Authoritative Sources', sources: 'Gov, Academic, Industry' },
-  modules: { dataset: 'Learning Modules', sources: '2,800+ min of content' },
+  modules: { dataset: 'Learning Modules', sources: '3,800+ min of content' },
   patents: { dataset: 'PQC Patents', sources: 'USPTO, EPO, WIPO' },
 }
 

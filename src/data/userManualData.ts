@@ -86,11 +86,11 @@ export const pageManuals: Record<PageId, PageManual> = {
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse 680+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse 1,200+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
     sections: [
       {
         heading: 'Search & Filters',
-        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
+        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 13 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research, Compliance & Certification, Blockchain Standards, Implementations). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
       },
       {
         heading: 'View Toggle',
@@ -266,7 +266,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   migrate: {
     title: 'Migration Workbench',
     summary:
-      'Browse 830+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
+      'Browse 880+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',
@@ -299,7 +299,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
+      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~3 min) or Comprehensive (13 steps, ~5 min) mode.",
     sections: [
       {
         heading: 'Assessment Modes',
@@ -383,7 +383,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education with 62 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
+      'Structured PQC education with 73 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
     sections: [
       {
         heading: 'Module Tracks',
