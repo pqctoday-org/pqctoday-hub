@@ -1,0 +1,353 @@
+{
+  "version": 1,
+  "claims": [
+    {
+      "id": "crqc-gri-2025-timeline",
+      "claim": "A 2025 survey of 26 experts (Global Risk Institute with evolutionQ) found a cryptographically relevant quantum computer \"quite possible\" (28-49%) within 10 years and \"likely\" (51-70%) within 15.",
+      "madeBy": "Global Risk Institute and evolutionQ (survey of 26 experts, published March 2026)",
+      "state": "Open",
+      "reason": "A forecast of something that has not happened; nobody can show it right or wrong today.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "Global Risk Institute, Quantum Threat Timeline Report 2025",
+          "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+          "states": "The survey result, quoted from the report page.",
+          "quote": "a cryptographically relevant quantum computer (CRQC) quite possible (28-49%) within the next 10 years, and likely (51-70%) in the next 15"
+        },
+        {
+          "name": "Global Risk Institute, Quantum Threat Timeline Report 2025",
+          "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+          "states": "The number of experts surveyed.",
+          "quote": "This year’s survey was answered by 26 experts from Canada and around the world"
+        }
+      ]
+    },
+    {
+      "id": "crqc-nist-ir8547-dates",
+      "claim": "NIST's initial public draft IR 8547 (November 2024) proposes that 112-bit RSA, ECDSA and EdDSA be deprecated after 2030 and that quantum-vulnerable algorithms be disallowed after 2035.",
+      "madeBy": "NIST (IR 8547, initial public draft, November 2024)",
+      "state": "Settled",
+      "reason": "What the draft says is checked against the draft itself. It is a draft: the comment period closed on 2025-01-10 and no final version was found on 2026-07-30.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "NIST IR 8547 ipd",
+          "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
+          "states": "Transition table: deprecated after 2030, disallowed after 2035.",
+          "quote": "Deprecated after 2030 Disallowed after 2035"
+        }
+      ]
+    },
+    {
+      "id": "crqc-nsa-cnsa2-dates",
+      "claim": "NSA's CNSA 2.0 expects national security systems to finish the transition to quantum-resistant algorithms by 2035, and to use CNSA 2.0 exclusively for software and firmware signing by 2030.",
+      "madeBy": "NSA (CNSA 2.0, 2022)",
+      "state": "Settled",
+      "reason": "These are dates the NSA sets for its own systems, checked against the NSA document. They are migration deadlines, not a prediction of when a quantum computer will exist.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "NSA Commercial National Security Algorithm Suite 2.0",
+          "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+          "states": "Transition complete by 2035.",
+          "quote": "NSA expects the transition to QR algorithms for NSS to be complete by 2035 in line with NSM-10."
+        },
+        {
+          "name": "NSA Commercial National Security Algorithm Suite 2.0",
+          "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+          "states": "Exclusive use by 2030 for software and firmware signing.",
+          "quote": "exclusively use CNSA 2.0 by 2030"
+        }
+      ],
+      "newerStatements": [
+        {
+          "claim": "crqc-nsa-cnsa2-faq-v21-dates",
+          "relation": "updates"
+        }
+      ]
+    },
+    {
+      "id": "crqc-anssi-phase3",
+      "claim": "ANSSI's 2022 position paper puts standalone post-quantum cryptography as an option \"probably not earlier than 2030\" and recommends hybrid use until then.",
+      "madeBy": "ANSSI (France), position paper of January 2022, updated 2023",
+      "state": "Settled",
+      "reason": "What the paper says is checked against the paper. It is a transition milestone, not a date for when a quantum computer will exist; the paper gives no such date.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "ANSSI views on the post-quantum cryptography transition",
+          "url": "https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition",
+          "states": "The three-phase roadmap.",
+          "quote": "Phase 3 (probably not earlier than 2030): optional standalone post-quantum cryptography."
+        },
+        {
+          "name": "ANSSI views on the post-quantum cryptography transition",
+          "url": "https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition",
+          "states": "Phase 1: hybrid use today.",
+          "quote": "Phase 1 (today): hybridation to provide some additional post-quantum defense-in-depth to the pre-quantum security assurance."
+        }
+      ],
+      "newerStatements": [
+        {
+          "claim": "crqc-anssi-faq-2025-buy-after-2030",
+          "relation": "updates"
+        }
+      ]
+    },
+    {
+      "id": "crqc-bsi-hybrid",
+      "claim": "BSI recommends against using post-quantum cryptography alone and recommends it only in hybrid form with classical algorithms, if possible.",
+      "madeBy": "BSI (Germany), Migration to Post Quantum Cryptography: recommendations for action, version 1.0 of 31 May 2021 (English translation)",
+      "state": "Settled",
+      "reason": "What the papers say is checked against the papers. Both the 2021 migration paper and the current TR-02102-1 (2026-01) recommend hybrid use; neither is a date for when a quantum computer will exist.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "BSI, Migration to Post Quantum Cryptography",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2",
+          "states": "The hybrid recommendation.",
+          "quote": "the BSI does not recommend using post-quantum cryptography alone, but only \"hybrid\" if possible"
+        },
+        {
+          "name": "BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
+          "states": "The quantum-safe mechanisms should be used in hybrid form.",
+          "quote": "The quantum-safe mechanisms recommended in Section 2.4 should be used in “hybrid” form, i.e., in a suitable combination with a classical method."
+        }
+      ]
+    },
+    {
+      "id": "crqc-google-ef-secp256k1-resources",
+      "claim": "A March 2026 paper by Google Quantum AI and collaborators estimates that breaking the elliptic-curve cryptography used by Bitcoin and Ethereum (secp256k1) needs at most 1,200 logical qubits (or at most 1,450 in a variant). On superconducting machines with 10⁻³ physical error rates and planar connectivity, it estimates the circuits would run in minutes using fewer than half a million physical qubits.",
+      "madeBy": "Babbush, Zalcman, Gidney and co-authors (Google Quantum AI, UC Berkeley, Ethereum Foundation, Stanford University), paper dated 30 March 2026",
+      "state": "Settled",
+      "reason": "What the paper estimates is checked against the paper itself. The figures are the authors' estimates for a machine that does not exist; whether that many qubits are really needed cannot be checked until such a machine is built, and other groups publish other figures.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations",
+          "url": "https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf",
+          "states": "Logical-qubit counts.",
+          "quote": "Shor’s algorithm for this problem can execute with either ≤ 1200 logical qubits and ≤ 90 million Toffoli gates or ≤ 1450 logical qubits and ≤ 70 million Toffoli gates"
+        },
+        {
+          "name": "Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations",
+          "url": "https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf",
+          "states": "Physical-qubit count, and the machine it assumes.",
+          "quote": "On superconducting architectures with 10−3 physical error rates and planar connectivity, those circuits can execute in minutes using fewer than half a million physical qubits"
+        }
+      ]
+    },
+    {
+      "id": "crqc-rsa2048-physical-qubits-2025",
+      "claim": "Fewer than one million physical qubits are enough to break RSA-2048 (Craig Gidney, June 2025).",
+      "madeBy": "Craig Gidney (Google), June 2025, as reported by Cloudflare (2025) and Project Eleven (2026)",
+      "state": "Open",
+      "reason": "A resource estimate for a machine that does not exist, based on assumptions about hardware and error rates. It cannot be checked until such a machine is built; other groups may publish other figures.",
+      "lastChecked": null,
+      "sources": [
+        {
+          "name": "Cloudflare, post-quantum Internet review 2025",
+          "url": "https://blog.cloudflare.com/pq-2025/",
+          "states": "Reports the June 2025 result: fewer than one million qubits.",
+          "quote": "Craig Gidney shows that with clever quantum software optimisations we need fewer than one million qubits"
+        },
+        {
+          "name": "Project Eleven, Quantum threat to blockchains 2026",
+          "url": "https://report.projecteleven.com/",
+          "states": "About 1,000,000 physical qubits, credited to Google 2025.",
+          "quote": "~1,000,000 physical qubits and a “logical” error rate of 1 in a quadrillion per cycle are needed to break RSA-2048."
+        }
+      ],
+      "earlier": [
+        {
+          "claim": "crqc-rsa2048-physical-qubits-20m",
+          "relation": "replaces",
+          "detail": "Cloudflare describes the 20 million figure as the earlier estimate and credits the June 2025 paper for the lower one. The newer figure is still an estimate.",
+          "madeBy": "The earlier estimate, as described by Cloudflare (2025)",
+          "url": "https://blog.cloudflare.com/pq-2025/",
+          "changes": [
+            {
+              "point": "Physical qubits needed to break RSA-2048 on superconducting machines",
+              "before": {
+                "text": "Earlier estimate: about 20 million qubits.",
+                "quote": "We thought we’d need about 20 million qubits with the superconducting approach to break RSA-2048."
+              },
+              "after": {
+                "text": "June 2025 estimate: fewer than one million qubits.",
+                "quote": "we need fewer than one million qubits"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crqc-rsa2048-physical-qubits-20m",
+      "claim": "About 20 million superconducting qubits are needed to break RSA-2048.",
+      "madeBy": "The earlier estimate, as described by Cloudflare (2025)",
+      "state": "Superseded",
+      "reason": "Cloudflare itself says the 20 million figure was the earlier one and that newer software work shows much less is needed.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "Cloudflare, post-quantum Internet review 2025",
+          "url": "https://blog.cloudflare.com/pq-2025/",
+          "states": "The older estimate, and that it is now thought to be much lower.",
+          "quote": "We thought we’d need about 20 million qubits with the superconducting approach to break RSA-2048. It turns out we can do it with much less."
+        }
+      ],
+      "supersededBy": "crqc-rsa2048-physical-qubits-2025",
+      "newerStatements": [
+        {
+          "claim": "crqc-rsa2048-physical-qubits-2025",
+          "relation": "replaces"
+        }
+      ]
+    },
+    {
+      "id": "crqc-bsi-tr02102-2026-dates",
+      "claim": "BSI's technical guideline TR-02102-1 (version 2026-01) recommends using classical key agreement alone only until the end of 2031, recommends that applications with very high protection requirements move to quantum-safe mechanisms by the end of 2030, and recommends classical signatures only until the end of 2035.",
+      "madeBy": "BSI (Germany), TR-02102-1, version 2026-01, 23 January 2026",
+      "state": "Settled",
+      "reason": "What the guideline says is checked against the guideline itself. These are migration recommendations, not a prediction of when a quantum computer will exist.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
+          "states": "Classical key agreement alone only until the end of 2031.",
+          "quote": "The sole use of classic key agreement mechanisms is only recommended until the end of 2031"
+        },
+        {
+          "name": "BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
+          "states": "Very high protection requirements: transition by the end of 2030.",
+          "quote": "For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030."
+        },
+        {
+          "name": "BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
+          "states": "Classical signatures only until the end of 2035.",
+          "quote": "the use of classic signature mechanisms is therefore only recommended until the end of 2035"
+        }
+      ]
+    },
+    {
+      "id": "crqc-bsi-working-hypothesis-early-2030s",
+      "claim": "For high-security systems BSI works on the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s, and says this is a timeline for risk assessment, not a forecast.",
+      "madeBy": "BSI (Germany), brochure \"Quantum-safe cryptography – fundamentals, current developments and recommendations\", 2021",
+      "state": "Open",
+      "reason": "A working hypothesis about a machine that does not exist, which BSI itself calls a risk-assessment timeline and not a forecast. The brochure is from 2021; no newer BSI statement of it was found.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "BSI, Quantum-safe cryptography brochure (2021)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Brochure/quantum-safe-cryptography.pdf?__blob=publicationFile&v=4",
+          "states": "The working hypothesis.",
+          "quote": "BSI works under the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s"
+        },
+        {
+          "name": "BSI, Quantum-safe cryptography brochure (2021)",
+          "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Brochure/quantum-safe-cryptography.pdf?__blob=publicationFile&v=4",
+          "states": "It is a timeline for risk assessment.",
+          "quote": "represents a timeline for risk assessment"
+        }
+      ]
+    },
+    {
+      "id": "crqc-nsa-cnsa2-faq-v21-dates",
+      "claim": "NSA's December 2024 CNSA 2.0 FAQ (version 2.1) says that by 31 December 2030 all equipment and services that cannot support CNSA 2.0 must be phased out, and that by 31 December 2031 CNSA 2.0 algorithms are mandated for use, unless otherwise noted.",
+      "madeBy": "NSA, \"The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ\", version 2.1, December 2024",
+      "state": "Settled",
+      "reason": "What the FAQ says is checked against the FAQ itself. These are migration dates NSA sets for its own systems, not a prediction of when a quantum computer will exist. The FAQ is newer than NSA's September 2022 announcement; it updates it and does not replace it.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "NSA CNSA 2.0 and Quantum Computing FAQ, version 2.1 (December 2024)",
+          "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
+          "states": "The 2030 phase-out and the 2031 mandate.",
+          "quote": "By December 31, 2030, all equipment and services that cannot support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandated for use unless otherwise noted."
+        }
+      ],
+      "earlier": [
+        {
+          "claim": "crqc-nsa-cnsa2-dates",
+          "relation": "updates",
+          "detail": "The FAQ gives general phase-out and mandate dates and says NSA's update to CNSSP 15 set several dates. It does not restate the 2022 announcement's category dates, which are not withdrawn. Where the two give different dates for the same equipment, the newer governs.",
+          "madeBy": "NSA (CNSA 2.0, 2022)",
+          "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+          "changes": [
+            {
+              "point": "When equipment and algorithms must move to CNSA 2.0",
+              "before": {
+                "text": "September 2022 announcement: by category. Software and firmware signing exclusively CNSA 2.0 by 2030; web browsers and servers and cloud services by 2033.",
+                "quote": "exclusively use CNSA 2.0 by 2030"
+              },
+              "after": {
+                "text": "December 2024 FAQ: by 31 December 2030 equipment and services that cannot support CNSA 2.0 must be phased out, and by 31 December 2031 CNSA 2.0 algorithms are mandated, unless otherwise noted.",
+                "quote": "By December 31, 2030, all equipment and services that cannot support CNSA 2.0 must be phased out unless otherwise noted, and by December 31, 2031, CNSA 2.0 algorithms are mandated for use unless otherwise noted."
+              }
+            },
+            {
+              "point": "Web browsers and servers, cloud services",
+              "before": {
+                "text": "September 2022 announcement: exclusive use of CNSA 2.0 by 2033.",
+                "quote": "Web browsers/servers and cloud services: support and prefer CNSA 2.0 by 2025, and exclusively1 use CNSA 2.0 by 2033."
+              },
+              "after": {
+                "text": "December 2024 FAQ: CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted; the FAQ does not restate a 2033 date.",
+                "quote": "by December 31, 2031, CNSA 2.0 algorithms are mandated for use unless otherwise noted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crqc-anssi-faq-2025-buy-after-2030",
+      "claim": "ANSSI's current FAQ on post-quantum cryptography says it will not be reasonable to buy products that do not include post-quantum cryptography after 2030, and strongly insists on hybrid protection wherever post-quantum protection is needed.",
+      "madeBy": "ANSSI (France), FAQ on post-quantum cryptography (a page that refers to events of early October 2025, so it is from October 2025 or later)",
+      "state": "Settled",
+      "reason": "What the FAQ says is checked against the FAQ itself. It is a purchasing recommendation (the FAQ says there is no regulatory obligation), not a prediction of when a quantum computer will exist. It is newer than ANSSI's 2022 position paper.",
+      "lastChecked": "2026-10-03",
+      "sources": [
+        {
+          "name": "ANSSI, FAQ on post-quantum cryptography",
+          "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/",
+          "states": "Purchasing after 2030.",
+          "quote": "L'ANSSI indique qu'il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030."
+        },
+        {
+          "name": "ANSSI, FAQ on post-quantum cryptography",
+          "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/",
+          "states": "Hybridisation.",
+          "quote": "L'ANSSI insiste fortement sur la nécessité de l'hybridation partout où une protection post-quantique est nécessaire"
+        }
+      ],
+      "earlier": [
+        {
+          "claim": "crqc-anssi-phase3",
+          "relation": "updates",
+          "detail": "The FAQ adds a purchasing recommendation (no products without post-quantum cryptography after 2030) and keeps the hybrid recommendation. It does not withdraw the 2022 paper's phase roadmap.",
+          "madeBy": "ANSSI (France), position paper of January 2022, updated 2023",
+          "url": "https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition",
+          "changes": [
+            {
+              "point": "What ANSSI says about 2030",
+              "before": {
+                "text": "2022 position paper: standalone post-quantum cryptography becomes an option, probably not earlier than 2030.",
+                "quote": "Phase 3 (probably not earlier than 2030): optional standalone post-quantum cryptography."
+              },
+              "after": {
+                "text": "Current FAQ: it will not be reasonable to buy products that do not include post-quantum cryptography after 2030.",
+                "quote": "L'ANSSI indique qu'il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
