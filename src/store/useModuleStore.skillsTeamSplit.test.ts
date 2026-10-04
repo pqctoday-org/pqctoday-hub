@@ -221,7 +221,7 @@ function restoredInputsFor(migrated: AnyDoc, type: string): AnyDoc | undefined {
 describe('store v15 → v16 — Skills & Team save-slot split preserves every draft', () => {
   it('the ladder actually advances the data version', () => {
     const migrated = runMigrate(v15Store([]), 15)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
   })
 
   // ── Scenario 1–2: bare, pre-scope drafts, one per colliding component ──────
@@ -359,7 +359,7 @@ describe('store v15 → v16 — Skills & Team save-slot split preserves every dr
   it('S9 a store with no executive documents migrates cleanly', () => {
     const migrated = runMigrate(v15Store([]), 15)
     expect(docsOf(migrated)).toEqual([])
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.modules['skills-team-structure']).toBeDefined()
   })
 
@@ -439,7 +439,7 @@ describe('store v15 → v16 — Skills & Team save-slot split preserves every dr
   it('S10b a store with no artifacts object at all survives the ladder', () => {
     const broken = { version: '15.0.0', modules: {} }
     const migrated = runMigrate(broken, 15)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
   })
 
   // ── Scenario 11: the full ladder from an ancient store ────────────────────
@@ -452,7 +452,7 @@ describe('store v15 → v16 — Skills & Team save-slot split preserves every dr
       artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [champ, sizing] },
     }
     const migrated = runMigrate(ancient, 11)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     const docs = docsOf(migrated)
     expect(docs).toHaveLength(2)
     expect(new Set(docs.map(slotKey)).size).toBe(2)
@@ -490,7 +490,7 @@ describe('store v15 → v16 — Skills & Team save-slot split preserves every dr
       const types = docs.map((d) => d.type).sort()
       expect(types).toEqual(['crypto-champion-roster', 'team-sizing-plan'])
       expect(new Set(docs.map((d) => `${d.moduleId}::${d.type}`)).size).toBe(2)
-      expect(useModuleStore.getState().version).toBe('18.0.0')
+      expect(useModuleStore.getState().version).toBe('19.0.0')
     })
 
     it('S12b re-saving one step after the migration no longer evicts the other', async () => {

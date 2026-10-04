@@ -104,7 +104,7 @@ describe('useModuleStore', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     const customProgress = { version: '2.0.0', preferences: { theme: 'light' } } as any
     useModuleStore.getState().loadProgress(customProgress)
-    expect(useModuleStore.getState().version).toBe('18.0.0') // migrated to current
+    expect(useModuleStore.getState().version).toBe('19.0.0') // migrated to current
     expect(useModuleStore.getState().preferences.theme).toBe('light') // value preserved
   })
 
@@ -131,7 +131,7 @@ describe('useModuleStore', () => {
     expect(mods['kms-pqc']).toBeDefined()
     expect(mods['kms-pqc'].timeSpent).toBe(42)
     expect(mods['hsm-pqc']).toBeDefined()
-    expect(useModuleStore.getState().version).toBe('18.0.0')
+    expect(useModuleStore.getState().version).toBe('19.0.0')
   })
 
   it('resets a specific module', () => {
@@ -156,13 +156,185 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
     expect(migrated.quizMastery.correctQuestionIds).toEqual([])
     expect(migrated.timestamp).toEqual(expect.any(Number))
+  })
+
+  describe('v18 → v19: FHE content moved from confidential-computing to homomorphic-encryption', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const migrate = () => (useModuleStore.persist.getOptions() as any).migrate
+
+    const v18 = (cc: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
+      version: '18.0.0',
+      modules: { 'confidential-computing': cc, ...extra },
+      artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [] },
+    })
+    const TEE_STEPS = [
+      'tee-architecture-explorer',
+      'attestation-workshop',
+      'encryption-mechanisms',
+      'tee-hsm-channel',
+      'quantum-threat-migration',
+    ]
+    const TEE_SECTIONS = [
+      'tee-fundamentals',
+      'vendor-architectures',
+      'attestation',
+      'memory-encryption',
+      'tee-hsm',
+      'quantum-threats',
+    ]
+
+    it('moves the FHE step and the read FHE section to the new module, keeping TEE progress', () => {
+      const migrated = migrate()(
+        v18({
+          status: 'in-progress',
+          lastVisited: 11,
+          timeSpent: 40,
+          completedSteps: [TEE_STEPS[0], 'fhe-hsm-flows'],
+          quizScores: { q1: 80 },
+          learnSectionChecks: { 'tee-fundamentals': true, 'homomorphic-encryption': true },
+        }),
+        18
+      )
+      expect(migrated.version).toBe('19.0.0')
+      const cc = migrated.modules['confidential-computing']
+      expect(cc.completedSteps).toEqual([TEE_STEPS[0]])
+      expect(cc.learnSectionChecks).toEqual({ 'tee-fundamentals': true })
+      expect(cc.timeSpent).toBe(40)
+      expect(cc.quizScores).toEqual({ q1: 80 })
+      expect(cc.status).toBe('in-progress')
+      const fhe = migrated.modules['homomorphic-encryption']
+      expect(fhe.completedSteps).toEqual(['fhe-hsm-flows'])
+      expect(Object.keys(fhe.learnSectionChecks).sort()).toEqual([
+        'fhe-fundamentals',
+        'fhe-hsm-custody',
+        'fhe-implementations',
+        'fhe-keys-operations',
+        'fhe-quantum',
+      ])
+      // Its one workshop step and all five sections are done, so it counts as complete.
+      expect(fhe.status).toBe('completed')
+      expect(fhe.timeSpent).toBe(0)
+      expect(fhe.lastVisited).toBe(11)
+    })
+
+    it('leaves a module with only the FHE step done in progress', () => {
+      const migrated = migrate()(
+        v18({
+          status: 'in-progress',
+          lastVisited: 11,
+          timeSpent: 5,
+          completedSteps: ['fhe-hsm-flows'],
+          quizScores: {},
+        }),
+        18
+      )
+      const fhe = migrated.modules['homomorphic-encryption']
+      expect(fhe.completedSteps).toEqual(['fhe-hsm-flows'])
+      // the single required workshop step is done, so the store's own rule completes it
+      expect(fhe.status).toBe('completed')
+    })
+
+    it('completes the TEE module once when steps 1-5 were done but the FHE step was not', () => {
+      const migrated = migrate()(
+        v18({
+          status: 'in-progress',
+          lastVisited: 3,
+          timeSpent: 90,
+          completedSteps: TEE_STEPS,
+          quizScores: {},
+        }),
+        18
+      )
+      expect(migrated.modules['confidential-computing'].status).toBe('completed')
+      expect(migrated.modules['homomorphic-encryption']).toBeUndefined()
+    })
+
+    it('never demotes a completed TEE module and does not invent FHE progress for it', () => {
+      const migrated = migrate()(
+        v18({
+          status: 'completed',
+          lastVisited: 3,
+          timeSpent: 120,
+          completedSteps: [...TEE_STEPS, 'fhe-hsm-flows'],
+          quizScores: {},
+          learnSectionChecks: Object.fromEntries(
+            [...TEE_SECTIONS, 'homomorphic-encryption'].map((id) => [id, true])
+          ),
+        }),
+        18
+      )
+      const cc = migrated.modules['confidential-computing']
+      expect(cc.status).toBe('completed')
+      expect(cc.completedSteps).toEqual(TEE_STEPS)
+      expect(Object.keys(cc.learnSectionChecks)).toEqual(TEE_SECTIONS)
+    })
+
+    it('merges into an existing homomorphic-encryption entry without losing either side', () => {
+      const migrated = migrate()(
+        v18(
+          {
+            status: 'in-progress',
+            lastVisited: 5,
+            timeSpent: 10,
+            completedSteps: ['fhe-hsm-flows'],
+            quizScores: {},
+          },
+          {
+            'homomorphic-encryption': {
+              status: 'in-progress',
+              lastVisited: 9,
+              timeSpent: 7,
+              completedSteps: [],
+              quizScores: { q: 1 },
+              learnSectionChecks: { 'fhe-quantum': true },
+            },
+          }
+        ),
+        18
+      )
+      const fhe = migrated.modules['homomorphic-encryption']
+      expect(fhe.lastVisited).toBe(9)
+      expect(fhe.timeSpent).toBe(7)
+      expect(fhe.quizScores).toEqual({ q: 1 })
+      expect(fhe.completedSteps).toEqual(['fhe-hsm-flows'])
+      expect(fhe.learnSectionChecks['fhe-quantum']).toBe(true)
+    })
+
+    it('does nothing for a learner with no confidential-computing progress', () => {
+      const migrated = migrate()(
+        {
+          version: '18.0.0',
+          modules: {},
+          artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [] },
+        },
+        18
+      )
+      expect(migrated.modules['confidential-computing']).toBeUndefined()
+      expect(migrated.modules['homomorphic-encryption']).toBeUndefined()
+    })
+
+    it('is idempotent: migrating the result again changes nothing', () => {
+      const once = migrate()(
+        v18({
+          status: 'in-progress',
+          lastVisited: 11,
+          timeSpent: 40,
+          completedSteps: [TEE_STEPS[0], 'fhe-hsm-flows'],
+          quizScores: {},
+          learnSectionChecks: { 'homomorphic-encryption': true },
+        }),
+        18
+      )
+      const twice = migrate()(JSON.parse(JSON.stringify(once)), 19)
+      expect(twice.modules).toEqual(once.modules)
+    })
   })
 
   it('v17 → v18 carries iot-ot-pqc progress to iot-pqc and energy-utilities-pqc to ot-pqc', () => {
@@ -189,7 +361,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [] },
     }
     const migrated = migrate(v17State, 17)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.modules['iot-ot-pqc']).toBeUndefined()
     expect(migrated.modules['energy-utilities-pqc']).toBeUndefined()
     expect(migrated.modules['iot-pqc'].completedSteps).toEqual(['firmware-signing'])
@@ -215,7 +387,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [] },
     }
     const migrated = migrate(v16State, 16)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.modules['fips-pci-certification']).toBeUndefined()
     expect(migrated.modules['fips-140-3-certification'].completedSteps).toEqual([
       'fips-level-planner',
@@ -232,7 +404,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
@@ -244,7 +416,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
@@ -258,7 +430,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
   })
@@ -282,7 +454,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v5State, 5)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     // key-management should be removed
     expect(migrated.modules['key-management']).toBeUndefined()
     // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
@@ -318,7 +490,7 @@ describe('useModuleStore', () => {
       kpiHistory: { riskScore: [] },
     }
     const migrated = migrate(v11State, 11)
-    expect(migrated.version).toBe('18.0.0')
+    expect(migrated.version).toBe('19.0.0')
     const ids = migrated.artifacts.executiveDocuments.map((d: { id: string }) => d.id)
     expect(ids).toEqual(['a', 'c'])
     // Records without prior `inputs` stay undefined; records with `inputs` retain them.

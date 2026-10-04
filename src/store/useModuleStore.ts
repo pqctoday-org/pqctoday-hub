@@ -11,7 +11,11 @@ import {
   logArtifactGenerated,
 } from '../utils/analytics'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
-import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
+import {
+  applyContentMoves,
+  applyModuleRenames,
+  reconcileMovedContentStatus,
+} from '../components/PKILearning/manifest/contentVersion'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import {
   requiredLearnSectionIds,
@@ -19,7 +23,7 @@ import {
   type ScopeManifest,
 } from '../components/PKILearning/manifest/learnPathScope'
 
-const MODULE_STORE_VERSION = 18
+const MODULE_STORE_VERSION = 19
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -930,12 +934,27 @@ export const useModuleStore = create<ModuleState>()(
           state.timestamp = Date.now()
         }
 
+        // Version 18 → Version 19: the FHE section and "FHE + HSM Flows" step moved
+        // from confidential-computing to the new homomorphic-encryption module
+        // (2026-10-04, MODULE_CONTENT_MOVES). The moves themselves are applied below,
+        // on every migrate; this step re-checks, once, whether the module that gave
+        // content away is now complete.
+        if (version <= 18) {
+          state.version = '19.0.0'
+          state.timestamp = Date.now()
+          if (state.modules) {
+            state.modules = reconcileMovedContentStatus(applyContentMoves(state.modules))
+          }
+        }
+
         // B2: apply the DECLARATIVE id rename-map (generalises the one-off
         // key-management split above) so a renamed module's progress carries
         // over. Idempotent + runs after all version steps — a future rename is
         // a one-line MODULE_ID_RENAMES entry + a version bump, not a new step.
         if (state.modules) {
           state.modules = applyModuleRenames(state.modules)
+          // Idempotent: progress for content that moved between live modules.
+          state.modules = applyContentMoves(state.modules)
         }
 
         return state
