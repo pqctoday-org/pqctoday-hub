@@ -20,7 +20,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { CRQC_ESTIMATES, getCrqcForecast } from '../data/quantumConstants'
-import { EstimateClaims } from './EstimateClaims'
+import { EstimateClaims } from '@/components/common/EstimateClaims'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 interface QuantumThreatsIntroductionProps {

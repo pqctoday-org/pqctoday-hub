@@ -7,7 +7,7 @@ import {
 } from '@/components/common/UnresolvedEstimatesNotice'
 import { claimsWithTopic, type OpenClaim } from '@/data/openClaimsData'
 import { headStatements } from '@/data/openClaimsView'
-import type { CRQCEstimate } from '../data/quantumConstants'
+import type { CRQCEstimate } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 interface EstimateClaimsProps {
   /** The estimates whose claims are shown, in this order. */

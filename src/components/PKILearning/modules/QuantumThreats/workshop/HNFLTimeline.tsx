@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES, CRQC_ESTIMATE_KIND_LABELS } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
-import { EstimateClaims } from '../components/EstimateClaims'
+import { EstimateClaims } from '@/components/common/EstimateClaims'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
