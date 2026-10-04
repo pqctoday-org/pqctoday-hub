@@ -19,6 +19,7 @@ import { CollapsibleSection } from './reportContentShared'
 import { useSavedArtifactDocuments } from '@/hooks/useSavedArtifactInputs'
 import type { SimRoadmapInput } from '@/simulation/simRoadmap'
 import type { RunScoreBreakdown } from '@/simulation/runScore'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
   A: 'bg-success/15 text-success border-success/30',
@@ -151,6 +152,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
                 <span className="text-xl font-bold text-foreground">{r.yearsToHorizon}y</span>
               </div>
             </div>
+            <UnresolvedEstimatesNotice detail="simulation" className="mt-3" />
           </section>
 
           <section aria-labelledby="sim-outcomes-phases">

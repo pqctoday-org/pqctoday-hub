@@ -15,6 +15,7 @@ import { WhyWeAskHint } from './WhyWeAskHint'
 
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { QC_FIRST_YEAR } from '@/data/quantumTimeline'
 
 const StepCredentialLifetime = ({
   hideHeading = false,
@@ -143,7 +144,9 @@ const StepCredentialLifetime = ({
 
       <p className="text-xs text-muted-foreground">
         Root CA certificates issued today with a 20-year validity period must be trusted past the
-        aggressive planning anchor for a first CRQC (~2029; expert estimates span 2030–2040).
+        planning anchor this site uses for a first CRQC ({QC_FIRST_YEAR}, a planning figure, not a
+        source figure). The Global Risk Institute&apos;s 2025 survey of 26 experts found a CRQC
+        “quite possible” (28–49%) within 10 years.
       </p>
       <UnresolvedEstimatesNotice detail="oneFigure" />
     </div>
