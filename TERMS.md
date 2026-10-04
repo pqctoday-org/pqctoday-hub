@@ -89,15 +89,17 @@ The Platform is not affiliated with, endorsed by, or sponsored by any of these o
 - Original educational content, data compilations, and visualizations are copyright of the PQC Today maintainers.
 - Third-party standards, specifications, and documents referenced by the Platform are subject to their respective licenses and copyright terms.
 
-## 10. Privacy
+## 10. Privacy and Analytics
 
 The Platform has no user accounts and no login credentials, and no server of its own that processes your data. All cryptographic operations and assessments run entirely in your browser using client-side WebAssembly.
 
-We use **Google Analytics 4 (GA4)** on every visit. It starts when a page loads, and the Platform has no consent prompt or on/off switch yet. GA4 collects anonymous usage data: page views, aggregated interaction events (for example, which learning modules are started or completed, and searches, with the text you type scrubbed of email addresses, web addresses, IP addresses and long key-like strings), and basic browser details such as language and screen size. GA4 sets cookies that give your browser a random identifier so repeat visits can be counted. The page address we send has nothing after a "?" or "#". Two automatic GA4 features (site search and navigation tracking) read the browser's own address instead, and can record text after a "?", such as a search term or the data in a shared-report link. Google also receives your IP address when your browser sends these events. We do not send names, email addresses or account details. Analytics are disabled entirely when the Platform is accessed on localhost.
+We use **Google Analytics 4 (GA4)** on every visit. It starts when a page loads, and the Platform has no consent prompt or on/off switch yet. GA4 collects anonymous usage data: page views, aggregated interaction events (e.g., which learning modules are started or completed, and searches, with the text you type scrubbed of email addresses, web addresses, IP addresses and long key-like strings), and basic browser details such as language and screen size. GA4 sets cookies that give your browser a random identifier so repeat visits can be counted. The page address we send has nothing after a "?" or "#". Two automatic GA4 features (site search and navigation tracking) read the browser's own address instead, and can record text after a "?", such as a search term or the data in a shared-report link. Google also receives your IP address when your browser sends these events. We do not send names, email addresses or account details. Analytics are disabled entirely when the Platform is accessed on localhost.
 
 To stop analytics, block them in your browser: use a content blocker that blocks Google Analytics requests (google-analytics.com), block cookies for this site, or install Google's opt-out browser add-on. For details on how Google processes analytics data, see [Google's Privacy Policy](https://policies.google.com/privacy).
 
-Local browser storage (localStorage) is used solely to persist your learning progress and preferences on your device. This data never leaves your browser.
+The Platform's **PQC Assistant** chat feature offers two modes. When using **Google Gemini Flash**, your chat messages and page context are sent to Google's servers for processing. You must provide your own Google AI API key to use this mode. Your API key is stored locally in your browser and is never transmitted to PQC Today's infrastructure. Google's use of data sent via the Gemini API is governed by [Google's Gemini API Terms of Service](https://ai.google.dev/gemini-api/terms). Alternatively, you can use the **Local LLM (WebLLM)** mode, which runs the AI model entirely in your browser — no data leaves your device.
+
+Local browser storage (localStorage) keeps your learning progress, preferences, saved assessments and, if you add one, your AI provider key on your device. We do not receive it. It leaves your browser only if you share a report link or use the Gemini cloud mode described above.
 
 ## 11. Modifications
 

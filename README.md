@@ -620,7 +620,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   threats, timeline, and leaders data sources
 - **Terms of Service** (`/terms`): Legal compliance page covering GPL-3.0 licensing, educational
   crypto disclaimer, export compliance (ECCN 5D002), prohibited destinations, acceptable use,
-  and privacy (zero tracking, client-side only)
+  and privacy (client-side processing; anonymous usage counting with Google Analytics 4, as the
+  Terms explain)
 - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions

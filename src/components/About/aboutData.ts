@@ -78,7 +78,7 @@ export const NOT_ITEMS = [
   },
   {
     label: 'Not a surveillance platform',
-    text: 'We collect zero user data. We do not know who you are. We never will.',
+    text: 'We have no accounts and ask for no personal details. Google Analytics 4 counts anonymous usage on every visit; the Privacy section says what it records and how to block it.',
   },
   {
     label: 'Not US-only',

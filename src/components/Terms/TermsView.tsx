@@ -370,8 +370,10 @@ export function TermsView() {
             the AI model entirely in your browser &mdash; no data leaves your device.
           </p>
           <p>
-            Local browser storage (localStorage) is used solely to persist your learning progress
-            and preferences on your device. This data never leaves your browser.
+            Local browser storage (localStorage) keeps your learning progress, preferences, saved
+            assessments and, if you add one, your AI provider key on your device. We do not receive
+            it. It leaves your browser only if you share a report link or use the Gemini cloud mode
+            described above.
           </p>
         </Section>
 

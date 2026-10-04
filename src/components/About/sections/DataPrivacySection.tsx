@@ -53,8 +53,9 @@ export function DataPrivacySection() {
                 <li>
                   <strong className="text-foreground">Local-only persistence</strong> &mdash; all
                   user preferences, assessment results, learning progress, and saved state are
-                  stored in your browser&apos;s localStorage. This data never leaves your device
-                  unless you opt in to Google Drive sync.
+                  stored in your browser&apos;s localStorage. We do not receive this data. It leaves
+                  your device only if you share a report link or use the Gemini cloud mode of the
+                  PQC Assistant.
                 </li>
                 <li>
                   <strong className="text-foreground">Client-side cryptography</strong> &mdash; all
@@ -69,8 +70,8 @@ export function DataPrivacySection() {
                   externally only when you use specific opt-in features:{' '}
                   <strong className="text-foreground">Gemini AI</strong> (chat messages sent to
                   Google when using cloud mode) and{' '}
-                  <strong className="text-foreground">Google Drive sync</strong> (learning progress,
-                  opt-in). See sections below and the{' '}
+                  <strong className="text-foreground">Google Drive sync</strong> (learning progress;
+                  built into the code but not currently available). See sections below and the{' '}
                   <a href="/terms" className="text-primary hover:underline">
                     Terms of Service
                   </a>{' '}
