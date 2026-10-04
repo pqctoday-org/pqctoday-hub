@@ -9,7 +9,6 @@ import {
   getCrqcForecast,
   getCrqcMigrationDeadlines,
   formatEstimateYears,
-  getCrqcSiteDerivedScenarios,
   type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
@@ -60,7 +59,6 @@ export const CrqcCapabilityStrip: React.FC<{
   // exposure hero, economics calculator and mobile screen read.
   const forecast = useMemo(() => getCrqcForecast(), [])
   const deadlines = useMemo(() => getCrqcMigrationDeadlines(), [])
-  const scenarios = useMemo(() => getCrqcSiteDerivedScenarios(), [])
   const yearsToLow = forecast.low - CURRENT_YEAR
 
   const leadMachine = useMemo(
@@ -204,10 +202,25 @@ export const CrqcCapabilityStrip: React.FC<{
             title="Migration deadlines and planning guidance — dates to finish migrating, not forecasts"
             items={deadlines}
           />
-          <EstimateList
-            title="Not in the window — a range this site derived; the source makes no arrival claim"
-            items={scenarios}
-          />
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <span className="font-semibold text-foreground">
+              Resource estimates, not arrival dates.
+            </span>{' '}
+            Google Quantum AI and collaborators (paper dated 30 March 2026) estimate that breaking
+            the elliptic-curve cryptography used by Bitcoin and Ethereum needs at most 1,200 logical
+            qubits (at most 1,450 in a variant) and, on superconducting machines with 10
+            <sup>&minus;3</sup> physical error rates and planar connectivity, fewer than half a
+            million physical qubits. No reliable estimate of when such a machine could exist is
+            established.{' '}
+            <a
+              href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline underline-offset-2 hover:text-primary/80"
+            >
+              The paper
+            </a>
+          </p>
           <div>
             <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
               Current modality progress (logical-qubit estimates)

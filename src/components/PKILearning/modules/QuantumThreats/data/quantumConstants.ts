@@ -423,26 +423,15 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile',
     lastReviewed: '2026-10-03',
   },
-  {
-    source: 'Google Quantum AI & Ethereum Foundation (2026)',
-    kind: 'site-derived-scenario',
-    yearLow: 2029,
-    yearHigh: 2036,
-    confidence:
-      'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
-    notes:
-      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and fewer than half a million physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
-    url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
-    lastReviewed: '2026-07-30',
-  },
 ]
 
 /**
  * The ONE CRQC window the site shows (ruling R5, 2026-09-24) — derived only
  * from the `arrival-forecast` entries of CRQC_ESTIMATES (today: the Global
- * Risk Institute 2025 survey, 2030–2041). Migration deadlines, planning
- * guidance and the site-derived scenario are excluded: none of them says when
- * a CRQC will exist. Every Threats-page surface (capability strip, trajectory
+ * Risk Institute 2025 survey, 2030–2041). Migration deadlines and planning
+ * guidance are excluded: neither says when a CRQC will exist. (The site no longer
+ * publishes a range of its own; the `site-derived-scenario` kind stays for the day
+ * a reviewed one returns.) Every Threats-page surface (capability strip, trajectory
  * chart, exposure hero, economics calculator, mobile screen) and the
  * QuantumThreats Learn module read this function, so they agree by
  * construction.
