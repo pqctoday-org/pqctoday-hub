@@ -3,7 +3,7 @@
   "truthBoundary": "Real measurements taken for teaching (plan §1 item 9). Not a validated entropy source, not an ESV submission, and no min-entropy claim about these devices beyond what the estimator output shows for each dataset under its recorded conditions.",
   "generatedBy": "scripts/entropy-90b/package-device-datasets.ts",
   "sourceManifest": {
-    "path": "pqctoday-priv/local-evidence-cache/entropy/0924/datasets.json (not published)",
+    "path": "datasets.json (private evidence manifest, not published)",
     "sha256": "c3a2af3a0d7f1c94d9e7a9def2ca08f2ff7ab1265ff802ba640cdcefeef92902",
     "generatedUtc": "2026-09-25T03:20:12Z"
   },
@@ -327,7 +327,7 @@
         "binary": "tools/jitterentropy-hashtime-macos-arm64",
         "binary_sha256": "e03d9d062cc80f11af0b0cd2bbf769f0fea2cc13bc18ec481c95ab748063fabf"
       },
-      "command": "/private/tmp/claude-501/-Users-pqctoday-Antigravity/fad562f7-6211-4a2c-a83b-22206d58d59f/scratchpad/build/out-macos-arm64/jitterentropy-hashtime 1000000 1 /private/tmp/claude-501/-Users-pqctoday-Antigravity/fad562f7-6211-4a2c-a83b-22206d58d59f/scratchpad/run-mac-native/idle/jent-raw-noise --max-mem 0",
+      "command": "jitterentropy-hashtime 1000000 1 jent-raw-noise --max-mem 0",
       "startUtc": "2026-09-25T03:13:36Z",
       "endUtc": "2026-09-25T03:13:46Z",
       "wallSeconds": 10,

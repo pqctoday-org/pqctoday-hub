@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, ExternalLink, Quote } from 'lucide-react'
 import { useSourcePassages } from '@/hooks/useSourcePassages'
 import { Button } from '@/components/ui/button'
+import { attributionLabel } from './attributionLabel'
 
 interface SourcePassagesDrawerProps {
   /** Full corpus chunk id (e.g., `library-FIPS 203`). Caller builds the id. */
@@ -24,7 +25,7 @@ export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassages
 
   const docHref = cachedHref(sourceDoc)
   const docLabel = sourceDoc ? sourceDoc.split('/').pop() : undefined
-  const attribution = wasAttributedTo ?? 'unknown'
+  const attribution = attributionLabel(wasAttributedTo)
   const summary = `${passages.length} passage${passages.length === 1 ? '' : 's'} from ${docLabel ?? 'source'}`
 
   return (

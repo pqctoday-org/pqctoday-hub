@@ -290,12 +290,9 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       {cswp39Open && (
                         <div className="mt-3 pl-1">
                           <p className="text-xs text-muted-foreground/80 mb-3">
-                            Governance obligations extracted from this source document by{' '}
-                            <code className="text-[10px] bg-muted/40 px-1 rounded">
-                              qwen3.6:27b
-                            </code>
-                            , grouped by Crypto Posture Management pillar and tagged with the
-                            maturity tier each one represents.
+                            Governance obligations extracted from this source document by automated
+                            extraction, grouped by Crypto Posture Management pillar and tagged with
+                            the maturity tier each one represents.
                           </p>
                           <div className="space-y-3">
                             {grouped.map(({ pillar, items }) => {
