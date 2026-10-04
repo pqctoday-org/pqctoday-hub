@@ -14,21 +14,24 @@ import {
 } from 'lucide-react'
 
 /**
- * Mission tags shown on the vision panel. Three entries embed live counts
- * (learning modules, assessment steps, patents) that previously drifted from
- * the real data — the caller supplies the current computed values (same
- * loaders Landing already uses) so this list can never silently go stale.
+ * Mission tags shown on the vision panel. Five entries embed live counts
+ * (learning modules, business tools, assessment steps, migration catalog
+ * products, patents) that previously drifted from the real data — the caller
+ * supplies the current computed values (same loaders Landing already uses) so
+ * this list can never silently go stale.
  */
 export function buildMissionTags(counts: {
   moduleCount: number
+  toolCount: number
   stepCount: number
+  catalogCount: number
   patentCount: number
 }): string[] {
   return [
     `${counts.moduleCount} learning modules`,
-    '34 business planning tools',
+    `${counts.toolCount} business planning tools`,
     `${counts.stepCount}-step risk assessment`,
-    '800+ migration catalog',
+    `${counts.catalogCount.toLocaleString()} migration catalog products`,
     `${counts.patentCount.toLocaleString()} PQC patents`,
     'PKCS#11 v3.2 simulator',
     'FIPS 203 / 204 / 205',

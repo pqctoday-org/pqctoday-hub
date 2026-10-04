@@ -10,7 +10,7 @@ import {
   type ReplaceAsset,
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
-import { logMigrateAction } from '@/utils/analytics'
+import { logMigrateAction, logMigrateAssetSearch } from '@/utils/analytics'
 import { domainProductCount, searchProducts } from './workbenchCatalog'
 import { Input } from '../../ui/input'
 import { Button } from '../../ui/button'
@@ -54,7 +54,7 @@ export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }
 
   useEffect(() => {
     if (!query.trim()) return
-    const t = window.setTimeout(() => logMigrateAction('Search Assets', query.trim()), 600)
+    const t = window.setTimeout(() => logMigrateAssetSearch(query.trim()), 600)
     return () => window.clearTimeout(t)
   }, [query])
 

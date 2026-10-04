@@ -15,6 +15,11 @@ import {
   logFaqExpand,
   logBusinessToolsSearch,
   logBusinessToolsFilter,
+  logComplianceSearch,
+  logLeadersSearch,
+  logLibrarySearch,
+  logMigrateAssetSearch,
+  logTimelineFilterText,
   logExploreTileClick,
   logExploreUnlock,
   logReportViewed,
@@ -530,6 +535,49 @@ describe('analytics', () => {
       })
       logQuizSession(1, 1)
       expect(useHistoryStore.getState().events).toHaveLength(1)
+    })
+  })
+
+  // Every logger that takes text a visitor typed must scrub it. The query is a
+  // mix of an email, a URL, an IPv4 address and a long key-like token around
+  // the one harmless word each assertion expects to survive.
+  describe('typed-text loggers never send the raw query', () => {
+    const TOKEN = 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8'
+    const RAW = `lattice user@example.com https://x.example/path 10.0.0.12 ${TOKEN}`
+    type GaCall = [{ category: string; action: string; label?: string }]
+    const lastCall = () => {
+      const calls = (ReactGA.event as unknown as { mock: { calls: GaCall[] } }).mock.calls
+      return calls[calls.length - 1][0]
+    }
+    const expectScrubbed = (label: string | undefined) => {
+      expect(label).toContain('lattice')
+      expect(label).not.toContain('user@example.com')
+      expect(label).not.toContain('https://')
+      expect(label).not.toContain('10.0.0.12')
+      expect(label).not.toContain(TOKEN)
+    }
+
+    it.each([
+      ['logLibrarySearch', logLibrarySearch, 'Library', 'Search'],
+      ['logComplianceSearch', logComplianceSearch, 'Compliance', 'Search'],
+      ['logLeadersSearch', logLeadersSearch, 'Leaders', 'Search'],
+      ['logTimelineFilterText', logTimelineFilterText, 'Timeline', 'Filter Text'],
+      ['logMigrateAssetSearch', logMigrateAssetSearch, 'Migrate', 'Search Assets'],
+      ['logPatentSearch', logPatentSearch, 'Patents', 'Search'],
+      ['logFaqSearch', logFaqSearch, 'FAQ', 'Search'],
+      ['logBusinessToolsSearch', logBusinessToolsSearch, 'Business', 'Tools Search'],
+    ])('%s scrubs email, URL, IP and token', (_name, logger, category, action) => {
+      logger(RAW)
+      const call = lastCall()
+      expect(call.category).toBe(category)
+      expect(call.action).toBe(action)
+      expectScrubbed(call.label)
+    })
+
+    it('caps the label at 80 characters before any persona suffix', () => {
+      const long = 'ab '.repeat(60)
+      logLeadersSearch(long)
+      expect(lastCall().label).toBe(long.slice(0, 80))
     })
   })
 })

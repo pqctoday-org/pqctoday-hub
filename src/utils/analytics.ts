@@ -176,7 +176,7 @@ export const logAlgorithmView = (algorithmName: string) => {
 }
 
 export const logComplianceSearch = (query: string) => {
-  logEvent('Compliance', 'Search', personaLabel(query))
+  logEvent('Compliance', 'Search', personaLabel(sanitizeQuery(query)))
 }
 
 export const logComplianceFilter = (filterType: string, value: string) => {
@@ -187,8 +187,21 @@ export const logMigrateAction = (action: string, label?: string) => {
   logEvent('Migrate', action, personaLabel(label))
 }
 
+/** Typed text from the Migrate workbench asset search — scrubbed like every other query. */
+export const logMigrateAssetSearch = (query: string) => {
+  logMigrateAction('Search Assets', sanitizeQuery(query))
+}
+
 export const logLibrarySearch = (query: string) => {
-  logEvent('Library', 'Search', query)
+  logEvent('Library', 'Search', sanitizeQuery(query))
+}
+
+export const logLeadersSearch = (query: string) => {
+  logEvent('Leaders', 'Search', sanitizeQuery(query))
+}
+
+export const logTimelineFilterText = (text: string) => {
+  logEvent('Timeline', 'Filter Text', sanitizeQuery(text))
 }
 
 export const logLibraryDownload = (fileName: string) => {
@@ -289,11 +302,15 @@ export const logReportCta = (
   logEvent('Report', 'CTA Click', personaLabel(target))
 }
 
-// Scrub PII (emails, URLs) before sending query strings to GA4
+// Scrub PII (emails, URLs, IPv4 addresses, long key/hash-like tokens) before
+// sending query strings to GA4. Every logger that takes text a visitor typed
+// must go through this — never pass a typed string to logEvent directly.
 function sanitizeQuery(q: string): string {
   return q
     .replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, '[email]')
     .replace(/https?:\/\/\S+/gi, '[url]')
+    .replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '[ip]')
+    .replace(/[A-Za-z0-9+/_=-]{32,}/g, '[token]')
     .slice(0, 80)
 }
 

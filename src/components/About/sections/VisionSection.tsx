@@ -9,17 +9,22 @@ import { buildMissionTags, PRINCIPLES, NOT_ITEMS } from '../aboutData'
 import { CareerJourneyModal } from '../CareerJourneyModal'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { STEP_COMPONENTS } from '@/components/Assess/redesign/stepRegistry'
+import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { patentsData } from '@/data/patentsData'
+import { softwareData } from '@/data/migrateData'
 
 // Excludes the synthetic 'quiz' entry — matches the count Landing already shows.
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 // The Assess step registry, not the raw file count under steps/ — a step file
 // that isn't wired into STEP_COMPONENTS isn't part of the real flow a user sees.
 const STEP_COUNT = Object.keys(STEP_COMPONENTS).length
+const TOOL_COUNT = BUSINESS_TOOLS.length
 
 const MISSION_TAGS = buildMissionTags({
   moduleCount: MODULE_COUNT,
+  toolCount: TOOL_COUNT,
   stepCount: STEP_COUNT,
+  catalogCount: softwareData.length,
   patentCount: patentsData.length,
 })
 
@@ -115,10 +120,10 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
                 the deadlines.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                Our Command Center provides 34 interactive planning tools for executives and
-                compliance teams &mdash; ROI calculators, RACI builders, vendor scorecards, policy
-                generators, deployment playbooks, and audit checklists &mdash; all adapting to your
-                industry, geography, and regulatory context.
+                Our Command Center provides {TOOL_COUNT} interactive planning tools for executives
+                and compliance teams &mdash; ROI calculators, RACI builders, vendor scorecards,
+                policy generators, deployment playbooks, and audit checklists &mdash; all adapting
+                to your industry, geography, and regulatory context.
               </p>
               <div className="flex flex-wrap gap-2">
                 {MISSION_TAGS.map((tag) => (

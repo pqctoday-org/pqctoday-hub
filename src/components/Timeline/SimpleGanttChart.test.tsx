@@ -51,6 +51,7 @@ vi.mock('../common/FilterDropdown', () => ({
 // Mock Analytics
 vi.mock('../../utils/analytics', () => ({
   logEvent: vi.fn(),
+  logTimelineFilterText: vi.fn(),
 }))
 
 const mockData: GanttCountryData[] = [
