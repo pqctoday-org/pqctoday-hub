@@ -2,10 +2,10 @@
   "version": 1,
   "model": "Xenova/bge-base-en-v1.5",
   "modelHash": "0fb6250c0ee24063375ad208aadc1052c32aadc65896d261bd83f67d92ca4f8b",
-  "corpusHash": "7d6063034ce5fbe54164ff932bfc30797239f2b8ed3e9ad905ea0f77d19fa003",
+  "corpusHash": "b66639120dd6deae59ab098524a1dd95c9983e70cdc2a623d1c6afd0a29ffe00",
   "dimensions": 768,
   "dtype": "float32",
-  "generatedAt": "2026-10-04T21:43:53.313Z",
+  "generatedAt": "2026-10-04T22:06:59.779Z",
   "generatedBy": "build-embedding-index@v1",
   "chunkCount": 17139,
   "byteOffsets": {
