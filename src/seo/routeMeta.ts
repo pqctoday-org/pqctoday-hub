@@ -419,25 +419,10 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 62 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — {modules} Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 62 guided learning modules across 9 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with {modules} guided learning modules across 9 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Course',
-      name: 'Post-Quantum Cryptography Learning Path',
-      description:
-        '62 interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.',
-      provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
-      isAccessibleForFree: true,
-      numberOfCredits: 62,
-      hasCourseInstance: {
-        '@type': 'CourseInstance',
-        courseMode: 'online',
-        courseWorkload: 'PT61H',
-      },
-    },
   },
 
   '/learn/pqc-101': {
@@ -971,10 +956,116 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     ),
   },
 
+  // --- Modules that were in the catalog but had no page entry (title and description are the module's own) ---
+
+  '/learn/cbom': {
+    title: 'Cryptography Bill of Materials (CBOM) | PQC Today',
+    description:
+      'Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.',
+    canonical: `${BASE_URL}/learn/cbom`,
+    structuredData: buildModuleSchema(
+      'Cryptography Bill of Materials (CBOM)',
+      'PT60M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/crypto-mgmt-modernization': {
+    title: 'Cryptographic Management Modernization | PQC Today',
+    description:
+      'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
+    canonical: `${BASE_URL}/learn/crypto-mgmt-modernization`,
+    structuredData: buildModuleSchema(
+      'Cryptographic Management Modernization',
+      'PT55M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/crypto-registry': {
+    title: 'CycloneDX Cryptography Registry | PQC Today',
+    description:
+      'One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.',
+    canonical: `${BASE_URL}/learn/crypto-registry`,
+    structuredData: buildModuleSchema('CycloneDX Cryptography Registry', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/mls-group-messaging': {
+    title: 'MLS — Group Messaging | PQC Today',
+    description:
+      'Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.',
+    canonical: `${BASE_URL}/learn/mls-group-messaging`,
+    structuredData: buildModuleSchema('MLS — Group Messaging', 'PT40M', 'Intermediate'),
+  },
+
+  '/learn/pki-enrollment-protocols': {
+    title: 'PKI Enrollment Protocols (EST & CMP) | PQC Today',
+    description:
+      'RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
+    canonical: `${BASE_URL}/learn/pki-enrollment-protocols`,
+    structuredData: buildModuleSchema('PKI Enrollment Protocols (EST & CMP)', 'PT50M', 'Advanced'),
+  },
+
+  '/learn/pqc-candidates': {
+    title: 'PQC Candidates & Lifecycle | PQC Today',
+    description:
+      'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
+    canonical: `${BASE_URL}/learn/pqc-candidates`,
+    structuredData: buildModuleSchema('PQC Candidates & Lifecycle', 'PT55M', 'Intermediate'),
+  },
+
+  '/learn/pqc-grc': {
+    title: 'PQC GRC | PQC Today',
+    description:
+      'Wire post-quantum risk into governance, risk, and compliance: cascade Key Risk Indicators from board to operational level, triage a deferral exception register into SOC suppression, and hand off cleanly between GRC and the SOC.',
+    canonical: `${BASE_URL}/learn/pqc-grc`,
+    structuredData: buildModuleSchema('PQC GRC', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/sbom': {
+    title: 'Software Bill of Materials (SBOM) | PQC Today',
+    description:
+      'Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.',
+    canonical: `${BASE_URL}/learn/sbom`,
+    structuredData: buildModuleSchema('Software Bill of Materials (SBOM)', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/skills-team-structure': {
+    title: 'Skills & Team Structure | PQC Today',
+    description:
+      'Size and staff the PQC migration program: convert your cryptographic estate into an FTE estimate with the 1-FTE-per-500-instances heuristic, build a federated Crypto Champion roster, and track each champion’s readiness commitments.',
+    canonical: `${BASE_URL}/learn/skills-team-structure`,
+    structuredData: buildModuleSchema('Skills & Team Structure', 'PT30M', 'Intermediate'),
+  },
+
+  '/learn/slh-dsa': {
+    title: 'SLH-DSA: Stateless Hash Signatures | PQC Today',
+    description:
+      'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
+    canonical: `${BASE_URL}/learn/slh-dsa`,
+    structuredData: buildModuleSchema('SLH-DSA: Stateless Hash Signatures', 'PT45M', 'Advanced'),
+  },
+
+  '/learn/soc-implementation-pqc': {
+    title: 'SOC Implementation for PQC | PQC Today',
+    description:
+      'Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on.',
+    canonical: `${BASE_URL}/learn/soc-implementation-pqc`,
+    structuredData: buildModuleSchema('SOC Implementation for PQC', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/verification-closure': {
+    title: 'Decommissioning & Program Closure | PQC Today',
+    description:
+      'Retire classical cryptography on a defensible schedule, prove the migration actually happened from observed behaviour, and hand the program to business-as-usual.',
+    canonical: `${BASE_URL}/learn/verification-closure`,
+    structuredData: buildModuleSchema('Decommissioning & Program Closure', 'PT40M', 'Intermediate'),
+  },
+
   '/explore': {
     title: 'Explore | PQC Today',
     description:
-      'Discover post-quantum cryptography resources — interactive timelines, 62 learning modules, compliance tools, migration guides, and the PQC risk assessment.',
+      'Discover post-quantum cryptography resources — interactive timelines, {modules} learning modules, compliance tools, migration guides, and the PQC risk assessment.',
     canonical: `${BASE_URL}/explore`,
   },
 
@@ -990,6 +1081,44 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Interactive 3D map of the post-quantum cryptography landscape — standards, algorithms, protocols, compliance mandates, industries, use cases, products, vendors, patents, and community leaders, linked by how they relate.',
     canonical: `${BASE_URL}/navigate`,
+  },
+}
+
+// --- Counts quoted in page copy -------------------------------------------------------------------
+// A title or description writes "{modules}" where it quotes the number of Learn modules, and the
+// /learn course data carries the same count and the total study time. They all come from the module
+// pages above, counted the way the app counts them (the catalog without the quiz), so adding a
+// module updates every place at once. learnRoutes.test.ts ties those pages to the real catalog.
+const moduleStudyMinutes = (iso: unknown): number => {
+  const text = String(iso ?? '')
+  return Number(/(\d+)H/.exec(text)?.[1] ?? 0) * 60 + Number(/(\d+)M/.exec(text)?.[1] ?? 0)
+}
+const modulePages = Object.entries(ROUTE_META).filter(
+  ([path]) => path.startsWith('/learn/') && path !== '/learn/quiz'
+)
+export const LEARN_MODULE_COUNT = modulePages.length
+const LEARN_STUDY_MINUTES = modulePages.reduce(
+  (sum, [, meta]) => sum + moduleStudyMinutes(meta.structuredData?.timeRequired),
+  0
+)
+
+for (const meta of Object.values(ROUTE_META)) {
+  meta.title = meta.title.replaceAll('{modules}', String(LEARN_MODULE_COUNT))
+  meta.description = meta.description.replaceAll('{modules}', String(LEARN_MODULE_COUNT))
+}
+
+ROUTE_META['/learn']!.structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'Post-Quantum Cryptography Learning Path',
+  description: `${LEARN_MODULE_COUNT} interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.`,
+  provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
+  isAccessibleForFree: true,
+  numberOfCredits: LEARN_MODULE_COUNT,
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    courseWorkload: `PT${Math.round(LEARN_STUDY_MINUTES / 60)}H`,
   },
 }
 
