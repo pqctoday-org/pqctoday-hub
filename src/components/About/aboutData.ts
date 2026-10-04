@@ -36,7 +36,7 @@ export function buildMissionTags(counts: {
     'PKCS#11 v3.2 simulator',
     'FIPS 203 / 204 / 205',
     'AI assistant — local or cloud',
-    'Zero data collected',
+    'No accounts, anonymous usage analytics',
   ]
 }
 
@@ -55,7 +55,7 @@ export const PRINCIPLES = [
   },
   {
     label: 'Private by design',
-    text: 'No registration. No data collection. Processing runs on your device. We never know you visited.',
+    text: 'No registration. Processing runs on your device. Google Analytics 4 counts anonymous usage on every visit; the Privacy section below says what it records and how to block it.',
   },
   {
     label: 'Free at the core',

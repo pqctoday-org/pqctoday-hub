@@ -42,12 +42,13 @@ export function DataPrivacySection() {
             <div className="prose prose-invert max-w-none mt-4">
               <p className="text-muted-foreground">
                 PQC Today is a fully static website &mdash; there is no backend server, no database,
-                and no user accounts. We do not collect, store, or transmit any personal data.
+                and no user accounts. We do not ask for your name, email address, or any account
+                details. Anonymous usage analytics run on every visit; see below.
               </p>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
                 <li>
-                  <strong className="text-foreground">No personal data collection</strong> &mdash;
-                  no names, email addresses, form submissions, or server-side logging of any kind.
+                  <strong className="text-foreground">No sign-up data</strong> &mdash; no names,
+                  email addresses, or form submissions, and no server of ours that logs visits.
                 </li>
                 <li>
                   <strong className="text-foreground">Local-only persistence</strong> &mdash; all
@@ -62,11 +63,12 @@ export function DataPrivacySection() {
                 </li>
                 <li>
                   <strong className="text-foreground">Third-party data flows</strong> &mdash; the
-                  site is served as static files from GitHub Pages. Data is sent externally only
-                  when you use specific opt-in features:{' '}
-                  <strong className="text-foreground">Google Analytics 4</strong> (anonymous usage
-                  data, may set cookies), <strong className="text-foreground">Gemini AI</strong>{' '}
-                  (chat messages sent to Google when using cloud mode), and{' '}
+                  site is served as static files from GitHub Pages.{' '}
+                  <strong className="text-foreground">Google Analytics 4</strong> runs on every
+                  visit (anonymous usage data, sets cookies; see below). Other data is sent
+                  externally only when you use specific opt-in features:{' '}
+                  <strong className="text-foreground">Gemini AI</strong> (chat messages sent to
+                  Google when using cloud mode) and{' '}
                   <strong className="text-foreground">Google Drive sync</strong> (learning progress,
                   opt-in). See sections below and the{' '}
                   <a href="/terms" className="text-primary hover:underline">
@@ -99,22 +101,44 @@ export function DataPrivacySection() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
                   To improve content accuracy and usability, PQC Today uses{' '}
-                  <strong className="text-foreground">Google Analytics 4</strong> to collect
-                  anonymous, aggregated behavioral signals. No personal identifiers are ever
-                  transmitted. Specifically, we collect:
+                  <strong className="text-foreground">Google Analytics 4</strong> on{' '}
+                  <strong className="text-foreground">every visit</strong>. It starts when a page
+                  loads, and there is no consent prompt or on/off switch on the site yet. It records
+                  anonymous usage, and sets cookies that give your browser a random identifier so
+                  repeat visits can be counted. We do not send your name, email address, or account
+                  details. Because your browser contacts Google to send these events, Google also
+                  receives your IP address; Google&apos;s Privacy Policy describes how it handles
+                  that data. Specifically, we collect:
                 </p>
                 <ul className="space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
                   <li>
-                    <strong className="text-foreground">Page navigation</strong> &mdash; which
-                    sections of the site are visited.
+                    <strong className="text-foreground">Page navigation</strong> &mdash; which pages
+                    are visited. The page address we send has nothing after a &ldquo;?&rdquo; or
+                    &ldquo;#&rdquo;. Two automatic Google Analytics features (site search and
+                    navigation tracking) read the browser&apos;s own address instead, and can record
+                    text after a &ldquo;?&rdquo;, such as a search term or the data in a
+                    shared-report link.
                   </li>
                   <li>
                     <strong className="text-foreground">Feature interactions</strong> &mdash;
-                    searches performed, filters applied, algorithms and compliance items viewed.
+                    searches performed (text you type is scrubbed of email addresses, web addresses,
+                    IP addresses, and long key-like strings, and shortened to 80 characters, before
+                    it is sent as an event), filters applied, algorithms and compliance items
+                    viewed.
+                  </li>
+                  <li>
+                    <strong className="text-foreground">Your choices</strong> &mdash; the role,
+                    experience level, region, and industry you pick, and summary labels such as the
+                    industry and overall risk level of an assessment.
+                  </li>
+                  <li>
+                    <strong className="text-foreground">Browser details</strong> &mdash; language,
+                    screen size, and browser and device type, which your browser sends with each
+                    event.
                   </li>
                   <li>
                     <strong className="text-foreground">Content accuracy signals</strong> &mdash;
-                    thumbs-up / thumbs-down votes on content pages (page path and vote only).
+                    thumbs-up / thumbs-down votes on content pages (the page and the vote).
                   </li>
                   <li>
                     <strong className="text-foreground">Learning milestones</strong> &mdash; module
@@ -127,17 +151,9 @@ export function DataPrivacySection() {
                   </li>
                 </ul>
                 <p className="text-sm text-muted-foreground mt-3">
-                  Analytics are <strong className="text-foreground">disabled on localhost</strong>.
-                  Google Analytics 4 anonymizes IP addresses by default &mdash;{' '}
-                  <a
-                    href="https://policies.google.com/privacy"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Google&apos;s Privacy Policy
-                  </a>{' '}
-                  applies. You may opt out at any time via the{' '}
+                  <strong className="text-foreground">How to stop it:</strong> block analytics in
+                  your browser. Use a content blocker that blocks Google Analytics requests
+                  (google-analytics.com), block cookies for this site, or install the{' '}
                   <a
                     href="https://tools.google.com/dlpage/gaoptout"
                     target="_blank"
@@ -146,7 +162,17 @@ export function DataPrivacySection() {
                   >
                     Google Analytics opt-out browser extension
                   </a>
-                  .
+                  . Analytics are <strong className="text-foreground">disabled on localhost</strong>
+                  . Google&apos;s{' '}
+                  <a
+                    href="https://policies.google.com/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Privacy Policy
+                  </a>{' '}
+                  applies to data sent to Google.
                 </p>
               </div>
             </div>

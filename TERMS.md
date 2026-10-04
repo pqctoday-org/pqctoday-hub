@@ -1,7 +1,7 @@
 # Terms of Service
 
-**Effective Date:** March 22, 2026
-**Last Updated:** March 22, 2026
+**Effective Date:** October 4, 2026
+**Last Updated:** October 4, 2026
 
 ## 1. Acceptance of Terms
 
@@ -91,7 +91,11 @@ The Platform is not affiliated with, endorsed by, or sponsored by any of these o
 
 ## 10. Privacy
 
-The Platform collects **no personal data**. There are no user accounts, no cookies, no analytics tracking, and no server-side data processing. All cryptographic operations and assessments run entirely in your browser using client-side WebAssembly. No data leaves your device.
+The Platform has no user accounts and no login credentials, and no server of its own that processes your data. All cryptographic operations and assessments run entirely in your browser using client-side WebAssembly.
+
+We use **Google Analytics 4 (GA4)** on every visit. It starts when a page loads, and the Platform has no consent prompt or on/off switch yet. GA4 collects anonymous usage data: page views, aggregated interaction events (for example, which learning modules are started or completed, and searches, with the text you type scrubbed of email addresses, web addresses, IP addresses and long key-like strings), and basic browser details such as language and screen size. GA4 sets cookies that give your browser a random identifier so repeat visits can be counted. The page address we send has nothing after a "?" or "#". Two automatic GA4 features (site search and navigation tracking) read the browser's own address instead, and can record text after a "?", such as a search term or the data in a shared-report link. Google also receives your IP address when your browser sends these events. We do not send names, email addresses or account details. Analytics are disabled entirely when the Platform is accessed on localhost.
+
+To stop analytics, block them in your browser: use a content blocker that blocks Google Analytics requests (google-analytics.com), block cookies for this site, or install Google's opt-out browser add-on. For details on how Google processes analytics data, see [Google's Privacy Policy](https://policies.google.com/privacy).
 
 Local browser storage (localStorage) is used solely to persist your learning progress and preferences on your device. This data never leaves your browser.
 
