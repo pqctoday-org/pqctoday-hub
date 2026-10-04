@@ -31,6 +31,8 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.150.0] - 2026-10-04
 
+Pages that quote when a quantum computer might arrive now stick to what their sources say: the Threats page drops the range this site had worked out itself and shows the Global Risk Institute survey in its own words, the Assess steps no longer claim a 2030–2040 expert range, and the FAQ, Simulation, report and Learn exercises say that these figures are published estimates, still open to debate. The Confidential Computing workshop also now prints the real ML-DSA key sizes.
+
 ### Added
 
 - **Notes that estimates are still open, on more pages** [view:/faq] [view:/report] [view:/simulation] [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the FAQ answers that quote a quantum-computer year or qubit count, the Simulation's years-to-Q-Day figure in the report, and the Learn exercises where you set a quantum-computer year now say that these are published estimates or example figures, not settled answers. The 2029 year the Simulation and the assessment report plan against is now labelled as this site's own planning anchor, not a figure from a source.
