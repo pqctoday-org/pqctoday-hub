@@ -217,6 +217,7 @@ const MODULE_NAMES: Record<string, string> = {
   'automotive-pqc': 'Automotive PQC',
   'aerospace-pqc': 'Aerospace PQC',
   'confidential-computing': 'Confidential Computing & TEEs',
+  'homomorphic-encryption': 'Homomorphic Encryption (FHE) & HSM Key Custody',
   'database-encryption-pqc': 'Database Encryption & PQC',
   'secrets-management-pqc': 'Secrets Management & PQC',
   'platform-eng-pqc': 'Platform Engineering & PQC',
@@ -463,6 +464,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How do TEE attestation chains become vulnerable to quantum attacks?',
     'What is the PQC migration path for Intel SGX, AMD SEV-SNP, and ARM CCA?',
     'How do TEE-HSM trusted channels integrate PQC key provisioning?',
+  ],
+  'homomorphic-encryption': [
+    'How does FHE differ from a TEE, and what does it cost in speed?',
+    'Why must an HSM never act as a raw decryption oracle for FHE?',
+    'Is FHE quantum-safe, and which parts around it still need a PQC fix?',
   ],
   'database-encryption-pqc': [
     'Is AES-256 TDE already quantum-safe, and what still needs migration?',

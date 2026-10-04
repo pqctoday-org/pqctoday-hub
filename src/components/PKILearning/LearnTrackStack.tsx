@@ -65,6 +65,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'key-management',
     'secure-boot-pqc',
     'confidential-computing',
+    'homomorphic-encryption',
     'crypto-product-certification',
     'fips-140-3-certification',
     'cc-eucc-certification',

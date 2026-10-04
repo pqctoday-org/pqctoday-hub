@@ -57,6 +57,7 @@ export const QUIZ_CATEGORIES = [
   'automotive-pqc',
   'crypto-dev-apis',
   'confidential-computing',
+  'homomorphic-encryption',
   'platform-eng-pqc',
   'secrets-management-pqc',
   'network-security-pqc',

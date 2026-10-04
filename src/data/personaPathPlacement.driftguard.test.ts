@@ -137,8 +137,8 @@ const WS8_PLACEMENTS: { module: string; persona: PersonaId; after: string; why: 
   {
     module: 'platform-eng-pqc',
     persona: 'architect',
-    after: 'confidential-computing',
-    why: 'end of the infra cluster this persona already walks; platform choices are architecture choices',
+    after: 'homomorphic-encryption',
+    why: 'end of the infra cluster this persona already walks (homomorphic-encryption was split out of confidential-computing and sits right after it); platform choices are architecture choices',
   },
   {
     module: 'confidential-computing',

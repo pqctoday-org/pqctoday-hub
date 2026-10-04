@@ -93,6 +93,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   APISecurityJWT: 'api-security-jwt',
   IoTPQC: 'iot-pqc',
   ConfidentialComputing: 'confidential-computing',
+  HomomorphicEncryption: 'homomorphic-encryption',
   WebGatewayPQC: 'web-gateway-pqc',
   EMVPaymentPQC: 'emv-payment-pqc',
   CryptoDevAPIs: 'crypto-dev-apis',

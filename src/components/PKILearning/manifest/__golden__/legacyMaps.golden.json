@@ -95,8 +95,8 @@
       "id": "confidential-computing",
       "lm_id": "LM-019",
       "title": "Confidential Computing & TEEs",
-      "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.",
-      "duration": "90 min",
+      "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.",
+      "duration": "60 min",
       "difficulty": "advanced",
       "frameworkPhase": "p6"
     },
@@ -271,6 +271,15 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
+    },
+    "homomorphic-encryption": {
+      "id": "homomorphic-encryption",
+      "lm_id": "LM-076",
+      "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
+      "description": "Compute on encrypted data without trusting the hardware: the four ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM can hold the FHE secret key without becoming a decryption oracle.",
+      "duration": "45 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p6"
     },
     "hsm-pqc": {
       "id": "hsm-pqc",
@@ -669,7 +678,7 @@
     "cc-eucc-certification": 2,
     "code-signing": 5,
     "compliance-strategy": 4,
-    "confidential-computing": 6,
+    "confidential-computing": 5,
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
     "crypto-mgmt-modernization": 9,
@@ -689,6 +698,7 @@
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
+    "homomorphic-encryption": 1,
     "hsm-pqc": 5,
     "hybrid-crypto": 7,
     "iam-pqc": 6,
@@ -1034,10 +1044,6 @@
       {
         "id": "quantum-threats",
         "label": "Quantum Threats to TEEs"
-      },
-      {
-        "id": "homomorphic-encryption",
-        "label": "Homomorphic Encryption (FHE)"
       }
     ],
     "crypto-agility": [
@@ -1495,6 +1501,28 @@
       {
         "id": "healthcare-migration",
         "label": "Healthcare PQC Migration"
+      }
+    ],
+    "homomorphic-encryption": [
+      {
+        "id": "fhe-fundamentals",
+        "label": "FHE vs TEEs & the ISO/IEC 28033 Schemes"
+      },
+      {
+        "id": "fhe-keys-operations",
+        "label": "Keys, Operations & AES Data"
+      },
+      {
+        "id": "fhe-quantum",
+        "label": "FHE Against the Quantum Threat"
+      },
+      {
+        "id": "fhe-hsm-custody",
+        "label": "The HSM as FHE Key Custodian"
+      },
+      {
+        "id": "fhe-implementations",
+        "label": "Open-Source Implementations"
       }
     ],
     "hsm-pqc": [
@@ -2600,10 +2628,6 @@
       {
         "id": "quantum-threat-migration",
         "label": "Quantum Threat Migration"
-      },
-      {
-        "id": "fhe-hsm-flows",
-        "label": "FHE + HSM Flows"
       }
     ],
     "crypto-agility": [
@@ -3004,6 +3028,12 @@
       {
         "id": "hospital-migration-planner",
         "label": "Hospital Migration Planner"
+      }
+    ],
+    "homomorphic-encryption": [
+      {
+        "id": "fhe-hsm-flows",
+        "label": "FHE + HSM Flows"
       }
     ],
     "hsm-pqc": [
@@ -4145,8 +4175,17 @@
           "id": "confidential-computing",
           "lm_id": "LM-019",
           "title": "Confidential Computing & TEEs",
-          "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.",
-          "duration": "90 min",
+          "description": "Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p6"
+        },
+        {
+          "id": "homomorphic-encryption",
+          "lm_id": "LM-076",
+          "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
+          "description": "Compute on encrypted data without trusting the hardware: the four ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM can hold the FHE secret key without becoming a decryption oracle.",
+          "duration": "45 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"
         },
@@ -4693,6 +4732,10 @@
     "healthcare-pqc": {
       "algorithms": ["ML-DSA", "ML-KEM"],
       "standards": ["NIST IR 8547", "FIPS 203", "FIPS 204", "FIPS 205"]
+    },
+    "homomorphic-encryption": {
+      "algorithms": ["ML-DSA", "ML-KEM"],
+      "standards": ["FIPS 203", "FIPS 204"]
     },
     "hsm-pqc": {
       "algorithms": ["ML-KEM", "ML-DSA"],

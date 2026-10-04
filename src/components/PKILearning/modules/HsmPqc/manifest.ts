@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
-  trackOrder: 2,
+  trackOrder: 3,
   learnSections: [
     { id: 'pkcs11', label: 'PKCS#11 PQC Mechanisms' },
     { id: 'vendors', label: 'HSM Vendor Landscape' },

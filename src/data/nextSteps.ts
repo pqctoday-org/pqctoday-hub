@@ -207,6 +207,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: Infrastructure Modernization Planner',
     why: 'This module belongs to phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase in the Command Center.',
   },
+  '/learn/homomorphic-encryption': {
+    to: '/business/tools/infra-modernization-planner',
+    label: 'Produce the artifact: Infrastructure Modernization Planner',
+    why: 'This module belongs to phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase in the Command Center.',
+  },
   // ── module→tool ──
   '/learn/hybrid-crypto': {
     to: '/playground/hybrid-certs',

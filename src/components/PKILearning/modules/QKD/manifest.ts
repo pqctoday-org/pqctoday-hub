@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
-  trackOrder: 4,
+  trackOrder: 5,
   learnSections: [
     { id: 'bb84', label: 'BB84 Protocol' },
     { id: 'integration', label: 'QKD Protocol Integration' },

@@ -27,6 +27,13 @@ const manifest: ModuleManifest = {
     step: 'fhe-hsm-flows',
     text: 'Open the first scenario in the FHE + HSM Flows step: the data owner makes its FHE key in an HSM, encrypts locally, lets a third party compute on ciphertexts, then asks the HSM to decrypt under policy.',
   },
+  // Derived from the algorithm and standard ids content.ts declares, restricted to
+  // the researcher-filter vocabulary (moduleEnrichment). The FHE schemes and
+  // ISO/IEC 28033 are not in that vocabulary.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['FIPS 203', 'FIPS 204'],
+  },
   load: () => import('./index').then((m) => ({ default: m.HomomorphicEncryptionModule })),
 }
 

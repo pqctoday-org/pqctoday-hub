@@ -83,6 +83,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'data-asset-sensitivity': { phasesServed: ['p1', 'p3'], legs: ['learn', 'reference'] },
   'standards-bodies': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'confidential-computing': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
+  'homomorphic-encryption': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'database-encryption-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'ot-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'emv-payment-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
