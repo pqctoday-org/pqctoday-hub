@@ -49,16 +49,16 @@ export function estimateBandwidthOverhead(inferenceRequestsPerDay: number): numb
 
 /** Estimate HNDL risk window description */
 export function estimateHNDLRiskWindow(retentionYears: number): string {
-  // Conservative CRQC estimates: 2030–2040
+  // Example planning window for this exercise (an illustration, not a forecast)
   const currentYear = 2026
   const dataExpiresYear = currentYear + retentionYears
   if (dataExpiresYear <= 2030) {
-    return `Low — data expires (${dataExpiresYear}) before most CRQC estimates (2030–2040)`
+    return `Low — data expires (${dataExpiresYear}) before 2030, the earliest planning date this exercise uses (an example, not a forecast)`
   }
   if (dataExpiresYear <= 2035) {
-    return `Medium — data retention (${dataExpiresYear}) overlaps early CRQC estimates (2030–2035)`
+    return `Medium — data retention (${dataExpiresYear}) runs into 2031–2035, inside the planning window this exercise uses (an example, not a forecast)`
   }
-  return `High — data retention extends to ${dataExpiresYear}, well within CRQC threat window (2030–2040+)`
+  return `High — data retention extends to ${dataExpiresYear}, past 2035 and beyond the planning window this exercise uses (an example, not a forecast)`
 }
 
 // ── Migration Phase Templates ─────────────────────────────────────────────

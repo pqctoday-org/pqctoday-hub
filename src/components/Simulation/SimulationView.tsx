@@ -3393,7 +3393,7 @@ export function SimulationView() {
                 <PlanningBadge
                   tip={
                     `Years to the planning anchor (${horizonYear}) — the EARLIER of two different things, shown apart because they mean different things:` +
-                    ` • Threat horizon ${threatHorizonYear} — this scenario's illustrative CRQC planning estimate, which starts from this site's own planning anchor (${SIM_CRQC_YEAR}), not a source figure. Not a published date, and not moved by any regulation.` +
+                    ` • Threat horizon ${threatHorizonYear} — this scenario's illustrative CRQC planning estimate, which starts from this site's own planning anchor (${SIM_CRQC_YEAR}), not a source figure. Not a published date.` +
                     (regulatoryDueYear !== null
                       ? ` • Regulatory due date ${regulatoryDueYear} — a dated obligation, not a forecast.` +
                         (deadlineScopeFor(country)

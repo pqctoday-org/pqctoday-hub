@@ -87,7 +87,7 @@ function simMoveClaims(): FreshnessClaim[] {
 export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'q-day-anchor',
-    claim: 'Sim Q-Day anchor (2029) vs the public 2030–2040 CRQC range',
+    claim: "Sim Q-Day anchor (2029, the site's own planning anchor) vs the published expert survey",
     source: 'src/data/quantumTimeline.ts',
     ...Q_DAY_FRESHNESS,
   },
