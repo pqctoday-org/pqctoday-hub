@@ -1,0 +1,57 @@
+enabled
+# /usr/lib/systemd/system/pqc-fhe-server.service
+[Unit]
+Description=PQC untrusted TFHE compute service (HTTPS/mTLS :5730)
+After=network-online.target pqc-firstboot.service pqc-network-setup.service
+Wants=network-online.target
+Requires=pqc-firstboot.service pqc-network-setup.service
+# Pins, from /persist/pqc/fhe-server.env (kept across boots) and/or /run/pqc/fhe-server.env (this
+# boot only; wins when both exist). One line each, written by the operator; no pins = no service:
+#   FHE_SIGNER_SHA256=<hex>[,<hex>]   attested manifest-signer SPKI hashes, one per custodian token
+#   FHE_LINEAGE=<hex>[,<hex>]         FHE key lineages
+#   FHE_PARAM_HASH=<hex>              parameter hash of the TFHE custody config
+#   FHE_MAX_COST_S=900                optional job budget (seconds on the A53)
+ConditionPathExists=|/persist/pqc/fhe-server.env
+ConditionPathExists=|/run/pqc/fhe-server.env
+
+[Service]
+User=pqc
+Group=pqc
+EnvironmentFile=/run/pqc/network.env
+EnvironmentFile=-/persist/pqc/fhe-server.env
+EnvironmentFile=-/run/pqc/fhe-server.env
+# Crypto port only, like :5710/:5720. Same per-boot leaf and client CA as the other crypto services.
+ExecStart=/usr/bin/kv260-fhe-server serve --listen ${PQC_CRYPTO_IP}:5730 \
+  --cert /run/pqc/certs/crypto-port.crt --key /run/pqc/certs/crypto-port.key \
+  --client-ca /etc/pqc/certs/ca.crt \
+  --signer-sha256 ${FHE_SIGNER_SHA256} --lineage ${FHE_LINEAGE} --param-hash ${FHE_PARAM_HASH} \
+  --max-cost-s ${FHE_MAX_COST_S}
+Environment=FHE_MAX_COST_S=900
+Restart=on-failure
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+# Keys, jobs and results live in memory only; nothing is written.
+ReadOnlyPaths=/
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/pqc-fhe-server.service.d/10-pqc-qos.conf
+[Service]
+CPUWeight=800
+AllowedCPUs=1-3
+MemoryHigh=3G
+MemoryMax=3G
+MemorySwapMax=0
+0a7cc68f4357cad99b0496ed9536c623331f396b075bae2448107c36859e3501  /usr/bin/kv260-fhe-server
+VERSION="26.06+release-cb75a4c061568fe7fecd552a60b17af9c9e64cf1 (scarthgap)"
+active
+CPUWeight=800
+AllowedCPUs=1-3
+MemoryHigh=3221225472
+MemoryMax=3221225472
+MemorySwapMax=0
+User=pqc
+bash: line 1: ss: command not found

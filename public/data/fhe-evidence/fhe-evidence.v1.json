@@ -3326,6 +3326,197 @@
           }
         ]
       }
+    },
+    {
+      "id": "tfhe-kv260-service-installed-sw-40114ab",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "generate-client-key",
+        "generate-server-key",
+        "export-server-key",
+        "publish-compact-public-key",
+        "owner-encrypts-locally",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result",
+        "owner-requests-decrypt",
+        "decrypt-under-policy",
+        "release-result"
+      ],
+      "level": "end-to-end",
+      "parts": [
+        {
+          "device": "mac-m4pro",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "qualifier": ", attested against its own educational test root",
+          "stepIds": [
+            "generate-client-key",
+            "generate-server-key",
+            "export-server-key",
+            "publish-compact-public-key",
+            "decrypt-under-policy",
+            "release-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "b3a6eb8dd192f65af3d4114cd01e68a942eae832"
+          }
+        },
+        {
+          "device": "mac-m4pro",
+          "role": "data-owner",
+          "producer": "pqctoday-fhe",
+          "claimScope": "owner-device",
+          "qualifier": ", after verifying the custodian attestation",
+          "stepIds": ["owner-encrypts-locally"]
+        },
+        {
+          "device": "kv260",
+          "role": "fhe-server",
+          "producer": "pqctoday-fhe",
+          "claimScope": "board-untrusted-compute",
+          "qualifier": ", service installed in the shipped board image, mutual TLS",
+          "stepIds": [
+            "export-server-key",
+            "upload-ciphertexts",
+            "compute-with-pbs",
+            "return-encrypted-result"
+          ],
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-fhe",
+            "commit": "609aa42297458233be4bebab381f76a17a5c411f"
+          }
+        }
+      ],
+      "claimLabel": "custodian: software token on a Mac; untrusted compute: the KV260 FHE service installed in the shipped board image, over mutual TLS; owner verified the attestation",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token on a Mac, not hardware custody. First run of the FHE service installed in the shipped KV260 image (CACP K26 build 20261004145201, see IMAGE-PROVENANCE.md), not a binary copied to /tmp: the three pins were written to /run/pqc/fhe-server.env and the baked systemd unit pqc-fhe-server was started; without pins the unit does not start (its start condition checks for the pin file, see installed-unit.txt). The client ran in a linux/arm64 container on the owner's Mac (pqctoday-fhe cd2271ce) and connected straight to the board's crypto port 5730 over mutual TLS. The owner checked the token's attestation with the macOS build of pqctoday-hsm b3a6eb8d verify-signer (against the token's own test root; signer 891ce509...) and pinned the signer. A tampered server key was refused (403); the signed server key was admitted (verify 235 ms, conformant load and decompress 1.50 s). A 7-step program over u32, u8 and u64 ran in 48.6 s on the board (list expansion 14.3 s, steps 34.3 s; 50.2 s wall at the client). That is slower than the 42.7 s of the 3 Oct service run: the installed unit restricts the service to CPUs 1-3, while the earlier run used all four cores, which is the likely reason but was not isolated. The token released 5 of 6 outputs, all correct, and refused the u64 output by policy (CK_RV 0x1b). cgroup peak 265 MiB against a 3 GiB limit. The service pins live in memory only and are lost on reboot; the board image has no ss command, so one line in installed-unit.txt is an error message. The board's journal is withheld because it names the board.",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "40114ab98396391b1813674dbb9c4d2bc2df9d61"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false)",
+      "parameterHash": "13b81b45a5d79e2a23ca69043c1b396f47c0ac1142b6f141d8abab8d52696b7d",
+      "environment": {
+        "hardware": "AMD Kria KV260 revB, 4x Cortex-A53 (the service is limited to CPUs 1 to 3 by its unit), 4 GB, as FHE network service; custodian software token and data owner on an Apple M4 Pro Mac",
+        "os": "Linux 6.18.10-xilinx, AMD EDF 26.06 (Scarthgap), CACP K26 image 20261004145201 (KV260); macOS 26.6.2 on the Mac",
+        "toolchain": "board service: Yocto build of pqctoday-fhe 609aa422, binary sha256 0a7cc68f4357cad9... identical to the file in the image (installed-unit.txt); client: container build of pqctoday-fhe cd2271ce, rustc 1.95.0 (build.txt); token tool pqctoday-hsm b3a6eb8d, macOS arm64, rustc 1.95.0",
+        "features": "same KV260 hardware as the other KV260 records; the service is the installed systemd unit pqc-fhe-server, not a copy in /tmp"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "one demo program run",
+        "peakMemoryMethod": "systemd cgroup MemoryPeak 278,200,320 B (memory.txt)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "RESULT.md",
+          "sha256": "45f694c7f42a0668ed0a8909296879eca399fd431c8061fe87b5a0b664378f0a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/RESULT.md"
+        },
+        {
+          "name": "client.txt",
+          "sha256": "221c42e636befd60108bdf0f50957b66e9f1060b010068c4a62dfd2515ac4b9d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/client.txt"
+        },
+        {
+          "name": "job.json",
+          "sha256": "5b119f1bfedbba72c7c4631511af56b5567bb965b896f4b4f6b2e572ad0bac45",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/job.json"
+        },
+        {
+          "name": "token-decrypt.txt",
+          "sha256": "a6706ec2b5d2645bd9290e14210f2ad0df4c1edbdab0090bbaa437606792b915",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/token-decrypt.txt"
+        },
+        {
+          "name": "owner-k3-verify.json",
+          "sha256": "870466b59c8bebe5786693c4d863768dc32b5f3b4ec88cb422af90a4e6edc852",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/owner-k3-verify.json"
+        },
+        {
+          "name": "owner-encrypt.json",
+          "sha256": "66c78f97964f1ff1bc66f09fae017524a875ec101d08c9163dc68f68da3c2c41",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/owner-encrypt.json"
+        },
+        {
+          "name": "memory.txt",
+          "sha256": "fe4afbcf83f4251383b08d82fdebbbce42baffa3777a76572dbde375620d1bf2",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/memory.txt"
+        },
+        {
+          "name": "build.txt",
+          "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/build.txt"
+        },
+        {
+          "name": "installed-unit.txt",
+          "sha256": "986f1ae8f51c5d89a364d8fdaa98981dac42b4c3670f6f2d5cc8df3c50b20a12",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/installed-unit.txt"
+        },
+        {
+          "name": "sha256.txt",
+          "sha256": "be94a410b5e7f8bcc6c9b5d20bc4b186543c34b1a2d7f2a6ae3eaea91ea34319",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/sha256.txt"
+        },
+        {
+          "name": "sha256-results.txt",
+          "sha256": "444a3bc7d1174ce12e9775c63422daa50d2c0e5dc0eaad9cb78d0fc8e657b563",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/sha256-results.txt"
+        },
+        {
+          "name": "sha256-token-export.txt",
+          "sha256": "16b568911c837d811e3027f5b0c0961eb41cb24ae555323c0a6184dfbe82ba6b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/sha256-token-export.txt"
+        },
+        {
+          "name": "IMAGE-PROVENANCE.md",
+          "sha256": "fb93883d6d8d21a45f1d5ef6d9d6cc47f4d88c8935d3c0ac6ebc9ff55ff4faab",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/kv260-service-installed-sw-40114ab/IMAGE-PROVENANCE.md"
+        }
+      ],
+      "measuredAt": "2026-10-04T16:53:12Z",
+      "summary": {
+        "headline": "The FHE service installed in the shipped KV260 image ran a 7-step encrypted program in 48.6 s: 5 of 6 outputs released correct, the 64-bit output refused, and a tampered server key refused (403).",
+        "keyNumbers": [
+          {
+            "label": "Program run on the board",
+            "value": "48.6",
+            "unit": "s"
+          },
+          {
+            "label": "Outputs released correctly",
+            "value": "5 of 6, all correct"
+          },
+          {
+            "label": "64-bit output",
+            "value": "refused by policy"
+          },
+          {
+            "label": "Tampered server key",
+            "value": "refused (403)"
+          },
+          {
+            "label": "Service start",
+            "value": "only with pins; pins kept in memory, lost on reboot"
+          },
+          {
+            "label": "Memory peak",
+            "value": "265",
+            "unit": "MiB"
+          }
+        ]
+      }
     }
   ]
 }
