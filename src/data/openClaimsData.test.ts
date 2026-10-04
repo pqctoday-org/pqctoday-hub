@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   CLAIM_STATES,
+  CLAIM_TOPICS,
+  claimsWithTopic,
   OPEN_CLAIMS,
   OpenClaimsFileError,
   getOpenClaim,
@@ -135,6 +137,17 @@ describe('parseOpenClaims', () => {
     )
   })
 
+  it('keeps valid topics and refuses an unknown or empty one', () => {
+    expect(
+      parseOpenClaims(file(claim({ topics: ['estimates', 'migration-deadline'] })))[0].topics
+    ).toEqual(['estimates', 'migration-deadline'])
+    expect(() => parseOpenClaims(file(claim({ topics: ['gossip'] })))).toThrow(/unknown topic/)
+    expect(() => parseOpenClaims(file(claim({ topics: [] })))).toThrow(/not a list of tags/)
+    expect(() => parseOpenClaims(file(claim({ topics: 'estimates' })))).toThrow(
+      /not a list of tags/
+    )
+  })
+
   it('lets an open claim stand without a source when the site derived it', () => {
     expect(() =>
       parseOpenClaims(file(claim({ state: 'Open', sources: [], derivedBy: 'this site' })))
@@ -188,6 +201,44 @@ describe('the published claims file', () => {
       expect(ch.before.quote.length).toBeGreaterThan(5)
       expect(ch.after.quote.length).toBeGreaterThan(5)
     }
+  })
+
+  it('tags every claim with known topics, and the six estimate rows are tagged `estimates`', () => {
+    for (const c of OPEN_CLAIMS) {
+      expect(c.topics?.length, c.id).toBeGreaterThan(0)
+      for (const topic of c.topics ?? []) expect(CLAIM_TOPICS).toContain(topic)
+    }
+    expect(
+      claimsWithTopic('estimates')
+        .map((c) => c.id)
+        .sort()
+    ).toEqual(
+      [
+        'crqc-gri-2025-timeline',
+        'crqc-nist-ir8547-dates',
+        'crqc-nsa-cnsa2-dates',
+        'crqc-anssi-phase3',
+        'crqc-bsi-tr02102-2026-dates',
+        'crqc-google-ef-secp256k1-resources',
+      ].sort()
+    )
+  })
+
+  it('every `estimate-update` claim is reached from an `estimates` claim', () => {
+    const rows = new Set(claimsWithTopic('estimates').map((c) => c.id))
+    for (const update of claimsWithTopic('estimate-update')) {
+      const parents = OPEN_CLAIMS.filter((c) =>
+        c.newerStatements?.some((n) => n.claim === update.id)
+      )
+      expect(
+        parents.some((p) => rows.has(p.id)),
+        update.id
+      ).toBe(true)
+    }
+  })
+
+  it('every claim tagged `open-questions` is Open', () => {
+    expect(claimsWithTopic('open-questions').every((c) => c.state === 'Open')).toBe(true)
   })
 
   it('lists the open questions, and an unknown id returns nothing', () => {

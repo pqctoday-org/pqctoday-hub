@@ -21,7 +21,8 @@
           "states": "The number of experts surveyed.",
           "quote": "This year’s survey was answered by 26 experts from Canada and around the world"
         }
-      ]
+      ],
+      "topics": ["estimates", "arrival-forecast"]
     },
     {
       "id": "crqc-nist-ir8547-dates",
@@ -37,7 +38,8 @@
           "states": "Transition table: deprecated after 2030, disallowed after 2035.",
           "quote": "Deprecated after 2030 Disallowed after 2035"
         }
-      ]
+      ],
+      "topics": ["estimates", "migration-deadline"]
     },
     {
       "id": "crqc-nsa-cnsa2-dates",
@@ -65,7 +67,8 @@
           "claim": "crqc-nsa-cnsa2-faq-v21-dates",
           "relation": "updates"
         }
-      ]
+      ],
+      "topics": ["estimates", "migration-deadline"]
     },
     {
       "id": "crqc-anssi-phase3",
@@ -93,7 +96,8 @@
           "claim": "crqc-anssi-faq-2025-buy-after-2030",
           "relation": "updates"
         }
-      ]
+      ],
+      "topics": ["estimates", "migration-deadline"]
     },
     {
       "id": "crqc-bsi-hybrid",
@@ -115,7 +119,8 @@
           "states": "The quantum-safe mechanisms should be used in hybrid form.",
           "quote": "The quantum-safe mechanisms recommended in Section 2.4 should be used in “hybrid” form, i.e., in a suitable combination with a classical method."
         }
-      ]
+      ],
+      "topics": ["planning-guidance"]
     },
     {
       "id": "crqc-google-ef-secp256k1-resources",
@@ -137,7 +142,8 @@
           "states": "Physical-qubit count, and the machine it assumes.",
           "quote": "On superconducting architectures with 10−3 physical error rates and planar connectivity, those circuits can execute in minutes using fewer than half a million physical qubits"
         }
-      ]
+      ],
+      "topics": ["estimates", "hardware-requirements"]
     },
     {
       "id": "crqc-rsa2048-physical-qubits-2025",
@@ -181,7 +187,8 @@
             }
           ]
         }
-      ]
+      ],
+      "topics": ["open-questions", "hardware-requirements"]
     },
     {
       "id": "crqc-rsa2048-physical-qubits-20m",
@@ -204,7 +211,8 @@
           "claim": "crqc-rsa2048-physical-qubits-2025",
           "relation": "replaces"
         }
-      ]
+      ],
+      "topics": ["hardware-requirements"]
     },
     {
       "id": "crqc-bsi-tr02102-2026-dates",
@@ -232,7 +240,8 @@
           "states": "Classical signatures only until the end of 2035.",
           "quote": "the use of classic signature mechanisms is therefore only recommended until the end of 2035"
         }
-      ]
+      ],
+      "topics": ["estimates", "planning-guidance"]
     },
     {
       "id": "crqc-bsi-working-hypothesis-early-2030s",
@@ -254,7 +263,8 @@
           "states": "It is a timeline for risk assessment.",
           "quote": "represents a timeline for risk assessment"
         }
-      ]
+      ],
+      "topics": ["open-questions", "arrival-forecast"]
     },
     {
       "id": "crqc-nsa-cnsa2-faq-v21-dates",
@@ -303,7 +313,8 @@
             }
           ]
         }
-      ]
+      ],
+      "topics": ["estimate-update", "migration-deadline"]
     },
     {
       "id": "crqc-anssi-faq-2025-buy-after-2030",
@@ -347,7 +358,8 @@
             }
           ]
         }
-      ]
+      ],
+      "topics": ["estimate-update", "migration-deadline"]
     }
   ]
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { getOpenClaim } from '@/data/openClaimsData'
+import { claimsWithTopic, getOpenClaim } from '@/data/openClaimsData'
 import { headStatement } from '@/data/openClaimsView'
 import {
   CRQC_ESTIMATES,
@@ -116,5 +116,19 @@ describe('CRQC_ESTIMATES and the published claims', () => {
       if (e.kind === 'arrival-forecast') expect(claim.state, e.source).toBe('Open')
       else expect(claim.state, e.source).toBe('Settled')
     }
+  })
+
+  it('every estimate stands on a claim tagged as an estimate, and its newer statement as an update', () => {
+    for (const e of CRQC_ESTIMATES) {
+      expect(getOpenClaim(e.claimId!)!.topics, e.source).toContain('estimates')
+      const shown = headStatement(e.claimId!)!
+      if (shown.id !== e.claimId) expect(shown.topics, e.source).toContain('estimate-update')
+    }
+  })
+
+  it('every claim that stands for an estimate is tagged for it, and the open questions are the tagged ones', () => {
+    const tagged = new Set(claimsWithTopic('estimates').map((c) => c.id))
+    for (const e of CRQC_ESTIMATES) expect(tagged.has(e.claimId!), e.source).toBe(true)
+    expect(claimsWithTopic('open-questions').every((c) => c.state === 'Open')).toBe(true)
   })
 })

@@ -17,6 +17,31 @@ import { sortCSVFiles } from './csvUtils'
 export type ClaimState = 'Settled' | 'Broken' | 'Open' | 'Superseded'
 export type ClaimRelation = 'replaces' | 'updates' | 'adds-to'
 
+/**
+ * What a claim is about and where it shows. `estimates`: it is the basis of one entry in the
+ * CRQC estimates list; `estimate-update`: a newer statement that updates such an entry (reached from
+ * it through `newerStatements`); `open-questions`: it belongs in the short list of open questions.
+ * The rest say what the claim is about.
+ */
+export type ClaimTopic =
+  | 'estimates'
+  | 'estimate-update'
+  | 'open-questions'
+  | 'arrival-forecast'
+  | 'migration-deadline'
+  | 'planning-guidance'
+  | 'hardware-requirements'
+
+export const CLAIM_TOPICS: readonly ClaimTopic[] = [
+  'estimates',
+  'estimate-update',
+  'open-questions',
+  'arrival-forecast',
+  'migration-deadline',
+  'planning-guidance',
+  'hardware-requirements',
+]
+
 export interface ClaimSource {
   name: string
   url: string
@@ -62,6 +87,8 @@ export interface OpenClaim {
   /** Set when this site, not a source, derived the figure. */
   derivedBy?: 'this site'
   supersededBy?: string
+  /** Tags saying what the claim is about and where it shows; see `ClaimTopic`. */
+  topics?: ClaimTopic[]
   newerStatements?: ClaimNewer[]
   earlier?: ClaimEarlier[]
 }
@@ -192,6 +219,15 @@ export function parseOpenClaims(raw: unknown): OpenClaim[] {
     if (c.inConflict === true) out.inConflict = true
     if (c.derivedBy === 'this site') out.derivedBy = 'this site'
     if (typeof c.supersededBy === 'string') out.supersededBy = c.supersededBy
+    if (c.topics !== undefined) {
+      if (!Array.isArray(c.topics) || c.topics.length === 0)
+        fail(`${where} has a topics field that is not a list of tags`)
+      out.topics = c.topics.map((t) => {
+        if (typeof t !== 'string' || !CLAIM_TOPICS.includes(t as ClaimTopic))
+          fail(`${where} has an unknown topic`)
+        return t as ClaimTopic
+      })
+    }
     if (Array.isArray(c.newerStatements)) {
       out.newerStatements = c.newerStatements.map((n, j) => {
         if (!isRecord(n)) fail(`${where} newer statement ${j} is not an object`)
@@ -261,6 +297,11 @@ export function getOpenClaim(id: string): OpenClaim | undefined {
 
 export function getOpenClaims(ids: readonly string[]): OpenClaim[] {
   return ids.map((id) => BY_ID.get(id)).filter((c): c is OpenClaim => c !== undefined)
+}
+
+/** The claims carrying a topic tag, in file order. */
+export function claimsWithTopic(topic: ClaimTopic): OpenClaim[] {
+  return OPEN_CLAIMS.filter((c) => c.topics?.includes(topic))
 }
 
 /** The claims that are still open questions. */

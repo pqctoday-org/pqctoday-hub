@@ -2,7 +2,7 @@
 import React from 'react'
 import { ClaimList } from '@/components/common/ClaimCard'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
-import { openQuestions, type OpenClaim } from '@/data/openClaimsData'
+import { claimsWithTopic, type OpenClaim } from '@/data/openClaimsData'
 import { headStatements } from '@/data/openClaimsView'
 import type { CRQCEstimate } from '../data/quantumConstants'
 
@@ -30,7 +30,10 @@ export function claimsForEstimates(
   // An open claim that only appears as the earlier statement of a shown claim is reached
   // through that card, so it is not listed a second time.
   for (const c of forEstimates) for (const e of c.earlier ?? []) shown.add(e.claim)
-  return { forEstimates, otherOpen: openQuestions().filter((c) => !shown.has(c.id)) }
+  return {
+    forEstimates,
+    otherOpen: claimsWithTopic('open-questions').filter((c) => !shown.has(c.id)),
+  }
 }
 
 /**
