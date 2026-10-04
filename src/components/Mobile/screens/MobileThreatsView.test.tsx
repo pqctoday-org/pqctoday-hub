@@ -78,11 +78,13 @@ describe('MobileThreatsView', () => {
     ).toBeInTheDocument()
   })
 
-  it('the CRQC year stepper starts at the forecast planning year and states the one forecast window (R5)', () => {
+  it('the CRQC year stepper starts at the planning year, states the survey in its own words and labels the years a planning range', () => {
     renderView()
     const forecast = getCrqcForecast()
     expect(screen.getByText(String(forecast.planningYear))).toBeInTheDocument()
-    expect(screen.getByText(forecast.label)).toBeInTheDocument()
+    expect(
+      screen.getByText(`${forecast.label}. The year buttons span a ${forecast.rangeLabel}.`)
+    ).toBeInTheDocument()
     expect(screen.queryByText(/consensus|median of/i)).not.toBeInTheDocument()
   })
 

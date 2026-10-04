@@ -11,6 +11,7 @@ import { ExportableArtifact } from '../../../common/executive'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useThreatsData } from '@/hooks/useThreatsData'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 interface AlgorithmImpact {
   name: string
@@ -325,6 +326,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       {seedSources.length > 0 && (
         <PreFilledBanner
           summary={`Scenario seeded from ${seedSources.join(' + ')}.`}

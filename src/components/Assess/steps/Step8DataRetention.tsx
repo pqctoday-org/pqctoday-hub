@@ -21,6 +21,7 @@ import { PersonaHint } from './PersonaHint'
 
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { QC_FIRST_YEAR } from '@/data/quantumTimeline'
 
 const Step8DataRetention = ({ hideHeading = false, hideHints = false }: EmbeddedStepProps = {}) => {
   const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
@@ -59,9 +60,11 @@ const Step8DataRetention = ({ hideHeading = false, hideHints = false }: Embedded
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
-            If your encrypted data needs to remain confidential past the aggressive planning anchor
-            for a first CRQC (~2029; expert estimates span 2030–2040), adversaries may already be
-            harvesting it today for future quantum decryption.
+            If your encrypted data needs to remain confidential past the planning anchor this site
+            uses for a first CRQC ({QC_FIRST_YEAR}, a planning figure, not a source figure),
+            adversaries may already be harvesting it today for future quantum decryption. The Global
+            Risk Institute&apos;s 2025 survey of 26 experts found a CRQC “quite possible” (28–49%)
+            within 10 years.
           </p>
         </div>
       </div>

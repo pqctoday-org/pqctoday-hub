@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.150.0] - 2026-10-04
+
+Pages that quote when a quantum computer might arrive now stick to what their sources say: the Threats page drops the range this site had worked out itself and shows the Global Risk Institute survey in its own words, the Assess steps no longer claim a 2030–2040 expert range, and the FAQ, Simulation, report and Learn exercises say that these figures are published estimates, still open to debate. The Confidential Computing workshop also now prints the real ML-DSA key sizes.
+
+### Added
+
+- **Notes that estimates are still open, on more pages** [view:/faq] [view:/report] [view:/simulation] [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the FAQ answers that quote a quantum-computer year or qubit count, the Simulation's years-to-Q-Day figure in the report, and the Learn exercises where you set a quantum-computer year now say that these are published estimates or example figures, not settled answers. The 2029 year the Simulation and the assessment report plan against is now labelled as this site's own planning anchor, not a figure from a source.
+
+### Changed
+
+- **The Threats page no longer shows a CRQC range of its own** [view:/threats] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the expanded source list used to show a 2029–2036 range that this site had worked out from a Google Quantum AI paper, but the paper gives no arrival date. The list now states what the paper does estimate (at most 1,200 logical qubits, fewer than half a million physical qubits on the stated machine assumptions) and says plainly that no reliable estimate of when such a machine could exist is established.
+- **The Assess steps no longer claim a 2030–2040 expert range** [view:/assess] [persona:executive] [persona:grc] [persona:architect] [persona:researcher]: the data-retention and credential-lifetime steps now say that 2029 is this site's own planning anchor for a first CRQC, not a source figure, and quote the Global Risk Institute's 2025 survey of 26 experts, which found a CRQC "quite possible" (28–49%) within 10 years. The AI security scale-encryption exercise now calls its risk bands an example planning window instead of a range of estimates.
+- **The Threats headline shows the Global Risk Institute survey in its own words** [view:/threats] [view:/learn/quantum-threats] [persona:executive] [persona:grc] [persona:architect] [persona:researcher]: the headline card used to show a "2030–2041 expert forecast" that this site had worked out itself. It now reports what the 2025 survey of 26 experts actually says: a cryptographically relevant quantum computer is "quite possible" (28–49%) within 10 years and "likely" (51–70%) within 15. The years 2030–2041 are now called a planning range set by this site, in the calculators and in the Quantum Threats module. A note that a majority expect a CRQC by 2035, which the survey does not support, is removed.
+
+### Fixed
+
+- **The trusted-channel steps show the real ML-DSA key sizes** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: the key-provisioning steps in the Confidential Computing workshop used to print two fixed sizes (about 2.5 KB for an ML-DSA public key and about 4.5 KB for a wrapped private key) that did not match the algorithm of the chosen integration. They now print the FIPS 204 sizes for that algorithm (for example 1,952 bytes public and 4,032 bytes private for ML-DSA-65), plus the 28 bytes that AES-GCM wrapping adds to the private key.
+
 ## [4.149.0] - 2026-10-03
 
 FHE key custody now runs across two appliance boards with a backup and a failover, the data owner checks the custodian's attestation before trusting its keys, and the FHE compute service runs on a small Arm board over mutual TLS. Every "Validated" badge in the workshop now opens its results on the page, and the Threats and related pages now say plainly that some quantum estimates are still unresolved, with the BSI, NSA and ANSSI entries corrected to what those organisations actually state.

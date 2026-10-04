@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'aerospace-pqc',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-25',
+  lastEdited: '2026-10-04',
 
   standards: [
     getStandard('FIPS 203'),

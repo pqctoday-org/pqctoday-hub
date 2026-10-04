@@ -1069,9 +1069,9 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     prompt:
       'Leave Retention (years) at its default of 7. Which HNDL Risk label does the PQC Migration Analysis show?',
     options: [
-      'Low — data expires before most CRQC estimates',
-      'Medium — retention to 2033 overlaps early CRQC estimates (2030–2035)',
-      'High — retention runs well into the CRQC threat window',
+      'Low — data expires before 2030, the earliest planning date this exercise uses',
+      'Medium — retention to 2033 runs into 2031–2035, inside the planning window this exercise uses',
+      'High — retention runs past 2035, beyond the planning window this exercise uses',
     ],
     answer: 1,
     why: 'The planner adds retention to 2026: seven years lands on 2033, inside the 2031–2035 band it calls Medium; four years or fewer expires by 2030 (Low), and ten or more runs past 2035 (High).',

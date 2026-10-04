@@ -20,6 +20,7 @@ import {
   SEVERITY_COLORS,
   type BiometricType,
 } from '../data/healthcareConstants'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -90,6 +91,7 @@ export const BiometricVaultAssessor: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       <p className="text-sm text-foreground/80">
         Assess the quantum risk of biometric data in healthcare systems. Biometric identifiers are
         unique because they cannot be revoked or reissued &mdash; once compromised by a quantum

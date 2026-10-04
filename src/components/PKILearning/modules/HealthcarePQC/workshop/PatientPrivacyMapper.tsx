@@ -11,6 +11,7 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
+import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 const HEALTHCARE_KAT_SPECS: KatTestSpec[] = [
   {
@@ -329,6 +330,7 @@ export const PatientPrivacyMapper: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <UnresolvedEstimatesNotice detail="workshopExample" />
       {/* Header */}
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Patient Privacy Mapper</h3>

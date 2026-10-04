@@ -23,6 +23,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { SBOM_BUILDS, SBOM_EMBEDDED_VERSIONS } from '../../src/data/sbomVersions.generated'
+import { findAboutChunk } from './chunk-graph'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const arg = (name: string) =>
@@ -47,29 +48,21 @@ function wasmFiles(dir: string, out: string[] = []): string[] {
 }
 
 // The About chunk is lazy-loaded, so no single chunk names it reliably: walk the chunk graph from
-// the entry (breadth-first, a few requests at a time).
-async function findAboutChunk(entry: string): Promise<string | undefined> {
-  const seen = new Set<string>([entry.replace('/assets/', '')])
-  let frontier = [...seen]
-  while (frontier.length) {
-    const next: string[] = []
-    for (let i = 0; i < frontier.length; i += 12) {
-      const texts = await Promise.all(
-        frontier.slice(i, i + 12).map(async (n) => (await get(`/assets/${n}`)).toString('latin1'))
-      )
-      for (const t of texts) {
-        const about = /AboutView-[A-Za-z0-9_-]+\.js/.exec(t)?.[0]
-        if (about) return about
-        for (const m of t.matchAll(/[A-Za-z0-9_.-]+-[A-Za-z0-9_-]{8}\.js/g))
-          if (!seen.has(m[0])) {
-            seen.add(m[0])
-            next.push(m[0])
-          }
-      }
-    }
-    frontier = next
-  }
-  return undefined
+// the entry (see chunk-graph.ts for what counts as a chunk reference and how an unreachable
+// candidate is handled). A chunk that cannot be fetched is only a problem if it stops the walk
+// reaching About, in which case it is named in the failure.
+async function findAbout(entry: string): Promise<string> {
+  const { about, unreachable } = await findAboutChunk(entry, async (name) =>
+    (await get(`/assets/${name}`)).toString('latin1')
+  )
+  if (about) return about
+  const why = unreachable.length
+    ? ` (${unreachable.length} referenced chunk(s) did not load: ${unreachable
+        .slice(0, 5)
+        .map((u) => u.reason)
+        .join('; ')})`
+    : ''
+  throw new Error(`no AboutView chunk reachable from the entry chunk${why}`)
 }
 
 async function checkOnce(): Promise<string[]> {
@@ -104,8 +97,7 @@ async function checkOnce(): Promise<string[]> {
     const html = (await get('/')).toString('utf8')
     const entry = /\/assets\/index-[A-Za-z0-9_-]+\.js/.exec(html)?.[0]
     if (!entry) throw new Error('no entry chunk in index.html')
-    const chunkName = await findAboutChunk(entry)
-    if (!chunkName) throw new Error('no AboutView chunk reachable from the entry chunk')
+    const chunkName = await findAbout(entry)
     const about = (await get(`/assets/${chunkName}`)).toString('utf8')
     const needles = [
       ...Object.entries(SBOM_EMBEDDED_VERSIONS).map(([k, v]) => [`embedded ${k} ${v}`, v] as const),

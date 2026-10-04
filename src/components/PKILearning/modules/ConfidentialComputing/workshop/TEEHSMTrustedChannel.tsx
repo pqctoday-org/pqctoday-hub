@@ -172,6 +172,18 @@ const KEY_SIZE_BYTES: Record<string, number> = {
 const formatKeySize = (bytes: number | undefined) =>
   bytes === undefined ? 'N/A' : `~${bytes.toLocaleString()} B`
 
+// FIPS 204 Table 2: ML-DSA public and private key sizes in bytes, per parameter set.
+// The provisioning steps below read these for the signing algorithm of the chosen
+// integration (ML-DSA-65 for some vendors, ML-DSA-87 for others) instead of printing
+// one fixed size for every pairing.
+const ML_DSA_KEY_BYTES = new Map<string, { publicKey: number; privateKey: number }>([
+  ['ML-DSA-44', { publicKey: 1312, privateKey: 2560 }],
+  ['ML-DSA-65', { publicKey: 1952, privateKey: 4032 }],
+  ['ML-DSA-87', { publicKey: 2592, privateKey: 4896 }],
+])
+// AES-256-GCM wrapping adds a 12-byte IV and a 16-byte authentication tag (NIST SP 800-38D).
+const GCM_WRAP_OVERHEAD_BYTES = 12 + 16
+
 function buildProvisioningSteps(
   integration: (typeof TEE_HSM_INTEGRATIONS)[number],
   pqcMode: boolean
@@ -180,6 +192,9 @@ function buildProvisioningSteps(
     ? (integration.pqcSigningAlgo ?? 'Not available')
     : integration.currentSigningAlgo
   const kem = pqcMode ? (integration.pqcKEM ?? 'Not available') : integration.currentKEM
+  // Same fallback as the "keypair generation" label below when an integration names no ML-DSA set.
+  const mlDsaSet = integration.pqcSigningAlgo ?? 'ML-DSA-65'
+  const mlDsaBytes = ML_DSA_KEY_BYTES.get(mlDsaSet) ?? { publicKey: 1952, privateKey: 4032 }
 
   return [
     {
@@ -191,7 +206,9 @@ function buildProvisioningSteps(
       crypto: pqcMode
         ? `${integration.pqcSigningAlgo ?? 'ML-DSA-65'} keypair generation`
         : `${integration.currentSigningAlgo} keypair generation`,
-      dataSize: pqcMode ? '~2.5 KB (ML-DSA public key)' : '~64 bytes (ECDSA public key)',
+      dataSize: pqcMode
+        ? `${mlDsaBytes.publicKey.toLocaleString()}-byte ${mlDsaSet} public key (FIPS 204)`
+        : '~64 bytes (ECDSA public key)',
     },
     {
       title: 'TLS transport to enclave',
@@ -211,7 +228,7 @@ function buildProvisioningSteps(
         'Wrapping ensures the key is never in plaintext during transit — even if the TLS channel is compromised at the application layer. The wrapping key is derived from the session so only the intended receiver can unwrap it. Without this step, the key is exposed to any process that can intercept the TLS payload.',
       crypto: `AES-256-GCM key wrapping over ${kem} session`,
       dataSize: pqcMode
-        ? '~4.5 KB (wrapped ML-DSA private key)'
+        ? `${(mlDsaBytes.privateKey + GCM_WRAP_OVERHEAD_BYTES).toLocaleString()} bytes (${mlDsaBytes.privateKey.toLocaleString()}-byte ${mlDsaSet} private key, FIPS 204, plus ${GCM_WRAP_OVERHEAD_BYTES} bytes of AES-256-GCM wrapping)`
         : '~100 bytes (wrapped ECDSA private key)',
     },
     {
@@ -221,7 +238,7 @@ function buildProvisioningSteps(
         'The sealing key is derived from the enclave identity (MRENCLAVE/MRSIGNER) and CPU secrets — it only exists inside the enclave and cannot be extracted. This ensures only the exact, unmodified enclave code can access the provisioned key. AES-128 sealing is Grover-halved to 64-bit post-quantum security; next-gen CPUs will require AES-256.',
       crypto: 'AES-256-GCM sealing (hardware-derived key via EGETKEY/ASP/RMM)',
       dataSize: pqcMode
-        ? '~4.0 KB (4,032-byte ML-DSA-65 private key, FIPS 204)'
+        ? `${mlDsaBytes.privateKey.toLocaleString()}-byte ${mlDsaSet} private key (FIPS 204)`
         : '~32 bytes (unsealed ECDSA private key)',
     },
   ]

@@ -47,6 +47,8 @@ const forecast = (low: number, high: number, planningYear: number) => ({
   sources: [],
   sourceCountLabel: 'one expert survey',
   label: `CRQC expert forecast: ${low}–${high} (one expert survey)`,
+  headline: `${low}–${high}`,
+  rangeLabel: `planning range ${low}–${high}, set by this site`,
 })
 
 describe('SectorExposureHero — Mosca migration-deadline card', () => {

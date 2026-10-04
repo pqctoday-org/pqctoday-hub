@@ -11,6 +11,14 @@ export const UNRESOLVED_ESTIMATES_DETAIL = {
   /** The page shows a planning range (optimistic to pessimistic) and does not list sources. */
   aRange:
     'Where credible sources differ, the range shown here is a planning range, not a settled answer.',
+  /** FAQ answers that quote a year or a qubit count. */
+  faq: 'Any year or qubit count in these answers is one published estimate, not a settled answer.',
+  /** The simulation's Q-Day year, which is an input to the exercise. */
+  simulation:
+    'The Q-Day year used here is a planning assumption for the simulation, not a settled answer.',
+  /** Learn exercises where the reader sets, or is given, a CRQC year or qubit count. */
+  workshopExample:
+    'The years and qubit counts in this exercise are example figures for practice, not forecasts and not settled answers.',
   /** The page quotes one planning figure and does not list the sources itself. */
   oneFigure:
     'Where credible sources differ, the figure shown here is one planning estimate, not a settled answer.',
