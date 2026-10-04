@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { reviewerDisplay } from '@/data/reviewerDisplay'
 
 /**
  * Per-record field-level change. Optional — populated for record-scoped revisions
@@ -72,6 +73,7 @@ async function loadRevisions(): Promise<RevisionEntry[]> {
           }
         })
         .filter((e): e is RevisionEntry => e !== null)
+        .map((e) => ({ ...e, reviewer_display: reviewerDisplay(e.reviewer_display) }))
 
       // Sort descending by merge_timestamp
       entries.sort((a, b) => b.merge_timestamp.localeCompare(a.merge_timestamp))
