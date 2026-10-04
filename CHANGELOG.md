@@ -31,11 +31,15 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.150.0] - 2026-10-04
 
-Pages that quote when a quantum computer might arrive now stick to what their sources say: the Threats page drops the range this site had worked out itself and shows the Global Risk Institute survey in its own words, the Assess steps no longer claim a 2030–2040 expert range, and the FAQ, Simulation, report and Learn exercises say that these figures are published estimates, still open to debate. The Confidential Computing workshop also now prints the real ML-DSA key sizes.
+Pages that quote when a quantum computer might arrive now stick to what their sources say: the Threats page drops the range this site had worked out itself and shows the Global Risk Institute survey in its own words, the Assess steps no longer claim a 2030–2040 expert range, and the FAQ, Simulation, report and Learn exercises say that these figures are published estimates, still open to debate. The Confidential Computing workshop also now prints the real ML-DSA key sizes. Shared links can now open a single transition row, an industry standard, a test-vector variant or a coverage case, and highlight links tint only the algorithm they name.
 
 ### Added
 
 - **Notes that estimates are still open, on more pages** [view:/faq] [view:/report] [view:/simulation] [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the FAQ answers that quote a quantum-computer year or qubit count, the Simulation's years-to-Q-Day figure in the report, and the Learn exercises where you set a quantum-computer year now say that these are published estimates or example figures, not settled answers. The 2029 year the Simulation and the assessment report plan against is now labelled as this site's own planning anchor, not a figure from a source.
+- **Link to one Transition row, one landscape standard, a KAT variant or a coverage case** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: shared links can now open a single classical→PQC transition row, an industry standard on the Landscape tab (with Share on each), the SLH-DSA test-vector variant, or the coverage matrix's case polarity.
+- **Who maintains an open-source product** [view:/migrate] [persona:architect] [persona:developer] [persona:researcher]: product details list the open-source maintainers, linked to their Community profiles where we have one.
+- **Certificates on phones** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:ops]: the phone Records section adds a searchable list of certification records, and a certificate opens with the same details as on a computer.
+- **Share and "open on its page" from more places** [view:/leaders] [view:/compliance] [persona:grc] [persona:researcher]: Community cards and revision-history panels can be shared, and Library, threat and timeline pop-ups inside "For You" link to their own page; on phones, the Migrate catalog filter now travels in shared links too.
 
 ### Changed
 
@@ -46,6 +50,7 @@ Pages that quote when a quantum computer might arrive now stick to what their so
 ### Fixed
 
 - **The trusted-channel steps show the real ML-DSA key sizes** [view:/learn/confidential-computing] [persona:architect] [persona:researcher] [persona:cert-engineer]: the key-provisioning steps in the Confidential Computing workshop used to print two fixed sizes (about 2.5 KB for an ML-DSA public key and about 4.5 KB for a wrapped private key) that did not match the algorithm of the chosen integration. They now print the FIPS 204 sizes for that algorithm (for example 1,952 bytes public and 4,032 bytes private for ML-DSA-65), plus the 28 bytes that AES-GCM wrapping adds to the private key.
+- **Highlight links tint only the algorithm named** [view:/algorithms] [persona:developer] [persona:curious]: a link that highlights 3DES no longer also highlights DES, and ML-KEM-768 no longer tints its composite variants.
 
 ## [4.149.0] - 2026-10-03
 

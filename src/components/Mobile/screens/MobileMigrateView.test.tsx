@@ -12,6 +12,8 @@ import {
   productsForVendor,
   domainProductCount,
   filterProducts,
+  applyProductFacets,
+  NO_FACETS,
 } from '@/components/Migrate/Workbench/workbenchCatalog'
 import { productPqcStatus, productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
@@ -895,6 +897,69 @@ describe('MobileMigrateView', () => {
           'no-such-thing-zz'
         )
       })
+    })
+  })
+
+  // 2026-10-03: the phone Replace list reads/writes the same ?rq= / ?facet=
+  // view state desktop's ReplaceTab does (replaceTabParams.ts).
+  describe('Replace view state (?rq= / ?facet=)', () => {
+    const search = () => screen.getByTestId('location-search').textContent ?? ''
+    const hasCert = (p: SoftwareItem) => getCertsForProduct(p.productId, p.softwareName).length > 0
+
+    it('?rq= pre-fills the filter and narrows the list', () => {
+      const [first] = productsForDomain('tls')
+      renderMobile(`/migrate?rq=${encodeURIComponent(first.softwareName)}`)
+      expect(screen.getByLabelText('Filter products')).toHaveValue(first.softwareName)
+      const expected = filterProducts(productsForDomain('tls'), first.softwareName).length
+      expect(
+        screen.getByText(new RegExp(`^${expected} of ${productsForDomain('tls').length} products`))
+      ).toHaveAttribute('aria-live', 'polite')
+    })
+
+    it('typing writes ?rq=; clearing the box removes it', () => {
+      renderMobile()
+      const input = screen.getByLabelText('Filter products')
+      fireEvent.change(input, { target: { value: 'IBM' } })
+      expect(search()).toContain('rq=IBM')
+      fireEvent.change(input, { target: { value: '' } })
+      expect(search()).not.toContain('rq=')
+    })
+
+    it('switching domain clears the filter and drops ?rq=', () => {
+      renderMobile('/migrate?rq=IBM')
+      const vpn = REPLACE_ASSETS.find((a) => a.id === 'vpn')!
+      fireEvent.click(screen.getAllByText(vpn.label)[0].closest('button')!)
+      expect(screen.getByLabelText('Filter products')).toHaveValue('')
+      expect(search()).not.toContain('rq=')
+      expect(search()).toContain('domain=vpn')
+    })
+
+    it('?facet= narrows the list and shows a removable chip; removing it drops the param', () => {
+      const tls = productsForDomain('tls')
+      const facets = { ...NO_FACETS, pqc: 'available' as const }
+      const expected = applyProductFacets(tls, facets, hasCert).length
+      renderMobile('/migrate?facet=pqc:available')
+      const chips = screen.getByTestId('migrate-facet-chips')
+      const chipBtn = within(chips).getByRole('button', {
+        name: 'Remove filter PQC status: Available',
+      })
+      const live = new RegExp(`^${expected} of ${tls.length} products match the active filters`)
+      expect(screen.getByText(live)).toBeInTheDocument()
+      fireEvent.click(chipBtn)
+      expect(search()).not.toContain('facet=')
+      expect(screen.queryByTestId('migrate-facet-chips')).not.toBeInTheDocument()
+    })
+
+    it('a filter edit keeps ?facet= and writes both', () => {
+      renderMobile('/migrate?facet=certified:linked')
+      fireEvent.change(screen.getByLabelText('Filter products'), { target: { value: 'IBM' } })
+      expect(search()).toContain('rq=IBM')
+      expect(search()).toContain('facet=certified%3Alinked')
+    })
+
+    it('ignores unknown facet keys/values (no chip)', () => {
+      renderMobile('/migrate?facet=bogus:x,pqc:nope')
+      expect(screen.queryByTestId('migrate-facet-chips')).not.toBeInTheDocument()
     })
   })
 })

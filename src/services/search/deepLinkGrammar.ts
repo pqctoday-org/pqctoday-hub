@@ -76,7 +76,11 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     // accepted). `protocol` opens a Protocol Support matrix row (implies
     // tab=support). `mode=compare` is the Detailed tab's Browse↔Compare
     // toggle. `section` is the Validation tab's accordion preset
-    // (attacks|kat|coverage). `industry`/`mechanism`/`usecase` drive the
+    // (attacks|kat|coverage); `kat` picks the SLH-DSA KAT variant and
+    // `polarity` the coverage-matrix case polarity (both imply that tab).
+    // `transition` opens one Transition row (slug of function-classical-pqc);
+    // `standard` one Industry Landscape standard (standard_id).
+    // `industry`/`mechanism`/`usecase` drive the
     // Landscape tab. The `matrix*` keys are Protocol Support's own state.
     queryKeys: [
       'tab',
@@ -97,6 +101,10 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'attack',
       'engine',
       'case',
+      'polarity',
+      'kat',
+      'transition',
+      'standard',
       'protocol',
       'matrixView',
       'matrixQ',

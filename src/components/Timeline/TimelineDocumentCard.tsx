@@ -233,6 +233,7 @@ export const TimelineDocumentCard = ({
             entityLabel={row.title}
             revisions={byRecord(revisions, 'timeline', row.eventId || row.title)}
             onClose={() => setDrilldownOpen(false)}
+            sharePath={`/timeline?event=${encodeURIComponent(row.eventId || row.title)}`}
           />
         </div>
       )}

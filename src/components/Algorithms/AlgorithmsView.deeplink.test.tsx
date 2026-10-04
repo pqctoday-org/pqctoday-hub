@@ -6,13 +6,15 @@
  * Curious preview card.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 import { AlgorithmsView } from './AlgorithmsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getAlgorithmDefaults } from '@/data/personaConfig'
+import { loadAlgorithmsData, type AlgorithmTransition } from '../../data/algorithmsData'
+import { transitionRowId, transitionRowSlug } from './highlightMatch'
 
 const { algo } = vi.hoisted(() => ({
   algo: (name: string, fipsStandard: string, statusTier: string, status = 'Standardized') => ({
@@ -46,7 +48,25 @@ vi.mock('@/services/search/useSemanticSearch', () => ({
   useSemanticSearch: () => ({ hits: [], mode: 'idle' as const, loading: false }),
 }))
 vi.mock('./AlgorithmComparison', () => ({
-  AlgorithmComparison: () => <div data-testid="transition-body" />,
+  AlgorithmComparison: ({
+    filteredData = [],
+    selectedRowId = null,
+    highlightFromLink = false,
+  }: {
+    filteredData?: { classical: string; pqc: string }[]
+    selectedRowId?: string | null
+    highlightFromLink?: boolean
+  }) => (
+    <ul
+      data-testid="transition-body"
+      data-selected-row={selectedRowId ?? ''}
+      data-from-link={String(highlightFromLink)}
+    >
+      {filteredData.map((t) => (
+        <li key={`${t.classical}|${t.pqc}`}>{`${t.classical} → ${t.pqc}`}</li>
+      ))}
+    </ul>
+  ),
 }))
 vi.mock('./AlgorithmDetailedComparison', () => ({
   AlgorithmDetailedComparison: ({
@@ -60,6 +80,15 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
       ))}
     </ul>
   ),
+}))
+vi.mock('./AlgorithmValidationView', () => ({
+  AlgorithmValidationView: ({
+    katParam,
+    polarityParam,
+  }: {
+    katParam?: string | null
+    polarityParam?: string | null
+  }) => <div data-testid="validation-body">{`kat=${katParam} polarity=${polarityParam}`}</div>,
 }))
 vi.mock('./PQCProtocolMatrix', () => ({
   PQCProtocolMatrix: () => <div data-testid="protocol-matrix" />,
@@ -116,6 +145,7 @@ describe('AlgorithmsView — deep links', () => {
       hasSeenPersonaPicker: true,
       experienceLevel: null,
     })
+    vi.mocked(loadAlgorithmsData).mockResolvedValue([])
   })
 
   it('leaves filters alone when the highlighted row is already visible', async () => {
@@ -160,6 +190,15 @@ describe('AlgorithmsView — deep links', () => {
     await waitFor(() => expect(urlSearch()).toContain('tab=support'))
   })
 
+  it.each([
+    ['kat=SHAKE-256f', 'kat=SHAKE-256f polarity=null'],
+    ['polarity=negative', 'kat=null polarity=negative'],
+  ])('treats ?%s without ?tab as the Validation tab', async (query, passed) => {
+    renderAt(`/algorithms?${query}`)
+    expect(await screen.findByTestId('validation-body')).toHaveTextContent(passed)
+    await waitFor(() => expect(urlSearch()).toContain('tab=validation'))
+  })
+
   it('a resource link bypasses the Curious preview card', async () => {
     usePersonaStore.setState({ selectedPersona: 'curious', viewAccess: 'preview' })
     renderAt('/algorithms?tab=support&protocol=ssh')
@@ -200,5 +239,90 @@ describe('AlgorithmsView — deep links', () => {
     fireEvent.click(screen.getByRole('button', { name: `go ${detailed}&quickview=none&cnsa=1` }))
     // CNSA 2.0 admits ML-KEM-1024 only, so the -768 row drops out.
     await waitFor(() => expect(screen.queryByText('ML-KEM-768')).not.toBeInTheDocument())
+  })
+})
+
+// ?transition=<row slug> (2026-10-03): one Transition Guide row addressable by
+// a slug derived from function|classical|pqc — no data column.
+describe('AlgorithmsView — ?transition row links', () => {
+  const trow = (
+    pqc: string,
+    status: string,
+    statusTier: AlgorithmTransition['statusTier']
+  ): AlgorithmTransition => ({
+    classical: 'RSA',
+    pqc,
+    function: 'Encryption/KEM',
+    deprecationDate: '2030',
+    standardizationDate: '2024',
+    region: 'USA',
+    status,
+    statusTier,
+  })
+  const mlkem = trow('ML-KEM-768 (NIST Level 3)', 'FIPS 203', 'final')
+  const hqc = trow('HQC-128 (NIST Level 1)', 'Candidate', 'round2-candidate')
+
+  beforeEach(() => {
+    usePersonaStore.setState({
+      selectedPersona: 'developer',
+      viewAccess: 'unlocked',
+      hasSeenPersonaPicker: true,
+      experienceLevel: null,
+    })
+    vi.mocked(loadAlgorithmsData).mockResolvedValue([mlkem, hqc])
+  })
+
+  it('the slug is the kebab-case of function, classical and PQC', () => {
+    expect(transitionRowSlug(mlkem)).toBe('encryption-kem-rsa-ml-kem-768-nist-level-3')
+  })
+
+  it('opens the Transition tab on the linked row (pins ?tab, opens the phone list)', async () => {
+    renderAt(`/algorithms?transition=${transitionRowSlug(mlkem)}`)
+    const body = await screen.findByTestId('transition-body')
+    await waitFor(() => expect(body).toHaveAttribute('data-selected-row', transitionRowId(mlkem)))
+    expect(body).toHaveAttribute('data-from-link', 'true')
+    await waitFor(() => expect(urlSearch()).toContain('tab=transition'))
+    expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
+  })
+
+  it('matches the slug case-insensitively', async () => {
+    renderAt(`/algorithms?tab=transition&transition=${transitionRowSlug(mlkem).toUpperCase()}`)
+    const body = await screen.findByTestId('transition-body')
+    await waitFor(() => expect(body).toHaveAttribute('data-selected-row', transitionRowId(mlkem)))
+  })
+
+  it('widens the filters when the linked row is hidden, with Undo', async () => {
+    renderAt(`/algorithms?tab=transition&transition=${transitionRowSlug(hqc)}`)
+    expect(await screen.findByTestId('deeplink-notice-widened')).toHaveTextContent('HQC-128')
+    expect(await screen.findByText('RSA → HQC-128 (NIST Level 1)')).toBeInTheDocument()
+    expect(screen.getByTestId('transition-body')).toHaveAttribute(
+      'data-selected-row',
+      transitionRowId(hqc)
+    )
+  })
+
+  it('says "not found" for an unknown slug, and Dismiss strips it', async () => {
+    renderAt('/algorithms?tab=transition&transition=signature-rot13-nothing')
+    expect(await screen.findByTestId('deeplink-notice-not-found')).toHaveTextContent(
+      'signature-rot13-nothing'
+    )
+    expect(screen.getByTestId('transition-body')).toHaveAttribute('data-selected-row', '')
+    fireEvent.click(
+      within(screen.getByTestId('deeplink-notice-not-found')).getByRole('button', {
+        name: 'Dismiss notice',
+      })
+    )
+    await waitFor(() => expect(urlSearch()).not.toContain('transition=signature'))
+    expect(screen.queryByTestId('deeplink-notice-not-found')).not.toBeInTheDocument()
+  })
+
+  it('a ?transition link bypasses the Curious preview card', async () => {
+    usePersonaStore.setState({ selectedPersona: 'curious', viewAccess: 'preview' })
+    renderAt(`/algorithms?transition=${transitionRowSlug(mlkem)}`)
+    expect(await screen.findByTestId('transition-body')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /three you actually need to know/ })
+    ).not.toBeInTheDocument()
   })
 })

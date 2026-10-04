@@ -62,6 +62,9 @@ interface AlgorithmComparisonProps {
   /** True when the highlight came from a ?highlight= link (not a role
    *  default): on a phone, open the full list on that row instead of the wizard. */
   highlightFromLink?: boolean
+  /** transitionRowId of the ?transition-linked row: highlighted on its own,
+   *  independent of any ?highlight names. */
+  selectedRowId?: string | null
   filteredData: AlgorithmTransition[]
   compareSet: Set<string>
   compareType: 'KEM' | 'Signature' | null
@@ -72,6 +75,7 @@ interface AlgorithmComparisonProps {
 export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   highlightAlgorithms,
   highlightFromLink = false,
+  selectedRowId = null,
   filteredData,
   compareSet,
   compareType,
@@ -293,6 +297,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                   data={sortedData}
                   pqcDetailMap={pqcDetailMap}
                   highlightAlgorithms={highlightAlgorithms}
+                  selectedRowId={selectedRowId}
                   onBackToWizard={() => setShowFullTable(false)}
                 />
               </>
@@ -499,11 +504,13 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     // and PQC names (executive/curious pick ML-KEM-768 etc. —
                     // see ALGORITHM_PERSONA_DEFAULTS in personaConfig.ts) —
                     // check both columns, not just classical.
+                    const rowId = transitionRowId(algo)
                     const isHighlighted =
-                      highlightAlgorithms &&
-                      Array.from(highlightAlgorithms).some((h) =>
-                        transitionMatchesHighlight(algo, h)
-                      )
+                      (!!selectedRowId && rowId === selectedRowId) ||
+                      (!!highlightAlgorithms &&
+                        Array.from(highlightAlgorithms).some((h) =>
+                          transitionMatchesHighlight(algo, h)
+                        ))
                     const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
                     const isCompared = compareSet.has(pqcName)
                     const isSignatureType =
@@ -524,7 +531,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
-                        data-deeplink-id={transitionRowId(algo)}
+                        data-deeplink-id={rowId}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         // Cap the stagger so a ~40-row table doesn't animate for

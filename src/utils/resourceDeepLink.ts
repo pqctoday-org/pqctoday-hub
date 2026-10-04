@@ -29,6 +29,8 @@ export const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
     'attack',
     'engine',
     'case',
+    'transition',
+    'standard',
   ],
   '/timeline': ['event', 'country'],
   '/migrate': ['product', 'productIds', 'share', 'vendor', 'open', 'domain'],
