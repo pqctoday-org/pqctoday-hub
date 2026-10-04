@@ -273,7 +273,7 @@ export function expandIndustriesForMatching(industries: string[]): string[] {
  * label yields `['<label>']` and can only self-match — which the identity
  * check on the line above already covers.
  */
-function sectorCodesOverlap(csvIndustries: string[], profileIndustry: string): boolean {
+export function sectorCodesOverlap(csvIndustries: string[], profileIndustry: string): boolean {
   const mine = resolveToNaicsSet(profileIndustry)
   if (mine.length === 0 || (mine.length === 1 && mine[0] === profileIndustry)) return false
   const mineSet = new Set(mine)
