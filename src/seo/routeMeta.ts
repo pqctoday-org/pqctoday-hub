@@ -283,7 +283,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/business/tools': {
     title: 'Business Tools — PQC Planning & Governance Toolkit | PQC Today',
     description:
-      '34 interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
+      '{businessTools} interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
     canonical: `${BASE_URL}/business/tools`,
   },
 
@@ -1085,10 +1085,12 @@ export const ROUTE_META: Record<string, RouteMeta> = {
 }
 
 // --- Counts quoted in page copy -------------------------------------------------------------------
-// A title or description writes "{modules}" where it quotes the number of Learn modules, and the
-// /learn course data carries the same count and the total study time. They all come from the module
-// pages above, counted the way the app counts them (the catalog without the quiz), so adding a
-// module updates every place at once. learnRoutes.test.ts ties those pages to the real catalog.
+// A title or description writes "{modules}" where it quotes the number of Learn modules and
+// "{businessTools}" where it quotes the number of Business Tools. The /learn course data carries the
+// module count and the total study time. They all come from the pages themselves (the module pages
+// below, counted the way the app counts them: the catalog without the quiz, and the generated tool
+// list), so adding a module or a tool updates every place at once. learnRoutes.test.ts and
+// searchRoutes.test.ts tie those sources to the real catalog and registry.
 const moduleStudyMinutes = (iso: unknown): number => {
   const text = String(iso ?? '')
   return Number(/(\d+)H/.exec(text)?.[1] ?? 0) * 60 + Number(/(\d+)M/.exec(text)?.[1] ?? 0)
@@ -1102,9 +1104,17 @@ const LEARN_STUDY_MINUTES = modulePages.reduce(
   0
 )
 
+const BUSINESS_TOOL_COUNT = TOOL_ROUTE_META.filter((tool) => tool.kind === 'business-tool').length
+const QUOTED_COUNTS: Record<string, number> = {
+  '{modules}': LEARN_MODULE_COUNT,
+  '{businessTools}': BUSINESS_TOOL_COUNT,
+}
+
 for (const meta of Object.values(ROUTE_META)) {
-  meta.title = meta.title.replaceAll('{modules}', String(LEARN_MODULE_COUNT))
-  meta.description = meta.description.replaceAll('{modules}', String(LEARN_MODULE_COUNT))
+  for (const [token, count] of Object.entries(QUOTED_COUNTS)) {
+    meta.title = meta.title.replaceAll(token, String(count))
+    meta.description = meta.description.replaceAll(token, String(count))
+  }
 }
 
 ROUTE_META['/learn']!.structuredData = {

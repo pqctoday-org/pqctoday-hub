@@ -82,7 +82,7 @@ describe('the module count quoted in page copy is the real one', () => {
 
   it('leaves no unfilled placeholder in any title or description', () => {
     const unfilled = Object.entries(ROUTE_META)
-      .filter(([, meta]) => `${meta.title} ${meta.description}`.includes('{modules}'))
+      .filter(([, meta]) => /\{[A-Za-z]+\}/.test(`${meta.title} ${meta.description}`))
       .map(([path]) => path)
     expect(unfilled).toEqual([])
   })

@@ -55,3 +55,11 @@ describe('search route manifest', () => {
     }
   })
 })
+
+describe('the tool count quoted in page copy is the real one', () => {
+  it('is the number of Business Tools in the registry', () => {
+    expect(ROUTE_META['/business/tools']!.description).toContain(
+      `${BUSINESS_TOOLS.length} interactive business planning tools`
+    )
+  })
+})
