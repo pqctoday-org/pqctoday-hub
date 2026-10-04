@@ -34,6 +34,7 @@ const manifest: ModuleManifest = {
     algorithms: ['ML-DSA', 'ML-KEM'],
     standards: ['FIPS 203', 'FIPS 204'],
   },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HomomorphicEncryptionModule })),
 }
 
