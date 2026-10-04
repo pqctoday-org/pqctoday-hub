@@ -1110,6 +1110,18 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: 'A KEM gives both parties the same shared secret without sending it; each side then runs the identical HKDF derivation, so the wrapping key exists at both ends but never crosses the channel.',
   },
+  // homomorphic-encryption
+  'homomorphic-encryption/fhe-hsm-flows': {
+    prompt:
+      'In the CKKS single-HSM scenario, the step "Export the evaluation keys" is marked as where this model breaks. Why?',
+    options: [
+      'The evaluation keys are secret, so the HSM cannot send them to the cloud',
+      'Only the secret-key holder can make them, and a bootstrappable set is gigabytes: beyond what an HSM can hold or return through PKCS#11',
+      'The cloud has to generate them itself, which would expose the secret key',
+    ],
+    answer: 1,
+    why: 'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only its holder can make them. A bootstrappable CKKS set is gigabytes (estimated), so the scenario is kept as a counter-example and the planned engine refuses the export.',
+  },
   // platform-eng-pqc
   'platform-eng-pqc/crypto-posture-monitor': {
     prompt:
