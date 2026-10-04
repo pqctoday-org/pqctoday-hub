@@ -19,6 +19,12 @@ export const UNRESOLVED_ESTIMATES_DETAIL = {
   /** Learn exercises where the reader sets, or is given, a CRQC year or qubit count. */
   workshopExample:
     'The years and qubit counts in this exercise are example figures for practice, not forecasts and not settled answers.',
+  /**
+   * The page shows each unresolved claim as a claim card, with its sources and dates, and marks
+   * the question as open. Use ONLY on a page that really renders those cards (ClaimCard).
+   */
+  claimsShown:
+    'Where credible sources differ, we show each one with its source and date, and say that the question is open, rather than pick a single answer.',
   /** The page quotes one planning figure and does not list the sources itself. */
   oneFigure:
     'Where credible sources differ, the figure shown here is one planning estimate, not a settled answer.',
@@ -29,9 +35,9 @@ export const UNRESOLVED_ESTIMATES_LEAD =
 
 /**
  * Interim notice (4.149.0) for every surface that quotes a quantum-computer estimate or a
- * Q-Day date: today there are still unknown and conflicting claims. It makes no claim about a
- * per-claim "open question" mark, which does not exist yet; `detail` says only what the page
- * does, so pick the variant that is true there.
+ * Q-Day date: today there are still unknown and conflicting claims. `detail` says only what the
+ * page does, so pick the variant that is true there. Only `claimsShown` speaks of a per-claim
+ * "open question" mark, because only a page that renders claim cards (ClaimCard) has one.
  */
 export const UnresolvedEstimatesNotice: React.FC<{
   detail: keyof typeof UNRESOLVED_ESTIMATES_DETAIL
