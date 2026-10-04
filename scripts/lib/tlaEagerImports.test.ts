@@ -13,6 +13,8 @@ import { analyzeBuild, type BuildAnalysis, type Finding } from './tlaEagerImport
 const WRAPPED =
   'let h;\nlet __tla = Promise.all([]).then(async () => {\n  h = () => 1\n})\nexport { h as a, __tla }\n'
 const PLAIN = 'const h = () => 1\nexport { h as a }\n'
+// Assigned later like a wrapped chunk's export, but with no wrapper, so nothing is actually delayed.
+const UNWRAPPED_LATE = 'let h\nh = () => 1\nexport { h as a }\n'
 const SOURCE = './src-0002.js'
 const IMPORT = `import { a as p } from "${SOURCE}"\n`
 const INDEX_HTML = '<script type="module" src="/assets/index-0001.js"></script>'
@@ -34,6 +36,7 @@ describe('analyzeBuild: a clean build', () => {
     expect(a.chunks).toBe(3)
     expect(a.startup).toBe(1)
     expect(a.lateWrapped).toEqual(['src-0002.js'])
+    expect(a.notes).toEqual([])
   })
 })
 
@@ -110,10 +113,6 @@ describe('analyzeBuild: reads that happen later are fine', () => {
   it('a property that happens to share the local name is a label, not a read', () => {
     expect(withRead('const o = { p: 1 }\nexport const v = o.p').findings).toEqual([])
   })
-
-  it("the bundler's own namespace object lists exports without reading them", () => {
-    expect(withRead('export const ns = Object.freeze({ a: p })').findings).toEqual([])
-  })
 })
 
 describe('analyzeBuild: a chunk that waits, or one that cannot be early', () => {
@@ -143,6 +142,7 @@ describe('analyzeBuild: a chunk that waits, or one that cannot be early', () => 
 
   it('passes when the source is not wrapped', () => {
     expect(withRead('export const TABLE = { mech: p }', PLAIN).findings).toEqual([])
+    expect(withRead('export const TABLE = { mech: p }', UNWRAPPED_LATE).findings).toEqual([])
   })
 
   it('a wrapped chunk that is not read at start-up is not a finding', () => {
@@ -153,12 +153,6 @@ describe('analyzeBuild: a chunk that waits, or one that cannot be early', () => 
     const a = analyze({
       'page-0003.js': 'import { a as p } from "react"\nexport const T = { k: p }\n',
     })
-    expect(a.findings).toEqual([])
-  })
-
-  it('does not check a namespace import (a documented limit)', () => {
-    const body = `import * as ns from "${SOURCE}"\nexport const T = ns.a\n`
-    const a = analyze({ 'src-0002.js': WRAPPED, 'page-0003.js': body })
     expect(a.findings).toEqual([])
   })
 })
@@ -270,6 +264,301 @@ describe('analyzeBuild: chunks the source itself loads after it has run', () => 
       'other-0005.js': `${IMPORT}export const T = { k: p }\n`,
     })
     expect(found(a)).toEqual(['other-0005.js:p'])
+  })
+})
+
+describe('analyzeBuild: Object.freeze and the bundler namespace object', () => {
+  // The shape the bundler emits for a module's namespace, as found in a saved build.
+  const NAMESPACE = (members: string) =>
+    `export const Rt = Object.freeze(Object.defineProperty({ __proto__: null, ${members} }, Symbol.toStringTag, { value: "Module" }))`
+
+  it('a frozen table someone wrote reads the export while the module runs', () => {
+    expect(found(withRead('export const table = Object.freeze({ compare: p })'))).toEqual([
+      'page-0003.js:p',
+    ])
+  })
+
+  it.each([
+    [
+      'no __proto__ first',
+      'Object.freeze(Object.defineProperty({ other: null, compare: p }, Symbol.toStringTag, { value: "Module" }))',
+    ],
+    [
+      'a tag that is not Symbol.toStringTag',
+      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, "tag", { value: "Module" }))',
+    ],
+    [
+      'a tag value that is not Module',
+      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, Symbol.toStringTag, { value: "Other" }))',
+    ],
+    [
+      'Symbol.iterator instead of the tag',
+      'Object.freeze(Object.defineProperty({ __proto__: null, compare: p }, Symbol.iterator, { value: "Module" }))',
+    ],
+    ['no defineProperty', 'Object.freeze({ __proto__: null, compare: p })'],
+  ])('an object that only looks like the namespace shape (%s) is still a read', (_name, expr) => {
+    expect(found(withRead(`export const t = ${expr}`))).toEqual(['page-0003.js:p'])
+  })
+
+  it('the namespace object is not a failure, but the late binding it copies is a note', () => {
+    const a = withRead(NAMESPACE('local: 1, member: p'))
+    expect(a.findings).toEqual([])
+    expect(a.notes).toEqual<Finding[]>([
+      { file: 'page-0003.js', localName: 'p', importedName: 'a', source: SOURCE, line: 2 },
+    ])
+  })
+
+  it('a namespace object that copies nothing late has no notes', () => {
+    const a = withRead(NAMESPACE('local: 1, member: p'), PLAIN)
+    expect(a.notes).toEqual([])
+    expect(a.findings).toEqual([])
+  })
+})
+
+describe('analyzeBuild: re-exports and aliases lead to the chunk that holds the binding', () => {
+  const page = (from: string, name = 'a') =>
+    `import { ${name} as p } from "${from}"\nexport const T = { k: p }\n`
+
+  it('a named re-export', () => {
+    const a = analyze({
+      'src-0002.js': WRAPPED,
+      'barrel-0005.js': `export { a } from "${SOURCE}"\n`,
+      'page-0003.js': page('./barrel-0005.js'),
+    })
+    expect(a.findings).toEqual<Finding[]>([
+      {
+        file: 'page-0003.js',
+        localName: 'p',
+        importedName: 'a',
+        source: './barrel-0005.js',
+        line: 2,
+      },
+    ])
+  })
+
+  it('a re-export under another name', () => {
+    const a = analyze({
+      'src-0002.js': WRAPPED,
+      'barrel-0005.js': `export { a as b } from "${SOURCE}"\n`,
+      'page-0003.js': page('./barrel-0005.js', 'b'),
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+
+  it('an import that is exported again under its own alias', () => {
+    const a = analyze({
+      'src-0002.js': WRAPPED,
+      'barrel-0005.js': `import { a as x } from "${SOURCE}"\nexport { x as a }\n`,
+      'page-0003.js': page('./barrel-0005.js'),
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+
+  it('a chain of two re-exports', () => {
+    const a = analyze({
+      'src-0002.js': WRAPPED,
+      'one-0005.js': `export { a } from "${SOURCE}"\n`,
+      'two-0006.js': 'export { a } from "./one-0005.js"\n',
+      'page-0003.js': page('./two-0006.js'),
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+
+  it('passes when the reader also waits for the chunk that really holds the binding', () => {
+    const waiting = [
+      'import { a as p } from "./barrel-0005.js"',
+      `import { __tla as t } from "${SOURCE}"`,
+      'export const T = { k: p }',
+      'export { t as __tla }',
+    ].join('\n')
+    const a = analyze({
+      'src-0002.js': WRAPPED,
+      'barrel-0005.js': `export { a } from "${SOURCE}"\n`,
+      'page-0003.js': waiting,
+    })
+    expect(a.findings).toEqual([])
+  })
+
+  it('a re-exported binding read later is fine, and so is one from a source that is not wrapped', () => {
+    const later = 'import { a as p } from "./barrel-0005.js"\nexport const f = () => p()\n'
+    const barrel = `export { a } from "${SOURCE}"\n`
+    expect(
+      analyze({ 'src-0002.js': WRAPPED, 'barrel-0005.js': barrel, 'page-0003.js': later }).findings
+    ).toEqual([])
+    expect(
+      analyze({
+        'src-0002.js': PLAIN,
+        'barrel-0005.js': barrel,
+        'page-0003.js': page('./barrel-0005.js'),
+      }).findings
+    ).toEqual([])
+  })
+})
+
+describe('analyzeBuild: namespace imports', () => {
+  const ns = (use: string) => `import * as ns from "${SOURCE}"\n${use}\n`
+  // `k` is declared with an initialiser, so it is ready as soon as the chunk is evaluated.
+  const MIXED =
+    'const k = 1\nlet h\nlet __tla = Promise.all([]).then(async () => {\n  h = () => 1\n})\nexport { k, h as a, __tla }\n'
+
+  it('a member read while the module runs', () => {
+    const a = analyze({ 'src-0002.js': WRAPPED, 'page-0003.js': ns('export const T = ns.a') })
+    expect(a.findings).toEqual<Finding[]>([
+      { file: 'page-0003.js', localName: 'ns.a', importedName: 'a', source: SOURCE, line: 2 },
+    ])
+  })
+
+  it('a computed member with a literal name', () => {
+    const a = analyze({ 'src-0002.js': WRAPPED, 'page-0003.js': ns('export const T = ns["a"]') })
+    expect(found(a)).toEqual(['page-0003.js:ns.a'])
+  })
+
+  it('passes when the reader imports the source’s own __tla as well', () => {
+    const page = `${ns('export const T = ns.a')}import { __tla as t } from "${SOURCE}"\nexport { t as __tla }\n`
+    expect(analyze({ 'src-0002.js': WRAPPED, 'page-0003.js': page }).findings).toEqual([])
+  })
+
+  it('a member that is ready at once, a read inside a function, and passing the namespace on are fine', () => {
+    const page = ns('export const K = ns.k\nexport const f = () => ns.a\nuse(ns)')
+    expect(analyze({ 'src-0002.js': MIXED, 'page-0003.js': page }).findings).toEqual([])
+  })
+})
+
+describe('analyzeBuild: only exports that are assigned late are delayed', () => {
+  const MIXED =
+    'const k = 1\nfunction f() {}\nlet h\nlet __tla = Promise.all([]).then(async () => {\n  h = () => 1\n})\nexport { k as k, f as f, h as a, __tla }\n'
+
+  it('flags the late export and not the ones ready at once', () => {
+    const page = [
+      `import { k as pk, f as pf, a as p } from "${SOURCE}"`,
+      'export const T = { one: pk, two: pf, three: p }',
+    ].join('\n')
+    expect(found(analyze({ 'src-0002.js': MIXED, 'page-0003.js': page }))).toEqual([
+      'page-0003.js:p',
+    ])
+  })
+})
+
+describe('analyzeBuild: the HSM engine chunk is late wherever it sits', () => {
+  const HSM = 'softhsm-0002.js'
+  const reader = `import { a as p } from "./${HSM}"\nexport const T = { k: p }\n`
+
+  it('is checked even when start-up code imports it', () => {
+    const a = analyze({
+      'index-0001.js': `import "./${HSM}"\nexport {}\n`,
+      [HSM]: WRAPPED,
+      'page-0003.js': reader,
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+    expect(a.lateWrapped).toEqual([HSM])
+  })
+
+  it('and a chunk it loads after it has run is not excused', () => {
+    const a = analyze({
+      [HSM]: `${WRAPPED}export const open = () => import("./page-0003.js")\n`,
+      'page-0003.js': reader,
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+
+  it('a chunk with another name gets no such treatment (control)', () => {
+    const a = analyze({
+      'index-0001.js': `import "./engine-0002.js"\nexport {}\n`,
+      'engine-0002.js': WRAPPED,
+      'page-0003.js': reader.replace(HSM, 'engine-0002.js'),
+    })
+    expect(a.findings).toEqual([])
+  })
+
+  it('says which chunks matched and which of them are wrapped', () => {
+    expect(analyze({ [HSM]: WRAPPED }).alwaysLate).toEqual({ found: [HSM], wrapped: [HSM] })
+    expect(analyze({ [HSM]: PLAIN }).alwaysLate).toEqual({ found: [HSM], wrapped: [] })
+    expect(analyze({ 'other-0002.js': WRAPPED }).alwaysLate).toEqual({ found: [], wrapped: [] })
+  })
+
+  it('takes another pattern when asked', () => {
+    const a = analyzeBuild(
+      new Map([
+        ['index-0001.js', `import "./engine-0002.js"\nexport {}\n`],
+        ['engine-0002.js', WRAPPED],
+        ['page-0003.js', reader.replace(HSM, 'engine-0002.js')],
+      ]),
+      INDEX_HTML,
+      { alwaysLate: /^engine-/ }
+    )
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+})
+
+describe('analyzeBuild: a chunk that runs in the start-up set reads the source back to back', () => {
+  it('is checked when both are part of start-up', () => {
+    const a = analyze({
+      'index-0001.js': 'import "./src-0002.js"\nimport "./page-0003.js"\nexport {}\n',
+      'src-0002.js': WRAPPED,
+      'page-0003.js': `${IMPORT}export const T = { k: p }\n`,
+    })
+    expect(found(a)).toEqual(['page-0003.js:p'])
+  })
+
+  it('and passes when it waits for the source', () => {
+    const waiting = `import { a as p, __tla as __tla_0 } from "${SOURCE}"\nexport const T = { k: p }\nexport { __tla_0 as __tla }\n`
+    const a = analyze({
+      'index-0001.js': 'import "./src-0002.js"\nimport "./page-0003.js"\nexport {}\n',
+      'src-0002.js': WRAPPED,
+      'page-0003.js': waiting,
+    })
+    expect(a.findings).toEqual([])
+  })
+})
+
+describe('analyzeBuild: an import() only excuses the chunk it loads when it runs later', () => {
+  const loads = (wrapper: string, outside = '') =>
+    `${outside}let h\nlet __tla = ${wrapper}\nexport { h as a, __tla }\n`
+  const page = { 'page-0003.js': `${IMPORT}export const T = { k: p }\n` }
+
+  it('in the wrapper body itself, it runs while the chunk starts (not an excuse)', () => {
+    const src = loads(
+      'Promise.all([]).then(async () => {\n  h = () => 1\n  import("./page-0003.js")\n})'
+    )
+    expect(found(analyze({ 'src-0002.js': src, ...page }))).toEqual(['page-0003.js:p'])
+  })
+
+  it('at the top level of the chunk (not an excuse)', () => {
+    const src = loads(
+      'Promise.all([]).then(async () => {\n  h = () => 1\n})',
+      'import("./page-0003.js")\n'
+    )
+    expect(found(analyze({ 'src-0002.js': src, ...page }))).toEqual(['page-0003.js:p'])
+  })
+
+  it('among the things the wrapper waits for (not an excuse)', () => {
+    const src = loads(
+      'Promise.all([import("./page-0003.js")]).then(async () => {\n  h = () => 1\n})'
+    )
+    expect(found(analyze({ 'src-0002.js': src, ...page }))).toEqual(['page-0003.js:p'])
+  })
+
+  it('inside a function in the wrapper, it runs when someone calls it (an excuse)', () => {
+    const src = loads(
+      'Promise.all([]).then(async () => {\n  h = () => 1\n  window.open = () => import("./page-0003.js")\n})'
+    )
+    expect(analyze({ 'src-0002.js': src, ...page }).findings).toEqual([])
+  })
+
+  it('wrapped in the bundler’s preload helper inside a function (an excuse)', () => {
+    const src = loads(
+      'Promise.all([]).then(async () => {\n  h = () => 1\n  window.open = () => preload(() => import("./page-0003.js"), [])\n})'
+    )
+    expect(analyze({ 'src-0002.js': src, ...page }).findings).toEqual([])
+  })
+})
+
+describe('analyzeBuild: ways a chunk can be marked as wrapped', () => {
+  it('an export of the promise under the name __tla, whatever it is called inside', () => {
+    const src = 'let h\nconst done = Promise.resolve()\nexport { h as a, done as __tla }\n'
+    expect(
+      found(analyze({ 'src-0002.js': src, 'page-0003.js': `${IMPORT}export const T = { k: p }\n` }))
+    ).toEqual(['page-0003.js:p'])
   })
 })
 

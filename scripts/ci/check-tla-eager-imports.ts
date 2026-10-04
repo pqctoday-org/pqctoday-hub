@@ -17,13 +17,13 @@
  * Runs at the end of `npm run build`, after `gate:precache`, so it checks the real artifact.
  *
  * Exit codes:
- *   0 — no read of a not-yet-ready export found
- *   1 — at least one finding
+ *   0 — no read of a not-yet-ready export found, and the check had something to examine
+ *   1 — at least one finding, or nothing to examine (the HSM engine chunk or every wrapped chunk missing)
  *   2 — could not read the build output
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
-import { analyzeBuild } from '../lib/tlaEagerImports'
+import { analyzeBuild, SOFTHSM_CHUNK } from '../lib/tlaEagerImports'
 
 const DIST = path.resolve(process.cwd(), 'dist')
 const ASSETS = path.join(DIST, 'assets')
@@ -46,17 +46,43 @@ console.log(
     `${analysis.lateWrapped.length} wrapped chunk(s) are loaded after start-up`
 )
 
-// If the bundler stopped wrapping anything, the gate would pass without checking a thing, which looks
-// the same as "no bug" from outside. Say so.
-if (analysis.lateWrapped.length === 0) {
+// A check that finds nothing to check looks exactly like a clean build, so these fail the build.
+let vacuous = false
+if (analysis.alwaysLate.found.length === 0) {
+  vacuous = true
+  console.error(
+    `\n✖ no built chunk matched ${SOFTHSM_CHUNK}: the HSM engine chunk, the one this check exists\n` +
+      '  for, was renamed or split. Update SOFTHSM_CHUNK in scripts/lib/tlaEagerImports.ts.\n'
+  )
+} else if (analysis.alwaysLate.wrapped.length === 0) {
   console.warn(
-    '\n⚠ no wrapped chunk is loaded after start-up this run, so this gate checked nothing.\n' +
-      '  That is expected only if the top-level-await plugin no longer wraps the HSM engine chunk;\n' +
-      '  if it is still in use, the chunk detection in scripts/lib/tlaEagerImports.ts needs updating.\n'
+    `\n⚠ ${analysis.alwaysLate.found.join(', ')} is not wrapped by the top-level-await plugin this run, so\n` +
+      '  nothing can read it too early; worth noticing if the plugin or its settings changed.\n'
+  )
+}
+if (analysis.lateWrapped.length === 0) {
+  vacuous = true
+  console.error(
+    '\n✖ no wrapped chunk is loaded after start-up this run, so this check examined nothing.\n' +
+      '  If the plugin still wraps chunks, the wrapper detection in scripts/lib/tlaEagerImports.ts\n' +
+      '  needs updating; if it no longer does, retire this check on purpose.\n'
   )
 }
 
+// Values the bundler copied into a namespace object while they were not ready yet.
+if (analysis.notes.length > 0) {
+  console.warn(
+    `\n⚠ ${analysis.notes.length} late binding(s) are copied into a bundler namespace object, so the copy may be ` +
+      'undefined if that object is\n  read before the source chunk has finished (not a failure; see the limits in ' +
+      'scripts/lib/tlaEagerImports.ts):'
+  )
+  for (const n of analysis.notes) {
+    console.warn(`  • ${n.file}:${n.line}: \`${n.importedName}\` from ${n.source}`)
+  }
+}
+
 if (analysis.findings.length === 0) {
+  if (vacuous) process.exit(1)
   console.log('\n✔ no chunk reads an export of a still-starting chunk while it starts up\n')
   process.exit(0)
 }
