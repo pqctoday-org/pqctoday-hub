@@ -3,6 +3,8 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { useStructuredCitations } from '@/services/featureFlags'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
@@ -275,6 +277,24 @@ export function buildModuleLinkList(): { count: number; links: string } {
   }
 }
 
+/**
+ * The ids of every planning tool under /business/tools/<toolId>, from the same
+ * registry the Planning Tools page lists. A typed list named 17 of 37 tools, so
+ * the assistant could not link the rest.
+ */
+export function buildBusinessToolIdList(): string {
+  return BUSINESS_TOOLS.map((tool) => tool.id).join(', ')
+}
+
+/**
+ * How many /playground/<toolId> pages exist, from the playground registry: every
+ * tool, split into those that run in the browser and the Docker-sandbox ones.
+ */
+export function countPlaygroundTools(): { total: number; native: number; sandbox: number } {
+  const sandbox = WORKSHOP_TOOLS.filter((tool) => tool.sandbox).length
+  return { total: WORKSHOP_TOOLS.length, native: WORKSHOP_TOOLS.length - sandbox, sandbox }
+}
+
 export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   // See featureFlags.ts: plain flag check, not a React Hook — the `use`
   // prefix is this module's naming convention for every flag, including
@@ -299,6 +319,8 @@ export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageCo
     inventorySection,
   } = buildSharedSections(chunks, pageContext)
   const moduleList = buildModuleLinkList()
+  const businessToolIds = buildBusinessToolIdList()
+  const playgroundTools = countPlaygroundTools()
 
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
 ${pageNote}${personaSection}${experienceSection}${profileSection}${assessmentSection}
@@ -339,10 +361,10 @@ GUIDELINES:
    - /leaders?leader=<leader id or name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category — singular: Standards, Algorithm Inventor, Industry Adopter, Industry Vendor, Government, Open Source Maintainer, Patent Inventor>, /leaders?region=<americas|eu|apac>, /leaders?q=<text>, /leaders?mode=<cards|table|stack>, /leaders?layer=<Public|Private|Academic> (stack view layer)
    - /compliance?framework=<id> (open one framework, e.g. CNSA-2, FIPS-140-3), /compliance?cert=<recordId> (open one certification record), /compliance?evref=<library ref> (CSWP.39 evidence reference; tab=cswp39 optional), /compliance?tab=<obligations|requirements|progress|products|standards|certification|compliance|records|foryou|cswp39>, /compliance?q=<text>, /compliance?pqc=<algorithm name, e.g. ML-KEM>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<tab>
    - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?class=<hndl|hnfl>, /threats?q=<text>, /threats?sort=<industry|threatId|criticality|evidence>&dir=<asc|desc>, /threats?view=horizon (CRQC Threat Horizon)
-   - /playground/<toolId> (one page per tool — 63+ native + Docker-sandbox tools; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
+   - /playground/<toolId> (one page per tool — ${playgroundTools.total} tools: ${playgroundTools.native} native + ${playgroundTools.sandbox} Docker-sandbox; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
    - /playground/interactive?tab=<tab>&algo=<algo> (multi-tab lab), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
-   - /business/tools/<toolId> — actual toolIds: roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook
+   - /business/tools/<toolId> — actual toolIds: ${businessToolIds}
    - /learn (catalog) — /learn?mode=<mypath|browse> (My Path guided journey vs Browse all modules). Track filtering only applies in Browse mode, so ALWAYS pair it: /learn?mode=browse&track=<trackName> (track names: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Executive, Industries). /learn?persona=<id> presets the persona path/lens (executive|grc|developer|architect|researcher|cert-engineer|ops|curious).
    - /learn/<module-id> (learning content), /learn/<module-id>?tab=workshop (hands-on workshop/simulation)
    - /learn/<module-id>?tab=workshop&step=<n>, /learn/<module-id>?category=<cat>, /learn/<module-id>?diveDeeper=<topic>

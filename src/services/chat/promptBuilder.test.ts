@@ -4,8 +4,12 @@ import {
   buildLocalSystemPrompt,
   buildGeminiSystemPrompt,
   buildModuleLinkList,
+  buildBusinessToolIdList,
+  countPlaygroundTools,
 } from './promptBuilder'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { validateDeepLink } from '@/services/search/deepLinkGrammar'
 
@@ -228,5 +232,68 @@ describe('buildGeminiSystemPrompt — Learn module list parity', () => {
     const { count, links } = buildModuleLinkList()
     expect(count).toBe(modules.length)
     expect(listLine).toContain(links)
+  })
+})
+
+// Like the module list, the planning-tool ids and the playground tool count in
+// the prompt come from their registries. They were typed by hand: 17 of the 37
+// planning tools were named, and "63+" playground tools were claimed against 58.
+describe('buildGeminiSystemPrompt — business tool list parity', () => {
+  const prompt = buildGeminiSystemPrompt([])
+  const listLine =
+    prompt.split('\n').find((l) => l.includes('/business/tools/<toolId> — actual toolIds:')) ?? ''
+  const promptIds = (listLine.split('actual toolIds:')[1] ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean)
+  const registryIds = BUSINESS_TOOLS.map((tool) => tool.id)
+
+  it('has the tool id line', () => {
+    expect(listLine).not.toBe('')
+  })
+
+  it('names every business tool in the registry — none is missing from the prompt', () => {
+    expect(registryIds.filter((id) => !promptIds.includes(id))).toEqual([])
+  })
+
+  it('names nothing that is not a registered tool, and each tool once', () => {
+    expect(promptIds.filter((id) => !registryIds.includes(id))).toEqual([])
+    expect(new Set(promptIds).size).toBe(promptIds.length)
+    expect(promptIds).toHaveLength(registryIds.length)
+  })
+
+  it('buildBusinessToolIdList agrees with the prompt', () => {
+    expect(listLine).toContain(`actual toolIds: ${buildBusinessToolIdList()}`)
+  })
+})
+
+describe('buildGeminiSystemPrompt — playground tool count parity', () => {
+  const prompt = buildGeminiSystemPrompt([])
+  const line =
+    prompt.split('\n').find((l) => l.includes('/playground/<toolId> (one page per tool')) ?? ''
+  const claim = /one page per tool — (\d+) tools: (\d+) native \+ (\d+) Docker-sandbox/.exec(line)
+
+  it('states the total, native and sandbox counts', () => {
+    expect(claim).not.toBeNull()
+  })
+
+  it('matches the playground registry', () => {
+    const sandbox = WORKSHOP_TOOLS.filter((tool) => tool.sandbox).length
+    expect(Number(claim?.[1])).toBe(WORKSHOP_TOOLS.length)
+    expect(Number(claim?.[2])).toBe(WORKSHOP_TOOLS.length - sandbox)
+    expect(Number(claim?.[3])).toBe(sandbox)
+    expect(countPlaygroundTools()).toEqual({
+      total: WORKSHOP_TOOLS.length,
+      native: WORKSHOP_TOOLS.length - sandbox,
+      sandbox,
+    })
+  })
+
+  it('native plus sandbox adds up to the total', () => {
+    expect(Number(claim?.[2]) + Number(claim?.[3])).toBe(Number(claim?.[1]))
+  })
+
+  it('no longer carries a typed "63+" style count', () => {
+    expect(line).not.toMatch(/\d+\+ native/)
   })
 })
