@@ -88,6 +88,69 @@ describe('MobileThreatsView', () => {
     expect(screen.queryByText(/consensus|median of/i)).not.toBeInTheDocument()
   })
 
+  describe('what each source says (claim cards)', () => {
+    const LEAD = 'Some published estimates are still unresolved'
+    const SECOND_HALF =
+      'Where credible sources differ, we show each one with its source and date, and say that the question is open, rather than pick a single answer.'
+
+    it('folds the cards into one control that is closed until the reader opens it', () => {
+      renderView()
+      const summary = screen.getByText('What each source says, in its own words', {
+        selector: 'summary',
+      })
+      expect(summary.tagName).toBe('SUMMARY')
+      const details = summary.closest('details')!
+      expect(details).not.toHaveAttribute('open')
+      // the control is the only thing a reader sees of the cards while it is closed
+      expect(screen.getByTestId('estimate-claims')).toBeInTheDocument()
+    })
+
+    it('shows a card for each estimate and the other open questions once it is opened', () => {
+      renderView()
+      const details = screen
+        .getByText('What each source says, in its own words', { selector: 'summary' })
+        .closest('details')!
+      fireEvent.click(details.querySelector('summary')!)
+      const headline = within(details)
+        .getAllByTestId('claim-card')
+        .filter((c) => c.closest('details') === details)
+      expect(headline.map((c) => c.getAttribute('data-claim-id'))).toEqual([
+        'crqc-gri-2025-timeline',
+        'crqc-nist-ir8547-dates',
+        'crqc-nsa-cnsa2-faq-v21-dates',
+        'crqc-anssi-faq-2025-buy-after-2030',
+        'crqc-bsi-tr02102-2026-dates',
+        'crqc-rsa2048-physical-qubits-2025',
+        'crqc-bsi-working-hypothesis-early-2030s',
+      ])
+      expect(headline[0]).toHaveAttribute('data-state', 'Open')
+    })
+
+    it('says the approved sentence once, in two parts: the lead in the note above, the rest beside the cards', () => {
+      const { container } = renderView()
+      const text = container.textContent ?? ''
+      expect(text.split(LEAD).length - 1).toBe(1)
+      expect(text.split(SECOND_HALF).length - 1).toBe(1)
+      expect(screen.getByTestId('claims-sentence')).toHaveTextContent(SECOND_HALF)
+    })
+
+    it('keeps the heading outline in order and never averages the estimates', () => {
+      renderView()
+      const details = screen
+        .getByText('What each source says, in its own words', { selector: 'summary' })
+        .closest('details')!
+      fireEvent.click(details.querySelector('summary')!)
+      const levels = [...document.querySelectorAll('h1, h2, h3, h4, h5, h6')].map((h) =>
+        Number(h.tagName.slice(1))
+      )
+      for (let i = 1; i < levels.length; i++)
+        expect(levels[i] - levels[i - 1]).toBeLessThanOrEqual(1)
+      expect(screen.getByTestId('estimate-claims').textContent ?? '').not.toMatch(
+        /average|midpoint|consensus|combined estimate/i
+      )
+    })
+  })
+
   it('stepping the CRQC year up and down live-recomputes the urgency band', () => {
     renderView()
     const before = screen.getByText(/Migration should have|years remaining/i).textContent

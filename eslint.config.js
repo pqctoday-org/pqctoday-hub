@@ -389,6 +389,11 @@ export default defineConfig([
                 // Threats screen shows the same "estimates are still open" wording
                 // desktop does, from this one component.
                 '!@/components/common/UnresolvedEstimatesNotice',
+                // EstimateClaims.tsx (common, 2026-10-04) — same category: a self-contained,
+                // collapsed-by-default panel of claim cards with no desktop-only layout (cards
+                // stack on a phone; pure-moved out of the Quantum Threats module). The phone
+                // Threats screen shows the same cards desktop does, from this one component.
+                '!@/components/common/EstimateClaims',
                 // ItemShareButton.tsx (common, 2026-09-29) — the per-item Share
                 // control every item overlay carries; mobile sheets use it too.
                 '!@/components/common/ItemShareButton',

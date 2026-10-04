@@ -12,7 +12,11 @@ import {
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import {
+  CRQC_ESTIMATES,
+  getCrqcForecast,
+} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { EstimateClaims } from '@/components/common/EstimateClaims'
 import {
   getShorTier,
   getThreatClass,
@@ -470,6 +474,18 @@ export function MobileThreatsView() {
           {forecast.label}. The year buttons span a {forecast.rangeLabel}.
         </p>
       </section>
+
+      {/* What each source behind the estimates says, as claim cards, folded by default. The
+          note above already carries the lead sentence, so only the second half is added. */}
+      <div className="mb-4">
+        <EstimateClaims
+          estimates={CRQC_ESTIMATES}
+          headingLevel={3}
+          includeOtherOpenQuestions
+          collapsible
+          intro="sentence"
+        />
+      </div>
 
       <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">
         Same subtraction, two different X&apos;s:{' '}

@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { CRQC_ESTIMATES } from '../data/quantumConstants'
+import { CRQC_ESTIMATES } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { EstimateClaims, claimsForEstimates } from './EstimateClaims'
 
 const APPROVED_SENTENCE =
@@ -63,7 +63,9 @@ describe('EstimateClaims', () => {
   it('folds the cards into a keyboard-friendly control when collapsible, keeping the sentence visible', () => {
     render(<EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={5} collapsible />)
     expect(screen.getByRole('note')).toBeVisible()
-    const summary = screen.getByText('What each source says, in its own words')
+    const summary = screen.getByText('What each source says, in its own words', {
+      selector: 'summary',
+    })
     expect(summary.tagName).toBe('SUMMARY')
     expect(summary.closest('details')).not.toHaveAttribute('open')
   })
@@ -72,5 +74,22 @@ describe('EstimateClaims', () => {
     const bare = CRQC_ESTIMATES.map((e) => ({ ...e, claimId: undefined }))
     const { container } = render(<EstimateClaims estimates={bare} />)
     expect(container).toBeEmptyDOMElement()
+  })
+
+  it('in sentence mode shows only the second half of the approved sentence, never the note, and says it once', () => {
+    const { container } = render(
+      <EstimateClaims estimates={CRQC_ESTIMATES} collapsible intro="sentence" />
+    )
+    expect(screen.queryByRole('note')).not.toBeInTheDocument()
+    const text = container.textContent ?? ''
+    expect(text).not.toContain('Some published estimates are still unresolved')
+    expect(text.split('we show each one with its source and date').length - 1).toBe(1)
+    expect(screen.getByTestId('claims-sentence')).toBeInTheDocument()
+  })
+
+  it('in the folded form a heading of its own keeps the outline in order for screen readers', () => {
+    render(<EstimateClaims estimates={CRQC_ESTIMATES} headingLevel={3} collapsible />)
+    const heading = screen.getByText('What each source says, in its own words', { selector: 'h2' })
+    expect(heading).toHaveClass('sr-only')
   })
 })
