@@ -106,7 +106,7 @@ export interface DataFoundationRow {
 }
 
 const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'records'>> = {
-  timeline: { dataset: 'Timeline Events', sources: '80+ orgs, 37 countries' },
+  timeline: { dataset: 'Timeline Events', sources: '80+ orgs' },
   library: { dataset: 'Library Resources', sources: '30+ standards bodies' },
   algorithms: { dataset: 'Algorithm Reference', sources: 'FIPS 203/204/205 (+206 draft)' },
   compliance: { dataset: 'Compliance Frameworks', sources: 'NIST, CAVP, CC, ANSSI' },
@@ -141,10 +141,13 @@ const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
  * there); the wiring decisions live in DataFoundationSection.tsx.
  */
 export function buildDataFoundation(
-  records: Record<DataFoundationKey, number | string>
+  records: Record<DataFoundationKey, number | string>,
+  /** Replaces the Timeline row's fixed `sources` text, whose country figure is derived from the data. */
+  timelineSources?: string
 ): DataFoundationRow[] {
   return DATA_FOUNDATION_ORDER.map((key) => ({
     ...DATA_FOUNDATION_META[key],
+    ...(key === 'timeline' && timelineSources ? { sources: timelineSources } : {}),
     records: records[key],
   }))
 }
