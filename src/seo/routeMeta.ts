@@ -63,7 +63,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '62 Hands-on Learning Modules',
+            '{modules} Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
             'PQC Patent Landscape',
@@ -1098,7 +1098,8 @@ export const ROUTE_META: Record<string, RouteMeta> = {
 
 // --- Counts quoted in page copy -------------------------------------------------------------------
 // A title or description writes "{modules}" where it quotes the number of Learn modules and
-// "{businessTools}" where it quotes the number of Business Tools. The /learn course data carries the
+// "{businessTools}" where it quotes the number of Business Tools, in titles, descriptions and structured
+// data alike. The /learn course data carries the
 // module count and the total study time. They all come from the pages themselves (the module pages
 // below, counted the way the app counts them: the catalog without the quiz, and the generated tool
 // list), so adding a module or a tool updates every place at once. learnRoutes.test.ts and
@@ -1122,11 +1123,26 @@ const QUOTED_COUNTS: Record<string, number> = {
   '{businessTools}': BUSINESS_TOOL_COUNT,
 }
 
-for (const meta of Object.values(ROUTE_META)) {
-  for (const [token, count] of Object.entries(QUOTED_COUNTS)) {
-    meta.title = meta.title.replaceAll(token, String(count))
-    meta.description = meta.description.replaceAll(token, String(count))
+/** Fill the count placeholders in a string, or in every string inside structured data. */
+function fillCounts(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return Object.entries(QUOTED_COUNTS).reduce(
+      (text, [token, count]) => text.replaceAll(token, String(count)),
+      value
+    )
   }
+  if (Array.isArray(value)) return value.map(fillCounts)
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, inner]) => [key, fillCounts(inner)]))
+  }
+  return value
+}
+
+for (const meta of Object.values(ROUTE_META)) {
+  meta.title = fillCounts(meta.title) as string
+  meta.description = fillCounts(meta.description) as string
+  if (meta.structuredData)
+    meta.structuredData = fillCounts(meta.structuredData) as Record<string, unknown>
 }
 
 ROUTE_META['/learn']!.structuredData = {
