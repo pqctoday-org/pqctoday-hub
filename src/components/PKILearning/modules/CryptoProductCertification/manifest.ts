@@ -35,7 +35,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
-  trackOrder: 5,
+  trackOrder: 6,
   learnSections: [
     { id: 'four-questions', label: 'Four schemes, four questions' },
     { id: 'scope-before-level', label: 'Scope before level' },

@@ -3,7 +3,7 @@ module_id: confidential-computing
 title: Confidential Computing & TEEs
 track: Infrastructure
 difficulty: advanced
-duration: 90 min
+duration: 60 min
 workshop_steps: 5
 ---
 

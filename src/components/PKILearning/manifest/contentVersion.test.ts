@@ -9,6 +9,8 @@ import {
   LEARN_CONTENT_VERSION,
   MODULE_IDS,
   MODULE_ID_RENAMES,
+  MODULE_CONTENT_MOVES,
+  applyContentMoves,
   applyModuleRenames,
   findOrphanedModuleIds,
   getModuleVersionFingerprint,
@@ -111,5 +113,37 @@ describe('B2 module-change diff ("What\'s New")', () => {
       updated: [],
       renamed: [],
     })
+  })
+})
+
+describe('MODULE_CONTENT_MOVES (content that moved between live modules)', () => {
+  const byId = new Map(MANIFESTS.map((m) => [m.id, m]))
+
+  it('names live modules, steps and sections that exist on the receiving module only', () => {
+    expect(MODULE_CONTENT_MOVES.length).toBeGreaterThan(0)
+    for (const move of MODULE_CONTENT_MOVES) {
+      const from = byId.get(move.from)
+      const to = byId.get(move.to)
+      expect(from, `${move.from} is live`).toBeDefined()
+      expect(to, `${move.to} is live`).toBeDefined()
+      const fromSteps = new Set((from!.workshopSteps ?? []).map((st) => st.id))
+      const toSteps = new Set((to!.workshopSteps ?? []).map((st) => st.id))
+      for (const id of move.steps) {
+        expect(fromSteps.has(id), `${move.from} no longer has step ${id}`).toBe(false)
+        expect(toSteps.has(id), `${move.to} has step ${id}`).toBe(true)
+      }
+      const fromSections = new Set((from!.learnSections ?? []).map((sec) => sec.id))
+      const toSections = new Set((to!.learnSections ?? []).map((sec) => sec.id))
+      for (const [oldId, newIds] of Object.entries(move.sections)) {
+        expect(fromSections.has(oldId), `${move.from} no longer has section ${oldId}`).toBe(false)
+        for (const id of newIds)
+          expect(toSections.has(id), `${move.to} has section ${id}`).toBe(true)
+      }
+    }
+  })
+
+  it('does not touch a module whose progress has nothing that moved', () => {
+    const modules = { 'confidential-computing': entry({ completedSteps: ['tee-hsm-channel'] }) }
+    expect(applyContentMoves(modules)).toEqual(modules)
   })
 })

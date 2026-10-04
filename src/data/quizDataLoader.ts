@@ -433,6 +433,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis for confidential computing.',
       icon: 'Cpu',
     },
+    'homomorphic-encryption': {
+      label: 'Homomorphic Encryption & HSM Key Custody',
+      description:
+        'Fully homomorphic encryption (FHE): the ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM holds the FHE secret key without becoming a decryption oracle.',
+      icon: 'Lock',
+    },
     'platform-eng-pqc': {
       label: 'Platform Engineering & PQC',
       description:

@@ -29,7 +29,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
-  trackOrder: 7,
+  trackOrder: 8,
   learnSections: [
     { id: 'cc-model', label: 'The Common Criteria model' },
     { id: 'cc-eal-decoding', label: 'EALs and "EAL4+"' },

@@ -29,7 +29,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
-  trackOrder: 8,
+  trackOrder: 9,
   learnSections: [
     { id: 'pci-pts-approval', label: 'PTS HSM device approval' },
     { id: 'pci-v5-changes', label: 'What PTS HSM v5.0 changed' },

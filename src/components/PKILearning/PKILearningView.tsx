@@ -11,7 +11,12 @@ import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
 import { MANIFESTS } from './manifest/registry'
-import { SPLIT_MODULE_REDIRECTS, resolveSplitRedirect } from './manifest/moduleRedirects'
+import {
+  SPLIT_MODULE_REDIRECTS,
+  MOVED_CONTENT_REDIRECTS,
+  resolveSplitRedirect,
+} from './manifest/moduleRedirects'
+import { MovedContentGate } from './MovedContentGate'
 import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
@@ -209,7 +214,20 @@ export const PKILearningView: React.FC = () => {
                 <Route path="legacy" element={<Navigate to="/learn" replace />} />
                 {/* Module routes — derived from the manifests (single source). */}
                 {[...MODULE_COMPONENTS].map(([path, Component]) => (
-                  <Route key={path} path={path} element={<Component />} />
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      MOVED_CONTENT_REDIRECTS.has(path) ? (
+                        // This module gave content to another one: old links to that content move on.
+                        <MovedContentGate from={path}>
+                          <Component />
+                        </MovedContentGate>
+                      ) : (
+                        <Component />
+                      )
+                    }
+                  />
                 ))}
                 {/* Legacy/short aliases that resolve to a canonical module. */}
                 {ROUTE_ALIAS_ENTRIES.map(({ alias, Component }) => (

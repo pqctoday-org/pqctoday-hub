@@ -76,6 +76,7 @@ const FEATURE_ROUTES_RAW: Record<string, string> = {
   'api-security-jwt': '/learn/api-security-jwt',
   'iot-pqc': '/learn/iot-pqc',
   'confidential-computing': '/learn/confidential-computing',
+  'homomorphic-encryption': '/learn/homomorphic-encryption',
   'web-gateway-pqc': '/learn/web-gateway-pqc',
   'emv-payment-pqc': '/learn/emv-payment-pqc',
   'crypto-dev-apis': '/learn/crypto-dev-apis',

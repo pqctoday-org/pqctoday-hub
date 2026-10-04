@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
-  trackOrder: 9,
+  trackOrder: 10,
   learnSections: [
     { id: 'where-time-goes', label: 'Where the Time Goes' },
     { id: 'building-blocks', label: 'The Five Building Blocks' },

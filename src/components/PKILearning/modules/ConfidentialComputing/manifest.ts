@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 12,
+  contentVersion: 13,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
-    'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, fully homomorphic encryption with HSM key custody, and quantum threat analysis.',
+    'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.',
   whyThisMatters:
     "TEEs and PQC solve different problems — remote attestation, not confidentiality-at-rest — but a compromised TEE root of trust and a broken classical signature fail the same way: silently, until it's too late.",
-  duration: '90 min',
+  duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
@@ -22,7 +22,6 @@ const manifest: ModuleManifest = {
     { id: 'memory-encryption', label: 'Memory Encryption' },
     { id: 'tee-hsm', label: 'TEE-HSM Communication' },
     { id: 'quantum-threats', label: 'Quantum Threats to TEEs' },
-    { id: 'homomorphic-encryption', label: 'Homomorphic Encryption (FHE)' },
   ],
   workshopSteps: [
     { id: 'tee-architecture-explorer', label: 'TEE Architecture Explorer' },
@@ -30,7 +29,6 @@ const manifest: ModuleManifest = {
     { id: 'encryption-mechanisms', label: 'Encryption Mechanisms' },
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
-    { id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' },
   ],
   startHere: {
     step: 'tee-hsm-channel',
