@@ -2,6 +2,7 @@
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
 import { filterActive } from './loaderUtils'
+import { parseBindingStatus, type BindingStatus } from '../utils/bindingSplit'
 import {
   COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME,
   COUNTRY_NAME_TO_COMPLIANCE_BLOC,
@@ -125,6 +126,15 @@ export interface ComplianceFramework {
   /** Sister-standards / cross-walk tokens (free text; not yet resolved). */
   relatedStandards?: string[]
   /**
+   * Whether this framework binds organisations like yours, from the CSV
+   * `binding_status` column (the Timeline's `binding_force` words). Absent until
+   * the row has been reviewed: absent means "not yet classified", never guidance.
+   * See utils/bindingSplit.ts.
+   */
+  bindingStatus?: BindingStatus
+  /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
+  bindingBasis?: string
+  /**
    * ISO date this row's fields were last checked against its primary source
    * — added 2026-07-16 (compliance-maintenance audit). Sparse by design:
    * only rows actually re-verified carry a real date; blank means "not yet
@@ -165,6 +175,8 @@ interface RawComplianceRow {
   deprecated_reason?: string
   related_standards?: string
   last_verified?: string
+  binding_status?: string
+  binding_basis?: string
 }
 
 // '[0-9]' not a bare '*' — the broad pattern also matched
@@ -358,6 +370,8 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deprecatedReason: row.deprecated_reason?.trim() || undefined,
     relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
     lastVerified: row.last_verified?.trim() || undefined,
+    bindingStatus: parseBindingStatus(row.binding_status),
+    bindingBasis: row.binding_basis?.trim() || undefined,
   }
 })
 
@@ -370,6 +384,16 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
 export const complianceFrameworks: ComplianceFramework[] = filterActive(
   frameworks as Array<ComplianceFramework & { status?: string }>
 ) as ComplianceFramework[]
+
+/**
+ * True once at least one framework carries a reviewed `binding_status`. The
+ * Report's Binding / Guidance and drafts display switches on only then, so it
+ * never shows a column of "Not yet classified" before the data exists. Read at
+ * call time (not at load) so a test can set a status and put it back.
+ */
+export function bindingDataPresent(): boolean {
+  return complianceFrameworks.some((fw) => fw.bindingStatus !== undefined)
+}
 
 /** Unfiltered set including deprecated/obsolete rows — for audits + cross-refs. */
 export const allComplianceFrameworks: ComplianceFramework[] = frameworks
