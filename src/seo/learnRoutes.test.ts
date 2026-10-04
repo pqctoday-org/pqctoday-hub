@@ -80,9 +80,19 @@ describe('the module count quoted in page copy is the real one', () => {
     })
   })
 
-  it('leaves no unfilled placeholder in any title or description', () => {
+  it('is used in the home page feature list that search engines read', () => {
+    expect(JSON.stringify(ROUTE_META['/']!.structuredData)).toContain(
+      `"${count} Hands-on Learning Modules"`
+    )
+  })
+
+  it('leaves no unfilled placeholder in any title, description or structured data', () => {
     const unfilled = Object.entries(ROUTE_META)
-      .filter(([, meta]) => /\{[A-Za-z]+\}/.test(`${meta.title} ${meta.description}`))
+      .filter(([, meta]) =>
+        /\{[A-Za-z]+\}/.test(
+          `${meta.title} ${meta.description} ${JSON.stringify(meta.structuredData)}`
+        )
+      )
       .map(([path]) => path)
     expect(unfilled).toEqual([])
   })
