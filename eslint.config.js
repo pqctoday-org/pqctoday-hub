@@ -394,6 +394,13 @@ export default defineConfig([
                 // stack on a phone; pure-moved out of the Quantum Threats module). The phone
                 // Threats screen shows the same cards desktop does, from this one component.
                 '!@/components/common/EstimateClaims',
+                // SuccessionLinks.tsx (common, 2026-10-04) — same category: a small,
+                // self-contained "Newer document" / "Replaces" list of links with no
+                // desktop-only layout (it stacks on a phone; kept out of the Library
+                // folder so Mobile does not import a desktop view). The phone Library
+                // sheet shows the same links the desktop drawer does, from this one
+                // component.
+                '!@/components/common/SuccessionLinks',
                 // ItemShareButton.tsx (common, 2026-09-29) — the per-item Share
                 // control every item overlay carries; mobile sheets use it too.
                 '!@/components/common/ItemShareButton',

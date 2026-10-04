@@ -19,6 +19,7 @@ import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../d
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from './FrameworkCrosswalkPanel'
 import { LIFECYCLE_STYLES } from '../../utils/libraryLifecycle'
+import { SuccessionLinks } from '../common/SuccessionLinks'
 import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { relatedLeadersFor } from './relatedLeaders'
 import clsx from 'clsx'
@@ -245,6 +246,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     {item.shortDescription?.trim() || 'No description available.'}
                   </p>
                 </div>
+
+                <SuccessionLinks item={item} />
 
                 {/* CSWP 39 governance requirements extracted from this doc */}
                 {(() => {

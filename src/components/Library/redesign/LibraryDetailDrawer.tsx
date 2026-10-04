@@ -35,6 +35,7 @@ import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
+import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -292,6 +293,8 @@ function DrawerPanel({
                 {item.shortDescription}
               </p>
             )}
+
+            <SuccessionLinks item={item} onOpenRef={onOpenRef} />
 
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
               <KeyFact label="Type" value={item.documentType} />
