@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.151.0] - 2026-10-04
+
+### Changed
+
+- **The Privacy and Terms pages now say plainly that analytics run on every visit** [view:/terms] [view:/about] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: the Terms page and the About page's privacy section used to say that no personal data is collected and that we never know you visited. They now say that Google Analytics 4 runs on every visit, that there is no consent prompt or on/off switch yet, what it records (page views, interaction events, the role, region and industry you pick, summary labels, basic browser details and a random cookie identifier), that Google also receives your IP address, and how to block it. The Terms date is now October 4, 2026.
+- **The About page, the Command Center text and the README quote the real counts** [view:/about] [persona:executive] [persona:grc] [persona:researcher] [persona:curious]: they now say 72 learning modules, 37 planning tools, 888 products in the migration catalog, 1,111 quiz questions in 78 categories and 13 assessment steps, taken from the real catalogs instead of older fixed numbers.
+
+### Fixed
+
+- **Typed search text no longer reaches Google Analytics unscrubbed** [view:/leaders] [view:/migrate] [view:/timeline] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: text typed into the Leaders search, the Migrate workbench asset search and the Timeline text filter is now cleaned before it is counted: email addresses, web addresses, IP addresses and long key-like strings are replaced and the rest is cut to 80 characters.
+- **The page address sent to Google Analytics no longer includes anything after a "?"** [persona:executive] [persona:grc] [persona:architect] [persona:curious]: page views and events used to carry the full address, including a Leaders search term and the data in a shared-report link. They now carry only the site and the page path, and the same applies to the previous page. The Terms page says what, if anything, can still be recorded.
+
 ## [4.150.0] - 2026-10-04
 
 Pages that quote when a quantum computer might arrive now stick to what their sources say: the Threats page drops the range this site had worked out itself and shows the Global Risk Institute survey in its own words, the Assess steps no longer claim a 2030–2040 expert range, and the FAQ, Simulation, report and Learn exercises say that these figures are published estimates, still open to debate. The Confidential Computing workshop also now prints the real ML-DSA key sizes.
