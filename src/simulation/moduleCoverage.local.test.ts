@@ -33,6 +33,10 @@ const NOT_IN_SIM: Record<string, string> = {
   'aerospace-pqc':
     'the sim has no aerospace sector — the government track uses government-defense-pqc (09-28)',
   'trust-services-pqc': 'Resources list only — user decision 2026-09-28 (content plan Q2)',
+  // New in 4.151.0 (split out of Confidential Computing). Delete this entry when the
+  // module is placed — the stale-entry check below fails until it is.
+  'homomorphic-encryption':
+    'new in 4.151.0 (split out of Confidential Computing); its place in the Simulation framework is decided in the next release, so it is not placed yet',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.
