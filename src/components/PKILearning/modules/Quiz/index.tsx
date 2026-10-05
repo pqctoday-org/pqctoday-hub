@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -293,8 +293,9 @@ export const QuizModule: React.FC = () => {
 
   if (isMobileShell) {
     const title = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
+    let body: ReactNode
     if (view === 'quiz') {
-      return (
+      body = (
         <MobileQuizWizard
           questions={quizQuestions}
           title={title}
@@ -302,23 +303,30 @@ export const QuizModule: React.FC = () => {
           onExit={() => navigate(-1)}
         />
       )
-    }
-    if (view === 'results' && completionData) {
-      return (
+    } else if (view === 'results' && completionData) {
+      body = (
         <MobileQuizResults
           summary={completionData.summary}
           onRetake={handleRetake}
           onExit={() => navigate(-1)}
         />
       )
+    } else {
+      body = (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
+          <p className="text-[12.5px] font-semibold text-foreground">Nothing to quiz here yet</p>
+          <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+            Open a checkpoint from a phase in Learn to take its quiz.
+          </p>
+        </div>
+      )
     }
+    // The phone header title is plain text, so the page names itself, whichever view shows.
     return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
-        <p className="text-[12.5px] font-semibold text-foreground">Nothing to quiz here yet</p>
-        <p className="text-[11.5px] leading-relaxed text-muted-foreground">
-          Open a checkpoint from a phase in Learn to take its quiz.
-        </p>
-      </div>
+      <>
+        <h1 className="sr-only">PQC Quiz</h1>
+        {body}
+      </>
     )
   }
 

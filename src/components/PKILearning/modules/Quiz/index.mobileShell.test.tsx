@@ -108,3 +108,21 @@ describe('QuizModule — mobile UX layer wiring', () => {
     expect(screen.getByText('Prior page')).toBeInTheDocument()
   })
 })
+
+describe('QuizModule on a phone: the page names itself in every view', () => {
+  // The phone header title is plain text, so the quiz supplies the page's one level-one heading.
+  it('has exactly one h1 while a quiz is running', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(`/learn/quiz?category=${QUIZ_CATEGORIES[0].id}`)
+    expect(screen.getByText(/Question 1 of/)).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('PQC Quiz')
+  })
+
+  it('has exactly one h1 on the placeholder shown when there is nothing to quiz', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz('/learn/quiz')
+    expect(screen.getByText('Nothing to quiz here yet')).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+})

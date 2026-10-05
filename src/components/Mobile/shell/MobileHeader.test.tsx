@@ -90,3 +90,17 @@ describe('MobileHeader', () => {
     expect(screen.queryByTestId('mobile-header-more-unread-dot')).not.toBeInTheDocument()
   })
 })
+
+describe('MobileHeader: the title is plain text, not a heading', () => {
+  // Every phone page carries its own level-one heading, so a header heading as well made two on
+  // 196 of 199 pages. The title stays visible as text.
+  it.each([
+    ['/', 'PQC Today'],
+    ['/timeline', 'Timeline'],
+    ['/some-route-with-no-title', 'PQC Today'],
+  ])('on %s the title is text, and the header has no heading', (path, text) => {
+    renderHeader(path)
+    expect(screen.getByTestId('mobile-header-title')).toHaveTextContent(text)
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument()
+  })
+})
