@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { PERSONAS } from '../../data/learningPersonas'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -119,11 +121,12 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
   })
 
-  it('flag on, no persona chosen: plain /threats (no deep link) still shows the first-run picker', async () => {
+  it('flag on, no persona chosen: plain /threats shows the page too, with a prompt instead of the picker', async () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderLayout('/threats')
-    expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
-    expect(screen.queryByText('Threats Page')).not.toBeInTheDocument()
+    expect(await screen.findByText('Threats Page')).toBeInTheDocument()
+    expect(await screen.findByTestId('mobile-role-prompt')).toBeInTheDocument()
+    expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
   })
 
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {
@@ -157,5 +160,84 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(main.className).not.toContain('container')
     expect(main.className).not.toContain('px-4')
     expect(main.className).not.toContain('py-4')
+  })
+})
+
+// The role picker used to replace EVERY page on a phone for a visitor with no stored role, which is
+// also what a search crawler is: it got the picker, not the page. It now takes over the home page only.
+describe('MainLayout, phone: the role picker is for the home page; every other page renders', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+    usePersonaStore.getState().setPersona(null)
+    usePersonaStore.setState({ hasSkippedPersonalization: false, hasSeenPersonaPicker: false })
+    window.localStorage.clear()
+  })
+
+  it.each(['/timeline', '/threats'])(
+    'first run on %s: the page and its text, the header, a one-line prompt, no picker',
+    async (path) => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderLayout(path)
+      expect(
+        await screen.findByText(path === '/timeline' ? 'Timeline Page' : 'Threats Page')
+      ).toBeInTheDocument()
+      expect(await screen.findByTestId('mobile-role-prompt')).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
+      expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
+    }
+  )
+
+  it('first run on the home page: the picker, and no prompt', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/')
+    expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
+    expect(screen.queryByText('Home Page')).not.toBeInTheDocument()
+  })
+
+  it('"Pick your role" opens the role sheet, and choosing a role keeps the page and is remembered', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/timeline')
+    await userEvent.click(await screen.findByRole('button', { name: 'Pick your role' }))
+    expect(await screen.findByText('Change role')).toBeInTheDocument()
+    await userEvent.click(
+      await screen.findByRole('button', { name: new RegExp(PERSONAS.developer.label) })
+    )
+    expect(usePersonaStore.getState().selectedPersona).toBe('developer')
+    expect(usePersonaStore.getState().hasSeenPersonaPicker).toBe(true)
+    expect(window.localStorage.getItem('pqc-learning-persona')).toContain(
+      '"selectedPersona":"developer"'
+    )
+    expect(screen.getByText('Timeline Page')).toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
+  })
+
+  it('dismissing the prompt is remembered: the page stays and the prompt does not come back', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    const { unmount } = renderLayout('/timeline')
+    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
+    expect(usePersonaStore.getState().hasSkippedPersonalization).toBe(true)
+    expect(window.localStorage.getItem('pqc-learning-persona')).toContain(
+      '"hasSkippedPersonalization":true'
+    )
+    unmount()
+    renderLayout('/threats')
+    expect(await screen.findByText('Threats Page')).toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
+  })
+
+  it('a visitor who has chosen a role, and the desktop layout, never see the prompt', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().setPersona('executive')
+    const { unmount } = renderLayout('/timeline')
+    expect(await screen.findByText('Timeline Page')).toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
+    unmount()
+    usePersonaStore.getState().setPersona(null)
+    mockUseIsMobileShell.mockReturnValue(false)
+    renderLayout('/timeline')
+    expect(await screen.findByText('Timeline Page')).toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-role-prompt')).not.toBeInTheDocument()
   })
 })
