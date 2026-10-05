@@ -32,6 +32,12 @@ import {
 } from '@/components/About/aboutData'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
+import {
+  ANALYTICS_DISCLOSURE,
+  LOCAL_DATA_LEAVES_STATEMENT,
+  PAGE_ADDRESS_STATEMENT,
+  SEARCH_SCRUB_CLAUSE,
+} from '@/components/About/analyticsStatement'
 
 declare const __BUILD_TIMESTAMP__: string
 
@@ -216,9 +222,19 @@ export function MobileAboutView() {
                       <Row title="Data privacy">
                         PQC Today is a fully static website — no backend server, no database, no
                         user accounts. Preferences, assessment results and learning progress are
-                        stored only in your browser's localStorage and never leave your device
-                        unless you opt in to sync. Cryptographic operations run entirely client-side
-                        via WebAssembly.
+                        stored in your browser's localStorage. {LOCAL_DATA_LEAVES_STATEMENT}{' '}
+                        Cryptographic operations run entirely client-side via WebAssembly.
+                      </Row>
+                      <Row title="Analytics">
+                        <span className="font-semibold text-foreground">Google Analytics 4</span>{' '}
+                        runs on <span className="font-semibold text-foreground">every visit</span>.{' '}
+                        {ANALYTICS_DISCLOSURE} It counts the pages visited and what you do on them,
+                        including searches performed ({SEARCH_SCRUB_CLAUSE}).{' '}
+                        {PAGE_ADDRESS_STATEMENT} How to stop it is in section 10 of the{' '}
+                        <Link to="/terms" className="font-semibold text-primary underline">
+                          Terms
+                        </Link>
+                        .
                       </Row>
                       {!isEmbedded && (
                         <Row title="Google Drive sync — privacy terms">
