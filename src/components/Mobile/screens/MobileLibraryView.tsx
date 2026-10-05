@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Search, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react'
+import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -16,6 +16,7 @@ import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/lib
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
+import { parseLifecycleParam } from '@/utils/libraryLifecycle'
 import { cn } from '@/lib/utils'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
@@ -93,6 +94,11 @@ export function MobileLibraryView() {
   const detailRef = params.get('ref')
   const sortParam = params.get('sort')
   const sortBy = SORT_OPTIONS.find((o) => o === sortParam)
+  // A shared desktop link can carry ?lifecycle= (a label, or an old name such as
+  // Published). The phone has no control for it, so it filters the list and shows as
+  // a removable chip, as Community does for its link-only filters. A value that is
+  // not a label filters nothing.
+  const lifecycle = parseLifecycleParam(params.get('lifecycle')) ?? 'All'
   // Same resolution as desktop's resolveLibraryDeepLink (live ref, else the
   // document that superseded it), read straight from libraryData.
   const selected: LibraryItem | null = useMemo(
@@ -159,13 +165,19 @@ export function MobileLibraryView() {
     cswp39Only: false,
     certRelevantOnly: quickView === 'cert',
     certRelevantIdSet,
-    lifecycleBucket: 'All',
+    lifecycleBucket: lifecycle,
     sortBy: sortBy ?? 'published',
     sortExplicit: sortBy !== undefined,
     selectedPersona,
     prefsOff: false,
     semanticIdSet: null,
   })
+
+  const clearLifecycle = useCallback(() => {
+    const next = new URLSearchParams(params)
+    next.delete('lifecycle')
+    setParams(next, { replace: true })
+  }, [params, setParams])
 
   const displayedItems =
     quickView === 'new'
@@ -257,6 +269,27 @@ export function MobileLibraryView() {
           </Button>
         ))}
       </div>
+
+      {lifecycle !== 'All' && (
+        <div
+          className="mb-3 flex flex-wrap items-center gap-1.5"
+          data-testid="library-link-filters"
+        >
+          <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
+            <span className="text-muted-foreground">Status:</span>
+            <span className="truncate font-medium text-foreground">{lifecycle}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label="Remove Status filter"
+              onClick={clearLifecycle}
+              className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
+            >
+              <X size={12} aria-hidden="true" />
+            </Button>
+          </span>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {displayedItems.length === 0 && (
