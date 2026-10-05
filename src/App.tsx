@@ -13,6 +13,7 @@ import { useAchievementChecker } from './hooks/useAchievementChecker'
 import { AchievementSectionTracker } from './components/AchievementSectionTracker'
 import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
+import { NotFoundView } from './components/NotFound/NotFoundView'
 import { PrerenderRouteState } from './seo/PrerenderRouteState'
 import { EmbedLayout } from './components/Layout/EmbedLayout'
 import { EmbedRouteGuard } from './embed/EmbedRouteGuard'
@@ -530,8 +531,8 @@ function App() {
               }
             />
             {commonRoutes}
-            {/* Fallback route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* An address with no page: say so (noindex), instead of silently showing the home page. */}
+            <Route path="*" element={<NotFoundView />} />
           </Route>
         </Routes>
       </Suspense>

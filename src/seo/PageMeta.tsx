@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { getRouteMeta } from './routeMeta'
+import { NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE } from './notFoundContent'
+import { useNotFoundPath } from './notFoundState'
 
 /**
  * Renders per-route SEO metadata using React 19's native document metadata hoisting.
@@ -8,19 +11,32 @@ import { getRouteMeta } from './routeMeta'
  */
 export function PageMeta() {
   const { pathname } = useLocation()
-  const meta = getRouteMeta(pathname)
+  // The app is showing its "page not found" screen for this address: no canonical (there is no page
+  // to point to), noindex, and nothing that describes a real page.
+  const isNotFound = useNotFoundPath() === pathname
+  const meta = isNotFound
+    ? { title: NOT_FOUND_TITLE, description: NOT_FOUND_DESCRIPTION, canonical: '', noindex: true }
+    : getRouteMeta(pathname)
+
+  // The saved 404.html carries its own title, description and robots tags for visitors without
+  // JavaScript (see scripts/lib/notFoundPage.ts). Once the app runs, the tags below take over, and
+  // the static ones must go: a stale "noindex" or "Page not found" title would otherwise stay on a
+  // real page that was served from 404.html.
+  useEffect(() => {
+    for (const element of document.head.querySelectorAll('[data-static-404]')) element.remove()
+  }, [])
 
   return (
     <>
       <title>{meta.title}</title>
       <meta name="description" content={meta.description} />
-      <link rel="canonical" href={meta.canonical} />
+      {!isNotFound && <link rel="canonical" href={meta.canonical} />}
       {meta.noindex && <meta name="robots" content="noindex,follow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
-      <meta property="og:url" content={meta.canonical} />
+      {!isNotFound && <meta property="og:url" content={meta.canonical} />}
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="PQC Today" />
       <meta property="og:image" content={meta.ogImage ?? 'https://www.pqctoday.com/og-image.png'} />
