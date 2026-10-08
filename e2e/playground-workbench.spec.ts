@@ -45,14 +45,14 @@ test('renders the two-pane workbench — sidebar, Overview and full-playground c
   await page.goto('/playground')
 
   // Sidebar brand + main Overview hero.
-  await expect(page.getByText('Crypto Lab')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
   await expect(
     page.getByRole('heading', { name: /Run real cryptography in your browser/i })
   ).toBeVisible()
 
   // The three full-playground feature cards (link to the special routes).
-  await expect(page.getByText('Interactive Playground')).toBeVisible()
-  await expect(page.locator('a[href="/playground/hsm"]')).toBeVisible()
+  await expect(page.getByText('Interactive Playground', { exact: true })).toBeVisible()
+  await expect(page.locator('a[href="/playground/hsm"]').first()).toBeVisible()
   // "KMIP Control Plane" is now the one consistent name used on both the feature
   // card and the "Featured" banner further down this Overview (playground.md item 3).
   await expect(page.getByText('KMIP Control Plane').first()).toBeVisible()
@@ -69,7 +69,7 @@ test('curious persona sees the same workbench (no minimal-mode gate)', async ({ 
   await page.addInitScript(seedPersona, 'curious')
   await page.goto('/playground')
 
-  await expect(page.getByText('Crypto Lab')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
   // No page-local persona control exists (Phase 0.2) — Playground only reads
   // the seeded persona and re-titles its content, it never renders a picker.
   await expect(page.getByRole('button', { name: /Viewing as/i })).toHaveCount(0)
@@ -86,17 +86,17 @@ test('developer persona re-titles the recommended pool', async ({ page }) => {
   await page.addInitScript(seedPersona, 'developer')
   await page.goto('/playground')
 
-  await expect(page.getByText('Crypto Lab')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
   await expect(page.getByText('Recommended for Developer')).toBeVisible()
 })
 
 test('search spans all categories and switches to a flat result list', async ({ page }) => {
   await page.goto('/playground')
-  await expect(page.getByText('Crypto Lab')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
 
   await page.getByRole('searchbox', { name: /search tools/i }).fill('bitcoin')
   await expect(page.getByRole('heading', { name: /Results for/i })).toBeVisible()
-  await expect(page.getByText('Bitcoin Transaction')).toBeVisible()
+  await expect(page.getByText('Bitcoin Transaction', { exact: true })).toBeVisible()
 })
 
 // playground.md item 4 — deep-linked sub-pages must show executive orientation
