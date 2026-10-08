@@ -130,10 +130,15 @@ const LEGACY_PLANES: Record<string, Plane> = {
   developer: 'dev',
 }
 
-function CacpStaticIntro() {
+/**
+ * The intro shown while the engine boots. On /playground/cacp it carries the page's level-one heading;
+ * opened as a tool page (/playground/cacp-kmip) the tool route already has one, so this is a level two.
+ */
+export function CacpStaticIntro({ headingLevel = 'h1' }: { headingLevel?: 'h1' | 'h2' }) {
+  const Heading = headingLevel
   return (
     <header className="mb-4 rounded-lg border border-border bg-muted/20 p-4">
-      <h1 className="text-xl font-bold text-foreground">Crypto-Agility Control Plane</h1>
+      <Heading className="text-xl font-bold text-foreground">Crypto-Agility Control Plane</Heading>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Explore how a KMIP policy permits, denies or migrates cryptographic operations as an estate
         moves to post-quantum algorithms. The explanatory workflow is available immediately; the
@@ -1071,7 +1076,7 @@ export function KmipPlaygroundView() {
   if (bootError) {
     return (
       <div className="p-6">
-        <CacpStaticIntro />
+        <CacpStaticIntro headingLevel={pathname === '/playground/cacp' ? 'h1' : 'h2'} />
         <div className="flex items-center gap-2 text-destructive">
           <AlertTriangle size={18} />{' '}
           <span className="font-semibold">Couldn’t start the in-browser KMIP engine</span>
@@ -1083,7 +1088,7 @@ export function KmipPlaygroundView() {
   if (!engine) {
     return (
       <div className="p-6">
-        <CacpStaticIntro />
+        <CacpStaticIntro headingLevel={pathname === '/playground/cacp' ? 'h1' : 'h2'} />
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 size={18} className="animate-spin" /> Booting the KMIP + PKCS#11 engine in your
           browser…
