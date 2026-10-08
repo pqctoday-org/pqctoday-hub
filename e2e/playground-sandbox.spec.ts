@@ -28,6 +28,8 @@ async function stubSandbox(page: import('@playwright/test').Page) {
 // A sandbox scenario re-homed into the Protocol Simulations domain category.
 const SANDBOX_TILE = 'OpenSSL TLS 1.3 + Composite Cert'
 const PROTOCOL_SIMS_URL = '/playground?cat=Protocol%20Simulations'
+// A Crypto Lab card is presentational (its name is a real link and it has a Preview button), so the
+// specs below find it by its data-tool-card marker, not by role="button".
 
 // bplus-programme WS9 test triage (2026-08-07): the Crypto Lab grid now
 // defaults to `runFilter: 'browser'` (WS6a-bis, shipped before this file was
@@ -65,7 +67,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
     await showSandboxScenarios(page)
 
-    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    const card = page.locator('[data-tool-card]', { hasText: SANDBOX_TILE }).first()
     await expect(card).toBeVisible({ timeout: 10000 })
     await expect(card.getByText('Sandbox', { exact: true })).toBeVisible()
     // Online → not locked.
@@ -85,7 +87,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await showSandboxScenarios(page)
 
     // The scenario card stays in the grid, dimmed.
-    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    const card = page.locator('[data-tool-card]', { hasText: SANDBOX_TILE }).first()
     await expect(card).toBeVisible({ timeout: 10000 })
     await expect(card.getByText('Sandbox', { exact: true })).toBeVisible()
     await expect(card.getByText('needs runtime')).toBeVisible()
@@ -112,7 +114,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
     await showSandboxScenarios(page)
 
-    const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
+    const card = page.locator('[data-tool-card]', { hasText: SANDBOX_TILE }).first()
     await card.click()
 
     // The detail modal opens with an "Open tool" action (not "Start runtime").
