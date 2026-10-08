@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'homomorphic-encryption',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-076',
   title: 'Homomorphic Encryption (FHE) & HSM Key Custody',
   description:
@@ -34,6 +34,7 @@ const manifest: ModuleManifest = {
     algorithms: ['ML-DSA', 'ML-KEM'],
     standards: ['FIPS 203', 'FIPS 204'],
   },
+  embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HomomorphicEncryptionModule })),
 }
 

@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.152.0] - 2026-10-08
+
+A mistyped or outdated address now shows a clear "Page not found" page instead of the home page; on phones every page has one main heading, shared Library links keep their status filter and the About page explains analytics; and the Simulation offers the new Homomorphic Encryption module.
+
+### Added
+
+- **The Simulation offers the Homomorphic Encryption module** [view:/simulation] [view:/learn/homomorphic-encryption] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: the "Defense-in-Depth & Data-at-Rest Strategy" activity (phase 5) now lists Homomorphic Encryption (FHE) & HSM Key Custody as an optional deep dive next to Confidential Computing, where this material used to sit, and the module opens inside the Simulation instead of leaving it. It is optional, so what you need to finish the activity and your maturity results are unchanged.
+
+### Changed
+
+- **An unknown address shows "Page not found"** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: a mistyped or outdated address used to take you to the home page without telling you anything was wrong. It now shows a "Page not found" page with links to the main sections, and search engines are told not to index it. Links to pages that exist, including embedded and older addresses, work as before.
+
+### Fixed
+
+- **Each page on a phone has exactly one main heading** [view:/] [view:/learn] [view:/playground] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: on a phone, the "PQC Today" header was marked as a main heading on top of each page's own title, so screen readers and search engines found two on almost every page. Each page now has one, its own title. The Crypto-Agility Control Plane tool page could also show a second one while its in-browser engine started; that is fixed too. Pages on a computer are unchanged.
+- **On a phone, a shared Library link keeps its status filter** [view:/library] [persona:executive] [persona:grc] [persona:researcher] [persona:cert-engineer]: a Library link that names a status (one of the six labels, or an older name such as Published) now narrows the list on a phone as it does on a computer, with a Status chip to remove it. The phone used to ignore it.
+- **The phone About page explains analytics** [view:/about] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: it now has an Analytics row and says when your data leaves your device, in the same words as the About page on a computer. It used to say nothing about Google Analytics and mentioned a sync option that is not available.
+
 ## [4.151.0] - 2026-10-04
 
 The Privacy and Terms pages now say plainly that analytics run on every visit; Homomorphic Encryption becomes its own Learn module with fourteen new quiz questions; the assessment report keeps the frameworks you selected and names any it leaves out; every Crypto Lab tool, planning tool and Learn module has a page that search engines can read; and the About page, README, tour and manual quote the real counts.

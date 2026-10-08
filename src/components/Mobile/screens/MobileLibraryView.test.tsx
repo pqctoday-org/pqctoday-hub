@@ -130,6 +130,80 @@ describe('MobileLibraryView', () => {
     expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
   })
 
+  // A shared desktop link can carry ?lifecycle= (the six labels, or an old name such as
+  // Published). The phone has no control for it, so it must still filter the list and
+  // show a chip that removes it. Counts come from the real data.
+  describe('?lifecycle= (same param as desktop)', () => {
+    function LocationProbe() {
+      return <output data-testid="loc">{useLocation().search}</output>
+    }
+    const renderAt = (query: string) =>
+      render(
+        <MemoryRouter initialEntries={[`/library${query}`]}>
+          <MobileLibraryView />
+          <LocationProbe />
+        </MemoryRouter>
+      )
+    const shown = () => Number(screen.getByTestId('library-count').textContent!.split(' ')[0])
+
+    it('every document is listed when there is no lifecycle value', () => {
+      renderAt('')
+      expect(shown()).toBe(libraryData.length)
+      expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+    })
+
+    const cases: Array<[string, string]> = [
+      ['Published', 'Released'],
+      ['Proposed', 'Draft'],
+      ['Superseded', 'Historical'],
+      ['Draft', 'Draft'],
+      ['Expired', 'Expired'],
+      ['Released', 'Released'],
+      ['Historical', 'Historical'],
+      ['Research%20Paper', 'Research Paper'],
+      ['Misc', 'Misc'],
+    ]
+    it.each(cases)(
+      '?lifecycle=%s lists the %s documents and shows the new label',
+      (value, label) => {
+        renderAt(`?lifecycle=${value}`)
+        expect(shown()).toBe(libraryData.filter((d) => d.lifecycleLabel === label).length)
+        expect(
+          within(screen.getByTestId('library-link-filters')).getByText(label)
+        ).toBeInTheDocument()
+      }
+    )
+
+    it('?lifecycle=All and a value that is not a label filter nothing and show no chip', () => {
+      for (const value of ['All', 'Archived']) {
+        const { unmount } = renderAt(`?lifecycle=${value}`)
+        expect(shown()).toBe(libraryData.length)
+        expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+        unmount()
+      }
+    })
+
+    it('the chip removes the filter and the value leaves the address', () => {
+      renderAt('?lifecycle=Misc&q=')
+      const before = shown()
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Status filter' }))
+      expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+      expect(
+        new URLSearchParams(screen.getByTestId('loc').textContent ?? '').has('lifecycle')
+      ).toBe(false)
+      expect(shown()).toBeGreaterThan(before)
+      expect(shown()).toBe(libraryData.length)
+    })
+
+    it('keeps the other parameters of the link when it removes the filter', () => {
+      renderAt('?lifecycle=Released&sort=name')
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Status filter' }))
+      expect(new URLSearchParams(screen.getByTestId('loc').textContent ?? '').get('sort')).toBe(
+        'name'
+      )
+    })
+  })
+
   describe('lifecycle label', () => {
     // A document whose label is not the common one, so the check cannot pass by luck.
     const unusual = libraryData.find((i) => i.lifecycleLabel !== 'Released')!

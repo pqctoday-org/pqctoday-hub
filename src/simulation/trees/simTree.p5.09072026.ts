@@ -283,6 +283,14 @@ const TREE: PhaseTree = {
               artifactType: 'data-at-rest-strategy',
             },
           ],
+          deepDive: [
+            {
+              kind: 'learn',
+              label: 'Deep dive — Learn: Homomorphic Encryption (FHE) & HSM key custody',
+              to: '/learn/homomorphic-encryption',
+              moduleId: 'homomorphic-encryption',
+            },
+          ],
         },
       ],
     },

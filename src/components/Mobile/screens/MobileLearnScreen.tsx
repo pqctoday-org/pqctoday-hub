@@ -63,6 +63,8 @@ export function MobileLearnScreen() {
 
   return (
     <div className="px-4 pb-4 pt-4">
+      {/* The page's level-one heading: the header title is plain text. */}
+      <h1 className="sr-only">Learn</h1>
       <div
         className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto rounded-none bg-transparent px-4 pb-1"
         role="tablist"

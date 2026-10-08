@@ -82,3 +82,18 @@ describe('MobileLearnScreen', () => {
     expect(screen.queryByTestId('workshop-entry-marker')).not.toBeInTheDocument()
   })
 })
+
+describe('MobileLearnScreen: the page names itself', () => {
+  // The phone header title is plain text, so this screen provides the page's one level-one heading.
+  it('has exactly one h1, "Learn", with and without a role', () => {
+    renderScreen()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole('heading', { level: 1, name: 'Learn' })).toBeInTheDocument()
+  })
+
+  it('still has exactly one once a role is selected', () => {
+    usePersonaStore.getState().setPersona('executive')
+    renderScreen()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+})

@@ -67,13 +67,18 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
         className="sticky top-0 z-nav border-b border-border bg-card px-4 pb-2.5 pt-[max(0.625rem,env(safe-area-inset-top))]"
       >
         <div className="flex items-center gap-2">
-          {/* Wave A (2026-09-18): the header title is the page's level-one
-              heading on the phone. The mobile screens render no h1 of their
-              own, so every route failed axe `page-has-heading-one` at 390 px
-              (45 of 165 items on desktop, all 165 on mobile). One element,
-              same classes, every route. */}
+          {/* The header title is plain text, not a heading: since Wave A (2026-09-18) every page
+              has carried its own level-one heading, and a header heading on top made two on 196
+              of 199 pages at 390 px (the home page, the screens and every Learn, Playground and
+              Business tool page). Each page names itself with exactly one h1; a phone screen
+              that has none must add one (a visually hidden one is fine). */}
           {isHome ? (
-            <h1 className="min-w-0 flex-1 text-[19px] font-extrabold text-foreground">PQC Today</h1>
+            <p
+              data-testid="mobile-header-title"
+              className="min-w-0 flex-1 text-[19px] font-extrabold text-foreground"
+            >
+              PQC Today
+            </p>
           ) : (
             <>
               <Button
@@ -92,9 +97,12 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
                     {crumb}
                   </p>
                 )}
-                <h1 className="truncate text-[17px] font-extrabold leading-tight text-foreground">
+                <p
+                  data-testid="mobile-header-title"
+                  className="truncate text-[17px] font-extrabold leading-tight text-foreground"
+                >
                   {title ?? 'PQC Today'}
-                </h1>
+                </p>
               </div>
             </>
           )}

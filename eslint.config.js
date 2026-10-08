@@ -207,6 +207,11 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // analyticsStatement.ts (About) — pure text constants, no JSX: the
+                // sentences about analytics and about when your data leaves the
+                // device that the laptop About and the phone About both print, so
+                // the two pages can never say different things.
+                '!@/components/About/analyticsStatement',
                 // useBusinessMetrics.ts (hooks) / cswp39Tier.ts (lib) — pure
                 // hook + pure logic, no JSX: the real metrics hook and tier
                 // computation every desktop Command Center panel reads, so
