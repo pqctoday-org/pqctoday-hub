@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { afterEach, describe, expect, it } from 'vitest'
+// eslint-disable-next-line testing-library/no-manual-cleanup -- the afterEach below must unmount before it clears the head
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
@@ -29,6 +30,7 @@ const head = (selector: string) => document.head.querySelector(selector)
 
 afterEach(() => {
   // Unmount first, so React removes the tags it put in the head, then clear anything left.
+
   cleanup()
   document.head.innerHTML = ''
 })
