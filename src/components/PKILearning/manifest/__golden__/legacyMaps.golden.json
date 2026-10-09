@@ -384,7 +384,7 @@
       "id": "ot-pqc",
       "lm_id": "LM-075",
       "title": "OT & Industrial Control Systems PQC",
-      "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
+      "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, the three paths into OT (IT-to-OT lateral movement, remote access and IIoT, physical access), OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
       "duration": "90 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
@@ -1771,6 +1771,10 @@
       {
         "id": "architecture",
         "label": "Purdue, zones and conduits"
+      },
+      {
+        "id": "attack-surface",
+        "label": "OT attack surface: three paths in"
       },
       {
         "id": "ot-protocols",
@@ -4410,7 +4414,7 @@
           "id": "ot-pqc",
           "lm_id": "LM-075",
           "title": "OT & Industrial Control Systems PQC",
-          "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
+          "description": "PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, the three paths into OT (IT-to-OT lateral movement, remote access and IIoT, physical access), OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.",
           "duration": "90 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
