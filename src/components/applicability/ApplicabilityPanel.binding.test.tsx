@@ -3,18 +3,19 @@
  * The Report's applicability panel no longer calls every framework from a body in
  * your country "Mandatory". Once frameworks have been reviewed it shows Binding,
  * Guidance and drafts, and Not yet classified. Until then (the data has no
- * binding_status yet) it looks exactly as before. The compliance file has no
- * reviewed column today, so these tests set a status on real frameworks and put
- * it back afterwards.
+ * binding_status yet) it looks exactly as before. The compliance file now carries
+ * reviewed statuses, so every test starts from a clean slate (no framework
+ * classified), sets the statuses it needs on real frameworks, and the original
+ * values are put back afterwards.
  */
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { ApplicabilityPanel } from './ApplicabilityPanel'
 import { applicableFrameworks } from '@/utils/applicabilityEngine'
 import type { BindingStatus } from '@/utils/bindingSplit'
-import type { ComplianceFramework } from '@/data/complianceData'
+import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 
 const profile = { country: 'United States', industry: 'Finance & Insurance' }
 
@@ -29,6 +30,12 @@ function mark(fw: ComplianceFramework, status: BindingStatus) {
   touched.push([fw, fw.bindingStatus])
   fw.bindingStatus = status
 }
+beforeEach(() => {
+  for (const fw of complianceFrameworks) {
+    if (fw.bindingStatus !== undefined) touched.push([fw, fw.bindingStatus])
+    fw.bindingStatus = undefined
+  }
+})
 afterEach(() => {
   while (touched.length) {
     const [fw, was] = touched.pop() as [ComplianceFramework, BindingStatus | undefined]

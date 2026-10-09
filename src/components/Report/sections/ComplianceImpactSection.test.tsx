@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -60,10 +60,17 @@ describe('ComplianceImpactSection — frameworks left out', () => {
   })
 })
 
-// Whether each framework binds organisations like yours. The compliance file has no
-// reviewed binding_status yet, so these tests set one on real frameworks and put it back.
+// Whether each framework binds organisations like yours. The compliance file now carries
+// reviewed statuses, so every test starts with no framework classified, sets the statuses
+// it needs on real frameworks, and the original values are put back afterwards.
 describe('ComplianceImpactSection: binding chip', () => {
   const touched: Array<[ComplianceFramework, BindingStatus | undefined]> = []
+  beforeEach(() => {
+    for (const fw of complianceFrameworks) {
+      if (fw.bindingStatus !== undefined) touched.push([fw, fw.bindingStatus])
+      fw.bindingStatus = undefined
+    }
+  })
   afterEach(() => {
     while (touched.length) {
       const [fw, was] = touched.pop() as [ComplianceFramework, BindingStatus | undefined]
