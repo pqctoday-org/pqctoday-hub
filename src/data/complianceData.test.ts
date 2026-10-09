@@ -1,11 +1,17 @@
 import { describe, it, expect } from 'vitest'
+import { readdirSync, readFileSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import Papa from 'papaparse'
 import {
   complianceFrameworks,
   allComplianceFrameworks,
   complianceDB,
+  bindingDataPresent,
   conceptIdForFramework,
   mergeFrameworksByLabel,
 } from './complianceData'
+import { BINDING_STATUSES } from '../utils/bindingSplit'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
 
@@ -203,5 +209,55 @@ describe('CSWP.39 maturity corpus', () => {
     )
     // Broken state scored 8. Real state (2026-08-07): 118 of 202 active rows.
     expect(joined.length).toBeGreaterThan(100)
+  })
+})
+
+// The compliance file gets a `binding_status` column (the Timeline's binding_force
+// words) once frameworks have been reviewed for whether they bind organisations like
+// yours. Until the column exists the loader leaves bindingStatus empty and the Report
+// looks as before. This holds whatever the data says: a cell is one of the six words
+// or blank, and a word in the file reaches the framework.
+describe('compliance binding_status column', () => {
+  const dataDir = join(dirname(fileURLToPath(import.meta.url)))
+  // Same (date, revision) order the loader uses to pick the wired file.
+  const latest = readdirSync(dataDir)
+    .filter((f) => /^compliance_\d{8}(?:_r\d+)?\.csv$/.test(f))
+    .map((f) => {
+      const m = /_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/.exec(f) as RegExpExecArray
+      return {
+        f,
+        t: new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])).getTime(),
+        r: Number(m[4] ?? 0),
+      }
+    })
+    .sort((a, b) => b.t - a.t || b.r - a.r)[0].f
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- a fixed repo file
+  const text = readFileSync(join(dataDir, latest), 'utf-8')
+  const rows = Papa.parse<Record<string, string>>(text.trim(), {
+    header: true,
+    skipEmptyLines: true,
+  }).data
+  const hasColumn = rows.length > 0 && 'binding_status' in rows[0]
+
+  it('holds only the six words or a blank, when the column exists', () => {
+    if (!hasColumn) return
+    const bad = rows
+      .map((r) => ({ id: r.id, cell: (r.binding_status ?? '').trim() }))
+      .filter((r) => r.cell !== '' && !(BINDING_STATUSES as readonly string[]).includes(r.cell))
+    expect(bad).toEqual([])
+  })
+
+  it("reaches the framework: a word in the file is that framework's bindingStatus", () => {
+    if (!hasColumn) return
+    for (const r of rows.filter((x) => x.status === 'active' && (x.binding_status ?? '').trim())) {
+      const fw = complianceFrameworks.find((f) => f.id === r.id)
+      expect(fw?.bindingStatus, r.id).toBe(r.binding_status.trim())
+    }
+  })
+
+  it('reports data as present exactly when some framework carries a status', () => {
+    expect(bindingDataPresent()).toBe(
+      complianceFrameworks.some((f) => f.bindingStatus !== undefined)
+    )
   })
 })

@@ -6,10 +6,18 @@ import { Link } from 'react-router'
 import { CheckCircle, ArrowRight, BookOpen, Calendar } from 'lucide-react'
 import clsx from 'clsx'
 import type { ComplianceImpact } from '../../../hooks/assessmentTypes'
-import { complianceFrameworks } from '../../../data/complianceData'
+import { bindingDataPresent, complianceFrameworks } from '../../../data/complianceData'
+import { BINDING_GROUP_META, bindingGroupOf, type BindingGroup } from '../../../utils/bindingSplit'
 import { ApplicabilityPanel } from '../../applicability/ApplicabilityPanel'
 import { AskAssistantButton } from '../../ui/AskAssistantButton'
 import { CollapsibleSection } from './reportContentShared'
+
+/** The chip beside a framework's PQC chip: is it binding on organisations like yours? */
+const BINDING_CHIP_CLASS: Record<BindingGroup, string> = {
+  binding: 'bg-status-error/10 text-status-error',
+  guidance: 'bg-muted text-muted-foreground',
+  unclassified: 'bg-muted/20 text-muted-foreground',
+}
 
 export const ComplianceImpactSection = ({
   complianceImpacts,
@@ -66,21 +74,45 @@ export const ComplianceImpactSection = ({
                 <span className="font-semibold text-foreground">{c.framework}</span>
               )
             })()}
-            <span
-              className={clsx(
-                'text-xs font-bold px-2 py-0.5 rounded-full',
-                c.requiresPQC === true
-                  ? 'bg-warning/10 text-warning'
+            <span className="flex flex-wrap items-center justify-end gap-1.5">
+              {bindingDataPresent() &&
+                (() => {
+                  const fw = complianceFrameworks.find((f) => f.label === c.framework)
+                  if (!fw) return null
+                  const group = bindingGroupOf(fw.bindingStatus)
+                  return (
+                    <span
+                      data-testid="binding-chip"
+                      title={
+                        fw.bindingBasis
+                          ? `${BINDING_GROUP_META[group].description}. Basis: ${fw.bindingBasis}`
+                          : BINDING_GROUP_META[group].description
+                      }
+                      className={clsx(
+                        'text-xs font-bold px-2 py-0.5 rounded-full',
+                        BINDING_CHIP_CLASS[group]
+                      )}
+                    >
+                      {BINDING_GROUP_META[group].chip}
+                    </span>
+                  )
+                })()}
+              <span
+                className={clsx(
+                  'text-xs font-bold px-2 py-0.5 rounded-full',
+                  c.requiresPQC === true
+                    ? 'bg-warning/10 text-warning'
+                    : c.requiresPQC === null
+                      ? 'bg-muted/20 text-muted-foreground'
+                      : 'bg-muted text-muted-foreground'
+                )}
+              >
+                {c.requiresPQC === true
+                  ? 'PQC Required'
                   : c.requiresPQC === null
-                    ? 'bg-muted/20 text-muted-foreground'
-                    : 'bg-muted text-muted-foreground'
-              )}
-            >
-              {c.requiresPQC === true
-                ? 'PQC Required'
-                : c.requiresPQC === null
-                  ? 'Status unknown'
-                  : 'No PQC mandate yet'}
+                    ? 'Status unknown'
+                    : 'No PQC mandate yet'}
+              </span>
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -142,9 +174,20 @@ export const ComplianceImpactSection = ({
       <h4 className="text-sm font-semibold text-foreground mb-2">Profile-driven applicability</h4>
       <p className="text-xs text-muted-foreground mb-3">
         Frameworks, threats, library docs, and milestones the engine identifies as applicable to
-        your industry and country. This list does not depend on the frameworks you selected above,
-        and &ldquo;mandatory&rdquo; here means issued or enforced by a body in your country, which
-        includes guidance and drafts, so check each item&apos;s status.
+        your industry and country. This list does not depend on the frameworks you selected above
+        {bindingDataPresent() ? (
+          <>
+            . Binding means a law, regulation or enforceable rule that applies to organisations like
+            yours; guidance and drafts are issued by a body in your country but nobody is required
+            to follow them. A framework marked Not yet classified has not been reviewed for this
+            yet.
+          </>
+        ) : (
+          <>
+            , and &ldquo;mandatory&rdquo; here means issued or enforced by a body in your country,
+            which includes guidance and drafts, so check each item&apos;s status.
+          </>
+        )}
       </p>
       <ApplicabilityPanel variant="report-section" />
     </div>
