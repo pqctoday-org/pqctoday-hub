@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:1eaf2bcb-fc67-5214-a4b0-20583b96b140",
+  "serialNumber": "urn:uuid:21b9ff62-a12f-5604-88e3-1924138a684f",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.152.0"
+      "version": "4.153.0"
     },
     "properties": [
       {
@@ -3471,8 +3471,8 @@
     {
       "type": "library",
       "name": "dompurify",
-      "version": "3.4.13",
-      "purl": "pkg:npm/dompurify@3.4.13",
+      "version": "3.4.16",
+      "purl": "pkg:npm/dompurify@3.4.16",
       "licenses": [
         {
           "expression": "(MPL-2.0 OR Apache-2.0)"
@@ -3481,7 +3481,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "daf998228aa3cded9dfa46a43fc4bf9d2e6c85fb25e7cee4cf012370695376292c5158051e7142b0b603563fc936a2553906464980539aec9cbf43e87709a731"
+          "content": "b2aa3ea4da77a918422296e0462d72f13824dbb068d91cbbc34742d4d05e3537590a15a3cfd5dbfca3a865b44ffd1ea9419f34430f18857c35de159605b3119d"
         }
       ],
       "properties": [
