@@ -86,6 +86,9 @@ const MobilePageActionsSheet = React.lazy(() =>
 const MobileRoleSelection = React.lazy(() =>
   import('../Mobile/shell/MobileRoleSelection').then((m) => ({ default: m.MobileRoleSelection }))
 )
+const MobileRolePrompt = React.lazy(() =>
+  import('../Mobile/shell/MobileRolePrompt').then((m) => ({ default: m.MobileRolePrompt }))
+)
 const MobileWorkshopDock = React.lazy(() =>
   import('../Mobile/shell/MobileWorkshopDock').then((m) => ({ default: m.MobileWorkshopDock }))
 )
@@ -483,7 +486,15 @@ export const MainLayout = () => {
   const deepLinkBypass =
     isResourceDeepLink(location.pathname, location.search) ||
     (enteredOnDeepLinkRoute !== null && isSameRoute(location.pathname, enteredOnDeepLinkRoute))
-  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization && !deepLinkBypass
+  // The role picker takes over the page only on the home page, where it is the front door. On every
+  // other page it used to replace the page too, so a first-time phone visitor, and a search crawler
+  // (which never has a stored role), got the picker instead of the page they asked for, and the page
+  // got a second level-one heading. Now the page renders and a one-line prompt offers the same choice.
+  const isHomeRoute = location.pathname === '/'
+  const hasNoRoleYet = !selectedPersona && !hasSkippedPersonalization
+  const isMobileFirstRun = hasNoRoleYet && !deepLinkBypass && isHomeRoute
+  // Shown only where the page renders: the picker, which replaces the page, never shows with it.
+  const showMobileRolePrompt = isMobileShell && hasNoRoleYet
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
@@ -1467,6 +1478,12 @@ export const MainLayout = () => {
                 )}
                 role="main"
               >
+                {showMobileRolePrompt && (
+                  <React.Suspense fallback={null}>
+                    <MobileRolePrompt onPick={() => setMobileRoleSwitchOpen(true)} />
+                  </React.Suspense>
+                )}
+
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
 

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:e9b3457b-eec2-4e56-a4ee-ad1101760648",
+  "serialNumber": "urn:uuid:113c65e9-2c91-44f9-b92d-918bbdb1ff0c",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-29T00:00:00.000Z",
+    "timestamp": "2026-10-03T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -4514,9 +4514,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "116db8e7ad82e8a9",
+      "bom-ref": "db8fdf32bcd6b8f0",
       "name": "DigiCert SigningHub",
-      "version": "Current",
       "manufacturer": {
         "name": "Ascertia Ltd."
       },
@@ -7118,9 +7117,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "27c39fbe5119a367",
+      "bom-ref": "e18febb4f9994732",
       "name": "Ericsson Quantum-Safe 5G",
-      "version": "5G Core 24.x",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14406,48 +14404,6 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2dbe3a90ab829470",
-      "name": "OpenText Content Cloud",
-      "version": "26.2",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
-      },
-      "description": "The cited OpenText Content Management 26.2 release post does not mention post-quantum cryptography.",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://www.opentext.com/products/content-cloud"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "opentext-content-cloud"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Data Storage & Protection"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "SecSoftware"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "false"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "30"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
       "bom-ref": "ce41961da8dfde34",
       "name": "Microsoft Defender for Endpoint",
       "cpe": "cpe:2.3:a:microsoft:defender_for_endpoint:-:*:*:*:*:-:*:*",
@@ -14485,48 +14441,6 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
-      "bom-ref": "35044000e164f837",
-      "name": "VMware Workspace ONE",
-      "cpe": "cpe:2.3:a:vmware:workspace_one:2.5.1:*:*:*:*:iphone_os:*:*",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
-      },
-      "description": "The Workspace ONE Cloud Services security guide documents TLS 1.2+ and AES-256 controls but does not mention post-quantum cryptography.",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://www.vmware.com/products/workspace-one.html"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "vmware-workspace-one"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Operating Systems"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "OS"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "false"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "30"
         }
       ]
     },
@@ -14753,6 +14667,47 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "442a6dea7a497019",
+      "name": "General Dynamics Mission",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The KIV-80 datasheet says 'KIV-80 enables quantum resistant Crypto Modernization 2.0 (CM2) security, per NSA requirements for software protection and algorithms' and lists 'NSA CM2 Quantum Resistant Compliant'. It names no PQC algorithm, and states 'KIV-80 submitted to NSA for certification 1Q 2026'.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://gdmissionsystems.com/cyber"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "general-dynamics-mission"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
         }
       ]
     },
@@ -19275,7 +19230,7 @@
           "primitive": "signature"
         }
       },
-      "description": "Hardware wallet using SLH-DSA-128 (SPHINCS+) hybrid with Ed25519 for bootloader/firmware verification, and ML-DSA-44 for device attestation/certificate. Transaction/wallet signing still uses classical ECDSA/EdDSA — blockchains have not yet adopted PQC, so no PQC algorithm protects transaction signing today. Began shipping Nov 23, 2025 (international; US shipments delayed by FCC-certification backlog during the government shutdown).",
+      "description": "Hardware wallet using SLH-DSA-128 (SPHINCS+) hybrid with Ed25519 for bootloader/firmware verification, and ML-DSA-44 for device attestation/certificate. Transaction/wallet signing still uses classical ECDSA/EdDSA — blockchains have not yet adopted PQC, so no PQC algorithm protects transaction signing today.",
       "externalReferences": [
         {
           "type": "website",
@@ -20068,9 +20023,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1c6a0dd13fabd9d9",
+      "bom-ref": "7c6274c956f928be",
       "name": "Spherity CARO Pharma PQC",
-      "version": "CARO v1.3",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -22449,9 +22403,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "38f9a49e41159ed8",
+      "bom-ref": "82aaa622df7c1422",
       "name": "Microchip CryptoAutomotive TA100",
-      "version": "TA100",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -36454,6 +36407,332 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "182932b5b2250d1d",
+      "name": "IBM CryptoLite for C",
+      "version": "4.16.0",
+      "manufacturer": {
+        "name": "IBM Research (CBOMkit)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "The product supports ML-DSA (Signature Verification), ML-KEM (Encapsulation/Decapsulation), and ML-KEM (Key Generation). These algorithms are listed under Algorithm Capabilities for the Dual-Core Arm® Cortex A72 operating environment.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "IBM-CryptoLite-for-C"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "346d6d657615ee04",
+      "name": "SANCTUAIRE Cryptographic Core (Virtuose)",
+      "manufacturer": {
+        "name": "SANCTUAIRE"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "SANCTUAIRE-Cryptographic-Core-Virtuose"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes — CAVP validated (First Validated: 9/18/2026)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1b2cccaba8c8094c",
+      "name": "NetApp CryptoMod",
+      "version": "3.1",
+      "manufacturer": {
+        "name": "NetApp"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The module supports LMS SigVer (Leighton-Micali Signature verification), a stateful hash-based signature scheme. This capability is validated across multiple hardware environments (Intel Xeon processors) and ONTAP versions (9.17.1, 9.18.1).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "NetApp-CryptoMod"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "CAVP Project A7489, First Validated: 10/9/2025"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f3b612bb2d8b77ac",
+      "name": "AMD Spartan UltraScale+ (SU200P)",
+      "version": "9.0",
+      "manufacturer": {
+        "name": "Advanced Micro Devices Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The document lists \"LMS SigVer\" as an algorithm capability under the operating environment \"Synopsys HAPS100-4F\". LMS (Leighton-Micali Signature) is a stateful hash-based signature scheme, which falls under the PQC category. No other PQC algorithms are mentioned.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "AMD-Spartan-UltraScale-SU200P"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, FIPS 140-3 (implied by CAVP listing and \"First Validated\" date), Certificate A7514"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "5921a8498871852b",
+      "name": "NVIDIA Crypto Library",
+      "version": "3.0",
+      "manufacturer": {
+        "name": "Nvidia Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The library supports LMS SigVer (Leighton-Micali Signature verification), which is a stateful hash-based signature scheme and a PQC algorithm. It is validated under the Cryptographic Algorithm Validation Program (CAVP).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "NVIDIA-Crypto-Library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, FIPS 140-3 (implied by CAVP listing and FIPS186-4/5 references), Certificate A7686, First Validated 11/14/2025"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9e26335669c26f3d",
+      "name": "Google Tensor 6th Gen security core",
+      "version": "1.0",
+      "manufacturer": {
+        "name": "Google LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "The document lists \"SLH-DSA SigVer\" under Algorithm Capabilities for the Google Tensor 6th Gen security core. No other PQC algorithms (such as ML-KEM, ML-DSA, or LMS) are mentioned. The status is validated via CAVP.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Google-Tensor-6th-Gen-security-core"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, CAVP Project A8178, First Validated 3/26/2026"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e5c6de62b33808ed",
+      "name": "NVIDIA ConnectX-9 Crypto Accelerators (ROM)",
+      "version": "1.0",
+      "manufacturer": {
+        "name": "Nvidia Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The module supports LMS (Leighton-Micali Signature) signature verification. This is a stateful hash-based signature scheme, which is a post-quantum cryptographic algorithm. The document lists \"LMS SigVer\" under Algorithm Capabilities.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "NVIDIA-ConnectX-9-Crypto-Accelerators-RO"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, First Validated: 7/13/2026, Certificate A8750"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "42746be6d0990aba",
+      "name": "SK hynix ACNT093 Secure Enclave Library 2.1",
+      "version": "2.1",
+      "manufacturer": {
+        "name": "SK hynix"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The document lists \"LMS SigVer\" under Algorithm Capabilities. LMS (Leighton-Micali Signature) is a stateful hash-based signature scheme, which is a Post-Quantum Cryptography (PQC) algorithm family. The specific parameters or maturity level are not detailed.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "SK-hynix-ACNT093-Secure-Enclave-Library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes, First Validated: 8/21/2026, Certificate A8896"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
         }
       ]
     }

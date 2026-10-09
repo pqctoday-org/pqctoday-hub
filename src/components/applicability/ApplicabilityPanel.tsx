@@ -19,7 +19,13 @@ import type { DerivedResult } from '../../utils/trustPathTraversal'
 import type { LibraryItem } from '../../data/libraryData'
 import type { ThreatData } from '../../data/threatsData'
 import type { TimelineEvent } from '../../types/timeline'
-import type { ComplianceFramework } from '../../data/complianceData'
+import { bindingDataPresent, type ComplianceFramework } from '../../data/complianceData'
+import {
+  BINDING_GROUPS,
+  BINDING_GROUP_META,
+  splitByBinding,
+  type BindingGroup,
+} from '../../utils/bindingSplit'
 
 type Variant = 'tab' | 'report-section' | 'summary-card'
 
@@ -90,6 +96,17 @@ export function ApplicabilityPanel({
           <FrameworkItem result={r} compact={isCompact} onSelect={onSelectFramework} />
         )}
         compact={isCompact}
+        // The Report does not call a framework "Mandatory" just because a body in
+        // your country issues it: once frameworks have been reviewed, the top tier
+        // is shown as Binding, Guidance and drafts, and Not yet classified.
+        mandatoryGroups={
+          variant === 'report-section' && bindingDataPresent()
+            ? (items) => {
+                const split = splitByBinding(items)
+                return BINDING_GROUPS.map((id) => ({ id, items: split[id] }))
+              }
+            : undefined
+        }
       />
     ),
     threats: () => (
@@ -157,9 +174,21 @@ interface SectionProps<T> {
   dropped?: Record<ApplicabilityTier, number>
   renderItem: (r: ApplicabilityResult<T>) => React.ReactNode
   compact: boolean
+  /** Replaces the single top-tier group with these groups (Report, frameworks only). */
+  mandatoryGroups?: (
+    items: ApplicabilityResult<T>[]
+  ) => Array<{ id: BindingGroup; items: ApplicabilityResult<T>[] }>
 }
 
-function Section<T>({ icon, title, results, dropped, renderItem, compact }: SectionProps<T>) {
+function Section<T>({
+  icon,
+  title,
+  results,
+  dropped,
+  renderItem,
+  compact,
+  mandatoryGroups,
+}: SectionProps<T>) {
   const grouped = useMemo(() => groupByTier(results), [results])
   const total = results.length
   const totalDropped = dropped ? TIER_ORDER.reduce((sum, t) => sum + (dropped[t] ?? 0), 0) : 0
@@ -187,6 +216,42 @@ function Section<T>({ icon, title, results, dropped, renderItem, compact }: Sect
             const styles = TIER_STYLES[tier]
             // eslint-disable-next-line security/detect-object-injection
             const droppedHere = dropped?.[tier] ?? 0
+            if (tier === 'mandatory' && mandatoryGroups) {
+              const groups = mandatoryGroups(items).filter((g) => g.items.length > 0)
+              return (
+                <div key={tier} className="divide-y divide-border">
+                  {groups.map((g, gi) => {
+                    // eslint-disable-next-line security/detect-object-injection -- g.id is a BindingGroup
+                    const meta = BINDING_GROUP_META[g.id]
+                    return (
+                      <div key={g.id} className="px-3 py-2" data-testid={`binding-group-${g.id}`}>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className={`w-2 h-2 rounded-full ${meta.dot}`} aria-hidden="true" />
+                          <span className="text-xs font-medium text-foreground">{meta.label}</span>
+                          <span className="text-xs text-muted-foreground">({g.items.length})</span>
+                          {gi === 0 && droppedHere > 0 && (
+                            <span className="text-xs text-muted-foreground/80">
+                              +{droppedHere} more
+                            </span>
+                          )}
+                          <span
+                            className="text-xs text-muted-foreground/80 hidden sm:inline truncate"
+                            title={meta.description}
+                          >
+                            — {meta.description}
+                          </span>
+                        </div>
+                        <ul className={compact ? 'space-y-0.5' : 'space-y-1'}>
+                          {g.items.map((r, i) => (
+                            <li key={i}>{renderItem(r)}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            }
             return (
               <div key={tier} className="px-3 py-2">
                 <div className="flex items-center gap-2 mb-1.5">

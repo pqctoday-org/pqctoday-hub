@@ -8,13 +8,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/about</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/algorithms</loc>
-    <lastmod>2026-10-03</lastmod>
+    <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -260,13 +260,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/changelog</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/compliance</loc>
-    <lastmod>2026-10-03</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -296,7 +296,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -482,7 +482,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/homomorphic-encryption</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -644,7 +644,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/quiz</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -698,7 +698,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/stateful-signatures</loc>
-    <lastmod>2026-10-03</lastmod>
+    <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -764,7 +764,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/openssl</loc>
-    <lastmod>2026-09-29</lastmod>
+    <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -776,7 +776,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -794,7 +794,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground/cacp</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -890,7 +890,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground/interactive</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1154,19 +1154,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/report</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/revisions</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/simulation</loc>
-    <lastmod>2026-10-03</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
