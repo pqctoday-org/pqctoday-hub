@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.153.0] - 2026-10-09
+
+The Report now says which compliance frameworks are binding and which are guidance, phone visitors see the page they asked for instead of a role question, and the Merkle Tree Certificates workshop proves the tree you built.
+
+### Added
+
+- **The Report separates laws from guidance** [view:/report] [view:/assess] [persona:executive] [persona:grc] [persona:architect] [persona:cert-engineer] [persona:ops]: for the frameworks from your own country's bodies, the Report no longer calls them all "Mandatory". Each one now sits under Binding (a law, regulation or enforceable rule that applies to organisations like yours), Guidance and drafts (recommendations, goals and drafts nobody is required to follow), or Not yet classified, and the same label appears beside each framework you selected. 171 of the 191 active frameworks are classified so far; the other 20 stay Not yet classified until their documents settle, and a blank is never treated as guidance.
+
+### Fixed
+
+- **On a phone, the page you asked for opens straight away** [view:/] [view:/learn] [view:/library] [view:/playground] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: a first-time visitor on a phone used to be asked "Who's asking?" on every page before seeing anything. The role picker now takes over the home page only. Every other page opens normally with a one-line "Pick your role" prompt above it, which you can dismiss for good. Visitors who have already chosen a role, and the computer layout, are unchanged.
+- **Merkle Tree Certificates: the proof steps now use the tree you built** [view:/learn/merkle-tree-certs] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: in the Learn workshop, Step 2 (Inclusion Proof) and Step 3 (Verify Proof) used to start from eight sample certificates even after you built your own tree in Step 1. They now prove and verify the certificates you added, with a note that your tree is loaded. If you skip Step 1, they say so and use the sample set. Resetting the workshop clears the tree.
+
+### Security
+
+- **Dependency updates** [persona:ops]: the HTML sanitising library (DOMPurify) moves from 3.4.13 to 3.4.16.
+
 ## [4.152.0] - 2026-10-08
 
 A mistyped or outdated address now shows a clear "Page not found" page instead of the home page; on phones every page has one main heading, shared Library links keep their status filter and the About page explains analytics; and the Simulation offers the new Homomorphic Encryption module.
