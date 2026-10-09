@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.154.0] - 2026-10-09
+
+The OT & Industrial Control Systems module now shows the three ways attackers reach a plant, and its Zone & Conduit Planner separates firmware signing from command authentication and adds industrial IoT.
+
+### Added
+
+- **OT attack surface: three paths in** [view:/learn/ot-pqc] [persona:architect] [persona:ops] [persona:grc] [persona:executive] [persona:cert-engineer]: a new Learn section shows how attackers reach industrial control systems. They move from the office network through the industrial DMZ into the plant, come in over remote access and internet-connected industrial IoT devices, or get on site, where most installed field equipment accepts commands from anyone. Each path gets its own fix, from separate OT accounts and a guarded DMZ to hybrid post-quantum key exchange on remote links and classical authentication at the field level. The December 2015 Ukraine grid attack is worked through as an example that used all three paths.
+
+### Changed
+
+- **Zone & Conduit Planner: industrial IoT and command authentication** [view:/learn/ot-pqc] [persona:architect] [persona:ops] [persona:cert-engineer]: the planner adds an "IIoT & cloud connectors" zone on its own segment next to the industrial DMZ, and shows a cloud link that skips the DMZ as a connection that should not exist. Each zone now has separate settings for firmware and project signing and for command authentication; controllers and field devices start with unauthenticated commands, which the planner flags as a gap to fix today rather than a quantum risk. Every conduit is labelled with its attack path and can be filtered by it. The exercise on zone ranking is now "Where attacks start vs where they hurt".
+- **IoT module: where industrial IoT sits in a plant** [view:/learn/iot-pqc] [persona:architect] [persona:developer]: a short note explains that industrial IoT gateways should connect through the plant's industrial DMZ, and links to the new OT section.
+
+### Data
+
+- **Four new OT security documents in the Library** [view:/library] [persona:grc] [persona:ops] [persona:architect]: CISA's 2026 study "Barriers to Secure OT Communication: Why Johnny Can't Authenticate", the CISA, FBI, EPA and DOE fact sheet "Primary Mitigations to Reduce Cyber Threats to Operational Technology", CISA advisory AA21-131A on the 2021 pipeline ransomware incident, and CISA's alert on the 2015 attack on Ukrainian power distribution.
+
 ## [4.153.0] - 2026-10-09
 
 The Report now says which compliance frameworks are binding and which are guidance, phone visitors see the page they asked for instead of a role question, and the Merkle Tree Certificates workshop proves the tree you built.
