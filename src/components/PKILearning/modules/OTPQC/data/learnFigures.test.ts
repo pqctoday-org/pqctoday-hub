@@ -38,6 +38,7 @@ describe('workshop figures quoted in Learn / exercises / rag-summary', () => {
 
   it('Zone planner defaults', () => {
     expect(zoneRanking.map((z) => [z.id, z.priority, z.driver])).toEqual([
+      ['iiot-connectors', 100, 'hndl'],
       ['remote-access', 100, 'hndl'],
       ['dmz', 100, 'hndl'],
       ['control', 90, 'forgery'],
@@ -48,7 +49,7 @@ describe('workshop figures quoted in Learn / exercises / rag-summary', () => {
       ['site-ops', 50, 'hndl'],
     ])
     expect(rag).toContain(
-      `Remote & vendor access and Industrial DMZ ${zone('dmz').priority} (HNDL), Basic control and SIS ${zone('control').priority} (forgery), Process / field devices ${zone('process').priority}, Enterprise ${zone('enterprise').priority}, Supervisory control ${zone('supervisory').priority}, Site operations ${zone('site-ops').priority}`
+      `IIoT & cloud connectors, Remote & vendor access and Industrial DMZ ${zone('dmz').priority} (HNDL), Basic control and SIS ${zone('control').priority} (forgery), Process / field devices ${zone('process').priority}, Enterprise ${zone('enterprise').priority}, Supervisory control ${zone('supervisory').priority}, Site operations ${zone('site-ops').priority}`
     )
   })
 

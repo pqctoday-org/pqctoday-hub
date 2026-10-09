@@ -64,12 +64,12 @@ export const OT_EXERCISES: OTExerciseScenario[] = [
   },
   {
     id: 'zones-forgery-vs-hndl',
-    title: '2. Why Level 1 outranks the enterprise zone',
+    title: '2. Where attacks start vs where they hurt',
     description:
-      'Open the Zone & Conduit Planner with its defaults. Compare the drivers of the top two zones with those of Basic control and the SIS. Then set Basic control to "ML-DSA / LMS".',
+      'Open the Zone & Conduit Planner with its defaults. Filter the conduits by path A, then path B, and note which zones they start from. Compare the drivers of the top zones with those of Basic control and the SIS, and read the gap flagged on Basic control. Then set Basic control\'s firmware signing to "ML-DSA / LMS".',
     badge: 'Zones',
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-    observe: `Remote & vendor access and the Industrial DMZ rank first at ${zone('remote-access').priority}, both driven by HNDL. Basic control and the SIS come next at ${zone('control').priority}, driven by forgery — above the Enterprise zone (${zone('enterprise').priority}). Switching Basic control to a PQC signature scheme drops its forgery score to 0: the signing root, not the traffic, was the exposure.`,
+    observe: `IIoT & cloud connectors, Remote & vendor access and the Industrial DMZ rank first at ${zone('iiot-connectors').priority}, all driven by HNDL: path B comes in there, and path A starts in the Enterprise zone (${zone('enterprise').priority}) and crosses the DMZ. Basic control and the SIS come next at ${zone('control').priority}, driven by forgery: that is where the consequences land. Their commands are flagged as unauthenticated today, a gap to close with classical authentication now. Switching Basic control's firmware signing to a PQC scheme drops its forgery score to 0: the signing root, not the traffic, was the quantum exposure. Both ends need migrating.`,
     config: { step: 1 },
   },
   {

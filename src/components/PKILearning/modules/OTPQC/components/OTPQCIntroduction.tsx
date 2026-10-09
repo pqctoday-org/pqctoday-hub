@@ -16,6 +16,7 @@ import {
   GitBranch,
   Key,
   Clock,
+  Route,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,55 @@ import {
   mldsa87Bytes,
   signingProjectLms,
 } from '../data/learnFigures'
+
+type PathId = 'A' | 'B' | 'C'
+
+const PATH_TONE: Record<PathId, string> = {
+  A: 'bg-primary/10 text-primary',
+  B: 'bg-status-warning/15 text-status-warning',
+  C: 'bg-status-error/10 text-status-error',
+}
+
+/** Where each attack path enters, crosses and ends on the Purdue stack. */
+const ATTACK_SURFACE_ROWS: {
+  level: string
+  what: string
+  paths: { path: PathId; role: string }[]
+}[] = [
+  {
+    level: 'L4–5',
+    what: 'Enterprise: email, ERP, identity provider, corporate PKI',
+    paths: [{ path: 'A', role: 'starts here' }],
+  },
+  {
+    level: 'L3.5',
+    what: 'Industrial DMZ, remote-access jump hosts, IIoT segment',
+    paths: [
+      { path: 'A', role: 'crosses' },
+      { path: 'B', role: 'ends here' },
+    ],
+  },
+  {
+    level: 'L3',
+    what: 'Site operations: engineering workstations, OT domain',
+    paths: [{ path: 'A', role: 'spreads' }],
+  },
+  {
+    level: 'L2',
+    what: 'Supervisory: SCADA, HMI, OPC UA servers',
+    paths: [{ path: 'A', role: 'reaches control' }],
+  },
+  {
+    level: 'L1',
+    what: 'Basic control and SIS: PLCs, RTUs, IEDs',
+    paths: [{ path: 'C', role: 'on site' }],
+  },
+  {
+    level: 'L0',
+    what: 'Field: sensors, actuators, drives',
+    paths: [{ path: 'C', role: 'on site' }],
+  },
+]
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -222,12 +272,138 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </table>
           </div>
           <p>
-            With its default settings, the Zone &amp; Conduit Planner ranks Remote &amp; vendor
-            access and the Industrial DMZ first ({zone('remote-access').priority}, driven by HNDL),
-            and Basic control and the SIS next ({zone('control').priority}, driven by forgery) —
-            ahead of the Enterprise zone ({zone('enterprise').priority}). An HNDL-only view would
-            have put Level 0–1 last.
+            With its default settings, the Zone &amp; Conduit Planner ranks IIoT &amp; cloud
+            connectors, Remote &amp; vendor access and the Industrial DMZ first (
+            {zone('remote-access').priority}, driven by HNDL), and Basic control and the SIS next (
+            {zone('control').priority}, driven by firmware and project-signing forgery) — ahead of
+            the Enterprise zone ({zone('enterprise').priority}). An HNDL-only view would have put
+            Level 0–1 last. The ranking says where a quantum computer hurts most; the next section
+            shows how attackers get there.
           </p>
+        </div>
+      </LearnSection>
+
+      {/* 2b ─ Attack surface ─────────────────────────────────────────────── */}
+      <LearnSection
+        sectionId="attack-surface"
+        title="OT Attack Surface: Three Paths In"
+        icon={<Route size={24} className="text-primary" />}
+      >
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Zones say what is at stake; they do not say how an attacker gets there. OT is reached
+            along three paths, and each needs a different fix. Step 2 of the workshop tags every
+            conduit with its path.
+          </p>
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Purdue levels and the three attack paths"
+          >
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border text-muted-foreground">
+                  <th className="text-left p-2 font-medium">Purdue</th>
+                  <th className="text-left p-2 font-medium">What sits there</th>
+                  <th className="text-left p-2 font-medium">Paths</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ATTACK_SURFACE_ROWS.map((r) => (
+                  <tr key={r.level} className="border-b border-border/50 align-top">
+                    <td className="p-2 font-mono whitespace-nowrap">{r.level}</td>
+                    <td className="p-2 text-muted-foreground">{r.what}</td>
+                    <td className="p-2">
+                      <div className="flex flex-wrap gap-1">
+                        {r.paths.map((x) => (
+                          <span
+                            key={x.path + x.role}
+                            className={`text-[10px] rounded px-1.5 py-0.5 whitespace-nowrap ${PATH_TONE[x.path]}`}
+                          >
+                            {x.path} · {x.role}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            <Card
+              title="A · IT-to-OT lateral movement (L4/5 → L3.5 → L3 → L2)"
+              tone="bg-primary/5 border-primary/20"
+            >
+              <p>
+                The most common way in starts on the business network: a phished laptop, stolen
+                credentials, then a pivot through the DMZ into site operations and supervisory
+                control. CISA notes that OT may be exposed to a quantum computer precisely
+                &ldquo;due to connectivity or association with IT platforms&rdquo; and their
+                identity and access management (<LibLink id="US-CISA-PQC-OT-2024">CISA</LibLink>).
+                Corporate PKI, identity providers and Active Directory trust vouch for every hop, so
+                a CRQC that forges them makes lateral movement quiet. Migrating the IT side is part
+                of protecting OT. NIST SP 800-82r3 asks for separate OT accounts and a monitored DMZ
+                &ldquo;to avoid compromises that allow attackers to pivot to the OT
+                environment&rdquo; (<LibLink id="NIST SP 800-82 Rev. 3">SP 800-82r3</LibLink>; see
+                also{' '}
+                <LibLink id="CISA-OT-Primary-Mitigations-2025">
+                  CISA&rsquo;s primary OT mitigations
+                </LibLink>
+                ). An IT-only incident can still stop the plant: in 2021 a pipeline operator
+                disconnected OT systems after ransomware hit its IT network (
+                <LibLink id="CISA-AA21-131A-DarkSide">CISA AA21-131A</LibLink>).
+              </p>
+            </Card>
+            <Card
+              title="B · Remote access and connected devices (ending at L3.5)"
+              tone="bg-status-warning/10 border-status-warning/20"
+            >
+              <p>
+                Vendor VPNs, jump hosts and IIoT platforms that send plant data to the cloud. In
+                NIST&rsquo;s reference architecture, communication from the IIoT platform tier is
+                routed through the DMZ border firewall; IIoT that connects straight to the cloud
+                from L1 or L2 changes the boundaries the zone model relies on (
+                <LibLink id="NIST SP 800-82 Rev. 3">SP 800-82r3 §5.4.2, §5.3.7</LibLink>). This is
+                where recorded traffic matters most, so hybrid ML-KEM on the VPN, SSH or TLS link is
+                the first PQC step; phishing-resistant MFA and private links come first of all.
+              </p>
+            </Card>
+            <Card
+              title="C · Physical or local access (L1/L0)"
+              tone="bg-status-error/10 border-status-error/20"
+            >
+              <p>
+                Sometimes called close access: someone on site or nearby, on a field network, serial
+                link or wireless segment. Only a small minority of installed field-level traffic is
+                authenticated or encrypted. CISA found that &ldquo;many OT systems built in 2026
+                still rely on protocol implementations designed decades ago, leaving their networks
+                fully trusting anyone with access&rdquo; (
+                <LibLink id="Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent">
+                  CISA, 2026
+                </LibLink>
+                ), and many Level 0 devices cannot be authenticated at all (SP 800-82r3 §5.3.6).
+                That is a present-day gap: fix it with classical authentication or an authenticating
+                gateway. PQC belongs in firmware signing and key distribution here, not in the
+                real-time path. The same CISA study warns that PQC will meet the same adoption
+                barriers: cost, downtime and complexity.
+              </p>
+            </Card>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border text-xs space-y-1">
+            <p className="text-foreground font-bold">Worked example: Ukraine, December 2015</p>
+            <p className="text-muted-foreground">
+              One incident used all three paths (
+              <LibLink id="CISA-IR-ALERT-H-16-056-01">CISA IR-ALERT-H-16-056-01</LibLink>). Spear
+              phishing put BlackEnergy malware on the companies&rsquo; networks, where it was
+              probably used to obtain legitimate credentials (A). The attackers then operated
+              breakers remotely through VPN connections and ICS client software (B). They also
+              rendered serial-to-Ethernet devices at substations inoperable by corrupting their
+              firmware (C).
+            </p>
+          </div>
         </div>
       </LearnSection>
 
@@ -466,6 +642,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               <strong>Jump hosts</strong> — interactive sessions terminate on an intermediate system
               with MFA before reaching anything in L1–L2. Hybrid ML-KEM on the VPN or SSH in front
               of them protects the recorded session.
+            </li>
+            <li>
+              <strong>IIoT platforms</strong> — gateways and cloud connectors belong on their own
+              segment, routed through the DMZ border firewall; a direct cloud link from L1–L2 is a
+              DMZ bypass. Hybrid ML-KEM on the cloud link and PQC-ready gateway certificates cover
+              the quantum side.
             </li>
             <li>
               <strong>Data diodes</strong> — one-way hardware has no key exchange to break, but the
