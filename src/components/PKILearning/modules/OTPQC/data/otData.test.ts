@@ -8,7 +8,15 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { OT_PROTOCOLS, realTimePathNeedsPqc, svSampleIntervalMicros } from './otProtocolData'
-import { OT_ZONES, assessZone, defaultAssessments, rankZones } from './zoneConduitData'
+import {
+  OT_ZONES,
+  OT_CONDUITS,
+  ATTACK_PATHS,
+  assessZone,
+  defaultAssessments,
+  rankZones,
+  recommendedAction,
+} from './zoneConduitData'
 import {
   DEFAULT_SUBSTATION,
   planSubstation,
@@ -141,10 +149,15 @@ describe('Zone & Conduit Planner (I22)', () => {
     const a = assessZone(
       OT_ZONES.find((z) => z.id === 'control')!,
       'none',
+      'none',
       'none'
     )
     expect(a.forgery).toBe(0)
-    expect(a.todayGaps).toEqual(['unauthenticated', 'plaintext'])
+    expect(a.todayGaps).toEqual([
+      'unauthenticated-firmware',
+      'unauthenticated-command',
+      'plaintext',
+    ])
   })
   it('PQC signatures remove the forgery score', () => {
     expect(
@@ -153,6 +166,37 @@ describe('Zone & Conduit Planner (I22)', () => {
         'pqc'
       ).forgery
     ).toBe(0)
+  })
+  it('L0–L1 and SIS commands default to unauthenticated: a gap, while firmware signing drives forgery', () => {
+    for (const id of ['control', 'sis', 'process']) {
+      const a = defaultAssessments().find((x) => x.zone.id === id)!
+      expect(a.commandAuth).toBe('none')
+      expect(a.firmwareAuth).toBe('classical-signature')
+      expect(a.todayGaps).toContain('unauthenticated-command')
+      expect(a.driver).toBe('forgery')
+      expect(recommendedAction(a)).toMatch(/^Commands are unauthenticated today/)
+    }
+  })
+  it('a certificate-based command channel still counts toward forgery (max of the two settings)', () => {
+    const sup = OT_ZONES.find((z) => z.id === 'supervisory')!
+    const both = assessZone(sup).forgery
+    expect(assessZone(sup, 'pqc', 'classical-signature').forgery).toBe(both)
+    expect(assessZone(sup, 'classical-signature', 'pqc').forgery).toBe(both)
+    expect(assessZone(sup, 'pqc', 'pqc').forgery).toBe(0)
+  })
+  it('IIoT & cloud connectors is its own L3.5 segment, ranked on HNDL', () => {
+    const iiot = defaultAssessments().find((a) => a.zone.id === 'iiot-connectors')!
+    expect(iiot.zone.purdue).toBe('L3.5 (separate segment)')
+    expect([iiot.forgery, iiot.hndl, iiot.driver]).toEqual([51, 100, 'hndl'])
+  })
+  it('every conduit names real zones and a path; the IIoT bypass is the only bypass', () => {
+    const ids = new Set(OT_ZONES.map((z) => z.id))
+    for (const c of OT_CONDUITS) {
+      expect(ids.has(c.from) && ids.has(c.to)).toBe(true)
+      expect(ATTACK_PATHS.map((p) => p.id)).toContain(c.path)
+    }
+    expect(OT_CONDUITS.filter((c) => c.bypass).map((c) => c.id)).toEqual(['c-iiot-bypass'])
+    for (const p of ATTACK_PATHS) expect(OT_CONDUITS.some((c) => c.path === p.id)).toBe(true)
   })
 })
 

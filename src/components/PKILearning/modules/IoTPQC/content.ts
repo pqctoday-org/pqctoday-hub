@@ -13,8 +13,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'iot-pqc',
   lastReviewed: '2026-10-01',
-  version: '2.0.0',
-  lastEdited: '2026-10-02',
+  version: '2.0.1',
+  lastEdited: '2026-10-09',
 
   standards: [
     // The yardstick first: RFC 7228 defines Classes 0-2 and the 7228bis draft
@@ -71,6 +71,7 @@ export const content: ModuleContent = {
     getStandard('US-FCC-24-26-Cyber-Trust-Mark'),
     getStandard('UK-PSTI-Regs-2023-1007'),
     getStandard('NIST-IR-8259r1'),
+    getStandard('NIST SP 800-82 Rev. 3'),
     getStandard('NIST-IR-8259A'),
   ],
 

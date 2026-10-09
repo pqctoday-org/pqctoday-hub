@@ -171,6 +171,18 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             2025). PQC replaces the public-key parts: key establishment and signatures.
           </p>
         </Callout>
+        <Callout title="Where industrial IoT sits in a plant">
+          <p>
+            Industrial IoT sensors and gateways often sit at the bottom of a plant network but send
+            their data to the cloud. In NIST&rsquo;s reference architecture, communication from the
+            IIoT platform tier is routed through the industrial DMZ border firewall (level 3.5 of
+            the plant network;{' '}
+            <L to="/library?ref=NIST%20SP%20800-82%20Rev.%203">NIST SP 800-82r3</L> §5.4.2). A
+            device that connects straight to the cloud skips that boundary. How this fits into the
+            three paths attackers use to reach OT is covered in{' '}
+            <L to="/learn/ot-pqc?section=attack-surface">OT attack surface: three paths in</L>.
+          </p>
+        </Callout>
         <p className="text-xs text-muted-foreground">
           Industrial control systems (SCADA, PLCs, zones and conduits) are covered in{' '}
           <L to="/learn/ot-pqc">OT &amp; Industrial Control Systems PQC</L>; vehicle networks and

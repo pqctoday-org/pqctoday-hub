@@ -11,11 +11,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'ot-pqc',
-  contentVersion: 2,
+  contentVersion: 4,
   lm_id: 'LM-075',
   title: 'OT & Industrial Control Systems PQC',
   description:
-    'PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.',
+    'PQC for operational technology across energy, water, rail, manufacturing and building automation: IEC 62443 zones and conduits, the three paths into OT (IT-to-OT lateral movement, remote access and IIoT, physical access), OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety-critical timing, PLC firmware and project signing, NERC CIP and NIS2, and brownfield retrofit.',
   whyThisMatters:
     'In OT a quantum computer’s worst trick is not reading old traffic but forging what controllers trust — firmware, project downloads, certificates and commands — on assets that stay in service for decades and cannot change crypto without a safety review.',
   duration: '90 min',
@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
   learnSections: [
     { id: 'why-ot', label: 'Why OT is different' },
     { id: 'architecture', label: 'Purdue, zones and conduits' },
+    { id: 'attack-surface', label: 'OT attack surface: three paths in' },
     { id: 'ot-protocols', label: 'OT protocol native security' },
     { id: 'safety-timing', label: 'Safety-critical timing' },
     { id: 'firmware-project-signing', label: 'Firmware and project signing' },

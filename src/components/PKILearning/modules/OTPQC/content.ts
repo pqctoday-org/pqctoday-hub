@@ -5,7 +5,7 @@
  * Energy & Utilities module plus the OT half of the old IoT/OT module.
  *
  * Every getStandard() id below exists verbatim (reference_id) in the latest
- * library CSV of this worktree (library_10012026_r63.csv).
+ * library CSV of this worktree (library_10092026.csv).
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -15,8 +15,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'ot-pqc',
   lastReviewed: '2026-10-01',
-  version: '2.0.0',
-  lastEdited: '2026-10-02',
+  version: '2.1.0',
+  lastEdited: '2026-10-09',
 
   standards: [
     // PQC algorithms and stateful hash-based signatures
@@ -34,6 +34,11 @@ export const content: ModuleContent = {
     getStandard('IEC-62443-4-2-2019-Security-for-industrial-automation-and-co'),
     getStandard('NIST SP 800-82 Rev. 3'),
     getStandard('US-CISA-PQC-OT-2024'),
+    // Attack surface: IT-to-OT, remote access and IIoT, physical/local access
+    getStandard('Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent'),
+    getStandard('CISA-OT-Primary-Mitigations-2025'),
+    getStandard('CISA-AA21-131A-DarkSide'),
+    getStandard('CISA-IR-ALERT-H-16-056-01'),
     getStandard('NIS2-DIRECTIVE-2022-2555'),
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
     // NERC CIP and TSA
@@ -116,12 +121,12 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Advanced module (90 min, 9 learn sections, 6 workshop steps) on PQC for operational technology across energy, water, rail, manufacturing and building automation. In OT, safety and availability come first, and the main quantum threat is authenticity — forged commands, firmware and project files — rather than harvest-now-decrypt-later, which matters mostly at remote-access and inter-site boundaries. Assets last 20–50 years and crypto changes can trigger safety recertification.',
+      'Advanced module (90 min, 10 learn sections, 6 workshop steps) on PQC for operational technology across energy, water, rail, manufacturing and building automation. In OT, safety and availability come first, and the main quantum threat is authenticity — forged commands, firmware and project files — rather than harvest-now-decrypt-later, which matters mostly at remote-access, IIoT and inter-site boundaries. OT is reached along three paths: IT-to-OT lateral movement (L4/5 → L3.5 → L3 → L2), remote access and connected devices ending at L3.5, and physical or local access at L1/L0, where most installed field traffic has no authentication at all. Assets last 20–50 years and crypto changes can trigger safety recertification.',
     keyConcepts:
-      'Purdue levels mapped to IEC 62443 zones and conduits (SL-T / SL-C / SL-A; SR/CR 4.3 have no PQC wording). OT protocols mostly protect real-time messages with symmetric crypto: IEC 62351-6 HMAC/GMAC for GOOSE and SV with GDOI group keys (IEC 62351-9, RFC 8052); DNP3 SAv5 HMAC challenge-response with pre-shared update keys and a symmetric default method for remote update-key change. Public-key exposure sits in TLS (IEC 62351-3, OPC UA RSA/ECC policies, CIP Security, Modbus/TCP Security, BACnet/SC ECC-only), certificates and firmware signing. GOOSE type 1A trip in TT6 (3 ms or less); SV at 4,000 / 4,800 / 14,400 samples/s; PQC stays out of the trip path. IEC 61511 Ed.2 clause 8.2.4 makes a SIS security risk assessment mandatory. PTP security is IEEE 1588-2019 Annex P.',
+      'Purdue levels mapped to IEC 62443 zones and conduits (SL-T / SL-C / SL-A; SR/CR 4.3 have no PQC wording). Three attack paths: IT-to-OT lateral movement through enterprise identity and PKI (so migrating the IT side protects OT), remote access and IIoT routed through the DMZ border firewall (a direct cloud link is a DMZ bypass), and physical or local access at L1/L0, where unauthenticated commands are a present-day gap fixed with classical authentication. OT protocols mostly protect real-time messages with symmetric crypto: IEC 62351-6 HMAC/GMAC for GOOSE and SV with GDOI group keys (IEC 62351-9, RFC 8052); DNP3 SAv5 HMAC challenge-response with pre-shared update keys and a symmetric default method for remote update-key change. Public-key exposure sits in TLS (IEC 62351-3, OPC UA RSA/ECC policies, CIP Security, Modbus/TCP Security, BACnet/SC ECC-only), certificates and firmware signing. GOOSE type 1A trip in TT6 (3 ms or less); SV at 4,000 / 4,800 / 14,400 samples/s; PQC stays out of the trip path. IEC 61511 Ed.2 clause 8.2.4 makes a SIS security risk assessment mandatory. PTP security is IEEE 1588-2019 Annex P.',
     workshopSummary:
-      'Protocol Analyzer (14 OT protocols tagged forgery / HNDL / symmetric, with HMAC-SHA-256 and AES key wrap KATs); Zone & Conduit Planner (forgery and HNDL scored separately per IEC 62443 zone); Substation Planner (energy worked example); Safety & Consequence Scorer (eight scenarios across five sectors, IEC 61511 safety-layer framing); Sector Roadmap (sector, jurisdiction, site count and CRQC planning year drive the plan); Firmware & Project Signing Lab (LMS/HSS vs ML-DSA bytes, key lifetime and state management, with an ML-DSA ACVP KAT).',
+      'Protocol Analyzer (14 OT protocols tagged forgery / HNDL / symmetric, with HMAC-SHA-256 and AES key wrap KATs); Zone & Conduit Planner (nine IEC 62443 zones including IIoT & cloud connectors; firmware signing, command authentication and traffic protection set separately; forgery and HNDL scored separately; conduits tagged by attack path, including a DMZ bypass); Substation Planner (energy worked example); Safety & Consequence Scorer (eight scenarios across five sectors, IEC 61511 safety-layer framing); Sector Roadmap (sector, jurisdiction, site count and CRQC planning year drive the plan); Firmware & Project Signing Lab (LMS/HSS vs ML-DSA bytes, key lifetime and state management, with an ML-DSA ACVP KAT).',
     relatedStandards:
-      'IEC 62443 (incl. 62443-4-2), NIST SP 800-82 Rev. 3, CISA PQC considerations for OT, NIS2 Art. 21(2)(h) and the EU coordinated PQC roadmap, NERC CIP-005-7 / CIP-010-4 / CIP-012-2, TSA SD Pipeline-2021-02G, NSA CNSA 2.0, NIST SP 800-208 / RFC 8554, IEC 62351-6, RFC 8052, OPC 10000-2/-7, ODVA CIP Security, PROFINET security classes, ASHRAE 135 Addendum bj (BACnet/SC), UNISIG SUBSET-137.',
+      'IEC 62443 (incl. 62443-4-2), NIST SP 800-82 Rev. 3, CISA PQC considerations for OT, CISA Barriers to Secure OT Communication (2026), CISA/FBI/EPA/DOE Primary Mitigations to Reduce Cyber Threats to OT (2025), CISA AA21-131A, CISA IR-ALERT-H-16-056-01, NIS2 Art. 21(2)(h) and the EU coordinated PQC roadmap, NERC CIP-005-7 / CIP-010-4 / CIP-012-2, TSA SD Pipeline-2021-02G, NSA CNSA 2.0, NIST SP 800-208 / RFC 8554, IEC 62351-6, RFC 8052, OPC 10000-2/-7, ODVA CIP Security, PROFINET security classes, ASHRAE 135 Addendum bj (BACnet/SC), UNISIG SUBSET-137.',
   },
 }
