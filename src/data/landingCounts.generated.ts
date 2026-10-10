@@ -5,5 +5,5 @@
 // own docstring for why they are estimates, not exact counts, and why that's fine.
 
 export const ALGORITHM_COUNT_ESTIMATE = 127
-export const TIMELINE_EVENT_COUNT_ESTIMATE = 184
+export const TIMELINE_EVENT_COUNT_ESTIMATE = 185
 export const LIBRARY_COUNT_ESTIMATE = 1279
