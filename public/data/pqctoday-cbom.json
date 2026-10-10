@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:113c65e9-2c91-44f9-b92d-918bbdb1ff0c",
+  "serialNumber": "urn:uuid:901facbe-0596-4f5b-aead-8cebfd1a9d04",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-03T00:00:00.000Z",
+    "timestamp": "2026-10-10T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -540,7 +540,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes"
+          "value": "No CMVP certificate naming Bouncy Castle Java LTS is linked. CMVP #4943 (FIPS 140-3 Level 1, Active) is held by the separate Bouncy Castle FIPS Java API (BC-FJA), which the vendor offers as a different download."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -3919,7 +3919,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No CMVP certificate naming Cloud HSM is linked. Linked CMVP #5272 'Google HSM' (Google LLC, FIPS 140-3 Level 3, Active, sunset 2031-05-18) is an embedded single-chip module whose record does not name Cloud HSM, and it lists no PQC algorithms. Vendor states Cloud HSM keys are protected by FIPS 140-3 Level 3 HSMs; the Marvell certificate #4700 formerly cited is a third-party embedded HSM and does not certify the service"
+          "value": "No CMVP certificate naming Cloud HSM is linked. CMVP #5272 'Google HSM' (Google LLC, FIPS 140-3 Level 3, Active) is an embedded single-chip module whose record does not name Cloud HSM, and it lists no PQC algorithms. The vendor's Cloud HSM pages state that keys are held in FIPS 140-2 Level 3 validated HSMs; the Marvell certificate #4700 formerly cited is a third-party embedded HSM and does not certify the service."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12094,7 +12094,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Trusted)"
+          "value": "No CMVP certificate naming Cisco IOS XR is linked. CMVP #5356 'IOS Common Cryptographic Module (IC2M)' (Cisco, FIPS 140-3 Level 1, Active) lists IOS-XE 17.12 platforms and does not name IOS XR."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -31139,7 +31139,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Yes — FIPS 140-3 Level 2, CMVP #5103 Trusted Platform Module ST33KTPM2A / ST33KTPM2I (Active, sunset 2030-12-07); ST33KTPM2A is also branded commercially STSAFE-V100-TPM; LMS SigVer is an approved algorithm"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33638,7 +33638,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No CMVP certificate linked for the Oracle OpenSSL FIPS Provider under FIPS 140-3 (FIPS 140-2 certificate #4506 is Historical; FIPS 140-2 modules are out of scope). CAVP algorithm validation A7758 (ML-DSA, ML-KEM, SLH-DSA; validated 2025-12-11)"
+          "value": "No CMVP certificate for the 3.5.4 provider is linked. CMVP #5294 (Oracle Linux 9 OpenSSL FIPS Provider, FIPS 140-3 Level 1, Active) covers the OpenSSL 3.0.7 build on Oracle Linux 9 and lists no PQC algorithms. The ML-DSA, ML-KEM and SLH-DSA algorithms are CAVP-validated (A7758, validated 2025-12-11)."
         },
         {
           "name": "pqctoday:algorithm_source",
