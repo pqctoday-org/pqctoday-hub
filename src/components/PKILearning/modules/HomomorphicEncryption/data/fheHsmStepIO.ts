@@ -151,7 +151,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'Plaintext integers and the verified compact public key.',
       'encrypt',
       'Split each integer into small blocks (e.g. 2-bit messages with carry space), then encrypt them as a compact ciphertext list.',
-      'A few KB per value, uploaded. The cloud expands it into ~0.5 MB of LWE blocks per 64-bit integer.'
+      'About 8.3–8.4 KB per value in a compact list (measured), uploaded. The cloud expands it into ~0.5 MB of LWE blocks per 64-bit integer.'
     ),
     io(
       'The ciphertexts from the previous step.',

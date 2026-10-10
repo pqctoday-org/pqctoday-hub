@@ -224,7 +224,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       1,
       '~ms',
       'client CPU',
-      'Compact public-key encryption, a few KB per value. The cloud expands each 64-bit value to ~0.5 MB of blocks (32 blocks × 2,049 × 8 B).'
+      'Compact public-key encryption, about 8.3–8.4 KB per value in compact lists (measured: 8,337 B for 8-bit, 8,449 B for 64-bit values, two values per list). The cloud expands each 64-bit value to ~0.5 MB of blocks (32 blocks × 2,049 × 8 B).'
     ),
     c(1, 'ciphertext', 0, '—', 'network', 'Ciphertexts only; the same bytes that were encrypted.'),
     c(
@@ -412,7 +412,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       3,
       'seconds',
       'HSM → server',
-      'Same TFHE key material as TFHE single-HSM custody (estimate).'
+      'Same TFHE key material as TFHE single-HSM custody: a 30.1 MB compressed server key (measured in that scenario).'
     ),
     c(1, '32 B', 1, 'µs', 'client', 'A 128-bit key and a 128-bit IV.'),
     c(
@@ -660,18 +660,18 @@ export const KEY_SIZES: KeySize[] = [
   {
     id: 'tfhe-client',
     label: 'TFHE client (secret) key',
-    bytes: 24_000,
-    size: '~24 KB as stored',
-    exact: false,
+    bytes: 24_087,
+    size: '24,087 B (measured)',
+    exact: true,
     secret: true,
-    note: '918-bit LWE key + 2,048-bit GLWE key: ~371 B of key bits; TFHE-rs stores them as 64-bit words, ~24 KB. Regenerable from the seed.',
+    note: '918-bit LWE key + 2,048-bit GLWE key: ~371 B of key bits; TFHE-rs 1.8.1 stores them as 64-bit words, 24,087 B serialized (measured). Regenerable from the seed.',
   },
   {
     id: 'tfhe-cpk',
     label: 'TFHE compact public key',
     bytes: 33_034,
-    size: '33 KB (measured)',
-    exact: false,
+    size: '33,034 B (measured)',
+    exact: true,
     secret: false,
     note: 'Lets clients encrypt compactly without the secret.',
   },
@@ -679,8 +679,8 @@ export const KEY_SIZES: KeySize[] = [
     id: 'tfhe-server',
     label: 'TFHE server key (compressed)',
     bytes: 30_147_061,
-    size: '30.1 MB (measured)',
-    exact: false,
+    size: '30,147,061 B (measured)',
+    exact: true,
     secret: false,
     note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). 120.4 MB once expanded by the cloud (measured; loading and expanding it took 1.3 s on a KV260).',
   },

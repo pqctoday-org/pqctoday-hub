@@ -196,7 +196,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Reference only: evaluation-key sizes measured with OpenFHE CKKS. The planned engine refuses the evaluation-key export by design.',
+        'Reference only: evaluation-key sizes are estimates; no OpenFHE CKKS measurement exists yet. The planned engine refuses the evaluation-key export by design.',
       reference: 'OpenFHE CKKS, pinned in pqctoday-sandbox',
     },
     label: 'CKKS single-HSM custody',
