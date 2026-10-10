@@ -3,14 +3,16 @@
  * "Start here" picks for the Library redesign — three curated entry documents
  * per persona, always present above the grid.
  *
- * Curious / Executive / Ops reuse their existing hand-curated pick sets. The
- * three personas that never had a curated set (Developer, Architect, Researcher)
- * are DERIVED from their PERSONA_LIBRARY_CATEGORIES focus areas — top documents
- * by citations then recency — so every reference id is guaranteed to resolve to a
- * real LibraryItem. Swap a derived set for a hand-curated file later if desired.
+ * Curious / Executive / Ops / Certification & Validation Engineer reuse hand-curated
+ * pick sets. The personas that never had a curated set (Developer, Architect,
+ * Researcher) are DERIVED from their PERSONA_LIBRARY_CATEGORIES focus areas — top
+ * documents by citations then recency — so every reference id is guaranteed to
+ * resolve to a real LibraryItem. Swap a derived set for a hand-curated file later
+ * if desired.
  */
 import { libraryData } from './libraryData'
 import { PERSONA_LIBRARY_CATEGORIES } from './personaConfig'
+import { LIBRARY_CERT_ENGINEER_PICKS } from './libraryCertEngineerPicks'
 import { LIBRARY_CURIOUS_PICKS, type LibraryCuriousPick } from './libraryCuriousPicks'
 import { LIBRARY_EXECUTIVE_PICKS } from './libraryExecutivePicks'
 import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
@@ -22,6 +24,7 @@ const CURATED: Partial<Record<PersonaId, readonly LibraryStartPick[]>> = {
   curious: LIBRARY_CURIOUS_PICKS,
   executive: LIBRARY_EXECUTIVE_PICKS,
   ops: LIBRARY_OPS_PICKS,
+  'cert-engineer': LIBRARY_CERT_ENGINEER_PICKS,
 }
 
 function derivePicks(persona: PersonaId): LibraryStartPick[] {
