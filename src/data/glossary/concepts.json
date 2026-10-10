@@ -2683,5 +2683,111 @@
     "relatedModule": "/learn/quantum-threats",
     "complexity": "intermediate",
     "category": "concept"
+  },
+  {
+    "term": "Entropy Source Validation",
+    "acronym": "ESV",
+    "definition": "The CMVP process for validating an entropy source — the combination of a noise source, health tests and an optional conditioning component that produces random bitstrings for a random bit generator — against NIST SP 800-90B. An accredited laboratory tests the entropy source and submits it through NIST's Entropy Source Validation Test System (ESVTS), and a validated entropy source may be referenced by certificate number in multiple modules without being recertified.",
+    "technicalNote": "Source: NIST SP 800-90B (January 2018), Section 3 'Entropy Source Validation' (p. 9) and Glossary (p. 62); NIST CMVP Entropy Validation Announcements page, 'ESV Program Rollout' of April 13, 2022 and 'Entropy Source Validation Test Server' of March 24, 2022 (page footer 'Updated August 21, 2026'); NIST ESV-Server README (usnistgov/ESV-Server). SP 800-90B states that validation provides additional assurance that adequate entropy is provided by the source. ESVTS runs the SP 800-90B Entropy Assessment Library to analyze entropy sources, and its Prod environment is available to NVLAP-accredited labs with the 17ESV accreditation scope.",
+    "relatedModule": "/learn/entropy-randomness",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Known-Answer Test",
+    "acronym": "KAT",
+    "definition": "A kind of cryptographic algorithm self-test in which a module operates an algorithm on a set of known input vectors and compares the result to the known expected output; if the calculated output does not equal the known answer, the self-test fails. The FIPS 140-3 Implementation Guidance calls it the most common way to meet an algorithm self-test requirement, alongside comparison tests and fault-detection tests.",
+    "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A (pp. 102-103, quoting ISO/IEC 19790:2012 Section 7.10.3.2) and General Notes 6-7 (p. 115). General Note 7 permits a KAT to verify equality by comparing a hash of the calculated output to a hash of the known expected output; that hash function must itself be self-tested first. For ML-KEM, ML-DSA and SLH-DSA the guidance describes KATs that use fixed, predetermined values (pp. 110-112).",
+    "relatedModule": "/learn/acvp-lab-workflow",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Cryptographic Algorithm Self-Test",
+    "acronym": "CAST",
+    "definition": "A conditional self-test that a FIPS 140-3 cryptographic module performs on the cryptographic functions of each approved algorithm it implements, before the algorithm's first operational use. A CAST may take the form of a known-answer test, a comparison test or a fault-detection test.",
+    "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A 'Cryptographic Algorithm Self-Test Requirements' (pp. 102-103, quoting ISO/IEC 19790:2012 Sections 7.10.3.1 and 7.10.3.2) and General Notes 5 and 8 (p. 115). Unless otherwise stated, CASTs are performed on the algorithms and parameters (for example key sizes, curves, modes) that an approved service uses. The requirement also applies to allowed algorithms with a claim of security and to legacy algorithms, but a CAST is not required before first execution in the non-approved mode.",
+    "relatedModule": "/learn/fips-140-3-certification",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Pairwise Consistency Test",
+    "acronym": "PCT",
+    "definition": "A conditional self-test that a cryptographic module must perform on every public and private key pair it generates; the Implementation Guidance treats it as separate from a cryptographic algorithm self-test. For ML-KEM key pairs it consists of encapsulating a shared secret with the encapsulation key and decapsulating the result with the decapsulation key, and it passes if the two shared secrets are equal. It is not required when a key or key pair is imported from outside the module's cryptographic boundary.",
+    "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A (p. 103, quoting ISO/IEC 19790:2012 Section 7.10.3.3) and its Additional Comment 1 (pp. 115-116). For key pairs generated for SP 800-208 (LMS, XMSS) or FIPS 205 (SLH-DSA), the PCT may be limited to confirming that the resulting public and private key share the same key identifier.",
+    "relatedModule": "/learn/fips-140-3-certification",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Sensitive Security Parameter",
+    "acronym": "SSP",
+    "definition": "In FIPS 140-3, the term that covers both critical security parameters (CSPs) and public security parameters (PSPs). For example, an AES-GCM initialization vector is considered an SSP (a PSP or a CSP) within the module validation, and SSP establishment is the process by which CSPs or PSPs are securely shared within a module or between two or more entities.",
+    "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG D.A 'Acceptable SSP Establishment Protocols' (p. 176), IG D.B 'Strength of SSP Establishment Methods' (p. 178) and IG C.H Additional Comment 10 (p. 155). FIPS 140-3 and NIST SP 800-140B Rev. 1 use the term (SP 800-140B expands the abbreviation) but do not define it.",
+    "relatedModule": "/learn/fips-140-3-certification",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "Security Policy",
+    "definition": "The vendor-provided, non-proprietary document that the CMVP requires for a cryptographic module; its required content comes from ISO/IEC 19790 Annex B and ISO/IEC 24759 Section 6.14 as modified by NIST SP 800-140B. Its sections follow the Annex B order, from 'General' to 'Mitigation of other attacks', and any section that does not apply is marked as such. Among other things it records the module's cryptographic boundary, the approved modes of operation and how each is configured, and a table of the module's sensitive security parameters.",
+    "technicalNote": "Source: NIST SP 800-140B Rev. 1, CMVP Security Policy Requirements (November 2023), Abstract (p. i), 'Security Requirements' (pp. 3-5) and section 2.4 (p. 9); FIPS 140-3 (March 22, 2019), section 3.3. For example, the vendor-provided non-proprietary security policy must list all vendor-affirmed security methods (p. 5).",
+    "relatedModule": "/learn/fips-140-3-certification",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Cryptographic Boundary",
+    "definition": "The explicitly defined perimeter that establishes the boundary of all components — the set of hardware, software or firmware components — of a cryptographic module. FIPS 140-3 test requirements have the tester verify that the module's block diagram indicates this boundary, and the module's security policy must define it precisely and list any hardware, software or firmware excluded from it.",
+    "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 9.5.A (p. 85) and IG 2.3.B (p. 27), both quoting the ISO/IEC 19790:2012 definition; NIST SP 800-140 (March 2020), assertions AS02.15, AS02.17 and AS02.18 (pp. 3-5); NIST SP 800-140B Rev. 1 (November 2023), pp. 7 and 9. The test requirements set the boundary rule separately for hardware, firmware and hybrid modules; a hybrid module's boundary is the composite of its hardware component boundary and the disjoint software or firmware component boundary.",
+    "relatedModule": "/learn/fips-140-3-certification",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Protection Profile",
+    "acronym": "PP",
+    "definition": "In Common Criteria, an implementation-independent statement of security needs for a type of target of evaluation (TOE). It describes the TOE type and the security functional and assurance requirements expected of it, and is typically written where a user community, a regulator or a group of developers wants to define a common set of security needs. A Security Target for a specific product may conform to one or more Protection Profiles.",
+    "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.68 (p. 22), 5.2.2.3 (p. 30), 6.3.3.2 (p. 39) and Annex B.2.1 (p. 125). Clause 10.1 (p. 66) says a PP is intended to describe a general TOE type, so it may be used as a Security Target template for any TOE of that type.",
+    "relatedModule": "/learn/cc-eucc-certification",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Security Target",
+    "acronym": "ST",
+    "definition": "In Common Criteria, an implementation-dependent statement of security requirements for a specific target of evaluation (TOE), based on a security problem definition. It is a document that describes the TOE, the conformance claims, the security problem, the security objectives and the security requirements, and it is typically produced by the developer. It may conform to one or more Protection Profiles.",
+    "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.82 (p. 24), 5.2.2.3 (p. 30), 12.1 (p. 89) and Annex D.2.1 (p. 149). Before and during the evaluation the ST specifies what is to be evaluated; after the evaluation it specifies what was evaluated.",
+    "relatedModule": "/learn/cc-eucc-certification",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Target of Evaluation",
+    "acronym": "TOE",
+    "definition": "In Common Criteria, the set of software, firmware and/or hardware, possibly accompanied by guidance, that is the subject of an evaluation. A TOE may be an IT product, a part of an IT product, a set of IT products, a unique technology that can never be made into a product, or a combination of these, and the Security Target must outline its physical and logical scope.",
+    "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.90 (p. 25) and clauses 5.3.1-5.3.2 (p. 33). The CC says the relation between the TOE and any IT product matters in one respect: the evaluation of a TOE containing only part of an IT product should not be misrepresented as the evaluation of the entire IT product.",
+    "relatedModule": "/learn/cc-eucc-certification",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Modules In Process List",
+    "acronym": "MIP",
+    "definition": "The CMVP list of cryptographic modules on which the CMVP is actively working. For each submission it shows the module name, vendor name, standard and status together with the date the module went into that status. Because validation is a joint effort of the CMVP, the laboratory and the vendor, the list gives some indication of which of them has the action. Participation is voluntary, the list does not necessarily include all modules being tested or reviewed, and posting on it does not imply or guarantee FIPS 140 validation.",
+    "technicalNote": "Source: NIST CMVP Modules In Process List page (csrc.nist.gov), 'Last Updated: 10/3/2026'; FIPS 140-3 CMVP Management Manual, Version 2.7 (April 9, 2026), section 4.2 (p. 31) for the voluntary-participation and no-guarantee statements. Per the page, a module moves from Pending Review to Review only after the lab pays the NIST Cost Recovery fee. Status values shown include Pending Review, Review, Comment Resolution - Lab, Comment Resolution - CMVP, Pending Resubmission, Cost Recovery and Finalization; the page does not describe each state and points to the CMVP Modules In Process page for details.",
+    "relatedModule": "/compliance",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "Cryptographic and Security Testing Laboratory",
+    "acronym": "CSTL",
+    "definition": "An independent, NVLAP-accredited laboratory (also written 'CST lab') that tests cryptographic modules for the CMVP. It tests a module to the FIPS 140-3 requirements for the security level and embodiment, and produces a written test report for the CMVP Validation Authorities, who review it. Vendors submit a module and its documentation to the accredited CSTL of their choice.",
+    "technicalNote": "Source: FIPS 140-3 CMVP Management Manual, Version 2.7 (April 9, 2026), sections 1.1 (p. 1), 2.6.1-2.6.2 (p. 13) and 2.6.3 (p. 15). A CSTL can conduct algorithmic testing and verify compliance with the algorithm standards (there may be additional requirements beyond what is CAVP-tested), review the module's documentation and source code, and perform the required testing in accordance with the test requirements, SP 800-140x and the Implementation Guidance.",
+    "relatedModule": "/learn/acvp-lab-workflow",
+    "complexity": "intermediate",
+    "category": "concept"
   }
 ]
