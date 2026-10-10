@@ -709,6 +709,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'united-states-nist-additional-signatures-round-3-advances': [
     'United States:NIST — Additional Signatures Round 3 Advances',
   ],
+  'united-states-nist-fips-140-2-certificates-move-to-the-histo': [
+    'United States:NIST — FIPS 140-2 certificates move to the Historical List',
+  ],
   'united-states-nist-fips-203-204-205-published': [
     'United States:NIST — FIPS 203 Published',
     'United States:NIST — FIPS 203, 204, 205 Published',

@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.155.0] - 2026-10-10
+
+Certification engineers now start the Library on the documents their work depends on, the Glossary gains twelve terms for module validation, the Timeline records when FIPS 140-2 validations move to NIST's historical list, and the Migrate page no longer shows certificates that belong to other products.
+
+### Added
+
+- **Twelve Glossary terms for module validation and certification** [view:/learn] [persona:cert-engineer] [persona:grc] [persona:developer] [persona:architect] [persona:researcher]: entropy source validation, known-answer test, cryptographic algorithm self-test, pairwise consistency test, sensitive security parameter, security policy, cryptographic boundary, Protection Profile, Security Target, target of evaluation, the CMVP Modules In Process list and the testing laboratory. Each definition is taken from the NIST or Common Criteria document it cites, with the section and page given, and the Modules In Process entry notes that appearing on the list does not imply or guarantee FIPS 140 validation.
+- **Timeline: FIPS 140-2 validations move to NIST's historical list** [view:/timeline] [persona:cert-engineer] [persona:grc] [persona:ops] [persona:executive]: a new entry records NIST's statement that FIPS 140-2 validations move to the historical list on 21 September 2026, and that the CMVP still supports buying and using those modules for existing systems.
+
+### Changed
+
+- **The Library opens on certification documents for certification engineers** [view:/library] [persona:cert-engineer]: the three starting documents are now the FIPS 140-3 implementation guidance for post-quantum cryptography, the CMVP Management Manual and NIST's public ACVP reference samples, in place of three documents chosen by citation count.
+- **Migrate: certificates that belong to other products are gone** [view:/migrate] [persona:cert-engineer] [persona:grc] [persona:ops] [persona:executive] [persona:architect]: Bouncy Castle Java LTS, Google Cloud HSM, Citrix Virtual Apps and Desktops and Cisco IOS XR no longer list a certificate that belongs to a different product, and each row says which one. STSAFE-V100-TPM now shows its FIPS 140-3 certificate, which names the same module under its former name. The Oracle OpenSSL FIPS Provider is shown as CAVP-validated, because its only FIPS 140-3 certificate covers the OpenSSL 3.0.7 build on Oracle Linux 9, not the 3.5.4 provider. The page now counts 84 FIPS 140-3 certified products and 53 that are CAVP-validated only.
+
+### Data
+
+- **Twenty certification-programme documents filed under Compliance & Certification** [view:/library] [persona:cert-engineer] [persona:grc] [persona:executive] [persona:ops]: NIST's CMVP, CAVP, ACVP and entropy-validation pages, the CMVP and entropy-validation certificates, ISO/IEC 15408-1, NIAP and two protection-profile documents now appear under Compliance & Certification, where they were previously hidden from the certification view unless you searched for them.
+
 ## [4.154.0] - 2026-10-09
 
 The OT & Industrial Control Systems module now shows the three ways attackers reach a plant, and its Zone & Conduit Planner separates firmware signing from command authentication and adds industrial IoT.

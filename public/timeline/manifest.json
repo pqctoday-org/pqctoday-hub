@@ -2,7 +2,7 @@
   "generated": "2026-09-27",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
-  "csv": "timeline_10032026.csv",
+  "csv": "timeline_10102026.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3420,6 +3420,21 @@
       "admittedAt": "2026-10-02T03:22:56.080370+00:00",
       "admittedBy": "admit.py",
       "superseded_file": "_superseded-10012026/timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html"
+    },
+    {
+      "refId": "united-states-nist-fips-140-2-certificates-move-to-the-histo",
+      "label": "FIPS-140-2-certificates-move-to-the-Historical-List",
+      "url": "https://csrc.nist.gov/Projects/FIPS-140-3-Transition-Effort",
+      "status": "downloaded",
+      "file": "timeline/FIPS-140-2-certificates-move-to-the-Historical-List.html",
+      "sizeBytes": 47720,
+      "contentType": "text/html",
+      "sha256": "e84fb957d7b565526da742756b3fb0374e4374e893cccf12a0c6a0ad95a55c8e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-10T15:59:08.842427+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
