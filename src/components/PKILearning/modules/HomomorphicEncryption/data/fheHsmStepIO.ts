@@ -7,6 +7,7 @@
 // compute-limits flows, TFHE for the TFHE flows, BFV / BGV for the threshold flows.
 
 import type { FheFlowId } from './fheHsmFlows'
+import { KEY_LIFECYCLE_IO } from './fheKeyLifecycleFlows'
 
 export type ComputeKind =
   | 'keygen'
@@ -50,6 +51,7 @@ const io = (input: string, kind: ComputeKind, computation: string, output: strin
 })
 
 export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
+  ...KEY_LIFECYCLE_IO,
   'single-hsm': [
     io(
       'Nothing from outside: the HSM entropy source plus the agreed parameter set (N = 2¹⁶, modulus chain, scale).',

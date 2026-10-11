@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { CkksEvidenceKey } from './fheCkksEvidence'
+import { KEY_LIFECYCLE_FLOWS, KEY_LIFECYCLE_META } from './fheKeyLifecycleFlows'
 import {
   BOARD_CELLS_NOT_MEASURED,
   FLOOD_FORMULA,
@@ -19,6 +21,8 @@ export type FheFlowId =
   | 'lattigo-threshold'
   | 'hsm-compute-limits'
   | 'tfhe-transciphering'
+  | 'ckks-key-rotation'
+  | 'ckks-shared-decrypt'
 
 export type ActorKind = 'client' | 'cloud' | 'hsm' | 'gpu'
 
@@ -42,7 +46,7 @@ export const ZONE_LABELS: Record<TrustZone, string> = {
 }
 
 /** The FHE life cycle every flow walks through, shown as bands down the diagram. */
-export type Phase = 'setup' | 'encrypt' | 'compute' | 'decrypt' | 'backup'
+export type Phase = 'setup' | 'encrypt' | 'compute' | 'decrypt' | 'backup' | 'retire'
 
 export const PHASE_LABELS: Record<Phase, string> = {
   setup: 'Key setup',
@@ -50,6 +54,7 @@ export const PHASE_LABELS: Record<Phase, string> = {
   compute: 'Compute on encrypted data',
   decrypt: 'Decrypt',
   backup: 'Backup',
+  retire: 'Retire',
 }
 
 /** What state the data itself is in at a step (keys-only steps carry no data). */
@@ -161,6 +166,8 @@ export interface FheFlow {
   hsmDoes: string
   staysSecret: string
   watchOut: string
+  /** Evidence records the scenario's measured numbers come from, linked under the diagram. */
+  measured?: { label: string; of: CkksEvidenceKey }[]
 }
 
 /** Engine status of a step: explicit, else refused / planned when it touches an HSM, else outside. */
@@ -1353,6 +1360,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     watchOut:
       'Use Kreyvium (128-bit key), not Trivium (80-bit), for data that must stay confidential for years. AES-128-CTR transciphering is available in TFHE-rs but costs more than Kreyvium.',
   },
+  ...KEY_LIFECYCLE_FLOWS,
 ]
 
 /** Phase and data state of every step, aligned with each flow's `steps` (checked by tests). */
@@ -1522,4 +1530,5 @@ export const FLOW_STEP_META: Record<FheFlowId, { phase: Phase[]; data: DataState
       'result',
     ],
   },
+  ...KEY_LIFECYCLE_META,
 }
