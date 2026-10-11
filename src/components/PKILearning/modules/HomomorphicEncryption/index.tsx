@@ -22,7 +22,12 @@ export const HomomorphicEncryptionModule: FC = () => (
     manifest={manifest}
     description="Fully homomorphic encryption, the ISO/IEC 28033 draft schemes, and how an HSM holds the FHE secret key: compute on encrypted data without trusting the hardware."
     learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => <FheExercises onNavigateToWorkshop={api.goToWorkshop} />}
+    exercises={(api) => (
+      <FheExercises
+        onNavigateToWorkshop={api.goToWorkshop}
+        onNavigateToLearn={() => api.goToTab('learn')}
+      />
+    )}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

@@ -8,8 +8,8 @@ Whoever holds the secret key can open everything, and the public keys that make 
 
 ### The Key Takeaway
 
-Keep the FHE secret key inside a hardware security module and never let it act as a decryption service for anyone who asks: published attacks can recover the key from the answers.
+FHE keeps data hidden from the server, but it is much slower than ordinary computing and suits some kinds of data better than others. Its secret key is best kept inside a hardware security module, and whoever is allowed to ask that module to decrypt can, in principle, recover the key from the answers, so who may ask decides how well the data is protected.
 
 ### What's Happening
 
-The international standard for FHE (ISO/IEC 28033) is still in draft, and open-source libraries such as TFHE-rs, OpenFHE and Lattigo already implement the schemes it covers.
+The international standard for FHE (ISO/IEC 28033) is still in draft, FHE itself has no FIPS or Common Criteria approval, and it is in production mainly for private lookups. Open-source libraries such as TFHE-rs, OpenFHE and Lattigo already implement the schemes it covers.

@@ -42,7 +42,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Approximate real / complex vectors',
     bestFor: 'Machine learning, statistics, signal processing',
     bootstrapping: 'Yes (approximate)',
-    isoPart: 'ISO/IEC DIS 28033-3',
+    isoPart: 'ISO/IEC FDIS 28033-3',
   },
   {
     id: 'tfhe',
