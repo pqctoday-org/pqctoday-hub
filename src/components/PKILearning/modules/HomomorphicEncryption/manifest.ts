@@ -3,26 +3,33 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'homomorphic-encryption',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-076',
   title: 'Homomorphic Encryption (FHE) & HSM Key Custody',
   description:
-    'Compute on encrypted data without trusting the hardware: the four ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM can hold the FHE secret key without becoming a decryption oracle.',
+    'Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.',
   whyThisMatters:
-    'FHE needs no trusted hardware, but its keys still need a custodian: the secret key is small and precious, the public keys are huge, and an HSM that decrypts on request becomes an oracle that leaks the key.',
+    'FHE needs no trusted hardware, but it costs thousands of times the compute and its keys still need a custodian: the secret key is small and precious, the public keys are huge, and whoever may ask the custodian to decrypt can recover the key.',
   duration: '45 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
   trackOrder: 2,
   learnSections: [
-    { id: 'fhe-fundamentals', label: 'FHE vs TEEs & the ISO/IEC 28033 Schemes' },
+    { id: 'fhe-fundamentals', label: 'What FHE Is & What It Promises' },
+    { id: 'fhe-schemes', label: 'Schemes, Data Types & Noisy Results' },
+    { id: 'fhe-use-cases', label: 'Where FHE Is Used' },
+    { id: 'fhe-cost', label: 'The Cost & How It Is Being Reduced' },
     { id: 'fhe-keys-operations', label: 'Keys, Operations & AES Data' },
     { id: 'fhe-quantum', label: 'FHE Against the Quantum Threat' },
+    { id: 'fhe-standards', label: 'Standards & Compliance' },
     { id: 'fhe-hsm-custody', label: 'The HSM as FHE Key Custodian' },
     { id: 'fhe-implementations', label: 'Open-Source Implementations' },
   ],
-  workshopSteps: [{ id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' }],
+  workshopSteps: [
+    { id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' },
+    { id: 'fhe-concepts', label: 'FHE concepts, hands-on' },
+  ],
   startHere: {
     step: 'fhe-hsm-flows',
     text: 'Open the first scenario in the FHE + HSM Flows step: the data owner makes its FHE key in an HSM, encrypts locally, lets a third party compute on ciphertexts, then asks the HSM to decrypt under policy.',

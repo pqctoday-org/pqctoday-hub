@@ -276,7 +276,7 @@
       "id": "homomorphic-encryption",
       "lm_id": "LM-076",
       "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
-      "description": "Compute on encrypted data without trusting the hardware: the four ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM can hold the FHE secret key without becoming a decryption oracle.",
+      "description": "Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.",
       "duration": "45 min",
       "difficulty": "advanced",
       "frameworkPhase": "p6"
@@ -698,7 +698,7 @@
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
-    "homomorphic-encryption": 1,
+    "homomorphic-encryption": 2,
     "hsm-pqc": 5,
     "hybrid-crypto": 7,
     "iam-pqc": 6,
@@ -1506,7 +1506,19 @@
     "homomorphic-encryption": [
       {
         "id": "fhe-fundamentals",
-        "label": "FHE vs TEEs & the ISO/IEC 28033 Schemes"
+        "label": "What FHE Is & What It Promises"
+      },
+      {
+        "id": "fhe-schemes",
+        "label": "Schemes, Data Types & Noisy Results"
+      },
+      {
+        "id": "fhe-use-cases",
+        "label": "Where FHE Is Used"
+      },
+      {
+        "id": "fhe-cost",
+        "label": "The Cost & How It Is Being Reduced"
       },
       {
         "id": "fhe-keys-operations",
@@ -1515,6 +1527,10 @@
       {
         "id": "fhe-quantum",
         "label": "FHE Against the Quantum Threat"
+      },
+      {
+        "id": "fhe-standards",
+        "label": "Standards & Compliance"
       },
       {
         "id": "fhe-hsm-custody",
@@ -3038,6 +3054,10 @@
       {
         "id": "fhe-hsm-flows",
         "label": "FHE + HSM Flows"
+      },
+      {
+        "id": "fhe-concepts",
+        "label": "FHE concepts, hands-on"
       }
     ],
     "hsm-pqc": [
@@ -4188,7 +4208,7 @@
           "id": "homomorphic-encryption",
           "lm_id": "LM-076",
           "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
-          "description": "Compute on encrypted data without trusting the hardware: the four ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM can hold the FHE secret key without becoming a decryption oracle.",
+          "description": "Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.",
           "duration": "45 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"

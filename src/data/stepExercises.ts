@@ -1113,14 +1113,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // homomorphic-encryption
   'homomorphic-encryption/fhe-hsm-flows': {
     prompt:
-      'In the CKKS single-HSM scenario, the step "Export the evaluation keys" is marked as where this model breaks. Why?',
+      'In the CKKS single-HSM scenario, the step "Stream the evaluation keys" is marked as the heaviest step. How does the HSM still deliver a bootstrappable key set that is gigabytes in size?',
     options: [
-      'The evaluation keys are secret, so the HSM cannot send them to the cloud',
-      'Only the secret-key holder can make them, and a bootstrappable set is gigabytes: beyond what an HSM can hold or return through PKCS#11',
-      'The cloud has to generate them itself, which would expose the secret key',
+      'It does not: the cloud generates the evaluation keys itself, because they are public',
+      'It produces the set as a stream of bounded PKCS#11 calls, each returning a small piece the host reads and the token then discards, so token memory stays small',
+      'It holds the whole set in its secure memory and returns it in a single PKCS#11 call',
     ],
     answer: 1,
-    why: 'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only its holder can make them. A bootstrappable CKKS set is gigabytes (estimated), so the scenario is kept as a counter-example and the planned engine refuses the export.',
+    why: 'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. The set is too large to hold in an HSM, but it never has to be held: the HSM derives it one bounded piece per call, the host reads and destroys each piece and checks it against a signed manifest. The measured runs show the token memory staying small while the whole set streams out, which is why the step is heavy (a one-time cost per key set) but scales.',
   },
   // platform-eng-pqc
   'platform-eng-pqc/crypto-posture-monitor': {

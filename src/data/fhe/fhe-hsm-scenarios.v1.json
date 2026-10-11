@@ -43,7 +43,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "KeyGen()"
         },
         {
@@ -53,7 +53,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {
@@ -63,7 +63,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "KeyGen() → publicKey"
         },
         {
@@ -111,7 +111,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": false,
-          "engineStatus": "refused"
+          "engineStatus": "planned"
         },
         {
           "id": "decrypt-under-policy",
@@ -120,7 +120,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT"
         },
         {
@@ -130,7 +130,7 @@
           "phase": "decrypt",
           "data": "result",
           "deployment": false,
-          "engineStatus": "refused"
+          "engineStatus": "planned"
         },
         {
           "id": "live-clone-peer-hsm",
@@ -139,7 +139,7 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "vendor replication capability: live clone (planned; names fixed in P0B)"
         },
         {
@@ -149,7 +149,7 @@
           "phase": "backup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "vendor replication capability: offline backup package, restored by the enrolled backup HSM (planned)"
         }
       ],
@@ -799,7 +799,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "refused",
+          "engineStatus": "planned",
           "api": "EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {

@@ -42,7 +42,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Approximate real / complex vectors',
     bestFor: 'Machine learning, statistics, signal processing',
     bootstrapping: 'Yes (approximate)',
-    isoPart: 'ISO/IEC DIS 28033-3',
+    isoPart: 'ISO/IEC FDIS 28033-3',
   },
   {
     id: 'tfhe',
@@ -78,21 +78,24 @@ export const FHE_KEYS: FheKey[] = [
     name: 'Public (encryption) key',
     secret: false,
     what: 'An RLWE sample (b = −a·s + e, a). Anyone holding it can encrypt.',
-    sizeOrder: '~15–30 MB for CKKS/BFV at N = 2¹⁶ (estimate); TFHE compact key tens of KB',
+    sizeOrder:
+      'CKKS at N = 2¹⁶ (Lattigo’s default bootstrappable set): 15.7 MB, of which an HSM exports the 7.9 MB b half (measured); BFV at N = 2¹⁶ similar (estimate); TFHE compact key 33 KB (measured)',
   },
   {
     id: 'relin',
     name: 'Relinearization key',
     secret: false,
     what: 'Key-switching key from s² back to s — needed after every ciphertext × ciphertext multiply (BGV/BFV/CKKS).',
-    sizeOrder: 'Tens to hundreds of MB',
+    sizeOrder:
+      'CKKS at N = 2¹⁶ (Lattigo’s default bootstrappable set): 157,289,056 B with both halves, 79 MB exported (measured); BFV and BGV at N = 2¹⁴: 6.3–6.6 MB (measured)',
   },
   {
     id: 'rot',
     name: 'Rotation (Galois) keys',
     secret: false,
     what: 'One key-switching key per slot rotation you want to allow, plus conjugation for CKKS.',
-    sizeOrder: 'Each ≈ a relin key; a CKKS bootstrapping set reaches GBs',
+    sizeOrder:
+      'Each the size of a relinearization key; a CKKS bootstrapping set of 51 keys is 7.87 GB, 3.94 GB exported (measured)',
   },
   {
     id: 'bsk',
@@ -100,53 +103,6 @@ export const FHE_KEYS: FheKey[] = [
     secret: false,
     what: 'Every bit of the secret key encrypted under a second key — lets the server refresh noise without decrypting.',
     sizeOrder: 'Tens to hundreds of MB (compressed forms are smaller)',
-  },
-]
-
-export interface FheOperation {
-  name: string
-  runBy: 'client' | 'server' | 'key holder'
-  needs: string
-  note: string
-}
-
-export const FHE_OPERATIONS: FheOperation[] = [
-  {
-    name: 'Encode / Encrypt',
-    runBy: 'client',
-    needs: 'public key',
-    note: 'Fresh ciphertext, small noise',
-  },
-  { name: 'Add', runBy: 'server', needs: '—', note: 'Noise adds — cheap' },
-  {
-    name: 'Multiply + Relinearize',
-    runBy: 'server',
-    needs: 'relin key',
-    note: 'Noise grows fast — this is what limits depth',
-  },
-  {
-    name: 'Rescale / Mod-switch',
-    runBy: 'server',
-    needs: '—',
-    note: 'Drops one modulus level to keep noise and scale in check',
-  },
-  {
-    name: 'Rotate',
-    runBy: 'server',
-    needs: 'rotation key',
-    note: 'Moves values between SIMD slots',
-  },
-  {
-    name: 'Bootstrap',
-    runBy: 'server',
-    needs: 'bootstrapping / rotation keys',
-    note: 'Refreshes noise so computation can continue — the expensive step',
-  },
-  {
-    name: 'Decrypt / Decode',
-    runBy: 'key holder',
-    needs: 'secret key',
-    note: 'The only evaluation-time operation that needs the secret (key generation needs it too) — the HSM’s job',
   },
 ]
 

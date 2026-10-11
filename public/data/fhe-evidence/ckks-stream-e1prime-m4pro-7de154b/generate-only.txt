@@ -1,0 +1,15 @@
+19:21  up 4 days, 19:50, 1 user, load averages: 2.29 4.97 4.12
+969f242fd31def8cc9bc579f0cd6b0020815ee7b893ffcd8d651aceb45f8dabc  -
+{
+ "paramSet": 2,
+ "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "keys": 51,
+ "limbsPerCall": 8,
+ "evkCalls": 1001,
+ "bytes": 3941073029,
+ "seconds": 43.840,
+ "mbPerSecond": 89.9,
+ "slowestCallSeconds": 0.0482,
+ "peakRssKiB": 15560
+}
+19:22  up 4 days, 19:51, 1 user, load averages: 2.05 4.54 4.00

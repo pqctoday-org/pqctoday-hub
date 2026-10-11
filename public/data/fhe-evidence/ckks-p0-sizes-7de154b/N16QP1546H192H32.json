@@ -1,0 +1,941 @@
+{
+ "bootstrapLog2Prec": 24.89437326835168,
+ "bootstrapMaxAbsErr": 3.2066157618082514e-8,
+ "bootstrapSeconds": 8.386650102,
+ "bootstrapping": {
+  "H": 192,
+  "P": [
+   2305843009211596801,
+   2305843009210023937,
+   2305843009218281473,
+   2305843009208713217,
+   2305843009218936833
+  ],
+  "Q": [
+   1152921504606584833,
+   1099512938497,
+   1099510054913,
+   1099507695617,
+   1099515691009,
+   1099516870657,
+   1099506515969,
+   1099504549889,
+   1099503894529,
+   1099503370241,
+   549754109953,
+   549753978881,
+   549753716737,
+   1152921504614055937,
+   1152921504598720513,
+   1152921504615628801,
+   1152921504616808449,
+   1152921504597016577,
+   1152921504595968001,
+   1152921504618381313,
+   1152921504620347393,
+   72057594038321153,
+   72057594036879361,
+   72057594035306497,
+   72057594040680449
+  ],
+  "ephemeralH": 32,
+  "logN": 16,
+  "logQP": 1545.9999549403965,
+  "xe": "{3.2 19.2}"
+ },
+ "cpus": 18,
+ "galoisKeyCount": 48,
+ "genSeconds": 27.325446821,
+ "go": "go1.25.4",
+ "keyCount": 51,
+ "keys": [
+  {
+   "kind": "relinearization",
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 113153,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 31745,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 78125,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 117889,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 122881,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 25,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 125,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 3125,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 8193,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 45441,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 49665,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 57601,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 67585,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 4097,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 63489,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 69153,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 71681,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 97937,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 128481,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 7937,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 15625,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 32769,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 60833,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 61313,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 81921,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 86145,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 99329,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 5,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 59393,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 65537,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 95233,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 102017,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 106497,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 114689,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 126977,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 13921,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 35841,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 89345,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 98305,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 131071,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 625,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 28609,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 49153,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 77185,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 81409,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 106561,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 118785,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "galois",
+   "galoisElement": 16385,
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  },
+  {
+   "kind": "dense-to-sparse",
+   "bytes": 2097248,
+   "bBytesOnly": 1048608,
+   "rnsDigits": 1,
+   "baseTwoSizes": [
+    1
+   ],
+   "levelQ": 0,
+   "levelP": 0,
+   "logN": 16
+  },
+  {
+   "kind": "sparse-to-dense",
+   "bytes": 157289056,
+   "bBytesOnly": 78644480,
+   "rnsDigits": 5,
+   "baseTwoSizes": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "levelQ": 24,
+   "levelP": 4,
+   "logN": 16
+  }
+ ],
+ "lattigo": "v6.2.0 (pqctoday-fhe/lattigo, unmodified)",
+ "parameterSet": "N16QP1546H192H32",
+ "residual": {
+  "H": 192,
+  "P": [
+   2305843009211596801,
+   2305843009210023937,
+   2305843009208713217,
+   2305843009202159617,
+   2305843009201242113
+  ],
+  "Q": [
+   1152921504606584833,
+   1099512938497,
+   1099510054913,
+   1099507695617,
+   1099515691009,
+   1099516870657,
+   1099506515969,
+   1099504549889,
+   1099503894529,
+   1099503370241
+  ],
+  "logDefaultScale": 40,
+  "logN": 16
+ },
+ "totalBBytesOnly": 3933272608,
+ "totalBytes": 7866550048
+}
