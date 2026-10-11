@@ -1,0 +1,7 @@
+model: NXP FRDM-IMX95-PRO
+custodian_sha256: ad039f4ef6231482636ccfc33a96853c30d92713a78642e9f6d3904d07c4cedf
+build_commit: 80b82d517f91270c1b02ff21cd56df29ab965a23
+build_features: educational-ckks,test-support
+build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
+sizes: 8 30
+threads: 6

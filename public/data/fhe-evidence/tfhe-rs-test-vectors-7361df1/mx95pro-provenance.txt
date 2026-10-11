@@ -1,0 +1,5 @@
+model: NXP FRDM-IMX95-PRO
+kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+cores: 6
+binary_sha256: 792a807f3d28b677c9dcd15968e0fb050091316e80f748423c53da61acf1cd67
+tmpfs                     7.7G     20.0K      7.7G   0% /tmp

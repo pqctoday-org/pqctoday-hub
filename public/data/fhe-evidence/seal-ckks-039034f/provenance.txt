@@ -1,0 +1,8 @@
+date: 2026-10-11T04:30:43Z
+repo_head: 8beec58b4b50764f347ac50607043675bb00f3f1
+seal: v4.1.2 119dc32e135cb89c1062076a69310d4413ebc824
+image: debian@sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26
+go_image: golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb
+lattigo_tree: e03848d679be6d3a0de093b399ed2b12bbcc03c4 (vendored v6.2.0)
+toolchain: g++ (Debian 12.2.0-14+deb12u1) 12.2.0; cmake version 3.25.1
+generator_binary_sha256: d3e4b2d1f3e33a5f76832cee29fb2e85e9392b3834d1b755232a6dce52a433de

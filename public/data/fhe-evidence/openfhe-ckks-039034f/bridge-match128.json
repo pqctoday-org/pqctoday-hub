@@ -1,0 +1,13 @@
+{
+ "config": "match128",
+ "N": 65536,
+ "ownKeyGenSeconds": 12.498153,
+ "log2Precision": {
+  "openfheOwnKeys": {"fresh": 40.576096, "multiplyRelinearize": 40.268469, "rotate+1": 33.460052, "rotate-1": 33.451589, "rotate+7": 33.450557, "conjugate": 33.449072, "bootstrap": 12.904120},
+  "lattigoKeysBridged": {"fresh": 40.657231, "multiplyRelinearize": 40.346483, "rotate+1": 33.454116, "rotate-1": 33.447449, "rotate+7": 33.448123, "conjugate": 33.457498, "bootstrap": 12.903260},
+  "negativeControlUnconvertedRelinKey": {"multiplyRelinearize": -999.000000}
+ },
+ "keysReplaced": 78,
+ "keysKeptOpenFHE": 2,
+ "bridgeLoadSeconds": 10.064125
+}

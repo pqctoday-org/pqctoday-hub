@@ -1,0 +1,7 @@
+date: 2026-10-11T04:28:25Z
+repo_head: 8beec58b4b50764f347ac50607043675bb00f3f1
+openfhe_tree: 23256a3a3586f036b4af3c55e1715deceedb34d2 (import of v1.6.0 6206d24f9eefefc620b524a4f2b9f308feb91e9f)
+image: debian@sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26
+cpus: 4 mem: 40g
+host: Darwin arm64, Docker 29.4.0
+toolchain: g++ (Debian 12.2.0-14+deb12u1) 12.2.0; cmake version 3.25.1
