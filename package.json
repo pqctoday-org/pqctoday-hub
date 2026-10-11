@@ -116,7 +116,10 @@
     "esbuild": "^0.28.1",
     "serialize-javascript": ">=7.0.3",
     "uuid": "^14.0.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "monaco-editor": {
+      "dompurify": "3.4.16"
+    }
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
