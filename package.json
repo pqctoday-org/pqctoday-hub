@@ -119,6 +119,9 @@
     "sharp": "^0.35.5",
     "monaco-editor": {
       "dompurify": "3.4.16"
+    },
+    "mermaid": {
+      "katex": "0.18.2"
     }
   },
   "dependencies": {
