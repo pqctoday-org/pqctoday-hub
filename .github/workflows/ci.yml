@@ -90,6 +90,14 @@ jobs:
           ONNXRUNTIME_NODE_INSTALL: skip
         run: npm ci
 
+      # Public-boundary scan, source (owner decision 2026-10-11): the tracked
+      # files may not gain private paths, run identifiers or internal folders
+      # beyond the frozen baseline. Existing findings are accepted as they are;
+      # the baseline only shrinks (`--update-baseline`). Output names the rule
+      # and file, never the matched text.
+      - name: Public-boundary scan (source)
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree . --tracked --baseline scripts/ci/leak-baseline-source.json --mode enforce
+
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.
         # It therefore has to actually RUN; a lint step that aborts gates nothing.
@@ -145,6 +153,11 @@ jobs:
           VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: npm run build
+
+      # Public-boundary scan, built site: the same rules over dist/ before the
+      # smoke tier and before the upload deploy.yml publishes.
+      - name: Public-boundary scan (built site)
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree dist --baseline scripts/ci/leak-baseline-dist.json --mode enforce
 
       # E2E smoke tier — the critical user journeys, against the production
       # build (`vite preview` on the dist/ from the Build step). The only
