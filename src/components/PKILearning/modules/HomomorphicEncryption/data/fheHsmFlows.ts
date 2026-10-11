@@ -71,7 +71,7 @@ export type ScalingVerdict = 'scales' | 'scales-when-streamed' | 'does-not-scale
  * contract (fhe-hsm-scenarios.v1.json) until that change merges.
  */
 const CKKS_ENGINE_PENDING =
-  'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy) are in a pqctoday-hsm change under review, not merged yet; the status shown is the earlier design until it merges. Validated on the MX95 boards (see the evidence badges).'
+  'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy) are in a pqctoday-hsm change under review, not merged yet, so the status shows planned until it merges. Validated on the MX95 boards (see the evidence badges).'
 
 /** Next to the evidence badges of the CKKS decrypt steps. */
 const CKKS_DECRYPT_EVIDENCE =
@@ -207,11 +207,11 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Cheon, Kim, Kim, Song: Homomorphic Encryption for Arithmetic of Approximate Numbers (ASIACRYPT 2017); OpenFHE design paper (IACR ePrint 2022/915)',
       paperUrl: 'https://eprint.iacr.org/2022/915',
     },
-    // Status kept as in the scenario contract until the streamed CKKS engine change merges; the
-    // HSM steps carry CKKS_ENGINE_PENDING as their note.
+    // Planned until the streamed CKKS engine change merges; the HSM steps carry
+    // CKKS_ENGINE_PENDING as their note.
     engineDefault: {
-      status: 'refused',
-      note: 'CKKS mechanisms are in a pqctoday-hsm change under review (streamed evaluation keys); this status follows the scenario contract until it merges.',
+      status: 'planned',
+      note: 'CKKS mechanisms are in a pqctoday-hsm change under review (streamed evaluation keys); planned until it merges.',
     },
     validation: {
       target:
@@ -1104,9 +1104,6 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         detail:
           'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM.',
         verdict: 'warn',
-        // The scenario contract still records this step as refused; kept until the streamed
-        // engine change merges and the contract is updated.
-        engine: 'refused',
         engineNote: CKKS_ENGINE_PENDING,
         link: 'sig',
       },
