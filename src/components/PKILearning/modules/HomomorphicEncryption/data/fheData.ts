@@ -78,21 +78,24 @@ export const FHE_KEYS: FheKey[] = [
     name: 'Public (encryption) key',
     secret: false,
     what: 'An RLWE sample (b = −a·s + e, a). Anyone holding it can encrypt.',
-    sizeOrder: '~15–30 MB for CKKS/BFV at N = 2¹⁶ (estimate); TFHE compact key tens of KB',
+    sizeOrder:
+      'CKKS at N = 2¹⁶ (Lattigo’s default bootstrappable set): 15.7 MB, of which an HSM exports the 7.9 MB b half (measured); BFV at N = 2¹⁶ similar (estimate); TFHE compact key 33 KB (measured)',
   },
   {
     id: 'relin',
     name: 'Relinearization key',
     secret: false,
     what: 'Key-switching key from s² back to s — needed after every ciphertext × ciphertext multiply (BGV/BFV/CKKS).',
-    sizeOrder: 'Tens to hundreds of MB',
+    sizeOrder:
+      'CKKS at N = 2¹⁶ (Lattigo’s default bootstrappable set): 157,289,056 B with both halves, 79 MB exported (measured); BFV and BGV at N = 2¹⁴: 6.3–6.6 MB (measured)',
   },
   {
     id: 'rot',
     name: 'Rotation (Galois) keys',
     secret: false,
     what: 'One key-switching key per slot rotation you want to allow, plus conjugation for CKKS.',
-    sizeOrder: 'Each ≈ a relin key; a CKKS bootstrapping set reaches GBs',
+    sizeOrder:
+      'Each the size of a relinearization key; a CKKS bootstrapping set of 51 keys is 7.87 GB, 3.94 GB exported (measured)',
   },
   {
     id: 'bsk',

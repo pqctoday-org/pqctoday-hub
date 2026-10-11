@@ -18,6 +18,7 @@ export type ComputeKind =
   | 'transfer'
   | 'symmetric'
   | 'combine'
+  | 'streamed'
   | 'rejected'
 
 export interface StepIO {
@@ -37,6 +38,7 @@ export const COMPUTE_KIND_LABELS: Record<ComputeKind, string> = {
   transfer: 'Transfer only',
   symmetric: 'Symmetric crypto',
   combine: 'Share combination',
+  streamed: 'Key generation, streamed in bounded pieces',
   rejected: 'Rejected: does not fit',
 }
 
@@ -56,10 +58,10 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'A seed stored as a non-extractable key object that leaves only by replication to an authenticated HSM. s exists only in HSM memory.'
     ),
     io(
-      's (inside the HSM), the parameter set and the list of rotation steps the computation needs.',
-      'rejected',
-      'For each target (s², and s(X^k) for every rotation k): sample a random a and an error e, then form b = −a·s + e + gadget·target. That is thousands of NTT polynomial multiplications. The finished key set is hashed and the hash signed.',
-      'In theory: ~GB of relinearization, rotation and conjugation keys plus a signature. In practice an HSM cannot produce or export this volume, which is why this model does not scale.'
+      's (inside the HSM), the parameter set and the closed list of keys the computation needs; per call, which key, digit and limbs to produce.',
+      'streamed',
+      'For each target (s², and s(X^k) for every rotation k), per digit and limb: expand the public a from a seed, sample the error e, and form b = −a·s + e + gadget·target in Montgomery and NTT form. One PKCS#11 call produces 8 limbs (4 MB) of one digit as a public session object; the host reads it and destroys it, and each piece’s SHA-256 goes into a manifest signed with the token’s key.',
+      'The b halves of 51 keys, 3,941,073,029 B in 1,001 calls (measured with Lattigo v6.2.0’s default bootstrappable set); the receiver re-expands each a from its seed. Token memory stayed at 15–17 MiB on a Mac core and on the MX95 boards.'
     ),
     io(
       's and the parameter set.',
@@ -432,10 +434,10 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       'A seed object and s in HSM memory. Fits comfortably.'
     ),
     io(
-      's and the list of rotation steps.',
-      'rejected',
-      'The same key-switching keygen as above. At the estimated GBs of output, an HSM CPU and PKCS#11 are impractical, so the planned engine refuses it before allocating.',
-      'Nothing from the HSM. Alternatives: TFHE (a ~30 MB server key the HSM can make), or threshold refresh (Lattigo), which needs no bootstrapping keys.'
+      's and the closed list of keys; per call, which key, digit and limbs.',
+      'streamed',
+      'The same key-switching keygen as above, one bounded piece per PKCS#11 call, so memory stays at a few MiB however large the set is.',
+      'The key set as a stream: 3.94 GB in 1,001 calls, 473 s on one MX95 Cortex-A55 core (measured). TFHE (a 30 MB server key) and threshold refresh (Lattigo, no bootstrapping keys) avoid the volume.'
     ),
     io(
       'Would need the ciphertexts plus GBs of evaluation keys resident in HSM memory.',

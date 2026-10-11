@@ -35,6 +35,7 @@ import {
   type FheFlowId,
   type FlowStep,
   type LinkKind,
+  type ScalingVerdict,
   type StepVerdict,
 } from '../data/fheHsmFlows'
 import {
@@ -152,26 +153,19 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
 
         {flow.scaling && (
           <div
-            className={`rounded-lg border p-3 text-xs leading-relaxed flex gap-2 ${
-              flow.scaling.verdict === 'scales'
-                ? 'border-success/40 bg-success/10'
-                : 'border-destructive/40 bg-destructive/10'
-            }`}
+            className={`rounded-lg border p-3 text-xs leading-relaxed flex gap-2 ${SCALING_TEXT[flow.scaling.verdict].box}`}
           >
-            {flow.scaling.verdict === 'scales' ? (
-              <ShieldCheck size={16} className="text-status-success shrink-0 mt-0.5" />
-            ) : (
+            {flow.scaling.verdict === 'does-not-scale' ? (
               <ShieldAlert size={16} className="text-status-error shrink-0 mt-0.5" />
+            ) : (
+              <ShieldCheck
+                size={16}
+                className={`${SCALING_TEXT[flow.scaling.verdict].text} shrink-0 mt-0.5`}
+              />
             )}
             <p className="text-foreground/85">
-              <span
-                className={`font-bold ${
-                  flow.scaling.verdict === 'scales' ? 'text-status-success' : 'text-status-error'
-                }`}
-              >
-                {flow.scaling.verdict === 'scales'
-                  ? 'Scales on an HSM. '
-                  : 'Does not scale on an HSM. '}
+              <span className={`font-bold ${SCALING_TEXT[flow.scaling.verdict].text}`}>
+                {SCALING_TEXT[flow.scaling.verdict].label}
               </span>
               {flow.scaling.note}
             </p>
@@ -463,6 +457,24 @@ const LegendSwatch: React.FC<{ className: string; label: string }> = ({ classNam
   </span>
 )
 
+const SCALING_TEXT: Record<ScalingVerdict, { label: string; box: string; text: string }> = {
+  scales: {
+    label: 'Scales on an HSM. ',
+    box: 'border-success/40 bg-success/10',
+    text: 'text-status-success',
+  },
+  'scales-when-streamed': {
+    label: 'Scales when streamed. ',
+    box: 'border-warning/40 bg-warning/10',
+    text: 'text-status-warning',
+  },
+  'does-not-scale': {
+    label: 'Does not scale on an HSM. ',
+    box: 'border-destructive/40 bg-destructive/10',
+    text: 'text-status-error',
+  },
+}
+
 const VERDICT_TEXT: Record<StepVerdict, { label: string; cls: string }> = {
   ok: {
     label: 'Fits in the HSM / right place',
@@ -684,6 +696,9 @@ export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow
             {v.label}
           </Button>
         ))
+      )}
+      {found.length > 0 && step.evidenceNote && (
+        <span className="w-full text-status-warning">{step.evidenceNote}</span>
       )}
       {open && <EvidencePanel open onClose={close} record={open.record} label={open.label} />}
     </div>

@@ -38,7 +38,7 @@ export const TAKEAWAYS = {
     'What can be validated today is the conventional cryptography around FHE, not FHE itself.',
   ],
   custody: [
-    'An HSM can hold the FHE secret key, sign the key set and decrypt under policy; it cannot run the homomorphic computation.',
+    'An HSM can hold the FHE secret key, stream out even a multi-GB evaluation-key set in bounded pieces, sign it and decrypt under policy; it cannot run the homomorphic computation.',
     'Whoever may ask the HSM to decrypt can recover the key, so decryption policy, compensating controls or threshold decryption carry the security model.',
   ],
   implementations: [
@@ -422,6 +422,8 @@ export const FHE_STANDARDS: FheStandardRow[] = [
 export interface FheReference {
   text: string
   url?: string
+  /** Library row id (e.g. IACR-ePrint-2020-1533); linked from the list once the row exists. */
+  libraryId?: string
 }
 
 export interface FheReferenceGroup {
@@ -440,6 +442,7 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       {
         text: 'Cheon, Kim, Kim, Song. Homomorphic Encryption for Arithmetic of Approximate Numbers. ASIACRYPT 2017, IACR ePrint 2016/421.',
         url: 'https://eprint.iacr.org/2016/421',
+        libraryId: 'IACR-ePrint-2016-421',
       },
       {
         text: 'Lattigo v6 package documentation (CKKS: fixed-point approximate arithmetic).',
@@ -461,38 +464,47 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       {
         text: 'Li, Micciancio. On the Security of Homomorphic Encryption on Approximate Numbers. EUROCRYPT 2021, IACR ePrint 2020/1533.',
         url: 'https://eprint.iacr.org/2020/1533',
+        libraryId: 'IACR-ePrint-2020-1533',
       },
       {
         text: 'Li, Micciancio, Schultz, Sorrell. Securing Approximate Homomorphic Encryption Using Differential Privacy. CRYPTO 2022, IACR ePrint 2022/816.',
         url: 'https://eprint.iacr.org/2022/816',
+        libraryId: 'IACR-ePrint-2022-816',
       },
       {
         text: 'Bossuat, Costache, Mouchet, Nürnberger, Troncoso-Pastoriza. Accurate and Composable Noise Estimates for CKKS with Application to Exact HE Computation. IACR Communications in Cryptology 2025, IACR ePrint 2024/853.',
         url: 'https://eprint.iacr.org/2024/853',
+        libraryId: 'IACR-ePrint-2024-853',
       },
       {
         text: 'Checri, Sirdey, Boudguiga, Bultel. On the practical CPAD security of “exact” and threshold FHE schemes and libraries. CRYPTO 2024, IACR ePrint 2024/116.',
         url: 'https://eprint.iacr.org/2024/116',
+        libraryId: 'IACR-ePrint-2024-116',
       },
       {
         text: 'Cheon, Choe, Passelègue, Stehlé, Suvanto. Attacks Against the INDCPA-D Security of Exact FHE Schemes. ACM CCS 2024, IACR ePrint 2024/127.',
         url: 'https://eprint.iacr.org/2024/127',
+        libraryId: 'IACR-ePrint-2024-127',
       },
       {
         text: 'Loftus, May, Smart, Vercauteren. On CCA-Secure Fully Homomorphic Encryption. IACR ePrint 2010/560.',
         url: 'https://eprint.iacr.org/2010/560',
+        libraryId: 'IACR-ePrint-2010-560',
       },
       {
         text: 'Chenal, Tang. On Key Recovery Attacks against Existing Somewhat Homomorphic Encryption Schemes. LATINCRYPT 2014, IACR ePrint 2014/535.',
         url: 'https://eprint.iacr.org/2014/535',
+        libraryId: 'IACR-ePrint-2014-535',
       },
       {
         text: 'Manulis, Nguyen. Fully Homomorphic Encryption beyond IND-CCA1 Security: Integrity through Verifiability. EUROCRYPT 2024, IACR ePrint 2024/202.',
         url: 'https://eprint.iacr.org/2024/202',
+        libraryId: 'IACR-ePrint-2024-202',
       },
       {
         text: 'Bootland et al. (Zama). Threshold (Fully) Homomorphic Encryption. IACR ePrint 2025/699 (preprint).',
         url: 'https://eprint.iacr.org/2025/699',
+        libraryId: 'IACR-ePrint-2025-699',
       },
       {
         text: 'Zama fhEVM documentation (zero-knowledge proofs on inputs; threshold key management); NIST Threshold Call preview TCall-1 Zama-PW01.',
@@ -629,6 +641,7 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       {
         text: 'Chillotti, Gama, Georgieva, Izabachène. TFHE: Fast Fully Homomorphic Encryption over the Torus. Journal of Cryptology 2020, IACR ePrint 2018/421.',
         url: 'https://eprint.iacr.org/2018/421',
+        libraryId: 'IACR-ePrint-2018-421',
       },
       {
         text: 'Cheon, Han, Kim, Kim, Song. A Full RNS Variant of Approximate Homomorphic Encryption. SAC 2018, IACR ePrint 2018/931.',
@@ -637,6 +650,12 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       {
         text: 'Bossuat, Mouchet, Troncoso-Pastoriza, Hubaux. Efficient Bootstrapping for Approximate Homomorphic Encryption with Non-Sparse Keys. EUROCRYPT 2021, IACR ePrint 2020/1203.',
         url: 'https://eprint.iacr.org/2020/1203',
+        libraryId: 'IACR-ePrint-2020-1203',
+      },
+      {
+        text: 'Bossuat, Troncoso-Pastoriza, Hubaux. Bootstrapping for Approximate Homomorphic Encryption with Negligible Failure-Probability by Using Sparse-Secret Encapsulation. IACR ePrint 2022/024 (source of the N16QP1546H192H32 parameter set used in the workshop’s CKKS measurements).',
+        url: 'https://eprint.iacr.org/2022/024',
+        libraryId: 'IACR-ePrint-2022-024',
       },
     ],
   },

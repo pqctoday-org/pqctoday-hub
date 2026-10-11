@@ -1,0 +1,2 @@
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 30, "evkCalls": 251, "bytes": 3941073029, "seconds": 397.542, "mbPerSecond": 9.9, "slowestCallSeconds": 1.9438, "peakRssKiB": 42396}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 1, "evkCalls": 7502, "bytes": 3941073029, "seconds": 955.192, "mbPerSecond": 4.1, "slowestCallSeconds": 0.1493, "peakRssKiB": 14924}

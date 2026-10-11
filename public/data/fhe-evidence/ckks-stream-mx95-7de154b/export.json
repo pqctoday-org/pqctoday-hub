@@ -1,0 +1,12 @@
+{
+ "paramSet": 2,
+ "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "keys": 51,
+ "limbsPerCall": 8,
+ "evkCalls": 1001,
+ "bytes": 3941073029,
+ "seconds": 497.656,
+ "mbPerSecond": 7.9,
+ "slowestCallSeconds": 0.6219,
+ "peakRssKiB": 16140
+}

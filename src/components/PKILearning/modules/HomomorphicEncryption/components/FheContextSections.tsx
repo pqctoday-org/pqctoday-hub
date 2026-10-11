@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { Link } from 'react-router'
+import { findStandard } from '@/data/standardsRegistry'
 import { Gauge, Lightbulb, ListChecks, Scale, Sparkles } from 'lucide-react'
+import { EvidenceCite } from './FheEvidenceCite'
 import {
   FHE_ACCELERATION,
   FHE_OVERHEAD_QUOTES,
@@ -310,8 +313,69 @@ export const FheCostSection: React.FC = () => (
         &ldquo;within a factor of ten of unencrypted computations&rdquo;; none of the sources above
         shows that goal met.
       </p>
-      {/* MEASURED-RESULTS: our own board measurements (CKKS key generation and streaming on
-          embedded boards) go here once their evidence records are published. */}
+    </div>
+
+    <div className="space-y-2">
+      <h3 className="text-sm font-bold text-foreground">
+        A hands-on example: our own CKKS measurements
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        Single runs with Lattigo v6.2.0&apos;s default bootstrappable parameter set (N = 2^16, 51
+        evaluation keys) and the educational software token from this workshop, one CPU core each.
+        They show where the cost sits for one deployment, not a general benchmark.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className={TH}>Operation</th>
+              <th className={TH}>Measured</th>
+              <th className={TH}>Files</th>
+            </tr>
+          </thead>
+          <tbody className="text-muted-foreground">
+            {[
+              {
+                op: 'Generate the whole key set in Lattigo, held in memory (Mac, M5 Max)',
+                value: '7.87 GB, 27.3 s, 17.2 GB peak memory',
+                of: 'sizes' as const,
+              },
+              {
+                op: 'Stream the same set out of the token (Mac, M4 Pro core)',
+                value: '3.94 GB exported in 1,001 calls, 42–44 s, 15.2 MiB peak',
+                of: 'macToken' as const,
+              },
+              {
+                op: 'Stream it out of the token on an MX95 board (Cortex-A55 core)',
+                value: '473 s, 16.7 MiB peak',
+                of: 'mx95' as const,
+              },
+              {
+                op: 'One bootstrap with the keys the board streamed (Mac, M5 Max)',
+                value: '6.7 s',
+                of: 'mx95' as const,
+              },
+              {
+                op: 'Decrypt, decode and round one result on the board token',
+                value: '0.148 s',
+                of: 'mx95' as const,
+              },
+            ].map((row) => (
+              <tr key={row.op} className="border-b border-border/50 align-top">
+                <td className="p-1.5 font-medium text-foreground">{row.op}</td>
+                <td className="p-1.5">{row.value}</td>
+                <td className="p-1.5">
+                  <EvidenceCite of={row.of}>evidence</EvidenceCite>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        The one-time key setup is the heaviest step here, minutes on a small board core; each
+        bootstrap then costs seconds on one laptop-class CPU core.
+      </p>
     </div>
   </div>
 )
@@ -384,6 +448,20 @@ export const FheStandardsSection: React.FC = () => (
   </div>
 )
 
+/** "Library" link for a reference whose Library row exists; nothing until the row lands. */
+const LibraryLink: React.FC<{ id: string }> = ({ id }) => {
+  const std = findStandard(id)
+  if (!std) return null
+  return (
+    <>
+      {' · '}
+      <Link to={std.deepLink} title={std.title} className="text-primary hover:underline">
+        Library: {id}
+      </Link>
+    </>
+  )
+}
+
 /** One References list for the whole Learn tab, grouped by topic. */
 export const FheReferencesList: React.FC = () => (
   <section className="glass-panel p-6 space-y-4" aria-labelledby="fhe-references-heading">
@@ -410,6 +488,7 @@ export const FheReferencesList: React.FC = () => (
                   </a>
                 </>
               )}
+              {ref.libraryId && <LibraryLink id={ref.libraryId} />}
             </li>
           ))}
         </ul>

@@ -62,6 +62,21 @@ export type LinkKind = 'tls' | 'sig' | 'wrap' | 'stream' | 'fhe'
 
 export type StepVerdict = 'ok' | 'warn' | 'no'
 
+/** Scenario banner: fits an HSM, fits when its large output is streamed, or does not fit. */
+export type ScalingVerdict = 'scales' | 'scales-when-streamed' | 'does-not-scale'
+
+/**
+ * Engine note for the CKKS HSM steps (2026-10-10). The streamed CKKS mechanism is in a reviewed
+ * pqctoday-hsm change that is not merged yet; the engine status shown still follows the scenario
+ * contract (fhe-hsm-scenarios.v1.json) until that change merges.
+ */
+const CKKS_ENGINE_PENDING =
+  'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy) are in a pqctoday-hsm change under review, not merged yet; the status shown is the earlier design until it merges. Validated on the MX95 boards (see the evidence badges).'
+
+/** Next to the evidence badges of the CKKS decrypt steps. */
+const CKKS_DECRYPT_EVIDENCE =
+  'Functional, not a security claim: the board decrypted and released the result under policy, which shows the mechanism works. It does not show resistance to the decryption-oracle limitation (Learn, section 8).'
+
 /**
  * What the pqctoday-hsm engine can do for a step today. Checked against the
  * engine source at commit ceddd554 (2026-10-02). The PKCS#11 reference is the
@@ -110,6 +125,8 @@ export interface FlowStep {
   engineNote?: string
   /** Release step: the third party that also gets the clear result when the owner's policy allows it. */
   shareWith?: string
+  /** Shown next to the step's evidence badges, e.g. what a validated decrypt does and does not show. */
+  evidenceNote?: string
 }
 
 export interface FheFlow {
@@ -127,7 +144,7 @@ export interface FheFlow {
   /** Validation the FHE wrapper plan targets. Nothing is validated yet. */
   validation: { target: string; reference: string }
   /** Shown as a banner: does this model fit inside an HSM? */
-  scaling?: { verdict: 'scales' | 'does-not-scale'; note: string }
+  scaling?: { verdict: ScalingVerdict; note: string }
   layman: { analogy: string; whatsDifferent: string; catch: string }
   actors: FlowActor[]
   steps: FlowStep[]
@@ -190,21 +207,24 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         'Cheon, Kim, Kim, Song: Homomorphic Encryption for Arithmetic of Approximate Numbers (ASIACRYPT 2017); OpenFHE design paper (IACR ePrint 2022/915)',
       paperUrl: 'https://eprint.iacr.org/2022/915',
     },
+    // Status kept as in the scenario contract until the streamed CKKS engine change merges; the
+    // HSM steps carry CKKS_ENGINE_PENDING as their note.
     engineDefault: {
       status: 'refused',
-      note: 'No CKKS mechanism is planned for pqctoday-hsm; this scenario is reference-only in OpenFHE.',
+      note: 'CKKS mechanisms are in a pqctoday-hsm change under review (streamed evaluation keys); this status follows the scenario contract until it merges.',
     },
     validation: {
       target:
-        'Reference only: evaluation-key sizes are estimates; no OpenFHE CKKS measurement exists yet. The planned engine refuses the evaluation-key export by design.',
-      reference: 'OpenFHE CKKS, pinned in pqctoday-sandbox',
+        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates; no OpenFHE CKKS measurement exists yet.',
+      reference:
+        'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE CKKS pinned in pqctoday-sandbox',
     },
     label: 'CKKS single-HSM custody',
     tagline: 'The HSM keeps the FHE secret; the cloud computes on ciphertexts it can never open.',
-    tileHint: 'DOES NOT SCALE: GB EVAL KEYS',
+    tileHint: 'SCALES WHEN STREAMED: GB EVAL KEYS',
     scaling: {
-      verdict: 'does-not-scale',
-      note: 'Kept as a counter-example. The custody idea is sound, but CKKS bootstrapping needs ~1.5–5 GB of evaluation keys even with seeded compression (3–10 GB raw, estimated), and only the secret-key holder can generate them. At these estimated sizes that is beyond what one HSM can hold, compute or return through PKCS#11, so the planned engine refuses it; measured OpenFHE sizes will replace the estimates. Compare with the TFHE scenario, or with Lattigo’s interactive refresh (threshold scenario), which needs no bootstrapping keys at all.',
+      verdict: 'scales-when-streamed',
+      note: 'An HSM cannot hold a bootstrappable CKKS key set, but it can produce one as a stream of bounded calls. Measured with Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶): 51 keys, 7.87 GB in full and 3.94 GB as exported (the other half of each key is re-expanded from a public seed). A software token on an MX95 board streamed it in 1,001 PKCS#11 calls of 4 MB each, in 473 s on one Cortex-A55 core with a 16.7 MiB peak (498 s when sent to the Mac over SSH); one Mac (M4 Pro) core takes 42–44 s. This is the heaviest step of the scenario, a one-time cost per key set that is paid again on rotation or recovery. Homomorphic evaluation itself still does not fit in an HSM. TFHE (a 30 MB server key) and Lattigo’s interactive refresh (threshold scenario, no bootstrapping keys) avoid this volume altogether.',
     },
     colorClass: 'text-primary',
     borderClass: 'border-primary/40',
@@ -239,6 +259,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         api: 'KeyGen()',
         deployment: true,
         title: 'Generate the FHE secret inside the HSM',
+        engineNote: CKKS_ENGINE_PENDING,
         detail:
           'The HSM DRBG produces a 32-byte seed, stored as a non-extractable key: it leaves only through the vendor replication capability, to an authenticated peer or an enrolled backup HSM. The FHE secret key s (a small polynomial) is derived from it inside the mechanism with an SP 800-108 KDF and never leaves the HSM.',
         link: 'fhe',
@@ -247,15 +268,14 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         id: 'export-evaluation-keys',
         from: 'hsm',
         to: 'cloud',
-        label: 'GB eval keys + sig',
+        label: 'GB eval keys, streamed',
         api: 'EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen',
         deployment: true,
-        title: 'Export the evaluation keys: where this model breaks',
+        title: 'Stream the evaluation keys: the heaviest step',
         detail:
-          'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from s, so only the HSM can make them. A bootstrappable set is GBs. That is beyond HSM memory, minutes or more of HSM CPU, and far more than PKCS#11 is built to return (estimated sizes, to be measured with OpenFHE).',
-        verdict: 'no',
-        engineNote:
-          'The planned engine computes the output size first and refuses before allocating anything: a bootstrappable set is far above the per-object cap.',
+          'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from s, so only the HSM can make them. A bootstrappable set is GBs, too large to hold in an HSM, but it never has to be held: the HSM produces it one bounded piece at a time. Each PKCS#11 call derives a few limbs (one limb is one residue polynomial of 512 KB) of one key digit as a public session object; the host reads it, destroys it and asks for the next. Memory stays bounded, every piece is deterministic, and the receiver checks a hash per piece against a signed manifest. Measured: 3.94 GB in 1,001 calls of 4 MB, 473 s on one MX95 Cortex-A55 core with a 16.7 MiB token peak, 42–44 s on one Mac (M4 Pro) core. On the board the CPU, not the link, is the limit.',
+        verdict: 'warn',
+        engineNote: CKKS_ENGINE_PENDING,
         link: 'sig',
       },
       {
@@ -266,6 +286,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         api: 'KeyGen() → publicKey',
         deployment: true,
         title: 'Give the data owner the public key',
+        engineNote: CKKS_ENGINE_PENDING,
         detail:
           'The client checks the HSM signature before trusting the public key. A swapped public key would let an attacker read everything encrypted under it.',
         link: 'sig',
@@ -318,6 +339,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'hsm',
         label: 'decrypt request',
         title: 'The data owner asks its HSM to decrypt',
+        engineNote: CKKS_ENGINE_PENDING,
+        evidenceNote: CKKS_DECRYPT_EVIDENCE,
         detail:
           'The data owner (or its authorized application) sends the encrypted result to its own HSM over an authenticated channel. Only the data owner can ask; the third party has no access to the HSM.',
         link: 'tls',
@@ -330,6 +353,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         api: 'Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT',
         deployment: true,
         title: 'Decrypt under policy',
+        engineNote: CKKS_ENGINE_PENDING,
+        evidenceNote: CKKS_DECRYPT_EVIDENCE,
         detail:
           'Policy first, then decryption. This policy is not defined by ISO/IEC 28033 or by OpenFHE; it is the HSM’s deployment layer. (1) Only the data owner’s authenticated session may ask. (2) The HSM checks the ciphertext’s metadata (slot count, level, scale) against an allowed result shape before decrypting; this limits how much one release can reveal, not where the ciphertext came from. (3) It decrypts inside the HSM, adds noise flooding (OpenFHE NOISE_FLOODING_DECRYPT) so the approximate output does not leak the key, and releases the value only if it fits the allowed range; a refusal still counts against the rate limit. (4) Rate limit and audit. The HSM cannot verify which computation produced a ciphertext.',
       },
@@ -339,6 +364,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'client',
         label: 'result',
         title: 'Release the result',
+        engineNote: CKKS_ENGINE_PENDING,
+        evidenceNote: CKKS_DECRYPT_EVIDENCE,
         detail: 'Only the authorized party gets the plaintext result.',
         link: 'tls',
         shareWith: 'cloud',
@@ -1070,13 +1097,17 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         id: 'eval-keygen-in-hsm',
         from: 'hsm',
         to: 'gpu',
-        label: 'GB eval keys?',
+        label: 'GB eval keys, streamed',
         api: 'EvalRotateKeyGen · EvalBootstrapKeyGen',
         deployment: true,
-        title: 'CKKS evaluation-key generation: does not scale',
+        title: 'CKKS evaluation-key generation: streams, the heaviest step',
         detail:
-          'The math (NTTs, polynomial multiplication) is fine, but a CKKS bootstrapping key set is GBs. At the estimated sizes that is beyond HSM memory and throughput, and beyond what PKCS#11 can return. Either switch to TFHE, whose server key is tens of MB, or to a threshold scheme with interactive refresh (Lattigo), which needs no bootstrapping keys. The seed itself never leaves the HSM.',
-        verdict: 'no',
+          'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM.',
+        verdict: 'warn',
+        // The scenario contract still records this step as refused; kept until the streamed
+        // engine change merges and the contract is updated.
+        engine: 'refused',
+        engineNote: CKKS_ENGINE_PENDING,
         link: 'sig',
       },
       {
@@ -1147,7 +1178,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       },
     ],
     hsmDoes:
-      'Keygen and decrypt. CKKS bootstrapping-key generation is refused by design (estimated GBs).',
+      'Keygen and decrypt; CKKS bootstrapping-key generation as a bounded stream (measured: 3.94 GB in 1,001 calls).',
     staysSecret: 'The seed and secret key. Evaluation keys leave the HSM, so they must be signed.',
     watchOut:
       'No PKCS#11 v3.2 or KMIP mechanism exists for FHE yet, so these are vendor-defined operations today.',

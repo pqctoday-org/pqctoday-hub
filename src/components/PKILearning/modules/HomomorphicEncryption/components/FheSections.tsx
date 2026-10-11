@@ -11,6 +11,7 @@ import {
 } from '../data/fheData'
 import { TAKEAWAYS } from '../data/fheContextData'
 import { FheFixedPointAndFit, FhePromiseBox, KeyTakeaways } from './FheContextSections'
+import { EvidenceCite } from './FheEvidenceCite'
 
 const RUN_BY_COLORS: Record<string, string> = {
   client: 'bg-primary/10 text-primary border-primary/30',
@@ -99,6 +100,52 @@ const THRESHOLD_VALUE_LIMITS: { topic: string; value: string; limit: string }[] 
     topic: 'Operations',
     value: '—',
     limit: 'Every required party must be online; rotation needs more ceremony',
+  },
+]
+
+/** Streamed CKKS key set, one core each, 8 limbs (4 MB) per call (evidence records 2026-10-10). */
+const CKKS_STREAM_MEASURED: {
+  device: string
+  generation: string
+  streamed: string
+  peak: string
+  bootstrap: string
+  decrypt: string
+}[] = [
+  {
+    device: 'Mac (M4 Pro), one core',
+    generation: '42.0–43.8 s (90–94 MB/s)',
+    streamed: 'not run',
+    peak: '15.2 MiB',
+    bootstrap: '—',
+    decrypt: '—',
+  },
+  {
+    device: 'MX95, one Cortex-A55 core',
+    generation: '473.4 s (8.3 MB/s)',
+    streamed: '497.7 s',
+    peak: '16.7 MiB',
+    bootstrap: '6.7 s',
+    decrypt: '0.148 s',
+  },
+  {
+    device: 'MX95 Pro, one Cortex-A55 core',
+    generation: '450.9 s (8.7 MB/s)',
+    streamed: '478.0 s',
+    peak: '15.7 MiB',
+    bootstrap: '7.3 s',
+    decrypt: '0.132 s',
+  },
+]
+
+/** Chunk size against time and token memory, full key set, one core (evidence records 2026-10-10). */
+const CKKS_CHUNK_SWEEP: { limbs: string; mac: string; mx95: string }[] = [
+  { limbs: '1 limb (512 KB), 7,502 calls', mac: '93.6 s · 12.2 MiB', mx95: '974.6 s · 14.1 MiB' },
+  { limbs: '8 limbs (4 MB), 1,001 calls', mac: '42.0 s · 15.2 MiB', mx95: '473.4 s · 16.7 MiB' },
+  {
+    limbs: '30 limbs (one digit), 251 calls',
+    mac: '35.8 s · 40.0 MiB',
+    mx95: '416.5 s · 42.6 MiB',
   },
 ]
 
@@ -367,6 +414,24 @@ export const FheSchemesSection: React.FC = () => (
           Rounding removes the low-order noise bits; it cannot recover bits the noise has already
           destroyed.
         </p>
+        <div className="rounded-md border border-border bg-background/60 p-3 mt-2">
+          <div className="text-[11px] text-status-success mb-1">
+            Measured on our test setup (CKKS, Lattigo v6.2.0 default bootstrappable set, scale 2^40)
+          </div>
+          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+            <li>
+              After one bootstrap the decrypted values kept <strong>24.7 bits</strong> of precision;
+              the noise in the coefficients was about 2^9.2 (
+              <EvidenceCite of="gateF">noise study</EvidenceCite>).
+            </li>
+            <li>
+              The software token on the MX95 boards released the owner&apos;s result rounded to{' '}
+              <span className="font-mono">precisionBits</span> 20: <strong>20.9 bits</strong> (20.94
+              measured on both boards; <EvidenceCite of="mx95">MX95</EvidenceCite>,{' '}
+              <EvidenceCite of="mx95pro">MX95 Pro</EvidenceCite>).
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div>
@@ -387,6 +452,15 @@ export const FheSchemesSection: React.FC = () => (
           its example marks experimental and not yet recommended for production; the example runs
           the computation twice, first to estimate the noise, and with 128-bit arithmetic chooses
           the scaling modulus size from that estimate.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>Measured cost at default parameters:</strong> with the noise above, flooding sized
+          for 30 bits of statistical security over 10,000 releases needs a noise width of about
+          2^31.6. At the default scale of 2^40 that leaves no correct bits (−1.3), so with these
+          parameters flooded releases to third parties do not work (
+          <EvidenceCite of="gateF">noise study</EvidenceCite>). They need a larger scale and a
+          larger first modulus, with security and bootstrapping parameters re-estimated. Releases to
+          the owner, which are rounded and not flooded, are not affected.
         </p>
       </div>
     </div>
@@ -430,7 +504,7 @@ export const FheKeysOperationsSection: React.FC = () => (
         ))}
       </div>
       <p className="text-xs text-muted-foreground">
-        Sizes are orders of magnitude and depend heavily on the parameter set. The public evaluation
+        Sizes depend heavily on the parameter set; measured values are marked. The public evaluation
         keys don&apos;t need to be secret, but they <em>encrypt functions of the secret key</em>, so
         they need <strong>integrity</strong>. There is no standard encoding yet: no PKCS#11 or KMIP
         object type and no X.509 OID. Each library serializes keys its own way, and a key is
@@ -625,9 +699,10 @@ export const FheCustodySection: React.FC = () => (
             generation, decryption. Both are small inputs and milliseconds of compute.
           </li>
           <li>
-            <span className="text-status-warning font-bold">Size-limited:</span> evaluation-key
-            generation. TFHE&apos;s ~30 MB server key fits; a CKKS bootstrapping key set (GBs,
-            estimated) does not, and the planned engine refuses it by design.
+            <span className="text-status-warning font-bold">Yes, streamed:</span> evaluation-key
+            generation. TFHE&apos;s 30 MB server key fits in one piece. A CKKS bootstrappable set
+            (3.94 GB exported, measured) is too large to hold, so the HSM produces it as a stream of
+            bounded calls with a token peak of 15–17 MiB (below).
           </li>
           <li>
             <span className="text-status-error font-bold">No:</span> homomorphic evaluation and
@@ -640,6 +715,135 @@ export const FheCustodySection: React.FC = () => (
           mechanisms.
         </p>
       </div>
+    </div>
+
+    <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <Cpu size={14} className="text-primary" />
+        Streaming evaluation keys and Montgomery arithmetic
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        A CKKS evaluation key is a set of polynomials in residue (RNS) form. One{' '}
+        <strong>limb</strong> is one residue polynomial: 2^16 coefficients of 8 bytes, 512 KB. A
+        full-size key in Lattigo&apos;s default bootstrappable set has 5 digits of 30 limbs, so the
+        51 keys hold 7,502 limbs of their <span className="font-mono">b</span> half (
+        <EvidenceCite of="sizes">key-set sizes</EvidenceCite>). The other half,{' '}
+        <span className="font-mono">a</span>, is public randomness that the receiver re-expands from
+        a seed, so only <span className="font-mono">b</span> leaves the HSM.
+      </p>
+      <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+        <li>
+          <strong>One chunk, one call:</strong> each PKCS#11 call derives a range of limbs of one
+          key digit (8 limbs, 4 MB, by default) as a public session object; the host reads it and
+          destroys it, then asks for the next. The whole set takes 1,001 calls. No new PKCS#11
+          functions are needed: a vendor mechanism and ordinary object reads, each object bounded.
+        </li>
+        <li>
+          <strong>Bounded memory:</strong> the token holds one chunk at a time, so its peak stayed
+          at 15–17 MiB on every device, against 17.2 GB for Lattigo generating and holding the whole
+          set in one process.
+        </li>
+        <li>
+          <strong>Determinism:</strong> each chunk depends only on the seed and on which key, digit
+          and limbs were asked for, so any order, core or replica gives the same bytes. Every limb
+          matched the reference spec, and the MX95 and MX95 Pro, loaded with the same test seed,
+          produced identical key material (1,003 of 1,003 manifest entries; only the descriptor
+          differs, by an identifier each token draws at random).
+        </li>
+        <li>
+          <strong>Integrity:</strong> each chunk&apos;s SHA-256 goes into a manifest signed with the
+          token&apos;s key. The receiver can check that it got the pieces the token signed; only a
+          test decryption shows the keys encrypt the right secret.
+        </li>
+        <li>
+          <strong>Montgomery arithmetic:</strong> the products of two variables (the random{' '}
+          <span className="font-mono">a</span> times the secret in NTT form, the secret squared for
+          relinearization, and <span className="font-mono">c1·s</span> in decryption) use Montgomery
+          multiplication: values are kept as <span className="font-mono">x·2^64 mod q</span>, so
+          each reduction is multiplications and a shift, with no division and no branch on secret
+          data. The output stays in Montgomery and NTT form, which is Lattigo&apos;s own wire form,
+          so the receiver uses the limbs as they arrive.
+        </li>
+      </ul>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left p-1.5 text-muted-foreground font-medium">Token on</th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Generate 3.94 GB
+              </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Streamed to the Mac
+              </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">Token peak</th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Bootstrap with these keys (Mac M5 Max)
+              </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Decrypt on the token
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-muted-foreground">
+            {CKKS_STREAM_MEASURED.map((row) => (
+              <tr key={row.device} className="border-b border-border/50 align-top">
+                <td className="p-1.5 font-medium text-foreground">{row.device}</td>
+                <td className="p-1.5">{row.generation}</td>
+                <td className="p-1.5">{row.streamed}</td>
+                <td className="p-1.5">{row.peak}</td>
+                <td className="p-1.5">{row.bootstrap}</td>
+                <td className="p-1.5">{row.decrypt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[11px] text-muted-foreground">
+        Single runs on one core, 8 limbs per call, software token (an educational engine, not
+        hardware custody). Files: <EvidenceCite of="macToken">Mac (M4 Pro)</EvidenceCite>,{' '}
+        <EvidenceCite of="mx95">MX95</EvidenceCite>,{' '}
+        <EvidenceCite of="mx95pro">MX95 Pro</EvidenceCite>. The board decrypts are functional, not a
+        security claim.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left p-1.5 text-muted-foreground font-medium">Chunk size</th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Mac (M4 Pro), one core
+              </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                MX95, one Cortex-A55 core
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-muted-foreground">
+            {CKKS_CHUNK_SWEEP.map((row) => (
+              <tr key={row.limbs} className="border-b border-border/50 align-top">
+                <td className="p-1.5 font-medium text-foreground">{row.limbs}</td>
+                <td className="p-1.5">{row.mac}</td>
+                <td className="p-1.5">{row.mx95}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Smaller chunks use less memory but cost more time: every call has a fixed cost of about 8 ms
+        on the Mac and about 77 ms on a Cortex-A55, because the stateless design regenerates the
+        secret for each call. Memory grows by about 1 MiB per extra limb. 8 limbs per call is the
+        default (sweeps: <EvidenceCite of="sweepMac">Mac</EvidenceCite>,{' '}
+        <EvidenceCite of="sweepMx95">MX95</EvidenceCite>,{' '}
+        <EvidenceCite of="sweepMx95pro">MX95 Pro</EvidenceCite>).
+      </p>
+      <p className="text-xs text-muted-foreground">
+        <strong>On the board the CPU is the limit, not the network:</strong> 8.3 MB/s is about 7 %
+        of a 1 Gb/s link, and sending the stream to the Mac over SSH added about 5 % to the
+        generation time. These runs use one of the board&apos;s six cores; spreading chunks over the
+        cores and tuning the code for the board are not measured yet.
+      </p>
     </div>
 
     <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">

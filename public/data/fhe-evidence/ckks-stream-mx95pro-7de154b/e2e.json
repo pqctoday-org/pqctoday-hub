@@ -1,0 +1,7 @@
+{
+ "paramSet": 2,
+ "source": "HSM export /repo/reference-runs/ckks-stream-e2e/work/2026-10-10-n16-mx95pro/hsm/out",
+ "assembleSeconds": 4.131957422,
+ "bootstrapSeconds": 7.268592529,
+ "ciphertextLevelOut": 0
+}

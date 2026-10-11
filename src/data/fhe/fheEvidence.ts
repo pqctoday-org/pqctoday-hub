@@ -10,6 +10,8 @@
  *   FHE server        → the KV260, pqctoday-fhe (the untrusted compute side, no token)
  *   FHE custodian/HSM → the MX95 (primary) and MX95 Pro (backup), pqctoday-cacp,
  *                       each a software token on that board; Ventuno Q later
+ *   CKKS FHE server   → the Mac (M5 Max), pqctoday-fhe (owner, 2026-10-10): it assembles the
+ *                       keys a board token streams out, encrypts and bootstraps
  * Threshold scenarios are validated as 2-of-2 on the two custodian boards.
  * A run spanning devices is one end-to-end record with per-device parts. Nothing is ever
  * hardware custody. The Hub raises a step's badge only for a record that validates here.
@@ -20,7 +22,7 @@ import manifestJson from '../../../public/data/fhe-evidence/fhe-evidence.v1.json
 export type EvidenceLevel = 'reference' | 'emulator' | 'device' | 'end-to-end'
 export type EvidenceProducer =
   'pqctoday-sandbox' | 'pqctoday-fhe' | 'pqctoday-cacp' | 'pqctoday-hsm'
-export type EvidenceDevice = 'mac-m4pro' | 'kv260' | 'mx95' | 'mx95-pro' | 'ventuno-q'
+export type EvidenceDevice = 'mac-m4pro' | 'mac-m5max' | 'kv260' | 'mx95' | 'mx95-pro' | 'ventuno-q'
 export type DeviceRole = 'data-owner' | 'fhe-server' | 'custodian' | 'backup-custodian' | 'party'
 export type EvidenceStatus = 'estimate' | 'measured' | 'reproduced' | 'independently-reviewed'
 
@@ -38,6 +40,7 @@ export const BADGE_STATUSES: EvidenceStatus[] = ['measured', 'reproduced', 'inde
 
 export const DEVICE_LABELS: Record<EvidenceDevice, string> = {
   'mac-m4pro': 'Mac (M4 Pro)',
+  'mac-m5max': 'Mac (M5 Max)',
   kv260: 'KV260',
   mx95: 'MX95',
   'mx95-pro': 'MX95 Pro',
@@ -54,6 +57,9 @@ export const DEVICE_RULES: Record<
     producers: ['pqctoday-sandbox', 'pqctoday-fhe', 'pqctoday-hsm'],
     roles: ['data-owner', 'custodian'],
   },
+  // Owner 2026-10-10: for CKKS the Mac (M5 Max) assembles the keys a board token streams out,
+  // encrypts under the token's public key and bootstraps (data owner and FHE server).
+  'mac-m5max': { producers: ['pqctoday-fhe'], roles: ['data-owner', 'fhe-server'] },
   kv260: { producers: ['pqctoday-fhe'], roles: ['fhe-server'] },
   mx95: { producers: ['pqctoday-cacp', 'pqctoday-hsm'], roles: ['custodian', 'party'] },
   // Owner 2026-10-03: the MX95 Pro plays custodian only in a failover run (part.failover).
@@ -167,6 +173,11 @@ export interface EvidenceRecord {
   notes?: string
   /** Reader-facing result: one sentence plus the headline numbers, taken from the pinned artifacts. */
   summary?: EvidenceSummary
+  /**
+   * false: a supporting measurement (sizes, a sweep, a noise study) that the Learn text cites by
+   * its files; it validates like any record but raises no step badge.
+   */
+  badge?: false
   artifacts: EvidenceArtifact[]
   measuredAt: string
   /** Per-record signature; without it the record is hash-pinned under the manifest .sig. */
@@ -223,6 +234,11 @@ const SHA256 = /^[0-9a-f]{64}$/
 const COMMIT = /^[0-9a-f]{7,40}$/
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}(T[\d:.]+(Z|[+-]\d{2}:\d{2}))?$/
 const THRESHOLD_SCENARIOS = new Set(['openfhe-threshold', 'lattigo-threshold'])
+/**
+ * Scenarios whose streamed-key runs measure each board as the custodian on its own (CKKS,
+ * 2026-10-10), so the MX95 Pro may play custodian there without a failover.
+ */
+const BOTH_BOARDS_CUSTODIAN = new Set(['single-hsm'])
 
 /** Actor ids a role may act as in a scenario (the step's `from` or `to` must be one). */
 function roleActors(s: Scenario, role: DeviceRole): string[] {
@@ -260,7 +276,12 @@ function checkPart(p: EvidencePart, s: Scenario, recordSteps: string[]): string[
   }
   if (p.claimScope === 'board-software-token' && !COMMIT.test(p.engine?.commit ?? ''))
     e.push(`software-token part on ${p.device} needs the engine repo and commit`)
-  if (p.device === 'mx95-pro' && p.role === 'custodian' && !p.failover)
+  if (
+    p.device === 'mx95-pro' &&
+    p.role === 'custodian' &&
+    !p.failover &&
+    !BOTH_BOARDS_CUSTODIAN.has(s.id)
+  )
     e.push('the MX95 Pro is the backup custodian; it plays custodian only in a failover run')
   if (p.failover && (p.role !== 'custodian' || p.device === 'mac-m4pro'))
     e.push('failover applies only to a board playing custodian')
@@ -371,6 +392,7 @@ export function validateRecord(
         errors.push(`artifact "${a.name}" needs a sha256 and an https url`)
   if (!ISO_DATE.test(r.measuredAt ?? '')) errors.push('measuredAt must be an ISO date')
   if (r.summary !== undefined) errors.push(...summaryErrors(r.summary))
+  if (r.badge !== undefined && r.badge !== false) errors.push('badge is either absent or false')
   return errors
 }
 
@@ -437,6 +459,7 @@ export function validationsFor(
         r.scenarioId === scenarioId &&
         r.stepIds.includes(stepId) &&
         r.result === 'pass' &&
+        r.badge !== false &&
         BADGE_STATUSES.includes(r.status) &&
         validateRecord(r).length === 0
     )
@@ -471,6 +494,7 @@ export function scenarioValidation(
     (r) =>
       r.scenarioId === scenarioId &&
       r.result === 'pass' &&
+      r.badge !== false &&
       BADGE_STATUSES.includes(r.status) &&
       validateRecord(r).length === 0
   )
@@ -514,12 +538,14 @@ export function scenarioValidation(
 
 /**
  * Owner 2026-10-03: every run shows, the designed device layout first. A custodian on an MX95
- * board with the MX95 Pro as backup ranks 3, an MX95 board alone 2, records without a custodian
- * 1, and the Mac token run 0.
+ * board with the MX95 Pro as backup ranks 3, an MX95 board alone 2, the MX95 Pro as custodian of its
+ * own run (CKKS, 2026-10-10) 1.5, records without a custodian 1, and the Mac token run 0.
  */
 function layoutRank(r: EvidenceRecord): number {
   const custodian = r.parts?.find((p) => p.role === 'custodian')
   if (!custodian) return 1
   if (custodian.device === 'mac-m4pro') return 0
+  // An MX95 Pro that is the custodian of its own run (not a failover) comes after the MX95 alone.
+  if (custodian.device === 'mx95-pro' && !custodian.failover) return 1.5
   return r.parts!.some((p) => p.device === 'mx95-pro') ? 3 : 2
 }

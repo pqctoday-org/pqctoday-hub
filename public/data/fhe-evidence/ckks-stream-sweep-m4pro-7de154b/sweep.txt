@@ -1,0 +1,8 @@
+19:28  up 4 days, 19:57, 1 user, load averages: 1.65 2.58 3.23
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 1, "evkCalls": 7502, "bytes": 3941073029, "seconds": 93.606, "mbPerSecond": 42.1, "slowestCallSeconds": 0.0151, "peakRssKiB": 12448}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 2, "evkCalls": 3751, "bytes": 3941073029, "seconds": 64.759, "mbPerSecond": 60.9, "slowestCallSeconds": 0.0209, "peakRssKiB": 13052}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 4, "evkCalls": 2001, "bytes": 3941073029, "seconds": 50.009, "mbPerSecond": 78.8, "slowestCallSeconds": 0.0283, "peakRssKiB": 13656}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 8, "evkCalls": 1001, "bytes": 3941073029, "seconds": 41.953, "mbPerSecond": 93.9, "slowestCallSeconds": 0.0478, "peakRssKiB": 15592}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 16, "evkCalls": 501, "bytes": 3941073029, "seconds": 37.737, "mbPerSecond": 104.4, "slowestCallSeconds": 0.0827, "peakRssKiB": 26692}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 30, "evkCalls": 251, "bytes": 3941073029, "seconds": 35.817, "mbPerSecond": 110.0, "slowestCallSeconds": 0.1539, "peakRssKiB": 40924}
+19:33  up 4 days, 20:02, 1 user, load averages: 2.69 2.59 3.01

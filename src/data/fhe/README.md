@@ -15,6 +15,7 @@ on lab devices, each playing one role in the workshop's lanes:
 The data owner may also run from `pqctoday-fhe`, and the FHE server runs only `pqctoday-fhe`.
 Reference-library runs come from `pqctoday-sandbox` or `pqctoday-fhe` (`level: reference`); a
 `platformLabel` (for example `KV260 Cortex-A53`) tells two runs of one library apart.
+For CKKS (owner, 2026-10-10) the Mac (M5 Max) (`mac-m5max`, `pqctoday-fhe`) plays data owner and FHE server, and either MX95 board may be the custodian of its own streamed-key run; records with `badge: false` back Learn-text numbers without raising a step badge.
 
 A part may add a short `qualifier` (starting with ", " or " (") to tell runs apart, e.g.
 " (board-local, no KMIP)", and `failover: true` lets the MX95 Pro play custodian. Every passing run

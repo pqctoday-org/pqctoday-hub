@@ -28,13 +28,13 @@ interface Scenario {
 const SCENARIOS: Scenario[] = [
   {
     id: 'ckks-where-it-breaks',
-    title: '1. Where CKKS single-HSM custody breaks — find the step that does not scale',
+    title: '1. CKKS single-HSM custody — find the heaviest step and what limits it',
     description:
-      'In FHE + HSM Flows, select "CKKS single-HSM custody". Walk the steps until you reach the one titled "Export the evaluation keys: where this model breaks", then read the scenario\'s scaling note.',
+      'In FHE + HSM Flows, select "CKKS single-HSM custody". Walk the steps until you reach the one titled "Stream the evaluation keys: the heaviest step", open its details and evidence, then read the scenario\'s scaling note.',
     badge: 'Custody',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. A bootstrappable CKKS set is gigabytes (estimated at about 1.5–5 GB even with seeded compression), far beyond what one HSM can hold or return through PKCS#11. The scenario is kept as a counter-example, and the planned engine refuses the export by design.',
+      'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. A bootstrappable CKKS set is 7.87 GB, 3.94 GB as exported (measured): too large for an HSM to hold, so it streams the set out in 1,001 bounded PKCS#11 calls with a token peak of about 16 MiB. What limits the step is CPU time, not memory or the PKCS#11 interface: 473 s on one MX95 Cortex-A55 core, 42–44 s on one Mac core, with the network adding about 5 %. It is a one-time cost per key set, paid again on rotation or recovery.',
   },
   {
     id: 'tfhe-why-it-fits',
@@ -60,11 +60,11 @@ const SCENARIOS: Scenario[] = [
     id: 'what-runs-in-the-hsm',
     title: '4. What can run in the HSM? — which FHE operations fit?',
     description:
-      'Select "What can run in the HSM?" and note, for each FHE operation, whether it fits inside an HSM, is limited by size, or does not fit.',
+      'Select "What can run in the HSM?" and note, for each FHE operation, whether it fits inside an HSM, fits only when streamed, or does not fit.',
     badge: 'Placement',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     observe:
-      'Seed and secret-key generation and decryption fit: small inputs and milliseconds of compute. Evaluation-key generation is size-limited: a TFHE server key of about 30 MB fits, a CKKS bootstrapping key set does not. Homomorphic evaluation and bootstrapping do not run in the HSM: they need gigabytes of keys in memory plus GPU or FPGA acceleration, and they need no secret, so running them in the HSM would add nothing but load.',
+      'Seed and secret-key generation and decryption fit: small inputs and milliseconds of compute. Evaluation-key generation fits when streamed: a TFHE server key of about 30 MB fits in one piece, and a CKKS bootstrapping key set (3.94 GB exported) streams out in bounded pieces, taking minutes on a small board core. Homomorphic evaluation and bootstrapping do not run in the HSM: they need gigabytes of keys in memory plus GPU or FPGA acceleration, and they need no secret, so running them in the HSM would add nothing but load.',
   },
   {
     id: 'transciphering-kreyvium',

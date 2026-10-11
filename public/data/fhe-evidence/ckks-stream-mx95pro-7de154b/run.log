@@ -1,0 +1,22 @@
+[00:40:11Z] B0 board facts
+model: NXP FRDM-IMX95-PRO
+kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+cpus: 6
+cpu_features:  fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+mem_total_kib: 16096760
+engine_commit: 1f3bb30dd3ed79eeb86b02dbe0f2b7270a65b172
+oracle_commit: a053a4a615e3bed367f13d2383cf93670a13b145
+custodian_sha256: 017ba8895a124194923c8094980b91aae03d2584dce94c4f5825c863266730f6
+build_commit: 1f3bb30dd3ed79eeb86b02dbe0f2b7270a65b172
+build_features: educational-ckks,test-support
+build_profile: release
+build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
+[00:40:13Z] upload
+[00:40:14Z] init (test seed, parameter set 2)
+initialised /tmp/ckks/tok (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1546H192H32_LATTIGO_V6_2_0 seed handle 134
+[00:40:16Z] B1a generation only (stream discarded on the board)
+[00:47:47Z] B1b streamed to the Mac over SSH
+[00:55:46Z] verify against the reference spec
+[00:56:04Z] e2e on the Mac (assemble, encrypt under the board token's public key, bootstrap)
+[00:56:31Z] B4 decrypt on the board under policy v2 (owner, rounded)
+[00:56:39Z] done

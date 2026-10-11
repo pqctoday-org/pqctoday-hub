@@ -3,8 +3,10 @@
 // ── Per-step data volume and compute cost for the FHE + HSM flows ─────────
 //
 // FHE figures are ORDER-OF-MAGNITUDE ESTIMATES unless marked measured (OpenFHE and Lattigo
-// threshold, TFHE: see MEASURED_BASIS). The other RLWE flows (CKKS) assume ring dimension N = 2^16 (~30 RNS limbs;
-// CKKS with bootstrappable parameters, 32,768 slots per ciphertext); the TFHE
+// threshold, TFHE, and the CKKS evaluation-key set and its streamed export: see MEASURED_BASIS
+// and the evidence records ckks-keyset-sizes-m5max-7de154b and ckks-stream-*-7de154b). The
+// CKKS flows assume ring dimension N = 2^16 (30 RNS limbs; Lattigo v6.2.0's default bootstrappable
+// set N16QP1546H192H32, 32,768 slots per ciphertext); the TFHE
 // flows assume the TFHE-rs 1.8.1 default parameters (n = 918, N = 2,048, k = 1, KS level 4) in the
 // custody configuration (dedicated OPRF key off). TFHE sizes and M4 Pro timings are measured
 // (pqctoday-fhe reference-runs/tfhe-custody and kv260-tfhe-bench, published). All on a recent multicore CPU or
@@ -35,6 +37,10 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
 
 /** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
 export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
+  'single-hsm':
+    'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
+  'hsm-compute-limits':
+    'The evaluation-key size and its streamed generation are measured (Lattigo v6.2.0’s default bootstrappable set, a software token on one MX95 Cortex-A55 core; files linked from the CKKS single-HSM scenario’s evidence). Evaluation and decryption costs are order-of-magnitude estimates; GPU bootstrap times are published figures.',
   'openfhe-threshold':
     'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
   'lattigo-threshold':
@@ -105,19 +111,19 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     ),
     c(
       4,
-      '~GB',
+      '3.94 GB',
       4,
-      'too slow',
-      'HSM (rejected)',
-      'A bootstrappable CKKS key set is ~1.5–5 GB seeded (estimate): relinearization plus dozens of rotation keys at ~50–90 MB each. At these estimated sizes an HSM can neither hold nor return that through PKCS#11. This is the step that does not scale.'
+      '473 s on A55',
+      'HSM, streamed',
+      'Measured with Lattigo v6.2.0’s default bootstrappable set: 51 keys, 3,941,073,029 B as exported (the b halves; 7.87 GB with the a halves), in 1,001 PKCS#11 calls of 8 limbs (4 MB) each. One MX95 Cortex-A55 core took 473 s with a 16.7 MiB token peak (8.3 MB/s); one Mac (M4 Pro) core 42–44 s. The heaviest step; on the board the CPU, not the link, limits it.'
     ),
     c(
       2,
-      '~MB',
+      '7.9 MB',
       1,
       '~ms',
       'HSM → client',
-      'The public key is two ring elements, ~15–30 MB at N = 2¹⁶ (estimate). Signing its hash is sub-millisecond.'
+      'The public key is two ring elements over the 15 limbs of the residual modulus chain; the export carries only b, 15 limbs of 512 KB = 7,864,320 B (measured), and a is re-expanded from a seed. Signing its hash is sub-millisecond.'
     ),
     c(
       2,
@@ -134,7 +140,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       'sec–min',
       'cloud GPU/CPU',
-      'Additions are cheap. A multiply plus relinearize takes tens of ms, and each bootstrap takes seconds on a CPU or ~40–330 ms on a GPU (published N = 2¹⁶ figures). The cloud also needs the GB-scale keys in memory.'
+      'Additions are cheap. A multiply plus relinearize takes tens of ms, and each bootstrap takes seconds on a CPU (measured: 6.7–7.3 s on a Mac (M5 Max) with the keys the boards streamed out) or ~40–330 ms on a GPU (published N = 2¹⁶ figures). The cloud also needs the GB-scale keys in memory.'
     ),
     c(
       2,
@@ -155,10 +161,10 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     c(
       1,
       '~1 MB in',
-      1,
-      '~ms',
+      2,
+      '0.15 s (A55)',
       'HSM',
-      'Decryption is one ring multiplication, a few milliseconds. The policy check and noise flooding add little.'
+      'Decryption is one ring multiplication. Measured on one MX95 Cortex-A55 core: 0.148 s for the policy checks, decryption, decoding all 32,768 slots inside the token and rounding them (0.132 s on the MX95 Pro).'
     ),
     c(
       1,
@@ -456,11 +462,11 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
     c(1, '32 B seed', 1, '~ms', 'HSM', 'Fits easily: kilobytes of state and milliseconds of work.'),
     c(
       4,
-      '~GB out',
+      '3.94 GB out',
       4,
-      'too slow',
-      'HSM (rejected)',
-      'A CKKS bootstrapping key set is GBs. An HSM cannot hold, compute or export that volume in practice. A TFHE server key (~30 MB) is the HSM-sized alternative.'
+      '~8 min A55',
+      'HSM, streamed',
+      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. A TFHE server key (30 MB) is the smaller alternative.'
     ),
     c(
       4,
@@ -489,8 +495,8 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
 //
 // Reference unit: an RSA-2048 key pair as usually stored = 294 B DER
 // SubjectPublicKeyInfo + ~1,218 B PKCS#8 private key (CRT form; the exact
-// length varies by a few bytes) ≈ 1,512 B. FHE rows are estimates at the same
-// CKKS N = 2^16 parameter set as above; TFHE rows are computed from TFHE-rs-
+// length varies by a few bytes) ≈ 1,512 B. CKKS rows are measured at the same
+// N = 2^16 parameter set as above (the packed secret key stays an estimate); TFHE rows are computed from TFHE-rs-
 // style defaults (TFHE-rs 1.8.1: LWE n = 918, GLWE N = 2,048, k = 1, PBS level 1, KS level 4)
 // and should be measured before quoting. AES / ML-KEM / ML-DSA rows are exact.
 
@@ -686,39 +692,39 @@ export const KEY_SIZES: KeySize[] = [
   },
   {
     id: 'fhe-pk',
-    label: 'FHE public key',
-    bytes: 15_000_000,
-    size: '~15 MB',
-    exact: false,
+    label: 'CKKS public key (N = 2¹⁶)',
+    bytes: 15_728_640,
+    size: '15.7 MB (7.9 MB exported, measured)',
+    exact: true,
     secret: false,
-    note: 'Two ring elements across the full modulus chain (one can be a seed).',
+    note: 'Two ring elements (b, a) over the 15 limbs of the residual modulus chain of Lattigo v6.2.0’s default bootstrappable set, 512 KB per limb. The token exports only b, 7,864,320 B (measured); a is re-expanded from a seed.',
   },
   {
     id: 'relin',
-    label: 'Relinearization key',
-    bytes: 100_000_000,
-    size: '~100 MB',
-    exact: false,
+    label: 'CKKS relinearization key (N = 2¹⁶)',
+    bytes: 157_289_056,
+    size: '157 MB (79 MB exported, measured)',
+    exact: true,
     secret: false,
-    note: 'One key-switching key: s² → s.',
+    note: 'One key-switching key s² → s: 5 RNS digits × 30 limbs × (b, a) × 512 KB = 157,289,056 B (Lattigo v6.2.0 default bootstrappable set, measured). The b half, 78,644,480 B, is what the HSM exports.',
   },
   {
     id: 'rotation',
-    label: 'One rotation key',
-    bytes: 100_000_000,
-    size: '~100 MB',
-    exact: false,
+    label: 'One CKKS rotation (Galois) key (N = 2¹⁶)',
+    bytes: 157_289_056,
+    size: '157 MB (79 MB exported, measured)',
+    exact: true,
     secret: false,
-    note: 'One per allowed rotation step; bootstrapping needs dozens.',
+    note: 'One per allowed rotation step, same size as the relinearization key (measured); the bootstrappable set has 48 Galois keys, rotations plus conjugation.',
   },
   {
     id: 'eval-set',
-    label: 'Bootstrappable evaluation-key set',
-    bytes: 3_000_000_000,
-    size: '~1.5–5 GB seeded (3–10 GB raw)',
-    exact: false,
+    label: 'Bootstrappable CKKS evaluation-key set',
+    bytes: 7_866_550_048,
+    size: '7.87 GB (3.94 GB exported, measured)',
+    exact: true,
     secret: false,
-    note: 'Relinearization + conjugation + ~25–50 rotation keys at ~50–90 MB seeded (100–180 MB raw) each. Computed for N = 2^16, ~30 RNS limbs, dnum 3–6; measure before quoting.',
+    note: '51 keys: 1 relinearization, 48 Galois and 2 sparse-secret switches (Lattigo v6.2.0 default bootstrappable set N16QP1546H192H32, measured). The HSM streams the b halves out, 3,941,073,029 B with the public key and descriptor, in 1,001 calls; Lattigo holding the whole set in one process peaked at 17.2 GB.',
   },
 ]
 
