@@ -5324,7 +5324,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "feasibility study: two parties hold a CKKS secret 2-of-2 (Lattigo multiparty, both parties in one process), at the real parameters",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a Lattigo prototype with both parties in one process, not a token or board run. Lattigo v6.2.0’s multiparty package (additive N-out-of-N sharing) generated every key of the bootstrappable set from two shares at N = 2^16. The joint key set bootstrapped at 24.3–24.5 bits (24.9 bits for one party in the earlier key-set record); one share alone does not decrypt (−27.8 to −28.0 bits). Each party uploads 4,098,431,336 B of shares, and the relinearization key needs a second round. Threshold decryption kept 24.2–24.5 bits without flooding, 9.8–9.9 bits with a 2^20 flood, and −1.6 to −1.9 bits with a 2^31.6 flood, the width the earlier sizing gave the default set for 30-bit statistical security over 10,000 releases (the same result as the single-token noise study at that width). The corrected sizing is wider (2^43.1 for one token with four replicas), so flooded threshold releases at the default parameters fail by more; this prototype was not re-run at the wider flood. A crafted partial-decryption request (c0 = 0, c1 = 2^40) sent to one party returned that party’s whole share: 65,536 of 65,536 coefficients recovered, in every run. n16threshold32-1.json uses sparse shares of weight 32 instead of 16. Run files: pqctoday-fhe 8beec58, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a Lattigo prototype with both parties in one process, not a token or board run. Lattigo v6.2.0’s multiparty package (additive N-out-of-N sharing) generated every key of the bootstrappable set from two shares at N = 2^16. The joint key set bootstrapped at 24.3–24.5 bits (24.9 bits for one party in the earlier key-set record); one share alone does not decrypt (−27.8 to −28.0 bits). Each party uploads 4,098,431,336 B of shares, and the relinearization key needs a second round. Threshold decryption kept 24.2–24.5 bits without flooding, 9.8–9.9 bits with a 2^20 flood, and −1.6 to −1.9 bits with a 2^31.6 flood, the width the earlier sizing gave the default set for 30-bit statistical security over 10,000 releases (the same result as the single-token noise study at that width). The corrected sizing is wider (2^43.1 for one token with four replicas), so flooded threshold releases at the default parameters fail by more; this prototype was not re-run at the wider flood. A crafted partial-decryption request (c0 = 0, c1 = 2^40) sent to one party returned that party’s whole share: 65,536 of 65,536 coefficients recovered, in every run. n16threshold32-1.json uses sparse shares of weight 32 instead of 16. Run files: pqctoday-fhe 8beec58, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). sizes2.json and tdecrypt2.json (the same prototype on the default set, from pqctoday-fhe 8beec58) give the share sizes and the partial-decryption time: a decryption share at level 0 is 524,304 B; switched to the owner’s public key it is 1,048,894 B; one partial decryption takes 1.93 ms per party on the Mac; with only the joint public key (no bootstrap) the threshold decryption keeps 26.58 bits unflooded, 9.85 bits at a 2^20 flood and −1.76 bits at 2^31.6; one share alone gives −27.85 bits.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -5377,6 +5377,16 @@
           "name": "environment.txt",
           "sha256": "12e8900a48c5d1a768b0658e5340ae86d49fb15b31f708a89edb718fe4a73a21",
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/environment.txt"
+        },
+        {
+          "name": "sizes2.json",
+          "sha256": "912efcfbc17996bfa98c5a63b2c916e60b418ded6157a598a5a0a3b0a60a0e6a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/sizes2.json"
+        },
+        {
+          "name": "tdecrypt2.json",
+          "sha256": "067a81d9bdafa4ebe2a1b3b84047ccd67b616b6016e653b4e96ba7c7ee716c25",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/tdecrypt2.json"
         }
       ],
       "measuredAt": "2026-10-11",
@@ -5401,6 +5411,30 @@
           {
             "label": "Share coefficients recovered by one crafted request",
             "value": "65,536 of 65,536"
+          },
+          {
+            "label": "Decryption share at level 0 / switched to the owner’s public key",
+            "value": "524,304 / 1,048,894",
+            "unit": "B"
+          },
+          {
+            "label": "One partial decryption on the Mac",
+            "value": "1.93",
+            "unit": "ms"
+          },
+          {
+            "label": "Joint main secret, non-zero coefficients (one party: 192)",
+            "value": "384"
+          },
+          {
+            "label": "Decryption with one share alone",
+            "value": "−27.8",
+            "unit": "bits"
+          },
+          {
+            "label": "Relinearization round 1, download per party",
+            "value": "157,289,056",
+            "unit": "B"
           }
         ]
       }
