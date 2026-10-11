@@ -6,8 +6,8 @@
       "list": "MIP",
       "module": "Alibaba Cloud Crypto",
       "vendor": "Alibaba Cloud Computing Ltd.",
-      "nistStage": "Cost Recovery",
-      "date": "2026-09-25",
+      "nistStage": "Pending Review",
+      "date": "2026-09-28",
       "firstSeen": "2026-09-26"
     },
     {
@@ -47,6 +47,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "NetApp-CryptoMod",
+      "list": "MIP",
+      "module": "NetApp CryptoMod",
+      "vendor": "NetApp, Inc.",
+      "nistStage": "Review",
+      "date": "2026-08-13",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "Oracle-OpenSSL-FIPS-Provider",
       "list": "MIP",
       "module": "Oracle OpenSSL FIPS Provider",
@@ -69,8 +78,8 @@
       "list": "MIP",
       "module": "TASS Crypto Engine",
       "vendor": "Beijing JN TASS Technology Co., Ltd.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-09-23",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-30",
       "firstSeen": "2026-09-26"
     },
     {
@@ -78,8 +87,8 @@
       "list": "MIP",
       "module": "TASS Crypto Engine",
       "vendor": "Beijing JN TASS Technology Co., Ltd.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-09-23",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-30",
       "firstSeen": "2026-09-26"
     },
     {
@@ -87,8 +96,8 @@
       "list": "MIP",
       "module": "OpenSSL FIPS Provider",
       "vendor": "The OpenSSL Corporation",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-09-21",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-10-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -105,8 +114,8 @@
       "list": "MIP",
       "module": "Android Kernel Cryptographic Module",
       "vendor": "Google, LLC",
-      "nistStage": "Pending Review",
-      "date": "2026-09-14",
+      "nistStage": "Review",
+      "date": "2026-10-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -114,8 +123,8 @@
       "list": "MIP",
       "module": "AWS Key Management Service HSM",
       "vendor": "Amazon Web Services, Inc",
-      "nistStage": "Pending Review",
-      "date": "2026-09-24",
+      "nistStage": "Review",
+      "date": "2026-10-06",
       "firstSeen": "2026-09-26"
     },
     {
@@ -177,8 +186,17 @@
       "list": "MIP",
       "module": "Security Builder FIPS Module",
       "vendor": "Blackberry Limited",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-08-14",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-10-07",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-10-10",
       "firstSeen": "2026-09-26"
     },
     {
@@ -197,15 +215,6 @@
       "vendor": "Google, LLC",
       "nistStage": "Comment Resolution - Lab",
       "date": "2026-06-05",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "boringcrypto",
-      "list": "MIP",
-      "module": "BoringCrypto",
-      "vendor": "Google, LLC",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-05-18",
       "firstSeen": "2026-09-26"
     },
     {
@@ -349,7 +358,7 @@
       "module": "Fortanix DSM Appliance",
       "vendor": "Fortanix, Inc.",
       "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-09-25",
+      "date": "2026-10-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -357,8 +366,8 @@
       "list": "MIP",
       "module": "FortiOS 7.2/7.4",
       "vendor": "Fortinet, Inc.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-09-16",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-29",
       "firstSeen": "2026-09-26"
     },
     {
@@ -384,8 +393,8 @@
       "list": "MIP",
       "module": "FortiWeb-VM 7.6.7 Software",
       "vendor": "Fortinet Inc.",
-      "nistStage": "Cost Recovery",
-      "date": "2026-09-25",
+      "nistStage": "Pending Review",
+      "date": "2026-09-28",
       "firstSeen": "2026-09-26"
     },
     {
@@ -430,7 +439,7 @@
       "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
       "vendor": "Apple Inc.",
       "nistStage": "Pending Review",
-      "date": "2026-09-15",
+      "date": "2026-09-17",
       "firstSeen": "2026-09-26"
     },
     {
@@ -438,8 +447,8 @@
       "list": "MIP",
       "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
       "vendor": "Apple Inc.",
-      "nistStage": "Pending Review",
-      "date": "2026-09-17",
+      "nistStage": "Review",
+      "date": "2026-10-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -465,8 +474,8 @@
       "list": "MIP",
       "module": "OpenSSL FIPS Provider",
       "vendor": "The OpenSSL Corporation",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-09-21",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-10-09",
       "firstSeen": "2026-09-26"
     },
     {
@@ -474,8 +483,8 @@
       "list": "MIP",
       "module": "PQCryptoLib-Core",
       "vendor": "PQShield Ltd.",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-08-25",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-10-05",
       "firstSeen": "2026-09-26"
     },
     {
