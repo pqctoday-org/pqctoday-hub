@@ -1819,7 +1819,12 @@
       "unified": "current",
       "admittedAt": "2026-08-17T02:30:57.086505+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:53.919962+00:00"
+      "stampedAt": "2026-09-17T13:09:53.919962+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10112026/products/bouncy-castle-c-net-brief-ec9ec81a.html",
+      "supersededAt": "2026-10-11T05:11:32.662734+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "version and date refreshed: the saved proof page described an older release; the row now cites the vendor's announcement of the current release — replaced by bouncy-castle-c-net-ec9ec81a.html"
     },
     {
       "softwareName": "Bouncy Castle C NET Manual",
@@ -16576,7 +16581,12 @@
       "previousSizeBytes": 271694,
       "hashCorrectedAt": "2026-09-17T17:51:50.246079+00:00",
       "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
-      "stampedAt": "2026-09-17T13:09:53.919962+00:00"
+      "stampedAt": "2026-09-17T13:09:53.919962+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10112026/products/bouncy-castle-c-net-brief-ec9ec81a.html",
+      "supersededAt": "2026-10-11T05:11:32.662734+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "version and date refreshed: the saved proof page described an older release; the row now cites the vendor's announcement of the current release — replaced by bouncy-castle-c-net-ec9ec81a.html"
     },
     {
       "softwareName": "bouncy-castle-java",

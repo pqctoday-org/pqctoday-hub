@@ -18623,7 +18623,7 @@
       "admittedBy": "admit.py",
       "identity": "UNCONFIRMED",
       "file": "library/ANSI_X9.62.html",
-      "status": "downloaded",
+      "status": "superseded",
       "evidenceKind": "publisher-catalogue-page",
       "note": "paywalled standard: the publisher catalogue page is identity evidence, not the full text",
       "ok": false,
@@ -18644,7 +18644,7 @@
       "admittedBy": "admit.py",
       "identity": "UNCONFIRMED",
       "file": "library/ANSI_X9.63.html",
-      "status": "downloaded",
+      "status": "superseded",
       "evidenceKind": "publisher-catalogue-page",
       "note": "paywalled standard: the publisher catalogue page is identity evidence, not the full text",
       "ok": false,
@@ -20936,24 +20936,6 @@
       "superseded_file": "_superseded-09272026/compliance/EUCC-V2.pdf"
     },
     {
-      "refId": "Singapore-CSA-Quantum-Safe-Handbook",
-      "label": "Quantum-Safe Handbook and Quantum Readiness Index",
-      "url": "https://isomer-user-content.by.gov.sg/36/11227d39-4350-4ded-9046-d62f99f561ab/Draft%20for%20Public%20Consultation%20-%20Quantum-Safe%20Handbook%20(Oct%202025).pdf",
-      "status": "downloaded",
-      "file": "library/Singapore_IMDA_Cyber_Security_Guide.pdf",
-      "filename": "Singapore_IMDA_Cyber_Security_Guide.pdf",
-      "sizeBytes": 1665432,
-      "contentType": "application/pdf",
-      "sha256": "496d39ceadedfba82ca99e2a7001cc358f382b081557b0de6b617f0154db9775",
-      "verifiedAt": "2026-09-11",
-      "artefact": "SOURCE",
-      "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-11",
-      "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:59:36.097154+00:00"
-    },
-    {
       "refId": "ECCG-ACM-v2",
       "label": "ECCG Agreed Cryptographic Mechanisms Version 2.0",
       "url": "https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG+Agreed+Cryptographic+Mechanisms+version+2.pdf",
@@ -22427,6 +22409,24 @@
       "unified": "converted",
       "admittedAt": "2026-10-10T23:54:59.824364+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Singapore-CSA-Quantum-Safe-Handbook",
+      "filename": "Singapore-CSA-Quantum-Safe-Handbook.pdf",
+      "sizeBytes": 1544999,
+      "contentType": "application/pdf",
+      "url": "https://isomer-user-content.by.gov.sg/36/11227d39-4350-4ded-9046-d62f99f561ab/Draft%20for%20Public%20Consultation%20-%20Quantum-Safe%20Handbook%20(Oct%202025).pdf",
+      "sha256": "0efa1ea60aaee52af878295a442c2f8eba4d9233decc57826ea8b2096b5a7370",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-11T05:02:35.642142+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "library/Singapore-CSA-Quantum-Safe-Handbook.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-11T05:02:33.817812+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "the saved file was the final V1 handbook saved for another row; this row's address serves the October 2025 draft, now filed under its own name"
     }
   ],
   "archivedEntries": [
