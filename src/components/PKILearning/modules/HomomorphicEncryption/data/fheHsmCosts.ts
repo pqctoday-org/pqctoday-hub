@@ -682,7 +682,7 @@ export const KEY_SIZES: KeySize[] = [
     size: '30,147,061 B (measured)',
     exact: true,
     secret: false,
-    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). 120.4 MB once expanded by the cloud (measured; loading and expanding it took 1.3 s on a KV260).',
+    note: 'Bootstrapping key + key-switching key with seeded compression: 30,147,061 B measured (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off; the default configuration is 57.4 MB). 120.4 MB once expanded by the cloud (measured; loading and expanding it took about 1.2 to 1.6 s on a KV260).',
   },
   {
     id: 'fhe-pk',
