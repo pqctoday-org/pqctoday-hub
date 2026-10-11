@@ -484,7 +484,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-3 BC-FJA 2.1.2 interim cert #4943)"
+          "value": "Yes, for the separate Bouncy Castle FIPS Java API (BC-FJA), not for the mainline library: FIPS 140-3 Level 1, CMVP certificate #4943, covers BC-FJA 2.1.1 (security policy dated 2025-07-18). Its algorithm certificate, CAVP A4270, is recorded for BC-FJA implementation version 2.1.2. The only post-quantum algorithm in the policy is LMS signature verification."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -3897,7 +3897,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Cloud KMS with HSM-backed keys using FIPS 140-2 Level 3 hardware. PQC key types (ML-KEM ML-DSA SLH-DSA X-Wing) available through Cloud KMS with HSM protection level.",
+      "description": "Cloud KMS with HSM-backed keys using FIPS 140-2 Level 3 hardware. PQC key types (ML-KEM, ML-DSA, SLH-DSA, X-Wing) are offered through Cloud KMS; no saved Google page states them at the HSM protection level.",
       "externalReferences": [
         {
           "type": "website",
