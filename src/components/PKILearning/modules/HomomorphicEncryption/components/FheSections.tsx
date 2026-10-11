@@ -517,8 +517,17 @@ export const FheSchemesSection: React.FC = () => (
           an unflooded owner release on this set keeps 31.0 bits,{' '}
           <EvidenceCite of="metaBtsOwner">owner run</EvidenceCite>). It costs about twice the
           bootstrap time per refresh, 3 multiplications between refreshes instead of 9, and a 12 %
-          larger key set. It has not been measured on the boards yet; the default set stays in use
-          for owner releases.
+          larger key set. The default set stays in use for owner releases.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>On the boards too:</strong> with the token on the board and the release flooded
+          the same way, the MX95 Pro kept <strong>22.78 bits</strong> and the MX95{' '}
+          <strong>22.59 bits</strong> (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
+          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>). Each board generated the 4.41 GB key
+          set on six cores in 97.4 s and 99.4 s (1,201 calls of 8 limbs, token peak 80.6–82.4 MiB)
+          and streamed it to the Mac in 122 s and 124 s; every limb matched the reference spec, and
+          the two boards&apos; manifests are identical apart from the descriptor each token draws at
+          random. The board decrypts are functional, not a security claim.
         </p>
       </div>
     </div>
