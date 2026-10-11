@@ -11,6 +11,8 @@ import {
   ROTATION_STEPS,
   SHARED_MEASURED,
   SHARED_STEPS,
+  type RotationViz,
+  type SharedViz,
   rotationAttempt,
   sharedOutcome,
   type RotationNewSecret,
@@ -108,6 +110,130 @@ const Toggle: React.FC<{
 )
 
 /* ------------------------------------------------------------------ */
+/*  Illustrations: what each party holds after the current step        */
+/* ------------------------------------------------------------------ */
+
+type ChipState = 'on' | 'off' | 'gone'
+
+/** A small labelled box for a key or a record; the state is also written in words. */
+const Chip: React.FC<{ label: string; state?: ChipState; note?: string }> = ({
+  label,
+  state = 'on',
+  note,
+}) => (
+  <span
+    className={`inline-flex flex-wrap items-center gap-x-1.5 rounded border px-2 py-1 text-[11px] ${
+      state === 'on'
+        ? 'border-primary/50 bg-primary/10 text-foreground'
+        : state === 'gone'
+          ? 'border-dashed border-destructive/50 bg-destructive/5 text-muted-foreground'
+          : 'border-dashed border-border text-muted-foreground'
+    }`}
+  >
+    <span className={`font-mono ${state === 'gone' ? 'line-through' : ''}`}>{label}</span>
+    {note && <span className="text-[10px]">{note}</span>}
+  </span>
+)
+
+const Party: React.FC<{ title: string; sub: string; children: React.ReactNode }> = ({
+  title,
+  sub,
+  children,
+}) => (
+  <div className="rounded-md border border-border bg-background/60 p-2 space-y-1.5 min-w-0">
+    <p className="text-xs font-semibold text-foreground">
+      {title} <span className="font-normal text-muted-foreground">{sub}</span>
+    </p>
+    <div className="flex flex-wrap gap-1.5">{children}</div>
+  </div>
+)
+
+const RotationIllustration: React.FC<{ viz: RotationViz }> = ({ viz }) => (
+  <div
+    className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-stretch gap-2"
+    aria-hidden="true"
+    data-testid="rotation-illustration"
+  >
+    <Party title="Token" sub="holds the secrets">
+      <Chip
+        label="old seed"
+        state={viz.oldSeed === 'held' ? 'on' : 'gone'}
+        note={viz.oldSeed === 'held' ? 'held' : 'destroyed'}
+      />
+      <Chip
+        label="new seed"
+        state={viz.newSeed === 'held' ? 'on' : 'off'}
+        note={viz.newSeed === 'held' ? 'made by the token' : 'not made yet'}
+      />
+      {viz.manifest && <Chip label="rotation manifest" note="signed" />}
+      {viz.retirement && <Chip label="retirement record" note="signed, public" />}
+    </Party>
+    <div className="flex items-center justify-center text-[11px] text-muted-foreground text-center sm:w-36">
+      {viz.arrow ? <span>→ {viz.arrow} →</span> : <span>&nbsp;</span>}
+    </div>
+    <Party title="FHE server" sub="no secret">
+      <Chip
+        label="stored ciphertexts"
+        note={viz.ciphertexts === 'old' ? 'under the old key' : 'under the new key'}
+      />
+      <Chip
+        label="rotation key"
+        state={viz.rotationKey === 'none' ? 'off' : viz.rotationKey === 'deleted' ? 'gone' : 'on'}
+        note={
+          viz.rotationKey === 'none'
+            ? 'not made yet'
+            : viz.rotationKey === 'streaming'
+              ? 'arriving'
+              : viz.rotationKey === 'deleted'
+                ? 'deleted'
+                : 'present'
+        }
+      />
+    </Party>
+  </div>
+)
+
+const SharedIllustration: React.FC<{ viz: SharedViz }> = ({ viz }) => (
+  <div className="space-y-2" aria-hidden="true" data-testid="shared-illustration">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+      <Party title="Token A" sub="MX95">
+        <Chip label="share A" state={viz.shareA ? 'on' : 'off'} note="never leaves" />
+      </Party>
+      <Party title="Mac" sub="combiner">
+        {viz.combiner === 'nothing' && <Chip label="no secret" state="off" note="and no share" />}
+        {viz.combiner === 'key-shares' && <Chip label="key shares" note="2 × 4.10 GB arriving" />}
+        {viz.combiner === 'joint-keys' && <Chip label="joint key set" note="7.87 GB, no secret" />}
+        {viz.combiner === 'result-ciphertext' && (
+          <>
+            <Chip label="joint key set" />
+            <Chip label="result ciphertext" note="sent to both tokens" />
+          </>
+        )}
+        {viz.combiner === 'result' && (
+          <Chip label="result" note="from both shares; one alone: noise" />
+        )}
+      </Party>
+      <Party title="Token B" sub="MX95 Pro">
+        <Chip label="share B" state={viz.shareB ? 'on' : 'off'} note="never leaves" />
+      </Party>
+    </div>
+    {viz.arrows.length > 0 && (
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+        {viz.arrows.map((a) => (
+          <li key={`${a.from}${a.to}${a.label}`}>
+            <span className="font-mono text-foreground">
+              {a.from === 'M' ? 'Mac' : `Token ${a.from}`} →{' '}
+              {a.to === 'M' ? 'Mac' : `Token ${a.to}`}
+            </span>
+            : {a.label}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)
+
+/* ------------------------------------------------------------------ */
 /*  Key rotation                                                       */
 /* ------------------------------------------------------------------ */
 
@@ -151,7 +277,7 @@ export const RotationAttemptPanel: React.FC<{ onInteract?: () => void }> = ({ on
       >
         <p className="text-sm">
           <OutcomeBadge ok={out.allowed} />
-          {out.code && <span className="ml-2 font-mono text-foreground">{out.code}</span>}
+          {out.code && <span className="ml-2 font-mono text-foreground break-all">{out.code}</span>}
         </p>
         <p className="text-muted-foreground" data-testid="rotation-rule">
           {out.rule}
@@ -184,6 +310,7 @@ export const RotationView: React.FC<{ onInteract: () => void }> = ({ onInteract 
         }}
       />
       <div className="glass-panel p-3 space-y-3" data-testid="rotation-step">
+        <RotationIllustration viz={step.viz} />
         <p className="text-xs font-mono text-muted-foreground">{step.actor}</p>
         <h4 className="text-sm font-bold text-foreground">{step.title}</h4>
         <p className="text-sm text-muted-foreground leading-relaxed">{step.body}</p>
@@ -331,6 +458,7 @@ export const SharedDecryptView: React.FC<{ onInteract: () => void }> = ({ onInte
         }}
       />
       <div className="glass-panel p-3 space-y-3" data-testid="shared-step">
+        <SharedIllustration viz={step.viz} />
         <p className="text-xs font-mono text-muted-foreground">{step.actor}</p>
         <h4 className="text-sm font-bold text-foreground">{step.title}</h4>
         <p className="text-sm text-muted-foreground leading-relaxed">{step.body}</p>

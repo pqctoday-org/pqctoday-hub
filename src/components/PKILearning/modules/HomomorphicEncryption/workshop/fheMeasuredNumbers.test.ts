@@ -15,6 +15,7 @@ import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
 
 const ROOT = path.resolve(__dirname, '../../../../../../public/data/fhe-evidence')
 const json = (folder: string, file: string) =>
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
   JSON.parse(fs.readFileSync(path.join(ROOT, folder, file), 'utf8'))
 const round = (x: number, d: number) => x.toFixed(d)
 
@@ -127,6 +128,7 @@ describe('every record file is pinned by its sha256', () => {
         // run.log files are ignored by git (*.log); the manifest still pins their hash
         if (a.name.endsWith('.log')) continue
         const rel = a.url.replace('https://www.pqctoday.com/data/fhe-evidence/', '')
+        // eslint-disable-next-line security/detect-non-literal-fs-filename -- paths come from the committed manifest
         const bytes = fs.readFileSync(path.join(ROOT, rel))
         expect(crypto.createHash('sha256').update(bytes).digest('hex'), `${id} ${a.name}`).toBe(
           a.sha256

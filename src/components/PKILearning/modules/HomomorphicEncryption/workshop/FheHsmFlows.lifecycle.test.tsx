@@ -73,7 +73,7 @@ describe('FHE + HSM flows: the key-lifecycle scenarios', () => {
       'decrypt-under-policy',
       'release-result',
     ])
-      expect(status[id], id).toBe('engine')
+      expect(status[id], id).toBe('engine') // eslint-disable-line security/detect-object-injection
     expect(status['live-clone-peer-hsm']).toBe('planned')
     expect(status['offline-backup-restore']).toBe('planned')
   })

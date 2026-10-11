@@ -38,9 +38,12 @@ export const HomomorphicEncryptionModule: FC = () => (
     learn={(api) => (
       <Introduction
         onNavigateToWorkshop={api.goToWorkshop}
-        onOpenLifecycleView={(view, family) =>
-          api.openWorkshopStep(LIFECYCLE_STEP[family], { family, view })
-        }
+        onOpenLifecycleView={(view, family) => {
+          // switch to the Workshop tab, then land on the step and pass the view through
+          const step = LIFECYCLE_STEP[family] // eslint-disable-line security/detect-object-injection
+          api.goToWorkshop(step)
+          api.openWorkshopStep(step, { family, view })
+        }}
       />
     )}
     exercises={(api) => (
@@ -59,7 +62,7 @@ export const HomomorphicEncryptionModule: FC = () => (
               key={`fhe-hsm-${configKey}`}
               initialFlowId={
                 view && config?.family === 'flows'
-                  ? (LIFECYCLE_FLOW_ID[view] as FheFlowId)
+                  ? (LIFECYCLE_FLOW_ID[view] as FheFlowId) // eslint-disable-line security/detect-object-injection
                   : undefined
               }
             />

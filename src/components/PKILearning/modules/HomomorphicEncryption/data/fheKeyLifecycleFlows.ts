@@ -59,7 +59,7 @@ export const KEY_LIFECYCLE_FLOWS: FheFlow[] = [
       whatsDifferent:
         'Decrypting every stored ciphertext and encrypting it again would send the data through the very path that is under suspicion after an incident. Here the token produces one small key and the server does the conversion on ciphertexts.',
       catch:
-        'The adapter works in one direction only in secrecy: whoever holds the new secret and the adapter can compute the old secret, so it is used once and deleted. Whether someone who holds the old secret can read a converted ciphertext without having kept the original is not established.',
+        'The adapter has a price: whoever holds the new secret and the adapter can compute the old secret, so it is used once and deleted. Whether someone who holds the old secret can read a converted ciphertext without having kept the original is not established.',
     },
     actors: [
       {

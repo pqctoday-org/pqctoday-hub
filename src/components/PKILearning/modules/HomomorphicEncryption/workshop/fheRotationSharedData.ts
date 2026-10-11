@@ -55,9 +55,22 @@ export const ROTATION_MEASURED = {
   evidence: 'rotation' as CkksEvidenceKey,
 }
 
+/** What the illustration draws after a step; the words are the same as in `state`. */
+export interface RotationViz {
+  oldSeed: 'held' | 'destroyed'
+  newSeed: 'none' | 'held'
+  rotationKey: 'none' | 'streaming' | 'at-server' | 'deleted'
+  ciphertexts: 'old' | 'new'
+  manifest: boolean
+  retirement: boolean
+  /** The arrow between token and server, if this step moves something. */
+  arrow?: string
+}
+
 export interface RotationStep {
   id: string
   actor: string
+  viz: RotationViz
   title: string
   body: string
   /** State of the five things the view tracks after this step. */
@@ -76,6 +89,14 @@ const fmt = (n: number) => n.toLocaleString('en-US')
 export const ROTATION_STEPS: RotationStep[] = [
   {
     id: 'so-starts',
+    viz: {
+      oldSeed: 'held',
+      newSeed: 'none',
+      rotationKey: 'none',
+      ciphertexts: 'old',
+      manifest: false,
+      retirement: false,
+    },
     actor: 'Security officer',
     title: 'The security officer starts the rotation',
     body: 'Only a security-officer session may run a rotation. The token checks the session first, before it looks at any key, and a user session or a public session is refused. The security officer names the two seeds by lineage and never holds a handle to either.',
@@ -89,6 +110,14 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'token-makes-new',
+    viz: {
+      oldSeed: 'held',
+      newSeed: 'held',
+      rotationKey: 'none',
+      ciphertexts: 'old',
+      manifest: false,
+      retirement: false,
+    },
     actor: 'Token',
     title: 'The token generates the new secret itself',
     body: 'The new seed is made inside the token, never supplied or imported by the caller. A switching key toward a secret the caller knows would hand over the old secret, so a seed that was imported, or copied from another token, is refused as the new secret.',
@@ -102,6 +131,15 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'stream-key',
+    viz: {
+      oldSeed: 'held',
+      newSeed: 'held',
+      rotationKey: 'streaming',
+      ciphertexts: 'old',
+      manifest: true,
+      retirement: false,
+      arrow: 'rotation key, 15.7 MB streamed',
+    },
     actor: 'Token → server',
     title: 'The rotation key is streamed with a signed manifest',
     body: 'One key-switching key from the old secret to the new one, at the lower levels stored ciphertexts use. The token streams it in bounded calls and signs a manifest of the pieces once every digit has been sent exactly once. It is byte-identical to the key Lattigo rebuilds from the two seeds.',
@@ -126,6 +164,14 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'server-switches',
+    viz: {
+      oldSeed: 'held',
+      newSeed: 'held',
+      rotationKey: 'at-server',
+      ciphertexts: 'new',
+      manifest: true,
+      retirement: false,
+    },
     actor: 'FHE server',
     title: 'The server switches each stored ciphertext',
     body: 'No plaintext appears: the server applies the key to each ciphertext and the result decrypts under the new secret. Switching costs about 1.3–1.6 bits of precision.',
@@ -149,6 +195,15 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'old-key-fails',
+    viz: {
+      oldSeed: 'held',
+      newSeed: 'held',
+      rotationKey: 'at-server',
+      ciphertexts: 'new',
+      manifest: true,
+      retirement: false,
+      arrow: 'decrypt: new key works, old key gives noise',
+    },
     actor: 'Token',
     title: 'The old key no longer decrypts the result',
     body: 'A switched ciphertext decrypts under the new secret (released rounded to 20 bits it keeps 20.99 bits) and gives noise under the old one. Whether someone who holds the old secret could read a switched ciphertext without having kept the original is not established.',
@@ -169,6 +224,14 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'so-retires',
+    viz: {
+      oldSeed: 'destroyed',
+      newSeed: 'held',
+      rotationKey: 'at-server',
+      ciphertexts: 'new',
+      manifest: true,
+      retirement: true,
+    },
     actor: 'Security officer + token',
     title: 'The security officer retires the old secret',
     body: 'Only after the rotation manifest was signed, and after the server reports every stored ciphertext switched; the token cannot check that itself. The token first commits a signed retirement record, a public object nobody can change or delete, and only then destroys the old seed.',
@@ -182,6 +245,14 @@ export const ROTATION_STEPS: RotationStep[] = [
   },
   {
     id: 'server-deletes',
+    viz: {
+      oldSeed: 'destroyed',
+      newSeed: 'held',
+      rotationKey: 'deleted',
+      ciphertexts: 'new',
+      manifest: true,
+      retirement: true,
+    },
     actor: 'FHE server',
     title: 'The server deletes the rotation key',
     body: 'Whoever holds the new secret and the rotation key can compute the old secret, so the key is used once and deleted. The new key set (3.94 GB) must still be streamed; the rotation key moves stored data, it does not replace it. Rotation does not repair past exposure: copies of old ciphertexts held by someone who already knows the old secret stay readable.',
@@ -332,9 +403,20 @@ export const SHARED_MEASURED = {
   evidence: 'threshold' as CkksEvidenceKey,
 }
 
+/** What the illustration draws after a step. */
+export interface SharedViz {
+  shareA: boolean
+  shareB: boolean
+  /** What sits at the combiner. */
+  combiner: 'nothing' | 'key-shares' | 'joint-keys' | 'result-ciphertext' | 'result'
+  /** Arrows drawn between the tokens and the combiner. */
+  arrows: { from: 'A' | 'B' | 'M'; to: 'A' | 'B' | 'M'; label: string }[]
+}
+
 export interface SharedStep {
   id: string
   actor: string
+  viz: SharedViz
   title: string
   body: string
   numbers?: { label: string; value: string }[]
@@ -343,6 +425,7 @@ export interface SharedStep {
 export const SHARED_STEPS: SharedStep[] = [
   {
     id: 'two-shares',
+    viz: { shareA: true, shareB: true, combiner: 'nothing', arrows: [] },
     actor: 'Two tokens',
     title: 'Each board holds one share of the secret',
     body: 'Token A (MX95) and token B (MX95 Pro) each make a random share; the secret is their sum and nobody ever holds it. The sum has about twice as many non-zero coefficients as one secret, and bootstrapping with the joint keys still works (measured).',
@@ -355,6 +438,15 @@ export const SHARED_STEPS: SharedStep[] = [
   },
   {
     id: 'stream-shares',
+    viz: {
+      shareA: true,
+      shareB: true,
+      combiner: 'key-shares',
+      arrows: [
+        { from: 'A', to: 'M', label: '4.10 GB' },
+        { from: 'B', to: 'M', label: '4.10 GB' },
+      ],
+    },
     actor: 'Tokens → Mac',
     title: 'Each token streams its share of the key set',
     body: 'In the same chunk format as one token, for 50 of the 51 keys. The relinearization key needs two rounds, so each token also downloads the sum of round 1 before it streams round 2.',
@@ -371,6 +463,7 @@ export const SHARED_STEPS: SharedStep[] = [
   },
   {
     id: 'join-keys',
+    viz: { shareA: true, shareB: true, combiner: 'joint-keys', arrows: [] },
     actor: 'Mac',
     title: 'The Mac adds the shares into one joint key set',
     body: 'Shares of public keys are random-looking samples, so an untrusted machine can add them. The joint keys bootstrap about half a bit below a single party.',
@@ -383,6 +476,17 @@ export const SHARED_STEPS: SharedStep[] = [
   },
   {
     id: 'ask-both',
+    viz: {
+      shareA: true,
+      shareB: true,
+      combiner: 'result-ciphertext',
+      arrows: [
+        { from: 'M', to: 'A', label: 'result' },
+        { from: 'M', to: 'B', label: 'result' },
+        { from: 'A', to: 'M', label: 'share 0.5 MB' },
+        { from: 'B', to: 'M', label: 'share 0.5 MB' },
+      ],
+    },
     actor: 'Mac → both tokens',
     title: 'To decrypt, both tokens answer, each under its own approval',
     body: 'Each token returns a decryption share of the result. Switched to the owner’s public key, whoever combines the shares does not learn the plaintext.',
@@ -395,6 +499,7 @@ export const SHARED_STEPS: SharedStep[] = [
   },
   {
     id: 'combine',
+    viz: { shareA: true, shareB: true, combiner: 'result', arrows: [] },
     actor: 'Mac / owner',
     title: 'The shares are combined; one alone decrypts nothing',
     body: 'Both shares together give the result. One share alone gives noise.',
