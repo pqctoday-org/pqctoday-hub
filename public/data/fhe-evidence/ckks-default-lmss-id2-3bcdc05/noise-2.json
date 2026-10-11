@@ -1,0 +1,47 @@
+{
+ "paramSet": 2,
+ "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "paramHash": "218de3a2152ef7a92bfdba46dd832f8cadddc394c261405833683968757eaf52",
+ "trials": 2,
+ "releaseLevel": 0,
+ "log2ModulusAtRelease": 59.99999999999967,
+ "log2Scale": 40,
+ "assembleSeconds": 13.216111366,
+ "bootstrapSecondsPerTrial": [
+  7.027716805,
+  6.864337394
+ ],
+ "log2MaxCoefficientNoisePerTrial": [
+  9.174925682500678,
+  8.823367240046235
+ ],
+ "log2StdCoefficientNoisePerTrial": [
+  5.540947026477421,
+  5.521751069842482
+ ],
+ "log2PrecisionNoFloodPerTrial": [
+  24.850274016527695,
+  24.83343528195959
+ ],
+ "log2MaxCoefficientNoise": 9.174925682500678,
+ "log2B": 10,
+ "log2BMinusMeasuredMax": 0.8250743174993218,
+ "log2PrecisionNoFlood": 24.83343528195959,
+ "statSecurityBits": 30,
+ "maxDecrypts": 10000,
+ "maxReplicas": 4,
+ "floodQLineageTotal": 50000,
+ "floodFormula": "LMSS22 Corollary 2: log2 sigma = lambda_s/2 + log2(24*q*n)/2 + log2 B, q = (maxReplicas+1)*maxDecrypts",
+ "log2FloodSigma": 43.09730148757899,
+ "floodDraws": 3,
+ "log2PrecisionFlooded": -12.821281471706166,
+ "log2PrecisionFloodedPerDraw": [
+  -12.709380378531025,
+  -12.737040850706117,
+  -12.821281471706166
+ ],
+ "log2PrecisionRounded20": 20.929633622761685,
+ "gateF": "no-go",
+ "started": "2026-10-11T20:03:37Z",
+ "goVersion": "go1.25.4"
+}

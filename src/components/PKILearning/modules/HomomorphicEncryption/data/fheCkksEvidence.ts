@@ -22,6 +22,11 @@ export const CKKS_EVIDENCE = {
   metaBtsOwner: 'ckks-metabts2-owner-m5max-baf6237',
   metaBtsMx95: 'ckks-metabts2-stream-mx95-mac-m5max-f8663c9',
   metaBtsMx95pro: 'ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9',
+  // 2026-10-11, corrected flood width (LMSS22 Corollary 2); Mac only, the boards are not measured yet
+  metaBtsLmss: 'ckks-metabts2-lmss-gate-f-m5max-3bcdc05',
+  metaBtsLmssDepth1: 'ckks-metabts2-lmss-depth1-m5max-3bcdc05',
+  metaBtsLmssDepth3: 'ckks-metabts2-lmss-depth3-m5max-3bcdc05',
+  defaultLmssId2: 'ckks-default-lmss-id2-m5max-3bcdc05',
   rotation: 'ckks-rotation-key-m5max-ab8b1c3',
   openfhe: 'openfhe-ckks-reference-m5max-039034f',
   seal: 'seal-ckks-reference-m5max-039034f',

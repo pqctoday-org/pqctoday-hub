@@ -3529,7 +3529,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "sizes only: Lattigo v6.2.0 generates and holds the whole bootstrappable key set in one process",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. Sizes only, no step badge: Lattigo itself generated and held the whole set, which is the memory a holder of the set needs, not what the streaming token needs. Keys: 1 relinearization, 48 Galois (rotations and conjugation) and 2 sparse-secret switches (dense to sparse, sparse to dense). One full-size key is 5 RNS digits × 30 limbs × (b, a) × 2^16 × 8 B = 157,289,056 B. The b halves are what a seeded export carries; a is re-expanded from a public seed. Run files: pqctoday-fhe 7de154b (reviewed PR head, not yet merged).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. Sizes only, no step badge: Lattigo itself generated and held the whole set, which is the memory a holder of the set needs, not what the streaming token needs. Keys: 1 relinearization, 48 Galois (rotations and conjugation) and 2 sparse-secret switches (dense to sparse, sparse to dense). One full-size key is 5 RNS digits × 30 limbs × (b, a) × 2^16 × 8 B = 157,289,056 B. The b halves are what a seeded export carries; a is re-expanded from a public seed. Run files: pqctoday-fhe 7de154b (merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737)).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -3643,7 +3643,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one Mac (M4 Pro) core; full key set generated through PKCS#11, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token generated the full set through 1,001 bounded C_DeriveKey calls and the output was discarded on the Mac, so this times the token alone; no transfer and no byte comparison were part of this run (the board records carry the comparison with the reference spec). The file records one SHA-256 (969f242f…dabc) next to the timing; the build commit of this binary is not recorded with the run. Engine commit cited: pqctoday-hsm c9b0258b, the reviewed PR head, not yet merged. Run file: pqctoday-fhe 7de154b (reviewed PR head, not yet merged).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token generated the full set through 1,001 bounded C_DeriveKey calls and the output was discarded on the Mac, so this times the token alone; no transfer and no byte comparison were part of this run (the board records carry the comparison with the reference spec). The file records one SHA-256 (969f242f…dabc) next to the timing; the build commit of this binary is not recorded with the run. Engine commit cited: pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run file: pqctoday-fhe 7de154b (merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737)).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -3659,7 +3659,7 @@
       "environment": {
         "hardware": "Apple M4 Pro (14 cores, 48 GB); one core used",
         "os": "macOS host",
-        "toolchain": "ckks_custodian from pqctoday-hsm (reviewed PR head line); build not recorded with the run",
+        "toolchain": "ckks_custodian from pqctoday-hsm (pqctoday-hsm #351, merged); build not recorded with the run",
         "features": "single-threaded portable code"
       },
       "method": {
@@ -3771,7 +3771,7 @@
         }
       ],
       "claimLabel": "custodian: software token on MX95, streaming the evaluation keys in bounded PKCS#11 calls; data owner and FHE server: Lattigo on a Mac (M5 Max)",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The custodian ran on one Cortex-A55 core of the MX95 board, initialised with a fixed test seed (test-support build) so that every exported limb can be compared byte for byte with the Lattigo-based reference spec. Generation was measured twice: once with the stream discarded on the board (473.4 s, generate-only.json), and once streamed to the Mac over SSH on the owner’s management network (497.7 s, export.json and receive.json; streaming added about 5 %). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys from the export, re-expanding every public a, encrypted under the token’s public key and bootstrapped (e2e.json). The level-0 result went back to the board, which decrypted it under FHE decryption policy version 2 for the owner: decoded inside the token and rounded to 2^-20, with no flooding (decrypt.txt, e2e-check.json). That decrypt shows the mechanism works: it is functional, not a security claim (see the decryption-oracle limitation in the Learn tab). Uploading and returning ciphertexts ran in one process on the Mac and are not claimed. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, is the pushed PR head under review, not yet merged; its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, also a reviewed PR head, not yet merged. The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The custodian ran on one Cortex-A55 core of the MX95 board, initialised with a fixed test seed (test-support build) so that every exported limb can be compared byte for byte with the Lattigo-based reference spec. Generation was measured twice: once with the stream discarded on the board (473.4 s, generate-only.json), and once streamed to the Mac over SSH on the owner’s management network (497.7 s, export.json and receive.json; streaming added about 5 %). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys from the export, re-expanding every public a, encrypted under the token’s public key and bootstrapped (e2e.json). The level-0 result went back to the board, which decrypted it under FHE decryption policy version 2 for the owner: decoded inside the token and rounded to 2^-20, with no flooding (decrypt.txt, e2e-check.json). That decrypt shows the mechanism works: it is functional, not a security claim (see the decryption-oracle limitation in the Learn tab). Uploading and returning ciphertexts ran in one process on the Mac and are not claimed. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895); its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -3962,7 +3962,7 @@
         }
       ],
       "claimLabel": "custodian: software token on MX95 Pro, streaming the evaluation keys in bounded PKCS#11 calls; data owner and FHE server: Lattigo on a Mac (M5 Max)",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The custodian ran on one Cortex-A55 core of the MX95 Pro board, initialised with a fixed test seed (test-support build) so that every exported limb can be compared byte for byte with the Lattigo-based reference spec. Generation was measured twice: once with the stream discarded on the board (450.9 s, generate-only.json), and once streamed to the Mac over SSH on the owner’s management network (478.0 s, export.json and receive.json; streaming added about 6 %). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys from the export, re-expanding every public a, encrypted under the token’s public key and bootstrapped (e2e.json). The level-0 result went back to the board, which decrypted it under FHE decryption policy version 2 for the owner: decoded inside the token and rounded to 2^-20, with no flooding (decrypt.txt, e2e-check.json). That decrypt shows the mechanism works: it is functional, not a security claim (see the decryption-oracle limitation in the Learn tab). Uploading and returning ciphertexts ran in one process on the Mac and are not claimed. Same test seed as the MX95 run, on a second board: all 1,003 key-material entries of manifest.txt are identical to the MX95 run, and only descriptor.der differs, because it carries an identifier that each token draws at random when it is initialised. This is not a failover and the seed was not replicated. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, is the pushed PR head under review, not yet merged; its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, also a reviewed PR head, not yet merged. The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The custodian ran on one Cortex-A55 core of the MX95 Pro board, initialised with a fixed test seed (test-support build) so that every exported limb can be compared byte for byte with the Lattigo-based reference spec. Generation was measured twice: once with the stream discarded on the board (450.9 s, generate-only.json), and once streamed to the Mac over SSH on the owner’s management network (478.0 s, export.json and receive.json; streaming added about 6 %). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys from the export, re-expanding every public a, encrypted under the token’s public key and bootstrapped (e2e.json). The level-0 result went back to the board, which decrypted it under FHE decryption policy version 2 for the owner: decoded inside the token and rounded to 2^-20, with no flooding (decrypt.txt, e2e-check.json). That decrypt shows the mechanism works: it is functional, not a security claim (see the decryption-oracle limitation in the Learn tab). Uploading and returning ciphertexts ran in one process on the Mac and are not claimed. Same test seed as the MX95 run, on a second board: all 1,003 key-material entries of manifest.txt are identical to the MX95 run, and only descriptor.der differs, because it carries an identifier that each token draws at random when it is initialised. This is not a failover and the seed was not replicated. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895); its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4119,7 +4119,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one Mac (M4 Pro) core; full key set generated at several chunk sizes, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 33.8 s of work plus about 8 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Engine commit cited: pqctoday-hsm c9b0258b, the reviewed PR head, not yet merged; the build of this binary is not recorded with the run. Run file: pqctoday-fhe 7de154b (reviewed PR head, not yet merged).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 33.8 s of work plus about 8 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Engine commit cited: pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895); the build of this binary is not recorded with the run. Run file: pqctoday-fhe 7de154b (merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737)).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4135,7 +4135,7 @@
       "environment": {
         "hardware": "Apple M4 Pro (14 cores, 48 GB); one core used",
         "os": "macOS host",
-        "toolchain": "ckks_custodian from pqctoday-hsm (reviewed PR head line)",
+        "toolchain": "ckks_custodian from pqctoday-hsm (pqctoday-hsm #351, merged)",
         "features": "single-threaded portable code"
       },
       "method": {
@@ -4209,7 +4209,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one MX95 Cortex-A55 core; full key set generated at several chunk sizes, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 397 s of work plus about 77 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, is the pushed PR head under review, not yet merged; its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, also a reviewed PR head, not yet merged. The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 397 s of work plus about 77 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895); its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4292,7 +4292,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one MX95 Pro Cortex-A55 core; full key set generated at several chunk sizes, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 378 s of work plus about 77 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, is the pushed PR head under review, not yet merged; its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, also a reviewed PR head, not yet merged. The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token at one chunk size (limbs per C_DeriveKey call), output discarded, one core. A straight-line fit of time against the number of calls gives about 378 s of work plus about 77 ms per call. The fixed cost per call is the stateless design regenerating the secret for every call (constant-time fixed-weight sampler) and the digit’s error polynomial; memory grows by about 1 MiB per extra limb. 8 limbs per call is the default. Custodian binary ckks_custodian built from pqctoday-hsm 1f3bb30d (the build commit recorded in provenance.txt; sha256 017ba889…30f6, release profile, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm c9b0258b, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895); its only change after 1f3bb30d adds one line to each of three Cargo.lock files. Run files and the reference harness: pqctoday-fhe 7de154b, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen, so later versions may produce different bytes.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4361,8 +4361,8 @@
       "producer": "pqctoday-fhe",
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
-      "claimLabel": "noise study: post-bootstrap noise and the precision of rounded and flooded releases",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: this is a measurement that sizes the decryption policy, not a validation of a step. The reference harness bootstrapped twice with the reference-spec keys, decrypted with the spec secret and measured the level-0 coefficient error B against the exact encoding of the input; it then flooded one result with σ = 2^(λ/2)·√q·B, λ = 30 bits of statistical security and q = 10,000 releases, as the decryption policy sizes it. Gate result: no-go at the default scale 2^40, because a flood of that width (2^31.6) leaves no correct bits; owner releases, which are rounded and not flooded, are unaffected. Third-party flooded releases need other parameters (a larger level-0 modulus and scale), which is open work. noise-32770.json is the same study on the INSECURE N = 2^10 test ring. Run files: pqctoday-fhe 7de154b (reviewed PR head, not yet merged).",
+      "claimLabel": "noise study (earlier flood width, superseded by the corrected sizing): post-bootstrap noise and the precision of rounded and flooded releases",
+      "notes": "Earlier flood width, superseded by the corrected sizing: the token flooded 10.3 bits narrower than the published analysis requires (Li, Micciancio, Schultz and Sorrell, CRYPTO 2022, ePrint 2022/816, Definition 18 and Corollary 2) and counted one copy of the key; pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) corrects it. This study sized the flood as 2^(λ/2)·√q·B (σ = 2^31.6 for the default set); the corrected width is 2^43.1 for the same policy and set (four replicas, q = 50,000). This record keeps the earlier run as it was measured; it is not a current third-party-release result. The corrected Mac runs are ckks-metabts2-lmss-gate-f-m5max-3bcdc05, ckks-metabts2-lmss-depth1-m5max-3bcdc05 and ckks-metabts2-lmss-depth3-m5max-3bcdc05 (second parameter set) and ckks-default-lmss-id2-m5max-3bcdc05 (default set). Facts that do not depend on the flood width (key-set size, generation and streaming times, byte equality, token memory) remain valid. PQCTODAY EDUCATIONAL TEST ONLY. No step badge: this is a measurement that sizes the decryption policy, not a validation of a step. The reference harness bootstrapped twice with the reference-spec keys, decrypted with the spec secret and measured the level-0 coefficient error B against the exact encoding of the input; it then flooded one result with σ = 2^(λ/2)·√q·B, λ = 30 bits of statistical security and q = 10,000 releases, as the decryption policy sizes it. Gate result: no-go at the default scale 2^40, because a flood of that width (2^31.6) leaves no correct bits; owner releases, which are rounded and not flooded, are unaffected. Third-party flooded releases need other parameters (a larger level-0 modulus and scale), which is open work. noise-32770.json is the same study on the INSECURE N = 2^10 test ring. Run files: pqctoday-fhe 7de154b (merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737)).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4404,7 +4404,7 @@
       ],
       "measuredAt": "2026-10-10",
       "summary": {
-        "headline": "After bootstrapping, the noise is about 2^9.2; unflooded results keep 24.7 bits, rounded owner releases 20.9 bits, and flooding sized for 30-bit security over 10,000 releases leaves no correct bits at scale 2^40.",
+        "headline": "After bootstrapping, the noise is about 2^9.2; unflooded results keep 24.7 bits, rounded owner releases 20.9 bits, and flooding at the earlier, narrower width (2^31.6, superseded by the corrected sizing) already leaves no correct bits at scale 2^40.",
         "keyNumbers": [
           {
             "label": "Post-bootstrap noise B (max of 2)",
@@ -4421,17 +4421,17 @@
             "unit": "bits"
           },
           {
-            "label": "Flood width for 30-bit security, 10,000 releases",
+            "label": "Earlier flood width for 30-bit security, 10,000 releases (superseded)",
             "value": "2^31.6"
           },
           {
-            "label": "Precision with that flood",
+            "label": "Precision with that earlier flood",
             "value": "−1.3",
             "unit": "bits"
           },
           {
             "label": "Gate F at scale 2^40",
-            "value": "no-go for flooded third-party releases"
+            "value": "no-go for flooded third-party releases (also with the corrected, wider flood)"
           }
         ]
       }
@@ -4460,7 +4460,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one MX95 Cortex-A55 core with the cached generator; full key set generated at 8 and 30 limbs per call, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, one thread (threads: 1). Compared with the 2026-10-10 runs, the token keeps one cached generator per token (the expanded secret and the last digit’s error polynomial, zeroized on close, logout, finalize, token initialization, 30 s idle and seed destroy), caches the public NTT tables and the secret in NTT form per modulus (PQC_CKKS_CACHE_MB, default 64), and expands the public a with a 64-block AES-CTR keystream. The trade-off: the expanded secret stays in token memory during an export, and the token peak rises from about 16 MiB to 64.5–86.3 MiB; PQC_CKKS_CACHE_MB=0 returns to the earlier footprint of about 16 MiB at about twice the time. The streaming plan records the full set produced this way as identical to the 2026-10-10 export (1,003 entries); this sweep itself does not compare bytes. Custodian binary ckks_custodian built from pqctoday-hsm 80b82d51 (the build commit recorded in provenance.txt; sha256 ad039f4e…c4cedf, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, is the pushed PR head under review, not yet merged, and contains 80b82d51. Run files: pqctoday-fhe 3ec1f97, part of the pushed PR head under review, not yet merged (baf6237). The key generator is version 1, not yet frozen.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, one thread (threads: 1). Compared with the 2026-10-10 runs, the token keeps one cached generator per token (the expanded secret and the last digit’s error polynomial, zeroized on close, logout, finalize, token initialization, 30 s idle and seed destroy), caches the public NTT tables and the secret in NTT form per modulus (PQC_CKKS_CACHE_MB, default 64), and expands the public a with a 64-block AES-CTR keystream. The trade-off: the expanded secret stays in token memory during an export, and the token peak rises from about 16 MiB to 64.5–86.3 MiB; PQC_CKKS_CACHE_MB=0 returns to the earlier footprint of about 16 MiB at about twice the time. The streaming plan records the full set produced this way as identical to the 2026-10-10 export (1,003 entries); this sweep itself does not compare bytes. Custodian binary ckks_custodian built from pqctoday-hsm 80b82d51 (the build commit recorded in provenance.txt; sha256 ad039f4e…c4cedf, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895), and contains 80b82d51. Run files: pqctoday-fhe 3ec1f97, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4543,7 +4543,7 @@
         }
       ],
       "claimLabel": "custodian: software token on the six MX95 Pro Cortex-A55 cores with the cached generator; full key set generated at 8 and 30 limbs per call, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, the limbs of each call on six threads (threads: 6, PQC_CKKS_THREADS). The token uses the same caches as the one-core MX95 run (cached generator, per-modulus NTT tables and secret in NTT form, PQC_CKKS_CACHE_MB default 64, 64-block AES-CTR keystream); the expanded secret stays in token memory during an export, and the token peak rises to 94.4–123.6 MiB. At 30 limbs per call the rate is 54.4 MB/s, about half of a 1 Gb/s link, so the board CPU is still the limit. The streaming plan records parallel and cached generation as byte-identical to the 2026-10-10 export; this sweep itself does not compare bytes. Custodian binary ckks_custodian built from pqctoday-hsm 80b82d51 (provenance.txt; sha256 ad039f4e…c4cedf, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, is the pushed PR head under review, not yet merged, and contains 80b82d51. Run files: pqctoday-fhe 3ec1f97, part of the pushed PR head under review, not yet merged (baf6237). The key generator is version 1, not yet frozen.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, the limbs of each call on six threads (threads: 6, PQC_CKKS_THREADS). The token uses the same caches as the one-core MX95 run (cached generator, per-modulus NTT tables and secret in NTT form, PQC_CKKS_CACHE_MB default 64, 64-block AES-CTR keystream); the expanded secret stays in token memory during an export, and the token peak rises to 94.4–123.6 MiB. At 30 limbs per call the rate is 54.4 MB/s, about half of a 1 Gb/s link, so the board CPU is still the limit. The streaming plan records parallel and cached generation as byte-identical to the 2026-10-10 export; this sweep itself does not compare bytes. Custodian binary ckks_custodian built from pqctoday-hsm 80b82d51 (provenance.txt; sha256 ad039f4e…c4cedf, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895), and contains 80b82d51. Run files: pqctoday-fhe 3ec1f97, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4626,7 +4626,7 @@
         }
       ],
       "claimLabel": "custodian: software token on one MX95 Cortex-A55 core with only the generator cached; full key set generated at 1, 8 and 30 limbs per call, output discarded",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, one core. This build caches only the generator (the expanded secret and the last digit’s error polynomial), which removes most of the fixed cost per call (about 77 ms in the 2026-10-10 sweep): chunk size no longer costs much time, and small chunks keep the token near 14 MiB. The NTT-table cache and the faster keystream came later (the cached-generator records). Custodian binary ckks_custodian built from pqctoday-hsm ee152e5c (provenance.txt; sha256 a4592db9…013414, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, is the pushed PR head under review, not yet merged, and contains ee152e5c. Run files: pqctoday-fhe 6891773, part of the pushed PR head under review, not yet merged (baf6237). The key generator is version 1, not yet frozen.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Each line of sweep.txt is one full generation of the set through the token on the board, output discarded, one core. This build caches only the generator (the expanded secret and the last digit’s error polynomial), which removes most of the fixed cost per call (about 77 ms in the 2026-10-10 sweep): chunk size no longer costs much time, and small chunks keep the token near 14 MiB. The NTT-table cache and the faster keystream came later (the cached-generator records). Custodian binary ckks_custodian built from pqctoday-hsm ee152e5c (provenance.txt; sha256 a4592db9…013414, features educational-ckks and test-support). The engine commit cited, pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895), and contains ee152e5c. Run files: pqctoday-fhe 6891773, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4701,8 +4701,8 @@
       "producer": "pqctoday-fhe",
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
-      "claimLabel": "second parameter set (META-BTS ×2, scale 2^90): token export, Lattigo bootstrap and a flooded token release, end to end on one Mac",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F), not a board validation. The software token ran in a container on the Mac, not on a board; the board runs of this parameter set are the records ckks-metabts2-stream-mx95-mac-m5max-f8663c9 and ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9. Registry ID 3 is the parameter set chosen for releases to third parties: Lattigo’s META-BTS iteration (two bootstraps per refresh, Bae, Cheon, Cho, Kim and Kim, ePrint 2022/1167) at scale 2^90, the release decrypted over two primes (105 bits) and flooded in 128-bit arithmetic. The token streamed 51 keys, 4,410,835,077 B in 1,201 bounded calls (8 limbs each); every limb matched the reference spec (verify.txt); Lattigo assembled the keys, encrypted under the token’s public key and bootstrapped (two iterations), and the token decrypted the level-1 result under policy. Cost against the default set (flooding-options study): about twice the bootstrap time per refresh, 3 multiplications between refreshes at scale 2^90 instead of 9, and a 12 % larger key set. Engine: pqctoday-hsm 46dca802, the pushed PR head under review, not yet merged. Run files and the reference harness: pqctoday-fhe baf6237, also the pushed PR head under review, not yet merged. The key generator is version 1, not yet frozen. In this run the owner release was flooded exactly as a third-party release would be (λ_s = 30, q_max = 10,000, frozen noise bound log2 B = 36, so σ = 2^57.6) and rounded to 2^-30 so the rounding does not cap the measurement: 22.84 bits over 32,768 slots (e2e-check.json), against a gate-F bar of 10 bits. noise-3.json is the noise study behind the frozen bound: 30 bootstraps with the reference-spec keys, maximum coefficient noise 2^34.77, unflooded precision 49.6–50.0 bits; the registry freezes log2 B = 36 to cover an earlier run that reached 2^35.1.",
+      "claimLabel": "second parameter set (META-BTS ×2, scale 2^90), earlier flood width (superseded by the corrected sizing): token export, Lattigo bootstrap and a flooded token release, end to end on one Mac",
+      "notes": "Earlier flood width, superseded by the corrected sizing: the token flooded 10.3 bits narrower than the published analysis requires (Li, Micciancio, Schultz and Sorrell, CRYPTO 2022, ePrint 2022/816, Definition 18 and Corollary 2) and counted one copy of the key; pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) corrects it. The flood here was σ = 2^57.6 (corrected: 2^69.1). This record keeps the earlier run as it was measured; it is not a current third-party-release result. The corrected Mac runs are ckks-metabts2-lmss-gate-f-m5max-3bcdc05, ckks-metabts2-lmss-depth1-m5max-3bcdc05 and ckks-metabts2-lmss-depth3-m5max-3bcdc05 (second parameter set) and ckks-default-lmss-id2-m5max-3bcdc05 (default set). Facts that do not depend on the flood width (key-set size, generation and streaming times, byte equality, token memory) remain valid. PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F), not a board validation. The software token ran in a container on the Mac, not on a board; the board runs of this parameter set are the records ckks-metabts2-stream-mx95-mac-m5max-f8663c9 and ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9. Registry ID 3 is the parameter set chosen for releases to third parties: Lattigo’s META-BTS iteration (two bootstraps per refresh, Bae, Cheon, Cho, Kim and Kim, ePrint 2022/1167) at scale 2^90, the release decrypted over two primes (105 bits) and flooded in 128-bit arithmetic. The token streamed 51 keys, 4,410,835,077 B in 1,201 bounded calls (8 limbs each); every limb matched the reference spec (verify.txt); Lattigo assembled the keys, encrypted under the token’s public key and bootstrapped (two iterations), and the token decrypted the level-1 result under policy. Cost against the default set (flooding-options study): about twice the bootstrap time per refresh, 3 multiplications between refreshes at scale 2^90 instead of 9, and a 12 % larger key set. Engine: pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files and the reference harness: pqctoday-fhe baf6237, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen. In this run the owner release was flooded exactly as a third-party release would be (λ_s = 30, q_max = 10,000, frozen noise bound log2 B = 36, so σ = 2^57.6) and rounded to 2^-30 so the rounding does not cap the measurement: 22.84 bits over 32,768 slots (e2e-check.json), against a gate-F bar of 10 bits. noise-3.json is the noise study behind the frozen bound: 30 bootstraps with the reference-spec keys, maximum coefficient noise 2^34.77, unflooded precision 49.6–50.0 bits; the registry freezes log2 B = 36 to cover an earlier run that reached 2^35.1.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4769,15 +4769,15 @@
       ],
       "measuredAt": "2026-10-11",
       "summary": {
-        "headline": "With the second parameter set, a release flooded for 30-bit statistical security over 10,000 releases kept 22.8 bits of precision end to end on the Mac: gate F passes.",
+        "headline": "Earlier flood width (superseded by the corrected sizing): with the second parameter set, a release flooded at σ = 2^57.6 for 30-bit statistical security over 10,000 releases kept 22.8 bits end to end on the Mac. With the corrected width the same run keeps 11.1 bits.",
         "keyNumbers": [
           {
-            "label": "Precision of the flooded release, 32,768 slots",
+            "label": "Precision of the release flooded at the earlier width, 32,768 slots",
             "value": "22.84",
             "unit": "bits"
           },
           {
-            "label": "Flood width (λ_s 30, q_max 10,000, log2 B 36)",
+            "label": "Earlier flood width (λ_s 30, q_max 10,000, log2 B 36; superseded)",
             "value": "2^57.6"
           },
           {
@@ -4823,7 +4823,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "second parameter set (META-BTS ×2, scale 2^90): token export, Lattigo bootstrap and a rounded owner release, end to end on one Mac",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: the unflooded companion of the gate-F run on the same parameter set. The software token ran in a container on the Mac, not on a board; the board runs of this parameter set are the records ckks-metabts2-stream-mx95-mac-m5max-f8663c9 and ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9. Registry ID 3 is the parameter set chosen for releases to third parties: Lattigo’s META-BTS iteration (two bootstraps per refresh, Bae, Cheon, Cho, Kim and Kim, ePrint 2022/1167) at scale 2^90, the release decrypted over two primes (105 bits) and flooded in 128-bit arithmetic. The token streamed 51 keys, 4,410,835,077 B in 1,201 bounded calls (8 limbs each); every limb matched the reference spec (verify.txt); Lattigo assembled the keys, encrypted under the token’s public key and bootstrapped (two iterations), and the token decrypted the level-1 result under policy. Cost against the default set (flooding-options study): about twice the bootstrap time per refresh, 3 multiplications between refreshes at scale 2^90 instead of 9, and a 12 % larger key set. Engine: pqctoday-hsm 46dca802, the pushed PR head under review, not yet merged. Run files and the reference harness: pqctoday-fhe baf6237, also the pushed PR head under review, not yet merged. The key generator is version 1, not yet frozen. The owner release was rounded to 2^-30 and not flooded: 31.0 bits over 32,768 slots (e2e-check.json).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: the unflooded companion of the gate-F run on the same parameter set. The software token ran in a container on the Mac, not on a board; the board runs of this parameter set are the records ckks-metabts2-stream-mx95-mac-m5max-f8663c9 and ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9. Registry ID 3 is the parameter set chosen for releases to third parties: Lattigo’s META-BTS iteration (two bootstraps per refresh, Bae, Cheon, Cho, Kim and Kim, ePrint 2022/1167) at scale 2^90, the release decrypted over two primes (105 bits) and flooded in 128-bit arithmetic. The token streamed 51 keys, 4,410,835,077 B in 1,201 bounded calls (8 limbs each); every limb matched the reference spec (verify.txt); Lattigo assembled the keys, encrypted under the token’s public key and bootstrapped (two iterations), and the token decrypted the level-1 result under policy. Cost against the default set (flooding-options study): about twice the bootstrap time per refresh, 3 multiplications between refreshes at scale 2^90 instead of 9, and a 12 % larger key set. Engine: pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files and the reference harness: pqctoday-fhe baf6237, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen. The owner release was rounded to 2^-30 and not flooded: 31.0 bits over 32,768 slots (e2e-check.json). The flooded companion of this run used the earlier flood width, superseded by the corrected sizing (see ckks-metabts2-lmss-gate-f-m5max-3bcdc05); this unflooded owner release does not depend on the flood width and stands.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4920,7 +4920,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "key rotation: the token streams one switching key from the old secret to a new one; Lattigo switches stored ciphertexts without decrypting them",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token in a container on the Mac, not hardware custody and not a board run. No step badge. The token generated a new seed itself, and the security officer streamed one key-switching key from the old secret to the new one: 2 digits × 15 limbs at the levels stored ciphertexts use, 31,457,872 B in full and 15,728,640 B of b halves in 4 calls of 8 limbs (rotate.json). Every limb matched the Lattigo rebuild (30 of 30), and both descriptor hashes matched the seeds (rotation-check.json). Lattigo switched a level-9 and a level-0 ciphertext to the new key: precision 28.7 → 27.1 and 28.6 → 27.3 bits, and the switched ciphertexts no longer decrypt under the old key. The new seed decrypted the switched result under its policy (e2e-check.json, 20.99 bits at precisionBits 20), and the security officer then retired the old seed (run.log). selftest.json is the same check with the reference key. Engine: pqctoday-hsm d2f99660 (rotation), contained in pqctoday-hsm 46dca802, the pushed PR head under review, not yet merged. Run files: pqctoday-fhe ab8b1c3, part of the pushed PR head under review (baf6237).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token in a container on the Mac, not hardware custody and not a board run. No step badge. The token generated a new seed itself, and the security officer streamed one key-switching key from the old secret to the new one: 2 digits × 15 limbs at the levels stored ciphertexts use, 31,457,872 B in full and 15,728,640 B of b halves in 4 calls of 8 limbs (rotate.json). Every limb matched the Lattigo rebuild (30 of 30), and both descriptor hashes matched the seeds (rotation-check.json). Lattigo switched a level-9 and a level-0 ciphertext to the new key: precision 28.7 → 27.1 and 28.6 → 27.3 bits, and the switched ciphertexts no longer decrypt under the old key. The new seed decrypted the switched result under its policy (e2e-check.json, 20.99 bits at precisionBits 20), and the security officer then retired the old seed (run.log). selftest.json is the same check with the reference key. Engine: pqctoday-hsm d2f99660 (rotation), contained in pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files: pqctoday-fhe ab8b1c3, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -5022,7 +5022,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "reference only: OpenFHE v1.6.0 CKKS key-set size, precision and bootstrapping at N = 2^16, and Lattigo-layout keys run in OpenFHE through a format bridge",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s own exported key set has not been run in OpenFHE; it uses Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. Run files: pqctoday-fhe 039034f, part of the pushed PR head under review (baf6237).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s own exported key set has not been run in OpenFHE; it uses Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "OpenFHE",
         "version": "v1.6.0",
@@ -5128,7 +5128,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "reference only: a seeded CKKS set made with Microsoft SEAL v4.1.2, decrypted and evaluated with Lattigo v6.2.0",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge. SEAL publishes no CKKS test vectors, so this set was generated with the unmodified SEAL library from a fixed seed (deterministic and insecure, a test artefact only) at N = 8192, coefficient modulus {60, 40, 40 | 60}, scale 2^40. Lattigo decrypted all 7 SEAL ciphertexts with SEAL’s secret key to the same plaintext polynomials, coefficient for coefficient; SEAL’s relinearization key and three Galois keys, converted, worked in Lattigo; unconverted keys gave garbage, as they should (check.json). The generator ran twice with byte-identical output (SHA256SUMS). No bootstrapping: SEAL has none for CKKS. Run files: pqctoday-fhe 039034f, part of the pushed PR head under review (baf6237).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge. SEAL publishes no CKKS test vectors, so this set was generated with the unmodified SEAL library from a fixed seed (deterministic and insecure, a test artefact only) at N = 8192, coefficient modulus {60, 40, 40 | 60}, scale 2^40. Lattigo decrypted all 7 SEAL ciphertexts with SEAL’s secret key to the same plaintext polynomials, coefficient for coefficient; SEAL’s relinearization key and three Galois keys, converted, worked in Lattigo; unconverted keys gave garbage, as they should (check.json). The generator ran twice with byte-identical output (SHA256SUMS). No bootstrapping: SEAL has none for CKKS. Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "Microsoft SEAL",
         "version": "v4.1.2",
@@ -5224,7 +5224,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max, MX95 and MX95 Pro",
       "claimLabel": "reference only: TFHE-rs 1.8.1 published test vectors regenerated with the pinned tree on a Mac and on both MX95 boards",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge. TFHE-rs publishes 36 test-vector files (apps/test-vectors). Regenerated with the pinned TFHE-rs 1.8.1 tree, 28 of 36 are byte-identical to upstream on every platform we ran (Mac linux/arm64 and linux/amd64, MX95, MX95 Pro). The 8 that differ are the FFT blind-rotation outputs, which upstream says are platform dependent; they decrypt to the expected messages, and all 8 Karatsuba variants match upstream. Our outputs are identical across all our platforms, including the 8 FFT files (36 of 36 on each board against the Mac). The same linux/arm64 binary ran unchanged on both boards. Mac runs 2026-10-10, board runs 2026-10-11. Run files: pqctoday-fhe 7361df1, part of the pushed PR head under review (baf6237).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge. TFHE-rs publishes 36 test-vector files (apps/test-vectors). Regenerated with the pinned TFHE-rs 1.8.1 tree, 28 of 36 are byte-identical to upstream on every platform we ran (Mac linux/arm64 and linux/amd64, MX95, MX95 Pro). The 8 that differ are the FFT blind-rotation outputs, which upstream says are platform dependent; they decrypt to the expected messages, and all 8 Karatsuba variants match upstream. Our outputs are identical across all our platforms, including the 8 FFT files (36 of 36 on each board against the Mac). The same linux/arm64 binary ran unchanged on both boards. Mac runs 2026-10-10, board runs 2026-10-11. Run files: pqctoday-fhe 7361df1, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "TFHE-rs",
         "version": "1.8.1",
@@ -5324,7 +5324,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "feasibility study: two parties hold a CKKS secret 2-of-2 (Lattigo multiparty, both parties in one process), at the real parameters",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a Lattigo prototype with both parties in one process, not a token or board run. Lattigo v6.2.0’s multiparty package (additive N-out-of-N sharing) generated every key of the bootstrappable set from two shares at N = 2^16. The joint key set bootstrapped at 24.3–24.5 bits (24.9 bits for one party in the earlier key-set record); one share alone does not decrypt (−27.8 to −28.0 bits). Each party uploads 4,098,431,336 B of shares, and the relinearization key needs a second round. Threshold decryption kept 24.2–24.5 bits without flooding, 9.8–9.9 bits with a 2^20 flood, and −1.6 to −1.9 bits with the 2^31.6 flood that the default set needs for 30-bit statistical security over 10,000 releases, the same result as the single-token noise study. A crafted partial-decryption request (c0 = 0, c1 = 2^40) sent to one party returned that party’s whole share: 65,536 of 65,536 coefficients recovered, in every run. n16threshold32-1.json uses sparse shares of weight 32 instead of 16. Run files: pqctoday-fhe 8beec58, part of the pushed PR head under review (baf6237).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a Lattigo prototype with both parties in one process, not a token or board run. Lattigo v6.2.0’s multiparty package (additive N-out-of-N sharing) generated every key of the bootstrappable set from two shares at N = 2^16. The joint key set bootstrapped at 24.3–24.5 bits (24.9 bits for one party in the earlier key-set record); one share alone does not decrypt (−27.8 to −28.0 bits). Each party uploads 4,098,431,336 B of shares, and the relinearization key needs a second round. Threshold decryption kept 24.2–24.5 bits without flooding, 9.8–9.9 bits with a 2^20 flood, and −1.6 to −1.9 bits with a 2^31.6 flood, the width the earlier sizing gave the default set for 30-bit statistical security over 10,000 releases (the same result as the single-token noise study at that width). The corrected sizing is wider (2^43.1 for one token with four replicas), so flooded threshold releases at the default parameters fail by more; this prototype was not re-run at the wider flood. A crafted partial-decryption request (c0 = 0, c1 = 2^40) sent to one party returned that party’s whole share: 65,536 of 65,536 coefficients recovered, in every run. n16threshold32-1.json uses sparse shares of weight 32 instead of 16. Run files: pqctoday-fhe 8beec58, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -5394,7 +5394,7 @@
             "unit": "B"
           },
           {
-            "label": "Threshold decryption, 2^31.6 flood",
+            "label": "Threshold decryption, 2^31.6 flood (the earlier width; the corrected one is wider)",
             "value": "−1.6 to −1.9",
             "unit": "bits"
           },
@@ -5425,7 +5425,7 @@
           "role": "custodian",
           "producer": "pqctoday-hsm",
           "claimScope": "board-software-token",
-          "qualifier": ", second parameter set, flooded release, fixed test seed",
+          "qualifier": ", second set, earlier flood width (superseded), fixed test seed",
           "engine": {
             "repo": "pqctoday-org/pqctoday-hsm",
             "commit": "46dca8022f0481be21bbd63f396e3611a31740da"
@@ -5462,8 +5462,8 @@
           ]
         }
       ],
-      "claimLabel": "custodian: software token on MX95 Pro, second CKKS parameter set (META-BTS ×2, scale 2^90), release flooded as for a third party; data owner and FHE server: Lattigo on a Mac (M5 Max)",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Gate F on the board: the release is flooded exactly as a release to a third party would be. The custodian ran on the MX95 Pro board on six cores (8 limbs per call), initialised with a fixed test seed (test-support build) and the release policy set at init (flooding for the owner on, statistical security 30 bits, at most 10,000 releases, frozen noise bound log2 B = 36, rounding to 2^-30 so the rounding does not cap the measurement). Generation was measured with the stream discarded on the board (97.4 s, generate-only.json) and streamed to the Mac over SSH (120.7 s, export.json and receive.json; the receiver checked every chunk against the token-signed manifest). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys, encrypted under the token’s public key and bootstrapped twice (META-BTS, e2e.json). The level-1 result went back to the board, which decrypted it over two primes, flooded it and released it under FHE decryption policy version 2 (decrypt.txt, e2e-check.json). The MX95 board, loaded with the same test seed, produced the same manifest apart from the descriptor each token draws at random at init. This shows the mechanism and the precision a flooded release keeps; it is functional, not a security claim. Custodian binary ckks_custodian built from pqctoday-hsm 46dca802 (provenance.txt; sha256 45fb5e8d…6aea7, features educational-ckks and test-support), the pushed PR head under review, not yet merged. Run files and the reference harness: pqctoday-fhe f8663c9, also the pushed PR head under review, not yet merged. The key generator is version 1, not yet frozen.",
+      "claimLabel": "custodian: software token on MX95 Pro, second CKKS parameter set (META-BTS ×2, scale 2^90), release flooded at the earlier width (superseded by the corrected sizing); data owner and FHE server: Lattigo on a Mac (M5 Max)",
+      "notes": "Earlier flood width, superseded by the corrected sizing: the token flooded 10.3 bits narrower than the published analysis requires (Li, Micciancio, Schultz and Sorrell, CRYPTO 2022, ePrint 2022/816, Definition 18 and Corollary 2) and counted one copy of the key; pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) corrects it. The flood on this board run was σ = 2^57.6 (corrected: 2^69.1); the precision below is that earlier run. This record keeps the earlier run as it was measured; it is not a current third-party-release result. The corrected Mac runs are ckks-metabts2-lmss-gate-f-m5max-3bcdc05, ckks-metabts2-lmss-depth1-m5max-3bcdc05 and ckks-metabts2-lmss-depth3-m5max-3bcdc05 (second parameter set) and ckks-default-lmss-id2-m5max-3bcdc05 (default set). Facts that do not depend on the flood width (key-set size, generation and streaming times, byte equality, token memory) remain valid. PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Gate F on the board: the release is flooded exactly as a release to a third party would be. The custodian ran on the MX95 Pro board on six cores (8 limbs per call), initialised with a fixed test seed (test-support build) and the release policy set at init (flooding for the owner on, statistical security 30 bits, at most 10,000 releases, frozen noise bound log2 B = 36, rounding to 2^-30 so the rounding does not cap the measurement). Generation was measured with the stream discarded on the board (97.4 s, generate-only.json) and streamed to the Mac over SSH (120.7 s, export.json and receive.json; the receiver checked every chunk against the token-signed manifest). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys, encrypted under the token’s public key and bootstrapped twice (META-BTS, e2e.json). The level-1 result went back to the board, which decrypted it over two primes, flooded it and released it under FHE decryption policy version 2 (decrypt.txt, e2e-check.json). The MX95 board, loaded with the same test seed, produced the same manifest apart from the descriptor each token draws at random at init. This shows the mechanism and the precision a flooded release keeps; it is functional, not a security claim. Custodian binary ckks_custodian built from pqctoday-hsm 46dca802 (provenance.txt; sha256 45fb5e8d…6aea7, features educational-ckks and test-support), merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files and the reference harness: pqctoday-fhe f8663c9, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -5549,10 +5549,10 @@
       ],
       "measuredAt": "2026-10-11",
       "summary": {
-        "headline": "On the MX95 Pro the token generated the second parameter set’s 4.41 GB key set on six cores in 97.4 s, every limb matched the reference, the Mac bootstrapped with the board’s keys, and a release flooded for 30-bit statistical security over 10,000 releases kept 22.78 bits.",
+        "headline": "On the MX95 Pro the token generated the second parameter set’s 4.41 GB key set on six cores in 97.4 s, every limb matched the reference, the Mac bootstrapped with the board’s keys, and a release flooded at the earlier, narrower width (superseded by the corrected sizing) kept 22.78 bits.",
         "keyNumbers": [
           {
-            "label": "Precision of the flooded release, 32,768 slots",
+            "label": "Precision of the release flooded at the earlier width (superseded), 32,768 slots",
             "value": "22.78",
             "unit": "bits"
           },
@@ -5620,7 +5620,7 @@
           "role": "custodian",
           "producer": "pqctoday-hsm",
           "claimScope": "board-software-token",
-          "qualifier": ", second parameter set, flooded release, fixed test seed",
+          "qualifier": ", second set, earlier flood width (superseded), fixed test seed",
           "engine": {
             "repo": "pqctoday-org/pqctoday-hsm",
             "commit": "46dca8022f0481be21bbd63f396e3611a31740da"
@@ -5657,8 +5657,8 @@
           ]
         }
       ],
-      "claimLabel": "custodian: software token on MX95, second CKKS parameter set (META-BTS ×2, scale 2^90), release flooded as for a third party; data owner and FHE server: Lattigo on a Mac (M5 Max)",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Gate F on the board: the release is flooded exactly as a release to a third party would be. The custodian ran on the MX95 board on six cores (8 limbs per call), initialised with a fixed test seed (test-support build) and the release policy set at init (flooding for the owner on, statistical security 30 bits, at most 10,000 releases, frozen noise bound log2 B = 36, rounding to 2^-30 so the rounding does not cap the measurement). Generation was measured with the stream discarded on the board (99.4 s, generate-only.json) and streamed to the Mac over SSH (123.0 s, export.json and receive.json; the receiver checked every chunk against the token-signed manifest). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys, encrypted under the token’s public key and bootstrapped twice (META-BTS, e2e.json). The level-1 result went back to the board, which decrypted it over two primes, flooded it and released it under FHE decryption policy version 2 (decrypt.txt, e2e-check.json). The MX95 Pro board, loaded with the same test seed, produced the same manifest apart from the descriptor each token draws at random at init. This shows the mechanism and the precision a flooded release keeps; it is functional, not a security claim. Custodian binary ckks_custodian built from pqctoday-hsm 46dca802 (provenance.txt; sha256 45fb5e8d…6aea7, features educational-ckks and test-support), the pushed PR head under review, not yet merged. Run files and the reference harness: pqctoday-fhe f8663c9, also the pushed PR head under review, not yet merged. The key generator is version 1, not yet frozen.",
+      "claimLabel": "custodian: software token on MX95, second CKKS parameter set (META-BTS ×2, scale 2^90), release flooded at the earlier width (superseded by the corrected sizing); data owner and FHE server: Lattigo on a Mac (M5 Max)",
+      "notes": "Earlier flood width, superseded by the corrected sizing: the token flooded 10.3 bits narrower than the published analysis requires (Li, Micciancio, Schultz and Sorrell, CRYPTO 2022, ePrint 2022/816, Definition 18 and Corollary 2) and counted one copy of the key; pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) corrects it. The flood on this board run was σ = 2^57.6 (corrected: 2^69.1); the precision below is that earlier run. This record keeps the earlier run as it was measured; it is not a current third-party-release result. The corrected Mac runs are ckks-metabts2-lmss-gate-f-m5max-3bcdc05, ckks-metabts2-lmss-depth1-m5max-3bcdc05 and ckks-metabts2-lmss-depth3-m5max-3bcdc05 (second parameter set) and ckks-default-lmss-id2-m5max-3bcdc05 (default set). Facts that do not depend on the flood width (key-set size, generation and streaming times, byte equality, token memory) remain valid. PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. Gate F on the board: the release is flooded exactly as a release to a third party would be. The custodian ran on the MX95 board on six cores (8 limbs per call), initialised with a fixed test seed (test-support build) and the release policy set at init (flooding for the owner on, statistical security 30 bits, at most 10,000 releases, frozen noise bound log2 B = 36, rounding to 2^-30 so the rounding does not cap the measurement). Generation was measured with the stream discarded on the board (99.4 s, generate-only.json) and streamed to the Mac over SSH (123.0 s, export.json and receive.json; the receiver checked every chunk against the token-signed manifest). On the Mac (M5 Max) the reference harness compared every limb with the spec (verify.txt), assembled Lattigo keys, encrypted under the token’s public key and bootstrapped twice (META-BTS, e2e.json). The level-1 result went back to the board, which decrypted it over two primes, flooded it and released it under FHE decryption policy version 2 (decrypt.txt, e2e-check.json). The MX95 Pro board, loaded with the same test seed, produced the same manifest apart from the descriptor each token draws at random at init. This shows the mechanism and the precision a flooded release keeps; it is functional, not a security claim. Custodian binary ckks_custodian built from pqctoday-hsm 46dca802 (provenance.txt; sha256 45fb5e8d…6aea7, features educational-ckks and test-support), merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files and the reference harness: pqctoday-fhe f8663c9, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737). The key generator is version 1, not yet frozen.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -5744,10 +5744,10 @@
       ],
       "measuredAt": "2026-10-11",
       "summary": {
-        "headline": "On the MX95 the token generated the second parameter set’s 4.41 GB key set on six cores in 99.4 s, every limb matched the reference, the Mac bootstrapped with the board’s keys, and a release flooded for 30-bit statistical security over 10,000 releases kept 22.59 bits.",
+        "headline": "On the MX95 the token generated the second parameter set’s 4.41 GB key set on six cores in 99.4 s, every limb matched the reference, the Mac bootstrapped with the board’s keys, and a release flooded at the earlier, narrower width (superseded by the corrected sizing) kept 22.59 bits.",
         "keyNumbers": [
           {
-            "label": "Precision of the flooded release, 32,768 slots",
+            "label": "Precision of the release flooded at the earlier width (superseded), 32,768 slots",
             "value": "22.59",
             "unit": "bits"
           },
@@ -5791,6 +5791,429 @@
             "label": "Board decrypt, flood and release (functional, not a security claim)",
             "value": "0.217",
             "unit": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-metabts2-lmss-gate-f-m5max-3bcdc05",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "export-evaluation-keys",
+        "compute-ciphertexts",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "Apple M5 Max",
+      "claimLabel": "second parameter set (META-BTS ×2, scale 2^90), corrected flood width: token export, Lattigo bootstrap and a flooded token release, end to end on one Mac",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F) with the corrected flood width, not a board validation. The software token ran in a container on the Mac, not on a board; the board runs with this sizing are not yet measured. Corrected sizing: the flood follows Li, Micciancio, Schultz and Sorrell (CRYPTO 2022, ePrint 2022/816), Definition 18 and Corollary 2, σ = √(24qn)·2^(s/2), noise added to the decrypted ring element with the per-coefficient bound B in the role of the ∞-norm bound t: log2 σ = λ_s/2 + ½·log2(24·q·n) + log2 B, with q = (maxReplicas + 1) × maxDecrypts. Policy: λ_s 30, maxDecrypts 10,000, maxReplicas 4, so q = 50,000; n = 2^16; owner release flooded; rounding to 2^-30 so the rounding does not cap the measurement. Engine: pqctoday-hsm a401b548, merged in pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) (the depth-0 run used 27a524cb, which the run notes record as the same code). Run files and the reference harness: pqctoday-fhe 3bcdc05, the head of pqctoday-fhe #26 (open, not yet merged). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). Depth 0: a refresh (two bootstraps) and the release. The token streamed 51 keys, 4,410,835,077 B in 1,201 bounded calls (8 limbs each); every limb matched the reference spec (verify.txt); the token decrypted the level-1 result over two primes, flooded it at σ = 2^69.10 and released it: 11.10 bits over 32,768 slots (e2e-check.json), against a gate-F bar of 10 bits. The margin is thin, about 1.1 bits, and is set by the paper’s exact sizing. Before the correction the same run kept 22.84 bits (ckks-metabts2-gate-f-m5max-baf6237).",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "3bcdc05c620999ef1d2ac37ad987a4a78d522755"
+      },
+      "parameters": "CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 (registry ID 3: META-BTS ×2 at scale 2^90, release over two primes, 105 bits)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per call; release flooded with statSecurityBits 30, maxDecrypts 10,000, maxReplicas 4, log2 B 36, so σ = 2^69.10; rounded to 2^-30; 32,768 slots",
+      "parameterHash": "f86930893cd9ee5647720bd0c349265f47654411c8473f0286ab761ec89a9dec",
+      "environment": {
+        "hardware": "Apple M5 Max (Linux containers)",
+        "os": "Linux aarch64 containers on macOS",
+        "toolchain": "ckks_custodian from pqctoday-hsm a401b548 (Rust, pqc-rust container; the depth-0 run used 27a524cb, the same code); reference harness from pqctoday-fhe 3bcdc05 (Go, Lattigo v6.2.0 unmodified)",
+        "features": "software token and reference harness in containers on one Mac"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single end-to-end run",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian (export.json, peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "e2e-check.json",
+          "sha256": "04df2d6c0f9bc9816a5d34f23d68a52757bbafe40843fcaa063202e70cef138e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-gate-f-3bcdc05/e2e-check.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "2d0110c1c29ec2523f65a466f38c5da3788549905faaf2048805fabf38beebca",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-gate-f-3bcdc05/export.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "bf01fbce378f9c55a720dd50a403ef968e3a6c0d8a8df8d21692b53e472d9381",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-gate-f-3bcdc05/verify.txt"
+        },
+        {
+          "name": "e2e.json",
+          "sha256": "2b1ad9d2580acefaa864a36a4a015503bf271c55a9ad9736629b6f4d6db00bf1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-gate-f-3bcdc05/e2e.json"
+        },
+        {
+          "name": "manifest.txt",
+          "sha256": "2bd080e542076a43684bb66de743d592b826d43c264b662c2c473dabea43d1ea",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-gate-f-3bcdc05/manifest.txt"
+        }
+      ],
+      "measuredAt": "2026-10-11",
+      "summary": {
+        "headline": "With the second parameter set and the corrected flood width (σ = 2^69.1), a release flooded for 30-bit statistical security over a lineage of 50,000 releases kept 11.1 bits end to end on the Mac: gate F passes, by about 1.1 bits.",
+        "keyNumbers": [
+          {
+            "label": "Precision of the flooded release, 32,768 slots",
+            "value": "11.10",
+            "unit": "bits"
+          },
+          {
+            "label": "Flood width (λ_s 30, q = 50,000, n = 2^16, log2 B 36)",
+            "value": "2^69.10"
+          },
+          {
+            "label": "Gate F bar",
+            "value": "10",
+            "unit": "bits"
+          },
+          {
+            "label": "Before the correction (σ = 2^57.6)",
+            "value": "22.84",
+            "unit": "bits"
+          },
+          {
+            "label": "Evaluation keys streamed",
+            "value": "4,410,835,077",
+            "unit": "B"
+          },
+          {
+            "label": "PKCS#11 derive calls, 8 limbs each",
+            "value": "1,201"
+          },
+          {
+            "label": "Limbs compared with the reference spec",
+            "value": "11 + 8,402, 0 mismatches"
+          },
+          {
+            "label": "Lattigo bootstrap, two iterations (M5 Max)",
+            "value": "13.3",
+            "unit": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-metabts2-lmss-depth1-m5max-3bcdc05",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "export-evaluation-keys",
+        "compute-ciphertexts",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "Apple M5 Max",
+      "claimLabel": "second parameter set (META-BTS ×2, scale 2^90), corrected flood width, program of depth 1: token export, Lattigo refresh, 1 multiplication and a flooded token release, on one Mac",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F) with the corrected flood width, not a board validation. The software token ran in a container on the Mac, not on a board; the board runs with this sizing are not yet measured. Corrected sizing: the flood follows Li, Micciancio, Schultz and Sorrell (CRYPTO 2022, ePrint 2022/816), Definition 18 and Corollary 2, σ = √(24qn)·2^(s/2), noise added to the decrypted ring element with the per-coefficient bound B in the role of the ∞-norm bound t: log2 σ = λ_s/2 + ½·log2(24·q·n) + log2 B, with q = (maxReplicas + 1) × maxDecrypts. Policy: λ_s 30, maxDecrypts 10,000, maxReplicas 4, so q = 50,000; n = 2^16; owner release flooded; rounding to 2^-30 so the rounding does not cap the measurement. Engine: pqctoday-hsm a401b548, merged in pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) (the depth-0 run used 27a524cb, which the run notes record as the same code). Run files and the reference harness: pqctoday-fhe 3bcdc05, the head of pqctoday-fhe #26 (open, not yet merged). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). Depth 1: after the refresh, y0 = 2x − z, then 1 multiplication (ciphertext × ciphertext, ciphertext × plaintext alternating), dropped to the release level (program.json). The token flooded the level-1 result at σ = 2^69.10 and released it: 11.25 bits over 32,768 slots (e2e-check.json), against a gate-F bar of 10 bits. Before release the same ciphertext decrypted with the reference spec’s secret, without flooding or rounding, held 48.61 bits (program.json). Before the correction the same program kept 22.63 bits on the Mac (README of the run files).",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "3bcdc05c620999ef1d2ac37ad987a4a78d522755"
+      },
+      "parameters": "CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 (registry ID 3: META-BTS ×2 at scale 2^90, release over two primes, 105 bits)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per call; program of depth 1 between the refresh and the release; release flooded with statSecurityBits 30, maxDecrypts 10,000, maxReplicas 4, log2 B 36, so σ = 2^69.10; rounded to 2^-30; 32,768 slots",
+      "parameterHash": "9ba3660daebe8ee8f84fc3b5fddec770b7aaa8039483abbc77d12e40bd08fbbd",
+      "environment": {
+        "hardware": "Apple M5 Max (Linux containers)",
+        "os": "Linux aarch64 containers on macOS",
+        "toolchain": "ckks_custodian from pqctoday-hsm a401b548 (Rust, pqc-rust container; the depth-0 run used 27a524cb, the same code); reference harness from pqctoday-fhe 3bcdc05 (Go, Lattigo v6.2.0 unmodified)",
+        "features": "software token and reference harness in containers on one Mac"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single end-to-end run of a program of depth 1",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian (export.json, peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "e2e-check.json",
+          "sha256": "008d92112523eabc13648cdf40d75e7f38b6be8cfe3bdb9d128b6c825c0270c4",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth1-3bcdc05/e2e-check.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "a422d0501525ee2bb1ccde5bb16954317309ed6ea819882382713c56958fee40",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth1-3bcdc05/export.json"
+        },
+        {
+          "name": "program.json",
+          "sha256": "5bd548ea5a907fc35f855d6f936cd3682bad8fb71af6cfd5633ab41e817edefb",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth1-3bcdc05/program.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "bf01fbce378f9c55a720dd50a403ef968e3a6c0d8a8df8d21692b53e472d9381",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth1-3bcdc05/verify.txt"
+        }
+      ],
+      "measuredAt": "2026-10-11",
+      "summary": {
+        "headline": "With the corrected flood width, a flooded release after a program of depth 1 kept 11.25 bits on the Mac: gate F passes, by about 1.2 bits.",
+        "keyNumbers": [
+          {
+            "label": "Precision of the flooded release, 32,768 slots",
+            "value": "11.25",
+            "unit": "bits"
+          },
+          {
+            "label": "Multiplicative depth between refresh and release",
+            "value": "1"
+          },
+          {
+            "label": "Flood width (λ_s 30, q = 50,000, n = 2^16, log2 B 36)",
+            "value": "2^69.10"
+          },
+          {
+            "label": "Gate F bar",
+            "value": "10",
+            "unit": "bits"
+          },
+          {
+            "label": "Before the correction (σ = 2^57.6)",
+            "value": "22.63",
+            "unit": "bits"
+          },
+          {
+            "label": "Precision before release, unflooded and unrounded",
+            "value": "48.61",
+            "unit": "bits"
+          },
+          {
+            "label": "Program of depth 1 on the Mac",
+            "value": "0.377",
+            "unit": "s"
+          },
+          {
+            "label": "Lattigo bootstrap, two iterations (M5 Max)",
+            "value": "13.4",
+            "unit": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-metabts2-lmss-depth3-m5max-3bcdc05",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "export-evaluation-keys",
+        "compute-ciphertexts",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "Apple M5 Max",
+      "claimLabel": "second parameter set (META-BTS ×2, scale 2^90), corrected flood width, program of depth 3: token export, Lattigo refresh, 3 multiplications and a flooded token release, on one Mac",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F) with the corrected flood width, not a board validation. The software token ran in a container on the Mac, not on a board; the board runs with this sizing are not yet measured. Corrected sizing: the flood follows Li, Micciancio, Schultz and Sorrell (CRYPTO 2022, ePrint 2022/816), Definition 18 and Corollary 2, σ = √(24qn)·2^(s/2), noise added to the decrypted ring element with the per-coefficient bound B in the role of the ∞-norm bound t: log2 σ = λ_s/2 + ½·log2(24·q·n) + log2 B, with q = (maxReplicas + 1) × maxDecrypts. Policy: λ_s 30, maxDecrypts 10,000, maxReplicas 4, so q = 50,000; n = 2^16; owner release flooded; rounding to 2^-30 so the rounding does not cap the measurement. Engine: pqctoday-hsm a401b548, merged in pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) (the depth-0 run used 27a524cb, which the run notes record as the same code). Run files and the reference harness: pqctoday-fhe 3bcdc05, the head of pqctoday-fhe #26 (open, not yet merged). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). Depth 3: after the refresh, y0 = 2x − z, then 3 multiplications (ciphertext × ciphertext, ciphertext × plaintext alternating), dropped to the release level (program.json). The token flooded the level-1 result at σ = 2^69.10 and released it: 11.34 bits over 32,768 slots (e2e-check.json), against a gate-F bar of 10 bits. Before release the same ciphertext decrypted with the reference spec’s secret, without flooding or rounding, held 48.68 bits (program.json). Before the correction the same program kept 22.78 bits on the Mac (README of the run files).",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "3bcdc05c620999ef1d2ac37ad987a4a78d522755"
+      },
+      "parameters": "CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 (registry ID 3: META-BTS ×2 at scale 2^90, release over two primes, 105 bits)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per call; program of depth 3 between the refresh and the release; release flooded with statSecurityBits 30, maxDecrypts 10,000, maxReplicas 4, log2 B 36, so σ = 2^69.10; rounded to 2^-30; 32,768 slots",
+      "parameterHash": "1713b864210fa8769faaaf24d233ea3128d980b1713363bc8276bd5da5231398",
+      "environment": {
+        "hardware": "Apple M5 Max (Linux containers)",
+        "os": "Linux aarch64 containers on macOS",
+        "toolchain": "ckks_custodian from pqctoday-hsm a401b548 (Rust, pqc-rust container; the depth-0 run used 27a524cb, the same code); reference harness from pqctoday-fhe 3bcdc05 (Go, Lattigo v6.2.0 unmodified)",
+        "features": "software token and reference harness in containers on one Mac"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single end-to-end run of a program of depth 3",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian (export.json, peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "e2e-check.json",
+          "sha256": "15567e0d99789d1ab70e6eaaf4bcba17e108dd19b1dd3588f5ea1addd7c52074",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth3-3bcdc05/e2e-check.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "a422d0501525ee2bb1ccde5bb16954317309ed6ea819882382713c56958fee40",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth3-3bcdc05/export.json"
+        },
+        {
+          "name": "program.json",
+          "sha256": "7839f00afe2d276fdb69f45e3ab409758758fb58385c5592145657c788e03f48",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth3-3bcdc05/program.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "bf01fbce378f9c55a720dd50a403ef968e3a6c0d8a8df8d21692b53e472d9381",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-lmss-depth3-3bcdc05/verify.txt"
+        }
+      ],
+      "measuredAt": "2026-10-11",
+      "summary": {
+        "headline": "With the corrected flood width, a flooded release after a program of depth 3 kept 11.34 bits on the Mac: gate F passes, by about 1.3 bits.",
+        "keyNumbers": [
+          {
+            "label": "Precision of the flooded release, 32,768 slots",
+            "value": "11.34",
+            "unit": "bits"
+          },
+          {
+            "label": "Multiplicative depth between refresh and release",
+            "value": "3"
+          },
+          {
+            "label": "Flood width (λ_s 30, q = 50,000, n = 2^16, log2 B 36)",
+            "value": "2^69.10"
+          },
+          {
+            "label": "Gate F bar",
+            "value": "10",
+            "unit": "bits"
+          },
+          {
+            "label": "Before the correction (σ = 2^57.6)",
+            "value": "22.78",
+            "unit": "bits"
+          },
+          {
+            "label": "Precision before release, unflooded and unrounded",
+            "value": "48.68",
+            "unit": "bits"
+          },
+          {
+            "label": "Program of depth 3 on the Mac",
+            "value": "0.655",
+            "unit": "s"
+          },
+          {
+            "label": "Lattigo bootstrap, two iterations (M5 Max)",
+            "value": "12.8",
+            "unit": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-default-lmss-id2-m5max-3bcdc05",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "export-evaluation-keys",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "Apple M5 Max",
+      "claimLabel": "default parameter set (scale 2^40), corrected flood width: the token refuses the flooded release; the noise-study emulation leaves no correct bits",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a measurement that sizes the decryption policy for releases to third parties (gate F) with the corrected flood width, not a board validation. The software token ran in a container on the Mac, not on a board; the board runs with this sizing are not yet measured. Corrected sizing: the flood follows Li, Micciancio, Schultz and Sorrell (CRYPTO 2022, ePrint 2022/816), Definition 18 and Corollary 2, σ = √(24qn)·2^(s/2), noise added to the decrypted ring element with the per-coefficient bound B in the role of the ∞-norm bound t: log2 σ = λ_s/2 + ½·log2(24·q·n) + log2 B, with q = (maxReplicas + 1) × maxDecrypts. Policy: λ_s 30, maxDecrypts 10,000, maxReplicas 4, so q = 50,000; n = 2^16; owner release flooded; rounding to 2^-30 so the rounding does not cap the measurement. Engine: pqctoday-hsm a401b548, merged in pqctoday-hsm #355 (merge commit d6b23452d92e4250069db9b993f818e65712b7b1) (the depth-0 run used 27a524cb, which the run notes record as the same code). Run files and the reference harness: pqctoday-fhe 3bcdc05, the head of pqctoday-fhe #26 (open, not yet merged). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). Default set (registry ID 2, scale 2^40, one-prime release): at σ = 2^43.1 the decoded slot noise is about 2^13, above the policy’s value bound 2^10, so the token refuses the release (CKR_ACTION_PROHIBITED; the reason goes to the token’s audit log only), as the README of the run files records. noise-2.json is the reference harness’s emulation of the same flooding: 24.83 bits unflooded, 20.93 bits rounded to 2^-20, −12.82 bits flooded (three draws, −12.71 to −12.82), gate F no-go; the post-bootstrap noise is 2^9.17 against the registry’s bound B = 2^10. Before the correction the emulation gave −1.3 bits at σ = 2^31.6. Owner releases, which are rounded and not flooded, are unaffected.",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "3bcdc05c620999ef1d2ac37ad987a4a78d522755"
+      },
+      "parameters": "N16QP1546H192H32 (Lattigo v6.2.0 default bootstrappable set, registry ID 2)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per call; release flooded with statSecurityBits 30, maxDecrypts 10,000, maxReplicas 4, log2 B 10, so σ = 2^43.10; 2 bootstrap trials, 3 flood draws",
+      "parameterHash": "c59d9a9b0fcc6d0e2bb11606abce4badd0b5e1dcac079f861668f0c205726876",
+      "environment": {
+        "hardware": "Apple M5 Max (Linux containers)",
+        "os": "Linux aarch64 containers on macOS",
+        "toolchain": "ckks_custodian from pqctoday-hsm a401b548 (Rust, pqc-rust container; the depth-0 run used 27a524cb, the same code); reference harness from pqctoday-fhe 3bcdc05 (Go, Lattigo v6.2.0 unmodified)",
+        "features": "software token and reference harness in containers on one Mac"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 2,
+        "distribution": "two bootstrap trials and three flood draws (noise-2.json); key export once",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian (export.json, peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "noise-2.json",
+          "sha256": "5e8b42e275f55ced64d16ffc4c8b8d592d794d6c03ab5a2230f4f4c0c82bf632",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-default-lmss-id2-3bcdc05/noise-2.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "93ab5be330d6e9a3b75f6a5bdc4490241bde6685133d9beb761bfd3f72803371",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-default-lmss-id2-3bcdc05/export.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "6bc6aa95441fd4167712e7340d73cc21f89e0dee4a6ecd51398e17663bcb5758",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-default-lmss-id2-3bcdc05/verify.txt"
+        }
+      ],
+      "measuredAt": "2026-10-11",
+      "summary": {
+        "headline": "With the default parameter set the corrected flood width (σ = 2^43.1) leaves −12.8 bits in the noise-study emulation and the token refuses the release: flooded releases to third parties still fail at the default parameters.",
+        "keyNumbers": [
+          {
+            "label": "Flood width (λ_s 30, q = 50,000, n = 2^16, log2 B 10)",
+            "value": "2^43.10"
+          },
+          {
+            "label": "Precision with that flood (emulation, worst of 3 draws)",
+            "value": "−12.82",
+            "unit": "bits"
+          },
+          {
+            "label": "Precision without flooding (emulation)",
+            "value": "24.83",
+            "unit": "bits"
+          },
+          {
+            "label": "Rounded to 2^-20 (owner release, emulation)",
+            "value": "20.93",
+            "unit": "bits"
+          },
+          {
+            "label": "Post-bootstrap noise, max of 2 trials",
+            "value": "2^9.17"
+          },
+          {
+            "label": "Gate F at scale 2^40",
+            "value": "no-go for flooded third-party releases"
+          },
+          {
+            "label": "Token",
+            "value": "refuses the release"
           }
         ]
       }
