@@ -18,6 +18,8 @@ import {
   KeyTakeaways,
 } from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
+import { Button } from '@/components/ui/button'
+import type { LifecycleView, OpenLifecycleView } from '../workshop/fheRotationSharedData'
 import {
   BOARD_CELLS_NOT_MEASURED,
   FLOOD_FORMULA,
@@ -728,8 +730,28 @@ export const FheQuantumSection: React.FC = () => (
   </div>
 )
 
+/** Links from a Learn card to the two places its interactive view lives in the workshop. */
+const LifecycleLinks: React.FC<{
+  view: LifecycleView
+  open?: OpenLifecycleView
+  label: string
+}> = ({ view, open, label }) =>
+  open ? (
+    <div className="flex flex-wrap items-center gap-2 pt-1" role="group" aria-label={label}>
+      <span className="text-[11px] text-muted-foreground">Try it in the workshop:</span>
+      <Button size="sm" variant="outline" onClick={() => open(view, 'concepts')}>
+        Interactive view (step 2) <ArrowRight size={12} className="ml-1" />
+      </Button>
+      <Button size="sm" variant="outline" onClick={() => open(view, 'flows')}>
+        Flow diagram (step 1) <ArrowRight size={12} className="ml-1" />
+      </Button>
+    </div>
+  ) : null
+
 /** Learn section 8: the HSM as FHE key custodian, its decryption policy and the decryption-oracle limitation. */
-export const FheCustodySection: React.FC = () => (
+export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleView }> = ({
+  onOpenLifecycleView,
+}) => (
   <div className="space-y-6 text-sm text-foreground/80">
     <KeyTakeaways items={TAKEAWAYS.custody} />
 
@@ -1170,6 +1192,11 @@ export const FheCustodySection: React.FC = () => (
         Measured with the software token in a container on a Mac, not on a board (
         <EvidenceCite of="rotation">rotation run</EvidenceCite>).
       </p>
+      <LifecycleLinks
+        view="rotation"
+        open={onOpenLifecycleView}
+        label="Open the key-rotation view in the workshop"
+      />
     </div>
 
     <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
@@ -1192,6 +1219,11 @@ export const FheCustodySection: React.FC = () => (
         or compromised token is no longer enough; it does not protect against a crafted request sent
         to one token, and it does not fix flooding for third parties at the default parameters.
       </p>
+      <LifecycleLinks
+        view="shared"
+        open={onOpenLifecycleView}
+        label="Open the shared-decryption view in the workshop"
+      />
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
@@ -1217,7 +1249,9 @@ export const FheCustodySection: React.FC = () => (
 )
 
 /** Learn section 9: open-source implementations of the draft schemes. */
-export const FheImplementationsSection: React.FC = () => (
+export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLifecycleView }> = ({
+  onOpenLifecycleView,
+}) => (
   <div className="space-y-6 text-sm text-foreground/80">
     <KeyTakeaways items={TAKEAWAYS.implementations} />
 
@@ -1309,6 +1343,32 @@ export const FheImplementationsSection: React.FC = () => (
           messages.
         </li>
       </ul>
+      <p className="text-xs text-muted-foreground">
+        Our own two Lattigo reference runs, key rotation without decryption and 2-of-2 shared
+        decryption, are interactive in the workshop, with their measured numbers.
+      </p>
+      {onOpenLifecycleView && (
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Open the reference-run views in the workshop"
+        >
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onOpenLifecycleView('rotation', 'concepts')}
+          >
+            Key rotation view <ArrowRight size={12} className="ml-1" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onOpenLifecycleView('shared', 'concepts')}
+          >
+            Shared decryption view <ArrowRight size={12} className="ml-1" />
+          </Button>
+        </div>
+      )}
     </div>
   </div>
 )
