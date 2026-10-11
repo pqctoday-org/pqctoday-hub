@@ -152,3 +152,33 @@ describe('HomomorphicEncryption Learn tab: links to the key-lifecycle views', ()
     expect(screen.queryByRole('button', { name: /Key rotation view/ })).not.toBeInTheDocument()
   })
 })
+
+describe('HomomorphicEncryption Learn tab: flooded releases at the corrected sizing', () => {
+  it('section 2 states the Mac and board results, the thin margin and the earlier width', () => {
+    render(
+      <MemoryRouter>
+        <FheSchemesSection />
+      </MemoryRouter>
+    )
+    const text = document.body.textContent ?? ''
+    for (const v of [
+      '11.10',
+      '11.25',
+      '11.34',
+      '11.37',
+      '11.20',
+      '11.26',
+      '11.19',
+      '11.14',
+      '11.32',
+    ])
+      expect(text, v).toContain(v)
+    expect(text).toContain('a margin of only about 1.1–1.4 bits')
+    expect(text).toContain('−12.82')
+    expect(text).toContain('superseded')
+    expect(text).not.toMatch(/not yet measured on the boards/)
+    // the linked evidence records exist
+    for (const name of ['depth 0', 'depth 1', 'depth 3', 'MX95 Pro', 'MX95'])
+      expect(screen.getAllByRole('link', { name }).length).toBeGreaterThan(0)
+  })
+})

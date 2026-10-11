@@ -2,12 +2,7 @@
 
 import type { CkksEvidenceKey } from './fheCkksEvidence'
 import { KEY_LIFECYCLE_FLOWS, KEY_LIFECYCLE_META } from './fheKeyLifecycleFlows'
-import {
-  BOARD_CELLS_NOT_MEASURED,
-  FLOOD_FORMULA,
-  FLOOD_ID3,
-  GATE_F_BAR_BITS,
-} from './fheFloodSizing'
+import { FLOOD_FORMULA, FLOOD_ID3, GATE_F_BAR_BITS } from './fheFloodSizing'
 
 // ── FHE × HSM usage flows — data for the "FHE + HSM Flows" workshop step ──
 // Each scenario is a sequence of steps between actors. A step may carry a
@@ -86,7 +81,7 @@ const CKKS_ENGINE_MERGED =
   'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy, key rotation) are merged in pqctoday-hsm (#351, #353, #354), behind a non-default build feature of the educational engine. Validated on the MX95 boards (see the evidence badges).'
 
 /** The corrected flood sizing (pqctoday-hsm #355, merged) and what is measured; decrypt step only. */
-const CKKS_FLOOD_SIZING = `The width of the flood for third-party releases follows the published analysis and is merged (pqctoday-hsm #355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1): ${FLOOD_FORMULA}. Measured on a Mac with the second parameter set: ${FLOOD_ID3.depth0}–${FLOOD_ID3.depth3} bits against a bar of ${GATE_F_BAR_BITS}, a thin margin; the default parameter set is refused. Flooded releases are ${BOARD_CELLS_NOT_MEASURED}.`
+const CKKS_FLOOD_SIZING = `The width of the flood for third-party releases follows the published analysis and is merged (pqctoday-hsm #355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1): ${FLOOD_FORMULA}. Measured with the second parameter set on a Mac and with the token on both MX95 boards (depth 0, 1 and 3): ${FLOOD_ID3.rangeLow}–${FLOOD_ID3.rangeHigh} bits against a bar of ${GATE_F_BAR_BITS}, a thin margin of about ${FLOOD_ID3.margin} bits; the default parameter set is refused.`
 
 /** Next to the evidence badges of the CKKS decrypt steps. */
 const CKKS_DECRYPT_EVIDENCE =
@@ -233,7 +228,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge; the HSM’s own exported key set has not been run in OpenFHE.',
+        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. The second parameter set was also validated end to end on both boards with the corrected flood width (flooded release 11.1–11.4 bits against a bar of 10, depth 0, 1 and 3). Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge; the HSM’s own exported key set has not been run in OpenFHE.',
       reference:
         'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE v1.6.0 and Microsoft SEAL v4.1.2 CKKS reference runs in pqctoday-fhe',
     },

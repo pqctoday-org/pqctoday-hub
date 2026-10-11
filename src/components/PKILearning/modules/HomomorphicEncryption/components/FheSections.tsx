@@ -21,10 +21,10 @@ import { EvidenceCite } from './FheEvidenceCite'
 import { Button } from '@/components/ui/button'
 import type { LifecycleView, OpenLifecycleView } from '../workshop/fheRotationSharedData'
 import {
-  BOARD_CELLS_NOT_MEASURED,
   FLOOD_FORMULA,
   FLOOD_ID2,
   FLOOD_ID3,
+  FLOOD_ID3_BOARDS,
   FLOOD_POLICY,
   GATE_F_BAR_BITS,
   SAMPLER_SENTENCE,
@@ -559,16 +559,27 @@ export const FheSchemesSection: React.FC = () => (
           larger key set. The default set stays in use for owner releases.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <strong>On the boards:</strong> each board generated the 4.41 GB key set of the second set
-          on six cores in 97.4 s (MX95 Pro) and 99.4 s (MX95) (1,201 calls of 8 limbs, token peak
-          80.6–82.4 MiB) and streamed it to the Mac in 122 s and 124 s; every limb matched the
-          reference spec, and the two boards&apos; manifests are identical apart from the descriptor
-          each token draws at random (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
-          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>). Flooded releases are{' '}
-          <strong>{BOARD_CELLS_NOT_MEASURED}</strong>. Those two board records measured the earlier,
-          narrower width (<em>{FLOOD_ID3.beforeMx95Pro}</em> and <em>{FLOOD_ID3.beforeMx95}</em>{' '}
-          bits, superseded) and stay as records of that run; the board decrypts are functional, not
-          a security claim.
+          <strong>On the boards too:</strong> with the token on the board and the release flooded at
+          the corrected width, the MX95 Pro kept <strong>{FLOOD_ID3_BOARDS.mx95pro.depth0}</strong>{' '}
+          / <strong>{FLOOD_ID3_BOARDS.mx95pro.depth1}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95pro.depth3} bits</strong> (
+          <EvidenceCite of="metaBtsLmssMx95pro">MX95 Pro</EvidenceCite>) and the MX95{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth0}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth1}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth3} bits</strong> (
+          <EvidenceCite of="metaBtsLmssMx95">MX95</EvidenceCite>) at program depth 0 / 1 / 3, within{' '}
+          {FLOOD_ID3_BOARDS.maxFromMacBits} bits of the Mac. The margin over the bar of{' '}
+          {GATE_F_BAR_BITS} bits is therefore thin on every device, about {FLOOD_ID3.margin} bits.
+          Each board generated the 4.41 GB key set of the second set in{' '}
+          {FLOOD_ID3_BOARDS.mx95pro.generationSeconds} s (MX95 Pro) and{' '}
+          {FLOOD_ID3_BOARDS.mx95.generationSeconds} s (MX95) (1,201 calls of 8 limbs, token peak{' '}
+          {FLOOD_ID3_BOARDS.peakMiB} MiB) and streamed it to the Mac in{' '}
+          {FLOOD_ID3_BOARDS.streamedSeconds.mx95pro} s and {FLOOD_ID3_BOARDS.streamedSeconds.mx95}{' '}
+          s; every limb matched the reference spec (0 mismatches). The earlier board runs at the
+          narrower width kept <em>{FLOOD_ID3.beforeMx95Pro}</em> and <em>{FLOOD_ID3.beforeMx95}</em>{' '}
+          bits at depth 0 (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
+          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>; superseded) and stay as records of
+          that run. The board decrypts are functional, not a security claim.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           <strong>How the noise is drawn:</strong> {SAMPLER_SENTENCE}

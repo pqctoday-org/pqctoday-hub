@@ -4,7 +4,7 @@ import { render, screen, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { FheHsmFlows } from './FheHsmFlows'
 import { FHE_HSM_FLOWS, engineStatusOf } from '../data/fheHsmFlows'
-import { BOARD_CELLS_NOT_MEASURED } from '../data/fheFloodSizing'
+import { FLOOD_ID3 } from '../data/fheFloodSizing'
 
 const flow = (id: string) => FHE_HSM_FLOWS.find((f) => f.id === id)!
 
@@ -79,10 +79,13 @@ describe('FHE + HSM flows: the key-lifecycle scenarios', () => {
     expect(status['offline-backup-restore']).toBe('planned')
   })
 
-  it('the corrected flood sizing is stated once on the decrypt step, with the board marker', () => {
+  it('the corrected flood sizing is stated once on the decrypt step, with the Mac and board results', () => {
     const decrypt = flow('single-hsm').steps.find((s) => s.id === 'decrypt-under-policy')!
     expect(decrypt.engineNote).toContain('pqctoday-hsm #355')
-    expect(decrypt.engineNote).toContain(BOARD_CELLS_NOT_MEASURED)
-    expect(decrypt.engineNote).toContain('11.10–11.34 bits against a bar of 10')
+    expect(decrypt.engineNote).toContain('on a Mac and with the token on both MX95 boards')
+    expect(decrypt.engineNote).toContain(
+      `${FLOOD_ID3.rangeLow}–${FLOOD_ID3.rangeHigh} bits against a bar of 10`
+    )
+    expect(decrypt.engineNote).not.toMatch(/not yet measured/)
   })
 })

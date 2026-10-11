@@ -6,16 +6,12 @@
  *
  * Source of every number: the evidence records ckks-metabts2-lmss-gate-f-m5max-3bcdc05,
  * ckks-metabts2-lmss-depth1-m5max-3bcdc05, ckks-metabts2-lmss-depth3-m5max-3bcdc05 and
- * ckks-default-lmss-id2-m5max-3bcdc05 (pqctoday-fhe 3bcdc05, Mac M5 Max, token in a container).
- * Engine: pqctoday-hsm #355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1.
+ * ckks-default-lmss-id2-m5max-3bcdc05 (Mac M5 Max, token in a container), and
+ * ckks-metabts2-lmss-stream-mx95pro-mac-m5max-dc9ad8b and
+ * ckks-metabts2-lmss-stream-mx95-mac-m5max-dc9ad8b (token on the boards). Run files: pqctoday-fhe
+ * #26, merge commit dc9ad8b9d92013ed95aae7530eadec49ade711b8. Engine: pqctoday-hsm #355, merge
+ * commit d6b23452d92e4250069db9b993f818e65712b7b1.
  */
-
-/**
- * BOARD CELLS: the one place that says the corrected flood sizing has not been run on the
- * MX95 and MX95 Pro boards. Replace this constant (and the marked line in rag-summary.md) once
- * the board runs exist; every Learn and workshop text that needs the sentence reads it from here.
- */
-export const BOARD_CELLS_NOT_MEASURED = 'not yet measured on the boards with the corrected sizing'
 
 /** The formula as the token applies it (pqctoday-hsm proposal §6.6). */
 export const FLOOD_FORMULA = 'log₂σ = s/2 + ½·log₂(24·q·n) + log₂B'
@@ -31,15 +27,33 @@ export const FLOOD_ID3 = {
   depth1: '11.25',
   depth3: '11.34',
   /** Margin over the bar, in bits (11.10 − 10 to 11.34 − 10). */
-  margin: '1.1–1.3',
+  margin: '1.1–1.4',
+  /** Lowest and highest of the nine flooded runs (Mac and both boards, depth 0, 1 and 3). */
+  rangeLow: '11.10',
+  rangeHigh: '11.37',
   /** The same runs before the correction (σ = 2^57.6). */
   beforeDepth0: '22.84',
   beforeDepth1: '22.63',
   beforeDepth3: '22.78',
   beforeSigmaLog2: '57.6',
-  /** Earlier board runs at the earlier width, kept as records (superseded). */
+  /** Earlier board runs at the earlier width, depth 0, kept as records (superseded). */
   beforeMx95Pro: '22.78',
   beforeMx95: '22.59',
+} as const
+
+/**
+ * The same programs with the token on the boards (2026-10-11): the flooded release, bits over
+ * 32,768 slots at depth 0, 1 and 3, and what the depth-0 session measured.
+ */
+export const FLOOD_ID3_BOARDS = {
+  mx95pro: { depth0: '11.37', depth1: '11.20', depth3: '11.26', generationSeconds: '96.9' },
+  mx95: { depth0: '11.19', depth1: '11.14', depth3: '11.32', generationSeconds: '99.2' },
+  /** Streamed to the Mac, end to end (s): MX95 Pro, MX95. */
+  streamedSeconds: { mx95pro: '121', mx95: '124' },
+  /** Token peak memory over every measurement of both boards (MiB). */
+  peakMiB: '80.6–82.4',
+  /** The largest difference from the Mac run of the same program (bits). */
+  maxFromMacBits: '0.3',
 } as const
 
 /** Registry ID 2 (default parameter set, scale 2^40), same policy. */

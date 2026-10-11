@@ -10,7 +10,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { EVIDENCE_MANIFEST } from '@/data/fhe/fheEvidence'
-import { FLOOD_ID2, FLOOD_ID3, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
+import { FLOOD_ID2, FLOOD_ID3, FLOOD_ID3_BOARDS, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
 import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
 
 const ROOT = path.resolve(__dirname, '../../../../../../public/data/fhe-evidence')
@@ -96,6 +96,60 @@ describe('flood sizing numbers match the corrected runs', () => {
       expect(parseFloat(v)).toBeGreaterThan(GATE_F_BAR_BITS)
     expect(parseFloat(FLOOD_ID3.depth0) - GATE_F_BAR_BITS).toBeCloseTo(1.1, 1)
     expect(parseFloat(FLOOD_ID3.depth3) - GATE_F_BAR_BITS).toBeCloseTo(1.34, 1)
+  })
+  it('registry ID 3 with the token on each board, and the range and margin quoted', () => {
+    const peakMiB: number[] = []
+    for (const [b, vals] of [
+      ['mx95pro', FLOOD_ID3_BOARDS.mx95pro],
+      ['mx95', FLOOD_ID3_BOARDS.mx95],
+    ] as const) {
+      const folder = `ckks-metabts2-lmss-${b}-dc9ad8b`
+      expect(prec(folder), `${b} depth 0`).toBe(vals.depth0)
+      expect(round(json(folder, 'depth1-e2e-check.json').log2PrecisionAfterHsmDecrypt, 2)).toBe(
+        vals.depth1
+      )
+      expect(round(json(folder, 'depth3-e2e-check.json').log2PrecisionAfterHsmDecrypt, 2)).toBe(
+        vals.depth3
+      )
+      expect(round(json(folder, 'generate-only.json').seconds, 1)).toBe(vals.generationSeconds)
+      expect(json(folder, 'e2e.json').paramSet).toBe(3)
+      expect(fs.readFileSync(path.join(ROOT, folder, 'verify.txt'), 'utf8')).toContain(
+        '0 mismatches'
+      )
+      expect(fs.readFileSync(path.join(ROOT, folder, 'program-verify.txt'), 'utf8')).toContain(
+        '0 mismatches'
+      )
+      const peaks = [
+        json(folder, 'generate-only.json').peakRssKiB,
+        json(folder, 'export.json').peakRssKiB,
+        json(folder, 'program-export.json').peakRssKiB,
+      ]
+      peakMiB.push(...peaks.map((k: number) => k / 1024))
+      expect(String(json(folder, 'stream-wall.json').wallSecondsEndToEnd)).toBe(
+        FLOOD_ID3_BOARDS.streamedSeconds[b]
+      )
+    }
+    expect(`${Math.min(...peakMiB).toFixed(1)}–${Math.max(...peakMiB).toFixed(1)}`).toBe(
+      FLOOD_ID3_BOARDS.peakMiB
+    )
+    // every flooded run sits 1.1 to 1.4 bits above the bar, and within 0.3 bits of the Mac
+    const all = [
+      FLOOD_ID3.depth0,
+      FLOOD_ID3.depth1,
+      FLOOD_ID3.depth3,
+      ...Object.values(FLOOD_ID3_BOARDS.mx95pro).slice(0, 3),
+      ...Object.values(FLOOD_ID3_BOARDS.mx95).slice(0, 3),
+    ].map(parseFloat)
+    expect(Math.min(...all).toFixed(2)).toBe(FLOOD_ID3.rangeLow)
+    expect(Math.max(...all).toFixed(2)).toBe(FLOOD_ID3.rangeHigh)
+    const mac = [FLOOD_ID3.depth0, FLOOD_ID3.depth1, FLOOD_ID3.depth3].map(parseFloat)
+    for (const b of [FLOOD_ID3_BOARDS.mx95pro, FLOOD_ID3_BOARDS.mx95])
+      [b.depth0, b.depth1, b.depth3].forEach((v, i) =>
+        expect(Math.abs(parseFloat(v) - mac[i])).toBeLessThan(
+          Number(FLOOD_ID3_BOARDS.maxFromMacBits)
+        )
+      )
+    expect(FLOOD_ID3.margin).toBe('1.1–1.4')
   })
   it('registry ID 2 emulation and the flood width formula', () => {
     const n = json('ckks-default-lmss-id2-3bcdc05', 'noise-2.json')
