@@ -215,9 +215,9 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates; no OpenFHE CKKS measurement exists yet.',
+        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge; the HSM’s own exported key set has not been run in OpenFHE.',
       reference:
-        'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE CKKS pinned in pqctoday-sandbox',
+        'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE v1.6.0 and Microsoft SEAL v4.1.2 CKKS reference runs in pqctoday-fhe',
     },
     label: 'CKKS single-HSM custody',
     tagline: 'The HSM keeps the FHE secret; the cloud computes on ciphertexts it can never open.',
@@ -1046,7 +1046,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target: 'Evidence-scoped measurements only; no absolute claims.',
-      reference: 'OpenFHE / Lattigo sizes, measured in pqctoday-sandbox',
+      reference:
+        'Lattigo v6.2.0 key-set sizes and streamed generation measured in pqctoday-fhe; OpenFHE v1.6.0 CKKS key-set size measured separately (80 keys, 13.26 GB at N = 2¹⁶)',
     },
     label: 'What can run in the HSM?',
     tagline: 'Keygen and decrypt belong in the HSM. Homomorphic evaluation belongs on GPUs.',
