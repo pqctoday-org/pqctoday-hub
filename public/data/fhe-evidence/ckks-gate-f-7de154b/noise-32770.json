@@ -1,0 +1,23 @@
+{
+ "paramSet": 32770,
+ "trials": 3,
+ "log2Scale": 40,
+ "log2MaxCoefficientNoisePerTrial": [
+  11.190442018782825,
+  11.013322673425447,
+  11.044394119358454
+ ],
+ "log2StdCoefficientNoisePerTrial": [
+  8.509750958813706,
+  8.410442291137944,
+  8.518814597171778
+ ],
+ "log2B": 12,
+ "log2PrecisionNoFlood": 25.10695555094911,
+ "statSecurityBits": 30,
+ "maxDecrypts": 10000,
+ "log2FloodSigma": 33.64385618977472,
+ "log2PrecisionFlooded": 0.012142186644642745,
+ "log2PrecisionRounded20": 20.9781105973326,
+ "gateF": "no-go"
+}

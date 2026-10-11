@@ -11,6 +11,7 @@ import {
 import {
   EVIDENCE_MANIFEST,
   SCENARIO_CONTRACT,
+  scenarioValidation,
   validateRecord,
   validationsFor,
   type EvidencePart,
@@ -393,5 +394,58 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
 
   it('the valid end-to-end fixture itself passes', () => {
     expect(validateRecord(e2e())).toEqual([])
+  })
+  it('CKKS streamed keys: the Mac (M5 Max) is owner and server, either MX95 board the custodian', () => {
+    const ckks = (device: EvidencePart['device']): EvidenceRecord => ({
+      ...base,
+      id: `ckks-${device}`,
+      scenarioId: 'single-hsm',
+      level: 'end-to-end',
+      stepIds: ['export-evaluation-keys', 'owner-encrypts-locally', 'compute-ciphertexts'],
+      parts: [
+        {
+          device,
+          role: 'custodian',
+          producer: 'pqctoday-hsm',
+          claimScope: 'board-software-token',
+          engine: ENGINE,
+          stepIds: ['export-evaluation-keys'],
+        },
+        {
+          device: 'mac-m5max',
+          role: 'data-owner',
+          producer: 'pqctoday-fhe',
+          claimScope: 'owner-device',
+          stepIds: ['owner-encrypts-locally'],
+        },
+        {
+          device: 'mac-m5max',
+          role: 'fhe-server',
+          producer: 'pqctoday-fhe',
+          claimScope: 'board-untrusted-compute',
+          stepIds: ['compute-ciphertexts'],
+        },
+      ],
+    })
+    expect(validateRecord(ckks('mx95'))).toEqual([])
+    expect(validateRecord(ckks('mx95-pro'))).toEqual([])
+    expect(validationsFor('single-hsm', 'compute-ciphertexts', [ckks('mx95-pro')])[0].label).toBe(
+      'FHE server on Mac (M5 Max) (untrusted compute, software-held keys) · end-to-end run with the MX95 Pro custodian'
+    )
+    // The TFHE layout rule is unchanged: there the MX95 Pro is custodian only after a failover.
+    expect(validateRecord(swap(2, { device: 'mx95-pro' }))).toContain(
+      'the MX95 Pro is the backup custodian; it plays custodian only in a failover run'
+    )
+    // The M5 Max never holds the token.
+    const bad = ckks('mx95')
+    bad.parts = bad.parts!.map((p, i) => (i === 0 ? { ...p, device: 'mac-m5max' as const } : p))
+    expect(validateRecord(bad)).toContain('mac-m5max does not run pqctoday-hsm')
+  })
+
+  it('a badge: false record validates but raises no badge and no scenario line', () => {
+    const r = e2e({ badge: false })
+    expect(validateRecord(r)).toEqual([])
+    for (const st of r.stepIds) expect(validationsFor(r.scenarioId, st, [r])).toEqual([])
+    expect(scenarioValidation(r.scenarioId, [r])).toBeNull()
   })
 })

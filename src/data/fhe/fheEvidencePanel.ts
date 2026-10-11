@@ -89,7 +89,16 @@ export function evidencePanelModel(record: EvidenceRecord): PanelModel {
   facts.push({ label: 'Evidence level', value: STATUS_TEXT[r.status] ?? r.status })
   facts.push({ label: 'Date', value: formatEvidenceDate(r.measuredAt) })
   const scopes = r.parts?.length
-    ? [...new Set(r.parts.map((p) => CLAIM_SCOPE_TEXT[p.claimScope]))]
+    ? [
+        ...new Set(
+          r.parts.map((p) =>
+            // A Mac fhe-server is not a board: name the scope without "Board".
+            p.claimScope === 'board-untrusted-compute' && p.device.startsWith('mac-')
+              ? 'Mac as untrusted compute (keys held in software)'
+              : CLAIM_SCOPE_TEXT[p.claimScope]
+          )
+        ),
+      ]
     : r.claimScope
       ? [CLAIM_SCOPE_TEXT[r.claimScope]]
       : []

@@ -28,6 +28,7 @@ const KIND_CLASS: Record<ComputeKind, string> = {
   transfer: 'text-muted-foreground border-border bg-muted/40',
   symmetric: 'text-foreground border-border bg-muted/40',
   combine: 'text-primary border-primary/40 bg-primary/10',
+  streamed: 'text-status-warning border-warning/40 bg-warning/10',
   rejected: 'text-status-error border-destructive/40 bg-destructive/10',
 }
 

@@ -4,9 +4,13 @@ import { Link } from 'react-router'
 import {
   AlertTriangle,
   ArrowRight,
+  Binary,
   Cpu,
+  Gauge,
   HardDrive,
   KeyRound,
+  ListChecks,
+  Scale,
   Server,
   ShieldCheck,
   Sigma,
@@ -20,7 +24,14 @@ import {
   FheImplementationsSection,
   FheKeysOperationsSection,
   FheQuantumSection,
+  FheSchemesSection,
 } from './FheSections'
+import {
+  FheCostSection,
+  FheReferencesList,
+  FheStandardsSection,
+  FheUseCasesSection,
+} from './FheContextSections'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -33,11 +44,35 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
     <div className="space-y-8 w-full">
       <LearnSection
         sectionId="fhe-fundamentals"
-        title="Compute Without Trusting the Hardware"
+        title="What FHE Is, and What It Promises"
         icon={<Sigma size={24} className="text-primary" />}
         defaultOpen={true}
       >
         <FheFundamentalsSection />
+      </LearnSection>
+
+      <LearnSection
+        sectionId="fhe-schemes"
+        title="Schemes, Data Types and Noisy Results"
+        icon={<Binary size={24} className="text-primary" />}
+      >
+        <FheSchemesSection />
+      </LearnSection>
+
+      <LearnSection
+        sectionId="fhe-use-cases"
+        title="Where FHE Is Used"
+        icon={<ListChecks size={24} className="text-primary" />}
+      >
+        <FheUseCasesSection />
+      </LearnSection>
+
+      <LearnSection
+        sectionId="fhe-cost"
+        title="The Cost, and How It Is Being Reduced"
+        icon={<Gauge size={24} className="text-primary" />}
+      >
+        <FheCostSection />
       </LearnSection>
 
       <LearnSection
@@ -57,6 +92,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       </LearnSection>
 
       <LearnSection
+        sectionId="fhe-standards"
+        title="Standards and Compliance"
+        icon={<Scale size={24} className="text-primary" />}
+      >
+        <FheStandardsSection />
+      </LearnSection>
+
+      <LearnSection
         sectionId="fhe-hsm-custody"
         title="The HSM as FHE Key Custodian"
         icon={<ShieldCheck size={24} className="text-primary" />}
@@ -71,6 +114,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       >
         <FheImplementationsSection />
       </LearnSection>
+
+      <FheReferencesList />
 
       {/* ── Workshop CTA ────────────────────────────────────────────────── */}
       <div className="glass-panel p-6 border-primary/20">
