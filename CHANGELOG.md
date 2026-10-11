@@ -31,7 +31,20 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.156.0] - 2026-10-10
 
-The Library gains thirteen primary papers behind the homomorphic-encryption module, the Executive's first Library suggestion shows the right document, two Migrate rows describe their certification and post-quantum status accurately, and a bundled sanitiser library is brought up to date.
+The Homomorphic Encryption module is reorganised into nine sections and gains measured key-streaming results, workshop views and sourced sections on operations, standards and market position; the Library gains thirteen primary papers behind it. The Executive's first Library suggestion shows the right document, two Migrate rows describe their certification and post-quantum status accurately, and a bundled sanitiser library is brought up to date.
+
+### Added
+
+- **New hands-on workshop step: FHE concepts** [view:/learn/homomorphic-encryption] [persona:developer] [persona:architect] [persona:researcher]: four interactive views, namely noise budget and bootstrapping, encoding and rounding, a program turned into an FHE circuit, and key streaming with a chunk-size control backed by measured times.
+- **CKKS evaluation keys scale when streamed, measured on Mac and MX95 boards** [view:/learn/homomorphic-encryption] [persona:architect] [persona:developer] [persona:ops]: an HSM token produced the full 3.94 GB bootstrappable key set as 1,001 bounded calls, never holding more than about 16 MB. On one MX95 core this took about 8 minutes; it was limited by the CPU, not the network. Chunk size trades memory for time, and every limb matched the reference exactly.
+- **Decryption results are noisy: how to read them, and the decryption limits** [view:/learn/homomorphic-encryption] [persona:architect] [persona:grc] [persona:researcher]: CKKS gives approximate fixed-point values that you read by rounding, while TFHE decrypts exactly. Explains why anyone allowed to ask for decryption can recover the key, what the HSM's decryption policy controls, and the value and limits of threshold decryption, all with sources.
+- **Where FHE is used, what it costs, and how it is positioned** [view:/learn/homomorphic-encryption] [persona:executive] [persona:architect] [persona:researcher]: use cases ranked by evidence (in production for private lookups; peer-reviewed or pilots for genomics, biometrics, AI inference and financial crime); compute overhead next to enclaves, MPC, differential privacy and federated learning; GPU, FPGA, chip and algorithm speedups; and FHE's market position among privacy technologies, with analyst estimates labelled.
+- **Standards and compliance status of FHE** [view:/learn/homomorphic-encryption] [persona:grc] [persona:cert-engineer]: no FHE scheme is FIPS-approved, in CNSA 2.0 or Common Criteria-certified, and ISO/IEC 28033 is still in ballot. What can be validated today is the conventional cryptography around FHE.
+- **Operations, encoding and turning programs into FHE circuits** [view:/learn/homomorphic-encryption] [persona:developer] [persona:researcher]: what CKKS, TFHE and BFV/BGV support natively, how inputs are encoded and results decoded, why programs must avoid secret-dependent branches, and which compilers automate the conversion.
+
+### Changed
+
+- **FHE module reorganised into nine sections in learning order** [view:/learn/homomorphic-encryption] [persona:architect] [persona:developer] [persona:researcher]: what FHE is and what "fully homomorphic" does and does not promise; schemes, data types and noisy results; where FHE is used; what it costs; keys; quantum; standards and compliance; the HSM's role; implementations. Each section opens with key takeaways, and one grouped reference list closes the page.
 
 ### Fixed
 
