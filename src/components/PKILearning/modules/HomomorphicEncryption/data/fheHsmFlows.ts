@@ -93,10 +93,11 @@ const CKKS_DECRYPT_EVIDENCE =
   'Functional, not a security claim: the board decrypted and released the result under policy, which shows the mechanism works. It does not show resistance to the decryption-oracle limitation (Learn, section 8).'
 
 /**
- * What the pqctoday-hsm engine can do for a step today. Checked against the
- * engine source at commit ceddd554 (2026-10-02). The PKCS#11 reference is the
- * v3.2 OASIS Standard plus pqctoday vendor mechanisms; no FHE mechanism exists
- * yet, so no HSM step of these flows is `engine` today.
+ * What the pqctoday-hsm engine can do for a step today. First checked against the
+ * engine source at commit ceddd554 (2026-10-02); the CKKS flows were updated on 2026-10-11
+ * after the streamed CKKS mechanisms and key rotation merged (#351, #353, #354, #355). The
+ * PKCS#11 reference is the v3.2 OASIS Standard plus pqctoday vendor mechanisms. The other
+ * flows' HSM steps are still derived as planned below, except where a step sets its status.
  * - engine:  every PKCS#11 v3.2 call the step needs exists now
  * - planned: needs a vendor mechanism or engine fix from the FHE wrapper plan
  * - refused: the planned engine refuses it by design (size check before allocation)
