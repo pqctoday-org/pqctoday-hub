@@ -744,7 +744,7 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
   const calls = CALLS_BY_LIMBS[limbs]
   const dev = STREAM_DEVICES.find((d) => d.id === device)!
   const m = dev.measured[limbs]
-  const estimate = dev.fitWorkSeconds + (dev.fitPerCallMs / 1000) * calls
+  const estimate = dev.fit ? dev.fit.workSeconds + (dev.fit.perCallMs / 1000) * calls : null
   const chunkBytes = limbs * LIMB_BYTES
 
   useEffect(() => {
@@ -779,8 +779,8 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
     <div className="space-y-4">
       <WhatYouSee>
         The token producing the 51 evaluation keys a bounded chunk at a time and streaming each
-        chunk out, and what the chunk size does to time and token memory on three devices, from our
-        measurements.
+        chunk out, and what the chunk size does to time and token memory on our devices, before and
+        after the token learned to cache work between calls, from our measurements.
       </WhatYouSee>
       <div className="space-y-2">
         <p className="text-xs text-muted-foreground">
@@ -887,28 +887,45 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
             at this chunk size on this device.
           </p>
         )}
-        <p className="text-xs text-muted-foreground">
-          Estimate from the fitted model (not a measurement): {dev.fitWorkSeconds} s of work +{' '}
-          {dev.fitPerCallMs} ms per call × {fmtInt(calls)} calls ≈ {fmtSeconds(estimate)}{' '}
-          <EvidenceCite of={dev.sweepEvidence}>(fit published with the sweep)</EvidenceCite>
-        </p>
+        {dev.fit && estimate !== null ? (
+          <p className="text-xs text-muted-foreground">
+            Estimate from the fitted model (not a measurement): {dev.fit.workSeconds} s of work +{' '}
+            {dev.fit.perCallMs} ms per call × {fmtInt(calls)} calls ≈ {fmtSeconds(estimate)}{' '}
+            <EvidenceCite of={dev.fit.evidence}>(fit published with the sweep)</EvidenceCite>
+          </p>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            No fitted model for this device: it was measured at 8 and 30 limbs per call only, and
+            with the cached generator chunk size barely changes the time.
+          </p>
+        )}
       </div>
 
       <div className="glass-panel p-3 bg-muted/30 text-xs text-muted-foreground space-y-1">
         <p>
           <strong className="text-foreground">Trade-off:</strong> smaller chunks need less token
-          memory but more calls, and every call pays a fixed cost (the token regenerates the secret
-          and the digit&apos;s error polynomial each time). Larger chunks cut the calls and grow
-          memory by about 1 MiB per extra limb.
+          memory but more calls. In the first version every call paid a fixed cost (the token
+          regenerated the secret and the digit&apos;s error polynomial each time); larger chunks cut
+          the calls and grow memory by about 1 MiB per extra limb.
+        </p>
+        <p>
+          <strong className="text-foreground">Cached generator:</strong> the token now keeps its
+          expanded secret and the NTT tables between calls and can use all six cores. The bytes do
+          not change; time drops (one MX95 core <EvidenceCite of="cachedMx95">214 s</EvidenceCite>,
+          six MX95 Pro cores <EvidenceCite of="cachedMx95pro">84 s</EvidenceCite> at 8 limbs per
+          call) and token memory rises to 65–124 MiB. Setting the cache to 0 keeps the token at
+          about 16 MiB at about twice the time.
         </p>
         <p>
           <strong className="text-foreground">
             On the board the CPU is the limit, not the 1 GbE link:
           </strong>{' '}
-          on the MX95 the token generated the set in <EvidenceCite of="mx95">473 s</EvidenceCite>{' '}
-          with the output discarded, and streamed it to the Mac in{' '}
-          <EvidenceCite of="mx95">498 s</EvidenceCite>. At 1 Gb/s line rate the 3.94 GB would take
-          about 32 s.
+          on the MX95 the first version generated the set in{' '}
+          <EvidenceCite of="mx95">473 s</EvidenceCite> with the output discarded, and streamed it to
+          the Mac in <EvidenceCite of="mx95">498 s</EvidenceCite>. At 1 Gb/s line rate the 3.94 GB
+          would take about 32 s. The fastest board run, six MX95 Pro cores at 30 limbs per call,
+          takes <EvidenceCite of="cachedMx95pro">72.4 s</EvidenceCite> (54 MB/s), about half of the
+          link.
         </p>
       </div>
     </div>
