@@ -7,6 +7,7 @@
 // compute-limits flows, TFHE for the TFHE flows, BFV / BGV for the threshold flows.
 
 import type { FheFlowId } from './fheHsmFlows'
+import { KEY_LIFECYCLE_IO } from './fheKeyLifecycleFlows'
 
 export type ComputeKind =
   | 'keygen'
@@ -50,6 +51,7 @@ const io = (input: string, kind: ComputeKind, computation: string, output: strin
 })
 
 export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
+  ...KEY_LIFECYCLE_IO,
   'single-hsm': [
     io(
       'Nothing from outside: the HSM entropy source plus the agreed parameter set (N = 2¹⁶, modulus chain, scale).',
@@ -102,7 +104,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
     io(
       'The result ciphertext plus the request metadata: who is asking and the declared output type. The HSM cannot verify which computation produced it.',
       'decrypt',
-      'Policy gate before decryption: authenticated requester; ciphertext must match an allowed result shape (slots, level, scale). Decrypt m′ = c₀ + c₁·s, add flooding noise, decode with an FFT, check the allowed range, and write an audit record.',
+      'Policy gate before decryption: authenticated requester; ciphertext must match an allowed result shape (slots, level, scale). Decrypt m′ = c₀ + c₁·s, add flooding noise for releases to third parties (width log₂σ = s/2 + ½·log₂(24·q·n) + log₂B, from the published analysis), decode with an FFT, check the allowed range, and write an audit record.',
       'Plaintext result values, rounded and noised, inside the HSM.'
     ),
     io(

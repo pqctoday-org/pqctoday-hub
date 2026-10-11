@@ -52,6 +52,8 @@ import {
 import { FHE_STEP_IO } from '../data/fheHsmStepIO'
 import { scenarioValidation, validationsFor } from '@/data/fhe/fheEvidence'
 import { FheStepDetailModal } from './FheStepDetailModal'
+import { EvidenceCite } from '../components/FheEvidenceCite'
+import { RotationAttemptPanel, SharedSwitchesPanel } from './FheRotationSharedViews'
 import { EvidencePanel } from './EvidencePanel'
 import {
   HOLD_STATUS,
@@ -386,12 +388,29 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
           onNavigate={goTo}
         />
 
+        {flow.id === 'ckks-key-rotation' && <RotationAttemptPanel />}
+        {flow.id === 'ckks-shared-decrypt' && <SharedSwitchesPanel />}
+
         <KeySizePanel highlighted={stepKeys} />
 
         <p className="text-[10px] text-muted-foreground leading-snug">
           {MEASURED_BASIS[flow.id] ??
             `Data, compute and FHE key sizes are order-of-magnitude estimates for ${SIZE_BASIS[flow.id]}. They shift by 10× with parameters, library and hardware. ML-KEM and ML-DSA sizes are exact (FIPS 203 / 204; the ML-KEM private key is counted as its 64 B seed, ML-DSA as the expanded 4,032 B key), as are AES sizes (FIPS 197); RSA sizes are typical DER encodings (RFC 8017).`}
         </p>
+
+        {flow.measured && (
+          <p className="text-[11px] text-muted-foreground">
+            <span className="font-semibold text-foreground">
+              Measured data behind this scenario:{' '}
+            </span>
+            {flow.measured.map((m, i) => (
+              <React.Fragment key={m.of}>
+                {i > 0 && ' · '}
+                <EvidenceCite of={m.of}>{m.label}</EvidenceCite>
+              </React.Fragment>
+            ))}
+          </p>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
           <InfoCard title="What the HSM does" body={flow.hsmDoes} />
@@ -636,8 +655,8 @@ const BaselineBox: React.FC<{ flow: FheFlow }> = ({ flow }) => (
       not part of the library or paper. pqctoday-hsm is a software token and browser emulator, not
       hardware custody; its certificates would use a test manufacturing CA and prove no hardware
       isolation. Each step also shows what pqctoday-hsm (PKCS#11 v3.2 plus vendor mechanisms) can do
-      today: its educational build runs the TFHE custody steps as a software token on the lab
-      boards, the browser emulator runs no FHE step, and the ML-KEM, ML-DSA, HPKE and AES-GCM
+      today: its educational build runs the TFHE and CKKS custody steps as a software token on the
+      lab boards, the browser emulator runs no FHE step, and the ML-KEM, ML-DSA, HPKE and AES-GCM
       building blocks run in both.
     </div>
   </div>
@@ -780,6 +799,7 @@ const PHASE_TEXT: Record<Phase, string> = {
   compute: 'text-status-warning',
   decrypt: 'text-status-success',
   backup: 'text-muted-foreground',
+  retire: 'text-status-warning',
 }
 
 const ZONE_CHIP: Record<TrustZone, string> = {
@@ -1111,6 +1131,7 @@ const PHASE_TONE: Record<Phase, Tone> = {
   compute: 'warning',
   decrypt: 'success',
   backup: 'muted',
+  retire: 'warning',
 }
 
 const STATE_STYLE: Record<DataState, { box: string; text: string }> = {

@@ -1,0 +1,46 @@
+{
+ "paramSet": 3,
+ "source": "HSM export /repo/reference-runs/ckks-stream-e2e/work/2026-10-11-n16-o2b-lmss-program-mx95/hsm/out",
+ "depth": 3,
+ "program": "y0 = 2x - z after the refresh of x; y_k = y_{k-1}*u_k (ciphertext, odd k) or *p_k (plaintext, even k); drop to the release level",
+ "assembleSeconds": 5.395923307,
+ "bootstrapSeconds": 12.957476286,
+ "programSeconds": 0.654054791,
+ "levelAfterRefresh": 7,
+ "log2ScaleAfterRefresh": 90,
+ "steps": [
+  {
+   "step": 0,
+   "kind": "weighted sum 2x - z",
+   "levelIn": 7,
+   "levelOut": 7,
+   "log2ScaleOut": 90
+  },
+  {
+   "step": 1,
+   "kind": "ciphertext x ciphertext (relinearised)",
+   "levelIn": 7,
+   "levelOut": 5,
+   "log2ScaleOut": 90
+  },
+  {
+   "step": 2,
+   "kind": "ciphertext x plaintext vector",
+   "levelIn": 5,
+   "levelOut": 3,
+   "log2ScaleOut": 90
+  },
+  {
+   "step": 3,
+   "kind": "ciphertext x ciphertext (relinearised)",
+   "levelIn": 3,
+   "levelOut": 1,
+   "log2ScaleOut": 90
+  }
+ ],
+ "ciphertextLevelOut": 1,
+ "log2ScaleOut": 90,
+ "maxAbsExpectedValue": 6.057318668824901,
+ "log2PrecisionBeforeRelease": 48.415037499278846,
+ "precisionComment": "test-seed export: decrypted with the reference spec's secret, no flooding, no rounding"
+}

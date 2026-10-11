@@ -9,6 +9,8 @@ import {
   Ruler,
   GitBranch,
   Layers,
+  RefreshCw,
+  Users,
   Play,
   Pause,
   RotateCcw,
@@ -32,12 +34,13 @@ import {
   type ProgramId,
   type StreamDevice,
 } from './fheConceptsData'
+import { RotationView, SharedDecryptView } from './FheRotationSharedViews'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
 /* ------------------------------------------------------------------ */
 
-type CardId = 'noise' | 'encode' | 'circuit' | 'stream'
+export type CardId = 'noise' | 'encode' | 'circuit' | 'stream' | 'rotation' | 'shared'
 
 interface ConceptSectionProps {
   id: CardId
@@ -936,11 +939,17 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-const CARD_IDS: CardId[] = ['noise', 'encode', 'circuit', 'stream']
+const CARD_IDS: CardId[] = ['noise', 'encode', 'circuit', 'stream', 'rotation', 'shared']
 
-export const FheConceptsWorkshop: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
+export const FheConceptsWorkshop: React.FC<{
+  onComplete?: () => void
+  /** Open this card first (a link from the Learn tab); default is the noise card. */
+  initialCard?: CardId
+}> = ({ onComplete, initialCard }) => {
   const reduced = usePrefersReducedMotion()
-  const [expanded, setExpanded] = useState<CardId | null>('noise')
+  const [expanded, setExpanded] = useState<CardId | null>(
+    initialCard && CARD_IDS.includes(initialCard) ? initialCard : 'noise'
+  )
   const [done, setDone] = useState<Set<CardId>>(new Set())
 
   const mark = useCallback(
@@ -1002,16 +1011,35 @@ export const FheConceptsWorkshop: React.FC<{ onComplete?: () => void }> = ({ onC
       icon: Layers,
       body: <StreamDemo onInteract={() => mark('stream')} />,
     },
+    {
+      id: 'rotation',
+      title: 'Key rotation without decrypting',
+      short: 'Rotation',
+      subtitle: 'Move stored ciphertexts to a new key, and see what the token refuses',
+      border: 'border-l-warning',
+      icon: RefreshCw,
+      body: <RotationView onInteract={() => mark('rotation')} />,
+    },
+    {
+      id: 'shared',
+      title: 'Shared (2-of-2) decryption',
+      short: 'Shared',
+      subtitle: 'Two tokens each hold a share: what it costs, what it fixes, what it does not',
+      border: 'border-l-destructive',
+      icon: Users,
+      body: <SharedDecryptView onInteract={() => mark('shared')} />,
+    },
   ]
 
   return (
     <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
       <div className="space-y-5">
         <p className="text-muted-foreground leading-relaxed">
-          Four hands-on views of what makes FHE different from ordinary encryption: noise that must
+          Six hands-on views of what makes FHE different from ordinary encryption: noise that must
           be managed, numbers that are scaled and rounded, programs that cannot branch on secret
-          data, and evaluation keys large enough that the custodian streams them out in pieces.
-          Concepts use simplified math; measured numbers link to their evidence.
+          data, evaluation keys large enough that the custodian streams them out in pieces, a key
+          that can be rotated without decrypting the data, and a secret that two tokens can hold as
+          shares. Concepts use simplified math; measured numbers link to their evidence.
         </p>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>Progress:</span>

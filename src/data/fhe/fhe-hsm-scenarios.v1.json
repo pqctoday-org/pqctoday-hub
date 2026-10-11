@@ -43,7 +43,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "KeyGen()"
         },
         {
@@ -53,7 +53,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {
@@ -63,7 +63,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "KeyGen() → publicKey"
         },
         {
@@ -111,7 +111,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": false,
-          "engineStatus": "planned"
+          "engineStatus": "engine"
         },
         {
           "id": "decrypt-under-policy",
@@ -120,7 +120,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT"
         },
         {
@@ -130,7 +130,7 @@
           "phase": "decrypt",
           "data": "result",
           "deployment": false,
-          "engineStatus": "planned"
+          "engineStatus": "engine"
         },
         {
           "id": "live-clone-peer-hsm",
@@ -1012,6 +1012,286 @@
         "cloud.transcipherMsPerBlock": null,
         "hsm.decryptMs": null,
         "client.bundleBytes": null
+      },
+      "fixtures": []
+    },
+    {
+      "id": "ckks-key-rotation",
+      "label": "CKKS key rotation",
+      "scheme": "CKKS",
+      "baseline": {
+        "implementation": "Lattigo v6.2.0 core/rlwe: GenEvaluationKeyNew(skInput = s_old, skOutput = s_new) and Evaluator.ApplyEvaluationKey",
+        "codeUrl": "https://github.com/tuneinsight/lattigo/tree/v6.2.0/core/rlwe",
+        "paper": "Lattigo v6.2.0 SECURITY.md: key rotation is listed as a mitigation that limits the material available to IND-CPA-D attacks",
+        "paperUrl": "https://github.com/tuneinsight/lattigo/blob/v6.2.0/SECURITY.md"
+      },
+      "validationTarget": "Reference-validated with Lattigo v6.2.0: the token’s rotation key matched Lattigo’s own rebuild limb for limb (30 of 30), Lattigo switched a level-9 and a level-0 ciphertext, the switched ciphertexts no longer decrypt under the old key, and the new seed decrypted the result under its policy. Measured with the software token in a container on a Mac; not run on a board.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsm",
+          "kind": "hsm",
+          "zone": "owner"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "so-starts-rotation",
+          "from": "client",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "engine",
+          "api": "CKM_PQCTODAY_FHE_DERIVE_PUBLIC, parameter version 3, kind 3 (rotation descriptor)"
+        },
+        {
+          "id": "token-generates-new-secret",
+          "from": "hsm",
+          "to": "hsm",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "engine",
+          "api": "KeyGen()"
+        },
+        {
+          "id": "stream-rotation-key",
+          "from": "hsm",
+          "to": "cloud",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "engine",
+          "api": "GenEvaluationKeyNew(s_old, s_new)"
+        },
+        {
+          "id": "server-switches-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "engineStatus": "outside",
+          "api": "rlwe.Evaluator.ApplyEvaluationKey"
+        },
+        {
+          "id": "return-switched-ciphertext",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "engineStatus": "outside"
+        },
+        {
+          "id": "decrypt-with-new-secret",
+          "from": "client",
+          "to": "hsm",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "engineStatus": "engine",
+          "api": "Decrypt (policy version 2)"
+        },
+        {
+          "id": "so-retires-old-secret",
+          "from": "client",
+          "to": "hsm",
+          "phase": "retire",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "engine",
+          "api": "retire_old_seed(SO session, old lineage)"
+        },
+        {
+          "id": "server-deletes-rotation-key",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "retire",
+          "data": "keys",
+          "deployment": false,
+          "engineStatus": "outside"
+        }
+      ],
+      "validationTargetLabel": "reference-validated",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "host-rollback-possible",
+        "rotation-old-secret-read-not-established"
+      ],
+      "budgets": {
+        "hsm.rotationKeyBytes": null,
+        "hsm.peakRssMb": null,
+        "cloud.switchMsPerCiphertext": null
+      },
+      "fixtures": []
+    },
+    {
+      "id": "ckks-shared-decrypt",
+      "label": "CKKS shared (2-of-2) decryption",
+      "scheme": "CKKS",
+      "baseline": {
+        "implementation": "Lattigo v6.2.0 multiparty: additive N-out-of-N key generation (PublicKeyGenProtocol, RelinearizationKeyGenProtocol, GaloisKeyGenProtocol, EvaluationKeyGenProtocol) and collective key switching (KeySwitchProtocol, PublicKeySwitchProtocol)",
+        "codeUrl": "https://pkg.go.dev/github.com/tuneinsight/lattigo/v6/multiparty",
+        "paper": "Mouchet, Troncoso-Pastoriza, Bossuat, Hubaux: Multiparty Homomorphic Encryption from Ring-Learning-with-Errors (PoPETs 2021)",
+        "paperUrl": "https://petsymposium.org/popets/2021/popets-2021-0071.php"
+      },
+      "validationTarget": "Evidence-scoped measurements only; no absolute claims. A Lattigo prototype with both parties in one process on a Mac, at the real parameters (N = 2¹⁶): the joint keys bootstrap, one share alone decrypts nothing, and a crafted request to one party returns its whole share. No token or board run.",
+      "actors": [
+        {
+          "id": "client",
+          "kind": "client",
+          "zone": "owner"
+        },
+        {
+          "id": "hsmA",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "hsmB",
+          "kind": "hsm",
+          "zone": "party"
+        },
+        {
+          "id": "cloud",
+          "kind": "cloud",
+          "zone": "third"
+        }
+      ],
+      "steps": [
+        {
+          "id": "token-a-makes-share",
+          "from": "hsmA",
+          "to": "hsmA",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "KeyGen() (share)"
+        },
+        {
+          "id": "token-b-makes-share",
+          "from": "hsmB",
+          "to": "hsmB",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "KeyGen() (share)"
+        },
+        {
+          "id": "token-a-streams-key-share",
+          "from": "hsmA",
+          "to": "client",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "multiparty.*KeyGenProtocol.GenShare"
+        },
+        {
+          "id": "token-b-streams-key-share",
+          "from": "hsmB",
+          "to": "client",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "multiparty.*KeyGenProtocol.GenShare"
+        },
+        {
+          "id": "combiner-joins-key-shares",
+          "from": "client",
+          "to": "client",
+          "phase": "setup",
+          "data": "keys",
+          "deployment": false,
+          "engineStatus": "outside",
+          "api": "AggregateShares · GenRelinearizationKey"
+        },
+        {
+          "id": "owner-encrypts-and-uploads",
+          "from": "client",
+          "to": "cloud",
+          "phase": "encrypt",
+          "data": "encrypted",
+          "deployment": false,
+          "engineStatus": "outside",
+          "api": "Encryptor with the joint public key"
+        },
+        {
+          "id": "compute-ciphertexts",
+          "from": "cloud",
+          "to": "cloud",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "engineStatus": "outside",
+          "api": "Evaluator, bootstrapping with the joint keys"
+        },
+        {
+          "id": "return-encrypted-result",
+          "from": "cloud",
+          "to": "client",
+          "phase": "compute",
+          "data": "encrypted",
+          "deployment": false,
+          "engineStatus": "outside"
+        },
+        {
+          "id": "token-a-partial-decrypt",
+          "from": "client",
+          "to": "hsmA",
+          "phase": "decrypt",
+          "data": "encrypted",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "multiparty.KeySwitchProtocol.GenShare (or PublicKeySwitchProtocol)"
+        },
+        {
+          "id": "token-b-partial-decrypt",
+          "from": "client",
+          "to": "hsmB",
+          "phase": "decrypt",
+          "data": "decrypting",
+          "deployment": true,
+          "engineStatus": "planned",
+          "api": "multiparty.KeySwitchProtocol.GenShare (or PublicKeySwitchProtocol)"
+        },
+        {
+          "id": "combine-shares",
+          "from": "client",
+          "to": "client",
+          "phase": "decrypt",
+          "data": "result",
+          "deployment": false,
+          "engineStatus": "outside",
+          "api": "multiparty.*.AggregateShares · DecryptNew"
+        }
+      ],
+      "validationTargetLabel": "reference-only",
+      "disclosures": [
+        "emulator-not-hardware-custody",
+        "honest-but-curious-parties",
+        "crafted-request-returns-share",
+        "flooding-fails-at-default-parameters",
+        "t-of-n-attacks-reported"
+      ],
+      "budgets": {
+        "hsmA.shareUploadBytes": null,
+        "hsmA.partialDecryptMs": null,
+        "hsmA.peakRssMb": null
       },
       "fixtures": []
     }

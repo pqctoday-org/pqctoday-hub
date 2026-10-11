@@ -1,0 +1,32 @@
+{
+ "paramSet": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "log2PrecisionDecryptJointKeyNoFlood": 26.6387083227306,
+ "thresholdDecrypt": [
+  {
+   "log2SigmaFlood": 0,
+   "log2Precision": 26.5828402164834
+  },
+  {
+   "log2SigmaFlood": 20,
+   "log2Precision": 9.849540365829178
+  },
+  {
+   "log2SigmaFlood": 31.6,
+   "log2Precision": -1.7559685300688108
+  }
+ ],
+ "log2PrecisionDecryptWithOneShareOnly": -27.84642019333938,
+ "sizesBytes": {
+  "publicKeyShare": 7864456,
+  "relinRoundOneShare": 0,
+  "relinRoundTwoShare": 0,
+  "galoisShareEach": 0,
+  "denseToSparseShare": 0,
+  "sparseToDenseShare": 0,
+  "thresholdDecryptShareLevel0": 524304,
+  "perPartyUploadTotal": 0,
+  "jointBootstrappingKeySet": 0,
+  "singlePartyBootstrappingKeySet": 0
+ },
+ "partialDecryptSecondsPerParty": 0.0019327765
+}

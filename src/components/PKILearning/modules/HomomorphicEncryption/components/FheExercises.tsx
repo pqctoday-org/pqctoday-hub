@@ -84,7 +84,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Noise',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The last digits of a CKKS result are noise, so report it rounded to a precision you trust: rounded to 20 bits (multiples of 2^-20 ≈ 0.00000095) it reads 3.141593 to six decimals. Rounding removes low-order noise bits but cannot recover bits the noise has already destroyed. If the result goes to others, rounding alone is not enough: decrypted CKKS results seen by others can lead to key recovery, and the research countermeasure, noise flooding, costs further precision. At the default parameters flooding for third parties leaves no correct bits; a second parameter set with higher-precision bootstrapping keeps about 22.6–22.8 bits, measured on a Mac and on both boards.',
+      'The last digits of a CKKS result are noise, so report it rounded to a precision you trust: rounded to 20 bits (multiples of 2^-20 ≈ 0.00000095) it reads 3.141593 to six decimals. Rounding removes low-order noise bits but cannot recover bits the noise has already destroyed. If the result goes to others, rounding alone is not enough: decrypted CKKS results seen by others can lead to key recovery, and the research countermeasure, noise flooding, costs further precision. At the default parameters flooding for third parties leaves no correct bits (−12.8 bits in the noise-study emulation, and the token refuses the release); a second parameter set with higher-precision bootstrapping keeps 11.1–11.4 bits against a bar of 10 bits, measured with the corrected flood width on a Mac and with the token on both MX95 boards: a thin margin, set by the published sizing.',
     target: 'learn',
   },
   {
