@@ -6,7 +6,15 @@ import { Gauge, Lightbulb, ListChecks, Scale, Sparkles } from 'lucide-react'
 import { EvidenceCite } from './FheEvidenceCite'
 import {
   FHE_ACCELERATION,
+  FHE_COMPILERS,
+  FHE_ENCODING,
+  FHE_MARKET_SUMMARY,
+  FHE_MARKET_TREND,
   FHE_OVERHEAD_QUOTES,
+  FHE_PET_MARKET,
+  FHE_PROGRAM_EXAMPLES,
+  FHE_PROGRAM_RULES,
+  FHE_SCHEME_OPERATIONS,
   FHE_PET_COMPARISON,
   FHE_PROMISE_ROWS,
   FHE_REFERENCE_GROUPS,
@@ -280,6 +288,8 @@ export const FheCostSection: React.FC = () => (
       </div>
     </div>
 
+    <FheMarketBox />
+
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground">How the cost is being reduced</h3>
       <div className="overflow-x-auto">
@@ -377,6 +387,218 @@ export const FheCostSection: React.FC = () => (
         bootstrap then costs seconds on one laptop-class CPU core.
       </p>
     </div>
+  </div>
+)
+
+const RUN_BY_COLORS: Record<string, string> = {
+  client: 'bg-primary/10 text-primary border-primary/30',
+  server: 'bg-muted text-muted-foreground border-border',
+  'key holder': 'bg-success/10 text-status-success border-success/30',
+}
+
+/** Section 2 box: what each scheme computes natively, which key each operation needs. */
+export const FheOperationsBox: React.FC = () => (
+  <div className="space-y-3">
+    <h3 className="text-sm font-bold text-foreground">Operations each scheme supports</h3>
+    <p className="text-xs text-muted-foreground">
+      Each scheme has a small set of native operations. Only decryption (and key generation) needs
+      the secret key; the server runs everything else with public evaluation keys. Whatever is not
+      native has to be built from these operations.
+    </p>
+    {FHE_SCHEME_OPERATIONS.map((s) => (
+      <div key={s.scheme} className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+        <div className="text-xs font-bold text-foreground">{s.scheme}</div>
+        <p className="text-xs text-muted-foreground">{s.summary}</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border">
+                <th className={TH}>Operation</th>
+                <th className={TH}>Run by</th>
+                <th className={TH}>Needs</th>
+                <th className={TH}>Note</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              {s.ops.map((op) => (
+                <tr key={op.op} className="border-b border-border/50 align-top">
+                  <td className="p-1.5 font-medium text-foreground">{op.op}</td>
+                  <td className="p-1.5">
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded border font-bold whitespace-nowrap ${RUN_BY_COLORS[op.runBy]}`}
+                    >
+                      {op.runBy}
+                    </span>
+                  </td>
+                  <td className="p-1.5">{op.needs}</td>
+                  <td className="p-1.5">{op.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="text-[11px] font-bold text-foreground">Not native, and how it is done</div>
+        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+          {s.notNative.map((w) => (
+            <li key={w.what}>
+              <span className="font-medium text-foreground">{w.what}:</span> {w.how}
+            </li>
+          ))}
+        </ul>
+        {s.footnote && <p className="text-[11px] text-status-warning">{s.footnote}</p>}
+      </div>
+    ))}
+  </div>
+)
+
+/** Section 2 box: how inputs are encoded and results decoded, per scheme. */
+export const FheEncodingBox: React.FC = () => (
+  <div className="space-y-2">
+    <h3 className="text-sm font-bold text-foreground">
+      Encoding the input and decoding the result
+    </h3>
+    <p className="text-xs text-muted-foreground">
+      FHE computes on polynomials with integer coefficients, so every input is encoded before
+      encryption and every result decoded after decryption. The encoding sets the precision and what
+      happens when a value grows too large.
+    </p>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={TH}>Scheme</th>
+            <th className={TH}>Encoding the input</th>
+            <th className={TH}>Decoding the result</th>
+          </tr>
+        </thead>
+        <tbody className="text-muted-foreground">
+          {FHE_ENCODING.map((row) => (
+            <tr key={row.scheme} className="border-b border-border/50 align-top">
+              <td className="p-1.5 font-medium text-foreground">{row.scheme}</td>
+              <td className="p-1.5">{row.encode}</td>
+              <td className="p-1.5">{row.decode}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p className="text-xs text-muted-foreground">
+      How to read a noisy CKKS result, and when rounding is enough, is in{' '}
+      <a href="#fhe-noisy-results" className="text-primary hover:underline">
+        Decryption results are noisy
+      </a>{' '}
+      below.
+    </p>
+  </div>
+)
+
+/** Section 2 box: turning an ordinary program into an FHE computation. */
+export const FheProgramsBox: React.FC = () => (
+  <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+    <h3 className="text-sm font-bold text-foreground">
+      From an ordinary program to an FHE computation
+    </h3>
+    <p className="text-xs text-muted-foreground">
+      An FHE program is a circuit: a fixed sequence of the native operations above, the same for
+      every input. The SoK on FHE compilers describes it as “gates (or operations) connected by
+      wires, where the execution follows the same steps, no matter what values the input has”.
+      Writing one means following a few rules.
+    </p>
+    <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+      {FHE_PROGRAM_RULES.map((r) => (
+        <li key={r.what}>
+          <span className="font-medium text-foreground">{r.what}:</span> {r.how}
+        </li>
+      ))}
+    </ul>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={TH}>Ordinary code</th>
+            <th className={TH}>FHE form</th>
+            <th className={TH}>Note</th>
+          </tr>
+        </thead>
+        <tbody className="text-muted-foreground">
+          {FHE_PROGRAM_EXAMPLES.map((e) => (
+            <tr key={e.plain} className="border-b border-border/50 align-top">
+              <td className="p-1.5 font-mono text-foreground">{e.plain}</td>
+              <td className="p-1.5 font-mono">{e.fhe}</td>
+              <td className="p-1.5">{e.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div className="text-xs font-bold text-foreground">Compilers that automate the translation</div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={TH}>Tool</th>
+            <th className={TH}>Published as</th>
+            <th className={TH}>What it does</th>
+          </tr>
+        </thead>
+        <tbody className="text-muted-foreground">
+          {FHE_COMPILERS.map((c) => (
+            <tr key={c.name} className="border-b border-border/50 align-top">
+              <td className="p-1.5 font-medium text-foreground">{c.name}</td>
+              <td className="p-1.5">{c.venue}</td>
+              <td className="p-1.5">{c.does}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p className="text-xs text-muted-foreground">
+      The workshop step &ldquo;FHE concepts, hands-on&rdquo; lets you try these rules on small
+      examples.
+    </p>
+  </div>
+)
+
+/** Section 4 box: where FHE sits among privacy technologies by market and maturity. */
+export const FheMarketBox: React.FC = () => (
+  <div className="space-y-2">
+    <h3 className="text-sm font-bold text-foreground">
+      How FHE is positioned among privacy technologies
+    </h3>
+    <p className="text-[11px] text-status-warning">
+      Market figures are analyst estimates, labelled with the firm, the page date and the base year.
+      Firms use different scopes and years; the figures are not comparable across firms or rows.
+    </p>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={TH}>Technology</th>
+            <th className={TH}>Market (analyst estimate)</th>
+            <th className={TH}>Forecast and CAGR</th>
+            <th className={TH}>Adoption maturity</th>
+            <th className={TH}>Main industries</th>
+          </tr>
+        </thead>
+        <tbody className="text-muted-foreground">
+          {FHE_PET_MARKET.map((row) => (
+            <tr key={row.technology} className="border-b border-border/50 align-top">
+              <td className="p-1.5 font-medium text-foreground">{row.technology}</td>
+              <td className="p-1.5">{row.estimate}</td>
+              <td className="p-1.5">{row.forecast}</td>
+              <td className="p-1.5">{row.maturity}</td>
+              <td className="p-1.5">{row.industries}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+      {FHE_MARKET_SUMMARY.map((line) => (
+        <li key={line}>{line}</li>
+      ))}
+    </ul>
+    <p className="text-xs text-muted-foreground">{FHE_MARKET_TREND}</p>
   </div>
 )
 

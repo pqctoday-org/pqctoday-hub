@@ -4,20 +4,20 @@ import { AlertTriangle, ArrowRight, KeyRound, Server, ShieldCheck, Cpu, Lock } f
 import {
   FHE_SCHEMES,
   FHE_KEYS,
-  FHE_OPERATIONS,
   FHE_QUANTUM_EXPOSURE,
   FHE_IMPLEMENTATIONS,
   FHE_COMMERCIAL_NAMES,
 } from '../data/fheData'
 import { TAKEAWAYS } from '../data/fheContextData'
-import { FheFixedPointAndFit, FhePromiseBox, KeyTakeaways } from './FheContextSections'
+import {
+  FheEncodingBox,
+  FheFixedPointAndFit,
+  FheOperationsBox,
+  FheProgramsBox,
+  FhePromiseBox,
+  KeyTakeaways,
+} from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
-
-const RUN_BY_COLORS: Record<string, string> = {
-  client: 'bg-primary/10 text-primary border-primary/30',
-  server: 'bg-muted text-muted-foreground border-border',
-  'key holder': 'bg-success/10 text-status-success border-success/30',
-}
 
 /** Compensating controls single-HSM decryption relies on (it trusts every caller allowed to decrypt). */
 const DECRYPT_CONTROLS: { area: string; control: string; limits: string }[] = [
@@ -341,7 +341,16 @@ export const FheSchemesSection: React.FC = () => (
 
     <FheFixedPointAndFit />
 
-    <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+    <FheOperationsBox />
+
+    <FheEncodingBox />
+
+    <FheProgramsBox />
+
+    <div
+      id="fhe-noisy-results"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-3"
+    >
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
         <Lock size={14} className="text-primary" />
         Decryption results are noisy: what that means and how to read them
@@ -512,38 +521,10 @@ export const FheKeysOperationsSection: React.FC = () => (
       </p>
     </div>
 
-    {/* Operations */}
-    <div className="space-y-2">
-      <h3 className="text-sm font-bold text-foreground">Operations and who runs them</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left p-2 text-muted-foreground font-medium">Operation</th>
-              <th className="text-left p-2 text-muted-foreground font-medium">Run by</th>
-              <th className="text-left p-2 text-muted-foreground font-medium">Needs</th>
-              <th className="text-left p-2 text-muted-foreground font-medium">Effect</th>
-            </tr>
-          </thead>
-          <tbody>
-            {FHE_OPERATIONS.map((op) => (
-              <tr key={op.name} className="border-b border-border/50">
-                <td className="p-2 font-bold text-foreground">{op.name}</td>
-                <td className="p-2">
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${RUN_BY_COLORS[op.runBy]}`}
-                  >
-                    {op.runBy}
-                  </span>
-                </td>
-                <td className="p-2 text-muted-foreground">{op.needs}</td>
-                <td className="p-2 text-muted-foreground">{op.note}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <p className="text-xs text-muted-foreground">
+      Which operation needs which of these keys, and who runs it, is listed per scheme in section 2,
+      &ldquo;Operations each scheme supports&rdquo;.
+    </p>
 
     {/* AES / transciphering */}
     <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">

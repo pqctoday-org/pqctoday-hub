@@ -708,4 +708,583 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       },
     ],
   },
+  {
+    topic: 'Operations, encoding and compilers',
+    refs: [
+      {
+        text: 'Microsoft SEAL native examples: 1_bfv_basics, 2_encoders, 5_ckks_basics, 6_rotation (relinearization, batching, CKKS scale and slots, Galois keys).',
+        url: 'https://github.com/microsoft/SEAL/tree/main/native/examples',
+      },
+      {
+        text: 'Lattigo v6, package schemes/ckks (evaluator operations).',
+        url: 'https://pkg.go.dev/github.com/tuneinsight/lattigo/v6/schemes/ckks',
+      },
+      {
+        text: 'OpenFHE examples: CKKS_BOOTSTRAPPING.md, FUNCTION_EVALUATION.md, SCHEME_SWITCHING_CAPABILITY.md.',
+        url: 'https://github.com/openfheorg/openfhe-development/tree/main/src/pke/examples',
+      },
+      {
+        text: 'Cheon, Kim, Kim. Efficient Homomorphic Comparison Methods with Optimal Complexity. ASIACRYPT 2020, IACR ePrint 2019/1234.',
+        url: 'https://eprint.iacr.org/2019/1234',
+      },
+      {
+        text: 'Chillotti, Joye, Paillier. Programmable Bootstrapping Enables Efficient Homomorphic Inference of Deep Neural Networks. CSCML 2021, IACR ePrint 2021/091.',
+        url: 'https://eprint.iacr.org/2021/091',
+      },
+      {
+        text: 'Zama, TFHE-rs documentation: operations, ternary conditional, overflow detection, integer types and radix blocks.',
+        url: 'https://docs.zama.org/tfhe-rs/fhe-computation/operations',
+      },
+      {
+        text: 'Zama, TFHE-rs CPU integer benchmarks (vendor benchmark, AWS hpc8a.96xlarge).',
+        url: 'https://docs.zama.org/tfhe-rs/get-started/benchmarks/cpu/cpu-integer-operations',
+      },
+      {
+        text: 'Zama, Concrete documentation, quick overview (integers only, quantization, no branches or non-constant loops).',
+        url: 'https://docs.zama.org/concrete/get-started/quick_overview',
+      },
+      {
+        text: 'Zama, Concrete ML documentation, quantization.',
+        url: 'https://docs.zama.org/concrete-ml/explanations/quantization',
+      },
+      {
+        text: 'Viand, Jattke, Hithnawi. SoK: Fully Homomorphic Encryption Compilers. IEEE S&P 2021, arXiv 2101.07078.',
+        url: 'https://arxiv.org/abs/2101.07078',
+      },
+      {
+        text: 'HEIR documentation (data-oblivious transformation, ciphertext management, layout optimization).',
+        url: 'https://heir.dev/',
+      },
+      {
+        text: 'HEIR: A Universal Compiler for Homomorphic Encryption. arXiv 2508.11095 (preprint).',
+        url: 'https://arxiv.org/abs/2508.11095',
+      },
+      {
+        text: 'Gorantala et al. A General Purpose Transpiler for Fully Homomorphic Encryption. White paper, arXiv 2106.07893; repository archived.',
+        url: 'https://github.com/google/fully-homomorphic-encryption',
+      },
+      {
+        text: 'Dathathri et al. EVA: An Encrypted Vector Arithmetic Language and Compiler for Efficient Homomorphic Computation. PLDI 2020, arXiv 1912.11951.',
+        url: 'https://arxiv.org/abs/1912.11951',
+      },
+      {
+        text: 'Dathathri, Saarikivi, Chen et al. CHET: An Optimizing Compiler for Fully-Homomorphic Neural-Network Inferencing. PLDI 2019.',
+        url: 'https://www.microsoft.com/en-us/research/publication/chet-an-optimizing-compiler-for-fully-homomorphic-neural-network-inferencing/',
+      },
+      {
+        text: 'Viand, Jattke, Haller, Hithnawi. HECO: Fully Homomorphic Encryption Compiler. USENIX Security 2023.',
+        url: 'https://www.usenix.org/conference/usenixsecurity23/presentation/viand',
+      },
+      {
+        text: 'Cowan, Dangwal, Alaghi, Trippel, Lee, Reagen. Porcupine: A Synthesizing Compiler for Vectorized Homomorphic Encryption. PLDI 2021, arXiv 2101.07841.',
+        url: 'https://arxiv.org/abs/2101.07841',
+      },
+      {
+        text: 'Coyote: A Compiler for Vectorizing Encrypted Arithmetic Circuits. ASPLOS 2023.',
+        url: 'https://par.nsf.gov/servlets/purl/10467237',
+      },
+    ],
+  },
+  {
+    topic: 'Market and adoption',
+    refs: [
+      {
+        text: 'Fortune Business Insights. Homomorphic Encryption Market (analyst estimate; last updated 21 September 2026).',
+        url: 'https://www.fortunebusinessinsights.com/homomorphic-encryption-market-111218',
+      },
+      {
+        text: 'Precedence Research. Privacy Enhancing Computation Market (analyst estimate; updated 30 June 2025).',
+        url: 'https://www.precedenceresearch.com/privacy-enhancing-computation-market',
+      },
+      {
+        text: 'Grand View Research. Privacy Enhancing Technologies, Confidential Computing, Secure Multiparty Computation, Federated Learning and Synthetic Data Generation market reports (analyst estimates, 2024–2025).',
+        url: 'https://www.grandviewresearch.com/industry-analysis/privacy-enhancing-technologies-market-report',
+      },
+      {
+        text: 'MarketsandMarkets. Confidential Computing Market (press release, 31 May 2023; analyst estimate).',
+        url: 'https://www.marketsandmarkets.com/PressReleases/confidential-computing.asp',
+      },
+      {
+        text: 'MarketsandMarkets. Federated Learning Solutions Market (analyst estimate).',
+        url: 'https://www.marketsandmarkets.com/Market-Reports/federated-learning-solutions-market-151896843.html',
+      },
+      {
+        text: 'Mordor Intelligence. Confidential Computing Market (analyst estimate).',
+        url: 'https://www.mordorintelligence.com/industry-reports/confidential-computing-market',
+      },
+      {
+        text: 'Mordor Intelligence. Secure Multi-Party Computation Market (analyst estimate).',
+        url: 'https://www.mordorintelligence.com/industry-reports/secure-multi-party-computation-market',
+      },
+      {
+        text: 'Confidential Computing Consortium. Confidential computing market could reach US$54 billion in 2026 (Everest Group study), 27 October 2021.',
+        url: 'https://confidentialcomputing.io/2021/10/27/confidential-computing-market-could-reach-us54-billion-in-2026/',
+      },
+      {
+        text: 'Confidential Computing Consortium. New study (IDC, commissioned by the consortium), 3 December 2025.',
+        url: 'https://confidentialcomputing.io/2025/12/03/new-study-finds-confidential-computing-emerging-as-a-strategic-imperative-for-secure-ai-and-data-collaboration/',
+      },
+      {
+        text: 'Gartner. Gartner Identifies Top Five Trends in Privacy Through 2024. Press release, 31 May 2022.',
+        url: 'https://www.gartner.com/en/newsroom/press-releases/2022-05-31-gartner-identifies-top-five-trends-in-privacy-through-2024',
+      },
+      {
+        text: 'Gartner. Press release on the 2021 Hype Cycle for Privacy, 30 September 2021.',
+      },
+      {
+        text: 'The Royal Society. From privacy to partnership: the role of privacy enhancing technologies in data governance and collaborative analysis. January 2023.',
+        url: 'https://royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/from-privacy-to-partnership.pdf',
+      },
+      {
+        text: 'OECD. Emerging privacy-enhancing technologies: current regulatory and policy approaches. OECD Digital Economy Papers No. 351, March 2023.',
+      },
+      {
+        text: 'ENISA. Cryptographic Products and Services Market Analysis. August 2024.',
+        url: 'https://doi.org/10.2824/249233',
+      },
+      {
+        text: 'US National Science and Technology Council. National Strategy to Advance Privacy-Preserving Data Sharing and Analytics. March 2023.',
+      },
+    ],
+  },
 ]
+
+// ── Section 2: operations, encoding and programming models ───────────────
+// Sources: Cheon et al. 2017; Microsoft SEAL README and native examples; Lattigo v6 CKKS
+// package; OpenFHE examples (bootstrapping, function evaluation, scheme switching); TFHE-rs and
+// Concrete / Concrete ML documentation; Viand et al., SoK: FHE compilers (IEEE S&P 2021).
+
+/** One operation of a scheme: who runs it, which key it needs, what to know. */
+export interface FheOpRow {
+  op: string
+  runBy: 'client' | 'server' | 'key holder'
+  needs: string
+  note: string
+}
+
+/** An operation a scheme does not have natively, and how it is done instead. */
+export interface FheWorkaroundRow {
+  what: string
+  how: string
+}
+
+export interface FheSchemeOps {
+  scheme: string
+  summary: string
+  ops: FheOpRow[]
+  notNative: FheWorkaroundRow[]
+  footnote?: string
+}
+
+export const FHE_SCHEME_OPERATIONS: FheSchemeOps[] = [
+  {
+    scheme: 'CKKS',
+    summary:
+      'Approximate arithmetic on vectors of real (or complex) numbers: CKKS “supports an approximate addition and multiplication of encrypted messages, together with a new rescaling procedure” (Cheon et al. 2017).',
+    ops: [
+      {
+        op: 'Encode + encrypt',
+        runBy: 'client',
+        needs: 'public key',
+        note: 'Scales and rounds a vector of numbers into one plaintext polynomial (see encoding below)',
+      },
+      {
+        op: 'Add / subtract',
+        runBy: 'server',
+        needs: '—',
+        note: 'Cheap; both operands must have the same scale and parameters (SEAL)',
+      },
+      {
+        op: 'Multiply + relinearize',
+        runBy: 'server',
+        needs: 'relinearization key',
+        note: 'Relinearization “reduces the size of a ciphertext after multiplication back to the initial size, 2” (SEAL); noise and scale grow, so depth is limited',
+      },
+      {
+        op: 'Rescale',
+        runBy: 'server',
+        needs: '—',
+        note: 'Brings the scale back down after a multiplication and uses up one modulus level; the modulus size “grows linearly with the depth of the circuit” (Cheon et al. 2017)',
+      },
+      {
+        op: 'Rotate / conjugate',
+        runBy: 'server',
+        needs: 'Galois (rotation) keys, one per rotation step',
+        note: 'Moves values between slots; sums across slots (Lattigo InnerSum) are built from rotations',
+      },
+      {
+        op: 'Bootstrap',
+        runBy: 'server',
+        needs: 'bootstrapping evaluation keys (51 keys, 3.94 GB exported in our measured set)',
+        note: '“refreshing a ciphertext’s noise and increasing its multiplicative depth… In the CKKS scheme, this procedure is approximate” (OpenFHE); the expensive step',
+      },
+      {
+        op: 'Decrypt + decode',
+        runBy: 'key holder',
+        needs: 'secret key',
+        note: 'Returns an approximate result, read by rounding; the only evaluation-time operation that needs the secret, the HSM’s job',
+      },
+    ],
+    notNative: [
+      {
+        what: 'Comparison, sign, max/min',
+        how: 'Approximate the sign function with polynomials (Cheon, Kim & Kim, ASIACRYPT 2020), or switch the ciphertext to FHEW to compare (OpenFHE scheme switching, marked experimental). SEAL’s README: “encrypted comparison, sorting, or regular expressions, are in most cases not feasible”.',
+      },
+      {
+        what: 'Inverse, division, square root, logistic and other non-polynomial functions',
+        how: 'Approximate them with a polynomial over a chosen input range (OpenFHE: Chebyshev series, e.g. EvalLogistic). Depth grows with the degree: degree 3–5 needs depth 4, degree 60–119 depth 8 (OpenFHE function evaluation table). Results are approximate.',
+      },
+    ],
+  },
+  {
+    scheme: 'TFHE (TFHE-rs integers)',
+    summary:
+      'Exact integers and Booleans; every non-linear step is a programmable bootstrapping (PBS), which evaluates “any function of a ciphertext” as a lookup table (Chillotti, Joye & Paillier 2021).',
+    ops: [
+      {
+        op: 'Encrypt',
+        runBy: 'client',
+        needs: 'client key',
+        note: 'Integers of 1–256 bits, built from small blocks (see encoding below)',
+      },
+      {
+        op: 'Add / subtract / negate',
+        runBy: 'server',
+        needs: 'server key',
+        note: 'FheUint64 add: 61.3 ms',
+      },
+      { op: 'Multiply', runBy: 'server', needs: 'server key', note: 'FheUint64: 262 ms' },
+      {
+        op: 'Bitwise AND / OR / XOR; shifts',
+        runBy: 'server',
+        needs: 'server key',
+        note: 'FheUint64 bitwise: 17.8 ms; shifts: 119 ms',
+      },
+      {
+        op: 'Compare (==, <, …); min / max',
+        runBy: 'server',
+        needs: 'server key',
+        note: 'Native, unlike CKKS and BFV/BGV. FheUint64 compare: 49.7 ms; max/min: 83.6 ms',
+      },
+      {
+        op: 'Select (encrypted if-then-else)',
+        runBy: 'server',
+        needs: 'server key',
+        note: '“encrypted_condition.select(encrypted_choice_if_true, encrypted_choice_if_false)”. FheUint64: 38.5 ms',
+      },
+      {
+        op: 'Divide / remainder',
+        runBy: 'server',
+        needs: 'server key',
+        note: 'FheUint64: 3.36 s. Division by zero “returns modulus - 1”, with no error',
+      },
+      {
+        op: 'Decrypt',
+        runBy: 'key holder',
+        needs: 'client (secret) key',
+        note: 'Exact, unless too many operations let the noise reach the message bits',
+      },
+    ],
+    notNative: [
+      {
+        what: 'Any function of a small encrypted value',
+        how: 'Programmable bootstrapping: the function is written as a lookup table and evaluated while the noise is refreshed. The server key holds the bootstrapping and key-switching keys.',
+      },
+      {
+        what: 'Real numbers',
+        how: 'No native type: quantize to integers before encryption and dequantize after decryption (Concrete, Concrete ML).',
+      },
+      {
+        what: 'Overflow detection',
+        how: 'Arithmetic wraps around silently. Overflow-detecting add, subtract and multiply return an encrypted flag that “the client has to check … when decrypting”.',
+      },
+    ],
+    footnote:
+      'Times: vendor benchmark (Zama TFHE-rs documentation), CPU latency for FheUint64 on an AWS hpc8a.96xlarge instance; not our measurement.',
+  },
+  {
+    scheme: 'BFV / BGV',
+    summary:
+      'Exact modular arithmetic on vectors of integers: they “allow modular arithmetic to be performed on encrypted integers” (SEAL README).',
+    ops: [
+      {
+        op: 'Encode (batch) + encrypt',
+        runBy: 'client',
+        needs: 'public key',
+        note: 'Integers modulo the plaintext modulus t, packed into slots (see encoding below)',
+      },
+      {
+        op: 'Add / subtract',
+        runBy: 'server',
+        needs: '—',
+        note: 'Slot by slot, modulo t',
+      },
+      {
+        op: 'Multiply + relinearize',
+        runBy: 'server',
+        needs: 'relinearization key',
+        note: 'Slot by slot, modulo t; noise grows fast, which limits the depth',
+      },
+      {
+        op: 'Modulus switching',
+        runBy: 'server',
+        needs: '—',
+        note: 'Drops one modulus level to keep the noise in check',
+      },
+      {
+        op: 'Rotate rows / columns',
+        runBy: 'server',
+        needs: 'Galois (rotation) keys',
+        note: 'Moves values between slots of the 2 × (N/2) batching matrix (SEAL)',
+      },
+      {
+        op: 'Decrypt + decode',
+        runBy: 'key holder',
+        needs: 'secret key',
+        note: 'Exact result modulo t; a result that wrapped around modulo t cannot be told apart',
+      },
+    ],
+    notNative: [
+      {
+        what: 'Comparison, sorting, regular expressions',
+        how: '“in most cases not feasible” (SEAL README); comparisons need binary circuits, where TFHE fits better (SoK on FHE compilers).',
+      },
+      {
+        what: 'Real numbers and division',
+        how: 'Not native: use CKKS for approximate real numbers, or scale values to integers yourself.',
+      },
+    ],
+  },
+]
+
+/** Encoding the input and decoding the result, per scheme. */
+export interface FheEncodingRow {
+  scheme: string
+  encode: string
+  decode: string
+}
+
+export const FHE_ENCODING: FheEncodingRow[] = [
+  {
+    scheme: 'CKKS',
+    encode:
+      'A vector of real numbers is multiplied by a scale and rounded, because “plaintext elements are fundamentally polynomials with integer coefficients” (SEAL). One ciphertext holds N/2 values: “In CKKS the number of slots is poly_modulus_degree / 2” (32,768 slots at N = 2^16). “Think of the scale as determining the bit-precision of the encoding.”',
+    decode:
+      'Divide by the scale; the result is approximate and is read by rounding to the precision you trust.',
+  },
+  {
+    scheme: 'BFV / BGV',
+    encode:
+      'Integers modulo a plaintext modulus t. Batching treats a plaintext as 2 × (N/2) matrices of integers modulo t, and operations act on every element at once.',
+    decode:
+      'Exact modulo t. A result that exceeds t wraps around silently: “overflow cannot be detected in encrypted form” (SEAL), so t must be chosen larger than any intermediate value.',
+  },
+  {
+    scheme: 'TFHE',
+    encode:
+      'The message is shifted “to the most significant bits” and the noise sits in the low bits. Bits of padding above the message absorb carries: an addition consumes padding. Larger integers are radix blocks, e.g. “8-bit integers … 4 shortint blocks that store 2 bits of message each”; propagating carries between blocks is “costly” (TFHE-rs).',
+    decode:
+      'Exact. Integer operations wrap around; overflow-detecting operations return an encrypted flag for the client to check.',
+  },
+  {
+    scheme: 'Machine learning (Concrete, Concrete ML)',
+    encode:
+      '“In Concrete, everything needs to be an integer”: floats are quantized to integers before encryption, in the clear (post-training quantization or quantization-aware training). Concrete ML works with “integers of maximum 16 bits”.',
+    decode: 'Dequantize to floats after decryption; Concrete ML does both steps for the user.',
+  },
+]
+
+/** Rules for turning an ordinary program into an FHE computation. */
+export const FHE_PROGRAM_RULES: FheWorkaroundRow[] = [
+  {
+    what: 'No branches on secret data',
+    how: '“FHE computations are, by definition, data-independent” (SoK). An if/else computes both branches and selects the result with arithmetic: “any conditional branching on a ciphertext can be converted into a ‘mux’” (Coyote).',
+  },
+  {
+    what: 'Loops with fixed bounds',
+    how: '“any loop with known (plaintext) bounds can be fully unrolled” (Coyote); a loop whose bound depends on encrypted data “quickly becomes infeasible” (SoK).',
+  },
+  {
+    what: 'Depth and the noise budget',
+    how: 'Noise “limits computations to a (parameter-dependent) number of consecutive multiplications” (SoK). Rewriting reduces depth: SEAL computes 4(x+1)^2(x^2+1) at depth 2.',
+  },
+  {
+    what: 'Where to relinearize, rescale and bootstrap',
+    how: 'Each placement trades latency against noise and parameter size (SoK); compilers such as EVA and HEIR insert these operations automatically.',
+  },
+  {
+    what: 'Packing and rotations',
+    how: 'Batching is “potentially the most important optimization technique” (SoK). Data layout decides how many rotations are needed, and “runtime primarily comes from the quantity of rotation and bootstrap operations” (HEIR).',
+  },
+  {
+    what: 'Non-polynomial functions',
+    how: 'CKKS and BFV/BGV only add and multiply, so functions such as sign, max or the logistic function become polynomial approximations (SoK); in TFHE they become lookup tables, whose input bit-width is the main cost (Concrete).',
+  },
+  {
+    what: 'Parameters fit the computation',
+    how: 'The parameters depend on the program’s depth; “effectively computing this minimal q remains an open challenge” (SoK).',
+  },
+]
+
+/** Small worked examples: ordinary code → FHE form. */
+export const FHE_PROGRAM_EXAMPLES: { plain: string; fhe: string; note: string }[] = [
+  {
+    plain: 'if (x > t) y = a; else y = b',
+    fhe: 'c = compare(x, t); y = select(c, a, b)',
+    note: 'Both a and b are computed. TFHE: native compare and select. CKKS: c ≈ approximated sign, then y = c·a + (1 − c)·b',
+  },
+  {
+    plain: 'm = max(x, y)',
+    fhe: 'c = compare(x, y); m = select(c, x, y)',
+    note: 'TFHE has max natively; in CKKS it is a polynomial approximation, or a switch to FHEW',
+  },
+  {
+    plain: 'mean = (x1 + … + xn) / n',
+    fhe: 'sum of the slots (rotations + additions), then × the plaintext constant 1/n',
+    note: 'No encrypted division: n is public, so its inverse is a plaintext constant (CKKS)',
+  },
+  {
+    plain: 'for (i = 0; i < n; i++) …',
+    fhe: 'unrolled n times, n public',
+    note: 'A loop that stops on an encrypted condition cannot be expressed directly',
+  },
+]
+
+/** Compilers and toolchains that automate the translation. */
+export const FHE_COMPILERS: { name: string; venue: string; does: string }[] = [
+  {
+    name: 'Concrete (Zama)',
+    venue: 'Documentation',
+    does: 'Python → computation graph → MLIR; “Each function evaluation is converted into a lookup table and evaluated via PBS”. No conditional branches or non-constant loops.',
+  },
+  {
+    name: 'HEIR',
+    venue: 'Documentation (heir.dev); paper is a preprint (arXiv 2508.11095)',
+    does: 'Data-oblivious transformations, layout optimization, inserts modulus switching, relinearization and bootstrapping; targets OpenFHE, Lattigo and TFHE-rs.',
+  },
+  {
+    name: 'Google FHE C++ Transpiler',
+    venue: 'White paper (arXiv 2106.07893); repository archived, “morphed into” HEIR',
+    does: 'Translated C++ functions into FHE programs.',
+  },
+  {
+    name: 'EVA',
+    venue: 'PLDI 2020',
+    does: 'Automates parameter selection and the insertion of relinearization and rescaling.',
+  },
+  {
+    name: 'CHET',
+    venue: 'PLDI 2019',
+    does: 'Compiles tensor circuits (neural-network inference); chooses parameters and data layouts.',
+  },
+  {
+    name: 'HECO',
+    venue: 'USENIX Security 2023',
+    does: 'Turns imperative programs into FHE programs with automatic SIMD vectorization.',
+  },
+  {
+    name: 'Porcupine',
+    venue: 'PLDI 2021',
+    does: 'Uses program synthesis to generate FHE kernels.',
+  },
+  {
+    name: 'Coyote',
+    venue: 'ASPLOS 2023',
+    does: 'Searches data layouts and vector packings.',
+  },
+  {
+    name: 'SoK: Fully Homomorphic Encryption Compilers',
+    venue: 'IEEE S&P 2021',
+    does: 'Survey of the field: the circuit model, “gates (or operations) connected by wires, where the execution follows the same steps, no matter what values the input has”.',
+  },
+]
+
+// ── Section 4: market and adoption ────────────────────────────────────────
+// Every market figure is an analyst estimate, labelled with firm, page date and base year.
+// Firms use different scopes and years, so figures are not comparable across rows.
+
+export interface FhePetMarketRow {
+  technology: string
+  estimate: string
+  forecast: string
+  maturity: string
+  industries: string
+}
+
+/** Sorted by estimated market size, largest first. */
+export const FHE_PET_MARKET: FhePetMarketRow[] = [
+  {
+    technology: 'Confidential computing (TEEs)',
+    estimate:
+      'Analyst estimates: Grand View Research (Jul 2024) USD 5.5B (2023); MarketsandMarkets (May 2023) USD 5.3B (2023); Mordor Intelligence (updated Jan 2026) USD 9.31B (2025), a scope that also counts HE accelerators and MPC',
+    forecast:
+      'Grand View: USD 153.8B by 2030, 61.1% CAGR. MarketsandMarkets: USD 59.4B by 2028, 62.1%. Mordor: USD 172.95B by 2031, 62.74%',
+    maturity:
+      'Royal Society (2023): TEE readiness “Product”. CCC/IDC survey (Dec 2025, consortium-commissioned, n > 600): “75% of organizations are adopting Confidential Computing; 57% have started piloting/testing, joining the 18% … already in production”',
+    industries:
+      'Finance (Mordor: BFSI 46.2%; CCC/IDC: finance 37% of full production deployments, healthcare 29%, government 21%); cloud',
+  },
+  {
+    technology: 'Privacy-enhancing technologies, all',
+    estimate:
+      'Analyst estimates: Grand View Research (Sep 2024) USD 2.6B (2023); Precedence Research (updated Jun 2025) “privacy-enhancing computation” USD 4.40B (2024)',
+    forecast: 'Grand View: USD 12.1B by 2030, 25.3% CAGR. Precedence: USD 26.90B by 2034, 19.85%',
+    maturity:
+      'Royal Society (Jan 2023): “the market for PETs is nascent”. US National Strategy (Mar 2023): adoption “slow because of … financial cost, and the usability and technical maturity”',
+    industries:
+      'BFSI (Grand View: 27%); IT and telecom (Precedence: 33%); healthcare (Precedence: fastest-growing, 31.6% CAGR)',
+  },
+  {
+    technology: 'Secure multiparty computation (MPC)',
+    estimate:
+      'Analyst estimates: Grand View Research (Sep 2024) USD 794.1M (2023); Mordor Intelligence (updated Sep 2026) USD 0.94B (2025)',
+    forecast: 'Grand View: USD 1,718.1M by 2030, 11.7% CAGR. Mordor: USD 1.62B by 2030, 11.6%',
+    maturity:
+      'Royal Society (2023): “PSI / PIR / Product, Proof of concept–Pilot”. ENISA (Aug 2024): FE, FHE and MPC “are moving from research prototypes to the first emerging industrial applications”',
+    industries:
+      'Finance; advertising (OECD: ad conversion measurement with private set intersection)',
+  },
+  {
+    technology: 'Synthetic data',
+    estimate: 'Analyst estimate: Grand View Research (Oct 2024) USD 218.3M (2023)',
+    forecast: 'USD 1,788.1M by 2030, 35.3% CAGR',
+    maturity: 'Royal Society (2023): “Proof of concept, in use”',
+    industries: '—',
+  },
+  {
+    technology: 'Homomorphic encryption (HE)',
+    estimate:
+      'Analyst estimate: Fortune Business Insights (updated Sep 2026) USD 212.77M (2025). Precedence Research instead puts HE at 34% of its USD 4.40B privacy-enhancing computation market (2024): the firms define the market differently',
+    forecast: 'Fortune Business Insights: USD 470.20M by 2034, 9.21% CAGR (2026–2034)',
+    maturity:
+      'Royal Society (2023): “PHE / SHE / FHE in use (FHE on a smaller scale)”. OECD (Mar 2023): “For now, most applications are done at a small scale”. ENISA (Aug 2024): moving to “the first emerging industrial applications”',
+    industries: 'BFSI (Fortune Business Insights: about 30%); healthcare; finance and AML pilots',
+  },
+  {
+    technology: 'Federated learning (FL)',
+    estimate:
+      'Analyst estimates: Grand View Research (Apr 2025) USD 138.6M (2024); MarketsandMarkets (updated Sep 2026) USD 127M (2023)',
+    forecast:
+      'Grand View: USD 297.5M by 2030, 14.4% CAGR. MarketsandMarkets: USD 210M by 2028, 10.6%',
+    maturity:
+      'Royal Society (2023): “Product, in use”. OECD (2023): “deployed at scale, for instance, in predictive text”',
+    industries: 'Healthcare (MarketsandMarkets: largest segment); mobile predictive text',
+  },
+  {
+    technology: 'Differential privacy (DP)',
+    estimate: 'No standalone market estimate found',
+    forecast: '—',
+    maturity:
+      'Royal Society (2023): “Proof of concept, in use”. The 2020 US Census used DP. Gartner (Sep 2021) placed HE and DP “on the left side of the Hype Cycle”',
+    industries: 'Public statistics',
+  },
+]
+
+export const FHE_MARKET_SUMMARY: string[] = [
+  'Among the privacy technologies with a standalone estimate, homomorphic encryption is one of the smallest markets, with an early stated maturity (“FHE on a smaller scale”) and a modest stated growth rate.',
+  'Confidential computing is the largest and the most adopted: products are on the market, and a consortium-commissioned survey reports 18% of organizations in production.',
+  'Firms disagree widely: one puts HE at USD 0.21B, another at 34% of a USD 4.4B privacy-enhancing computation market. Firms use different scopes and base years, so figures are not comparable across firms or rows.',
+]
+
+export const FHE_MARKET_TREND =
+  'Trend 2020–2026: Gartner predicted in May 2022 that “by 2025, 60% of large organizations will use at least one PEC technique in analytics, business intelligence and/or cloud computing” (a prediction; the outcome is not confirmed). Confidential-computing estimates grew from about USD 2B for 2021 (Everest Group for the Confidential Computing Consortium) to USD 5–9B for 2023–2025 (other firms): different firms, not one series. HE stayed early-stage in the statements of Gartner (2021), the OECD (2023) and ENISA (2024).'

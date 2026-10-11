@@ -106,53 +106,6 @@ export const FHE_KEYS: FheKey[] = [
   },
 ]
 
-export interface FheOperation {
-  name: string
-  runBy: 'client' | 'server' | 'key holder'
-  needs: string
-  note: string
-}
-
-export const FHE_OPERATIONS: FheOperation[] = [
-  {
-    name: 'Encode / Encrypt',
-    runBy: 'client',
-    needs: 'public key',
-    note: 'Fresh ciphertext, small noise',
-  },
-  { name: 'Add', runBy: 'server', needs: '—', note: 'Noise adds — cheap' },
-  {
-    name: 'Multiply + Relinearize',
-    runBy: 'server',
-    needs: 'relin key',
-    note: 'Noise grows fast — this is what limits depth',
-  },
-  {
-    name: 'Rescale / Mod-switch',
-    runBy: 'server',
-    needs: '—',
-    note: 'Drops one modulus level to keep noise and scale in check',
-  },
-  {
-    name: 'Rotate',
-    runBy: 'server',
-    needs: 'rotation key',
-    note: 'Moves values between SIMD slots',
-  },
-  {
-    name: 'Bootstrap',
-    runBy: 'server',
-    needs: 'bootstrapping / rotation keys',
-    note: 'Refreshes noise so computation can continue — the expensive step',
-  },
-  {
-    name: 'Decrypt / Decode',
-    runBy: 'key holder',
-    needs: 'secret key',
-    note: 'The only evaluation-time operation that needs the secret (key generation needs it too) — the HSM’s job',
-  },
-]
-
 export interface FheQuantumExposure {
   id: string
   component: string
