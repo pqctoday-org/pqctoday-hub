@@ -38,7 +38,7 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
 /** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
 export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
   'single-hsm':
-    'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
+    'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; generation with the token’s caches on one MX95 core and six MX95 Pro cores (2026-10-11); files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
   'hsm-compute-limits':
     'The evaluation-key size and its streamed generation are measured (Lattigo v6.2.0’s default bootstrappable set, a software token on one MX95 Cortex-A55 core; files linked from the CKKS single-HSM scenario’s evidence). Evaluation and decryption costs are order-of-magnitude estimates; GPU bootstrap times are published figures.',
   'openfhe-threshold':
@@ -113,9 +113,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '3.94 GB',
       4,
-      '473 s on A55',
+      '214–473 s',
       'HSM, streamed',
-      'Measured with Lattigo v6.2.0’s default bootstrappable set: 51 keys, 3,941,073,029 B as exported (the b halves; 7.87 GB with the a halves), in 1,001 PKCS#11 calls of 8 limbs (4 MB) each. One MX95 Cortex-A55 core took 473 s with a 16.7 MiB token peak (8.3 MB/s); one Mac (M4 Pro) core 42–44 s. The heaviest step; on the board the CPU, not the link, limits it.'
+      'Measured with Lattigo v6.2.0’s default bootstrappable set: 51 keys, 3,941,073,029 B as exported (the b halves; 7.87 GB with the a halves), in 1,001 PKCS#11 calls of 8 limbs (4 MB) each. One MX95 Cortex-A55 core took 473 s with a 16.7 MiB token peak (8.3 MB/s); one Mac (M4 Pro) core 42–44 s. With the token caching work between calls: 213.8 s on one MX95 core (64.5 MiB peak) and 84.0 s on six MX95 Pro cores (94.4 MiB). The heaviest step; on the board the CPU, not the link, limits it (54 MB/s at best, about half of 1 Gb/s).'
     ),
     c(
       2,
@@ -464,9 +464,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '3.94 GB out',
       4,
-      '~8 min A55',
+      '4–8 min A55',
       'HSM, streamed',
-      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. A TFHE server key (30 MB) is the smaller alternative.'
+      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core; 214 s with the token caching work between calls (64.5 MiB peak). A TFHE server key (30 MB) is the smaller alternative.'
     ),
     c(
       4,

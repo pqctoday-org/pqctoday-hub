@@ -61,7 +61,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       's (inside the HSM), the parameter set and the closed list of keys the computation needs; per call, which key, digit and limbs to produce.',
       'streamed',
       'For each target (s², and s(X^k) for every rotation k), per digit and limb: expand the public a from a seed, sample the error e, and form b = −a·s + e + gadget·target in Montgomery and NTT form. One PKCS#11 call produces 8 limbs (4 MB) of one digit as a public session object; the host reads it and destroys it, and each piece’s SHA-256 goes into a manifest signed with the token’s key.',
-      'The b halves of 51 keys, 3,941,073,029 B in 1,001 calls (measured with Lattigo v6.2.0’s default bootstrappable set); the receiver re-expands each a from its seed. Token memory stayed at 15–17 MiB on a Mac core and on the MX95 boards.'
+      'The b halves of 51 keys, 3,941,073,029 B in 1,001 calls (measured with Lattigo v6.2.0’s default bootstrappable set); the receiver re-expands each a from its seed. Token memory stayed at 15–17 MiB on a Mac core and on the MX95 boards, and 64.5–123.6 MiB when the token caches work between calls to go faster.'
     ),
     io(
       's and the parameter set.',
@@ -437,7 +437,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       's and the closed list of keys; per call, which key, digit and limbs.',
       'streamed',
       'The same key-switching keygen as above, one bounded piece per PKCS#11 call, so memory stays at a few MiB however large the set is.',
-      'The key set as a stream: 3.94 GB in 1,001 calls, 473 s on one MX95 Cortex-A55 core (measured). TFHE (a 30 MB server key) and threshold refresh (Lattigo, no bootstrapping keys) avoid the volume.'
+      'The key set as a stream: 3.94 GB in 1,001 calls, 473 s on one MX95 Cortex-A55 core, or 214 s with the token’s caches (measured). TFHE (a 30 MB server key) and threshold refresh (Lattigo, no bootstrapping keys) avoid the volume.'
     ),
     io(
       'Would need the ciphertexts plus GBs of evaluation keys resident in HSM memory.',

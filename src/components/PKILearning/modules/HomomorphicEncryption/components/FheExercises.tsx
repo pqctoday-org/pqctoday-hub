@@ -34,7 +34,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Custody',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. A bootstrappable CKKS set is 7.87 GB, 3.94 GB as exported (measured): too large for an HSM to hold, so it streams the set out in 1,001 bounded PKCS#11 calls with a token peak of about 16 MiB. What limits the step is CPU time, not memory or the PKCS#11 interface: 473 s on one MX95 Cortex-A55 core, 42–44 s on one Mac core, with the network adding about 5 %. It is a one-time cost per key set, paid again on rotation or recovery.',
+      'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. A bootstrappable CKKS set is 7.87 GB, 3.94 GB as exported (measured): too large for an HSM to hold, so it streams the set out in 1,001 bounded PKCS#11 calls with a token peak of about 16 MiB. What limits the step is CPU time, not memory or the PKCS#11 interface: 473 s on one MX95 Cortex-A55 core, 42–44 s on one Mac core, with the network adding about 5 %. Letting the token cache work between calls cuts it to 214 s on one MX95 core and 72–84 s on six MX95 Pro cores, at the cost of more token memory (65–124 MiB). It is a one-time cost per key set, paid again on rotation or recovery.',
   },
   {
     id: 'tfhe-why-it-fits',
@@ -84,7 +84,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Noise',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The last digits of a CKKS result are noise, so report it rounded to a precision you trust: rounded to 20 bits (multiples of 2^-20 ≈ 0.00000095) it reads 3.141593 to six decimals. Rounding removes low-order noise bits but cannot recover bits the noise has already destroyed. If the result goes to others, rounding alone is not enough: decrypted CKKS results seen by others can lead to key recovery, and the research countermeasure, noise flooding, costs further precision.',
+      'The last digits of a CKKS result are noise, so report it rounded to a precision you trust: rounded to 20 bits (multiples of 2^-20 ≈ 0.00000095) it reads 3.141593 to six decimals. Rounding removes low-order noise bits but cannot recover bits the noise has already destroyed. If the result goes to others, rounding alone is not enough: decrypted CKKS results seen by others can lead to key recovery, and the research countermeasure, noise flooding, costs further precision. At the default parameters flooding for third parties leaves no correct bits; a second parameter set with higher-precision bootstrapping keeps 22.8 bits.',
     target: 'learn',
   },
   {
