@@ -43,7 +43,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "KeyGen()"
         },
         {
@@ -53,7 +53,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "EvalMultKeyGen · EvalRotateKeyGen · EvalBootstrapKeyGen"
         },
         {
@@ -63,7 +63,7 @@
           "phase": "setup",
           "data": "keys",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "KeyGen() → publicKey"
         },
         {
@@ -111,7 +111,7 @@
           "phase": "decrypt",
           "data": "encrypted",
           "deployment": false,
-          "engineStatus": "planned"
+          "engineStatus": "engine"
         },
         {
           "id": "decrypt-under-policy",
@@ -120,7 +120,7 @@
           "phase": "decrypt",
           "data": "decrypting",
           "deployment": true,
-          "engineStatus": "planned",
+          "engineStatus": "engine",
           "api": "Decrypt with DecryptionNoiseMode NOISE_FLOODING_DECRYPT"
         },
         {
@@ -130,7 +130,7 @@
           "phase": "decrypt",
           "data": "result",
           "deployment": false,
-          "engineStatus": "planned"
+          "engineStatus": "engine"
         },
         {
           "id": "live-clone-peer-hsm",

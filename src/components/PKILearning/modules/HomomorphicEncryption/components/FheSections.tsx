@@ -18,6 +18,16 @@ import {
   KeyTakeaways,
 } from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
+import {
+  BOARD_CELLS_NOT_MEASURED,
+  FLOOD_FORMULA,
+  FLOOD_ID2,
+  FLOOD_ID3,
+  FLOOD_POLICY,
+  GATE_F_BAR_BITS,
+  SAMPLER_SENTENCE,
+  WIDTH_SHORTFALL_BITS,
+} from '../data/fheFloodSizing'
 
 /** Compensating controls single-HSM decryption relies on (it trusts every caller allowed to decrypt). */
 const DECRYPT_CONTROLS: { area: string; control: string; limits: string }[] = [
@@ -75,7 +85,7 @@ const THRESHOLD_VALUE_LIMITS: { topic: string; value: string; limit: string }[] 
     value:
       'No party ever holds the whole key; one stolen token yields a share that is useless alone',
     limit:
-      'Partial decryptions leak like whole keys unless each is flooded (Checri et al. 2024; for TFHE flooding needs a different technique, Bootland et al. 2025). Measured 2-of-2 at CKKS default parameters: flooding sized for third parties leaves −1.6 to −1.9 bits, the same failure as with one token',
+      'Partial decryptions leak like whole keys unless each is flooded (Checri et al. 2024; for TFHE flooding needs a different technique, Bootland et al. 2025). Measured 2-of-2 at CKKS default parameters: a 2^31.6 flood, the width the earlier sizing gave one token, leaves −1.6 to −1.9 bits, the same failure as with one token; the corrected width is wider (2^43.1), so flooded threshold releases at these parameters fail by more',
   },
   {
     topic: 'Compromised requester',
@@ -267,7 +277,7 @@ const FHE_POLICY_PARAMS: { param: string; scope: string; meaning: string }[] = [
     param: 'statSecurityBits',
     scope: 'CKKS (v2)',
     meaning:
-      'Default 30; sizes the flooding noise together with the maximum number of decryptions and a measured noise bound of the parameter set',
+      'Default 30; sizes the flooding noise together with the maximum number of decryptions, the replica limit of the key’s replication policy and a measured noise bound of the parameter set',
   },
 ]
 
@@ -499,35 +509,67 @@ export const FheSchemesSection: React.FC = () => (
           the scaling modulus size from that estimate.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <strong>Measured cost at default parameters:</strong> with the noise above, flooding sized
-          for 30 bits of statistical security over 10,000 releases needs a noise width of about
-          2^31.6. At the default scale of 2^40 that leaves no correct bits (−1.3), so with these
-          parameters flooded releases to third parties do not work (
-          <EvidenceCite of="gateF">noise study</EvidenceCite>). They need a larger scale and a
-          larger first modulus, with security and bootstrapping parameters re-estimated. Releases to
-          the owner, which are rounded and not flooded, are not affected.
+          <strong>The width the pqctoday HSM simulation uses</strong> follows the paper exactly
+          (Definition 18 and Corollary 2, <span className="font-mono">σ = √(24qn)·2^(s/2)</span>,
+          noise added to the decrypted ring element, the per-coefficient bound{' '}
+          <span className="font-mono">B</span> in the role of the ∞-norm bound{' '}
+          <span className="font-mono">t</span>): <span className="font-mono">{FLOOD_FORMULA}</span>,
+          with <span className="font-mono">n</span> the ring degree and{' '}
+          <span className="font-mono">q</span> the number of releases the whole lineage of a key may
+          make, (replicas + 1) × maximum decryptions, because every replica keeps its own counter. A
+          copy of a key made for another token must keep the same replica limit as its source, so
+          every copy computes the same width. Two-prime parameter sets may flood up to σ = 2^80,
+          one-prime sets up to 2^62. The first version was {WIDTH_SHORTFALL_BITS} bits narrower than
+          this at n = 2^16 (it left out the √24 and √n factors) and counted one copy of the key;
+          that is corrected (pqctoday-hsm #355).
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <strong>A second parameter set passes:</strong> the limit is how precise one bootstrap can
-          be, so the second set raises bootstrapping precision instead: two bootstraps per refresh
-          (META-BTS, Bae, Cheon, Cho, Kim &amp; Kim, IACR ePrint 2022/1167) at scale 2^90, with the
-          result released over two primes. Measured end to end on a Mac with the software token, the
-          same flooding (30 bits of statistical security, 10,000 releases) left{' '}
-          <strong>22.8 bits</strong> (<EvidenceCite of="metaBtsGateF">second-set run</EvidenceCite>;
-          an unflooded owner release on this set keeps 31.0 bits,{' '}
-          <EvidenceCite of="metaBtsOwner">owner run</EvidenceCite>). It costs about twice the
+          <strong>Measured cost at default parameters:</strong> with the policy used for the
+          measurements (30 bits of statistical security, {FLOOD_POLICY.maxDecrypts} releases, four
+          replicas, so <span className="font-mono">q = {FLOOD_POLICY.q}</span>) the default set
+          needs a noise width of about 2^{FLOOD_ID2.sigmaLog2}. At the default scale of 2^40 the
+          noise-study emulation leaves <strong>{FLOOD_ID2.emulatedBits} bits</strong>, no correct
+          bits, and the token refuses the release because the decoded noise is above the policy’s
+          value range (<EvidenceCite of="defaultLmssId2">default-set run</EvidenceCite>). The
+          earlier, narrower width (2^{FLOOD_ID2.beforeSigmaLog2}) already left{' '}
+          {FLOOD_ID2.beforeBits} bits (<EvidenceCite of="gateF">earlier noise study</EvidenceCite>).
+          So with these parameters flooded releases to third parties do not work. They need a larger
+          scale and a larger first modulus, with security and bootstrapping parameters re-estimated.
+          Releases to the owner, which are rounded and not flooded, are not affected.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>A second parameter set passes, by a thin margin:</strong> the limit is how precise
+          one bootstrap can be, so the second set raises bootstrapping precision instead: two
+          bootstraps per refresh (META-BTS, Bae, Cheon, Cho, Kim &amp; Kim, IACR ePrint 2022/1167)
+          at scale 2^90, with the result released over two primes. Measured end to end on a Mac with
+          the software token and the corrected width (σ = 2^{FLOOD_ID3.sigmaLog2}), a flooded
+          release kept <strong>{FLOOD_ID3.depth0} bits</strong> straight after a refresh (
+          <EvidenceCite of="metaBtsLmss">depth 0</EvidenceCite>),{' '}
+          <strong>{FLOOD_ID3.depth1} bits</strong> after one multiplication (
+          <EvidenceCite of="metaBtsLmssDepth1">depth 1</EvidenceCite>) and{' '}
+          <strong>{FLOOD_ID3.depth3} bits</strong> after three (
+          <EvidenceCite of="metaBtsLmssDepth3">depth 3</EvidenceCite>), against a bar of{' '}
+          {GATE_F_BAR_BITS} bits. That is a margin of only about {FLOOD_ID3.margin} bits, and it is
+          set by the paper’s exact sizing, not by rounding in our implementation. An unflooded owner
+          release on this set keeps 31.0 bits (
+          <EvidenceCite of="metaBtsOwner">owner run</EvidenceCite>). The set costs about twice the
           bootstrap time per refresh, 3 multiplications between refreshes instead of 9, and a 12 %
           larger key set. The default set stays in use for owner releases.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <strong>On the boards too:</strong> with the token on the board and the release flooded
-          the same way, the MX95 Pro kept <strong>22.78 bits</strong> and the MX95{' '}
-          <strong>22.59 bits</strong> (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
-          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>). Each board generated the 4.41 GB key
-          set on six cores in 97.4 s and 99.4 s (1,201 calls of 8 limbs, token peak 80.6–82.4 MiB)
-          and streamed it to the Mac in 122 s and 124 s; every limb matched the reference spec, and
-          the two boards&apos; manifests are identical apart from the descriptor each token draws at
-          random. The board decrypts are functional, not a security claim.
+          <strong>On the boards:</strong> each board generated the 4.41 GB key set of the second set
+          on six cores in 97.4 s (MX95 Pro) and 99.4 s (MX95) (1,201 calls of 8 limbs, token peak
+          80.6–82.4 MiB) and streamed it to the Mac in 122 s and 124 s; every limb matched the
+          reference spec, and the two boards&apos; manifests are identical apart from the descriptor
+          each token draws at random (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
+          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>). Flooded releases are{' '}
+          <strong>{BOARD_CELLS_NOT_MEASURED}</strong>. Those two board records measured the earlier,
+          narrower width (<em>{FLOOD_ID3.beforeMx95Pro}</em> and <em>{FLOOD_ID3.beforeMx95}</em>{' '}
+          bits, superseded) and stay as records of that run; the board decrypts are functional, not
+          a security claim.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>How the noise is drawn:</strong> {SAMPLER_SENTENCE}
         </p>
       </div>
     </div>
@@ -957,7 +999,9 @@ export const FheCustodySection: React.FC = () => (
         </li>
         <li>
           <strong>Replication:</strong> when a key is replicated to another HSM, its policy can only
-          be narrowed, never widened, and flooding cannot be switched off.
+          be narrowed, never widened, and flooding cannot be switched off. A copy of a CKKS key must
+          also keep the same replica limit as its source, so every copy computes the same flood
+          width.
         </li>
       </ul>
     </div>
