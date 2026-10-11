@@ -215,16 +215,16 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates; no OpenFHE CKKS measurement exists yet.',
+        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge; the HSM’s own exported key set has not been run in OpenFHE.',
       reference:
-        'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE CKKS pinned in pqctoday-sandbox',
+        'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE v1.6.0 and Microsoft SEAL v4.1.2 CKKS reference runs in pqctoday-fhe',
     },
     label: 'CKKS single-HSM custody',
     tagline: 'The HSM keeps the FHE secret; the cloud computes on ciphertexts it can never open.',
     tileHint: 'SCALES WHEN STREAMED: GB EVAL KEYS',
     scaling: {
       verdict: 'scales-when-streamed',
-      note: 'An HSM cannot hold a bootstrappable CKKS key set, but it can produce one as a stream of bounded calls. Measured with Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶): 51 keys, 7.87 GB in full and 3.94 GB as exported (the other half of each key is re-expanded from a public seed). A software token on an MX95 board streamed it in 1,001 PKCS#11 calls of 4 MB each, in 473 s on one Cortex-A55 core with a 16.7 MiB peak (498 s when sent to the Mac over SSH); one Mac (M4 Pro) core takes 42–44 s. This is the heaviest step of the scenario, a one-time cost per key set that is paid again on rotation or recovery. Homomorphic evaluation itself still does not fit in an HSM. TFHE (a 30 MB server key) and Lattigo’s interactive refresh (threshold scenario, no bootstrapping keys) avoid this volume altogether.',
+      note: 'An HSM cannot hold a bootstrappable CKKS key set, but it can produce one as a stream of bounded calls. Measured with Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶): 51 keys, 7.87 GB in full and 3.94 GB as exported (the other half of each key is re-expanded from a public seed). A software token on an MX95 board streamed it in 1,001 PKCS#11 calls of 4 MB each, in 473 s on one Cortex-A55 core with a 16.7 MiB peak (498 s when sent to the Mac over SSH); one Mac (M4 Pro) core takes 42–44 s. With the token caching work between calls, one MX95 core generates the set in 214 s and six MX95 Pro cores in 72–84 s, with a 65–124 MiB peak. This is the heaviest step of the scenario, a one-time cost per key set that is paid again on rotation or recovery. Homomorphic evaluation itself still does not fit in an HSM. TFHE (a 30 MB server key) and Lattigo’s interactive refresh (threshold scenario, no bootstrapping keys) avoid this volume altogether.',
     },
     colorClass: 'text-primary',
     borderClass: 'border-primary/40',
@@ -273,7 +273,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'Stream the evaluation keys: the heaviest step',
         detail:
-          'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from s, so only the HSM can make them. A bootstrappable set is GBs, too large to hold in an HSM, but it never has to be held: the HSM produces it one bounded piece at a time. Each PKCS#11 call derives a few limbs (one limb is one residue polynomial of 512 KB) of one key digit as a public session object; the host reads it, destroys it and asks for the next. Memory stays bounded, every piece is deterministic, and the receiver checks a hash per piece against a signed manifest. Measured: 3.94 GB in 1,001 calls of 4 MB, 473 s on one MX95 Cortex-A55 core with a 16.7 MiB token peak, 42–44 s on one Mac (M4 Pro) core. On the board the CPU, not the link, is the limit.',
+          'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from s, so only the HSM can make them. A bootstrappable set is GBs, too large to hold in an HSM, but it never has to be held: the HSM produces it one bounded piece at a time. Each PKCS#11 call derives a few limbs (one limb is one residue polynomial of 512 KB) of one key digit as a public session object; the host reads it, destroys it and asks for the next. Memory stays bounded, every piece is deterministic, and the receiver checks a hash per piece against a signed manifest. Measured: 3.94 GB in 1,001 calls of 4 MB, 473 s on one MX95 Cortex-A55 core with a 16.7 MiB token peak, 42–44 s on one Mac (M4 Pro) core. With the token caching work between calls: 214 s on one MX95 core and 84 s on six MX95 Pro cores (65–94 MiB peak). On the board the CPU, not the link, is the limit: the fastest run reaches 54 MB/s, about half of 1 Gb/s.',
         verdict: 'warn',
         engineNote: CKKS_ENGINE_PENDING,
         link: 'sig',
@@ -1046,7 +1046,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target: 'Evidence-scoped measurements only; no absolute claims.',
-      reference: 'OpenFHE / Lattigo sizes, measured in pqctoday-sandbox',
+      reference:
+        'Lattigo v6.2.0 key-set sizes and streamed generation measured in pqctoday-fhe; OpenFHE v1.6.0 CKKS key-set size measured separately (80 keys, 13.26 GB at N = 2¹⁶)',
     },
     label: 'What can run in the HSM?',
     tagline: 'Keygen and decrypt belong in the HSM. Homomorphic evaluation belongs on GPUs.',
@@ -1102,7 +1103,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'CKKS evaluation-key generation: streams, the heaviest step',
         detail:
-          'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM.',
+          'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core (214 s with the token caching work between calls, 84 s on six MX95 Pro cores). It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM.',
         verdict: 'warn',
         engineNote: CKKS_ENGINE_PENDING,
         link: 'sig',

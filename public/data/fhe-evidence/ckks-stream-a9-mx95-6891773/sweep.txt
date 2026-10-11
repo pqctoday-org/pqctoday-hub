@@ -1,0 +1,3 @@
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 1, "evkCalls": 7502, "bytes": 3941073029, "seconds": 415.807, "mbPerSecond": 9.5, "slowestCallSeconds": 0.0787, "peakRssKiB": 13920}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 8, "evkCalls": 1001, "bytes": 3941073029, "seconds": 400.989, "mbPerSecond": 9.8, "slowestCallSeconds": 0.5232, "peakRssKiB": 16552}
+{ "paramSet": 2, "name": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0", "keys": 51, "limbsPerCall": 30, "evkCalls": 251, "bytes": 3941073029, "seconds": 397.999, "mbPerSecond": 9.9, "slowestCallSeconds": 1.8815, "peakRssKiB": 43392}

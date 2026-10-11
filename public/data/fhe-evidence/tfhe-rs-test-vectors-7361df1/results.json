@@ -1,0 +1,523 @@
+{
+ "schema": "pqctoday-fhe/tfhe-test-vectors-run/v1",
+ "plan_item": "E7",
+ "date": "2026-10-10",
+ "tfhe_rs": {
+  "tag": "tfhe-rs-1.8.1",
+  "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db",
+  "tfhe_crate_version": "1.8.1",
+  "source": "vendored tree ./tfhe-rs (provenance/tfhe-rs-fpga-integration.json); one downstream change fpga-001 (parameter export only, not used by this app)"
+ },
+ "app": {
+  "name": "tfhe-test-vectors",
+  "version": "0.2.0",
+  "tfhe_dependency": "path = ../../tfhe (vendored tree), features = [experimental-force_fft_algo_dif4]",
+  "data_readme_says": "generated with git tag tfhe-test-vectors-0.2.0",
+  "cargo": "workspace member, built with --locked against tfhe-rs/Cargo.lock"
+ },
+ "host": {
+  "machine": "Apple M5 Max",
+  "macos": "26.6.2",
+  "docker": "OrbStack 29.4.0 (amd64 via Rosetta, no AVX/AVX2 exposed: cpu flags sse4_1 sse4_2 fma)"
+ },
+ "toolchain": {
+  "image": "rust:1.91.1-bookworm",
+  "image_index_digest": "rust@sha256:c1e5f19e773b7878c3f7a805dd00a495e747acbdc76fb2337a4ebf0418896b33",
+  "rustc": "rustc 1.91.1 (ed61e7d7e 2025-11-07)",
+  "matches": "tfhe-rs/rust-toolchain.toml channel 1.91.1"
+ },
+ "runs": {
+  "linux_arm64_native": {
+   "build_s": 21,
+   "run_s": 93,
+   "wall_s": 115,
+   "binary_sha256": "792a807f3d28b677c9dcd15968e0fb050091316e80f748423c53da61acf1cd67",
+   "cpus": 6
+  },
+  "linux_amd64_emulated": {
+   "build_s": 64,
+   "run_s": 102,
+   "wall_s": 170,
+   "binary_sha256": "b95085e05884fe2f449103b38748813c7ff77048b146a0c3de76db1710679e01",
+   "cpus": 6
+  }
+ },
+ "summary": {
+  "files": 36,
+  "linux_arm64_match": 28,
+  "linux_amd64_emulated_match": 28,
+  "arm64_equals_amd64": 36,
+  "mismatching_kinds": [
+   "fft_blind_rotation"
+  ],
+  "karatsuba_all_match": true,
+  "fft_outputs_decrypt_correctly": true,
+  "verdict": "Bit-exact on every platform-independent vector (28/36: keys, encryptions, linear ops, keyswitch, modulus switch, all Karatsuba blind rotations). The 8 FFT blind-rotation vectors differ from upstream, as the data README warns; they decrypt to the right messages (4 and 2*4=8) with phase within 2^49.7 of upstream, 9+ bits under Delta=2^59."
+ },
+ "fft_phase_check": {
+  "toy_params/lwe_after_id_pbs": {
+   "msg_reference": 4,
+   "msg_candidate_fft": 4,
+   "msg_candidate_karatsuba": 4,
+   "log2_phase_diff_ref_vs_fft": 40.92,
+   "log2_phase_diff_ref_vs_karatsuba": 44.47,
+   "log2_phase_diff_fft_vs_karatsuba": 44.34,
+   "log2_delta": 59
+  },
+  "toy_params/lwe_after_spec_pbs": {
+   "msg_reference": 8,
+   "msg_candidate_fft": 8,
+   "msg_candidate_karatsuba": 8,
+   "log2_phase_diff_ref_vs_fft": 44.22,
+   "log2_phase_diff_ref_vs_karatsuba": 43.38,
+   "log2_phase_diff_fft_vs_karatsuba": 43.04,
+   "log2_delta": 59
+  },
+  "valid_params_128/lwe_after_id_pbs": {
+   "msg_reference": 4,
+   "msg_candidate_fft": 4,
+   "msg_candidate_karatsuba": 4,
+   "log2_phase_diff_ref_vs_fft": 49.65,
+   "log2_phase_diff_ref_vs_karatsuba": 49.45,
+   "log2_phase_diff_fft_vs_karatsuba": 46.67,
+   "log2_delta": 59
+  },
+  "valid_params_128/lwe_after_spec_pbs": {
+   "msg_reference": 8,
+   "msg_candidate_fft": 8,
+   "msg_candidate_karatsuba": 8,
+   "log2_phase_diff_ref_vs_fft": 48.68,
+   "log2_phase_diff_ref_vs_karatsuba": 49.72,
+   "log2_phase_diff_fft_vs_karatsuba": 48.75,
+   "log2_delta": 59
+  }
+ },
+ "fft_coefficient_diff": {
+  "toy_params/glwe_after_id_br.cbor": {
+   "coefficients": 512,
+   "differing": 512,
+   "max_abs_diff": 9200680272931061760,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.96063606441021,
+   "same_metadata": true
+  },
+  "toy_params/glwe_after_spec_br.cbor": {
+   "coefficients": 512,
+   "differing": 512,
+   "max_abs_diff": 9217236949339734016,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.989357319660485,
+   "same_metadata": true
+  },
+  "toy_params/lwe_after_id_pbs.cbor": {
+   "coefficients": 257,
+   "differing": 257,
+   "max_abs_diff": 9200680272931061760,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.96063606441021,
+   "same_metadata": true
+  },
+  "toy_params/lwe_after_spec_pbs.cbor": {
+   "coefficients": 257,
+   "differing": 257,
+   "max_abs_diff": 9217236949339734016,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.989357319660485,
+   "same_metadata": true
+  },
+  "valid_params_128/glwe_after_id_br.cbor": {
+   "coefficients": 4096,
+   "differing": 4096,
+   "max_abs_diff": 9220048354669494272,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.994234330486506,
+   "same_metadata": true
+  },
+  "valid_params_128/glwe_after_spec_br.cbor": {
+   "coefficients": 4096,
+   "differing": 4096,
+   "max_abs_diff": 9222628397492994048,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.998709991341457,
+   "same_metadata": true
+  },
+  "valid_params_128/lwe_after_id_pbs.cbor": {
+   "coefficients": 2049,
+   "differing": 2049,
+   "max_abs_diff": 9220048354669494272,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.994234330486506,
+   "same_metadata": true
+  },
+  "valid_params_128/lwe_after_spec_pbs.cbor": {
+   "coefficients": 2049,
+   "differing": 2049,
+   "max_abs_diff": 9219954417292279808,
+   "max_abs_diff_log2": 63.0,
+   "max_abs_diff_over_delta": 15.99407137511298,
+   "same_metadata": true
+  }
+ },
+ "files_detail": [
+  {
+   "file": "data/toy_params/bsk.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "5593ae368d8fd8a3126433174fd896777ea45b1a92ae8379151de0fed5e5a4e1",
+   "linux_arm64_sha256": "5593ae368d8fd8a3126433174fd896777ea45b1a92ae8379151de0fed5e5a4e1",
+   "linux_amd64_emulated_sha256": "5593ae368d8fd8a3126433174fd896777ea45b1a92ae8379151de0fed5e5a4e1",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/glwe_after_id_br.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "1a4e0747a7cda547a99a2512b036dc21ced461f1ad8680cce6e7f6a91159d68c",
+   "linux_arm64_sha256": "03d118fed1c56b2095cb2f6a310ba986a16327e1be1c0e114a78e81855c28633",
+   "linux_amd64_emulated_sha256": "03d118fed1c56b2095cb2f6a310ba986a16327e1be1c0e114a78e81855c28633",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/glwe_after_id_br_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "96b66c6d8370e89fd6fecdec70dbc872c749614ca82ed0a3779188c09c08a1db",
+   "linux_arm64_sha256": "96b66c6d8370e89fd6fecdec70dbc872c749614ca82ed0a3779188c09c08a1db",
+   "linux_amd64_emulated_sha256": "96b66c6d8370e89fd6fecdec70dbc872c749614ca82ed0a3779188c09c08a1db",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/glwe_after_spec_br.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "f25cfa0e64b04a39ef11a14fd5de3f5fc82fdc0b8511c91e66183cb309811808",
+   "linux_arm64_sha256": "65ac8c1ef3f053e8024c66a26869ffce176283620491de1ef96d80276c59ff83",
+   "linux_amd64_emulated_sha256": "65ac8c1ef3f053e8024c66a26869ffce176283620491de1ef96d80276c59ff83",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/glwe_after_spec_br_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "6601d34dde7487630bcecef306f8aa6cba3f7850a6b338e03c6474d4de673da6",
+   "linux_arm64_sha256": "6601d34dde7487630bcecef306f8aa6cba3f7850a6b338e03c6474d4de673da6",
+   "linux_amd64_emulated_sha256": "6601d34dde7487630bcecef306f8aa6cba3f7850a6b338e03c6474d4de673da6",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/ksk.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "fc690226cca294153b1dc65833e95ba66b837aff87cbb2ef211729d9232b30d3",
+   "linux_arm64_sha256": "fc690226cca294153b1dc65833e95ba66b837aff87cbb2ef211729d9232b30d3",
+   "linux_amd64_emulated_sha256": "fc690226cca294153b1dc65833e95ba66b837aff87cbb2ef211729d9232b30d3",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/large_lwe_secret_key.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "534f9e3bb24d4ecbf7447c0e937f5df4840b70d9fcff7ffc6610dae71e7bff88",
+   "linux_arm64_sha256": "534f9e3bb24d4ecbf7447c0e937f5df4840b70d9fcff7ffc6610dae71e7bff88",
+   "linux_amd64_emulated_sha256": "534f9e3bb24d4ecbf7447c0e937f5df4840b70d9fcff7ffc6610dae71e7bff88",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_a.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "a13f573a0fd90065c193002bb2a509ca7a6fdac24c6bee1da95a99e1e9217ee1",
+   "linux_arm64_sha256": "a13f573a0fd90065c193002bb2a509ca7a6fdac24c6bee1da95a99e1e9217ee1",
+   "linux_amd64_emulated_sha256": "a13f573a0fd90065c193002bb2a509ca7a6fdac24c6bee1da95a99e1e9217ee1",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_after_id_pbs.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "db51aa1b96120c8c41364368247643d85fb35d2db66468514ddf8f25cf8bf1f4",
+   "linux_arm64_sha256": "4f5f6190ecb7d1161b44faccc2faa1efd9cacc00af9cf67df17873d727ae80a7",
+   "linux_amd64_emulated_sha256": "4f5f6190ecb7d1161b44faccc2faa1efd9cacc00af9cf67df17873d727ae80a7",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_after_id_pbs_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "c393d1b4ac5f093f8ace128e656a9ff520e3b6e4448c3dcde8054291908bcbd0",
+   "linux_arm64_sha256": "c393d1b4ac5f093f8ace128e656a9ff520e3b6e4448c3dcde8054291908bcbd0",
+   "linux_amd64_emulated_sha256": "c393d1b4ac5f093f8ace128e656a9ff520e3b6e4448c3dcde8054291908bcbd0",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_after_spec_pbs.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "26317e8430c703ce6d82e0b61237a51fabbcd11f52838aef40108777a08b0037",
+   "linux_arm64_sha256": "d91be93cd994b1eda43ed1a873dbfbb34c0d4840e8f9e5df012714056f203047",
+   "linux_amd64_emulated_sha256": "d91be93cd994b1eda43ed1a873dbfbb34c0d4840e8f9e5df012714056f203047",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_after_spec_pbs_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "6597867705cbd69bd3695fb70608c04e1feb96e9b1e242137cefbb8b9d67c25e",
+   "linux_arm64_sha256": "6597867705cbd69bd3695fb70608c04e1feb96e9b1e242137cefbb8b9d67c25e",
+   "linux_amd64_emulated_sha256": "6597867705cbd69bd3695fb70608c04e1feb96e9b1e242137cefbb8b9d67c25e",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_b.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "632ef8130037896623de9478469d6ccd8298a6b73ec4f2bdc871f8c0adc1e71c",
+   "linux_arm64_sha256": "632ef8130037896623de9478469d6ccd8298a6b73ec4f2bdc871f8c0adc1e71c",
+   "linux_amd64_emulated_sha256": "632ef8130037896623de9478469d6ccd8298a6b73ec4f2bdc871f8c0adc1e71c",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_ks.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "a5227e552c7a853c121ce1bb7e371596b2e4594206024e7a7232ab65216b9472",
+   "linux_arm64_sha256": "a5227e552c7a853c121ce1bb7e371596b2e4594206024e7a7232ab65216b9472",
+   "linux_amd64_emulated_sha256": "a5227e552c7a853c121ce1bb7e371596b2e4594206024e7a7232ab65216b9472",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_ms.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "fd2e004e4385ed45af7b68f76f8741348a1b94a5c9c28cb6d3642733c0132b9c",
+   "linux_arm64_sha256": "fd2e004e4385ed45af7b68f76f8741348a1b94a5c9c28cb6d3642733c0132b9c",
+   "linux_amd64_emulated_sha256": "fd2e004e4385ed45af7b68f76f8741348a1b94a5c9c28cb6d3642733c0132b9c",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_prod.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "38f7f0ca6251c5139aaf16121797ae7b25f189ba64ea6ce3a365193cb103bc49",
+   "linux_arm64_sha256": "38f7f0ca6251c5139aaf16121797ae7b25f189ba64ea6ce3a365193cb103bc49",
+   "linux_amd64_emulated_sha256": "38f7f0ca6251c5139aaf16121797ae7b25f189ba64ea6ce3a365193cb103bc49",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/lwe_sum.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "bb52f8c2493c253ed4a4837126e8ad1fe231bf122c4042afd8f71b9ae5fecbd1",
+   "linux_arm64_sha256": "bb52f8c2493c253ed4a4837126e8ad1fe231bf122c4042afd8f71b9ae5fecbd1",
+   "linux_amd64_emulated_sha256": "bb52f8c2493c253ed4a4837126e8ad1fe231bf122c4042afd8f71b9ae5fecbd1",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/toy_params/small_lwe_secret_key.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "1a376b04dea2cc29ba2569bd4be13fb00523f85cb4ec1400f3c6cea8827d312e",
+   "linux_arm64_sha256": "1a376b04dea2cc29ba2569bd4be13fb00523f85cb4ec1400f3c6cea8827d312e",
+   "linux_amd64_emulated_sha256": "1a376b04dea2cc29ba2569bd4be13fb00523f85cb4ec1400f3c6cea8827d312e",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/bsk.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "346995d4ac20031338826503173812ff04eac52d15eeb6c93636f6fa6f1b07a5",
+   "linux_arm64_sha256": "346995d4ac20031338826503173812ff04eac52d15eeb6c93636f6fa6f1b07a5",
+   "linux_amd64_emulated_sha256": "346995d4ac20031338826503173812ff04eac52d15eeb6c93636f6fa6f1b07a5",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/glwe_after_id_br.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "ba4058987c3635934e759b572d34c1be4edc40939c23192e1776e91afacd69a3",
+   "linux_arm64_sha256": "5201551b83c84c4fd76a148dc12d81cd710b00ee3b356da235ec20aa635e6a43",
+   "linux_amd64_emulated_sha256": "5201551b83c84c4fd76a148dc12d81cd710b00ee3b356da235ec20aa635e6a43",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/glwe_after_id_br_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "70ab63fe9e1947dd3c95cd7e7d377025146fbefa3ef34dc72727f10d80d0b454",
+   "linux_arm64_sha256": "70ab63fe9e1947dd3c95cd7e7d377025146fbefa3ef34dc72727f10d80d0b454",
+   "linux_amd64_emulated_sha256": "70ab63fe9e1947dd3c95cd7e7d377025146fbefa3ef34dc72727f10d80d0b454",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/glwe_after_spec_br.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "632fc4b7ad17b40183fca92524b9c21b2adcfbcff3d28f2559959ab740b18bcb",
+   "linux_arm64_sha256": "8f64a07087e69003a9c8f8afb112b2621de74419459a79f865e03ad7823525d8",
+   "linux_amd64_emulated_sha256": "8f64a07087e69003a9c8f8afb112b2621de74419459a79f865e03ad7823525d8",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/glwe_after_spec_br_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "7400f815f147227fa6ff86898dc875d5e523572c9baaa96a2d6f90189ad14e72",
+   "linux_arm64_sha256": "7400f815f147227fa6ff86898dc875d5e523572c9baaa96a2d6f90189ad14e72",
+   "linux_amd64_emulated_sha256": "7400f815f147227fa6ff86898dc875d5e523572c9baaa96a2d6f90189ad14e72",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/ksk.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "09066e9051cb11cd3fa820fe70daba41652dfd8ba7aec1e62deb592e8d422c73",
+   "linux_arm64_sha256": "09066e9051cb11cd3fa820fe70daba41652dfd8ba7aec1e62deb592e8d422c73",
+   "linux_amd64_emulated_sha256": "09066e9051cb11cd3fa820fe70daba41652dfd8ba7aec1e62deb592e8d422c73",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/large_lwe_secret_key.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "7cb3f6f4fd17875baa6bff5f3a5da9af554c89f4932587accfcad7181c31e4b7",
+   "linux_arm64_sha256": "7cb3f6f4fd17875baa6bff5f3a5da9af554c89f4932587accfcad7181c31e4b7",
+   "linux_amd64_emulated_sha256": "7cb3f6f4fd17875baa6bff5f3a5da9af554c89f4932587accfcad7181c31e4b7",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_a.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "40a07b2f42e2b7a8f6f90ea61568158a0273476bfea69b8b4907269b952f5d5c",
+   "linux_arm64_sha256": "40a07b2f42e2b7a8f6f90ea61568158a0273476bfea69b8b4907269b952f5d5c",
+   "linux_amd64_emulated_sha256": "40a07b2f42e2b7a8f6f90ea61568158a0273476bfea69b8b4907269b952f5d5c",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_after_id_pbs.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "53eb223855483465ab50fe0ea1a9ef39cdb47be2e5544928ec2343d942c78554",
+   "linux_arm64_sha256": "7b4742480e3c0eb15f0cdcf85e96004d2460727415a474e79a9cdeef5c6af626",
+   "linux_amd64_emulated_sha256": "7b4742480e3c0eb15f0cdcf85e96004d2460727415a474e79a9cdeef5c6af626",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_after_id_pbs_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "d55a4f0c0ab7794ae9c5d178b72ea97d383a6078cab47bbba83e654702e96885",
+   "linux_arm64_sha256": "d55a4f0c0ab7794ae9c5d178b72ea97d383a6078cab47bbba83e654702e96885",
+   "linux_amd64_emulated_sha256": "d55a4f0c0ab7794ae9c5d178b72ea97d383a6078cab47bbba83e654702e96885",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_after_spec_pbs.cbor",
+   "kind": "fft_blind_rotation",
+   "expected_sha256": "316d04542ba422bf82854c1c53a95d201ba042e12ad31476772a4755620f4e8d",
+   "linux_arm64_sha256": "022066860d050b1536adad2972fcb8f70b6690f5369754db5810beb837c7ebf6",
+   "linux_amd64_emulated_sha256": "022066860d050b1536adad2972fcb8f70b6690f5369754db5810beb837c7ebf6",
+   "linux_arm64_matches_upstream": false,
+   "linux_amd64_emulated_matches_upstream": false,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_after_spec_pbs_karatsuba.cbor",
+   "kind": "karatsuba_blind_rotation",
+   "expected_sha256": "b8e5075efb58464192319bcb847cc6b3f77942fc07c768e0972f5bf77043a4c5",
+   "linux_arm64_sha256": "b8e5075efb58464192319bcb847cc6b3f77942fc07c768e0972f5bf77043a4c5",
+   "linux_amd64_emulated_sha256": "b8e5075efb58464192319bcb847cc6b3f77942fc07c768e0972f5bf77043a4c5",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_b.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "11d970a504709f4375cbdce717c57e7292f0deb8de1e5ce5b0ddfec86d0ff0c4",
+   "linux_arm64_sha256": "11d970a504709f4375cbdce717c57e7292f0deb8de1e5ce5b0ddfec86d0ff0c4",
+   "linux_amd64_emulated_sha256": "11d970a504709f4375cbdce717c57e7292f0deb8de1e5ce5b0ddfec86d0ff0c4",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_ks.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "2f64e6eccd4ddcc7cb2e76844ae869559bcf0c1c2b73a6ff9c7cade02f55dab0",
+   "linux_arm64_sha256": "2f64e6eccd4ddcc7cb2e76844ae869559bcf0c1c2b73a6ff9c7cade02f55dab0",
+   "linux_amd64_emulated_sha256": "2f64e6eccd4ddcc7cb2e76844ae869559bcf0c1c2b73a6ff9c7cade02f55dab0",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_ms.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "77837989606579e3bba52382fee3f218f552df82c5b101b79fe4f83bec714d72",
+   "linux_arm64_sha256": "77837989606579e3bba52382fee3f218f552df82c5b101b79fe4f83bec714d72",
+   "linux_amd64_emulated_sha256": "77837989606579e3bba52382fee3f218f552df82c5b101b79fe4f83bec714d72",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_prod.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "f5f4fcc754e2186db0580049093321a37d9de244cfaace9e1b926e1560f20b58",
+   "linux_arm64_sha256": "f5f4fcc754e2186db0580049093321a37d9de244cfaace9e1b926e1560f20b58",
+   "linux_amd64_emulated_sha256": "f5f4fcc754e2186db0580049093321a37d9de244cfaace9e1b926e1560f20b58",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/lwe_sum.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "0bcca92c6208519ddec6d618ecc7e77b9b35d30e55588863bc6e4576ced1a010",
+   "linux_arm64_sha256": "0bcca92c6208519ddec6d618ecc7e77b9b35d30e55588863bc6e4576ced1a010",
+   "linux_amd64_emulated_sha256": "0bcca92c6208519ddec6d618ecc7e77b9b35d30e55588863bc6e4576ced1a010",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  },
+  {
+   "file": "data/valid_params_128/small_lwe_secret_key.cbor",
+   "kind": "keygen_encrypt_linear_ks_ms",
+   "expected_sha256": "177f09db39a165a1a3b3e528047e48ad2fdef61dce93a5e3ef67625ef3e23d16",
+   "linux_arm64_sha256": "177f09db39a165a1a3b3e528047e48ad2fdef61dce93a5e3ef67625ef3e23d16",
+   "linux_amd64_emulated_sha256": "177f09db39a165a1a3b3e528047e48ad2fdef61dce93a5e3ef67625ef3e23d16",
+   "linux_arm64_matches_upstream": true,
+   "linux_amd64_emulated_matches_upstream": true,
+   "arm64_equals_amd64": true
+  }
+ ]
+}

@@ -331,8 +331,8 @@ export const FheCostSection: React.FC = () => (
       </h3>
       <p className="text-xs text-muted-foreground">
         Single runs with Lattigo v6.2.0&apos;s default bootstrappable parameter set (N = 2^16, 51
-        evaluation keys) and the educational software token from this workshop, one CPU core each.
-        They show where the cost sits for one deployment, not a general benchmark.
+        evaluation keys) and the educational software token from this workshop, one CPU core each
+        unless noted. They show where the cost sits for one deployment, not a general benchmark.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -356,9 +356,19 @@ export const FheCostSection: React.FC = () => (
                 of: 'macToken' as const,
               },
               {
-                op: 'Stream it out of the token on an MX95 board (Cortex-A55 core)',
+                op: 'Stream it out of the token on an MX95 board (Cortex-A55 core), first version',
                 value: '473 s, 16.7 MiB peak',
                 of: 'mx95' as const,
+              },
+              {
+                op: 'Generate it in the token with the cached generator, one MX95 core',
+                value: '213.8 s, 64.5 MiB peak',
+                of: 'cachedMx95' as const,
+              },
+              {
+                op: 'The same on six MX95 Pro cores',
+                value: '84.0 s, 94.4 MiB peak',
+                of: 'cachedMx95pro' as const,
               },
               {
                 op: 'One bootstrap with the keys the board streamed (Mac, M5 Max)',

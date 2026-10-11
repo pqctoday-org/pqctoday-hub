@@ -507,6 +507,10 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
         libraryId: 'IACR-ePrint-2025-699',
       },
       {
+        text: 'Colin de Verdière, Passelègue, Stehlé. On Threshold Fully Homomorphic Encryption with Synchronized Decryptors. IACR ePrint 2026/031 (preprint).',
+        url: 'https://eprint.iacr.org/2026/031',
+      },
+      {
         text: 'Zama fhEVM documentation (zero-knowledge proofs on inputs; threshold key management); NIST Threshold Call preview TCall-1 Zama-PW01.',
       },
       {
@@ -656,6 +660,10 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
         text: 'Bossuat, Troncoso-Pastoriza, Hubaux. Bootstrapping for Approximate Homomorphic Encryption with Negligible Failure-Probability by Using Sparse-Secret Encapsulation. IACR ePrint 2022/024 (source of the N16QP1546H192H32 parameter set used in the workshop’s CKKS measurements).',
         url: 'https://eprint.iacr.org/2022/024',
         libraryId: 'IACR-ePrint-2022-024',
+      },
+      {
+        text: 'Bae, Cheon, Cho, Kim, Kim. META-BTS: Bootstrapping Precision Beyond the Limit. ACM CCS 2022, IACR ePrint 2022/1167 (the higher-precision bootstrapping behind the workshop’s second CKKS parameter set).',
+        url: 'https://eprint.iacr.org/2022/1167',
       },
     ],
   },

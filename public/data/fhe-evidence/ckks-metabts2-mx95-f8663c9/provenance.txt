@@ -1,0 +1,11 @@
+model: NXP FRDM-IMX95
+kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+cpus: 6
+cpu_features:  fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+mem_total_kib: 7867940
+engine_commit: 46dca8022f0481be21bbd63f396e3611a31740da
+oracle_commit: 481b9660a5842a90e7203440d35259b47299f7bd
+custodian_sha256: 45fb5e8d0060ead93fcbe7a20dd8e36ed02d48039922bde252a5e9f28086aea7
+build_commit: 46dca8022f0481be21bbd63f396e3611a31740da
+build_features: educational-ckks,test-support
+build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
