@@ -18,10 +18,10 @@ export type LibraryExecutivePick = LibraryCuriousPick
 
 export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
   {
-    referenceId: 'NIST-CSWP-39',
-    label: 'NIST CSWP 39 — Cybersecurity Maturity',
+    referenceId: 'NIST CSWP 39',
+    label: 'NIST CSWP 39 — Considerations for Achieving Cryptographic Agility',
     blurb:
-      'NIST\'s crypto-agility considerations paper: strategies, practices, and a four-tier maturity model. The board-level answer to "are we ready?"',
+      "NIST's strategies and practices for cryptographic agility: replacing and adapting algorithms in protocols, applications and infrastructure without disruption. The companion to the PQC transition.",
   },
   {
     referenceId: 'NIST IR 8547',

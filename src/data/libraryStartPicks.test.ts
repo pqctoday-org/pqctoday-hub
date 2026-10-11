@@ -25,6 +25,28 @@ describe('Library "Start here" picks', () => {
     }
   })
 
+  it('every curated pick of every role names a live Library row, not a retired id', () => {
+    const lists = {
+      curious: LIBRARY_CURIOUS_PICKS,
+      executive: LIBRARY_EXECUTIVE_PICKS,
+      ops: LIBRARY_OPS_PICKS,
+      'cert-engineer': LIBRARY_CERT_ENGINEER_PICKS,
+    }
+    for (const [role, picks] of Object.entries(lists)) {
+      for (const pick of picks) {
+        expect(activeIds.has(pick.referenceId), `${role}: ${pick.referenceId}`).toBe(true)
+      }
+    }
+  })
+
+  it('the executive first pick is the live cryptographic-agility paper under its real title', () => {
+    const first = getLibraryStartPicks('executive')[0]
+    expect(first.referenceId).toBe('NIST CSWP 39')
+    expect(first.label).toContain('Considerations for Achieving Cryptographic Agility')
+    const item = libraryData.find((i) => i.referenceId === first.referenceId)
+    expect(item?.documentTitle).toBe('Considerations for Achieving Cryptographic Agility')
+  })
+
   it('every pick has a label and a blurb', () => {
     for (const pick of LIBRARY_CERT_ENGINEER_PICKS) {
       expect(pick.label.length).toBeGreaterThan(0)
