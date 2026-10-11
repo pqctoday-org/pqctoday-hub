@@ -218,8 +218,10 @@ describe('useModuleStore', () => {
         'fhe-keys-operations',
         'fhe-quantum',
       ])
-      // Its one workshop step and all five sections are done, so it counts as complete.
-      expect(fhe.status).toBe('completed')
+      // The five moved sections keep their ids in the nine-section module, but the
+      // module now has two workshop steps (fhe-hsm-flows, fhe-concepts), so having
+      // done only the moved step leaves it in progress.
+      expect(fhe.status).toBe('in-progress')
       expect(fhe.timeSpent).toBe(0)
       expect(fhe.lastVisited).toBe(11)
     })
@@ -237,7 +239,34 @@ describe('useModuleStore', () => {
       )
       const fhe = migrated.modules['homomorphic-encryption']
       expect(fhe.completedSteps).toEqual(['fhe-hsm-flows'])
-      // the single required workshop step is done, so the store's own rule completes it
+      // one of the module's two workshop steps is done
+      expect(fhe.status).toBe('in-progress')
+    })
+
+    it('completes the FHE module once both of its workshop steps are done', () => {
+      const migrated = migrate()(
+        v18(
+          {
+            status: 'in-progress',
+            lastVisited: 11,
+            timeSpent: 5,
+            completedSteps: ['fhe-hsm-flows'],
+            quizScores: {},
+          },
+          {
+            'homomorphic-encryption': {
+              status: 'in-progress',
+              lastVisited: 12,
+              timeSpent: 3,
+              completedSteps: ['fhe-concepts'],
+              quizScores: {},
+            },
+          }
+        ),
+        18
+      )
+      const fhe = migrated.modules['homomorphic-encryption']
+      expect([...fhe.completedSteps].sort()).toEqual(['fhe-concepts', 'fhe-hsm-flows'])
       expect(fhe.status).toBe('completed')
     })
 
