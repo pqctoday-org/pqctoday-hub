@@ -1,0 +1,7 @@
+{
+ "paramSet": 3,
+ "source": "HSM export /repo/reference-runs/ckks-stream-e2e/work/2026-10-11-n16-o2b-gatef-mx95/hsm/out",
+ "assembleSeconds": 5.687581731,
+ "bootstrapSeconds": 13.032227249,
+ "ciphertextLevelOut": 1
+}

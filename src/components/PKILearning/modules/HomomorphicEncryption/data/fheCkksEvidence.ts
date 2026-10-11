@@ -20,6 +20,8 @@ export const CKKS_EVIDENCE = {
   generatorCacheMx95: 'ckks-stream-generator-cache-mx95-6891773',
   metaBtsGateF: 'ckks-metabts2-gate-f-m5max-baf6237',
   metaBtsOwner: 'ckks-metabts2-owner-m5max-baf6237',
+  metaBtsMx95: 'ckks-metabts2-stream-mx95-mac-m5max-f8663c9',
+  metaBtsMx95pro: 'ckks-metabts2-stream-mx95pro-mac-m5max-f8663c9',
   rotation: 'ckks-rotation-key-m5max-ab8b1c3',
   openfhe: 'openfhe-ckks-reference-m5max-039034f',
   seal: 'seal-ckks-reference-m5max-039034f',
