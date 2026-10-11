@@ -100,6 +100,92 @@ const THRESHOLD_VALUE_LIMITS: { topic: string; value: string; limit: string }[] 
   },
 ]
 
+/** What decryption noise means for each scheme (sources in DECRYPT_REFERENCES). */
+const NOISE_BY_SCHEME: { scheme: string; returns: string; noiseSetting: string }[] = [
+  {
+    scheme: 'CKKS',
+    returns:
+      'The message plus a small error. CKKS is approximate by design: its “decryption structure outputs an approximate value of plaintext with a predetermined precision”, and the encryption noise is “considered to be a part of error” (Cheon, Kim, Kim & Song 2017). A result comes back close to the true value, correct to a number of bits (its precision); the last digits are noise.',
+    noiseSetting:
+      'Chosen at release: round to a precision you trust, and optionally add flooding noise when results go to others (below).',
+  },
+  {
+    scheme: 'TFHE',
+    returns:
+      'The exact message. The message sits in the most significant bits and the noise in the least significant bits; “if too many computations are performed, the noise will eventually overflow into the message bits and lead to an incorrect result” (TFHE-rs documentation). Otherwise decryption is exact.',
+    noiseSetting:
+      'None: the decryption-failure probability is fixed by the parameter set. TFHE-rs default parameters use p_error ≤ 2^-128, which “ensures that our implementation is resilient against attacks in the IND-CPA-D model”; parameters with p_error ≤ 2^-64 exist when only the IND-CPA model is considered. Added noise matters for TFHE only in threshold decryption, where partial decryptions are flooded and TFHE needs “a more subtle technique” because its parameters are small (Bootland et al. 2025, preprint); Checri et al. 2024 show threshold BFV, BGV and CKKS would be insecure without such noise.',
+  },
+]
+
+/** Parameters of the FHE decryption policy in the pqctoday HSM simulation. */
+const FHE_POLICY_PARAMS: { param: string; scope: string; meaning: string }[] = [
+  {
+    param: 'Allowed output types',
+    scope: 'v1 and v2',
+    meaning: 'Exactly which encrypted types may be released; anything else is refused',
+  },
+  {
+    param: 'Never-release types',
+    scope: 'v1 and v2',
+    meaning: 'Types that are never decrypted, whatever else the policy allows',
+  },
+  {
+    param: 'Value predicates',
+    scope: 'TFHE only',
+    meaning: 'Conditions on the decrypted value, e.g. release only if the value is ≤ a bound',
+  },
+  {
+    param: 'Third-party recipients / recipient-only',
+    scope: 'v1 and v2',
+    meaning:
+      'Results sealed to an enrolled recipient key; with recipient-only, nothing is released in the clear',
+  },
+  {
+    param: 'Maximum number of decryptions',
+    scope: 'v1 and v2',
+    meaning: 'A lifetime budget; every call counts, released or refused',
+  },
+  {
+    param: 'maxValues',
+    scope: 'CKKS (v2)',
+    meaning: 'How many slots leave the token per release',
+  },
+  {
+    param: 'precisionBits',
+    scope: 'CKKS (v2)',
+    meaning:
+      'Results are rounded to multiples of 2^-precisionBits before release; the HSM never releases raw noisy coefficients',
+  },
+  {
+    param: 'valueBoundLog2',
+    scope: 'CKKS (v2)',
+    meaning:
+      'Each released value (real and imaginary part) must satisfy |value| < 2^valueBoundLog2, otherwise the request is refused',
+  },
+  {
+    param: 'scaleLog2',
+    scope: 'CKKS (v2)',
+    meaning: 'The only ciphertext scale accepted',
+  },
+  {
+    param: 'floodRecipients',
+    scope: 'CKKS (v2)',
+    meaning: 'Default on: add flooding noise to releases sealed for third parties',
+  },
+  {
+    param: 'floodOwner',
+    scope: 'CKKS (v2)',
+    meaning: 'Default off: add flooding noise to the owner’s own releases too',
+  },
+  {
+    param: 'statSecurityBits',
+    scope: 'CKKS (v2)',
+    meaning:
+      'Default 30; sizes the flooding noise together with the maximum number of decryptions and a measured noise bound of the parameter set',
+  },
+]
+
 /** Published work on the decryption-oracle limitation and its mitigations. */
 const DECRYPT_REFERENCES: { text: string; url?: string }[] = [
   {
@@ -111,7 +197,7 @@ const DECRYPT_REFERENCES: { text: string; url?: string }[] = [
     url: 'https://eprint.iacr.org/2022/816',
   },
   {
-    text: 'Bossuat, Costache, Mouchet, Nürnberger, Troncoso-Pastoriza. Accurate and Composable Noise Estimates for CKKS with Application to Exact HE Computation. IACR ePrint 2024/853.',
+    text: 'Bossuat, Costache, Mouchet, Nürnberger, Troncoso-Pastoriza. Accurate and Composable Noise Estimates for CKKS with Application to Exact HE Computation. IACR Communications in Cryptology 2025, IACR ePrint 2024/853.',
     url: 'https://eprint.iacr.org/2024/853',
   },
   {
@@ -123,7 +209,7 @@ const DECRYPT_REFERENCES: { text: string; url?: string }[] = [
     url: 'https://eprint.iacr.org/2024/127',
   },
   {
-    text: 'Loftus, May, Smart, Vercauteren. On CCA-Secure Fully Homomorphic Encryption. IACR ePrint 2010/560 (SAC 2011 version: On CCA-Secure Somewhat Homomorphic Encryption).',
+    text: 'Loftus, May, Smart, Vercauteren. On CCA-Secure Fully Homomorphic Encryption. IACR ePrint 2010/560.',
     url: 'https://eprint.iacr.org/2010/560',
   },
   {
@@ -135,7 +221,7 @@ const DECRYPT_REFERENCES: { text: string; url?: string }[] = [
     url: 'https://eprint.iacr.org/2024/202',
   },
   {
-    text: 'Bootland et al. (Zama). Threshold (Fully) Homomorphic Encryption. IACR ePrint 2025/699.',
+    text: 'Bootland et al. (Zama). Threshold (Fully) Homomorphic Encryption. IACR ePrint 2025/699 (preprint).',
     url: 'https://eprint.iacr.org/2025/699',
   },
   {
@@ -143,6 +229,26 @@ const DECRYPT_REFERENCES: { text: string; url?: string }[] = [
   },
   {
     text: 'OpenFHE documentation, “Making CKKS More Secure” (NOISE_FLOODING_DECRYPT).',
+  },
+  {
+    text: 'Cheon, Kim, Kim, Song. Homomorphic Encryption for Arithmetic of Approximate Numbers. ASIACRYPT 2017, IACR ePrint 2016/421.',
+    url: 'https://eprint.iacr.org/2016/421',
+  },
+  {
+    text: 'TFHE-rs documentation, “Security and cryptography” (noise, failure probability and IND-CPA-D).',
+    url: 'https://docs.zama.org/tfhe-rs/get-started/security-and-cryptography',
+  },
+  {
+    text: 'Lattigo, SECURITY.md (IND-CPA-D security, DecodePublic).',
+    url: 'https://github.com/tuneinsight/lattigo/blob/main/SECURITY.md',
+  },
+  {
+    text: 'OpenFHE, CKKS_NOISE_FLOODING.md (noise flooding and static noise estimation).',
+    url: 'https://github.com/openfheorg/openfhe-development/blob/main/src/pke/examples/CKKS_NOISE_FLOODING.md',
+  },
+  {
+    text: 'OpenFHE, ckks-noise-flooding.cpp example (experimental NOISE_FLOODING_DECRYPT mode).',
+    url: 'https://github.com/openfheorg/openfhe-development/blob/main/src/pke/examples/ckks-noise-flooding.cpp',
   },
 ]
 
@@ -473,6 +579,157 @@ export const FheCustodySection: React.FC = () => (
           No standard PKCS#11 mechanism exists for any of this today. It would use vendor-defined
           mechanisms.
         </p>
+      </div>
+    </div>
+
+    <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <Lock size={14} className="text-primary" />
+        Decryption results are noisy: what that means, how to read them, and what the HSM policy
+        controls
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        Every FHE ciphertext carries a small random error, called noise, that grows as you compute.
+        What that noise does to a decrypted result depends on the scheme.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left p-1.5 text-muted-foreground font-medium">Scheme</th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                What decryption returns
+              </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                Can you set the noise level?
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-muted-foreground">
+            {NOISE_BY_SCHEME.map((row) => (
+              <tr key={row.scheme} className="border-b border-border/50 align-top">
+                <td className="p-1.5 font-medium text-foreground">{row.scheme}</td>
+                <td className="p-1.5">{row.returns}</td>
+                <td className="p-1.5">{row.noiseSetting}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div className="text-xs font-bold text-foreground mb-1">
+          Reading a noisy CKKS result: rounding
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Read the result to the precision you trust and discard the rest, by rounding it to a
+          chosen number of bits. Lattigo provides this as{' '}
+          <span className="font-mono">DecodePublic</span>, which takes the desired bit precision and
+          rounds each value as <span className="font-mono">y = ⌊x/ε⌉·ε</span>. Its documentation
+          says values shared with external parties should be decoded with{' '}
+          <span className="font-mono">DecodePublic</span> instead of the usual{' '}
+          <span className="font-mono">Decode</span>, and that “the Lattigo API does not provide
+          automatic IND-CPA-D security”.
+        </p>
+        <div className="rounded-md border border-border bg-background/60 p-3 mt-2">
+          <div className="text-[11px] text-status-warning mb-1">
+            Illustration with made-up numbers, not a measurement
+          </div>
+          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+            <li>
+              Encrypted input: <span className="font-mono">3.14159265</span>
+            </li>
+            <li>
+              Decrypted CKKS value: <span className="font-mono">3.1415926481</span> (noise in the
+              last digits)
+            </li>
+            <li>
+              Rounded to 20 bits, i.e. to multiples of{' '}
+              <span className="font-mono">2^-20 ≈ 0.00000095</span>:{' '}
+              <span className="font-mono">round(3.1415926481 · 2^20) = 3294199</span>, and{' '}
+              <span className="font-mono">3294199 · 2^-20 = 3.1415929794…</span>, which reads{' '}
+              <strong>3.141593</strong> to six decimals
+            </li>
+          </ul>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Rounding removes the low-order noise bits; it cannot recover bits the noise has already
+          destroyed.
+        </p>
+      </div>
+
+      <div>
+        <div className="text-xs font-bold text-foreground mb-1">
+          When results go to others: noise flooding
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Decrypted CKKS results seen by others can lead to complete key recovery (Li &amp;
+          Micciancio 2021). The research countermeasure is noise flooding: “adding Gaussian noise to
+          the output of CKKS decryption suffices to achieve IND-CPA^D security” (Li, Micciancio,
+          Schultz &amp; Sorrell 2022). Flooding costs precision. OpenFHE sizes the added noise as{' '}
+          <span className="font-mono">σ = √(12τ)·2^(s/2)·t</span>, where{' '}
+          <span className="font-mono">τ</span> is the number of adversarial queries the application
+          expects, <span className="font-mono">s</span> the statistical security (at least 30) and{' '}
+          <span className="font-mono">t</span> the ciphertext noise estimate; the cost therefore
+          grows with the number of decryptions and the statistical security level. OpenFHE exposes
+          it as the <span className="font-mono">NOISE_FLOODING_DECRYPT</span> decryption mode, which
+          its example marks experimental and not yet recommended for production; the example runs
+          the computation twice, first to estimate the noise, and with 128-bit arithmetic chooses
+          the scaling modulus size from that estimate.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <div className="text-xs font-bold text-foreground">
+          What the pqctoday HSM simulation makes configurable
+        </div>
+        <p className="text-xs text-muted-foreground">
+          In the pqctoday HSM simulation (an educational engine), the security officer enrolls an
+          immutable FHE decryption policy bound to each FHE key seed. Version 1 is for TFHE; version
+          2 adds a CKKS block.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left p-1.5 text-muted-foreground font-medium">Parameter</th>
+                <th className="text-left p-1.5 text-muted-foreground font-medium">Applies to</th>
+                <th className="text-left p-1.5 text-muted-foreground font-medium">What it does</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              {FHE_POLICY_PARAMS.map((row) => (
+                <tr key={row.param} className="border-b border-border/50 align-top">
+                  <td
+                    className={`p-1.5 font-medium text-foreground ${row.scope.startsWith('CKKS') ? 'font-mono' : ''}`}
+                  >
+                    {row.param}
+                  </td>
+                  <td className="p-1.5">{row.scope}</td>
+                  <td className="p-1.5">{row.meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+          <li>
+            <strong>CKKS:</strong> the release is decoded inside the token and rounded. With at most{' '}
+            <span className="font-mono">maxValues</span> slots, each with a real and an imaginary
+            part, a crafted request can learn at most about{' '}
+            <span className="font-mono">maxValues × 2 × (precisionBits + valueBoundLog2 + 1)</span>{' '}
+            bits per release. This is how the policy bounds what one release reveals, not a security
+            proof.
+          </li>
+          <li>
+            <strong>TFHE:</strong> the policy has no noise setting, because decryption is exact; it
+            limits what is released, to whom and how often.
+          </li>
+          <li>
+            <strong>Replication:</strong> when a key is replicated to another HSM, its policy can
+            only be narrowed, never widened, and flooding cannot be switched off.
+          </li>
+        </ul>
       </div>
     </div>
 
