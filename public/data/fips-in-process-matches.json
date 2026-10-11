@@ -47,6 +47,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "NetApp-CryptoMod",
+      "list": "MIP",
+      "module": "NetApp CryptoMod",
+      "vendor": "NetApp, Inc.",
+      "nistStage": "Review",
+      "date": "2026-08-13",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "Oracle-OpenSSL-FIPS-Provider",
       "list": "MIP",
       "module": "Oracle OpenSSL FIPS Provider",
