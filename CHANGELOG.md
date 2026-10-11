@@ -31,11 +31,20 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.156.0] - 2026-10-10
 
-The Library gains thirteen primary papers behind the homomorphic-encryption module: the CKKS and TFHE scheme papers, the CKKS bootstrapping papers, and the research on what a decryption result can leak.
+The Library gains thirteen primary papers behind the homomorphic-encryption module, the Executive's first Library suggestion shows the right document, two Migrate rows describe their certification and post-quantum status accurately, and a bundled sanitiser library is brought up to date.
+
+### Fixed
+
+- **The Executive's first "Start here" suggestion in the Library shows the right document** [view:/library] [persona:executive]: the card now names NIST CSWP 39, Considerations for Achieving Cryptographic Agility, with its status, instead of a retired entry with a different title.
 
 ### Data
 
 - **Thirteen primary papers on homomorphic encryption** [view:/library] [persona:researcher] [persona:developer] [persona:architect]: the CKKS and TFHE scheme papers; the two CKKS bootstrapping papers behind the Lattigo library; the Li-Micciancio decryption-oracle attack on CKKS and the differential-privacy countermeasure; the later attacks on exact schemes (BFV, BGV, TFHE) and on threshold decryption; the chosen-ciphertext and verifiability papers; and a preliminary threshold-FHE document. Each entry gives the authors, dates and venue as the IACR archive page shows them and links to the homomorphic-encryption module. Eleven name a peer-reviewed venue; one is a preprint and one shows no venue.
+- **Migrate: Google Cloud HSM and Bouncy Castle Java say only what their sources say** [view:/migrate] [persona:cert-engineer] [persona:grc] [persona:ops] [persona:architect]: Google Cloud HSM's text no longer calls it a FIPS 140-3 Level 3 service that supports ML-KEM, ML-DSA and SLH-DSA; Google's pages say FIPS 140-2 Level 3, with a quantum-safe Cloud HSM listed for 2028. Bouncy Castle Java's certification line now says the validated module is the separate BC-FJA, FIPS 140-3 Level 1, certificate #4943, version 2.1.1. The Migrate counts do not change.
+
+### Security
+
+- **Dependency updates** [persona:ops]: the code editor package carried its own older copy of the DOMPurify sanitising library (3.4.8) with five published advisories; it now uses 3.4.16, the same as the rest of the site.
 
 ## [4.155.0] - 2026-10-10
 
