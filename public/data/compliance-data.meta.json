@@ -1,30 +1,33 @@
 {
   "schemaVersion": 1,
-  "publicationId": "a509a40471e33dac399e4e5a9d3ece11391a2070892883b31304a072e20767eb",
-  "generatedAt": "2026-09-27T22:37:32+00:00",
+  "publicationId": "b8bcb1b6871406457cbd27f2e23158da448d33db361ea87a24a3c68b66b38c36",
+  "generatedAt": "2026-10-11T20:14:32+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
     "cc": "Common Criteria Portal certified + archived lists, ANSSI (CC and CSPN), ENISA EUCC",
-    "excluded": ["FIPS 140-2", "national programmes other than those listed"]
+    "excluded": [
+      "FIPS 140-2",
+      "national programmes other than those listed"
+    ]
   },
   "partitions": {
     "fips": {
       "label": "NIST CMVP \u2014 FIPS 140-3",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active",
-      "retrievedAt": "2026-09-27T21:24:53+00:00",
-      "count": 783
+      "retrievedAt": "2026-10-11T20:14:33+00:00",
+      "count": 802
     },
     "cavp": {
       "label": "NIST CAVP \u2014 ML-KEM, ML-DSA, SLH-DSA, LMS",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search",
-      "retrievedAt": "2026-09-27T22:37:37+00:00",
-      "count": 309
+      "retrievedAt": "2026-10-11T20:24:01+00:00",
+      "count": 328
     },
     "cc": {
       "label": "Common Criteria Portal",
       "sourceUrl": "https://www.commoncriteriaportal.org/products/",
-      "retrievedAt": "2026-09-27T22:07:20+00:00",
+      "retrievedAt": "2026-10-11T20:44:56+00:00",
       "count": 867
     },
     "anssi": {
