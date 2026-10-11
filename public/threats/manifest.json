@@ -594,7 +594,7 @@
       "refId": "GOV-003",
       "label": "Federal PQC procurement guidance: CISA January 2026 federal buying guidance pursuant to Executive Order 14306 (June 2025) recommends agencies procure quantum-resistant technology across designated product categories including cloud services, collaboration tools, web browsers/servers, and endpoint security. Note: EO 14306 removed the original procurement mandate but CISA's product categories list strongly encourages PQC-capable acquisitions.",
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
-      "status": "downloaded",
+      "status": "superseded",
       "file": "threats/GOV-003.pdf",
       "filename": "GOV-003.pdf",
       "sizeBytes": 471296,

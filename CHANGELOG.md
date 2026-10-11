@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.157.0] - 2026-10-11
+
+Bouncy Castle's three Migrate rows move to the current releases, the Singapore handbook draft is backed by its own saved copy, and a broken Timeline source link is repaired.
+
+### Fixed
+
+- **A broken source link on the Timeline is repaired** [view:/timeline] [persona:grc] [persona:cert-engineer]: the Australian ASD milestone on quantum-vulnerable algorithms (Diffie-Hellman, ECDH, ECDSA and RSA not approved beyond 2030) linked to a web page that no longer exists. It now links to the June 2025 Guidelines for cryptography PDF it describes.
+
+### Data
+
+- **Migrate: Bouncy Castle at the current releases** [view:/migrate] [persona:ops] [persona:developer] [persona:cert-engineer] [persona:architect]: Java moves to 1.86 (announced 15 September 2026), Java LTS to 2.73.13 (22 September) and C# .NET to 2.7.0 (7 August), each with the vendor's own announcement as the proof page. The capability text now matches those announcements: C# .NET 2.7.0 adds hybrid ML-KEM key exchange and ML-DSA and SLH-DSA authentication for TLS 1.3, Java 1.86 names post-quantum and hybrid key encapsulation across CMS/S-MIME, HPKE and TLS, and the Java LTS row no longer says composite signatures are unconfirmed. The Migrate counts do not change.
+- **Singapore Quantum-Safe Handbook: the draft is backed by the draft** [view:/library] [persona:grc] [persona:researcher]: the Library entry for the October 2025 draft for public consultation shared a saved file with the final V1 handbook of 16 July 2026. It now has its own copy of the draft; the entry for the final handbook is unchanged.
+
 ## [4.156.0] - 2026-10-10
 
 The Homomorphic Encryption module is reorganised into nine sections and gains measured key-streaming results, workshop views and sourced sections on operations, standards and market position; the Library gains thirteen primary papers behind it. The Executive's first Library suggestion shows the right document, two Migrate rows describe their certification and post-quantum status accurately, and a bundled sanitiser library is brought up to date.

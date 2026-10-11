@@ -2,7 +2,7 @@
   "generated": "2026-09-27",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
-  "csv": "timeline_10102026.csv",
+  "csv": "timeline_10112026.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -989,7 +989,7 @@
       "sha256": "0efa1ea60aaee52af878295a442c2f8eba4d9233decc57826ea8b2096b5a7370",
       "verifiedAt": "2026-09-27",
       "artefact": "SOURCE",
-      "unified": "current",
+      "unified": "converted",
       "stampedAt": "2026-10-01T03:05:56.079578+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
@@ -2870,7 +2870,7 @@
     {
       "refId": "australia-asd-legacy-asymmetric-crypto-disallowed-full-pqc-transition",
       "label": "Quantum-Vulnerable Asymmetric Algorithms (DH, ECDH, ECDSA, RSA) Not Approved Beyond 2030",
-      "url": "https://www.cyber.gov.au/resources-business-and-government/maintaining-devices-and-systems/cryptography/guidelines-for-cryptography",
+      "url": "https://www.cyber.gov.au/sites/default/files/2025-07/22.%20ISM%20-%20Guidelines%20for%20cryptography%20(June%202025).pdf",
       "status": "downloaded",
       "file": "timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
       "filename": "Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
