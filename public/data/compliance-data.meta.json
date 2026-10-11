@@ -6,10 +6,7 @@
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
     "cc": "Common Criteria Portal certified + archived lists, ANSSI (CC and CSPN), ENISA EUCC",
-    "excluded": [
-      "FIPS 140-2",
-      "national programmes other than those listed"
-    ]
+    "excluded": ["FIPS 140-2", "national programmes other than those listed"]
   },
   "partitions": {
     "fips": {
