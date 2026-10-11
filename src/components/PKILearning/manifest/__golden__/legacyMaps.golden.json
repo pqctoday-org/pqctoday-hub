@@ -698,7 +698,7 @@
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
-    "homomorphic-encryption": 1,
+    "homomorphic-encryption": 2,
     "hsm-pqc": 5,
     "hybrid-crypto": 7,
     "iam-pqc": 6,
@@ -3054,6 +3054,10 @@
       {
         "id": "fhe-hsm-flows",
         "label": "FHE + HSM Flows"
+      },
+      {
+        "id": "fhe-concepts",
+        "label": "FHE concepts, hands-on"
       }
     ],
     "hsm-pqc": [

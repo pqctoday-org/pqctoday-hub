@@ -26,7 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'fhe-hsm-custody', label: 'The HSM as FHE Key Custodian' },
     { id: 'fhe-implementations', label: 'Open-Source Implementations' },
   ],
-  workshopSteps: [{ id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' }],
+  workshopSteps: [
+    { id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' },
+    { id: 'fhe-concepts', label: 'FHE concepts, hands-on' },
+  ],
   startHere: {
     step: 'fhe-hsm-flows',
     text: 'Open the first scenario in the FHE + HSM Flows step: the data owner makes its FHE key in an HSM, encrypts locally, lets a third party compute on ciphertexts, then asks the HSM to decrypt under policy.',
