@@ -1,0 +1,6 @@
+[23:06:33] n16threshold-1: build/proto threshold 2 16
+rc=0 wall_ms=43475
+[23:07:51] n16threshold-2: build/proto threshold 2 16
+rc=0 wall_ms=44370
+[23:08:44] n16threshold32-1: build/proto threshold 2 32
+rc=0 wall_ms=45019

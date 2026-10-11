@@ -1,0 +1,15 @@
+[04:25:44Z] OpenFHE export (match128)
+[04:26:10Z] Lattigo key generation and conversion
+{
+ "bytesWritten": 13086228480,
+ "digits": 5,
+ "keys": 78,
+ "lattigo": "v6.2.0 (pinned, unmodified)",
+ "seconds": 66.915513537,
+ "towers": 32
+}
+[04:27:37Z] NTT roots: 0 of 32 primes equal; OpenFHE root is the smallest for 32
+[04:27:37Z] OpenFHE run: own keys, then bridged keys
+openfhe run: 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:35.41
+openfhe run: 	Maximum resident set size (kbytes): 26652460
+[04:28:25Z] deleted bridged key files (work/openfhe-ref/bridge-match128/keys)

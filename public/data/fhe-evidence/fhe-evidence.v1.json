@@ -4757,9 +4757,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-gate-f-baf6237/noise-3.json"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "26acd25c701b6a54c8c3b5eb0e8ca91dd714ccad19eb73551c3e8c517174e552",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-gate-f-baf6237/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-gate-f-baf6237/run.log.txt"
         },
         {
           "name": "manifest.txt",
@@ -4873,9 +4873,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-owner-baf6237/e2e.json"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "eafa36651353d9f32a8e2c6687696d64c375f99e85b04b0c01defde817f489b4",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-owner-baf6237/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-owner-baf6237/run.log.txt"
         },
         {
           "name": "manifest.txt",
@@ -4920,7 +4920,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "key rotation: the token streams one switching key from the old secret to a new one; Lattigo switches stored ciphertexts without decrypting them",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token in a container on the Mac, not hardware custody and not a board run. No step badge. The token generated a new seed itself, and the security officer streamed one key-switching key from the old secret to the new one: 2 digits × 15 limbs at the levels stored ciphertexts use, 31,457,872 B in full and 15,728,640 B of b halves in 4 calls of 8 limbs (rotate.json). Every limb matched the Lattigo rebuild (30 of 30), and both descriptor hashes matched the seeds (rotation-check.json). Lattigo switched a level-9 and a level-0 ciphertext to the new key: precision 28.7 → 27.1 and 28.6 → 27.3 bits, and the switched ciphertexts no longer decrypt under the old key. The new seed decrypted the switched result under its policy (e2e-check.json, 20.99 bits at precisionBits 20), and the security officer then retired the old seed (run.log). selftest.json is the same check with the reference key. Engine: pqctoday-hsm d2f99660 (rotation), contained in pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files: pqctoday-fhe ab8b1c3, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token in a container on the Mac, not hardware custody and not a board run. No step badge. The token generated a new seed itself, and the security officer streamed one key-switching key from the old secret to the new one: 2 digits × 15 limbs at the levels stored ciphertexts use, 31,457,872 B in full and 15,728,640 B of b halves in 4 calls of 8 limbs (rotate.json). Every limb matched the Lattigo rebuild (30 of 30), and both descriptor hashes matched the seeds (rotation-check.json). Lattigo switched a level-9 and a level-0 ciphertext to the new key: precision 28.7 → 27.1 and 28.6 → 27.3 bits, and the switched ciphertexts no longer decrypt under the old key. The new seed decrypted the switched result under its policy (e2e-check.json, 20.99 bits at precisionBits 20), and the security officer then retired the old seed (run.log.txt). selftest.json is the same check with the reference key. Engine: pqctoday-hsm d2f99660 (rotation), contained in pqctoday-hsm 46dca802, merged in pqctoday-hsm #351 (merge commit f4924a034641c44e00a8565c200cc9f7d179f895). Run files: pqctoday-fhe ab8b1c3, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -4970,9 +4970,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-rotation-ab8b1c3/selftest.json"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "4b67ad5c824b7d1242005134fda2058bf2a906078679f7e197cd9acb933e00c3",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-rotation-ab8b1c3/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-rotation-ab8b1c3/run.log.txt"
         }
       ],
       "measuredAt": "2026-10-11",
@@ -5045,7 +5045,7 @@
         "warmup": 0,
         "samples": 1,
         "distribution": "single run per configuration",
-        "peakMemoryMethod": "peak RSS 16.6 GB with OpenFHE’s own keys (match128.json); 26.7 GB in the bridged run, both key sets in memory (bridge-match128.log)"
+        "peakMemoryMethod": "peak RSS 16.6 GB with OpenFHE’s own keys (match128.json); 26.7 GB in the bridged run, both key sets in memory (bridge-match128.log.txt)"
       },
       "result": "pass",
       "status": "measured",
@@ -5067,9 +5067,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-ckks-039034f/bridge-match128.json"
         },
         {
-          "name": "bridge-match128.log",
+          "name": "bridge-match128.log.txt",
           "sha256": "8ffc3d313e68ee174e87896d3aa3c7024f73940b1609f8e93342c3e2d7ec1dcc",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-ckks-039034f/bridge-match128.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/openfhe-ckks-039034f/bridge-match128.log.txt"
         },
         {
           "name": "bridge-match128.ntt-roots.json",
@@ -5183,9 +5183,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/seal-ckks-039034f/provenance.txt"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "ab982a669452e24eed1c72a2cc3204e4f1fd9ba96e61edaf5c42c3644232fcfb",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/seal-ckks-039034f/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/seal-ckks-039034f/run.log.txt"
         }
       ],
       "measuredAt": "2026-10-11",
@@ -5369,9 +5369,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/n16threshold32-1.json"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "ad0de322e4dba064a6ffcc3ab50b3b6be2644107f5ed82cb68ce4ffba40becb8",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-threshold-2of2-8beec58/run.log.txt"
         },
         {
           "name": "environment.txt",
@@ -5571,9 +5571,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95pro-f8663c9/provenance.txt"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "3104cfe7cd03ab307793a0a6b61781ce1385a8e2fdfaed8f44358c209c01255b",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95pro-f8663c9/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95pro-f8663c9/run.log.txt"
         },
         {
           "name": "manifest.txt",
@@ -5766,9 +5766,9 @@
           "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95-f8663c9/provenance.txt"
         },
         {
-          "name": "run.log",
+          "name": "run.log.txt",
           "sha256": "1644d1cf9d88fd534070325521db3baa093dafa46183ed4e8c7bfe9e0eaf52a1",
-          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95-f8663c9/run.log"
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-metabts2-mx95-f8663c9/run.log.txt"
         },
         {
           "name": "manifest.txt",

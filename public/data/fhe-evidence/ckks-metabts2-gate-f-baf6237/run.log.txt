@@ -1,0 +1,8 @@
+[00:20:51] engine: 46dca8022f0481be21bbd63f396e3611a31740da; oracle: c21b0874159681d395b173aa6bc978eefc267cdb
+initialised /ag/pqctoday-fhe-ckks-stream-1010/reference-runs/ckks-stream-e2e/work/2026-10-11-n16-o2b-gatef-m5max/hsm (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 seed handle 134
+[00:21:19] export (limbs per call: 8)
+[00:21:30] verify
+[00:21:48] e2e (assemble, encrypt under the HSM public key, bootstrap)
+[00:22:19] HSM decrypt under policy
+released 524292 B in 0.020 s
+[00:22:24] done

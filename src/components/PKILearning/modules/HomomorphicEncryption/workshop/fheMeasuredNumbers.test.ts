@@ -8,8 +8,8 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import { EVIDENCE_MANIFEST } from '@/data/fhe/fheEvidence'
-import { CKKS_EVIDENCE } from '../data/fheCkksEvidence'
 import { FLOOD_ID2, FLOOD_ID3, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
 import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
 
@@ -111,29 +111,46 @@ describe('flood sizing numbers match the corrected runs', () => {
   })
 })
 
-describe('every record file is pinned by its sha256', () => {
-  it('the files of the new and extended records match the manifest', () => {
-    const ids = [
-      CKKS_EVIDENCE.metaBtsLmss,
-      CKKS_EVIDENCE.metaBtsLmssDepth1,
-      CKKS_EVIDENCE.metaBtsLmssDepth3,
-      CKKS_EVIDENCE.defaultLmssId2,
-      CKKS_EVIDENCE.threshold,
-      CKKS_EVIDENCE.rotation,
-    ]
-    for (const id of ids) {
-      const rec = EVIDENCE_MANIFEST.records.find((r) => r.id === id)!
-      expect(rec, id).toBeTruthy()
+describe('every evidence file the manifest lists is committed and pinned by its sha256', () => {
+  const rel = (url: string) => url.replace('https://www.pqctoday.com/data/fhe-evidence/', '')
+  const inGit = (() => {
+    try {
+      execFileSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: ROOT, stdio: 'ignore' })
+      return true
+    } catch {
+      return false
+    }
+  })()
+
+  it('each file exists and matches its sha256, for every record', () => {
+    for (const rec of EVIDENCE_MANIFEST.records)
       for (const a of rec.artifacts) {
-        // run.log files are ignored by git (*.log); the manifest still pins their hash
-        if (a.name.endsWith('.log')) continue
-        const rel = a.url.replace('https://www.pqctoday.com/data/fhe-evidence/', '')
         // eslint-disable-next-line security/detect-non-literal-fs-filename -- paths come from the committed manifest
-        const bytes = fs.readFileSync(path.join(ROOT, rel))
-        expect(crypto.createHash('sha256').update(bytes).digest('hex'), `${id} ${a.name}`).toBe(
+        const bytes = fs.readFileSync(path.join(ROOT, rel(a.url)))
+        expect(crypto.createHash('sha256').update(bytes).digest('hex'), `${rec.id} ${a.name}`).toBe(
           a.sha256
         )
       }
-    }
+  })
+
+  // .gitignore has *.log: a listed file under that pattern is silently left out of the commit
+  // and its URL would 404 after the deploy. Such files are published under a .txt name.
+  it.skipIf(!inGit)('each file is tracked by git, so a listed URL cannot 404', () => {
+    const listed = EVIDENCE_MANIFEST.records.flatMap((r) =>
+      r.artifacts.map((a) => path.join(ROOT, rel(a.url)))
+    )
+    const top = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+    }).trim()
+    const trackedAbs = new Set(
+      execFileSync('git', ['ls-files', '-z', '--full-name', '.'], { cwd: ROOT, encoding: 'utf8' })
+        .split('\0')
+        .filter(Boolean)
+        .map((f) => path.join(top, f))
+    )
+    expect(trackedAbs.size).toBeGreaterThan(0)
+    const missing = listed.filter((f) => !trackedAbs.has(f))
+    expect(missing).toEqual([])
   })
 })
