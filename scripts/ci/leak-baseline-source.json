@@ -1,0 +1,403 @@
+{
+  "version": 1,
+  "rules": [
+    "private-repo",
+    "evidence-cache",
+    "home-path",
+    "session-tmp-path",
+    "run-id",
+    "internal-log",
+    "internal-folder",
+    "agent-config-path"
+  ],
+  "files": {
+    ".env.example": {
+      "private-repo": 1
+    },
+    ".gitignore": {
+      "evidence-cache": 4,
+      "private-repo": 6
+    },
+    "CHANGELOG.md": {
+      "agent-config-path": 1,
+      "internal-folder": 2,
+      "private-repo": 6
+    },
+    "e2e/compliance-persona-overwhelm.spec.ts": {
+      "private-repo": 1
+    },
+    "e2e/migrate-persona-defaults.spec.ts": {
+      "private-repo": 1
+    },
+    "e2e/threats-persona-defaults.spec.ts": {
+      "private-repo": 1
+    },
+    "e2e/timeline-persona-region.spec.ts": {
+      "private-repo": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-boards/README.md": {
+      "private-repo": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-cpp/ML-DSA-sigVer-FIPS204/evidence.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-cpp/ML-DSA-sigVer-FIPS204/execution-environment.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-cpp/ML-KEM-encapDecap-FIPS203/evidence.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-cpp/ML-KEM-encapDecap-FIPS203/execution-environment.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-rust/ML-DSA-sigVer-FIPS204/evidence.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-rust/ML-DSA-sigVer-FIPS204/execution-environment.json": {
+      "session-tmp-path": 2
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-rust/ML-KEM-encapDecap-FIPS203/evidence.json": {
+      "session-tmp-path": 1
+    },
+    "evidence/acvp-xplat/2026-09-25-native/targets/macos-arm64-rust/ML-KEM-encapDecap-FIPS203/execution-environment.json": {
+      "session-tmp-path": 2
+    },
+    "pqc-references/regional-transition-dates/CZ-NUKIB-MIN-REQ.yaml": {
+      "private-repo": 1
+    },
+    "pqc-references/regional-transition-dates/EU-ECCG-ACM.yaml": {
+      "private-repo": 1
+    },
+    "pqc-references/regional-transition-dates/FR-ANSSI-PG-083.yaml": {
+      "private-repo": 1
+    },
+    "pqc-references/regional-transition-dates/IN-DST-NQM-ROADMAP.yaml": {
+      "private-repo": 1
+    },
+    "pqc-references/regional-transition-dates/INDEX.yaml": {
+      "evidence-cache": 2,
+      "private-repo": 4
+    },
+    "public/data/pqctoday-oscal-assessment-plan.json": {
+      "private-repo": 3
+    },
+    "public/data/rag-corpus.json": {
+      "internal-folder": 1,
+      "private-repo": 1,
+      "run-id": 1
+    },
+    "public/data/revisions.jsonl": {
+      "evidence-cache": 2,
+      "internal-log": 2,
+      "private-repo": 4,
+      "run-id": 5
+    },
+    "public/industry-landscape/evidence/manifest.json": {
+      "evidence-cache": 1,
+      "internal-folder": 1
+    },
+    "public/library/manifest.json": {
+      "internal-folder": 1
+    },
+    "public/migrate-proofs/manifest.json": {
+      "evidence-cache": 6,
+      "internal-folder": 1
+    },
+    "public/products/manifest.json": {
+      "evidence-cache": 428,
+      "home-path": 1,
+      "internal-folder": 1,
+      "private-repo": 474
+    },
+    "public/threats/claim-status.json": {
+      "run-id": 209
+    },
+    "public/threats/manifest.json": {
+      "evidence-cache": 1,
+      "internal-folder": 1
+    },
+    "public/timeline/manifest.json": {
+      "internal-folder": 1
+    },
+    "public/vendor-roadmaps/manifest.json": {
+      "internal-folder": 1
+    },
+    "public/wasm/openssh-server.js": {
+      "home-path": 2
+    },
+    "public/wasm/wasm-provenance.json": {
+      "home-path": 3,
+      "private-repo": 27
+    },
+    "scripts/ci/check-tool-version-bump.ts": {
+      "private-repo": 1
+    },
+    "scripts/ci/trust-artifacts.json": {
+      "private-repo": 1
+    },
+    "scripts/ci/wasm-build-inputs.test.ts": {
+      "private-repo": 1
+    },
+    "scripts/ci/wasm-build-inputs.ts": {
+      "private-repo": 2
+    },
+    "scripts/entropy-90b/convert-jent-raw.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "scripts/entropy-90b/package-device-datasets.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "scripts/entropy-90b/parity-report.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "scripts/entropy-90b/results/node-measurements-0924.jsonl": {
+      "session-tmp-path": 8
+    },
+    "scripts/entropy-90b/results/parity-report-0924.md": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/__tests__/corpus-trust-invariants.test.ts": {
+      "evidence-cache": 4,
+      "private-repo": 4
+    },
+    "src/components/Algorithms/AlgorithmEntryStrip.driftguard.test.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/components/Algorithms/IndustryLandscapeView.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Compliance/cmvpDetails.test.ts": {
+      "private-repo": 1
+    },
+    "src/components/Compliance/cmvpDetails.ts": {
+      "private-repo": 1
+    },
+    "src/components/Layout/MainLayout.test.tsx": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/APISecurityJWT/jwtUtils.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/CcEuccCertification/data/ccEuData.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/CcEuccCertification/data/regionalSchemesData.ts": {
+      "run-id": 2
+    },
+    "src/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator.tsx": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/CryptoProductCertification/manifest.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/EMVPaymentPQC/data/bankingData.ts": {
+      "evidence-cache": 1
+    },
+    "src/components/PKILearning/modules/Entropy/workshop/evidenceLab/evidenceLabData.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/HybridCrypto/services/hpkeService.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/KmsPqc/workshop/EnvelopeEncryptionDemo.tsx": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/PciCertification/data/pciListingFixture.ts": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/SecureBootPQC/workshop/FirmwareSigningMigrator.tsx": {
+      "private-repo": 1
+    },
+    "src/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Patents/PatentDetail.test.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/HsmClassicalSignPanel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/HsmHashingPanel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/HsmKdfPanel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/HsmKeyAgreementPanel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/HsmSymmetricPanel.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/hsm/StatefulHashSignPanels.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Playground/tabs/softhsm/SoftHsmUI.tsx": {
+      "private-repo": 1
+    },
+    "src/components/Report/ReportView.share.test.tsx": {
+      "private-repo": 1
+    },
+    "src/components/ui/MarkdownView.tsx": {
+      "private-repo": 1
+    },
+    "src/data/acvp/cose-sphincs-plus-10-examples.json": {
+      "private-repo": 1
+    },
+    "src/data/acvp/rfc7515-a3-es256-jws.json": {
+      "private-repo": 1
+    },
+    "src/data/algorithmEntryIntents.tsx": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/data/archive/library_#.csv": {
+      "evidence-cache": 11,
+      "internal-folder": 11,
+      "internal-log": 11,
+      "private-repo": 31,
+      "run-id": 11
+    },
+    "src/data/archive/pqc_complete_algorithm_reference_#.csv": {
+      "private-repo": 14
+    },
+    "src/data/archive/pqc_product_catalog_#.csv": {
+      "evidence-cache": 5,
+      "home-path": 1,
+      "run-id": 649
+    },
+    "src/data/archive/quantum_threats_hsm_industries_#.csv": {
+      "evidence-cache": 2,
+      "run-id": 90
+    },
+    "src/data/archive/role_board_content_#.csv": {
+      "run-id": 3
+    },
+    "src/data/archive/timeline_#.csv": {
+      "evidence-cache": 1
+    },
+    "src/data/archive/trusted_sources_#.csv": {
+      "run-id": 4
+    },
+    "src/data/cswp39Headings.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/data/forceClusterGraph.ts": {
+      "private-repo": 1
+    },
+    "src/data/frameworkPhases.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/data/kat/gsma_suci_ts33501_annex_c.json": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/data/learningPersonas.ts": {
+      "private-repo": 1
+    },
+    "src/data/library_#.csv": {
+      "evidence-cache": 11,
+      "internal-folder": 11,
+      "internal-log": 11,
+      "private-repo": 31,
+      "run-id": 11
+    },
+    "src/data/loaderUtils.ts": {
+      "private-repo": 1
+    },
+    "src/data/moduleCitationDeclarations.local.test.ts": {
+      "private-repo": 1
+    },
+    "src/data/moduleStandardsOrdering.driftguard.test.ts": {
+      "private-repo": 3
+    },
+    "src/data/pqcAlgorithmsData.ts": {
+      "private-repo": 1
+    },
+    "src/data/pqc_complete_algorithm_reference_#.csv": {
+      "private-repo": 14
+    },
+    "src/data/pqc_product_catalog_#.csv": {
+      "evidence-cache": 5,
+      "home-path": 1,
+      "run-id": 647
+    },
+    "src/data/pqc_software_category_priority_matrix.csv": {
+      "private-repo": 63
+    },
+    "src/data/product-extractions/csc_018_extractions_#.json": {
+      "home-path": 1
+    },
+    "src/data/product-extractions/csc_018_extractions_#.md": {
+      "home-path": 1
+    },
+    "src/data/quantum_threats_hsm_industries_#.csv": {
+      "evidence-cache": 2,
+      "run-id": 90
+    },
+    "src/data/roiBaselines.ts": {
+      "evidence-cache": 4,
+      "private-repo": 5
+    },
+    "src/data/role_board_content_#.csv": {
+      "run-id": 3
+    },
+    "src/data/timeline_#.csv": {
+      "evidence-cache": 1
+    },
+    "src/data/trusted_sources_#.csv": {
+      "run-id": 4
+    },
+    "src/data/validation/nativeConformance.ts": {
+      "private-repo": 1
+    },
+    "src/data/validation/validationCaseManifest.ts": {
+      "evidence-cache": 1,
+      "private-repo": 1
+    },
+    "src/data/validation/vector-manifest.json": {
+      "private-repo": 6
+    },
+    "src/services/chat/factVerification.ts": {
+      "private-repo": 1
+    },
+    "src/services/search/embeddingRetrieval.ts": {
+      "private-repo": 1
+    },
+    "src/simulation/frameworkCoverage.ts": {
+      "private-repo": 1
+    },
+    "src/types/CveTypes.ts": {
+      "private-repo": 1
+    },
+    "src/utils/breachCostModel.ts": {
+      "private-repo": 1
+    },
+    "src/utils/katRunner.ts": {
+      "private-repo": 1
+    },
+    "src/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes.ts": {
+      "private-repo": 1
+    },
+    "src/wasm/pkcs11ConformanceRunner/profileConditions.ts": {
+      "private-repo": 1
+    },
+    "src/wasm/softhsm/mechanismInventory.ts": {
+      "private-repo": 1
+    },
+    "src/wasm/softhsm/pqc.ts": {
+      "private-repo": 1
+    }
+  }
+}

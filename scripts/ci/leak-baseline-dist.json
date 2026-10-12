@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "rules": [
+    "private-repo",
+    "evidence-cache",
+    "home-path",
+    "session-tmp-path",
+    "run-id",
+    "internal-log",
+    "internal-folder",
+    "agent-config-path"
+  ],
+  "files": {
+    "assets/App-#.js": {
+      "agent-config-path": 1,
+      "internal-folder": 2,
+      "private-repo": 6
+    },
+    "assets/MobileNextStepCard-#.js": {
+      "evidence-cache": 22,
+      "internal-folder": 22,
+      "internal-log": 22,
+      "private-repo": 62,
+      "run-id": 22
+    },
+    "assets/index-#.js": {
+      "evidence-cache": 10,
+      "home-path": 2,
+      "run-id": 1294
+    },
+    "assets/pqc_complete_algorithm_reference_#-#.js": {
+      "private-repo": 14
+    },
+    "assets/timelineData-#.js": {
+      "evidence-cache": 6,
+      "run-id": 181
+    },
+    "assets/trustScoreData-#.js": {
+      "evidence-cache": 1,
+      "home-path": 1,
+      "internal-folder": 1,
+      "private-repo": 1
+    },
+    "assets/trustedSourceXrefData-#.js": {
+      "run-id": 8
+    },
+    "changelog.html": {
+      "private-repo": 1
+    },
+    "changelog/index.html": {
+      "private-repo": 1
+    },
+    "data/pqctoday-oscal-assessment-plan.json": {
+      "private-repo": 3
+    },
+    "data/rag-corpus.json": {
+      "internal-folder": 1,
+      "private-repo": 1,
+      "run-id": 1
+    },
+    "data/revisions.jsonl": {
+      "evidence-cache": 2,
+      "internal-log": 2,
+      "private-repo": 4,
+      "run-id": 5
+    },
+    "industry-landscape/evidence/manifest.json": {
+      "evidence-cache": 1,
+      "internal-folder": 1
+    },
+    "library/manifest.json": {
+      "internal-folder": 1
+    },
+    "migrate-proofs/manifest.json": {
+      "evidence-cache": 6,
+      "internal-folder": 1
+    },
+    "products/manifest.json": {
+      "evidence-cache": 428,
+      "home-path": 1,
+      "internal-folder": 1,
+      "private-repo": 474
+    },
+    "threats/claim-status.json": {
+      "run-id": 209
+    },
+    "threats/manifest.json": {
+      "evidence-cache": 1,
+      "internal-folder": 1
+    },
+    "timeline/manifest.json": {
+      "internal-folder": 1
+    },
+    "vendor-roadmaps/manifest.json": {
+      "internal-folder": 1
+    },
+    "wasm/openssh-server.js": {
+      "home-path": 2
+    },
+    "wasm/wasm-provenance.json": {
+      "home-path": 3,
+      "private-repo": 27
+    }
+  }
+}

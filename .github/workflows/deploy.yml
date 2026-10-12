@@ -80,6 +80,12 @@ jobs:
         run: npm run build
       # -------------------------------------------------------------------------
 
+      # Public-boundary scan of exactly what is about to be published (both the
+      # CI artifact and the dispatch rebuild). Runs before the live boot chunks
+      # are copied in: those are earlier published builds, not new content.
+      - name: Public-boundary scan (built site)
+        run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree dist --baseline scripts/ci/leak-baseline-dist.json --mode enforce
+
       # GitHub's edge serves the previous index.html for up to 10 minutes after a
       # deploy; keep the live boot chunks it references so it can still start.
       # Reads the live sw.js and copies missing chunks into dist/assets/.
