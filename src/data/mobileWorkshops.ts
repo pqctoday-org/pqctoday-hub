@@ -27,6 +27,10 @@
  * cards). Three single-page workshops (digital-assets, mls-group-messaging,
  * tls-basics) have no step nav on the phone and stay off until walked by
  * hand. Evidence: priv `round9-records/wave3-phone-probe-4.107.0.json`.
+ *
+ * 2026-10-12: homomorphic-encryption joined (owner decision). Probed at 390 px with the phone
+ * shell on: the Workshop tab mounts; all eight flow scenarios and all six concept views open and
+ * work; no horizontal overflow, no console errors, no serious axe violation on the new views.
  */
 export const MOBILE_WORKSHOP_READY: ReadonlySet<string> = new Set([
   '5g-security',
@@ -55,6 +59,7 @@ export const MOBILE_WORKSHOP_READY: ReadonlySet<string> = new Set([
   'exec-quantum-impact',
   'government-defense-pqc',
   'healthcare-pqc',
+  'homomorphic-encryption',
   'hsm-pqc',
   'hybrid-crypto',
   'iam-pqc',
