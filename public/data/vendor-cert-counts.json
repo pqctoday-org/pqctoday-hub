@@ -7,6 +7,13 @@
     "total": 95
   },
   {
+    "vendor": "Amazon Web Services, Inc.",
+    "fips": 11,
+    "acvp": 49,
+    "cc": 0,
+    "total": 60
+  },
+  {
     "vendor": "Cisco Systems, Inc.",
     "fips": 21,
     "acvp": 2,
@@ -28,18 +35,11 @@
     "total": 57
   },
   {
-    "vendor": "Amazon Web Services, Inc.",
-    "fips": 11,
-    "acvp": 41,
-    "cc": 0,
-    "total": 52
-  },
-  {
     "vendor": "Apple Inc.",
-    "fips": 28,
-    "acvp": 3,
+    "fips": 27,
+    "acvp": 6,
     "cc": 19,
-    "total": 50
+    "total": 52
   },
   {
     "vendor": "THALES DIS FRANCE SA",
@@ -77,17 +77,17 @@
     "total": 28
   },
   {
-    "vendor": "Palo Alto Networks, Inc.",
-    "fips": 22,
-    "acvp": 0,
-    "cc": 3,
-    "total": 25
-  },
-  {
     "vendor": "Juniper Networks, Inc.",
     "fips": 20,
     "acvp": 0,
     "cc": 4,
+    "total": 24
+  },
+  {
+    "vendor": "Palo Alto Networks, Inc.",
+    "fips": 21,
+    "acvp": 0,
+    "cc": 3,
     "total": 24
   },
   {
@@ -105,6 +105,13 @@
     "total": 21
   },
   {
+    "vendor": "Qualcomm Technologies, Inc.",
+    "fips": 17,
+    "acvp": 0,
+    "cc": 0,
+    "total": 17
+  },
+  {
     "vendor": "Ricoh Company, Ltd.",
     "fips": 0,
     "acvp": 0,
@@ -115,13 +122,6 @@
     "vendor": "Chainguard, Inc.",
     "fips": 3,
     "acvp": 12,
-    "cc": 0,
-    "total": 15
-  },
-  {
-    "vendor": "Qualcomm Technologies, Inc.",
-    "fips": 15,
-    "acvp": 0,
     "cc": 0,
     "total": 15
   },
@@ -147,6 +147,20 @@
     "total": 14
   },
   {
+    "vendor": "Google, LLC",
+    "fips": 10,
+    "acvp": 3,
+    "cc": 0,
+    "total": 13
+  },
+  {
+    "vendor": "Thales",
+    "fips": 5,
+    "acvp": 6,
+    "cc": 2,
+    "total": 13
+  },
+  {
     "vendor": "SUSE LLC",
     "fips": 10,
     "acvp": 0,
@@ -168,6 +182,13 @@
     "total": 13
   },
   {
+    "vendor": "Hewlett Packard Enterprise",
+    "fips": 7,
+    "acvp": 1,
+    "cc": 4,
+    "total": 12
+  },
+  {
     "vendor": "Thales Trusted Cyber Technologies",
     "fips": 2,
     "acvp": 10,
@@ -182,17 +203,10 @@
     "total": 12
   },
   {
-    "vendor": "Google, LLC",
-    "fips": 8,
-    "acvp": 3,
-    "cc": 0,
-    "total": 11
-  },
-  {
-    "vendor": "Hewlett Packard Enterprise",
-    "fips": 6,
-    "acvp": 1,
-    "cc": 4,
+    "vendor": "Ciena Corporation",
+    "fips": 7,
+    "acvp": 2,
+    "cc": 2,
     "total": 11
   },
   {
@@ -266,10 +280,10 @@
     "total": 10
   },
   {
-    "vendor": "Ciena Corporation",
-    "fips": 5,
-    "acvp": 2,
-    "cc": 2,
+    "vendor": "Intel Corporation",
+    "fips": 4,
+    "acvp": 5,
+    "cc": 0,
     "total": 9
   },
   {
@@ -313,13 +327,6 @@
     "acvp": 0,
     "cc": 9,
     "total": 9
-  },
-  {
-    "vendor": "Thales",
-    "fips": 4,
-    "acvp": 2,
-    "cc": 2,
-    "total": 8
   },
   {
     "vendor": "NXP Semiconductors Netherlands N.V.",
@@ -378,13 +385,6 @@
     "total": 8
   },
   {
-    "vendor": "Intel Corporation",
-    "fips": 3,
-    "acvp": 4,
-    "cc": 0,
-    "total": 7
-  },
-  {
     "vendor": "Legion of the Bouncy Castle Inc.",
     "fips": 2,
     "acvp": 5,
@@ -410,6 +410,13 @@
     "fips": 0,
     "acvp": 0,
     "cc": 7,
+    "total": 7
+  },
+  {
+    "vendor": "Google LLC",
+    "fips": 2,
+    "acvp": 2,
+    "cc": 3,
     "total": 7
   },
   {
@@ -445,13 +452,6 @@
     "fips": 1,
     "acvp": 5,
     "cc": 0,
-    "total": 6
-  },
-  {
-    "vendor": "Google LLC",
-    "fips": 1,
-    "acvp": 2,
-    "cc": 3,
     "total": 6
   },
   {
@@ -570,6 +570,13 @@
     "vendor": "PQSecure Technologies, LLC",
     "fips": 0,
     "acvp": 4,
+    "cc": 0,
+    "total": 4
+  },
+  {
+    "vendor": "wolfSSL Inc.",
+    "fips": 3,
+    "acvp": 1,
     "cc": 0,
     "total": 4
   },
@@ -763,13 +770,6 @@
     "total": 3
   },
   {
-    "vendor": "wolfSSL Inc.",
-    "fips": 2,
-    "acvp": 1,
-    "cc": 0,
-    "total": 3
-  },
-  {
     "vendor": "BULL",
     "fips": 0,
     "acvp": 0,
@@ -858,6 +858,13 @@
     "fips": 1,
     "acvp": 0,
     "cc": 2,
+    "total": 3
+  },
+  {
+    "vendor": "AudioCodes Ltd.",
+    "fips": 3,
+    "acvp": 0,
+    "cc": 0,
     "total": 3
   },
   {
@@ -1029,7 +1036,7 @@
     "total": 2
   },
   {
-    "vendor": "Center for Development of Telematics",
+    "vendor": "Centre for Development of Telematics",
     "fips": 0,
     "acvp": 2,
     "cc": 0,
@@ -1074,6 +1081,13 @@
     "vendor": "Sansec Technology Co., Ltd.",
     "fips": 1,
     "acvp": 1,
+    "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "The OpenSSL Corporation",
+    "fips": 0,
+    "acvp": 2,
     "cc": 0,
     "total": 2
   },
@@ -1372,6 +1386,13 @@
     "total": 2
   },
   {
+    "vendor": "Skydio, Inc.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 0,
+    "total": 2
+  },
+  {
     "vendor": "Sunhillo Corporation",
     "fips": 2,
     "acvp": 0,
@@ -1394,13 +1415,6 @@
   },
   {
     "vendor": "Apple, Inc.",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
-    "vendor": "AudioCodes Ltd.",
     "fips": 2,
     "acvp": 0,
     "cc": 0,
@@ -1771,6 +1785,13 @@
     "total": 2
   },
   {
+    "vendor": "TrellisWare Technologies, Inc.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 0,
+    "total": 2
+  },
+  {
     "vendor": "Synology Inc.",
     "fips": 0,
     "acvp": 2,
@@ -1961,13 +1982,6 @@
   },
   {
     "vendor": "Terra Quantum Inc.",
-    "fips": 0,
-    "acvp": 1,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "The OpenSSL Corporation",
     "fips": 0,
     "acvp": 1,
     "cc": 0,
@@ -2703,13 +2717,6 @@
   },
   {
     "vendor": "Tetrate.io, Inc",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Skydio, Inc.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -3787,13 +3794,6 @@
     "total": 1
   },
   {
-    "vendor": "Crestron Electronics, Inc.",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
     "vendor": "Adva Network Security Gmbh Hermann-Dorner-Allee 9112489 Berlin, Germany",
     "fips": 0,
     "acvp": 0,
@@ -4284,13 +4284,6 @@
     "total": 1
   },
   {
-    "vendor": "TrellisWare Technologies, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Loadbalancer.org Ltd",
     "fips": 1,
     "acvp": 0,
@@ -4372,6 +4365,55 @@
     "fips": 0,
     "acvp": 0,
     "cc": 1,
+    "total": 1
+  },
+  {
+    "vendor": "MolecuLight Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "L3Harris Technologies, Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Infinera Corporation (Nokia)",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Singlewire Software, LLC",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Motorola Solutions Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Crossbar, Inc.",
+    "fips": 0,
+    "acvp": 1,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Provision",
+    "fips": 0,
+    "acvp": 1,
+    "cc": 0,
     "total": 1
   }
 ]

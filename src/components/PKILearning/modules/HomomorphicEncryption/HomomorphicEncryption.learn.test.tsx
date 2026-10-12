@@ -4,8 +4,8 @@
  * in learning order (matching the manifest), a "Key takeaways" box in each,
  * one grouped References list, and the eight exercises.
  */
-import { describe, it, expect } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { Introduction } from './components/Introduction'
@@ -15,7 +15,12 @@ import {
   FheStandardsSection,
   FheUseCasesSection,
 } from './components/FheContextSections'
-import { FheFundamentalsSection, FheSchemesSection } from './components/FheSections'
+import {
+  FheCustodySection,
+  FheFundamentalsSection,
+  FheImplementationsSection,
+  FheSchemesSection,
+} from './components/FheSections'
 import { FHE_REFERENCE_GROUPS, TAKEAWAYS } from './data/fheContextData'
 import { FHE_SCHEMES } from './data/fheData'
 import manifest from './manifest'
@@ -94,5 +99,86 @@ describe('HomomorphicEncryption exercises', () => {
       expect(within(card).getByRole('button', { name: /Open Learn/ })).toBeInTheDocument()
     }
     expect(screen.getAllByRole('button', { name: /Open Workshop/ })).toHaveLength(5)
+  })
+})
+
+describe('HomomorphicEncryption Learn tab: links to the key-lifecycle views', () => {
+  it('the rotation and threshold cards open their view in the concepts step and the flow diagrams', () => {
+    const open = vi.fn()
+    render(
+      <MemoryRouter>
+        <FheCustodySection onOpenLifecycleView={open} />
+      </MemoryRouter>
+    )
+    // eslint-disable-next-line testing-library/no-node-access -- the anchors are element ids
+    expect(document.getElementById('fhe-key-rotation')).toBeInTheDocument()
+    const rot = screen.getByRole('group', { name: 'Open the key-rotation view in the workshop' })
+    fireEvent.click(within(rot).getByRole('button', { name: /Interactive view/ }))
+    fireEvent.click(within(rot).getByRole('button', { name: /Flow diagram/ }))
+    const shared = screen.getByRole('group', {
+      name: 'Open the shared-decryption view in the workshop',
+    })
+    fireEvent.click(within(shared).getByRole('button', { name: /Interactive view/ }))
+    fireEvent.click(within(shared).getByRole('button', { name: /Flow diagram/ }))
+    expect(open.mock.calls).toEqual([
+      ['rotation', 'concepts'],
+      ['rotation', 'flows'],
+      ['shared', 'concepts'],
+      ['shared', 'flows'],
+    ])
+  })
+
+  it('the reference-runs card links to both views, and shows nothing without a handler', () => {
+    const open = vi.fn()
+    const { unmount } = render(
+      <MemoryRouter>
+        <FheImplementationsSection onOpenLifecycleView={open} />
+      </MemoryRouter>
+    )
+    // eslint-disable-next-line testing-library/no-node-access -- the anchors are element ids
+    expect(document.getElementById('fhe-reference-runs')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Key rotation view/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Shared decryption view/ }))
+    expect(open.mock.calls).toEqual([
+      ['rotation', 'concepts'],
+      ['shared', 'concepts'],
+    ])
+    unmount()
+    render(
+      <MemoryRouter>
+        <FheImplementationsSection />
+      </MemoryRouter>
+    )
+    expect(screen.queryByRole('button', { name: /Key rotation view/ })).not.toBeInTheDocument()
+  })
+})
+
+describe('HomomorphicEncryption Learn tab: flooded releases at the corrected sizing', () => {
+  it('section 2 states the Mac and board results, the thin margin and the earlier width', () => {
+    render(
+      <MemoryRouter>
+        <FheSchemesSection />
+      </MemoryRouter>
+    )
+    const text = document.body.textContent ?? ''
+    for (const v of [
+      '11.10',
+      '11.25',
+      '11.34',
+      '11.37',
+      '11.20',
+      '11.26',
+      '11.19',
+      '11.14',
+      '11.32',
+    ])
+      expect(text, v).toContain(v)
+    expect(text).toContain('a margin of only about 1.1–1.4 bits')
+    expect(text).toContain('−12.82')
+    expect(text).toContain('superseded')
+    expect(text).not.toMatch(/not yet measured on the boards/)
+    // the linked evidence records exist
+    for (const name of ['depth 0', 'depth 1', 'depth 3', 'MX95 Pro', 'MX95'])
+      expect(screen.getAllByRole('link', { name }).length).toBeGreaterThan(0)
   })
 })

@@ -18,6 +18,18 @@ import {
   KeyTakeaways,
 } from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
+import { Button } from '@/components/ui/button'
+import type { LifecycleView, OpenLifecycleView } from '../workshop/fheRotationSharedData'
+import {
+  FLOOD_FORMULA,
+  FLOOD_ID2,
+  FLOOD_ID3,
+  FLOOD_ID3_BOARDS,
+  FLOOD_POLICY,
+  GATE_F_BAR_BITS,
+  SAMPLER_SENTENCE,
+  WIDTH_SHORTFALL_BITS,
+} from '../data/fheFloodSizing'
 
 /** Compensating controls single-HSM decryption relies on (it trusts every caller allowed to decrypt). */
 const DECRYPT_CONTROLS: { area: string; control: string; limits: string }[] = [
@@ -75,35 +87,41 @@ const THRESHOLD_VALUE_LIMITS: { topic: string; value: string; limit: string }[] 
     value:
       'No party ever holds the whole key; one stolen token yields a share that is useless alone',
     limit:
-      'Partial decryptions leak like whole keys unless each is flooded (Checri et al. 2024; for TFHE flooding needs a different technique, Bootland et al. 2025)',
+      'Partial decryptions leak like whole keys unless each is flooded (Checri et al. 2024; for TFHE flooding needs a different technique, Bootland et al. 2025). Measured 2-of-2 at CKKS default parameters: a 2^31.6 flood, the width the earlier sizing gave one token, leaves −1.6 to −1.9 bits, the same failure as with one token; the corrected width is wider (2^43.1), so flooded threshold releases at these parameters fail by more',
   },
   {
     topic: 'Compromised requester',
     value: 'A crafted request needs every required party to answer',
     limit:
-      'Holds only if the parties answer to different people or systems; one application holding every credential brings it back to single-HSM trust',
+      'Holds only if the parties answer to different people or systems; one application holding every credential brings it back to single-HSM trust. Measured: a crafted request sent to one party returns that party’s whole share (65,536 of 65,536 coefficients, even with flooding), so each token needs its own independent approval',
   },
   {
     topic: 'FHE server',
     value:
       'Computes unchanged: one joint public key and one evaluation-key set, with the same sizes and costs',
     limit:
-      'A joint secret has a larger norm (more noise, possibly larger moduli); sparse-secret bootstrapping parameters may not carry over, which can force other bootstrapping parameters or an interactive refresh with the parties online',
+      'A joint secret has a larger norm (more noise, possibly larger moduli). Measured 2-of-2 with Lattigo at the default bootstrappable set: the joint keys bootstrap at 24.3–24.5 bits, against 24.9 for one party; the weight of each party’s sparse share is a security parameter still to be settled',
   },
   {
     topic: 'Key generation',
     value: 'Each party can produce its share of every evaluation key',
     limit:
-      'Shares must be combined (about twice the transfer with two parties unless combined near them); relinearization keys need two rounds; protocol rounds must not be retried',
+      'Shares must be combined: measured 4.10 GB uploaded per party for the CKKS set (3.94 GB from one token), plus a 157 MB download, because relinearization keys need two rounds; protocol rounds must not be retried',
   },
   {
     topic: 'Operations',
     value: '—',
     limit: 'Every required party must be online; rotation needs more ceremony',
   },
+  {
+    topic: 'More than two parties (t-of-N)',
+    value: 'Some parties may be offline',
+    limit:
+      'Key-recovery attacks have been reported on the t-of-N threshold decryption of Mouchet et al., the scheme behind Lattigo’s t-of-N support (Colin de Verdière, Passelègue & Stehlé, IACR ePrint 2026/031, a preprint that also proposes a fix); whether they apply to a fixed 2-of-2 additive split has not been established',
+  },
 ]
 
-/** Streamed CKKS key set, one core each, 8 limbs (4 MB) per call (evidence records 2026-10-10). */
+/** Streamed CKKS key set, 8 limbs (4 MB) per call (evidence records 2026-10-10 and 2026-10-11). */
 const CKKS_STREAM_MEASURED: {
   device: string
   generation: string
@@ -121,7 +139,7 @@ const CKKS_STREAM_MEASURED: {
     decrypt: '—',
   },
   {
-    device: 'MX95, one Cortex-A55 core',
+    device: 'MX95, one Cortex-A55 core, before (2026-10-10)',
     generation: '473.4 s (8.3 MB/s)',
     streamed: '497.7 s',
     peak: '16.7 MiB',
@@ -129,23 +147,53 @@ const CKKS_STREAM_MEASURED: {
     decrypt: '0.148 s',
   },
   {
-    device: 'MX95 Pro, one Cortex-A55 core',
+    device: 'MX95 Pro, one Cortex-A55 core, before (2026-10-10)',
     generation: '450.9 s (8.7 MB/s)',
     streamed: '478.0 s',
     peak: '15.7 MiB',
     bootstrap: '7.3 s',
     decrypt: '0.132 s',
   },
+  {
+    device: 'MX95, one Cortex-A55 core, cached generator (2026-10-11)',
+    generation: '213.8 s (18.4 MB/s)',
+    streamed: 'not run',
+    peak: '64.5 MiB',
+    bootstrap: '—',
+    decrypt: '—',
+  },
+  {
+    device: 'MX95 Pro, six Cortex-A55 cores, cached generator (2026-10-11)',
+    generation: '84.0 s (46.9 MB/s); 72.4 s (54.4 MB/s) at 30 limbs per call',
+    streamed: 'not run',
+    peak: '94.4 MiB; 123.6 MiB at 30 limbs',
+    bootstrap: '—',
+    decrypt: '—',
+  },
 ]
 
-/** Chunk size against time and token memory, full key set, one core (evidence records 2026-10-10). */
-const CKKS_CHUNK_SWEEP: { limbs: string; mac: string; mx95: string }[] = [
-  { limbs: '1 limb (512 KB), 7,502 calls', mac: '93.6 s · 12.2 MiB', mx95: '974.6 s · 14.1 MiB' },
-  { limbs: '8 limbs (4 MB), 1,001 calls', mac: '42.0 s · 15.2 MiB', mx95: '473.4 s · 16.7 MiB' },
+/**
+ * Chunk size against time and token memory, full key set, one core (evidence records 2026-10-10;
+ * the generator-cache column 2026-10-11).
+ */
+const CKKS_CHUNK_SWEEP: { limbs: string; mac: string; mx95: string; mx95Cached: string }[] = [
+  {
+    limbs: '1 limb (512 KB), 7,502 calls',
+    mac: '93.6 s · 12.2 MiB',
+    mx95: '974.6 s · 14.1 MiB',
+    mx95Cached: '415.8 s · 13.6 MiB',
+  },
+  {
+    limbs: '8 limbs (4 MB), 1,001 calls',
+    mac: '42.0 s · 15.2 MiB',
+    mx95: '473.4 s · 16.7 MiB',
+    mx95Cached: '401.0 s · 16.2 MiB',
+  },
   {
     limbs: '30 limbs (one digit), 251 calls',
     mac: '35.8 s · 40.0 MiB',
     mx95: '416.5 s · 42.6 MiB',
+    mx95Cached: '398.0 s · 42.4 MiB',
   },
 ]
 
@@ -231,7 +279,7 @@ const FHE_POLICY_PARAMS: { param: string; scope: string; meaning: string }[] = [
     param: 'statSecurityBits',
     scope: 'CKKS (v2)',
     meaning:
-      'Default 30; sizes the flooding noise together with the maximum number of decryptions and a measured noise bound of the parameter set',
+      'Default 30; sizes the flooding noise together with the maximum number of decryptions, the replica limit of the key’s replication policy and a measured noise bound of the parameter set',
   },
 ]
 
@@ -463,13 +511,78 @@ export const FheSchemesSection: React.FC = () => (
           the scaling modulus size from that estimate.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <strong>Measured cost at default parameters:</strong> with the noise above, flooding sized
-          for 30 bits of statistical security over 10,000 releases needs a noise width of about
-          2^31.6. At the default scale of 2^40 that leaves no correct bits (−1.3), so with these
-          parameters flooded releases to third parties do not work (
-          <EvidenceCite of="gateF">noise study</EvidenceCite>). They need a larger scale and a
-          larger first modulus, with security and bootstrapping parameters re-estimated. Releases to
-          the owner, which are rounded and not flooded, are not affected.
+          <strong>The width the pqctoday HSM simulation uses</strong> follows the paper exactly
+          (Definition 18 and Corollary 2, <span className="font-mono">σ = √(24qn)·2^(s/2)</span>,
+          noise added to the decrypted ring element, the per-coefficient bound{' '}
+          <span className="font-mono">B</span> in the role of the ∞-norm bound{' '}
+          <span className="font-mono">t</span>): <span className="font-mono">{FLOOD_FORMULA}</span>,
+          with <span className="font-mono">n</span> the ring degree and{' '}
+          <span className="font-mono">q</span> the number of releases the whole lineage of a key may
+          make, (replicas + 1) × maximum decryptions, because every replica keeps its own counter. A
+          copy of a key made for another token must keep the same replica limit as its source, so
+          every copy computes the same width. Two-prime parameter sets may flood up to σ = 2^80,
+          one-prime sets up to 2^62. The first version was {WIDTH_SHORTFALL_BITS} bits narrower than
+          this at n = 2^16 (it left out the √24 and √n factors) and counted one copy of the key;
+          that is corrected (pqctoday-hsm #355).
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>Measured cost at default parameters:</strong> with the policy used for the
+          measurements (30 bits of statistical security, {FLOOD_POLICY.maxDecrypts} releases, four
+          replicas, so <span className="font-mono">q = {FLOOD_POLICY.q}</span>) the default set
+          needs a noise width of about 2^{FLOOD_ID2.sigmaLog2}. At the default scale of 2^40 the
+          noise-study emulation leaves <strong>{FLOOD_ID2.emulatedBits} bits</strong>, no correct
+          bits, and the token refuses the release because the decoded noise is above the policy’s
+          value range (<EvidenceCite of="defaultLmssId2">default-set run</EvidenceCite>). The
+          earlier, narrower width (2^{FLOOD_ID2.beforeSigmaLog2}) already left{' '}
+          {FLOOD_ID2.beforeBits} bits (<EvidenceCite of="gateF">earlier noise study</EvidenceCite>).
+          So with these parameters flooded releases to third parties do not work. They need a larger
+          scale and a larger first modulus, with security and bootstrapping parameters re-estimated.
+          Releases to the owner, which are rounded and not flooded, are not affected.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>A second parameter set passes, by a thin margin:</strong> the limit is how precise
+          one bootstrap can be, so the second set raises bootstrapping precision instead: two
+          bootstraps per refresh (META-BTS, Bae, Cheon, Cho, Kim &amp; Kim, IACR ePrint 2022/1167)
+          at scale 2^90, with the result released over two primes. Measured end to end on a Mac with
+          the software token and the corrected width (σ = 2^{FLOOD_ID3.sigmaLog2}), a flooded
+          release kept <strong>{FLOOD_ID3.depth0} bits</strong> straight after a refresh (
+          <EvidenceCite of="metaBtsLmss">depth 0</EvidenceCite>),{' '}
+          <strong>{FLOOD_ID3.depth1} bits</strong> after one multiplication (
+          <EvidenceCite of="metaBtsLmssDepth1">depth 1</EvidenceCite>) and{' '}
+          <strong>{FLOOD_ID3.depth3} bits</strong> after three (
+          <EvidenceCite of="metaBtsLmssDepth3">depth 3</EvidenceCite>), against a bar of{' '}
+          {GATE_F_BAR_BITS} bits. That is a margin of only about {FLOOD_ID3.margin} bits, and it is
+          set by the paper’s exact sizing, not by rounding in our implementation. An unflooded owner
+          release on this set keeps 31.0 bits (
+          <EvidenceCite of="metaBtsOwner">owner run</EvidenceCite>). The set costs about twice the
+          bootstrap time per refresh, 3 multiplications between refreshes instead of 9, and a 12 %
+          larger key set. The default set stays in use for owner releases.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>On the boards too:</strong> with the token on the board and the release flooded at
+          the corrected width, the MX95 Pro kept <strong>{FLOOD_ID3_BOARDS.mx95pro.depth0}</strong>{' '}
+          / <strong>{FLOOD_ID3_BOARDS.mx95pro.depth1}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95pro.depth3} bits</strong> (
+          <EvidenceCite of="metaBtsLmssMx95pro">MX95 Pro</EvidenceCite>) and the MX95{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth0}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth1}</strong> /{' '}
+          <strong>{FLOOD_ID3_BOARDS.mx95.depth3} bits</strong> (
+          <EvidenceCite of="metaBtsLmssMx95">MX95</EvidenceCite>) at program depth 0 / 1 / 3, within{' '}
+          {FLOOD_ID3_BOARDS.maxFromMacBits} bits of the Mac. The margin over the bar of{' '}
+          {GATE_F_BAR_BITS} bits is therefore thin on every device, about {FLOOD_ID3.margin} bits.
+          Each board generated the 4.41 GB key set of the second set in{' '}
+          {FLOOD_ID3_BOARDS.mx95pro.generationSeconds} s (MX95 Pro) and{' '}
+          {FLOOD_ID3_BOARDS.mx95.generationSeconds} s (MX95) (1,201 calls of 8 limbs, token peak{' '}
+          {FLOOD_ID3_BOARDS.peakMiB} MiB) and streamed it to the Mac in{' '}
+          {FLOOD_ID3_BOARDS.streamedSeconds.mx95pro} s and {FLOOD_ID3_BOARDS.streamedSeconds.mx95}{' '}
+          s; every limb matched the reference spec (0 mismatches). The earlier board runs at the
+          narrower width kept <em>{FLOOD_ID3.beforeMx95Pro}</em> and <em>{FLOOD_ID3.beforeMx95}</em>{' '}
+          bits at depth 0 (<EvidenceCite of="metaBtsMx95pro">MX95 Pro</EvidenceCite>,{' '}
+          <EvidenceCite of="metaBtsMx95">MX95</EvidenceCite>; superseded) and stay as records of
+          that run. The board decrypts are functional, not a security claim.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong>How the noise is drawn:</strong> {SAMPLER_SENTENCE}
         </p>
       </div>
     </div>
@@ -628,8 +741,28 @@ export const FheQuantumSection: React.FC = () => (
   </div>
 )
 
+/** Links from a Learn card to the two places its interactive view lives in the workshop. */
+const LifecycleLinks: React.FC<{
+  view: LifecycleView
+  open?: OpenLifecycleView
+  label: string
+}> = ({ view, open, label }) =>
+  open ? (
+    <div className="flex flex-wrap items-center gap-2 pt-1" role="group" aria-label={label}>
+      <span className="text-[11px] text-muted-foreground">Try it in the workshop:</span>
+      <Button size="sm" variant="outline" onClick={() => open(view, 'concepts')}>
+        Interactive view (step 2) <ArrowRight size={12} className="ml-1" />
+      </Button>
+      <Button size="sm" variant="outline" onClick={() => open(view, 'flows')}>
+        Flow diagram (step 1) <ArrowRight size={12} className="ml-1" />
+      </Button>
+    </div>
+  ) : null
+
 /** Learn section 8: the HSM as FHE key custodian, its decryption policy and the decryption-oracle limitation. */
-export const FheCustodySection: React.FC = () => (
+export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleView }> = ({
+  onOpenLifecycleView,
+}) => (
   <div className="space-y-6 text-sm text-foreground/80">
     <KeyTakeaways items={TAKEAWAYS.custody} />
 
@@ -683,7 +816,8 @@ export const FheCustodySection: React.FC = () => (
             <span className="text-status-warning font-bold">Yes, streamed:</span> evaluation-key
             generation. TFHE&apos;s 30 MB server key fits in one piece. A CKKS bootstrappable set
             (3.94 GB exported, measured) is too large to hold, so the HSM produces it as a stream of
-            bounded calls with a token peak of 15–17 MiB (below).
+            bounded calls with a token peak of 15–17 MiB, or up to 124 MiB when the token caches
+            work between calls to go faster (below).
           </li>
           <li>
             <span className="text-status-error font-bold">No:</span> homomorphic evaluation and
@@ -722,7 +856,8 @@ export const FheCustodySection: React.FC = () => (
         <li>
           <strong>Bounded memory:</strong> the token holds one chunk at a time, so its peak stayed
           at 15–17 MiB on every device, against 17.2 GB for Lattigo generating and holding the whole
-          set in one process.
+          set in one process. The faster version below also keeps caches, so its peak is 64.5–123.6
+          MiB; it stays bounded whatever the size of the set.
         </li>
         <li>
           <strong>Determinism:</strong> each chunk depends only on the seed and on which key, digit
@@ -781,11 +916,14 @@ export const FheCustodySection: React.FC = () => (
         </table>
       </div>
       <p className="text-[11px] text-muted-foreground">
-        Single runs on one core, 8 limbs per call, software token (an educational engine, not
+        Single runs, 8 limbs per call unless noted, software token (an educational engine, not
         hardware custody). Files: <EvidenceCite of="macToken">Mac (M4 Pro)</EvidenceCite>,{' '}
         <EvidenceCite of="mx95">MX95</EvidenceCite>,{' '}
-        <EvidenceCite of="mx95pro">MX95 Pro</EvidenceCite>. The board decrypts are functional, not a
-        security claim.
+        <EvidenceCite of="mx95pro">MX95 Pro</EvidenceCite>,{' '}
+        <EvidenceCite of="cachedMx95">MX95 cached</EvidenceCite>,{' '}
+        <EvidenceCite of="cachedMx95pro">MX95 Pro cached</EvidenceCite>. The board decrypts are
+        functional, not a security claim. The cached runs generate the set with the output discarded
+        on the board; the streamed and bootstrap columns are from the first runs.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -798,6 +936,9 @@ export const FheCustodySection: React.FC = () => (
               <th className="text-left p-1.5 text-muted-foreground font-medium">
                 MX95, one Cortex-A55 core
               </th>
+              <th className="text-left p-1.5 text-muted-foreground font-medium">
+                MX95, one core, generator cached
+              </th>
             </tr>
           </thead>
           <tbody className="text-muted-foreground">
@@ -806,24 +947,39 @@ export const FheCustodySection: React.FC = () => (
                 <td className="p-1.5 font-medium text-foreground">{row.limbs}</td>
                 <td className="p-1.5">{row.mac}</td>
                 <td className="p-1.5">{row.mx95}</td>
+                <td className="p-1.5">{row.mx95Cached}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <p className="text-xs text-muted-foreground">
-        Smaller chunks use less memory but cost more time: every call has a fixed cost of about 8 ms
-        on the Mac and about 77 ms on a Cortex-A55, because the stateless design regenerates the
-        secret for each call. Memory grows by about 1 MiB per extra limb. 8 limbs per call is the
-        default (sweeps: <EvidenceCite of="sweepMac">Mac</EvidenceCite>,{' '}
+        In the first version smaller chunks used less memory but cost more time: every call had a
+        fixed cost of about 8 ms on the Mac and about 77 ms on a Cortex-A55, because the stateless
+        design regenerated the secret for each call. Memory grows by about 1 MiB per extra limb. 8
+        limbs per call is the default (sweeps: <EvidenceCite of="sweepMac">Mac</EvidenceCite>,{' '}
         <EvidenceCite of="sweepMx95">MX95</EvidenceCite>,{' '}
-        <EvidenceCite of="sweepMx95pro">MX95 Pro</EvidenceCite>).
+        <EvidenceCite of="sweepMx95pro">MX95 Pro</EvidenceCite>). Caching the generator in the token
+        removes most of that fixed cost, so chunk size then barely changes the time (
+        <EvidenceCite of="generatorCacheMx95">generator-cache sweep</EvidenceCite>).
       </p>
       <p className="text-xs text-muted-foreground">
-        <strong>On the board the CPU is the limit, not the network:</strong> 8.3 MB/s is about 7 %
-        of a 1 Gb/s link, and sending the stream to the Mac over SSH added about 5 % to the
-        generation time. These runs use one of the board&apos;s six cores; spreading chunks over the
-        cores and tuning the code for the board are not measured yet.
+        <strong>Faster generation, more token memory:</strong> the token now caches its expanded
+        secret, the public NTT tables and the secret in NTT form between calls (wiped when the
+        session closes, after 30 s idle or when the seed is destroyed), expands the public{' '}
+        <span className="font-mono">a</span> with a faster AES-CTR keystream, and can spread the
+        limbs of a call over the cores. The bytes do not change. One MX95 core then takes 213.8 s
+        instead of 473.4 s (2.2 times faster), and six MX95 Pro cores take 84.0 s instead of 450.9 s
+        on one core (5.4 times faster). The price is memory, and the expanded secret stays in token
+        memory during an export: the peak rises to 64.5–123.6 MiB. Setting{' '}
+        <span className="font-mono">PQC_CKKS_CACHE_MB=0</span> keeps the token at about 16 MiB at
+        about twice the time.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        <strong>On the board the CPU is still the limit, not the network:</strong> the first version
+        ran at 8.3 MB/s, about 7 % of a 1 Gb/s link, and sending the stream to the Mac over SSH
+        added about 5 % to the generation time. The fastest board run, six MX95 Pro cores at 30
+        limbs per call, reaches 54 MB/s, about half of a 1 Gb/s link.
       </p>
     </div>
 
@@ -876,7 +1032,9 @@ export const FheCustodySection: React.FC = () => (
         </li>
         <li>
           <strong>Replication:</strong> when a key is replicated to another HSM, its policy can only
-          be narrowed, never widened, and flooding cannot be switched off.
+          be narrowed, never widened, and flooding cannot be switched off. A copy of a CKKS key must
+          also keep the same replica limit as its source, so every copy computes the same flood
+          width.
         </li>
       </ul>
     </div>
@@ -1004,6 +1162,54 @@ export const FheCustodySection: React.FC = () => (
       </div>
     </div>
 
+    <div
+      id="fhe-key-rotation"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-2"
+    >
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <KeyRound size={14} className="text-primary" />
+        Key rotation without decrypting stored data
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        After an incident the response is to stop decryption and move to a new key. Decrypting every
+        stored ciphertext and encrypting it again would send the data through the path under
+        suspicion. Instead the token streams one key-switching key from the old secret to the new
+        one, and the FHE server applies it to each stored ciphertext; no plaintext appears.
+      </p>
+      <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+        <li>
+          <strong>Size:</strong> stored ciphertexts sit at the lower levels left after
+          bootstrapping, so the key is 31.5 MB (15.7 MB streamed, 4 calls), not the 157 MB of a
+          bootstrapping-level key. Its bytes matched Lattigo&apos;s own rebuild.
+        </li>
+        <li>
+          <strong>Precision:</strong> a switched ciphertext keeps 27.1–27.3 bits, against 28.6–28.7
+          bits before, and no longer decrypts under the old key. One switch took 10–37 ms on the
+          Mac.
+        </li>
+        <li>
+          <strong>Rules in the pqctoday HSM simulation:</strong> only the security officer can run
+          it; the new seed must be generated by the token, never chosen or imported by the caller,
+          because a switching key toward a secret the caller knows hands over the old secret; and
+          the old seed is retired only after the rotation manifest is signed.
+        </li>
+        <li>
+          <strong>Limits:</strong> the new key set (3.94 GB) must still be streamed. Rotation
+          protects data from then on; it does not make old copies of ciphertexts safe from someone
+          who already holds the old secret.
+        </li>
+      </ul>
+      <p className="text-[11px] text-muted-foreground">
+        Measured with the software token in a container on a Mac, not on a board (
+        <EvidenceCite of="rotation">rotation run</EvidenceCite>).
+      </p>
+      <LifecycleLinks
+        view="rotation"
+        open={onOpenLifecycleView}
+        label="Open the key-rotation view in the workshop"
+      />
+    </div>
+
     <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
         <KeyRound size={14} className="text-primary" />
@@ -1015,6 +1221,20 @@ export const FheCustodySection: React.FC = () => (
         appears only when enough parties answer. It removes the single point of trust of single-HSM
         decryption, at the costs listed here.
       </p>
+      <p className="text-xs text-muted-foreground">
+        <strong>Two tokens, 2-of-2, for CKKS:</strong> feasible. A Lattigo prototype with both
+        parties in one process generated the whole bootstrappable key set from two shares at the
+        real parameters, and one share alone does not decrypt (
+        <EvidenceCite of="threshold">threshold study</EvidenceCite>). Each token could stream its
+        share in the same chunk format as today for 50 of the 51 keys. Its value is that one stolen
+        or compromised token is no longer enough; it does not protect against a crafted request sent
+        to one token, and it does not fix flooding for third parties at the default parameters.
+      </p>
+      <LifecycleLinks
+        view="shared"
+        open={onOpenLifecycleView}
+        label="Open the shared-decryption view in the workshop"
+      />
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
@@ -1040,7 +1260,9 @@ export const FheCustodySection: React.FC = () => (
 )
 
 /** Learn section 9: open-source implementations of the draft schemes. */
-export const FheImplementationsSection: React.FC = () => (
+export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLifecycleView }> = ({
+  onOpenLifecycleView,
+}) => (
   <div className="space-y-6 text-sm text-foreground/80">
     <KeyTakeaways items={TAKEAWAYS.implementations} />
 
@@ -1090,6 +1312,74 @@ export const FheImplementationsSection: React.FC = () => (
       <p className="text-xs text-muted-foreground">
         Commercial offerings, not covered here: {FHE_COMMERCIAL_NAMES.join(' · ')}.
       </p>
+    </div>
+
+    <div
+      id="fhe-reference-runs"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-2"
+    >
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <ShieldCheck size={14} className="text-primary" />
+        Checking our numbers against other libraries
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        The workshop&apos;s CKKS measurements use Lattigo. We also ran three other libraries to see
+        what carries over (2026-10-10 and 2026-10-11, single runs):
+      </p>
+      <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+        <li>
+          <strong>OpenFHE v1.6.0 CKKS</strong> (
+          <EvidenceCite of="openfhe">OpenFHE run</EvidenceCite>): at N = 2^16, the settings closest
+          to Lattigo&apos;s default set that pass OpenFHE&apos;s own 128-bit check give 80 keys and
+          13.26 GB (51 keys and 7.87 GB in Lattigo), and one bootstrap keeps 13.3 bits. Keys in
+          Lattigo&apos;s layout, made by Lattigo&apos;s key generator for OpenFHE&apos;s secret and
+          primes, ran in OpenFHE through a format bridge with the same precision as OpenFHE&apos;s
+          own keys, bootstrapping included. The HSM&apos;s own exported key set has not been run in
+          OpenFHE: it uses Lattigo&apos;s primes and bootstrapping key list, which OpenFHE cannot
+          use.
+        </li>
+        <li>
+          <strong>Microsoft SEAL v4.1.2 CKKS</strong> (
+          <EvidenceCite of="seal">SEAL run</EvidenceCite>): SEAL publishes no CKKS test vectors, so
+          we made a seeded set with SEAL. Lattigo decrypted all 7 of its ciphertexts to the same
+          plaintexts, coefficient for coefficient, and SEAL&apos;s converted keys worked in Lattigo.
+          SEAL has no CKKS bootstrapping.
+        </li>
+        <li>
+          <strong>TFHE-rs 1.8.1 published test vectors</strong> (
+          <EvidenceCite of="tfheVectors">test-vector run</EvidenceCite>): 28 of 36 files are
+          byte-identical to upstream on the Mac, the MX95 and the MX95 Pro. The other 8 are FFT
+          blind-rotation outputs, which upstream says depend on the platform: they differ from
+          upstream&apos;s bytes, are identical across our platforms and decrypt to the expected
+          messages.
+        </li>
+      </ul>
+      <p className="text-xs text-muted-foreground">
+        Our own two Lattigo reference runs, key rotation without decryption and 2-of-2 shared
+        decryption, are interactive in the workshop, with their measured numbers.
+      </p>
+      {onOpenLifecycleView && (
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Open the reference-run views in the workshop"
+        >
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onOpenLifecycleView('rotation', 'concepts')}
+          >
+            Key rotation view <ArrowRight size={12} className="ml-1" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onOpenLifecycleView('shared', 'concepts')}
+          >
+            Shared decryption view <ArrowRight size={12} className="ml-1" />
+          </Button>
+        </div>
+      )}
     </div>
   </div>
 )

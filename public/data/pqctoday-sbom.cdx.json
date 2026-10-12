@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:04b6c4ff-daf0-5f8c-8879-72f43195d44a",
+  "serialNumber": "urn:uuid:d70ef512-f7c9-5567-9f27-36b388a296ab",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.157.0"
+      "version": "4.158.0"
     },
     "properties": [
       {
@@ -4719,8 +4719,8 @@
     {
       "type": "library",
       "name": "katex",
-      "version": "0.16.47",
-      "purl": "pkg:npm/katex@0.16.47",
+      "version": "0.18.2",
+      "purl": "pkg:npm/katex@0.18.2",
       "licenses": [
         {
           "license": {
@@ -4731,7 +4731,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "11ea3c62cd5da14d73fb1f0066c3e942efa9fd0719048e4f78ea3b40641dcb6c769b4314fe161a8016c63a65f0af92956c47d5b96bfd2e99d059e7a1a20bab8e"
+          "content": "dec9ef7b8cb44974cc7aab8b8a6d453223ef2c6125c926a6d1b94de7141906a118de5389cf54e7b9a6a2ba09c1641a87ce54801a615360becc09090e46e2ca08"
         }
       ],
       "properties": [

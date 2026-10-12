@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.157.0",
+  "version": "4.158.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -119,6 +119,9 @@
     "sharp": "^0.35.5",
     "monaco-editor": {
       "dompurify": "3.4.16"
+    },
+    "mermaid": {
+      "katex": "0.18.2"
     }
   },
   "dependencies": {

@@ -1,0 +1,21 @@
+{
+ "library": "Microsoft SEAL 4.1.2",
+ "N": 8192,
+ "slots": 4096,
+ "log2Scale": 40,
+ "secretHammingWeight": 5432,
+ "rngInstancesUsed": 29,
+ "dataPrimes": [1152921504606748673, 1099510890497, 1099511480321],
+ "specialPrime": 1152921504606830593,
+ "galoisElements": [3, 2187, 16383],
+ "sizesBytesUncompressed": {"secretKey": 262232, "publicKey": 524401, "publicKeySeeded": 262338, "relinKey": 1573267, "relinKeySeeded": 787078, "galoisKeys3": 4785201, "galoisKeys3Seeded": 2426634, "ciphertextFresh": 393329},
+ "ciphertexts": {
+  "x": {"size": 2, "limbs": 3, "log2Scale": 40, "scale": 1099511627776},
+  "y": {"size": 2, "limbs": 3, "log2Scale": 40, "scale": 1099511627776},
+  "mul3": {"size": 3, "limbs": 3, "log2Scale": 80, "scale": 1.2089258196146292e+24},
+  "mul": {"size": 2, "limbs": 2, "log2Scale": 40.000000193479181, "scale": 1099511775231.0198},
+  "rot1": {"size": 2, "limbs": 3, "log2Scale": 40, "scale": 1099511627776},
+  "rot7": {"size": 2, "limbs": 3, "log2Scale": 40, "scale": 1099511627776},
+  "conj": {"size": 2, "limbs": 3, "log2Scale": 40, "scale": 1099511627776}
+ }
+}

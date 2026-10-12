@@ -1,0 +1,38 @@
+{
+ "toy_params/lwe_after_id_pbs": {
+  "msg_reference": 4,
+  "msg_candidate_fft": 4,
+  "msg_candidate_karatsuba": 4,
+  "log2_phase_diff_ref_vs_fft": 40.92,
+  "log2_phase_diff_ref_vs_karatsuba": 44.47,
+  "log2_phase_diff_fft_vs_karatsuba": 44.34,
+  "log2_delta": 59
+ },
+ "toy_params/lwe_after_spec_pbs": {
+  "msg_reference": 8,
+  "msg_candidate_fft": 8,
+  "msg_candidate_karatsuba": 8,
+  "log2_phase_diff_ref_vs_fft": 44.22,
+  "log2_phase_diff_ref_vs_karatsuba": 43.38,
+  "log2_phase_diff_fft_vs_karatsuba": 43.04,
+  "log2_delta": 59
+ },
+ "valid_params_128/lwe_after_id_pbs": {
+  "msg_reference": 4,
+  "msg_candidate_fft": 4,
+  "msg_candidate_karatsuba": 4,
+  "log2_phase_diff_ref_vs_fft": 49.65,
+  "log2_phase_diff_ref_vs_karatsuba": 49.45,
+  "log2_phase_diff_fft_vs_karatsuba": 46.67,
+  "log2_delta": 59
+ },
+ "valid_params_128/lwe_after_spec_pbs": {
+  "msg_reference": 8,
+  "msg_candidate_fft": 8,
+  "msg_candidate_karatsuba": 8,
+  "log2_phase_diff_ref_vs_fft": 48.68,
+  "log2_phase_diff_ref_vs_karatsuba": 49.72,
+  "log2_phase_diff_fft_vs_karatsuba": 48.75,
+  "log2_delta": 59
+ }
+}

@@ -20,6 +20,7 @@
 // RTX 5090) is from IACR ePrint 2026/1209.
 
 import type { FheFlowId, LinkKind } from './fheHsmFlows'
+import { KEY_LIFECYCLE_COSTS, KEY_LIFECYCLE_KEYS } from './fheKeyLifecycleFlows'
 
 /** What the FHE estimates of each flow assume, shown under the diagram. */
 export const SIZE_BASIS: Record<FheFlowId, string> = {
@@ -33,18 +34,24 @@ export const SIZE_BASIS: Record<FheFlowId, string> = {
   'hsm-compute-limits': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
   'tfhe-transciphering':
     'TFHE with LWE n = 918, GLWE N = 2,048, k = 1 (TFHE-rs 1.8.1 default parameters, custody configuration with the dedicated OPRF key off)',
+  'ckks-key-rotation': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
+  'ckks-shared-decrypt': 'CKKS at ring dimension N = 2¹⁶ with bootstrappable parameters',
 }
 
 /** Flows whose sizes are measured rather than estimated: the note shown under the diagram. */
 export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
   'single-hsm':
-    'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
+    'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; generation with the token’s caches on one MX95 core and six MX95 Pro cores (2026-10-11); files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
   'hsm-compute-limits':
     'The evaluation-key size and its streamed generation are measured (Lattigo v6.2.0’s default bootstrappable set, a software token on one MX95 Cortex-A55 core; files linked from the CKKS single-HSM scenario’s evidence). Evaluation and decryption costs are order-of-magnitude estimates; GPU bootstrap times are published figures.',
   'openfhe-threshold':
     'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
   'lattigo-threshold':
     'Data and key sizes and timings in this scenario are measured: Lattigo v6.2.0 t-of-N threshold BGV at N = 16,384, LogQP 438 with noise flooding, 2-of-3 with every party in one process on a KV260’s Cortex-A53 (pqctoday-fhe 2819ebf, peak RAM about 122 MiB); the M4 Pro timings are from the same spike’s reference run, quoted in the published result. Files linked from the step evidence.',
+  'ckks-key-rotation':
+    'Sizes, times and precisions in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶), a software token in a container on a Mac (M5 Max) streaming one rotation key, and Lattigo switching a level-9 and a level-0 ciphertext; files linked under the diagram. Not run on a board. Times quoted for the boards are extrapolations and are labelled as such.',
+  'ckks-shared-decrypt':
+    'Sizes and precisions in this scenario are measured with a Lattigo v6.2.0 prototype, both parties in one process on a Mac (M5 Max), at N = 2¹⁶; files linked under the diagram. Times on the boards were not measured; the one extrapolation is labelled as such. No token or board run.',
 }
 
 /** Log-scale bucket used to draw the per-step bars. 0 = nothing. */
@@ -100,6 +107,7 @@ const c = (
 
 /** Indexed in the same order as each flow's `steps` (checked by fheHsmCosts.test.ts). */
 export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
+  ...KEY_LIFECYCLE_COSTS,
   'single-hsm': [
     c(
       1,
@@ -113,9 +121,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '3.94 GB',
       4,
-      '473 s on A55',
+      '214–473 s',
       'HSM, streamed',
-      'Measured with Lattigo v6.2.0’s default bootstrappable set: 51 keys, 3,941,073,029 B as exported (the b halves; 7.87 GB with the a halves), in 1,001 PKCS#11 calls of 8 limbs (4 MB) each. One MX95 Cortex-A55 core took 473 s with a 16.7 MiB token peak (8.3 MB/s); one Mac (M4 Pro) core 42–44 s. The heaviest step; on the board the CPU, not the link, limits it.'
+      'Measured with Lattigo v6.2.0’s default bootstrappable set: 51 keys, 3,941,073,029 B as exported (the b halves; 7.87 GB with the a halves), in 1,001 PKCS#11 calls of 8 limbs (4 MB) each. One MX95 Cortex-A55 core took 473 s with a 16.7 MiB token peak (8.3 MB/s); one Mac (M4 Pro) core 42–44 s. With the token caching work between calls: 213.8 s on one MX95 core (64.5 MiB peak) and 84.0 s on six MX95 Pro cores (94.4 MiB). The heaviest step; on the board the CPU, not the link, limits it (54 MB/s at best, about half of 1 Gb/s).'
     ),
     c(
       2,
@@ -464,9 +472,9 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '3.94 GB out',
       4,
-      '~8 min A55',
+      '4–8 min A55',
       'HSM, streamed',
-      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core. A TFHE server key (30 MB) is the smaller alternative.'
+      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core; 214 s with the token caching work between calls (64.5 MiB peak). A TFHE server key (30 MB) is the smaller alternative.'
     ),
     c(
       4,
@@ -522,6 +530,9 @@ export type KeyId =
   | 'bgv14k-pk'
   | 'bgv14k-relin'
   | 'bgv14k-galois'
+  | 'rotation-key'
+  | 'ckks-share-keyset'
+  | 'ckks-dec-share'
 
 export interface KeySize {
   id: KeyId
@@ -726,10 +737,38 @@ export const KEY_SIZES: KeySize[] = [
     secret: false,
     note: '51 keys: 1 relinearization, 48 Galois and 2 sparse-secret switches (Lattigo v6.2.0 default bootstrappable set N16QP1546H192H32, measured). The HSM streams the b halves out, 3,941,073,029 B with the public key and descriptor, in 1,001 calls; Lattigo holding the whole set in one process peaked at 17.2 GB.',
   },
+  {
+    id: 'rotation-key',
+    label: 'CKKS rotation key, old → new secret (N = 2¹⁶)',
+    bytes: 31_457_872,
+    size: '31.5 MB (15.7 MB exported, measured)',
+    exact: true,
+    secret: false,
+    note: 'One key-switching key at the residual levels stored ciphertexts use: 2 digits × 15 limbs × (b, a) × 512 KB = 31,457,872 B (Lattigo v6.2.0 default bootstrappable set, measured). The token exports the b half, 15,728,640 B, in 4 calls of 8 limbs. Together with the new secret it reveals the old one, so it is used once and deleted.',
+  },
+  {
+    id: 'ckks-share-keyset',
+    label: 'One token’s share of the CKKS evaluation-key set (2-of-2)',
+    bytes: 4_098_431_336,
+    size: '4.10 GB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured with the Lattigo v6.2.0 multiparty prototype at N = 2¹⁶: 4,098,431,336 B uploaded per token, against 3,941,073,029 B for one token, plus a 157,289,056 B download for the second relinearization round.',
+  },
+  {
+    id: 'ckks-dec-share',
+    label: 'CKKS decryption share, level 0 (2-of-2)',
+    bytes: 524_304,
+    size: '524 KB (measured)',
+    exact: true,
+    secret: false,
+    note: 'Measured: 524,304 B at level 0 (1,048,894 B when switched to the owner’s public key); one partial decryption took 1.9 ms per party on a Mac. A crafted request to one token returns that token’s whole share, so a share is as sensitive as the secret it comes from.',
+  },
 ]
 
 /** Keys each step generates, moves or uses — aligned with each flow's `steps`. */
 export const FHE_STEP_KEYS: Record<FheFlowId, KeyId[][]> = {
+  ...KEY_LIFECYCLE_KEYS,
   'single-hsm': [
     ['fhe-seed', 'fhe-sk'],
     ['eval-set', 'relin', 'rotation', 'mldsa65'],

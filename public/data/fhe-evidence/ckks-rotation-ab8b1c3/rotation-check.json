@@ -1,0 +1,29 @@
+{
+ "paramSet": 2,
+ "source": "token export /repo/reference-runs/ckks-rotation-check/work/2026-10-11-n16-m5max/hsm/out/rotation",
+ "rotationKeyBytes": 31457872,
+ "rotationKeyBBytes": 15728640,
+ "digits": 2,
+ "limbs": 15,
+ "limbsCompared": 30,
+ "mismatches": 0,
+ "descriptorHashesMatchSeeds": true,
+ "aSeedMatchesReference": true,
+ "levels": [
+  {
+   "level": 9,
+   "log2PrecisionUnderOldKey": 28.678872396822406,
+   "log2PrecisionAfterSwitchUnderNewKey": 27.115114059061977,
+   "log2PrecisionSwitchedCiphertextUnderOldKey": -387.7958220047388,
+   "switchSeconds": 0.036532393
+  },
+  {
+   "level": 0,
+   "log2PrecisionUnderOldKey": 28.57518939928656,
+   "log2PrecisionAfterSwitchUnderNewKey": 27.322074185422373,
+   "log2PrecisionSwitchedCiphertextUnderOldKey": -27.789643226226254,
+   "switchSeconds": 0.010132681
+  }
+ ],
+ "pass": true
+}

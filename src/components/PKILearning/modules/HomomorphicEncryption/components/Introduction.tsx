@@ -32,12 +32,18 @@ import {
   FheStandardsSection,
   FheUseCasesSection,
 } from './FheContextSections'
+import type { OpenLifecycleView } from '../workshop/fheRotationSharedData'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
+  /** Open the key-rotation or shared-decryption view in the concepts or the flows step. */
+  onOpenLifecycleView?: OpenLifecycleView
 }
 
-export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
+export const Introduction: React.FC<IntroductionProps> = ({
+  onNavigateToWorkshop,
+  onOpenLifecycleView,
+}) => {
   useSectionAnchors()
 
   return (
@@ -104,7 +110,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         title="The HSM as FHE Key Custodian"
         icon={<ShieldCheck size={24} className="text-primary" />}
       >
-        <FheCustodySection />
+        <FheCustodySection onOpenLifecycleView={onOpenLifecycleView} />
       </LearnSection>
 
       <LearnSection
@@ -112,7 +118,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         title="Open-Source Implementations"
         icon={<Server size={24} className="text-primary" />}
       >
-        <FheImplementationsSection />
+        <FheImplementationsSection onOpenLifecycleView={onOpenLifecycleView} />
       </LearnSection>
 
       <FheReferencesList />
@@ -123,8 +129,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <div>
             <h3 className="font-bold text-foreground">Ready to follow the keys?</h3>
             <p className="text-sm text-muted-foreground">
-              Step through six encrypt, compute and decrypt scenarios and see where every key and
-              every piece of data sits.
+              Step through eight encrypt, compute and decrypt scenarios, including key rotation and
+              shared decryption, and see where every key and every piece of data sits.
             </p>
           </div>
           <Button variant="gradient" onClick={onNavigateToWorkshop} className="shrink-0">

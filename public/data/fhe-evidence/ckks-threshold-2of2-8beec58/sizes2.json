@@ -1,0 +1,16 @@
+{
+ "paramSet": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "galoisKeys": 48,
+ "publicKeyShare": 7864456,
+ "relinRoundOneShare": 157289056,
+ "relinRoundTwoShare": 78644576,
+ "galoisShareEach": 78644584,
+ "denseToSparseShare": 1048640,
+ "sparseToDenseShare": 78644576,
+ "thresholdDecryptShareLevel0": 524304,
+ "publicKeySwitchShareLevel0": 1048894,
+ "perPartyUploadTotal": 4098431336,
+ "evaluationKeyFullLevels": 157289056,
+ "rotationKeyResidualLevels": 31457872,
+ "rotationKeyBootstrappingLevels": 157289056
+}

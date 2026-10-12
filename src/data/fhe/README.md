@@ -68,6 +68,10 @@ producer, claimScope, stepIds, engine?}]`, with `engine` required for software-t
    - `measuredAt`;
    - optionally `claimLabel`, `platformLabel`, `notes` (caveats such as a pending byte-exact
      re-run) and a per-record `signature {keyId, alg: "ML-DSA-65", value}`.
+     Publish a run log under a `.txt` name (for example `run.log.txt`, byte-identical to the log):
+     `.gitignore` excludes `*.log`, so a file with that suffix is silently left out of the commit
+     and its URL would 404 after the deploy. A test checks that every listed file is tracked and
+     matches its sha256.
 2. Run `npx vitest run src/data/fhe`. Every record must validate.
 3. Sign it with the release signing step, commit `fhe-evidence.v1.json.sig` and add a revisions
    entry.

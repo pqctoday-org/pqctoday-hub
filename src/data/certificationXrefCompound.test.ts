@@ -7,8 +7,9 @@
  * product it names from a neighbour that shares one word ("azure"). Classical
  * links already need two signals (ruling 7a) and the Windows 11 → Azure pairs
  * are pinned out. This covers the PQC links: every PQC link on a certificate
- * whose name lists several products was reviewed by hand (19, all correct:
- * the same vendor and the same product line). A new one fails here until
+ * whose name lists several products was reviewed by hand (22, all correct:
+ * the same vendor and the same product line; the last three are Apple's
+ * 9 October re-validations of modules already on the list). A new one fails here until
  * someone reads it and adds it to the list.
  */
 import { describe, expect, it } from 'vitest'
@@ -23,6 +24,9 @@ const REVIEWED = new Set([
   'apple-pq3-corecrypto A7637',
   'apple-pq3-corecrypto A7645',
   'apple-pq3-corecrypto A7649',
+  'apple-pq3-corecrypto A9154',
+  'apple-pq3-corecrypto A9165',
+  'apple-pq3-corecrypto A9173',
   'ios-26-macos-26 A7637',
   'ios-26-macos-26 A7645',
   'ios-26-macos-26 A7649',

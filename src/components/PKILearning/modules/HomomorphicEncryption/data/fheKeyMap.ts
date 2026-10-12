@@ -7,6 +7,7 @@
 // when the "persist at rest" toggle is on.
 
 import type { FheFlowId } from './fheHsmFlows'
+import { KEY_LIFECYCLE_MAP } from './fheKeyLifecycleFlows'
 
 /** Secret = must never be exposed; public = may be exposed (integrity only); ciphertext = safe to expose. */
 export type ItemClass = 'secret' | 'public' | 'ciphertext'
@@ -28,6 +29,11 @@ export type ItemId =
   | 'shares-out'
   | 'ct-owner'
   | 'seed-backup'
+  | 'old-seed'
+  | 'new-seed'
+  | 'rotation-key'
+  | 'ct-switched'
+  | 'retire-record'
 
 export interface MapItem {
   id: ItemId
@@ -104,6 +110,31 @@ export const MAP_ITEMS: Record<ItemId, MapItem> = {
     short: 'backup package',
     cls: 'ciphertext',
   },
+  'old-seed': { id: 'old-seed', label: 'Old FHE seed', short: 'old seed', cls: 'secret' },
+  'new-seed': {
+    id: 'new-seed',
+    label: 'New FHE seed (made by the token)',
+    short: 'new seed',
+    cls: 'secret',
+  },
+  'rotation-key': {
+    id: 'rotation-key',
+    label: 'Rotation key, old → new (reveals the old secret to a holder of the new one)',
+    short: 'rotation key',
+    cls: 'public',
+  },
+  'ct-switched': {
+    id: 'ct-switched',
+    label: 'Ciphertext switched to the new key',
+    short: 'data (new key)',
+    cls: 'ciphertext',
+  },
+  'retire-record': {
+    id: 'retire-record',
+    label: 'Signed retirement record',
+    short: 'retire record',
+    cls: 'public',
+  },
 }
 
 export type ProtectionMode = 'hsm' | 'memory' | 'rest-encrypted' | 'rest-plain' | 'shared'
@@ -150,6 +181,7 @@ const atRest = (item: ItemId, from: number): Placement =>
   p(item, 'datacenter', 'rest-plain', from, { persisted: true })
 
 export const FHE_KEY_MAP: Record<FheFlowId, Placement[]> = {
+  ...KEY_LIFECYCLE_MAP,
   'single-hsm': [
     p('ct-result', 'client', 'memory', 6),
     p('ct-data', 'client', 'memory', 3, { until: 4 }),

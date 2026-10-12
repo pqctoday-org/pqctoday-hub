@@ -1,0 +1,16 @@
+{
+ "frames": 1209,
+ "bytes": 4411021574,
+ "seconds": 121.247,
+ "mbPerSecond": 36.4,
+ "manifestEntries": 1204,
+ "hashMismatches": 0,
+ "firstMismatches": [],
+ "tokenManifest": {
+  "present": true,
+  "entries": 1203,
+  "mismatches": 0,
+  "notCovered": [],
+  "firstMismatches": []
+ }
+}

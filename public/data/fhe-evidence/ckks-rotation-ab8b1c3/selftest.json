@@ -1,0 +1,26 @@
+{
+ "paramSet": 2,
+ "source": "reference spec (self-test)",
+ "rotationKeyBytes": 31457872,
+ "rotationKeyBBytes": 15728640,
+ "digits": 2,
+ "limbs": 15,
+ "mismatches": 0,
+ "levels": [
+  {
+   "level": 9,
+   "log2PrecisionUnderOldKey": 28.799164314221073,
+   "log2PrecisionAfterSwitchUnderNewKey": 27.468002761070135,
+   "log2PrecisionSwitchedCiphertextUnderOldKey": -387.87739729166975,
+   "switchSeconds": 0.038848766
+  },
+  {
+   "level": 0,
+   "log2PrecisionUnderOldKey": 28.78182384439319,
+   "log2PrecisionAfterSwitchUnderNewKey": 27.532188396380597,
+   "log2PrecisionSwitchedCiphertextUnderOldKey": -27.86516935845546,
+   "switchSeconds": 0.00950127
+  }
+ ],
+ "pass": true
+}
