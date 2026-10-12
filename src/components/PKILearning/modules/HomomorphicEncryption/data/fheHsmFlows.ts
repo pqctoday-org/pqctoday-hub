@@ -83,6 +83,18 @@ const CKKS_ENGINE_MERGED =
 /** The corrected flood sizing (pqctoday-hsm #355, merged) and what is measured; decrypt step only. */
 const CKKS_FLOOD_SIZING = `The width of the flood for third-party releases follows the published analysis and is merged (pqctoday-hsm #355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1): ${FLOOD_FORMULA}. Measured with the second parameter set on a Mac and with the token on both MX95 boards (depth 0, 1 and 3): ${FLOOD_ID3.rangeLow}–${FLOOD_ID3.rangeHigh} bits against a bar of ${GATE_F_BAR_BITS}, a thin margin of about ${FLOOD_ID3.margin} bits; the default parameter set is refused.`
 
+/**
+ * Engine notes for the "What can run in the HSM?" scenario, with the merge commits of the pull
+ * requests that built each part (pqctoday-hsm main, checked against the changelog and the merged
+ * commits): #351 f4924a03 (streamed export, registry ID 3, rotation key, decryption under
+ * policy version 2), #353 3c395474 (generator version 1 frozen), #354 3cad9d3b (retirement
+ * record), #355 d6b23452 (flood width).
+ */
+const HSM_LIMITS_ENGINE_KEYS =
+  'Merged in pqctoday-hsm, behind a non-default build feature of the educational engine: the CKKS seed and secret (CKM_PQCTODAY_FHE_KEY_GEN), the evaluation-key set as bounded DERIVE_PUBLIC calls with a token-signed manifest, the second parameter set (registry ID 3) and the security-officer-only rotation key (all #351, merge commit f4924a034641c44e00a8565c200cc9f7d179f895), the frozen generator version 1 (#353, merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905) and the signed retirement record of a rotation (#354, merge commit 3cad9d3ba628522c1e3d150a3ed2570bfac825d6). Measured on the boards in the CKKS single-HSM scenario.'
+const HSM_LIMITS_ENGINE_DECRYPT =
+  'Merged in pqctoday-hsm, behind a non-default build feature of the educational engine: CKM_PQCTODAY_FHE_DECRYPT under FHE decryption policy version 2 (#351, merge commit f4924a034641c44e00a8565c200cc9f7d179f895), with the flood width of third-party releases that follows the published analysis (#355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1). Measured on the boards in the CKKS single-HSM scenario.'
+
 /** Next to the evidence badges of the CKKS decrypt steps. */
 const CKKS_DECRYPT_EVIDENCE =
   'Functional, not a security claim: the board decrypted and released the result under policy, which shows the mechanism works. It does not show resistance to the decryption-oracle limitation (Learn, section 8).'
@@ -1105,6 +1117,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         api: 'KeyGen()',
         deployment: true,
         title: 'Key generation: fits',
+        engine: 'engine',
+        engineNote: HSM_LIMITS_ENGINE_KEYS,
         detail:
           'A seed and one small polynomial take kilobytes and milliseconds. This is exactly what an HSM is for.',
         verdict: 'ok',
@@ -1118,9 +1132,10 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         deployment: true,
         title: 'CKKS evaluation-key generation: streams, the heaviest step',
         detail:
-          'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core (214 s with the token caching work between calls, 84 s on six MX95 Pro cores). It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM.',
+          'The math (NTTs, polynomial multiplication) fits; the volume is what matters. A bootstrappable CKKS set is 3.94 GB as exported, too large to hold in an HSM, so the HSM streams it in bounded pieces instead: measured 1,001 PKCS#11 calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core (214 s with the token caching work between calls, 84 s on six MX95 Pro cores). It is a one-time cost per key set, paid again on rotation or recovery. TFHE, whose server key is 30 MB, and threshold refresh (Lattigo), which needs no bootstrapping keys, avoid the volume altogether. The seed itself never leaves the HSM. The same chunk mechanism serves the other CKKS key sets: the second parameter set (registry ID 3, scale 2^90) is 4.41 GB in 1,201 calls, generated in 96.9 s on the MX95 Pro and 99.2 s on the MX95, and a rotation key from an old secret to a new one is one 31.5 MB key that only the security officer may ask for. The generator (version 1) is frozen, so the same seed always yields the same bytes and the receiver checks every piece against the token-signed manifest.',
         verdict: 'warn',
-        engineNote: CKKS_ENGINE_MERGED,
+        engine: 'engine',
+        engineNote: HSM_LIMITS_ENGINE_KEYS,
         link: 'sig',
       },
       {
@@ -1163,6 +1178,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'hsm',
         label: 'decrypt request',
         title: 'The application asks the HSM to decrypt',
+        engine: 'engine',
+        engineNote: HSM_LIMITS_ENGINE_DECRYPT,
         detail:
           'The application, acting for the data owner, sends the encrypted result to the HSM over an authenticated channel. The accelerators have no access to the HSM.',
         link: 'tls',
@@ -1175,6 +1192,8 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         api: 'Decrypt',
         deployment: true,
         title: 'Decryption: fits',
+        engine: 'engine',
+        engineNote: HSM_LIMITS_ENGINE_DECRYPT,
         detail:
           'Decryption fits easily: microseconds to milliseconds. The policy around it matters more: only the application’s authenticated session may ask, only allowed result types or shapes are decrypted, and the plaintext must fit the allowed form before release.',
         verdict: 'ok',
@@ -1185,13 +1204,15 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
         to: 'app',
         label: 'result',
         title: 'Release under policy',
+        engine: 'engine',
+        engineNote: HSM_LIMITS_ENGINE_DECRYPT,
         detail: 'Same policy and noise-flooding rules as single-HSM custody.',
         link: 'tls',
         shareWith: 'gpu',
       },
     ],
     hsmDoes:
-      'Keygen and decrypt; CKKS bootstrapping-key generation as a bounded stream (measured: 3.94 GB in 1,001 calls).',
+      'Keygen and decrypt; CKKS bootstrapping-key generation as a bounded stream (measured: 3.94 GB in 1,001 calls; 4.41 GB in 1,201 calls for the second parameter set); the security-officer-only rotation key.',
     staysSecret: 'The seed and secret key. Evaluation keys leave the HSM, so they must be signed.',
     watchOut:
       'No PKCS#11 v3.2 or KMIP mechanism exists for FHE yet, so these are vendor-defined operations today.',

@@ -439,7 +439,7 @@ export const FHE_STEP_IO: Record<FheFlowId, StepIO[]> = {
       's and the closed list of keys; per call, which key, digit and limbs.',
       'streamed',
       'The same key-switching keygen as above, one bounded piece per PKCS#11 call, so memory stays at a few MiB however large the set is.',
-      'The key set as a stream: 3.94 GB in 1,001 calls, 473 s on one MX95 Cortex-A55 core, or 214 s with the token’s caches (measured). TFHE (a 30 MB server key) and threshold refresh (Lattigo, no bootstrapping keys) avoid the volume.'
+      'The key set as a stream: 3.94 GB in 1,001 calls, 473 s on one MX95 Cortex-A55 core, or 214 s with the token’s caches (measured); the second parameter set is 4.41 GB in 1,201 calls. TFHE (a 30 MB server key) and threshold refresh (Lattigo, no bootstrapping keys) avoid the volume.'
     ),
     io(
       'Would need the ciphertexts plus GBs of evaluation keys resident in HSM memory.',
