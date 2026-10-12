@@ -98,6 +98,12 @@ jobs:
       - name: Public-boundary scan (source)
         run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree . --tracked --baseline scripts/ci/leak-baseline-source.json --mode enforce
 
+      # Engine files against the lock (owner decision 2026-10-12, cleanup Step 3):
+      # offline, needs no sibling checkout. A changed, missing or unlisted engine
+      # file fails here, naming the bundle and the file.
+      - name: Verify engine files against the lock
+        run: node --experimental-strip-types scripts/ci/verify-engines.ts
+
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.
         # It therefore has to actually RUN; a lint step that aborts gates nothing.
