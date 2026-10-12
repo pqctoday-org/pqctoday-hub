@@ -1,0 +1,232 @@
+{
+ "N": 65536,
+ "lattigoEqualsOpenFHE": 0,
+ "openfheIsSmallest": 32,
+ "primes": 32,
+ "rows": [
+  {
+   "prime": 1152921504606584833,
+   "lattigoPsi": 56809027156372148,
+   "openfhePsi": 18043022392882,
+   "smallestPrimitive2NthRoot": 18043022392882,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599656468481,
+   "lattigoPsi": 455675047009835,
+   "openfhePsi": 21245097381,
+   "smallestPrimitive2NthRoot": 21245097381,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599645065217,
+   "lattigoPsi": 884523320291163,
+   "openfhePsi": 59784185360,
+   "smallestPrimitive2NthRoot": 59784185360,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599665512449,
+   "lattigoPsi": 771641960824629,
+   "openfhePsi": 38485424609,
+   "smallestPrimitive2NthRoot": 38485424609,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599656599553,
+   "lattigoPsi": 3842583617062232,
+   "openfhePsi": 11615615626,
+   "smallestPrimitive2NthRoot": 11615615626,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599663677441,
+   "lattigoPsi": 4050341484318063,
+   "openfhePsi": 97082031370,
+   "smallestPrimitive2NthRoot": 97082031370,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599647817729,
+   "lattigoPsi": 810502943002843,
+   "openfhePsi": 5929748345,
+   "smallestPrimitive2NthRoot": 5929748345,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599661711361,
+   "lattigoPsi": 2097478817720140,
+   "openfhePsi": 7261454755,
+   "smallestPrimitive2NthRoot": 7261454755,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599651094529,
+   "lattigoPsi": 2434703911997794,
+   "openfhePsi": 100534751587,
+   "smallestPrimitive2NthRoot": 100534751587,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599659220993,
+   "lattigoPsi": 3116412506309050,
+   "openfhePsi": 7646948190,
+   "smallestPrimitive2NthRoot": 7646948190,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599621472257,
+   "lattigoPsi": 76141396819113,
+   "openfhePsi": 3594277316,
+   "smallestPrimitive2NthRoot": 3594277316,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599643885569,
+   "lattigoPsi": 1076905968827490,
+   "openfhePsi": 30080272889,
+   "smallestPrimitive2NthRoot": 30080272889,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599640477697,
+   "lattigoPsi": 1010074026813827,
+   "openfhePsi": 79291441443,
+   "smallestPrimitive2NthRoot": 79291441443,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599642836993,
+   "lattigoPsi": 2743499844117118,
+   "openfhePsi": 11965997317,
+   "smallestPrimitive2NthRoot": 11965997317,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599623045121,
+   "lattigoPsi": 3049416893110528,
+   "openfhePsi": 5106237945,
+   "smallestPrimitive2NthRoot": 5106237945,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599637200897,
+   "lattigoPsi": 2923418938874157,
+   "openfhePsi": 18328055336,
+   "smallestPrimitive2NthRoot": 18328055336,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599625404417,
+   "lattigoPsi": 1442274820060463,
+   "openfhePsi": 62879452361,
+   "smallestPrimitive2NthRoot": 62879452361,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599635628033,
+   "lattigoPsi": 3225273574271889,
+   "openfhePsi": 7437399547,
+   "smallestPrimitive2NthRoot": 7437399547,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599628943361,
+   "lattigoPsi": 1265442076586391,
+   "openfhePsi": 20498121251,
+   "smallestPrimitive2NthRoot": 20498121251,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599634579457,
+   "lattigoPsi": 2322577889942962,
+   "openfhePsi": 100126468803,
+   "smallestPrimitive2NthRoot": 100126468803,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599631433729,
+   "lattigoPsi": 3794238509142898,
+   "openfhePsi": 76660856966,
+   "smallestPrimitive2NthRoot": 76660856966,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599632613377,
+   "lattigoPsi": 3265425259806409,
+   "openfhePsi": 145569032650,
+   "smallestPrimitive2NthRoot": 145569032650,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599625535489,
+   "lattigoPsi": 362384797323180,
+   "openfhePsi": 141990425884,
+   "smallestPrimitive2NthRoot": 141990425884,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599629467649,
+   "lattigoPsi": 2384914950590253,
+   "openfhePsi": 108077063144,
+   "smallestPrimitive2NthRoot": 108077063144,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599626321921,
+   "lattigoPsi": 4398794741090287,
+   "openfhePsi": 94510489515,
+   "smallestPrimitive2NthRoot": 94510489515,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 4503599627763713,
+   "lattigoPsi": 551193762853445,
+   "openfhePsi": 140916746534,
+   "smallestPrimitive2NthRoot": 140916746534,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504598720513,
+   "lattigoPsi": 560939867933173424,
+   "openfhePsi": 800790938143,
+   "smallestPrimitive2NthRoot": 800790938143,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504597016577,
+   "lattigoPsi": 410712286955299124,
+   "openfhePsi": 17749908910371,
+   "smallestPrimitive2NthRoot": 17749908910371,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504595968001,
+   "lattigoPsi": 659759182078554478,
+   "openfhePsi": 11469071954203,
+   "smallestPrimitive2NthRoot": 11469071954203,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504592822273,
+   "lattigoPsi": 1050720516549580945,
+   "openfhePsi": 21482204621753,
+   "smallestPrimitive2NthRoot": 21482204621753,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504592429057,
+   "lattigoPsi": 35023005044404306,
+   "openfhePsi": 6744827058362,
+   "smallestPrimitive2NthRoot": 6744827058362,
+   "lattigoEqualsOpenFHE": false
+  },
+  {
+   "prime": 1152921504589938689,
+   "lattigoPsi": 937021722086414666,
+   "openfhePsi": 17679085976867,
+   "smallestPrimitive2NthRoot": 17679085976867,
+   "lattigoEqualsOpenFHE": false
+  }
+ ]
+}

@@ -29,6 +29,40 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.158.0] - 2026-10-11
+
+The Homomorphic Encryption module corrects its figures for releasing CKKS results to others and adds key rotation and shared decryption as interactive views. The certificate records behind Compliance and Migrate are refreshed, six classical-only FIPS 140-3 modules show their certificates again, and twelve NIST certification documents in the Library carry checked details.
+
+### Added
+
+- **Key rotation and shared decryption as interactive views** [view:/learn/homomorphic-encryption] [persona:architect] [persona:developer] [persona:ops] [persona:grc]: a step-through of replacing an HSM key without decrypting stored data (who may start it, what the token refuses, 31.5 MB key, about 1.5 bits of precision lost, old key no longer decrypts), and a two-board shared-decryption view with switches for "approvals independent" and "noise on or off" that show the measured outcome. Both are in the workshop and in the HSM flow diagrams.
+- **Releasing CKKS results to others: the corrected result at a thin margin** [view:/learn/homomorphic-encryption] [persona:architect] [persona:researcher] [persona:grc]: with the published noise sizing, today's default parameters cannot release results to third parties, while a second parameter set (higher-precision bootstrapping, scale 2^90) keeps 11.1–11.4 bits against a bar of 10, on a Mac and with the token on both MX95 boards, for programs of 0, 1 and 3 multiplications after a refresh. The margin is about 1 bit; the section says so, and states the costs: refreshes take about twice as long, 3 multiplications fit between refreshes instead of 9, and the key set is about 12 % larger.
+- **Cross-checks against OpenFHE, Microsoft SEAL and TFHE-rs** [view:/learn/homomorphic-encryption] [persona:developer] [persona:researcher]: OpenFHE's own CKKS keys at comparable 128-bit settings take 80 keys and 13.26 GB, and keys in Lattigo's layout ran in OpenFHE with equal precision; Lattigo decrypted all seven SEAL ciphertexts exactly as SEAL did; TFHE-rs 1.8.1 reproduced 28 of its 36 published test vectors byte for byte on the Mac and both boards (the other 8 differ in floating-point rounding but are identical across our platforms and decrypt correctly).
+
+### Changed
+
+- **Key streaming on the MX95 boards is 2–6 times faster** [view:/learn/homomorphic-encryption] [persona:architect] [persona:ops] [persona:developer]: the full 3.94 GB key set takes 214 s on one MX95 core (was 473 s) and 72–84 s on six MX95 Pro cores (was 451 s on one core), byte-identical. The cost is token memory, 65–124 MB instead of about 16 MB, or about 16 MB at twice the time with the cache off. Still limited by the CPU, at about half of a 1 Gb/s link. The key-streaming view shows runs before and after.
+- **Shared decryption across two boards: what it gives and what it does not** [view:/learn/homomorphic-encryption] [persona:architect] [persona:researcher] [persona:grc]: joint keys bootstrap at 24.3–24.5 bits against 24.9 for one key, at about 4.1 GB uploaded per token. A crafted request to one token still returns that token's whole share, so the two approvals must be independent. Notes a 2026 preprint reporting attacks on t-of-N threshold decryption.
+- **HSM steps of the CKKS scenario show "in engine"** [view:/learn/homomorphic-encryption] [persona:architect] [persona:ops]: key generation, evaluation-key export, public key, decryption under policy and release are now shown as built, citing the merged commits.
+
+### Fixed
+
+- **Figures for releasing CKKS results to others corrected** [view:/learn/homomorphic-encryption] [persona:architect] [persona:researcher]: an earlier version of the module (and its measurement records) quoted 22.6–22.8 bits for the second parameter set. Those runs used a noise width about 10 bits narrower than the published analysis requires; the figures are corrected above and the old records are marked as superseded.
+- **What was measured with OpenFHE is stated accurately** [view:/learn/homomorphic-encryption] [persona:developer] [persona:researcher] [persona:architect]: the module said or implied that CKKS evaluation-key sizes had been measured with OpenFHE. It now says OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 and that the HSM's own key set has not been run in OpenFHE.
+- **Run logs listed in the measurement records can be opened** [view:/learn/homomorphic-encryption] [persona:researcher]: eight log files were listed but not published; they are now available as text files, and a test checks that every listed file is published.
+
+### Security
+
+- **Dependency updates** [persona:ops]: the maths library that the diagram package (Mermaid) uses, KaTeX, moves from 0.16.47 to 0.18.2, which closes its open advisory (prototype pollution that could bypass the trust option). One open security alert on a logging helper (sprintf-js), which has no published fix and is not part of the deployed site, was reviewed and dismissed as accepted risk.
+
+### Data
+
+- **New measurement records for homomorphic encryption** [view:/learn/homomorphic-encryption] [persona:researcher] [persona:architect]: faster board streaming, the second parameter set on the Mac and both MX95 boards at the corrected noise sizing, key rotation, the two-token threshold run, and the OpenFHE, SEAL and TFHE-rs reference runs. Each record names the commits it was measured at; Mac runs are labelled as reference runs.
+- **Compliance: certificate records refreshed** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:architect]: 38 new records (19 FIPS 140-3 module validations dated 28 September to 10 October, and 19 algorithm validations that include ML-KEM or ML-DSA), no removals, and three status changes: two FIPS 140-3 modules (Palo Alto PAN-OS and Apple corecrypto v12.0) move to Historical and one Common Criteria record to Archived. NIST's list of modules in process grows from 197 to 204 and its implementations-under-test list from 229 to 234.
+- **Migrate: certificate links brought up to date** [view:/migrate] [persona:cert-engineer] [persona:ops] [persona:developer] [persona:architect]: 17 new algorithm validations are linked (AWS-LC, Apple, OpenSSL, Thales CipherTrust and others) and four superseded links are retired. Six classical-only FIPS 140-3 modules (CGI Momentum, CTERA, HID Global, Radiant Logic, Tellabs Panorama PON Manager and Trend Micro) show their certificates again, labelled as having no post-quantum algorithms. Oracle OpenSSL FIPS Provider and NetApp CryptoMod now show "module in process", because NIST lists their modules.
+- **Twelve NIST certification documents in the Library carry checked details** [view:/library] [persona:cert-engineer] [persona:researcher]: the entropy-validation program page and its announcements, five entropy certificates, two module certificates, the module-package page, the automated validation workstream and the NCCoE automation project now state the correct title, publisher, status and last-update date; first-published dates are left empty where the page gives none.
+- **Singapore Quantum-Safe Migration Handbook entry names its document** [view:/library] [persona:grc] [persona:researcher]: the Library entry for Singapore's final handbook (Version 1, 16 July 2026, by CSA, GovTech and IMDA) now carries that title, those authors and those dates; before, it carried a different title and a last-update date of 2024.
+
 ## [4.157.0] - 2026-10-11
 
 Bouncy Castle's three Migrate rows move to the current releases, the Singapore handbook draft is backed by its own saved copy, and a broken Timeline source link is repaired.

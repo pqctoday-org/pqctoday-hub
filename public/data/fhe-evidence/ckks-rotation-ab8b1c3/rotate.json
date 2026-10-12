@@ -1,0 +1,14 @@
+{
+ "paramSet": 2,
+ "digits": 2,
+ "limbs": 15,
+ "limbsPerCall": 8,
+ "chunkCalls": 4,
+ "bBytes": 15728640,
+ "seconds": 0.1414,
+ "slowestCallSeconds": 0.0330,
+ "oldLineage": "2791dc243d7ba513d9aff4240009ed37b1c3458e2f8583da0acd748827cd3fa0",
+ "newLineage": "950dcc5898da81162dcb243fbb472599ea4c667d922ff3a4b2caed3d0f47bf8f",
+ "manifestBytes": 15006,
+ "peakRssKiB": 52640
+}

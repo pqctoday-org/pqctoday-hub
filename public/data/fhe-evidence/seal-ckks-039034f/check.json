@@ -1,0 +1,95 @@
+{
+ "A_B_decrypt_decode_sealCiphertexts": {
+  "conj": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 50,
+   "log2PrecisionVsExpected": 21.114988933922618,
+   "sealLog2PrecisionVsExpected": 21.1149889315581
+  },
+  "mul": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 50.29956028185891,
+   "log2PrecisionVsExpected": 26.60685101054864,
+   "sealLog2PrecisionVsExpected": 26.606851003386826
+  },
+  "mul3": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 50.415037499278846,
+   "log2PrecisionVsExpected": 26.93932723655835,
+   "sealLog2PrecisionVsExpected": 26.93932711288345
+  },
+  "rot1": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 49.830074998557684,
+   "log2PrecisionVsExpected": 19.68187594868803,
+   "sealLog2PrecisionVsExpected": 19.681875948149166
+  },
+  "rot7": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 49.830074998557684,
+   "log2PrecisionVsExpected": 21.640371422372855,
+   "sealLog2PrecisionVsExpected": 21.640371423943606
+  },
+  "x": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 50,
+   "log2PrecisionVsExpected": 26.70613201232035,
+   "sealLog2PrecisionVsExpected": 26.706132025472378
+  },
+  "y": {
+   "decryptedPlaintextEqualsSealExactly": true,
+   "mismatchedCoefficients": 0,
+   "log2AgreementWithSealDecode": 50,
+   "log2PrecisionVsExpected": 26.674116931823477,
+   "sealLog2PrecisionVsExpected": 26.67411694897466
+  }
+ },
+ "C_sealKeysEvaluatedInLattigo": [
+  {
+   "operation": "multiply + relinearize (SEAL relin key) + rescale",
+   "lattigoWithSealKeysLog2PrecisionVsExpected": 26.362576577886653,
+   "sealLog2PrecisionVsExpected": 26.606851003386826,
+   "log2AgreementWithSealResult": 26.23777292786179,
+   "pass": true
+  },
+  {
+   "operation": "automorphism g=3 (SEAL Galois key, converted)",
+   "lattigoWithSealKeysLog2PrecisionVsExpected": 24.95589946014027,
+   "sealLog2PrecisionVsExpected": 19.681875948149166,
+   "log2AgreementWithSealResult": 19.68650359750626,
+   "negativeControlUnconvertedKeyLog2Precision": -106.2995037437787,
+   "pass": true
+  },
+  {
+   "operation": "automorphism g=2187 (SEAL Galois key, converted)",
+   "lattigoWithSealKeysLog2PrecisionVsExpected": 25.152533371599116,
+   "sealLog2PrecisionVsExpected": 21.640371423943606,
+   "log2AgreementWithSealResult": 21.66343039536108,
+   "negativeControlUnconvertedKeyLog2Precision": -106.18498305580114,
+   "pass": true
+  },
+  {
+   "operation": "automorphism g=16383 (SEAL Galois key, converted)",
+   "lattigoWithSealKeysLog2PrecisionVsExpected": 24.73920721484864,
+   "sealLog2PrecisionVsExpected": 21.1149889315581,
+   "log2AgreementWithSealResult": 21.119094112483715,
+   "negativeControlUnconvertedKeyLog2Precision": -106.1490700022596,
+   "pass": true
+  }
+ ],
+ "N": 8192,
+ "lattigo": "v6.2.0 (pinned, unmodified)",
+ "pass": true,
+ "slotMap": {
+  "conjugateWhenNotIn5Subgroup": true,
+  "lattigo": "slot j = root 5^j mod 2N",
+  "seal": "slot i = root 3^i mod 2N"
+ },
+ "slots": 4096
+}

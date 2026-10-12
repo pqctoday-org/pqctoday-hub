@@ -1,0 +1,21 @@
+[14:13:17Z] B0 board facts
+model: NXP FRDM-IMX95
+kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+cpus: 6
+cpu_features:  fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+mem_total_kib: 7867940
+engine_commit: 46dca8022f0481be21bbd63f396e3611a31740da
+oracle_commit: 481b9660a5842a90e7203440d35259b47299f7bd
+custodian_sha256: 45fb5e8d0060ead93fcbe7a20dd8e36ed02d48039922bde252a5e9f28086aea7
+build_commit: 46dca8022f0481be21bbd63f396e3611a31740da
+build_features: educational-ckks,test-support
+build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
+[14:13:19Z] upload
+[14:13:21Z] init (test seed, parameter set 3, CKKS_FLOOD_OWNER=1 CKKS_PRECISION_BITS=30 )
+initialised /tmp/ckks/tok (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 seed handle 134
+[14:13:22Z] B1a generation only (stream discarded on the board)
+[14:15:02Z] B1b streamed to the Mac over SSH
+[14:17:06Z] verify against the reference spec
+[14:17:26Z] e2e on the Mac (assemble, encrypt under the board token's public key, bootstrap)
+[14:17:58Z] B4 decrypt on the board under policy v2 (ct_level1.bin, CKKS_FLOOD_OWNER=1 CKKS_PRECISION_BITS=30 )
+[14:18:06Z] done

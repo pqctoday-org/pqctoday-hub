@@ -2,7 +2,8 @@
 import type { CkksEvidenceKey } from '../data/fheCkksEvidence'
 
 /**
- * Data behind the "FHE concepts, hands-on" workshop step (2026-10-10).
+ * Data behind the "FHE concepts, hands-on" workshop step (2026-10-10; cached-generator runs
+ * 2026-10-11).
  *
  * Measured numbers are copied from the published evidence files under
  * public/data/fhe-evidence/ (Lattigo v6.2.0 default bootstrappable set N16QP1546H192H32,
@@ -29,7 +30,7 @@ export const CALLS_BY_LIMBS: Record<LimbChoice, number> = {
   30: 251,
 }
 
-export type StreamDevice = 'm4pro' | 'mx95' | 'mx95pro'
+export type StreamDevice = 'm4pro' | 'mx95' | 'mx95pro' | 'mx95-cached' | 'mx95pro-cached'
 
 export interface StreamMeasurement {
   /** seconds for the token to generate the whole set (output discarded) */
@@ -42,10 +43,11 @@ export interface StreamMeasurement {
 export interface StreamDeviceInfo {
   id: StreamDevice
   label: string
-  /** straight-line fit published with the sweep record: work + per-call cost */
-  fitWorkSeconds: number
-  fitPerCallMs: number
-  sweepEvidence: CkksEvidenceKey
+  /**
+   * Straight-line fit published with the sweep record: work + per-call cost. Absent for the
+   * cached-generator runs, which were measured at 8 and 30 limbs only and publish no fit.
+   */
+  fit?: { workSeconds: number; perCallMs: number; evidence: CkksEvidenceKey }
   measured: Partial<Record<LimbChoice, StreamMeasurement>>
   /** generation streamed to a Mac over the network at 8 limbs per call */
   streamedSeconds?: number
@@ -56,9 +58,7 @@ export const STREAM_DEVICES: StreamDeviceInfo[] = [
   {
     id: 'm4pro',
     label: 'Mac (M4 Pro), one core',
-    fitWorkSeconds: 33.8,
-    fitPerCallMs: 8,
-    sweepEvidence: 'sweepMac',
+    fit: { workSeconds: 33.8, perCallMs: 8, evidence: 'sweepMac' },
     measured: {
       1: { seconds: 93.606, peakKiB: 12448, evidence: 'sweepMac' },
       2: { seconds: 64.759, peakKiB: 13052, evidence: 'sweepMac' },
@@ -70,10 +70,8 @@ export const STREAM_DEVICES: StreamDeviceInfo[] = [
   },
   {
     id: 'mx95',
-    label: 'MX95, one Cortex-A55 core',
-    fitWorkSeconds: 397,
-    fitPerCallMs: 77,
-    sweepEvidence: 'sweepMx95',
+    label: 'MX95, one core, before (2026-10-10)',
+    fit: { workSeconds: 397, perCallMs: 77, evidence: 'sweepMx95' },
     measured: {
       1: { seconds: 974.579, peakKiB: 14436, evidence: 'sweepMx95' },
       8: { seconds: 473.419, peakKiB: 17060, evidence: 'mx95' },
@@ -84,10 +82,8 @@ export const STREAM_DEVICES: StreamDeviceInfo[] = [
   },
   {
     id: 'mx95pro',
-    label: 'MX95 Pro, one Cortex-A55 core',
-    fitWorkSeconds: 378,
-    fitPerCallMs: 77,
-    sweepEvidence: 'sweepMx95pro',
+    label: 'MX95 Pro, one core, before (2026-10-10)',
+    fit: { workSeconds: 378, perCallMs: 77, evidence: 'sweepMx95pro' },
     measured: {
       1: { seconds: 955.192, peakKiB: 14924, evidence: 'sweepMx95pro' },
       8: { seconds: 450.934, peakKiB: 16076, evidence: 'mx95pro' },
@@ -95,6 +91,22 @@ export const STREAM_DEVICES: StreamDeviceInfo[] = [
     },
     streamedSeconds: 477.955,
     streamedEvidence: 'mx95pro',
+  },
+  {
+    id: 'mx95-cached',
+    label: 'MX95, one core, cached generator (2026-10-11)',
+    measured: {
+      8: { seconds: 213.843, peakKiB: 66056, evidence: 'cachedMx95' },
+      30: { seconds: 209.767, peakKiB: 88392, evidence: 'cachedMx95' },
+    },
+  },
+  {
+    id: 'mx95pro-cached',
+    label: 'MX95 Pro, six cores, cached generator (2026-10-11)',
+    measured: {
+      8: { seconds: 83.989, peakKiB: 96696, evidence: 'cachedMx95pro' },
+      30: { seconds: 72.417, peakKiB: 126556, evidence: 'cachedMx95pro' },
+    },
   },
 ]
 

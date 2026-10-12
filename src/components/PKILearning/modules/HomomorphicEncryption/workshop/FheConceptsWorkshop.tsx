@@ -9,6 +9,8 @@ import {
   Ruler,
   GitBranch,
   Layers,
+  RefreshCw,
+  Users,
   Play,
   Pause,
   RotateCcw,
@@ -32,12 +34,13 @@ import {
   type ProgramId,
   type StreamDevice,
 } from './fheConceptsData'
+import { RotationView, SharedDecryptView } from './FheRotationSharedViews'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
 /* ------------------------------------------------------------------ */
 
-type CardId = 'noise' | 'encode' | 'circuit' | 'stream'
+export type CardId = 'noise' | 'encode' | 'circuit' | 'stream' | 'rotation' | 'shared'
 
 interface ConceptSectionProps {
   id: CardId
@@ -744,7 +747,7 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
   const calls = CALLS_BY_LIMBS[limbs]
   const dev = STREAM_DEVICES.find((d) => d.id === device)!
   const m = dev.measured[limbs]
-  const estimate = dev.fitWorkSeconds + (dev.fitPerCallMs / 1000) * calls
+  const estimate = dev.fit ? dev.fit.workSeconds + (dev.fit.perCallMs / 1000) * calls : null
   const chunkBytes = limbs * LIMB_BYTES
 
   useEffect(() => {
@@ -779,8 +782,8 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
     <div className="space-y-4">
       <WhatYouSee>
         The token producing the 51 evaluation keys a bounded chunk at a time and streaming each
-        chunk out, and what the chunk size does to time and token memory on three devices, from our
-        measurements.
+        chunk out, and what the chunk size does to time and token memory on our devices, before and
+        after the token learned to cache work between calls, from our measurements.
       </WhatYouSee>
       <div className="space-y-2">
         <p className="text-xs text-muted-foreground">
@@ -887,28 +890,45 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
             at this chunk size on this device.
           </p>
         )}
-        <p className="text-xs text-muted-foreground">
-          Estimate from the fitted model (not a measurement): {dev.fitWorkSeconds} s of work +{' '}
-          {dev.fitPerCallMs} ms per call × {fmtInt(calls)} calls ≈ {fmtSeconds(estimate)}{' '}
-          <EvidenceCite of={dev.sweepEvidence}>(fit published with the sweep)</EvidenceCite>
-        </p>
+        {dev.fit && estimate !== null ? (
+          <p className="text-xs text-muted-foreground">
+            Estimate from the fitted model (not a measurement): {dev.fit.workSeconds} s of work +{' '}
+            {dev.fit.perCallMs} ms per call × {fmtInt(calls)} calls ≈ {fmtSeconds(estimate)}{' '}
+            <EvidenceCite of={dev.fit.evidence}>(fit published with the sweep)</EvidenceCite>
+          </p>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            No fitted model for this device: it was measured at 8 and 30 limbs per call only, and
+            with the cached generator chunk size barely changes the time.
+          </p>
+        )}
       </div>
 
       <div className="glass-panel p-3 bg-muted/30 text-xs text-muted-foreground space-y-1">
         <p>
           <strong className="text-foreground">Trade-off:</strong> smaller chunks need less token
-          memory but more calls, and every call pays a fixed cost (the token regenerates the secret
-          and the digit&apos;s error polynomial each time). Larger chunks cut the calls and grow
-          memory by about 1 MiB per extra limb.
+          memory but more calls. In the first version every call paid a fixed cost (the token
+          regenerated the secret and the digit&apos;s error polynomial each time); larger chunks cut
+          the calls and grow memory by about 1 MiB per extra limb.
+        </p>
+        <p>
+          <strong className="text-foreground">Cached generator:</strong> the token now keeps its
+          expanded secret and the NTT tables between calls and can use all six cores. The bytes do
+          not change; time drops (one MX95 core <EvidenceCite of="cachedMx95">214 s</EvidenceCite>,
+          six MX95 Pro cores <EvidenceCite of="cachedMx95pro">84 s</EvidenceCite> at 8 limbs per
+          call) and token memory rises to 65–124 MiB. Setting the cache to 0 keeps the token at
+          about 16 MiB at about twice the time.
         </p>
         <p>
           <strong className="text-foreground">
             On the board the CPU is the limit, not the 1 GbE link:
           </strong>{' '}
-          on the MX95 the token generated the set in <EvidenceCite of="mx95">473 s</EvidenceCite>{' '}
-          with the output discarded, and streamed it to the Mac in{' '}
-          <EvidenceCite of="mx95">498 s</EvidenceCite>. At 1 Gb/s line rate the 3.94 GB would take
-          about 32 s.
+          on the MX95 the first version generated the set in{' '}
+          <EvidenceCite of="mx95">473 s</EvidenceCite> with the output discarded, and streamed it to
+          the Mac in <EvidenceCite of="mx95">498 s</EvidenceCite>. At 1 Gb/s line rate the 3.94 GB
+          would take about 32 s. The fastest board run, six MX95 Pro cores at 30 limbs per call,
+          takes <EvidenceCite of="cachedMx95pro">72.4 s</EvidenceCite> (54 MB/s), about half of the
+          link.
         </p>
       </div>
     </div>
@@ -919,11 +939,17 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-const CARD_IDS: CardId[] = ['noise', 'encode', 'circuit', 'stream']
+const CARD_IDS: CardId[] = ['noise', 'encode', 'circuit', 'stream', 'rotation', 'shared']
 
-export const FheConceptsWorkshop: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
+export const FheConceptsWorkshop: React.FC<{
+  onComplete?: () => void
+  /** Open this card first (a link from the Learn tab); default is the noise card. */
+  initialCard?: CardId
+}> = ({ onComplete, initialCard }) => {
   const reduced = usePrefersReducedMotion()
-  const [expanded, setExpanded] = useState<CardId | null>('noise')
+  const [expanded, setExpanded] = useState<CardId | null>(
+    initialCard && CARD_IDS.includes(initialCard) ? initialCard : 'noise'
+  )
   const [done, setDone] = useState<Set<CardId>>(new Set())
 
   const mark = useCallback(
@@ -985,16 +1011,35 @@ export const FheConceptsWorkshop: React.FC<{ onComplete?: () => void }> = ({ onC
       icon: Layers,
       body: <StreamDemo onInteract={() => mark('stream')} />,
     },
+    {
+      id: 'rotation',
+      title: 'Key rotation without decrypting',
+      short: 'Rotation',
+      subtitle: 'Move stored ciphertexts to a new key, and see what the token refuses',
+      border: 'border-l-warning',
+      icon: RefreshCw,
+      body: <RotationView onInteract={() => mark('rotation')} />,
+    },
+    {
+      id: 'shared',
+      title: 'Shared (2-of-2) decryption',
+      short: 'Shared',
+      subtitle: 'Two tokens each hold a share: what it costs, what it fixes, what it does not',
+      border: 'border-l-destructive',
+      icon: Users,
+      body: <SharedDecryptView onInteract={() => mark('shared')} />,
+    },
   ]
 
   return (
     <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
       <div className="space-y-5">
         <p className="text-muted-foreground leading-relaxed">
-          Four hands-on views of what makes FHE different from ordinary encryption: noise that must
+          Six hands-on views of what makes FHE different from ordinary encryption: noise that must
           be managed, numbers that are scaled and rounded, programs that cannot branch on secret
-          data, and evaluation keys large enough that the custodian streams them out in pieces.
-          Concepts use simplified math; measured numbers link to their evidence.
+          data, evaluation keys large enough that the custodian streams them out in pieces, a key
+          that can be rotated without decrypting the data, and a secret that two tokens can hold as
+          shares. Concepts use simplified math; measured numbers link to their evidence.
         </p>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>Progress:</span>

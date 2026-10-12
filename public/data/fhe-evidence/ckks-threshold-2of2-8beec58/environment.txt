@@ -1,0 +1,4 @@
+fhe repo: 7361df1c11b6c5c53ec6df5f1b3e8cb9b3c9fe68
+image: golang:1.25.4-bookworm (--cpus 4)
+Darwin arm64
+Sat Oct 10 23:07:51 CDT 2026

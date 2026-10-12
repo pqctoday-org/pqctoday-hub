@@ -1,0 +1,4 @@
+[04:30:43Z] build SEAL v4.1.2 and the generator
+[04:31:00Z] repeat run: byte-identical (30 files)
+[04:31:00Z] cross-check with Lattigo v6.2.0
+check pass: True

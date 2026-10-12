@@ -1,0 +1,54 @@
+{
+ "paramSet": "CKKS_N16QP1546H192H32_LATTIGO_V6_2_0",
+ "parties": 2,
+ "mainShareHammingWeight": 192,
+ "sparseShareHammingWeight": 32,
+ "jointMainSecret": {
+  "nonZero": 382,
+  "maxAbs": 1,
+  "countAbs2": 0,
+  "l1": 382
+ },
+ "jointSparseSecret": {
+  "nonZero": 64,
+  "maxAbs": 1,
+  "countAbs2": 0,
+  "l1": 64
+ },
+ "galoisKeys": 48,
+ "collectiveKeyGenSeconds": 27.825796978,
+ "bootstrapSeconds": 8.239093094,
+ "log2PrecisionAfterBootstrapJointKey": 24.37450400965745,
+ "log2PrecisionAfterBootstrapSinglePartyBaseline": 0,
+ "log2PrecisionDecryptWithOneShareOnly": -27.971369851080226,
+ "thresholdDecrypt": [
+  {
+   "log2SigmaFlood": 0,
+   "log2Precision": 24.387532248506528
+  },
+  {
+   "log2SigmaFlood": 20,
+   "log2Precision": 9.855492334292197
+  },
+  {
+   "log2SigmaFlood": 31.6,
+   "log2Precision": -1.7044469162277553
+  }
+ ],
+ "craftedQueryShareCoeffsRecovered": 65536,
+ "craftedQueryShareCoeffsTotal": 65536,
+ "sizesBytes": {
+  "publicKeyShare": 7864456,
+  "relinRoundOneShare": 157289056,
+  "relinRoundTwoShare": 78644576,
+  "galoisShareEach": 78644584,
+  "denseToSparseShare": 1048640,
+  "sparseToDenseShare": 78644576,
+  "thresholdDecryptShareLevel0": 524304,
+  "perPartyUploadTotal": 4098431336,
+  "jointBootstrappingKeySet": 7866551213,
+  "singlePartyBootstrappingKeySet": 0
+ },
+ "goHeapSysMB": 15695.990104675293,
+ "pass": true
+}
