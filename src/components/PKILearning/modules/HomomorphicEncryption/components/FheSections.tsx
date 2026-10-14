@@ -18,6 +18,15 @@ import {
   KeyTakeaways,
 } from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
+import {
+  COMPUTE_SERVICE_LIMITS,
+  COMPUTE_SERVICE_REF,
+  COMPUTE_SERVICE_ROWS,
+  OPENFHE_EXPORT_LIMITS,
+  OPENFHE_EXPORT_REFS,
+  OPENFHE_EXPORT_ROWS,
+  citeMerged,
+} from '../data/fheComputeService'
 import { Button } from '@/components/ui/button'
 import type { LifecycleView, OpenLifecycleView } from '../workshop/fheRotationSharedData'
 import {
@@ -1331,12 +1340,13 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
           <strong>OpenFHE v1.6.0 CKKS</strong> (
           <EvidenceCite of="openfhe">OpenFHE run</EvidenceCite>): at N = 2^16, the settings closest
           to Lattigo&apos;s default set that pass OpenFHE&apos;s own 128-bit check give 80 keys and
-          13.26 GB (51 keys and 7.87 GB in Lattigo), and one bootstrap keeps 13.3 bits. Keys in
+          13.26 GB (51 keys and 7.87 GB in Lattigo), and one bootstrap keeps 13.3 bits. That run
+          counted one test rotation; the keys bootstrapping needs are 79, 13.09 GB. Keys in
           Lattigo&apos;s layout, made by Lattigo&apos;s key generator for OpenFHE&apos;s secret and
           primes, ran in OpenFHE through a format bridge with the same precision as OpenFHE&apos;s
-          own keys, bootstrapping included. The HSM&apos;s own exported key set has not been run in
-          OpenFHE: it uses Lattigo&apos;s primes and bootstrapping key list, which OpenFHE cannot
-          use.
+          own keys, bootstrapping included. The HSM&apos;s default key set uses Lattigo&apos;s
+          primes and key list, which OpenFHE cannot use; a parameter set built from OpenFHE&apos;s
+          own settings now can (below).
         </li>
         <li>
           <strong>Microsoft SEAL v4.1.2 CKKS</strong> (
@@ -1381,5 +1391,62 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
         </div>
       )}
     </div>
+
+    <div
+      id="fhe-openfhe-export"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-2"
+    >
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <KeyRound size={14} className="text-primary" />
+        The HSM&apos;s own key set, used by OpenFHE
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        A third CKKS parameter set in the token takes its primes, digits and key list from OpenFHE
+        v1.6.0 at the settings that pass OpenFHE&apos;s 128-bit check (N = 2^16). The token streams
+        the keys out as it does for the other sets, and OpenFHE uses them as they are: no format
+        bridge and no keys of its own.
+      </p>
+      <FactsTable rows={OPENFHE_EXPORT_ROWS} />
+      <p className="text-xs text-muted-foreground">{OPENFHE_EXPORT_LIMITS}</p>
+      <p className="text-[11px] text-muted-foreground">
+        Merged: {OPENFHE_EXPORT_REFS.map(citeMerged).join('; ')}.
+      </p>
+    </div>
+
+    <div
+      id="fhe-compute-service"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-2"
+    >
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <Server size={14} className="text-primary" />
+        An encrypted risk-scoring service
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        The whole pattern in one place: the data owner&apos;s keys come from the token, a service
+        that never holds a secret key scores encrypted customer records, and only the owner reads
+        the result. It is a reference service for learning, built and measured on one Mac.
+      </p>
+      <FactsTable rows={COMPUTE_SERVICE_ROWS} />
+      <p className="text-xs text-muted-foreground">{COMPUTE_SERVICE_LIMITS}</p>
+      <p className="text-[11px] text-muted-foreground">
+        Merged: {citeMerged(COMPUTE_SERVICE_REF)}.
+      </p>
+    </div>
+  </div>
+)
+
+/** Two-column table of measured facts for the section 9 reference boxes. */
+const FactsTable: React.FC<{ rows: { topic: string; value: string }[] }> = ({ rows }) => (
+  <div className="overflow-x-auto">
+    <table className="w-full text-xs">
+      <tbody className="text-muted-foreground">
+        {rows.map((row) => (
+          <tr key={row.topic} className="border-b border-border/50 align-top">
+            <td className="p-1.5 font-medium text-foreground whitespace-nowrap">{row.topic}</td>
+            <td className="p-1.5">{row.value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 )
