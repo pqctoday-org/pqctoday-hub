@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "producer": "pqctoday-org/pqctoday-hsm",
+  "bundles": {
+    "cacp-kmip": {
+      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "release": null,
+      "files": {
+        "public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm": {
+          "sha256": "b45dc0d7ba294eadc61d0d1239007c8c015e8470fab3a4c222efa45cae177fcb",
+          "bytes": 5595753
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm.d.ts": {
+          "sha256": "a451e8abf7e279cde030f8e5354ac46c09984051e10435a784d6708d2c5b8eb6",
+          "bytes": 32415
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm.js": {
+          "sha256": "ba2ebc425ac23a5c85e482810f3178e61bc7bd0b5f9f96662949193e61ba3760",
+          "bytes": 2269
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.d.ts": {
+          "sha256": "898720022d984e9fc625dbdee802088e84bcebd8720b01fc78bac4190035c684",
+          "bytes": 650
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.js": {
+          "sha256": "4ee6af67b64760b5bd8e55197e89e7456b5c07d4ee4a462aa6714e012e82aaea",
+          "bytes": 79836
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm": {
+          "sha256": "b45dc0d7ba294eadc61d0d1239007c8c015e8470fab3a4c222efa45cae177fcb",
+          "bytes": 5595753
+        },
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm.d.ts": {
+          "sha256": "ff4b211e6c4190367cb41c655d157fdb7edc9c452b1afb4f657cc8c1434742bd",
+          "bytes": 12703
+        }
+      }
+    },
+    "openssh-pkcs11": {
+      "hsmCommit": "bc92034d12d32b3a1b32111d2114e6a1fb8a6205",
+      "release": null,
+      "files": {
+        "public/wasm/openssh-server.js": {
+          "sha256": "8edb152cf41ff50fd04a864630006f36d8e15e4b087f612fd14d4c1e95a9ab16",
+          "bytes": 264312
+        },
+        "public/wasm/openssh-server.wasm": {
+          "sha256": "bcdef08aae1879433cd735548e1564d7664c8c41945056ffce64c4c3a11bcb70",
+          "bytes": 11227345
+        }
+      }
+    },
+    "openssl-pkcs11": {
+      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "release": null,
+      "files": {
+        "public/wasm/openssl.js": {
+          "sha256": "e2464cf4b12acd0915490476ac102b55617b4124c4d7050a0b8d22f2aaaed3c2",
+          "bytes": 267489
+        },
+        "public/wasm/openssl.wasm": {
+          "sha256": "77494bd4920b67b49aec429128102347b2438a30abb8769bcb15407206a399da",
+          "bytes": 7929794
+        }
+      }
+    },
+    "softhsm-cpp-engine": {
+      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "release": null,
+      "files": {
+        "public/wasm/libsofthsmv3.wasm": {
+          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
+          "bytes": 2472888
+        },
+        "public/wasm/softhsm.wasm": {
+          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
+          "bytes": 2472888
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsm.wasm": {
+          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
+          "bytes": 2472888
+        }
+      }
+    },
+    "softhsmrustv3-engine": {
+      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "release": null,
+      "files": {
+        "public/wasm/rust/softhsmrustv3_bg.wasm": {
+          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
+          "bytes": 2853800
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm": {
+          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
+          "bytes": 2853800
+        },
+        "src/wasm/softhsmrustv3_bg.wasm": {
+          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
+          "bytes": 2853800
+        }
+      }
+    },
+    "strongswan": {
+      "hsmCommit": "bf53023b78b42078b5936dab91809eaeb9f756e3",
+      "release": null,
+      "files": {
+        "public/wasm/strongswan.wasm": {
+          "sha256": "43a5e9cede0c399c2ccc40daa8281f22be55a9e93bc8250fbf2f6c579abd72db",
+          "bytes": 14052322
+        }
+      }
+    }
+  }
+}

@@ -17,14 +17,16 @@
 //     so they can only be cross-checked hub-internally.
 //
 // Venue: `*.local.test.ts` — excluded from CI globs, run by the local gate
-// (directive 2026-07-01), because it reads a sibling repo. It skips
-// cleanly when that repo is not checked out rather than failing.
+// (directive 2026-07-01), because it reads a sibling repo. Since 2026-10-12 it
+// FAILS LOUDLY when that repo is not checked out; ALLOW_MISSING_HSM=1 skips it
+// knowingly and prints a warning (see src/test/hsmSibling.ts).
 import { describe, it, expect } from 'vitest'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { CKA_TABLE, CKO_TABLE, CKK_TABLE, CKR_TABLE } from './pkcs11Inspect'
+import { hsmAvailableOrExplicitSkip, hsmRepoPath } from '../test/hsmSibling'
 
-const HEADER = path.resolve(__dirname, '../../../pqctoday-hsm/docs/refs/pkcs11t-canonical-v3.2.h')
+const HEADER = path.join(hsmRepoPath(), 'docs/refs/pkcs11t-canonical-v3.2.h')
 
 /** name -> value, for every `#define CKx_... 0x...UL` in the header. */
 const parseHeader = (): Map<string, number> => {
@@ -36,10 +38,13 @@ const parseHeader = (): Map<string, number> => {
   return out
 }
 
-const describeIfPresent = existsSync(HEADER) ? describe : describe.skip
+const headerPresent = hsmAvailableOrExplicitSkip('constant-table header check', HEADER)
+const describeIfPresent = headerPresent ? describe : describe.skip
 
 describeIfPresent('spec-sourced constant tables match the canonical v3.2 header', () => {
-  const spec = parseHeader()
+  // A skipped suite's body still runs while vitest collects it, so only read the
+  // header when it is there (an explicit ALLOW_MISSING_HSM=1 run must not crash).
+  const spec = headerPresent ? parseHeader() : new Map<string, number>()
 
   const check = (label: string, table: Record<number, { name: string }>) => {
     it(`${label}: every entry matches the header`, () => {
