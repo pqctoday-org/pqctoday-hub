@@ -43,7 +43,7 @@ export const MEASURED_BASIS: Partial<Record<FheFlowId, string>> = {
   'single-hsm':
     'Evaluation-key and public-key sizes and the streaming times in this scenario are measured: Lattigo v6.2.0’s default bootstrappable set (N = 2¹⁶, 51 keys), streamed by a software token on one Cortex-A55 core of the MX95 and MX95 Pro boards to a Mac (M5 Max), and on one Mac (M4 Pro) core; generation with the token’s caches on one MX95 core and six MX95 Pro cores (2026-10-11); files linked from the step evidence. Ciphertext sizes and the other steps’ costs are order-of-magnitude estimates for CKKS at N = 2¹⁶.',
   'hsm-compute-limits':
-    'The evaluation-key size and its streamed generation are measured (Lattigo v6.2.0’s default bootstrappable set, a software token on one MX95 Cortex-A55 core; files linked from the CKKS single-HSM scenario’s evidence). Evaluation and decryption costs are order-of-magnitude estimates; GPU bootstrap times are published figures.',
+    'The evaluation-key size and its streamed generation are measured (Lattigo v6.2.0’s default bootstrappable set, a software token on one MX95 Cortex-A55 core; the second parameter set’s 4.41 GB key set on both boards; the 31.5 MB rotation key on a Mac; files linked from the CKKS single-HSM and key-rotation scenarios’ evidence). Evaluation and decryption costs are order-of-magnitude estimates; GPU bootstrap times are published figures.',
   'openfhe-threshold':
     'Data and key sizes and timings in this scenario are measured: OpenFHE v1.6.0, BFV at n = 16,384, log2 q = 300 with noise flooding, 3 parties in one process on an Apple M4 Pro (pqctoday-fhe de1d2b8d) and again on a KV260’s Cortex-A53 (pqctoday-fhe adab554, peak RAM about 384 MiB with every party on the one board); files linked from the step evidence. Without noise flooding the 5-party example runs at n = 8,192. Other key sizes in the panel are estimates.',
   'lattigo-threshold':
@@ -474,7 +474,7 @@ export const FHE_STEP_COSTS: Record<FheFlowId, StepCost[]> = {
       4,
       '4–8 min A55',
       'HSM, streamed',
-      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core; 214 s with the token caching work between calls (64.5 MiB peak). A TFHE server key (30 MB) is the smaller alternative.'
+      'Measured: a bootstrappable CKKS key set streams out of the token in 1,001 bounded calls with a 16.7 MiB token peak, 473 s on one MX95 Cortex-A55 core; 214 s with the token caching work between calls (64.5 MiB peak). The second parameter set is 4.41 GB in 1,201 calls (generated in 96.9 s on the MX95 Pro and 99.2 s on the MX95) and a rotation key is 31.5 MB (measured). A TFHE server key (30 MB) is the smaller alternative.'
     ),
     c(
       4,

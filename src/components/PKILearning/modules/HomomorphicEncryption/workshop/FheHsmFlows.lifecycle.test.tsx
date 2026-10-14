@@ -88,4 +88,59 @@ describe('FHE + HSM flows: the key-lifecycle scenarios', () => {
     )
     expect(decrypt.engineNote).not.toMatch(/not yet measured/)
   })
+
+  it('"What can run in the HSM?": the steps the merged engine does are in the engine, nothing is planned', () => {
+    const f = flow('hsm-compute-limits')
+    const status = Object.fromEntries(f.steps.map((s) => [s.id, engineStatusOf(f, s)]))
+    expect(status).toEqual({
+      'key-generation-fits': 'engine',
+      'eval-keygen-in-hsm': 'engine',
+      // the HSM cannot run homomorphic evaluation: that step stays "refused", it is not "planned"
+      'evaluation-in-hsm': 'refused',
+      'evaluation-on-accelerators': 'outside',
+      'return-encrypted-result': 'outside',
+      'app-requests-decrypt': 'engine',
+      'decrypt-in-hsm': 'engine',
+      'release-result': 'engine',
+    })
+    expect(Object.values(status)).not.toContain('planned')
+  })
+
+  it('"What can run in the HSM?": the engine notes cite the merge commits, not pull request heads', () => {
+    const f = flow('hsm-compute-limits')
+    const notes = (id: string) => f.steps.find((s) => s.id === id)!.engineNote ?? ''
+    const keys = notes('eval-keygen-in-hsm')
+    for (const sha of [
+      'f4924a034641c44e00a8565c200cc9f7d179f895', // #351 streamed export, registry ID 3, rotation key
+      '3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905', // #353 generator frozen
+      '3cad9d3ba628522c1e3d150a3ed2570bfac825d6', // #354 retirement record
+    ])
+      expect(keys).toContain(sha)
+    expect(keys).toContain('registry ID 3')
+    expect(keys).toContain('rotation key')
+    expect(notes('key-generation-fits')).toBe(keys)
+    const decrypt = notes('decrypt-in-hsm')
+    expect(decrypt).toContain('d6b23452d92e4250069db9b993f818e65712b7b1') // #355 flood width
+    expect(decrypt).toContain('f4924a034641c44e00a8565c200cc9f7d179f895')
+    for (const id of ['app-requests-decrypt', 'release-result']) expect(notes(id)).toBe(decrypt)
+    // the streaming step says what the second set and the rotation key cost (merged measurements)
+    const detail = f.steps.find((s) => s.id === 'eval-keygen-in-hsm')!.detail
+    expect(detail).toContain('4.41 GB in 1,201 calls')
+    expect(detail).toContain('31.5 MB')
+    expect(detail).toContain('frozen')
+  })
+
+  it('shared decryption and the replication steps stay planned: nothing of them is built', () => {
+    const shared = flow('ckks-shared-decrypt')
+    for (const st of shared.steps.filter((s) => /^token-/.test(s.id)))
+      expect(engineStatusOf(shared, st), st.id).toBe('planned')
+    const single = flow('single-hsm')
+    for (const id of ['live-clone-peer-hsm', 'offline-backup-restore'])
+      expect(
+        engineStatusOf(
+          single,
+          single.steps.find((s) => s.id === id)!
+        )
+      ).toBe('planned')
+  })
 })
