@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.159.0] - 2026-10-14
+
+The Homomorphic Encryption workshop now works on phones and its HSM scenario shows what the engine already does; the build now pins the compiled engine files the site ships and fails loudly when one differs.
+
+### Changed
+
+- **The Homomorphic Encryption workshop now works on phones** [view:/learn/homomorphic-encryption] [persona:developer] [persona:architect] [persona:researcher]: the Workshop tab opens on a phone instead of the "not built for mobile yet" note. All eight HSM flow scenarios step through to the end, the key-rotation and shared-decryption views respond to touch, and the six concept views open and work, with no horizontal scrolling.
+- **"What can run in the HSM?" shows what the merged engine already does** [view:/learn/homomorphic-encryption] [persona:architect] [persona:ops] [persona:grc]: five steps that said "planned" now say "in engine today": key generation, streaming the evaluation-key set as bounded calls, the application's decrypt request, decryption under policy, and the release. The streaming step now states the second parameter set (4.41 GB in 1,201 calls, generated in 96.9 s on the MX95 Pro and 99.2 s on the MX95), the 31.5 MB rotation key that only the security officer may request, and that the key generator is frozen, so the same seed gives the same bytes. Shared decryption and replication stay "planned"; homomorphic evaluation inside the HSM stays "refused by design".
+
+### Security
+
+- **The engine files the site ships are pinned** [persona:ops] [persona:developer]: the site contains 18 compiled engine files (OpenSSL, strongSwan and the PKCS#11 engines, in 6 bundles). Their checksums and sizes are now recorded in a lock list, and the build fails, naming the bundle and file, if one changes, goes missing or is added without being listed. The KMIP engine's record now names its seven generated files instead of a whole folder that also holds code written here. Four existing checks that used to skip quietly when the HSM project is not checked out next to the site now fail with a clear message unless skipping is switched on deliberately. The leak scan of the source and of the built site that was added after 4.158.0 runs on every build.
+
 ## [4.158.0] - 2026-10-11
 
 The Homomorphic Encryption module corrects its figures for releasing CKKS results to others and adds key rotation and shared decryption as interactive views. The certificate records behind Compliance and Migrate are refreshed, six classical-only FIPS 140-3 modules show their certificates again, and twelve NIST certification documents in the Library carry checked details.
