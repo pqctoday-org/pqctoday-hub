@@ -31,12 +31,18 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.159.0] - 2026-10-14
 
-The Homomorphic Encryption workshop now works on phones and its HSM scenario shows what the engine already does; the build now pins the compiled engine files the site ships and fails loudly when one differs.
+The Homomorphic Encryption module adds the HSM key set running in OpenFHE and an encrypted risk-scoring service, its workshop now works on phones and its HSM scenario shows what the engine already does; the build now pins the compiled engine files the site ships and fails loudly when one differs.
+
+### Added
+
+- **The HSM's own key set now works in OpenFHE** [view:/learn/homomorphic-encryption] [persona:developer] [persona:researcher] [persona:architect]: a third CKKS parameter set follows OpenFHE's own 128-bit settings, so the 79 keys the token streams out (6.56 GB in 17.8 s on a Mac) bootstrap in OpenFHE with no keys of its own, at the same precision (13.28 bits against 13.20 with OpenFHE's keys). Results go to the data owner only, and it has not run on the boards yet.
+- **An encrypted risk-scoring service, measured end to end** [view:/learn/homomorphic-encryption] [persona:architect] [persona:developer] [persona:ops] [persona:executive]: a reference service scores 32,768 customers' encrypted credit records per request in about 200 ms and ranks them exactly as the plaintext model does (AUC 0.717298 against 0.717299, the same decision for every customer). It accepts only token-signed keys, uses post-quantum TLS 1.3 with a client certificate, never holds a secret key, and only the data owner can read a score. Its limits are stated alongside: test certificates, one tenant, memory only, one Mac.
 
 ### Changed
 
 - **The Homomorphic Encryption workshop now works on phones** [view:/learn/homomorphic-encryption] [persona:developer] [persona:architect] [persona:researcher]: the Workshop tab opens on a phone instead of the "not built for mobile yet" note. All eight HSM flow scenarios step through to the end, the key-rotation and shared-decryption views respond to touch, and the six concept views open and work, with no horizontal scrolling.
 - **"What can run in the HSM?" shows what the merged engine already does** [view:/learn/homomorphic-encryption] [persona:architect] [persona:ops] [persona:grc]: five steps that said "planned" now say "in engine today": key generation, streaming the evaluation-key set as bounded calls, the application's decrypt request, decryption under policy, and the release. The streaming step now states the second parameter set (4.41 GB in 1,201 calls, generated in 96.9 s on the MX95 Pro and 99.2 s on the MX95), the 31.5 MB rotation key that only the security officer may request, and that the key generator is frozen, so the same seed gives the same bytes. Shared decryption and replication stay "planned"; homomorphic evaluation inside the HSM stays "refused by design".
+- **Corrected OpenFHE key count** [view:/learn/homomorphic-encryption] [persona:researcher]: the cross-check now says that OpenFHE's bootstrapping needs 79 keys (13.09 GB); the 80 keys and 13.26 GB reported earlier included one test rotation.
 
 ### Security
 
