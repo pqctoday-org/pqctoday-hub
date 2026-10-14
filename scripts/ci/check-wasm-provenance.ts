@@ -6,8 +6,9 @@
  * source dirs it was built from (i.e. the hub is shipping a stale bundle). Bundles
  * marked `pending-refresh` are always flagged.
  *
- * Mirrors the sync:sandbox pattern: it is a no-op (passes) when the sibling repo
- * is not present (e.g. in hub-only CI), and a hard gate locally / where hsm is checked out.
+ * Without the sibling repo it FAILS LOUDLY (since 2026-10-12); ALLOW_MISSING_HSM=1 skips it
+ * knowingly with a printed warning. It is not run by GitHub CI. The offline file check
+ * that needs no sibling is scripts/ci/verify-engines.ts.
  *
  *   npx tsx scripts/check-wasm-provenance.ts             # report
  *   npx tsx scripts/check-wasm-provenance.ts --check     # exit 1 on drift/pending
@@ -21,7 +22,7 @@
  * Override the hsm location with HSM_REPO_PATH=/path/to/pqctoday-hsm.
  */
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
   DOC_ONLY_EXCLUDES,
@@ -31,6 +32,7 @@ import {
   gitCargoIo,
   type DerivedInputs,
 } from './wasm-build-inputs'
+import { hsmAvailableOrExplicitSkip } from '../../src/test/hsmSibling'
 
 const CHECK = process.argv.includes('--check')
 const ONLY = new Set(
@@ -63,8 +65,7 @@ const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as { bundles: Bu
 
 const hsmPath = process.env.HSM_REPO_PATH ?? resolve(process.cwd(), '..', 'pqctoday-hsm')
 
-if (!existsSync(resolve(hsmPath, '.git'))) {
-  console.log(`⏭  sibling pqctoday-hsm not found at ${hsmPath} — skipping wasm provenance check.`)
+if (!hsmAvailableOrExplicitSkip('wasm provenance drift check', resolve(hsmPath, '.git'))) {
   process.exit(0)
 }
 

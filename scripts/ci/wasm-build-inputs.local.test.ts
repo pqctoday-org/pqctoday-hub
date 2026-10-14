@@ -8,7 +8,7 @@
 // (hand-written `sourceDirs`) are asserted too, so this proves the change in
 // behaviour rather than only the new behaviour.
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
@@ -18,10 +18,12 @@ import {
   deriveCargoInputs,
   gitCargoIo,
 } from './wasm-build-inputs'
+import { hsmAvailableOrExplicitSkip } from '../../src/test/hsmSibling'
 
 const ROOT = path.resolve(__dirname, '../..')
 const HSM = process.env.HSM_REPO_PATH ?? path.resolve(ROOT, '..', 'pqctoday-hsm')
-const hasHsm = existsSync(path.join(HSM, '.git'))
+// Fails loudly without the sibling checkout; ALLOW_MISSING_HSM=1 skips knowingly.
+const hasHsm = hsmAvailableOrExplicitSkip('wasm staleness replay', path.join(HSM, '.git'))
 
 // This file runs inside .husky/pre-push (test:local), where git exports GIT_DIR
 // and friends to the hook — and those override `-C`, silently pointing every

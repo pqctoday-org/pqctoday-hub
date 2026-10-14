@@ -4,7 +4,15 @@
   "bundles": [
     {
       "name": "cacp-kmip",
-      "files": ["public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm", "src/wasm/kmip/"],
+      "files": [
+        "public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm",
+        "src/wasm/kmip/pqctoday_kmip_wasm.d.ts",
+        "src/wasm/kmip/pqctoday_kmip_wasm.js",
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.d.ts",
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.js",
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm",
+        "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm.d.ts"
+      ],
       "buildScript": "scripts/build-kmip-wasm.sh",
       "sourceDirs": ["kmip", "wasm"],
       "cargoManifest": "wasm/Cargo.toml",

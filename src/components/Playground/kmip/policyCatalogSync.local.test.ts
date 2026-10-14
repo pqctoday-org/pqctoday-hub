@@ -9,9 +9,10 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { POLICY_PRESETS } from '@/wasm/kmip/kmipMeta'
+import { hsmAvailableOrExplicitSkip, hsmRepoPath } from '@/test/hsmSibling'
 
 const POLICY_DIR = join(__dirname, '../../../../public/kmip-policies')
-const HSM_SRC = join(__dirname, '../../../../../pqctoday-hsm/kmip/policies')
+const HSM_SRC = join(hsmRepoPath(), 'kmip/policies')
 const shippedYamls = () => readdirSync(POLICY_DIR).filter((f) => f.endsWith('.yaml'))
 
 describe('policy catalog ↔ files sync', () => {
@@ -47,7 +48,8 @@ describe('policy catalog ↔ files sync', () => {
   // The hub copy under public/ must byte-match the engine's source of truth so
   // the UI never renders a policy that differs from what the server enforces.
   it('hub policy copies byte-match the engine source (kmip/policies)', () => {
-    if (!existsSync(HSM_SRC)) return // sibling hsm checkout absent — skip
+    // Fails loudly without the sibling checkout; ALLOW_MISSING_HSM=1 skips knowingly.
+    if (!hsmAvailableOrExplicitSkip('policy catalog byte-match', HSM_SRC)) return
     for (const f of shippedYamls()) {
       // A policy born on a feature branch (e.g. migration-classical.yaml on
       // feat/kmip3-commands) has no counterpart in the sibling MAIN checkout

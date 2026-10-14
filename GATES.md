@@ -50,6 +50,18 @@ then the receipt is written. Data checks (data integrity, archival, evidence,
 editorial and validation-evidence checks) are not part of this gate: they run
 outside this repository on each PR head before merge. (`gate:cacp` was removed from the hook and from GitHub on 2026-09-27 by owner decision; run `npm run gate:cacp` by hand when changing the KMIP/CACP playground or rebuilding its wasm.)
 
+## Engine files and the HSM sibling (2026-10-12)
+
+- `npm run verify:engines` (in `gate:local`, `gate:prepush` and CI's `checks` job) proves the vendored
+  engine files match `public/wasm/engines.lock.json`: SHA-256 and size of every file, the HSM commit per
+  bundle, and that `wasm-provenance.json` names files, never folders. It needs **no sibling checkout**.
+  After rebuilding an engine: update its provenance entry, run `npm run verify:engines -- --write-lock`,
+  commit the lock with the files. Rollback is reverting that commit.
+- Guards that read the sibling `pqctoday-hsm` checkout (`constantTables`, `policyCatalogSync`,
+  `wasm-build-inputs` replay, `sync:wasm:check`) used to skip quietly when it was absent. They now **fail
+  loudly**; set `ALLOW_MISSING_HSM=1` to skip knowingly (a WARNING names each skipped guard) or
+  `HSM_REPO_PATH` to point at the checkout. GitHub CI never runs them.
+
 ## GitHub — `.github/workflows/ci.yml` (push to main, every PR)
 
 `checks` (the required status check) ≈ 13–15 min:
