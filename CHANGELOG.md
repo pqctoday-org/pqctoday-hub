@@ -29,6 +29,47 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.160.0] - 2026-10-15
+
+Five certification modules now name the official document behind ten more of their statements. The Homomorphic Encryption module adds a two-round refresh that restores precision, runs the encrypted scoring service on an x86 machine and an MX95 Pro board, and generates the OpenFHE key set on both boards. The playground retires the Step-CA scenario, and the TPM emulator now comes from a tagged release.
+
+### Added
+
+- **Certification modules name their sources for ten more statements** [view:/learn/pci-certification] [view:/learn/cc-eucc-certification] [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/acvp-lab-workflow] [persona:cert-engineer] [persona:grc]: five modules now list the document that states each of these sentences:
+  - PCI: the PCI SSC announcement of PIN Security Standard v3.1.
+  - EUCC: ENISA's EUCC Guidelines on Cryptography page, the CMVP Management Manual, ENISA's 2024 State of Cybersecurity report and NIAP's CCEVS Policy 33.
+  - FIPS 140-3: NIST's CMVP FIPS 140-3 standards page and a published CMVP certificate.
+  - Product certification: NIST's CMVP FIPS 140-3 standards page and ETSI EN 319 411.
+  - ACVP lab workflow: NIST's ACVP ML-DSA test specification.
+
+  The module text is unchanged; only the reference lists grow.
+
+- **OpenFHE's two-round refresh lifts precision from about 13 to about 32 bits with the HSM's own keys** [view:/learn/homomorphic-encryption] [persona:researcher] [persona:developer]: one refresh keeps 13.2 bits. Two rounds at OpenFHE's recommended setting give 21.1 bits, and the best setting gives 31.7–31.8 bits, close to a fresh ciphertext's 32.1. The cost is about twice the time and one level. This was measured on one Mac with one test input, not on a board.
+- **The encrypted risk-scoring service runs on an x86 virtual machine and on an MX95 Pro board, with the token on a second board** [view:/learn/homomorphic-encryption] [persona:architect] [persona:ops] [persona:developer]: each batch scores 32,768 customers. A batch takes 277 ms on the virtual machine and 4.29 s on the MX95 Pro, about 21 times the Mac's 0.2 s. Peak memory is 1,311 MiB and 1,870 MiB. Both machines give identical scores (21.00 bits, AUC 0.717298). The runs use test certificates and a published test seed, so they show time, memory and correctness only.
+- **The OpenFHE key set is also generated on both MX95 boards** [view:/learn/homomorphic-encryption] [persona:researcher] [persona:architect]: the token exports the 79-key, 6.56 GB set in 145 s on the MX95 and 142 s on the MX95 Pro. Streaming it to a Mac takes about 3 minutes. All 1,565 pieces match the reference and the token-signed manifest, and the token uses 89–91 MiB of memory.
+
+### Changed
+
+- **The Automated CA (Step-CA) sandbox scenario is retired** [view:/playground] [persona:developer] [persona:ops]: the lab now issues post-quantum certificates with EJBCA and OpenBao. The playground lists 23 sandbox scenarios, and two Industry Landscape use cases no longer link to the retired one. Product entries that describe step-ca as a real product are unchanged.
+- **The TPM playground's emulator is built from the pqctoday-tpm v0.10.1 release** [view:/playground] [persona:developer] [persona:ops]: the browser emulator now comes from a tagged release, and the software bill of materials names it.
+- **The Homomorphic Encryption figures say which refresh they mean** [view:/learn/homomorphic-encryption] [persona:researcher]: "about 13 bits" now refers to the default single refresh. The release figure reads 30.5 bits with the exact scale applied, or 27.0 at face value. The scoring-service box covers three machines, and fact tables stack on phones.
+- **Every engine the site ships is checked against its lock before release** [persona:ops] [persona:developer]: the check now also covers the TPM emulator, the LMS/HSS module and the entropy estimators, including their loader files. The engines built in pqctoday-hsm are pinned to their published release.
+
+### Fixed
+
+- **A Homomorphic Encryption record headline is corrected** [view:/learn/homomorphic-encryption] [persona:researcher]: it no longer says the HSM's key set was never run in OpenFHE.
+- **The playground lists the certificate-discovery lesson, and two lesson summaries match their lessons** [view:/playground] [persona:developer]: the OpenSSL Studio summary now says `openssl kdf` arrived in OpenSSL 3.0, and the TPM 2.0 summary uses the lesson's current wording.
+
+### Data
+
+- **Four new Library entries** [view:/library] [persona:researcher] [persona:grc]:
+  - the PCI PIN Security Standard v3.1 announcement;
+  - ENISA's EUCC Guidelines on Cryptography page;
+  - NIST's ACVP ML-DSA test specification;
+  - NIST's CMVP FIPS 140-3 standards page.
+- **Thirteen homomorphic-encryption papers in the Library are read in full** [view:/library] [persona:researcher]: their summaries, key points and search results now come from the complete paper, not its abstract page.
+- **Three new homomorphic-encryption measurement records** [view:/learn/homomorphic-encryption] [persona:researcher] [persona:architect]: the two-round refresh, the scoring service on the MX95 Pro, and the scoring service on the x86 virtual machine. Two board records cover the key-set generation.
+
 ## [4.159.0] - 2026-10-14
 
 The Homomorphic Encryption module adds the HSM key set running in OpenFHE and an encrypted risk-scoring service, its workshop now works on phones and its HSM scenario shows what the engine already does; the build now pins the compiled engine files the site ships and fails loudly when one differs.

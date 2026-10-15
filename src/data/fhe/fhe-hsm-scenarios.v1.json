@@ -12,7 +12,7 @@
         "paper": "Cheon, Kim, Kim, Song: Homomorphic Encryption for Arithmetic of Approximate Numbers (ASIACRYPT 2017); OpenFHE design paper (IACR ePrint 2022/915)",
         "paperUrl": "https://eprint.iacr.org/2022/915"
       },
-      "validationTarget": "Reference-validated with Lattigo v6.2.0: the evaluation-key set streamed by a software token on the MX95 boards matched the Lattigo-based reference spec and bootstrapped in Lattigo. OpenFHE v1.6.0 CKKS was measured separately; the token's exported key set has not been run in OpenFHE.",
+      "validationTarget": "Reference-validated with Lattigo v6.2.0: the evaluation-key set streamed by a software token on the MX95 boards matched the Lattigo-based reference spec and bootstrapped in Lattigo. OpenFHE v1.6.0 CKKS was measured separately. The HSM's Lattigo-based sets (registry IDs 2 and 3) cannot be used in OpenFHE; its registry ID 4, built from OpenFHE's own primes and key list, was run in OpenFHE with only the token's keys and was also generated with the token on both MX95 boards (export only). OpenFHE's two-round (iterative) bootstrapping raised the precision with those keys from about 13 bits to 21 at the setting its example recommends and about 32 at the best setting found, on a Mac only.",
       "actors": [
         {
           "id": "client",

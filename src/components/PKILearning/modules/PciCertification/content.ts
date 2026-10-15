@@ -30,7 +30,7 @@ export const content: ModuleContent = {
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-09-27',
+  lastEdited: '2026-10-15',
 
   standards: [
     // ── PCI (public documents only, plan r2 D4) ──
@@ -47,6 +47,7 @@ export const content: ModuleContent = {
     getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
     // FIPS 140-2 → 140-3 transition dates the PCI data cites (pciData.ts)
     getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline'),
+    getStandard('Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard'), // second source for claim:2ea3a54da34ed289
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

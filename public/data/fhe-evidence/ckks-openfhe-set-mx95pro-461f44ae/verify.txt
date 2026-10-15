@@ -1,0 +1,1 @@
+verify: 32 public-key limbs, 12483 evaluation-key limbs compared, 0 mismatches

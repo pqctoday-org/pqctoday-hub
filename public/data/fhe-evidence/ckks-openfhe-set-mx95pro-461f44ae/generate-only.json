@@ -1,0 +1,12 @@
+{
+ "paramSet": 4,
+ "name": "CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128",
+ "keys": 79,
+ "limbsPerCall": 8,
+ "evkCalls": 1561,
+ "bytes": 6561464453,
+ "seconds": 142.091,
+ "mbPerSecond": 46.2,
+ "slowestCallSeconds": 0.1373,
+ "peakRssKiB": 90740
+}
