@@ -1,0 +1,215 @@
+[00:36:55] provenance
+run: 2026-10-15-iterative-m5max
+date_utc: 2026-10-15T05:36:55Z
+fhe_commit: 9dde7f84f974ed29bee30e82242cea93def54225 (+ 0 uncommitted or untracked files outside this results folder)
+openfhe: v1.6.0, 6206d24f9eefefc620b524a4f2b9f308feb91e9f, the repository's vendored tree 23256a3a3586f036b4af3c55e1715deceedb34d2 (0 local changes)
+openfhe_build: Release, 64-bit native integers, WITH_OPENMP=ON, no tests/benchmarks/examples (build-openfhe.sh)
+openfhe_container: debian@sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26 (debian:bookworm), linux/arm64, --cpus 6 --memory 40g, OMP_NUM_THREADS=6
+openfhe_toolchain: g++ (Debian 12.2.0-14+deb12u1) 12.2.0; cmake version 3.25.1
+go_container: golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb (golang:1.25.4-bookworm), lattigo v6.2.0 (the repository's pinned tree)
+token_container: pqc-rust (image sha256:483e0c1fd6cbc39e3e7edfaabbb44a893c9552e089be45915c8bbfb3e3403e41), PQC_CKKS_THREADS=6, CKKS_PRECISION_BITS=30
+hsm_engine_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d (custodian built from an export of origin/main, features educational-ckks,test-support)
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+registry_id: 4 (CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128), test seed 00..1f, owner release policy rounding 2^-30
+host_class: Apple M5 Max, macOS 26.6.2 (25G83), Docker Engine 29.8.2, containers on OrbStack
+reps_per_mode: 4; ITER_PRECISIONS=2,4,6,8,10,11,12,13,14,15; ITER_PRIMARY=8
+custodian_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+custodian_features: educational-ckks,test-support
+custodian_profile: release
+custodian_builder: pqc-rust container (image sha256:483e0c1fd6cbc39e3e7edfaabbb44a893c9552e089be45915c8bbfb3e3403e41), rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13 (trixie) glibc 2.41, aarch64-unknown-linux-gnu
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+custodian_source: git archive of the HSM checkout's origin/main (no worktree); contains 9dea1716044217cc2e0c5809f347639f4e825564 (HSM PR #360)
+custodian_build: cd rust && CARGO_TARGET_DIR=work/target nice -n 15 cargo build --release --features educational-ckks,test-support --example ckks_custodian --jobs 4
+custodian_built: 2026-10-15T05:32Z
+[00:36:55] engine: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d (export of origin/main; custodian sha256 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53); fhe: 9dde7f84f974ed29bee30e82242cea93def54225
+[00:36:55] token init (registry ID 4, test seed) and export (8 limbs per call)
+initialised /ag/pqctoday-fhe-ckks-iterative-1015/reference-runs/openfhe-hsm-export/work/2026-10-15-iterative-m5max/hsm (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128 seed handle 134
+[00:37:18] oracle verify: every exported limb against the reference spec
+[00:37:51] convert the export for OpenFHE (re-expand a, IMForm + INTT)
+[00:38:03] done
+[00:38:03] done
+[00:38:13] OpenFHE with its own keys, 4 runs: numIterations 1 and 2 (precision sweep 2,4,6,8,10,11,12,13,14,15)
+rep1: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:20.60; Maximum resident set size (kbytes): 17394984;
+rep2: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:09.96; Maximum resident set size (kbytes): 17396028;
+rep3: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:17.28; Maximum resident set size (kbytes): 17405236;
+rep4: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:17.73; Maximum resident set size (kbytes): 17384596;
+[00:43:34] done
+[00:43:40] OpenFHE with the token's keys, 4 runs: numIterations 1 and 2 (precision sweep 2,4,6,8,10,11,12,13,14,15)
+rep1: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:16.73; Maximum resident set size (kbytes): 17384548;
+rep2: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:21.00; Maximum resident set size (kbytes): 17387160;
+rep3: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:18.68; Maximum resident set size (kbytes): 17399024;
+rep4: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:19.68; Maximum resident set size (kbytes): 17508580;
+[00:49:12] done
+[00:49:16] every stage of every token run -> PQCKKS02 -> token decrypt (owner policy, 2^-30 rounding) -> precision
+[00:49:41] every stage of every token run -> PQCKKS02 -> token decrypt (owner policy, 2^-30 rounding) -> precision
+converted 56 ciphertexts
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.013 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.013 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.050 s
+released 524292 B in 0.013 s
+released 524292 B in 0.016 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.013 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.013 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.013 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+      56 results/2026-10-15-iterative-m5max/token-release.jsonl
+[00:49:54] summary
+Runs: 4 with OpenFHE's own keys, 4 with the token's keys (each run: new encryption randomness; own keys: new key generation).
+
+OpenFHE decrypts (own keys: own secret; token keys: the test seed's secret, diagnostic). Precision in bits, mean (min to max):
+
+| stage | numIterations | precision arg | own keys | token's keys | levels left | own s | token s |
+|---|---|---|---|---|---|---|---|
+| boot1 | 1 | - | 13.20 (13.13 to 13.36) | 13.22 (13.13 to 13.32) | 8 | 3.237 | 3.186 |
+| boot2_p2 | 2 | 2 | 15.02 (14.68 to 15.30) | 15.26 (15.13 to 15.31) | 7 | 6.432 | 6.068 |
+| boot2_p4 | 2 | 4 | 17.08 (16.96 to 17.13) | 17.28 (17.11 to 17.47) | 7 | 6.158 | 5.946 |
+| boot2_p6 | 2 | 6 | 19.21 (19.12 to 19.26) | 19.15 (19.03 to 19.26) | 7 | 6.170 | 5.908 |
+| boot2_p8 | 2 | 8 | 21.18 (21.00 to 21.33) | 21.07 (20.69 to 21.36) | 7 | 6.081 | 5.807 |
+| boot2_p10 | 2 | 10 | 23.17 (22.96 to 23.38) | 23.06 (22.91 to 23.17) | 7 | 6.124 | 5.953 |
+| boot2_p11 | 2 | 11 | 24.22 (24.00 to 24.39) | 24.06 (23.90 to 24.22) | 7 | 7.683 | 6.204 |
+| boot2_p12 | 2 | 12 | 25.16 (25.01 to 25.30) | 25.23 (25.10 to 25.45) | 7 | 6.882 | 6.411 |
+| boot2_p13 | 2 | 13 | 26.18 (25.86 to 26.36) | 26.20 (26.18 to 26.25) | 7 | 6.252 | 6.404 |
+| boot2_p14 | 2 | 14 | 27.22 (27.15 to 27.32) | 27.39 (27.34 to 27.44) | 7 | 6.099 | 6.217 |
+| boot2_p15 | 2 | 15 | 28.07 (27.93 to 28.34) | 28.30 (28.17 to 28.41) | 7 | 6.246 | 6.136 |
+| boot1_warm | 1 | - | 13.20 (13.13 to 13.36) | 13.22 (13.13 to 13.32) | 8 | 3.038 | 3.174 |
+| boot1_mult | 1 | - | 13.27 (12.99 to 13.44) | 13.36 (13.16 to 13.46) | 7 | 0.028 | 0.022 |
+| boot2_p8_mult | 2 | 8 | 21.25 (21.19 to 21.33) | 21.20 (21.15 to 21.33) | 6 | 0.022 | 0.022 |
+
+Through the token's owner release (rounding 2^-30), mean over the runs (min to max): as released, and after multiplying the release by 2^52 / (the ciphertext's true scale):
+
+| stage | as released | scale-corrected |
+|---|---|---|
+| boot1 | 13.22 (13.13 to 13.32) | 13.22 (13.13 to 13.32) |
+| boot2_p2 | 15.26 (15.13 to 15.31) | 15.26 (15.13 to 15.31) |
+| boot2_p4 | 17.28 (17.11 to 17.46) | 17.28 (17.11 to 17.47) |
+| boot2_p6 | 19.15 (19.03 to 19.26) | 19.15 (19.03 to 19.26) |
+| boot2_p8 | 21.07 (20.69 to 21.35) | 21.07 (20.69 to 21.36) |
+| boot2_p10 | 23.07 (22.98 to 23.20) | 23.06 (22.91 to 23.17) |
+| boot2_p11 | 24.09 (24.01 to 24.21) | 24.06 (23.89 to 24.22) |
+| boot2_p12 | 25.04 (24.84 to 25.22) | 25.25 (25.10 to 25.46) |
+| boot2_p13 | 25.79 (25.70 to 25.88) | 26.19 (26.13 to 26.27) |
+| boot2_p14 | 26.37 (26.28 to 26.43) | 27.34 (27.31 to 27.37) |
+| boot2_p15 | 26.71 (26.65 to 26.75) | 28.20 (28.05 to 28.31) |
+| boot1_warm | 13.22 (13.13 to 13.32) | 13.22 (13.13 to 13.32) |
+| boot1_mult | 13.36 (13.15 to 13.46) | 13.36 (13.16 to 13.46) |
+| boot2_p8_mult | 21.21 (21.15 to 21.32) | 21.20 (21.15 to 21.32) |
+
+Peak memory of the OpenFHE process (GiB): own keys 16.6, token's keys 16.6.
+[00:49:54] done
+[00:50:33] OpenFHE with its own keys, 2 runs: numIterations 1 and 2 (precision sweep 16,17,18,19,20,22,24)
+rep1: Elapsed (wall clock) time (h:mm:ss or m:ss): 0:54.87; Maximum resident set size (kbytes): 17354484;
+rep2: Elapsed (wall clock) time (h:mm:ss or m:ss): 0:52.71; Maximum resident set size (kbytes): 17354768;
+[00:52:30] OpenFHE with the token's keys, 2 runs: numIterations 1 and 2 (precision sweep 16,17,18,19,20,22,24)
+rep1: Elapsed (wall clock) time (h:mm:ss or m:ss): 1:00.31; Maximum resident set size (kbytes): 17411348;
+rep2: Elapsed (wall clock) time (h:mm:ss or m:ss): 0:55.64; Maximum resident set size (kbytes): 17366464;
+[00:54:42] every stage of every token run -> PQCKKS02 -> token decrypt (owner policy, 2^-30 rounding) -> precision
+converted 22 ciphertexts
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+released 524292 B in 0.012 s
+released 524292 B in 0.011 s
+released 524292 B in 0.011 s
+      22 results/2026-10-15-iterative-m5max/token-release-ext.jsonl
+[00:54:52] summary
+Runs: 2 with OpenFHE's own keys, 2 with the token's keys (each run: new encryption randomness; own keys: new key generation).
+
+OpenFHE decrypts (own keys: own secret; token keys: the test seed's secret, diagnostic). Precision in bits, mean (min to max):
+
+| stage | numIterations | precision arg | own keys | token's keys | levels left | own s | token s |
+|---|---|---|---|---|---|---|---|
+| boot1 | 1 | - | 12.98 (12.94 to 13.01) | 13.35 (13.30 to 13.39) | 8 | 3.018 | 3.256 |
+| boot2_p16 | 2 | 16 | 29.12 (29.03 to 29.22) | 29.24 (29.22 to 29.25) | 7 | 5.730 | 6.121 |
+| boot2_p17 | 2 | 17 | 30.25 (30.16 to 30.35) | 29.88 (29.79 to 29.98) | 7 | 6.361 | 6.141 |
+| boot2_p18 | 2 | 18 | 31.14 (31.12 to 31.15) | 31.00 (30.97 to 31.03) | 7 | 6.335 | 6.259 |
+| boot2_p19 | 2 | 19 | 31.88 (31.80 to 31.95) | 31.80 (31.78 to 31.81) | 7 | 6.137 | 6.184 |
+| boot2_p20 | 2 | 20 | 31.84 (31.83 to 31.85) | 31.73 (31.67 to 31.79) | 7 | 6.008 | 5.906 |
+| boot2_p22 | 2 | 22 | 28.02 (28.00 to 28.04) | 28.02 (28.02 to 28.03) | 7 | 5.938 | 5.725 |
+| boot2_p24 | 2 | 24 | 24.06 (24.01 to 24.12) | 24.23 (24.19 to 24.28) | 7 | 5.861 | 5.764 |
+| boot1_warm | 1 | - | 12.98 (12.94 to 13.01) | 13.35 (13.30 to 13.39) | 8 | 2.867 | 2.759 |
+| boot1_mult | 1 | - | 13.07 (13.03 to 13.10) | 13.32 (13.26 to 13.38) | 7 | 0.021 | 0.022 |
+| boot2_p16_mult | 2 | 16 | 28.83 (28.66 to 29.00) | 28.99 (28.80 to 29.17) | 6 | 0.018 | 0.020 |
+
+Through the token's owner release (rounding 2^-30), mean over the runs (min to max): as released, and after multiplying the release by 2^52 / (the ciphertext's true scale):
+
+| stage | as released | scale-corrected |
+|---|---|---|
+| boot1 | 13.35 (13.30 to 13.39) | 13.35 (13.30 to 13.39) |
+| boot2_p16 | 26.89 (26.89 to 26.90) | 29.10 (29.09 to 29.11) |
+| boot2_p17 | 26.99 (26.99 to 26.99) | 29.84 (29.79 to 29.90) |
+| boot2_p18 | 27.01 (27.01 to 27.02) | 30.28 (30.23 to 30.32) |
+| boot2_p19 | 27.02 (27.01 to 27.02) | 30.53 (30.50 to 30.56) |
+| boot2_p20 | 27.02 (27.02 to 27.02) | 30.45 (30.44 to 30.45) |
+| boot2_p22 | 26.79 (26.75 to 26.83) | 27.97 (27.90 to 28.05) |
+| boot2_p24 | 24.16 (24.16 to 24.17) | 24.23 (24.19 to 24.28) |
+| boot1_warm | 13.35 (13.30 to 13.39) | 13.35 (13.30 to 13.39) |
+| boot1_mult | 13.32 (13.26 to 13.38) | 13.32 (13.26 to 13.38) |
+| boot2_p16_mult | 26.38 (26.37 to 26.40) | 28.79 (28.56 to 29.01) |
+
+Peak memory of the OpenFHE process (GiB): own keys 16.6, token's keys 16.6.
+[00:54:52] done
+[00:56:02] delete converted keys and the export (reproducible)
+[00:56:02] done

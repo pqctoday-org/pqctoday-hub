@@ -1,0 +1,13 @@
+{
+ "already_admitted": false,
+ "assemble_ms": 496.943193,
+ "client_wall_ms": 1571,
+ "generator_version": 1,
+ "key_id": "a5c4cfb6f50d044c",
+ "lineage": "6fdadb3e6a5fb08dbae3ce83a580afd983e62a28f8b7fcf735f43939fc708d92",
+ "param_hash": "89eedf447250eb3abd28feb751832b9981358fd5af72ac0078d8e8d08963670a6e41f943e051971beb3a4d0dc54bb0ed",
+ "public_key_chunks": 2,
+ "relinearization_chunks": 24,
+ "signer_sha256": "57c533b2ab2502b21f92171491b7e7cf2a4d61cee7965be9cf35a8832ed5fd34",
+ "verify_ms": 170.349862
+}

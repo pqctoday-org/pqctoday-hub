@@ -1,0 +1,26 @@
+run: 2026-10-15-iterative-m5max
+date_utc: 2026-10-15T05:36:55Z
+fhe_commit: 9dde7f84f974ed29bee30e82242cea93def54225 (+ 0 uncommitted or untracked files outside this results folder)
+openfhe: v1.6.0, 6206d24f9eefefc620b524a4f2b9f308feb91e9f, the repository's vendored tree 23256a3a3586f036b4af3c55e1715deceedb34d2 (0 local changes)
+openfhe_build: Release, 64-bit native integers, WITH_OPENMP=ON, no tests/benchmarks/examples (build-openfhe.sh)
+openfhe_container: debian@sha256:f37a335e82bca302e955fa39f9dfe28f1be618f016f8a2b56318e5a5111afc26 (debian:bookworm), linux/arm64, --cpus 6 --memory 40g, OMP_NUM_THREADS=6
+openfhe_toolchain: g++ (Debian 12.2.0-14+deb12u1) 12.2.0; cmake version 3.25.1
+go_container: golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb (golang:1.25.4-bookworm), lattigo v6.2.0 (the repository's pinned tree)
+token_container: pqc-rust (image sha256:483e0c1fd6cbc39e3e7edfaabbb44a893c9552e089be45915c8bbfb3e3403e41), PQC_CKKS_THREADS=6, CKKS_PRECISION_BITS=30
+hsm_engine_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d (custodian built from an export of origin/main, features educational-ckks,test-support)
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+registry_id: 4 (CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128), test seed 00..1f, owner release policy rounding 2^-30
+host_class: Apple M5 Max, macOS 26.6.2 (25G83), Docker Engine 29.8.2, containers on OrbStack
+reps_per_mode: 4; ITER_PRECISIONS=2,4,6,8,10,11,12,13,14,15; ITER_PRIMARY=8
+custodian_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+custodian_features: educational-ckks,test-support
+custodian_profile: release
+custodian_builder: pqc-rust container (image sha256:483e0c1fd6cbc39e3e7edfaabbb44a893c9552e089be45915c8bbfb3e3403e41), rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13 (trixie) glibc 2.41, aarch64-unknown-linux-gnu
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+custodian_source: git archive of the HSM checkout's origin/main (no worktree); contains 9dea1716044217cc2e0c5809f347639f4e825564 (HSM PR #360)
+custodian_build: cd rust && CARGO_TARGET_DIR=work/target nice -n 15 cargo build --release --features educational-ckks,test-support --example ckks_custodian --jobs 4
+custodian_built: 2026-10-15T05:32Z
+note_scripts: this folder was produced by fhe commit 9dde7f84f974ed29bee30e82242cea93def54225 (driver src/openfhe_hsm_iter.cpp, converter, run.sh, ofhe.sh as committed there). After it, run-iterative.sh gained the TAG option and a fix of the decrypt step (the first decrypt attempt in run.log stopped on the exit status of a silent conversion loop, nothing was measured in it), summarize-iterative.py the tag argument, and src/openfhe_depth_check.cpp was added; they are in the commit that adds these results.
+note_sweeps: main sweep (ITER_PRECISIONS=2,4,6,8,10,11,12,13,14,15; 4 own + 4 token runs) 00:38 to 00:49 CDT; extended sweep (TAG=-ext, ITER_PRECISIONS=16,17,18,19,20,22,24; 2 own + 2 token runs) 00:50 to 00:55 CDT, same keys; depth-check.txt after it. Both on 2026-10-15.
+note_load: other sessions used the machine during the runs (1-minute load per core 0.4 to 0.8 at the start of each run); the seconds are not comparable with the idle-machine 2.5 s of 2026-10-12, the ratios are.
+note_cleanup: the converted keys (12 GB) and the received export (6.1 GB) were deleted after the runs; the custodian build tree and the HSM source export were deleted.

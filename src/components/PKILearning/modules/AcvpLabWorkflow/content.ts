@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   // No lastReviewed: this is a DRAFT awaiting review by a validation-lab
   // practitioner (plan WS-I). record_module_review.py sets it when that review
   // is recorded — never by hand.
-  lastEdited: '2026-09-27',
+  lastEdited: '2026-10-15',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -36,6 +36,7 @@ export const content: ModuleContent = {
     getStandard('Accessing-the-ACVTS-Demo-and-Prod-Environments'),
     getStandard('usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S'),
     getStandard('usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets'),
+    getStandard('ACVP-ML-DSA-JSON-Specification'), // second source for claim:de77165cc631ad51
   ],
 
   algorithms: [

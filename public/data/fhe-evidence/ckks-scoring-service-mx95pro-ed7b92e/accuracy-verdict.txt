@@ -1,0 +1,3 @@
+PASS
+error against the plaintext cubic: 4.77e-07 = 21.00 bits over 32,768 slots; decisions at 0.5 and 0.25: 100.000 % and 100.000 % agree; AUC 0.717298 (plaintext cubic 0.717299)
+identical to the evaluation's headline run (2026-10-12-eval-m5max-6cpu-32g): max error and AUC equal
