@@ -1,32 +1,91 @@
 ---
 generated: 2026-10-15
 collection: library
-documents_processed: 1
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard
+## ACVP-ML-DSA-JSON-Specification
 
-- **Reference ID**: Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard
-- **Title**: Just Released: Version 3.1 of the PCI PIN Security Standard
-- **Authors**: PCISSC
+- **Reference ID**: ACVP-ML-DSA-JSON-Specification
+- **Title**: ACVP ML-DSA JSON Specification
+- **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: The document announces the release of Version 3.1 of the PCI PIN Security Standard, detailing updates to key implementation dates, encrypted key injection scope, and algorithm nomenclature.
+- **Main Topic**: This document defines the JSON schema for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations with the Automated Crypto Validation Protocol (ACVP).
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: C. Celi, Ed.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: RSA
+- **Key Takeaways**: The document specifies the JSON constructs required for ACVP testing of ML-DSA implementations; ACVP tests ensure conformity to FIPS 204 but do not cover zeroization, DRBG security strength, or incorrect length signatures; implementations must register their capabilities and prerequisites via specific JSON structures in the ACVP registration message.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "This sub-specification defines the JSON constructs for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: ACVP/CAVP; conformance testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: ACVP-ML-DSA-JSON-Specification.html (170,371 bytes, 6,618 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T08:13:13
+- **Evidence SHA-256**: 041ef3bf965f245cc2ffc406ae72bb99930518bcf98b5c29268fca484f5a8212
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 041ef3bf965f245c
+- **Window Chars**: 6618
+
+---
+
+## NIST-CMVP-FIPS-140-3-Standards-page
+
+- **Reference ID**: NIST-CMVP-FIPS-140-3-Standards-page
+- **Title**: NIST CMVP — FIPS 140-3 Standards page
+- **Authors**: CSRC | NIST
+- **Publication Date**: 2016
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The document outlines the structure, standards, and procedural requirements of the FIPS 140-3 Cryptographic Module Validation Program (CMVP).
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: PCI SSC
-- **Leaders Contributions Mentioned**: Emma Sutcliffe (PCI SSC SVP and Standards Officer); Lindsay Goodspeed (Senior Manager, Corporate Communications)
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CCCS
+- **Leaders Contributions Mentioned**: David Hawes - NIST CMVP Program Manager; Kailai Chen - CCCS CMVP Program Manager
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: HSM; Key Management
-- **Standardization Bodies**: PCI SSC; NIST; ISO
-- **Compliance Frameworks Referenced**: PCI PIN Security Standard; ISO 13491-2
-- **Classical Algorithms Referenced**: TDEA; AES
-- **Key Takeaways**: Implementation dates for encrypted key injection have been deferred three years and scope limited to POI v5 and higher devices; Effective dates for ISO Format 4 PIN Blocks are suspended while migration from TDEA to AES is reevaluated; Normative Annex C has been updated to align key size nomenclature with NIST publications; PCI-approved HSMs may require deployment in controlled or secure environments as defined in ISO 13491-2
-- **Security Levels & Parameters**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation
+- **Standardization Bodies**: NIST, ISO/IEC
+- **Compliance Frameworks Referenced**: FIPS 140-3, ISO/IEC 19790, ISO/IEC 24759
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: FIPS 140-3 references ISO/IEC 19790 for requirements and ISO/IEC 24759 for testing; NIST SP 800-140 series documents provide specific CMVP modifications to ISO/IEC standards; The CMVP is a joint effort of the US and Canadian governments; ISO/IEC 19790:2012 includes the 2015 update folded into the main document
+- **Security Levels & Parameters**: Four security levels for cryptographic modules
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
@@ -38,29 +97,29 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Security Architect
-- **Implementation Prerequisites**: POI v5 and higher devices for encrypted key injection; PCI-approved HSMs deployed in controlled or secure environments
-- **Relevant PQC Today Features**: Compliance; Migrate; crypto-agility
+- **Target Audience**: Compliance Officer, Security Architect
+- **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; NVLAP accreditation for test labs
+- **Relevant PQC Today Features**: Compliance; pqc-governance; compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: Conformance testing; Non-invasive attack mitigation testing
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Migration from TDEA to AES; deferral of implementation dates due to stakeholder feedback
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard.html (82,310 bytes, 4,009 extracted chars)
-- **Extraction Timestamp**: 2026-10-15T07:58:08
-- **Evidence SHA-256**: 540a8216f2e547409759f629916d81c6b7927fdc9007aa3f7e80863b6c1619f2
+- **Source Document**: NIST-CMVP-FIPS-140-3-Standards-page.html (77,965 bytes, 15,061 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T08:13:14
+- **Evidence SHA-256**: bdc29bfaa7656cf9faaa11668969447718413e97fd25665ccda5482fde5510e4
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 540a8216f2e54740
-- **Window Chars**: 4009
+- **Evidence SHA256**: bdc29bfaa7656cf9
+- **Window Chars**: 15061
 
 ---
 
@@ -29177,6 +29236,65 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: None detected
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard
+
+- **Reference ID**: Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard
+- **Title**: Just Released: Version 3.1 of the PCI PIN Security Standard
+- **Authors**: PCISSC
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The document announces the release of Version 3.1 of the PCI PIN Security Standard, detailing updates to key implementation dates, encrypted key injection scope, and algorithm nomenclature.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: PCI SSC
+- **Leaders Contributions Mentioned**: Emma Sutcliffe (PCI SSC SVP and Standards Officer); Lindsay Goodspeed (Senior Manager, Corporate Communications)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: PCI SSC; NIST; ISO
+- **Compliance Frameworks Referenced**: PCI PIN Security Standard; ISO 13491-2
+- **Classical Algorithms Referenced**: TDEA; AES
+- **Key Takeaways**: Implementation dates for encrypted key injection have been deferred three years and scope limited to POI v5 and higher devices; Effective dates for ISO Format 4 PIN Blocks are suspended while migration from TDEA to AES is reevaluated; Normative Annex C has been updated to align key size nomenclature with NIST publications; PCI-approved HSMs may require deployment in controlled or secure environments as defined in ISO 13491-2
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect
+- **Implementation Prerequisites**: POI v5 and higher devices for encrypted key injection; PCI-approved HSMs deployed in controlled or secure environments
+- **Relevant PQC Today Features**: Compliance; Migrate; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Migration from TDEA to AES; deferral of implementation dates due to stakeholder feedback
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard.html (82,310 bytes, 4,009 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T07:58:08
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 540a8216f2e54740
+- **Window Chars**: 4009
 
 ---
 
