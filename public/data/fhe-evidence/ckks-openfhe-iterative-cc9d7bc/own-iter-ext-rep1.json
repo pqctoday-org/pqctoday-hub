@@ -1,0 +1,16 @@
+{
+ "mode": "own", "config": "match128", "N": 65536, "chainDepth": 25, "towersTotal": 26, "keys": 79, "bootstrapSetupSeconds": 0.75137675699999995, "keySeconds": 4.1111269679999998, "primaryPrecision": 16, "stages": [
+  {"name": "boot1", "numIterations": 1, "precisionArg": 0, "seconds": 3.1677042700000002, "towersRaw": 10, "noiseScaleDegRaw": 2, "usableLevels": 8, "towers": 9, "level": 17, "noiseScaleDeg": 1, "scalingFactor": 4503599654502401, "log2Precision": 13.008833234972304},
+  {"name": "boot2_p16", "numIterations": 2, "precisionArg": 16, "seconds": 5.7692339769999998, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 29.215124969661375},
+  {"name": "boot2_p17", "numIterations": 2, "precisionArg": 17, "seconds": 6.6861269649999997, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 30.346805036690178},
+  {"name": "boot2_p18", "numIterations": 2, "precisionArg": 18, "seconds": 6.6829157959999996, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 31.149926121552927},
+  {"name": "boot2_p19", "numIterations": 2, "precisionArg": 19, "seconds": 6.4083123620000002, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 31.804159242737462},
+  {"name": "boot2_p20", "numIterations": 2, "precisionArg": 20, "seconds": 6.0950775410000002, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 31.849704810502374},
+  {"name": "boot2_p22", "numIterations": 2, "precisionArg": 22, "seconds": 5.9801717219999997, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 28.041745685102931},
+  {"name": "boot2_p24", "numIterations": 2, "precisionArg": 24, "seconds": 5.7742391870000001, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 24.119712247798116},
+  {"name": "boot1_warm", "numIterations": 1, "precisionArg": 0, "seconds": 2.799626403, "towersRaw": 10, "noiseScaleDegRaw": 2, "usableLevels": 8, "towers": 9, "level": 17, "noiseScaleDeg": 1, "scalingFactor": 4503599654502401, "log2Precision": 13.008833234972304},
+  {"name": "boot1_mult", "numIterations": 1, "precisionArg": 0, "seconds": 0.021524333, "towersRaw": 9, "noiseScaleDegRaw": 2, "usableLevels": 7, "towers": 8, "level": 18, "noiseScaleDeg": 1, "scalingFactor": 4503599657910273, "log2Precision": 13.104436994515972},
+  {"name": "boot2_p16_mult", "numIterations": 2, "precisionArg": 16, "seconds": 0.017668697000000001, "towersRaw": 8, "noiseScaleDegRaw": 2, "usableLevels": 6, "towers": 7, "level": 19, "noiseScaleDeg": 1, "scalingFactor": 4503599654109185, "log2Precision": 28.655623523901639}
+ ],
+ "peakRssGB": 16.550525665283203
+}

@@ -1,0 +1,2 @@
+multiplicative depth 25 (26 towers in Q): accepted, ring dimension 65536, towers in Q 26, towers in P 6, log2 Q 1360, log2 P 360, log2 QP 1720
+multiplicative depth 26 (27 towers in Q): refused: /repo/openfhe/src/pke/lib/scheme/ckksrns/ckksrns-parametergeneration.cpp:l.152:ParamsGenCKKSRNSInternal(): The specified ring dimension (65536) does not comply with HE standards recommendation (131072).

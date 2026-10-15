@@ -5022,7 +5022,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "reference only: OpenFHE v1.6.0 CKKS key-set size, precision and bootstrapping at N = 2^16, and Lattigo-layout keys run in OpenFHE through a format bridge",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s Lattigo-based exported key sets (registry IDs 2 and 3) use Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. The HSM’s registry ID 4, built from OpenFHE’s own primes and key list, was run in OpenFHE later (pqctoday-fhe #28, merge commit 67217242c01c0382b72938a153243893e5804434; pqctoday-hsm #360, merge commit 9dea1716044217cc2e0c5809f347639f4e825564). Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s Lattigo-based exported key sets (registry IDs 2 and 3) use Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. The HSM’s registry ID 4, built from OpenFHE’s own primes and key list, was run in OpenFHE later (pqctoday-fhe #28, merge commit 67217242c01c0382b72938a153243893e5804434; pqctoday-hsm #360, merge commit 9dea1716044217cc2e0c5809f347639f4e825564). The later two-round (iterative) refresh on those keys is in the record ckks-openfhe-iterative-m5max-cc9d7bc: 13.2 bits for one refresh, 21.1 bits at the documented setting and 31.8 bits at the best setting found. This record keeps the single-refresh measurements at OpenFHE’s own settings as they were made. Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "OpenFHE",
         "version": "v1.6.0",
@@ -5084,7 +5084,7 @@
       ],
       "measuredAt": "2026-10-11",
       "summary": {
-        "headline": "OpenFHE v1.6.0 CKKS at N = 2^16 with 128-bit-checked settings: 80 keys, 13.26 GB, one bootstrap at 13.3 bits; Lattigo-layout keys run in OpenFHE with equal precision through a format bridge. The HSM’s own exported set has not been run in OpenFHE.",
+        "headline": "OpenFHE v1.6.0 CKKS at N = 2^16 with 128-bit-checked settings: 80 keys, 13.26 GB, one bootstrap at 13.3 bits; Lattigo-layout keys run in OpenFHE with equal precision through a format bridge. The HSM’s own exported set (registry ID 4) was run in OpenFHE later, where a two-round refresh raises the precision from about 13 bits to about 32 (record ckks-openfhe-iterative-m5max-cc9d7bc).",
         "keyNumbers": [
           {
             "label": "Keys in the set (match128)",
@@ -6798,7 +6798,7 @@
         }
       ],
       "claimLabel": "custodian: software token on MX95, OpenFHE parameter set (registry ID 4): the whole 79-key export generated, streamed to a Mac and checked against the reference spec; export only, no decryption",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (145.2 s, 45.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (180.9 s, 36.3 MB/s, 182 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570. The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. Functional, not a security claim.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (145.2 s, 45.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (180.9 s, 36.3 MB/s, 182 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570. The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. That run used OpenFHE’s default single refresh (about 13 bits); a two-round refresh with the same keys, also on a Mac only, is in the record ckks-openfhe-iterative-m5max-cc9d7bc. Functional, not a security claim.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -6940,7 +6940,7 @@
         }
       ],
       "claimLabel": "custodian: software token on MX95 Pro, OpenFHE parameter set (registry ID 4): the whole 79-key export generated, streamed to a Mac and checked against the reference spec; export only, no decryption",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 Pro board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (142.1 s, 46.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (178.2 s, 36.8 MB/s, 179 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570 (the working tree also held one untracked file). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. Functional, not a security claim.",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 Pro board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (142.1 s, 46.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (178.2 s, 36.8 MB/s, 179 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570 (the working tree also held one untracked file). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. That run used OpenFHE’s default single refresh (about 13 bits); a two-round refresh with the same keys, also on a Mac only, is in the record ckks-openfhe-iterative-m5max-cc9d7bc. Functional, not a security claim.",
       "library": {
         "name": "Lattigo",
         "version": "v6.2.0",
@@ -7050,6 +7050,239 @@
           {
             "label": "Chunk hashes against the 2026-10-12 Mac export",
             "value": "all 1,565 identical"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-openfhe-iterative-m5max-cc9d7bc",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "export-evaluation-keys",
+        "compute-ciphertexts",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "Apple M5 Max",
+      "claimLabel": "reference only: OpenFHE v1.6.0 iterative bootstrapping (two rounds) with the HSM’s registry ID 4 key export: precision by setting with OpenFHE’s own keys, with the token’s keys and through the token’s owner release, on one Mac",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a reference measurement of OpenFHE’s iterative bootstrapping on the HSM’s registry ID 4 key export, not a board run and not a security claim. OpenFHE v1.6.0 (unmodified, the repository’s vendored tree) bootstrapped with EvalBootstrap(ciphertext, numIterations, precision): numIterations 1 is the control (OpenFHE’s default single refresh); numIterations 2 bootstraps, scales the input by 2^precision, bootstraps the remaining error and subtracts it. The key list and the parameter set are unchanged (79 keys, N = 2^16, log QP 1720); the second round costs one level (7 left after the refresh instead of 8). The software token (registry ID 4, the published test seed, test-support build, owner release rounded to 2^-30) ran in a container on the Mac and streamed its keys in 8-limb calls; the reference oracle compared every limb (verify.txt: 32 public-key limbs and 12483 evaluation-key limbs, 0 mismatches); the receiver converted them to OpenFHE’s layout; OpenFHE loaded the token’s public key and all 79 keys and held no secret key. The same program also ran with OpenFHE’s own keys for the same key list. Inputs: complex values uniform in [-1, 1]^2, one seeded input vector, 2^15 slots; precision is minus the base-2 logarithm of the worst absolute error over all slots. “Token’s keys” precision is decrypted by OpenFHE with the test seed’s secret (a diagnostic; that secret is public by construction); “released” is the token’s own owner release, read at face value and after multiplying by 2^52 over the ciphertext’s true scale. Results (mean of runs; summary.md and summary-ext.md): one refresh 13.20 bits with OpenFHE’s own keys and 13.22 with the token’s (four runs each; the extended sweep’s own control, two runs each, gave 12.98 and 13.35). Two rounds at the documented rule for the precision argument (8, the floor of the measured bits minus 5): 21.18 with OpenFHE’s own keys, 21.07 with the token’s keys and 21.07 through the token’s release. Best settings, precision 19 and 20 (two runs each): 31.88 and 31.84 with OpenFHE’s own keys, 31.80 and 31.73 with the token’s keys, against 32.09 and 32.13 for a fresh public-key encryption in the earlier run of the same set (its README, pqctoday-fhe #28); through the token’s release 30.53 and 30.45 bits with the true scale applied, 27.02 and 27.02 at face value. Below precision 19 the result is about 13.2 plus the precision argument; at 22 it is 28.02 with both key sets and at 24 it is 24.06 (own) and 24.23 (token’s); the cause of the fall was not investigated. The token’s keys and OpenFHE’s own agree within 0.4 bit at every setting of two rounds. Time: about 6 s for two rounds against about 3.2 s for one (OpenFHE’s EvalBootstrap on 6 cores of a shared Mac, so compare the ratio, about 1.9); peak memory of the OpenFHE process 16.6 GiB in both cases. Scale: OpenFHE’s scale after a bootstrap is 2^52 (1 + 6.0 x 10^-9) after one round and 2^52 (1 + 6.8 x 10^-9) after two (scalingFactor in the per-run files), while the token’s decrypt input (PQCKKS02) carries the scale as a power of two, so a release read at face value is off by that relative amount and caps the as-released precision near 27 bits. Keeping 8 levels would need multiplicative depth 26 (27 towers): OpenFHE refuses it at N = 2^16 with 128-bit classic security and asks for N = 2^17 (depth-check.txt, an acceptance check only, no keys); the registry set was not changed. Limits: one platform (a Linux container on one Mac), no board; the ModRaise-first variant only; one seeded input vector; four runs per setting up to precision 15 and two from 16, a sample (the spread is in summary.md and summary-ext.md); the best precision setting was found by this sweep on these inputs and is not a rule from OpenFHE’s documentation; owner release only, rounded and not flooded, because no flood bound has been measured for this set. Run files: pqctoday-fhe #31 (merge commit cc9d7bc46e71459fd4363b1197a0b2fcc507ab97; the pull request’s pinned head is b3da9c6f84f5e873ca2d16d6c35982e5bd5ad81d, and the run used the driver of 9dde7f84f974ed29bee30e82242cea93def54225); the files are copied byte for byte, the run log under a .txt name. Custodian: pqctoday-hsm ebbc3d20ab209bfba125243f2b9a029b71a8cf9d (main, which contains pqctoday-hsm #360, merge commit 9dea1716044217cc2e0c5809f347639f4e825564), features educational-ckks and test-support, release build, sha256 709aaa90…cfe53 (provenance.txt). The default one-refresh runs of this set and of OpenFHE’s own settings are kept as they were measured (13.28 bits with the token’s keys and 13.20 with OpenFHE’s own in pqctoday-fhe #28; openfhe-ckks-reference-m5max-039034f).",
+      "library": {
+        "name": "OpenFHE",
+        "version": "v1.6.0",
+        "commit": "6206d24f9eefefc620b524a4f2b9f308feb91e9f"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "cc9d7bc46e71459fd4363b1197a0b2fcc507ab97"
+      },
+      "parameters": "CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128 (registry ID 4: OpenFHE v1.6.0 at its 128-bit-checked match128 settings, N = 2^16, log QP 1720, 79 keys)",
+      "config": "EvalBootstrap with numIterations 1 (control) and 2, precision argument 2 to 24; ModRaise-first bootstrapping (EvalBootstrapSetup default); FLEXIBLEAUTO; complex slots (2^15); OpenFHE’s own keys, and the token’s 79 keys loaded as streamed (generator v1, fixed test seed, test-support build, owner release rounded to 2^-30, 8 limbs per C_DeriveKey call)",
+      "parameterHash": "642bb6cdc60f097ee17f19ceb93a409d04ccc8bc338d27adea6f70251d3df4e7",
+      "environment": {
+        "hardware": "Apple M5 Max (Linux containers limited to 6 CPUs and 40 GB; the Mac was shared with other work during the runs)",
+        "os": "Linux aarch64 containers on macOS 26.6.2",
+        "toolchain": "OpenFHE v1.6.0 built from the vendored tree in debian:bookworm (g++ 12.2.0, cmake 3.25.1); ckks_custodian from pqctoday-hsm ebbc3d20 (Rust 1.96.0, pqc-rust container); receiver and reference oracle from pqctoday-fhe (merge commit cc9d7bc4; Go 1.25.4, Lattigo v6.2.0 unmodified)",
+        "features": "OpenFHE release build, 64-bit native integers, OpenMP on 6 threads; custodian: educational-ckks and test-support, release build"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 4,
+        "distribution": "four runs with OpenFHE’s own keys and four with the token’s keys per setting for precision 2 to 15, two and two for precision 16 to 24 (same keys); each run with new encryption randomness (own keys: new key generation); one seeded input vector; worst slot over 32,768 slots",
+        "peakMemoryMethod": "peak RSS of the OpenFHE process per run (peakRssGB in the per-run files): 16.6 GiB with OpenFHE’s own keys and with the token’s keys"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "summary.md",
+          "sha256": "ed5ab0d677f26f393bc3cec7ede7af0c093c6cfa1a264ba90998bea6b1d702ea",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/summary.md"
+        },
+        {
+          "name": "summary-ext.md",
+          "sha256": "9f608deaf8ea0971580228d440551ba88f9b4edd37819ce771ea8c83b1ea4057",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/summary-ext.md"
+        },
+        {
+          "name": "provenance.txt",
+          "sha256": "5f2bbed7d78131f8f3251c20178f7ac825cd0ac2fb2257d1cf3903742f88ccc1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/provenance.txt"
+        },
+        {
+          "name": "depth-check.txt",
+          "sha256": "5c0faa369bc07d8ac16423db5abdd5bd5353406346d21361631c09d49c12471e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/depth-check.txt"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "a686840d68676735e16223e78a9d7d1234de59d4ab3281713f6bb24d3e2a6c7c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/verify.txt"
+        },
+        {
+          "name": "summary.json",
+          "sha256": "06c4446aa0e6554b0efacbfef535ec65360e09664744ff54fd90c935186f0755",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/summary.json"
+        },
+        {
+          "name": "summary-ext.json",
+          "sha256": "0503c023d0430166ac85e3b8a61b5a8b7568a51474fff12c85be98acf37254db",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/summary-ext.json"
+        },
+        {
+          "name": "token-release.jsonl",
+          "sha256": "41bf2bb5034dae3397e5ff4713481e57ad4001cbc8bcb0e662b8051b423c666a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-release.jsonl"
+        },
+        {
+          "name": "token-release-ext.jsonl",
+          "sha256": "d26c85439c1cd5c35fd659becaa6b5221a2a8e9d6b3f50a3fc993cc201914022",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-release-ext.jsonl"
+        },
+        {
+          "name": "own-iter-rep1.json",
+          "sha256": "5987e817b5024cd441f73e4728c360595fe995ffa5ce3cf4bcd81debb78b7191",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-rep1.json"
+        },
+        {
+          "name": "own-iter-rep2.json",
+          "sha256": "068606ed60772a2f1d90bbadab4803874ea464c266e13cad3dcd98c66a4fa467",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-rep2.json"
+        },
+        {
+          "name": "own-iter-rep3.json",
+          "sha256": "06d2790d961d0c76c069431b8f8d0104cb4b42594395156e2a8b95518cc2542e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-rep3.json"
+        },
+        {
+          "name": "own-iter-rep4.json",
+          "sha256": "eddd4dd8b8301f617dc3819d1305aaa880a166a782f5134dc8fc19dcad29e327",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-rep4.json"
+        },
+        {
+          "name": "own-iter-ext-rep1.json",
+          "sha256": "12c8d33b4b226282553515901669bc841dfcea6e87d7555eef5b11e350e253ec",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-ext-rep1.json"
+        },
+        {
+          "name": "own-iter-ext-rep2.json",
+          "sha256": "e6926b52c93340b2f7f054307e21add694d51cfe7658a92d386d1c19ac145976",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/own-iter-ext-rep2.json"
+        },
+        {
+          "name": "token-stages-rep1.json",
+          "sha256": "be5b57c1a9732bb05f27d5dd52686c4ecf567b9787d3d258c384810462caa643",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-rep1.json"
+        },
+        {
+          "name": "token-stages-rep2.json",
+          "sha256": "aa4ead3896a2cc72150493e313117d20066164a9ccf20821370e69dbaf1ef655",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-rep2.json"
+        },
+        {
+          "name": "token-stages-rep3.json",
+          "sha256": "f11c020047776a2798ba36ce9fad2fb5dd368ec9c76f745b40d53d01102beefe",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-rep3.json"
+        },
+        {
+          "name": "token-stages-rep4.json",
+          "sha256": "a191e14eddfad8adcf04e6f7744e8f3e64a954b07397d47aefdb495b260bce39",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-rep4.json"
+        },
+        {
+          "name": "token-stages-ext-rep1.json",
+          "sha256": "9823a0c15dc0d22c2f5c14bf014d65e7aee9245c574b0876cc02c6e9f80b7cfc",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-ext-rep1.json"
+        },
+        {
+          "name": "token-stages-ext-rep2.json",
+          "sha256": "0e4a59306afeb5318d39961ebac6f82a72f588a9dc2bac78429fcb2eaba535b8",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/token-stages-ext-rep2.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "294b47c884db37338c85c2ddcc60057cff347e87edb9fd55787563b9c3c2dc42",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/export.json"
+        },
+        {
+          "name": "convert-keys.json",
+          "sha256": "2b95b676520324f5c6bdb6346e7eea4bc60b30aa666b95efabb30a43b014d480",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/convert-keys.json"
+        },
+        {
+          "name": "manifest.txt",
+          "sha256": "33e65e1bc1100399abb444ea8068412af00a286646b7c67034552f62c7edb6bd",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/manifest.txt"
+        },
+        {
+          "name": "run.log.txt",
+          "sha256": "f487e3033d28f428877f93af5a674730b0d72152e8777e7dbfd16a27d537ec37",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc/run.log.txt"
+        }
+      ],
+      "measuredAt": "2026-10-15",
+      "summary": {
+        "headline": "OpenFHE’s two-round bootstrapping works with the HSM’s registry ID 4 keys as they stand: precision rises from 13.2 bits (one refresh) to 21.1 bits at the documented setting and 31.8 bits at the best setting found, at about twice the time and one level fewer.",
+        "keyNumbers": [
+          {
+            "label": "One refresh (control), token’s keys, worst slot",
+            "value": "13.22",
+            "unit": "bits"
+          },
+          {
+            "label": "Two rounds, documented setting (precision 8), token’s keys",
+            "value": "21.07",
+            "unit": "bits"
+          },
+          {
+            "label": "Two rounds, precision 19, token’s keys",
+            "value": "31.80",
+            "unit": "bits"
+          },
+          {
+            "label": "Two rounds, precision 20, token’s keys",
+            "value": "31.73",
+            "unit": "bits"
+          },
+          {
+            "label": "Same, OpenFHE’s own keys (precision 19 / 20)",
+            "value": "31.88 / 31.84",
+            "unit": "bits"
+          },
+          {
+            "label": "Through the token’s owner release, true scale applied (precision 19)",
+            "value": "30.53",
+            "unit": "bits"
+          },
+          {
+            "label": "Through the token’s owner release, read at face value (precision 19)",
+            "value": "27.02",
+            "unit": "bits"
+          },
+          {
+            "label": "Precision 22 / 24, token’s keys",
+            "value": "28.02 / 24.23",
+            "unit": "bits"
+          },
+          {
+            "label": "Bootstrap time, one round / two rounds (shared M5 Max, 6 cores)",
+            "value": "about 3.2 / about 6",
+            "unit": "s"
+          },
+          {
+            "label": "Levels left after the refresh, one round / two rounds",
+            "value": "8 / 7"
+          },
+          {
+            "label": "Keys used, unchanged",
+            "value": "79"
+          },
+          {
+            "label": "Peak memory of the OpenFHE process",
+            "value": "16.6",
+            "unit": "GiB"
           }
         ]
       }
