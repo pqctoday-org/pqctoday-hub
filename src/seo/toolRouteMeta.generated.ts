@@ -1108,20 +1108,6 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     contentRegion: '#main-content',
   },
   {
-    path: '/playground/sbx-stepca',
-    title: 'Automated CA (Step-CA) — PQC Crypto Lab | PQC Today',
-    description:
-      'Deploy Smallstep step-ca with PQC-enabled certificate issuance, contrasting classical ECDSA-P256 automated certificat...',
-    kind: 'sandbox-tool',
-    index: true,
-    sourceGlobs: [
-      'src/data/sandboxScenarios.ts',
-      'src/components/Playground/SandboxScenarioEmbed.tsx',
-      'src/components/Playground/PlaygroundToolRoute.tsx',
-    ],
-    contentRegion: '#main-content',
-  },
-  {
     path: '/playground/sbx-supply-chain-signing',
     title: 'Supply Chain Signing — Quantum-Safe Container Provenance — PQC Crypto Lab | PQC Today',
     description:

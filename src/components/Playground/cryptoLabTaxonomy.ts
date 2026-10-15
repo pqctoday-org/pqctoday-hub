@@ -145,7 +145,8 @@ export const VERB_TAGS: Record<string, VerbId[]> = {
   // hybrid handshake purely to generate traffic to capture; implemented no
   // post-quantum cryptography itself.
   'sbx-api-security-jwt': ['sign'],
-  'sbx-stepca': ['certs'],
+  // 'sbx-stepca' omitted: removed from pqctoday-sandbox in 2026-10 (the lab replaced step-ca
+  // with EJBCA and OpenBao).
   'sbx-database-postgres': ['simulate'],
   'sbx-firmware-hss': ['sign'],
   'sbx-osslsigncode': ['sign'],
@@ -188,7 +189,7 @@ export const SUBGROUPS: Record<string, SubGroup[]> = {
   'Certificates & Proofs': [
     {
       label: 'Issuance & validation',
-      ids: ['pki-workshop', 'sbx-pki', 'sbx-stepca', 'sbx-cert-validation'],
+      ids: ['pki-workshop', 'sbx-pki', 'sbx-cert-validation'],
     },
     {
       label: 'Formats, proofs & sizing',

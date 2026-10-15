@@ -54,7 +54,6 @@ const TRACK_DEFAULT_WORK_ROLES: Record<SandboxTrackId, NiceWorkRoleId[]> = {
 const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   // Identity / trust establishment
   pki: ['CA-IDENT', 'CA-CRYPTO'],
-  stepca: ['CA-IDENT', 'CA-SECPROG'],
   'cert-validation': ['CA-IDENT', 'CA-CRYPTO'],
   'hybrid-certs': ['CA-IDENT', 'CA-CRYPTO'],
   // 'mtc' omitted: removed from pqctoday-sandbox in v0.7.0 (#50) — inert override.
