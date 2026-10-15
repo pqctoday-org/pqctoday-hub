@@ -126,8 +126,7 @@
       "home-path": 2
     },
     "public/wasm/wasm-provenance.json": {
-      "home-path": 3,
-      "private-repo": 27
+      "private-repo": 26
     },
     "scripts/ci/check-tool-version-bump.ts": {
       "private-repo": 1
