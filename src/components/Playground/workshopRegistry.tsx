@@ -1451,9 +1451,8 @@ const SANDBOX_SCENARIO_CATEGORY: Record<string, WorkshopCategory> = {
   // cryptoLabTaxonomy.ts for why) — this override is now inert.
   // supply-chain track — TPM key hierarchy is an HSM/key concern
   'tpm-pqc-migration': 'HSM / PKCS#11',
-  // applications track — JOSE/JWT, automated CA, firmware keys, code signing
+  // applications track — JOSE/JWT, firmware keys, code signing
   'api-security-jwt': 'OpenSSL Studio',
-  stepca: 'Certificates & Proofs',
   'firmware-hss': 'HSM / PKCS#11',
   // Code signing (PE/Authenticode) is a supply-chain signing concern, not a
   // protocol simulation — re-home off the 'applications' track default.
@@ -1479,7 +1478,7 @@ const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
     new Set([s.id, s.tool.name, s.trackId, 'sandbox', ...s.algorithms].map((k) => k.toLowerCase()))
   ),
   difficulty: s.difficulty,
-  // One shared declaration for all 24 scenarios: they are not browser-runnable
+  // One shared declaration for all sandbox scenarios: they are not browser-runnable
   // at all. Declaring a browser capability like 'sab' here would make the device
   // badge lie — these do not fail a capability check, they run somewhere else.
   requires: ['container'],

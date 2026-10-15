@@ -270,20 +270,6 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     tool: { name: 'OpenSSL (raw JOSE signing)', url: 'https://www.openssl.org' },
   },
   {
-    id: 'stepca',
-    title: 'Automated CA (Step-CA)',
-    emoji: '🪜',
-    useCase:
-      "Deploy Smallstep step-ca with PQC-enabled certificate issuance, contrasting classical ECDSA-P256 automated certificate management against post-quantum ML-DSA-65. This run drives the CA's issuance engine directly (mldsa-issue); the ACME protocol itself is exercised by the separate live-server scenario (18b), which verifies the directory endpoint but does not complete a full ACME order.",
-    algorithms: ['ML-DSA-65', 'ACME-capable CA'],
-    difficulty: 'intermediate',
-    trackId: 'applications',
-    tool: {
-      name: 'step-ca (PQCToday SoftCAS fork)',
-      url: 'https://github.com/smallstep/certificates',
-    },
-  },
-  {
     id: 'database-postgres',
     title: 'PostgreSQL TLS Hardening',
     emoji: '🐘',
@@ -374,8 +360,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
   {
     id: 'applications',
     label: 'Application Security',
-    subtitle:
-      'Microservice JWT auth, internal CA issuance, database TLS, firmware signing, and IoT MQTT',
+    subtitle: 'Microservice JWT auth, database TLS, firmware signing, and IoT MQTT',
     difficulty: 'Intermediate → Advanced',
   },
 ]
