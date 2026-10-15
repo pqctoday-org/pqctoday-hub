@@ -29,7 +29,7 @@ export const content: ModuleContent = {
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-09-27',
+  lastEdited: '2026-10-15',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -80,6 +80,7 @@ export const content: ModuleContent = {
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
     getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
+    getStandard('ETSI-EN-319-411'), // second source for claim:6c7319b5f7fff220
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

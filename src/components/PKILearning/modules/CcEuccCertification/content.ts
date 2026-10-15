@@ -29,7 +29,7 @@ export const content: ModuleContent = {
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-09-27',
+  lastEdited: '2026-10-15',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -65,6 +65,9 @@ export const content: ModuleContent = {
     getStandard('ENISA-EUCC-Product-Series-Methodology'),
 
     // ── PCI (Path D; public documents only, plan r2 D4) ──
+    getStandard('CMVP-MGMT-MANUAL'), // second source for claim:3a3eeed3b35cd08b
+    getStandard('ENISA-State-of-Cybersecurity-2024'), // second source for claim:aa6c2717399a14ad
+    getStandard('NIAP-CCEVS-POLICY-33'), // second source for claim:e08838c7dd690915
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The
