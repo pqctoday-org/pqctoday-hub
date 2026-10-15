@@ -36,8 +36,6 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   pki: { protocolId: 'x509', label: 'X.509' },
   'cert-validation': { protocolId: 'x509', label: 'X.509' },
   'hybrid-certs': { protocolId: 'x509', label: 'X.509' },
-  // Certificate enrollment
-  stepca: { protocolId: 'est-cmp', label: 'EST / CMP' },
   // S/MIME
   smime: { protocolId: 'smime', label: 'S/MIME' },
   // OpenPGP
