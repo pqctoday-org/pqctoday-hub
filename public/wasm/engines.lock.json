@@ -36,6 +36,58 @@
         }
       }
     },
+    "entropy90b": {
+      "hsmCommit": null,
+      "producer": "usnistgov/SP800-90B_EntropyAssessment",
+      "buildCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+      "release": null,
+      "files": {
+        "public/wasm/entropy90b/BUILDINFO.json": {
+          "sha256": "56837cd61b106c88dccfe33f5dfcc193b2ff42eef94abf3993e116ce40944c63",
+          "bytes": 1509
+        },
+        "public/wasm/entropy90b/ea_iid.mjs": {
+          "sha256": "7d0f8276c287180345ad7a5b0aa58b4dbf95caa64a1b04b861b3af2656f6244b",
+          "bytes": 72055
+        },
+        "public/wasm/entropy90b/ea_iid.wasm": {
+          "sha256": "6c06533b3985e4fb75183461f3ca69cbe4bcc468b7dfb6627287745496a6e2a6",
+          "bytes": 2371161
+        },
+        "public/wasm/entropy90b/ea_non_iid.mjs": {
+          "sha256": "3ef71e2b44b36ae0ef5e6fb5d35b1e2638d925c72f3f43da2e62fff68a592cec",
+          "bytes": 71591
+        },
+        "public/wasm/entropy90b/ea_non_iid.wasm": {
+          "sha256": "d0c2a5faca24319c97ac3dafb3de3a1c4469647f8e5047cce14f5eabf92c78cc",
+          "bytes": 2287787
+        },
+        "public/wasm/entropy90b/ea_restart.mjs": {
+          "sha256": "3e0e690a99d5a1765e5f5b05890cf6cc10f814c9e02d8aa4b7b8f985545834e0",
+          "bytes": 72071
+        },
+        "public/wasm/entropy90b/ea_restart.wasm": {
+          "sha256": "7b5b1eacf512581ed452cbbd052b2202fe2b468eb4aa4096e3de8bacaaee2de5",
+          "bytes": 2393346
+        }
+      }
+    },
+    "lms": {
+      "hsmCommit": null,
+      "producer": null,
+      "buildCommit": null,
+      "release": null,
+      "files": {
+        "public/wasm/lms.js": {
+          "sha256": "f7be667d786edadf7e057af4a7fa1d1d140adf30419477d4b4eefc74f625a4f7",
+          "bytes": 95758
+        },
+        "public/wasm/lms.wasm": {
+          "sha256": "61204da8dbda98c5c9f489f4afc9097f92f2afed76b71fd8ee28cc714c8e66f2",
+          "bytes": 34797
+        }
+      }
+    },
     "openssh-pkcs11": {
       "hsmCommit": "bc92034d12d32b3a1b32111d2114e6a1fb8a6205",
       "release": null,
@@ -61,6 +113,22 @@
         "public/wasm/openssl.wasm": {
           "sha256": "77494bd4920b67b49aec429128102347b2438a30abb8769bcb15407206a399da",
           "bytes": 7929794
+        }
+      }
+    },
+    "pqctoday-tpm": {
+      "hsmCommit": null,
+      "producer": "pqctoday-org/pqctoday-tpm",
+      "buildCommit": null,
+      "release": null,
+      "files": {
+        "public/wasm/pqctpm.js": {
+          "sha256": "3d2822542342660a8e1573afa1e3e481ab7191783fb7f80774f1e49f028f4dd7",
+          "bytes": 30408
+        },
+        "public/wasm/pqctpm.wasm": {
+          "sha256": "4e209ead587d7e5502ea7a4c1d5840cdb27b5c3b277cd67eb9308acda1f43314",
+          "bytes": 2164704
         }
       }
     },
