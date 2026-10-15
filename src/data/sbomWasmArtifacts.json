@@ -5,11 +5,11 @@
       "key": "pqctoday-tpm",
       "label": "PQC TPM emulator (swtpm/libtpms fork)",
       "repo": "pqctoday-org/pqctoday-tpm",
-      "commit": "c473352c2c316a258b23067cd9df78afc9b38303",
+      "commit": "acb13517f36534239c80050c90774759c6050d5a",
       "files": {
-        "public/wasm/pqctpm.wasm": "6d3db8d1bc59b64739907ade59b16276b4a72cabc90e5427e8d121cb6d66801d"
+        "public/wasm/pqctpm.wasm": "72b7a3e1b0705c5c0b26b25bba4584b29c31c8a52418162417d3a2eccd871b02"
       },
-      "note": "Built from pqctoday-tpm v0.10.0 (commit c473352c) with Emscripten 6.0.10 and OpenSSL 3.6.3 built for WebAssembly by the pqctoday-hsm build-openssl-wasm.sh recipe; two clean builds gave identical bytes.",
+      "note": "Built from pqctoday-tpm v0.10.1 (commit acb13517) with Emscripten 6.0.10 and OpenSSL 3.6.3 built for WebAssembly by the pqctoday-hsm build-openssl-wasm.sh recipe; two clean builds gave identical bytes.",
       "lockFiles": ["public/wasm/pqctpm.js"]
     },
     {

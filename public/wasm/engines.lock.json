@@ -127,7 +127,7 @@
     "pqctoday-tpm": {
       "hsmCommit": null,
       "producer": "pqctoday-org/pqctoday-tpm",
-      "buildCommit": "c473352c2c316a258b23067cd9df78afc9b38303",
+      "buildCommit": "acb13517f36534239c80050c90774759c6050d5a",
       "release": null,
       "files": {
         "public/wasm/pqctpm.js": {
@@ -135,8 +135,8 @@
           "bytes": 21962
         },
         "public/wasm/pqctpm.wasm": {
-          "sha256": "6d3db8d1bc59b64739907ade59b16276b4a72cabc90e5427e8d121cb6d66801d",
-          "bytes": 2162362
+          "sha256": "72b7a3e1b0705c5c0b26b25bba4584b29c31c8a52418162417d3a2eccd871b02",
+          "bytes": 2162364
         }
       }
     },

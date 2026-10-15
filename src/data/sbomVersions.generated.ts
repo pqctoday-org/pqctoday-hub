@@ -419,8 +419,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'pqctoday-tpm': {
     repo: 'pqctoday-org/pqctoday-tpm',
-    commit: 'c473352c2c316a258b23067cd9df78afc9b38303',
-    sha256: '6d3db8d1bc59b64739907ade59b16276b4a72cabc90e5427e8d121cb6d66801d',
+    commit: 'acb13517f36534239c80050c90774759c6050d5a',
+    sha256: '72b7a3e1b0705c5c0b26b25bba4584b29c31c8a52418162417d3a2eccd871b02',
   },
   'softhsm-cpp-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
