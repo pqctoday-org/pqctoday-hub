@@ -32,6 +32,9 @@ export const CKKS_EVIDENCE = {
   openfheSetMx95pro: 'ckks-openfhe-set-token-mx95pro-461f44ae',
   // the same set, OpenFHE's iterative bootstrapping (two rounds) on a Mac, 2026-10-15
   openfheIterative: 'ckks-openfhe-iterative-m5max-cc9d7bc',
+  // the encrypted risk-scoring service on other machines, 2026-10-15
+  scoringMx95pro: 'ckks-scoring-service-mx95pro-m5max-ed7b92e',
+  scoringX86Vm: 'ckks-scoring-service-x86-vm-m5max-ed7b92e',
   // the same programs with the token on the boards
   metaBtsLmssMx95pro: 'ckks-metabts2-lmss-stream-mx95pro-mac-m5max-dc9ad8b',
   metaBtsLmssMx95: 'ckks-metabts2-lmss-stream-mx95-mac-m5max-dc9ad8b',

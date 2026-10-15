@@ -8,7 +8,11 @@ import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { FheImplementationsSection } from '../components/FheSections'
-import { COMPUTE_SERVICE_REF, OPENFHE_EXPORT_REFS } from './fheComputeService'
+import {
+  COMPUTE_SERVICE_REF,
+  COMPUTE_SERVICE_RUNS_REF,
+  OPENFHE_EXPORT_REFS,
+} from './fheComputeService'
 import { TAKEAWAYS } from './fheContextData'
 
 const sectionText = () => {
@@ -22,13 +26,14 @@ const sectionText = () => {
 
 describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring service', () => {
   it('cites full merge commits of the merged pull requests only', () => {
-    const refs = [COMPUTE_SERVICE_REF, ...OPENFHE_EXPORT_REFS]
+    const refs = [COMPUTE_SERVICE_REF, ...OPENFHE_EXPORT_REFS, COMPUTE_SERVICE_RUNS_REF]
     expect(refs.map((r) => `${r.repo}#${r.pr}`)).toEqual([
       'pqctoday-fhe#27',
       'pqctoday-hsm#360',
       'pqctoday-fhe#28',
       'pqctoday-fhe#29',
       'pqctoday-fhe#31',
+      'pqctoday-fhe#32',
     ])
     const text = sectionText()
     for (const r of refs) {
@@ -57,13 +62,16 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
       'with all 1,565 pieces matching the reference',
       'AUC 0.717298 encrypted against 0.717299',
       'all 32,768 slots',
-      'About 200 ms',
+      'On the Mac, about 200 ms',
       'X25519MLKEM768',
       'about 40 refusal cases',
       'classical test certificates',
       'memory only',
     ])
       expect(text, v).toContain(v)
+    // the service is no longer described as run on one Mac only
+    expect(text).not.toMatch(/built and measured on one Mac/)
+    expect(text).not.toMatch(/run on one Mac, not on a board/)
     expect(text).not.toMatch(/has not been run in\s+OpenFHE/)
     expect(text).not.toMatch(/no board yet/)
   })
@@ -127,7 +135,56 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
     }
   })
 
+  it('says the scoring service also ran on an x86-64 VM and on an MX95 Pro with the token on a second board', () => {
+    const text = sectionText()
+    for (const v of [
+      'built and measured on a Mac, then run on an x86-64 virtual machine and on an MX95 Pro board',
+      'On other machines:',
+      'also ran on an x86-64 virtual machine and on an MX95 Pro board, the latter with the token on a second board (the base MX95)',
+      'so the three roles sat on three machines',
+      'Mac (Apple M5 Max)',
+      'median 201 ms, 197–231 ms over 10 jobs',
+      'peak 1,714 MiB',
+      'x86-64 virtual machine',
+      '277 ms per batch (median of three repetitions; 273–305 ms over all 8 jobs), peak 1,311 MiB',
+      'key set admitted with 40 ms to verify and 100 ms to assemble',
+      'about 13,000 requests an hour by server time alone, whole run 47 s',
+      'MX95 Pro board',
+      'the token on the base MX95 board (it exported its 4.41 GB key set in 124 s, 35.7 MB/s, 83 MiB peak)',
+      '4.29 s per batch (median of three repetitions; 4.16–4.66 s over all 8 jobs), about 21 times the Mac, peak 1,870 MiB',
+      'key set admitted with 170 ms to verify and 497 ms to assemble',
+      '600 requests an hour one at a time with the 184 MiB upload (840 by server time alone), whole run 202 s',
+      'The scores were identical on all three machines: 21.00 bits against the plaintext cubic',
+      'AUC 0.717298 against 0.717299',
+      'one run per machine',
+      'use the published test seed, so their secret key is public and they measure time, memory and correctness, not secrecy',
+      'not a dedicated host',
+      'listens on loopback and is reached through an ssh tunnel with TLS inside it',
+      'pqctoday-fhe #32, merge commit ed7b92ee2bb3fae7bc9cb22e24a80490c786d1fd',
+      'pqctoday-hsm main at ebbc3d20ab209bfba125243f2b9a029b71a8cf9d',
+    ])
+      expect(text, v).toContain(v)
+    // the lab's machine labels and addresses are not in the text
+    expect(text).not.toMatch(/\bX1\b|x1-vm|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
+  })
+
+  it('the two machine runs link to their evidence records', () => {
+    sectionText()
+    for (const [id, folder] of [
+      ['ckks-scoring-service-x86-vm-m5max-ed7b92e', 'ckks-scoring-service-x86-vm-ed7b92e'],
+      ['ckks-scoring-service-mx95pro-m5max-ed7b92e', 'ckks-scoring-service-mx95pro-ed7b92e'],
+    ]) {
+      // eslint-disable-next-line testing-library/no-node-access -- the cite carries its record id as a title
+      const link = document.querySelector(`a[title="Evidence record ${id}"]`)
+      expect(link, id).toBeTruthy()
+      expect(link?.getAttribute('href')).toContain(`/${folder}/`)
+    }
+  })
+
   it('section 9 now has two takeaways', () => {
     expect(TAKEAWAYS.implementations).toHaveLength(2)
+    expect(TAKEAWAYS.implementations[1]).toContain(
+      'in about 200 ms per 32,768 customers on a Mac (277 ms on an x86 virtual machine, 4.29 s on an MX95 Pro board)'
+    )
   })
 })

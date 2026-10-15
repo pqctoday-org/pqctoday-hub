@@ -5,7 +5,9 @@
  *    (pqctoday-fhe #27);
  *  - the HSM's own streamed key export used directly by OpenFHE v1.6.0 (registry ID 4; engine in
  *    pqctoday-hsm #360, end-to-end run in pqctoday-fhe #28), and OpenFHE's iterative (two-round)
- *    bootstrapping on those keys (pqctoday-fhe #31, 2026-10-15).
+ *    bootstrapping on those keys (pqctoday-fhe #31, 2026-10-15);
+ *  - the scoring service on an x86-64 virtual machine and on an MX95 Pro board with the token on a
+ *    second board (pqctoday-fhe #32, 2026-10-15).
  * Every number is copied from the merged pull requests' measured results (single runs on an Apple
  * M5 Max, in containers; for the OpenFHE set the token's export was also run on both MX95 boards,
  * pqctoday-fhe #29). Nothing here is interpolated.
@@ -23,6 +25,16 @@ export const COMPUTE_SERVICE_REF: MergedRef = {
   pr: 27,
   mergeCommit: '70872f9a0ace9106eb65e2c0c76ab2b9a953fca3',
 }
+
+/** The scoring service on an x86-64 VM and on the MX95 Pro; its custodian is the HSM main commit below. */
+export const COMPUTE_SERVICE_RUNS_REF: MergedRef = {
+  repo: 'pqctoday-fhe',
+  pr: 32,
+  mergeCommit: 'ed7b92ee2bb3fae7bc9cb22e24a80490c786d1fd',
+}
+
+/** The HSM main commit the custodian of those runs was built from (it contains pqctoday-hsm #360). */
+export const COMPUTE_SERVICE_RUNS_CUSTODIAN_COMMIT = 'ebbc3d20ab209bfba125243f2b9a029b71a8cf9d'
 
 export const OPENFHE_EXPORT_REFS: MergedRef[] = [
   { repo: 'pqctoday-hsm', pr: 360, mergeCommit: '9dea1716044217cc2e0c5809f347639f4e825564' },
@@ -63,7 +75,7 @@ export const COMPUTE_SERVICE_ROWS: { topic: string; value: string }[] = [
   },
   {
     topic: 'Speed',
-    value: `About 200 ms of server time per ${COMPUTE_SERVICE.slots}-customer batch (${COMPUTE_SERVICE.serverMsRange} over 10 jobs, 6 CPUs). The data owner is the slower side: encrypting one batch takes ${COMPUTE_SERVICE.clientEncryptS}, and a request is ${COMPUTE_SERVICE.requestMiB} MiB of ciphertexts. Server peak memory ${COMPUTE_SERVICE.peakMiB}.`,
+    value: `On the Mac, about 200 ms of server time per ${COMPUTE_SERVICE.slots}-customer batch (${COMPUTE_SERVICE.serverMsRange} over 10 jobs, 6 CPUs; the other machines are below). The data owner is the slower side: encrypting one batch takes ${COMPUTE_SERVICE.clientEncryptS}, and a request is ${COMPUTE_SERVICE.requestMiB} MiB of ciphertexts. Server peak memory ${COMPUTE_SERVICE.peakMiB}.`,
   },
   {
     topic: 'Who may upload keys',
@@ -86,9 +98,65 @@ export const COMPUTE_SERVICE_ROWS: { topic: string; value: string }[] = [
   },
 ]
 
+/**
+ * The same service on three machines (batch of 32,768 customers, registry ID 3, owner release, no
+ * refresh). Mac: the headline run of pqctoday-fhe #27 (median 201 ms, 197 to 231 ms over 10 jobs,
+ * peak 1,714 MiB, 17,813 requests an hour by the server's run time). x86-64 VM and MX95 Pro:
+ * pqctoday-fhe #32, medians of three repetitions with the range over all 8 jobs of the run, taken
+ * from the run files in public/data/fhe-evidence/ckks-scoring-service-*-ed7b92e (a test recomputes
+ * them).
+ */
+export const COMPUTE_SERVICE_MACHINES = {
+  mac: { perHourByRunTime: '17,800' },
+  vm: {
+    medianMs: '277',
+    rangeMs: '273–305',
+    peakMiB: '1,311',
+    admission: '40 ms to verify and 100 ms to assemble',
+    perHourByRunTime: '13,000',
+    runS: '47',
+  },
+  pro: {
+    medianS: '4.29',
+    rangeS: '4.16–4.66',
+    peakMiB: '1,870',
+    admission: '170 ms to verify and 497 ms to assemble',
+    perHourSequential: '600',
+    perHourByRunTime: '840',
+    runS: '202',
+    tokenExportS: '124',
+    tokenExportMBs: '35.7',
+    tokenPeakMiB: '83',
+    timesTheMac: '21',
+  },
+  accuracyBits: '21.00',
+  auc: '0.717298 against 0.717299',
+} as const
+
+export const COMPUTE_SERVICE_MACHINES_INTRO =
+  'The same service, built as a static binary for each processor, also ran on an x86-64 virtual machine and on an MX95 Pro board, the latter with the token on a second board (the base MX95), so the three roles sat on three machines. The data owner’s client was a container on the Mac in every run'
+
+export const COMPUTE_SERVICE_MACHINE_ROWS: { topic: string; value: string }[] = [
+  {
+    topic: 'Mac (Apple M5 Max)',
+    value: `Service and token in containers on the same Mac: about 200 ms per batch (median 201 ms, ${COMPUTE_SERVICE.serverMsRange} over 10 jobs), peak ${COMPUTE_SERVICE.peakMiB}, about ${COMPUTE_SERVICE_MACHINES.mac.perHourByRunTime} requests an hour by server time alone.`,
+  },
+  {
+    topic: 'x86-64 virtual machine',
+    value: `12 virtual CPUs (AMD Ryzen AI 9 HX 370), the token in a container on the Mac: ${COMPUTE_SERVICE_MACHINES.vm.medianMs} ms per batch (median of three repetitions; ${COMPUTE_SERVICE_MACHINES.vm.rangeMs} ms over all 8 jobs), peak ${COMPUTE_SERVICE_MACHINES.vm.peakMiB} MiB, key set admitted with ${COMPUTE_SERVICE_MACHINES.vm.admission}, about ${COMPUTE_SERVICE_MACHINES.vm.perHourByRunTime} requests an hour by server time alone, whole run ${COMPUTE_SERVICE_MACHINES.vm.runS} s.`,
+  },
+  {
+    topic: 'MX95 Pro board',
+    value: `6 Cortex-A55 cores and 15.4 GiB, the token on the base MX95 board (it exported its 4.41 GB key set in ${COMPUTE_SERVICE_MACHINES.pro.tokenExportS} s, ${COMPUTE_SERVICE_MACHINES.pro.tokenExportMBs} MB/s, ${COMPUTE_SERVICE_MACHINES.pro.tokenPeakMiB} MiB peak): ${COMPUTE_SERVICE_MACHINES.pro.medianS} s per batch (median of three repetitions; ${COMPUTE_SERVICE_MACHINES.pro.rangeS} s over all 8 jobs), about ${COMPUTE_SERVICE_MACHINES.pro.timesTheMac} times the Mac, peak ${COMPUTE_SERVICE_MACHINES.pro.peakMiB} MiB, key set admitted with ${COMPUTE_SERVICE_MACHINES.pro.admission}, ${COMPUTE_SERVICE_MACHINES.pro.perHourSequential} requests an hour one at a time with the ${COMPUTE_SERVICE.requestMiB} MiB upload (${COMPUTE_SERVICE_MACHINES.pro.perHourByRunTime} by server time alone), whole run ${COMPUTE_SERVICE_MACHINES.pro.runS} s.`,
+  },
+]
+
+/** One sentence under the table: the result did not depend on the machine. */
+export const COMPUTE_SERVICE_MACHINES_SAME_RESULT = `The scores were identical on all three machines: ${COMPUTE_SERVICE_MACHINES.accuracyBits} bits against the plaintext cubic, the same decision on every slot at 0.5 and 0.25, AUC ${COMPUTE_SERVICE_MACHINES.auc}.`
+
 /** Limits the service states about itself. */
 export const COMPUTE_SERVICE_LIMITS =
-  'Limits: the certificates are classical test certificates (the key exchange is post-quantum, the authentication is not); one tenant; keys and jobs live in memory only, so a restart drops them; run on one Mac, not on a board. A deeper model would need the refresh step and its 4.4 GB of extra keys.'
+  'Limits: the certificates are classical test certificates (the key exchange is post-quantum, the authentication is not); one tenant; keys and jobs live in memory only, so a restart drops them; a program of 3 multiplications and one batch size (32,768 customers); one run per machine; the virtual machine and board runs use the published test seed, so their secret key is public and they measure time, memory and correctness, not secrecy; the x86 run is a virtual machine, not a dedicated host, and its cores were not pinned; the board’s service listens on loopback and is reached through an ssh tunnel with TLS inside it. A deeper model would need the refresh step and its 4.4 GB of extra keys.'
 
 /** The HSM's key export in OpenFHE (registry ID 4, OpenFHE v1.6.0 at its 128-bit-checked settings). */
 export const OPENFHE_EXPORT = {

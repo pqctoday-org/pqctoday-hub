@@ -10,7 +10,12 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { EVIDENCE_MANIFEST } from '@/data/fhe/fheEvidence'
-import { OPENFHE_EXPORT_BOARDS, OPENFHE_ITERATIVE } from '../data/fheComputeService'
+import {
+  COMPUTE_SERVICE,
+  COMPUTE_SERVICE_MACHINES,
+  OPENFHE_EXPORT_BOARDS,
+  OPENFHE_ITERATIVE,
+} from '../data/fheComputeService'
 import { FLOOD_ID2, FLOOD_ID3, FLOOD_ID3_BOARDS, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
 import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
 
@@ -509,6 +514,217 @@ describe('OpenFHE iterative bootstrapping (two rounds) on the registry ID 4 keys
       expect(body, f).not.toMatch(/\/Users\/|\/home\/|ericamador|eram2207/i)
       expect(body, f).not.toMatch(/@[a-z0-9-]+\.[a-z]+/i)
     }
+  })
+})
+
+describe('the encrypted risk-scoring service on an x86-64 VM and on an MX95 Pro (pqctoday-fhe #32)', () => {
+  const RUNS = {
+    vm: {
+      folder: 'ckks-scoring-service-x86-vm-ed7b92e',
+      record: 'ckks-scoring-service-x86-vm-m5max-ed7b92e',
+    },
+    pro: {
+      folder: 'ckks-scoring-service-mx95pro-ed7b92e',
+      record: 'ckks-scoring-service-mx95pro-m5max-ed7b92e',
+    },
+  } as const
+  const text = (folder: string, file: string) =>
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
+    fs.readFileSync(path.join(ROOT, folder, file), 'utf8')
+  const files = (folder: string) =>
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
+    fs.readdirSync(path.join(ROOT, folder)).sort()
+  const prov = (folder: string) =>
+    Object.fromEntries(
+      text(folder, 'provenance.txt')
+        .split('\n')
+        .filter((l) => l.includes(': '))
+        .map((l) => [l.slice(0, l.indexOf(': ')), l.slice(l.indexOf(': ') + 2)])
+    )
+  const median = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+  const thousands = (n: number) => Math.round(n).toLocaleString('en-US')
+
+  it('the x86-64 VM numbers the Learn text quotes equal the run files', () => {
+    const { folder } = RUNS.vm
+    const s = json(folder, 'summary.json')
+    const b = json(folder, 'bench.json')
+    const p = prov(folder)
+    const m = COMPUTE_SERVICE_MACHINES.vm
+    expect(String(Math.round(median(s.serverRunMs_repetitions)))).toBe(m.medianMs)
+    expect(`${s.serverWallMsAllJobs.min}–${s.serverWallMsAllJobs.max}`).toBe(m.rangeMs)
+    expect(s.serverWallMsAllJobs.n).toBe(8)
+    expect(thousands(s.serverPeakRssMiB)).toBe(m.peakMiB)
+    expect(m.admission).toBe(
+      `${Math.round(parseFloat(p.key_admitted.match(/verify_ms ([\d.]+)/)![1]))} ms to verify and ${Math.round(parseFloat(p.key_admitted.match(/assemble_ms ([\d.]+)/)![1]))} ms to assemble`
+    )
+    // "about 13,000 requests an hour by server time alone"
+    expect(thousands(Math.round(b.requestsPerHour_byServerRunTime / 1000) * 1000)).toBe(
+      m.perHourByRunTime
+    )
+    expect(p.total_wall_s).toBe(m.runS)
+    expect(p.result).toBe('PASS')
+  })
+
+  it('the MX95 Pro numbers the Learn text quotes equal the run files', () => {
+    const { folder } = RUNS.pro
+    const s = json(folder, 'summary.json')
+    const b = json(folder, 'bench.json')
+    const e = json(folder, 'export.json')
+    const p = prov(folder)
+    const m = COMPUTE_SERVICE_MACHINES.pro
+    expect((median(s.serverRunMs_repetitions) / 1000).toFixed(2)).toBe(m.medianS)
+    expect(
+      `${(s.serverWallMsAllJobs.min / 1000).toFixed(2)}–${(s.serverWallMsAllJobs.max / 1000).toFixed(2)}`
+    ).toBe(m.rangeS)
+    expect(thousands(s.serverPeakRssMiB)).toBe(m.peakMiB)
+    expect(m.admission).toBe(
+      `${Math.round(parseFloat(p.key_admitted.match(/verify_ms ([\d.]+)/)![1]))} ms to verify and ${Math.round(parseFloat(p.key_admitted.match(/assemble_ms ([\d.]+)/)![1]))} ms to assemble`
+    )
+    expect(String(Math.round(b.requestsPerHour_bySequentialCycle))).toBe(m.perHourSequential)
+    expect(String(Math.round(b.requestsPerHour_byServerRunTime))).toBe(m.perHourByRunTime)
+    expect(p.total_wall_s).toBe(m.runS)
+    // the token on the base MX95 board
+    expect(p.token_label).toBe('mx95')
+    expect(p.server_label).toBe('mx95pro')
+    expect(String(Math.round(e.seconds))).toBe(m.tokenExportS)
+    expect(e.mbPerSecond.toFixed(1)).toBe(m.tokenExportMBs)
+    expect(String(Math.round(e.peakRssKiB / 1024))).toBe(m.tokenPeakMiB)
+    expect(e.bytes).toBe(4_410_835_077)
+    expect(e.keys).toBe(51)
+    // "about 21 times the Mac" (median of three repetitions against the Mac's 201 ms)
+    expect(
+      String(Math.round(median(s.serverRunMs_repetitions) / COMPUTE_SERVICE.serverMsMedian))
+    ).toBe(m.timesTheMac)
+    expect(p.server_mem_total_kib).toBe('16096760') // 15.4 GiB
+    expect(p.server_cpus).toBe('6')
+    expect(p.result).toBe('PASS')
+  })
+
+  for (const key of ['vm', 'pro'] as const) {
+    it(`${key}: identical scores to the Mac, every key piece checked, the same custodian build`, () => {
+      const { folder } = RUNS[key]
+      const s = json(folder, 'summary.json')
+      const r = json(folder, 'receive.json')
+      const p = prov(folder)
+      expect(s.accuracyBits_allSlots.toFixed(2)).toBe(COMPUTE_SERVICE_MACHINES.accuracyBits)
+      expect(s.auc.auc_encrypted.toFixed(6)).toBe('0.717298')
+      expect(s.auc.auc_plaintextPolynomial.toFixed(6)).toBe('0.717299')
+      expect(COMPUTE_SERVICE_MACHINES.auc).toBe('0.717298 against 0.717299')
+      expect(COMPUTE_SERVICE.aucEncrypted).toBe('0.717298')
+      expect(text(folder, 'accuracy-verdict.txt')).toContain(
+        'decisions at 0.5 and 0.25: 100.000 % and 100.000 % agree'
+      )
+      expect(text(folder, 'accuracy-verdict.txt')).toContain('max error and AUC equal')
+      expect(json(folder, 'timing.json').requestCiphertextBytes).toBe(192_938_536)
+      expect(json(folder, 'timing.json').featureCiphertexts).toBe(23)
+      expect(r.hashMismatches).toBe(0)
+      expect(r.tokenManifest.mismatches).toBe(0)
+      expect(r.manifestEntries).toBe(1204)
+      expect(r.tokenManifest.entries).toBe(1203)
+      expect(p.chunk_hashes_vs_reference_run).toContain('identical (all 1203 ')
+      expect(p.registry_id).toContain('CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0')
+      expect(p.hsm_commit).toBe('ebbc3d20ab209bfba125243f2b9a029b71a8cf9d')
+      expect(p.custodian_sha256).toBe(
+        '709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53'
+      )
+      expect(p.custodian_build_source).toContain('origin/main')
+      expect(p.seed).toContain('the secret key is public by construction')
+      expect(p.server_workers).toBe('1')
+      expect(p.customers_per_batch).toBe('32768')
+    })
+  }
+
+  it('the VM ran a static amd64 build and the board a static arm64 build of the same service code', () => {
+    const vm = prov(RUNS.vm.folder)
+    const pro = prov(RUNS.pro.folder)
+    expect(vm.server_binary).toContain('linux/amd64')
+    expect(pro.server_binary).toContain('linux/arm64')
+    expect(vm.server_binary_build_fhe_commit).toBe(pro.server_binary_build_fhe_commit)
+    expect(vm.server_binary_build_build).toContain('CGO_ENABLED=0')
+    expect(pro.server_binary_build_build).toContain('CGO_ENABLED=0')
+    expect(vm.server_cpus).toBe('12')
+    expect(vm.server_cpu_model).toContain('AMD Ryzen AI 9 HX 370')
+    expect(vm.token_model).toContain('container on the Mac')
+  })
+
+  it('the two records are reference-level, no-badge records of the merged run, listing every file', () => {
+    for (const key of ['vm', 'pro'] as const) {
+      const { folder, record } = RUNS[key]
+      const rec = EVIDENCE_MANIFEST.records.find((r) => r.id === record)!
+      expect(rec, record).toBeTruthy()
+      expect(rec.level).toBe('reference')
+      expect(rec.producer).toBe('pqctoday-fhe')
+      expect(rec.claimScope).toBe('reference-library')
+      expect(rec.badge).toBe(false)
+      expect(rec.parts).toBeUndefined()
+      expect(rec.engine?.commit).toBe('ed7b92ee2bb3fae7bc9cb22e24a80490c786d1fd')
+      for (const ref of [
+        '70872f9a0ace9106eb65e2c0c76ab2b9a953fca3',
+        'ed7b92ee2bb3fae7bc9cb22e24a80490c786d1fd',
+        'ebbc3d20ab209bfba125243f2b9a029b71a8cf9d',
+        '9dea1716044217cc2e0c5809f347639f4e825564',
+        'pqctoday-fhe #27',
+        'pqctoday-fhe #32',
+        'the published test seed',
+        'not a security claim',
+      ])
+        expect(rec.notes, `${record} ${ref}`).toContain(ref)
+      expect(rec.artifacts.map((a) => a.name).sort()).toEqual(files(folder))
+      for (const log of ['run.log.txt', 'server.log.txt', 'server-start.log.txt'])
+        expect(files(folder)).toContain(log)
+      expect(files(folder).some((f) => f.endsWith('.log'))).toBe(false)
+      expect(rec.artifacts[0].name).toBe('summary.md')
+      for (const a of rec.artifacts)
+        expect(a.url).toBe(`https://www.pqctoday.com/data/fhe-evidence/${folder}/${a.name}`)
+    }
+    // the MX95 Pro cannot play the FHE server under the evidence rules, hence the reference level
+    const pro = EVIDENCE_MANIFEST.records.find((r) => r.id === RUNS.pro.record)!
+    expect(pro.notes).toContain('let the MX95 Pro play a custodian, backup custodian or party')
+  })
+
+  it('the records’ key numbers equal the run files', () => {
+    for (const key of ['vm', 'pro'] as const) {
+      const { folder, record } = RUNS[key]
+      const rec = EVIDENCE_MANIFEST.records.find((r) => r.id === record)!
+      const kn = Object.fromEntries(rec.summary!.keyNumbers.map((k) => [k.label, k.value]))
+      const s = json(folder, 'summary.json')
+      const b = json(folder, 'bench.json')
+      const p = prov(folder)
+      expect(kn['Server time per batch, median of 3 repetitions']).toBe(
+        thousands(median(s.serverRunMs_repetitions))
+      )
+      const w = s.serverWallMsAllJobs
+      expect(kn['Server time over all 8 jobs, min / median / max']).toBe(
+        `${thousands(w.min)} / ${thousands(w.median)} / ${thousands(w.max)}`
+      )
+      expect(kn['Server peak memory (VmHWM)']).toBe(thousands(s.serverPeakRssMiB))
+      expect(kn['Key admission, verify / assemble']).toBe(
+        `${Math.round(parseFloat(p.key_admitted.match(/verify_ms ([\d.]+)/)![1]))} / ${Math.round(parseFloat(p.key_admitted.match(/assemble_ms ([\d.]+)/)![1]))}`
+      )
+      expect(kn['Requests per hour, one at a time / by server time alone']).toBe(
+        `${thousands(b.requestsPerHour_bySequentialCycle)} / ${thousands(b.requestsPerHour_byServerRunTime)}`
+      )
+      expect(kn['Whole run']).toBe(p.total_wall_s)
+      expect(kn['Score against the plaintext cubic, all 32,768 slots']).toBe(
+        s.accuracyBits_allSlots.toFixed(2)
+      )
+      expect(kn['AUC, encrypted / plaintext cubic']).toBe('0.717298 / 0.717299')
+      expect(kn['Request size']).toBe('184.0')
+      expect(kn['Same program on the Mac (headline run, pqctoday-fhe #27)']).toBe(
+        `${COMPUTE_SERVICE.serverMsMedian} ms, peak ${COMPUTE_SERVICE.peakMiB}`
+      )
+    }
+  })
+
+  it('no file holds an address other than loopback, a host or user name, a serial or a home path', () => {
+    for (const { folder } of Object.values(RUNS))
+      for (const f of files(folder)) {
+        const body = text(folder, f).replace(/127\.0\.0\.1|0\.0\.0\.0/g, '')
+        expect(body, `${folder}/${f}`).not.toMatch(/(\d{1,3}\.){3}\d{1,3}/)
+        expect(body, `${folder}/${f}`).not.toMatch(/\/Users\/|\/home\/|ericamador|eram2207/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/@[a-z0-9-]+\.[a-z]+/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/([0-9a-f]{2}:){5}[0-9a-f]{2}/i)
+      }
   })
 })
 

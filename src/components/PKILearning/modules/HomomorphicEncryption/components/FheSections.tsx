@@ -20,8 +20,13 @@ import {
 import { EvidenceCite } from './FheEvidenceCite'
 import {
   COMPUTE_SERVICE_LIMITS,
+  COMPUTE_SERVICE_MACHINES_INTRO,
+  COMPUTE_SERVICE_MACHINES_SAME_RESULT,
+  COMPUTE_SERVICE_MACHINE_ROWS,
   COMPUTE_SERVICE_REF,
   COMPUTE_SERVICE_ROWS,
+  COMPUTE_SERVICE_RUNS_CUSTODIAN_COMMIT,
+  COMPUTE_SERVICE_RUNS_REF,
   OPENFHE_EXPORT_BOARDS_SENTENCE,
   OPENFHE_EXPORT_LIMITS,
   OPENFHE_EXPORT_REFS,
@@ -1438,12 +1443,23 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
       <p className="text-xs text-muted-foreground">
         The whole pattern in one place: the data owner&apos;s keys come from the token, a service
         that never holds a secret key scores encrypted customer records, and only the owner reads
-        the result. It is a reference service for learning, built and measured on one Mac.
+        the result. It is a reference service for learning, built and measured on a Mac, then run on
+        an x86-64 virtual machine and on an MX95 Pro board.
       </p>
       <FactsTable rows={COMPUTE_SERVICE_ROWS} />
+      <p className="text-xs text-muted-foreground">
+        <strong className="text-foreground">On other machines:</strong>{' '}
+        {COMPUTE_SERVICE_MACHINES_INTRO} (
+        <EvidenceCite of="scoringX86Vm">virtual machine run</EvidenceCite>,{' '}
+        <EvidenceCite of="scoringMx95pro">MX95 Pro run</EvidenceCite>):
+      </p>
+      <FactsTable rows={COMPUTE_SERVICE_MACHINE_ROWS} />
+      <p className="text-xs text-muted-foreground">{COMPUTE_SERVICE_MACHINES_SAME_RESULT}</p>
       <p className="text-xs text-muted-foreground">{COMPUTE_SERVICE_LIMITS}</p>
       <p className="text-[11px] text-muted-foreground">
-        Merged: {citeMerged(COMPUTE_SERVICE_REF)}.
+        Merged: {citeMerged(COMPUTE_SERVICE_REF)}; {citeMerged(COMPUTE_SERVICE_RUNS_REF)}. The
+        custodian of the virtual machine and board runs was built from pqctoday-hsm main at{' '}
+        {COMPUTE_SERVICE_RUNS_CUSTODIAN_COMMIT}.
       </p>
     </div>
   </div>
