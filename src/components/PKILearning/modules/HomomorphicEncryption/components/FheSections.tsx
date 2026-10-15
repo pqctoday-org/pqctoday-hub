@@ -26,6 +26,8 @@ import {
   OPENFHE_EXPORT_LIMITS,
   OPENFHE_EXPORT_REFS,
   OPENFHE_EXPORT_ROWS,
+  OPENFHE_ITERATIVE_INTRO,
+  OPENFHE_ITERATIVE_ROWS,
   citeMerged,
 } from '../data/fheComputeService'
 import { Button } from '@/components/ui/button'
@@ -1347,7 +1349,8 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
           primes, ran in OpenFHE through a format bridge with the same precision as OpenFHE&apos;s
           own keys, bootstrapping included. The HSM&apos;s default key set uses Lattigo&apos;s
           primes and key list, which OpenFHE cannot use; a parameter set built from OpenFHE&apos;s
-          own settings now can (below).
+          own settings now can (below, including a two-round refresh that reaches about 32 bits
+          where one round keeps about 13).
         </li>
         <li>
           <strong>Microsoft SEAL v4.1.2 CKKS</strong> (
@@ -1413,6 +1416,11 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
         (<EvidenceCite of="openfheSetMx95">MX95</EvidenceCite>,{' '}
         <EvidenceCite of="openfheSetMx95pro">MX95 Pro</EvidenceCite>).
       </p>
+      <p className="text-xs text-muted-foreground">
+        <strong className="text-foreground">Refreshing twice:</strong> {OPENFHE_ITERATIVE_INTRO} (
+        <EvidenceCite of="openfheIterative">run of 2026-10-15, on a Mac</EvidenceCite>):
+      </p>
+      <FactsTable rows={OPENFHE_ITERATIVE_ROWS} />
       <p className="text-xs text-muted-foreground">{OPENFHE_EXPORT_LIMITS}</p>
       <p className="text-[11px] text-muted-foreground">
         Merged: {OPENFHE_EXPORT_REFS.map(citeMerged).join('; ')}.
@@ -1442,14 +1450,18 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
 )
 
 /** Two-column table of measured facts for the section 9 reference boxes. */
+// Below the sm breakpoint each row stacks (topic above value): a table with a no-wrap topic column
+// leaves a phone-width value column a few words wide, scrolled sideways.
 const FactsTable: React.FC<{ rows: { topic: string; value: string }[] }> = ({ rows }) => (
   <div className="overflow-x-auto">
-    <table className="w-full text-xs">
-      <tbody className="text-muted-foreground">
+    <table className="w-full text-xs block sm:table">
+      <tbody className="text-muted-foreground block sm:table-row-group">
         {rows.map((row) => (
-          <tr key={row.topic} className="border-b border-border/50 align-top">
-            <td className="p-1.5 font-medium text-foreground whitespace-nowrap">{row.topic}</td>
-            <td className="p-1.5">{row.value}</td>
+          <tr key={row.topic} className="border-b border-border/50 align-top block sm:table-row">
+            <td className="p-1.5 pb-0 sm:pb-1.5 font-medium text-foreground sm:whitespace-nowrap block sm:table-cell">
+              {row.topic}
+            </td>
+            <td className="p-1.5 block sm:table-cell">{row.value}</td>
           </tr>
         ))}
       </tbody>

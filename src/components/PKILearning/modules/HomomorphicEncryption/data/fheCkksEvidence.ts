@@ -30,6 +30,8 @@ export const CKKS_EVIDENCE = {
   // registry ID 4 (the OpenFHE set): the token's export generated on the boards
   openfheSetMx95: 'ckks-openfhe-set-token-mx95-461f44ae',
   openfheSetMx95pro: 'ckks-openfhe-set-token-mx95pro-461f44ae',
+  // the same set, OpenFHE's iterative bootstrapping (two rounds) on a Mac, 2026-10-15
+  openfheIterative: 'ckks-openfhe-iterative-m5max-cc9d7bc',
   // the same programs with the token on the boards
   metaBtsLmssMx95pro: 'ckks-metabts2-lmss-stream-mx95pro-mac-m5max-dc9ad8b',
   metaBtsLmssMx95: 'ckks-metabts2-lmss-stream-mx95-mac-m5max-dc9ad8b',

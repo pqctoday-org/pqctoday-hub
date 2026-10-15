@@ -4,7 +4,8 @@
  *  - an encrypted risk-scoring service that computes on CKKS ciphertexts under the token's keys
  *    (pqctoday-fhe #27);
  *  - the HSM's own streamed key export used directly by OpenFHE v1.6.0 (registry ID 4; engine in
- *    pqctoday-hsm #360, end-to-end run in pqctoday-fhe #28).
+ *    pqctoday-hsm #360, end-to-end run in pqctoday-fhe #28), and OpenFHE's iterative (two-round)
+ *    bootstrapping on those keys (pqctoday-fhe #31, 2026-10-15).
  * Every number is copied from the merged pull requests' measured results (single runs on an Apple
  * M5 Max, in containers; for the OpenFHE set the token's export was also run on both MX95 boards,
  * pqctoday-fhe #29). Nothing here is interpolated.
@@ -27,6 +28,7 @@ export const OPENFHE_EXPORT_REFS: MergedRef[] = [
   { repo: 'pqctoday-hsm', pr: 360, mergeCommit: '9dea1716044217cc2e0c5809f347639f4e825564' },
   { repo: 'pqctoday-fhe', pr: 28, mergeCommit: '67217242c01c0382b72938a153243893e5804434' },
   { repo: 'pqctoday-fhe', pr: 29, mergeCommit: '461f44ae2599799f261f62245456079ffad6a710' },
+  { repo: 'pqctoday-fhe', pr: 31, mergeCommit: 'cc9d7bc46e71459fd4363b1197a0b2fcc507ab97' },
 ]
 
 /** "pqctoday-fhe #27, merge commit 70872f9a…" in full, as the other engine notes cite merges. */
@@ -116,7 +118,7 @@ export const OPENFHE_EXPORT_ROWS: { topic: string; value: string }[] = [
   },
   {
     topic: 'In OpenFHE',
-    value: `OpenFHE encrypts under the token's public key, then multiplies, rotates, conjugates and bootstraps with the token's ${OPENFHE_EXPORT.keys} keys and none of its own. Bootstrapping keeps ${OPENFHE_EXPORT.bootstrapTokenBits} bits with the token's keys against ${OPENFHE_EXPORT.bootstrapOwnBits} with OpenFHE's own (worst slot, mean of four runs). One flipped bit in the new key kind breaks only bootstrapping.`,
+    value: `OpenFHE encrypts under the token's public key, then multiplies, rotates, conjugates and bootstraps with the token's ${OPENFHE_EXPORT.keys} keys and none of its own. One bootstrap, OpenFHE's default refresh, keeps ${OPENFHE_EXPORT.bootstrapTokenBits} bits with the token's keys against ${OPENFHE_EXPORT.bootstrapOwnBits} with OpenFHE's own (worst slot, mean of four runs); refreshing twice keeps more (below). One flipped bit in the new key kind breaks only bootstrapping.`,
   },
 ]
 
@@ -131,5 +133,73 @@ export const OPENFHE_EXPORT_BOARDS = {
 /** One sentence, shown with links to the two board records. */
 export const OPENFHE_EXPORT_BOARDS_SENTENCE = `The token’s export of this set was also generated on both MX95 boards, in ${OPENFHE_EXPORT_BOARDS.generationS.mx95} s (MX95) and ${OPENFHE_EXPORT_BOARDS.generationS.mx95pro} s (MX95 Pro), about 2.4 minutes each, and streamed to a Mac in about 3 minutes (${OPENFHE_EXPORT_BOARDS.streamedS.mx95} s and ${OPENFHE_EXPORT_BOARDS.streamedS.mx95pro} s), with all ${OPENFHE_EXPORT_BOARDS.pieces} pieces matching the reference and the token-signed manifest and a token peak of ${OPENFHE_EXPORT_BOARDS.peakMiB} MiB`
 
+/**
+ * OpenFHE's iterative bootstrapping (EvalBootstrap with numIterations 2 and a precision argument) on
+ * the same 79 keys (pqctoday-fhe #31, one Mac, a shared machine). Worst slot over 32,768 slots, mean
+ * of runs: four per setting up to precision 15, two from 16. Equal to the run files in
+ * public/data/fhe-evidence/ckks-openfhe-iterative-cc9d7bc (a test recomputes them).
+ */
+export const OPENFHE_ITERATIVE = {
+  /** One refresh (the control), four runs. */
+  oneRound: { own: '13.20', token: '13.22' },
+  /** The rule in OpenFHE's example (measured bits minus 5), precision argument 8. */
+  rule: { precision: 8, own: '21.18', token: '21.07', release: '21.07' },
+  /**
+   * The best settings found by the sweep, token's keys, shown to one decimal: precision 19 and 20
+   * give 31.80 and 31.73; at precision 19 the owner release gives 30.53 with the true scale applied
+   * and 27.02 at face value.
+   */
+  best: {
+    precisions: '19 to 20',
+    tokenRange: '31.7 to 31.8',
+    releaseScaled: '30.5',
+    releaseFace: '27.0',
+  },
+  /** The result falls above the best settings (token's keys at precision 22 and 24, one decimal). */
+  falls: { at22: '28.0', at24: '24.2' },
+  /** A fresh public-key encryption in the earlier run of the same set, token's keys (32.13). */
+  freshBits: '32.1',
+  /** Largest gap between the token's keys and OpenFHE's own over the two-round settings, in bits. */
+  agreeWithinBits: '0.4',
+  secondsOneRound: '3.2',
+  secondsTwoRounds: '6',
+  levelsLeft: { oneRound: 8, twoRounds: 7 },
+  peakGiB: '16.6',
+  /** Multiplicative depth that would keep 8 levels, refused at N = 2^16. */
+  refusedDepth: 26,
+} as const
+
+/** What the token's keys give OpenFHE's two-round refresh, one row per question a reader asks. */
+export const OPENFHE_ITERATIVE_ROWS: { topic: string; value: string }[] = [
+  {
+    topic: 'One refresh (default)',
+    value: `13.2 bits, worst slot, mean of four runs (${OPENFHE_ITERATIVE.oneRound.token} with the token’s keys, ${OPENFHE_ITERATIVE.oneRound.own} with OpenFHE’s own).`,
+  },
+  {
+    topic: 'Two rounds, the example’s rule',
+    value: `21.1 bits with the token’s keys (${OPENFHE_ITERATIVE.rule.own} with OpenFHE’s own, ${OPENFHE_ITERATIVE.rule.release} through the token’s owner release), at the setting OpenFHE’s example recommends: the measured bits minus 5, here precision ${OPENFHE_ITERATIVE.rule.precision}.`,
+  },
+  {
+    topic: 'Two rounds, best setting found',
+    value: `${OPENFHE_ITERATIVE.best.tokenRange} bits at precision ${OPENFHE_ITERATIVE.best.precisions} with the token’s keys, close to the ${OPENFHE_ITERATIVE.freshBits} bits of a freshly encrypted ciphertext in the earlier run. Through the token’s owner release (precision 19), which rounds to 2^-30: ${OPENFHE_ITERATIVE.best.releaseScaled} bits when the ciphertext’s true scale is applied, ${OPENFHE_ITERATIVE.best.releaseFace} bits when the release is read at face value, because OpenFHE’s scale after a bootstrap differs from 2^52 by 6 to 7 parts in a billion and the token’s input carries the scale only as a power of two.`,
+  },
+  {
+    topic: 'Choosing the setting',
+    value: `Below precision 19 the result is about 13.2 plus the precision; above 20 it falls (${OPENFHE_ITERATIVE.falls.at22} at 22, ${OPENFHE_ITERATIVE.falls.at24} at 24; the cause was not investigated). At these parameters the setting moves the result bit for bit, and the best one was found by sweeping, not from a documented rule.`,
+  },
+  {
+    topic: 'Token’s keys against OpenFHE’s own',
+    value: `Within ${OPENFHE_ITERATIVE.agreeWithinBits} bit at every two-round setting. The key set did not change: the same 79 keys, nothing different on the token.`,
+  },
+  {
+    topic: 'Cost',
+    value: `About twice the time (about ${OPENFHE_ITERATIVE.secondsTwoRounds} s against ${OPENFHE_ITERATIVE.secondsOneRound} s, on a shared Mac with six cores, so compare the ratio) and one level fewer: ${OPENFHE_ITERATIVE.levelsLeft.twoRounds} left after the refresh instead of ${OPENFHE_ITERATIVE.levelsLeft.oneRound}. Keeping 8 levels would need a deeper chain (multiplicative depth ${OPENFHE_ITERATIVE.refusedDepth}), which OpenFHE refuses at N = 2^16 with its 128-bit check; it asks for N = 2^17. Peak memory is unchanged, ${OPENFHE_ITERATIVE.peakGiB} GiB.`,
+  },
+]
+
+/** One paragraph above the table, shown with the link to the iterative record. */
+export const OPENFHE_ITERATIVE_INTRO =
+  'OpenFHE can also refresh a ciphertext in two rounds (iterative bootstrapping): the second round bootstraps the first round’s error, scaled up by 2^precision (a setting you choose), and subtracts it. It works with the token’s keys as they stand'
+
 export const OPENFHE_EXPORT_LIMITS =
-  'Limits: owner release only, because no flood bound has been measured for this set; about 13 bits after bootstrapping is OpenFHE’s own precision at these settings; OpenFHE itself ran on one platform only, a container on a Mac, because the boards ran the token’s export and not OpenFHE.'
+  'Limits: owner release only, because no flood bound has been measured for this set; about 13 bits after one bootstrap is OpenFHE’s default precision at these settings, and a second round raises it; OpenFHE itself ran on one platform only, a container on a Mac, because the boards ran the token’s export and not OpenFHE; the two-round results come from one seeded input vector and a few runs per setting (four up to precision 15, two above), with the variant that raises the modulus first only.'
