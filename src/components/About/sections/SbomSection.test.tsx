@@ -115,8 +115,16 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
   })
 
   it('does not invent a release for bundles whose binary embeds none', () => {
-    const tpm = sbomVersionLabel(byName(/^pqctoday-tpm/))
-    expect(tpm).toMatch(/^build commit not recorded · sha256 [0-9a-f]{8}$/)
+    // The LMS module has no recorded origin; the page must say so, not guess.
+    const lms = sbomVersionLabel(byName(/^LMS\/HSS/))
+    expect(lms).toMatch(/^build commit not recorded · sha256 [0-9a-f]{8}$/)
+    // The TPM emulator is built from a tagged pqctoday-tpm release.
+    expect(sbomVersionLabel(byName(/^pqctoday-tpm/))).toMatch(
+      /^built from pqctoday-tpm @ [0-9a-f]{8}$/
+    )
+    expect(sbomHref(byName(/^pqctoday-tpm/))).toMatch(
+      /github\.com\/pqctoday-org\/pqctoday-tpm\/commit\//
+    )
     expect(sbomVersionLabel(byName(/^softhsmv3/))).toMatch(
       /^built from pqctoday-hsm @ [0-9a-f]{8}$/
     )
