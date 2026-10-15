@@ -1,4 +1,4 @@
-### 2026-10-15-id3-x1-vm
+### 2026-10-15-id3-x86-vm
 
 Server: ; 12 cores, 15.6 GiB, Linux 6.12.111+deb13-cloud-amd64 x86_64. Token: pqc-rust container on the Mac (linux/arm64), no board. Client: container on the Mac. Result: PASS. Batch 32768 customers, 1 worker(s).
 

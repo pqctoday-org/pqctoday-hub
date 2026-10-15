@@ -165,7 +165,10 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
     ])
       expect(text, v).toContain(v)
     // the lab's machine labels and addresses are not in the text
-    expect(text).not.toMatch(/\bX1\b|x1-vm|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
+    const oldLabel = `x${1}`
+    expect(text).not.toMatch(
+      new RegExp(`\\b${oldLabel}\\b|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}`, 'i')
+    )
   })
 
   it('the two machine runs link to their evidence records', () => {

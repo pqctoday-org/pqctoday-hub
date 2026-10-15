@@ -1,6 +1,6 @@
 {
- "run": "2026-10-15-id3-x1-vm",
- "kind": "x1",
+ "run": "2026-10-15-id3-x86-vm",
+ "kind": "x86-vm",
  "serverRunMs_first": 274.671,
  "uploadUntilAcceptedMs_first": 1654,
  "serverRunMs_repetitions": [

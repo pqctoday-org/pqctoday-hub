@@ -716,6 +716,78 @@ describe('the encrypted risk-scoring service on an x86-64 VM and on an MX95 Pro 
     }
   })
 
+  // sha256 of each x86-64 VM run file in the FHE repository (pqctoday-fhe #32, merge commit ed7b92ee),
+  // the logs under their .txt names
+  const FHE_COPY_SHA256: Record<string, string> = {
+    'accuracy-verdict.txt': '57e9deedcdc8c824ff190b5ef0f671d82e4ad276d435146253504108726a2192',
+    'bench.json': '3cab6b27da7c56de37c966dae20024219b9a68b4c7c215398660a1f54bd66e2c',
+    'check.json': '338be846ff3e7f58a623bea7ecb6be1566dba9df920ea6beae3b47e5de9ba44b',
+    'export.json': '57ec30c4c2fcb2f3a9879d1bbdeadb1a6ea835616687727a5874a4d174714c1b',
+    'health-after.json': '8d70b5b90cce00a944ff8577f0f123d5a24b2fee8075d01ea0cbe5bafc6640ff',
+    'health-before.json': '406be8138aab1037d233aaebea25fba1d3bdebeaf44b74a232b762ed37a354b5',
+    'manifest.txt': 'bc34fdeac4f870742b203e950b2cf90fcae792818522aa1d16b155670d5ca623',
+    'models.json': 'e201f38bb679c4ea0f36fed0e2e24c773c34fe559cf26c447ba8218c9f5a138d',
+    'provenance.txt': '5d59f490104f84c2379afb38d868a223cb68ea315ccf6a270b36850593ce76e7',
+    'receive.json': '92275cc820d95ddb36bacf23d1f82abde5b53577c2f95eb67a3733abbb2778bb',
+    'run.log.txt': 'a289c237e903af0dfd08b155b6c322cad396d7da5ad910adbb948a0c802efd1f',
+    'server-process-status.txt': '95a2a35fc1cc242104519261d1cfa1a3c7885443e3843b9af8807616db86cbb9',
+    'server-start.log.txt': '5ccdc9de197df923f5290b6e473fcb84130bbb7e379a1bd7bfe249fcb406f7dc',
+    'server.log.txt': '4093e70aec77027b9a5c6ef90216ac2777c951d15c265a0d9365fcd5c3a3218c',
+    'summary.json': 'e99c564f599780819629e7efaaa438b797c77327836ec142959dea9336966f73',
+    'summary.md': 'fde4b7f77ae35e14623749b377253af4a388dd94f2b230227f627ed444de8156',
+    'timing.json': '0180a5711b06181551e7f86aa33d88cd3d8c01876b396dbbb84fd7ee2c574933',
+    'token-decrypt.txt': '19fe8a36a8a8fcfa3e960a25e2b03f5157fd5ab900bfe2141613d554d1b003c1',
+    'token-init.txt': '36aa40bb0e96fe11438b3e7f52c42f7507d1e16432e34e8b30a84316fbd339f5',
+    'upload-key.json': '2867de5d01fd12c53a96a226364dac16ac1c3c9042dae4fd03a37567f817ce6b',
+  }
+  const NOTE_LINE =
+    'note_public_copy: labels differ from the FHE repository copy (the machine label was renamed to x86-vm in the public copy); the measurements are unchanged'
+  // the old machine label, written so that this test file does not hold the label itself
+  const OLD = `x${1}`
+  const sha = (s: string | Buffer) => crypto.createHash('sha256').update(s).digest('hex')
+  // undoes the documented label substitution, line by line, in the four files that carry it
+  const restoreLabel = (s: string) =>
+    s
+      .replace(`\n${NOTE_LINE}\n`, '\n')
+      .replaceAll('2026-10-15-id3-x86-vm', `2026-10-15-id3-${OLD}-vm`)
+      .replaceAll('server_label: x86-vm', `server_label: ${OLD}-vm`)
+      .replaceAll('server x86-vm (ssh)', `server ${OLD}-vm (ssh)`)
+      .replaceAll('] x86-vm service run', `] ${OLD} service run`)
+      .replaceAll('kind: x86-vm', `kind: ${OLD}`)
+      .replaceAll('"kind": "x86-vm"', `"kind": "${OLD}"`)
+
+  it('the x86-64 VM run files equal the FHE repository copy, except the documented label substitution', () => {
+    const { folder } = RUNS.vm
+    expect(files(folder)).toEqual(Object.keys(FHE_COPY_SHA256).sort())
+    const changed = ['provenance.txt', 'run.log.txt', 'summary.json', 'summary.md']
+    for (const f of files(folder)) {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folder under public/
+      const bytes = fs.readFileSync(path.join(ROOT, folder, f))
+      if (!changed.includes(f)) {
+        expect(sha(bytes), f).toBe(FHE_COPY_SHA256[f])
+        continue
+      }
+      const restored = restoreLabel(bytes.toString('utf8'))
+      expect(restored, f).not.toContain('x86-vm')
+      expect(sha(restored), f).toBe(FHE_COPY_SHA256[f])
+    }
+    // the substitution is stated in the run's provenance and in the record
+    expect(text(folder, 'provenance.txt')).toContain(`\n${NOTE_LINE}\n`)
+    const rec = EVIDENCE_MANIFEST.records.find((r) => r.id === RUNS.vm.record)!
+    expect(rec.notes).toContain('copied byte for byte except the machine label in four of them')
+  })
+
+  it('no machine label of the lab remains in the x86-64 VM run files, the record or the Learn text', () => {
+    const { folder, record } = RUNS.vm
+    const label = new RegExp(`(^|[^0-9A-Za-z])${OLD}([^0-9A-Za-z]|$)|${OLD}-vm`, 'im')
+    for (const f of files(folder)) expect(text(folder, f), `${folder}/${f}`).not.toMatch(label)
+    const rec = EVIDENCE_MANIFEST.records.find((r) => r.id === record)!
+    expect(JSON.stringify(rec)).not.toMatch(label)
+    // the run is named x86-vm in its own files
+    expect(text(folder, 'provenance.txt')).toContain('run: 2026-10-15-id3-x86-vm')
+    expect(text(folder, 'provenance.txt')).toContain('server_label: x86-vm')
+  })
+
   it('no file holds an address other than loopback, a host or user name, a serial or a home path', () => {
     for (const { folder } of Object.values(RUNS))
       for (const f of files(folder)) {

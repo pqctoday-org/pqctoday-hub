@@ -1,12 +1,12 @@
-[05:56:49Z] x1 service run 2026-10-15-id3-x1-vm: server x1-vm (ssh), token m5max (container), client container on the Mac
-run: 2026-10-15-id3-x1-vm
-kind: x1
+[05:56:49Z] x86-vm service run 2026-10-15-id3-x86-vm: server x86-vm (ssh), token m5max (container), client container on the Mac
+run: 2026-10-15-id3-x86-vm
+kind: x86-vm
 mode: remote
 date_utc: 2026-10-15T05:56:49Z
 mac_host: Apple M5 Max, 18 cores, 128 GiB; load 3.73 7.56 9.30; 91 GB free memory
 mac_pick_host: HOST=m5max reason=lower-load-per-core m5max=load/core:0.21 (3.73/18) free:90.6GB
 mac_other_containers_running: 
-server_label: x1-vm
+server_label: x86-vm
 server_model: 
 server_os: Debian GNU/Linux 13 (trixie)
 server_kernel: Linux 6.12.111+deb13-cloud-amd64 x86_64
