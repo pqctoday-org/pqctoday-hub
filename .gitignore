@@ -423,6 +423,10 @@ public/threats/**/*.html
 public/library/**/*.pdf
 public/library/**/*.html
 .cache/*.pdf
+# Third-party documents are not redistributed; see the source link in pqc-references/README.md.
+pqc-references/*.pdf
+public/threats/IOT-003.txt
+public/threats/CROSS-011.txt
 
 # Root-level dev artifacts and one-off scripts
 update_threats_csv.py
