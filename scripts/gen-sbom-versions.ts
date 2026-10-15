@@ -44,7 +44,8 @@ if (missing.length) {
     existing + missing.map((e) => `\nexport const ${e}: never = {} as never\n`).join('')
   )
 }
-const { SBOM_EXCLUDED, SBOM_GROUPS } = await import('../src/data/sbomComponents')
+const { SBOM_EXCLUDED, SBOM_GROUPS, SBOM_LICENSE_PENDING } =
+  await import('../src/data/sbomComponents')
 
 const {
   content: raw,
@@ -53,6 +54,7 @@ const {
 } = derive(ROOT, {
   groups: SBOM_GROUPS,
   excluded: SBOM_EXCLUDED,
+  licensePending: SBOM_LICENSE_PENDING,
 })
 // The generated file is prettier-checked by `format:check`; emit it already formatted so
 // regenerating never dirties the tree and the staleness comparison is byte-exact.

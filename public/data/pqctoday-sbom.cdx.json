@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:d4cb0af9-a83d-5bbf-bbe3-04d8df8495f6",
+  "serialNumber": "urn:uuid:1dc57c23-e4fe-58eb-8119-ecaa73acee7d",
   "version": 1,
   "metadata": {
     "component": {
@@ -8413,8 +8413,18 @@
       "licenses": [
         {
           "license": {
-            "name": "not recorded"
+            "id": "GPL-2.0-or-later"
           }
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "source-distribution",
+          "url": "https://download.strongswan.org/strongswan-6.0.5.tar.bz2"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/commit/bf53023b78b42078b5936dab91809eaeb9f756e3"
         }
       ],
       "properties": [

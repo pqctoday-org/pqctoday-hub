@@ -58,6 +58,8 @@ type Base = {
   href?: string
   /** A caveat shown under the row, e.g. what the binary does not tell us. */
   note?: string
+  /** Upstream source the component is built from (release archive), for the CycloneDX file. */
+  source?: string
 }
 type NoOther = {
   pkg?: never
@@ -201,6 +203,11 @@ export function sbomHref(c: SbomComponent): string | undefined {
     const b = SBOM_BUILDS[c.built]
     if (b?.repo && b.commit) return `https://github.com/${b.repo}/commit/${b.commit}`
   }
+  // An embedded-version row that is also a recorded build (strongSwan): link that commit.
+  if ('embedded' in c && c.embedded !== undefined) {
+    const b = (SBOM_BUILDS as Record<string, (typeof SBOM_BUILDS)[string] | undefined>)[c.embedded]
+    if (b?.repo && b.commit) return `https://github.com/${b.repo}/commit/${b.commit}`
+  }
   return undefined
 }
 
@@ -239,6 +246,15 @@ export const SBOM_EXCLUDED: Readonly<Record<string, string>> = {
   '@types/react': 'type declarations only; no code is shipped',
   '@types/react-dom': 'type declarations only; no code is shipped',
   '@types/three': 'type declarations only; no code is shipped',
+}
+
+/**
+ * Rows whose licence is not yet known, each with the reason. Any other row with no licence
+ * ("not recorded") fails the check, and so does an entry here whose row now has one.
+ */
+export const SBOM_LICENSE_PENDING: Readonly<Record<string, string>> = {
+  'LMS/HSS hash-based signature module (WASM)':
+    'origin not recorded; to be rebuilt from a recorded source or removed',
 }
 
 /** Groups in the order the desktop accordion renders them (Rust groups last). */
@@ -357,7 +373,13 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         built: 'openssh-pkcs11',
         note: 'Contains OpenSSL code; the OpenSSL version is not embedded in the binary.',
       },
-      { name: 'strongSwan (IKEv2 / VPN, WASM)', license: 'not recorded', embedded: 'strongswan' },
+      {
+        name: 'strongSwan (IKEv2 / VPN, WASM)',
+        license: 'GPL-2.0-or-later',
+        embedded: 'strongswan',
+        source: 'https://download.strongswan.org/strongswan-6.0.5.tar.bz2',
+        note: 'Built from the strongSwan 6.0.5 release with PQC Today patches and a PKCS#11 plugin; the link is the exact pqctoday-hsm commit holding them.',
+      },
       { name: 'LMS/HSS hash-based signature module (WASM)', license: 'not recorded', built: 'lms' },
       {
         name: 'NIST SP 800-90B EntropyAssessment (WASM estimators)',
