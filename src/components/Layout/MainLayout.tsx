@@ -62,6 +62,7 @@ import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
 import { isResourceDeepLink, isSameRoute, resourceDeepLinkRoute } from '@/utils/resourceDeepLink'
+import { BUILD_COMMIT, shortCommit, sourceCodeUrl } from '@/utils/sourceLink'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
@@ -1569,6 +1570,21 @@ export const MainLayout = () => {
                   <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
                     Sponsor
                   </Link>
+                  {' · '}
+                  <a
+                    href={sourceCodeUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-testid="footer-source-link"
+                    title={
+                      BUILD_COMMIT
+                        ? `Source code of this version (commit ${shortCommit()})`
+                        : 'Source code repository'
+                    }
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    Source code
+                  </a>
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Content may be inaccurate. Please verify information independently. Report

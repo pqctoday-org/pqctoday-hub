@@ -4,6 +4,8 @@
 
 declare const __BUILD_TIMESTAMP__: string
 declare const __APP_VERSION__: string
+/** Full git commit the build was made from; '' when unknown. */
+declare const __BUILD_COMMIT__: string
 declare const __WASM_HASH__: string
 
 // wasm-bindgen's generated `_bg.js` glue ships no .d.ts. The cert-discovery

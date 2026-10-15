@@ -11,6 +11,22 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 import { injectCoiGuard } from './src/utils/crossOriginIsolation'
 
+/** Full git commit of the checkout being built, else GITHUB_SHA, else '' (unknown). */
+function buildCommit(): string {
+  const valid = (s: string | undefined) => (s && /^[0-9a-f]{40}$/i.test(s.trim()) ? s.trim() : '')
+  try {
+    const head = execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: __dirname,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+    if (valid(head)) return valid(head).toLowerCase()
+  } catch {
+    // not a git checkout (e.g. a source tarball): fall through
+  }
+  return valid(process.env.GITHUB_SHA).toLowerCase()
+}
+
 // Plugin to inject build-time constants
 function buildTimestampPlugin(): Plugin {
   return {
@@ -30,6 +46,10 @@ function buildTimestampPlugin(): Plugin {
             })
           ),
           __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+          // The commit this build is made from, for the "Source code" link on every
+          // page (src/utils/sourceLink.ts). Empty when unknown; the link then
+          // points at the repository instead.
+          __BUILD_COMMIT__: JSON.stringify(buildCommit()),
           __WASM_HASH__: JSON.stringify(
             (() => {
               const p = path.resolve(__dirname, 'public/wasm/softhsm.wasm')
@@ -46,6 +66,7 @@ function buildTimestampPlugin(): Plugin {
 import path from 'path'
 import { createHash } from 'crypto'
 import { readFileSync, existsSync } from 'fs'
+import { execFileSync } from 'child_process'
 
 /**
  * The set of JS chunks the app needs in order to BOOT and render the landing page.
