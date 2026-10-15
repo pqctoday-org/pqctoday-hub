@@ -2,8 +2,8 @@ Third-party notices — public/wasm/entropy90b/ (ea_non_iid, ea_iid, ea_restart)
 ================================================================================
 
 These WebAssembly modules are a build of the NIST SP 800-90B EntropyAssessment
-tool and the libraries it links. The PQC Today Hub itself is GPL-3.0-only; each
-component below keeps its own licence, all compatible with GPL-3.0 distribution.
+tool and the libraries it links. Each component below keeps its own licence;
+the rest of the site is under the PQC Today Hub's own licence, see LICENSE.
 Full licence texts are in ./licenses/.
 
 Reproduce: scripts/entropy-90b/build-wasm.sh (pinned emsdk image, pinned
