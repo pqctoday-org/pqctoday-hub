@@ -68,6 +68,7 @@ export const content: ModuleContent = {
     getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
     getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
     getStandard('NIST-CMVP-Cert-5223'), // second source for claim:18d14b3a7815ab38
+    getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

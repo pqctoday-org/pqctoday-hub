@@ -81,6 +81,7 @@ export const content: ModuleContent = {
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
     getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
     getStandard('ETSI-EN-319-411'), // second source for claim:6c7319b5f7fff220
+    getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:58f696df5ca2fd80
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The
