@@ -107,6 +107,12 @@ const manifest: ModuleManifest = {
     'ANSSI-CC-PP-2016-05-M01': ['cc', 'eucc-eidas'],
     'ANSSI-CC-PP-2018-02-EN-419241-2': ['cc', 'eucc-eidas'],
     'BSI-CC-PP-0084-V2-2026': ['cc', 'eucc-eidas'],
+    // Sources added 15 Oct 2026 for sentences the module already makes.
+    // ISO/IEC 19790 security levels are read in both schemes' sections.
+    'CMVP-MGMT-MANUAL': ['cc', 'eucc-eidas'],
+    'NIAP-CCEVS-POLICY-33': ['cc'],
+    'ENISA-State-of-Cybersecurity-2024': ['eucc-eidas'],
+    'EUCC-Guidelines-on-Cryptography': ['eucc-eidas'],
   },
   workshopSteps: [
     { id: 'cc-claim-decoder', label: 'Decode the certificate claim', paths: ['cc'] },
