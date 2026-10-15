@@ -10,6 +10,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { EVIDENCE_MANIFEST } from '@/data/fhe/fheEvidence'
+import { OPENFHE_EXPORT_BOARDS } from '../data/fheComputeService'
 import { FLOOD_ID2, FLOOD_ID3, FLOOD_ID3_BOARDS, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
 import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
 
@@ -162,6 +163,77 @@ describe('flood sizing numbers match the corrected runs', () => {
     expect(sigma(36).toFixed(2)).toBe(FLOOD_ID3.sigmaLog2)
     // the shortfall of the first version at n = 2^16: 1/2 log2(24 n)
     expect((0.5 * Math.log2(24 * 65_536)).toFixed(1)).toBe('10.3')
+  })
+})
+
+describe('the OpenFHE set (registry ID 4) generated with the token on the boards', () => {
+  const text = (folder: string, file: string) =>
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
+    fs.readFileSync(path.join(ROOT, folder, file), 'utf8')
+  const prov = (folder: string) =>
+    Object.fromEntries(
+      text(folder, 'provenance.txt')
+        .split('\n')
+        .filter((l) => l.includes(': '))
+        .map((l) => [l.slice(0, l.indexOf(': ')), l.slice(l.indexOf(': ') + 2)])
+    )
+  for (const b of ['mx95', 'mx95pro'] as const) {
+    it(`${b}: the numbers the Learn text quotes equal the run files`, () => {
+      const folder = `ckks-openfhe-set-${b}-461f44ae`
+      const gen = json(folder, 'generate-only.json')
+      const exp = json(folder, 'export.json')
+      const rec = json(folder, 'receive.json')
+      const p = prov(folder)
+      expect(gen.paramSet).toBe(4)
+      expect(gen.keys).toBe(79)
+      expect(gen.bytes).toBe(6_561_464_453)
+      expect(exp.bytes).toBe(6_561_464_453)
+      expect(round(gen.seconds, 0)).toBe(OPENFHE_EXPORT_BOARDS.generationS[b])
+      expect(round(exp.seconds, 0)).toBe(OPENFHE_EXPORT_BOARDS.streamedS[b])
+      // "about 2.4 minutes" to generate, "about 3 minutes" to stream
+      expect(round(gen.seconds / 60, 1)).toBe('2.4')
+      expect(round(exp.seconds / 60, 0)).toBe('3')
+      // every piece matches: receiver hashes, the token-signed manifest, the reference spec
+      expect(rec.hashMismatches).toBe(0)
+      expect(rec.tokenManifest.mismatches).toBe(0)
+      expect(rec.tokenManifest.entries).toBe(Number(OPENFHE_EXPORT_BOARDS.pieces.replace(',', '')))
+      expect(text(folder, 'verify.txt')).toContain(
+        '32 public-key limbs, 12483 evaluation-key limbs compared, 0 mismatches'
+      )
+      expect(p['chunk_hashes_vs_2026-10-12_mac_export']).toMatch(/^identical \(all 1565 /)
+      // the custodian was built from the HSM main that contains #360
+      expect(p.registry_id).toBe('4')
+      expect(p.build_source).toContain('9dea1716044217cc2e0c5809f347639f4e825564')
+      expect(p.hsm_commit).toBe('ebbc3d20ab209bfba125243f2b9a029b71a8cf9d')
+    })
+  }
+
+  it('the quoted token peak range covers both boards and every measurement', () => {
+    const peaks: number[] = []
+    for (const b of ['mx95', 'mx95pro'])
+      for (const f of ['generate-only.json', 'export.json'])
+        peaks.push(json(`ckks-openfhe-set-${b}-461f44ae`, f).peakRssKiB / 1024)
+    expect(`${Math.min(...peaks).toFixed(1)}–${Math.max(...peaks).toFixed(1)}`).toBe(
+      OPENFHE_EXPORT_BOARDS.peakMiB
+    )
+  })
+
+  it('the two records share one parameter set, run files from the merged tree and no secrets or hosts', () => {
+    for (const b of ['mx95', 'mx95pro']) {
+      const rec = EVIDENCE_MANIFEST.records.find(
+        (r) => r.id === `ckks-openfhe-set-token-${b}-461f44ae`
+      )!
+      expect(rec.level).toBe('device')
+      expect(rec.parts?.[0].role).toBe('custodian')
+      expect(rec.engine?.commit).toBe('461f44ae2599799f261f62245456079ffad6a710')
+      expect(rec.notes).toContain('9dea1716044217cc2e0c5809f347639f4e825564')
+      expect(rec.notes).toContain('461f44ae2599799f261f62245456079ffad6a710')
+      expect(rec.notes).toContain('does not show OpenFHE running on a board')
+      for (const a of rec.artifacts) {
+        const body = text(`ckks-openfhe-set-${b}-461f44ae`, a.name)
+        expect(body, a.name).not.toMatch(/(\d{1,3}\.){3}\d{1,3}|\/Users\/|@[a-z0-9-]+\.[a-z]+/i)
+      }
+    }
   })
 })
 

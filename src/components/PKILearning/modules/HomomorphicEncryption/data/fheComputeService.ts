@@ -6,7 +6,8 @@
  *  - the HSM's own streamed key export used directly by OpenFHE v1.6.0 (registry ID 4; engine in
  *    pqctoday-hsm #360, end-to-end run in pqctoday-fhe #28).
  * Every number is copied from the merged pull requests' measured results (single runs on an Apple
- * M5 Max, containers; no board). Nothing here is interpolated.
+ * M5 Max, in containers; for the OpenFHE set the token's export was also run on both MX95 boards,
+ * pqctoday-fhe #29). Nothing here is interpolated.
  */
 
 /** A merged pull request a claim rests on: repository, number and full merge commit. */
@@ -25,6 +26,7 @@ export const COMPUTE_SERVICE_REF: MergedRef = {
 export const OPENFHE_EXPORT_REFS: MergedRef[] = [
   { repo: 'pqctoday-hsm', pr: 360, mergeCommit: '9dea1716044217cc2e0c5809f347639f4e825564' },
   { repo: 'pqctoday-fhe', pr: 28, mergeCommit: '67217242c01c0382b72938a153243893e5804434' },
+  { repo: 'pqctoday-fhe', pr: 29, mergeCommit: '461f44ae2599799f261f62245456079ffad6a710' },
 ]
 
 /** "pqctoday-fhe #27, merge commit 70872f9a…" in full, as the other engine notes cite merges. */
@@ -118,5 +120,16 @@ export const OPENFHE_EXPORT_ROWS: { topic: string; value: string }[] = [
   },
 ]
 
+/** The same export generated with the token on the MX95 boards (pqctoday-fhe #29; export only). */
+export const OPENFHE_EXPORT_BOARDS = {
+  generationS: { mx95: '145', mx95pro: '142' },
+  streamedS: { mx95: '181', mx95pro: '178' },
+  pieces: '1,565',
+  peakMiB: '88.6–90.6',
+} as const
+
+/** One sentence, shown with links to the two board records. */
+export const OPENFHE_EXPORT_BOARDS_SENTENCE = `The token’s export of this set was also generated on both MX95 boards, in ${OPENFHE_EXPORT_BOARDS.generationS.mx95} s (MX95) and ${OPENFHE_EXPORT_BOARDS.generationS.mx95pro} s (MX95 Pro), about 2.4 minutes each, and streamed to a Mac in about 3 minutes (${OPENFHE_EXPORT_BOARDS.streamedS.mx95} s and ${OPENFHE_EXPORT_BOARDS.streamedS.mx95pro} s), with all ${OPENFHE_EXPORT_BOARDS.pieces} pieces matching the reference and the token-signed manifest and a token peak of ${OPENFHE_EXPORT_BOARDS.peakMiB} MiB`
+
 export const OPENFHE_EXPORT_LIMITS =
-  'Limits: owner release only, because no flood bound has been measured for this set; about 13 bits after bootstrapping is OpenFHE’s own precision at these settings; one platform (a container on a Mac), no board yet.'
+  'Limits: owner release only, because no flood bound has been measured for this set; about 13 bits after bootstrapping is OpenFHE’s own precision at these settings; OpenFHE itself ran on one platform only, a container on a Mac, because the boards ran the token’s export and not OpenFHE.'

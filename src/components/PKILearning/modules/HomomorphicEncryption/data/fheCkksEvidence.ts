@@ -27,6 +27,9 @@ export const CKKS_EVIDENCE = {
   metaBtsLmssDepth1: 'ckks-metabts2-lmss-depth1-m5max-3bcdc05',
   metaBtsLmssDepth3: 'ckks-metabts2-lmss-depth3-m5max-3bcdc05',
   defaultLmssId2: 'ckks-default-lmss-id2-m5max-3bcdc05',
+  // registry ID 4 (the OpenFHE set): the token's export generated on the boards
+  openfheSetMx95: 'ckks-openfhe-set-token-mx95-461f44ae',
+  openfheSetMx95pro: 'ckks-openfhe-set-token-mx95pro-461f44ae',
   // the same programs with the token on the boards
   metaBtsLmssMx95pro: 'ckks-metabts2-lmss-stream-mx95pro-mac-m5max-dc9ad8b',
   metaBtsLmssMx95: 'ckks-metabts2-lmss-stream-mx95-mac-m5max-dc9ad8b',

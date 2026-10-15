@@ -27,6 +27,7 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
       'pqctoday-fhe#27',
       'pqctoday-hsm#360',
       'pqctoday-fhe#28',
+      'pqctoday-fhe#29',
     ])
     const text = sectionText()
     for (const r of refs) {
@@ -49,7 +50,10 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
       '13.28 bits',
       '13.20',
       'owner release only',
-      'no board yet',
+      'OpenFHE itself ran on one platform only',
+      'also generated on both MX95 boards',
+      'about 2.4 minutes each',
+      'with all 1,565 pieces matching the reference',
       'AUC 0.717298 encrypted against 0.717299',
       'all 32,768 slots',
       'About 200 ms',
@@ -60,6 +64,20 @@ describe('section 9: the HSM key set in OpenFHE and the encrypted risk-scoring s
     ])
       expect(text, v).toContain(v)
     expect(text).not.toMatch(/has not been run in\s+OpenFHE/)
+    expect(text).not.toMatch(/no board yet/)
+  })
+
+  it('the board sentence links to the two device records of the OpenFHE set', () => {
+    sectionText()
+    for (const id of [
+      'ckks-openfhe-set-token-mx95-461f44ae',
+      'ckks-openfhe-set-token-mx95pro-461f44ae',
+    ]) {
+      // eslint-disable-next-line testing-library/no-node-access -- the cite carries its record id as a title
+      const link = document.querySelector(`a[title="Evidence record ${id}"]`)
+      expect(link, id).toBeTruthy()
+      expect(link?.getAttribute('href')).toContain(`/${id.replace('-token', '')}/`)
+    }
   })
 
   it('section 9 now has two takeaways', () => {

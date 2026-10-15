@@ -22,6 +22,7 @@ import {
   COMPUTE_SERVICE_LIMITS,
   COMPUTE_SERVICE_REF,
   COMPUTE_SERVICE_ROWS,
+  OPENFHE_EXPORT_BOARDS_SENTENCE,
   OPENFHE_EXPORT_LIMITS,
   OPENFHE_EXPORT_REFS,
   OPENFHE_EXPORT_ROWS,
@@ -1407,6 +1408,11 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
         bridge and no keys of its own.
       </p>
       <FactsTable rows={OPENFHE_EXPORT_ROWS} />
+      <p className="text-xs text-muted-foreground">
+        <strong className="text-foreground">On the boards:</strong> {OPENFHE_EXPORT_BOARDS_SENTENCE}{' '}
+        (<EvidenceCite of="openfheSetMx95">MX95</EvidenceCite>,{' '}
+        <EvidenceCite of="openfheSetMx95pro">MX95 Pro</EvidenceCite>).
+      </p>
       <p className="text-xs text-muted-foreground">{OPENFHE_EXPORT_LIMITS}</p>
       <p className="text-[11px] text-muted-foreground">
         Merged: {OPENFHE_EXPORT_REFS.map(citeMerged).join('; ')}.
