@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { motion } from 'framer-motion'
 import { FileBarChart, ClipboardCheck, AlertCircle, ArrowRight } from 'lucide-react'
 import { ReportContent } from './ReportContent'
@@ -19,7 +19,11 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileReportView } from '@/components/Mobile/screens/MobileReportView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
-import { useResolvedSharedReport } from '@/hooks/useResolvedSharedReport'
+import {
+  useResolvedSharedReport,
+  sampleReportView,
+  REPORT_LINK_PARAMS,
+} from '@/hooks/useResolvedSharedReport'
 import { getReportSectionConfig, type ReportSectionId } from '../../data/personaConfig'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import { PageHeader } from '../common/PageHeader'
@@ -210,7 +214,17 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // both so mobile stops having no shared/example resolution at all, and so
   // a same-route `?share=`/`?example=` change re-resolves instead of being
   // missed by a mount-only guard.
-  const sharedView = useResolvedSharedReport(livePersona)
+  const linkedView = useResolvedSharedReport(livePersona)
+  // No link and no assessment of their own: show the worked example (with a
+  // "sample" banner) instead of an empty page. Never inside the simulation,
+  // and never while a link is still resolving (the hook sets it in an effect).
+  const [searchParams] = useSearchParams()
+  const carriesLink = REPORT_LINK_PARAMS.some((p) => searchParams.has(p))
+  const showSample = !linkedView && !simEmbed && !carriesLink && assessmentStatus === 'not-started'
+  const sharedView = useMemo(
+    () => linkedView ?? (showSample ? sampleReportView(livePersona) : null),
+    [linkedView, showSample, livePersona]
+  )
 
   const selectedPersona = sharedView ? sharedView.persona : livePersona
   const isShared = !!sharedView
@@ -437,13 +451,32 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
-            <FileBarChart size={16} className="text-primary shrink-0" />
-            <span className="text-sm text-foreground">
-              Viewing a shared report. This is a read-only snapshot — your own assessment is
-              unaffected.
-            </span>
-          </div>
+          {sharedView.sample ? (
+            <div className="glass-panel p-3 border-l-4 border-l-primary flex flex-wrap items-center gap-3">
+              <FileBarChart size={16} className="text-primary shrink-0" />
+              <span className="text-sm text-foreground flex-1 min-w-[12rem]">
+                This is a sample report for a fictional US bank. Run your own assessment to see
+                yours.
+              </span>
+              <Link
+                to="/assess"
+                onClick={() => logReportCta('start-assessment')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 transition-opacity"
+              >
+                <ClipboardCheck size={16} />
+                Start Assessment
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          ) : (
+            <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+              <FileBarChart size={16} className="text-primary shrink-0" />
+              <span className="text-sm text-foreground">
+                Viewing a shared report. This is a read-only snapshot — your own assessment is
+                unaffected.
+              </span>
+            </div>
+          )}
         </motion.div>
       )}
 

@@ -75,8 +75,8 @@ describe('EXAMPLE_REPORT_SHARE_TOKEN — v2 snapshot round-trips exactly', () =>
 describe('EXAMPLE_REPORT_SHARE_TOKEN — stable across builds', () => {
   it('pins generatedAt, so the sample-report link does not change every build', () => {
     expect(EXAMPLE_REPORT_RESULT.generatedAt).toBe(EXAMPLE_REPORT_GENERATED_AT)
-    expect(decodeShareToken(EXAMPLE_REPORT_SHARE_TOKEN)?.result.generatedAt).toBe(
-      EXAMPLE_REPORT_GENERATED_AT
-    )
+    const schema = decodeShareToken(EXAMPLE_REPORT_SHARE_TOKEN)
+    if (schema?.v !== 2) throw new Error('expected v2 schema')
+    expect(schema.result.generatedAt).toBe(EXAMPLE_REPORT_GENERATED_AT)
   })
 })

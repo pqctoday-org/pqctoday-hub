@@ -413,3 +413,61 @@ describe('ReportView re-resolves a shared link on a same-route query change', ()
     })
   })
 })
+
+// Bare /report with no assessment used to be an empty "No Report Yet" page,
+// which search engines reported as a soft 404. It now shows the worked
+// example under a "sample" banner — to visitors and crawlers alike.
+describe('bare /report with no assessment shows the sample report', () => {
+  beforeEach(() => {
+    useAssessmentStore.getState().reset()
+    usePersonaStore.getState().clearPersona()
+    reportContentSpy.mockClear()
+  })
+
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  function renderBare(embed = false) {
+    return render(
+      <MemoryRouter initialEntries={['/report']}>
+        <ReportView simEmbed={embed} />
+      </MemoryRouter>
+    )
+  }
+
+  it('renders the worked example with the sample banner, not "No Report Yet"', async () => {
+    renderBare()
+    await screen.findByTestId('report-content')
+    const props = reportContentSpy.mock.calls.at(-1)?.[0] as { result: typeof SAMPLE_RESULT }
+    expect(props.result).toEqual(EXAMPLE_REPORT_RESULT)
+    expect(screen.getByText(/This is a sample report/)).toBeInTheDocument()
+    expect(screen.queryByText('No Report Yet')).not.toBeInTheDocument()
+  })
+
+  it('never writes the sample into the visitor’s own store', async () => {
+    renderBare()
+    await screen.findByTestId('report-content')
+    expect(useAssessmentFormStore.getState().assessmentStatus).toBe('not-started')
+    expect(useAssessmentResultStore.getState().lastResult).toBeNull()
+  })
+
+  it('keeps the empty state once the visitor has started their own assessment', () => {
+    useAssessmentFormStore.getState().setAssessmentStatus('in-progress')
+    renderBare()
+    expect(screen.queryByText(/This is a sample report/)).not.toBeInTheDocument()
+  })
+
+  it('keeps the empty state inside the simulation', () => {
+    renderBare(true)
+    expect(screen.getByText('No Report Yet')).toBeInTheDocument()
+    expect(screen.queryByText(/This is a sample report/)).not.toBeInTheDocument()
+  })
+
+  it('shows the same sample, with its banner, on mobile', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderBare()
+    expect(await screen.findByText(/This is a sample report/)).toBeInTheDocument()
+    expect(screen.queryByText('No Report Yet')).not.toBeInTheDocument()
+  })
+})
