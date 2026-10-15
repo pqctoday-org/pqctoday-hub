@@ -59,7 +59,10 @@ outside this repository on each PR head before merge. (`gate:cacp` was removed f
   tools) from `src/data/sbomWasmArtifacts.json`: their pinned binaries plus the loaders in `lockFiles`,
   with producer and build commit. After rebuilding an engine: update its provenance entry (or its
   artifact record), run `npm run verify:engines -- --write-lock`, commit the lock with the files.
-  Rollback is reverting that commit.
+  Rollback is reverting that commit. Bundles built in `pqctoday-hsm` are also pinned to a published
+  engine release (`release`: tag, asset, tarball SHA-256). After publishing a new engine release, pin
+  it with `npm run verify:engines -- --pin-release engines-N --sums <that release's SHA256SUMS>`. A pin
+  whose asset name no longer matches the bundle's build commit fails `verify:engines` as `release stale`.
 - Guards that read the sibling `pqctoday-hsm` checkout (`constantTables`, `policyCatalogSync`,
   `wasm-build-inputs` replay, `sync:wasm:check`) used to skip quietly when it was absent. They now **fail
   loudly**; set `ALLOW_MISSING_HSM=1` to skip knowingly (a WARNING names each skipped guard) or
@@ -172,7 +175,10 @@ the workflow stops invoking it.
 
 ## Before a release — `npm run gate:release`
 
-`gate:local` + `gate:e2e` (`build` + the full Playwright suite against the
+`gate:local` + `verify:engines:release` (downloads each engine release a bundle
+is pinned to, checks the tarball SHA-256 against the pin and every file against
+the lock; needs the network, so it is here and in the weekly
+`engines-release-weekly.yml`, not in pre-push) + `gate:e2e` (`build` + the full Playwright suite against the
 production build — the round-9 lesson: 15 browser regressions shipped through
 13 green releases while only the smoke tier ran per PR) +
 `test:e2e:local-tier` (`E2E_SERVER=dev playwright test --project=local` — the 18
