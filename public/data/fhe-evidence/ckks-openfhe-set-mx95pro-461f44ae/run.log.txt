@@ -1,0 +1,33 @@
+[04:54:46Z] B0 facts (board, label mx95pro)
+run: 2026-10-14-id4-mx95pro
+mode: board
+board_label: mx95pro
+model: NXP FRDM-IMX95-PRO
+kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+cpus: 6
+cpu_features: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+mem_total_kib: 16096760
+registry_id: 4
+limbs_per_call: 8
+token_threads: 6
+policy_env_at_init: none (defaults)
+hsm_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+fhe_commit: 0089a570a69155c5ccd122315a23069b0b64f356 (+ 1 uncommitted or untracked files)
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+custodian_bytes: 5300448
+build_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+build_features: educational-ckks,test-support
+build_profile: release
+build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
+build_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+build_source: git archive of the HSM checkout's origin/main (no worktree); contains 9dea1716044217cc2e0c5809f347639f4e825564 (HSM PR #360)
+build_build: cd rust && CARGO_TARGET_DIR=work/target nice -n 15 cargo build --release --features educational-ckks,test-support --example ckks_custodian --jobs 4
+build_built: 2026-10-15T04:36Z
+[04:54:47Z] upload the custodian to /tmp/ckks on the board
+[04:54:48Z] init (registry ID 4, test seed)
+initialised <dir>/tok (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128 seed handle 134
+[04:54:49Z] B1a generation only (8 limbs per C_DeriveKey, 6 threads; frames discarded)
+[04:57:12Z] B1b stream to the Mac (receiver: frames, host manifest, token-signed manifest)
+[05:00:12Z] oracle verify 4: every exported limb against the reference spec
+[05:00:39Z] done
+[05:00:40Z] exit 0

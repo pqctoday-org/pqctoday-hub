@@ -5022,7 +5022,7 @@
       "claimScope": "reference-library",
       "platformLabel": "Apple M5 Max",
       "claimLabel": "reference only: OpenFHE v1.6.0 CKKS key-set size, precision and bootstrapping at N = 2^16, and Lattigo-layout keys run in OpenFHE through a format bridge",
-      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s own exported key set has not been run in OpenFHE; it uses Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: an OpenFHE reference, not a run of the HSM’s keys. OpenFHE v1.6.0 unmodified, CKKS with sparse-secret encapsulation at N = 2^16, 2^15 complex slots, in containers limited to 4 CPUs. The setting closest to Lattigo’s default set that passes OpenFHE’s own 128-bit check (match128, log QP 1720) has 80 keys and 13,257,146,368 B of raw key limbs (6.63 GB of b halves), and one bootstrap gives 13.29 bits (worst slot). Bridge: OpenFHE’s relinearization key and all 77 Galois keys were replaced with keys from Lattigo v6.2.0’s key generator, generated under OpenFHE’s secret and primes and converted (Montgomery form removed, NTT redone with OpenFHE’s roots); every operation, bootstrapping included, matched OpenFHE’s own keys within 0.1 bit (bridge-match128.json), and keys loaded without the conversion gave no result. Not shown here: the HSM’s Lattigo-based exported key sets (registry IDs 2 and 3) use Lattigo’s primes and bootstrapping key list, which OpenFHE cannot use. The HSM’s registry ID 4, built from OpenFHE’s own primes and key list, was run in OpenFHE later (pqctoday-fhe #28, merge commit 67217242c01c0382b72938a153243893e5804434; pqctoday-hsm #360, merge commit 9dea1716044217cc2e0c5809f347639f4e825564). Run files: pqctoday-fhe 039034f, merged in pqctoday-fhe #24 (merge commit c0df1541599bfdc2431c83e5d63994ce722df737).",
       "library": {
         "name": "OpenFHE",
         "version": "v1.6.0",
@@ -6766,6 +6766,290 @@
             "label": "Board decrypt, flood and release, depth 0 / 1 / 3 (functional, not a security claim)",
             "value": "0.213 / 0.211 / 0.208",
             "unit": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-openfhe-set-token-mx95-461f44ae",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "generate-fhe-secret",
+        "export-evaluation-keys",
+        "publish-public-key"
+      ],
+      "level": "device",
+      "parts": [
+        {
+          "device": "mx95",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "qualifier": ", OpenFHE set (ID 4), export only, fixed test seed",
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "ebbc3d20ab209bfba125243f2b9a029b71a8cf9d"
+          },
+          "stepIds": [
+            "generate-fhe-secret",
+            "export-evaluation-keys",
+            "publish-public-key"
+          ]
+        }
+      ],
+      "claimLabel": "custodian: software token on MX95, OpenFHE parameter set (registry ID 4): the whole 79-key export generated, streamed to a Mac and checked against the reference spec; export only, no decryption",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (145.2 s, 45.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (180.9 s, 36.3 MB/s, 182 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570. The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. Functional, not a security claim.",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "461f44ae2599799f261f62245456079ffad6a710"
+      },
+      "parameters": "CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128 (registry ID 4: OpenFHE v1.6.0 at its 128-bit-checked match128 settings, N = 2^16, log QP 1720, 79 keys)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per C_DeriveKey call, six export threads; the set’s default policy (owner release only); token and keys in /tmp on the board, removed afterwards",
+      "parameterHash": "22d3fb0203f28c31529ad6466c0cf3b361e4a9d2a4c7c3ebdf9429a924fa0ae5",
+      "environment": {
+        "hardware": "MX95 board (NXP FRDM-IMX95, 6x Cortex-A55, 8 GB; six export threads) as custodian; Apple M5 Max Mac as the receiver of the stream and for the byte check",
+        "os": "Linux 6.18.20 aarch64 board image (custodian); Linux container on macOS (receiver and reference check)",
+        "toolchain": "ckks_custodian from pqctoday-hsm ebbc3d20, rustc 1.96.0, aarch64-unknown-linux-gnu (provenance.txt); receiver and reference oracle from pqctoday-fhe (merge commit 461f44ae; run at 0089a570; Go, Lattigo v6.2.0 unmodified)",
+        "features": "educational-ckks and test-support, release build; limbs of a call on six threads; board CPU flags in provenance.txt"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run: generation only (frames discarded on the board), then the same stream to the Mac, then the reference check",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian: 91,032 KiB generation only, 92,724 KiB streamed (peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "generate-only.json",
+          "sha256": "50afdf54d56fa99efc5b87d84a01a46d4803455cde1e803eff0d7feba82d882a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/generate-only.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "3aa092460372d94d4717ffd47e571d30961a738821b1c936ad169b62dcf3f640",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/export.json"
+        },
+        {
+          "name": "receive.json",
+          "sha256": "2344ba8fa1705b7a1230ebe64b6670beaadf2fef03b6d11bb84bf311bbe44510",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/receive.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "a686840d68676735e16223e78a9d7d1234de59d4ab3281713f6bb24d3e2a6c7c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/verify.txt"
+        },
+        {
+          "name": "provenance.txt",
+          "sha256": "40826fe2cd4b3bb63d445aedfd7a527ca7db93f7fbf695dc1a05508271a1c006",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/provenance.txt"
+        },
+        {
+          "name": "run.log.txt",
+          "sha256": "573e823c2d571404d36bfa2ec18435dd485b6feafe832ca1fdc72fcd7597e105",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/run.log.txt"
+        },
+        {
+          "name": "manifest.txt",
+          "sha256": "c39d3bd9ec135451d5c93391427a9ab772f8fa3164e7d463fbaefbe67acfa734",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95-461f44ae/manifest.txt"
+        }
+      ],
+      "measuredAt": "2026-10-15T04:54:45Z",
+      "summary": {
+        "headline": "On the MX95 the token generated the OpenFHE set’s whole 79-key export, 6.56 GB, in 145 s (about 2.4 minutes) and streamed it to a Mac in 181 s (about 3 minutes) with a 90.6 MiB peak; every piece matched the reference spec and the token-signed manifest.",
+        "keyNumbers": [
+          {
+            "label": "Keys exported",
+            "value": "79"
+          },
+          {
+            "label": "Evaluation keys and public key, as exported",
+            "value": "6,561,464,453",
+            "unit": "B"
+          },
+          {
+            "label": "PKCS#11 derive calls, 8 limbs each",
+            "value": "1,561"
+          },
+          {
+            "label": "Generation on the board, frames discarded",
+            "value": "145.2 s, 45.2 MB/s"
+          },
+          {
+            "label": "Streamed to the Mac over SSH",
+            "value": "180.9 s, 36.3 MB/s (182 s end to end)"
+          },
+          {
+            "label": "Slowest call",
+            "value": "0.147",
+            "unit": "s"
+          },
+          {
+            "label": "Token peak memory, generation / streamed",
+            "value": "88.9 / 90.6",
+            "unit": "MiB"
+          },
+          {
+            "label": "Limbs compared with the reference spec",
+            "value": "32 + 12,483, 0 mismatches"
+          },
+          {
+            "label": "Hash mismatches against the token-signed manifest",
+            "value": "0 of 1,565 entries"
+          },
+          {
+            "label": "Chunk hashes against the 2026-10-12 Mac export",
+            "value": "all 1,565 identical"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ckks-openfhe-set-token-mx95pro-461f44ae",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "generate-fhe-secret",
+        "export-evaluation-keys",
+        "publish-public-key"
+      ],
+      "level": "device",
+      "parts": [
+        {
+          "device": "mx95-pro",
+          "role": "custodian",
+          "producer": "pqctoday-hsm",
+          "claimScope": "board-software-token",
+          "qualifier": ", OpenFHE set (ID 4), export only, fixed test seed",
+          "engine": {
+            "repo": "pqctoday-org/pqctoday-hsm",
+            "commit": "ebbc3d20ab209bfba125243f2b9a029b71a8cf9d"
+          },
+          "stepIds": [
+            "generate-fhe-secret",
+            "export-evaluation-keys",
+            "publish-public-key"
+          ]
+        }
+      ],
+      "claimLabel": "custodian: software token on MX95 Pro, OpenFHE parameter set (registry ID 4): the whole 79-key export generated, streamed to a Mac and checked against the reference spec; export only, no decryption",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY; software token, not hardware custody. The token of registry ID 4 (OpenFHE v1.6.0’s primes, digits and key list at its 128-bit-checked settings; 79 keys: 1 relinearization, 75 rotation, 1 conjugation and 2 sparse-secret keys) ran on the MX95 Pro board from /tmp, initialised with the published test seed (test-support build) and the set’s default policy (owner release only), and did nothing else: no OpenFHE, no key conversion and no bootstrapping on the board. Generation was measured with the frames discarded on the board (142.1 s, 46.2 MB/s, generate-only.json), then the same stream went to a Mac (M5 Max) over SSH (178.2 s, 36.8 MB/s, 179 s end to end; export.json, receive.json): the receiver hashed every frame and checked the host manifest (1,566 entries, 0 hash mismatches) and the token-signed manifest (kind 6, 1,565 entries, 0 mismatches). The reference oracle regenerated every limb from the Lattigo-based reference spec: 32 public-key limbs and 12,483 evaluation-key limbs compared, 0 mismatches (verify.txt). All 1,565 public-key and evaluation-key chunk hashes equal those of the 2026-10-12 Mac export of the same set (provenance.txt); the descriptor differs at every initialisation by design, so manifest.txt as a whole differs from that export. The custodian binary was built from pqctoday-hsm ebbc3d20 (main, which contains pqctoday-hsm #360 (merge commit 9dea1716044217cc2e0c5809f347639f4e825564); features educational-ckks and test-support, release build, sha256 709aaa90…cfe53, provenance.txt). Run files, receiver and reference oracle: merged in pqctoday-fhe #29 (merge commit 461f44ae2599799f261f62245456079ffad6a710); the pull request’s pinned head is 868bbacde8f8cb48441b6f5efa46e9da6a0a1665, and the run used the working tree at 0089a570 (the working tree also held one untracked file). The key generator is version 1, frozen in pqctoday-hsm #353 (merge commit 3c3954741bc8f2ccab8cf0e18f6d8d48e53fe905). This shows that the token produces the whole OpenFHE-set key export on the board in the same bounded calls as the other sets; it does not show OpenFHE running on a board: the run of OpenFHE with these keys, bootstrapping included, was made in a container on a Mac only. Functional, not a security claim.",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "461f44ae2599799f261f62245456079ffad6a710"
+      },
+      "parameters": "CKKS_N16QP1720H192H32_OPENFHE_V1_6_0_MATCH128 (registry ID 4: OpenFHE v1.6.0 at its 128-bit-checked match128 settings, N = 2^16, log QP 1720, 79 keys)",
+      "config": "generator v1 (frozen in pqctoday-hsm #353); fixed test seed (test-support build); 8 limbs per C_DeriveKey call, six export threads; the set’s default policy (owner release only); token and keys in /tmp on the board, removed afterwards",
+      "parameterHash": "22d3fb0203f28c31529ad6466c0cf3b361e4a9d2a4c7c3ebdf9429a924fa0ae5",
+      "environment": {
+        "hardware": "MX95 Pro board (NXP FRDM-IMX95-PRO, 6x Cortex-A55, 16 GB; six export threads) as custodian; Apple M5 Max Mac as the receiver of the stream and for the byte check",
+        "os": "Linux 6.18.20 aarch64 board image (custodian); Linux container on macOS (receiver and reference check)",
+        "toolchain": "ckks_custodian from pqctoday-hsm ebbc3d20, rustc 1.96.0, aarch64-unknown-linux-gnu (provenance.txt); receiver and reference oracle from pqctoday-fhe (merge commit 461f44ae; run at 0089a570; Go, Lattigo v6.2.0 unmodified)",
+        "features": "educational-ckks and test-support, release build; limbs of a call on six threads; board CPU flags in provenance.txt"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1,
+        "distribution": "single run: generation only (frames discarded on the board), then the same stream to the Mac, then the reference check",
+        "peakMemoryMethod": "token peak RSS reported by ckks_custodian: 90,740 KiB generation only, 91,100 KiB streamed (peakRssKiB)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "artifacts": [
+        {
+          "name": "generate-only.json",
+          "sha256": "7128f843d7422912dd419acf3463a58549bc80c65664fd9ba90dc09a8dea0868",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/generate-only.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "73f2f09a59eae41d81af09df656f58cf9bc3981215192971ef5cd775332470ac",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/export.json"
+        },
+        {
+          "name": "receive.json",
+          "sha256": "268d501038b91f7e55e19ef69bf620897516d2bb18d01ca29969bac2a83f1cec",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/receive.json"
+        },
+        {
+          "name": "verify.txt",
+          "sha256": "a686840d68676735e16223e78a9d7d1234de59d4ab3281713f6bb24d3e2a6c7c",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/verify.txt"
+        },
+        {
+          "name": "provenance.txt",
+          "sha256": "8f31a6ad6e2b65bee4dda933875a8d3ab887890df831319c4e5e72442b0dbbc3",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/provenance.txt"
+        },
+        {
+          "name": "run.log.txt",
+          "sha256": "3bae17fc180bcc87ba41252e6e4c89f2b4e2f98637000e18d89d374b6ef888e7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/run.log.txt"
+        },
+        {
+          "name": "manifest.txt",
+          "sha256": "b51581c5c9cc1ee6ae7870a7e9fe4313c025c8b925a25342fb071b17a8af0dbc",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-openfhe-set-mx95pro-461f44ae/manifest.txt"
+        }
+      ],
+      "measuredAt": "2026-10-15T05:00:39Z",
+      "summary": {
+        "headline": "On the MX95 Pro the token generated the OpenFHE set’s whole 79-key export, 6.56 GB, in 142 s (about 2.4 minutes) and streamed it to a Mac in 178 s (about 3 minutes) with a 89.0 MiB peak; every piece matched the reference spec and the token-signed manifest.",
+        "keyNumbers": [
+          {
+            "label": "Keys exported",
+            "value": "79"
+          },
+          {
+            "label": "Evaluation keys and public key, as exported",
+            "value": "6,561,464,453",
+            "unit": "B"
+          },
+          {
+            "label": "PKCS#11 derive calls, 8 limbs each",
+            "value": "1,561"
+          },
+          {
+            "label": "Generation on the board, frames discarded",
+            "value": "142.1 s, 46.2 MB/s"
+          },
+          {
+            "label": "Streamed to the Mac over SSH",
+            "value": "178.2 s, 36.8 MB/s (179 s end to end)"
+          },
+          {
+            "label": "Slowest call",
+            "value": "0.137",
+            "unit": "s"
+          },
+          {
+            "label": "Token peak memory, generation / streamed",
+            "value": "88.6 / 89.0",
+            "unit": "MiB"
+          },
+          {
+            "label": "Limbs compared with the reference spec",
+            "value": "32 + 12,483, 0 mismatches"
+          },
+          {
+            "label": "Hash mismatches against the token-signed manifest",
+            "value": "0 of 1,565 entries"
+          },
+          {
+            "label": "Chunk hashes against the 2026-10-12 Mac export",
+            "value": "all 1,565 identical"
           }
         ]
       }
