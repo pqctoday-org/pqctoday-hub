@@ -4,6 +4,7 @@ import {
   EXAMPLE_REPORT_SHARE_PAYLOAD,
   EXAMPLE_REPORT_RESULT,
   EXAMPLE_REPORT_SHARE_TOKEN,
+  EXAMPLE_REPORT_GENERATED_AT,
 } from './exampleReport'
 import { decodeShareToken } from '@/utils/reportShareToken'
 import {
@@ -68,5 +69,14 @@ describe('EXAMPLE_REPORT_SHARE_TOKEN — v2 snapshot round-trips exactly', () =>
     if (schema?.v !== 2) throw new Error('expected v2 schema')
     expect(schema.result).toEqual(EXAMPLE_REPORT_RESULT)
     expect(schema.persona).toBe('curious')
+  })
+})
+
+describe('EXAMPLE_REPORT_SHARE_TOKEN — stable across builds', () => {
+  it('pins generatedAt, so the sample-report link does not change every build', () => {
+    expect(EXAMPLE_REPORT_RESULT.generatedAt).toBe(EXAMPLE_REPORT_GENERATED_AT)
+    expect(decodeShareToken(EXAMPLE_REPORT_SHARE_TOKEN)?.result.generatedAt).toBe(
+      EXAMPLE_REPORT_GENERATED_AT
+    )
   })
 })

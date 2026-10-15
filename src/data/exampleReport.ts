@@ -30,7 +30,15 @@ export const EXAMPLE_REPORT_SHARE_PAYLOAD: AssessmentInput = {
 
 export const EXAMPLE_REPORT_PERSONA = 'curious'
 
-export const EXAMPLE_REPORT_RESULT = computeAssessment(EXAMPLE_REPORT_SHARE_PAYLOAD)
+// `computeAssessment` stamps `generatedAt` with the current time, which made
+// the share token (and so the sample-report link on /report and /sponsor)
+// change on every build and every page load. Pin it so the link is stable.
+export const EXAMPLE_REPORT_GENERATED_AT = '2026-10-15T00:00:00.000Z'
+
+export const EXAMPLE_REPORT_RESULT = {
+  ...computeAssessment(EXAMPLE_REPORT_SHARE_PAYLOAD),
+  generatedAt: EXAMPLE_REPORT_GENERATED_AT,
+}
 
 export const EXAMPLE_REPORT_SHARE_TOKEN = encodeShareToken({
   result: EXAMPLE_REPORT_RESULT,

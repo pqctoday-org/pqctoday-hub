@@ -219,7 +219,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
         'Run quantum CTI across the tactical, operational, and strategic horizons feeding triage, hunts, and board-level assessments.',
       modules: [
         { id: 'research-quantum-impact', label: 'Researcher Quantum Impact' },
-        { id: 'quantum-computing-basics', label: 'Quantum Computing' },
+        { id: 'quantum-threats', label: 'Quantum Threats' },
       ],
     },
     {
