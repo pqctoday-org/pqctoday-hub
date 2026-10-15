@@ -22726,6 +22726,21 @@
       "replacedAt": "2026-10-15T01:53:06.880121+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "full paper instead of the abstract page: the ePrint PDF, downloaded by the maintainer in a browser on 14 Oct 2026 (automated download is blocked by the site's bot check)"
+    },
+    {
+      "refId": "Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard",
+      "title": "Just Released: Version 3.1 of the PCI PIN Security Standard",
+      "url": "https://blog.pcisecuritystandards.org/just-released-version-3-1-of-the-pci-pin-security-standard",
+      "status": "downloaded",
+      "filename": "Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard.html",
+      "sizeBytes": 82310,
+      "contentType": "text/html",
+      "sha256": "540a8216f2e547409759f629916d81c6b7927fdc9007aa3f7e80863b6c1619f2",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-15T12:53:43.784675+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
