@@ -24,14 +24,23 @@
  *
  * Upgrading an engine: rebuild it, update its provenance entry, then run
  * `npm run verify:engines -- --write-lock` and commit the lock with the files.
- * Rollback is reverting that commit. A later phase fills in `release` (the
- * published engine release each bundle is pinned to) and downloads it to
- * compare; this phase only needs the committed files.
+ * Rollback is reverting that commit. A bundle published in an engine release
+ * also carries `release` (tag, asset, tarball SHA-256); `--pin-release` fills
+ * it from that release's SHA256SUMS, and `verify-engines-release.ts` downloads
+ * the asset and compares it. A pin whose asset name no longer matches the
+ * bundle's build commit fails here as 'release stale': re-pin after a rebuild.
  *
  * Usage:
  *   tsx scripts/ci/verify-engines.ts                 # check
  *   tsx scripts/ci/verify-engines.ts --write-lock    # (re)generate the lock
- *   --root <dir> --lock <file> --provenance <file>   # override locations
+ *   tsx scripts/ci/verify-engines.ts --pin-release engines-N --sums <SHA256SUMS>
+ *                                                     # pin HSM bundles to a published release
+ *   --root <dir> --lock <file> --provenance <file> --artifacts <file>   # override locations
+ *
+ * Two sources (owner decision 2026-10-14: every shipped engine is locked):
+ * public/wasm/wasm-provenance.json for the bundles built in pqctoday-hsm, and
+ * src/data/sbomWasmArtifacts.json for the others (TPM emulator, LMS module,
+ * NIST SP 800-90B tools), whose `lockFiles` add the loaders beside each binary.
  */
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
@@ -50,6 +59,9 @@ export interface PinnedRelease {
 
 export interface LockedBundle {
   hsmCommit: string | null
+  /** Bundles not built from the HSM repository: who built them and from which commit. */
+  producer?: string | null
+  buildCommit?: string | null
   /** Filled in once the bundle is published as an engine release; null until then. */
   release: PinnedRelease | null
   files: Record<string, LockedFile>
@@ -65,6 +77,44 @@ export interface ProvenanceBundle {
   name: string
   files: string[]
   hsmCommit?: string | null
+  /** Set only for bundles from src/data/sbomWasmArtifacts.json (not built in the HSM repository). */
+  producer?: string | null
+  buildCommit?: string | null
+}
+
+/** One record of src/data/sbomWasmArtifacts.json. `files` are the pinned .wasm binaries;
+ * `lockFiles` lists their companion loaders, which the SBOM check does not pin. */
+export interface WasmArtifact {
+  key: string
+  repo: string | null
+  commit: string | null
+  files: Record<string, string>
+  lockFiles?: string[]
+}
+
+/** Turn the non-HSM artifact records into bundles the lock covers like any other. */
+export function artifactBundles(artifacts: WasmArtifact[]): ProvenanceBundle[] {
+  return artifacts.map((a) => ({
+    name: a.key,
+    files: [...Object.keys(a.files), ...(a.lockFiles ?? [])],
+    hsmCommit: null,
+    producer: a.repo,
+    buildCommit: a.commit,
+  }))
+}
+
+/** All bundles the lock must cover; a name used twice is an error. */
+export function allBundles(
+  provenance: ProvenanceBundle[],
+  artifacts: WasmArtifact[]
+): ProvenanceBundle[] {
+  const all = [...provenance, ...artifactBundles(artifacts)]
+  const seen = new Set<string>()
+  for (const b of all) {
+    if (seen.has(b.name)) throw new Error(`bundle name ${b.name} is used twice`)
+    seen.add(b.name)
+  }
+  return all
 }
 
 export type ProblemKind =
@@ -73,6 +123,8 @@ export type ProblemKind =
   | 'unlocked'
   | 'not declared'
   | 'commit differs'
+  | 'producer differs'
+  | 'release stale'
   | 'folder entry'
   | 'bundle not in lock'
   | 'bundle not in provenance'
@@ -86,6 +138,35 @@ export interface Problem {
 const sha256 = (buf: Buffer): string => createHash('sha256').update(buf).digest('hex')
 
 const isFolder = (entry: string): boolean => entry.endsWith('/')
+
+/** A release asset is named `<bundle>-<first 8 of the build commit>.tar.gz`. */
+export const releaseAsset = (bundle: string, commit: string): string =>
+  `${bundle}-${commit.slice(0, 8)}.tar.gz`
+
+/** A pin is stale when the engine was rebuilt from another commit but not re-pinned. */
+function releaseMatchesCommit(name: string, locked: LockedBundle): boolean {
+  if (!locked.release || !locked.hsmCommit) return false
+  return locked.release.asset === releaseAsset(name, locked.hsmCommit)
+}
+
+/** Pin every HSM bundle whose asset for its current commit is listed in a release's SHA256SUMS. */
+export function pinRelease(lock: EnginesLock, tag: string, sums: string): string[] {
+  const bySum = new Map<string, string>()
+  for (const line of sums.split('\n')) {
+    const m = /^([0-9a-f]{64})\s+\*?(\S+)$/.exec(line.trim())
+    if (m) bySum.set(m[2], m[1])
+  }
+  const pinned: string[] = []
+  for (const [name, b] of Object.entries(lock.bundles)) {
+    if (!b.hsmCommit) continue
+    const asset = releaseAsset(name, b.hsmCommit)
+    const sha = bySum.get(asset)
+    if (!sha) continue
+    b.release = { tag, asset, tarballSha256: sha }
+    pinned.push(name)
+  }
+  return pinned
+}
 
 export function verifyEngines(
   root: string,
@@ -109,6 +190,15 @@ export function verifyEngines(
     }
     if ((locked.hsmCommit ?? null) !== (b.hsmCommit ?? null)) {
       problems.push({ bundle: b.name, file: '-', what: 'commit differs' })
+    }
+    if ((locked.buildCommit ?? null) !== (b.buildCommit ?? null)) {
+      problems.push({ bundle: b.name, file: '-', what: 'commit differs' })
+    }
+    if (locked.release && !releaseMatchesCommit(b.name, locked)) {
+      problems.push({ bundle: b.name, file: locked.release.asset, what: 'release stale' })
+    }
+    if ((locked.producer ?? null) !== (b.producer ?? null)) {
+      problems.push({ bundle: b.name, file: '-', what: 'producer differs' })
     }
     const declaredFiles = new Set(b.files.filter((f) => !isFolder(f)))
     for (const f of declaredFiles) {
@@ -155,6 +245,9 @@ export function buildLock(
     }
     bundles[b.name] = {
       hsmCommit: b.hsmCommit ?? null,
+      ...(b.producer !== undefined || b.buildCommit !== undefined
+        ? { producer: b.producer ?? null, buildCommit: b.buildCommit ?? null }
+        : {}),
       release: previous?.bundles[b.name]?.release ?? null,
       files,
     }
@@ -170,21 +263,38 @@ function main(argv: string[]): number {
   const root = arg('--root') ?? process.cwd()
   const lockPath = arg('--lock') ?? join(root, 'public/wasm/engines.lock.json')
   const provPath = arg('--provenance') ?? join(root, 'public/wasm/wasm-provenance.json')
+  const artifactsPath = arg('--artifacts') ?? join(root, 'src/data/sbomWasmArtifacts.json')
   const prov = JSON.parse(readFileSync(provPath, 'utf8')) as {
     hsmRepo?: string
     bundles: ProvenanceBundle[]
   }
+  const artifacts = existsSync(artifactsPath)
+    ? (JSON.parse(readFileSync(artifactsPath, 'utf8')) as { artifacts: WasmArtifact[] }).artifacts
+    : []
+  const bundlesIn = allBundles(prov.bundles, artifacts)
   const previous = existsSync(lockPath)
     ? (JSON.parse(readFileSync(lockPath, 'utf8')) as EnginesLock)
     : undefined
 
-  if (argv.includes('--write-lock')) {
-    const lock = buildLock(
-      root,
-      prov.bundles,
-      prov.hsmRepo ?? 'pqctoday-org/pqctoday-hsm',
-      previous
+  const pinTag = arg('--pin-release')
+  if (pinTag) {
+    const sumsPath = arg('--sums')
+    if (!previous || !sumsPath) {
+      console.error(
+        'engines: --pin-release needs an existing lock and --sums <SHA256SUMS of that release>'
+      )
+      return 2
+    }
+    const pinned = pinRelease(previous, pinTag, readFileSync(sumsPath, 'utf8'))
+    writeFileSync(lockPath, `${JSON.stringify(previous, null, 2)}\n`)
+    console.log(
+      `engines: pinned ${pinned.length} bundle(s) to ${pinTag}: ${pinned.join(', ') || 'none'}`
     )
+    return pinned.length > 0 ? 0 : 1
+  }
+
+  if (argv.includes('--write-lock')) {
+    const lock = buildLock(root, bundlesIn, prov.hsmRepo ?? 'pqctoday-org/pqctoday-hsm', previous)
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`)
     const n = Object.values(lock.bundles).reduce((s, b) => s + Object.keys(b.files).length, 0)
     console.log(`engines: lock written (${Object.keys(lock.bundles).length} bundles, ${n} files)`)
@@ -195,7 +305,7 @@ function main(argv: string[]): number {
     console.error(`engines: no lock at ${lockPath}; create it with --write-lock`)
     return 2
   }
-  const problems = verifyEngines(root, previous, prov.bundles)
+  const problems = verifyEngines(root, previous, bundlesIn)
   if (problems.length === 0) {
     const n = Object.values(previous.bundles).reduce((s, b) => s + Object.keys(b.files).length, 0)
     console.log(
