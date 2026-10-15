@@ -27,3 +27,7 @@ The workshop has 2 interactive steps:
 - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and planned FIPS 206 (FN-DSA; in development with no public draft)
 - NSA CNSA 2.0 (algorithm suite and timelines)
 - CycloneDX (CBOM format the team operates and maintains)
+
+## Source and licence
+
+Parts of this module are adapted from the Applied Quantum PQC Migration Framework v2.1 (https://pqcframework.com) by Marin Ivezić / Applied Quantum, "Skills & Team Structure" section, pp. 160–164, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). The material was condensed, reorganised and adapted for this module.

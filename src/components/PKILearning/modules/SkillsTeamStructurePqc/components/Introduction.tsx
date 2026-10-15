@@ -20,6 +20,7 @@ import { NICE_WORK_ROLES, NICE_COMPONENTS_VERSION } from '@/data/niceFramework'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { AppliedQuantumCredit } from '@/components/PKILearning/common/FrameworkCredit'
 import {
   ROLE_CROSSWALK,
   ROLE_SOURCES,
@@ -513,5 +514,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
     },
   ]
 
-  return <LearnStepper steps={steps} />
+  return (
+    <>
+      <LearnStepper steps={steps} />
+      <AppliedQuantumCredit section="Skills & Team Structure" pages="160–164" />
+    </>
+  )
 }

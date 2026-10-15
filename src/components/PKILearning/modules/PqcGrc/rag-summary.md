@@ -28,3 +28,7 @@ The workshop has 2 interactive steps:
 - NIST SP 800-208 (Stateful Hash-Based Signatures)
 - CycloneDX 1.7 (CBOM); the module requires 1.6+ of vendors
 - ISO 27005 / ISO 31000 (risk management), COBIT (governance)
+
+## Source and licence
+
+Parts of this module are adapted from the Applied Quantum PQC Migration Framework v2.1 (https://pqcframework.com) by Marin Ivezić / Applied Quantum, "GRC Implementation" section, pp. 176–185, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). The material was condensed, reorganised and adapted for this module.
