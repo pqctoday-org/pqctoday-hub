@@ -62,13 +62,13 @@ Five certification modules now name the official document behind ten more of the
 
 ### Data
 
-- **Four new Library entries**:
+- **Four new Library entries** [view:/library] [persona:researcher] [persona:grc]:
   - the PCI PIN Security Standard v3.1 announcement;
   - ENISA's EUCC Guidelines on Cryptography page;
   - NIST's ACVP ML-DSA test specification;
   - NIST's CMVP FIPS 140-3 standards page.
 - **Thirteen homomorphic-encryption papers in the Library are read in full** [view:/library] [persona:researcher]: their summaries, key points and search results now come from the complete paper, not its abstract page.
-- **Three new homomorphic-encryption measurement records**: the two-round refresh, the scoring service on the MX95 Pro, and the scoring service on the x86 virtual machine. Two board records cover the key-set generation.
+- **Three new homomorphic-encryption measurement records** [view:/learn/homomorphic-encryption] [persona:researcher] [persona:architect]: the two-round refresh, the scoring service on the MX95 Pro, and the scoring service on the x86 virtual machine. Two board records cover the key-set generation.
 
 ## [4.159.0] - 2026-10-14
 
