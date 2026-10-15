@@ -1,0 +1,41 @@
+{
+ "customers": 32768,
+ "uniqueRows": 6000,
+ "clientEncryptMs": 3569,
+ "requestCiphertextBytes": 192938536,
+ "bytesPerFeatureCiphertext": 8388632,
+ "featureCiphertexts": 23,
+ "clientUploadUntilAcceptedMs": 1671,
+ "clientWaitForResultMs": 4366,
+ "clientDownloadMs": 37,
+ "scoreCiphertextBytes": 2097176,
+ "serverRunMs": 4194.589,
+ "serverSteps": [
+  {
+   "ms": 754.628,
+   "name": "weighted sum and t"
+  },
+  {
+   "ms": 835.975,
+   "name": "t^2"
+  },
+  {
+   "ms": 504.983,
+   "name": "t^3"
+  },
+  {
+   "ms": 236.277,
+   "name": "a t"
+  },
+  {
+   "ms": 1.839,
+   "name": "final add"
+  },
+  {
+   "ms": 4192.994,
+   "name": "total"
+  }
+ ],
+ "clientEndToEndMs": 9647,
+ "jobId": "d91f530a8a9bc3bb1bb61cdeb957b598"
+}
