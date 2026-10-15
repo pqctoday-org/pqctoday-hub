@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:32fae946-24c6-53f3-950f-3aab2a7428e4",
+  "serialNumber": "urn:uuid:d4cb0af9-a83d-5bbf-bbe3-04d8df8495f6",
   "version": 1,
   "metadata": {
     "component": {
@@ -135,7 +135,13 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4e209ead587d7e5502ea7a4c1d5840cdb27b5c3b277cd67eb9308acda1f43314"
+          "content": "72b7a3e1b0705c5c0b26b25bba4584b29c31c8a52418162417d3a2eccd871b02"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-tpm/commit/acb13517f36534239c80050c90774759c6050d5a"
         }
       ],
       "properties": [
@@ -145,7 +151,7 @@
         },
         {
           "name": "pqctoday:build",
-          "value": "build commit not recorded"
+          "value": "built from pqctoday-org/pqctoday-tpm @ acb13517f36534239c80050c90774759c6050d5a"
         },
         {
           "name": "pqctoday:note",
