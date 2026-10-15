@@ -1,0 +1,34 @@
+{
+ "run": "2026-10-15-id3-x86-vm",
+ "kind": "x86-vm",
+ "serverRunMs_first": 274.671,
+ "uploadUntilAcceptedMs_first": 1654,
+ "serverRunMs_repetitions": [
+  277.002,
+  273.07,
+  281.303
+ ],
+ "uploadMs_repetitions": [
+  1654,
+  1651,
+  1650
+ ],
+ "cycleMs_repetitions": [
+  2008,
+  1948,
+  2003
+ ],
+ "serverWallMsAllJobs": {
+  "min": 273.0,
+  "median": 282.0,
+  "max": 305.0,
+  "n": 8
+ },
+ "serverPeakRssMiB": 1311.19140625,
+ "accuracyBits_allSlots": 21.000361596762993,
+ "auc": {
+  "auc_encrypted": 0.7172984311903541,
+  "auc_plaintextPolynomial": 0.717298511821587,
+  "auc_exactSigmoid": 0.717298511821587
+ }
+}

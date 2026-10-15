@@ -1,0 +1,5 @@
+VmPeak:	 2558760 kB
+VmHWM:	 1342660 kB
+VmRSS:	 1224888 kB
+Threads:	18
+loadavg_end=0.14 0.07 0.80

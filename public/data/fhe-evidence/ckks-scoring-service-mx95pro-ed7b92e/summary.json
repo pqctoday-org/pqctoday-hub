@@ -1,0 +1,34 @@
+{
+ "run": "2026-10-15-id3-mx95pro-server",
+ "kind": "board",
+ "serverRunMs_first": 4194.589,
+ "uploadUntilAcceptedMs_first": 1671,
+ "serverRunMs_repetitions": [
+  4297.297,
+  4277.533,
+  4287.718
+ ],
+ "uploadMs_repetitions": [
+  1670,
+  1660,
+  1657
+ ],
+ "cycleMs_repetitions": [
+  6022,
+  5979,
+  6010
+ ],
+ "serverWallMsAllJobs": {
+  "min": 4158.0,
+  "median": 4278.0,
+  "max": 4662.0,
+  "n": 8
+ },
+ "serverPeakRssMiB": 1869.765625,
+ "accuracyBits_allSlots": 21.000361596762993,
+ "auc": {
+  "auc_encrypted": 0.7172984311903541,
+  "auc_plaintextPolynomial": 0.717298511821587,
+  "auc_exactSigmoid": 0.717298511821587
+ }
+}
