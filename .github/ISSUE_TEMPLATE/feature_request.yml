@@ -8,6 +8,8 @@ body:
       value: |
         Thanks for suggesting a feature! Please provide as much detail as possible.
 
+        By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
   - type: textarea
     id: problem
     attributes:

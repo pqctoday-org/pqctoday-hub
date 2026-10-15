@@ -10,6 +10,8 @@ body:
 
         **Do not paste vectors issued to an ACVTS session or other access-controlled lab material.** Public reference material only.
 
+        By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
   - type: dropdown
     id: contribution_type
     attributes:

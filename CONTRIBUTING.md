@@ -1,6 +1,6 @@
 # Contributing to PQC Today
 
-Thank you for your interest in contributing to PQC Today! The project welcomes two kinds of involvement: **knowledge contributions** (no coding required) and **code contributions**.
+Thank you for your interest in PQC Today! The project welcomes **feedback**: corrections, missing data, bug reports, feature ideas, case studies and validation proposals, sent through [Issues](https://github.com/pqctoday-org/pqctoday-hub/issues) or [Discussions](https://github.com/pqctoday-org/pqctoday-hub/discussions). Code changes are made only by the maintainer (see [Feedback terms](#feedback-terms)).
 
 ## Code of Conduct
 
@@ -65,7 +65,9 @@ Open a [Feature Request](https://github.com/pqctoday-org/pqctoday-hub/issues/new
 
 ---
 
-## Contributing Code
+## Building and Running Locally
+
+You are welcome to build, run and study the code. Changes to the repository itself are made only by the maintainer; to propose one, open an issue describing it.
 
 ### Prerequisites
 
@@ -135,11 +137,7 @@ Green unit tests are not evidence the panes still work.
 
 ### Pull Requests
 
-1. **Fork the repository** and create your branch from `main`
-2. **Branch naming**: `feat/your-feature` for features, `fix/your-fix` for bug fixes
-3. **Make your changes** — keep the diff minimal and focused
-4. **Open a Pull Request** targeting `main` and fill out the PR template
-5. All CI checks must pass and the maintainer must approve before merge
+Code changes are made only by the maintainer. Pull requests from outside the project are read with thanks and then closed without merging; if a pull request shows a problem or a good idea, the maintainer makes the change in their own words. The quickest way to get something fixed is an issue that describes it.
 
 ### Development Guidelines
 
@@ -151,10 +149,12 @@ Green unit tests are not evidence the panes still work.
 
 ## Recognition
 
-All contributors — whether via code PRs or data suggestions — are credited by name in the GitHub release notes for the version that includes their contribution.
+People whose feedback leads to a change are thanked in the GitHub release notes for the version that includes it.
 
 ---
 
-## License
+## Feedback terms
 
-By contributing, you agree that your contributions will be licensed under **GPL-3.0-only** (inbound = outbound). There is no CLA. Add `Signed-off-by: Your Name <email>` to commits (DCO) if your organization requires it.
+Feedback is welcome through Issues and Discussions. Code changes are made only by the maintainer; outside pull requests are thanked and closed.
+
+By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
