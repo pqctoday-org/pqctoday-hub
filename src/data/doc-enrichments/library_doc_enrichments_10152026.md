@@ -1,92 +1,33 @@
 ---
 generated: 2026-10-15
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## ACVP-ML-DSA-JSON-Specification
+## EUCC-Guidelines-on-Cryptography
 
-- **Reference ID**: ACVP-ML-DSA-JSON-Specification
-- **Title**: ACVP ML-DSA JSON Specification
-- **Authors**: See document
-- **Publication Date**: Not specified
+- **Reference ID**: EUCC-Guidelines-on-Cryptography
+- **Title**: EUCC Guidelines on Cryptography
+- **Authors**: European Union Cybersecurity Certification
+- **Publication Date**: 2024
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This document defines the JSON schema for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations with the Automated Crypto Validation Protocol (ACVP).
-- **PQC Algorithms Covered**: ML-DSA
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
-- **Leaders Contributions Mentioned**: C. Celi, Ed.
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: NIST; IETF
-- **Compliance Frameworks Referenced**: FIPS 204
-- **Classical Algorithms Referenced**: RSA
-- **Key Takeaways**: The document specifies the JSON constructs required for ACVP testing of ML-DSA implementations; ACVP tests ensure conformity to FIPS 204 but do not cover zeroization, DRBG security strength, or incorrect length signatures; implementations must register their capabilities and prerequisites via specific JSON structures in the ACVP registration message.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "This sub-specification defines the JSON constructs for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations"
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Compliance Officer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; Assess
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: ACVP/CAVP; conformance testing
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: ACVP-ML-DSA-JSON-Specification.html (170,371 bytes, 6,618 extracted chars)
-- **Extraction Timestamp**: 2026-10-15T08:13:13
-- **Evidence SHA-256**: 041ef3bf965f245cc2ffc406ae72bb99930518bcf98b5c29268fca484f5a8212
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 041ef3bf965f245c
-- **Window Chars**: 6618
-
----
-
-## NIST-CMVP-FIPS-140-3-Standards-page
-
-- **Reference ID**: NIST-CMVP-FIPS-140-3-Standards-page
-- **Title**: NIST CMVP — FIPS 140-3 Standards page
-- **Authors**: CSRC | NIST
-- **Publication Date**: 2016
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: The document outlines the structure, standards, and procedural requirements of the FIPS 140-3 Cryptographic Module Validation Program (CMVP).
+- **Main Topic**: Guidelines providing recommendations on cryptographic mechanisms for ICT products submitted to the European Cybersecurity Certification Scheme on Common Criteria (EUCC).
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CCCS
-- **Leaders Contributions Mentioned**: David Hawes - NIST CMVP Program Manager; Kailai Chen - CCCS CMVP Program Manager
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Union Agency for Cybersecurity
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: Cryptographic Module Validation
-- **Standardization Bodies**: NIST, ISO/IEC
-- **Compliance Frameworks Referenced**: FIPS 140-3, ISO/IEC 19790, ISO/IEC 24759
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria; EUCC
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: FIPS 140-3 references ISO/IEC 19790 for requirements and ISO/IEC 24759 for testing; NIST SP 800-140 series documents provide specific CMVP modifications to ISO/IEC standards; The CMVP is a joint effort of the US and Canadian governments; ISO/IEC 19790:2012 includes the 2015 update folded into the main document
-- **Security Levels & Parameters**: Four security levels for cryptographic modules
-- **Hybrid & Transition Approaches**: None detected
+- **Key Takeaways**: Developers and evaluators should use these guidelines to select preferred cryptographic mechanisms for EUCC certification; A new version 3 of the Agreed Cryptographic Mechanisms is under public review until the end of July 2026; ENISA publishes a separate report analyzing the standardization of hybridizing traditional cryptography with PQC.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybridization of traditional cryptographic mechanisms with PQC
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
@@ -97,14 +38,14 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
+- **Lifecycle State**: Draft
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer, Security Architect
-- **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; NVLAP accreditation for test labs
-- **Relevant PQC Today Features**: Compliance; pqc-governance; compliance-strategy
+- **Target Audience**: Developer; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; hybrid-crypto; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Conformance testing; Non-invasive attack mitigation testing
+- **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
@@ -114,12 +55,12 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: NIST-CMVP-FIPS-140-3-Standards-page.html (77,965 bytes, 15,061 extracted chars)
-- **Extraction Timestamp**: 2026-10-15T08:13:14
-- **Evidence SHA-256**: bdc29bfaa7656cf9faaa11668969447718413e97fd25665ccda5482fde5510e4
+- **Source Document**: EUCC-Guidelines-on-Cryptography.html (88,278 bytes, 1,930 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T08:23:25
+- **Evidence SHA-256**: bfdab4d9fab4520cd9f0f71b8d2058532824a62c441ff11a0a213c348b328215
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: bdc29bfaa7656cf9
-- **Window Chars**: 15061
+- **Evidence SHA256**: bfdab4d9fab4520c
+- **Window Chars**: 1930
 
 ---
 
@@ -1761,6 +1702,65 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## ACVP-ML-DSA-JSON-Specification
+
+- **Reference ID**: ACVP-ML-DSA-JSON-Specification
+- **Title**: ACVP ML-DSA JSON Specification
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document defines the JSON schema for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations with the Automated Crypto Validation Protocol (ACVP).
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: C. Celi, Ed.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST; IETF
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: RSA
+- **Key Takeaways**: The document specifies the JSON constructs required for ACVP testing of ML-DSA implementations; ACVP tests ensure conformity to FIPS 204 but do not cover zeroization, DRBG security strength, or incorrect length signatures; implementations must register their capabilities and prerequisites via specific JSON structures in the ACVP registration message.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "This sub-specification defines the JSON constructs for testing Module Lattice-based Digital Signature Algorithm (ML-DSA) implementations"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: ACVP/CAVP; conformance testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: ACVP-ML-DSA-JSON-Specification.html (170,371 bytes, 6,618 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T08:13:13
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 041ef3bf965f245c
+- **Window Chars**: 6618
 
 ---
 
@@ -34851,6 +34851,65 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Evidence SHA256**: 7a385ea3c5e3d762
 - **Reader**: unified/5 full
 - **Window Chars**: 3672
+
+---
+
+## NIST-CMVP-FIPS-140-3-Standards-page
+
+- **Reference ID**: NIST-CMVP-FIPS-140-3-Standards-page
+- **Title**: NIST CMVP — FIPS 140-3 Standards page
+- **Authors**: CSRC | NIST
+- **Publication Date**: 2016
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The document outlines the structure, standards, and procedural requirements of the FIPS 140-3 Cryptographic Module Validation Program (CMVP).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CCCS
+- **Leaders Contributions Mentioned**: David Hawes - NIST CMVP Program Manager; Kailai Chen - CCCS CMVP Program Manager
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation
+- **Standardization Bodies**: NIST, ISO/IEC
+- **Compliance Frameworks Referenced**: FIPS 140-3, ISO/IEC 19790, ISO/IEC 24759
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: FIPS 140-3 references ISO/IEC 19790 for requirements and ISO/IEC 24759 for testing; NIST SP 800-140 series documents provide specific CMVP modifications to ISO/IEC standards; The CMVP is a joint effort of the US and Canadian governments; ISO/IEC 19790:2012 includes the 2015 update folded into the main document
+- **Security Levels & Parameters**: Four security levels for cryptographic modules
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect
+- **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; NVLAP accreditation for test labs
+- **Relevant PQC Today Features**: Compliance; pqc-governance; compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Conformance testing; Non-invasive attack mitigation testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: NIST-CMVP-FIPS-140-3-Standards-page.html (77,965 bytes, 15,061 extracted chars)
+- **Extraction Timestamp**: 2026-10-15T08:13:14
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: bdc29bfaa7656cf9
+- **Window Chars**: 15061
 
 ---
 
