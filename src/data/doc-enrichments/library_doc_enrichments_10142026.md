@@ -5,27 +5,27 @@ documents_processed: 5
 enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 ---
 
-## IACR-ePrint-2020-1533
+## IACR-ePrint-2010-560
 
-- **Reference ID**: IACR-ePrint-2020-1533
-- **Title**: On the Security of Homomorphic Encryption on Approximate Numbers
-- **Authors**: Baiyu Li; Daniele Micciancio
-- **Publication Date**: 2020-12-08
-- **Last Updated**: 2021-03-07
-- **Document Status**: Published
-- **Main Topic**: The document presents passive key-recovery attacks against the CKKS approximate homomorphic encryption scheme and proposes stronger security definitions to address the inadequacy of traditional IND-CPA security for approximate schemes.
+- **Reference ID**: IACR-ePrint-2010-560
+- **Title**: On CCA-Secure Fully Homomorphic Encryption
+- **Authors**: J. Loftus; A. May; N. P. Smart; F. Vercauteren
+- **Publication Date**: 2010-11-03
+- **Last Updated**: 2011-07-15
+- **Document Status**: Published elsewhere (venue not shown)
+- **Main Topic**: Analysis of the security of Gentry's fully homomorphic encryption scheme against chosen ciphertext attacks and the proposal of a modified somewhat homomorphic scheme that achieves IND-CCA1 security.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: USA; Bodies: None detected
-- **Leaders Contributions Mentioned**: Baiyu Li and Daniele Micciancio (authors who presented the attacks and proposed new security definitions)
-- **PQC Products Mentioned**: HEAAN; SEAL; HElib; PALISADE; RNS-HEAAN; Lattigo
+- **Applicable Regions / Bodies**: Regions: United Kingdom; Germany; Belgium; Bodies: European Commission, EPSRC, DARPA, Air Force Research Laboratory
+- **Leaders Contributions Mentioned**: J. Loftus; A. May; N.P. Smart; F. Vercauteren
+- **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Traditional IND-CPA security does not adequately capture security for approximate homomorphic encryption schemes against passive adversaries; The CKKS scheme is vulnerable to practical key-recovery attacks when decryption results are disclosed; Major open-source libraries (HEAAN, SEAL, HElib, PALISADE) are vulnerable to this attack due to theoretical definition shortcomings rather than implementation bugs; New indistinguishability-based and simulation-based security definitions are required to properly evaluate the security of approximate homomorphic encryption.
+- **Classical Algorithms Referenced**: RSA; ElGamal
+- **Key Takeaways**: The basic Gentry fully homomorphic encryption scheme is not IND-CCA1 secure as a trivial lunchtime attack recovers the secret key; A modified Smart-Vercauteren somewhat homomorphic scheme achieves IND-CCA1 and PA-1 security under a lattice knowledge assumption; Ciphertext validity checking oracles (CVA) pose a distinct security threat not implied by PA-1 security; CCA-like security notions are critical for applications where multiple parties submit encrypted data for secure processing.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -39,246 +39,10 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Attack runs in expected polynomial time; Key recovery in just a few seconds for large security parameters; Double-precision floating-point numbers used for FFT; N = 2^16 dimension mentioned for error analysis
-- **Target Audience**: Researcher; Developer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-101; quantum-threats; pqc-candidates
-- **Implementation Attack Surface**: Passive key-recovery attack; Decryption oracle access; Publicly available decryption results
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Implementation testing against HEAAN, SEAL, HElib, and PALISADE; Experimental key recovery verification
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Not Applicable
-- **Source Document**: IACR-ePrint-2020-1533.pdf (521,194 bytes, 16,726 extracted chars)
-- **Extraction Timestamp**: 2026-10-14T21:29:06
-- **Evidence SHA-256**: 3189ba0432e73a90aa2cb55065a03b2c9e9ce31144719fae80bff931d231f5ea
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 3189ba0432e73a90
-- **Window Chars**: 16726
-
----
-
-## IACR-ePrint-2022-816
-
-- **Reference ID**: IACR-ePrint-2022-816
-- **Title**: Securing Approximate Homomorphic Encryption Using Differential Privacy
-- **Authors**: Baiyu Li; Daniele Micciancio; Mark Schultz; Jessica Sorrell
-- **Publication Date**: 2022-06-22
-- **Last Updated**: 2022-06-22
-- **Document Status**: Published
-- **Main Topic**: The document presents a method to transform approximate homomorphic encryption schemes, specifically CKKS, into IND-CPA-D secure schemes by post-processing decryption outputs with differential privacy noise.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: USA; Bodies: None detected
-- **Leaders Contributions Mentioned**: Baiyu Li; Daniele Micciancio; Mark Schultz; Jessica Sorrell
-- **PQC Products Mentioned**: HElib; Lattigo; HEAAN; PALISADE; Microsoft SEAL
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Post-processing CKKS decryption with Gaussian noise achieves provable IND-CPA-D security; nearly matching upper and lower bounds prove the required noise amount cannot be significantly reduced; dynamic error estimation does not allow for smaller noise parameters without vulnerability to attacks; specific parameter sets are proposed for open-source libraries to achieve (128, 64)-bit security.
-- **Security Levels & Parameters**: (128, 64)-bits of q-IND-CPA-D security; 133-bits of IND-CPA-security; q = 2^10 decryption queries; n <= 2^15 ring dimension
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Additional Gaussian noise size ranges from 25.79 to 73.79 bits depending on security parameters; 48–56 bits of precision left for CKKS approximation and DP error
-- **Target Audience**: Researcher; Developer
-- **Implementation Prerequisites**: Open-source libraries implementing CKKS (HElib, Lattigo, HEAAN, PALISADE, Microsoft SEAL); calibration of precision/noise parameters in decryption APIs
-- **Relevant PQC Today Features**: Algorithms; Assess
-- **Implementation Attack Surface**: Passive adversary key recovery attacks; IND-CPA-D attacks
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Not Applicable
-- **Source Document**: IACR-ePrint-2022-816.pdf (516,485 bytes, 17,052 extracted chars)
-- **Extraction Timestamp**: 2026-10-14T21:29:07
-- **Evidence SHA-256**: ef42cf18bc7bf4485426183c5a8ca16769d4db5e59aba74acba40ac327cf0244
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: ef42cf18bc7bf448
-- **Window Chars**: 17052
-
----
-
-## IACR-ePrint-2024-853
-
-- **Reference ID**: IACR-ePrint-2024-853
-- **Title**: Accurate and Composable Noise Estimates for CKKS with Application to Exact HE Computation
-- **Authors**: Jean-Philippe Bossuat; Anamaria Costache; Christian Mouchet; Lea Nürnberger; Juan Ramón Troncoso-Pastoriza
-- **Publication Date**: 2024-05-30
-- **Last Updated**: 2025-08-11
-- **Document Status**: Published
-- **Main Topic**: Development of a composable noise model and prototype tool for accurate precision loss estimation in CKKS Fully Homomorphic Encryption, including a method for exact decryption.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Singapore; Norway; Germany; Switzerland; Bodies: None detected
-- **Leaders Contributions Mentioned**: Jean-Philippe Bossuat; Lea Nürnberger; Anamaria Costache; Christian Mouchet; Juan Ramón Troncoso-Pastoriza
-- **PQC Products Mentioned**: Lattigo; OpenFHE
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: A component-wise noise definition allows for tighter and more composable average-case noise estimates in CKKS; Theoretical noise estimates deviate by no more than 0.01 bits from experimental results even in large circuits; An exact variant of CKKS can be achieved where decryption removes all noise with high probability; Exact CKKS strengthens security against IND-CPA-D attacks by preserving an exact message space; The proposed estimator tool supports complex operations like bootstrapping and polynomial evaluation.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Theoretical estimates never deviate by more than 0.01 bits from experimental estimates; Estimator uses arbitrary precision complex arithmetic; Optimized implementation could significantly improve efficiency
-- **Target Audience**: Researcher; Developer
-- **Implementation Prerequisites**: Lattigo library; Concrete messages provided by user
-- **Relevant PQC Today Features**: Algorithms; pqc-101
-- **Implementation Attack Surface**: IND-CPA-D attacks; passive key-recovery attacks
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Experimental demonstration of noise estimate tightness; Comparison with bounds from related work
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Not Applicable
-- **Source Document**: IACR-ePrint-2024-853.pdf (805,902 bytes, 16,535 extracted chars)
-- **Extraction Timestamp**: 2026-10-14T21:29:08
-- **Evidence SHA-256**: 2324812291c340d90ef23b8877b78da726cebe28d3aae247d18d7499b1005194
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 2324812291c340d9
-- **Window Chars**: 16535
-
----
-
-## IACR-ePrint-2024-116
-
-- **Reference ID**: IACR-ePrint-2024-116
-- **Title**: On the practical CPAD security of “exact” and threshold FHE schemes and libraries
-- **Authors**: Marina Checri; Renaud Sirdey; Aymen Boudguiga; Jean-Paul Bultel
-- **Publication Date**: 2024-01-26
-- **Last Updated**: 2024-08-02
-- **Document Status**: Published
-- **Main Topic**: A practical CPAD key-recovery attack on linearly homomorphic Regev cryptosystem and its generalizations to BFV, BGV, and TFHE, including vulnerabilities in threshold variants.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: France; Bodies: None detected
-- **Leaders Contributions Mentioned**: Marina Checri, Renaud Sirdey, Aymen Boudguiga, Jean-Paul Bultel (Authors); Li and Micciancio (Introduced CPAD security notion)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: "Exact" FHE schemes like BFV, BGV, and TFHE are not CPAD secure in their basic form; Threshold variants of BFV, BGV, and CKKS are CPAD-insecure without proper smudging noise addition after partial decryption; The attack is practical, taking less than an hour on an average laptop with a few thousand ciphertexts; Countermeasures require monitoring noise deviation and blocking decryption for ciphertexts exceeding the noise budget, impacting efficiency.
-- **Security Levels & Parameters**: 128-bit security; 256-bit security; 227 bits of security; n = 4096; log2(q) = 58; sigma = 3.2; q = 2^32; sigma = 2^17
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Attack takes less than an hour on an average laptop PC; Requires a few thousand ciphertexts; Requires up to around a million evaluations/decryptions; 289-bits q required for countermeasure vs 240 bits q in OpenFHE
-- **Target Audience**: Researcher; Developer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-101; quantum-threats; Assess
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Not Applicable
-- **Source Document**: IACR-ePrint-2024-116.pdf (589,361 bytes, 15,551 extracted chars)
-- **Extraction Timestamp**: 2026-10-14T21:29:09
-- **Evidence SHA-256**: 2bf9bc8b4e9177f0582dd53ea5b76d1d07a047df583e367ae5555c1220540b74
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 2bf9bc8b4e9177f0
-- **Window Chars**: 15551
-
----
-
-## IACR-ePrint-2018-421
-
-- **Reference ID**: IACR-ePrint-2018-421
-- **Title**: TFHE: Fast Fully Homomorphic Encryption over the Torus
-- **Authors**: Ilaria Chillotti; Nicolas Gama; Mariya Georgieva; Malika Izabachène
-- **Publication Date**: 2018-05-10
-- **Last Updated**: 2019-04-02
-- **Document Status**: Published
-- **Main Topic**: This document describes TFHE, a fast fully homomorphic encryption scheme over the torus that optimizes gate bootstrapping and introduces packed leveled modes and circuit bootstrapping.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Belgium; France; Switzerland; Bodies: imec-COSIC, KU Leuven, Laboratoire de Mathématiques de Versailles, UVSQ, CNRS, Université Paris-Saclay, Inpher, EPFL, CEA, LIST
-- **Leaders Contributions Mentioned**: Ilaria Chillotti, Nicolas Gama, Mariya Georgieva, Malika Izabachène
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: TFHE reduces gate bootstrapping time from 690ms to 13ms on a single core; TFHE reduces bootstrapping key size from 1GB to 16MB while preserving security parameters; TFHE introduces a circuit bootstrapping method that converts LWE ciphertexts to low-noise RingGSW ciphertexts in 137ms; TFHE supports packed leveled modes to decrease ciphertext expansion and optimize look-up table evaluation.
-- **Security Levels & Parameters**: 128-bits of security in the classical model; 80-bits of security in the quantum model; 16MB bootstrapping key; 13ms single core bootstrapping time; 137ms circuit bootstrapping time
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: 13ms single core gate bootstrapping; 16MB bootstrapping key; 137ms circuit bootstrapping; 690ms previous bootstrapping time; 1GB previous bootstrapping key size
+- **Performance & Size Considerations**: None detected
 - **Target Audience**: Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; pqc-101
+- **Relevant PQC Today Features**: pqc-101; Algorithms
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -291,12 +55,248 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
-- **Source Document**: IACR-ePrint-2018-421.pdf (950,943 bytes, 14,290 extracted chars)
-- **Extraction Timestamp**: 2026-10-14T21:29:10
-- **Evidence SHA-256**: 23fa887ff217f14a47763d6711d8c9304a392954751bee11799a223499d393cd
+- **Source Document**: IACR-ePrint-2010-560.pdf (284,377 bytes, 15,802 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:41:21
+- **Evidence SHA-256**: 0978667900eba39e9bccf2a869531a4f205bc5a10999ebca8fc80b84fbd9443f
 - **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
-- **Evidence SHA256**: 23fa887ff217f14a
-- **Window Chars**: 14290
+- **Evidence SHA256**: 0978667900eba39e
+- **Window Chars**: 15802
+
+---
+
+## IACR-ePrint-2014-535
+
+- **Reference ID**: IACR-ePrint-2014-535
+- **Title**: On Key Recovery Attacks against Existing Somewhat Homomorphic Encryption Schemes
+- **Authors**: Massimo Chenal; Qiang Tang
+- **Publication Date**: 2014-07-09
+- **Last Updated**: 2014-09-29
+- **Document Status**: Published
+- **Main Topic**: The document presents key recovery attacks against several existing somewhat homomorphic encryption schemes, demonstrating that they are not IND-CCA1 secure.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Luxembourg; Bodies: None detected
+- **Leaders Contributions Mentioned**: Massimo Chenal and Qiang Tang (authors who developed the key recovery attacks); Craig Gentry (proposed fully homomorphic encryption); Zvika Brakerski and Vinod Vaikuntanathan (proposed SHE schemes); Jake Loftus, Alexander May, Nigel P. Smart, and Frederik Vercauteren (showed IND-CCA1 attack against Gentry's scheme); Zhang, Plantard and Susilo (showed IND-CCA1 attack against van Dijk et al. scheme)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Most existing somewhat homomorphic encryption schemes are not IND-CCA1 secure; Key recovery attacks allow adversaries to recover private keys through decryption oracle queries; No SHE or FHE scheme can be IND-CCA2 secure due to the ability to manipulate challenged ciphertexts; Gentry's approach to FHE results in schemes that are not IND-CCA1 secure because the private key is encrypted and can be submitted to the decryption oracle
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-101; quantum-threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: IACR-ePrint-2014-535.pdf (509,596 bytes, 16,117 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:41:22
+- **Evidence SHA-256**: 1b96d44df47511d3856191c1f19d9d5315af8cec3771b22ec2e40cf60a6dcf0f
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 1b96d44df47511d3
+- **Window Chars**: 16117
+
+---
+
+## IACR-ePrint-2016-421
+
+- **Reference ID**: IACR-ePrint-2016-421
+- **Title**: Homomorphic Encryption for Arithmetic of Approximate Numbers
+- **Authors**: Jung Hee Cheon; Andrey Kim; Miran Kim; Yongsoo Song
+- **Publication Date**: 2016-05-01
+- **Last Updated**: 2017-09-08
+- **Document Status**: Published
+- **Main Topic**: A homomorphic encryption scheme for approximate arithmetic that uses a rescaling procedure and batching technique to manage ciphertext modulus growth and precision loss.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Republic of Korea; Bodies: None detected
+- **Leaders Contributions Mentioned**: Jung Hee Cheon, Andrey Kim, Miran Kim, Yongsoo Song
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The proposed rescaling procedure allows the ciphertext modulus to grow linearly with circuit depth rather than exponentially; A new batching technique using complex canonical embedding preserves plaintext precision during encoding; The scheme supports efficient evaluation of transcendental functions like multiplicative inverse and exponential function; Precision loss during evaluation is bounded by the circuit depth and exceeds unencrypted arithmetic by at most one bit.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Ciphertext modulus bit size grows linearly with circuit depth; Amortized rate of 0.43 milliseconds per slot for x^1024 circuit; Amortized time of 0.11 milliseconds per slot for multiplicative inverse.
+- **Target Audience**: Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-101; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: IACR-ePrint-2016-421.pdf (474,109 bytes, 15,612 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:41:23
+- **Evidence SHA-256**: 2d84c504e4286d94b07311689e3e879235b0dd32543f32cd70884e9da2182301
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 2d84c504e4286d94
+- **Window Chars**: 15612
+
+---
+
+## IACR-ePrint-2020-1203
+
+- **Reference ID**: IACR-ePrint-2020-1203
+- **Title**: Efficient Bootstrapping for Approximate Homomorphic Encryption with Non-Sparse Keys
+- **Authors**: Jean-Philippe Bossuat; Christian Mouchet; Juan Troncoso-Pastoriza; Jean-Pierre Hubaux
+- **Publication Date**: 2020-10-06
+- **Last Updated**: 2022-08-26
+- **Document Status**: Published
+- **Main Topic**: A more precise, efficient, and 128-bit-secure bootstrapping procedure for the full-RNS variant of the CKKS approximate homomorphic encryption scheme that does not require sparse secret keys.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Jean-Philippe Bossuat, Christian Mouchet, Juan Troncoso-Pastoriza, and Jean-Pierre Hubaux (Authors); Jung Hee Cheon, Kyoohyung Han, Andrey Kim, Miran Kim, and Yongsoo Song (Cited for prior bootstrapping work); Martin Albrecht, Melissa Chase, Hao Chen, Jintai Ding, Shafi Goldwasser, Sergey Gorbunov, Shai Halevi, Jeffrey Hoffstein, Kim Laine, Kristin Lauter, Satya Lokam, Daniele Micciancio, Dustin Moody, Travis Morrison, Amit Sahai, and Vinod Vaikuntanathan (Cited for Homomorphic Encryption Security Standard)
+- **PQC Products Mentioned**: Lattigo
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The proposed bootstrapping procedure eliminates the need for sparse secret keys, addressing recent attacks on sparse R-LWE secrets; It achieves 128-bit security with a failure probability of 2^-15.58 for a C32768 plaintext; The method provides a 14.1x improvement in bootstrapped throughput compared to previous best results; The implementation is available in the open-source Lattigo library as the first public implementation for full-RNS CKKS bootstrapping
+- **Security Levels & Parameters**: 128-bit security; C32768 plaintext; 505-bit output coefficient modulus; 19.1-bit mean precision; 2^-15.58 failure probability
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: 18 seconds bootstrapping time for C32768 plaintext; 505-bit output coefficient modulus; 19.1-bit mean precision; 14.1x improvement in bootstrapped throughput; 468x smaller failure probability
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: Lattigo library; Golang 1.15.6; i5-6600k CPU at 3.5 GHz; 32 GB RAM
+- **Relevant PQC Today Features**: Algorithms; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: IACR-ePrint-2020-1203.pdf (1,580,033 bytes, 16,326 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:41:24
+- **Evidence SHA-256**: 3b53cf70c8cde60571edc749ce9ff5d7e5c09201cf316cbd178055fe8a2aeabe
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 3b53cf70c8cde605
+- **Window Chars**: 16326
+
+---
+
+## IACR-ePrint-2022-024
+
+- **Reference ID**: IACR-ePrint-2022-024
+- **Title**: Bootstrapping for Approximate Homomorphic Encryption with Negligible Failure-Probability by Using Sparse-Secret Encapsulation
+- **Authors**: Jean-Philippe Bossuat; Juan Ramón Troncoso-Pastoriza; Jean-Pierre Hubaux
+- **Publication Date**: 2022-01-08
+- **Last Updated**: 2023-04-03
+- **Document Status**: Published
+- **Main Topic**: A bootstrapping procedure for the CKKS approximate homomorphic encryption scheme that combines dense and sparse secrets to achieve negligible failure probability and high security.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Switzerland; Bodies: None detected
+- **Leaders Contributions Mentioned**: Jean-Philippe Bossuat, Juan Ramón Troncoso-Pastoriza, Jean-Pierre Hubaux
+- **PQC Products Mentioned**: Lattigo
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Combining dense and sparse secrets in CKKS bootstrapping allows for negligible failure probability while maintaining sparse-secret efficiency; The proposed method achieves 32.11 bits of precision with a failure probability of 2^-138.7 for C^32768 plaintexts; This approach provides a large security margin compared to previous sparse-secret-only instantiations; The construction is compatible with both original and full-RNS variants of the CKKS scheme.
+- **Security Levels & Parameters**: 128-bit security; C^32768 plaintext; 32.11 bits of precision; 2^-138.7 failure probability; 285 bits of modulus remaining
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: 20.2 s bootstrapping time; 32.11 bits of precision; 2^-138.7 failure probability; 128-bit security
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: Lattigo library; Windows 10, i5-6600K CPU @ 3.50GHz, 32 GB of RAM
+- **Relevant PQC Today Features**: Algorithms; pqc-candidates
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: IACR-ePrint-2022-024.pdf (499,908 bytes, 14,508 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:41:24
+- **Evidence SHA-256**: 37863df80532a7fedcb65dfbf87a756d6cb08ee0d6fc51925c07ce2e9078f717
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 37863df80532a7fe
+- **Window Chars**: 14508
 
 ---
 
@@ -23594,6 +23594,301 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Math Family**: Code-based
 - **PQC Round**: Round 3
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## IACR-ePrint-2018-421
+
+- **Reference ID**: IACR-ePrint-2018-421
+- **Title**: TFHE: Fast Fully Homomorphic Encryption over the Torus
+- **Authors**: Ilaria Chillotti; Nicolas Gama; Mariya Georgieva; Malika Izabachène
+- **Publication Date**: 2018-05-10
+- **Last Updated**: 2019-04-02
+- **Document Status**: Published
+- **Main Topic**: This document describes TFHE, a fast fully homomorphic encryption scheme over the torus that optimizes gate bootstrapping and introduces packed leveled modes and circuit bootstrapping.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Belgium; France; Switzerland; Bodies: imec-COSIC, KU Leuven, Laboratoire de Mathématiques de Versailles, UVSQ, CNRS, Université Paris-Saclay, Inpher, EPFL, CEA, LIST
+- **Leaders Contributions Mentioned**: Ilaria Chillotti, Nicolas Gama, Mariya Georgieva, Malika Izabachène
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: TFHE reduces gate bootstrapping time from 690ms to 13ms on a single core; TFHE reduces bootstrapping key size from 1GB to 16MB while preserving security parameters; TFHE introduces a circuit bootstrapping method that converts LWE ciphertexts to low-noise RingGSW ciphertexts in 137ms; TFHE supports packed leveled modes to decrease ciphertext expansion and optimize look-up table evaluation.
+- **Security Levels & Parameters**: 128-bits of security in the classical model; 80-bits of security in the quantum model; 16MB bootstrapping key; 13ms single core bootstrapping time; 137ms circuit bootstrapping time
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: 13ms single core gate bootstrapping; 16MB bootstrapping key; 137ms circuit bootstrapping; 690ms previous bootstrapping time; 1GB previous bootstrapping key size
+- **Target Audience**: Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; pqc-101
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: IACR-ePrint-2018-421.pdf (950,943 bytes, 14,290 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:29:10
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 23fa887ff217f14a
+- **Window Chars**: 14290
+
+---
+
+## IACR-ePrint-2020-1533
+
+- **Reference ID**: IACR-ePrint-2020-1533
+- **Title**: On the Security of Homomorphic Encryption on Approximate Numbers
+- **Authors**: Baiyu Li; Daniele Micciancio
+- **Publication Date**: 2020-12-08
+- **Last Updated**: 2021-03-07
+- **Document Status**: Published
+- **Main Topic**: The document presents passive key-recovery attacks against the CKKS approximate homomorphic encryption scheme and proposes stronger security definitions to address the inadequacy of traditional IND-CPA security for approximate schemes.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: USA; Bodies: None detected
+- **Leaders Contributions Mentioned**: Baiyu Li and Daniele Micciancio (authors who presented the attacks and proposed new security definitions)
+- **PQC Products Mentioned**: HEAAN; SEAL; HElib; PALISADE; RNS-HEAAN; Lattigo
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Traditional IND-CPA security does not adequately capture security for approximate homomorphic encryption schemes against passive adversaries; The CKKS scheme is vulnerable to practical key-recovery attacks when decryption results are disclosed; Major open-source libraries (HEAAN, SEAL, HElib, PALISADE) are vulnerable to this attack due to theoretical definition shortcomings rather than implementation bugs; New indistinguishability-based and simulation-based security definitions are required to properly evaluate the security of approximate homomorphic encryption.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Attack runs in expected polynomial time; Key recovery in just a few seconds for large security parameters; Double-precision floating-point numbers used for FFT; N = 2^16 dimension mentioned for error analysis
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-101; quantum-threats; pqc-candidates
+- **Implementation Attack Surface**: Passive key-recovery attack; Decryption oracle access; Publicly available decryption results
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Implementation testing against HEAAN, SEAL, HElib, and PALISADE; Experimental key recovery verification
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: IACR-ePrint-2020-1533.pdf (521,194 bytes, 16,726 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:29:06
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 3189ba0432e73a90
+- **Window Chars**: 16726
+
+---
+
+## IACR-ePrint-2022-816
+
+- **Reference ID**: IACR-ePrint-2022-816
+- **Title**: Securing Approximate Homomorphic Encryption Using Differential Privacy
+- **Authors**: Baiyu Li; Daniele Micciancio; Mark Schultz; Jessica Sorrell
+- **Publication Date**: 2022-06-22
+- **Last Updated**: 2022-06-22
+- **Document Status**: Published
+- **Main Topic**: The document presents a method to transform approximate homomorphic encryption schemes, specifically CKKS, into IND-CPA-D secure schemes by post-processing decryption outputs with differential privacy noise.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: USA; Bodies: None detected
+- **Leaders Contributions Mentioned**: Baiyu Li; Daniele Micciancio; Mark Schultz; Jessica Sorrell
+- **PQC Products Mentioned**: HElib; Lattigo; HEAAN; PALISADE; Microsoft SEAL
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Post-processing CKKS decryption with Gaussian noise achieves provable IND-CPA-D security; nearly matching upper and lower bounds prove the required noise amount cannot be significantly reduced; dynamic error estimation does not allow for smaller noise parameters without vulnerability to attacks; specific parameter sets are proposed for open-source libraries to achieve (128, 64)-bit security.
+- **Security Levels & Parameters**: (128, 64)-bits of q-IND-CPA-D security; 133-bits of IND-CPA-security; q = 2^10 decryption queries; n <= 2^15 ring dimension
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Additional Gaussian noise size ranges from 25.79 to 73.79 bits depending on security parameters; 48–56 bits of precision left for CKKS approximation and DP error
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: Open-source libraries implementing CKKS (HElib, Lattigo, HEAAN, PALISADE, Microsoft SEAL); calibration of precision/noise parameters in decryption APIs
+- **Relevant PQC Today Features**: Algorithms; Assess
+- **Implementation Attack Surface**: Passive adversary key recovery attacks; IND-CPA-D attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: IACR-ePrint-2022-816.pdf (516,485 bytes, 17,052 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:29:07
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: ef42cf18bc7bf448
+- **Window Chars**: 17052
+
+---
+
+## IACR-ePrint-2024-116
+
+- **Reference ID**: IACR-ePrint-2024-116
+- **Title**: On the practical CPAD security of “exact” and threshold FHE schemes and libraries
+- **Authors**: Marina Checri; Renaud Sirdey; Aymen Boudguiga; Jean-Paul Bultel
+- **Publication Date**: 2024-01-26
+- **Last Updated**: 2024-08-02
+- **Document Status**: Published
+- **Main Topic**: A practical CPAD key-recovery attack on linearly homomorphic Regev cryptosystem and its generalizations to BFV, BGV, and TFHE, including vulnerabilities in threshold variants.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: France; Bodies: None detected
+- **Leaders Contributions Mentioned**: Marina Checri, Renaud Sirdey, Aymen Boudguiga, Jean-Paul Bultel (Authors); Li and Micciancio (Introduced CPAD security notion)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: "Exact" FHE schemes like BFV, BGV, and TFHE are not CPAD secure in their basic form; Threshold variants of BFV, BGV, and CKKS are CPAD-insecure without proper smudging noise addition after partial decryption; The attack is practical, taking less than an hour on an average laptop with a few thousand ciphertexts; Countermeasures require monitoring noise deviation and blocking decryption for ciphertexts exceeding the noise budget, impacting efficiency.
+- **Security Levels & Parameters**: 128-bit security; 256-bit security; 227 bits of security; n = 4096; log2(q) = 58; sigma = 3.2; q = 2^32; sigma = 2^17
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Attack takes less than an hour on an average laptop PC; Requires a few thousand ciphertexts; Requires up to around a million evaluations/decryptions; 289-bits q required for countermeasure vs 240 bits q in OpenFHE
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-101; quantum-threats; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: IACR-ePrint-2024-116.pdf (589,361 bytes, 15,551 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:29:09
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 2bf9bc8b4e9177f0
+- **Window Chars**: 15551
+
+---
+
+## IACR-ePrint-2024-853
+
+- **Reference ID**: IACR-ePrint-2024-853
+- **Title**: Accurate and Composable Noise Estimates for CKKS with Application to Exact HE Computation
+- **Authors**: Jean-Philippe Bossuat; Anamaria Costache; Christian Mouchet; Lea Nürnberger; Juan Ramón Troncoso-Pastoriza
+- **Publication Date**: 2024-05-30
+- **Last Updated**: 2025-08-11
+- **Document Status**: Published
+- **Main Topic**: Development of a composable noise model and prototype tool for accurate precision loss estimation in CKKS Fully Homomorphic Encryption, including a method for exact decryption.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Singapore; Norway; Germany; Switzerland; Bodies: None detected
+- **Leaders Contributions Mentioned**: Jean-Philippe Bossuat; Lea Nürnberger; Anamaria Costache; Christian Mouchet; Juan Ramón Troncoso-Pastoriza
+- **PQC Products Mentioned**: Lattigo; OpenFHE
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: A component-wise noise definition allows for tighter and more composable average-case noise estimates in CKKS; Theoretical noise estimates deviate by no more than 0.01 bits from experimental results even in large circuits; An exact variant of CKKS can be achieved where decryption removes all noise with high probability; Exact CKKS strengthens security against IND-CPA-D attacks by preserving an exact message space; The proposed estimator tool supports complex operations like bootstrapping and polynomial evaluation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Theoretical estimates never deviate by more than 0.01 bits from experimental estimates; Estimator uses arbitrary precision complex arithmetic; Optimized implementation could significantly improve efficiency
+- **Target Audience**: Researcher; Developer
+- **Implementation Prerequisites**: Lattigo library; Concrete messages provided by user
+- **Relevant PQC Today Features**: Algorithms; pqc-101
+- **Implementation Attack Surface**: IND-CPA-D attacks; passive key-recovery attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Experimental demonstration of noise estimate tightness; Comparison with bounds from related work
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: IACR-ePrint-2024-853.pdf (805,902 bytes, 16,535 extracted chars)
+- **Extraction Timestamp**: 2026-10-14T21:29:08
+- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Evidence SHA256**: 2324812291c340d9
+- **Window Chars**: 16535
 
 ---
 
