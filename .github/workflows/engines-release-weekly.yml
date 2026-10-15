@@ -1,0 +1,43 @@
+name: Engine release check (weekly)
+
+# The engine files the site ships are pinned to published engine releases
+# (public/wasm/engines.lock.json, `release` per bundle). This job downloads each
+# pinned release tarball, checks its SHA-256 against the pin and compares every
+# file with the lock (scripts/ci/verify-engines-release.ts). It needs the
+# network, so it runs weekly and in `gate:release`, not on every PR.
+#
+# Not a required check. Run it on demand with workflow_dispatch before a release.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC, clear of the nightly jobs
+  workflow_dispatch: {}
+
+concurrency:
+  group: engines-release-weekly
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  engines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Committed engine files match the lock
+        run: npm run verify:engines
+
+      - name: Pinned engine releases match the lock
+        run: npm run verify:engines:release

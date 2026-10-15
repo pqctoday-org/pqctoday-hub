@@ -9,6 +9,8 @@ import {
   allBundles,
   artifactBundles,
   buildLock,
+  pinRelease,
+  releaseAsset,
   verifyEngines,
   type ProvenanceBundle,
   type WasmArtifact,
@@ -135,6 +137,30 @@ describe('verifyEngines', () => {
     expect(second.bundles.alpha.files['public/wasm/a.wasm'].sha256).not.toBe(
       first.bundles.alpha.files['public/wasm/a.wasm'].sha256
     )
+  })
+})
+
+describe('release pins', () => {
+  it('pins bundles listed in SHA256SUMS for their current commit, and flags a stale pin after a rebuild', () => {
+    const lock = buildLock(dir, prov(), 'org/hsm')
+    const sums = `${'f'.repeat(64)}  ${releaseAsset('alpha', COMMIT)}\n${'e'.repeat(64)}  other-12345678.tar.gz\n`
+    expect(pinRelease(lock, 'engines-1', sums)).toEqual(['alpha'])
+    expect(lock.bundles.alpha.release).toEqual({
+      tag: 'engines-1',
+      asset: 'alpha-aaaaaaaa.tar.gz',
+      tarballSha256: 'f'.repeat(64),
+    })
+    expect(lock.bundles.beta.release).toBeNull()
+    expect(verifyEngines(dir, lock, prov())).toEqual([])
+
+    const rebuilt = prov()
+    rebuilt[0].hsmCommit = 'b'.repeat(40)
+    const relocked = buildLock(dir, rebuilt, 'org/hsm', lock)
+    expect(verifyEngines(dir, relocked, rebuilt)).toContainEqual({
+      bundle: 'alpha',
+      file: 'alpha-aaaaaaaa.tar.gz',
+      what: 'release stale',
+    })
   })
 })
 
