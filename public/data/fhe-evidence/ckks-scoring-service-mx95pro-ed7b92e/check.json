@@ -1,0 +1,37 @@
+{
+ "auc_encrypted": 0.7172984311903541,
+ "auc_exactSigmoid": 0.717298511821587,
+ "auc_plaintextPolynomial": 0.717298511821587,
+ "customersInBatch": 32768,
+ "decisionAgreementEncryptedVsExactSigmoid_at_0.5": 0.9903333333333333,
+ "decisionAgreementEncryptedVsPolynomial_at_0.25": 1,
+ "decisionAgreementEncryptedVsPolynomial_at_0.5": 1,
+ "decisionAgreementPolynomialVsExactSigmoid_at_0.5": 0.9903333333333333,
+ "flaggedFraction_encrypted_at_0.25": 0.2791666666666667,
+ "flaggedFraction_encrypted_at_0.5": 0.079,
+ "maxAbsImaginaryPart": 0,
+ "plaintextPolynomialVsExactSigmoid_uniqueRows": {
+  "bits": 3.265629351421934,
+  "maxAbs": 0.1039794726495743,
+  "meanAbs": 0.00622936207338676
+ },
+ "releasePrecisionBits": 20,
+ "releaseRoundingStep": 9.5367431640625e-7,
+ "scoreVsExactSigmoid_uniqueRows": {
+  "bits": 3.265634912534067,
+  "maxAbs": 0.10397907184387656,
+  "meanAbs": 0.006229365709628847
+ },
+ "scoreVsPlaintextPolynomial_allBatchSlots": {
+  "bits": 21.000361596762993,
+  "maxAbs": 4.7671765882051353e-7,
+  "meanAbs": 2.3998397260886615e-7
+ },
+ "scoreVsPlaintextPolynomial_uniqueRows": {
+  "bits": 21.000361596762993,
+  "maxAbs": 4.7671765882051353e-7,
+  "meanAbs": 2.39976218597842e-7
+ },
+ "slotsReleased": 32768,
+ "uniqueTestRows": 6000
+}

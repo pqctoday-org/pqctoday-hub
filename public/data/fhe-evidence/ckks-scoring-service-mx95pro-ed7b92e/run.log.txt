@@ -1,0 +1,91 @@
+[05:58:14Z] board service run 2026-10-15-id3-mx95pro-server: server mx95pro (ssh), token mx95 (ssh), client container on the Mac
+run: 2026-10-15-id3-mx95pro-server
+kind: board
+mode: remote
+date_utc: 2026-10-15T05:58:14Z
+mac_host: Apple M5 Max, 18 cores, 128 GiB; load 2.58 6.36 8.69; 90 GB free memory
+mac_pick_host: HOST=m5max reason=lower-load-per-core m5max=load/core:0.14 (2.58/18) free:90.3GB
+mac_other_containers_running: 
+server_label: mx95pro
+server_model: NXP FRDM-IMX95-PRO
+server_os: NXP i.MX Distro with Wayland 6.18-wrynose (wrynose)
+server_kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+server_cpus: 6
+server_cpu_features: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+server_mem_total_kib: 16096760
+server_mem_available_at_start_kib: 15362324
+server_swap_total_kib: 0
+server_tmp_fs: tmpfs
+server_loadavg_at_start: 0.14 0.18 0.18
+server_clock_skew_vs_mac_s: 0 (ssh latency included)
+token_label: mx95
+token_model: NXP FRDM-IMX95
+token_os: NXP i.MX Distro with Wayland 6.18-wrynose (wrynose)
+token_kernel: Linux 6.18.20-2.0.0-gb096ce610e95 aarch64
+token_cpus: 6
+token_cpu_features: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+token_mem_total_kib: 7867940
+token_mem_available_at_start_kib: 7203720
+token_swap_total_kib: 0
+token_tmp_fs: tmpfs
+token_loadavg_at_start: 0.41 0.17 0.11
+token_clock_skew_vs_mac_s: 1 (ssh latency included)
+registry_id: 3 (CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0)
+seed: test seed 00..1f (test-support build: the secret key is public by construction; this run measures time, memory and correctness, not secrecy)
+release_policy: owner release: CKKS_PRECISION_BITS=20 at init (rounding 2^-20), flooding off (CKKS_FLOOD_OWNER unset), value bound 2^10, 10,000 decrypts, as the evaluation's token
+customers_per_batch: 32768
+bench_repetitions: 3
+server_workers: 1
+token_threads: 6
+limbs_per_call: 8
+hsm_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+custodian_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+custodian_bytes: 5300448
+custodian_build_commit: ebbc3d20ab209bfba125243f2b9a029b71a8cf9d
+custodian_build_features: educational-ckks,test-support
+custodian_build_profile: release
+custodian_build_builder: pqc-rust container, rustc 1.96.0 (ac68faa20 2026-05-25), Debian 13.5 glibc 2.41, aarch64-unknown-linux-gnu
+custodian_build_sha256: 709aaa909bbbfe18bd7e146d0a0561daa98a1eb95abb46cbc874f830046cfe53
+custodian_build_source: git archive of the HSM checkout's origin/main (no worktree)
+custodian_build_build: cd rust && CARGO_TARGET_DIR=work/target nice -n 15 cargo build --release --features educational-ckks,test-support --example ckks_custodian --jobs 4
+custodian_build_built: 2026-10-15T05:33Z
+fhe_commit: 40c20ed95d0da95bf51442fa48a8e669a459d0ad (+ 0 uncommitted tracked files)
+server_binary: linux/arm64, sha256 8c788765a988da22a24bbd0c94bef654b695feeb0f4e896e0a02f70ff176950c, 9175188 bytes
+server_binary_build_binary: ckks-server (linux/arm64, static, CGO_ENABLED=0)
+server_binary_build_sha256: 8c788765a988da22a24bbd0c94bef654b695feeb0f4e896e0a02f70ff176950c
+server_binary_build_bytes: 9175188
+server_binary_build_fhe_commit: 7947d59ec4f08f7cd53fbeef36ddbd2e87c57911
+server_binary_build_fhe_uncommitted_tracked_files: 0
+server_binary_build_go: go version go1.25.4 linux/arm64
+server_binary_build_image: golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb
+server_binary_build_lattigo: v6.2.0 (vendored at lattigo/, unmodified; go.mod replace)
+server_binary_build_circl: github.com/cloudflare/circl v1.6.5 (go.sum pins the hash)
+server_binary_build_build: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -buildvcs=false -ldflags='-s -w -buildid=' -o work/bin/linux-arm64/ckks-server ./cmd/ckks-server
+server_binary_build_built: 2026-10-15T05:35Z
+client_binary: linux/arm64 (Mac container), sha256 0234a371daa3fc89754c2e5ff671e9a51d3801076cfdb7b43fa968f577552d6d
+model_sha256: c6193a5b7408702426332cde5ac37f6c1a909229dc64e85c9c8d7633bfd77a7d
+test_rows_sha256: b020002121175f69b0bbf2df831af330aed6553f70982ef83a03eac62535588d
+go_image: golang:1.25.4-bookworm golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb
+client_container: 2 CPUs, 8g
+transport: ssh -L tunnel (loopback on the Mac to loopback on the server machine; ssh cipher default), TLS 1.3 X25519MLKEM768 with client certificates inside it
+pki: throw-away test CA from scripts/mkpki.sh, SAN localhost 127.0.0.1 only (no machine name or address)
+[05:58:17Z] upload to the token machine (ckks_custodian)
+[05:58:19Z] token binary uploaded, hash checked, starts
+[05:58:21Z] server binary uploaded, hash checked, starts
+[05:58:21Z] token init (registry ID 3, test seed, CKKS_PRECISION_BITS=20)
+initialised <dir>/tok (PQCTODAY EDUCATIONAL TEST ONLY): CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 seed handle 134
+[05:58:22Z] token export-stream to the Mac (only the descriptor, manifests, public key and relinearization key are stored; every frame is hashed and checked)
+[06:00:28Z] pins: signer 57c533b2ab2502b21f92171491b7e7cf2a4d61cee7965be9cf35a8832ed5fd34 lineage 6fdadb3e6a5fb08dbae3ce83a580afd983e62a28f8b7fcf735f43939fc708d92
+[06:00:28Z] upload to the server machine (test PKI, model, start script)
+[06:00:32Z] server files uploaded, hashes checked
+[06:00:32Z] start the server (over ssh, listening on the machine's loopback, reached through an ssh -L tunnel to Mac loopback port 18443)
+[06:00:33Z] health, models (through the tunnel)
+[06:00:34Z] admission: upload the token's signed public material
+[06:00:36Z] score a batch of 32768 customers (encrypt on the Mac, upload, job, fetch)
+[06:00:46Z] the token decrypts the score ciphertext under its owner release policy
+[06:00:49Z] compare with the plaintext
+[06:00:49Z] bench: 3 repetitions of the same encrypted batch, then four together
+[06:01:32Z] server health and memory
+[06:01:33Z] stop the server
+[06:01:34Z] done
+[06:01:35Z] exit 0
