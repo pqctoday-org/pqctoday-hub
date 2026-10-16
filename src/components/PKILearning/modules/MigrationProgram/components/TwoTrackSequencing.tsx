@@ -116,7 +116,7 @@ export const TwoTrackSequencing: React.FC = () => (
             bullets={[
               'Migrate key establishment first: TLS, VPN/IPsec, stored-data key wrapping.',
               'Prioritise by data secrecy-lifetime — long-lived secrets are already exposed.',
-              'ML-KEM (FIPS 203) is standardised; hybrid (X25519+ML-KEM) is deployable now.',
+              'ML-KEM (FIPS 203) is standardised; hybrid (X25519+ML-KEM) is deployable now in TLS 1.3 (RFC 10024) and OpenSSH 9.9+; the IKEv2 drafts are in the RFC Editor queue.',
             ]}
           />
           <TrackCard
@@ -129,6 +129,7 @@ export const TwoTrackSequencing: React.FC = () => (
               'Migrate signing & PKI: code-signing, firmware, document & certificate signing.',
               'Urgency is gated on CRQC arrival, PKI/HSM readiness, and standards finalisation.',
               'ML-DSA / SLH-DSA (FIPS 204/205) plus on-ramp candidates still maturing.',
+              'Long-lived signatures (firmware, roots of trust, archives) may need to migrate earlier, because they must stay verifiable for years after signing.',
             ]}
           />
         </div>
