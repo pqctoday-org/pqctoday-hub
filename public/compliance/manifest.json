@@ -3375,6 +3375,23 @@
       "replacedAt": "2026-10-16T15:21:45.485033+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "cached file was the PCI SSC homepage, not the standard"
+    },
+    {
+      "refId": "BRAZIL-BACEN-4893",
+      "filename": "BRAZIL-BACEN-4893.html",
+      "sizeBytes": 109881,
+      "contentType": "text/html",
+      "url": "https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?tipo=Resolu%C3%A7%C3%A3o%20CMN&numero=4893",
+      "sha256": "6a123f7b09cc086b931fbab9be6f1a46aeb466c4235e134a0a17ee8c91c7709e",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T16:21:56.677692+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "compliance/BRAZIL-BACEN-4893.html",
+      "status": "downloaded",
+      "acquisition": "manual",
+      "acquiredAt": "2026-10-16"
     }
   ],
   "blocked": {
