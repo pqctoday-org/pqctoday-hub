@@ -6,9 +6,8 @@ import {
   ARCHITECTURE_PACK_DISCLAIMER,
   ARCHITECTURE_PACK_SECTIONS,
   buildArchitecturePack,
-  demoteHeadings,
-  toolPathFor,
 } from './architecturePack'
+import { buildRolePack, demoteHeadings, toolPathFor } from './rolePack'
 
 const now = new Date('2026-10-16T12:00:00Z')
 
@@ -38,7 +37,7 @@ describe('architecture pack', () => {
   it('every section type links to a tool page that exists', () => {
     const ids = new Set(BUSINESS_TOOLS.map((t) => t.id))
     for (const s of ARCHITECTURE_PACK_SECTIONS) {
-      const path = toolPathFor(s.type)
+      const path = toolPathFor(s)
       expect(path).not.toBeNull()
       expect(ids.has(String(path).replace('/business/tools/', ''))).toBe(true)
     }
@@ -76,5 +75,34 @@ describe('architecture pack', () => {
     expect(demoteHeadings('# A\n## B\ntext #not\n###### F')).toBe(
       '### A\n#### B\ntext #not\n###### F'
     )
+  })
+
+  it('includes every document of a multiple section, oldest first', () => {
+    const pack = buildRolePack(
+      {
+        title: 'Test pack',
+        disclaimer: 'Disclaimer.',
+        sections: [
+          { type: 'hybrid-transition', purpose: 'Decisions.', multiple: true, toolPath: '/x' },
+        ],
+      },
+      {
+        now,
+        documents: [
+          doc({ id: 'b', title: 'Second', data: '# B', updatedAt: 2_000 }),
+          doc({
+            id: 'a',
+            title: 'First',
+            data: '# A',
+            updatedAt: 1_000,
+            approvalStatus: 'approved',
+          }),
+        ],
+      }
+    )
+    const md = pack.markdown
+    expect(md).toContain('| 1 | Hybrid Transition Plan (2) | 1 of 2 approved |')
+    expect(md.indexOf('### 1.1 First')).toBeLessThan(md.indexOf('### 1.2 Second'))
+    expect(md).toContain('##### A')
   })
 })
