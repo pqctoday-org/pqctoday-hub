@@ -36470,11 +36470,12 @@
   "successorDependencies": "Enables phased migration planning for CII owners; depends on the maturation of quantum-safe standards and solutions."
  },
  "Singapore:MAS — MAS advisory on addressing cybersecurity risks associated with quantum": {
-  "mainTopic": "MAS advisory requiring Singapore financial institutions to develop quantum risk management programs and conduct cryptographic inventory assessments.",
+  "mainTopic": "Advisory outlining cybersecurity risks from quantum computing and mitigating measures for financial institutions.",
   "pqcAlgorithms": [
    "ML-KEM",
    "ML-DSA",
-   "SLH-DSA"
+   "SLH-DSA",
+   "hybrid algorithms"
   ],
   "quantumThreats": [
    "Cybersecurity risks arising from developments in quantum computing"
@@ -36513,17 +36514,16 @@
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Financial institutions must develop quantum risk management programs",
-   "Organizations are required to conduct cryptographic inventory assessments",
-   "Mitigating measures for quantum cybersecurity risks should be considered by the financial sector"
+   "Financial institutions should consider mitigating measures for quantum computing risks",
+   "Financial institutions should develop quantum risk management programs",
+   "Financial institutions should conduct cryptographic inventory assessments"
   ],
   "securityLevels": [],
   "hybridApproaches": [],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Compliance Officer",
-   "Security Architect",
-   "CISO"
+   "CISO",
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
    "Cryptographic inventory assessments",
@@ -36531,40 +36531,41 @@
   ],
   "relevantFeatures": [
    "pqc-risk-management",
-   "Assess",
-   "Compliance",
-   "migration-program",
-   "pqc-governance"
+   "pqc-governance",
+   "Assess"
   ],
   "implementationAttackSurface": [],
   "cryptoDiscovery": [
-   "cryptographic inventory assessments"
+   "Maintaining an inventory of cryptographic solutions, identifying potentially vulnerable assets, classifying IT and data assets based on sensitivity and criticality"
   ],
-  "testingValidation": [],
-  "qkdProtocols": [],
+  "testingValidation": [
+   "Proof-of-concept trials with quantum security solutions"
+  ],
+  "qkdProtocols": [
+   "Quantum Key Distribution (QKD) technology to establish secure communication channels for distributing encryption keys"
+  ],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
+  "supplyChainRisk": [
+   "Assessing IT supply chain risks arising from quantum threats, requesting vendors to provide quantum-resistant solutions, working with third-party IT vendors"
+  ],
   "deploymentComplexity": [
-   "quantum risk management programs",
-   "PQC planning"
+   "Attaining crypto-agility to migrate from vulnerable algorithms to PQC without significantly impacting IT systems, assessing system infrastructure support for crypto-agility, upgrading infrastructure over time, developing risk mitigation strategies for assets that cannot be migrated"
   ],
   "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "The document explicitly sets a 2028 deadline for regulated financial institutions to submit PQC migration plans, marking a definitive compliance endpoint. It follows a structured sequence of risk assessments and inventories leading to this mandatory submission date.",
-  "mandateLevel": "Mandatory",
+  "organizationalReadiness": [
+   "Ensuring senior management and third-party vendors understand quantum threats, uplifting technical competencies of staff, reviewing internal policies and standards, connecting with industry groups and ISACs"
+  ],
+  "phaseClassification": "The document is an \"Advisory\" that highlights \"measures FIs should consider\" and \"supplementary information,\" indicating a guidance phase rather than a mandatory directive.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "Finance",
-   "Banking"
+   "Finance"
   ],
-  "migrationUrgency": "Long-Term (3-5yr)",
-  "phaseTransition": "Transitions from initial risk assessments and cryptographic inventories (2026) to the formal submission of detailed migration plans.",
-  "historicalSignificance": "Represents a key regulatory milestone where Singapore's MAS requires concrete PQC migration planning from the financial sector by 2028, aligning with national quantum-safe frameworks.",
-  "implementationDates": [
-   "2026: initial risk assessments and cryptographic inventories",
-   "2028: submit detailed PQC migration plans"
-  ],
-  "successorDependencies": "Initial risk assessments (2026); Cryptographic inventories (2026)"
+  "migrationUrgency": "Long-Term",
+  "phaseTransition": "Moves from Awareness to Planning — signals the need for financial institutions to begin inventorying cryptographic assets and developing crypto-agility strategies in anticipation of future quantum threats.",
+  "historicalSignificance": "Represents a significant regulatory guidance milestone for the Singapore financial sector, explicitly directing institutions to prepare for quantum cybersecurity risks and maintain cryptographic inventories.",
+  "implementationDates": [],
+  "successorDependencies": "Requires NIST PQC standardization finalization; Enables financial institutions to develop crypto-agility and risk mitigation strategies."
  },
  "Spain:CCN — Five-Phase PQC Transition Approach": {
   "mainTopic": "Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.",
