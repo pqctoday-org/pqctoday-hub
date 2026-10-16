@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsKpiStrip — the redesign's "so what" up front: five headline KPIs over
  * the scoped corpus, each a one-click drill-down into a filtered Explore. Gives

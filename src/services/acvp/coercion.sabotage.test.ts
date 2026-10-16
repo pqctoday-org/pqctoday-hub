@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // J-3 sabotage: "unsupported parameter coercion" (plan F-3 — never silently
 // coerce an unsupported option to a default). Each case mutates ONE option of
 // a real public NIST ACVP-Server prompt and proves the prototype either

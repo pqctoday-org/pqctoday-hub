@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // xmlAst.ts — parse an OASIS KMIP 3.0 conformance test transcript (an XML
 // file of alternating <RequestMessage>/<ResponseMessage> elements, each

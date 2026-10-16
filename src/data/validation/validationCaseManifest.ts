@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ValidationCaseManifest — the typed shape of src/data/validation/vector-manifest.json,
  * the sidecar provenance record for every expected-value vector file under

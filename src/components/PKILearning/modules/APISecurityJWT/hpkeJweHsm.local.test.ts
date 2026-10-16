@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PQ JWE with the whole HPKE operation inside SoftHSM3 (PKCS#11 CKM_HPKE with
  * the SHAKE256 KDF, hsm #310), against:

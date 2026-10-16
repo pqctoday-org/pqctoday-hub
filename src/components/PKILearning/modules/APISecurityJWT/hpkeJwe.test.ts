@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PQ JWE (HPKE Integrated Encryption) against the published examples of
  * draft-ietf-jose-hpke-pq-pqt-01 Appendix A — HPKE-12 (ML-KEM-768) and HPKE-9

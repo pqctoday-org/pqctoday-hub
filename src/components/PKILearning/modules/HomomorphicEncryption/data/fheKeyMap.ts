@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Where every key and data item sits, per step — data for the key map ────
 // Placements are deployment choices layered on the library flows (the

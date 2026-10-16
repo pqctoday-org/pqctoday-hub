@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Always-visible control deck for the Assess redesign: a Fast/Full segmented
 // track toggle + a per-screen context line + (on fast track during the wizard)

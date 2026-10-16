@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the lossless two-device progress merge (B1 #3). The invariant: a
  * merge NEVER loses progress present on either side.

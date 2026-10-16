@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Layers, FileSearch, Route, ClipboardList } from 'lucide-react'
 import { CryptoAgilityIntroduction } from './components/CryptoAgilityIntroduction'

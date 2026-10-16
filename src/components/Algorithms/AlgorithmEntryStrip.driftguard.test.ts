@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ACCURACY-0705 drift guard: every literal `status:` value any in-app
 // deep-link/CTA passes must be a real STATUS_ITEMS id. This is exactly the

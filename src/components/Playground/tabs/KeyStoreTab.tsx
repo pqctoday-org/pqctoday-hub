@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { KeyStoreView } from '../KeyStoreView'
 import { useSettingsContext, type ClassicalAlgorithm } from '../contexts/SettingsContext'

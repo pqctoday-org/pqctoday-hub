@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Stateful hash-based signature panels (XMSS, LMS/HSS) for the HSM playground —
 // the Sign & Verify tab's "Stateful" family (NIST SP 800-208, PKCS#11 v3.2

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-H H-1: the ExecutionEnvironment record. Missing identity ⇒ non-publishable;
 // a tampered record ⇒ envId no longer recomputes ⇒ non-publishable; the
 // CSP-safe schema interpreter agrees with ajv on the schema file.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure camera-flight math for the /navigate guided tour. THREE.Vector3 is
  * used only as a value type here (no scene/renderer/camera coupling), so

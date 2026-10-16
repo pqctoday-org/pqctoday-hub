@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Entropy Evidence Lab (SP 800-90B) — the real NIST tool in WebAssembly, in a
  * Web Worker, against the PRODUCTION build (vite preview, which sends the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Run records saved to "my evidence": a run manifest (`runManifest.ts`) kept
  * in the artifact store as a `run-manifest` document. `output` holds the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Threats, seen through the protocols a developer owns — B+ remediation 4.3
  * (2026-08-10, built on an explicit user decision).

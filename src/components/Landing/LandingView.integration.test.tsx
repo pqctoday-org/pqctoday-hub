@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * End-to-end integration coverage for the persona-journeys A-grade redesign's
  * wiring (IMPLEMENTATION-PLAN-2026-08-01.md §7 "Full pass" / §8 "Testing

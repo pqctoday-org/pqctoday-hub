@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * DualSignDemo — Phase 4.B PQ + classical dual-signature.
  *

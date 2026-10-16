@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render tests for the Entropy Evidence Lab step. The WASM estimator is mocked
  * (repo convention): the mock returns the PINNED native NIST tool result for

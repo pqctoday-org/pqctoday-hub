@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { FC } from 'react'
 import { ArrowRightLeft, Frame, GitCompareArrows, Globe, ListChecks } from 'lucide-react'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // The runtime schema-subset interpreter must agree with a full JSON Schema
 // 2020-12 implementation (ajv, dev-only) on every pinned schema — on the real
 // fixtures AND on malformed mutations — so the CSP-safe interpreter cannot

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure patent link-filter matching shared by desktop (Patents/usePatentResults'
  * filterPatents) and the phone screen (Mobile/screens/MobilePatentsView), so

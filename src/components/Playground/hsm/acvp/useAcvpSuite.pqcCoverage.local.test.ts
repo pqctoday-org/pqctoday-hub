@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the gap-closure P5 PQC coverage sections — sections/mldsaNegBoundary.ts
 // (5f), sections/mlkemKeyCheckDepth.ts (7c) and sections/slhdsaCoverage.ts (9d) —

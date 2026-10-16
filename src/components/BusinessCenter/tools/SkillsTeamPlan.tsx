@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Skills & Team Plan — Foundations Command Center gap-closer
  * (PHASE-OVERLAY-SPEC.md §6.5 / §7.4).

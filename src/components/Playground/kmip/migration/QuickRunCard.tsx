@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The three-step quick run at the top of the Migration tab. It drives the same
 // engine instance as the estate below, so every key it creates also shows in

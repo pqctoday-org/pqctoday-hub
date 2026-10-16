@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Cross-reference resolvers for the Industry Landscape detail view — the
 // lookups that turn one industry into its Learn modules, technical standards,

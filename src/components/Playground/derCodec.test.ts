@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Known-answer tests for the shared DER codec. These pin the exact byte output
  * so the encoders extracted from VpnSimulationPanel / AttestationPanel (which

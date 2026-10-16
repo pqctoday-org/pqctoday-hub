@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Community profiles behind a product's credited open-source maintainers, for
  * the `/leaders?leader=<leader_id>` links on the product detail (desktop

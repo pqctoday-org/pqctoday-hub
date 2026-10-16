@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Device-fleet key-management types (moved from the Energy & Utilities module
 // and generalised from smart meters to any device fleet, 2026-10-01 split).
 

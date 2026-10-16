@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Cross-check guard: the hub states every CKP_* parameter-set ordinal TWICE —
 // once in `softhsm/constants.ts` (the values actually sent to the engine to

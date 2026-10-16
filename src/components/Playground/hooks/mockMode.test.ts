@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Mock mode is the fallback the interactive playground drops into when
 // WebAssembly cannot load. Before 2026-08-12 it fabricated success: signature

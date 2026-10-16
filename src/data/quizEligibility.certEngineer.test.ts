@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Certification & Validation Engineer quiz eligibility — the same floor the
  * GRC split set (quizEligibility.grc.test.ts): every checkpoint, the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The five SOC detection use cases from the Applied Quantum
  * "SOC Implementation" section. Each is buildable on existing

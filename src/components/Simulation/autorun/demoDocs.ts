@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Demo content for the simulation auto-run. Each entry is a REAL document body
  * recorded via `addExecutiveDocument` — producing a genuine `ExecutiveDocument`

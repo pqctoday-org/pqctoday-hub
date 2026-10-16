@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { hidesWorkbench } from '@/utils/workbenchAccess'

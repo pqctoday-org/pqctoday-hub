@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsDrillBanner — shown on Explore only when filters arrived from a dashboard
  * (KPI / chart) click, so the drill-down handoff is obvious. Replaces the live

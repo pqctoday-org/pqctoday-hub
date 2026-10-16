@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Lightweight nav anchors for the four authoritative CSWP.39 document
  * sections (§3 / §4 / §5 / §6). Renders above the strategic plan as a

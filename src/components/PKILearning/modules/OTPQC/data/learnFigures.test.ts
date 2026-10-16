@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Every number in Learn text must equal what the workshop computes"
  * (plan E17 / E23). The Learn tab and the exercises read these figures at

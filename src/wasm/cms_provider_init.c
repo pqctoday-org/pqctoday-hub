@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /*
  * cms_provider_init.c — Standalone entry point that registers the
  * statically-linked pkcs11-provider with OpenSSL so the `openssl cms`

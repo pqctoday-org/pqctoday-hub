@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // X.509 signature, chain and profile verification for the hybrid-certificate
 // workshop — every format except composite, which compositeVerifier.ts owns.
 //

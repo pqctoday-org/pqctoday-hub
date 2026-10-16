@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-2 plumbing check: hsm_getKeyAttributes must distinguish "not present on
 // this object" (CKR_ATTRIBUTE_TYPE_INVALID) from a real value, via the new
 // `unavailable` map — not collapse both to null the way it did before this

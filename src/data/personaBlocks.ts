@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — "For your role" blocks on modules and tools:
  * one paragraph per CLAIMED persona (decision 3 of the round: a tool's

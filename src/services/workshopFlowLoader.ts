@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FlowMatch, ResolvedFlowContext, WorkshopFlow, WorkshopRegion } from '@/types/Workshop'
 import type { ExperienceLevel } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'

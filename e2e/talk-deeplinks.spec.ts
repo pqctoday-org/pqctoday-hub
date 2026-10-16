@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Deep links that must land on their target, not just on the right page:
 //   - /about#about-data-foundation scrolls to the Platform Data section;
 //   - /openssl?cmd=genpkey opens the Workbench with genpkey selected;

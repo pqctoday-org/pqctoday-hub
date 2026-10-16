@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PolicyScenario — the Agility Workbench's test-scenario runner. When a policy
 // is active, it shows ONLY the validated scenarios tied to that policy

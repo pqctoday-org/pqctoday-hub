@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useEffect, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Search, Wrench, Filter } from 'lucide-react'

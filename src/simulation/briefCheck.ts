@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * briefCheck (sim-mobile-full-play WS-2) — picks the comprehension-check
  * question for a phone "Brief + check" completion (plan §4.2 step 3).

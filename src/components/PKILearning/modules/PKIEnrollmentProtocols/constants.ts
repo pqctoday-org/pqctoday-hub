@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { KeyRound, Send, RefreshCw, Layers, Inbox, FileSearch } from 'lucide-react'
 
 export const MODULE_ID = 'pki-enrollment-protocols'

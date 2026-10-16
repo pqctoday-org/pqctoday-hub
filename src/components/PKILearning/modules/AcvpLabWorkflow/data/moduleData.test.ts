@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Data integrity for the acvp-lab-workflow module: every citation resolves,
  * every Library citation is a real Library row, the classification exercise

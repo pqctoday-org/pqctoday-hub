@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Verifies algorithmListParser.ts against the REAL `openssl list` output
 // from the actual bundled openssl.wasm — not a hand-written fixture. This

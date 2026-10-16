@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Minimal pure-TypeScript ASN.1 DER parser for educational certificate inspection.
 // No external dependencies. Handles X.509 certificate structure to extract:
 //   - Algorithm OIDs (signatureAlgorithm, subjectPublicKeyInfo)

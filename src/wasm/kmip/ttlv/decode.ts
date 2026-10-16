@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // decode.ts — annotate a decoded wire tree (from `KmipEngine.decodeTtlv`,
 // whose `tag` is always the raw `"0x420028"`-style hex codepoint — the wasm

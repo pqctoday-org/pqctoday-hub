@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * coverageModel — the capability × evidence coverage matrix (plan WS-C,
  * C-1..C-5, J-7). Pure functions only: the generator

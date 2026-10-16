@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // certDiscoveryCore.ts — the "Discovering certificates" lesson's engine work,
 // independent of where it runs (a dedicated Web Worker in the browser, a

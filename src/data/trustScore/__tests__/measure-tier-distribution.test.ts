@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Phase 2 acceptance measurement — captures the current trust-tier
  * distribution and writes it to `reports/trust-tier-snapshot.json`.

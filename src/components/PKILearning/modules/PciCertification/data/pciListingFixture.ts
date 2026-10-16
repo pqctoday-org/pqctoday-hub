@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: PCI author
 /**
  * Hand-curated PTS HSM listing fixture (plan r2 §5 P8). The Hub carries no PCI

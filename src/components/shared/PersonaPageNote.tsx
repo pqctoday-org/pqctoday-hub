@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8, Wave C (2026-09-19) — "What this means for you" strip for the
  * twelve routed reference pages (landing, patents, leaders, explore, revisions,

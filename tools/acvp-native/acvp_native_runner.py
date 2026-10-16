@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """PQC Today native ACVP-format runner (plan WS-H, H-2) — stdlib + ctypes only.
 
 Executes an ACVP fixture bundle written by the hub's Node CLI

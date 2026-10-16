@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Seam test against the SHIPPED Rust WASM binary (softhsmrustv3_bg.wasm), not
 // the engine's own source: proves the 2026-09-03 fix for

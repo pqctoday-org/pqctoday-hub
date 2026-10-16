@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { VendorRoadmapEnrichment } from '../types/MigrateTypes'
 
 // 2026-08-07 archive-sweep audit: merge-all source with 3 archived files this

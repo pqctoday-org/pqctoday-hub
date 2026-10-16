@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * openssl-driver — Node-mode harness for driving public/wasm/openssl.wasm
  * directly from vitest (no Web Worker abstraction).

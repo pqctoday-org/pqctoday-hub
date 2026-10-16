@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ACVP-format import / response export — bounded conference prototype (WS-F,
  * F-5). Local file in → PKCS#11 run on the chosen WASM engine → response.json

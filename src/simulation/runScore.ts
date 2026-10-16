@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * runScore (WP4.2) — grades a completed (or in-progress) run A–D from four
  * independently-visible sub-scores, not a black box: pace against a

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * /navigate — the force-cluster graph of the whole PQC knowledge hub.
  * design_handoff_force_cluster/IMPLEMENTATION-PLAN-2026-08-28.md.

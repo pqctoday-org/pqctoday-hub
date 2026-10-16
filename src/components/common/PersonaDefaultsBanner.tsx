@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PersonaDefaultsBanner — the matched/show-all banner used across pages
  * that apply persona-aware default filters (Library, Migrate, Threats,

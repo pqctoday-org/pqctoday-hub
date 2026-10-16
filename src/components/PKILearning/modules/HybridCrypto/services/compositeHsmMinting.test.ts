@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The workshop's REAL minting path, end to end: SoftHSM PKCS#11 keys →
 // buildCompositeCertDraft19 → compositeVerifier.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Resolve a protocol-matrix spec id (e.g. "RFC-4253",
 // "draft-ietf-sshm-mlkem-hybrid-kex-10") to the matching Library referenceId so

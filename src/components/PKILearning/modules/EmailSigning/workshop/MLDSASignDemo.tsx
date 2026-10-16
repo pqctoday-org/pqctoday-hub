@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MLDSASignDemo — Phase 2 end-to-end CMS sign + verify using ML-DSA-65.
  *

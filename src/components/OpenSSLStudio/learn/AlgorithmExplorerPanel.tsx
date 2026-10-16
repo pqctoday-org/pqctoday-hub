@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // AlgorithmExplorerPanel — OpenSSL Studio's live "what does THIS build
 // actually support" discovery panel, mirroring HsmMechanismPanel.tsx (the

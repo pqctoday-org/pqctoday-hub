@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Verify LLM-emitted claim citations (parseCitations.ts) against the
  * chunks actually retrieved for this turn.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { EstimateNote } from './EstimateNote'

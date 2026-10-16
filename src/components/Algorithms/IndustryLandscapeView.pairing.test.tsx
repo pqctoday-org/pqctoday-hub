@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The per-kind classical → PQC pairing on the landscape tile and the
 // Replaces / Replaced-by chips on the mechanism lens (2026-09-17, audit R1).

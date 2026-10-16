@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { GateReason } from '@/components/shared/GateReason'
 import { Loader2, Inbox, AlertTriangle, CheckCircle2, Info } from 'lucide-react'

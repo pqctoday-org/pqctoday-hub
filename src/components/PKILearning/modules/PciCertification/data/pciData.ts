@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: PCI author
 /**
  * Path D (PCI) data: scheme clocks, the v5.0 change list, the operating-stack

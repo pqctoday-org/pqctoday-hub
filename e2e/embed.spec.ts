@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from '@playwright/test'
 
 // These tests rely on the `../pqctoday-sdk/embed-test-site` running on http://localhost:3098

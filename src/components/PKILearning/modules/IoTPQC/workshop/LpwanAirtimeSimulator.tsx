@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Step 6 — LPWAN airtime for a signed firmware update (generalised 2026-10-01
  * from the Energy & Utilities RF-mesh simulator). The corrected lesson: the

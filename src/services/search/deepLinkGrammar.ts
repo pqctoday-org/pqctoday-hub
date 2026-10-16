@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link grammar — single source of truth for valid `chunk.deepLink` URLs
  * emitted by the RAG corpus generator and consumed by the PQC Assistant.

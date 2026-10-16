@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Per-threat claim verdicts from the private claim ledger
  * (`public/threats/claim-status.json`, written by the data pipeline): for each

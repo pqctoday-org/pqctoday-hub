@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Prerender script — generates static, crawlable HTML for every indexable route
  * using Playwright (already a devDependency).

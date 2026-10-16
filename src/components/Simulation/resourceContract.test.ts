@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-07 — contract test for the sim's external dependencies. If an upstream
  * feature renames/removes a symbol the sim relies on, this fails CI instead of

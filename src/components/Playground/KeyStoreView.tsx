@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo } from 'react'
 import { Key as KeyIcon, Trash2, Archive, Upload } from 'lucide-react'
 import type { Key } from '../../types'

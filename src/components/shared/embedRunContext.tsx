@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * embedRunContext (W6.1/W6.3) — the scenario an embedded hub resource is being
  * opened inside.

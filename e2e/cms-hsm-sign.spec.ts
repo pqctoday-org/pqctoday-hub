@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * S/MIME Workshop P0 — CMS sign+verify and encrypt+decrypt E2E KAT tests.
  *

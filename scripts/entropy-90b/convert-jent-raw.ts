@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Convert the D2/D3 device datasets (pqctoday-priv/local-evidence-cache/
  * entropy/<date>/) into NIST SP800-90B tool input for the W1 parity run.

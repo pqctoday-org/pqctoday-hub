@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { GitBranch, CheckCircle, XCircle, AlertCircle, HelpCircle, Info } from 'lucide-react'
 import {

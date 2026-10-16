@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // bindings.ts — per-test `$NAME` → resolved-value map. Built up as
 // responses come back: the first time an expected response contains

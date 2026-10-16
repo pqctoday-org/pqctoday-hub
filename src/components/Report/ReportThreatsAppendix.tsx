@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink, EyeOff } from 'lucide-react'

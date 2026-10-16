@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Two-Track roadmap swimlane — renders milestones across three lanes (the
  * Foundations/governance spine + Track A confidentiality + Track B integrity)

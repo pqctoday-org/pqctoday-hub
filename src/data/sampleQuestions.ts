@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Sample questions for the PQC Assistant chatbot, organized by app section.
  * Sourced from the Q&A test harness (QandA_pqctoday.md).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // End-to-end sign-then-verify for every composite profile the workshop offers,
 // using REAL keys and REAL primitives — no capturing stubs.

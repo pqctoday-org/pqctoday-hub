@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The lens makes two different claims under one label. If the split between
  * them ever collapses — everything reported as "stated", or the inference

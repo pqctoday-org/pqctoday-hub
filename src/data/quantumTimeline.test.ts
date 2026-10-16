@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { QC_FIRST_YEAR, QC_BROAD_YEAR } from './quantumTimeline'
 import { CRQC_ESTIMATES } from './regulatoryTimelines'

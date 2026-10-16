@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Shim parity driftguard (dev-tabs-pkcs11-kmip plan G6). Asserts the p11
 // shim's public method surface against a manifest of the REAL

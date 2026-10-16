@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ExecutionEnvironment — plan WS-H H-1. The identity of ONE execution target
  * for ONE run: where it ran (OS/image, arch, CPU/board, emulation), what ran

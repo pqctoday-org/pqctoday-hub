@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the Tabs primitive (M8) — a custom (non-Radix) context-driven
  * implementation used across many pages. Pins the controlled/uncontrolled

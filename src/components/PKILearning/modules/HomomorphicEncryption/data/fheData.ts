@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Homomorphic Encryption (FHE) — data for the Learn section ───────────
 // Scope rule (2026-10-02): only schemes defined in ISO/IEC 28033 and only

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-3 write-half check: every label-taking key generator must actually
 // write CKA_LABEL into the object it creates. hsm_generateECKeyPair
 // encoded the label, malloc'd it, freed it in the finally block — and never

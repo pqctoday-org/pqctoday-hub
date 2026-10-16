@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Proves the four src/data/acvp/slhdsa_prehash_* files are genuinely exercised
 // by the real Rust engine — the same job nistPqcVectors.local.test.ts does for

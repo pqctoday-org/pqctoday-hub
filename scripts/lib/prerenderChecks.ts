@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { JSDOM } from 'jsdom'
 import { minimumContentCharacters, type SearchRoute } from '../../src/seo/searchRoutes'
 import { SNAPSHOT_MAX_BYTES, byteLength } from './snapshotBudget'

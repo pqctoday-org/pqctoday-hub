@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Per-step Input → Computation → Output for the FHE + HSM flows ─────────
 // Aligned by index with each flow's `steps` (checked by fheHsmCosts.test.ts).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Six real X.509 v3 certificates (EC P-256, self-signed, subject
 // "O=PQC Today, CN=Lesson Cert <n>", 10-year validity) used as the

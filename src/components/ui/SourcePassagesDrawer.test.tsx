@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Verifies SourcePassagesDrawer renders the toggle, expands passages on
  * click, and silently renders nothing when no passages are available.

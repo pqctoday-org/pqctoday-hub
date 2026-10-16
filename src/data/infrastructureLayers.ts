@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Infrastructure layer taxonomy — hoisted out of the unrendered
 // `Migrate/InfrastructureStack.tsx` component (item 7, migrate remediation).

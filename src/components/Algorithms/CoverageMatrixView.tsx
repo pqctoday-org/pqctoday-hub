@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CoverageMatrixView — the public capability coverage matrix and open-gaps
  * register (plan WS-C C-6, J-7; decision Q7: public on the Hub).

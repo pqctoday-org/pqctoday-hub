@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // F-3 dispatch bookkeeping, F-4 response shape + golden comparison, F-6
 // evidence sidecar — driven through a TEST-ONLY fake engine that answers from
 // NIST expectedResults.json (no crypto; see testing/expectedResultsFakeEngine.ts).

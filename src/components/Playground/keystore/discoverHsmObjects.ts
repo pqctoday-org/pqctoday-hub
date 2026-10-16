@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // discoverHsmObjects — enumerate every PKCS#11 object on the current session
 // and register any handle HsmContext doesn't already know about. Shared by

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { deriveSimClock, type SimClockInput } from './useSimClock'
 import { SIM_CRQC_YEAR, COUNTRY_DEADLINE_YEAR, shelfLifeFor } from '@/data/moscaClock'

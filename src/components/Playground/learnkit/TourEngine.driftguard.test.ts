@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // TourEngine.driftguard.test.ts — asserts every `data-tour` selector the two
 // Developer-tab guided lessons (dev-tabs-pkcs11-kmip plan, G5) point at

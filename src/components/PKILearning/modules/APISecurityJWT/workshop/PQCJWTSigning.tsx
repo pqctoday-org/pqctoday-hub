@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { PenLine, Key, CheckCircle, XCircle, Copy, Check, ShieldCheck } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'

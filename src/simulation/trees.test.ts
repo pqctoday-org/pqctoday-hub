@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drift guard for the generated Simulation trees. Every leaf must point at a
  * REAL hub resource; if hub coverage changes and a tree goes stale, this fails.

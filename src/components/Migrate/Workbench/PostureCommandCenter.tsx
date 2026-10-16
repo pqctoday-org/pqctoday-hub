@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ArrowRight, RotateCcw } from 'lucide-react'
 import { REPLACE_ASSETS, DECISIONS } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'

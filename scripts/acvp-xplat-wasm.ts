@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-H H-2(a): run the WASM C++ + Rust baseline targets and emit THE fixture
 // bundle every native/board target consumes (logic:
 // src/services/acvp-xplat/node/wasmBaseline.ts).

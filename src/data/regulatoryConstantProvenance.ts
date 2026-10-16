@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Where every hand-coded date in regulatoryTimelines.ts comes from (timeline
  * remediation r2 W-K, 2026-09-25).

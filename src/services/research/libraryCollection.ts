@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Library collections (researcher evidence workspace, Layer 2): a named set of
  * Library record ids, each with the user's own annotation and the record's

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { LayoutGrid, Activity, ShieldCheck, Truck, Key, Calendar } from 'lucide-react'
 import { AutomotivePQCIntroduction } from './components/AutomotivePQCIntroduction'

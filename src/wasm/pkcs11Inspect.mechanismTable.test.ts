@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression test for the mechanism-table consolidation (v3.2 audit
 // remediation, Commit 2): pkcs11Inspect.ts used to hold its own private

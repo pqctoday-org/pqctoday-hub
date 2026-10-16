@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // A link from an architecture lesson to the architect's decision editor in the
 // Command Center's architecture pack, opened on that lesson's template. Shown

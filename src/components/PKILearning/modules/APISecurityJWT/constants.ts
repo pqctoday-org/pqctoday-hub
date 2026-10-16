@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ── JOSE Algorithm Data ─────────────────────────────────────────────────────
 //
 // PQC `alg` codes follow RFC 9964 (ML-DSA for JOSE and COSE, May 2026).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Corpus-mode content for KmipPipelineBuilder's palette/canvas/summary
 // regions — the OASIS conformance corpus as an alternate palette source,

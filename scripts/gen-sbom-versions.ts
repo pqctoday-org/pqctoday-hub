@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * gen-sbom-versions — regenerate src/data/sbomVersions.generated.ts and audit
  * the curated SBOM (src/data/sbomComponents.ts) against what this build ships.

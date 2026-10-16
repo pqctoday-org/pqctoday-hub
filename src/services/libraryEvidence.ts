@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Resolve Library reference ids to their current state, for documents that
  * cite evidence (architecture decision records). The Library corpus is large,

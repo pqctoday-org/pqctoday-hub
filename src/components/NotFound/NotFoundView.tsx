@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useLayoutEffect } from 'react'
 import { Link, useLocation } from 'react-router'
 import { NOT_FOUND_LINKS } from '@/seo/notFoundContent'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Finds code in the built chunks that reads another chunk's export while that chunk is still
  * starting up, which in production leaves it undefined (or "not a function") and stops the page

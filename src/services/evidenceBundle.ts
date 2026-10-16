@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The researcher's evidence bundle (Layer 1): one zip that ties together the
  * Library records a researcher bookmarked, their citations, every run record

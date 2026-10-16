@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared helpers for client-side downloads: zip a set of generated files,
  * hand a Blob to the browser as a download, and name it consistently.

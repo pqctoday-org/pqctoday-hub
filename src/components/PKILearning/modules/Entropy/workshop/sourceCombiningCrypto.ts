@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SP 800-90 series source assembly and conditioning functions via SoftHSMv3 PKCS#11.
  *

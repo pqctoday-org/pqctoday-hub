@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ForceClusterNode } from '@/data/forceClusterGraph'
 import { GRAPH_TOKEN, TYPE_LABEL } from './graphVisuals'
 

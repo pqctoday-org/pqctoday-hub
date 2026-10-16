@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TokenSetupPanel — 3-step PKCS#11 token initialization UI.
  * Reads/writes via useHsmContext(); calls hsm_* helpers directly.

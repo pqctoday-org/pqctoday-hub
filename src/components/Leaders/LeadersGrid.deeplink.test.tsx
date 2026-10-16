@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ?leader= deep links through a real router (deep-link remediation PR 1):
  * hidden targets widen filters in ONE navigation (incl. all=1 for stubs), the

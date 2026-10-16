@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W2 — main-thread API for running the NIST SP 800-90B tool (WASM) in a Web
  * Worker, with progress and cancel.

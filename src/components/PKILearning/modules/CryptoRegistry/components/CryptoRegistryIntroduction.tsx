@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { BookOpen, ListTree, Atom, Globe, Wrench } from 'lucide-react'

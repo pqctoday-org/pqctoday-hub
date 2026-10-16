@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical in-app links into /migrate. The page reads `product` (a
  * product_id, or an exact/former name), `productIds`, `domain` (a workbench

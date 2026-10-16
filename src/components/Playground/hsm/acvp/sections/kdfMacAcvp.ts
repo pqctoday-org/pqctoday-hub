@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PBKDF2 and KMAC-128 from NIST ACVP-Server reference samples (remediation
 // plan 2026-09-24, WS-E), per engine:

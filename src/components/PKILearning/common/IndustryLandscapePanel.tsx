@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * IndustryLandscapePanel — "In the Industry Landscape" for one module.
  *

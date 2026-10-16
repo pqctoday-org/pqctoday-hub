@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Dependency-free loaders for the published certification snapshot:
  *   - public/data/compliance-data.json       (the records)

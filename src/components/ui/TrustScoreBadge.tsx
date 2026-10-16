@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { TrustBadge } from './TrustBadge'
 import { TrustScoreTooltip } from './TrustScoreTooltip'

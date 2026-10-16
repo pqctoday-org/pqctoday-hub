@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Integration test for the generic op-template pipeline (buildRequest →
 // toWireTree → encodeTtlv → submit → decodeTtlv, via `runOp`) — the

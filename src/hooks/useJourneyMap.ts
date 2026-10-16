@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useMemo } from 'react'
 import { usePersonaStore } from '@/store/usePersonaStore'

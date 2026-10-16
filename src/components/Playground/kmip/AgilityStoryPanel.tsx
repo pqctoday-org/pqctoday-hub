@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The executive's way into the control plane — B+ remediation 4.5 (2026-08-10).
  *

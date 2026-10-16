@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getStandard } from '@/data/standardsRegistry'
 import { getAlgorithm } from '@/data/algorithmProperties'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * JurisdictionPanel — the Simulation's per-country compliance rule. The country
  * dial drives which migration choice (hybrid vs pure) is compliant, not just

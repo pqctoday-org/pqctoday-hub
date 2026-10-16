@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Added 2026-07-16 (compliance-maintenance audit, Phase 4.5) — this component
 // had zero co-located tests despite being the primary drill-down for every

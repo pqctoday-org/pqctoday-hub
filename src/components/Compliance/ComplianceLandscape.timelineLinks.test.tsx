@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link gap (2026-10-02 audit §3): timeline event titles were plain text
 // and every Timeline chip linked the whole country, although the event ids

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MobilePlaygroundOps — reduced interactive Playground for mobile.
  * Provides KEM + Sign & Verify tabs via scroll-snap carousel with WASM capability check.

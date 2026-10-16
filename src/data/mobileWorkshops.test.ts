@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 import { MOBILE_WORKSHOP_READY } from './mobileWorkshops'

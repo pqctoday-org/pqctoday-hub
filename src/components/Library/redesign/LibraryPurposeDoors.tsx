@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryPurposeDoors — the coarse "why are you here" pre-filter that sits above
  * the facet rail + results. Four doors (Everything / Learn / Reference / Plan

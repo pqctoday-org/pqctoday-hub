@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical in-app links to one algorithm on /algorithms. `?algo=<id>` opens
  * that algorithm's detail; the id is the kebab-case slug of the reference

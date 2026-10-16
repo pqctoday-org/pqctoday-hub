@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Normalize a catalog product's PQC + FIPS status into badge-ready shapes for
 // the workbench product rows. Reads the clean `pqcStatusCanonical` field

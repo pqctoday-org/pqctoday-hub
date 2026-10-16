@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Register model — turns the applicability engine's output into the rows the
  * Obligations tab draws. Pure functions only; no React, no stores.

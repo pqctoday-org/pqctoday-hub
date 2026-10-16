@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: PCI author
 /* eslint-disable security/detect-object-injection -- keys are typed literal unions (PciRefKey / PlainSourceKey) */
 /**

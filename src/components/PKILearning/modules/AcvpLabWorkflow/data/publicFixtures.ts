@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Lazy loaders for the two public NIST ACVP-Server sample vector sets the
  * WS-F ACVP-format prototype pins (src/services/acvp/__fixtures__/

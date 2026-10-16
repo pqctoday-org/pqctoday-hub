@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // OpenSslLearnView — OpenSSL Studio's "Learn" tab: 11 guided lessons whose
 // steps run REAL `openssl` commands against the same WASM engine the

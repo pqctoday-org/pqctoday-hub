@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Direct unit coverage for the timeline scope helpers (C6) — the single source of
  * truth that BOTH TimelineView.ganttData and the sim's TimelineEmbed filter

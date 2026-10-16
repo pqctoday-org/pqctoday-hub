@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A Learn track is a topic grouping, never a persona (GRC journey audit, 15 Oct
  * 2026). Six GRC Essentials used to carry an "EXECUTIVE" badge because the

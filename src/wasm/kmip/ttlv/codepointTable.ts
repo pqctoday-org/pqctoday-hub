@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // codepointTable.ts — KMIP 3.0 tag/enum codepoint table, ported from
 // pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/_ttlv.py's

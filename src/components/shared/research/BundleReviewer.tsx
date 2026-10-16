@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Open a bundle" (read-only): a reviewer picks an evidence bundle zip and
  * sees its research question, collections (with the state at bundle time

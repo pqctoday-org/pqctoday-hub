@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Regression coverage for the Executive/GRC split's snapshot (Drive/backup)
  * behavior: a restored snapshot must round-trip a valid `grc` persona and

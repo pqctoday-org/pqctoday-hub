@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression test: discoverHsmObjects is per-step registry bookkeeping, not
 // lesson content, and must never add entries to the learner-visible call

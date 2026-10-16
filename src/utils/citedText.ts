@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Splits a run of prose into plain text and standards citations, so the
  * citations can be rendered as links to the document in this app's own library.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Check src/data/acvp/ecdsa_test.json (P-256) or ecdsa_p384_test.json (P-384)
 against RFC 6979 Appendix A.2.5 / A.2.6.

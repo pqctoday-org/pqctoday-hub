@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render smoke tests for the simulation embed widgets (C5 slice / C6 / C7).
  *

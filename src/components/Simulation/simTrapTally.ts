@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simTrapTally (PR-5) — a local, per-browser tally of which Common-Failure (trap)
  * moves a player has fallen for. It turns play into a content-priority instrument:

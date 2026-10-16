@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * moduleContentRegistry — every module's `lastReviewed` date, surfaced for the
  * UI (remediation item 5: freshness should be visible in-product, not only

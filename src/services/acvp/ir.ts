@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ACVP-shaped intermediate representation (IR) for the WS-F bounded
  * ACVP-format import/response-export prototype.

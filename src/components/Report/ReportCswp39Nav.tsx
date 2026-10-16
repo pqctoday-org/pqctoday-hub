@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Link } from 'react-router'
 import { REPORT_SECTION_LABELS, getReportSectionsForStep } from '@/data/reportSectionToCswp39'
 import type { CSWP39StepId } from '@/components/shared/CSWP39StepBadge'

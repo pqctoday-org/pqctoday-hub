@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Save one of the architecture pack's own artifacts. The store keys documents
 // on moduleId + type, so a re-save of the same moduleId updates the existing

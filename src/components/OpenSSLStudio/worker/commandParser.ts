@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // commandParser — the single tokenizer for an `openssl ...` command string.
 // Extracted from useOpenSSL.ts's inline parsing so the Learn tab's lesson

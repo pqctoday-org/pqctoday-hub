@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 import { Lock, BookOpen, X } from 'lucide-react'

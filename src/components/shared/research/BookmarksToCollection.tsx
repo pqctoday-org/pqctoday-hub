@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Save bookmarks as a collection": turns the user's Library bookmarks into a
  * named collection, each record with its state as it is now. Bookmarks stay

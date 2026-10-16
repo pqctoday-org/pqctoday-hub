@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * EmbedLoading (PR6) — the loading affordance shown while a lazily-imported
  * in-sim tool (Learn module, activity, workshop, reference) resolves. Drives off

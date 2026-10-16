@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WorkshopShell — the shared chrome both hub workshops (PKCS#11 at
  * /playground/hsm, KMIP/CACP at /playground/cacp) render around their

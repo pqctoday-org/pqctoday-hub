@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The persistent step-map rail — domain-grouped steps with progress, time-left,
 // answered ticks and click-to-edit on any reached step. Replaces the legacy thin

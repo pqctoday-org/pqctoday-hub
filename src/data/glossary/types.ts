@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Glossary types — shared by all category JSON files and consumers.
 
 export interface GlossaryTerm {

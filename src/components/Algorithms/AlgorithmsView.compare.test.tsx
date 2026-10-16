@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Transition-tab comparison panel ↔ ?cmp=1 (2026-09-29). A shared
  * `?tab=transition&compare=a,b` link opens the panel (not just the tray),

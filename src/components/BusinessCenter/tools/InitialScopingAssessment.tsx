@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Initial Scoping Assessment — Phase 0 (Executive Mandate) Command Center
  * gap-closer. Captures the rapid first-cut scope the framework's Activity 0.5

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * embeddingRetrieval unit tests — uses synthetic 4-dim fixture vectors
  * rather than driving the real Transformers.js encoder. Keeps tests fast

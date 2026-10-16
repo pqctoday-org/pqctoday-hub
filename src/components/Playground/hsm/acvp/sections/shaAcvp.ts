@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // SHA-2 / SHA-3 message-length boundaries and Monte Carlo (remediation plan
 // 2026-09-24, WS-E), per engine, from pinned NIST ACVP-Server samples:

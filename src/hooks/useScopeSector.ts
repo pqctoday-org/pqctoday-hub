@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback } from 'react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'

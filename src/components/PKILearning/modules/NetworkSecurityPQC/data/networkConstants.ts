@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 export type VendorTier = 'enterprise' | 'mid-market' | 'open-source'
 export type PQCReadiness = 'ga' | 'beta' | 'roadmap' | 'not-planned'

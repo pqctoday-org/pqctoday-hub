@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The 7 acronyms that gate comprehension of the Compliance Records tab
 // (FIPS 140-3 / NIST CAVP / CC / CSPN / EUCC / CNSA 2.0 / HNDL). Pure-moved out of

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * sectorTrack — optional, non-gating learn steps surfaced alongside the phase
  * tree for sector-specific organisations. These steps never affect maturity or

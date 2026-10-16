@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The operations pack's own artifacts (Layer 2). Each is stored in the
  * artifact store as Markdown (`data`) plus its structured `inputs`:

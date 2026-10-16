@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Shield, AlertTriangle, CheckCircle, Clock, Car, Info } from 'lucide-react'
 import type { ASILLevel, AutomotiveFunction } from '../data/automotiveConstants'

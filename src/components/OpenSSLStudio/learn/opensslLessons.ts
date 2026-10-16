@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // opensslLessons.ts — OpenSSL Studio's guided curriculum: 11 lessons whose
 // steps run REAL `openssl` commands against the same OpenSSL 3.6.3 WASM

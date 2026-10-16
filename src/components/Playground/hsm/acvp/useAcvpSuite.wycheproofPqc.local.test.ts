@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PROJECT WYCHEPROOF (Google / C2SP) ML-KEM and ML-DSA vectors, driven through
 // the REAL useAcvpSuite hook in dual-engine mode — sections/wycheproofPqc.ts.

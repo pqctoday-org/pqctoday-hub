@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Exec-tour financial artifacts (ROI model, breach scenario, cost of inaction,
  * board deck) DERIVED from the same shared math the real Business Case tools

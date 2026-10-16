@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Simulation sub-sections (WS-05 extraction) — the prop-driven, presentational
  * pieces of the console that live outside the SimulationView shell: the resource

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Accuracy and behaviour guards for the OT module's data (plan findings
  * E1–E26 and I22 in iot-ot-split-plan-10012026.md).

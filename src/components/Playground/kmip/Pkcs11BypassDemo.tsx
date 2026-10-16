@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pkcs11BypassDemo — WP-4 showcase. Every other demo on this page goes
 // THROUGH the KMIP dispatcher and the active CACP policy above. This one

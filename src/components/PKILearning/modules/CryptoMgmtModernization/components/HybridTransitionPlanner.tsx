@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Hybrid Algorithm Transition Planner (M5 / CSWP.39 §3.2.4)
  *

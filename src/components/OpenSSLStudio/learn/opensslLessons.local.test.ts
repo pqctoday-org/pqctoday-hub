@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Curriculum guarantee for the OpenSSL Studio Learn tab. Replays every
 // lesson step against the REAL openssl.wasm (via src/test/kat/openssl-driver.ts

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // pkcs11LessonsV32.ts — the "v3.2 & the PQC transformation" track. Each
 // lesson pairs a classical step with its post-quantum counterpart (mirroring

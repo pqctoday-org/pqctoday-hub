@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PKCS#11 engine adapter (F-3) — the ONE executor both code paths use: the
  * browser panel hands it a module from getSoftHSMCppModule()/

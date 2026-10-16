@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Token scenarios for the workshop's attack lab. Each one is a real ML-DSA-65
  * JWS (or a forgery derived from one) aimed at the same API, so the lab can

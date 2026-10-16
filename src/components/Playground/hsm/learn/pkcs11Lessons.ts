@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // pkcs11Lessons.ts — the "PKCS#11 Foundations" track's curriculum data.
 // Each step runs a REAL call against the shared HsmContext's live wasm

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Golden comparison (F-4): a generated response vs. a NIST ACVP-Server
  * `expectedResults.json` for the same prompt. Only possible for PUBLIC sample

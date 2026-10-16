@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Printability heuristic for deciding whether a hex-encoded byte payload's
  * default Inspect view should be hex or decoded text — generalized out of

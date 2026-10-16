@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * make-404.ts — writes dist/404.html, the page GitHub Pages serves (with a 404 status) for an address
  * that has no file, from the built dist/index.html. See scripts/lib/notFoundPage.ts.

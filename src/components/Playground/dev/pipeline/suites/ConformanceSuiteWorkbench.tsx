@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ConformanceSuiteWorkbench — the Build tab's PKCS#11 v3.2 Profiles
 // conformance suite inside the shared Builder/Code shell (design handoff

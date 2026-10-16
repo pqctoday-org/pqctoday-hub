@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cross-target comparator (plan WS-H H-4/H-5/H-6). Pure: all file I/O lives in
  * ./node/. For every declared target × fixture × test case it assigns exactly

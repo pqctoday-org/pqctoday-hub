@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cloud Shared-Responsibility Crypto Matrix (M8 / CSWP.39 Section 6.4)
  *

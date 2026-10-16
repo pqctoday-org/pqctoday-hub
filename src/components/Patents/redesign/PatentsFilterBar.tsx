@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsFilterBar — the consolidated Explore filter bar. Search leads; four
  * primary dropdowns (Region / Agility / Impact / Domain); a live "Showing N of M"

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // LOCAL-ONLY (needs Docker + an existing sandbox container; never in CI):
 // the Python/ctypes native runner reproduces the Node CLI goldens on a real
 // native PKCS#11 engine, writes schema-valid evidence + environment records,

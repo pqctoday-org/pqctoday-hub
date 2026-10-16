@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * katEvidence — the evidence class and source of every katRunner test kind,
  * read from the GENERATED per-case evidence records

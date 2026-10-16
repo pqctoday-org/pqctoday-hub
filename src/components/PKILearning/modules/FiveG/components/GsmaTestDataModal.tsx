@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { X, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'

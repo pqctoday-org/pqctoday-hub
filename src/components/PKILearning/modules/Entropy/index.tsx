@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Dice5, BarChart3, ShieldCheck, Workflow, Combine, Microscope } from 'lucide-react'
 import { EntropyIntroduction } from './components/EntropyIntroduction'

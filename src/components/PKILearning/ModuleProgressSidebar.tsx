@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState } from 'react'
 import { ArrowRight, CheckCircle, ChevronDown, ChevronUp, Trophy, Wrench } from 'lucide-react'

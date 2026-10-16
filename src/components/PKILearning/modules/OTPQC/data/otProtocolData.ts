@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * OT protocol native-security data (workshop Step 1 and the Learn
  * "OT protocol native security" section).

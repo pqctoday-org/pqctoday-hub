@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // URL params owned by the Gantt chart and its Documents panel:
 //   ?phase ?deadlines=1 ?etype ?gsort ?gdir  (filters/sort, replace)
 //   ?event from a Documents-panel click       (push; close = replace)

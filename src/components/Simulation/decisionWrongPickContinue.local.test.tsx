@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 nav remediation (WP1) — a wrong pick on Realistic/Hard must never be a
  * dead end. The pick stands for scoring (one consequence, attempt kept), but the

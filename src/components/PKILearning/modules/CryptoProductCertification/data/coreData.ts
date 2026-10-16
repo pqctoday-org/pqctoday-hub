@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Core (Shared author)
 /**
  * Data for the common core (plan r2 Common Core 1–2) and its two workshops:

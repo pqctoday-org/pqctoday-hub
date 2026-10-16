@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every Arm acceleration PQC Today actually implemented in its engine
  * (pqctoday-hsm `softhsmrustv3`) and appliance images (pqctoday-cacp), with

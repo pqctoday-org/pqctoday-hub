@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link PR 2 (Patents): the Search tab's `?sq`, drawer prev/next from the
  * active tab, prior-art citations pushing history, `inventor`/`patentIds`

@@ -482,7 +482,7 @@ async function main() {
     boardEntries.push(`  ${roleKey}: [\n${variantEntries.join('\n')}\n  ],`)
   }
 
-  const generated = `// SPDX-License-Identifier: GPL-3.0-only
+  const generated = `// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
  * Source: ${csvPath.replace(ROOT + '/', '')}

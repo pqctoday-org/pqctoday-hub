@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The Report's applicability panel no longer calls every framework from a body in
  * your country "Mandatory". Once frameworks have been reviewed it shows Binding,

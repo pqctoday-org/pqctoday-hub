@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The education / not-for-production status notice (education-notice
  * remediation 2026-09-26). Modelled on `validationDisclaimer.test.tsx`: pin the

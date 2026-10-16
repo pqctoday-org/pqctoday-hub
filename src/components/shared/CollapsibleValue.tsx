@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CollapsibleValue — click-to-expand hex payload, extracted out of
  * Pkcs11InspectPanel.tsx so the pipeline builders' Inspect views can reuse

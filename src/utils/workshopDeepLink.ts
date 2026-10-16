@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { WorkshopStep, WorkshopRegion } from '@/types/Workshop'
 import type { Region } from '@/store/usePersonaStore'
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ArchitecturePanel — the Simulation's per-size migration board. Systems show
  * their product PQC status; each vulnerable protocol link is migratable now,

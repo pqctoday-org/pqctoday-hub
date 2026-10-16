@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "You're seeing the simplified view" — B+ remediation 1.6 (2026-08-10).
  *

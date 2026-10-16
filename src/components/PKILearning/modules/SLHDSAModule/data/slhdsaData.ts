@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // FIPS 205 Table 2 — SLH-DSA parameter sets
 
 export type HashFamily = 'SHA-2' | 'SHAKE'

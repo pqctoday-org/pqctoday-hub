@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * quizSelection (WP2.5) — deterministic per-module question pick for the
  * quiz-gated "Mark complete" flow. Reuses the REAL quiz bank that already

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * chunkToResource — map a RAG corpus chunk to a (resourceType, resourceId)
  * pair compatible with `getTrustScore` from `src/data/trustScore`.

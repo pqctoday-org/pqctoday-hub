@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // One estate key card: generate LABEL-ONLY, then drive that key's real
 // crypto by hand. Every input AND output is an editable field — edit a

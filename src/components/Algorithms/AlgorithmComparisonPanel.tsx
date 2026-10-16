@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Fragment, useState, useCallback, useMemo } from 'react'
 import { X, Loader2, Play, AlertTriangle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'

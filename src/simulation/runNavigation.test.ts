@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W5.4 / W5.5 — durable navigation and a challenge that is actually the same
  * scenario.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * kmipBridge — exposes the hub's in-browser KmipEngine to Pyodide, so the
  * Python-side `pqctoday_kmip` shim can reimplement the SAME operation

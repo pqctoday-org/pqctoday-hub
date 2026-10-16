@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Past PQC KEM-round history. Used by the Learn tab to anchor the thesis
  * that standardisation is a rolling process — the KEM track already shows

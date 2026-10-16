@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Max-penalty lookup for compliance frameworks, keyed by the `id` column of
  * `src/data/compliance_*.csv`. Values are in USD millions (rounded to whole

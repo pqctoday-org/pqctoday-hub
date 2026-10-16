@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Central catalog status accessor — the single source of truth for product PQC
  * status. Learning modules MUST read a product's PQC status from here (by its

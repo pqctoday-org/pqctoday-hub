@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { Step } from '../../components/StepWizard'
 import { InfoTooltip } from '../../components/InfoTooltip'
 import { useArtifactManagement } from '../../hooks/useArtifactManagement'

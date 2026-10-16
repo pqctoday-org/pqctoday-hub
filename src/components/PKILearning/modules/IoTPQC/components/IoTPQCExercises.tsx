@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guided exercises. Each scenario opens one workshop step pre-configured, and
  * its "what to observe" text states what that step actually computes with the

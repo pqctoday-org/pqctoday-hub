@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read + cross-check; removed 2
 // unconsumed exports (LIBRARY_PERSONA_SENTENCE, LIBRARY_NO_PERSONA_SENTENCE)
 // and corrected a header comment that overclaimed what's actually rendered

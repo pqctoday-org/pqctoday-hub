@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TryToolModalHost — runs a playground workshop tool *in place*, on whatever
  * page you're already on, from a `?try=<tool id>` param. Sibling of

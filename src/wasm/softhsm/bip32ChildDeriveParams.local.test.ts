@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Layout guard for CK_BIP32_CHILD_DERIVE_PARAMS, and the first test of any
 // kind over BIP32 derivation — the HD-wallet lesson

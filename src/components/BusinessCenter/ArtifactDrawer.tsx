@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useCallback, useEffect, Suspense } from 'react'
 import { X, Download, Pencil, Eye, FileDown, Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'

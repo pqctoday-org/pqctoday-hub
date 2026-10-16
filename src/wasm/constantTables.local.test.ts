@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Drift guard for the SPEC-SOURCED constant tables — CKA_TABLE, CKO_TABLE,
 // CKK_TABLE and CKR_TABLE in pkcs11Inspect.ts — against the canonical

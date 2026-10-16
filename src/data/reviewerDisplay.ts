@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * How a stored reviewer name is shown to readers. The earliest automated records carry a
  * tool-specific name; every public surface (the "reviewed by" badge, the revision feeds and the

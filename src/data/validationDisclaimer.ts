@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The one required validation disclaimer (ACVP validation remediation plan
  * 2026-09-24, §2.2 / WS-A item A-4). It must appear, verbatim, on the

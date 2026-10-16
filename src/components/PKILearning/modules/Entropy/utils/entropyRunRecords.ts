@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Run records (run manifests) for the Entropy module's researcher tools:
  * the SP 800-90A DRBG known-answer check, the Entropy Testing primitive

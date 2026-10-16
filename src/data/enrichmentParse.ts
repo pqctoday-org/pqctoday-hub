@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Pure enrichment-sidecar parsing and merging: no import.meta.glob, so build
 // tooling (the timeline-enrichment generator) can import it under Node.
 // libraryEnrichmentData.ts re-exports everything here.

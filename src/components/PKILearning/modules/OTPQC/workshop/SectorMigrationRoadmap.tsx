@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { Map, Calendar, Building2, AlertTriangle, Scale } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'

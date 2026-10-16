@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * StepInspectPanel — opt-in real-data view for one PKCS#11 pipeline step,
  * fed by the ###STEP <id> detail### line pipelineCodegen.ts now emits

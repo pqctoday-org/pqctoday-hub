@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { Key } from '../../../types'
 
 /** Returns key size in bytes, or null if indeterminate (mock/placeholder keys). */

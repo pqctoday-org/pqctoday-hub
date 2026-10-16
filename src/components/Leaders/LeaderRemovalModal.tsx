@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import { X, ShieldX, ExternalLink, MessageSquare } from 'lucide-react'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Verifies the useSourcePassages hook resolves PROV-DM source passages
  * for a known chunk and falls back gracefully for missing chunks.

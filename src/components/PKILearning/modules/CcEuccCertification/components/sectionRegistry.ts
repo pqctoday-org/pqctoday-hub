@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 /**
  * Learn-section registry for LM-068: manifest section id → owner component.

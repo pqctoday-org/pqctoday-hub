@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- migration operates on untyped persisted state
 export function runLegacyAssessmentMigrations(state: Record<string, any>, version: number) {

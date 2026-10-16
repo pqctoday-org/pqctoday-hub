@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ML-DSA context / message-length / pre-hash depth (remediation plan
 // 2026-09-24, WS-D D2-6). Extends section 5d (mldsaAcvp.ts), which picked the

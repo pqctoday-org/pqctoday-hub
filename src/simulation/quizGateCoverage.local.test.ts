@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guardrail (local-only, not run in CI): lists which Learn modules gating
  * program maturity have NO quiz-gate coverage (questionsForModule returns

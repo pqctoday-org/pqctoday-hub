@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo } from 'react'
 import { Clock } from 'lucide-react'
 import { useHistoryStore } from '@/store/useHistoryStore'

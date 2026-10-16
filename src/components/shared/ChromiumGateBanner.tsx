@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ChromiumGateBanner — shown above the VPN / SSH simulator panels when
  * the user's browser isn't recognized as Chromium. Chromium-family

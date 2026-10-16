@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { Freshness } from './contentFreshness'
 // Industry breach cost baselines — IBM Cost of a Data Breach Report 2025
 // (https://www.ibm.com/reports/data-breach), read directly from the primary

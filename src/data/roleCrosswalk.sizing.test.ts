@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W2-4 (audit 2026-08-10): the Skills & Team Plan applied framework-2.1's
  * `sizing_heuristic` (1 FTE per 500 instances) without ever reconciling it

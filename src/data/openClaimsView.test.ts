@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { OPEN_CLAIMS, getOpenClaim, type OpenClaim } from './openClaimsData'
 import { formatClaimDate, headStatement, headStatements, relationLabel } from './openClaimsView'

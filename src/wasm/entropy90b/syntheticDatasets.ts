@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * D4 — synthetic failure (and contrast) datasets for the SP 800-90B workshop.
  *

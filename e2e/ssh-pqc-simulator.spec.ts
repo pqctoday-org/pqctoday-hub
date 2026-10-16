@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ssh-pqc-simulator.spec.ts — E2E tests for the PQC SSH Simulator playground tool.
 //

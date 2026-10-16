@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ?highlight=<name>[,<name>…] matching and ?transition=<row slug> lookup,
  * shared by the Detailed and Transition tables (which tint matching rows) and useAlgorithmExplorer (which widens

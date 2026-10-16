@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Computes intelligent default selections for assessment wizard steps
  * based on the user's industry, country, and persona.

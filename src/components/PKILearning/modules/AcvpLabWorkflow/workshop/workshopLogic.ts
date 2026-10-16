@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure helpers behind the acvp-lab-workflow workshop steps (kept out of the
  * component files so React fast refresh stays component-only).

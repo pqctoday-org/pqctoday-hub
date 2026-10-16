@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS8b — the device-fitness resolution, driven by explicit capability matrices
  * rather than by whatever the test runner's jsdom happens to expose.

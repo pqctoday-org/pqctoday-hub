@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ML-DSA negative / boundary depth (gap-closure plan 2026-09-25, P5 item 3).
 // Sections 5d/5e (mldsaAcvp.ts, mldsaDepth.ts) leave the negative column of the

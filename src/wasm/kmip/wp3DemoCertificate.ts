@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // WP-3 showcase fixture — a real, self-signed ECDSA-P256 X.509 certificate,
 // used by `Pkcs11CertificateDemo.tsx` to demonstrate KMIP Register's

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ECDSA / EdDSA key validation and signature generation from NIST ACVP-Server
 // reference samples (gap-closure plan 2026-09-25, P5 item 2 — WS-E remainder),

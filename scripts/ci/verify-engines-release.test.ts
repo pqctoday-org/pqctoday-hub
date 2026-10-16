@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // scripts/ci/verify-engines-release.ts: the pinned release holds exactly the locked files.
 import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'

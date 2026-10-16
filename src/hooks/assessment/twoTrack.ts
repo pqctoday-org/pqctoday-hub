@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Two-Track sequencing — gap-closer #4 (spec §6.2, Assess #4; framework §3.3 p.75).
  *

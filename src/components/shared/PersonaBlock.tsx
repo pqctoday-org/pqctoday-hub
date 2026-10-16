@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — "For your role" on a module or tool, from
  * `src/data/personaBlocks.ts`. With a persona set, that persona's paragraph

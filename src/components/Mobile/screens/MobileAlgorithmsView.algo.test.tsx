@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** The phone landing screen's detail sheet is `?algo=<algorithm_id>`, like desktop's drawer. */
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'

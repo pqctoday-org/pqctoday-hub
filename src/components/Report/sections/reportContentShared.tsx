@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Shared, stateless helpers reused across /report's section modules — labels,
 // icon lookups, and the report-specific CollapsibleSection/SectionInfoTip
 // wrappers. Extracted from ReportContent.tsx (see reportSectionToCswp39.ts

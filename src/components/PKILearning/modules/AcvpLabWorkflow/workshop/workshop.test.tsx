@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop logic for acvp-lab-workflow, driven by the real public NIST
  * fixtures and the real WS-F pipeline (no mocks of parsing or planning).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Wave C (2026-09-19) — phone-shell twin of shared/PersonaPageNote. The Mobile
  * tree may not import desktop view components (eslint no-restricted-imports),

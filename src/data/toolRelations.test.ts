@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { playgroundToolRelations, businessToolRelations } from './toolRelations'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'

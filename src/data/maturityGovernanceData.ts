@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Loads and merges ALL pqc_maturity_governance_requirements_*.csv files.
  * Unlike standard loaders that pick only the latest file, the maturity corpus

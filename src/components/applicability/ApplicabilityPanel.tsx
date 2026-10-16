@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
 import { ShieldAlert, Calendar, BookOpen, Scale, Link2 } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../hooks/useApplicabilityWithPaths'
@@ -221,7 +221,6 @@ function Section<T>({
               return (
                 <div key={tier} className="divide-y divide-border">
                   {groups.map((g, gi) => {
-                    // eslint-disable-next-line security/detect-object-injection -- g.id is a BindingGroup
                     const meta = BINDING_GROUP_META[g.id]
                     return (
                       <div key={g.id} className="px-3 py-2" data-testid={`binding-group-${g.id}`}>

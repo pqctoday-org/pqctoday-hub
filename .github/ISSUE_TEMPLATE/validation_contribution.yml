@@ -51,7 +51,7 @@ body:
     id: license
     attributes:
       label: License / redistribution
-      description: Under what terms may the Hub (GPL-3.0) redistribute this material? Quote the source's license or notice.
+      description: Under what terms may the Hub (AGPL-3.0) redistribute this material? Quote the source's license or notice.
     validations:
       required: true
 

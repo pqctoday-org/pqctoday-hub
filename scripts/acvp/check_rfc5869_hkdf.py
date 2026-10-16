@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Check src/data/acvp/hkdf_test.json against RFC 5869 Appendix A.1-A.3.
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useId, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, BookOpen, Check, ChevronDown } from 'lucide-react'

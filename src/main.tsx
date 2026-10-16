@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { createRoot } from 'react-dom/client'
 import { setEmbedState, getEmbedState } from './embed/embedContext'
 import { detectPlatform, getNativePlatform, isNativeApp } from './embed/platform'

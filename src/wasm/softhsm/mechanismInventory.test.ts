@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pure-function KATs for mechanismInventory.ts: normalization, flag decoding,
 // the G-2 flag → operation mapping and the canonical-JSON SHA-256. Driven by a

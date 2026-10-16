@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Records wasm RUN RESULTS for the coverage matrix (plan WS-C C-4): drives the
 // REAL useAcvpSuite hook over every category in dual-engine mode — the C++

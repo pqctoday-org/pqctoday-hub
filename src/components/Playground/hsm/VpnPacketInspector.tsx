@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { useVpnPacketStore, type VpnPacket } from '@/store/useVpnPacketStore'
 import { formatHexDump } from '@/utils/isakmp'

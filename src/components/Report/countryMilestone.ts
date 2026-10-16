@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { timelineData, transformToGanttData } from '../../data/timelineData'
 import { COUNTRY_PLANNING_MANDATE } from '../../hooks/assessmentData'
 import type { GanttCountryData } from '../../types/timeline'

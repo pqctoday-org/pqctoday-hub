@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Palette display metadata for the pipeline builder — family grouping, PQ/
  * classical flag, mechanism hex string. The sandbox's PipelinePage reads

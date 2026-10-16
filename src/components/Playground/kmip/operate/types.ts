@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Shared context for the Operate tab's "Plane 2 · KMIP Lifecycle" section
 // (K4b, gaps-closeout WP-4.2) — one bundled object rather than positional

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Short role tours — B+ remediation 4.2 (2026-08-10); GRC's added 2026-09-07.
  *

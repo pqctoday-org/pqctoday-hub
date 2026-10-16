@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Presentational atoms for the Simulation console (WS-05 extraction). Pure,
  * prop-driven, no store access — the building blocks the SimulationView shell and

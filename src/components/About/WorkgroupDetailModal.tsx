@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink, Calendar, Users } from 'lucide-react'
 import FocusLock from 'react-focus-lock'

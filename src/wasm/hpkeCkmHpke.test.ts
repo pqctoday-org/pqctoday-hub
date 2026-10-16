@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // R2 (pqctoday-hsm/docs/remediation-plan-ckm-hpke-and-hpke-gaps-2026-08-31.md)
 // — proves the CKM_HPKE JS/WASM binding (hsm_generateHpkeKeyPair/

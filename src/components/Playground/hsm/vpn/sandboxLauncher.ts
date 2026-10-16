@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Minimal client for the pqctoday-sandbox orchestrator VPN scenario.
  *

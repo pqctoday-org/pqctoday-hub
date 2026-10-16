@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Refresh-Cycle Alignment — Phase 4 (Roadmap & Governance) Activity 4.3 tool.
  *

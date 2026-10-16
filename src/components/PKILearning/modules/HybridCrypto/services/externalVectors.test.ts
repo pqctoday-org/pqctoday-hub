@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Cross-implementation regression guard.
 //
 // Every other test in this module signs with our code and verifies with our

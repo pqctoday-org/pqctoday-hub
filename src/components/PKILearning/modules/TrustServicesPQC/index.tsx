@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Clock, GitCompareArrows, KeyRound } from 'lucide-react'
 import { TrustServicesIntroduction } from './components/TrustServicesIntroduction'

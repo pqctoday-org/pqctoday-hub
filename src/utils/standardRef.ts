@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Resolves a standards citation as it appears in prose ("FIPS 203",
  * "NIST SP 800-88", "SP 800-90B") to a real `/library?ref=` deep link.

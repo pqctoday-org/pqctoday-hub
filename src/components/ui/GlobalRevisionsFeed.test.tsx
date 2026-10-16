@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { applyPersonaSort } from './applyPersonaSort'
 import { PERSONA_REVISION_DOMAINS } from '@/data/personaConfig'

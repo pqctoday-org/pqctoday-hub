@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KmipPipelineBuilder — the KMIP/CACP Developer tab (dev-tabs-pkcs11-kmip
  * plan, WS-E + WS-G, extended by G9/W2), embedded as a new plane in the

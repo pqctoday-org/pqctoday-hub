@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * mechanismInventory.ts — runtime capture of what a PKCS#11 engine ADVERTISES
  * (C_GetMechanismList + C_GetMechanismInfo), normalized and hashed so every

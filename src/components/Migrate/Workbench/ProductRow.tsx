@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, type ReactNode } from 'react'
 import { Plus, Check, ChevronDown, ShieldCheck } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'

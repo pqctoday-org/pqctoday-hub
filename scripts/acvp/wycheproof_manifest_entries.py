@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Build the src/data/validation/vector-manifest.json entries for the vendored
 Project Wycheproof files (see scripts/acvp/vendor_wycheproof.py for the scope

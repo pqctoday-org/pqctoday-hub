@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // CACP policy-scenario validation — boots the REAL in-browser wasm engine and,
 // for every scenario in src/components/Playground/kmip/policyScenarios.ts:

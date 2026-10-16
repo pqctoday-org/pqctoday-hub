@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // quiz.ts — knowledge-check question banks for all ten Learn walkthroughs.
 // Every question is answerable from the lesson the learner just ran — no

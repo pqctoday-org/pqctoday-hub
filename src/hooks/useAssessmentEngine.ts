@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Algorithms and their quantum vulnerability
 // Derived set of quantum-vulnerable algorithm names
 // Compliance framework data

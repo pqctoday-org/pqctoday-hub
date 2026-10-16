@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical Certificate Lifecycle Management scenarios surfaced in the
  * InventoryLifecycleSimulator as concrete stress-tests of the operational loop.

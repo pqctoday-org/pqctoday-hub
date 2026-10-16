@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // SLH-DSA key-generation, sign-positive, negative and boundary depth
 // (gap-closure plan 2026-09-25, P5 item 3). Section 9c (slhdsaAcvp.ts) left the

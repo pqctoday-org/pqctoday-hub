@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import MiniSearch from 'minisearch'
 import type { SearchResult as MiniSearchResult } from 'minisearch'
 import localforage from 'localforage'

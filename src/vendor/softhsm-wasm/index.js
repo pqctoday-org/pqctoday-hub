@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: AGPL-3.0-only
 /*
  * @pqctoday/softhsm-wasm — SoftHSMv3 compiled to WebAssembly (PKCS#11 v3.2).
  *

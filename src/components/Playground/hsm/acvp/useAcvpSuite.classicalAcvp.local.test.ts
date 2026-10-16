@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the WS-E classical / symmetric / MAC reference-sample sections
 // (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts, rsaSigVerAcvp.ts, kdfMacAcvp.ts), driven through the

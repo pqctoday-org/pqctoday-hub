@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Review pass 2, M1: the RBG class panel called RBG1 "Non-Deterministic RBG"
 // and RBGC a per-request consolidated construction, contradicting SP 800-90C

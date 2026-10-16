@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Homomorphic Encryption (FHE) — context data for the Learn tab ─────────
 // What "fully homomorphic" promises, where FHE is used, what it costs, how the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // SshComparisonPanel — side-by-side classical vs PQC SSH handshake results.
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-3 acceptance check: hsm_getKeyAttributes must populate every attribute
 // both real engines return for a given class, matching the gap report's §1.2
 // live-probe table exactly — not a re-guess, the same ground truth that

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link resolver (WS-06) — validates a sim resource target against the app's
  * real route table AND its known query params, not just "starts with /". The

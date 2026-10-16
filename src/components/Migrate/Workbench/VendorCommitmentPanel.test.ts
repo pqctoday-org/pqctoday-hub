@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Vendor X has committed" is a sentence somebody repeats in a meeting, so the
  * committed/silent split must be exactly what the roadmap data supports —

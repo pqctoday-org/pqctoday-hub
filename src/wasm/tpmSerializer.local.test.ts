@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression tests for the TPM Command Builder chaining fix (see
 // tpm-playground-audit-pkcs11-cacp-parity-gap-report-07232026.md /

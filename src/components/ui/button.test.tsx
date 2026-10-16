@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the Button primitive (M8). Button is imported by ~32 page areas, so
  * its variant/size class mapping, ref forwarding, and prop pass-through are

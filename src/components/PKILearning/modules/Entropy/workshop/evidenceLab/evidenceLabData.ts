@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Data for the Entropy Evidence Lab: the device-dataset manifest (written by
  * scripts/entropy-90b/package-device-datasets.ts), the lab's case list, the

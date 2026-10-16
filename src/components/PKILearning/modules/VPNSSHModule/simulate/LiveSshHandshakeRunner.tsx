@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // LiveSshHandshakeRunner — runs the same softhsmv3-driven SSH handshake the
 // playground tool uses (sshEngine), and overlays the live byte-counts on the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { FileText, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ExecutiveDocumentType } from '@/services/storage/types'

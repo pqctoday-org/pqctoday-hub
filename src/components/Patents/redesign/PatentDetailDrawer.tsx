@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentDetailDrawer — a right-anchored slide-over that hosts the existing
  * PatentDetail (unchanged) over the intact table, replacing the live page's

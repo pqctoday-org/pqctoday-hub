@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simRelevance — filters the Simulation's resource lists to the SCENARIO:
  *  - industry verticals are shown only for the matching sector (a healthcare
