@@ -106,9 +106,12 @@ export function AlgorithmValidationView({
     selfWrittenSection !== linkedSection
       ? linkedSection
       : null
+  // block 'start': a section is taller than the viewport, so centring it
+  // would land in its middle (the KAT link landed on the AES tiles).
   useScrollToDeepLinkTarget(
     scrollSection ? `section|${scrollSection}` : null,
-    scrollSection ? deepLinkSelector(`validation-${scrollSection}`) : null
+    scrollSection ? deepLinkSelector(`validation-${scrollSection}`) : null,
+    { block: 'start' }
   )
 
   const toggle = (id: ValidationSection) => {
@@ -193,7 +196,7 @@ export function AlgorithmValidationView({
         return (
           <section
             key={id}
-            className="glass-panel overflow-hidden"
+            className="glass-panel overflow-hidden scroll-mt-28"
             data-workshop-target={`section-validation-${id}`}
             data-deeplink-id={`validation-${id}`}
           >
