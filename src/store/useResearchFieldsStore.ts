@@ -16,10 +16,17 @@ import { persist, createJSONStorage } from 'zustand/middleware'
  * validated against the taxonomy at read time, so a future taxonomy edit
  * (renaming/removing a bucket id) degrades gracefully to "that field just
  * stops matching any row" rather than corrupting the store.
+ *
+ * `followedTopics` (v3) holds research-topic ids from
+ * `research_topics_vocabulary.json` (`RESEARCH_TOPICS[].id`), kept separate from
+ * `followedFields` because the two are different vocabularies counted from
+ * different library columns. Same plain-string, degrade-gracefully rule.
  */
 interface ResearchFieldsState {
   followedFields: string[]
+  followedTopics: string[]
   toggleFollowedField: (id: string) => void
+  toggleFollowedTopic: (id: string) => void
   clearFollowedFields: () => void
 }
 
@@ -30,12 +37,14 @@ export const useResearchFieldsStore = create<ResearchFieldsState>()(
   persist(
     (set) => ({
       followedFields: [],
+      followedTopics: [],
       toggleFollowedField: (id) => set((s) => ({ followedFields: toggle(s.followedFields, id) })),
-      clearFollowedFields: () => set({ followedFields: [] }),
+      toggleFollowedTopic: (id) => set((s) => ({ followedTopics: toggle(s.followedTopics, id) })),
+      clearFollowedFields: () => set({ followedFields: [], followedTopics: [] }),
     }),
     {
       name: 'pqc-research-fields',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       migrate: (persistedState: unknown, version: number) => {
         const state =
@@ -56,6 +65,16 @@ export const useResearchFieldsStore = create<ResearchFieldsState>()(
         if (version < 2) {
           delete state.lastVisitedAt
         }
+
+        // v3 (2026-10-16): research topics can be followed alongside algorithm
+        // families. Existing readers start with no followed topics.
+        if (version < 3) {
+          state.followedTopics = Array.isArray(state.followedTopics) ? state.followedTopics : []
+        }
+
+        // Every version: never hand the app a non-array, whatever was stored.
+        if (!Array.isArray(state.followedFields)) state.followedFields = []
+        if (!Array.isArray(state.followedTopics)) state.followedTopics = []
 
         return state as unknown as ResearchFieldsState
       },

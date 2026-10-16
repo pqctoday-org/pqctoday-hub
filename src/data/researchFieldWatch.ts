@@ -6,6 +6,7 @@ import {
   OTHER_FIELD_BUCKET_ID,
   RESEARCH_FIELD_BUCKETS,
 } from './researchFieldTaxonomy'
+import { parseResearchTopicsDetailed, researchTopicLabel } from './researchTopics'
 
 /**
  * researchFieldWatch — the "recent corpus changes by algorithm family" counter
@@ -52,6 +53,9 @@ export interface FieldWatchRow {
   isDeprecated: boolean
   /** Parsed `deprecated_at`, ms since epoch, or `null` if unparseable/absent/not deprecated. */
   deprecatedAtMs: number | null
+  /** Known research-topic ids from the CSV `research_topics` column; absent or
+   *  empty when the row is not tagged (or the CSV has no such column yet). */
+  researchTopics?: string[]
 }
 
 export interface FieldWatchEntry {
@@ -68,7 +72,11 @@ export interface ResearchFieldWatchSummary {
    *  An id that isn't a real bucket (stale/renamed) is silently dropped rather
    *  than surfaced as a meaningless 0-count row. */
   fields: FieldWatchEntry[]
-  /** Sum of `deprecatedCount` across the followed fields — NOT a corpus-wide total. */
+  /** One entry per followed research-topic id, counted the same way from the
+   *  rows' `researchTopics`. `fieldId` holds the topic id. Unknown ids are
+   *  dropped, as for `fields`. */
+  topics: FieldWatchEntry[]
+  /** Sum of `deprecatedCount` across the followed fields and topics — NOT a corpus-wide total. */
   totalDeprecatedInWindow: number
   /**
    * True iff nothing in the researcher's followed fields was retracted inside
@@ -121,21 +129,30 @@ function isAfter(ms: number | null, threshold: number | null): boolean {
 export function computeResearchFieldWatch(
   followedFieldIds: string[],
   windowStartMs: number | null,
-  rows: FieldWatchRow[]
+  rows: FieldWatchRow[],
+  followedTopicIds: string[] = []
 ): ResearchFieldWatchSummary {
   const counts = new Map<string, { revisionCount: number; deprecatedCount: number }>()
   for (const id of followedFieldIds) counts.set(id, { revisionCount: 0, deprecatedCount: 0 })
+  const topicCounts = new Map<string, { revisionCount: number; deprecatedCount: number }>()
+  for (const id of followedTopicIds) topicCounts.set(id, { revisionCount: 0, deprecatedCount: 0 })
+
+  const tally = (
+    bucket: { revisionCount: number; deprecatedCount: number } | undefined,
+    row: FieldWatchRow
+  ) => {
+    if (!bucket) return // not a field / topic this researcher follows
+    if (isAfter(row.lastUpdateDateMs, windowStartMs)) bucket.revisionCount += 1
+    if (row.isDeprecated && isAfter(row.deprecatedAtMs, windowStartMs)) {
+      bucket.deprecatedCount += 1
+    }
+  }
 
   for (const row of rows) {
-    const fieldIds = mapAlgorithmFamilyToFields(row.algorithmFamily)
-    for (const fieldId of fieldIds) {
-      const bucket = counts.get(fieldId)
-      if (!bucket) continue // not a field this researcher follows
-      if (isAfter(row.lastUpdateDateMs, windowStartMs)) bucket.revisionCount += 1
-      if (row.isDeprecated && isAfter(row.deprecatedAtMs, windowStartMs)) {
-        bucket.deprecatedCount += 1
-      }
+    for (const fieldId of mapAlgorithmFamilyToFields(row.algorithmFamily)) {
+      tally(counts.get(fieldId), row)
     }
+    for (const topicId of row.researchTopics ?? []) tally(topicCounts.get(topicId), row)
   }
 
   const fields: FieldWatchEntry[] = followedFieldIds.flatMap((fieldId) => {
@@ -152,10 +169,21 @@ export function computeResearchFieldWatch(
     ]
   })
 
-  const totalDeprecatedInWindow = fields.reduce((sum, f) => sum + f.deprecatedCount, 0)
+  const topics: FieldWatchEntry[] = followedTopicIds.flatMap((topicId) => {
+    const label = researchTopicLabel(topicId)
+    const bucket = topicCounts.get(topicId)
+    if (!label || !bucket) return []
+    return [{ fieldId: topicId, label, ...bucket }]
+  })
+
+  const totalDeprecatedInWindow = [...fields, ...topics].reduce(
+    (sum, f) => sum + f.deprecatedCount,
+    0
+  )
 
   return {
     fields,
+    topics,
     totalDeprecatedInWindow,
     nothingRetracted: totalDeprecatedInWindow === 0,
   }
@@ -186,6 +214,15 @@ export function computeOtherFieldShare(rows: FieldWatchRow[]): OtherFieldShare {
   return { other, total, percent: total === 0 ? 0 : Math.round((other / total) * 100) }
 }
 
+/**
+ * How many rows (active or retracted) carry at least one research topic. Zero
+ * means the Library has not been tagged yet, so topic counts would be zeros
+ * that say nothing — the card shows a note instead.
+ */
+export function countTopicTaggedRows(rows: FieldWatchRow[]): number {
+  return rows.filter((r) => (r.researchTopics?.length ?? 0) > 0).length
+}
+
 // ── Real-data adapter ────────────────────────────────────────────────────
 
 interface RawFieldWatchRow {
@@ -194,6 +231,8 @@ interface RawFieldWatchRow {
   last_update_date: string
   status?: string
   deprecated_at?: string
+  /** Absent from CSVs written before research topics existed. */
+  research_topics?: string
 }
 
 function transformFieldWatchRow(row: RawFieldWatchRow): FieldWatchRow | null {
@@ -204,6 +243,9 @@ function transformFieldWatchRow(row: RawFieldWatchRow): FieldWatchRow | null {
     lastUpdateDateMs: parseDateMs(row.last_update_date),
     isDeprecated: row.status === 'deprecated',
     deprecatedAtMs: parseDateMs(row.deprecated_at),
+    // Detailed form so this second read of the CSV does not double-count the
+    // unknown ids the main library loader already counts.
+    researchTopics: parseResearchTopicsDetailed(row.research_topics).topics,
   }
 }
 
@@ -229,6 +271,8 @@ export interface FieldWatchCorpus {
   windowStartMs: number | null
   /** Share of active documents in the Other / Uncategorized bucket. */
   otherShare: OtherFieldShare
+  /** Rows carrying at least one research topic (see `countTopicTaggedRows`). */
+  topicTaggedCount: number
 }
 
 let cachedCorpus: FieldWatchCorpus | null = null
@@ -269,6 +313,7 @@ export function loadFieldWatchCorpus(forceReload = false): FieldWatchCorpus {
     releaseDateMs,
     windowStartMs,
     otherShare: computeOtherFieldShare(data),
+    topicTaggedCount: countTopicTaggedRows(data),
   }
   return cachedCorpus
 }
