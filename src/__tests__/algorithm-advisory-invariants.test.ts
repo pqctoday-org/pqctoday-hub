@@ -84,10 +84,6 @@ const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
   { file: /pqc_complete_algorithm_reference_09292026\.csv$/, text: 'recommended Level 5' },
   { file: /pqc_complete_algorithm_reference_09292026\.csv$/, text: 'BSI-recommended' },
   { file: /algorithms_transitions_07282026\.csv$/, text: 'BSI TR-02102-1 recommended' },
-  // KMIP BSI policies are copies of the engine's source (pqctoday-hsm kmip/policies)
-  // and must byte-match it; their wording is corrected there first, then resynced.
-  { file: /kmip-policies\/bsi-tr-02102\.yaml$/, text: 'BSI recognises' },
-  { file: /kmip-policies\/bsi-tr-02102-key-establishment\.yaml$/, text: 'BSI recognises' },
 ]
 
 const isPending = (s: { file: string; text: string }) =>
