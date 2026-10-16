@@ -17,6 +17,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { describeRuntimeSupport } from '../data/pqcSupportData'
 
 // Local CollapsibleSection replaced by the shared anchored LearnSection
 // (2026-07-30).
@@ -165,8 +166,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </p>
           <p className="text-muted-foreground">
             OpenSSL 3.5+ (April 2025) ships <strong className="text-foreground">native</strong>{' '}
-            ML-KEM, ML-DSA, and SLH-DSA in the default provider — no plugin needed. On older OpenSSL
-            3.2–3.4 installs,{' '}
+            ML-KEM, ML-DSA, and SLH-DSA in the default provider — no plugin needed. On OpenSSL
+            before 3.5, or for algorithms that are not standardised,{' '}
             <code className="text-primary font-mono text-sm">
               OSSL_PROVIDER_load(NULL, &quot;oqsprovider&quot;)
             </code>{' '}
@@ -174,8 +175,10 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <InlineTooltip term="oqsprovider">
               OpenSSL provider for PQC algorithms (liboqs)
             </InlineTooltip>
-            . Either way, the EVP layer means zero application code changes when switching to PQC —
-            only the algorithm name changes.
+            . Either way, the EVP call pattern stays the same when you switch to PQC. What still
+            changes: the algorithm identifier, key, signature and ciphertext sizes (and the buffers
+            and storage that hold them), key encodings, TLS group and signature negotiation, and the
+            error paths for peers or builds that lack the algorithm.
           </p>
         </LearnSection>
       </div>
@@ -236,8 +239,10 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </p>
           <p className="text-muted-foreground">
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
-            mode. PQC support went GA in 2025: ML-KEM, ML-DSA, and SLH-DSA APIs are available on
-            Windows 11 24H2+ and Windows Server 2025 (and in .NET 10).
+            mode. ML-KEM and ML-DSA became generally available in November 2025 on Windows 11 24H2+
+            and Windows Server 2025 (and .NET 10 uses them). SLH-DSA has an identifier
+            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider,
+            and the composite ML-DSA/ML-KEM identifiers are Windows Insider only.
           </p>
         </LearnSection>
       </div>
@@ -404,7 +409,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'C / C++',
                 libs: ['OpenSSL (EVP)', 'Botan 3.x', 'Crypto++', 'wolfSSL'],
-                pqc: 'Native in OpenSSL 3.5+ (oqsprovider for 3.2-3.4); liboqs directly',
+                pqc: 'Native in OpenSSL 3.5+ (oqsprovider before 3.5); liboqs directly',
                 note: 'Maximum performance; requires careful memory management',
               },
               {
@@ -416,26 +421,26 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
-                pqc: 'BC 1.78+ for all NIST PQC algorithms',
-                note: 'Widest PQC coverage today; JCProv bridges to HSM',
+                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (first LTS: JDK 25); BC 1.78+ adds SLH-DSA and more',
+                note: 'JDK 21 LTS has no ML-KEM/ML-DSA; JCProv bridges to HSM',
               },
               {
                 lang: 'Python',
                 libs: ['cryptography.io', 'pyOpenSSL', 'liboqs-python'],
-                pqc: 'liboqs-python for PQC; cryptography.io for classical',
-                note: 'Fast prototyping; not for production key handling',
+                pqc: 'cryptography 48+ for ML-KEM and ML-DSA (OpenSSL 3.5+); liboqs-python for SLH-DSA',
+                note: 'Immutable bytes make secure key zeroing hard',
               },
               {
                 lang: 'Go',
-                libs: ['crypto/*', 'golang.org/x/crypto', 'oqs-go', 'CIRCL'],
-                pqc: 'CIRCL (Cloudflare) for SIDH/FrodoKEM; oqs-go for full suite',
-                note: 'Growing PQC ecosystem; stdlib still classical-only',
+                libs: ['crypto/mlkem', 'crypto/mldsa', 'crypto/tls', 'CIRCL'],
+                pqc: 'Standard library: crypto/mlkem (Go 1.24+), crypto/mldsa (Go 1.27+); CIRCL for SLH-DSA',
+                note: 'crypto/tls negotiates X25519MLKEM768 by default since Go 1.24',
               },
               {
                 lang: '.NET / C#',
                 libs: ['System.Security.Cryptography', 'Bouncy Castle C#', 'CNG interop'],
-                pqc: 'BC C# for PQC; CNG for Windows HSM integration',
-                note: 'CNG integration is best-in-class for Windows environments',
+                pqc: '.NET 10 MLKem and MLDsa (SlhDsa experimental); BC C# as an alternative',
+                note: 'Built-in PQC needs OpenSSL 3.5+ on Linux or a PQC-capable Windows build',
               },
               {
                 lang: 'Zig',
@@ -475,27 +480,42 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Bouncy Castle (Java/.NET)',
                 status: 'production',
-                note: 'ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/XMSS all supported since Bouncy Castle 1.78',
+                note: `${describeRuntimeSupport('bouncy-castle')}; FN-DSA and LMS/XMSS too`,
               },
               {
                 api: 'OpenSSL (native)',
                 status: 'production',
-                note: 'ML-KEM, ML-DSA, SLH-DSA native since OpenSSL 3.5 (April 2025); oqsprovider only needed on OpenSSL 3.2-3.4',
+                note: `${describeRuntimeSupport('openssl')}; oqsprovider only before 3.5 or for non-standardised algorithms`,
               },
               {
                 api: 'AWS-LC (aws-lc-rs)',
                 status: 'production',
-                note: 'ML-KEM-768 in FIPS module; ML-DSA planned for 2025',
+                note: 'ML-KEM is an approved algorithm on the AWS-LC 3 FIPS 140-3 certificates (CMVP #5298, #5314); ML-DSA is not in their approved list — check the certificate before relying on it',
               },
               {
                 api: 'JCA/JCE (built-in)',
                 status: 'production',
-                note: 'JDK 24 (March 2025) ships native ML-KEM (JEP 496) and ML-DSA (JEP 497); BC provider for broader coverage',
+                note: `${describeRuntimeSupport('java')} — JEP 496/497, March 2025`,
               },
               {
                 api: 'Windows CNG',
                 status: 'production',
-                note: 'ML-KEM, ML-DSA, SLH-DSA GA since 2025 (Windows 11 24H2+ / Server 2025); Schannel TLS hybrid still preview',
+                note: describeRuntimeSupport('windows-cng'),
+              },
+              {
+                api: 'Go standard library',
+                status: 'production',
+                note: describeRuntimeSupport('go'),
+              },
+              {
+                api: 'Python cryptography',
+                status: 'production',
+                note: describeRuntimeSupport('python-cryptography'),
+              },
+              {
+                api: '.NET 10',
+                status: 'production',
+                note: describeRuntimeSupport('dotnet'),
               },
               {
                 api: 'PKCS#11 v3.2',

@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-dev-apis',
   version: '1.0.4',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-25',
+  lastEdited: '2026-10-15',
 
   standards: [
     getStandard('FIPS 203'),
@@ -91,8 +91,8 @@ export const content: ModuleContent = {
     overview:
       'Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryptography integration across the major cryptographic APIs and programming language ecosystems — JCA/JCE, OpenSSL EVP, PKCS#11 v3.2, Windows CNG, and language-specific PQC libraries. Teaches developers how to migrate production cryptographic code to PQC without vendor lock-in, using crypto agility patterns.',
     keyConcepts:
-      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. Standard JDK 21+ does not include ML-KEM/ML-DSA; requires BouncyCastle 1.78+ as JCA provider (BC or BCFIPS). Key types: MLKEMPublicKey, MLDSAPrivateKey. Algorithm strings: "ML-KEM-768", "ML-DSA-65". Java 17 → 21 migration recommended before PQC addition.',
+      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. JDK 24+ includes ML-KEM (JEP 496, javax.crypto.KEM) and ML-DSA (JEP 497, Signature "ML-DSA") in the default providers; JDK 25 is the first LTS with them, and JDK 21 LTS has neither. On JDK 21, or for SLH-DSA, register BouncyCastle 1.78+ as a JCA provider (BC or BCFIPS). Algorithm strings: "ML-KEM" / "ML-DSA" families with parameter sets such as "ML-KEM-768", "ML-DSA-65".',
     workshopSummary:
-      'APIArchitectureExplorer — Visualize the provider/plugin architecture of each API; compare abstraction layers; identify where PQC plugs in without application code changes. LanguageEcosystemComparator — Side-by-side code comparison for ML-KEM-768 key generation and ML-DSA-65 signing across C++, Rust, Zig, Java, Python, Go, and .NET; highlight import paths and API ergonomics differences.',
+      'APIArchitectureExplorer — Visualize the provider/plugin architecture of each API; compare abstraction layers; identify where PQC plugs in and what still changes around it (algorithm names, sizes, encodings, negotiation). LanguageEcosystemComparator — Side-by-side code comparison for ML-KEM-768 key generation and ML-DSA-65 signing across C++, Rust, Zig, Java, Python, Go, and .NET; highlight import paths and API ergonomics differences.',
   },
 }
