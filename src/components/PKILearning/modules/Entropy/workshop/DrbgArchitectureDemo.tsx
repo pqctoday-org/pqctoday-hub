@@ -25,12 +25,12 @@ import {
   hmacDrbgGenerate,
   hmacDrbgInstantiate,
   hmacDrbgReseed,
-  runHmacDrbgKatSuite,
-  sabotageVariants,
   hexToBytes,
-  type HmacDrbgKatCase,
-  type HmacDrbgKatOutcome,
 } from '../utils/hmacDrbg'
+import { runKatWithSabotage, type KatRun } from '../utils/drbgKatRun'
+import { drbgRunManifest } from '../utils/entropyRunRecords'
+import { downloadRunManifestJson } from '@/services/runRecordExport'
+import { RunRecordActions, RunProvenanceLine } from '@/components/shared/RunRecordActions'
 
 // SP 800-90A Rev. 1 §10.1 Table 2: HMAC_DRBG reseed_interval = 2^48.
 // For this educational demo we use a much smaller interval so the limit is
@@ -40,44 +40,6 @@ const DEMO_RESEED_INTERVAL = 10
 
 const INITIAL_K = new Uint8Array(32).fill(0x00)
 const INITIAL_V = new Uint8Array(32).fill(0x01)
-
-interface KatRun {
-  outcomes: HmacDrbgKatOutcome[]
-  /** One entry per one-bit variant; every one must NOT match. */
-  sabotage: { caseId: string; input: string; matched: boolean }[]
-}
-
-/** Load the pinned NIST vectors on demand (kept out of the step's main chunk). */
-async function loadKatCases(): Promise<HmacDrbgKatCase[]> {
-  const mod = await import('../utils/hmacDrbgSha256.kat.json')
-  return mod.default.cases as HmacDrbgKatCase[]
-}
-
-/** Vectors whose inputs are all non-empty: tc196 has a reseed, tg3 tc31 prediction resistance. */
-const SABOTAGE_BASES = ['acvp-tg14-tc196', 'acvp-tg3-tc31']
-
-/**
- * Run every pinned vector, then re-run one-bit variants of the entropy input,
- * nonce, personalization string, additional input, reseed material and
- * prediction-resistance entropy. Every variant must NOT match, or the check
- * proves nothing about that input.
- */
-async function runKatWithSabotage(): Promise<KatRun> {
-  const cases = await loadKatCases()
-  const outcomes = await runHmacDrbgKatSuite(cases)
-  const variants = cases
-    .filter((c) => SABOTAGE_BASES.includes(c.id))
-    .flatMap((c) => sabotageVariants(c))
-  const results = await runHmacDrbgKatSuite(variants.map((v) => v.mutated))
-  return {
-    outcomes,
-    sabotage: variants.map((v, i) => ({
-      caseId: v.caseId,
-      input: v.input,
-      matched: results[i].passed,
-    })),
-  }
-}
 
 export const DrbgArchitectureDemo: React.FC = () => {
   // DRBG Internal State
@@ -200,6 +162,11 @@ export const DrbgArchitectureDemo: React.FC = () => {
       setKatRunning(false)
     }
   }, [])
+
+  const handleDownloadKatRecord = useCallback(async () => {
+    if (!katRun) return
+    downloadRunManifestJson(await drbgRunManifest(katRun), 'drbg-known-answer-run')
+  }, [katRun])
 
   const handleReset = () => {
     setK(INITIAL_K)
@@ -586,8 +553,10 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 </li>
               ))}
             </ul>
+            <RunRecordActions onDownload={handleDownloadKatRecord} testId="drbg-run-record" />
           </div>
         )}
+        {!katRun && <RunProvenanceLine testId="drbg-provenance" />}
       </div>
 
       <PlaygroundNextStep

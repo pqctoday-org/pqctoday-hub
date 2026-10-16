@@ -22,6 +22,12 @@ vi.mock('@/wasm/entropy90b/estimatorClient', () => ({
   runSp80090b: (...args: unknown[]) => runMock(...args),
 }))
 
+const downloads: { blob: Blob; name: string }[] = []
+vi.mock('@/services/exportBundle', async (orig) => ({
+  ...(await orig<typeof import('@/services/exportBundle')>()),
+  downloadBlob: (blob: Blob, name: string) => downloads.push({ blob, name }),
+}))
+
 import { EntropyEvidenceLab } from './EntropyEvidenceLab'
 
 const ROOT = process.cwd()
@@ -231,5 +237,32 @@ describe('EntropyEvidenceLab', () => {
     goToStep(6)
     fireEvent.click(screen.getByTestId('evl-verdict-no-entropy-awarded'))
     expect(screen.getByTestId('evl-verdict-check')).toHaveTextContent('matches what the evidence')
+  })
+
+  it('exports the evidence as a run record carrying the site build', async () => {
+    downloads.length = 0
+    await openRunScreen('kv260-idle-sequential')
+    fireEvent.click(screen.getByTestId('evl-seq-run'))
+    await screen.findByTestId('evl-seq-result', {}, { timeout: 10000 })
+    goToStep(6)
+    fireEvent.click(screen.getByTestId('evl-verdict-insufficient-evidence'))
+    expect(screen.getByTestId('evl-provenance')).toHaveTextContent(/Site version .* · commit /)
+    fireEvent.click(screen.getByTestId('evl-export-evidence'))
+    expect(downloads).toHaveLength(1)
+    expect(downloads[0].name).toMatch(
+      /^entropy-evidence-kv260-idle-sequential-\d{4}-\d{2}-\d{2}\.json$/
+    )
+    const json = JSON.parse(await downloads[0].blob.text())
+    expect(json.schema).toBe('pqctoday.run-manifest/1')
+    expect(json.notice).toMatch(/^PQC Today is an educational/)
+    expect(json.site).toHaveProperty('appVersion')
+    expect(json.tool.id).toBe('entropy-evidence-lab')
+    expect(json.inputs.schema).toBe('pqctoday.entropy.evidence-lab-export/1')
+    expect(json.inputs.case.id).toBe('kv260-idle-sequential')
+    expect(json.inputs.learner.verdict).toBe('insufficient-evidence')
+    expect(json.cases.map((c: { id: string }) => c.id)).toContain(
+      'dataset hash confirmed by the tool'
+    )
+    expect(json.limitations.join(' ')).toContain('Not an ESV submission')
   })
 })

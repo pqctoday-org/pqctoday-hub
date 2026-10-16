@@ -56,6 +56,11 @@ import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryStartHere } from './LibraryStartHere'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
+import {
+  LibraryCitationExport,
+  itemsByReferenceIds,
+  type CitationScope,
+} from './LibraryCitationExport'
 import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
@@ -341,6 +346,22 @@ export function LibraryViewRedesign({
     downloadCsv(csv, csvFilename('pqc-library'))
   }, [displayedItems])
 
+  // Citation export reads the lists at click time (refs), so the top-bar
+  // registration below does not re-run on every filter or bookmark change.
+  const displayedItemsRef = useRef(displayedItems)
+  displayedItemsRef.current = displayedItems
+  const bookmarksRef = useRef(libraryBookmarks)
+  bookmarksRef.current = libraryBookmarks
+  const getCitationItems = useCallback(
+    (scope: CitationScope) =>
+      scope === 'filtered'
+        ? displayedItemsRef.current
+        : itemsByReferenceIds(libraryData, bookmarksRef.current),
+    []
+  )
+  const bookmarkCount = libraryBookmarks.length
+  const filteredCount = displayedItems.length
+
   const resetFilters = useCallback(() => {
     const next = new URLSearchParams(params)
     for (const p of FILTER_PARAMS) {
@@ -549,6 +570,13 @@ export function LibraryViewRedesign({
         ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
         : undefined,
       onExport: handleExportCsv,
+      extra: (
+        <LibraryCitationExport
+          getItems={getCitationItems}
+          bookmarkCount={bookmarkCount}
+          filteredCount={filteredCount}
+        />
+      ),
       endorseUrl: buildEndorsementUrl({
         category: 'library-resource-endorsement',
         title: 'Endorse: PQC Library',
@@ -573,7 +601,7 @@ export function LibraryViewRedesign({
       flagResourceType: 'Library',
     })
     return () => clearPageActions()
-  }, [simEmbed, handleExportCsv])
+  }, [simEmbed, handleExportCsv, getCitationItems, bookmarkCount, filteredCount])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
