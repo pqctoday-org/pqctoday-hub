@@ -7,7 +7,7 @@ import { useTLSStore } from '@/store/tls-learning.store'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
-import type { ExecutiveDocumentType } from '@/services/storage/types'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 // Same value as OPERATIONS_PACK_PANEL_PATH in services/operationsPack.ts (a
 // test keeps them equal); not imported, so app start-up does not load the
@@ -29,6 +29,16 @@ export const OPERATIONS_PACK_TYPES: ReadonlySet<ExecutiveDocumentType> =
  * rehydrating from localStorage before reading. Guarded by the `seeded` flag —
  * calling multiple times is safe.
  */
+/** Where a saved Command Center artifact's history entry leads. Artifacts
+ * made outside a Learn module open where they were made: the operations
+ * pack, the architecture pack, or the KMIP playground's Migration tab. */
+export function artifactHistoryRoute(doc: Pick<ExecutiveDocument, 'type' | 'moduleId'>): string {
+  if (OPERATIONS_PACK_TYPES.has(doc.type)) return OPERATIONS_PACK_HISTORY_ROUTE
+  if (doc.moduleId.startsWith('architecture-pack')) return '/business#architecture-pack'
+  if (doc.moduleId === 'kmip-playground') return '/playground/cacp?tab=migration'
+  return `/learn/${doc.moduleId}?tab=workshop`
+}
+
 export function seedHistoryFromStores() {
   // Wait for all persisted stores to finish hydrating before reading their state.
   // Zustand persist hydration is async — reading immediately gives INITIAL_STATE.
@@ -185,11 +195,7 @@ function seedModuleEvents(out: Omit<HistoryEvent, 'id'>[]) {
       timestamp: doc.createdAt,
       title: `Created ${doc.type}: ${doc.title}`,
       moduleId: doc.moduleId,
-      // Operations pack artifacts come from Playground tools and the pack
-      // panel, not from a Learn module, so they open the pack.
-      route: OPERATIONS_PACK_TYPES.has(doc.type)
-        ? OPERATIONS_PACK_HISTORY_ROUTE
-        : `/learn/${doc.moduleId}?tab=workshop`,
+      route: artifactHistoryRoute(doc),
     })
   }
 }
