@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r26.csv
+ * Source: src/data/role_board_content_10162026_r28.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2557,8 +2557,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — the same primitives, on a real prompt, your own invocation. Nothing to install.',
         ctaPrimary: 'Open OpenSSL Studio',
         ctaPrimaryHref: '/playground/openssl-studio',
-        ctaSecondary: 'See what a generated report contains',
-        ctaSecondaryHref: '/report?example=1',
+        ctaSecondary: 'Recent standards changes',
+        ctaSecondaryHref: '/library?qv=new&sort=newest',
         proofChips: [
           "OpenSSL 3.6.3's own primitives, not asserted",
           'Real PKCS#11 and Rust HSM, compiled to WASM',
