@@ -15,6 +15,8 @@
  * starting point, not a constraint.
  */
 
+import type { PersonaId } from './personaIds'
+
 export interface NextStep {
   /** Route the exit points at. */
   to: string
@@ -969,7 +971,53 @@ function isToolRoute(route: string): boolean {
   )
 }
 
-export function nextStepFor(route: string): NextStep | undefined {
+/**
+ * What Home leads a persona to, where it differs from the default funnel
+ * (readiness assessment → report, "Start Your Journey", the belt ScoreCard).
+ * One map read by the Home footer next step, the Home start CTA and the
+ * ScoreCard, so a persona's Home cannot point two ways at once.
+ */
+export interface PersonaHomeFunnel {
+  /** Replaces the '/' entry of NEXT_STEPS for this persona. */
+  nextStep: NextStep
+  /** Replaces the "Start Your Journey" CTA under the board. */
+  startCta: { label: string; sub: string; to: string }
+  /** The learning path is offered, not pushed: the ScoreCard opens collapsed. */
+  learningPathOptional: boolean
+}
+
+/** The Library filtered to new and updated documents, newest first. */
+export const LIBRARY_RECENT_CHANGES_ROUTE = '/library?qv=new&sort=newest'
+
+export const PERSONA_HOME_FUNNEL: Partial<Record<PersonaId, PersonaHomeFunnel>> = {
+  // Researcher (owner decision R1(a), 16 Oct 2026): the board promises a
+  // reference shelf with no funnel, so Home leads to what changed in the
+  // standards rather than to the readiness assessment.
+  researcher: {
+    nextStep: {
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+      label: 'See the recent standards changes',
+      why: 'The Library lists the documents that are new or were revised, newest first, each with its source and date.',
+    },
+    startCta: {
+      label: 'Browse the evidence',
+      sub: 'Recent standards changes in the Library',
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+    },
+    learningPathOptional: true,
+  },
+}
+
+export function homeFunnelFor(persona: PersonaId | null): PersonaHomeFunnel | undefined {
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union
+  return persona ? PERSONA_HOME_FUNNEL[persona] : undefined
+}
+
+export function nextStepFor(route: string, persona: PersonaId | null = null): NextStep | undefined {
+  if (route === '/') {
+    const override = homeFunnelFor(persona)
+    if (override) return override.nextStep
+  }
   // eslint-disable-next-line security/detect-object-injection -- route is a literal from the calling component, not user input
   return NEXT_STEPS[route]
 }

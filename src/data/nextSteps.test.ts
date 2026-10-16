@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { NEXT_STEPS, PAGE_NEXT_STEP_ROUTES } from './nextSteps'
+import {
+  NEXT_STEPS,
+  PAGE_NEXT_STEP_ROUTES,
+  PERSONA_HOME_FUNNEL,
+  homeFunnelFor,
+  nextStepFor,
+} from './nextSteps'
+import { PERSONA_IDS } from './personaIds'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -79,5 +86,35 @@ describe('NEXT_STEPS (round 9, wave 1.2)', () => {
   it('has no entry for a route that does not exist', () => {
     const orphans = Object.keys(NEXT_STEPS).filter((r) => !known.has(r))
     expect(orphans).toEqual([])
+  })
+})
+
+describe('persona Home funnel (researcher decision R1)', () => {
+  it('the researcher Home next step and start CTA lead to the Library recent changes, not the assessment', () => {
+    const step = nextStepFor('/', 'researcher')
+    expect(step?.to).toBe('/library?qv=new&sort=newest')
+    expect(step?.to).not.toBe('/assess')
+    expect(homeFunnelFor('researcher')?.startCta.label).toBe('Browse the evidence')
+    expect(homeFunnelFor('researcher')?.learningPathOptional).toBe(true)
+  })
+
+  it('every other persona, and no persona, keeps the default Home next step', () => {
+    for (const p of PERSONA_IDS.filter((id) => !(id in PERSONA_HOME_FUNNEL))) {
+      expect(nextStepFor('/', p), p).toBe(NEXT_STEPS['/'])
+    }
+    expect(nextStepFor('/', null)).toBe(NEXT_STEPS['/'])
+  })
+
+  it('an override only ever replaces the Home exit, never another route', () => {
+    expect(nextStepFor('/library', 'researcher')).toBe(NEXT_STEPS['/library'])
+  })
+
+  it('override targets are known routes and read like the other exits', () => {
+    for (const [p, f] of Object.entries(PERSONA_HOME_FUNNEL)) {
+      for (const to of [f.nextStep.to, f.startCta.to]) {
+        expect(known.has(to.split('?')[0]), `${p}: ${to}`).toBe(true)
+      }
+      expect(f.nextStep.why, p).toMatch(/[.!?]$/)
+    }
   })
 })

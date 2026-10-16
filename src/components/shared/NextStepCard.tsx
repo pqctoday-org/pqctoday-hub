@@ -9,6 +9,7 @@
 import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
 import { nextStepFor } from '@/data/nextSteps'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
 
 interface NextStepCardProps {
@@ -18,7 +19,9 @@ interface NextStepCardProps {
 }
 
 export function NextStepCard({ route, className }: NextStepCardProps) {
-  const step = nextStepFor(route)
+  // A persona can override a page's exit (Home, for the researcher).
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const step = nextStepFor(route, persona)
   if (!step) return null
   return (
     <section
