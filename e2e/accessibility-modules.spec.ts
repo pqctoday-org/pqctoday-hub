@@ -64,7 +64,7 @@ const MODULES = [
   { id: 'qkd', track: 'Hardware Infrastructure (+ WS7 named critical)' },
   { id: 'digital-id', track: 'Applications' },
   { id: '5g-security', track: 'Industries' },
-  { id: 'pqc-business-case', track: 'Executive' },
+  { id: 'pqc-business-case', track: 'Governance & Risk' },
   { id: 'secrets-management-pqc', track: 'WS7 named critical' },
 ]
 

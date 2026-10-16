@@ -192,7 +192,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/report': {
     executive:
       'Your view opens "Recommended Actions (Top 5)" first; at the foot of the report, "Print Executive Brief" and "Board Pack ZIP" produce the version you hand to the board.',
-    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk.',
+    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk, and "Compliance Pack ZIP" at the foot adds an applicability register — every framework in scope for your country and sector, with why it applies, its binding status and source.',
     developer:
       'Your view opens "Cryptographic Bill of Materials (CBOM)" and "Cryptographic Discovery" first; "Algorithm Migration Priority" names each replacement with a "Try in Playground" link, and "Export CSV" downloads that table.',
     architect:
@@ -239,8 +239,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/learn': {
     executive:
-      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the Executive track chip narrows the catalogue to the modules written for your role.',
-    grc: 'In "Browse all", the "Workforce view" button is shown for your role and maps modules to NICE work roles; the "Advanced" tray adds a "NICE proficiency" filter — Awareness, Practitioner, Expert.',
+      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to the leadership and GRC modules.',
+    grc: '"My Path" opens on your Essentials in order — PQC 101, risk, data sensitivity, PQC GRC, compliance, governance, vendors, closure; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to them, and the "Workforce view" button maps modules to NICE work roles.',
     developer:
       '"Browse all" has a search ("try \'TLS\' or \'HSM\'"), track chips such as Protocols, Software Infrastructure and Hardware Infrastructure, and a "Shortest first" sort.',
     architect:

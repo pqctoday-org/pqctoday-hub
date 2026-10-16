@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-business-case',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-036',
   title: 'PQC Business Case',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
     'Migration competes with everything else for budget; a quantified harvest-now-decrypt-later case is how PQC wins the funding.',
   difficulty: 'beginner',
   frameworkPhase: 'p0',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 2,
   learnSections: [
     { id: 'roi', label: 'Investment & Costs' },
