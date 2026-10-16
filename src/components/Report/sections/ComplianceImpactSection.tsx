@@ -189,7 +189,13 @@ export const ComplianceImpactSection = ({
           </>
         )}
       </p>
-      <ApplicabilityPanel variant="report-section" />
+      {/* The report's own profile, not the assessment store: a sample or shared
+          report carries its industry and country in the result, and the store can be
+          empty (or hold someone else's run) while it is shown. */}
+      <ApplicabilityPanel
+        variant="report-section"
+        profileOverride={{ industry: industry || null, country: country || null }}
+      />
     </div>
   </CollapsibleSection>
 )
