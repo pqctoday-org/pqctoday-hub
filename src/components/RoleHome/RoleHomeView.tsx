@@ -68,7 +68,7 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
   },
   developer: {
     urgency: 'OpenSSL, BoringSSL and JOSE already ship PQC. Find what fits your stack.',
-    firstWin: 'First win — run a real ML-KEM handshake · 5 min',
+    firstWin: 'First win — run a real hybrid ML-KEM + X25519 key exchange · 5 min',
     track: 'essentials',
   },
   architect: {

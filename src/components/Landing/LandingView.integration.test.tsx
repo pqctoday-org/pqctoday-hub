@@ -190,7 +190,7 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expect(screen.queryByRole('heading', { name: /who's asking/i })).not.toBeInTheDocument()
     expect(screen.queryByText(/the quantum era is/i)).not.toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: /five minutes to a real ml-kem handshake/i })
+      screen.getByRole('heading', { name: /five minutes to a real (hybrid )?ml-kem/i })
     ).toBeInTheDocument()
     expectDesktopRailCoversForYou('developer')
     // Regression guard (2026-08-01 follow-up: "remove more and revisions from

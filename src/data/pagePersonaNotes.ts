@@ -22,7 +22,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Pick Executive and choose the question — mandate, risk, roadmap, deadlines, evidence or the whole programme — each board is three cards that answer it, with the proof behind each.',
     grc: 'Pick GRC and choose the question — what applies, what is already proven, the controls, the risk register, vendor assurance or what "done" means — before any tool asks you for an inventory.',
     developer:
-      'Pick Developer and choose the question: the pilot board reaches a real ML-KEM handshake in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
+      'Pick Developer and choose the question: the pilot board runs a real hybrid ML-KEM + X25519 key exchange in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
     architect:
       'Pick Architect and choose the question: the control-plane board changes one KMIP policy line and rekeys the estate live; the others cover inventory, key stores, protocols, sequencing and defending the design.',
     researcher:
