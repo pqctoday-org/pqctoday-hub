@@ -90,6 +90,25 @@ describe('Security Architect claim invariants', () => {
     })
   }
 
+  // Merkle Tree Certificates handshake sizes. The old figures left the server's public key and
+  // CertificateVerify signature out of the MTC columns (936 B, "92%"), counted the root's key in
+  // the traditional chain (12,034 B) and compared against a 3-certificate chain. Module Q&A and
+  // quiz rows move through the data flow, so this guard covers the files the build ships as code,
+  // the glossary and the topic summaries.
+  it('the MTC handshake sizes keep the server key and CertificateVerify in every column', () => {
+    const mtcFiles = SHIPPED.filter(
+      (f) =>
+        /MerkleTreeCerts|PKIWorkshop/.test(f) ||
+        /glossary\/concepts\.json$|module-topic-summaries\.md$/.test(f)
+    )
+    const stale =
+      /~?936\s*(bytes|B)\b|up to 92\s?%|92\s?%\s*(size )?reduction|63[–-]74\s?%|\b12,034\b|\b11,196\b|\b4,444\b|no signature transmitted in the TLS handshake/i
+    const hits = mtcFiles
+      .filter((f) => !/\.test\.tsx?$/.test(f) && stale.test(fs.readFileSync(f, 'utf-8')))
+      .map((f) => path.relative(ROOT, f))
+    expect(hits).toEqual([])
+  })
+
   it('the old Merkle Tree Certificates draft is only cited as the one that was replaced', () => {
     const bad: string[] = []
     for (const f of SHIPPED) {

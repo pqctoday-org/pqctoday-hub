@@ -77,42 +77,44 @@ export const TYPICAL_SCT_COUNT = 2
 export const CERT_METADATA_BYTES = 200
 
 /**
- * The two subtree sizes draft-ietf-plants-merkle-tree-certs-04 §6.4 ("Size
- * Estimates") actually projects. They are NOT the same number, and this module
- * used to apply the larger one to both — the correction is itself the lesson,
- * so both constants are named for the certificate type they belong to.
+ * The two subtree sizes draft-ietf-plants-merkle-tree-certs-07 §6.5 ("Size
+ * Estimates") projects. They are NOT the same number, and this module once
+ * applied the larger one to both, so each constant is named for the certificate
+ * type it belongs to.
  *
- * Both projections share the same starting assumption: 7-day certificate
- * lifetimes renewed 75% of the way through, giving ~4,400,000 certificates per
- * hour for a Let's Encrypt-sized CA (558M active certs, reissued every 126
- * hours). What differs is how often the CA cuts a subtree:
+ * Both projections share one starting assumption: 7-day certificate lifetimes
+ * renewed 75% of the way through, so every certificate is reissued every 126
+ * hours. For a Let's Encrypt-sized CA (about 682 million active certificates in
+ * September 2026) that is about 5,400,000 certificates per hour. What differs
+ * is how often the CA cuts a subtree:
  *
  *   standalone — "if the CA mints a checkpoint every 2 seconds, standalone
- *   certificate subtrees will span around 2,500 certificates, leading to 12
- *   hashes in the inclusion proof, or 384 bytes"                       (§6.4)
+ *   certificate subtrees will span around 3,000 certificates, leading to 12
+ *   hashes in the inclusion proof, or 384 bytes. Standalone certificates
+ *   additionally must carry a sufficient set of signatures to meet relying
+ *   party requirements."                                              (§6.5)
  *
  *   landmark-relative — "if a new landmark is allocated every hour,
- *   landmark-relative certificate subtrees will span around 4,400,000
+ *   landmark-relative certificate subtrees will span around 5,400,000
  *   certificates, leading to 23 hashes in the inclusion proof, giving an
- *   inclusion proof size of 736 bytes, with no signatures"             (§6.4)
+ *   inclusion proof size of 736 bytes, with no signatures."            (§6.5)
  *
- * Using 736 B for a standalone certificate roughly doubles its real proof, and
- * it is the standalone column where that matters most: the proof is compared
- * against the signature it replaces, so an inflated proof understates MTC's
- * benefit for every algorithm and overstates the "barely helps ECDSA" effect.
+ * "No signatures" describes the certificate. The TLS handshake still carries
+ * the server's public key and its CertificateVerify signature, which the
+ * handshake model below counts for every mode.
  */
 export const MTC_STANDALONE_PROOF_BYTES = 384
 export const MTC_LANDMARK_PROOF_BYTES = 736
 
-/** Subtree sizes the two figures above are projected from (§6.4). */
-export const MTC_STANDALONE_SUBTREE_CERTS = 2_500
-export const MTC_LANDMARK_SUBTREE_CERTS = 4_400_000
+/** Subtree sizes the two figures above are projected from (§6.5). */
+export const MTC_STANDALONE_SUBTREE_CERTS = 3_000
+export const MTC_LANDMARK_SUBTREE_CERTS = 5_400_000
 
 /**
  * Compute inclusion proof size for a given batch size (number of certificates).
- * Per draft-ietf-plants-merkle-tree-certs-04: proof = ⌈log₂(batchSize)⌉ hashes × 32 bytes.
- * The draft's own two data points both satisfy this: 2,500 certs → 12 × 32 = 384 B,
- * and 4,400,000 certs → 23 × 32 = 736 B (§6.4). The demo tree of 8 certs → 3 × 32 = 96 B.
+ * Per draft-ietf-plants-merkle-tree-certs-07: proof = ⌈log₂(batchSize)⌉ hashes × 32 bytes.
+ * The draft's own two data points both satisfy this: 3,000 certs → 12 × 32 = 384 B,
+ * and 5,400,000 certs → 23 × 32 = 736 B (§6.5). The demo tree of 8 certs → 3 × 32 = 96 B.
  * Proof size depends ONLY on subtree size — never on the signature algorithm.
  */
 export function computeProofBytes(batchSize: number): number {
@@ -121,43 +123,64 @@ export function computeProofBytes(batchSize: number): number {
 }
 
 /**
+ * One scenario for all three modes, the one the module introduction states as
+ * 9,884 B for ML-DSA-44 before overheads: the server's key and every signature
+ * use the same algorithm, and the root certificate is already in the client's
+ * trust store, so it is never sent.
+ *
+ *   traditional — leaf and intermediate certificates: 2 public keys, 2
+ *   certificate signatures (the leaf signed by the intermediate, the
+ *   intermediate signed by the root) and the CertificateVerify signature, so
+ *   2 keys + 3 signatures, plus 2 SCTs and metadata for 2 certificates.
+ *
+ *   standalone MTC — one certificate: the server's public key, the inclusion
+ *   proof, the CA's cosignature(s) and the CertificateVerify signature.
+ *
+ *   landmark MTC — one certificate: the server's public key and the inclusion
+ *   proof, no cosignatures (the client already holds the trusted subtree), and
+ *   the CertificateVerify signature.
+ *
+ * SCTs are counted for the traditional chain only. The draft contrasts the MTC
+ * proof with the three ML-DSA-44 signatures post-quantum SCTs would need (§6.5).
+ */
+export const TRADITIONAL_CERTS_SENT = 2
+
+/**
+ * Cosignatures a standalone certificate carries. The draft says only "a
+ * sufficient set of signatures to meet relying party requirements"; one CA
+ * cosignature, in the same algorithm as the server's key, is the minimum. Each
+ * further cosigner a relying party requires adds one signature.
+ */
+export const STANDALONE_COSIGNATURE_COUNT = 1
+
+/**
  * Calculate total traditional TLS handshake authentication size.
  *
- * Components: Root CA sig + Intermediate CA sig + EE cert sig
- * + Root CA pubkey + Intermediate CA pubkey + EE pubkey
- * + SCTs embedded in EE cert (≥2 required by browsers; not in intermediate)
- * + cert metadata × 3
+ * Components: leaf and intermediate public keys, the two certificate
+ * signatures, the CertificateVerify signature, the SCTs embedded in the leaf
+ * certificate (≥2 required by browsers) and metadata for both certificates.
  */
 export function traditionalChainSize(algo: AlgorithmSizes): number {
-  const sigs = algo.signatureBytes * 3 // Root, Intermediate, EE
-  const keys = algo.publicKeyBytes * 3
-  const scts = SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT // SCTs in EE cert only
-  const metadata = CERT_METADATA_BYTES * 3
+  const sigs = algo.signatureBytes * (TRADITIONAL_CERTS_SENT + 1) // 2 cert signatures + CertificateVerify
+  const keys = algo.publicKeyBytes * TRADITIONAL_CERTS_SENT
+  const scts = SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT
+  const metadata = CERT_METADATA_BYTES * TRADITIONAL_CERTS_SENT
   return sigs + keys + scts + metadata
 }
 
 /**
- * Estimated cosigner signature overhead in a standalone certificate.
- * Per draft-ietf-plants-merkle-tree-certs-04 Section 6.2, standalone certs carry
- * cosignatures from the CA and external cosigners. Cosigner signatures use Ed25519
- * (64 bytes each). Typical policy: 2 external cosigners → ~128 bytes of cosignatures.
- * This is a conservative minimum; actual overhead depends on relying party requirements.
- */
-export const COSIGNER_SIGNATURE_OVERHEAD_BYTES = 128
-
-/**
  * Calculate standalone MTC TLS handshake authentication size.
  *
- * Components: 1 CA signature + 1 CA public key + cosigner signatures + inclusion proof + metadata
- * Per Section 6.2, standalone certs carry sufficient cosignatures to meet relying party requirements.
- * The proof defaults to the STANDALONE figure (§6.4) — a standalone subtree is cut
- * every checkpoint, not every landmark, so it is an order of magnitude smaller.
+ * Components: the server's public key, the CertificateVerify signature, the CA
+ * cosignature(s) carried in the certificate (draft §6.3), the inclusion proof
+ * and metadata. The proof defaults to the STANDALONE figure (§6.5): a standalone
+ * subtree is cut every checkpoint, not every landmark, so it is far smaller.
  */
 export function mtcChainSize(algo: AlgorithmSizes, proofBytes?: number): number {
   return (
-    algo.signatureBytes +
     algo.publicKeyBytes +
-    COSIGNER_SIGNATURE_OVERHEAD_BYTES +
+    algo.signatureBytes + // CertificateVerify
+    algo.signatureBytes * STANDALONE_COSIGNATURE_COUNT +
     (proofBytes ?? MTC_STANDALONE_PROOF_BYTES) +
     CERT_METADATA_BYTES
   )
@@ -166,12 +189,29 @@ export function mtcChainSize(algo: AlgorithmSizes, proofBytes?: number): number 
 /**
  * Calculate landmark MTC TLS handshake authentication size.
  *
- * Landmark certificates carry ZERO embedded signatures — relying parties pre-sync
- * trusted subtrees out-of-band. Per draft-ietf-plants-merkle-tree-certs §6.3:
- * only the inclusion proof + certificate metadata are transmitted in the handshake.
+ * A landmark-relative certificate carries no signatures (§6.4): relying parties
+ * pre-sync trusted subtrees out-of-band. The handshake still carries the server's
+ * public key and its CertificateVerify signature, plus the inclusion proof and
+ * metadata.
  */
-export function mtcLandmarkChainSize(proofBytes?: number): number {
-  return (proofBytes ?? MTC_LANDMARK_PROOF_BYTES) + CERT_METADATA_BYTES
+export function mtcLandmarkChainSize(algo: AlgorithmSizes, proofBytes?: number): number {
+  return (
+    algo.publicKeyBytes +
+    algo.signatureBytes + // CertificateVerify
+    (proofBytes ?? MTC_LANDMARK_PROOF_BYTES) +
+    CERT_METADATA_BYTES
+  )
+}
+
+/**
+ * Format a size change against the traditional baseline. A positive percent is a
+ * saving; a negative one means the MTC handshake is larger (for example a
+ * landmark proof next to an ECDSA chain, which is smaller than the proof).
+ */
+export function describeSizeChange(percent: number): { text: string; smaller: boolean } {
+  return percent >= 0
+    ? { text: `${percent}% smaller`, smaller: true }
+    : { text: `${-percent}% larger`, smaller: false }
 }
 
 /** Breakdown for display in the size comparison table */
@@ -183,13 +223,14 @@ export interface SizeBreakdown {
   traditionalTotal: number
   mtcTotal: number
   mtcLandmarkTotal: number
+  /** Percent smaller than traditional; negative when the MTC handshake is larger. */
   reductionPercent: number
   landmarkReductionPercent: number
 }
 
 /**
  * Two proof sizes, not one. The standalone and landmark columns describe subtrees
- * cut at different cadences (§6.4), so a caller that passes only one figure would
+ * cut at different cadences (§6.5), so a caller that passes only one figure would
  * reproduce exactly the conflation this module used to publish.
  */
 export function getSizeBreakdown(
@@ -200,23 +241,30 @@ export function getSizeBreakdown(
   const standaloneProof = standaloneProofBytes ?? MTC_STANDALONE_PROOF_BYTES
   const landmarkProof = landmarkProofBytes ?? MTC_LANDMARK_PROOF_BYTES
   const traditional = [
-    { component: 'Root CA signature', bytes: algo.signatureBytes },
-    { component: 'Root CA public key', bytes: algo.publicKeyBytes },
-    { component: 'Intermediate CA signature', bytes: algo.signatureBytes },
-    { component: 'Intermediate CA public key', bytes: algo.publicKeyBytes },
-    { component: 'End-entity signature', bytes: algo.signatureBytes },
-    { component: 'End-entity public key', bytes: algo.publicKeyBytes },
-    { component: 'CT SCTs ×2 (EE cert)', bytes: SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT },
-    { component: 'Certificate metadata (×3)', bytes: CERT_METADATA_BYTES * 3 },
+    { component: 'Leaf public key', bytes: algo.publicKeyBytes },
+    { component: 'Leaf certificate signature (by intermediate)', bytes: algo.signatureBytes },
+    { component: 'Intermediate public key', bytes: algo.publicKeyBytes },
+    { component: 'Intermediate certificate signature (by root)', bytes: algo.signatureBytes },
+    { component: 'CertificateVerify signature', bytes: algo.signatureBytes },
+    { component: 'CT SCTs ×2 (leaf cert)', bytes: SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT },
+    {
+      component: 'Certificate metadata (×2)',
+      bytes: CERT_METADATA_BYTES * TRADITIONAL_CERTS_SENT,
+    },
   ]
   const mtc = [
-    { component: 'CA signature (batch)', bytes: algo.signatureBytes },
-    { component: 'CA public key', bytes: algo.publicKeyBytes },
-    { component: 'Cosigner signatures (≥2)', bytes: COSIGNER_SIGNATURE_OVERHEAD_BYTES },
+    { component: 'Server public key', bytes: algo.publicKeyBytes },
+    { component: 'CertificateVerify signature', bytes: algo.signatureBytes },
+    {
+      component: `CA cosignature (minimum ${STANDALONE_COSIGNATURE_COUNT})`,
+      bytes: algo.signatureBytes * STANDALONE_COSIGNATURE_COUNT,
+    },
     { component: 'Inclusion proof', bytes: standaloneProof },
     { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
   ]
   const mtcLandmark = [
+    { component: 'Server public key', bytes: algo.publicKeyBytes },
+    { component: 'CertificateVerify signature', bytes: algo.signatureBytes },
     { component: 'Inclusion proof (to pre-synced subtree)', bytes: landmarkProof },
     { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
   ]

@@ -92,7 +92,7 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       badge: 'MTC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        "With ML-DSA-44, the tool shows ~11.8 KB for the traditional chain (3 certificate signatures + 3 public keys including the root's, 2 SCTs and certificate metadata: 7,260 + 3,936 + 238 + 600 B gives 12,034 B) and ~4.3 KB for a standalone MTC (1 CA signature + CA key + cosignatures + 384 B inclusion proof + metadata: 4,444 B). Counting only what a server actually sends (leaf and intermediate keys, two certificate signatures and the CertificateVerify signature), the chain is 9,884 B, as in the Introduction. The reduction is even more dramatic with SLH-DSA. Note the tradeoff: MTC clients must periodically synchronize with the transparency service.",
+        "With ML-DSA-44, the tool shows ~10.3 KB for the traditional chain: what a server sends (leaf and intermediate keys, two certificate signatures and the CertificateVerify signature, 9,884 B, as in the Introduction) plus 2 SCTs and metadata for two certificates (10,522 B in all; the root is in the client's trust store and is not sent). A standalone MTC is ~6.6 KB (server key, CertificateVerify signature, one CA cosignature, 384 B inclusion proof, metadata: 6,736 B), about 36% smaller. The reduction in bytes grows with SLH-DSA, whose signatures are larger. Note the tradeoff: standalone MTCs need relying parties to meet cosigner requirements, and landmark certificates need clients to synchronize trusted subtrees periodically.",
       workshopStep: 5,
     },
   ]

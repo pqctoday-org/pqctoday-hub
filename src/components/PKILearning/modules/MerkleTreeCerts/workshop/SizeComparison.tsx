@@ -7,24 +7,26 @@ import {
   getSizeBreakdown,
   formatBytes,
   computeProofBytes,
+  describeSizeChange,
+  STANDALONE_COSIGNATURE_COUNT,
 } from '../data/mtcConstants'
 
-// Two subtree cadences, because draft-ietf-plants-merkle-tree-certs-04 §6.4 projects
-// two — a standalone subtree is cut every checkpoint (~2,500 certs, 12 hashes, 384 B),
-// a landmark-relative one every landmark (~4.4M certs, 23 hashes, 736 B). Driving both
+// Two subtree cadences, because draft-ietf-plants-merkle-tree-certs-07 §6.5 projects
+// two — a standalone subtree is cut every checkpoint (~3,000 certs, 12 hashes, 384 B),
+// a landmark-relative one every landmark (~5.4M certs, 23 hashes, 736 B). Driving both
 // columns from a single slider is what previously published a 736 B standalone proof,
 // nearly double the spec's own estimate.
 const STANDALONE_MARKS = [
   { exp: 3, label: 'Demo (8)' },
   { exp: 8, label: 'Fast checkpoint (256)' },
-  { exp: 12, label: 'Spec: 2s checkpoint (~2.5K)' },
+  { exp: 12, label: 'Spec: 2s checkpoint (~3K)' },
   { exp: 16, label: 'Slow checkpoint (65K)' },
 ]
 
 const LANDMARK_MARKS = [
   { exp: 16, label: 'Frequent (65K)' },
   { exp: 20, label: 'Large CA (1M)' },
-  { exp: 23, label: 'Spec: hourly (~4.4M)' },
+  { exp: 23, label: 'Spec: hourly (~5.4M)' },
   { exp: 24, label: 'Max (16.7M)' },
 ]
 
@@ -36,9 +38,9 @@ function formatBatchSize(n: number): string {
 
 export const SizeComparison: React.FC = () => {
   const [selectedAlgo, setSelectedAlgo] = useState<string>(ALGORITHM_SIZES[2].shortName)
-  // Defaults are the spec's own two operating points (§6.4), not one applied twice.
-  const [standaloneExponent, setStandaloneExponent] = useState(12) // ~2.5K certs → 12 hashes → 384 B
-  const [landmarkExponent, setLandmarkExponent] = useState(23) // ~4.4M certs → 23 hashes → 736 B
+  // Defaults are the spec's own two operating points (§6.5), not one applied twice.
+  const [standaloneExponent, setStandaloneExponent] = useState(12) // ~3K certs → 12 hashes → 384 B
+  const [landmarkExponent, setLandmarkExponent] = useState(23) // ~5.4M certs → 23 hashes → 736 B
 
   const standaloneBatch = useMemo(() => Math.pow(2, standaloneExponent), [standaloneExponent])
   const landmarkBatch = useMemo(() => Math.pow(2, landmarkExponent), [landmarkExponent])
@@ -62,6 +64,18 @@ export const SizeComparison: React.FC = () => {
     () => Math.max(...allBreakdowns.map((b) => b.traditionalTotal)),
     [allBreakdowns]
   )
+  // Savings range over the post-quantum algorithms only; classical keys behave differently.
+  const { pqStandalone, pqLandmark } = useMemo(() => {
+    const pq = allBreakdowns.filter((_, i) => ALGORITHM_SIZES[i].category !== 'classical')
+    const range = (pick: (b: (typeof pq)[number]) => number) => ({
+      min: Math.min(...pq.map(pick)),
+      max: Math.max(...pq.map(pick)),
+    })
+    return {
+      pqStandalone: range((b) => b.reductionPercent),
+      pqLandmark: range((b) => b.landmarkReductionPercent),
+    }
+  }, [allBreakdowns])
 
   return (
     <div className="space-y-6">
@@ -70,17 +84,19 @@ export const SizeComparison: React.FC = () => {
           TLS Handshake Size: Traditional vs MTC
         </h3>
         <p className="text-sm text-muted-foreground">
-          Compare the total authentication data transmitted during a TLS handshake using traditional
-          X.509 certificate chains versus Merkle Tree Certificates. The two MTC columns are sized
-          from <em>separate</em> subtrees: a standalone certificate&apos;s proof reaches the latest
-          checkpoint, a landmark certificate&apos;s reaches the last landmark, and the spec projects
-          those at ~2,500 and ~4.4M certificates respectively. Adjust either to see proof size scale
-          logarithmically. In Step 5, you&apos;ll see the CA sign a real Merkle root with ML-DSA-44
-          — that single signature is what makes these size savings possible.
+          Compare the authentication data a TLS server sends: a traditional leaf-plus-intermediate
+          X.509 chain (the root is already in the client&apos;s trust store) versus a Merkle Tree
+          Certificate. Every column includes the server&apos;s public key and its CertificateVerify
+          signature. The two MTC columns are sized from <em>separate</em> subtrees: a standalone
+          certificate&apos;s proof reaches the latest checkpoint, a landmark certificate&apos;s
+          reaches the last landmark, and the draft projects those at ~3,000 and ~5.4M certificates
+          respectively. Adjust either to see proof size scale logarithmically. In Step 5,
+          you&apos;ll see the CA sign a real Merkle root with ML-DSA-44 — the signature that
+          replaces the per-certificate CA signatures.
         </p>
       </div>
 
-      {/* Subtree size sliders — one per certificate type (§6.4 projects both separately) */}
+      {/* Subtree size sliders — one per certificate type (§6.5 projects both separately) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {(
           [
@@ -217,7 +233,8 @@ export const SizeComparison: React.FC = () => {
         <div className="bg-success/5 rounded-lg p-4 border border-success/20">
           <h4 className="text-sm font-bold text-success mb-3">Standalone MTC</h4>
           <p className="text-[10px] text-muted-foreground mb-2">
-            Includes cosignatures — works without predistributed state.
+            Carries {STANDALONE_COSIGNATURE_COUNT} CA cosignature (the minimum; the draft leaves the
+            number to relying-party policy) — works without predistributed state.
           </p>
           <div className="space-y-2">
             {breakdown.mtc.map((item, i) => (
@@ -249,10 +266,11 @@ export const SizeComparison: React.FC = () => {
         <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
           <h4 className="text-sm font-bold text-primary mb-3">
             Landmark MTC{' '}
-            <span className="text-[10px] font-normal text-success">(no signatures)</span>
+            <span className="text-[10px] font-normal text-success">(no cosignatures)</span>
           </h4>
           <p className="text-[10px] text-muted-foreground mb-2">
-            Client pre-syncs trusted subtree — zero signatures in the TLS handshake.
+            Client pre-syncs the trusted subtree, so the certificate carries no cosignatures. The
+            server still sends its key and CertificateVerify signature.
           </p>
           <div className="space-y-2">
             {breakdown.mtcLandmark.map((item, i) => (
@@ -284,18 +302,18 @@ export const SizeComparison: React.FC = () => {
       {/* Reduction badges */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="text-center bg-success/10 rounded-lg p-4 border border-success/30">
-          <span className="text-3xl font-bold text-success">{breakdown.reductionPercent}%</span>
+          <span className="text-3xl font-bold text-success">
+            {describeSizeChange(breakdown.reductionPercent).text}
+          </span>
           <div className="text-sm text-muted-foreground mt-1">
-            smaller — Standalone MTC ({algo.shortName})
+            Standalone MTC ({algo.shortName})
           </div>
         </div>
         <div className="text-center bg-primary/10 rounded-lg p-4 border border-primary/30">
           <span className="text-3xl font-bold text-primary">
-            {breakdown.landmarkReductionPercent}%
+            {describeSizeChange(breakdown.landmarkReductionPercent).text}
           </span>
-          <div className="text-sm text-muted-foreground mt-1">
-            smaller — Landmark MTC ({algo.shortName})
-          </div>
+          <div className="text-sm text-muted-foreground mt-1">Landmark MTC ({algo.shortName})</div>
         </div>
       </div>
 
@@ -322,10 +340,10 @@ export const SizeComparison: React.FC = () => {
                   </span>
                   <div className="flex items-center gap-3">
                     <span className="text-success font-bold text-[10px]">
-                      Standalone &minus;{b.reductionPercent}%
+                      Standalone {describeSizeChange(b.reductionPercent).text}
                     </span>
                     <span className="text-primary font-bold text-[10px]">
-                      Landmark &minus;{b.landmarkReductionPercent}%
+                      Landmark {describeSizeChange(b.landmarkReductionPercent).text}
                     </span>
                   </div>
                 </div>
@@ -385,13 +403,13 @@ export const SizeComparison: React.FC = () => {
             why the two columns differ: {formatBytes(standaloneProof)} for a standalone proof over{' '}
             {formatBatchSize(standaloneBatch)} certs, {formatBytes(landmarkProof)} for a landmark
             proof over {formatBatchSize(landmarkBatch)}. Charging the larger figure to both, as this
-            page once did, nearly doubles the standalone proof and understates MTC&apos;s benefit.
-            Standalone savings range from ~{allBreakdowns[0].reductionPercent}% (ECDSA) to ~
-            {allBreakdowns[allBreakdowns.length - 1].reductionPercent}% (SLH-DSA-128s). Landmark
-            mode eliminates all signatures from the handshake (client pre-syncs the trusted
-            subtree), raising savings to ~{allBreakdowns[0].landmarkReductionPercent}%–
-            {allBreakdowns[allBreakdowns.length - 1].landmarkReductionPercent}% regardless of
-            algorithm.
+            page once did, nearly doubles the standalone proof. The proof replaces the certificate
+            signatures, not the server&apos;s own: every handshake still carries the server&apos;s
+            public key and a CertificateVerify signature. For the post-quantum algorithms that makes
+            standalone MTC about {pqStandalone.min}–{pqStandalone.max}% smaller and landmark MTC
+            about {pqLandmark.min}–{pqLandmark.max}% smaller than the leaf-plus-intermediate chain.
+            With a classical key the proof is not worth it: a landmark proof (
+            {formatBytes(landmarkProof)}) is bigger than an entire ECDSA chain.
           </div>
         </div>
       </div>
@@ -407,8 +425,8 @@ export const SizeComparison: React.FC = () => {
               <th className="text-right py-2 px-2">Traditional</th>
               <th className="text-right py-2 px-2">Standalone</th>
               <th className="text-right py-2 px-2">Landmark</th>
-              <th className="text-right py-2 px-2">Standalone ↓</th>
-              <th className="text-right py-2 pl-2">Landmark ↓</th>
+              <th className="text-right py-2 px-2">Standalone vs traditional</th>
+              <th className="text-right py-2 pl-2">Landmark vs traditional</th>
             </tr>
           </thead>
           <tbody>
@@ -449,10 +467,10 @@ export const SizeComparison: React.FC = () => {
                     {formatBytes(b.mtcLandmarkTotal)}
                   </td>
                   <td className="text-right py-2 px-2 font-bold text-success">
-                    {b.reductionPercent}%
+                    {describeSizeChange(b.reductionPercent).text}
                   </td>
                   <td className="text-right py-2 pl-2 font-bold text-primary">
-                    {b.landmarkReductionPercent}%
+                    {describeSizeChange(b.landmarkReductionPercent).text}
                   </td>
                 </tr>
               )
