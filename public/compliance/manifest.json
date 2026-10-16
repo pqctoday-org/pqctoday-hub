@@ -2331,7 +2331,12 @@
       "unified": "current",
       "admittedAt": "2026-08-17T03:24:08.705666+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:56:01.688571+00:00"
+      "stampedAt": "2026-09-17T12:56:01.688571+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10162026/compliance/DISA-STIG.html",
+      "supersededAt": "2026-10-16T16:23:16.698574+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "capture was the STIG downloads listing, not the instrument that makes STIGs binding — replaced by DISA-STIG.pdf"
     },
     {
       "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
@@ -3392,6 +3397,24 @@
       "status": "downloaded",
       "acquisition": "manual",
       "acquiredAt": "2026-10-16"
+    },
+    {
+      "refId": "DISA-STIG",
+      "filename": "DISA-STIG.pdf",
+      "sizeBytes": 548658,
+      "contentType": "application/pdf",
+      "url": "https://public.cyber.mil/stigs/downloads/",
+      "sha256": "dcd841591922810dca230a708825aaf9cd7e7efd60a2b325e5d114b131926e80",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T16:23:19.323470+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "compliance/DISA-STIG.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-16T16:23:16.698574+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "capture was the STIG downloads listing, not the instrument that makes STIGs binding"
     }
   ],
   "blocked": {
