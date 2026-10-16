@@ -27,6 +27,7 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 import { transitionConsequence } from '@/data/algorithmConsequence'
+import { isTransitionGuidanceDate, TRANSITION_GUIDANCE_NOTE } from './transitionGuidance'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -721,6 +722,14 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             >
                               {algo.deprecationDate}
                             </span>
+                            {isTransitionGuidanceDate(algo.deprecationDate) && (
+                              <span
+                                className="text-[10px] text-muted-foreground"
+                                title={TRANSITION_GUIDANCE_NOTE}
+                              >
+                                Proposed: NIST IR 8547 (draft), US federal
+                              </span>
+                            )}
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <ArrowRight size={14} className="opacity-50" />
                               <span className="font-mono">Std: {algo.standardizationDate}</span>

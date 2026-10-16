@@ -63,7 +63,7 @@ export interface Decision {
 }
 
 export const DECISIONS: Record<DecisionKey, Decision> = {
-  dropin: { key: 'dropin', label: 'Drop-in', tone: 'success', ready: true },
+  dropin: { key: 'dropin', label: 'Upgrade / configure', tone: 'success', ready: true },
   hybrid: { key: 'hybrid', label: 'Hybrid config', tone: 'primary', ready: true },
   rekey: { key: 'rekey', label: 'Re-key', tone: 'info', ready: true },
   roadmap: { key: 'roadmap', label: 'Track roadmap', tone: 'warning', ready: false },
@@ -143,7 +143,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     cnsaYear: 2025,
     hndl: true,
     deadlineLabel: 'External-facing — highest HNDL exposure',
-    note: 'Enable hybrid X25519+ML-KEM-768 key exchange on edge TLS terminators. Drop-in for modern stacks (OpenSSL 3.5+, BoringSSL, recent CDNs) — no application change required.',
+    note: 'Enable hybrid X25519+ML-KEM-768 key exchange on edge TLS terminators. On modern stacks (OpenSSL 3.5+, BoringSSL, recent CDNs) this is mostly a configuration change; test clients and middleboxes that cannot handle the larger key share, and keep a classical group only as a policy-controlled fallback.',
     focusPersonas: ['architect', 'executive', 'grc'],
   },
   {
@@ -185,7 +185,7 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     cnsaYear: 2030,
     hndl: false,
     deadlineLabel: 'CNSA 2.0 deadline',
-    note: 'OpenSSH 10.0+ defaults to the hybrid mlkem768x25519-sha256 key exchange (9.x defaulted to sntrup761x25519-sha512; OpenSSH OpenSSH 9.9 added the ML-KEM option). Upgrade clients + servers; no key reissue needed for the KEX itself.',
+    note: 'OpenSSH 10.0+ defaults to the hybrid mlkem768x25519-sha256 key exchange (9.x defaulted to sntrup761x25519-sha512; OpenSSH 9.9 added the ML-KEM option). Upgrade clients + servers; no key reissue needed for the KEX itself.',
     focusPersonas: ['architect'],
   },
   {

@@ -25,7 +25,7 @@ export interface Intent {
 export const INTENTS: Intent[] = [
   {
     label: 'Replace a classical algorithm',
-    description: 'Find the right PQC drop-in for RSA, ECC, or AES',
+    description: 'Find the PQC replacement for RSA or ECC, and what changes when you switch',
     icon: <Shuffle size={15} />,
     params: { tab: 'transition' },
   },
@@ -48,7 +48,8 @@ export const INTENTS: Intent[] = [
 export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   executive: {
     label: 'View top compliance picks',
-    description: 'ML-KEM-768 and ML-DSA-65 — the FIPS-required choices for US federal compliance',
+    description:
+      'ML-KEM-768 and ML-DSA-65 — NIST’s general-purpose defaults; US national security systems (CNSA 2.0) need ML-KEM-1024 and ML-DSA-87',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',
@@ -56,7 +57,7 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     },
   },
   developer: {
-    label: 'Find a drop-in replacement',
+    label: 'Find a replacement and what changes',
     description: 'Transition table with key sizes, performance, and standardization status',
     icon: <Shuffle size={15} />,
     // ACCURACY-0705: 'Standardized' is not a value in STATUS_ITEMS
