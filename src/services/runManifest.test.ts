@@ -38,6 +38,7 @@ describe('run manifest', () => {
     const m = buildRunManifest(INPUT, SITE, 'UA')
     const md = runManifestToMarkdown(m)
     expect(md).toContain('## What this run does not show')
+    expect(md.startsWith('**Notice')).toBe(true)
     expect(md).toContain('- FAIL client-auth: failed (expected success)')
     const json = md.slice(md.indexOf('```json') + 7, md.lastIndexOf('```'))
     expect(JSON.parse(json)).toEqual(m)

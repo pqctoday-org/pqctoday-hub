@@ -9,6 +9,7 @@
  * Everything is built in the browser from the run's own results. Nothing is
  * uploaded or stored. Full test vectors are never embedded, only digests.
  */
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 
 export const RUN_MANIFEST_SCHEMA = 'pqctoday.run-manifest/1'
 
@@ -90,7 +91,7 @@ const MODE_TEXT: Record<ExecutionMode, string> = {
   docker: 'Ran in a local container, not in the browser.',
 }
 
-/** A readable Markdown record with the full manifest as a JSON block at the end. */
+/** A readable Markdown record, led by the site's education notice, with the full manifest as a JSON block at the end. */
 export function runManifestToMarkdown(m: RunManifest): string {
   const lines = [
     `# ${m.tool.title}: what this run showed`,
@@ -119,5 +120,5 @@ export function runManifestToMarkdown(m: RunManifest): string {
     '```',
     '',
   ]
-  return lines.join('\n')
+  return withEducationNoticeMarkdown(lines.join('\n'))
 }
