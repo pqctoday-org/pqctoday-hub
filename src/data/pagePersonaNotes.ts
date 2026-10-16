@@ -192,7 +192,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/report': {
     executive:
       'Your view opens "Recommended Actions (Top 5)" first; at the foot of the report, "Print Executive Brief" and "Board Pack ZIP" produce the version you hand to the board.',
-    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk.',
+    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk, and "Compliance Pack ZIP" at the foot adds an applicability register — every framework in scope for your country and sector, with why it applies, its binding status and source.',
     developer:
       'Your view opens "Cryptographic Bill of Materials (CBOM)" and "Cryptographic Discovery" first; "Algorithm Migration Priority" names each replacement with a "Try in Playground" link, and "Export CSV" downloads that table.',
     architect:
