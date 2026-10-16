@@ -46,6 +46,13 @@ Each role now starts from its own questions and downloads (including a new opera
 - **Save what a TLS demo run showed** [view:/playground/tls-simulator] [persona:curious] [persona:developer]: after a run, one button downloads a small file with the settings, the negotiated cipher, key exchange and signature, whether the key exchange was post-quantum, the byte counts and round trips, and what the run does not prove. Nothing is uploaded.
 - **Download a record of what you ran** [view:/playground] [view:/library] [view:/learn/entropy-randomness] [persona:researcher]: the SP 800-90A DRBG check, Entropy Testing, Source Combining and the Entropy Evidence Lab can now save a JSON record of each run: the site version and commit, every test case and negative control, the test vectors used, and what the run does not prove. The Library can export your bookmarks or the current list as BibTeX or CSL-JSON for a citation manager.
 - **Sources on beginner home facts** [view:/] [persona:curious]: facts on the Curious home boards can link to the document behind them; the "who decides" card links each row to FIPS 203, the NSA CNSA 2.0 FAQ and the PQC Community page.
+- **Evidence bundle and research workspace** [view:/library] [view:/playground] [view:/learn/entropy-randomness] [persona:researcher]: save a run from the DRBG, Entropy Testing, Source Combining and Entropy Evidence tools to your evidence and download a bundle: a zip of your saved runs with a list of what is missing. A saved research question, a claim table (fact, estimate, scenario or recommendation, with supporting and contrary sources) and a side-by-side comparison of two saved runs of the same tool travel with the bundle, and a reviewer can open it read-only. The workspace is best on a larger screen, and a collection cannot yet be restored from a re-imported bundle.
+- **Library collections and "Changed since you saved"** [view:/library] [persona:researcher] [persona:grc]: keep a note on each record in a collection, and a list flags records whose revision, stage, replacement or removal changed since you saved them.
+- **Follow Library documents by research topic** [view:/library] [persona:researcher]: follow and filter documents by 12 research topics. The topic filter stays hidden until documents are tagged.
+- **The source of every figure in the board pack** [view:/report] [persona:executive] [persona:grc]: the Board Pack and the GRC Compliance Pack now list every figure they state with whether it is a fact, an estimate, a scenario or a recommendation, where it comes from, how it was worked out, its date and what to bear in mind before quoting it. A figure with no published source is still shown, marked as an estimate with no published source.
+- **How each answer moved your risk score** [view:/report] [persona:executive] [persona:grc] [persona:architect]: "How this was calculated" has a second table showing, for each question, how many points the score would change had you answered "don't know", largest first, and where each value came from. It appears only when your stored answers reproduce the report's score.
+- **Executive boards lead with one next step** [view:/] [persona:executive]: each of the six board questions shows one next step and one "after that" link, with the rest under a collapsed "More for this question". Progress labels name decisions: Briefed, Mandated, Funded, Governing.
+- **The Simulation says how long a run takes** [view:/simulation] [persona:executive] [persona:architect]: the landing states the length of the Executive Overview and the intro, what a finished run gives you (a maturity score, a run grade and a roadmap you can save), and every board screen shows whether it uses sample data or your assessment.
 
 ### Changed
 
@@ -68,6 +75,8 @@ Each role now starts from its own questions and downloads (including a new opera
 - **Flags with a known licence** [view:/compliance] [persona:curious] [persona:grc]: country and organisation flags now come from the open flag-icons set (MIT), credited at /licenses/. G7, NATO and "international" are shown as simple labelled badges.
 - **Contact by email** [persona:curious] [persona:executive]: the welcome banner's contact link is now pqctoday@proton.me.
 - **Engines from a published release, with their notices** [view:/openssl] [persona:developer] [persona:ops]: all six browser engines are taken from the engines-2 release, and each ships its full third-party licence notices. OpenSSL Studio uses the engine built in the public HSM repository; the other engines are unchanged.
+- **The roadmap lists every upcoming milestone and who set it** [view:/report] [persona:executive] [persona:grc]: besides the country's next milestone, the migration roadmap groups upcoming dates by the body that set them (for the United States: federal civilian agencies, national security systems, certified products), each marked binding or guidance, with a note that a date applies only to what its issuing body covers.
+- **The Compliance drawer says how binding a framework is** [view:/compliance] [persona:grc] [persona:executive]: the framework drawer has a "Binding" line worded as in the report: binding for its scope, with the framework's own words for who it applies to (and our translation where the original is not in English), binding, or guidance or draft, followed by its basis. The report quotes who a scoped framework binds in the same way.
 
 ### Fixed
 
@@ -100,6 +109,7 @@ Each role now starts from its own questions and downloads (including a new opera
 - **SSH configs OpenSSH accepts** [view:/learn/vpn-ssh-pqc] [persona:ops] [persona:developer]: the SSH config generator no longer writes an ML-KEM key exchange name that OpenSSH rejects. Hybrid now offers mlkem768x25519-sha256 first, and "Pure PQC" is renamed "PQC only (no classical fallback)", because both OpenSSH PQC methods combine with X25519.
 - **History links open where items were made** [view:/business] [persona:architect] [persona:ops]: saved architecture-pack and operations-pack items, and KMIP quick runs, now open their pack or tab instead of an empty Learn page.
 - **A lesson you have opened but not progressed in now says "Start"**, not "Resume" [view:/learn] [persona:curious] [persona:developer].
+- **The sample organisation reads as sample data** [view:/simulation] [persona:executive] [persona:architect]: loading the fictional bank no longer labels it "Your assessment", and the landing says "the 10-minute intro".
 
 ### Data
 
@@ -119,6 +129,9 @@ Each role now starts from its own questions and downloads (including a new opera
 - **One Library title correction recorded** [view:/library] [persona:researcher]: the change record for the corrected IACR ePrint 2010/560 title, shipped in 4.161.0, is now marked as shipped.
 - **Microsoft's post-quantum features in Windows added to its roadmap** [view:/migrate] [persona:architect] [persona:executive]: post-quantum algorithms are generally available in Windows 11 and Windows Server 2025, with ML-DSA certificates in AD Certificate Services; hybrid TLS key exchange and composite algorithms in the APIs are in preview.
 - **Roadmap summaries filled in for AWS and Futurex** [view:/migrate] [persona:architect].
+- **Compliance bases and scope** [view:/compliance] [persona:grc] [persona:cert-engineer]: DISA STIG, Brazil's BACEN Resolution 4.893, UN Regulation No. 155 (UN-ECE WP.29) and PCI DSS now say who they apply to in their own words and name their basis; the evidence for DISA STIG, PCI DSS and the DoD instruction names where its saved copy came from.
+- **ARINC 653P0-4 in the Library** [view:/library] [persona:researcher] [persona:architect]: the current edition of ARINC 653 Part 0 replaces the earlier one.
+- **Quiz and lesson answers corrected** [view:/learn/quiz] [persona:curious] [persona:grc]: two quiz explanations and three lesson Q&A answers (VPN and SSH, operations) are corrected.
 
 ## [4.161.0] - 2026-10-15
 
