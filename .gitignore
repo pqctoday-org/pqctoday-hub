@@ -148,6 +148,28 @@ public/vendor-roadmaps/*.pdf
 # Relocated to pqctoday-priv/local-evidence-cache/compliance-docs/.
 public/compliance-docs/*.html
 public/compliance-docs/*.pdf
+# Raw third-party documents are never committed in any evidence folder the
+# maintenance flow writes to (owner rule 2026-10-15: "public repo should not
+# contain any third party pdf"; only extractions). The indexes (manifest.json,
+# evidence.json, skip-list.json, *.md) stay tracked.
+public/compliance/*.pdf
+public/compliance/*.html
+public/compliance/*.htm
+public/compliance/*.txt
+public/compliance-docs/*.htm
+public/compliance-docs/*.txt
+public/threats/*.pdf
+public/threats/*.html
+public/threats/*.htm
+public/threats/*.txt
+public/timeline/*.pdf
+public/timeline/*.html
+public/timeline/*.htm
+public/timeline/*.txt
+public/migrate-proofs/*.htm
+public/migrate-proofs/*.txt
+public/vendor-roadmaps/*.htm
+public/vendor-roadmaps/*.txt
 
 # Local backups of branding assets (created by scripts/regen-brand-assets.py)
 public/_archive/
