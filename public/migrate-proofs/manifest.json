@@ -24150,6 +24150,22 @@
       "replacedAt": "2026-10-11T05:12:26.811800+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "version and date refreshed: the saved proof page described an older release; the row now cites the vendor's announcement of the current release"
+    },
+    {
+      "product_id": "Isidore-Mini-Core",
+      "refId": "Isidore-Mini-Core",
+      "file": "Isidore-Mini-Core-6b4bd0b3.html",
+      "sizeBytes": 101748,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/modules-in-process/iut-list#:~:text=Isidore%20Mini%20Core",
+      "sha256": "ef8be86daea6af18a39d7583a22885569dcdfe98bb2a305da815ecb68b5b1412",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T13:42:26.283085+00:00",
+      "admittedBy": "evidence admission",
+      "superseded_file": "_superseded-10162026/migrate-proofs/Isidore-Mini-Core-6b4bd0b3-2.html",
+      "identity": "SKIPPED",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
