@@ -130,7 +130,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               </div>
               <p className="text-xs text-muted-foreground mb-3 flex-grow">
                 Cryptography for data-in-transit (mTLS) is completely offloaded to an infrastructure
-                proxy (Envoy, Istio). Zero app code changes required.
+                proxy (Envoy, Istio). The application behind the proxy needs no crypto code changes.
               </p>
               <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
                 <div className="text-primary text-center">App (Plaintext)</div>

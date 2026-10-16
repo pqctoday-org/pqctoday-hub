@@ -431,8 +431,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="flex items-start gap-2">
                 <span className="text-primary font-bold shrink-0">4.</span>
                 <span>
-                  <strong>Key Derivation:</strong> Combined shared secret = KDF(X25519_ss ||
-                  ML-KEM_ss) &rarr; session key
+                  <strong>Key Derivation:</strong> Combined shared secret = KDF(both shared secrets,
+                  concatenated in the order the group defines) &rarr; session key
                 </span>
               </div>
             </div>
@@ -511,16 +511,21 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               Combiner Construction (SP 800-227 + SP 800-56C)
             </h4>
             <p className="text-xs text-muted-foreground">
-              The high-level <code className="text-[11px]">KDF(X25519_ss || ML-KEM_ss)</code> above
-              hides three real requirements that SP 800-227 defers to{' '}
-              <strong>SP 800-56C-Rev2</strong>:
+              The high-level &ldquo;KDF(both shared secrets)&rdquo; above hides three real
+              requirements that SP 800-227 defers to <strong>SP 800-56C-Rev2</strong>:
             </p>
             <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
               <li>
-                <strong>Concatenation order is fixed per protocol.</strong> Hybrid TLS 1.3 drafts
-                concatenate as <code>classical_ss || pqc_ss</code> with a protocol-specific label;
-                swapping order silently breaks interop. Order does not add security, but binding to
-                a known order prevents cross-protocol confusion.
+                <strong>Concatenation order is fixed per group.</strong> In TLS 1.3 (RFC 10024
+                §4.3), X25519MLKEM768 concatenates <code>ML-KEM_ss || X25519_ss</code>, while
+                SecP256r1MLKEM768 and SecP384r1MLKEM1024 concatenate{' '}
+                <code>ECDHE_ss || ML-KEM_ss</code>; the result enters the TLS key schedule as its
+                shared-secret input. SP 800-56C-Rev2 approves this when the first secret comes from
+                a FIPS-approved scheme, so X25519MLKEM768 puts ML-KEM first (X25519 is not
+                approved), while the NIST-curve groups put ECDHE first because certified P-256 and
+                P-384 implementations are more widely available (RFC 10024 §5). Swapping order
+                silently breaks interop. Order does not add security, but binding to a known order
+                prevents cross-protocol confusion.
               </li>
               <li>
                 <strong>HKDF vs KMAC.</strong> SP 800-56C permits either an HMAC-based extractor
@@ -756,7 +761,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </span>
               </div>
               <div className="pl-24 text-muted-foreground">
-                key_share: X25519MLKEM768 public key (1,216 bytes)
+                key_share: ML-KEM-768 encapsulation key || X25519 public key (1,184 + 32 = 1,216
+                bytes)
               </div>
               <div className="flex items-start gap-3 mt-1.5">
                 <span className="text-success font-bold shrink-0 w-20">Server</span>
@@ -767,13 +773,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </span>
               </div>
               <div className="pl-24 text-muted-foreground">
-                key_share: ciphertext (1,120 bytes) = X25519 ct || ML-KEM ct
+                key_share: ML-KEM-768 ciphertext || X25519 public key (1,088 + 32 = 1,120 bytes)
               </div>
               <div className="flex items-start gap-3 mt-1.5">
                 <span className="text-foreground font-bold shrink-0 w-20">Both</span>
                 <span className="text-muted-foreground">&rarr;</span>
                 <span>
-                  <strong>HKDF</strong>(X25519_ss || ML-KEM_ss) &rarr; handshake keys
+                  <strong>HKDF</strong>(ML-KEM_ss || X25519_ss) &rarr; handshake keys (RFC 10024
+                  §4.3)
                 </span>
               </div>
             </div>

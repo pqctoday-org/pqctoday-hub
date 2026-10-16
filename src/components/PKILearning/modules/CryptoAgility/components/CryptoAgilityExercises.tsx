@@ -33,13 +33,13 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
   const scenarios: Scenario[] = [
     {
       id: 'rsa-to-hybrid',
-      title: '1. RSA to Hybrid: Zero Code Changes',
+      title: '1. RSA to Hybrid: What Changes, What Does Not',
       description:
-        'Start with the RSA-2048 backend, then switch to X25519MLKEM768. Notice that the application code stays identical — only the configuration changes.',
+        'Start with the RSA-2048 backend, then switch to X25519MLKEM768. Notice that the encrypt()/keyExchange() call sites stay the same — the configuration selects the algorithm. Then look at what the abstraction cannot hide: the key and ciphertext sizes.',
       badge: 'Agility',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'The encrypt()/keyExchange() calls in the application code never change. The abstraction layer maps the same API to different algorithm implementations.',
+        'The encrypt()/keyExchange() calls never change: the abstraction layer maps the same API to different algorithm implementations. What still changes around them is the algorithm identifier, key and ciphertext sizes (buffers, storage and message formats), key encodings, negotiation with peers, and the error path when a peer does not support the new algorithm.',
       config: { step: 0, backend: 'rsa' },
     },
     {

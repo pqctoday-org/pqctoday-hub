@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import clsx from 'clsx'
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { flushSync } from 'react-dom'
 import {
@@ -63,7 +64,9 @@ import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storag
 // The four board-level questions every PQC program has to answer, each mapped to
 // the surface that answers it. Turns an empty state into a "what a program looks
 // like" primer instead of three bare buttons.
-const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = [
+type WelcomeQuestion = { q: string; desc: string; to: string; cta: string }
+
+const BOARD_QUESTIONS: WelcomeQuestion[] = [
   {
     q: "What's at risk?",
     desc: 'Size your quantum exposure by system and data sensitivity.',
@@ -90,14 +93,46 @@ const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = 
   },
 ]
 
+// The Developer / Engineer equivalent: the four engineering questions a
+// migration has to answer, each mapped to an existing tool. Board questions
+// (ROI, RACI) are not a developer's first step.
+const ENGINEERING_QUESTIONS: WelcomeQuestion[] = [
+  {
+    q: 'Where is the vulnerable crypto?',
+    desc: 'Find the call sites, APIs and providers your code depends on.',
+    to: '/business/tools/crypto-api-refactor-audit',
+    cta: 'Crypto API refactor audit',
+  },
+  {
+    q: 'What does the inventory look like?',
+    desc: 'Record algorithms, libraries and keys as a CycloneDX CBOM.',
+    to: '/business/tools/crypto-cbom-builder',
+    cta: 'CBOM builder',
+  },
+  {
+    q: 'Does it work on my stack?',
+    desc: 'Try ML-KEM, ML-DSA and SLH-DSA with real OpenSSL commands.',
+    to: '/openssl',
+    cta: 'OpenSSL Studio',
+  },
+  {
+    q: 'Does the handshake still work?',
+    desc: 'Run a real TLS 1.3 handshake with hybrid and PQC groups.',
+    to: '/playground/tls-simulator',
+    cta: 'TLS 1.3 simulator',
+  },
+]
+
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // Top 3 of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
+  const isDeveloper = selectedPersona === 'developer'
   const topToolIds = getBusinessRoleSequence(selectedPersona)
-    .steps.slice(0, 3)
+    .steps.slice(0, isDeveloper ? 4 : 3)
     .map((s) => s.id)
+  const questions = isDeveloper ? ENGINEERING_QUESTIONS : BOARD_QUESTIONS
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
     .filter((t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t))
@@ -110,19 +145,22 @@ function WelcomeState() {
           Welcome to your PQC Command Center
         </h2>
         <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-          A post-quantum migration is a program, and every program answers the same four board-level
-          questions. Start with whichever you need first.
+          {isDeveloper
+            ? 'Changing the cryptography in a codebase comes down to four engineering questions. Start with whichever you need first.'
+            : 'A post-quantum migration is a program, and every program answers the same four board-level questions. Start with whichever you need first.'}
         </p>
-        <div className="mb-6">
-          <Link to="/simulation?run=exec">
-            <Button variant="gradient" size="sm" className="gap-1.5">
-              <PlayCircle size={14} aria-hidden="true" />
-              New here? Watch the guided overview
-            </Button>
-          </Link>
-        </div>
+        {!isDeveloper && (
+          <div className="mb-6">
+            <Link to="/simulation?run=exec">
+              <Button variant="gradient" size="sm" className="gap-1.5">
+                <PlayCircle size={14} aria-hidden="true" />
+                New here? Watch the guided overview
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
-          {BOARD_QUESTIONS.map((item) => (
+          {questions.map((item) => (
             <Link
               key={item.q}
               to={item.to}
@@ -143,7 +181,7 @@ function WelcomeState() {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Start with these tools
           </p>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className={clsx('grid gap-3', isDeveloper ? 'sm:grid-cols-2' : 'sm:grid-cols-3')}>
             {topTools.map((tool) => {
               const Icon = tool.icon
               return (
@@ -177,6 +215,11 @@ function WelcomeState() {
           <Button variant="outline" onClick={() => navigate('/learn/pqc-grc')}>
             <BookOpen size={16} className="mr-2" />
             Start GRC Learning
+          </Button>
+        ) : isDeveloper ? (
+          <Button variant="outline" onClick={() => navigate('/learn/crypto-dev-apis')}>
+            <BookOpen size={16} className="mr-2" />
+            Learn the crypto APIs
           </Button>
         ) : (
           <Button variant="outline" onClick={() => navigate('/learn/exec-quantum-impact')}>

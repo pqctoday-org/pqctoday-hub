@@ -71,7 +71,7 @@
         "ML-DSA-44 signature: ~2.4 KB vs ECDSA P-256: ~71 bytes",
         "Total handshake ~5-8 KB larger than classical — still acceptable for most use cases",
         "Requires PQC-capable CA infrastructure and certificate issuance pipeline",
-        "Draft RFC support: draft-ietf-tls-mldsa, FIPS 204 (final)"
+        "Draft RFC support: draft-ietf-tls-mldsa-06, FIPS 204 (final)"
       ]
     },
     {
@@ -113,7 +113,7 @@
         "Update TLS libraries to versions supporting ML-KEM hybrid groups",
         "Enable X25519MLKEM768 as preferred key exchange group",
         "Monitor handshake size and latency impact",
-        "Validate with IETF draft-ietf-tls-hybrid-design compliance"
+        "Validate against RFC 9954 (hybrid key exchange design) and RFC 10024 (hybrid groups)"
       ]
     },
     {

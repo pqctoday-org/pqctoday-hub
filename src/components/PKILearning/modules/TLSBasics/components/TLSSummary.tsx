@@ -135,8 +135,8 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
               )}
               {isHRR && (
                 <p className="mt-1 text-status-warning">
-                  HelloRetryRequest occurred — the server did not support the client&apos;s
-                  initially preferred group
+                  HelloRetryRequest occurred — client and server share a group, but the initial
+                  ClientHello carried no key share for the group the server selected
                   {keyExchange ? (
                     <>
                       {' '}
@@ -144,7 +144,8 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
                     </>
                   ) : null}
                   , adding an extra round trip ({roundTrips?.details || '2'}-RTT instead of 1-RTT).
-                  To avoid HRR, make sure both sides list a common group (e.g. X25519) first.
+                  To avoid HRR, put the server&apos;s preferred group first in the client list so
+                  the client sends its key share up front.
                 </p>
               )}
             </>
@@ -157,6 +158,7 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
                 const noGroupMatch =
                   errorDetails.includes('no shared group') ||
                   errorDetails.includes('no supported groups') ||
+                  errorDetails.includes('no suitable key share') ||
                   errorDetails.includes('no protocols available')
                 const noCipherMatch =
                   errorDetails.includes('no cipher') ||
@@ -174,8 +176,10 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
                       </p>
                     ) : noGroupMatch ? (
                       <p className="mt-1 text-status-error">
-                        No key exchange group in common — client and server have no shared group.
-                        Add a common group (e.g. <strong>X25519</strong>) to both sides.
+                        No key exchange group in common — client and server have no shared group, so
+                        the server aborted with a handshake_failure alert (a HelloRetryRequest
+                        cannot help here). Add a common group (e.g. <strong>X25519</strong>) to both
+                        sides.
                       </p>
                     ) : noCipherMatch ? (
                       <p className="mt-1 text-status-error">
@@ -187,7 +191,7 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
                       <p className="mt-1 text-muted-foreground">
                         Check the Protocol Log tab below for detailed error messages.
                         {hrrEvent &&
-                          ' A HelloRetryRequest occurred but the handshake still failed — the server may not support any of the offered groups.'}
+                          ' A HelloRetryRequest occurred but the handshake still failed afterwards — the group retry itself succeeded, so check the certificate, signature and cipher settings in the log.'}
                       </p>
                     )}
                   </div>

@@ -259,6 +259,18 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
   })
 
+  it('shows a developer the engineering questions and tools, not board questions', () => {
+    mockPersonaStore.selectedPersona = 'developer'
+    renderView()
+    expect(screen.getByText('Where is the vulnerable crypto?')).toBeInTheDocument()
+    expect(screen.getByText('Does the handshake still work?')).toBeInTheDocument()
+    expect(screen.queryByText('What will it cost?')).not.toBeInTheDocument()
+    expect(screen.queryByText('Who owns it?')).not.toBeInTheDocument()
+    expect(screen.queryByText('Start Executive Learning')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Watch the guided overview/)).not.toBeInTheDocument()
+    expect(screen.getByText('Learn the crypto APIs')).toBeInTheDocument()
+  })
+
   it('shows the 6 CSWP.39 Fig 3 zones in fixed order when assessment is in progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
     mockAssessmentStore.industry = 'Technology'

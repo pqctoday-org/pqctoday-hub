@@ -71,7 +71,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
         <h3 className="text-lg font-bold text-foreground mb-2">Abstraction Layer Demo</h3>
         <p className="text-sm text-muted-foreground">
           Toggle between algorithm backends to see how a crypto-agile architecture lets you swap
-          algorithms without changing application code.
+          algorithms without touching the call sites — and what still changes around them.
         </p>
       </div>
 
@@ -194,8 +194,9 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
               {backend.type === 'classical' ? (
                 <>
                   <strong>Current state:</strong> This RSA-2048 configuration is vulnerable to
-                  quantum attack. To migrate, you only need to change the configuration file &mdash;
-                  no application code changes required.
+                  quantum attack. To migrate, the algorithm choice changes in the configuration file
+                  &mdash; but check that buffers, storage and peers can handle the larger PQC keys
+                  and ciphertexts.
                 </>
               ) : backend.type === 'pqc' ? (
                 <>

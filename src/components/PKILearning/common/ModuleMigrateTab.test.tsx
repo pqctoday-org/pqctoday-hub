@@ -111,11 +111,12 @@ describe('ModuleMigrateTab', () => {
     expect(screen.getByText('Partial')).toBeInTheDocument()
   })
 
-  it('renders FIPS badge for Validated and Partial, not for No', () => {
+  it('renders a FIPS badge only for a validated module — FedRAMP and "No" get none', () => {
     renderTab('tls-basics')
-    // Exact match — the badge text includes a space before FIPS due to the icon
     expect(screen.getByText('FIPS', { exact: true })).toBeInTheDocument()
-    expect(screen.getByText('FIPS Partial', { exact: true })).toBeInTheDocument()
+    // "Yes (FedRAMP)" used to read "FIPS Partial"; FedRAMP is not a FIPS 140 validation.
+    expect(screen.queryByText(/FIPS Partial/)).not.toBeInTheDocument()
+    expect(screen.queryByText('No FIPS')).not.toBeInTheDocument()
   })
 
   it('links product name to repositoryUrl when available', () => {

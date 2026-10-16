@@ -367,9 +367,8 @@ export const TLSBasicsModule: React.FC = () => {
                 </li>
                 <li>
                   <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-                  X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF
-                  draft-ietf-tls-ecdhe-mlkem); pure ML-KEM-512/768/1024 groups
-                  (draft-connolly-tls-mlkem)
+                  X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, RFC
+                  10024); pure ML-KEM-512/768/1024 groups (draft-ietf-tls-mlkem-11)
                 </li>
                 <li>
                   <span className="text-status-success font-semibold">✓ Classical certs</span> —
@@ -464,7 +463,7 @@ export const TLSBasicsModule: React.FC = () => {
                 from. The signed transcript here uses a placeholder string for illustration; real
                 CertificateVerify content is{' '}
                 <code className="font-mono">ContextString || SHA-256(handshake messages)</code> (RFC
-                8446 §4.4.3).
+                9846 §4.4.3).
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />

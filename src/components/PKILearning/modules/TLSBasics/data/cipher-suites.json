@@ -86,7 +86,7 @@
       "ct_bytes": 1120,
       "ss_bytes": 64,
       "quantum_safe": true,
-      "draft": "draft-ietf-tls-hybrid-design",
+      "draft": "RFC 10024",
       "notes": "Combines X25519 (classical) with ML-KEM-768 (PQC). Provides forward secrecy against both classical and quantum adversaries. IETF-recommended migration path. Chrome and Cloudflare default."
     },
     {
@@ -97,7 +97,7 @@
       "ct_bytes": 1153,
       "ss_bytes": 64,
       "quantum_safe": true,
-      "draft": "draft-ietf-tls-ecdhe-mlkem",
+      "draft": "RFC 10024",
       "notes": "P-256 + ML-KEM-768 hybrid. Preferred in FIPS-constrained environments where P-256 is mandated."
     }
   ],

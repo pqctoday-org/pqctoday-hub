@@ -77,7 +77,7 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
     id: 'go-api',
     question: 'Which Go crypto package do you use?',
     options: [
-      { label: 'crypto/* (stdlib)', recommendation: 'add-circl' },
+      { label: 'crypto/* (stdlib)', recommendation: 'go-stdlib-pqc' },
       { label: 'cloudflare/circl', recommendation: 'stay-circl' },
       { label: 'liboqs-go (cgo)', recommendation: 'circl-over-cgo' },
     ],
@@ -86,16 +86,16 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
     id: 'dotnet-api',
     question: 'Which .NET crypto API do you use?',
     options: [
-      { label: 'System.Security.Cryptography', recommendation: 'add-bc-dotnet' },
+      { label: 'System.Security.Cryptography', recommendation: 'dotnet10-native' },
       { label: 'Bouncy Castle C#', recommendation: 'stay-bc-dotnet' },
-      { label: 'CNG / P/Invoke', recommendation: 'add-bc-dotnet' },
+      { label: 'CNG / P/Invoke', recommendation: 'cng-native' },
     ],
   },
   {
     id: 'python-api',
     question: 'Which Python crypto library do you use?',
     options: [
-      { label: 'cryptography', recommendation: 'add-liboqs-python' },
+      { label: 'cryptography', recommendation: 'python-cryptography-pqc' },
       { label: 'PyCryptodome', recommendation: 'add-liboqs-python' },
       { label: 'pyOpenSSL', recommendation: 'add-liboqs-python' },
     ],
@@ -106,7 +106,7 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
     options: [
       { label: 'Yes — FIPS Level 3 required', recommendation: 'pkcs11-hsm' },
       { label: 'Yes — software FIPS sufficient', recommendation: 'fips-software' },
-      { label: 'No HSM needed', recommendation: 'jca-bc-migration' },
+      { label: 'No HSM needed', recommendation: 'jca-native-pqc' },
     ],
   },
 ]
@@ -219,7 +219,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
       'Update circl to a current release',
       'Use the ML-KEM package for key encapsulation and the hybrid KEM for the transition',
       'Add ML-DSA signing beside your Ed25519 or ECDSA code paths',
-      "Go 1.24 added an ML-KEM package to the standard library; consider it where you do not need circl's wider set",
+      "Go 1.24 added crypto/mlkem and Go 1.27 added crypto/mldsa to the standard library; prefer them where you do not need circl's wider set (e.g. SLH-DSA)",
     ],
   },
   {
@@ -229,10 +229,10 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'cloudflare/circl (pure Go)',
     effort: 'medium',
     description:
-      'liboqs-go needs cgo and a native liboqs build on every target, which complicates cross-compilation and static binaries. circl gives you the standardised algorithms in pure Go; keep liboqs-go only for algorithms circl lacks.',
+      'liboqs-go needs cgo and a native liboqs build on every target, which complicates cross-compilation and static binaries. The standard library (crypto/mlkem since Go 1.24, crypto/mldsa since Go 1.27) and circl (SLH-DSA and more) give you the standardised algorithms in pure Go; keep liboqs-go only for algorithms neither has.',
     steps: [
       'List the algorithms you call through liboqs-go and match them to circl packages',
-      'Replace ML-KEM, ML-DSA and SLH-DSA calls with circl',
+      'Replace ML-KEM and ML-DSA calls with crypto/mlkem and crypto/mldsa (Go 1.27+), and SLH-DSA calls with circl',
       'Drop the cgo build requirement where nothing else needs it',
       'Keep liboqs-go behind a build tag for any algorithm circl does not carry',
     ],
@@ -244,7 +244,7 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     to: 'Bouncy Castle C# (classical + PQC)',
     effort: 'low',
     description:
-      'Bouncy Castle C# carries the PQC algorithms, so the work is a package update and new algorithm calls, mirroring the Java advice for teams already on Bouncy Castle.',
+      'Bouncy Castle C# carries the PQC algorithms in managed code, so the work is a package update and new algorithm calls. It is an alternative to the .NET 10 built-in classes, useful on older .NET or where the OS backend has no PQC.',
     steps: [
       'Update the BouncyCastle.Cryptography NuGet package to a current release',
       'Add ML-DSA signing alongside the existing ECDSA or RSA signer',
@@ -253,18 +253,50 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     ],
   },
   {
+    id: 'python-cryptography-pqc',
+    title: 'Python: Use ML-KEM and ML-DSA in cryptography 48+',
+    from: 'cryptography (classical)',
+    to: 'cryptography 48.0.0+ (classical + ML-KEM, ML-DSA)',
+    effort: 'low',
+    description:
+      'pyca/cryptography added ML-KEM and ML-DSA in 47.0.0 for AWS-LC and BoringSSL builds, and in 48.0.0 for OpenSSL 3.5.0+, which the official wheels use. SLH-DSA is not included; use liboqs-python for it.',
+    steps: [
+      'Upgrade to cryptography 48.0.0 or later and confirm the linked OpenSSL is 3.5.0+ (or that you build against AWS-LC/BoringSSL)',
+      'Add ML-KEM encapsulation and ML-DSA signing behind a small interface',
+      'Plan for the larger keys, signatures and ciphertexts in storage, wire formats and database columns',
+      'TLS stays with the ssl module and the system OpenSSL; OpenSSL 3.5+ already offers X25519MLKEM768',
+      'Use liboqs-python only for SLH-DSA or non-standardised algorithms',
+    ],
+  },
+  {
     id: 'add-liboqs-python',
-    title: 'Python: Add liboqs-python for PQC',
-    from: 'cryptography / pyOpenSSL / PyCryptodome (classical)',
-    to: 'Existing library for classical and X.509 + liboqs-python for PQC',
+    title: 'Python: Move PQC to cryptography 48+ (liboqs-python for the rest)',
+    from: 'PyCryptodome / pyOpenSSL (classical)',
+    to: 'cryptography 48.0.0+ for ML-KEM and ML-DSA; liboqs-python for SLH-DSA',
     effort: 'medium',
     description:
-      'None of the common Python libraries expose PQC yet. liboqs-python wraps liboqs with the full PQC suite; keep your current library for classical operations, certificates and TLS, and call liboqs-python for ML-KEM and ML-DSA.',
+      'PyCryptodome and pyOpenSSL do not expose ML-KEM or ML-DSA. pyca/cryptography does from 48.0.0 (with OpenSSL 3.5+); liboqs-python wraps liboqs for SLH-DSA and algorithms that are not standardised.',
     steps: [
-      'Install liboqs and the liboqs-python binding for your platform',
-      'Put PQC operations behind a small interface so the binding can be swapped later',
-      'Add ML-KEM encapsulation and ML-DSA signing behind that interface',
-      'Keep certificates and TLS on your existing library until it gains PQC support',
+      'Add cryptography 48.0.0+ alongside your current library',
+      'Put PQC operations behind a small interface so the backend can be swapped later',
+      'Add ML-KEM encapsulation and ML-DSA signing through cryptography',
+      'Install liboqs and liboqs-python only if you need SLH-DSA or other algorithms',
+    ],
+  },
+  {
+    id: 'cng-native',
+    title: 'Windows CNG: Call the native ML-KEM and ML-DSA algorithms',
+    from: 'CNG / P/Invoke (classical algorithms)',
+    to: 'CNG BCRYPT_MLKEM_ALGORITHM and BCRYPT_MLDSA_ALGORITHM',
+    effort: 'medium',
+    description:
+      'Windows 11 24H2+ and Windows Server 2025 expose ML-KEM and ML-DSA through the default CNG provider (generally available since November 2025). SLH-DSA is defined as an identifier but not implemented by the default provider.',
+    steps: [
+      'Confirm every target machine runs Windows 11 24H2+ or Windows Server 2025',
+      'Open BCRYPT_MLKEM_ALGORITHM / BCRYPT_MLDSA_ALGORITHM and set BCRYPT_PARAMETER_SET_NAME before finalizing the key',
+      'Resize key, signature and ciphertext buffers — query BCRYPT_SIGNATURE_LENGTH and BCRYPT_KEM_CIPHERTEXT_LENGTH instead of hard-coding sizes',
+      'Handle STATUS_NOT_SUPPORTED on older Windows builds with a clear error or fallback',
+      'For SLH-DSA, use a third-party provider, OpenSSL 3.5+ or Bouncy Castle',
     ],
   },
   {
@@ -335,18 +367,18 @@ byte[] signature = sig.sign();`,
   },
   {
     id: 'openssl-provider',
-    title: 'OpenSSL: Add oqsprovider for PQC',
+    title: 'OpenSSL: Upgrade to 3.5+ for native PQC',
     from: 'OpenSSL 3.x (classical algorithms)',
-    to: 'OpenSSL 3.x + oqsprovider (classical + PQC)',
+    to: 'OpenSSL 3.5+ (classical + ML-KEM, ML-DSA, SLH-DSA)',
     effort: 'low',
     description:
-      'OpenSSL 3.x provider architecture makes PQC addition seamless. Install oqsprovider and your existing EVP code works with PQC algorithms.',
+      'OpenSSL 3.5 ships ML-KEM, ML-DSA and SLH-DSA in the default provider, so the EVP call pattern stays the same. What changes is the algorithm name, key and signature sizes, encodings and the error paths you handle. oqsprovider is only needed on OpenSSL before 3.5 or for algorithms that are not standardised.',
     steps: [
-      'Build and install oqsprovider (cmake + make install)',
-      'Add provider to openssl.cnf or load programmatically',
+      'Upgrade to OpenSSL 3.5 or later (on older 3.x, oqsprovider is the stop-gap)',
       'Change algorithm name strings from "RSA" to "ML-DSA-65" etc.',
-      'Test with openssl s_client/s_server for TLS PQC',
-      'Update key generation scripts to produce PQC keys',
+      'Resize buffers and storage for larger keys and signatures; use the two-call size query pattern',
+      'Test with openssl s_client/s_server — 3.5 offers X25519MLKEM768 by default',
+      'Update key generation scripts and certificate tooling to produce PQC keys',
     ],
     beforeCode: {
       language: 'C',
@@ -358,12 +390,12 @@ EVP_PKEY_keygen(ctx, &pkey);`,
     },
     afterCode: {
       language: 'C',
-      code: `// After: ML-DSA via oqsprovider — same API pattern
-OSSL_PROVIDER_load(NULL, "oqsprovider");
+      code: `// After: ML-DSA-65 in the OpenSSL 3.5+ default provider
 EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(
-    NULL, "ML-DSA-65", "provider=oqsprovider");
+    NULL, "ML-DSA-65", NULL);
 EVP_PKEY_keygen_init(ctx);
-EVP_PKEY_keygen(ctx, &pkey);`,
+EVP_PKEY_keygen(ctx, &pkey);
+// Signatures are ~3.3 KB (vs 384 B for RSA-3072): resize buffers`,
     },
   },
   {
@@ -398,19 +430,19 @@ let valid = dilithium3::verify(&sig, &message, &pk);`,
     },
   },
   {
-    id: 'add-circl',
-    title: 'Go: Add cloudflare/circl for PQC',
+    id: 'go-stdlib-pqc',
+    title: 'Go: Use the standard library (crypto/mlkem, crypto/mldsa)',
     from: 'Go crypto/* stdlib (classical)',
-    to: 'Go stdlib + circl (classical + PQC)',
+    to: 'Go 1.27+ stdlib (classical + ML-KEM, ML-DSA)',
     effort: 'low',
     description:
-      'Cloudflare circl is the recommended pure Go PQC library. No cgo dependency, excellent performance.',
+      'Go 1.24 added crypto/mlkem and turned on X25519MLKEM768 by default in crypto/tls; Go 1.27 added crypto/mldsa and ML-DSA in crypto/x509 and crypto/tls. No extra dependency or cgo. Use cloudflare/circl only for what the standard library lacks, such as SLH-DSA.',
     steps: [
-      'go get github.com/cloudflare/circl',
-      'Import circl KEM/signature packages',
-      'Add ML-KEM key encapsulation for key exchange',
-      'Test hybrid key exchange (X25519 + ML-KEM)',
-      'Integrate with existing TLS configuration if applicable',
+      'Move to Go 1.24+ for ML-KEM (Go 1.27+ if you also need ML-DSA)',
+      'If you set Config.CurvePreferences explicitly, add X25519MLKEM768 — the default list only applies when it is nil',
+      'Add ML-KEM encapsulation where you do key agreement today',
+      'Plan for larger keys and ciphertexts (1,184-byte encapsulation key, 1,088-byte ciphertext for ML-KEM-768)',
+      'Add cloudflare/circl only if you need SLH-DSA or other algorithms',
     ],
     beforeCode: {
       language: 'Go',
@@ -422,27 +454,28 @@ pub := priv.PublicKey()`,
     },
     afterCode: {
       language: 'Go',
-      code: `// After: ML-KEM-768 via circl
-import "github.com/cloudflare/circl/kem/mlkem/mlkem768"
-pub, priv, _ := mlkem768.GenerateKeyPair(rand.Reader)
-ct, ss, _ := mlkem768.Encapsulate(pub)
-ss2, _ := mlkem768.Decapsulate(priv, ct)`,
+      code: `// After: ML-KEM-768 from the standard library (Go 1.24+)
+import "crypto/mlkem"
+dk, _ := mlkem.GenerateKey768()
+ek := dk.EncapsulationKey() // send ek.Bytes() to the peer
+sharedKey, ciphertext := ek.Encapsulate()
+sharedKey2, _ := dk.Decapsulate(ciphertext)`,
     },
   },
   {
-    id: 'add-bc-dotnet',
-    title: '.NET: Add Bouncy Castle C# for PQC',
+    id: 'dotnet10-native',
+    title: '.NET 10: Use the built-in MLKem and MLDsa classes',
     from: 'System.Security.Cryptography (classical)',
-    to: 'System.Security.Cryptography + BC C# (PQC)',
+    to: '.NET 10 System.Security.Cryptography (MLKem, MLDsa, SlhDsa)',
     effort: 'medium',
     description:
-      'Add Bouncy Castle C# NuGet package for PQC algorithms. Use System.Security.Cryptography for classical operations and BC for PQC.',
+      '.NET 10 adds MLKem and MLDsa, plus SlhDsa and CompositeMLDsa marked [Experimental] (SYSLIB5006). They work only where the OS backend has PQC: OpenSSL 3.5+ on Linux or a Windows CNG build with PQC. Bouncy Castle C# is the alternative for older .NET or backends without PQC.',
     steps: [
-      'Install BouncyCastle.Cryptography NuGet package',
-      'Create abstraction interface for signing/KEM operations',
-      'Implement BC-backed PQC signer alongside existing .NET crypto signer',
-      'Use Span<T> for secure key material handling',
-      'Test cross-platform behavior (CNG on Windows, OpenSSL on Linux)',
+      'Target .NET 10 and check MLKem.IsSupported / MLDsa.IsSupported on every deployment platform',
+      'If you use SlhDsa or CompositeMLDsa, acknowledge SYSLIB5006 — their API may still change',
+      'Create an abstraction interface for signing/KEM operations so the backend can change',
+      'Resize storage and wire formats for larger keys and signatures (ML-DSA-65: 1,952-byte public key, 3,309-byte signature)',
+      'Where IsSupported is false, fall back to Bouncy Castle C# or fail with a clear error',
     ],
     beforeCode: {
       language: 'C#',
@@ -453,29 +486,27 @@ byte[] signature = ecdsa.SignData(
     },
     afterCode: {
       language: 'C#',
-      code: `// After: ML-DSA-65 via Bouncy Castle C#
-var gen = new MLDsaKeyPairGenerator();
-gen.Init(new MLDsaKeyGenerationParameters(
-    new SecureRandom(), MLDsaParameters.ML_DSA_65));
-var kp = gen.GenerateKeyPair();
-var signer = new MLDsaSigner();
-signer.Init(true, kp.Private);
-byte[] sig = signer.GenerateSignature(message);`,
+      code: `// After: ML-DSA-65 with .NET 10 built-in MLDsa
+if (!MLDsa.IsSupported)
+    throw new PlatformNotSupportedException(
+        "Needs OpenSSL 3.5+ or Windows CNG with PQC");
+using MLDsa key = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa65);
+byte[] signature = key.SignData(message);`,
     },
   },
   {
-    id: 'jca-bc-migration',
-    title: 'JCA: Migrate to Bouncy Castle provider',
+    id: 'jca-native-pqc',
+    title: 'JCA: Use JDK 24+ built-in ML-KEM and ML-DSA',
     from: 'JCA with default JDK provider (classical)',
-    to: 'JCA with Bouncy Castle provider (PQC)',
+    to: 'JDK 24+ / JDK 25 LTS default providers (ML-KEM, ML-DSA); Bouncy Castle for SLH-DSA',
     effort: 'low',
     description:
-      'Register Bouncy Castle as a JCA provider — existing JCA code works unchanged. Then add PQC algorithm calls using the same JCA pattern.',
+      'JDK 24 added ML-KEM (JEP 496) and ML-DSA (JEP 497) to the default providers; JDK 25 is the first LTS with them. JDK 21 LTS has neither, so teams on 21 either upgrade or register Bouncy Castle. Bouncy Castle is also the route to SLH-DSA.',
     steps: [
-      'Add Bouncy Castle dependency (Maven/Gradle)',
-      'Register BC provider: Security.addProvider(new BouncyCastleProvider())',
-      'Existing JCA code continues to work (backward compatible)',
-      'Add PQC key generation and signing using standard JCA API',
+      'Upgrade to JDK 25 LTS (or JDK 24+) — or add the Bouncy Castle provider if you must stay on JDK 21',
+      'Generate ML-DSA keys with KeyPairGenerator "ML-DSA" and a NamedParameterSpec',
+      'Use javax.crypto.KEM with "ML-KEM" where you do key agreement today',
+      'Resize key stores, database columns and wire formats for the larger keys and signatures',
       'Consider BC-FIPS if FIPS validation is required',
     ],
     beforeCode: {
@@ -487,11 +518,13 @@ KeyPair kp = kpg.generateKeyPair();`,
     },
     afterCode: {
       language: 'Java',
-      code: `// After: BC provider — same API, PQC algorithms available
-Security.addProvider(new BouncyCastleProvider());
-KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA-65", "BC");
+      code: `// After: JDK 24+ built-in ML-DSA — same JCA engine classes
+KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA");
+kpg.initialize(NamedParameterSpec.ML_DSA_65);
 KeyPair kp = kpg.generateKeyPair();
-// Existing RSA code still works via JDK default provider`,
+Signature sig = Signature.getInstance("ML-DSA");
+// On JDK 21: Security.addProvider(new BouncyCastleProvider())
+// and getInstance("ML-DSA-65", "BC")`,
     },
   },
 ]
@@ -522,14 +555,14 @@ export const INTEROP_PATTERNS: InteropPattern[] = [
     description:
       'OpenSSL libcrypto can be called from any language via FFI. Rust has the openssl crate, Zig has @cImport, Go has cgo, .NET has P/Invoke.',
     example:
-      'Rust app uses openssl crate → links to libcrypto.so → uses oqsprovider for PQC → same library as nginx/Apache on the system.',
+      'Rust app uses openssl crate → links to libcrypto.so (3.5+ has ML-KEM/ML-DSA natively) → same library as nginx/Apache on the system.',
   },
   {
     id: 'oqsprovider-chain',
     title: 'PQClean → liboqs → oqsprovider → OpenSSL',
     apis: ['PQClean', 'liboqs', 'oqsprovider', 'OpenSSL'],
     description:
-      'The open-source PQC supply chain: PQClean provides reference C code, liboqs wraps it with a unified API, oqsprovider exposes it as an OpenSSL provider.',
+      'The open-source PQC supply chain for OpenSSL before 3.5, or for algorithms that are not standardised: PQClean provides reference C code, liboqs wraps it with a unified API, oqsprovider exposes it as an OpenSSL provider.',
     example:
       'ML-KEM implementation: PQClean C code → compiled into liboqs → loaded by oqsprovider → used via EVP_PKEY_encapsulate().',
   },

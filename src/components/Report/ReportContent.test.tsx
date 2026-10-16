@@ -343,6 +343,22 @@ describe('ReportContent', () => {
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
 
+    it.each(['developer', 'ops'] as const)(
+      'offers %s the PDF and CSV, not the executive brief or board pack',
+      (persona) => {
+        usePersonaStore.getState().setPersona(persona)
+        try {
+          renderReport()
+          expect(screen.getByText('Download report (PDF)')).toBeInTheDocument()
+          expect(screen.getByText('Export CSV')).toBeInTheDocument()
+          expect(screen.queryByText('Print Executive Brief')).not.toBeInTheDocument()
+          expect(screen.queryByText(/Board Pack/)).not.toBeInTheDocument()
+        } finally {
+          usePersonaStore.getState().setPersona(null)
+        }
+      }
+    )
+
     it('calls window.print when Print / Save as PDF is clicked', () => {
       const printMock = vi.fn()
       vi.spyOn(window, 'print').mockImplementation(printMock)

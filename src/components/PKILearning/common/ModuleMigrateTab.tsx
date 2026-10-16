@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Package, CheckCircle, ShieldAlert } from 'lucide-react'
+import { ExternalLink, Package } from 'lucide-react'
 import { Link } from 'react-router'
 import { getMigrateItemsForModule } from '@/data/migrateData'
 import { LAYERS } from '@/data/infrastructureLayers'
@@ -8,6 +8,7 @@ import { getCertsForProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { EmptyState } from '@/components/ui/empty-state'
 import { migrateProductHref } from '@/utils/migrateLinks'
+import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
 
 interface ModuleMigrateTabProps {
   moduleId: string
@@ -37,28 +38,6 @@ function renderPqcBadge(support: string) {
       {label}
     </span>
   )
-}
-
-function renderFipsBadge(status: string) {
-  const lower = (status || '').toLowerCase()
-  const isFipsCertified = lower.includes('fips 140') || lower.includes('fips 203')
-  const isPartial = !isFipsCertified && lower.startsWith('yes')
-
-  if (isFipsCertified) {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-status-success text-status-success">
-        <CheckCircle size={10} /> FIPS
-      </span>
-    )
-  }
-  if (isPartial) {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-status-warning text-status-warning">
-        <ShieldAlert size={10} /> FIPS Partial
-      </span>
-    )
-  }
-  return null
 }
 
 interface LayerGroup {
@@ -157,7 +136,12 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
                   </div>
                   <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
                     {renderPqcBadge(product.pqcSupport)}
-                    {renderFipsBadge(product.fipsValidated)}
+                    <FipsStatusBadge
+                      fipsValidated={product.fipsValidated}
+                      productId={product.productId}
+                      softwareName={product.softwareName}
+                      hideNegative
+                    />
                     <CertBadges
                       certs={getCertsForProduct(product.productId, product.softwareName)}
                     />

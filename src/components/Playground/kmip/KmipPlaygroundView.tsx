@@ -793,7 +793,7 @@ export function KmipPlaygroundView() {
           title: 'Create again — identical action',
           target: '[data-tour="create-btn"]',
           act: () => onCreate(),
-          body: 'The exact same Auto Create now resolves to a PQC algorithm. Same request, zero code change, now quantum-safe. That is crypto-agility.',
+          body: 'The exact same Auto Create now resolves to a PQC algorithm. Same request, no change on the client side — the server policy picked the algorithm. That is crypto-agility. (Applications that store or transmit the keys still have to handle the larger PQC key sizes.)',
         },
         {
           title: "That's the loop",

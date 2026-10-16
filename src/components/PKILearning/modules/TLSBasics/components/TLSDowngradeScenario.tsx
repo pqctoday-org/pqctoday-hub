@@ -32,7 +32,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'system',
       label: 'Key derivation',
       detail:
-        'Both sides derive the same shared secret: KDF(ML-KEM_ss ∥ X25519_ss) — concatenated in that order per draft-ietf-tls-ecdhe-mlkem. Session is quantum-safe — breaking X25519 alone is insufficient.',
+        'Both sides derive the same shared secret: KDF(ML-KEM_ss ∥ X25519_ss) — concatenated in that order per RFC 10024 §4.3. Session is quantum-safe — breaking X25519 alone is insufficient.',
     },
     {
       actor: 'client',
@@ -52,7 +52,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'attacker',
       label: 'PQC handshake blocked',
       detail:
-        'Attacker drops or resets every connection offering a PQC key_share. Note: silently rewriting the ClientHello in flight would NOT work — the server signs the transcript as it received it (CertificateVerify, RFC 8446 §4.4.3), so the client, hashing its original ClientHello, would detect the mismatch and abort. The attacker can only make the PQC attempt fail.',
+        'Attacker drops or resets every connection offering a PQC key_share. Note: silently rewriting the ClientHello in flight would NOT work — the server signs the transcript as it received it (CertificateVerify, RFC 9846 §4.4.3), so the client, hashing its original ClientHello, would detect the mismatch and abort. The attacker can only make the PQC attempt fail.',
       isCompromised: true,
     },
     {
