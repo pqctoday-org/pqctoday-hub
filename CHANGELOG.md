@@ -46,6 +46,8 @@ The site now links the exact source code of the version you are viewing and list
 
 ### Fixed
 
+- **/report shows a sample report instead of an empty page** [view:/report] [persona:executive] [persona:grc] [persona:curious]: visitors who have not run the assessment yet see the sample report, under a banner that marks it as a sample, with a button to start their own. Its link no longer changes between releases.
+- **Two broken links fixed** [view:/learn/soc-implementation-pqc] [view:/playground] [persona:ops] [persona:developer]: the SOC Implementation guide now links Quantum Threats, and the KMIP playground's "Docker sandbox" link opens the Docker sandbox.
 - **A Library paper shows its correct title** [view:/library] [persona:researcher]: IACR ePrint 2010/560 is "On CCA-Secure Somewhat Homomorphic Encryption" (it read "Fully").
 
 ## [4.160.0] - 2026-10-15
