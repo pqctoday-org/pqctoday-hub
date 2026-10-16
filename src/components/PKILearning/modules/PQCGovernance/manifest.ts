@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
     "Without a policy naming owners, deadlines, and exceptions, migration stalls as everyone's job and no one's.",
   difficulty: 'beginner',
   frameworkPhase: 'p0',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 3,
   learnSections: [
     { id: 'model', label: 'Governance & RACI' },

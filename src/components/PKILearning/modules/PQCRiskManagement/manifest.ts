@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'p3',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 0,
   learnSections: [
     { id: 'crqc', label: 'CRQC Timeline Modeling' },

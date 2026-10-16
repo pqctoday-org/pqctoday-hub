@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 1,
   learnSections: [
     { id: 'frameworks', label: 'Compliance Landscape' },

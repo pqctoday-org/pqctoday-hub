@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 8,
   learnSections: [
     { id: 'kri-cascade', label: 'KRI Cascade Thresholds' },

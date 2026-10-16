@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p7',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 5,
   learnSections: [
     { id: 'readiness', label: 'Vendor PQC Readiness' },

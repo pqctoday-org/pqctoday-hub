@@ -44,7 +44,7 @@ const TRACK_ORDER = [
   'Hardware Infrastructure',
   'Software Infrastructure',
   'Applications',
-  'Executive',
+  'Governance & Risk',
   'Industries',
 ] as const
 

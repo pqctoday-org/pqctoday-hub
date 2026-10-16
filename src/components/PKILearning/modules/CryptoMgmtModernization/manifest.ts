@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '55 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p1',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 4,
   learnSections: [
     { id: 'why-now', label: 'Why Modernize Crypto Now' },
