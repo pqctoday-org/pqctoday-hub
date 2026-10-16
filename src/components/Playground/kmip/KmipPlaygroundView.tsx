@@ -1552,7 +1552,7 @@ export function KmipPlaygroundView() {
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}
         <code className="text-foreground">pqctoday-kmip</code> server from the{' '}
-        <a className="text-primary hover:underline" href="/playground/sandbox">
+        <a className="text-primary hover:underline" href="/playground/docker">
           Docker sandbox
         </a>
         .
