@@ -373,7 +373,7 @@ export function renderContractPreview(
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39-upd1 (Considerations for Achieving Cryptographic Agility) §5.3 — supply-chain considerations. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+    '*Aligned to NIST CSWP 39-upd1 (Considerations for Achieving Crypto Agility: Strategies and Practices) §5.3 — supply-chain considerations. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   // N5: sanitise non-ASCII punctuation in the exported markdown string only.
   md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')

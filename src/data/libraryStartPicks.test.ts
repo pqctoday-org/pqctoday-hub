@@ -42,6 +42,8 @@ describe('Library "Start here" picks', () => {
   it('the executive first pick is the live cryptographic-agility paper under its real title', () => {
     const first = getLibraryStartPicks('executive')[0]
     expect(first.referenceId).toBe('NIST CSWP 39')
+    // CSWP 39-upd1 (June 2026) retitled the paper "Considerations for Achieving
+    // Crypto Agility: Strategies and Practices"; the Library row follows it.
     expect(first.label).toContain('Considerations for Achieving Crypto Agility: Strategies and Practices')
     const item = libraryData.find((i) => i.referenceId === first.referenceId)
     expect(item?.documentTitle).toBe('Considerations for Achieving Crypto Agility: Strategies and Practices')
