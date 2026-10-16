@@ -8,8 +8,13 @@
  * without a regeneration fails here.
  */
 import { describe, expect, it } from 'vitest'
+import fs from 'node:fs'
+import path from 'node:path'
 import { mergeEnrichmentFiles } from './enrichmentParse'
 import { timelineEnrichments } from './timelineEnrichmentData'
+import { dropSupersededAliases, timelineCurrentLabels } from './timelineEnrichmentAliases'
+import { TIMELINE_LABEL_ALIASES } from './timelineLabelAliases.generated'
+import { DATA_FILENAMES } from './generated/dataFilenames.generated'
 import generated from './generated/timelineEnrichments.generated.json'
 
 const modules = {
@@ -36,7 +41,17 @@ const modules = {
 } as Record<string, string>
 
 describe('timelineEnrichments.generated.json', () => {
-  const runtime = mergeEnrichmentFiles(modules)
+  // The merge, without old-label entries of rows that have a current-label entry
+  // (dropSupersededAliases; the generator applies the same rule).
+  const currentCsv = fs.readFileSync(
+    path.join(process.cwd(), 'src/data', DATA_FILENAMES.timeline as string),
+    'utf-8'
+  )
+  const runtime = dropSupersededAliases(
+    mergeEnrichmentFiles(modules),
+    TIMELINE_LABEL_ALIASES,
+    timelineCurrentLabels(currentCsv)
+  )
 
   it('reads every generation across all four tiers', () => {
     expect(Object.keys(modules).length).toBeGreaterThanOrEqual(40)
