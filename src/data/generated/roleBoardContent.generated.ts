@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r28.csv
+ * Source: src/data/role_board_content_10162026_r30.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2345,8 +2345,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'FIPS 203, 204 and 205 are published. 206 is not. HQC is selected but unstandardised. Each of those is a different claim with a different citation, and this page never flattens them into “PQC is ready”.',
         ctaPrimary: 'See algorithm and FIPS status',
         ctaPrimaryHref: '/algorithms?tab=transition',
-        ctaSecondary: 'See what changed, and when',
-        ctaSecondaryHref: '/timeline',
+        ctaSecondary: 'Recent standards changes',
+        ctaSecondaryHref: '/library?qv=new&sort=newest',
         proofChips: [
           'Every status links to its NIST publication',
           'Draft and final are labelled, never merged',
