@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r28.csv
+ * Source: src/data/role_board_content_10162026_r35.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -1103,7 +1103,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What the calculator tells you',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Enterprise workflows sized', value: 'ten' },
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
@@ -1114,7 +1114,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Budget the cores before you budget the migration.',
           footnote:
-            "Real figures, not illustrative — the HSM Capacity Calculator's own defaults, the same ones behind the IT Ops board.",
+            "Illustrative: published FIPS 204 sizes and the HSM Capacity Calculator's editable throughput estimates, the same ones behind the IT Ops board. Measure your own HSMs before you budget.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Numbers you can put in a ticket',
@@ -1778,10 +1778,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: ['hsm-capacity'],
       businessToolIds: ['refresh-cycle-alignment'],
       board: {
-        heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
+        heroEyebrow: 'IT Ops · for example: 12k certificates, renewal window in 90 days',
 
         headline: 'Size your fleet before renewal day.',
-        sub: 'Ten enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.',
+        sub: 'Ten enterprise workflows, sized side by side: RSA-2048 and ECDSA P-256 today against ML-DSA-65, with N+1 or 2N redundancy, plus key storage for ML-DSA-44/65/87.',
         ctaPrimary: 'Size your HSM fleet',
         ctaPrimaryHref: '/playground/hsm-capacity',
         ctaSecondary: 'Align to funded refreshes',
@@ -1789,12 +1789,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
           'Sizing model with its sources published',
-          'Sizes from FIPS 204, not vendor estimates',
+          'Sizes from FIPS 204; throughput rates are estimates',
         ],
         sideCard: {
           title: 'What changes on renewal day',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
@@ -1805,7 +1805,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Your next renewal window is your migration window.',
           footnote:
-            'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page links to.',
+            "Illustrative: published FIPS 204 sizes and the HSM Capacity Calculator's editable throughput estimates. Replace the rates with your own HSM measurements before procurement or a change board.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'A sizing verdict, not a guess',
