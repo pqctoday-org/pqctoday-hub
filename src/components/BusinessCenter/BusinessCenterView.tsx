@@ -57,6 +57,7 @@ import {
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
+import { ArchitecturePackPanel } from './ArchitecturePackPanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
@@ -582,6 +583,10 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Architecture pack — the architect's review document. Shown even with
+           nothing saved, because its missing-section list is the path. */}
+      {selectedPersona === 'architect' && <ArchitecturePackPanel />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so
