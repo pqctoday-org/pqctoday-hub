@@ -22,6 +22,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logAboutOutboundLink } from '@/utils/analytics'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { useScrollToHash } from '@/hooks/useScrollToHash'
 import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
@@ -30,6 +31,8 @@ export function AboutView() {
   const isEmbedded = useIsEmbedded()
   const isExecutive = usePersonaStore((s) => s.selectedPersona) === 'executive'
   const containerRef = useRef<HTMLDivElement>(null)
+  // /about#about-<slug> links: scroll the section into view once it renders.
+  useScrollToHash()
 
   /**
    * Event-delegated outbound-link logger — closes audit task P18-P1-01.

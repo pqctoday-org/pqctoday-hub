@@ -166,6 +166,29 @@ describe('AboutView', () => {
     )
   })
 
+  it('scrolls a #about-<slug> link to its section once it renders', async () => {
+    const scroll = vi.fn<(arg?: boolean | ScrollIntoViewOptions) => void>()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    // jsdom has no layout; the hook only scrolls an element that has a box.
+    const rects = vi
+      .spyOn(Element.prototype, 'getClientRects')
+      .mockReturnValue([{}] as unknown as DOMRectList)
+    try {
+      render(
+        <MemoryRouter initialEntries={['/about#about-data-foundation']}>
+          <AboutView />
+        </MemoryRouter>
+      )
+      await vi.waitFor(() => expect(scroll).toHaveBeenCalled())
+      expect(scroll).toHaveBeenCalledWith({ block: 'start' })
+      expect(scroll.mock.contexts[0]).toHaveProperty('id', 'about-data-foundation')
+    } finally {
+      Element.prototype.scrollIntoView = original
+      rects.mockRestore()
+    }
+  })
+
   // Mobile UX layer (Phase 7). AboutView is never sim-embedded (no widget
   // under shared/widgets imports it), so unlike Threats/Library this needs
   // no simEmbed comparison — just confirm the branch fires.
