@@ -19,11 +19,7 @@ import { useApplicability } from '@/hooks/useApplicability'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
-import {
-  InlineScopeStep,
-  isScopeIncomplete,
-  scopeValue,
-} from '@/components/Compliance/obligations/InlineScopeStep'
+import { InlineScopeStep, isScopeIncomplete, scopeValue } from '@/components/common/InlineScopeStep'
 import {
   allComplianceFrameworks,
   complianceFrameworks,

@@ -151,3 +151,18 @@ describe('SectorExposureHero — HNDL/HNFL totals (UX-19)', () => {
     expect(screen.getByText(/classed both .*count in both totals/i)).toBeInTheDocument()
   })
 })
+
+describe('SectorExposureHero — one picked sector reads as that sector', () => {
+  it('names the site sector, not "your N sectors", when the scope is one sector', () => {
+    render(
+      <SectorExposureHero
+        applicable={[]}
+        scopedIndustries={['Finance & Banking', 'Insurance']}
+        sectorName="Finance & Banking"
+        variant="exposure"
+      />
+    )
+    expect(screen.getByText('Finance & Banking')).toBeInTheDocument()
+    expect(screen.queryByText(/your 2 sectors/)).not.toBeInTheDocument()
+  })
+})

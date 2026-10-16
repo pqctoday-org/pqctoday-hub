@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * The scope step an unscoped register shows in place of a pointer elsewhere.
+ * The scope step an unscoped page shows in place of a pointer elsewhere.
+ *
+ * Two users today: the Compliance register (country + sector) and the Threats
+ * exposure card (sector only — leave out `country`).
  *
  * The register needs a country and a sector. A new GRC or Executive reader has
  * neither (both personas start Global, with no sector), and the home board sends
@@ -20,14 +23,24 @@ import { useScopeSector } from '@/hooks/useScopeSector'
 const ANY = 'All'
 
 export interface InlineScopeStepProps {
-  /** The country the register is using, or `All` when there is none. */
-  country: string
-  countryItems: string[]
-  onCountryChange: (country: string) => void
-  /** The sector the register is using, or `All` when there is none. */
+  /**
+   * The country the page is using, or `All` when there is none. Leave it out
+   * (with `countryItems`/`onCountryChange`) for a sector-only step.
+   */
+  country?: string
+  countryItems?: string[]
+  onCountryChange?: (country: string) => void
+  /** The sector the page is using, or `All` when there is none. */
   sector: string
-  /** `card` sits inside the empty-register card; `strip` sits above a partial register. */
+  /**
+   * Called after the shared sector write, for a page that keeps its own copy of
+   * the sector (Threats maps it to its own industry names and the URL).
+   */
+  onSectorChange?: (sector: string) => void
+  /** `card` sits inside an empty-state card; `strip` sits above a partial result. */
   variant?: 'card' | 'strip'
+  /** The strip's sentence after "Still unknown: …". */
+  stripHint?: string
 }
 
 /**
@@ -46,13 +59,19 @@ export function isScopeIncomplete(country: string, sector: string): boolean {
 
 export function InlineScopeStep({
   country,
-  countryItems,
+  countryItems = [],
   onCountryChange,
   sector,
+  onSectorChange,
   variant = 'card',
+  stripHint = 'Add it to see which of these are mandatory for you rather than merely relevant.',
 }: InlineScopeStepProps) {
-  const setSector = useScopeSector()
-  const needCountry = country === ANY
+  const scopeSector = useScopeSector()
+  const setSector = (id: string) => {
+    scopeSector(id)
+    onSectorChange?.(id)
+  }
+  const needCountry = country === ANY && !!onCountryChange
   const needSector = sector === ANY
   if (!needCountry && !needSector) return null
 
@@ -95,8 +114,7 @@ export function InlineScopeStep({
         className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-border bg-card px-4 py-3"
       >
         <p className="text-xs text-muted-foreground">
-          Still unknown: <span className="font-medium text-foreground">{missing}</span>. Add it to
-          see which of these are mandatory for you rather than merely relevant.
+          Still unknown: <span className="font-medium text-foreground">{missing}</span>. {stripHint}
         </p>
         {pickers}
       </div>

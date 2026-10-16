@@ -35,7 +35,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 import { applyRoleOrder, roleFramingFor, roleNoteFor } from './roleLens'
 import { useRevisions } from '@/hooks/useRevisions'
 import { formatChangeDate, summarizeRecentChanges } from './recentChanges'
-import { InlineScopeStep, isScopeIncomplete, scopeValue } from './InlineScopeStep'
+import { InlineScopeStep, isScopeIncomplete, scopeValue } from '@/components/common/InlineScopeStep'
 import {
   buildObligations,
   groupObligations,

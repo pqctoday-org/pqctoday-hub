@@ -99,4 +99,25 @@ describe('InlineScopeStep', () => {
     expect(usePersonaStore.getState().selectedIndustries).toEqual(['Healthcare'])
     expect(useAssessmentFormStore.getState().industry).toBe('Healthcare')
   })
+
+  it('sector-only: no country picker, and the page hears about the pick', async () => {
+    // The Threats exposure card leaves out `country`; it keeps its own copy of the
+    // sector (mapped to its industry names and the URL), so it passes onSectorChange.
+    const user = userEvent.setup()
+    const onSectorChange = vi.fn()
+    render(
+      <InlineScopeStep
+        sector="All"
+        onSectorChange={onSectorChange}
+        variant="strip"
+        stripHint="Pick it."
+      />
+    )
+    expect(screen.queryByRole('button', { name: /Your country/i })).not.toBeInTheDocument()
+    expect(screen.getByText(/Pick it\./)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Your sector/i }))
+    await user.click(await screen.findByRole('option', { name: 'Healthcare' }))
+    expect(onSectorChange).toHaveBeenCalledWith('Healthcare')
+    expect(usePersonaStore.getState().selectedIndustries).toEqual(['Healthcare'])
+  })
 })
