@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getBeltTierLabel,
+  ALGORITHM_PERSONA_DEFAULTS,
   PERSONA_BELT_TIER_LABELS,
   isComplianceFrameworkEmphasized,
   PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS,
@@ -337,5 +338,13 @@ describe('PERSONA_REPORT_CONFIG — no persona gets the generic report', () => {
     // Board framing is demoted, never removed — a developer sometimes has to
     // present upward, so 'hidden' would be the wrong tool here.
     expect(Object.values(dev).every((c) => c.state !== 'hidden')).toBe(true)
+  })
+})
+
+describe('curious Algorithms default (curious journey review, 16 Oct 2026)', () => {
+  it('does not filter by function, so its one KEM and two signature highlights all show', () => {
+    const d = ALGORITHM_PERSONA_DEFAULTS.curious
+    expect(d.filters?.fn).toBeUndefined()
+    expect(d.highlight).toEqual(['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'])
   })
 })
