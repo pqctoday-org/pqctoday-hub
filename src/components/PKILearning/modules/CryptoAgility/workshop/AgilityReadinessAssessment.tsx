@@ -20,7 +20,8 @@ const DIMENSIONS: DimensionDef[] = [
   {
     id: 'algorithm',
     label: 'Algorithm Agility',
-    description: 'Can you swap cryptographic algorithms via config, not code?',
+    description:
+      'Can you select cryptographic algorithms in configuration, and absorb the size, encoding and call-pattern changes that come with them?',
     questions: [
       {
         id: 'alg-config',
@@ -29,7 +30,7 @@ const DIMENSIONS: DimensionDef[] = [
       },
       {
         id: 'alg-multi',
-        text: 'Your systems can run multiple algorithm variants simultaneously (e.g., RSA-2048 alongside ML-KEM-768) without code changes — useful for gradual rollout and rollback.',
+        text: 'Your systems can run multiple algorithm variants simultaneously (e.g., RSA-2048 alongside ML-KEM-768) — useful for gradual rollout and rollback.',
         hint: 'Check if your key management system supports heterogeneous algorithm families in the same namespace.',
       },
       {
@@ -71,7 +72,8 @@ const DIMENSIONS: DimensionDef[] = [
   {
     id: 'implementation',
     label: 'Implementation Agility',
-    description: 'Can you swap the crypto library or provider without touching application code?',
+    description:
+      'Can you swap the crypto library or provider without changing application call sites?',
     questions: [
       {
         id: 'impl-abstraction',
@@ -80,13 +82,13 @@ const DIMENSIONS: DimensionDef[] = [
       },
       {
         id: 'impl-swap',
-        text: 'You have changed (or can change) the underlying crypto library — e.g., from legacy OpenSSL 1.x to OpenSSL 3.x, or from Java Sun provider to BouncyCastle — without modifying application code.',
-        hint: 'This is the acid test for implementation agility. If changing the library required a code-level migration, your abstraction layer is incomplete.',
+        text: 'You have changed (or can change) the underlying crypto library — e.g., from legacy OpenSSL 1.x to OpenSSL 3.x, or from Java Sun provider to BouncyCastle — without changing application call sites.',
+        hint: 'This is the acid test for implementation agility. If changing the library meant rewriting call sites, your abstraction layer is incomplete. Expect build, configuration, test and rollback work even when the call sites stay the same.',
       },
       {
         id: 'impl-hsm',
         text: 'Your HSM or KMS vendor has committed to PQC support on your current hardware (or a hardware upgrade path is budgeted) — ensuring your crypto infrastructure is not the bottleneck.',
-        hint: "Check your HSM vendor's PQC roadmap. FIPS 140-3 Level 3/4 devices with ML-KEM/ML-DSA are now available from Thales, Entrust, AWS CloudHSM, and others.",
+        hint: "Check your HSM vendor's PQC roadmap and whether the PQC algorithms sit inside the FIPS 140-3 validated boundary of the certificate you rely on. Thales Luna and Entrust nShield ship ML-KEM and ML-DSA in firmware; AWS CloudHSM offers ML-DSA but no ML-KEM.",
       },
     ],
   },

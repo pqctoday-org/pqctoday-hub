@@ -42,17 +42,21 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
             <strong>
               <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip>
             </strong>{' '}
-            is the ability to rapidly switch cryptographic algorithms, protocols, and
-            implementations without significant changes to application code or infrastructure.
-            It&apos;s NIST&apos;s top recommendation for PQC transition preparedness.
+            is the ability to switch cryptographic algorithms, protocols, and implementations
+            without rewriting the applications that use them. It is a design goal, not a switch:
+            callers can be insulated from the primitive, but credentials, encodings, key and
+            signature sizes, negotiation, storage, rollback and tests still change with each
+            algorithm. NIST devotes a white paper, CSWP 39, to it.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Organizations should begin preparing for the migration to post-quantum
-              cryptography by designing systems with cryptographic agility.&rdquo;
+              &ldquo;Cryptographic (crypto) agility refers to the capabilities needed to replace and
+              adapt cryptographic algorithms in protocols, applications, software, hardware,
+              firmware, and infrastructures while preserving security and ongoing operations.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST IR 8547, November 2024
+              &mdash; NIST CSWP 39upd1, Considerations for Achieving Crypto Agility (December 2025,
+              updated June 2026)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -60,8 +64,9 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               <div className="text-xs font-bold text-primary mb-1">Algorithm Agility</div>
               <p className="text-xs text-muted-foreground">
                 Swap algorithms (<InlineTooltip term="RSA">RSA</InlineTooltip> &rarr;{' '}
-                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>) via configuration changes, not
-                code rewrites.
+                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>) in configuration rather than
+                hard-coded calls. A KEM cannot encrypt data directly (NIST SP 800-227), so RSA
+                encryption call patterns and buffer sizes still change.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -107,7 +112,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               </div>
               <p className="text-xs text-muted-foreground mb-3 flex-grow">
                 Applications link to a crypto library through an abstraction API (like JCA or
-                OpenSSL Providers). Agility is achieved at the application level via config changes.
+                OpenSSL Providers). The algorithm is selected in config, one application at a time.
               </p>
               <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
                 <div className="text-primary text-center">App Code</div>
@@ -156,7 +161,9 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               </div>
               <p className="text-xs text-muted-foreground mb-3 flex-grow">
                 Crypto operations are outsourced over the network to a central service (AWS KMS,
-                Azure Key Vault). Upgrading the central KMS upgrades the enterprise.
+                Azure Key Vault). Callers are insulated from the primitive, but each one still
+                adopts new key types, handles larger outputs and is re-tested; upgrading the service
+                is not instant enterprise-wide migration.
               </p>
               <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
                 <div className="text-primary text-center">App (API Request)</div>

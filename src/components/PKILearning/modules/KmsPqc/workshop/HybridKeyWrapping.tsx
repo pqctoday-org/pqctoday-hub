@@ -51,30 +51,34 @@ aws kms generate-data-key \\
 gcloud kms keys create wrapping-key \\
   --keyring=my-ring \\
   --location=global \\
-  --purpose=asymmetric-encrypt \\
-  --default-algorithm=RSA_DECRYPT_OAEP_3072_SHA256`,
-    pqc: `// Google Cloud KMS — PQC key wrapping
-gcloud kms keys create pqc-wrapping-key \\
+  --purpose=asymmetric-encryption \\
+  --default-algorithm=rsa-decrypt-oaep-3072-sha256`,
+    pqc: `// Google Cloud KMS — ML-KEM key encapsulation (Preview, SOFTWARE level)
+gcloud kms keys create pqc-kem-key \\
   --keyring=my-ring \\
   --location=global \\
-  --purpose=asymmetric-encrypt \\
-  --default-algorithm=ML_KEM_768
+  --purpose=key-encapsulation \\
+  --default-algorithm=ml-kem-768
 
-# ML-KEM encapsulate to establish shared secret
-gcloud kms asymmetric-encrypt \\
-  --key=pqc-wrapping-key \\
-  --plaintext-file=dek.bin`,
-    hybrid: `// Google Cloud KMS — X-Wing hybrid KEM
+# A KEM does not encrypt the DEK directly. Encapsulate on the client with the
+# public key (e.g. Go crypto/mlkem) to get a shared secret and a ciphertext,
+# derive a wrapping key from the secret, and wrap the DEK with AES-KW.
+# Cloud KMS recovers the shared secret from the ciphertext:
+gcloud kms decapsulate --version=1 --key=pqc-kem-key \\
+  --keyring=my-ring --location=global \\
+  --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
+    hybrid: `// Google Cloud KMS — X-Wing hybrid KEM (Preview, SOFTWARE level)
 gcloud kms keys create xwing-key \\
   --keyring=my-ring \\
   --location=global \\
-  --purpose=asymmetric-encrypt \\
-  --default-algorithm=X_WING
+  --purpose=key-encapsulation \\
+  --default-algorithm=kem-xwing
 
-# X-Wing = X25519 + ML-KEM-768 in one construction
-gcloud kms asymmetric-encrypt \\
-  --key=xwing-key \\
-  --plaintext-file=dek.bin`,
+# X-Wing = X25519 + ML-KEM-768 in one KEM. Same flow as ML-KEM:
+# encapsulate on the client, decapsulate in Cloud KMS.
+gcloud kms decapsulate --version=1 --key=xwing-key \\
+  --keyring=my-ring --location=global \\
+  --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
   },
   'azure-kv': {
     classical: `// Azure Key Vault — Classical wrapping

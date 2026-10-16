@@ -10,7 +10,7 @@ Classical cryptography used tiny memory buffers. For example, ECDSA uses roughly
 
 ## The Key Takeaway
 
-The physical hardware upgrades are happening right now. Major on-premise HSM vendors (such as Thales, Entrust, and Utimaco) already offer production-ready PQC firmware updates. Cloud HSMs are uneven: AWS CloudHSM now creates and uses ML-DSA signing keys inside the HSM, while Google offers its post-quantum keys only in software for now (checked October 2026).
+The physical hardware upgrades are happening right now. Major on-premise HSM vendors (such as Thales, Entrust, and Utimaco) already ship PQC firmware updates, though the algorithms each one supports differ (Thales and Utimaco do not yet offer SLH-DSA, for example) and only some of their FIPS 140 certificates list PQC algorithms yet. Cloud HSMs are uneven: AWS CloudHSM now creates and uses ML-DSA signing keys inside the HSM, while Google offers its post-quantum keys only in software for now (checked October 2026).
 
 ## What's Happening
 

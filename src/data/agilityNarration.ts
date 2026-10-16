@@ -73,7 +73,7 @@ export const AGILITY_STEPS: AgilityStep[] = [
   {
     n: 3,
     title: 'Watch the estate rekey',
-    body: `Rotate the affected keys to the post-quantum algorithm. The control plane reissues them and the applications carry on against the same key names — ${ESTATE_KEYS} keys in this worked estate, and the same operation at any size.`,
+    body: `Rotate the affected keys to the post-quantum algorithm. The control plane reissues them under the same key names, so applications that look keys up by name carry on; anything that stored the old key identifiers, public keys or certificates must be updated — ${ESTATE_KEYS} keys in this worked estate, and the same operation at any size.`,
     cost: `Cost, stated: signatures grow ${SIG_GROWTH}, so certificate chains, tokens and firmware headers all get bigger, and an HSM that does ${HSM_OPS_CLASSICAL.toLocaleString()} ECDSA P-256 signatures per second manages roughly ${HSM_OPS.toLocaleString()} with ML-DSA-65. That is the capacity conversation this migration actually is — not whether to move, but what to buy.`,
     action: 'Run the rekey in the Migration plane',
   },

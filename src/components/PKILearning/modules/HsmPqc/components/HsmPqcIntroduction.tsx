@@ -161,10 +161,13 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Thales Luna 7 (Network HSM, FIPS 140-3 L3)</li>
                 <li>&bull; Entrust nShield 5 (Network HSM, FIPS 140-3 L3)</li>
-                <li>&bull; Utimaco SecurityServer (PCIe, FIPS 140-3 L3)</li>
+                <li>
+                  &bull; Utimaco SecurityServer (PCIe, FIPS 140-2 L3, certificate now Historical)
+                </li>
               </ul>
               <p className="text-xs text-success mt-2 font-medium">
-                Full PQC firmware support available today
+                PQC firmware is shipping. Algorithm sets, APIs and validated configurations differ
+                by vendor &mdash; see the vendor deep dive below.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -336,8 +339,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         >
           <div className="space-y-4 text-sm text-foreground/80">
             <p>
-              On-premises HSMs from the three major vendors now offer production-ready PQC firmware.
-              Each takes a different approach to integrating post-quantum algorithms.
+              On-premises HSMs from the three major vendors now ship PQC firmware, but the algorithm
+              sets, APIs and FIPS 140 certificate coverage differ. Each takes a different approach
+              to integrating post-quantum algorithms.
             </p>
 
             <div className="grid grid-cols-1 gap-4">
@@ -493,13 +497,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
-                <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) are
-                in production with firmware-level PQC support. Cloud HSMs are uneven: AWS CloudHSM
-                generates and uses ML-DSA keys inside the HSM, in FIPS mode on hsm2m.medium from 1
-                September 2026, but its CMVP certificate does not list ML-DSA yet; Azure Dedicated
-                HSM has PQC available via customer-requested firmware upgrade (note: Azure Dedicated
-                HSM is retiring — no new customer onboardings); Google Cloud KMS offers PQC keys
-                only at the software protection level, not in Cloud HSM (checked 15 Oct 2026).
+                <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) ship
+                PQC firmware, with different algorithm sets (Thales and Utimaco do not yet offer
+                SLH-DSA) and different FIPS 140 coverage: some module certificates list PQC
+                algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5
+                #5329). Cloud HSMs are uneven: AWS CloudHSM generates and uses ML-DSA keys inside
+                the HSM, in FIPS mode on hsm2m.medium from 1 September 2026, but its CMVP
+                certificate does not list ML-DSA yet; Azure Dedicated HSM has PQC available via
+                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring — no new
+                customer onboardings); Google Cloud KMS offers PQC keys only at the software
+                protection level, not in Cloud HSM (checked 15 Oct 2026).
               </p>
             </div>
           </div>
@@ -516,7 +523,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
-                  <span className="text-foreground">ML-DSA-44/65/87 (preview)</span>
+                  <span className="text-foreground">ML-DSA-44/65/87 (no ML-KEM)</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}

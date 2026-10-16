@@ -107,7 +107,7 @@ export const content: ModuleContent = {
 
   narratives: {
     hybridRationale:
-      'Hybrid cryptography solves the dilemma of PQC being newer (less cryptanalysis) while the HNDL threat is real now. If either the classical or PQC component is broken, the other still provides security.',
+      'Hybrid cryptography solves the dilemma of PQC being newer (less cryptanalysis) while the HNDL threat is real now. For key exchange, the shared secret stays secret as long as either component KEM is unbroken, provided the combiner is a sound one (for example the TLS hybrid design or X-Wing). For signatures, a forgery requires breaking both algorithms, provided the verifier requires both signatures to be valid.',
     anssiMandate:
       'ANSSI recommends hybrid mode for PQC deployments and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Exception: hash-based signatures (SLH-DSA, LMS, XMSS) leveraging functions like SHA-3 may be used standalone due to their conservative security assumptions.',
     nistRecommendation:

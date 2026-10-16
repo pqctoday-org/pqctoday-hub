@@ -541,7 +541,7 @@ export function BusinessCenterView() {
         title={zoneEmphasis.headline ?? 'Command Center'}
         description={
           zoneEmphasis.tagline ??
-          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
+          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025, updated June 2026).'
         }
       />
 

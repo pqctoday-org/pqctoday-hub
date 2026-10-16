@@ -766,7 +766,7 @@ export function KmipPlaygroundView() {
       steps: [
         {
           title: 'Why crypto-agility?',
-          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, with no code change. Watch that happen live.',
+          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so clients that look keys up by name need no code change. Watch that happen live.',
         },
         {
           title: 'Start on the "before"',

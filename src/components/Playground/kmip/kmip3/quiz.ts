@@ -189,7 +189,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Via a dedicated HybridEncapsulate operation',
       ],
       answer: 1,
-      why: 'X25519MLKEM768 is a single first-class CryptographicAlgorithm value (KMIP 3.0 CSD02). Your code sees one key and one Encapsulate — that opacity is what makes the hybrid deployable with no code change.',
+      why: 'X25519MLKEM768 is a single first-class CryptographicAlgorithm value (KMIP 3.0 CSD02). Your code sees one key and one Encapsulate — that opacity is what lets the hybrid be deployed without changing that call. Clients must still handle the larger public keys and ciphertexts.',
     },
     {
       q: 'What is the state of hybrid (composite) SIGNATURES in KMIP?',

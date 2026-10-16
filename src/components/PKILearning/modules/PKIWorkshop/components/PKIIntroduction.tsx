@@ -218,8 +218,11 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
               Hybrid / <InlineTooltip term="Composite Certificate">Composite</InlineTooltip>
             </div>
             <p className="text-xs text-muted-foreground">
-              Combine classical + PQC in one certificate for backward compatibility. Protects
-              against both classical and quantum attacks during transition.
+              A composite certificate puts classical + PQC keys and signatures under one composite
+              OID. Only relying parties that understand that OID can validate it, so it is not
+              backward compatible. Compatibility comes instead from related certificates (RFC 9763)
+              or parallel classical and PQC chains, each with its own policy and downgrade
+              considerations.
             </p>
           </div>
         </div>
@@ -268,33 +271,48 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           Post-quantum signatures are dramatically larger than their classical counterparts:{' '}
           <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip> signatures are{' '}
           <strong>2,420 bytes</strong> compared to just <strong>64 bytes</strong> for ECDSA P-256
-          &mdash; a <strong>37&times;</strong> increase. A typical TLS certificate chain with three
-          PQ signatures, public keys, and Certificate Transparency SCTs can add{' '}
-          <strong>18&ndash;36 KB</strong> to every handshake, breaking constrained clients and
-          degrading performance.
+          &mdash; a <strong>37&times;</strong> increase. A TLS server using ML-DSA-44 throughout
+          sends its leaf and one intermediate certificate (two public keys and two certificate
+          signatures) and signs the handshake once more in CertificateVerify. That is{' '}
+          <strong>9,884 bytes (~9.9 KB)</strong> of keys and signatures in every full handshake,
+          which can break constrained clients and degrade performance. The figure grows with the
+          algorithm and the chain length: the same chain needs 13,831 B with ML-DSA-65 and 19,065 B
+          with ML-DSA-87.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          <strong>Merkle Tree Certificates (MTCs)</strong>, proposed in IETF{' '}
-          <em>draft-davidben-tls-merkle-tree-certs</em> by Google and Cloudflare, offer an elegant
-          solution: instead of signing each certificate individually, a Merkle Tree CA (MTCA)
-          batches thousands of certificates as leaves in a{' '}
-          <InlineTooltip term="Merkle Tree">Merkle tree</InlineTooltip>, signs only the root hash,
-          and distributes compact <strong>inclusion proofs</strong> (~736 bytes) that let any
-          relying party verify a certificate belongs to the signed batch. This replaces three
-          separate PQ signatures with a single root signature plus a hash-based proof.
+          <strong>Merkle Tree Certificates (MTCs)</strong>, specified in{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            <em>draft-ietf-plants-merkle-tree-certs</em>
+          </a>{' '}
+          in the IETF PLANTS working group (it replaced{' '}
+          <em>draft-davidben-tls-merkle-tree-certs</em>; latest version -07, 7 October 2026; still
+          an Internet-Draft, not yet proposed for publication), offer an elegant solution: instead
+          of signing each certificate individually, a Merkle Tree CA (MTCA) batches thousands of
+          certificates as leaves in a <InlineTooltip term="Merkle Tree">Merkle tree</InlineTooltip>,
+          signs only the root hash, and distributes compact <strong>inclusion proofs</strong>{' '}
+          (384&ndash;736 bytes in the draft&apos;s estimates) that let any relying party verify a
+          certificate belongs to the signed batch. In landmark mode, the certificate carries no CA
+          signature at all: a hash-based proof to a subtree the client already trusts replaces the
+          two certificate signatures and the intermediate&apos;s key, and only the handshake
+          signature remains.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
             <div className="text-sm font-bold text-status-error mb-1">Traditional PQC Chain</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>3 ML-DSA-44 signatures — 3 × 2,420 B = 7,260 B</li>
-              <li>3 public keys — 3 × 1,312 B = 3,936 B</li>
               <li>
-                4 CT SCTs: <strong>476 B</strong>
+                3 ML-DSA-44 signatures (intermediate cert, leaf cert, CertificateVerify) — 3 × 2,420
+                B = 7,260 B
               </li>
+              <li>2 public keys (leaf, intermediate) — 2 × 1,312 B = 2,624 B</li>
               <li className="font-bold text-foreground">
-                Total: 7,260 + 3,936 + 476 B, which gives 11,672 B (~11.7 KB) per handshake
+                Total: 7,260 + 2,624 B, which gives 9,884 B (~9.9 KB) per handshake
               </li>
             </ul>
           </div>
@@ -302,18 +320,28 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
             <div className="text-sm font-bold text-success mb-1">MTC Approach</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
-                1 root signature: <strong>2,420 B</strong>
+                Leaf public key: <strong>1,312 B</strong>
               </li>
               <li>
-                1 root public key: <strong>1,312 B</strong>
+                CertificateVerify signature: <strong>2,420 B</strong>
               </li>
               <li>
-                Inclusion proof: <strong>736 B</strong>
+                Landmark inclusion proof: <strong>736 B</strong>
               </li>
-              <li className="font-bold text-foreground">Total: ~4.5 KB per handshake</li>
+              <li className="font-bold text-foreground">Total: 4,468 B (~4.5 KB) per handshake</li>
             </ul>
           </div>
         </div>
+
+        <p className="text-[10px] text-muted-foreground italic mb-4">
+          Assumptions: ML-DSA-44 everywhere (FIPS 204: 1,312 B public key, 2,420 B signature); the
+          server sends a leaf and one intermediate, not the root, whose key is already in the
+          client&apos;s trust store; no Certificate Transparency SCTs; certificate names, extensions
+          and other encoding overhead are not counted. A standalone MTC (no pre-synced landmark)
+          also carries CA and cosigner signatures. The MTC Size Analysis tool uses a different model
+          (it also counts the root key, SCTs and certificate metadata, but not the CertificateVerify
+          signature), so its figures differ.
+        </p>
 
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
           <div className="flex items-start gap-2">
