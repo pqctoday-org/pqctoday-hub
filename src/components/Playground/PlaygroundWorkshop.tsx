@@ -92,6 +92,8 @@ const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 // Tools that actually appear in the grid (environments are surfaced as their own
 // marquee cards, never as single-concept tools).
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
+// The grid includes the Docker sandbox scenarios; only the rest run in the tab.
+const BROWSER_TOOL_COUNT = GRID_TOOL_COUNT - SANDBOX_TOOL_COUNT
 
 const ALL_PLAYGROUND_ROUTES = Array.from(
   new Map(
@@ -1174,7 +1176,7 @@ export const PlaygroundWorkshop = () => {
         <div className="min-w-0">
           <p className="text-[15px] font-bold leading-tight text-foreground">Crypto Lab</p>
           <p className="text-[10.5px] text-muted-foreground">
-            {GRID_TOOL_COUNT} tools · runs in-browser
+            {BROWSER_TOOL_COUNT} in-browser tools · {SANDBOX_TOOL_COUNT} Docker scenarios
           </p>
         </div>
       </div>
@@ -1496,7 +1498,8 @@ export const PlaygroundWorkshop = () => {
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground leading-relaxed">
           Pick a category on the left, jump into a full playground, or start with what fits your
-          role. Nothing is installed — every operation executes locally via WebAssembly.
+          role. The in-browser tools install nothing and run locally via WebAssembly; the Docker
+          sandbox scenarios run in an access-gated container instead, and each one is marked.
         </p>
 
         <PersonaPageNote route="/playground" className="mt-4" />

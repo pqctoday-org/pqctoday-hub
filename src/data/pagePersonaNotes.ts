@@ -324,7 +324,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Your lens opens on the Migration zone with the Migration Roadmap card, the Deployment Playbook under Mitigation; "NIST CSWP.39 — by document section" above the plan jumps by section, and "Export ZIP" bundles every artifact as Markdown.',
     architect:
-      'Your lens opens on the Governance zone with Crypto Architecture, RACI Matrix, Vendor Scorecard and Supply Chain Matrix cards first; the Migration zone holds the Hybrid Transition Plan and MTI Recommendation, reached from the Zones rail.',
+      'The "Architecture pack" panel at the top holds your scope, decision records and test plan, and downloads them with your saved architecture artifacts as one document that lists what is still missing; the Migration zone holds the Hybrid Transition Plan and MTI Recommendation.',
     researcher:
       'Your lens opens on Data-Centric Risk Management with the Risk Register and Risk Treatment Plan cards; "NIST CSWP.39 — by document section" lists the plan by section, and the accordion at the bottom quotes NIST CSWP 39\'s definition.',
     'cert-engineer':

@@ -95,6 +95,14 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
   const [migrationTime, setMigrationTime] = useState(5) // Y
   const [crqcYear, setCrqcYear] = useState(DEFAULT_CRQC_YEAR) // Z
 
+  // Until the reader changes an input, the result describes the example
+  // values, not their organisation — say so on each result.
+  const isExample =
+    dataLifetime === 10 &&
+    credentialValidity === 10 &&
+    migrationTime === 5 &&
+    crqcYear === DEFAULT_CRQC_YEAR
+
   // One deadline per model: Z − X − Y. They differ only by which X applies.
   const rows = useMemo(
     () => [
@@ -309,6 +317,14 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
                     <span className="text-xs text-muted-foreground">
                       {isOverdue ? 'migration window' : 'migration deadline'}
                     </span>
+                    {isExample && (
+                      <span
+                        className="ml-auto rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                        data-testid={`threat-economics-example-${row.key}`}
+                      >
+                        Example values — enter yours
+                      </span>
+                    )}
                   </div>
                   {isOverdue ? (
                     // Same "reads as a broken calculator" fix as SectorExposureHero

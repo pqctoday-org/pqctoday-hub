@@ -980,7 +980,7 @@ export const ThreatsDashboard: React.FC<{
           className="scroll-mt-20 mb-4"
         >
           <div className="space-y-4">
-            <ThreatEconomicsHeader defaultExpanded />
+            <ThreatEconomicsHeader />
             <CrqcCapabilityStrip expanded={detailOpen} onExpandedChange={setDetailOpen} />
             {detailOpen && <CrqcTrajectoryChart />}
           </div>
