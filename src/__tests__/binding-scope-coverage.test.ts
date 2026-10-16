@@ -22,12 +22,7 @@ import Papa from 'papaparse'
 const DATA = path.join(process.cwd(), 'src/data')
 
 /** Rows whose who-it-binds wording is still under review, with the reason. */
-const PENDING: Record<string, string> = {
-  'PCI-DSS': 'two-reader review of the standard itself, filed 16 Oct 2026',
-  'UN-ECE-WP29': 'two-reader review of UN Regulation No. 155, 16 Oct 2026',
-  'DISA-STIG': 'classified 16 Oct 2026; its cited page does not state who is bound',
-  'BRAZIL-BACEN-4893': 'classified 16 Oct 2026; no cached copy of the resolution yet',
-}
+const PENDING: Record<string, string> = {}
 
 /** Latest compliance_MMDDYYYY[_rN].csv, by date and then revision. */
 function latestCompliance(): string {
