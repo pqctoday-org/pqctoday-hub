@@ -29,10 +29,6 @@ const PENDING: Record<string, string> = {}
  * is approved but not yet in the data, with the reason. Entries go as the data lands.
  */
 const PENDING_BASIS: Record<string, string> = {
-  'PCI-DSS': 'basis proposed and approved; waiting for the next data pass',
-  'UN-ECE-WP29': 'basis proposed and approved; waiting for the next data pass',
-  'DISA-STIG': 'basis proposed and approved; waiting for the next data pass',
-  'BRAZIL-BACEN-4893': 'basis proposed and approved; waiting for the next data pass',
   'E-ITS-ESTONIAN-INFORMATION-SEC':
     'classified with the basis only in the decision note; evidence replaced since, so the basis is being re-checked',
 }
