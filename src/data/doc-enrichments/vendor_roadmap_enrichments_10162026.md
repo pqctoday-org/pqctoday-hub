@@ -8,50 +8,50 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-001:aws_amazon_com_blogs_security_aws_post_q — Amazon Web Services Inc.
+## VND-027:www_microsoft_com_en_us_security_blog_20 — Microsoft Corporation
 
-- **Vendor ID**: VND-001
-- **Vendor Name**: Amazon Web Services Inc.
-- **Roadmap Title**: AWS post-quantum cryptography migration plan
-- **Roadmap URL**: https://aws.amazon.com/blogs/security/aws-post-quantum-cryptography-migration-plan/
-- **Publish Date**: Unknown
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc.html
-- **CSV Coverage Notes**: AWS PQC migration plan (blog, updated Apr 2026): PQC delivered via the shared-responsibility model -- some features transparently enabled for all customers, others opt-in -- phased rollout starting with systems communicating over untrusted networks (internet-facing first).
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; CRYSTALS-Kyber; CRYSTALS-Dilithium; SPHINCS+
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: AWS-LC; s2n; AWS Key Management Service (AWS KMS); AWS Secrets Manager; AWS Certificate Manager (ACM); Elastic Load Balancing (ELB); Amazon API Gateway; Amazon CloudFront; AWS Private CA; Amazon Trust Services
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; CNSA Suite 2.0; FIPS-140-3; ETSI TR 103 619
-- **Hybrid Mode Support**: Yes, "Hybrid post-quantum key agreement combines Elliptic-Curve Diffie-Hellman (ECDH), a classic key exchange algorithm, with a post-quantum key encapsulation method, such as the newly standardized ML-KEM algorithm."
-- **Current GA Status**: Planned
-- **Customer Action Required**: Ensure agility in distributing updated software versions; adopt TLS 1.3 across the organization; implement PQC certificate validation functions on clients and servers using AWS-LC and s2n.
-- **Key Commitments & Quotes**: None detected
-- **Coverage Verification**: CONSISTENT The document explicitly states that PQC is delivered via the shared responsibility model with some features transparently enabled and others opt-in, and that the transition starts with systems communicating over untrusted networks.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-001_Amazon_Web_Services_Inc.html (1253.9 KB)
-- **Extraction Timestamp**: 2026-10-16T10:11:48
-
-
-## VND-017:www_futurex_com_news_futurex_announces_p — Futurex Inc.
-
-- **Vendor ID**: VND-017
-- **Vendor Name**: Futurex Inc.
-- **Roadmap Title**: Futurex Post-Quantum Hybrid Certificate Authority Solution
-- **Roadmap URL**: https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution
-- **Publish Date**: 2020-02-20
-- **Local File**: vendor-roadmaps/VND-017_Futurex_Inc..html
-- **CSV Coverage Notes**: (2026-07-01: verified publish date is 2020-02-20 (KMES Series 3 announcement), not 2026-06-05 as previously recorded; page shows a 2024-09-20 republish stamp but no new content. No more-current Futurex PQC announcement found.)
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: Key Management Enterprise Server (KMES) Series 3
-- **Compliance Frameworks**: FIPS 140-2 Level 3; NIST
-- **Hybrid Mode Support**: Yes, embeds both conventional and quantum-safe algorithms within a single container
+- **Vendor ID**: VND-027
+- **Vendor Name**: Microsoft Corporation
+- **Roadmap Title**: Accelerating the quantum-safe timeline | Microsoft Security Blog
+- **Roadmap URL**: https://www.microsoft.com/en-us/security/blog/2026/07/10/securing-our-future-july-2026-progress-report-on-microsofts-secure-future-initiative/
+- **Publish Date**: 2026-06-30
+- **Local File**: vendor/VND-027.html
+- **CSV Coverage Notes**: Microsoft has committed to transitioning critical products and services to post-quantum cryptography by 2029, incorporating PQC requirements into its Secure Future Initiative (SFI). ML-KEM and ML-DSA reached Windows Insiders in May 2026 and went generally available in Windows Server 2025, Windows 11 (24H2/25H2), and .NET 10 (Nov 2026 update) via CNG library and Certificate-function updates -- the initial "Foundational security components" phase of Microsoft's Quantum Safe Program.
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
+- **Target Migration Dates**: Transitioning to post-quantum cryptography (PQC) in critical products and services by 2029
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: None detected
 - **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Futurex is the first company to deliver a post-quantum hybrid certificate authority offering"; "embeds both conventional and quantum-safe algorithms within a single container"; "quantum-safe algorithms can be turned on as needed"
-- **Coverage Verification**: CONSISTENT, the document explicitly states "BULVERDE, Texas, February 20, 2020" and "Last updated: September 20, 2024" with no newer PQC content.
+- **Customer Action Required**: Inventory your cryptographic dependencies now and establish transition plans for post-quantum readiness
+- **Key Commitments & Quotes**: "We are accelerating the Microsoft Quantum Safe Program (QSP) timeline, with the goal of transitioning to post-quantum cryptography (PQC) in critical products and services by 2029."; "PQC is now an SFI-measured engineering requirement, with workstreams advancing across network traffic, data-at-rest protection, and trust chain modernization."; "Quantum-safe algorithms (ML-KEM, ML-DSA) are available today across major platforms."
+- **Coverage Verification**: PARTIAL - The document confirms the 2029 deadline and SFI integration, but does not mention Windows Insiders, specific OS versions (Server 2025, 11), .NET 10, or the "Foundational security components" phase.
 - **Extraction Quality**: MEDIUM
-- **Source Document**: VND-017_Futurex_Inc..html (596.5 KB)
-- **Extraction Timestamp**: 2026-10-16T10:12:32
+- **Source Document**: VND-027.html (275.0 KB)
+- **Extraction Timestamp**: 2026-10-16T10:17:31
+
+
+## VND-027:techcommunity_microsoft_com_blog_microso — Microsoft Corporation
+
+- **Vendor ID**: VND-027
+- **Vendor Name**: Microsoft Corporation
+- **Roadmap Title**: New Windows Features to Secure Today’s Data in a Post-Quantum World
+- **Roadmap URL**: https://techcommunity.microsoft.com/blog/microsoft-security-blog/new-windows-features-to-secure-today%e2%80%99s-data-in-a-post-quantum-world/4523370
+- **Publish Date**: Unknown
+- **Local File**: vendor-roadmaps/VND-027_Microsoft_Corporation_techcommunity_microsoft_com_blog_microso.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Windows 11; Windows Server 2025; Active Directory Certificate Services (ADCS); Windows TLS stack; Windows cryptography APIs
+- **Compliance Frameworks**: NIST; IETF
+- **Hybrid Mode Support**: Yes, via PQ TLS hybrid key exchange (X25519_MLKEM768, SecP256r1_MLKEM768, SecP384r1_MLKEM1024) and composite algorithms (ECDSA+ML-DSA, ECDHE+ML-KEM).
+- **Current GA Status**: GA (PQC algorithms on Windows 11/Server 2025; ML-DSA certificates in ADCS); Preview (TLS hybrid key exchange; composite algorithms in APIs)
+- **Customer Action Required**: Inventory public-key cryptography usage; prioritize systems with long confidentiality lifetimes; test hybrid/composite approaches in non-production environments; map applications relying on Windows cryptographic interfaces; prepare for operational changes in certificates, device policy, and performance validation.
+- **Key Commitments & Quotes**: "TLS Hybrid Key Exchange using ML-KEM groups is now available on Windows 11"; "ADCS support for issuance of ML-DSA certificates in Windows Server 2025 is now generally available"; "Composite algorithms are now available on Windows 11"
+- **Coverage Verification**: MISMATCH, as the document explicitly details specific PQC algorithms, products, and GA statuses, contradicting the "Not specified" claim.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-027_Microsoft_Corporation_techcommunity_microsoft_com_blog_microso.html (481.0 KB)
+- **Extraction Timestamp**: 2026-10-16T10:17:53
 
 ## VND-001 — Amazon Web Services Inc.
 
