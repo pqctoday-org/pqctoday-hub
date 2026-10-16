@@ -17,6 +17,7 @@
 import { useEffect, useState } from 'react'
 import { loadPQCAlgorithmsData } from '../../data/pqcAlgorithmsData'
 import { isDraftTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
+import { getAlgorithmAdvisory } from '../../data/algorithmAdvisories'
 
 /** Picker option id (as used in KeyGenerationSection's FilterDropdown) → exact CSV `algorithm` name. */
 export const PICKER_ID_TO_ALGO_NAME: Record<string, string> = {
@@ -140,6 +141,21 @@ const TIER_ROLE_NOTE: Partial<Record<AlgorithmStatusTier, string>> = {
   unverified: 'Status not yet fact-checked against an authoritative source.',
   'non-standardized':
     'Not on any FIPS/IETF/regional standards track — an actively-maintained implementation, not a certified or draft standard.',
+}
+
+/** Advisory badge for picker options (e.g. the BSI's Classic McEliece notice), shown
+ *  regardless of tier: an advisory changes how to use an algorithm, not its status. */
+export function PickerAdvisoryBadge({ id }: { id: string }) {
+  const advisory = getAlgorithmAdvisory(PICKER_ID_TO_ALGO_NAME[id] ?? id)
+  if (!advisory) return null
+  return (
+    <span
+      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium ml-auto shrink-0"
+      title={advisory.note}
+    >
+      {advisory.label}
+    </span>
+  )
 }
 
 /**

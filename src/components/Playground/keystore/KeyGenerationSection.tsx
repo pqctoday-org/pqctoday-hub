@@ -13,7 +13,12 @@ import {
 import { FilterDropdown, type FilterDropdownItem } from '../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { withEducationNoticeComment } from '@/data/educationNotice'
-import { useAlgorithmStatusTiers, getPickerTier, PickerDraftBadge } from '../algorithmPickerStatus'
+import {
+  useAlgorithmStatusTiers,
+  getPickerTier,
+  PickerDraftBadge,
+  PickerAdvisoryBadge,
+} from '../algorithmPickerStatus'
 
 // Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
 function getCodeSnippets(
@@ -292,7 +297,12 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
     () =>
       PQC_ALGORITHM_ITEMS.map((item) => ({
         ...item,
-        trailing: <PickerDraftBadge tier={getPickerTier(item.id, statusTiers)} />,
+        trailing: (
+          <span className="ml-auto inline-flex items-center gap-1 shrink-0">
+            <PickerDraftBadge tier={getPickerTier(item.id, statusTiers)} />
+            <PickerAdvisoryBadge id={item.id} />
+          </span>
+        ),
       })),
     [statusTiers]
   )

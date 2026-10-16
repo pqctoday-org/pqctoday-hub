@@ -246,6 +246,15 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
     'final',
   'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
     'final',
+  // The BSI advised against Classic McEliece for new developments on 2026-10-01
+  // (Hinweis Classic McEliece). It stays an ISO standard and stays listed in
+  // TR-02102-1 (2026-01), so the tier is unchanged; these keys accept the corrected
+  // fips_standard wording queued for the next reference CSV. The advisory itself is
+  // shown by algorithmAdvisories.ts.
+  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (2026-01, hybrid use, Level 5); BSI advises against new use since 2026-10-01; NOT in NIST FIPS':
+    'final',
+  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (2026-01, hybrid use); BSI advises against new use since 2026-10-01; NOT in NIST FIPS':
+    'final',
   'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer (pre-08082026 snapshots)
   'Candidate|||KpqC competition winner, announced 2025-01-16 (Korean Post-Quantum Cryptography Competition Final Results) — KS national standard TBD (draft expected 2026, final ~2027)':
     'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — corrected 2026-08-08, was mislabeled "Round 1"
