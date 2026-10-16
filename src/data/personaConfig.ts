@@ -645,7 +645,7 @@ export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
   // own region, as for GRC.
   'cert-engineer': 'global',
   ops: 'global', // owner decision D2, 15 Oct 2026
-  curious: 'americas',
+  curious: 'global', // owner decision, 16 Oct 2026: no persona-implied region
 }
 
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
