@@ -21,6 +21,9 @@ describe('catalogScopeCounts', () => {
       planned: 2,
       none: 1,
       unknown: 3,
+      relevant: { available: 0, partial: 0, planned: 0, none: 0, unknown: 0 },
+      baselineWithPqc: 0,
+      unassigned: 8,
     })
   })
 })
@@ -40,7 +43,23 @@ describe('CatalogScopeNote', () => {
       { pqcStatusCanonical: 'none', cataloguePopulation: 'migration_baseline' },
     ] as SoftwareItem[]
     render(<CatalogScopeNote items={items} />)
-    expect(screen.getByText(/1 products with PQC capability/)).toBeInTheDocument()
+    expect(screen.getByText(/1 PQC-relevant products \(1 available/)).toBeInTheDocument()
     expect(screen.getByText(/2 migration-baseline/)).toBeInTheDocument()
+  })
+
+  it('counts the status breakdown inside the PQC-relevant group only, and names unassigned rows', () => {
+    const items = [
+      { pqcStatusCanonical: 'available', cataloguePopulation: 'pqc_relevant' },
+      { pqcStatusCanonical: 'unknown', cataloguePopulation: 'pqc_relevant' },
+      { pqcStatusCanonical: 'available', cataloguePopulation: 'migration_baseline' },
+      { pqcStatusCanonical: 'unknown', cataloguePopulation: '' },
+    ] as SoftwareItem[]
+    render(<CatalogScopeNote items={items} />)
+    const text = document.body.textContent ?? ''
+    expect(text).toMatch(
+      /2 PQC-relevant products \(1 available · 0 partial · 0 planned or on a roadmap · 1 not yet determined\)/
+    )
+    expect(text).toMatch(/1 of them already have some PQC support/)
+    expect(text).toMatch(/1 more are not yet assigned/)
   })
 })
