@@ -63,5 +63,6 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'cert-capacity-plan': 'Certificate Capacity Plan',
   'protocol-config': 'Protocol Configuration',
   'vpn-sim-run': 'VPN Simulator Run',
+  'run-manifest': 'Saved Run Record',
   'ops-test-plan': 'Operations Test Plan',
 }

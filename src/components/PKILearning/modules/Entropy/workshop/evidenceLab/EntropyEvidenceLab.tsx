@@ -60,6 +60,7 @@ import entropyManifest from '../../manifest'
 import { downloadRunManifestJson } from '@/services/runRecordExport'
 import { bundleFilename, downloadBlob } from '@/services/exportBundle'
 import { RunProvenanceLine } from '@/components/shared/RunRecordActions'
+import { SaveRunToEvidence } from '@/components/shared/SaveRunToEvidence'
 
 const SCREENS: Array<{ title: string; proves: string[]; doesNotProve: string[] }> = [
   {
@@ -470,8 +471,8 @@ export const EntropyEvidenceLab: FC = () => {
     if (rec) downloadToolRecord(`sp800-90b-${which}-${rec.dataset.sha256.slice(0, 12)}`, rec)
   }
 
-  const exportEvidence = () => {
-    if (!labCase || !manifest) return
+  const buildEvidenceManifest = () => {
+    if (!labCase || !manifest) return null
     const datasetInfo = (ref: DataRef | undefined) => {
       if (!ref) return null
       if (ref.kind === 'device') return deviceDataset(manifest, ref.datasetId)
@@ -506,7 +507,7 @@ export const EntropyEvidenceLab: FC = () => {
       conclusion,
       learner: { verdict: chosen, check: verdictCheck, note },
     }
-    const manifestRecord = evidenceLabRunManifest({
+    return evidenceLabRunManifest({
       moduleVersion: `${entropyManifest.id} content ${entropyManifest.contentVersion}`,
       evidence,
       sequential: {
@@ -528,7 +529,13 @@ export const EntropyEvidenceLab: FC = () => {
       startedAt: seqRecord?.execution.startedAt ?? new Date().toISOString(),
       finishedAt: new Date().toISOString(),
     })
-    downloadRunManifestJson(manifestRecord, `entropy-evidence-${labCase.id}`)
+  }
+
+  const exportEvidence = () => {
+    const manifestRecord = buildEvidenceManifest()
+    if (manifestRecord && labCase) {
+      downloadRunManifestJson(manifestRecord, `entropy-evidence-${labCase.id}`)
+    }
   }
 
   const draftNote = () => {
@@ -678,7 +685,23 @@ export const EntropyEvidenceLab: FC = () => {
               onExport={exportEvidence}
             />
           )}
-          {screen === 5 && labCase && conclusion && <RunProvenanceLine testId="evl-provenance" />}
+          {screen === 5 && labCase && conclusion && (
+            <div className="flex flex-wrap items-center gap-3">
+              <SaveRunToEvidence
+                getManifest={buildEvidenceManifest}
+                runKey={JSON.stringify([
+                  labCase.id,
+                  track,
+                  seqRecord?.execution.startedAt ?? null,
+                  conclusion.verdict,
+                  chosen,
+                  note,
+                ])}
+                testId="evl-run-record"
+              />
+              <RunProvenanceLine testId="evl-provenance" />
+            </div>
+          )}
 
           <ProvesPanel proves={s.proves} doesNotProve={s.doesNotProve} />
 

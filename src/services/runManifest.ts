@@ -84,7 +84,8 @@ export function buildRunManifest(
   }
 }
 
-const MODE_TEXT: Record<ExecutionMode, string> = {
+/** How a run was produced, in one sentence per execution mode. */
+export const MODE_TEXT: Record<ExecutionMode, string> = {
   'in-browser-implementation': 'Real cryptographic code ran in your browser.',
   simulation: 'A simulation: no real cryptographic exchange took place.',
   'spec-visualiser': 'A visual walk-through of a specification, not an implementation.',

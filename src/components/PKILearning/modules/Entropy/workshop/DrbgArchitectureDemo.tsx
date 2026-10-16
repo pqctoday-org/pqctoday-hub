@@ -163,10 +163,15 @@ export const DrbgArchitectureDemo: React.FC = () => {
     }
   }, [])
 
+  const buildKatManifest = useCallback(
+    async () => (katRun ? drbgRunManifest(katRun) : null),
+    [katRun]
+  )
+
   const handleDownloadKatRecord = useCallback(async () => {
-    if (!katRun) return
-    downloadRunManifestJson(await drbgRunManifest(katRun), 'drbg-known-answer-run')
-  }, [katRun])
+    const manifest = await buildKatManifest()
+    if (manifest) downloadRunManifestJson(manifest, 'drbg-known-answer-run')
+  }, [buildKatManifest])
 
   const handleReset = () => {
     setK(INITIAL_K)
@@ -553,7 +558,11 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <RunRecordActions onDownload={handleDownloadKatRecord} testId="drbg-run-record" />
+            <RunRecordActions
+              onDownload={handleDownloadKatRecord}
+              getManifest={buildKatManifest}
+              testId="drbg-run-record"
+            />
           </div>
         )}
         {!katRun && <RunProvenanceLine testId="drbg-provenance" />}

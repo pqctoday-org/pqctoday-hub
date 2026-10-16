@@ -162,7 +162,7 @@ const ARCHITECT_INTRO: CommandCenterIntro = {
 // running a program, so neither the board questions nor the executive overview
 // apply.
 const RESEARCHER_INTRO: CommandCenterIntro = {
-  lede: 'Checking a post-quantum claim comes down to four questions: what changed, whether it reproduces, how firm the threat estimate is, and who holds the patents. Start with whichever you need first.',
+  lede: 'Checking a post-quantum claim comes down to four questions: what changed, whether it reproduces, how firm the threat estimate is, and who holds the patents. Start with whichever you need first. The evidence bundle above collects your bookmarked sources and saved runs into one citable zip.',
   showGuidedOverview: false,
   questions: [
     {

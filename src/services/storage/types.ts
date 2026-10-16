@@ -95,6 +95,10 @@ export type ExecutiveDocumentType =
   | 'protocol-config'
   | 'vpn-sim-run'
   | 'ops-test-plan'
+  // Researcher evidence bundle, Layer 1: a run record (run manifest) saved
+  // from a researcher tool. `output` holds the manifest JSON (digests and
+  // per-case results, never the full vectors).
+  | 'run-manifest'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

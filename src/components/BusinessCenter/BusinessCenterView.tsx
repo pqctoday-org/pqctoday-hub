@@ -61,6 +61,7 @@ import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
 import { ArchitecturePackPanel } from './ArchitecturePackPanel'
 import { OperationsPackPanel } from './OperationsPackPanel'
+import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
@@ -584,10 +585,12 @@ export function BusinessCenterView() {
         completedAt={metrics.completedAt}
       />
 
-      {/* Role packs — the architect's review document and the operations pack.
+      {/* Role packs — the architect's review document, the operations pack and
+           the researcher's evidence bundle.
            Shown even with nothing saved, because the missing-section list is the path. */}
       {selectedPersona === 'architect' && <ArchitecturePackPanel />}
       {selectedPersona === 'ops' && <OperationsPackPanel />}
+      {selectedPersona === 'researcher' && <EvidenceBundlePanel placement="command-center" />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so

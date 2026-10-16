@@ -65,6 +65,7 @@ import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -738,6 +739,10 @@ export function LibraryViewRedesign({
               </>
             }
           />
+
+          {/* Bookmarks view: the researcher's evidence bundle (bookmarked
+              records, citations, saved run records, what is missing). */}
+          {showOnlyLibraryBookmarks && !simEmbed && <EvidenceBundlePanel placement="library" />}
 
           {showNarrowBanner && (
             <div className="flex items-center gap-2 rounded-lg border border-secondary/30 bg-secondary/10 px-3 py-2 text-[12.5px]">
