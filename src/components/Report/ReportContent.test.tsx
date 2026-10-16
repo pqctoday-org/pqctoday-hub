@@ -6,6 +6,7 @@ import { ReportContent } from './ReportContent'
 import '@testing-library/jest-dom'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { PERSONA_IDS, pathModuleCount } from '../../data/learningPersonas'
 
 // Mock framer-motion
 vi.mock(
@@ -360,6 +361,32 @@ describe('ReportContent', () => {
         }
       }
     )
+
+    it('offers a researcher the PDF and CSV only: no executive brief, board pack or engineering plan', () => {
+      usePersonaStore.getState().setPersona('researcher')
+      try {
+        renderReport()
+        expect(screen.getByText('Download report (PDF)')).toBeInTheDocument()
+        expect(screen.getByText('Export CSV')).toBeInTheDocument()
+        expect(screen.queryByText('Print Executive Brief')).not.toBeInTheDocument()
+        expect(screen.queryByText(/Board Pack/)).not.toBeInTheDocument()
+        expect(screen.queryByText('Engineering migration plan (ZIP)')).not.toBeInTheDocument()
+      } finally {
+        usePersonaStore.getState().setPersona(null)
+      }
+    })
+
+    it.each(PERSONA_IDS)('states the %s learning path in the shared module count', (persona) => {
+      usePersonaStore.getState().setPersona(persona)
+      try {
+        renderReport()
+        expect(
+          screen.getByText(new RegExp(`learning path — ${pathModuleCount(persona)} modules,`))
+        ).toBeInTheDocument()
+      } finally {
+        usePersonaStore.getState().setPersona(null)
+      }
+    })
 
     it('calls window.print when Print / Save as PDF is clicked', () => {
       const printMock = vi.fn()
