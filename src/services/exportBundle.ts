@@ -9,6 +9,7 @@
  * CSV content is built with `generateCsv` from `@/utils/csvExport`.
  */
 import JSZip from 'jszip'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
 
 export interface BundleFile {
   /** Path inside the archive, e.g. `board-pack/README.md`. Folders are created as needed. */
@@ -16,11 +17,24 @@ export interface BundleFile {
   content: string | Blob
 }
 
-/** Zip the given files into one Blob. Paths keep their folder structure. */
+/** The status notice added to a bundle that does not carry its own NOTICE.md. */
+export const BUNDLE_NOTICE_MD = `# Status notice\n\n${EDUCATION_NOTICE}\n`
+
+/**
+ * Zip the given files into one Blob. Paths keep their folder structure.
+ * Every bundle leaves the site with the education notice: if no file is named
+ * NOTICE.md, one is added next to the first file (inside its top folder).
+ */
 export async function buildZipBundle(files: BundleFile[]): Promise<Blob> {
   const zip = new JSZip()
   for (const { path, content } of files) {
     zip.file(path, content)
+  }
+  const hasNotice = files.some((f) => /(^|\/)NOTICE\.md$/.test(f.path))
+  if (!hasNotice && files.length > 0) {
+    const first = files[0].path
+    const folder = first.includes('/') ? first.slice(0, first.indexOf('/') + 1) : ''
+    zip.file(`${folder}NOTICE.md`, BUNDLE_NOTICE_MD)
   }
   return zip.generateAsync({ type: 'blob' })
 }
