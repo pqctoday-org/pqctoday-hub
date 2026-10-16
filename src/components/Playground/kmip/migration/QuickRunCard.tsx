@@ -5,11 +5,13 @@
 // the keystore table. The application side only ever passes the key LABEL.
 
 import { useCallback, useState } from 'react'
-import { Check, ClipboardCopy, Loader2, Zap } from 'lucide-react'
+import { Check, ClipboardCopy, Loader2, Save, Zap } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine, KmipObject } from '@/wasm/kmip/kmipEngine'
 import { BUILD_COMMIT } from '@/utils/sourceLink'
+import { useModuleStore } from '@/store/useModuleStore'
 import { MIGRATION_POLICIES, type MigrationPolicyChip } from './migrationKeys'
 import {
   buildQuickRunSummary,
@@ -54,6 +56,8 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [savedAt, setSavedAt] = useState<string | null>(null)
+  const addDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const run = useCallback(
     (spec: Parameters<KmipEngine['runOp']>[0], log: string[]) => {
@@ -167,6 +171,25 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
 
   const summary = record ? buildQuickRunSummary(record) : null
 
+  /** Keep the latest run as the architecture pack's KMIP evidence. The store
+   * keys on moduleId + type, so a new run replaces the previous one. */
+  const onSave = () => {
+    if (!record || !summary) return
+    const now = Date.now()
+    addDocument({
+      id: `kmip-quick-run-${now}`,
+      moduleId: 'kmip-playground',
+      type: 'kmip-quick-run',
+      title: `KMIP quick run: ${record.before.algorithm} to ${record.after.algorithm}`,
+      data: summary,
+      inputs: record,
+      createdAt: now,
+      updatedAt: now,
+      approvalStatus: 'draft',
+    })
+    setSavedAt(record.ranAt)
+  }
+
   const onCopy = async () => {
     if (!summary) return
     try {
@@ -278,7 +301,7 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
 
       {summary && (
         <div className="mt-3 space-y-2" data-testid="quick-run-summary">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold">Result summary</span>
             <Button
               size="sm"
@@ -290,6 +313,25 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
               {copied ? <Check size={12} /> : <ClipboardCopy size={12} />}
               {copied ? 'Copied' : 'Copy as Markdown'}
             </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 text-[11px]"
+              onClick={onSave}
+              disabled={savedAt === record?.ranAt}
+              data-testid="quick-run-save"
+            >
+              <Save size={12} />
+              {savedAt === record?.ranAt ? 'Saved' : 'Save to architecture pack'}
+            </Button>
+            {savedAt === record?.ranAt && (
+              <Link
+                to="/business#architecture-pack"
+                className="text-[11px] text-primary hover:underline"
+              >
+                Open the architecture pack
+              </Link>
+            )}
           </div>
           <pre className="max-h-72 overflow-auto rounded-md border border-border bg-background p-3 text-[11px] leading-snug whitespace-pre-wrap">
             {summary}

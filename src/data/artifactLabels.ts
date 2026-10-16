@@ -54,4 +54,8 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'data-at-rest-strategy': 'Data-at-Rest Strategy',
   'sim-roadmap': 'Simulation Roadmap',
   'certification-plan': 'Certification Plan',
+  'architecture-scope': 'Architecture Scope',
+  'architecture-decision-record': 'Architecture Decision Record',
+  'architecture-test-plan': 'Architecture Test Plan',
+  'kmip-quick-run': 'KMIP Quick Run Result',
 }

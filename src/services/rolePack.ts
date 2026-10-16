@@ -43,6 +43,9 @@ export interface RolePackInput {
   appVersion?: string | null
   /** Generation time; injectable for tests. */
   now?: Date
+  /** Re-render a document's Markdown at pack time (e.g. to show the current
+   * state of cited sources). Return undefined to use the saved `data`. */
+  renderDocument?: (doc: ExecutiveDocument) => string | undefined
 }
 
 export interface RolePackMissing {
@@ -109,6 +112,8 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
       toolPath: toolPathFor(section),
     }))
 
+  const body = (d: ExecutiveDocument) => (input.renderDocument?.(d) ?? d.data).trim()
+
   const author = input.author?.trim()
   const scope = input.scope?.trim()
 
@@ -156,11 +161,11 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
         lines.push(`### ${i + 1}.${k + 1} ${d.title}`, '', metaLine(d), '')
         // Under a ### heading, push the artifact's own headings further down
         // (demoteHeadings caps at ######).
-        lines.push(demoteHeadings(demoteHeadings(d.data.trim())), '')
+        lines.push(demoteHeadings(demoteHeadings(body(d))), '')
       })
       return
     }
-    lines.push(metaLine(docs[0]), '', demoteHeadings(docs[0].data.trim()), '')
+    lines.push(metaLine(docs[0]), '', demoteHeadings(body(docs[0])), '')
   })
 
   if (missing.length > 0) {

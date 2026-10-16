@@ -4,6 +4,7 @@ import type { ExecutiveDocument } from '@/services/storage/types'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import {
   ARCHITECTURE_PACK_DISCLAIMER,
+  ARCHITECTURE_PACK_PANEL_PATH,
   ARCHITECTURE_PACK_SECTIONS,
   buildArchitecturePack,
 } from './architecturePack'
@@ -26,8 +27,8 @@ describe('architecture pack', () => {
     const pack = buildArchitecturePack({ documents: [], now, origin: 'https://example.test' })
     expect(pack.present).toEqual([])
     expect(pack.missing).toHaveLength(ARCHITECTURE_PACK_SECTIONS.length)
-    for (const m of pack.missing) expect(m.toolPath).toMatch(/^\/business\/tools\//)
-    expect(pack.markdown).toContain('Sections: 0 of 7 present')
+    for (const m of pack.missing) expect(m.toolPath).toMatch(/^\/(business|playground)/)
+    expect(pack.markdown).toContain('Sections: 0 of 11 present')
     expect(pack.markdown).toContain('## What is missing')
     expect(pack.markdown).toContain('https://example.test/business/tools/mti-negotiator')
     expect(pack.markdown).toContain('Scope: not stated')
@@ -37,9 +38,12 @@ describe('architecture pack', () => {
   it('every section type links to a tool page that exists', () => {
     const ids = new Set(BUSINESS_TOOLS.map((t) => t.id))
     for (const s of ARCHITECTURE_PACK_SECTIONS) {
-      const path = toolPathFor(s)
-      expect(path).not.toBeNull()
-      expect(ids.has(String(path).replace('/business/tools/', ''))).toBe(true)
+      const path = String(toolPathFor(s))
+      if (path.startsWith('/business/tools/')) {
+        expect(ids.has(path.replace('/business/tools/', ''))).toBe(true)
+      } else {
+        expect([ARCHITECTURE_PACK_PANEL_PATH, '/playground/cacp?tab=migration']).toContain(path)
+      }
     }
   })
 
@@ -67,8 +71,8 @@ describe('architecture pack', () => {
     expect(md.indexOf('CBOM BODY')).toBeLessThan(md.indexOf('NEW PLAN'))
     expect(md).toContain('- Author: A. Architect')
     expect(md).toContain('- Scope: Payments platform')
-    expect(md).toContain('| 4 | Hybrid Transition Plan | approved | R. Reviewer | 2026-10-05 |')
-    expect(md).toContain('Sections: 2 of 7 present')
+    expect(md).toContain('| 5 | Hybrid Transition Plan | approved | R. Reviewer | 2026-10-05 |')
+    expect(md).toContain('Sections: 2 of 11 present')
   })
 
   it('pushes artefact headings under the section heading', () => {
