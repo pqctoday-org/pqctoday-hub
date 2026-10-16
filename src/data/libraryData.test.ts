@@ -370,7 +370,7 @@ describe('library lifecycle labels (loader)', () => {
     )
     expect(
       transformLibraryRow(
-        rawRow({ document_status: 'Proposed Standard', lifecycle_state: 'current' })
+        rawRow({ document_status: 'Round 4 Submission', lifecycle_state: 'current' })
       )?.lifecycleLabel
     ).toBe('Draft')
     expect(transformLibraryRow(rawRow({ lifecycle_state: '' }))?.lifecycleState).toBeUndefined()

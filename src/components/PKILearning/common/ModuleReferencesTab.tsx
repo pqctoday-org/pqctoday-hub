@@ -2,6 +2,7 @@
 import { ExternalLink, BookOpen, CalendarCheck, Quote } from 'lucide-react'
 import { Link } from 'react-router'
 import { getLibraryItemsForModule } from '@/data/libraryData'
+import { LIFECYCLE_STYLES } from '@/utils/libraryLifecycle'
 import {
   MODULE_LAST_REVIEWED,
   MODULE_LAST_EDITED,
@@ -219,11 +220,14 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
               <span className="text-xs px-1.5 py-0.5 rounded border border-border text-muted-foreground bg-muted/30">
                 {item.documentType}
               </span>
-              {item.documentStatus && (
-                <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                  {item.documentStatus}
-                </span>
-              )}
+              {/* The Library's lifecycle label (Released, Draft, …) so a draft is
+                  never read as a final document; the raw status stays as a tooltip. */}
+              <span
+                className={`text-xs px-1.5 py-0.5 rounded ${LIFECYCLE_STYLES[item.lifecycleLabel].badge}`}
+                title={item.documentStatus || undefined}
+              >
+                {LIFECYCLE_STYLES[item.lifecycleLabel].label}
+              </span>
               {item.pqcRound && (
                 <span className="text-xs px-1.5 py-0.5 rounded bg-info/10 text-info border border-info/20">
                   {item.pqcRound}

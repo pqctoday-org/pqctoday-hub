@@ -1,53 +1,69 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-export type DocumentStatusBucket = 'Published' | 'Proposed' | 'Draft' | 'Expired' | 'Superseded'
+export type DocumentStatusBucket =
+  'Published' | 'Proposed' | 'Draft' | 'Expired' | 'Superseded' | 'Unverified'
 
 /**
- * Map a raw documentStatus string from the library CSV to one of five buckets.
- * This is the rule set that ran before the six lifecycle labels. It now only
- * answers for a document whose `lifecycle_state` is blank, through
- * `resolveLifecycleLabel` in libraryLifecycle.ts, which maps the five buckets onto
- * the six labels (Published to Released, Proposed to Draft, Superseded to Historical).
+ * Map a raw documentStatus string from the library CSV to one of six buckets.
+ * This is the rule set that ran before the lifecycle labels. It now only
+ * answers for a document whose `lifecycle_state` is blank or not a label,
+ * through `resolveLifecycleLabel` in libraryLifecycle.ts.
+ *
+ * There is no "Published" default (document labels, 16 Oct 2026). Text that
+ * matches no rule — or says it needs review — is Unverified, so an unread
+ * status can never be shown to a reader as a released document.
+ * libraryLifecycle.test.ts runs every active status string in the latest
+ * library CSV through these rules.
  */
 export function getDocumentStatusBucket(raw: string): DocumentStatusBucket {
   const s = raw.toLowerCase().trim()
+  if (!s || s.includes('unverified') || s.includes('needs review')) return 'Unverified'
 
-  // Expired / obsoleted — check first so "Expired" substrings win over "Draft" patterns
-  if (s.includes('expired') || s.includes('obsoleted')) return 'Expired'
-
-  // Superseded
+  // Expired / obsoleted / withdrawn — before Draft so "Expired Internet-Draft" is Expired
   if (s.includes('superseded')) return 'Superseded'
+  if (s.includes('expired') || s.includes('obsoleted') || s.startsWith('withdrawn'))
+    return 'Expired'
 
-  // Draft — all forms of in-progress, unfinished, or pre-publication documents
+  // Draft — every in-progress or pre-publication form, with or without a hyphen
   if (
-    s.includes('internet-draft') ||
-    s.includes('initial public draft') ||
-    s === 'draft' ||
-    s.startsWith('draft ') ||
-    s.includes('pre-draft') ||
+    s.includes('draft') ||
+    s.startsWith('draft-') ||
     s.includes('in development') ||
     s.includes('active research') ||
     s.includes('preprint') ||
     s.includes('new project') ||
-    s.includes('committee specification draft') ||
-    s.includes('preliminary draft')
+    s.includes('in iesg review') ||
+    s.includes('iesg evaluation')
   )
     return 'Draft'
 
-  // Proposed — selected/nominated but not yet a finished standard
+  // Proposed — selected, nominated or a candidate, but not a finished document
   if (
-    s.includes('proposed standard') ||
     s.includes('call for proposals') ||
-    s.includes('round 4 submission') ||
+    /round \d (submission|specification)/.test(s) ||
     s.includes('nist round 4') ||
     s.includes('kpqc selected') ||
-    s.includes('in iesg review') ||
     s.includes('study item approved') ||
-    // "Standards Track" without "rfc" means it's on the path but not yet an RFC
-    (s.includes('standards track') && !s.includes('rfc') && !s.includes('internet-draft'))
+    s.includes('release candidate') ||
+    s.startsWith('beta')
   )
     return 'Proposed'
 
-  // Default — published, active, final, in force, enacted, etc.
-  return 'Published'
+  // Published — finished documents. An RFC's category ("Proposed Standard",
+  // "Standards Track", "Informational", "Experimental", "Best Current
+  // Practice") describes a published RFC, not a draft.
+  if (
+    /\b(published|final|released|in force|enacted|adopted|approved|current|live|active)\b/.test(
+      s
+    ) ||
+    /\b(standard|standards track|rfc|recommendation|guidance|guideline|informational|experimental|best current practice)\b/.test(
+      s
+    ) ||
+    /\b(white paper|report|specification|policy|advisory|certified|certification|results|executive order|programme|program|living document|web resource|presentation|position paper|ballot \(passed\)|framework|note|practice guide)\b/.test(
+      s
+    )
+  )
+    return 'Published'
+
+  return 'Unverified'
 }
