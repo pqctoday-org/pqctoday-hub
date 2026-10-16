@@ -46,14 +46,14 @@ describe('getBeltTierLabel', () => {
     expect(getBeltTierLabel('ops', 'Brown Belt')).toBe('Rolling Out')
   })
 
-  it('maps executive belts to "Briefed → Aligned → Sponsoring → Board-Ready"', () => {
+  it('maps executive belts to "Briefed → Mandated → Funded → Governing"', () => {
     expect(getBeltTierLabel('executive', 'White Belt')).toBe('Briefed')
     expect(getBeltTierLabel('executive', 'Yellow Belt')).toBe('Briefed')
-    expect(getBeltTierLabel('executive', 'Orange Belt')).toBe('Aligned')
-    expect(getBeltTierLabel('executive', 'Green Belt')).toBe('Aligned')
-    expect(getBeltTierLabel('executive', 'Blue Belt')).toBe('Sponsoring')
-    expect(getBeltTierLabel('executive', 'Brown Belt')).toBe('Sponsoring')
-    expect(getBeltTierLabel('executive', 'Black Belt')).toBe('Board-Ready')
+    expect(getBeltTierLabel('executive', 'Orange Belt')).toBe('Mandated')
+    expect(getBeltTierLabel('executive', 'Green Belt')).toBe('Mandated')
+    expect(getBeltTierLabel('executive', 'Blue Belt')).toBe('Funded')
+    expect(getBeltTierLabel('executive', 'Brown Belt')).toBe('Funded')
+    expect(getBeltTierLabel('executive', 'Black Belt')).toBe('Governing')
   })
 
   it('maps curious belts to "Aware → Informed → Confident → Fluent"', () => {

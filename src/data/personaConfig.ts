@@ -1694,7 +1694,8 @@ export function isComplianceFrameworkEmphasized(
  *
  * The 7 generic belts (White → Black) still drive scoring math, but Executive
  * and Curious see role-relevant tier names alongside the belt — "Briefed →
- * Aligned → Sponsoring → Board-Ready" for execs, "Aware → Informed → Confident
+ * Mandated → Funded → Governing" for execs (decision outcomes, owner
+ * decision 2026-10-16), "Aware → Informed → Confident
  * → Fluent" for curious. Other personas inherit the belt names as-is.
  *
  * Mapping: 7 belts collapse into 4 tiers
@@ -1706,7 +1707,7 @@ export function isComplianceFrameworkEmphasized(
 export const PERSONA_BELT_TIER_LABELS: Partial<
   Record<PersonaId, [string, string, string, string]>
 > = {
-  executive: ['Briefed', 'Aligned', 'Sponsoring', 'Board-Ready'],
+  executive: ['Briefed', 'Mandated', 'Funded', 'Governing'],
   // GRC (2026-09-07 split, plan §5) — learning labels, not certification
   // claims: they track progress through the curriculum, not an audit outcome.
   grc: ['Oriented', 'Scoped', 'Evidence-Ready', 'Assurance-Ready'],

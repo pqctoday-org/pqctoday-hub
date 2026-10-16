@@ -8,8 +8,8 @@
  * chip) for researcher, and researcher's customSideCard override slot fully
  * replaces the data-driven side card.
  */
-import { describe, it, expect } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { beforeEach, describe, it, expect } from 'vitest'
+import { render, screen, within, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { ReactElement } from 'react'
 import { PersonaBoardView } from './PersonaBoardView'
@@ -21,6 +21,7 @@ import {
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { essentialsTrackChips } from '@/data/trackChips'
+import { EXECUTIVE_DECISION_STEPS } from '@/data/executiveDecisionMode'
 
 const ALL_PERSONAS = Object.keys(PERSONA_JOURNEY_BOARD) as PersonaId[]
 
@@ -30,7 +31,14 @@ function renderBoard(ui: ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>)
 }
 
+// The full board layout below is the contract for every role, and for the
+// executive role when decision mode is switched off. Decision mode (on by
+// default for executive) has its own describe block at the end of this file.
+const DECISION_MODE_FLAG = 'pqc-feature-exec-decision-mode'
+
 describe('PersonaBoardView', () => {
+  beforeEach(() => localStorage.setItem(DECISION_MODE_FLAG, '0'))
+
   it('covers all 8 real personas', () => {
     expect(ALL_PERSONAS).toHaveLength(8)
   })
@@ -301,4 +309,113 @@ describe('resolveRoleBoardVariant — one fallback rule, shared by both callers'
       )
     }
   })
+})
+
+describe('PersonaBoardView — executive decision mode (on by default)', () => {
+  const EXEC_VARIANTS = PERSONA_JOURNEY_BOARD_VARIANTS.executive
+
+  it('has a decision step for every executive board, and only those', () => {
+    expect(Object.keys(EXECUTIVE_DECISION_STEPS).sort()).toEqual(
+      EXEC_VARIANTS.map((v) => v.id).sort()
+    )
+  })
+
+  it.each(EXEC_VARIANTS.map((v) => v.id))(
+    '%s: shows the hero, the next step and one "after that" link',
+    (variantId) => {
+      renderBoard(<PersonaBoardView personaId="executive" variantId={variantId} />)
+      // eslint-disable-next-line security/detect-object-injection -- variantId comes from the real variant list
+      const step = EXECUTIVE_DECISION_STEPS[variantId]
+      const board = resolveRoleBoardVariant('executive', variantId).board
+      expect(screen.getByText(board.headline)).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Your next step' })).toBeInTheDocument()
+      expect(screen.getByTestId('exec-next-step-link')).toHaveTextContent(step.nextLabel)
+      expect(screen.getByTestId('exec-after-that-link')).toHaveAttribute('href', step.afterHref)
+      expect(screen.getByTestId('exec-after-that-link')).toHaveTextContent(step.afterLabel)
+    }
+  )
+
+  it('the next step navigates to its configured href', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const { useLocation } = await import('react-router')
+    const user = userEvent.setup()
+    const seen: string[] = []
+    function LocationProbe() {
+      const loc = useLocation()
+      seen.push(loc.pathname + loc.search)
+      return null
+    }
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <PersonaBoardView personaId="executive" variantId="risk" />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+    await user.click(screen.getByTestId('exec-next-step-link'))
+    expect(seen.at(-1)).toBe(EXECUTIVE_DECISION_STEPS.risk.nextHref)
+  })
+
+  it('the track strip shows only the essentials, plus the full path as a text link', () => {
+    renderBoard(<PersonaBoardView personaId="executive" />)
+    const track = screen.getByTestId('exec-essentials-track')
+    const essentials = PERSONAS.executive.essentials
+    const links = within(track).getAllByRole('link')
+    // Five essentials, then the full-path link.
+    expect(links).toHaveLength(essentials.length + 1)
+    essentials.forEach((id, i) => expect(links.at(i)).toHaveAttribute('href', `/learn/${id}`))
+    const fullCount = PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length
+    expect(screen.getByTestId('exec-full-path-link')).toHaveTextContent(
+      `Full path, optional — ${fullCount} modules`
+    )
+    // The "2 hours 10, not 16½" contrast is gone from the strip.
+    expect(within(track).queryByText(PERSONA_JOURNEY_BOARD.executive.trackTitle)).toBeNull()
+    expect(within(track).queryByTestId('capstone-chip')).toBeNull()
+  })
+
+  it('folds the rest of the board under a collapsed "More for this question"', () => {
+    renderBoard(<PersonaBoardView personaId="executive" />)
+    const board = PERSONA_JOURNEY_BOARD.executive
+    const toggle = screen.getByRole('button', { name: /More for this question/ })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    const region = document.getElementById(toggle.getAttribute('aria-controls')!)
+    expect(region).not.toBeNull()
+    expect(region).not.toBeVisible()
+    expect(screen.queryByTestId('grid-card-0')).toBeNull()
+    expect(screen.queryByTestId('default-side-card')).toBeNull()
+    expect(screen.queryByRole('list', { name: 'Proof points' })).toBeNull()
+    expect(screen.queryByText(board.ctaPrimary)).toBeNull()
+    expect(screen.queryByTestId('role-tools-row')).toBeNull()
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(region).toBeVisible()
+    expect(screen.getByTestId('grid-card-0')).toBeInTheDocument()
+    expect(screen.getByTestId('default-side-card')).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Proof points' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Related on this site' })).toBeInTheDocument()
+    expect(screen.getByText(board.ctaPrimary)).toBeInTheDocument()
+    expect(within(region!).getByTestId('role-tools-row')).toBeInTheDocument()
+  })
+
+  it('switching the flag off restores the full board', () => {
+    localStorage.setItem(DECISION_MODE_FLAG, '0')
+    renderBoard(<PersonaBoardView personaId="executive" />)
+    expect(screen.queryByTestId('exec-decision-mode')).toBeNull()
+    expect(screen.queryByTestId('exec-next-step')).toBeNull()
+    expect(screen.getByTestId('grid-card-0')).toBeInTheDocument()
+    expect(screen.getByTestId('default-side-card')).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: PERSONA_JOURNEY_BOARD.executive.trackTitle })
+    ).toBeInTheDocument()
+  })
+
+  it.each(ALL_PERSONAS.filter((id) => id !== 'executive'))(
+    '%s is unaffected: full board, no decision mode',
+    (personaId) => {
+      renderBoard(<PersonaBoardView personaId={personaId} />)
+      expect(screen.queryByTestId('exec-decision-mode')).toBeNull()
+      expect(screen.queryByRole('button', { name: /More for this question/ })).toBeNull()
+      expect(screen.getByTestId('grid-card-0')).toBeInTheDocument()
+    }
+  )
 })

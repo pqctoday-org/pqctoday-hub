@@ -73,3 +73,24 @@ export const useMobileShell = (): boolean => {
   }
   return true
 }
+
+/**
+ * Executive home "decision mode" (design note 16 Oct 2026, owner-approved).
+ * On by default: an executive's board shows one next step and one "after
+ * that" link, with the rest of the board folded under "More for this
+ * question". Other roles never see it.
+ *
+ * Opt-out without a rebuild: localStorage 'pqc-feature-exec-decision-mode' = '0'.
+ * Opt-out at build time: VITE_FEATURE_EXEC_DECISION_MODE = '0'.
+ */
+export const useExecDecisionMode = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const env = (import.meta as any).env
+  if (env?.VITE_FEATURE_EXEC_DECISION_MODE === '0') return false
+  try {
+    if (localStorage.getItem('pqc-feature-exec-decision-mode') === '0') return false
+  } catch {
+    // Storage unavailable: keep the default.
+  }
+  return true
+}
