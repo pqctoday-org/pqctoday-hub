@@ -122,6 +122,29 @@ export interface SharedReportView {
   result: AssessmentResult
   persona: PersonaId | null
   approximate: boolean
+  /** True when no link was opened: a visitor without a report of their own is
+   *  shown the worked example in place of an empty page (see
+   *  `sampleReportView`). */
+  sample?: boolean
+}
+
+/** Query params that make `useResolvedSharedReport` resolve a link. While any
+ *  of them is present the link wins and the sample is never substituted. */
+export const REPORT_LINK_PARAMS = ['share', 'example', 'i', 'cy', 'a', 's', 'p', 'm', 't', 'v']
+
+/**
+ * The worked example, as shown on bare `/report` to a visitor who has not
+ * started an assessment. Search engines index `/report`; an empty "No Report
+ * Yet" page read to them as a soft 404, and they must see what visitors see,
+ * so both get this sample under a banner that says it is one.
+ */
+export function sampleReportView(livePersona: PersonaId | null): SharedReportView {
+  return {
+    result: EXAMPLE_REPORT_RESULT,
+    persona: livePersona ?? toValidPersona(EXAMPLE_REPORT_PERSONA),
+    approximate: false,
+    sample: true,
+  }
 }
 
 /**
