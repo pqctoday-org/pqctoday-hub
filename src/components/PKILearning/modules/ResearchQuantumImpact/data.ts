@@ -5,21 +5,21 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
   roleId: 'researcher',
   roleLabel: 'Researcher / Academic',
   tagline:
-    'Research data with long confidentiality needs is uniquely vulnerable to quantum attacks. Your field needs PQC-literate researchers.',
+    'Research data with long confidentiality needs is especially exposed to harvest-now-decrypt-later attacks. Your field needs PQC-literate researchers.',
 
   urgencyStatement:
-    'Research institutions handle some of the most sensitive long-lived data on the planet \u2014 genomic sequences, clinical trial results, defense research, and intellectual property that may remain confidential for decades. This data is a prime target for Harvest Now, Decrypt Later attacks. Additionally, the PQC field itself is an active research area with open problems in side-channel analysis, formal verification, and cross-disciplinary applications.',
+    'Research institutions handle highly sensitive long-lived data \u2014 genomic sequences, clinical trial results, defense research, and intellectual property that may remain confidential for decades. This data is a natural target for Harvest Now, Decrypt Later attacks. Additionally, the PQC field itself is an active research area with open problems in side-channel analysis, formal verification, and cross-disciplinary applications.',
 
   threatImpacts: [
     {
       id: 'research-data',
       title: 'Long-Lived Research Data',
       description:
-        'Genomic, clinical, defense, and proprietary research data may require confidentiality for 20-50+ years.',
+        'Genomic, clinical, defense, and proprietary research data may require confidentiality for decades.',
       severity: 'critical',
       timeframe: 'Already at risk (HNDL)',
       exampleScenario:
-        'A pharmaceutical company\u2019s phase-3 clinical trial data is encrypted with RSA-2048. The data must remain confidential for 25 years. Nation-state adversaries intercepting this data today could decrypt it in 10-15 years \u2014 well within the confidentiality window.',
+        'A pharmaceutical company\u2019s phase-3 clinical trial data is encrypted with RSA-2048 and must stay confidential for 25 years. An adversary recording it today can decrypt it once a CRQC exists. In the Global Risk Institute\u2019s Quantum Threat Timeline Report 2025, a clear majority of the 26 experts surveyed put a CRQC within 15 years at least as likely as not \u2014 inside that confidentiality window.',
     },
     {
       id: 'academic-publishing',
@@ -27,9 +27,9 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       description:
         'Digital signatures on academic publications, peer reviews, and grant proposals will need PQC-resistant verification.',
       severity: 'high',
-      timeframe: '2026-2035',
+      timeframe: 'When a CRQC exists',
       exampleScenario:
-        'A landmark paper signed with ECDSA in 2025 is challenged in 2040. The digital signature can no longer be verified because ECDSA has been broken. Questions arise about the paper\u2019s authenticity, affecting citation chains and research reproducibility.',
+        'A landmark paper signed with ECDSA in 2025 is challenged decades later, after ECDSA has been broken. The signature still verifies, but it is now forgeable, so it no longer proves who signed or that the paper is unaltered unless a trusted timestamp or evidence record taken while ECDSA was still secure backs it up. Questions arise about the paper\u2019s authenticity, affecting citation chains and research reproducibility.',
     },
     {
       id: 'research-infra',
@@ -37,7 +37,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       description:
         'HPC clusters, data repositories, and collaborative platforms use cryptography that will be broken by quantum computers.',
       severity: 'high',
-      timeframe: '2025-2030',
+      timeframe: 'Recorded traffic at risk now (HNDL)',
       exampleScenario:
         'Your university\u2019s HPC cluster uses SSH with ECDH key exchange for researcher access. A quantum-capable adversary could intercept and later decrypt all data transmitted to and from the cluster, including unpublished results.',
     },
@@ -55,9 +55,9 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       id: 'cross-disciplinary',
       title: 'Cross-Disciplinary PQC Applications',
       description:
-        'Fields like bioinformatics, financial modeling, IoT, and AI/ML increasingly need PQC-aware security.',
+        'Fields like bioinformatics, financial modeling, IoT, and AI/ML also need PQC-aware security.',
       severity: 'medium',
-      timeframe: '2025-2035',
+      timeframe: 'Ongoing',
       exampleScenario:
         'A bioinformatics team designs a federated learning system for multi-institution genomic analysis. The system uses classical encryption for model aggregation. Without PQC, the entire collaborative dataset is vulnerable to future decryption.',
     },
@@ -65,11 +65,11 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       id: 'grant-funding',
       title: 'Funding & Grant Competitiveness',
       description:
-        'Funding agencies increasingly prioritize quantum-safe security in research proposals.',
+        'Proposals that handle long-lived sensitive data can strengthen their security and data management sections by addressing quantum-safe data protection.',
       severity: 'low',
-      timeframe: '2026-2030',
+      timeframe: 'Ongoing',
       exampleScenario:
-        'An NSF proposal for a distributed health data platform is scored down because the security section does not address quantum-safe data protection. The competing proposal from another institution includes a PQC migration plan and wins the award.',
+        'A team proposes a distributed health data platform holding participant data that must stay confidential for decades. Its data management plan classifies the datasets by HNDL risk and explains how the archive will move to ML-KEM, giving reviewers a concrete answer on long-term confidentiality. (Hypothetical scenario; check the funder\u2019s call text for actual requirements.)',
     },
   ],
 
@@ -127,7 +127,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       category: 'Algorithm Foundations',
       skill: 'Lattice-Based Cryptography',
       description:
-        'Understanding Learning with Errors (LWE), Module-LWE, and their role in ML-KEM and ML-DSA.',
+        'Understanding Learning with Errors (LWE), Module-LWE, Module-SIS, and their role in ML-KEM and ML-DSA.',
       targetLevel: 'advanced',
       linkedModules: [
         { id: 'pqc-101', label: 'PQC 101' },

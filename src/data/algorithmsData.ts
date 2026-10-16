@@ -106,13 +106,15 @@ const TRANSITION_CANDIDATE_PQC_TIER_LOOKUP: Record<string, AlgorithmStatusTier> 
   'NTRU+ (KpqC Level 3)': 'regional',
   'HAETAE (KpqC Lattice Signature)': 'regional',
   'AIMer (KpqC Symmetric Signature)': 'regional',
+  // Keys are the CSV's literal pqc_replacement text (still "Round 2" until the data
+  // row is updated); the tier id is historical — the UI labels it Round 3.
   'UOV (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
   'MAYO (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
   'SQIsign (NIST Sig Round 2 — Isogeny)': 'round2-candidate',
-  'CROSS (NIST Sig Round 2 — Code-based)': 'round2-candidate',
-  'LESS (NIST Sig Round 2 — Code-based)': 'round2-candidate',
+  'CROSS (NIST Sig Round 2 — Code-based)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
+  'LESS (NIST Sig Round 2 — Code-based)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
   'FAEST (NIST Sig Round 2 — Hash-based)': 'round2-candidate',
-  'HAWK (NIST Sig Round 2 — Lattice)': 'round2-candidate',
+  'HAWK (NIST Sig Round 2 — Lattice)': 'eliminated', // entered Round 3, withdrawn 29 Jul 2026
   'SNOVA (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
   'ML-DSA-44-RSA2048-PSS (IETF Composite Sig)': 'ietf-draft',
   'ML-DSA-44-ECDSA-P256 (IETF Composite Sig)': 'ietf-draft',
