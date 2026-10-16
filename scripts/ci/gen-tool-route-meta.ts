@@ -88,6 +88,11 @@ if (collisions.length > 0) {
   throw new Error(`tool SEO routes collide with reserved lab paths: ${collisions.join(', ')}`)
 }
 
+// Tool ids whose /playground/<id> route redirects elsewhere (see App.tsx) and so
+// never renders its own content — generating an SEO/prerender entry for it would
+// crawl a page that immediately navigates away and can never reach "ready".
+const REDIRECTS_ONLY = new Set(['cacp-kmip'])
+
 const records: ToolRouteRecord[] = [
   ...BUSINESS_TOOLS.map((tool) => ({
     path: `/business/tools/${tool.id}`,
@@ -101,7 +106,7 @@ const records: ToolRouteRecord[] = [
     ],
     contentRegion: '#main-content',
   })),
-  ...WORKSHOP_TOOLS.map((tool) => ({
+  ...WORKSHOP_TOOLS.filter((tool) => !REDIRECTS_ONLY.has(tool.id)).map((tool) => ({
     path: `/playground/${tool.id}`,
     title: `${tool.name} — PQC Crypto Lab | PQC Today`,
     description: cleanDescription(tool.description),

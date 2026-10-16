@@ -518,19 +518,6 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     contentRegion: '#main-content',
   },
   {
-    path: '/playground/cacp-kmip',
-    title: 'KMIP Control Plane — PQC Crypto Lab | PQC Today',
-    description:
-      'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle…',
-    kind: 'browser-tool',
-    index: true,
-    sourceGlobs: [
-      'src/components/Playground/workshopRegistry.tsx',
-      'src/components/Playground/PlaygroundToolRoute.tsx',
-    ],
-    contentRegion: '#main-content',
-  },
-  {
     path: '/playground/cert-capacity',
     title: 'Cert Capacity Calculator — PQC Crypto Lab | PQC Today',
     description:

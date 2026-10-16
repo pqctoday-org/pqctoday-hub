@@ -14,12 +14,19 @@ const LAB_PATHS = [
   '/playground/docker',
 ]
 
+// Its /playground/<id> route redirects to /playground/cacp (App.tsx) and so
+// never renders its own content — excluded from the generated SEO/prerender
+// routes for the same reason (see scripts/ci/gen-tool-route-meta.ts).
+const REDIRECTS_ONLY = ['cacp-kmip']
+
 describe('search route manifest', () => {
   it('contains every registry route in both directions', () => {
     const expected = new Set([
       ...Object.keys(ROUTE_META),
       ...BUSINESS_TOOLS.map((tool) => `/business/tools/${tool.id}`),
-      ...WORKSHOP_TOOLS.map((tool) => `/playground/${tool.id}`),
+      ...WORKSHOP_TOOLS.filter((tool) => !REDIRECTS_ONLY.includes(tool.id)).map(
+        (tool) => `/playground/${tool.id}`
+      ),
       ...LAB_PATHS,
     ])
     expect(new Set(SEARCH_ROUTES.map((route) => route.path))).toEqual(expected)
@@ -35,7 +42,7 @@ describe('search route manifest', () => {
 
   it('classifies the exact current inventory', () => {
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'business-tool')).toHaveLength(37)
-    expect(SEARCH_ROUTES.filter((route) => route.kind === 'browser-tool')).toHaveLength(34)
+    expect(SEARCH_ROUTES.filter((route) => route.kind === 'browser-tool')).toHaveLength(33)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'sandbox-tool')).toHaveLength(23)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'lab')).toHaveLength(4)
     // Pages other than Learn modules are pinned; the Learn module pages and the total follow from the
