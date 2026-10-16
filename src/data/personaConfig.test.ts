@@ -367,7 +367,7 @@ describe('curious Algorithms default (curious journey review, 16 Oct 2026)', () 
  * being added through the data lane are listed here; the entry fails once the
  * sources exist, so it is removed with them.
  */
-const PENDING_SOURCED_CARDS = new Set(['curious/anyone'])
+const PENDING_SOURCED_CARDS = new Set<string>()
 
 describe('sourced side cards link every row to its source', () => {
   for (const [personaId, variants] of Object.entries(PERSONA_JOURNEY_BOARD_VARIANTS)) {
