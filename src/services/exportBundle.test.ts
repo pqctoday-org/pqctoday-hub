@@ -25,6 +25,15 @@ describe('exportBundle', () => {
     expect(await zip.file('pack/NOTICE.md')!.async('string')).toBe('own notice')
   })
 
+  it('names JSON and BibTeX files too', () => {
+    expect(bundleFilename('drbg run record', 'json', '2026-10-16')).toBe(
+      'drbg-run-record-2026-10-16.json'
+    )
+    expect(bundleFilename('PQC Library citations', 'bib', '2026-10-16')).toBe(
+      'pqc-library-citations-2026-10-16.bib'
+    )
+  })
+
   it('names files {slug}-{date}.{ext}', () => {
     expect(bundleFilename('Engineering Migration Plan', 'md', '2026-10-16')).toBe(
       'engineering-migration-plan-2026-10-16.md'

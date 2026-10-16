@@ -828,7 +828,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'Entropy Testing',
     // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
     // min-entropy", which attributed monobit and frequency to SP 800-90B —
@@ -877,7 +877,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'drbg-demo',
     pt_id: 'PT-014',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'SP 800-90A DRBG',
     description:
       'Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev. 1 §10.1.2 — with a known-answer check against pinned NIST ACVP and CAVP vectors.',
@@ -913,7 +913,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'source-combining',
     pt_id: 'PT-013',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Source Combining',
     // Entropy remediation P0 cleanup (2026-09-24): HKDF was listed as a
     // conditioning function. It is only the workshop's demonstration expansion

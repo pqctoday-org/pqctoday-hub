@@ -54,7 +54,7 @@ export function downloadBlob(blob: Blob, filename: string): void {
   URL.revokeObjectURL(url)
 }
 
-export type BundleExtension = 'zip' | 'md' | 'csv' | 'pdf' | 'json'
+export type BundleExtension = 'zip' | 'md' | 'csv' | 'pdf' | 'json' | 'bib'
 
 /**
  * `{prefix}-YYYY-MM-DD.{ext}`, with the prefix reduced to lowercase letters,

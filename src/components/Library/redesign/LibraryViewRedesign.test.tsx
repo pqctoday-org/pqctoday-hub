@@ -6,6 +6,7 @@ import { LibraryViewRedesign } from './LibraryViewRedesign'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { libraryData } from '@/data/libraryData'
 import type { LifecycleLabel } from '@/utils/libraryLifecycle'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 function renderView(initial = '/library') {
   return render(
@@ -36,6 +37,14 @@ describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
     expect(
       screen.queryByRole('radiogroup', { name: /viewing the library as/i })
     ).not.toBeInTheDocument()
+  })
+
+  it('registers a citation export (Cite) next to the CSV export in the top bar', () => {
+    renderView()
+    const actions = usePageActionsStore.getState().current
+    expect(actions?.onExport).toBeTypeOf('function')
+    render(<>{actions?.extra}</>)
+    expect(screen.getByTestId('library-cite-trigger')).toHaveTextContent('Cite')
   })
 
   it('opens the detail drawer when a result card is clicked (?ref deep-link seam)', () => {
