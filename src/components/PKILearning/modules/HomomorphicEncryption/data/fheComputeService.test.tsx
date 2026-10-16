@@ -298,7 +298,7 @@ describe('FHE custody over KMIP: vendor mechanisms, the security model and the K
       'Key generation, public-key derivation, attribute reads and decryption are user operations; there is no FHE-specific role',
       'CKA_DESTROYABLE = FALSE, so only the security officer can destroy one, through a signed administrative request',
       "each decryption spends one unit of a counter fixed by the officer's enrolled decryption policy",
-      'Refused and malformed requests spend a unit too',
+      'a wrong role or an unknown recipient is refused before the counter',
       'PKCS#11 single-part, C_DecryptInit, a size query, then C_Decrypt',
     ])
       expect(text, v).toContain(v)

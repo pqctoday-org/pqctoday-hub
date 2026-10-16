@@ -883,8 +883,10 @@ export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleVi
         </li>
         <li>
           <strong>Decryption budget:</strong> each decryption spends one unit of a counter fixed by
-          the officer&apos;s enrolled decryption policy. Refused and malformed requests spend a unit
-          too; the size query spends none.
+          the officer&apos;s enrolled decryption policy. A request refused after the role and key
+          checks (a malformed ciphertext, a failed check on the result) spends a unit too; a wrong
+          role or an unknown recipient is refused before the counter, and the size query spends
+          none.
         </li>
         <li>
           <strong>Decryption calls:</strong> PKCS#11 single-part,{' '}
