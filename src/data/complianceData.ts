@@ -498,7 +498,42 @@ export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = framework
  * Maps compliance frameworks to the COMPLIANCE_DB shape
  * for backward compatibility with assessment scoring.
  */
-type ComplianceDBEntry = { requiresPQC: boolean; deadline: string; notes: string }
+type ComplianceDBEntry = {
+  requiresPQC: boolean
+  deadline: string
+  notes: string
+} & ComplianceProvenance
+
+/**
+ * Where a framework's figures come from, carried from the catalog row into the
+ * assessment result so an export can say how each deadline was sourced. Every
+ * field is optional and only present when the row states it.
+ */
+export type ComplianceProvenance = Partial<
+  Pick<
+    ComplianceFramework,
+    'website' | 'lastVerified' | 'bindingStatus' | 'bindingBasis' | 'deadlineKind'
+  >
+>
+
+const PROVENANCE_FIELDS = [
+  'website',
+  'lastVerified',
+  'bindingStatus',
+  'bindingBasis',
+  'deadlineKind',
+] as const
+
+function provenanceOf(row: ComplianceProvenance): ComplianceProvenance {
+  const out: ComplianceProvenance = {}
+  for (const key of PROVENANCE_FIELDS) {
+    // eslint-disable-next-line security/detect-object-injection
+    const value = row[key]
+    // eslint-disable-next-line security/detect-object-injection
+    if (value) (out as Record<string, unknown>)[key] = value
+  }
+  return out
+}
 
 /**
  * Collapse rows by `label`, resolving collisions deterministically.
@@ -518,12 +553,19 @@ type ComplianceDBEntry = { requiresPQC: boolean; deadline: string; notes: string
  * false". A fixture can; the live values are pinned separately, as data.
  */
 export function mergeFrameworksByLabel(
-  rows: Array<Pick<ComplianceFramework, 'label' | 'requiresPQC' | 'deadline' | 'notes'>>
+  rows: Array<
+    Pick<ComplianceFramework, 'label' | 'requiresPQC' | 'deadline' | 'notes'> & ComplianceProvenance
+  >
 ): Record<string, ComplianceDBEntry> {
   return rows.reduce<Record<string, ComplianceDBEntry>>((acc, fw) => {
     const existing = acc[fw.label]
     if (!existing || fw.requiresPQC || !existing.requiresPQC) {
-      acc[fw.label] = { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes }
+      acc[fw.label] = {
+        requiresPQC: fw.requiresPQC,
+        deadline: fw.deadline,
+        notes: fw.notes,
+        ...provenanceOf(fw),
+      }
     }
     return acc
   }, {})

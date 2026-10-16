@@ -65,7 +65,7 @@ async function extract(blob: Blob): Promise<Record<string, string>> {
 }
 
 describe('buildBoardPackBlob', () => {
-  it('emits all 8 expected files inside the board-pack/ folder', async () => {
+  it('emits all 10 expected files inside the board-pack/ folder', async () => {
     const blob = await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
     const files = await extract(blob)
     expect(Object.keys(files).sort()).toEqual([
@@ -75,6 +75,8 @@ describe('buildBoardPackBlob', () => {
       'board-pack/README.md',
       'board-pack/compliance-deadlines.csv',
       'board-pack/executive-summary.md',
+      'board-pack/figure-sources.csv',
+      'board-pack/figure-sources.md',
       'board-pack/key-findings.md',
       'board-pack/profile.json',
       'board-pack/program-effort.md',
@@ -206,5 +208,103 @@ describe('Compliance pack (GRC)', () => {
     )
     expect(Object.keys(files).some((f) => f.endsWith('applicability-register.csv'))).toBe(false)
     expect(Object.keys(files).every((f) => f.startsWith('board-pack/'))).toBe(true)
+  })
+})
+
+/** A result that exercises every figure the pack can state. */
+const fullResult: AssessmentResult = {
+  ...baseResult,
+  narrative: 'Your organization faces a high quantum risk (62/100).\nData persists 6 years.',
+  hndlRiskWindow: {
+    dataRetentionYears: 15,
+    estimatedQuantumThreatYear: 2035,
+    crqcEstimateYear: 2035,
+    currentYear: 2026,
+    isAtRisk: true,
+    riskWindowYears: 6,
+  },
+  tnflRiskWindow: {
+    credentialLifetimeYears: 10,
+    estimatedQuantumThreatYear: 2035,
+    currentYear: 2026,
+    isAtRisk: true,
+    riskWindowYears: 1,
+    hasSigningAlgorithms: true,
+    tnflRelevantUseCases: ['code signing'],
+  },
+  migrationEffort: [
+    { algorithm: 'RSA-2048', complexity: 'medium', estimatedScope: 'moderate', rationale: 'r' },
+    {
+      algorithm: 'ECDH P-256',
+      complexity: 'high',
+      estimatedScope: 'major-project',
+      rationale: 'r',
+    },
+  ],
+  keyFindings: ['2 algorithms need replacement', 'Data stays exposed 6 years past 2035'],
+}
+
+const MARKER = /\[(C\d+)\]/g
+const HAS_MARKER = /\[C\d+\]/
+
+/** Lines that state a number but carry no [Cn] marker — the pack's own timestamp excepted. */
+function unmarkedFigureLines(markdown: string): string[] {
+  return markdown
+    .split('\n')
+    .filter((l) => !l.startsWith('**Generated:**'))
+    .filter((l) => /\d/.test(l) && !HAS_MARKER.test(l))
+}
+
+describe('Sources of figures in the pack', () => {
+  for (const persona of ['executive', 'grc']) {
+    it(`ships figure-sources.csv and figure-sources.md (${persona})`, async () => {
+      const files = await extract(
+        await buildBoardPackBlob({ result: fullResult, profile: { ...baseProfile, persona } })
+      )
+      const folder = persona === 'grc' ? 'compliance-pack' : 'board-pack'
+      const csv = files[`${folder}/figure-sources.csv`]
+      expect(csv).toContain('id,claim,value,kind,source,url,ref,method,scope,as_of,caveat')
+      expect(files[`${folder}/figure-sources.md`]).toContain(
+        '# Sources of the figures in this pack'
+      )
+      expect(files[`${folder}/README.md`]).toContain('figure-sources.csv')
+    })
+  }
+
+  it('resolves every [Cn] marker and claim_id to a ledger entry', async () => {
+    const files = await extract(
+      await buildBoardPackBlob({ result: fullResult, profile: baseProfile })
+    )
+    const ledgerIds = new Set(
+      [...files['board-pack/figure-sources.csv'].matchAll(/^(C\d+),/gm)].map((m) => m[1])
+    )
+    expect(ledgerIds.size).toBeGreaterThan(0)
+    const cited = new Set<string>()
+    for (const [path, content] of Object.entries(files)) {
+      if (path.includes('figure-sources')) continue
+      for (const m of content.matchAll(MARKER)) cited.add(m[1])
+    }
+    const csv = files['board-pack/compliance-deadlines.csv']
+    const header = csv.split('\n').find((l) => l.startsWith('framework,'))
+    expect(header).toBe('framework,requires_pqc,deadline,notes,claim_id')
+    for (const m of csv.matchAll(/,(C\d+)$/gm)) cited.add(m[1])
+    expect(csv.match(/,(C\d+)$/gm)?.length).toBe(fullResult.complianceImpacts.length)
+    expect(cited.size).toBeGreaterThan(5)
+    for (const id of cited) expect(ledgerIds.has(id), `${id} is not in the ledger`).toBe(true)
+    // …and every ledger entry is printed somewhere in the pack.
+    for (const id of ledgerIds) expect(cited.has(id), `${id} is never cited`).toBe(true)
+  })
+
+  it('puts a [Cn] marker on every line that states a number', async () => {
+    const files = await extract(
+      await buildBoardPackBlob({ result: fullResult, profile: baseProfile })
+    )
+    for (const name of ['executive-summary.md', 'key-findings.md', 'program-effort.md']) {
+      const content = files[`board-pack/${name}`]
+      expect(content, name).toMatch(MARKER)
+      expect(unmarkedFigureLines(content), name).toEqual([])
+    }
+    // The guard itself catches an unmarked figure.
+    expect(unmarkedFigureLines('**Budget:** $2m')).toEqual(['**Budget:** $2m'])
   })
 })

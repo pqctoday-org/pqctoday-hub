@@ -11,6 +11,10 @@ export interface CountryMilestone {
   title: string
   /** True only for a row curated as a binding mandate (timeline CSV `mandate_type` HARD). */
   binding: boolean
+  /** The timeline row's published source, when it has one. */
+  sourceUrl?: string
+  /** The date the source was published or last checked, as the timeline row states it. */
+  sourceDate?: string
 }
 
 /**
@@ -41,6 +45,8 @@ export function nextMilestoneIn(
         (ev.startYear === best.year && binding && !best.binding)
       ) {
         best = { year: ev.startYear, title: ev.title, binding }
+        if (ev.sourceUrl) best.sourceUrl = ev.sourceUrl
+        if (ev.sourceDate) best.sourceDate = ev.sourceDate
       }
     }
   }

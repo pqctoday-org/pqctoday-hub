@@ -14,6 +14,7 @@
  *     compliance-deadlines.csv  — per-framework deadlines + PQC requirement
  *     profile.json              — assessment inputs (machine-readable replay)
  *     program-effort.md         — illustrative effort/timeline/cost rollup (override)
+ *     figure-sources.csv / .md    — source, kind and caveat of every figure, by [Cn] id
  *
  * Pure data builder — no React, no DOM. Returns a Blob ready for download.
  */
@@ -23,8 +24,26 @@ import {
   withEducationNoticeCsv,
   withEducationNoticeMarkdown,
 } from '@/data/educationNotice'
-import type { AssessmentResult, MigrationEffortItem } from '@/hooks/assessmentTypes'
+import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { applicableFrameworks, TIER_ORDER, type UserProfile } from '@/utils/applicabilityEngine'
+import {
+  findCountryNextMilestone,
+  type CountryMilestone,
+} from '@/components/Report/countryMilestone'
+import {
+  buildFigureSourcesIndex,
+  figureSourcesCsv,
+  figureSourcesMarkdown,
+  claimMarker,
+  type FigureSources,
+} from './figureSources'
+import {
+  ASSUMED_COST_PER_PERSON_MONTH,
+  ASSUMED_PARALLEL_WORKSTREAMS,
+  SCOPE_BANDS_TEXT,
+  computeProgramEffort,
+  usd,
+} from './programEffort'
 
 export interface BoardPackProfile {
   industry: string
@@ -70,6 +89,8 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
     '- `recommended-actions.md` — every recommendation grouped by category and priority.',
     '- `compliance-deadlines.csv` — applicable frameworks, deadlines, and PQC-required flag.',
     '- `profile.json` — the answers that produced this report, in machine-readable form.',
+    '- `program-effort.md` — an illustrative effort, calendar and cost range (not a quote).',
+    '- `figure-sources.csv` and `figure-sources.md` — every figure in this pack, by its [C1], [C2] … marker: whether it is a fact, an estimate, a scenario or a recommendation, its source, how it was worked out, its date, and what to bear in mind before quoting it.',
     '',
     '## How to use',
     '',
@@ -94,41 +115,84 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
   return parts.join('\n')
 }
 
-function buildExecutiveSummary(result: AssessmentResult, profile: BoardPackProfile): string {
+function buildExecutiveSummary(
+  result: AssessmentResult,
+  profile: BoardPackProfile,
+  ledger: FigureSources,
+  milestone: CountryMilestone | null
+): string {
   const top3 = result.recommendedActions.slice(0, 3)
+  const mark = (key: Parameters<FigureSources['idOf']>[0]) => claimMarker(ledger.idOf(key))
+  const narrative = (
+    result.personaNarrative ||
+    result.executiveSummary ||
+    result.narrative ||
+    ''
+  ).trim()
+  const dates: string[] = []
+  if (milestone) {
+    dates.push(
+      `- **Next national milestone (${profile.country}):** ${milestone.year} — ${milestone.title} (${milestone.binding ? 'binding mandate' : 'published target'})${mark('country-milestone')}`
+    )
+  }
+  const hndl = result.hndlRiskWindow
+  const tnfl = result.tnflRiskWindow
+  const horizon = ledger.idOf('crqc-horizon') ? (hndl ?? tnfl) : undefined
+  if (horizon) {
+    dates.push(
+      `- **Quantum-threat planning horizon:** ~${horizon.crqcEstimateYear ?? horizon.estimatedQuantumThreatYear} (a planning assumption, not a forecast)${mark('crqc-horizon')}`
+    )
+  }
+  if (hndl?.isAtRisk) {
+    dates.push(
+      `- **Data exposure window:** data kept ${hndl.riskWindowYears} years beyond ${hndl.estimatedQuantumThreatYear}${mark('data-exposure-window')}`
+    )
+  }
+  if (tnfl?.isAtRisk) {
+    dates.push(
+      `- **Credential exposure window:** signing credentials trusted ${tnfl.riskWindowYears} years beyond ${tnfl.estimatedQuantumThreatYear}${mark('credential-exposure-window')}`
+    )
+  }
   const lines = [
     '# Executive Summary',
     '',
-    `**Risk score:** ${result.riskScore} / 100 (${result.riskLevel})`,
+    `**Risk score:** ${result.riskScore} / 100 (${result.riskLevel})${mark('risk-score')}`,
     `**Generated:** ${profile.generatedAt}`,
     profile.industry ? `**Industry:** ${profile.industry}` : '',
     profile.country ? `**Country:** ${profile.country}` : '',
     '',
+    'Each figure is marked [Cn]; `figure-sources.md` gives its source and caveats.',
+    '',
+    ...(dates.length > 0 ? ['## Key dates', '', ...dates, ''] : []),
     '## Narrative',
     '',
-    (result.personaNarrative || result.executiveSummary || result.narrative || '').trim(),
+    // Marker on every line, so a reader quoting any sentence keeps its trace.
+    narrative
+      .split('\n')
+      .map((l) => (l.trim() ? `${l}${mark('narrative')}` : l))
+      .join('\n'),
     '',
-    '## Top 3 priorities',
+    '## Top priorities',
     '',
   ].filter(Boolean)
-  for (const a of top3) {
-    lines.push(`### ${a.priority}. ${a.action}`)
+  top3.forEach((a, i) => {
+    lines.push(`### ${a.priority}. ${a.action}${mark(`priority-${i}`)}`)
     lines.push('')
     lines.push(
       `*${CATEGORY_LABEL[a.category] ?? a.category}${a.effort ? ` · effort: ${a.effort}` : ''}*`
     )
     lines.push('')
-  }
+  })
   return lines.join('\n')
 }
 
-function buildKeyFindings(result: AssessmentResult): string {
+function buildKeyFindings(result: AssessmentResult, ledger: FigureSources): string {
   const findings = result.keyFindings ?? []
   if (findings.length === 0) {
     return '# Key Findings\n\n_No findings recorded for this assessment._\n'
   }
   const lines = ['# Key Findings', '']
-  for (const f of findings) lines.push(`- ${f}`)
+  findings.forEach((f, i) => lines.push(`- ${f}${claimMarker(ledger.idOf(`finding-${i}`))}`))
   lines.push('')
   return lines.join('\n')
 }
@@ -159,14 +223,15 @@ function buildRecommendedActions(result: AssessmentResult): string {
   return lines.join('\n')
 }
 
-function buildComplianceCsv(result: AssessmentResult): string {
-  const header = ['framework', 'requires_pqc', 'deadline', 'notes'].join(',')
-  const rows = result.complianceImpacts.map((c) =>
+function buildComplianceCsv(result: AssessmentResult, ledger: FigureSources): string {
+  const header = ['framework', 'requires_pqc', 'deadline', 'notes', 'claim_id'].join(',')
+  const rows = result.complianceImpacts.map((c, i) =>
     [
       escapeCsv(c.framework),
       c.requiresPQC === null ? 'unknown' : c.requiresPQC ? 'yes' : 'no',
       escapeCsv(c.deadline),
       escapeCsv(c.notes),
+      ledger.idOf(`compliance-${i}`) ?? '',
     ].join(',')
   )
   return [header, ...rows].join('\n') + '\n'
@@ -237,55 +302,23 @@ function buildProfileJson(result: AssessmentResult, profile: BoardPackProfile): 
 }
 
 /**
- * Build the Board Pack as a single Blob.
- */
-/** Person-month band per migration scope — illustrative planning figures. */
-const SCOPE_PERSON_MONTHS = new Map<MigrationEffortItem['estimatedScope'], [number, number]>([
-  ['quick-win', [0.5, 1]],
-  ['moderate', [1, 2]],
-  ['major-project', [3, 6]],
-  ['multi-year', [6, 12]],
-])
-const SCOPE_LABEL = new Map<MigrationEffortItem['estimatedScope'], string>([
-  ['quick-win', 'Quick win'],
-  ['moderate', 'Moderate'],
-  ['major-project', 'Major project'],
-  ['multi-year', 'Multi-year'],
-])
-/** Illustrative blended, fully-loaded cost per person-month (USD). Override with your rates. */
-const ASSUMED_COST_PER_PERSON_MONTH = 18000
-/** Assumed parallel workstreams used only for the calendar-time band. */
-const ASSUMED_PARALLEL_WORKSTREAMS = 2
-
-/**
  * Program effort & timeline rollup. Aggregates the per-algorithm migration scopes
  * into person-month + calendar bands, plus an optional cost band the reader is
- * explicitly told to override. Never presented as a quote.
+ * explicitly told to override. Never presented as a quote. Figures come from
+ * `computeProgramEffort`, the same rollup the sources of figures describes.
  */
-function buildProgramEffort(result: AssessmentResult): string {
-  const effort = result.migrationEffort ?? []
+function buildProgramEffort(result: AssessmentResult, ledger: FigureSources): string {
+  const effort = computeProgramEffort(result)
   const out: string[] = ['# Program Effort & Timeline (Illustrative)', '']
-  if (effort.length === 0) {
+  if (!effort) {
     out.push(
       'No per-algorithm migration effort was computed for this assessment (no',
       'quantum-vulnerable algorithms in scope, or quick-assessment mode was used).'
     )
     return out.join('\n')
   }
-
-  let pmLow = 0
-  let pmHigh = 0
-  const counts = new Map<MigrationEffortItem['estimatedScope'], number>()
-  for (const item of effort) {
-    const band = SCOPE_PERSON_MONTHS.get(item.estimatedScope) ?? [1, 2]
-    pmLow += band[0]
-    pmHigh += band[1]
-    counts.set(item.estimatedScope, (counts.get(item.estimatedScope) ?? 0) + 1)
-  }
-  const calLow = Math.max(1, Math.ceil(pmLow / ASSUMED_PARALLEL_WORKSTREAMS))
-  const calHigh = Math.max(1, Math.ceil(pmHigh / ASSUMED_PARALLEL_WORKSTREAMS))
-  const usd = (n: number) =>
-    n >= 1000 ? `$${Math.round(n / 1000).toLocaleString()}k` : `$${Math.round(n).toLocaleString()}`
+  const mark = (key: Parameters<FigureSources['idOf']>[0]) => claimMarker(ledger.idOf(key))
+  const rate = usd(ASSUMED_COST_PER_PERSON_MONTH)
 
   out.push(
     '> Illustrative planning estimate derived from the per-algorithm migration',
@@ -293,33 +326,37 @@ function buildProgramEffort(result: AssessmentResult): string {
     '> and team capacity below with your own figures.',
     '',
     '## Headline',
-    `- **Effort:** ~${pmLow}–${pmHigh} person-months across ${effort.length} algorithm migration(s)`,
-    `- **Calendar time:** ~${calLow}–${calHigh} months (assuming ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams)`,
-    `- **Indicative cost:** ~${usd(pmLow * ASSUMED_COST_PER_PERSON_MONTH)}–${usd(pmHigh * ASSUMED_COST_PER_PERSON_MONTH)} (at ${usd(ASSUMED_COST_PER_PERSON_MONTH)}/person-month, fully loaded — OVERRIDE)`,
+    `- **Effort:** ~${effort.pmLow}–${effort.pmHigh} person-months across ${effort.migrations} algorithm migration(s)${mark('effort-person-months')}`,
+    `- **Calendar time:** ~${effort.calLow}–${effort.calHigh} months (assuming ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams)${mark('effort-calendar')}`,
+    `- **Indicative cost:** ~${usd(effort.costLow)}–${usd(effort.costHigh)} (at ${rate}/person-month, fully loaded — OVERRIDE)${mark('effort-cost')}`,
     '',
     '## By migration scope',
     '| Scope | Algorithms | Person-months (band) |',
     '| --- | ---: | ---: |'
   )
-  for (const scope of SCOPE_PERSON_MONTHS.keys()) {
-    const n = counts.get(scope) ?? 0
-    if (n === 0) continue
-    const band = SCOPE_PERSON_MONTHS.get(scope) ?? [1, 2]
-    out.push(`| ${SCOPE_LABEL.get(scope) ?? scope} | ${n} | ${band[0] * n}–${band[1] * n} |`)
+  for (const row of effort.byScope) {
+    out.push(
+      `| ${row.label} | ${row.count} | ${row.pmLow}–${row.pmHigh}${mark('effort-by-scope')} |`
+    )
   }
   out.push(
     '',
     '## Assumptions (override these)',
-    '- Person-month bands per scope: quick-win 0.5–1, moderate 1–2, major-project 3–6, multi-year 6–12.',
-    `- Blended fully-loaded cost: ${usd(ASSUMED_COST_PER_PERSON_MONTH)}/person-month.`,
-    `- ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams for the calendar band.`,
+    `- Person-month bands per scope: ${SCOPE_BANDS_TEXT}.${mark('effort-assumptions')}`,
+    `- Blended fully-loaded cost: ${rate}/person-month.${mark('effort-assumptions')}`,
+    `- ${ASSUMED_PARALLEL_WORKSTREAMS} parallel workstreams for the calendar band.${mark('effort-assumptions')}`,
     '- Excludes procurement, test infrastructure, training, and contingency.'
   )
   return out.join('\n')
 }
 
+/**
+ * Build the Board Pack as a single Blob.
+ */
 export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Blob> {
   const { result, profile, appVersion } = input
+  const milestone = profile.country ? findCountryNextMilestone(profile.country) : null
+  const ledger = buildFigureSourcesIndex({ result, profile, countryMilestone: milestone })
   // A board pack is read, forwarded and quoted by people who never opened this
   // app, so the notice is in the archive AND in every file inside it — a reader
   // who opens only `key-findings.md` still meets it (education-notice
@@ -332,19 +369,35 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
     { path: 'README.md', content: withEducationNoticeMarkdown(buildReadme(profile, appVersion)) },
     {
       path: 'executive-summary.md',
-      content: withEducationNoticeMarkdown(buildExecutiveSummary(result, profile)),
+      content: withEducationNoticeMarkdown(
+        buildExecutiveSummary(result, profile, ledger, milestone)
+      ),
     },
-    { path: 'key-findings.md', content: withEducationNoticeMarkdown(buildKeyFindings(result)) },
+    {
+      path: 'key-findings.md',
+      content: withEducationNoticeMarkdown(buildKeyFindings(result, ledger)),
+    },
     {
       path: 'recommended-actions.md',
       content: withEducationNoticeMarkdown(buildRecommendedActions(result)),
     },
     {
       path: 'compliance-deadlines.csv',
-      content: withEducationNoticeCsv(buildComplianceCsv(result)),
+      content: withEducationNoticeCsv(buildComplianceCsv(result, ledger)),
     },
     { path: 'profile.json', content: buildProfileJson(result, profile) },
-    { path: 'program-effort.md', content: withEducationNoticeMarkdown(buildProgramEffort(result)) },
+    {
+      path: 'program-effort.md',
+      content: withEducationNoticeMarkdown(buildProgramEffort(result, ledger)),
+    },
+    {
+      path: 'figure-sources.csv',
+      content: withEducationNoticeCsv(figureSourcesCsv(ledger.entries)),
+    },
+    {
+      path: 'figure-sources.md',
+      content: withEducationNoticeMarkdown(figureSourcesMarkdown(ledger.entries)),
+    },
   ]
   if (isCompliancePack(profile)) {
     files.push({
