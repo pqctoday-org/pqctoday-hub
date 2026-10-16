@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r25.csv
+ * Source: src/data/role_board_content_10162026_r28.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3381,9 +3381,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Replacements', value: 'published, not proposed' },
-            { label: 'Deadlines', value: 'binding policy in several countries' },
-            { label: 'People working on it', value: 'named, with their work' },
+            {
+              label: 'Replacements',
+              value: 'published, not proposed',
+              source: '/library?ref=FIPS%20203',
+            },
+            {
+              label: 'Deadlines',
+              value: 'binding policy in several countries',
+              source: '/library?ref=NSA%20CNSA%202.0%20FAQ',
+            },
+            { label: 'People working on it', value: 'named, with their work', source: '/leaders' },
           ],
           punchline: 'The fix exists. Fitting it everywhere is the slow part.',
           footnote:
