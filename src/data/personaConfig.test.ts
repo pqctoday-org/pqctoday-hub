@@ -54,14 +54,14 @@ describe('getBeltTierLabel', () => {
     expect(getBeltTierLabel('executive', 'Black Belt')).toBe('Board-Ready')
   })
 
-  it('maps curious belts to "Aware → Informed → Confident → Quantum-Native"', () => {
+  it('maps curious belts to "Aware → Informed → Confident → Fluent"', () => {
     expect(getBeltTierLabel('curious', 'White Belt')).toBe('Aware')
     expect(getBeltTierLabel('curious', 'Yellow Belt')).toBe('Aware')
     expect(getBeltTierLabel('curious', 'Orange Belt')).toBe('Informed')
     expect(getBeltTierLabel('curious', 'Green Belt')).toBe('Informed')
     expect(getBeltTierLabel('curious', 'Blue Belt')).toBe('Confident')
     expect(getBeltTierLabel('curious', 'Brown Belt')).toBe('Confident')
-    expect(getBeltTierLabel('curious', 'Black Belt')).toBe('Quantum-Native')
+    expect(getBeltTierLabel('curious', 'Black Belt')).toBe('Fluent')
   })
 
   it('returns null for unknown belt names', () => {

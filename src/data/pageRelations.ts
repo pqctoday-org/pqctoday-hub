@@ -16,7 +16,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   '/': [
     P('/explore', 'Explore', 'Every topic on the site in plain words, with a first stop for each'),
     P('/assess', 'Assess', 'A fast or full track of questions, then a score and priorities'),
-    P('/learn', 'Learn', 'Sixty-five modules with guided workshops, by track and by role'),
+    P('/learn', 'Learn', 'Guided modules with hands-on workshops, by track and by role'),
   ],
   '/assess': [
     P(

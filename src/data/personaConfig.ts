@@ -385,7 +385,7 @@ export const PERSONA_ABSENT_PATHS: Record<PersonaId, Record<string, PersonaAbsen
   curious: {
     '/business': {
       reason:
-        'The Command Center works from your own assessment answers, so it opens after you finish the assessment.',
+        'The Command Center is a worked example of an organisation’s migration programme. It is most useful once you have assessment answers for a real organisation.',
       insteadPath: '/assess',
       insteadLabel: 'Assess',
     },
@@ -1693,7 +1693,7 @@ export function isComplianceFrameworkEmphasized(
  * The 7 generic belts (White → Black) still drive scoring math, but Executive
  * and Curious see role-relevant tier names alongside the belt — "Briefed →
  * Aligned → Sponsoring → Board-Ready" for execs, "Aware → Informed → Confident
- * → Quantum-Native" for curious. Other personas inherit the belt names as-is.
+ * → Fluent" for curious. Other personas inherit the belt names as-is.
  *
  * Mapping: 7 belts collapse into 4 tiers
  *   White / Yellow         → tier[0]
@@ -1708,7 +1708,7 @@ export const PERSONA_BELT_TIER_LABELS: Partial<
   // GRC (2026-09-07 split, plan §5) — learning labels, not certification
   // claims: they track progress through the curriculum, not an audit outcome.
   grc: ['Oriented', 'Scoped', 'Evidence-Ready', 'Assurance-Ready'],
-  curious: ['Aware', 'Informed', 'Confident', 'Quantum-Native'],
+  curious: ['Aware', 'Informed', 'Confident', 'Fluent'],
   // B+ remediation 2.3 (2026-08-10): four of six roles previously fell through
   // to the generic karate-belt names while executive and curious got ladders
   // written in their own language — "generic copy on the one reader who reads

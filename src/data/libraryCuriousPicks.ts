@@ -13,6 +13,11 @@
  * signature-side standards from the related-docs links. The 3-pick set keeps
  * the "minimum viable mode" (PR 4) above-the-fold target tight.
  *
+ * Re-picked 2026-10-16 (Curious journey review): a plain-language government
+ * factsheet first, then one of the three final standards, then the draft
+ * transition plan, labelled as a draft. RFC 9964 (JOSE/COSE) moved off the
+ * beginner shelf as too specialised.
+ *
  * `referenceId` values match `LibraryItem.referenceId` from the canonical
  * library CSV — they wire directly into the existing `openDetail()` flow.
  */
@@ -26,22 +31,22 @@ export interface LibraryCuriousPick {
 
 export const LIBRARY_CURIOUS_PICKS: readonly LibraryCuriousPick[] = [
   {
-    referenceId: 'NIST IR 8547',
-    label: 'NIST IR 8547 — Transition Timeline',
+    referenceId: 'CISA-Quantum-Readiness-Roadmap',
+    label: 'CISA / NSA / NIST — Quantum-Readiness',
     blurb:
-      "The single most important doc on this page: NIST's plan for retiring today's encryption. Deprecates 112-bit classical asymmetric crypto by 2030, disallows it by 2035. Every other regulator on the page is downstream of this.",
+      'A short U.S. government factsheet in plain language: why quantum computing matters for encryption, and the first steps an organisation takes (inventory, vendor questions, a migration roadmap). Guidance, not a rule.',
   },
   {
     referenceId: 'FIPS 203',
     label: 'FIPS 203 — ML-KEM',
     blurb:
-      "The first NIST-standardised post-quantum algorithm (August 2024). Replaces RSA / ECDH for key exchange. If you only read one algorithm spec, this is the one. (FIPS 204 / 205 — ML-DSA and SLH-DSA — are reachable from this doc's related-standards links.)",
+      "One of NIST's first three post-quantum standards, all published in August 2024. ML-KEM sets up a shared secret key (the job RSA and ECDH key exchange do today). Its companions FIPS 204 and FIPS 205 cover digital signatures and are linked from this document.",
   },
   {
-    referenceId: 'RFC-9964',
-    label: 'RFC 9964 — ML-DSA for JOSE/COSE',
+    referenceId: 'NIST IR 8547',
+    label: 'NIST IR 8547 — Transition Timeline (draft)',
     blurb:
-      'How ML-DSA signatures get embedded into JSON Web Tokens and COSE messages. The reason this matters: JWT/JWS is the universal token format on the web, and PQC signatures need a place in it.',
+      "Initial public draft (November 2024), not yet final. NIST's proposed plan for retiring today's public-key encryption: deprecate 112-bit classical algorithms after 2030 and disallow them after 2035. Many other agencies' timelines point to similar dates.",
   },
 ] as const
 

@@ -30,11 +30,11 @@ const curiousVariantSummaries = import.meta.glob('../modules/*/curious-summary-c
  */
 const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
   'pqc-101':
-    "A visual flowchart showing classical computers struggling to open a lock, while a quantum computer flashes a light representing Shor's Algorithm to instantly crack it. Below it, math grids represent lattice cryptography securing the lock.",
+    "A visual flowchart showing classical computers struggling to open a lock, while a quantum computer flashes a light representing Shor's Algorithm, which could break it once such a machine is large enough. Below it, math grids represent lattice cryptography securing the lock.",
   'quantum-threats':
     "A timeline showing the 'Harvest Now, Decrypt Later' threat, where hackers steal encrypted data today to decrypt it when quantum computers are powerful enough.",
   'hybrid-crypto':
-    'A diagram showing a traditional RSA lock and a new PQC lattice lock combined together on a single vault door, guaranteeing safety if either one fails.',
+    'A diagram showing a traditional RSA lock and a new PQC lattice lock combined together on a single vault door, staying secure as long as either one holds.',
   'crypto-agility':
     'A visualization of a modular IT architecture where security algorithms can be swapped out quickly without disrupting the entire system.',
   'tls-basics':
@@ -44,7 +44,7 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
   'data-asset-sensitivity':
     'A tiered classification pyramid showing data assets ranked from Low to Critical sensitivity, with regulatory icons for GDPR, HIPAA, and DORA alongside each tier.',
   'compliance-strategy':
-    'A world map with overlapping jurisdiction timelines showing CNSA 2.0, eIDAS 2.0, and DORA compliance deadlines converging on organizations operating across borders.',
+    'A world map with overlapping jurisdiction timelines showing CNSA 2.0 deadlines alongside European regulatory frameworks such as eIDAS 2.0 and DORA that organizations operating across borders must reconcile.',
   'standards-bodies':
     'A three-column diagram separating Standards Bodies, Certification Bodies, and Compliance Frameworks, with arrows showing how algorithms flow from specification through validation to mandated use.',
   'migration-program':

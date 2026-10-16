@@ -1,15 +1,15 @@
 ### What This Is About
 
-Today's digital world is secured by public-key cryptography (like RSA and ECC), which relies on math problems that are extremely hard for classical computers. However, quantum computers using Shor's Algorithm can solve these specific problems exponentially faster, breaking the encryption that protects banking, defense, and healthcare.
+Today's digital world is secured by public-key cryptography (like RSA and ECC), which relies on math problems that are extremely hard for classical computers. A sufficiently large, fault-tolerant quantum computer running Shor's Algorithm could solve these specific problems efficiently, breaking the encryption and signatures that protect banking, defense, and healthcare. No such machine is publicly known to exist today.
 
 ### Why It Matters
 
-The threat is active today due to "Harvest Now, Decrypt Later" (HNDL). Adversaries are currently intercepting and storing encrypted data to decrypt it once quantum computers are mature. Likewise, "Harvest Now, Forge Later" threatens long-lived digital signatures on firmware and roots of trust.
+The risk starts before that machine exists because of "Harvest Now, Decrypt Later" (HNDL): government security agencies, including NSA, CISA and the UK NCSC, warn that adversaries may record encrypted data now to decrypt it later. Likewise, "Harvest Now, Forge Later" matters for long-lived digital signatures on firmware and roots of trust.
 
 ### The Key Takeaway
 
-The defense is ready. In August 2024, NIST officially published the first Post-Quantum Cryptography (PQC) standards (FIPS 203, 204, 205). Organizations must now begin the transition—starting with cryptographic inventory and risk assessments—before the classical algorithms are entirely deprecated by 2030.
+The algorithms are ready. In August 2024, NIST published the first three Post-Quantum Cryptography (PQC) standards (FIPS 203, 204, 205). Protocols, products and certifications are still catching up, so organizations should begin the transition with a cryptographic inventory and a risk assessment. NIST's draft transition plan (IR 8547, initial public draft) proposes deprecating 112-bit classical public-key algorithms after 2030 and disallowing them after 2035.
 
 ### What's Happening
 
-Governments worldwide are now setting aggressive timelines for organizations to complete their transition away from classical algorithms, with CNSA 2.0 mandating PQC compliance by 2030 and early procurement requirements already taking effect.
+Some governments have set dates for specific systems. For example, CNSA 2.0 requires new acquisitions for U.S. National Security Systems to be CNSA 2.0-compliant from January 2027, and Executive Order 14412 directs U.S. federal high-impact systems to use PQC key establishment by the end of 2030. Most other publications are recommendations and roadmaps.

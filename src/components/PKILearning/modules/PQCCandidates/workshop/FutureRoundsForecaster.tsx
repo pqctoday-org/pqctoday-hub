@@ -9,7 +9,7 @@ const PHASES = [
   {
     id: 'now',
     label: 'Now (2025–2026)',
-    body: 'Round 3 down-selection of the 9 on-ramp candidates. ML-KEM, ML-DSA, SLH-DSA, FN-DSA in active production deployment. HQC alternate published. ISO/IEC SC 27 drafts in progress.',
+    body: 'Round 3 evaluation of the on-ramp candidates (nine selected in May 2026; HAWK withdrawn in July). ML-KEM, ML-DSA and SLH-DSA in production deployment; FN-DSA (FIPS 206) and HQC not yet published as standards. ISO/IEC SC 27 drafts in progress.',
   },
   {
     id: 'near',

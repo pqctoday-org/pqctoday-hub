@@ -4,7 +4,7 @@ As a Security Architect, your design patterns dictate how cryptography is utiliz
 
 ### Solution
 
-Architectural decisions made today will outlive the quantum transition. Designing a non-agile system now creates massive technical debt, as replacing hardcoded cryptography across an entire microservice mesh takes years. Furthermore, PQC introduces immediate architectural friction: ML-DSA-65 certificates are functionally 50x larger than ECC certificates, instantly breaking IoT memory budgets and pushing TLS latency thresholds.
+Architectural decisions made today will outlive the quantum transition. Designing a non-agile system now creates massive technical debt, as replacing hardcoded cryptography across an entire microservice mesh takes years. Furthermore, PQC introduces immediate architectural friction: ML-DSA-65 certificates are functionally 50x larger than ECC certificates, immediately straining IoT memory budgets and pushing TLS latency thresholds.
 
 ### Strategy
 

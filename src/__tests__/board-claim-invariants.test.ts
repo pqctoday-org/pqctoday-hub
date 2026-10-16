@@ -50,6 +50,16 @@ const SOURCES: string[] = [
   path.join(ROOT, 'src/data/algorithmEntryIntents.tsx'),
   latestDated(path.join(ROOT, 'src/data/module-qa'), 'module_qa_combined_'),
   latestDated(path.join(ROOT, 'src/data'), 'pqcquiz_'),
+  // Curious journey surfaces (curious journey review, 16 Oct 2026): the first
+  // sentences a newcomer reads, outside the Learn modules.
+  path.join(ROOT, 'src/components/common/CuriousGuide.tsx'),
+  path.join(ROOT, 'src/components/RoleHome/RoleHomeView.tsx'),
+  path.join(ROOT, 'src/components/Landing/LandingView.tsx'),
+  path.join(ROOT, 'src/components/OpenSSLStudio/TLSSimulatorTab.tsx'),
+  path.join(ROOT, 'src/components/PKILearning/common/CuriousSummaryBanner.tsx'),
+  path.join(ROOT, 'src/data/libraryCuriousPicks.ts'),
+  path.join(ROOT, 'src/data/pageRelations.ts'),
+  path.join(ROOT, 'src/data/personaConfig.ts'),
 ]
 
 /**
@@ -90,6 +100,13 @@ function offenders(test: (s: string) => boolean): string[] {
       return true
     })
     .map((s) => `${s.file}${s.row ? ` [${s.row}]` : ''}: ${s.text.slice(0, 200)}`)
+}
+
+const CURIOUS_SURFACE =
+  /curious-summary|CuriousGuide|RoleHomeView|LandingView|libraryCuriousPicks|pageRelations|CuriousSummaryBanner|TLSSimulatorTab|modules\/(TLSBasics|PQCCandidates|HybridCrypto)\//
+
+function curiousOffenders(test: (s: string) => boolean): string[] {
+  return offenders(test).filter((o) => CURIOUS_SURFACE.test(o.slice(0, o.indexOf(':'))))
 }
 
 describe('board-facing claim invariants', () => {
@@ -176,5 +193,60 @@ describe('board-facing claim invariants', () => {
 
   it('does not state unsourced cyber-insurance premium figures', () => {
     expect(offenders((s) => /insur/i.test(s) && /\d+\s*[-–]\s*\d+% premium/i.test(s))).toEqual([])
+  })
+
+  // ── Curious journey (16 Oct 2026). Short copy must keep its qualifiers. ──
+  // Scoped to what a newcomer reads first: every curious summary, the tour, the
+  // role card and hero, the Library start shelf, the TLS simulator and the TLS,
+  // hybrid and candidates modules. Wider Q&A/quiz wording goes through the data lane.
+
+  it('does not say quantum computers break cryptography instantly', () => {
+    expect(
+      curiousOffenders((s) => /instantl?y\b[^.]{0,40}\b(crack|break|shatter|solve)/i.test(s))
+    ).toEqual([])
+  })
+
+  it('does not promise PQC is unbreakable or today is completely safe', () => {
+    expect(
+      curiousOffenders((s) =>
+        /quantum computers? cannot break|completely protected|rock-solid|\bunbreakable\b/i.test(s)
+      )
+    ).toEqual([])
+  })
+
+  it('scopes every CNSA 2.0 mandate to National Security Systems', () => {
+    expect(
+      curiousOffenders(
+        (s) => /CNSA 2\.0 mandat/i.test(s) && !/National Security System|\bNSS\b/i.test(s)
+      )
+    ).toEqual([])
+  })
+
+  it('dates the first NIST selection to 2022 and does not list FN-DSA as a 2024 standard', () => {
+    expect(curiousOffenders((s) => /winners in 2024/i.test(s))).toEqual([])
+  })
+
+  it('does not teach that an attacker can silently strip ML-KEM from a TLS 1.3 handshake', () => {
+    expect(
+      curiousOffenders((s) => /\bstrip[a-z]*\b[^.]{0,60}ML-KEM/i.test(s) && !/detect/i.test(s))
+    ).toEqual([])
+  })
+
+  it('does not forecast NIST dates for the round-3 signature candidates', () => {
+    expect(curiousOffenders((s) => /Likely 2027 winners|Fast-track to 2027/i.test(s))).toEqual([])
+  })
+
+  it('does not overstate the draft transition plan or a browser’s TLS library', () => {
+    expect(
+      curiousOffenders((s) =>
+        /single most important doc|downstream of this|same OpenSSL your browser/i.test(s)
+      )
+    ).toEqual([])
+  })
+
+  it('cites the published TLS hybrid RFCs, not their superseded drafts', () => {
+    expect(
+      curiousOffenders((s) => /draft-ietf-tls-hybrid-design|draft-connolly-tls-mlkem/.test(s))
+    ).toEqual([])
   })
 })

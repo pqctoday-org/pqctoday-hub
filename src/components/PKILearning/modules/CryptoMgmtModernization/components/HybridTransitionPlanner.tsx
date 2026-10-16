@@ -100,12 +100,12 @@ function suggestKemPair(
   }
   // hybrid-traditional+PQC default
   if (currentAlgorithm.includes('X25519') || currentAlgorithm === 'X25519') {
-    return 'X25519MLKEM768 (IETF draft-ietf-tls-hybrid-design)'
+    return 'X25519MLKEM768 (RFC 10024)'
   }
   if (currentAlgorithm.includes('ECDH-P256') || currentAlgorithm === 'ECDH-P256') {
     return 'SecP256r1MLKEM768 (IETF hybrid KEM)'
   }
-  return 'X25519MLKEM768 (IETF draft-ietf-tls-hybrid-design)'
+  return 'X25519MLKEM768 (RFC 10024)'
 }
 
 function suggestSigPair(

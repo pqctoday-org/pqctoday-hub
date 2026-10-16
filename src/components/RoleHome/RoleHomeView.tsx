@@ -93,7 +93,8 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
     track: 'fullCorpus',
   },
   curious: {
-    urgency: 'Nothing breaks today. But the padlock icon will look very different in five years.',
+    urgency:
+      'No publicly known quantum computer can break today’s encryption. What runs underneath the padlock is changing anyway.',
     firstWin: 'First win — see what breaks · 6 min',
     track: 'essentials',
   },
