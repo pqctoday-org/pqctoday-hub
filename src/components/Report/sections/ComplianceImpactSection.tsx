@@ -225,8 +225,9 @@ export const ComplianceImpactSection = ({
             . Binding means a law, regulation or enforceable rule that applies to organisations like
             yours; guidance and drafts are issued by a body in your country but nobody is required
             to follow them. A framework you selected that binds only within a scope your country and
-            sector fall outside is marked Binding for others. A framework marked Not yet classified
-            has not been reviewed for this yet.
+            sector fall outside is marked Binding for others. A framework marked Binding for its
+            scope binds only the systems or organisations its own text names; check whether yours
+            are covered. A framework marked Not yet classified has not been reviewed for this yet.
           </>
         ) : (
           <>
