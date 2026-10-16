@@ -24,6 +24,19 @@ const DATA = path.join(process.cwd(), 'src/data')
 /** Rows whose who-it-binds wording is still under review, with the reason. */
 const PENDING: Record<string, string> = {}
 
+/**
+ * Binding or scoped rows whose basis (the citation shown next to the binding label)
+ * is approved but not yet in the data, with the reason. Entries go as the data lands.
+ */
+const PENDING_BASIS: Record<string, string> = {
+  'PCI-DSS': 'basis proposed and approved; waiting for the next data pass',
+  'UN-ECE-WP29': 'basis proposed and approved; waiting for the next data pass',
+  'DISA-STIG': 'basis proposed and approved; waiting for the next data pass',
+  'BRAZIL-BACEN-4893': 'basis proposed and approved; waiting for the next data pass',
+  'E-ITS-ESTONIAN-INFORMATION-SEC':
+    'classified with the basis only in the decision note; evidence replaced since, so the basis is being re-checked',
+}
+
 /** Latest compliance_MMDDYYYY[_rN].csv, by date and then revision. */
 function latestCompliance(): string {
   const key = (f: string) => {
@@ -64,6 +77,29 @@ describe(`binding scope coverage (${path.basename(file)})`, () => {
     const stale = Object.keys(PENDING).filter((id) => {
       const r = byId.get(id)
       return !r || hasScope(r) || (r.binding_status ?? '').trim() !== 'mandatory_for_scope'
+    })
+    expect(stale).toEqual([])
+  })
+
+  it('every binding or scoped framework names its basis, or is pending with a reason', () => {
+    const binding = active.filter((r) =>
+      ['binding', 'mandatory_for_scope'].includes((r.binding_status ?? '').trim())
+    )
+    const missing = binding
+      .filter((r) => (r.binding_basis ?? '').trim() === '' && !(r.id! in PENDING_BASIS))
+      .map((r) => r.id)
+    expect(missing).toEqual([])
+  })
+
+  it('the pending-basis list holds only rows that still lack a basis', () => {
+    const byId = new Map(active.map((r) => [r.id, r]))
+    const stale = Object.keys(PENDING_BASIS).filter((id) => {
+      const r = byId.get(id)
+      return (
+        !r ||
+        (r.binding_basis ?? '').trim() !== '' ||
+        !['binding', 'mandatory_for_scope'].includes((r.binding_status ?? '').trim())
+      )
     })
     expect(stale).toEqual([])
   })
