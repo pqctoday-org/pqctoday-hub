@@ -95,7 +95,7 @@ export const USE_CASES: UseCase[] = [
       'Web tier and API gateway TLS handshakes. 1 server signature + 1 hybrid KEM (ML-KEM-768 + ECDH P-256) per handshake. Assumes full-handshake offload to the HSM (both the certificate signature and the ephemeral KEM); keyless-TLS designs that only offload the signature would charge substantially less HSM load.',
     classicalOps: { 'ecdsa-p256': 1, 'ecdh-p256': 1 },
     pqcOps: { 'ml-dsa-65': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
-    // Hybrid KEM is production (draft-ietf-tls-ecdhe-mlkem, RFC Ed queue); ML-DSA in
+    // Hybrid KEM is production (RFC 10024); ML-DSA in
     // TLS (draft-ietf-tls-mldsa) is still at IESG — server sig stays ECDSA today.
     pqcTodayOps: { 'ecdsa-p256': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
     defaultTps: { small: 500, medium: 5_000, large: 50_000 },
@@ -110,7 +110,7 @@ export const USE_CASES: UseCase[] = [
         'Cloudflare/Fastly published TLS handshake rate data',
       ],
       pqcImpact:
-        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → hybrid ML-KEM-768 + ECDH P-256 (SecP256r1MLKEM768, draft-ietf-tls-ecdhe-mlkem-05 — the P-256 hybrid group used in FIPS/CNSA-constrained deployments; browsers instead default to the X25519MLKEM768 hybrid group). Hybrid KEM adds an extra ECDH operation per handshake alongside ML-KEM-768. ML-DSA-65 at 150 ops/s on a classical HSM is the primary bottleneck (~133× slower than ECDSA); ECDH P-256 hardware throughput is unchanged.',
+        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → hybrid ML-KEM-768 + ECDH P-256 (SecP256r1MLKEM768, RFC 10024 — the P-256 hybrid group used in FIPS/CNSA-constrained deployments; browsers instead default to the X25519MLKEM768 hybrid group). Hybrid KEM adds an extra ECDH operation per handshake alongside ML-KEM-768. ML-DSA-65 at 150 ops/s on a classical HSM is the primary bottleneck (~133× slower than ECDSA); ECDH P-256 hardware throughput is unchanged.',
     },
   },
   {

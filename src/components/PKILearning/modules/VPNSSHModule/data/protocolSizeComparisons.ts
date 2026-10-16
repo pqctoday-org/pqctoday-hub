@@ -153,8 +153,7 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     roundTrips: 1,
     publicKeyBytes: 1216,
     ciphertextBytes: 1120,
-    notes:
-      'draft-ietf-tls-ecdhe-mlkem; hybrid KEX in Chrome 124 (Kyber draft), final ML-KEM in Chrome 131',
+    notes: 'RFC 10024; hybrid KEX in Chrome 124 (Kyber draft), final ML-KEM in Chrome 131',
   },
   {
     protocol: 'TLS 1.3',
@@ -205,7 +204,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
     ikev2: 'draft-ietf-ipsecme-ikev2-mlkem',
     ssh: 'mlkem768x25519 in OpenSSH 9.9',
     wireguard: 'Rosenpass project (external)',
-    tls13: 'draft-ietf-tls-ecdhe-mlkem (X25519MLKEM768)',
+    tls13: 'RFC 10024 (X25519MLKEM768)',
   },
   {
     feature: 'PQC Integration Method',

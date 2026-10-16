@@ -58,7 +58,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   Library: [
     'What are the four FIPS standards published for PQC, and what do they cover?',
     'What is RFC 9629 about?',
-    'What does the IETF draft-ietf-tls-ecdhe-mlkem define?',
+    'What does RFC 10024 (hybrid ECDHE-MLKEM key agreement for TLS 1.3) define?',
     'What is ETSI TS 103 744?',
     'What does BSI TR-02102 cover?',
     'What is the ANSSI PQC Position Paper?',
