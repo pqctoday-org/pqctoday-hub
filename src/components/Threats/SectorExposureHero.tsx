@@ -54,10 +54,13 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 export const SectorExposureHero = ({
   applicable,
   scopedIndustries,
+  sectorName,
   variant = 'all',
 }: {
   applicable: ThreatData[]
   scopedIndustries: string[]
+  /** The site sector the scope came from, when it is exactly one ("Finance & Banking"). */
+  sectorName?: string
   /**
    * Which of the three cards to render. The Threats page splits the hero across
    * two tabs: the Catalog tab shows only your sector-exposure card ('exposure');
@@ -108,9 +111,11 @@ export const SectorExposureHero = ({
   const sectorLabel =
     scopedIndustries.length === 0
       ? 'all sectors'
-      : scopedIndustries.length === 1
-        ? scopedIndustries[0]
-        : `your ${scopedIndustries.length} sectors`
+      : sectorName
+        ? sectorName
+        : scopedIndustries.length === 1
+          ? scopedIndustries[0]
+          : `your ${scopedIndustries.length} sectors`
 
   // Grid column count adapts to how many cards this variant renders so the cards
   // never stretch awkwardly when only one (exposure) or two (horizon) are shown.

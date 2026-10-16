@@ -17,7 +17,7 @@ const VIEWPORTS = [
   { width: 390, height: 844 },
 ]
 
-async function seedFreshPersona(page: Page, persona: 'grc' | 'executive') {
+async function seedFreshPersona(page: Page, persona: 'grc' | 'executive' | 'researcher') {
   await page.addInitScript((p) => {
     localStorage.setItem(
       'pqc-version-storage',
@@ -88,4 +88,29 @@ for (const viewport of VIEWPORTS) {
       }
     })
   }
+}
+
+// Threats: a persona with no default sector (researcher on this base; developer,
+// architect, ops, GRC and Executive once their defaults are removed) used to see
+// "N threats apply to all sectors". The exposure card now offers the sector picker.
+for (const viewport of VIEWPORTS) {
+  const isMobile = viewport.width < 1024
+  test(`threats at ${viewport.width}px: no sector offers the picker, a pick scopes the count`, async ({
+    page,
+  }) => {
+    test.setTimeout(90_000)
+    await page.setViewportSize(viewport)
+    await seedFreshPersona(page, 'researcher')
+    await page.goto('/threats')
+
+    const step = page.getByRole('group', { name: 'Complete your scope' })
+    await expect(step).toBeVisible({ timeout: 40000 })
+    await pick(page, /Your sector/i, 'Healthcare')
+    await expect(step).toHaveCount(0)
+    if (isMobile) {
+      await expect(page.getByText(/in your focus areas/)).toBeVisible()
+    } else {
+      await expect(page.getByText(/apply to\s+Healthcare/)).toBeVisible()
+    }
+  })
 }

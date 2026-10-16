@@ -58,6 +58,7 @@ import {
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
+import { InlineScopeStep } from '@/components/common/InlineScopeStep'
 
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
@@ -156,6 +157,7 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  */
 export function MobileThreatsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const storeIndustries = usePersonaStore((s) => s.selectedIndustries)
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
 
@@ -232,9 +234,15 @@ export function MobileThreatsView() {
   // A deep-linked threat outside the persona scope adds its industry to it
   // (deep-link remediation PR 1), so the card is in the list behind the sheet.
   const [personaScopeExtra, setPersonaScopeExtra] = useState<string | null>(null)
+  // The reader's own sector (top bar, or the picker below) comes first, then the
+  // persona default — as desktop seeds its filter from the store. Personas no
+  // longer all carry a default (2026-10-16), so this is often the only scope.
   const personaIndustries = useMemo(() => {
-    if (!selectedPersona) return null
-    const keys = PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona] ?? []
+    if (!selectedPersona && storeIndustries.length === 0) return null
+    const keys =
+      storeIndustries.length > 0
+        ? storeIndustries
+        : (PERSONA_THREATS_DEFAULT_INDUSTRIES[selectedPersona ?? 'curious'] ?? [])
     const industries = keys
       .flatMap((k) => INDUSTRY_TO_THREATS_MAP[k] ?? [])
       .filter((ind) => threatsData.some((d) => d.industry === ind))
@@ -242,7 +250,7 @@ export function MobileThreatsView() {
     return personaScopeExtra && !industries.includes(personaScopeExtra)
       ? [...industries, personaScopeExtra]
       : industries
-  }, [selectedPersona, personaScopeExtra])
+  }, [selectedPersona, storeIndustries, personaScopeExtra])
 
   // ── ?id= arrival: not-found notice, or widen whatever hides the card ──
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
@@ -365,6 +373,15 @@ export function MobileThreatsView() {
             personaIndustries &&
             ` · ${scopedData.length} in your focus areas`}
         </p>
+        {urlIndustries.length === 0 && !personaIndustries && (
+          <div className="mt-2">
+            <InlineScopeStep
+              sector="All"
+              variant="strip"
+              stripHint={`Pick it to see the threats that apply to you, not all ${threatsData.length}.`}
+            />
+          </div>
+        )}
       </div>
 
       {deepLinkNotice && (

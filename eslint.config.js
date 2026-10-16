@@ -335,12 +335,6 @@ export default defineConfig([
                 '@/components/Compliance/obligations/*',
                 '!@/components/Compliance/obligations/obligationsModel',
                 '!@/components/Compliance/obligations/roleLens',
-                // InlineScopeStep.tsx (2026-10-16) — JSX, but phone-safe by
-                // construction: two compact FilterDropdowns and one line of
-                // text, no desktop layout. An unscoped register shows it on
-                // both shells, and sharing it keeps one write for the sector
-                // (useScopeSector) and one wording for "still unknown".
-                '!@/components/Compliance/obligations/InlineScopeStep',
                 '!@/components/Compliance/requirements',
                 '@/components/Compliance/requirements/*',
                 '!@/components/Compliance/requirements/requirementsModel',
@@ -379,6 +373,12 @@ export default defineConfig([
                 // lives under the exempt src/components/ui/.
                 '!@/components/common',
                 '@/components/common/*',
+                // InlineScopeStep.tsx (2026-10-16) — JSX, but phone-safe by
+                // construction: one or two compact FilterDropdowns and one line
+                // of text, no desktop layout. An unscoped Compliance register
+                // and the Threats exposure card show it on both shells, and
+                // sharing it keeps one write for the sector (useScopeSector).
+                '!@/components/common/InlineScopeStep',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
                 // DocumentAnalysis.tsx (common, pure-moved from Library
