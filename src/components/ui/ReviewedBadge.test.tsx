@@ -48,7 +48,7 @@ const entry = (over: Partial<RevisionEntry> = {}): RevisionEntry =>
     module_id: null,
     tool_id: 'PT-001',
     record_ids: ['PT-001'],
-    reviewer_id: 'pqctoday',
+    reviewer_id: 'ericamador',
     reviewer_display: 'eramusa',
     approval_method: 'offline',
     approved_via: 'registry review',
