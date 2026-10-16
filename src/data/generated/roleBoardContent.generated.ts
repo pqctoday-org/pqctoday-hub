@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10042026.csv
+ * Source: src/data/role_board_content_10162026_r2.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -862,7 +862,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
 
-        headline: 'Five minutes to a real ML-KEM handshake.',
+        headline: 'Five minutes to a real hybrid ML-KEM + X25519 key exchange.',
         sub: 'Not a diagram. ML-KEM and X25519 combined through a real HKDF pipeline in this tab, every intermediate value inspectable. Then we tell you what to change in your stack.',
         ctaPrimary: 'Run ML-KEM + X25519 now',
         ctaPrimaryHref: '/playground/hybrid-encrypt',
@@ -887,10 +887,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             'Real sizes, not illustrative — the second of the four anti-patterns the Crypto Agility module already teaches.',
         },
         gridTitle: 'What you walk out with',
-        gridSub: 'A handshake you have actually run',
+        gridSub: 'A key exchange you have actually run',
         gridCards: [
           {
-            title: 'The same handshake, inside a real migration',
+            title: 'The same key exchange, inside a real migration',
             body: "Phase 5 of the simulation runs this exact hybrid pattern across a whole organisation's estate, not just one pipeline.",
             href: '/simulation?phase=p5',
           },
