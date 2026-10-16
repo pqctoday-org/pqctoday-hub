@@ -77,6 +77,11 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'protocol-config',
   'vpn-sim-run',
   'ops-test-plan',
+  'run-manifest',
+  'library-collection',
+  'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -111,6 +116,12 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   'protocol-config',
   'vpn-sim-run',
   'ops-test-plan',
+  // Researcher evidence bundle: saved from a researcher tool's run record.
+  'run-manifest',
+  'library-collection',
+  'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ])
 
 describe('Command Center registry — drift guard', () => {

@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResearchFieldsStore } from './useResearchFieldsStore'
 
-const reset = () => useResearchFieldsStore.setState({ followedFields: [] })
+const reset = () => useResearchFieldsStore.setState({ followedFields: [], followedTopics: [] })
 
 describe('useResearchFieldsStore — followed fields', () => {
   beforeEach(reset)
@@ -39,6 +39,31 @@ describe('useResearchFieldsStore — followed fields', () => {
     toggleFollowedField('hash-based')
     clearFollowedFields()
     expect(useResearchFieldsStore.getState().followedFields).toEqual([])
+  })
+})
+
+describe('useResearchFieldsStore — followed research topics', () => {
+  beforeEach(reset)
+
+  it('starts with no followed topics', () => {
+    expect(useResearchFieldsStore.getState().followedTopics).toEqual([])
+  })
+
+  it('toggleFollowedTopic adds and removes a topic without touching fields', () => {
+    const { toggleFollowedTopic, toggleFollowedField } = useResearchFieldsStore.getState()
+    toggleFollowedField('lattice-based')
+    toggleFollowedTopic('cryptanalysis')
+    expect(useResearchFieldsStore.getState().followedTopics).toEqual(['cryptanalysis'])
+    expect(useResearchFieldsStore.getState().followedFields).toEqual(['lattice-based'])
+    toggleFollowedTopic('cryptanalysis')
+    expect(useResearchFieldsStore.getState().followedTopics).toEqual([])
+  })
+
+  it('clearFollowedFields also clears followed topics', () => {
+    const { toggleFollowedTopic, clearFollowedFields } = useResearchFieldsStore.getState()
+    toggleFollowedTopic('cryptanalysis')
+    clearFollowedFields()
+    expect(useResearchFieldsStore.getState().followedTopics).toEqual([])
   })
 })
 
@@ -79,9 +104,29 @@ describe('useResearchFieldsStore migrate() — persistence conventions', () => {
     expect(migrated.followedFields).toEqual([])
   })
 
-  it('is a no-op on an already-current (v2) persisted state', () => {
+  it('is a no-op on an already-current (v3) persisted state', () => {
+    const migrated = migrate(
+      { followedFields: ['lattice-based'], followedTopics: ['cryptanalysis'] },
+      3
+    )
+    expect(migrated.followedFields).toEqual(['lattice-based'])
+    expect(migrated.followedTopics).toEqual(['cryptanalysis'])
+  })
+
+  it('declares version 3', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    expect((useResearchFieldsStore.persist.getOptions() as any).version).toBe(3)
+  })
+
+  it('fromVersion < 3: adds an empty followedTopics and keeps followedFields', () => {
     const migrated = migrate({ followedFields: ['lattice-based'] }, 2)
     expect(migrated.followedFields).toEqual(['lattice-based'])
+    expect(migrated.followedTopics).toEqual([])
+  })
+
+  it('fromVersion < 3: replaces a non-array followedTopics with []', () => {
+    const migrated = migrate({ followedFields: [], followedTopics: 'x' }, 2)
+    expect(migrated.followedTopics).toEqual([])
   })
 
   it('handles a totally corrupt (non-object) persisted state without throwing', () => {

@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
   computeResearchFieldWatch,
   computeOtherFieldShare,
+  countTopicTaggedRows,
   loadFieldWatchCorpus,
   FIELD_WATCH_WINDOW_DAYS,
   type FieldWatchRow,
@@ -223,5 +224,62 @@ describe('computeOtherFieldShare', () => {
     const corpus = loadFieldWatchCorpus(true)
     expect(corpus.otherShare).toEqual(computeOtherFieldShare(corpus.rows))
     expect(corpus.otherShare.total).toBeGreaterThan(0)
+  })
+})
+
+describe('computeResearchFieldWatch — research topics', () => {
+  it('counts revisions and retractions per followed topic, the same way as fields', () => {
+    const rows: FieldWatchRow[] = [
+      row({ referenceId: 'A', researchTopics: ['cryptanalysis'], lastUpdateDateMs: AFTER }),
+      row({
+        referenceId: 'B',
+        researchTopics: ['cryptanalysis', 'formal-analysis'],
+        isDeprecated: true,
+        deprecatedAtMs: AFTER,
+      }),
+      row({ referenceId: 'C', researchTopics: ['cryptanalysis'], lastUpdateDateMs: BEFORE }),
+    ]
+    const summary = computeResearchFieldWatch([], T0, rows, ['cryptanalysis', 'formal-analysis'])
+    expect(summary.fields).toEqual([])
+    expect(summary.topics).toEqual([
+      { fieldId: 'cryptanalysis', label: 'Cryptanalysis', revisionCount: 1, deprecatedCount: 1 },
+      {
+        fieldId: 'formal-analysis',
+        label: 'Formal analysis',
+        revisionCount: 0,
+        deprecatedCount: 1,
+      },
+    ])
+    expect(summary.totalDeprecatedInWindow).toBe(2)
+    expect(summary.nothingRetracted).toBe(false)
+  })
+
+  it('drops an unknown followed topic id and ignores rows with no topics', () => {
+    const rows: FieldWatchRow[] = [row({ referenceId: 'A', lastUpdateDateMs: AFTER })]
+    const summary = computeResearchFieldWatch([], T0, rows, ['not-a-topic', 'cryptanalysis'])
+    expect(summary.topics).toEqual([
+      { fieldId: 'cryptanalysis', label: 'Cryptanalysis', revisionCount: 0, deprecatedCount: 0 },
+    ])
+  })
+
+  it('without followed topics, returns no topic entries (existing callers unchanged)', () => {
+    const summary = computeResearchFieldWatch(['lattice-based'], T0, [])
+    expect(summary.topics).toEqual([])
+  })
+
+  it('countTopicTaggedRows counts rows with at least one topic', () => {
+    expect(
+      countTopicTaggedRows([
+        row({ researchTopics: ['cryptanalysis'] }),
+        row({ researchTopics: [] }),
+        row({}),
+      ])
+    ).toBe(1)
+    expect(countTopicTaggedRows([])).toBe(0)
+  })
+
+  it('the shipped corpus reports its tagged-row count (zero until rows are tagged)', () => {
+    const corpus = loadFieldWatchCorpus()
+    expect(corpus.topicTaggedCount).toBe(countTopicTaggedRows(corpus.rows))
   })
 })

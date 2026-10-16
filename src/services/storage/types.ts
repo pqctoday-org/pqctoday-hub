@@ -95,6 +95,20 @@ export type ExecutiveDocumentType =
   | 'protocol-config'
   | 'vpn-sim-run'
   | 'ops-test-plan'
+  // Researcher evidence bundle, Layer 1: a run record (run manifest) saved
+  // from a researcher tool. `output` holds the manifest JSON (digests and
+  // per-case results, never the full vectors).
+  | 'run-manifest'
+  // Researcher evidence workspace, Layer 2: a named set of Library record ids,
+  // each with the user's annotation and the record's state as saved.
+  | 'library-collection'
+  // Researcher evidence workspace: atomic claims with a user-set status and supporting and contrary Library record ids.
+  | 'claim-matrix'
+  // Researcher evidence workspace: two saved run records compared, with a
+  // conclusion and what would falsify it.
+  | 'reproduction-record'
+  // Researcher evidence workspace: the question, its type, inclusion and exclusion criteria and evidence threshold.
+  | 'research-question'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

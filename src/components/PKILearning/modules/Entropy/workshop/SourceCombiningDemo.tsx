@@ -492,10 +492,10 @@ export const SourceCombiningDemo: React.FC = () => {
       })
     : null
 
-  const handleDownloadRunRecord = () => {
-    if (!assessment || !healthA || !healthB || !collected) return
+  const buildRunManifestRecord = () => {
+    if (!assessment || !healthA || !healthB || !collected) return null
     const cx = COUNTEREXAMPLES.find((c) => c.id === activeCounterexample)
-    const manifest = sourceCombiningRunManifest({
+    return sourceCombiningRunManifest({
       scenario: cx ? `Counterexample loaded: ${cx.label}` : 'Custom settings',
       sources: [
         {
@@ -537,8 +537,33 @@ export const SourceCombiningDemo: React.FC = () => {
       startedAt: collected.at,
       finishedAt: new Date().toISOString(),
     })
-    downloadRunManifestJson(manifest, 'source-combining-run')
   }
+
+  const handleDownloadRunRecord = () => {
+    const manifest = buildRunManifestRecord()
+    if (manifest) downloadRunManifestJson(manifest, 'source-combining-run')
+  }
+
+  // Identifies this run for "Save to my evidence" (the builder above is not
+  // memoised): the collection time plus every setting the record carries.
+  const runRecordKey = assessment
+    ? JSON.stringify([
+        collected?.at,
+        activeCounterexample,
+        includeA,
+        includeB,
+        independence,
+        adversaryControl,
+        failureHandling,
+        sourceValidation,
+        inputFreshness,
+        rbgClass,
+        useFailedSource,
+        combinationMode,
+        conditioningMode,
+        assessment.verdict,
+      ])
+    : undefined
 
   const combineLabel = COMBINATION_LABELS[combinationMode]
   const conditionLabel = CONDITIONING_LABELS[conditioningMode]
@@ -1066,6 +1091,8 @@ export const SourceCombiningDemo: React.FC = () => {
         )}
         <RunRecordActions
           onDownload={handleDownloadRunRecord}
+          getManifest={buildRunManifestRecord}
+          runKey={runRecordKey}
           canDownload={!!assessment && !!collected}
           testId="source-combining-run-record"
         />

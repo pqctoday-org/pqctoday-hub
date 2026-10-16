@@ -33,6 +33,34 @@ describe('artifactHistoryRoute', () => {
     )
   })
 
+  it('opens the tool that ran a saved run record', () => {
+    expect(
+      artifactHistoryRoute({
+        type: 'run-manifest',
+        moduleId: 'run-manifest:drbg-demo:2026-10-16T10:00:00.000Z',
+      })
+    ).toBe('/playground/drbg-demo')
+    expect(
+      artifactHistoryRoute({
+        type: 'run-manifest',
+        moduleId: 'run-manifest:entropy-evidence-lab:2026-10-16T10:00:00.000Z',
+      })
+    ).toBe('/learn/entropy-randomness?tab=workshop')
+  })
+
+  it('opens researcher workspace items in the research workspace', () => {
+    for (const type of [
+      'library-collection',
+      'research-question',
+      'claim-matrix',
+      'reproduction-record',
+    ] as const) {
+      expect(artifactHistoryRoute({ type, moduleId: `${type}:1` })).toBe(
+        '/business#research-workspace'
+      )
+    }
+  })
+
   it('keeps the Learn workshop route for module artifacts', () => {
     expect(
       artifactHistoryRoute({ type: 'deployment-playbook', moduleId: 'migration-program' })

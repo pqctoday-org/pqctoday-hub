@@ -181,9 +181,9 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
     []
   )
 
-  const handleDownloadRunRecord = useCallback(() => {
-    if (!selfCheckRun) return
-    const manifest = entropyTestingRunManifest({
+  const buildRunManifestRecord = useCallback(() => {
+    if (!selfCheckRun) return null
+    return entropyTestingRunManifest({
       specs: PRIMITIVE_SELF_CHECK_SPECS,
       results: selfCheckRun.results,
       startedAt: selfCheckRun.startedAt,
@@ -198,8 +198,12 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             }
           : undefined,
     })
-    downloadRunManifestJson(manifest, 'entropy-self-check-run')
   }, [selfCheckRun, sampleData, sampleLabel, testResults])
+
+  const handleDownloadRunRecord = useCallback(() => {
+    const manifest = buildRunManifestRecord()
+    if (manifest) downloadRunManifestJson(manifest, 'entropy-self-check-run')
+  }, [buildRunManifestRecord])
 
   const bins = sampleData ? binnedFrequency(sampleData, 16) : null
   const maxBinCount = bins ? Math.max(...bins) : 0
@@ -526,6 +530,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
       />
       <RunRecordActions
         onDownload={handleDownloadRunRecord}
+        getManifest={buildRunManifestRecord}
         canDownload={!!selfCheckRun}
         testId="entropy-run-record"
       />

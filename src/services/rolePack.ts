@@ -6,8 +6,15 @@
  * mechanics are shared so every pack reads the same way. Built entirely in the
  * browser from the artifact store; downloads go through `exportBundle.ts`.
  *
- * Recipes: `architecturePack.ts` (security architect). Other roles add their
+ * Recipes: `architecturePack.ts` (security architect), `operationsPack.ts`
+ * (IT operations), `evidenceBundle.ts` (researcher). Other roles add their
  * own recipe file and call `buildRolePack`.
+ *
+ * A recipe whose pack holds more than saved artifacts (the researcher's
+ * bookmarked Library records, for example) passes `extraSections`: numbered
+ * sections placed before or after the artifact sections, listed under "What
+ * is missing" when they have no body. `extraMissing` adds gaps that are not a
+ * whole section (e.g. "2 bookmarked drafts are superseded").
  */
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { TYPE_LABELS } from '@/data/artifactLabels'
@@ -33,8 +40,42 @@ export interface RolePackRecipe {
   disclaimer: string
 }
 
+/** A pack section that is not a saved artifact (e.g. a table of Library
+ * records). Its body is written at the pack's level: use `###` for its own
+ * sub-headings. */
+export interface RolePackExtraSection {
+  key: string
+  title: string
+  /** What this section answers for the reader. */
+  purpose: string
+  /** Before or after the recipe's artifact sections. */
+  position: 'before' | 'after'
+  /** Markdown body; blank means the section is missing. */
+  body?: string
+  /** Where to produce it when it is missing. */
+  toolPath?: string | null
+  /** Words before that link; defaults to "Produce it with". */
+  linkText?: string
+}
+
+/** A gap listed under "What is missing" that is not a whole section. */
+export interface RolePackExtraMissing {
+  label: string
+  detail: string
+  toolPath: string | null
+  /** Words before the link; defaults to "Produce it with". */
+  linkText?: string
+}
+
 export interface RolePackInput {
   documents: ExecutiveDocument[]
+  /** Pack title typed by the user; the recipe's title when blank. */
+  title?: string
+  /** Extra lines under the cover's metadata list (e.g. a provenance line or
+   * a statement of what the pack is not). */
+  coverLines?: string[]
+  extraSections?: RolePackExtraSection[]
+  extraMissing?: RolePackExtraMissing[]
   /** Free-text author name typed by the user; omitted when blank. */
   author?: string
   /** Free-text scope line typed by the user; omitted when blank. */
@@ -59,6 +100,8 @@ export interface RolePack {
   markdown: string
   present: ExecutiveDocumentType[]
   missing: RolePackMissing[]
+  /** Extra sections without a body, then the input's `extraMissing`. */
+  extraMissing: RolePackExtraMissing[]
 }
 
 const updatedAt = (d: ExecutiveDocument) => d.updatedAt ?? d.createdAt
@@ -119,6 +162,32 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
     path ? (input.origin ? `${input.origin}${path}` : path) : null
 
   const included = recipe.sections.map((s) => ({ section: s, docs: docsFor(s, input.documents) }))
+  const extras = input.extraSections ?? []
+  const hasBody = (x: RolePackExtraSection) => !!x.body?.trim()
+  // Every section in reading order, numbered once.
+  type Entry =
+    | { kind: 'extra'; extra: RolePackExtraSection }
+    | { kind: 'doc'; item: (typeof included)[number] }
+  const entries: Entry[] = [
+    ...extras
+      .filter((x) => x.position === 'before')
+      .map((extra) => ({ kind: 'extra' as const, extra })),
+    ...included.map((item) => ({ kind: 'doc' as const, item })),
+    ...extras
+      .filter((x) => x.position === 'after')
+      .map((extra) => ({ kind: 'extra' as const, extra })),
+  ]
+  const extraMissing: RolePackExtraMissing[] = [
+    ...extras
+      .filter((x) => !hasBody(x))
+      .map((x) => ({
+        label: x.title,
+        detail: x.purpose,
+        toolPath: x.toolPath ?? null,
+        ...(x.linkText ? { linkText: x.linkText } : {}),
+      })),
+    ...(input.extraMissing ?? []),
+  ]
   const present = included.filter((x) => x.docs.length > 0).map((x) => x.section.type)
   const missing: RolePackMissing[] = included
     .filter((x) => x.docs.length === 0)
@@ -134,13 +203,14 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
   const scope = input.scope?.trim()
 
   const lines: string[] = [
-    `# ${recipe.title}`,
+    `# ${input.title?.trim() || recipe.title}`,
     '',
     ...(author ? [`- Author: ${author}`] : []),
     `- Generated: ${now.toISOString().slice(0, 10)}`,
     `- Scope: ${scope || 'not stated'}`,
     ...(input.appVersion ? [`- Built with PQC Today ${input.appVersion}`] : []),
-    `- Sections: ${present.length} of ${recipe.sections.length} present`,
+    `- Sections: ${present.length + extras.filter(hasBody).length} of ${entries.length} present`,
+    ...(input.coverLines ?? []),
     '',
     '## Contents',
     '',
@@ -148,7 +218,13 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
     '|---|---|---|---|---|',
   ]
 
-  included.forEach(({ section, docs }, i) => {
+  entries.forEach((entry, i) => {
+    if (entry.kind === 'extra') {
+      const x = entry.extra
+      lines.push(`| ${i + 1} | ${cell(x.title)} | ${hasBody(x) ? 'present' : 'missing'} | — | — |`)
+      return
+    }
+    const { section, docs } = entry.item
     const label = TYPE_LABELS[section.type]
     if (docs.length === 0) {
       lines.push(`| ${i + 1} | ${label} | missing | — | — |`)
@@ -169,7 +245,14 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
   })
   lines.push('')
 
-  included.forEach(({ section, docs }, i) => {
+  entries.forEach((entry, i) => {
+    if (entry.kind === 'extra') {
+      const x = entry.extra
+      if (!hasBody(x)) return
+      lines.push(`## ${i + 1}. ${x.title}`, '', `_${x.purpose}_`, '', (x.body ?? '').trim(), '')
+      return
+    }
+    const { section, docs } = entry.item
     if (docs.length === 0) return
     lines.push(`## ${i + 1}. ${TYPE_LABELS[section.type]}`, '', `_${section.purpose}_`, '')
     if (section.multiple) {
@@ -184,17 +267,28 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
     lines.push(metaLine(docs[0]), '', demoteHeadings(body(docs[0])), '')
   })
 
-  if (missing.length > 0) {
+  if (missing.length > 0 || extraMissing.length > 0) {
     lines.push('## What is missing', '')
     for (const m of missing) {
       const purpose = recipe.sections.find((s) => s.type === m.type)?.purpose ?? ''
       const href = link(m.toolPath)
       lines.push(`- **${m.label}**: ${purpose}${href ? ` Produce it with ${href}` : ''}`)
     }
+    for (const m of extraMissing) {
+      const href = link(m.toolPath)
+      lines.push(
+        `- **${m.label}**: ${m.detail}${href ? ` ${m.linkText ?? 'Produce it with'} ${href}` : ''}`
+      )
+    }
     lines.push('')
   }
 
   lines.push('---', '', recipe.disclaimer, '')
   // Every pack states the platform's status notice first (Markdown and PDF alike).
-  return { markdown: withEducationNoticeMarkdown(lines.join('\n')), present, missing }
+  return {
+    markdown: withEducationNoticeMarkdown(lines.join('\n')),
+    present,
+    missing,
+    extraMissing,
+  }
 }

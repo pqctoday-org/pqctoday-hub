@@ -124,6 +124,13 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'protocol-config': 'architecture',
   'vpn-sim-run': 'architecture',
   'ops-test-plan': 'architecture',
+  // Researcher evidence bundle: a saved run record is conformance evidence.
+  'run-manifest': 'compliance',
+  // Researcher workspace: a collection of cited sources is reference evidence.
+  'library-collection': 'compliance',
+  'claim-matrix': 'compliance',
+  'reproduction-record': 'compliance',
+  'research-question': 'compliance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -188,6 +195,15 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   'protocol-config': 'migration',
   'vpn-sim-run': 'mitigation',
   'ops-test-plan': 'migration',
+  // Researcher evidence bundle: a run record saved from a researcher tool
+  // (DRBG, entropy tools, TLS simulator), not from a Command Center builder.
+  'run-manifest': 'mitigation',
+  // Researcher workspace artifacts, saved from the Library and the researcher
+  // Command Center, not from a Command Center builder.
+  'library-collection': 'mitigation',
+  'claim-matrix': 'mitigation',
+  'reproduction-record': 'mitigation',
+  'research-question': 'mitigation',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

@@ -28,6 +28,7 @@ import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
 import { bundleFilename, downloadBlob } from '@/services/exportBundle'
 import { runManifestToMarkdown } from '@/services/runManifest'
+import { SaveRunToEvidence } from '@/components/shared/SaveRunToEvidence'
 import { tlsRunManifest, TLS_SIMULATOR_VERSION } from './tlsRunManifest'
 
 export const TLSSimulatorTab: React.FC = () => {
@@ -57,9 +58,9 @@ export const TLSSimulatorTab: React.FC = () => {
 
   // "Save what this run showed": a small file with the run's settings, results
   // and what it does not prove (curious journey review, 16 Oct 2026).
-  const saveRunRecord = useCallback(() => {
-    if (!lastRun) return
-    const manifest = tlsRunManifest({
+  const buildRunRecord = useCallback(() => {
+    if (!lastRun) return null
+    return tlsRunManifest({
       run: lastRun,
       clientConfig,
       serverConfig,
@@ -67,11 +68,16 @@ export const TLSSimulatorTab: React.FC = () => {
       startedAt: runStartedAt.current || new Date(lastRun.timestamp).toISOString(),
       finishedAt: new Date(lastRun.timestamp).toISOString(),
     })
+  }, [lastRun, clientConfig, serverConfig])
+
+  const saveRunRecord = useCallback(() => {
+    const manifest = buildRunRecord()
+    if (!manifest) return
     downloadBlob(
       new Blob([runManifestToMarkdown(manifest)], { type: 'text/markdown' }),
       bundleFilename('tls-demo-run', 'md')
     )
-  }, [lastRun, clientConfig, serverConfig])
+  }, [buildRunRecord])
 
   /* HSM mode toggle removed: it never produced a successful handshake for
    * end-users and the "HSM ON" toggle was misleading. softhsm v3 +
@@ -382,6 +388,7 @@ export const TLSSimulatorTab: React.FC = () => {
             Save what this run showed
           </Button>
         )}
+        {lastRun && <SaveRunToEvidence getManifest={buildRunRecord} testId="tls-run-record" />}
         {results && (
           <Button
             variant="ghost"

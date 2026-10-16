@@ -42,6 +42,7 @@ import {
   publisherStatusText,
 } from './libraryPills'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
+import { AddToCollection } from '@/components/shared/research/AddToCollection'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -529,6 +530,12 @@ function DrawerPanel({
                 </div>
               </Section>
             )}
+
+            {/* Researcher workspace: keep this record in a named collection
+              with an annotation and its state as saved. */}
+            <Section title="Your collections">
+              <AddToCollection record={item} />
+            </Section>
           </div>
 
           {/* footer */}

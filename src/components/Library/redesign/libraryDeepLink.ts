@@ -67,6 +67,7 @@ export function libraryWideningFor(
     certRelevantOnly: false,
     certRelevantIdSet: input.certRelevantIdSet,
     lifecycleBucket: 'All',
+    topicFilter: 'All',
     semanticIdSet: null,
   }
   const checks: [string, Partial<LibraryFilterState>][] = [
@@ -84,6 +85,7 @@ export function libraryWideningFor(
     ],
     ['cswp39', { cswp39Only: input.cswp39Only }],
     ['lifecycle', { lifecycleBucket: input.lifecycleBucket }],
+    ['topic', { topicFilter: input.topicFilter ?? 'All' }],
     ['q', { filterText: input.filterText, semanticIdSet: input.semanticIdSet }],
   ]
   const drop = checks

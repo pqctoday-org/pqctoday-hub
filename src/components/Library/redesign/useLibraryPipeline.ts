@@ -156,6 +156,8 @@ export interface LibraryPipelineInput {
   certRelevantOnly: boolean
   certRelevantIdSet: Set<string>
   lifecycleBucket: string // 'All' or a LifecycleLabel
+  /** 'All' (or absent) or one research-topic id (`?topic=`). */
+  topicFilter?: string
   sortBy: SortOption
   /** True when the reader picked the sort themselves (?sort= is present) rather
    *  than falling back to the persona default. Suppresses the persona re-sort. */
@@ -195,6 +197,7 @@ export type LibraryFilterState = Pick<
   | 'certRelevantOnly'
   | 'certRelevantIdSet'
   | 'lifecycleBucket'
+  | 'topicFilter'
   | 'semanticIdSet'
 >
 
@@ -214,6 +217,7 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
     certRelevantOnly,
     certRelevantIdSet,
     lifecycleBucket,
+    topicFilter,
     semanticIdSet,
   } = f
   if (activeOrg !== 'All') {
@@ -256,6 +260,8 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
   if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
   if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
   if (lifecycleBucket !== 'All' && item.lifecycleLabel !== lifecycleBucket) return false
+  if (topicFilter && topicFilter !== 'All' && !item.researchTopics.includes(topicFilter))
+    return false
   if (!filterText) return true
   const searchLower = filterText.toLowerCase()
   // Every meaningful word of the query must appear somewhere in title / id /
@@ -304,6 +310,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     certRelevantOnly,
     certRelevantIdSet,
     lifecycleBucket,
+    topicFilter,
     sortBy,
     sortExplicit,
     selectedPersona,
@@ -382,6 +389,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     certRelevantOnly,
     certRelevantIdSet,
     lifecycleBucket,
+    topicFilter,
     tierFilter,
     algoFamilyFilter,
     personaPreferredActive,

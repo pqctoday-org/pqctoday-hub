@@ -18,6 +18,8 @@ export interface SaveRequest {
   title: string
   data: string
   inputs: unknown
+  /** Structured result, stored as the document's `output` (e.g. a run manifest). */
+  output?: unknown
   revisionSummary?: string
 }
 
@@ -33,6 +35,7 @@ export function useSaveArtifact(): (req: SaveRequest) => ExecutiveDocument['id']
           title: req.title,
           data: req.data,
           inputs: req.inputs,
+          ...(req.output !== undefined ? { output: req.output } : {}),
           ...(req.revisionSummary ? { revisionSummary: req.revisionSummary } : {}),
         } as Partial<Omit<ExecutiveDocument, 'id'>>)
         return existing.id
@@ -46,6 +49,7 @@ export function useSaveArtifact(): (req: SaveRequest) => ExecutiveDocument['id']
         title: req.title,
         data: req.data,
         inputs: req.inputs,
+        ...(req.output !== undefined ? { output: req.output } : {}),
         createdAt: now,
         updatedAt: now,
         approvalStatus: 'draft',
