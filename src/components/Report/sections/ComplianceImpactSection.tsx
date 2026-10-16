@@ -158,8 +158,21 @@ export const ComplianceImpactSection = ({
               return null
             return (
               <p className="text-xs text-muted-foreground" data-testid="binding-scope-note">
-                <strong>Binding for its scope:</strong> it applies only to the systems or
-                organisations its own text names. Check whether yours are covered
+                <strong>Binding for its scope:</strong>{' '}
+                {fw.bindingScope ? (
+                  <>
+                    its text says it applies to &ldquo;{fw.bindingScope}&rdquo;
+                    {fw.bindingScopeEn ? (
+                      <> (our translation: &ldquo;{fw.bindingScopeEn}&rdquo;)</>
+                    ) : null}
+                    . Check whether yours are covered
+                  </>
+                ) : (
+                  <>
+                    it applies only to the systems or organisations its own text names. Check
+                    whether yours are covered
+                  </>
+                )}
                 {fw.bindingBasis ? ` — basis: ${fw.bindingBasis}` : ''}.
               </p>
             )

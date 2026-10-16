@@ -10,7 +10,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ComplianceDetailDrawer } from './ComplianceDetailDrawer'
-import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
+import {
+  bindingDataPresent,
+  complianceFrameworks,
+  type ComplianceFramework,
+} from '@/data/complianceData'
 
 vi.mock('react-focus-lock', () => ({
   default: ({ children }: { children: React.ReactNode }) => children,
@@ -129,5 +133,67 @@ describe('ComplianceDetailDrawer — learn backlink', () => {
   it('omits the section when the field is absent (older rows)', () => {
     renderDrawer(framework({ label: 'No column' }))
     expect(screen.queryByText('Learn this')).toBeNull()
+  })
+})
+
+// Executive journey remediation, section 7 (owner decision 16 Oct 2026): the
+// Compliance page says who a scoped framework binds, in the same words as the report.
+describe('ComplianceDetailDrawer — binding', () => {
+  const show = (overrides: Partial<ComplianceFramework>) =>
+    render(
+      <MemoryRouter>
+        <ComplianceDetailDrawer
+          framework={framework(overrides)}
+          pillar="comply"
+          onClose={() => {}}
+        />
+      </MemoryRouter>
+    )
+
+  it('the shipped compliance file carries binding data, so the row can show', () => {
+    expect(bindingDataPresent()).toBe(true)
+  })
+
+  it('quotes who a scoped framework binds, its translation and its basis', () => {
+    show({
+      bindingStatus: 'mandatory_for_scope',
+      bindingScope: 'Behörden des Bundes',
+      bindingScopeEn: 'federal authorities',
+      bindingBasis: 'BSIG § 8',
+    })
+    const row = screen.getByTestId('drawer-binding')
+    expect(row).toHaveTextContent('Binding for its scope')
+    expect(row).toHaveTextContent('Its text says it applies to “Behörden des Bundes”')
+    expect(row).toHaveTextContent('(our translation: “federal authorities”)')
+    expect(row).toHaveTextContent('Basis: BSIG § 8')
+  })
+
+  it('a scoped framework with no recorded scope still says it binds only its scope', () => {
+    show({ bindingStatus: 'mandatory_for_scope', bindingBasis: 'FIPS PUB 140-3' })
+    const row = screen.getByTestId('drawer-binding')
+    expect(row).toHaveTextContent('Binding for its scope')
+    expect(row).not.toHaveTextContent('Its text says')
+  })
+
+  it('a binding law reads "Binding" and never claims a scope', () => {
+    show({
+      bindingStatus: 'binding',
+      bindingScope: 'ignored',
+      bindingBasis: 'Regulation (EU) 2022/2554',
+    })
+    const row = screen.getByTestId('drawer-binding')
+    expect(row).toHaveTextContent(/^Binding/)
+    expect(row).not.toHaveTextContent('for its scope')
+    expect(row).not.toHaveTextContent('Its text says')
+  })
+
+  it('guidance reads as guidance, not binding', () => {
+    show({ bindingStatus: 'recommendation' })
+    expect(screen.getByTestId('drawer-binding')).toHaveTextContent('Guidance or draft')
+  })
+
+  it('no binding status, no row', () => {
+    show({ website: 'https://example.gov' })
+    expect(screen.queryByTestId('drawer-binding')).toBeNull()
   })
 })

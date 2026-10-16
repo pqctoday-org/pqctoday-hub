@@ -23,7 +23,8 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { ComplianceFramework } from '@/data/complianceData'
+import { bindingDataPresent, type ComplianceFramework } from '@/data/complianceData'
+import { BINDING_GROUP_META, BINDING_SCOPED_META, bindingGroupOf } from '@/utils/bindingSplit'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { getTrustedSource } from '@/data/trustedSourcesData'
@@ -191,7 +192,10 @@ export function ComplianceDetailDrawer({
             {/* Source & trust — visible to every user, not just the researcher
                 persona's For You view (see compliance-maintenance-audit-
                 remediation-plan-07162026.md Phase 4.1). */}
-            {(framework.website || trustedSource || framework.enforcementBody) && (
+            {(framework.website ||
+              trustedSource ||
+              framework.enforcementBody ||
+              (framework.bindingStatus && bindingDataPresent())) && (
               <section className="rounded-xl border border-border bg-muted/20 p-3.5">
                 <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <ShieldCheck size={13} />
@@ -219,6 +223,35 @@ export function ComplianceDetailDrawer({
                       <dt className="shrink-0 text-muted-foreground">Enforcement body</dt>
                       <dd className="min-w-0 text-right font-medium text-foreground">
                         {framework.enforcementBody}
+                      </dd>
+                    </div>
+                  )}
+                  {framework.bindingStatus && bindingDataPresent() && (
+                    <div className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-muted-foreground">Binding</dt>
+                      <dd
+                        className="min-w-0 text-right text-foreground"
+                        data-testid="drawer-binding"
+                      >
+                        <span className="font-medium">
+                          {framework.bindingStatus === 'mandatory_for_scope'
+                            ? BINDING_SCOPED_META.chip
+                            : BINDING_GROUP_META[bindingGroupOf(framework.bindingStatus)].chip}
+                        </span>
+                        {framework.bindingStatus === 'mandatory_for_scope' &&
+                          framework.bindingScope && (
+                            <span className="block text-muted-foreground">
+                              Its text says it applies to &ldquo;{framework.bindingScope}&rdquo;
+                              {framework.bindingScopeEn ? (
+                                <> (our translation: &ldquo;{framework.bindingScopeEn}&rdquo;)</>
+                              ) : null}
+                            </span>
+                          )}
+                        {framework.bindingBasis && (
+                          <span className="block text-muted-foreground">
+                            Basis: {framework.bindingBasis}
+                          </span>
+                        )}
                       </dd>
                     </div>
                   )}

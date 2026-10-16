@@ -175,6 +175,42 @@ describe('ComplianceImpactSection: binding chip', () => {
     }
   })
 
+  it('quotes who the framework binds, with our translation when the original is not English', () => {
+    mark(fwA, 'mandatory_for_scope')
+    const was = { basis: fwA.bindingBasis, scope: fwA.bindingScope, en: fwA.bindingScopeEn }
+    fwA.bindingBasis = 'Circular 7 of 2018'
+    fwA.bindingScope = 'entidades sometidas a la inspección y vigilancia'
+    fwA.bindingScopeEn = 'entities subject to inspection and supervision'
+    try {
+      renderSection(undefined, [impactFor(fwA)])
+      const note = screen.getByTestId('binding-scope-note')
+      expect(note).toHaveTextContent(
+        'its text says it applies to “entidades sometidas a la inspección y vigilancia” (our translation: “entities subject to inspection and supervision”)'
+      )
+      expect(note).toHaveTextContent('basis: Circular 7 of 2018')
+    } finally {
+      fwA.bindingBasis = was.basis
+      fwA.bindingScope = was.scope
+      fwA.bindingScopeEn = was.en
+    }
+  })
+
+  it('quotes an English scope without a translation', () => {
+    mark(fwA, 'mandatory_for_scope')
+    const was = { scope: fwA.bindingScope, en: fwA.bindingScopeEn }
+    fwA.bindingScope = 'all Federal agencies that use cryptography-based security systems'
+    fwA.bindingScopeEn = undefined
+    try {
+      renderSection(undefined, [impactFor(fwA)])
+      const note = screen.getByTestId('binding-scope-note')
+      expect(note).toHaveTextContent('applies to “all Federal agencies that use cryptography-based security systems”')
+      expect(note).not.toHaveTextContent('our translation')
+    } finally {
+      fwA.bindingScope = was.scope
+      fwA.bindingScopeEn = was.en
+    }
+  })
+
   it('gives an out-of-scope scoped framework no basis note: it is Binding for others', () => {
     const [elsewhere] = outOfScope
     mark(elsewhere, 'mandatory_for_scope')
