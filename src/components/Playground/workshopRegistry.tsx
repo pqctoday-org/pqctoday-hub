@@ -162,7 +162,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cacp-kmip',
     pt_id: 'PT-033',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'KMIP Control Plane',
     description:
       'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.',
@@ -214,7 +214,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hsm-capacity',
     pt_id: 'PT-026',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'HSM Capacity Calculator',
     description:
       'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
@@ -542,7 +542,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tls-simulator',
     pt_id: 'PT-024',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -583,7 +583,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -986,7 +986,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cert-capacity',
     pt_id: 'PT-025',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Cert Capacity Calculator',
     description:
       'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
