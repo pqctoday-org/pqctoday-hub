@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Deep links that must land on their target, not just on the right page:
-//   - /about#about-data-foundation scrolls to the Platform Data section.
+//   - /about#about-data-foundation scrolls to the Platform Data section;
+//   - /openssl?cmd=genpkey opens the Workbench with genpkey selected.
 // The app scrolls inside its own content container (the parent of
 // #main-content), not the window, so offsets are measured against that
 // container. Run against the production build:
@@ -67,6 +68,17 @@ for (const viewport of VIEWPORTS) {
       test.info().annotations.push({ type: 'offset', description: String(offset) })
       expect(offset).toBeGreaterThanOrEqual(0)
       expect(offset).toBeLessThanOrEqual(300)
+    })
+
+    test('/openssl?cmd=genpkey opens the Workbench with genpkey selected', async ({ page }) => {
+      await page.goto('/openssl?cmd=genpkey')
+      const workbenchTab = page.getByRole('tab', { name: 'Workbench', exact: true })
+      await expect(workbenchTab).toHaveAttribute('aria-selected', 'true')
+      await expect(page.getByRole('tab', { name: 'Learn', exact: true })).toHaveAttribute(
+        'aria-selected',
+        'false'
+      )
+      await expect(page.getByText(/openssl genpkey/).first()).toBeVisible()
     })
   })
 }
