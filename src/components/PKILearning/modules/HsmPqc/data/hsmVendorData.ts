@@ -364,7 +364,8 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_ECDSA with P-256 → 64-byte signature (51x smaller)',
     vendorNotes: {
       onPrem: 'All vendors: native ML-DSA with hedged signing. Entrust also supports SLH-DSA',
-      cloud: 'AWS CloudHSM: ML-DSA preview. Azure/GCP: not yet available',
+      cloud:
+        'AWS CloudHSM: ML-DSA via vendor-defined PKCS#11 mechanisms. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
     },
   },
   {

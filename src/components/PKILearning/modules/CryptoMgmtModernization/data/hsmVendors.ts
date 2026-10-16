@@ -149,12 +149,13 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#4703 (Marvell LS2 HSM Family; FIPS 140-3 L3, per AWS CloudHSM docs)',
     esvStatus: 'active',
-    pqcSupport: 'ML-KEM, ML-DSA on hsm2m instance family (outside FIPS boundary)',
+    pqcSupport:
+      'ML-DSA-44/65/87 in the HSM; FIPS mode on hsm2m.medium from 1 Sep 2026; not on certificate #4703; no ML-KEM',
     platformBinding: 'hsm2m.medium instance; region-bound',
-    lastVerified: '2026-09-24',
+    lastVerified: '2026-10-15',
     posture: 'yellow',
     notes:
-      "AWS's CloudHSM compliance page names certificate #4703 (Marvell LS2 HSM Family) for hsm2m.medium; the older hsm1.medium certificate #4218 (FIPS 140-2) was due to move to the Historical list on 4 Jan 2026. #4703 lists no PQC algorithm as approved. Its Security Policy names the OCTEON HW RBG entropy source without an ESV number; Marvell's later LS2 certificate #5502 cites ESV E231 for that source. PQC algorithms available via PKCS#11 but not in a validated boundary.",
+      "AWS's CloudHSM compliance page names certificate #4703 (Marvell LS2 HSM Family) for hsm2m.medium; the older hsm1.medium certificate #4218 (FIPS 140-2) was due to move to the Historical list on 4 Jan 2026. #4703 lists no PQC algorithm as approved. Its Security Policy names the OCTEON HW RBG entropy source without an ESV number; Marvell's later LS2 certificate #5502 cites ESV E231 for that source. ML-DSA is available in FIPS mode on hsm2m.medium from 1 Sep 2026 (AWS CloudHSM documentation) through vendor-defined PKCS#11 mechanisms, but #4703 still lists no PQC algorithm (checked 15 Oct 2026), so it is not inside the validated boundary yet. No ML-KEM.",
   },
   {
     id: 'azure-dedicated-hsm',

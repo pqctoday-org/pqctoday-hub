@@ -70,6 +70,31 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     why: 'AWS CloudHSM documents ML-DSA only; no ML-KEM command',
   },
   {
+    file: `${HSM}/components/HsmPqcIntroduction.tsx`,
+    banned: /PQC delivered via AWS-LC SDK|Native PKCS#11 PQC mechanisms not yet in firmware/,
+    why: 'AWS CloudHSM ML-DSA in the HSM via vendor-defined PKCS#11 mechanisms',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit.tsx',
+    banned: /AWS Crypto Tools SDK/,
+    why: 'AWS CloudHSM ML-DSA in the HSM via vendor-defined PKCS#11 mechanisms',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors.ts',
+    banned: /hsm2m instance family \(outside FIPS boundary\)/,
+    why: 'ML-DSA in FIPS mode on hsm2m.medium from 1 Sep 2026; not on certificate #4703',
+  },
+  {
+    file: 'src/components/PKILearning/modules/KmsPqc/data/kmsProviderData.ts',
+    banned: /none are GA yet/,
+    why: 'Cloud KMS PQC signing GA 16 Jul 2026 (release notes)',
+  },
+  {
+    file: 'src/components/PKILearning/modules/KmsPqc/data/kmsConstants.ts',
+    banned: /X-Wing GA|ML-DSA preview/,
+    why: 'Cloud KMS: signing GA, KEMs Preview (release notes)',
+  },
+  {
     file: 'src/components/Algorithms/algorithmFilterOptions.ts',
     banned: /label: 'Certified'/,
     why: 'algorithms are not certified; the bucket includes FIPS-pending and non-US picks',
