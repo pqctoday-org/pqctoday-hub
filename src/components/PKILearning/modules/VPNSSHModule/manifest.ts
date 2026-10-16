@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vpn-ssh-pqc',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-009',
   title: 'VPN/IPsec & SSH',
   description:
