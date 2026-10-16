@@ -1795,7 +1795,8 @@ export interface PersonaJourneyBoard {
      *                  become your data
      */
     provenance: 'sourced' | 'illustrative' | 'guidance'
-    rows: { label: string; value: string }[]
+    /** `source`: an in-app link to the document behind this row, when it has one. */
+    rows: { label: string; value: string; source?: string }[]
     punchline: string
     footnote?: string
     /**

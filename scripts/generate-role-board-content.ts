@@ -385,6 +385,23 @@ async function main() {
       }
       const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
       const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
+      // Optional per-row source (beginner-board source links, 16 Oct 2026): an
+      // in-app link such as /library?ref=FIPS%20203. Literal links in the
+      // generated file are checked against real items by inAppLiteralLinks.test.
+      const sourceByIndex = byIndex(slots, 'side_card_row_source')
+      for (const [idx, href] of sourceByIndex) {
+        if (!labelByIndex.has(idx)) {
+          throw new Error(
+            `${ctx}: side_card_row_source[${idx}] has no matching side_card_row_label`
+          )
+        }
+        if (!href.startsWith('/')) {
+          throw new Error(
+            `${ctx}: side_card_row_source[${idx}] must be an in-app link starting with /`
+          )
+        }
+      }
+      const rowSources = rowIndices.map((i) => sourceByIndex.get(i))
 
       // `as '…'` in the emitted string is a cast, not a check — a typo'd
       // provenance would compile and render an empty chip. Validate on read.
@@ -431,7 +448,7 @@ async function main() {
           title: ${jsString(requireScalar(slots, 'side_card_title', ctx))},
           tone: ${jsString(requireScalar(slots, 'side_card_tone', ctx))} as 'bad' | 'warn' | 'info' | 'accent',
           provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative' | 'guidance',
-          rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
+          rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])}${rowSources[i] ? `, source: ${jsString(rowSources[i]!)}` : ''} }`).join(', ')}],
           punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
           ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
           ${sideCardEmptyState !== undefined ? `emptyState: ${jsString(sideCardEmptyState)},` : ''}

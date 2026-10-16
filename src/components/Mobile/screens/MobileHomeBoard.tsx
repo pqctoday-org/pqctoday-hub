@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Check } from 'lucide-react'
+import { BookOpen, Check } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PERSONAS } from '@/data/learningPersonas'
 import { essentialsTrackChips } from '@/data/trackChips'
@@ -228,7 +228,20 @@ export function MobileHomeBoard({
               className="flex items-baseline justify-between gap-3 border-t border-border/50 pt-1.5 text-[11.5px] first:border-t-0 first:pt-0"
             >
               <dt className="text-muted-foreground">{row.label}</dt>
-              <dd className="text-right font-semibold text-foreground">{row.value}</dd>
+              <dd className="text-right font-semibold text-foreground">
+                {row.value}
+                {row.source && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => navigate(row.source!)}
+                    aria-label={`Source for ${row.label}`}
+                    className="ml-1 inline-flex h-auto p-0 align-middle text-primary"
+                  >
+                    <BookOpen size={11} aria-hidden="true" />
+                  </Button>
+                )}
+              </dd>
             </div>
           ))}
         </dl>

@@ -294,7 +294,19 @@ export function PersonaBoardView({
                     className="flex items-baseline justify-between gap-3 text-sm"
                   >
                     <dt className="text-muted-foreground">{row.label}</dt>
-                    <dd className="text-right font-semibold text-foreground">{row.value}</dd>
+                    <dd className="text-right font-semibold text-foreground">
+                      {row.value}
+                      {row.source && (
+                        <Link
+                          to={row.source}
+                          aria-label={`Source for ${row.label}`}
+                          title="Open the source"
+                          className="ml-1.5 inline-flex align-middle text-primary hover:underline"
+                        >
+                          <BookOpen size={12} aria-hidden="true" />
+                        </Link>
+                      )}
+                    </dd>
                   </div>
                 ))}
               </dl>

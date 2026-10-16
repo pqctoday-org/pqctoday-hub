@@ -359,3 +359,33 @@ describe('curious Algorithms default (curious journey review, 16 Oct 2026)', () 
     expect(d.highlight).toEqual(['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'])
   })
 })
+
+/**
+ * Beginner-board source links (16 Oct 2026). A curious side card that calls
+ * itself `sourced` must give every row a source link (owner decision: beginner
+ * boards first; other roles' sourced cards are a later data-lane pass). Boards whose sources are still
+ * being added through the data lane are listed here; the entry fails once the
+ * sources exist, so it is removed with them.
+ */
+const PENDING_SOURCED_CARDS = new Set(['curious/anyone'])
+
+describe('sourced side cards link every row to its source', () => {
+  for (const [personaId, variants] of Object.entries(PERSONA_JOURNEY_BOARD_VARIANTS)) {
+    if (personaId !== 'curious') continue
+    for (const v of variants) {
+      const key = `${personaId}/${v.id}`
+      if (v.board.sideCard.provenance !== 'sourced') continue
+      it(key, () => {
+        const missing = v.board.sideCard.rows.filter((r) => !r.source).map((r) => r.label)
+        if (PENDING_SOURCED_CARDS.has(key)) {
+          expect(
+            missing.length,
+            `${key} has all its sources now; drop it from PENDING`
+          ).toBeGreaterThan(0)
+        } else {
+          expect(missing, `${key}: rows without a source`).toEqual([])
+        }
+      })
+    }
+  }
+})
