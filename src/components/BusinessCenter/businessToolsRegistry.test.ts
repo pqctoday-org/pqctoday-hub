@@ -71,6 +71,12 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'architecture-decision-record',
   'architecture-test-plan',
   'kmip-quick-run',
+  'ops-scope',
+  'hsm-capacity-plan',
+  'cert-capacity-plan',
+  'protocol-config',
+  'vpn-sim-run',
+  'ops-test-plan',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -96,6 +102,15 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   'architecture-decision-record',
   'architecture-test-plan',
   'kmip-quick-run',
+  // IT operations pack, Layer 2: scope and test plan are edited in the
+  // operations pack panel; the rest are saved from the capacity calculators,
+  // the config generators and the VPN simulator.
+  'ops-scope',
+  'hsm-capacity-plan',
+  'cert-capacity-plan',
+  'protocol-config',
+  'vpn-sim-run',
+  'ops-test-plan',
 ])
 
 describe('Command Center registry — drift guard', () => {

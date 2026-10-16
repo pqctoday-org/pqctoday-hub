@@ -87,6 +87,14 @@ export type ExecutiveDocumentType =
   | 'architecture-decision-record'
   | 'architecture-test-plan'
   | 'kmip-quick-run'
+  // IT operations pack, Layer 2 (produced in the pack panel, the capacity
+  // calculators, the config generators and the VPN simulator).
+  | 'ops-scope'
+  | 'hsm-capacity-plan'
+  | 'cert-capacity-plan'
+  | 'protocol-config'
+  | 'vpn-sim-run'
+  | 'ops-test-plan'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

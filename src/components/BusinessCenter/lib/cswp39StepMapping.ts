@@ -117,6 +117,13 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'architecture-decision-record': 'architecture',
   'architecture-test-plan': 'architecture',
   'kmip-quick-run': 'architecture',
+  // IT operations pack, Layer 2.
+  'ops-scope': 'governance',
+  'hsm-capacity-plan': 'architecture',
+  'cert-capacity-plan': 'architecture',
+  'protocol-config': 'architecture',
+  'vpn-sim-run': 'architecture',
+  'ops-test-plan': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -171,6 +178,16 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   'architecture-decision-record': 'migration',
   'architecture-test-plan': 'migration',
   'kmip-quick-run': 'mitigation',
+  // IT operations pack, Layer 2: produced in the operations pack panel (scope,
+  // test plan), the HSM and certificate capacity calculators, the SSH and TLS
+  // config generators and the VPN simulator, none of which is a Command Center
+  // builder.
+  'ops-scope': 'governance',
+  'hsm-capacity-plan': 'migration',
+  'cert-capacity-plan': 'migration',
+  'protocol-config': 'migration',
+  'vpn-sim-run': 'mitigation',
+  'ops-test-plan': 'migration',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from
