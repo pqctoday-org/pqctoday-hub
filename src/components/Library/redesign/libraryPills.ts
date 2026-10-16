@@ -50,7 +50,9 @@ export function urgencyPillClass(urgency: string): string {
 export interface TrustInfo {
   score: number | null
   pillClass: string
-  source: 'Authoritative' | 'Needs review'
+  /** Plain word for the same score the pill shows, using the pill's thresholds.
+   *  Never "Authoritative": that reads as a standards status, and trust is not maturity. */
+  source: 'High trust' | 'Moderate trust' | 'Needs review'
 }
 
 export function trustInfo(referenceId: string): TrustInfo {
@@ -65,7 +67,13 @@ export function trustInfo(referenceId: string): TrustInfo {
           ? 'bg-warning/15 text-warning'
           : 'bg-muted text-muted-foreground'
   const source: TrustInfo['source'] =
-    ts && (ts.tier === 'Authoritative' || ts.tier === 'High') ? 'Authoritative' : 'Needs review'
+    score == null
+      ? 'Needs review'
+      : score >= 80
+        ? 'High trust'
+        : score >= 66
+          ? 'Moderate trust'
+          : 'Needs review'
   return { score, pillClass, source }
 }
 
