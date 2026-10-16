@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r25.csv
+ * Source: src/data/role_board_content_10162026_r26.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2301,6 +2301,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
     {
@@ -2380,6 +2381,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
     {
@@ -2457,6 +2459,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
     {
@@ -2534,6 +2537,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
     {
@@ -2610,6 +2614,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
     {
@@ -2685,6 +2690,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'TLS basics',
           'PKI workshop',
         ],
+        capstoneChip: { label: 'Evidence-Ready' },
       },
     },
   ],
