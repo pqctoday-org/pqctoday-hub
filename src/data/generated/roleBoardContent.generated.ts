@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r2.csv
+ * Source: src/data/role_board_content_10162026_r18.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3171,10 +3171,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             'An illustrative framing of the harvest-now-decrypt-later argument. The dates it depends on are on the timeline, with sources.',
         },
         gridTitle: 'Where you can go next',
-        gridSub: 'Optional, none of it sequenced',
+        gridSub: 'Optional — every page is open',
         gridCards: [
           {
-            title: 'One guided path',
+            title: 'A suggested path',
             body: 'The learning path is a single route through post-quantum cryptography, ordered for whichever role you pick.',
             href: '/learn',
           },
@@ -3193,18 +3193,18 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
-          'Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.',
+          'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3250,7 +3250,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Try the actual command line',
-            body: 'Nothing to install — the same OpenSSL your browser padlock depends on, running in a tab, if you want to go past what the simulator shows.',
+            body: 'Nothing to install — OpenSSL, one of the most widely used TLS libraries, running in a tab, if you want to go past what the simulator shows.',
             href: '/playground/openssl-studio',
           },
           {
@@ -3268,13 +3268,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Worth saying plainly: at 205 minutes this is longer than the executive track (130 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3333,18 +3333,18 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
-          'Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.',
+          'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3366,7 +3366,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Meet the people doing the work',
         ctaSecondaryHref: '/leaders',
-        proofChips: ['Plain English by default', 'Every claim links to its own source'],
+        proofChips: ['Plain English by default', 'Sources listed on every page'],
         sideCard: {
           title: 'Where it already stands',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3403,17 +3403,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3468,7 +3468,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The hard problem is inventory, not cryptography',
-            body: 'Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.',
+            body: 'Swapping an algorithm in one place can be quick. Finding every place your organisation uses one is the part that takes years.',
             href: '/report?example=1',
           },
         ] as [
@@ -3476,17 +3476,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3510,7 +3510,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Plain English by default',
-          'Every claim links to its own source',
+          'Sources listed on every page',
           'Nothing to install',
         ],
         sideCard: {
@@ -3549,17 +3549,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
         trackChips: [
           'PQC 101',
-          'PQC candidates',
           'Quantum threats',
+          'TLS basics',
           'Risk basics',
           'Compliance timelines',
           'TLS basics',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
   ],
