@@ -1,0 +1,35 @@
+{
+ "concurrent4": {
+  "requests": 4,
+  "requestsPerHour": 1995.8419958419959,
+  "serverRunMs": [
+   281.801,
+   283.22,
+   280.989,
+   317.904
+  ],
+  "wallMs": 7215
+ },
+ "customersPerRequest": 32768,
+ "meanCycleMs": 2001,
+ "meanServerRunMs": 305.67333333333335,
+ "requestsPerHour_bySequentialCycle": 1799.1004497751123,
+ "requestsPerHour_byServerRunTime": 11777.278576257879,
+ "sequentialRequests": [
+  {
+   "CycleMs": 2003,
+   "UploadMs": 1657,
+   "ServerRunMs": 320.502
+  },
+  {
+   "CycleMs": 2001,
+   "UploadMs": 1649,
+   "ServerRunMs": 301.658
+  },
+  {
+   "CycleMs": 1999,
+   "UploadMs": 1649,
+   "ServerRunMs": 294.86
+  }
+ ]
+}

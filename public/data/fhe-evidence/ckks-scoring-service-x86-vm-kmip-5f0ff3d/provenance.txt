@@ -1,0 +1,91 @@
+run: 2026-10-16-id3-x86-vm-mx95pro-kmip-r3
+kind: x86-vm
+mode: remote
+date_utc: 2026-10-16T05:25:05Z
+mac_host: Apple M5 Max, 18 cores, 128 GiB; load 25.14 27.45 32.18; 63 GB free memory
+mac_pick_host: HOST=m4pro reason=lower-load-per-core m5max=load/core:1.40 (25.14/18) free:61.7GB
+mac_other_containers_running: 
+server_label: x86-vm
+server_model: 
+server_os: Debian GNU/Linux 13 (trixie)
+server_kernel: Linux 6.12.111+deb13-cloud-amd64 x86_64
+server_cpus: 12
+server_cpu_model: AMD Ryzen AI 9 HX 370 w/ Radeon 890M
+server_cpu_features: adx aes avx avx2 avx512bw avx512dq avx512f avx512ifma avx512vl bmi2 pclmulqdq sha_ni vaes vpclmulqdq 
+server_mem_total_kib: 12800728
+server_mem_available_at_start_kib: 12283088
+server_swap_total_kib: 0
+server_tmp_fs: tmpfs
+server_loadavg_at_start: 0.09 0.09 0.04
+server_clock_skew_vs_mac_s: 1 (ssh latency included)
+token_label: mx95pro
+token_model: KMIP server (PQCTODAY_FHE_1_0), reached from the Mac
+token_token: kmip (PQCTODAY_FHE_1_0), port 5696
+token_kmip_adapter_sha256: 039f8c3fef8941b7b63399a431311052cf65f59a3fcfa200117a498f6bb3563b
+token_kmip_client_sha256: 97b6e66e734d9948ceff0f02df8a5f71a83083c781ccbd0b1011675fa14ba562 (kmip.py, fhe.py, _ttlv.py)
+token_kmip_trust_root_sha256: f806fdda3455c10dbb1732a10bea5a469f0b25a63f11c96a53f4814a20325801
+token_kmip_device_id: 0348a600d1ab01530e6d9484af6fa94e9e601d545e5b3542dad7e8d7fbf054ca
+token_kmip_decrypt_policy: @<trust>/decrypt-policy-0002-id.bin
+registry_id: 3 (CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0)
+seed: random, generated in the token over KMIP (unique ID in work/, not published)
+release_policy: owner release: the SO's enrolled CKKS policy (repl_edu_courier enroll-ckks-policy: rounding 2^-20, flooding off for the owner, value bound 2^10)
+customers_per_batch: 32768
+bench_repetitions: 3
+server_workers: 1
+token_threads: 6
+limbs_per_call: 8
+fhe_commit: d8ccf57fe97cd61d23840f95c9c2267239f86b5b (+ 0 uncommitted tracked files)
+server_binary: linux/amd64, sha256 877769ed9860faa29c117a1fe0f92b2e2625e56a8ebaff6e95a8827116fb046f, 9982100 bytes
+server_binary_build_binary: ckks-server (linux/amd64, static, CGO_ENABLED=0)
+server_binary_build_sha256: 877769ed9860faa29c117a1fe0f92b2e2625e56a8ebaff6e95a8827116fb046f
+server_binary_build_bytes: 9982100
+server_binary_build_fhe_commit: 5ec2f0222a278af83885c69ac907cd240d6e0227
+server_binary_build_fhe_uncommitted_tracked_files: 0
+server_binary_build_go: go version go1.25.4 linux/arm64
+server_binary_build_image: golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb
+server_binary_build_lattigo: v6.2.0 (vendored at lattigo/, unmodified; go.mod replace)
+server_binary_build_circl: github.com/cloudflare/circl v1.6.5 (go.sum pins the hash)
+server_binary_build_build: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=false -ldflags='-s -w -buildid=' -o work/bin/linux-amd64/ckks-server ./cmd/ckks-server
+server_binary_build_built: 2026-10-16T05:11Z
+client_binary: linux/arm64 (Mac container), sha256 0234a371daa3fc89754c2e5ff671e9a51d3801076cfdb7b43fa968f577552d6d
+model_sha256: c6193a5b7408702426332cde5ac37f6c1a909229dc64e85c9c8d7633bfd77a7d
+test_rows_sha256: b020002121175f69b0bbf2df831af330aed6553f70982ef83a03eac62535588d
+go_image: golang:1.25.4-bookworm golang@sha256:e17419604b6d1f9bc245694425f0ec9b1b53685c80850900a376fb10cb0f70cb
+client_container: 2 CPUs, 8g
+transport: ssh -L tunnel (loopback on the Mac to loopback on the server machine; ssh cipher default), TLS 1.3 X25519MLKEM768 with client certificates inside it
+pki: throw-away test CA from scripts/mkpki.sh, SAN localhost 127.0.0.1 only (no machine name or address)
+token_init_wall_s: 0
+token_export_wall_s: 197
+token_export_seconds: 196.799
+token_export_mb_per_s: 22.4
+token_export_slowest_call_s: 0.2454
+token_export_peak_rss_kib: None
+token_export_evk_calls: 1201
+token_export_key_bytes: 4410835077
+token_export_keys: 51
+stream_frames: 1207
+stream_bytes: 4411016291
+receiver_seconds: 196.881
+host_manifest_entries: 1204
+host_manifest_hash_mismatches: 0
+token_manifest_present: True
+token_manifest_entries: 1203
+token_manifest_mismatches: 0
+stored_on_the_mac: 30 files, 94028899 bytes; not stored: 1177 frames, 4316987392 bytes (hashed and checked)
+key_admitted: 540abde1d6d416dd verify_ms 39.809098 assemble_ms 99.02192699999999 client_wall_ms 1093
+first_batch_server_run_ms: 325.485
+first_batch_upload_until_accepted_ms: 1656
+first_batch_request_bytes: 192938536
+client_encrypt_ms: 6346
+server_peak_rss_kib_proc: 1205836
+server_peak_rss_kib_health: 1205836
+server_heap_alloc_bytes_end: 1145948864
+server_loadavg_end: 0.13 0.08 0.04
+server_session_exit: 0 (143 = stopped by SIGTERM through the closed input, as designed)
+accuracy_checks: PASS
+server_tmp_cleaned: yes (/tmp/ckks-service removed)
+received_key_files: deleted (KEEP=1 keeps them)
+total_wall_s: 240
+result: PASS
+privacy_scan: clean (no address, host name, user name or serial in the result files)
+note_public_copy: labels differ from the FHE repository copy (the machine label was renamed to x86-vm in the public copy); the measurements are unchanged

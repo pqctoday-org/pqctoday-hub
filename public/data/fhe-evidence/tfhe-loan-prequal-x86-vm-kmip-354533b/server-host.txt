@@ -1,0 +1,6 @@
+Linux 6.12.111+deb13-cloud-amd64 x86_64
+12
+CPU(s):                                  12
+Model name:                              AMD Ryzen AI 9 HX 370 w/ Radeon 890M
+Mem:           14640        1113        5687          17        8190       13526
+ 13:58:48 up 3 min,  1 user,  load average: 5.72, 1.91, 0.69

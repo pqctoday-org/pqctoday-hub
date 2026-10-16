@@ -7696,6 +7696,343 @@
         ]
       },
       "parameterHash": "c4bddecdfe31a41645166358fb22e44ce3ffbbaf8d1427bd307e52eeecd1c8b7"
+    },
+    {
+      "id": "ckks-scoring-service-x86-vm-mx95pro-kmip-5f0ff3d",
+      "scenarioId": "single-hsm",
+      "stepIds": [
+        "generate-fhe-secret",
+        "export-evaluation-keys",
+        "compute-ciphertexts",
+        "decrypt-under-policy"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "x86-64 VM (server), MX95 Pro over KMIP (token), Apple M5 Max (client)",
+      "claimLabel": "reference only: the encrypted risk-scoring service on an x86-64 virtual machine, with the token reached over KMIP on the MX95 Pro and the data owner’s client in a container on a Mac: key set exported and admitted, 32,768 customers scored, score released under the owner policy",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a reference measurement of the encrypted risk-scoring service (ckks-server) with the token reached over KMIP, not a validation of a step and not a security claim. The service ran on an x86-64 virtual machine (Debian 13, Linux 6.12.111, 12 vCPUs of an AMD Ryzen AI 9 HX 370, 12.2 GiB) as a static linux/amd64 binary (one worker), uploaded for the run. The token was the MX95 Pro board’s KMIP service (interface PQCTODAY_FHE_1_0, vendor-defined PKCS#11 calls carried by the KMIP PKCS_11 operation, mutual TLS; the negotiated TLS group of the KMIP connection is not recorded in the run files). The data owner’s client ran in a container on the Mac (Apple M5 Max, 2 CPUs, 8 GB; the Mac was shared, load averages 25.14, 27.45 and 32.18 on 18 cores at the start). It is a reference record because no evidence device covers an x86-64 VM, and a reference record has no device parts, so the MX95 Pro’s part as the custodian is stated here and not as a part. Registry ID 3, owner release under the security officer’s enrolled CKKS policy (rounded to 2^-20, no flooding for the owner, value bound 2^10), no refresh. The seed was random and generated in the token over KMIP (not the published test seed; its unique ID is not published), so the evaluation-key chunk hashes differ from the reference run by design. The token exported 4,410,835,077 B (51 keys, 1,201 bounded calls of 8 limbs) over KMIP in 197 s (196.8 s, 22.4 MB/s, slowest call 0.245 s); the token’s memory is not observable over KMIP (export.json peakRssKiB null; the Mac client peaked at 107,856 KiB). The receiver hashed every frame and checked the host manifest (1,204 entries, 0 hash mismatches) and the token-signed manifest (1,203 entries, 0 mismatches), and stored the 94,028,899 B the service ingests (30 files). The service admitted the key set (verify 40 ms, assemble 99 ms), scored one batch of 32,768 customers (23 ciphertexts, 192,938,536 B, 184.0 MiB), and the token released the score over KMIP under the owner policy (524,292 B in 0.176 s, 0.231 s wall over KMIP). Results: 325 ms for the first batch; 321, 302 and 295 ms for three repetitions (median 302 ms); 280 to 325 ms (median 301 ms) over all 8 jobs; server peak resident set 1,205,836 kB (1,178 MiB, VmHWM). One request at a time: a mean cycle of 2,001 ms, 1,799 requests an hour; 11,777 an hour by the server’s run time alone; four together took 7,215 ms (1,996 an hour). Accuracy equals the Mac headline run to the last digit: 21.00 bits against the plaintext cubic over all 32,768 slots, decisions 100.000 % at 0.5 and at 0.25, AUC 0.717298 against 0.717299 (accuracy-verdict.txt). Total run 240 s. The same VM took 277 ms per batch in the earlier run with the token in a Mac container (record ckks-scoring-service-x86-vm-m5max-ed7b92e); one run each, with a different VM memory size and a different token, so the two are not a comparison of the token transports. Limits: a throw-away test PKI with classical certificates (the key exchange is post-quantum, the authentication is not); a single tenant; a program of 3 multiplications with no refresh; one batch size; one run of 8 jobs; the service listens on loopback and is reached through an ssh tunnel with TLS 1.3 inside it; the VM’s cores are not pinned and a virtual machine is not a dedicated host. Run files: reference-runs/ckks-server/results of pqctoday-fhe #36 (merge commit 5f0ff3daf142c5064681cb3ca7d5f0946b139f2d); the files are copied byte for byte except the machine label in four of them (provenance.txt, run.log.txt, summary.json, summary.md; the label of the virtual machine was renamed to x86-vm, as provenance.txt states), the three logs under .txt names. The FHE repository’s sha256 of those four files: provenance.txt 581f37811af818963c7d6c2fdbfb8a9a98aaec984af3593aca6a0c126d62c57a, run.log 073ec2d2657a4e035082357d03006e862405ca93a297e3ed10b001caf2322e69, summary.json cf8a9c2f2c8465b09597bbfa9bf490ec498986e5484bf4f26713963c7f37516e, summary.md 36a50ee33c7dea136aeff29a3e20d822b86c2dcd16536c75d7f86bb2e7da7c11. No file holds personal data or a private key. The run used pqctoday-fhe d8ccf57fe97cd61d23840f95c9c2267239f86b5b; the server binary was built from 5ec2f0222a278af83885c69ac907cd240d6e0227 (sha256 877769ed…046f, provenance.txt).",
+      "library": {
+        "name": "Lattigo",
+        "version": "v6.2.0",
+        "commit": "c1fd095f08602e2d4ef571db015fc553fdd2d845"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "5f0ff3daf142c5064681cb3ca7d5f0946b139f2d"
+      },
+      "parameters": "CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0 (registry ID 3: META-BTS ×2 at scale 2^90, release over two primes, 105 bits)",
+      "config": "encrypted risk-scoring service (ckks-server): logistic-regression score as a cubic, 3 multiplications, no refresh; 32,768 customers per batch (23 feature ciphertexts); one worker; TLS 1.3 X25519MLKEM768 with client certificates (throw-away test PKI) inside an ssh loopback tunnel; token: the MX95 Pro board’s KMIP service (interface PQCTODAY_FHE_1_0 on the KMIP PKCS_11 operation, mutual TLS), generator v1, random seed generated in the token, owner release under the security officer’s enrolled CKKS policy (rounded to 2^-20, no flooding for the owner, value bound 2^10), 8 limbs per C_DeriveKey call, six export threads",
+      "environment": {
+        "hardware": "Server: x86-64 virtual machine (12 vCPUs, AMD Ryzen AI 9 HX 370, 12.2 GiB); token: the MX95 Pro board’s KMIP service; data owner’s client and receiver: containers on an Apple M5 Max Mac (client 2 CPUs, 8 GB)",
+        "os": "Debian GNU/Linux 13, Linux 6.12.111 x86_64 (server VM); Linux aarch64 containers on macOS (client and receiver)",
+        "toolchain": "ckks-server linux/amd64 static (Go 1.25.4, CGO off, Lattigo v6.2.0 unmodified, circl 1.6.5), sha256 877769ed…046f; KMIP client adapter sha256 039f8c3f…3563b (provenance.txt)",
+        "features": "service: one worker, memory only; token: KMIP interface PQCTODAY_FHE_1_0, six export threads"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 8,
+        "distribution": "one run: 8 jobs of one encrypted batch (the first batch, three repetitions, four submitted together); one worker; one batch size",
+        "peakMemoryMethod": "server peak RSS from /proc VmHWM (1,205,836 kB), equal to the service’s own figure (server-process-status.txt, health-after.json); the token’s memory is not observable over KMIP (export.json)"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "summary.md",
+          "sha256": "18c956b80b0f90b9116cef5acc7fa12f7c442bb21177104172e0b7a95f0dc90d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/summary.md"
+        },
+        {
+          "name": "accuracy-verdict.txt",
+          "sha256": "57e9deedcdc8c824ff190b5ef0f671d82e4ad276d435146253504108726a2192",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/accuracy-verdict.txt"
+        },
+        {
+          "name": "bench.json",
+          "sha256": "3d8d000e6f5beb8b1db90bbdfa43084548b72f9300447ed724451e00af077e9f",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/bench.json"
+        },
+        {
+          "name": "check.json",
+          "sha256": "338be846ff3e7f58a623bea7ecb6be1566dba9df920ea6beae3b47e5de9ba44b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/check.json"
+        },
+        {
+          "name": "export.json",
+          "sha256": "c6c8e78f493615d12a9137e851cc6ab3d4a1e32d2f33e3f7cfd305073f949d90",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/export.json"
+        },
+        {
+          "name": "health-after.json",
+          "sha256": "098dd2f8fa828e1f2ede0e545bb6263d96eb7038bb355a51f886f907eeae4c71",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/health-after.json"
+        },
+        {
+          "name": "health-before.json",
+          "sha256": "d8fca0f128f97e2bd0680351b9cdd767760e7722985f7c2532b10b4a2cda407b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/health-before.json"
+        },
+        {
+          "name": "manifest.txt",
+          "sha256": "14b972168daed79aa45583f7caa3c85a5522aef6898df5f51383e3c862dec44b",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/manifest.txt"
+        },
+        {
+          "name": "models.json",
+          "sha256": "e201f38bb679c4ea0f36fed0e2e24c773c34fe559cf26c447ba8218c9f5a138d",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/models.json"
+        },
+        {
+          "name": "provenance.txt",
+          "sha256": "532b26b70b58bef26f36085ec58e01fecef8e53201819b410bb74b071c32cbf1",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/provenance.txt"
+        },
+        {
+          "name": "receive.json",
+          "sha256": "972d4ae833c9f1b31cbd49eb74d9bd75ad3f384946b172e215ca495e7cb2477e",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/receive.json"
+        },
+        {
+          "name": "run.log.txt",
+          "sha256": "f578745f3189d2d1e4e034e1bb035c0573b18d94f56801663828029439555fb4",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/run.log.txt"
+        },
+        {
+          "name": "server-process-status.txt",
+          "sha256": "5a1170edb4c82ed27a9387bbf7695079cd05efeb128473e913072356a022cda3",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/server-process-status.txt"
+        },
+        {
+          "name": "server-start.log.txt",
+          "sha256": "2ffd731c6e46a59e75aa5ca76c60539a4a6cc5414eba9a63f24e63eb8b37c572",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/server-start.log.txt"
+        },
+        {
+          "name": "server.log.txt",
+          "sha256": "b532a7d2f267472b4c4060802773a2fbe35f9f25669c841f6794becfc26fa867",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/server.log.txt"
+        },
+        {
+          "name": "summary.json",
+          "sha256": "9c7ee3cc733315c0173707c8deeed459a8dd2d42e62bd6cc0091847285a4911a",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/summary.json"
+        },
+        {
+          "name": "timing.json",
+          "sha256": "15136a52622cbc3678430eeca0ed6e0c7da0ad4ef8bf8d4753db7ff939ba95da",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/timing.json"
+        },
+        {
+          "name": "token-decrypt.txt",
+          "sha256": "c42def24b805d6b04a6be9fca01ce6d2731656e3e1a4f1c592756b90c32a77a9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/token-decrypt.txt"
+        },
+        {
+          "name": "token-init.txt",
+          "sha256": "78973f7d8ab767a5062ba71e17160f174869d1803fd6f87ff7cc85ffac1ba400",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/token-init.txt"
+        },
+        {
+          "name": "upload-key.json",
+          "sha256": "679221afc4f1fa98ffea722b11c08ff6eb206727f3d77f1684f2281caea685a7",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/upload-key.json"
+        }
+      ],
+      "measuredAt": "2026-10-16T05:25:05Z",
+      "summary": {
+        "headline": "With the token on the MX95 Pro reached over KMIP, the scoring service on an x86-64 virtual machine scored 32,768 customers in 302 ms per batch, and the scores were identical to the Mac’s: 21.00 bits against the plaintext cubic, AUC 0.717298.",
+        "keyNumbers": [
+          {
+            "label": "Server time per batch, median of 3 repetitions",
+            "value": "302",
+            "unit": "ms"
+          },
+          {
+            "label": "Server time over all 8 jobs, min / median / max",
+            "value": "280 / 301 / 325",
+            "unit": "ms"
+          },
+          {
+            "label": "Server peak memory (VmHWM)",
+            "value": "1,178",
+            "unit": "MiB"
+          },
+          {
+            "label": "Key admission, verify / assemble",
+            "value": "40 / 99",
+            "unit": "ms"
+          },
+          {
+            "label": "Token over KMIP: key set 4.41 GB exported in",
+            "value": "197 s, 22.4 MB/s, 1,201 bounded calls"
+          },
+          {
+            "label": "Score released over KMIP",
+            "value": "0.176 s (0.231 s wall)"
+          },
+          {
+            "label": "Requests per hour, one at a time / by server time alone",
+            "value": "1,799 / 11,777"
+          },
+          {
+            "label": "Whole run",
+            "value": "240",
+            "unit": "s"
+          },
+          {
+            "label": "Score against the plaintext cubic, all 32,768 slots",
+            "value": "21.00",
+            "unit": "bits"
+          },
+          {
+            "label": "Decisions agreeing at 0.5 and at 0.25",
+            "value": "100.000 % and 100.000 %"
+          },
+          {
+            "label": "AUC, encrypted / plaintext cubic",
+            "value": "0.717298 / 0.717299"
+          },
+          {
+            "label": "Manifest mismatches, host / token-signed",
+            "value": "0 / 0"
+          }
+        ]
+      },
+      "parameterHash": "77186f261ae1682b864790b1362f1c0dc9067d63136c10d0209846ccdaa4bbd9"
+    },
+    {
+      "id": "tfhe-loan-prequal-x86-vm-mx95pro-kmip-354533b",
+      "scenarioId": "tfhe-single-hsm",
+      "stepIds": [
+        "generate-client-key",
+        "generate-server-key",
+        "export-server-key",
+        "publish-compact-public-key",
+        "owner-encrypts-locally",
+        "upload-ciphertexts",
+        "compute-with-pbs",
+        "return-encrypted-result",
+        "owner-requests-decrypt",
+        "decrypt-under-policy",
+        "release-result"
+      ],
+      "level": "reference",
+      "producer": "pqctoday-fhe",
+      "claimScope": "reference-library",
+      "platformLabel": "x86-64 VM (server), MX95 Pro over KMIP (token), Mac (data owner)",
+      "claimLabel": "reference only: TFHE loan pre-qualification on an x86-64 virtual machine, with the token reached over KMIP on the MX95 Pro: 1,016 applicants, every output decrypted over KMIP",
+      "notes": "PQCTODAY EDUCATIONAL TEST ONLY. No step badge: a reference measurement of an encrypted loan pre-qualification with TFHE (tfhe-loan-prequal), not a validation of a step and not a security claim; the rules are illustrative, not any lender’s credit policy. Roles: the untrusted compute service (kv260-fhe-server, built offline on the VM in a rust:1.95-bookworm container) on an x86-64 virtual machine (12 vCPUs of an AMD Ryzen AI 9 HX 370, Linux 6.12.111, server-host.txt); the key custodian on the MX95 Pro board, reached over KMIP (interface PQCTODAY_FHE_1_0, vendor-defined PKCS#11 calls carried by the KMIP PKCS_11 operation, mutual TLS); the data owner (the bank) on the Mac. It is a reference record because no evidence device covers an x86-64 VM, and a reference record has no device parts, so the MX95 Pro’s part as the custodian is stated here and not as a part. The token generated the seed and exported the compressed server key (30,147,061 B in 4.50 s), the compact public key (33,034 B) and its token-signed manifest (14,742 B) over KMIP (token-export.json). The owner checked the token-signed manifest (chain to the provisioned root, CRLs, signature, file hashes) before anything was sent; the runner stops if that check fails, and the check’s own output is not among the published files. Applicants: 1,000 sampled from the public HMDA 2023 loan register (Delaware, home purchase; 14,877 usable of 15,775 rows) plus 16 hand-made edge cases, 1,016 in all; credit score and recent delinquencies are synthetic (prepare.json). Every decrypted output was compared with the plaintext engine: 0 mismatches, 243 approved. Server compute per applicant: median 0.905 s (0.835 to 1.088 s); client wall time per applicant: median 1.112 s (1.051 to 2.448 s), 3,237 applicants an hour by wall time; service cgroup peak 910,454,784 B (868 MiB, server-memory.txt). All 6,096 outputs were decrypted over KMIP, each as one PKCS#11 single-part decryption (C_DecryptInit, a size query, C_Decrypt): 6,096 released, 0 refused, 0 errors, wall time per output median 24.8 ms, p95 42.8 ms (17.3 ms to 1,395.7 ms), 175.6 s in all (decrypt-timings.jsonl, its last line the summary). This is the first published run under the corrected HSM engine (pqctoday-hsm b3074c8ddf6af5d136e031fd7464e64779dbf602), which reports the TFHE parameter fingerprint e3219e9ea3f300d736e14e9cedc6dc7bc759ec9b8caac9a247b54b7367e59c5fb1cbf4bcb1b98bbb36bac9ca9bb677a4 (token-export.json param_hash). TFHE-rs is used here for non-commercial purposes only: the code is BSD-3-Clause-Clear, the licence grants no patent rights, and Zama states that commercial use requires its patent licence. Limits: a throw-away test PKI; a single tenant; one run; one program; the service listens on loopback and is reached through an ssh tunnel; the VM’s cores are not pinned and a virtual machine is not a dedicated host; the token’s memory is not observable over KMIP. Run files: reference-runs/tfhe-loan-prequal/results of pqctoday-fhe #38 (merge commit 354533be3fc88003a705cb667d84812568caebcc), all six copied byte for byte; nothing needed redacting, and no file holds personal data or a private key. Applicant-level files are not published.",
+      "library": {
+        "name": "TFHE-rs",
+        "version": "1.8.1",
+        "commit": "187fc0b95ab35352422deec6c027d0bd8743b6db"
+      },
+      "engine": {
+        "repo": "pqctoday-org/pqctoday-fhe",
+        "commit": "354533be3fc88003a705cb667d84812568caebcc"
+      },
+      "parameters": "V1_8_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128",
+      "config": "default, use_dedicated_oprf_key(false); loan pre-qualification program of 12 steps (four rules, the decision and the approved amount, 6 encrypted outputs), one job per applicant; REST over mutual TLS 1.3 (throw-away test PKI) inside an ssh loopback tunnel; token: the MX95 Pro board’s KMIP service (interface PQCTODAY_FHE_1_0), TFHE parameter fingerprint e3219e9e…77a4, server key admitted under the token’s device id",
+      "environment": {
+        "hardware": "Server: x86-64 virtual machine (12 vCPUs, AMD Ryzen AI 9 HX 370); token: the MX95 Pro board’s KMIP service; data owner: a Mac",
+        "os": "Linux 6.12.111 x86_64 (server VM)",
+        "toolchain": "kv260-fhe-server built offline on the VM (rust:1.95-bookworm, vendored crates, TFHE-rs 1.8.1); HSM engine pqctoday-hsm b3074c8d with educational-fhe",
+        "features": "service under a systemd unit (MemoryMax 8G), server key admitted under the token’s device id"
+      },
+      "method": {
+        "warmup": 0,
+        "samples": 1016,
+        "distribution": "one run: one job per applicant (1,016), each of the 6,096 decryptions timed (init, size query, decrypt)",
+        "peakMemoryMethod": "service: systemd cgroup MemoryPeak 910,454,784 B (server-memory.txt); the token’s memory is not observable over KMIP"
+      },
+      "result": "pass",
+      "status": "measured",
+      "badge": false,
+      "artifacts": [
+        {
+          "name": "summary.json",
+          "sha256": "0e7f9d96627bd0e0dbf50a7291d782e3ff206ce55a98263ff76914e3a9b5bd44",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/summary.json"
+        },
+        {
+          "name": "decrypt-timings.jsonl",
+          "sha256": "deba7e9ec3752318b69410c10dc7e640c62f697e64eee205b21e4a807db532cf",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/decrypt-timings.jsonl"
+        },
+        {
+          "name": "prepare.json",
+          "sha256": "3cbe3336e9c4925decbb1637e9c8bc4bab73d48b04e8b0fc1dd96eb3263b5b77",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/prepare.json"
+        },
+        {
+          "name": "server-host.txt",
+          "sha256": "3b966e542e0b0cf4ce419ab27e4758f968eba6b2f6ea84edec445703401fbc57",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/server-host.txt"
+        },
+        {
+          "name": "server-memory.txt",
+          "sha256": "512c4afd5a2c54c0e8787bc48ea09e5f7acbaa30f86543d2432a5f544d8bd7cb",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/server-memory.txt"
+        },
+        {
+          "name": "token-export.json",
+          "sha256": "47490be8608659dc2d02b8528ca314c924e4d14ff5529ec9e7f160def9ff95a9",
+          "url": "https://www.pqctoday.com/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b/token-export.json"
+        }
+      ],
+      "measuredAt": "2026-10-16",
+      "summary": {
+        "headline": "TFHE loan pre-qualification with the token on the MX95 Pro over KMIP: 1,016 applicants, 0 mismatches against the plaintext engine, median 0.905 s of server compute per applicant, and all 6,096 outputs decrypted over KMIP at a median of 24.8 ms.",
+        "keyNumbers": [
+          {
+            "label": "Applicants (16 edge cases)",
+            "value": "1,016"
+          },
+          {
+            "label": "Mismatches against the plaintext engine",
+            "value": "0"
+          },
+          {
+            "label": "Approved",
+            "value": "243"
+          },
+          {
+            "label": "Server compute per applicant, median (min–max)",
+            "value": "0.905 (0.835–1.088)",
+            "unit": "s"
+          },
+          {
+            "label": "Client wall time per applicant, median",
+            "value": "1.112",
+            "unit": "s"
+          },
+          {
+            "label": "Applicants per hour by wall time",
+            "value": "3,237"
+          },
+          {
+            "label": "Outputs decrypted over KMIP",
+            "value": "6,096 of 6,096, 0 refused, 0 errors"
+          },
+          {
+            "label": "Decryption over KMIP per output, median / p95",
+            "value": "24.8 / 42.8",
+            "unit": "ms"
+          },
+          {
+            "label": "Compressed server key exported over KMIP",
+            "value": "30.1 MB in 4.50 s"
+          },
+          {
+            "label": "Service memory peak (cgroup)",
+            "value": "868",
+            "unit": "MiB"
+          }
+        ]
+      },
+      "parameterHash": "145cfab1d3a4e9f921df075bc073aed2b8a8a8b38f7c7921f7324e3893bc1678"
     }
   ]
 }
