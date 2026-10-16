@@ -44,6 +44,10 @@ const USE_CASES = [
 ]
 
 const STATUS_LABEL: Record<string, { label: string; tone: string }> = {
+  withdrawn: {
+    label: 'Withdrawn',
+    tone: 'bg-muted text-muted-foreground border-border',
+  },
   stable: {
     label: 'Stable',
     tone: 'bg-status-success/15 text-status-success border-status-success/40',

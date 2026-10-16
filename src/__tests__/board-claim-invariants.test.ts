@@ -161,6 +161,19 @@ describe('board-facing claim invariants', () => {
     ).toEqual([])
   })
 
+  it('does not put a 2027 standardisation year on the signature on-ramp', () => {
+    // NIST expects Round 3 (from 14 May 2026) to last about two years and names no
+    // standardisation year; HAWK was withdrawn on 29 July 2026 (NIST Round 3 page).
+    expect(
+      offenders(
+        (s) =>
+          /\b2027\b/.test(s) &&
+          /(on-ramp|\bHAWK\b|SQIsign|winners?|draft FIPS)/i.test(s) &&
+          !/conference/i.test(s)
+      )
+    ).toEqual([])
+  })
+
   it('does not state unsourced cyber-insurance premium figures', () => {
     expect(offenders((s) => /insur/i.test(s) && /\d+\s*[-–]\s*\d+% premium/i.test(s))).toEqual([])
   })
