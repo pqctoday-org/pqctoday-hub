@@ -53,6 +53,8 @@ import {
   SANDBOX_ACCESS_URL,
   type FeatureAccent,
 } from './cryptoLabMeta'
+import { playgroundToolsForRole } from '@/data/roleTools'
+import type { PersonaId } from '@/data/personaIds'
 import {
   runFor,
   isEnvironmentTool,
@@ -92,6 +94,22 @@ const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 // Tools that actually appear in the grid (environments are surfaced as their own
 // marquee cards, never as single-concept tools).
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
+
+/**
+ * One line explaining the three numbers a role sees on the overview: every
+ * tool in the grid, the ready in-browser tools whose registry tags name the
+ * role (the same count the role's Home board shows), and the picks to start
+ * with. Exported for tests.
+ */
+export function playgroundCountsLine(
+  total: number,
+  tagged: number,
+  role: PersonaId,
+  toStart: number
+): string {
+  // eslint-disable-next-line security/detect-object-injection -- role is the typed PersonaId union
+  return `${total} tools · ${tagged} tagged for ${PERSONA_CHIP_LABEL[role]} · ${toStart} to start`
+}
 
 const ALL_PLAYGROUND_ROUTES = Array.from(
   new Map(
@@ -1541,7 +1559,12 @@ export const PlaygroundWorkshop = () => {
           </p>
           <p className="text-[11.5px] text-muted-foreground">
             {role
-              ? `${recommendedPool.length} tools matched to your role`
+              ? playgroundCountsLine(
+                  GRID_TOOL_COUNT,
+                  playgroundToolsForRole(role).length,
+                  role,
+                  recommendedPool.length
+                )
               : 'Set your role for tailored picks'}
           </p>
         </div>

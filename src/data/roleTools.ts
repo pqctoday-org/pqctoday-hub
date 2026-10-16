@@ -23,7 +23,14 @@ import type { PersonaId } from '@/data/personaIds'
 
 export interface RoleTools {
   playground: WorkshopTool[]
+  /** The role's suggested sequence first, then every tool whose audience is the role's. */
   business: BusinessTool[]
+  /**
+   * The subset of `business` whose audience genuinely names this role. A role
+   * with no audience of its own (researcher, ops, cert-engineer, curious) has
+   * none: its sequence tools are suggestions, not tools written for it.
+   */
+  businessNamingRole: BusinessTool[]
 }
 
 const AUDIENCE_FOR_ROLE: Record<PersonaId, BusinessToolAudience | null> = {
@@ -37,13 +44,22 @@ const AUDIENCE_FOR_ROLE: Record<PersonaId, BusinessToolAudience | null> = {
   curious: null,
 }
 
-export function toolsForRole(persona: PersonaId): RoleTools {
+/**
+ * The ready (not sandbox, not work-in-progress) Playground tools whose
+ * `recommendedPersonas` name the role, Start-here picks first. The Home
+ * board's tool row and the Playground overview's count line both read this.
+ */
+export function playgroundToolsForRole(persona: PersonaId): WorkshopTool[] {
   const live = WORKSHOP_TOOLS.filter((t) => !t.sandbox && !t.wip)
   const mine = live.filter((t) => t.recommendedPersonas.includes(persona))
-  const playground = [
+  return [
     ...mine.filter((t) => t.startHere?.includes(persona)),
     ...mine.filter((t) => !t.startHere?.includes(persona)),
   ]
+}
+
+export function toolsForRole(persona: PersonaId): RoleTools {
+  const playground = playgroundToolsForRole(persona)
   const seq = getBusinessRoleSequence(persona)
     .steps.map((s) => BUSINESS_TOOLS.find((t) => t.id === s.id))
     .filter((t): t is BusinessTool => Boolean(t))
@@ -56,5 +72,8 @@ export function toolsForRole(persona: PersonaId): RoleTools {
   const business = [...seq, ...byAudience].filter((t) =>
     seen.has(t.id) ? false : (seen.add(t.id), true)
   )
-  return { playground, business }
+  const businessNamingRole = audience
+    ? business.filter((t) => (t.audience ?? 'business') === audience)
+    : []
+  return { playground, business, businessNamingRole }
 }

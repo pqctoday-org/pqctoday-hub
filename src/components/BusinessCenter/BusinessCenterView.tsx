@@ -26,6 +26,8 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
+import { LIBRARY_RECENT_CHANGES_ROUTE } from '@/data/nextSteps'
+import type { PersonaId } from '@/data/personaIds'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import {
   CSWP39_ZONE_ORDER,
@@ -123,16 +125,91 @@ const ENGINEERING_QUESTIONS: WelcomeQuestion[] = [
   },
 ]
 
+// The Researcher / Academic equivalent: the four questions a researcher
+// checks first, each mapped to the existing page or tool that answers it. A
+// researcher is not running a program, so neither the board questions nor
+// the executive overview apply.
+const RESEARCHER_QUESTIONS: WelcomeQuestion[] = [
+  {
+    q: 'What changed in the standards?',
+    desc: 'New and revised documents in the Library, newest first, each with its source and date.',
+    to: LIBRARY_RECENT_CHANGES_ROUTE,
+    cta: 'Recent standards changes',
+  },
+  {
+    q: 'Can I reproduce it?',
+    desc: 'Run the SP 800-90A HMAC_DRBG yourself and check it against pinned NIST ACVP vectors.',
+    to: '/playground/drbg-demo',
+    cta: 'SP 800-90A DRBG',
+  },
+  {
+    q: 'How sure is the threat timeline?',
+    desc: 'Quantum threats by industry, with the cryptography at risk and the migration window behind the dates.',
+    to: '/threats',
+    cta: 'Threats',
+  },
+  {
+    q: 'Who holds the patents?',
+    desc: 'Patent filings on post-quantum schemes: who filed, where, and on which algorithms.',
+    to: '/patents',
+    cta: 'Patents',
+  },
+]
+
+interface WelcomeCopy {
+  questions: WelcomeQuestion[]
+  intro: string
+  /** Show the executive guided-overview simulation link. */
+  showOverview: boolean
+  /** How many of the role's sequence to foreground. */
+  topToolCount: number
+  learnCta: { label: string; to: string }
+}
+
+function welcomeCopyFor(persona: PersonaId | null): WelcomeCopy {
+  switch (persona) {
+    case 'developer':
+      return {
+        questions: ENGINEERING_QUESTIONS,
+        intro:
+          'Changing the cryptography in a codebase comes down to four engineering questions. Start with whichever you need first.',
+        showOverview: false,
+        topToolCount: 4,
+        learnCta: { label: 'Learn the crypto APIs', to: '/learn/crypto-dev-apis' },
+      }
+    case 'researcher':
+      return {
+        questions: RESEARCHER_QUESTIONS,
+        intro:
+          'Checking a post-quantum claim comes down to four questions: what changed, whether it reproduces, how firm the threat estimate is, and who holds the patents. Start with whichever you need first.',
+        showOverview: false,
+        topToolCount: 2,
+        learnCta: { label: 'Read the revision log', to: '/revisions' },
+      }
+    default:
+      return {
+        questions: BOARD_QUESTIONS,
+        intro:
+          'A post-quantum migration is a program, and every program answers the same four board-level questions. Start with whichever you need first.',
+        showOverview: true,
+        topToolCount: 3,
+        learnCta:
+          persona === 'grc'
+            ? { label: 'Start GRC Learning', to: '/learn/pqc-grc' }
+            : { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' },
+      }
+  }
+}
+
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  // Top 3 of the persona's own recommended sequence — foregrounded so the
+  const copy = welcomeCopyFor(selectedPersona)
+  // Top N of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
-  const isDeveloper = selectedPersona === 'developer'
   const topToolIds = getBusinessRoleSequence(selectedPersona)
-    .steps.slice(0, isDeveloper ? 4 : 3)
+    .steps.slice(0, copy.topToolCount)
     .map((s) => s.id)
-  const questions = isDeveloper ? ENGINEERING_QUESTIONS : BOARD_QUESTIONS
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
     .filter((t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t))
@@ -144,12 +221,8 @@ function WelcomeState() {
         <h2 className="text-xl font-semibold text-foreground mb-2">
           Welcome to your PQC Command Center
         </h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-          {isDeveloper
-            ? 'Changing the cryptography in a codebase comes down to four engineering questions. Start with whichever you need first.'
-            : 'A post-quantum migration is a program, and every program answers the same four board-level questions. Start with whichever you need first.'}
-        </p>
-        {!isDeveloper && (
+        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{copy.intro}</p>
+        {copy.showOverview && (
           <div className="mb-6">
             <Link to="/simulation?run=exec">
               <Button variant="gradient" size="sm" className="gap-1.5">
@@ -160,7 +233,7 @@ function WelcomeState() {
           </div>
         )}
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
-          {questions.map((item) => (
+          {copy.questions.map((item) => (
             <Link
               key={item.q}
               to={item.to}
@@ -181,7 +254,12 @@ function WelcomeState() {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Start with these tools
           </p>
-          <div className={clsx('grid gap-3', isDeveloper ? 'sm:grid-cols-2' : 'sm:grid-cols-3')}>
+          <div
+            className={clsx(
+              'grid gap-3',
+              topTools.length % 2 === 0 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
+            )}
+          >
             {topTools.map((tool) => {
               const Icon = tool.icon
               return (
@@ -211,22 +289,10 @@ function WelcomeState() {
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
         </Button>
-        {selectedPersona === 'grc' ? (
-          <Button variant="outline" onClick={() => navigate('/learn/pqc-grc')}>
-            <BookOpen size={16} className="mr-2" />
-            Start GRC Learning
-          </Button>
-        ) : isDeveloper ? (
-          <Button variant="outline" onClick={() => navigate('/learn/crypto-dev-apis')}>
-            <BookOpen size={16} className="mr-2" />
-            Learn the crypto APIs
-          </Button>
-        ) : (
-          <Button variant="outline" onClick={() => navigate('/learn/exec-quantum-impact')}>
-            <BookOpen size={16} className="mr-2" />
-            Start Executive Learning
-          </Button>
-        )}
+        <Button variant="outline" onClick={() => navigate(copy.learnCta.to)}>
+          <BookOpen size={16} className="mr-2" />
+          {copy.learnCta.label}
+        </Button>
       </div>
     </div>
   )

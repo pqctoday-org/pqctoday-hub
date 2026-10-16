@@ -98,10 +98,28 @@ export const DEVELOPER_SEQUENCE: BusinessRoleSequence = {
   ],
 }
 
+/**
+ * Researcher / Academic: the researcher's questions are answered by the
+ * Library, the Playground, Threats and Patents rather than by Command Center
+ * deliverables, so the sequence holds only the two existing tools a
+ * researcher would open — the CRQC scenario model behind the threat timeline
+ * (also the researcher board's threat-model CTA) and the CVE digest. Without
+ * this researchers got GENERIC_SEQUENCE, which starts at the ROI calculator.
+ */
+export const RESEARCHER_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Test the threat model',
+  guidance: 'Two tools that let you vary the assumptions behind the dates.',
+  steps: [
+    { step: 1, label: 'CRQC scenarios', id: 'crqc-scenario' },
+    { step: 2, label: 'CVE watch', id: 'crypto-vulnerability-watch' },
+  ],
+}
+
 const BUSINESS_ROLE_SEQUENCES: Partial<Record<PersonaId, BusinessRoleSequence>> = {
   executive: EXECUTIVE_SEQUENCE,
   grc: GRC_SEQUENCE,
   developer: DEVELOPER_SEQUENCE,
+  researcher: RESEARCHER_SEQUENCE,
 }
 
 /** Resolve the recommended sequence for a persona, falling back to the
