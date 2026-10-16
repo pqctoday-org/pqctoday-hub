@@ -167,11 +167,11 @@ export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioI
   if (reach === 'unreachable') {
     const description = orchestratorConfigured
       ? 'The sandbox orchestrator did not respond. Check that pqctoday-orchestrator is running (npm run dev) and VITE_SANDBOX_ORCHESTRATOR_URL is correct.'
-      : 'Start the Docker stack: cd ~/antigravity/pqctoday-sandbox && docker compose up -d. Then reload this page.'
+      : 'The Docker sandbox is a separate product and is not connected to this site. The scenarios run there, not here.'
     return (
       <EmptyState
         icon={<ServerCrash className="w-6 h-6" />}
-        title="pqctoday-sandbox is not reachable"
+        title="The Docker sandbox is not connected"
         description={description}
       />
     )
