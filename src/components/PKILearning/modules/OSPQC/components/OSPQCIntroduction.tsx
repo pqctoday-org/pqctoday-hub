@@ -287,7 +287,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               <p className="text-xs text-muted-foreground">
                 Protects session encryption. OpenSSH 8.5+ supports{' '}
                 <code className="text-[10px] bg-muted px-1 rounded">sntrup761x25519-sha512</code>{' '}
-                hybrid KEX. OpenSSH 9.9+ experimental adds ML-KEM-768 hybrid KEX. Addresses HNDL for
+                hybrid KEX (the default from 9.0). OpenSSH 9.9 adds{' '}
+                <code className="text-[10px] bg-muted px-1 rounded">mlkem768x25519-sha256</code>,
+                enabled by default, and OpenSSH 10.0 makes it the default KEX. Addresses HNDL for
                 session contents.
               </p>
             </div>
