@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import type { KmipEngine, KmipObject } from '@/wasm/kmip/kmipEngine'
 import { BUILD_COMMIT } from '@/utils/sourceLink'
 import { useModuleStore } from '@/store/useModuleStore'
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 import { MIGRATION_POLICIES, type MigrationPolicyChip } from './migrationKeys'
 import {
   buildQuickRunSummary,
@@ -193,7 +194,8 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
   const onCopy = async () => {
     if (!summary) return
     try {
-      await navigator.clipboard.writeText(summary)
+      // The copied text leaves the site, so it carries the status notice.
+      await navigator.clipboard.writeText(withEducationNoticeMarkdown(summary))
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
