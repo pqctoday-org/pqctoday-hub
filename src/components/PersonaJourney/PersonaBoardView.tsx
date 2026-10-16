@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { ReactNode } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 import { useNavigate, Link } from 'react-router'
-import { Check, BookOpen, Briefcase, Wrench } from 'lucide-react'
+import { ArrowRight, Check, BookOpen, Briefcase, ChevronDown, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -17,6 +17,13 @@ import { boardRelatedLinks } from '@/data/boardRelatedLinks'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
+import { useExecDecisionMode } from '@/services/featureFlags'
+import {
+  executiveDecisionStep,
+  formatTrackMinutes,
+  fullPathModuleCount,
+  FULL_PATH_HREF,
+} from '@/data/executiveDecisionMode'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -143,6 +150,12 @@ export function PersonaBoardView({
   const board = active.board
   const relatedLinks = boardRelatedLinks(active)
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
+  // Executive decision mode (design note 16 Oct 2026): one next step, one
+  // "after that" link, the rest folded under "More for this question".
+  const decision = executiveDecisionStep(personaId, active.id, useExecDecisionMode())
+  const [moreOpen, setMoreOpen] = useState(false)
+  const nextHeadingId = useId()
+  const moreRegionId = useId()
 
   // Live region/industry badge (2026-09-03, home-scenarios remediation
   // WS7.2). `board.heroBadge.text` used to be static per-board copy —
@@ -159,12 +172,12 @@ export function PersonaBoardView({
   const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
   const liveBadgeText = [regionLabel, industryLabel].filter(Boolean).join(' · ')
 
-  return (
-    <div className="w-full">
+  const variantChips = (
+    <>
       {/* Board option switcher — the role's top three use cases in a PQC
-          migration. Rendered as a real radio group rather than styled buttons
-          so the relationship (one of three, one selected) is announced, not
-          just implied by colour. */}
+      migration. Rendered as a real radio group rather than styled buttons
+      so the relationship (one of three, one selected) is announced, not
+      just implied by colour. */}
       <div
         className="mb-6 flex flex-wrap gap-2"
         role="radiogroup"
@@ -199,132 +212,129 @@ export function PersonaBoardView({
           )
         })}
       </div>
+    </>
+  )
 
-      {/* Hero + side card row */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        {/* Hero */}
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-            {board.heroEyebrow}
-          </p>
+  const heroText = (
+    <>
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+        {board.heroEyebrow}
+      </p>
 
-          {liveBadgeText && (
-            <div className="mt-2">
-              <ProvenanceChip provenance="illustrative" label={liveBadgeText} />
-            </div>
+      {liveBadgeText && (
+        <div className="mt-2">
+          <ProvenanceChip provenance="illustrative" label={liveBadgeText} />
+        </div>
+      )}
+
+      <h1 className="text-gradient mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
+        {board.headline}
+      </h1>
+
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+        {board.sub}
+      </p>
+    </>
+  )
+
+  const ctaRow = (
+    <div className="mt-5 flex flex-wrap items-center gap-3">
+      <Button
+        variant="gradient"
+        onClick={() => {
+          logRoleBoardCtaClick(personaId, active.id, 'cta_primary_href', board.ctaPrimaryHref)
+          navigate(board.ctaPrimaryHref)
+        }}
+      >
+        {board.ctaPrimary}
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => {
+          logRoleBoardCtaClick(personaId, active.id, 'cta_secondary_href', board.ctaSecondaryHref)
+          navigate(board.ctaSecondaryHref)
+        }}
+      >
+        {board.ctaSecondary}
+      </Button>
+    </div>
+  )
+
+  const proofChips = (
+    <ul className="mt-5 flex flex-wrap gap-2" aria-label="Proof points">
+      {board.proofChips.map((chip, i) => (
+        <li
+          key={chip}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs',
+            i === 0
+              ? 'border-accent/30 bg-accent/10 text-accent-legible'
+              : 'border-border bg-muted/30 text-muted-foreground'
           )}
+        >
+          {i === 0 && <Check size={12} aria-hidden="true" />}
+          {chip}
+        </li>
+      ))}
+    </ul>
+  )
 
-          <h1 className="text-gradient mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
-            {board.headline}
-          </h1>
+  const sideCard = (
+    <div className="w-full shrink-0 lg:w-[340px]" data-testid="side-card">
+      {useCustomSideCard ? (
+        customSideCard
+      ) : (
+        <div
+          className={cn(
+            'glass-panel flex h-full flex-col gap-3 p-5',
+            TONE_BORDER_BG[board.sideCard.tone]
+          )}
+          data-testid="default-side-card"
+        >
+          <ProvenanceChip
+            provenance={board.sideCard.provenance}
+            label={PROVENANCE_LABEL[board.sideCard.provenance]}
+          />
 
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {board.sub}
-          </p>
+          <h2 className={cn('text-lg font-bold', TONE_TEXT[board.sideCard.tone])}>
+            {board.sideCard.title}
+          </h2>
 
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button
-              variant="gradient"
-              onClick={() => {
-                logRoleBoardCtaClick(personaId, active.id, 'cta_primary_href', board.ctaPrimaryHref)
-                navigate(board.ctaPrimaryHref)
-              }}
-            >
-              {board.ctaPrimary}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                logRoleBoardCtaClick(
-                  personaId,
-                  active.id,
-                  'cta_secondary_href',
-                  board.ctaSecondaryHref
-                )
-                navigate(board.ctaSecondaryHref)
-              }}
-            >
-              {board.ctaSecondary}
-            </Button>
-          </div>
-
-          <ul className="mt-5 flex flex-wrap gap-2" aria-label="Proof points">
-            {board.proofChips.map((chip, i) => (
-              <li
-                key={chip}
-                className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs',
-                  i === 0
-                    ? 'border-accent/30 bg-accent/10 text-accent-legible'
-                    : 'border-border bg-muted/30 text-muted-foreground'
-                )}
-              >
-                {i === 0 && <Check size={12} aria-hidden="true" />}
-                {chip}
-              </li>
+          <dl className="flex flex-col gap-2">
+            {board.sideCard.rows.map((row) => (
+              <div key={row.label} className="flex items-baseline justify-between gap-3 text-sm">
+                <dt className="text-muted-foreground">{row.label}</dt>
+                <dd className="text-right font-semibold text-foreground">
+                  {row.value}
+                  {row.source && (
+                    <Link
+                      to={row.source}
+                      aria-label={`Source for ${row.label}`}
+                      title="Open the source"
+                      className="ml-1.5 inline-flex align-middle text-primary hover:underline"
+                    >
+                      <BookOpen size={12} aria-hidden="true" />
+                    </Link>
+                  )}
+                </dd>
+              </div>
             ))}
-          </ul>
-        </div>
+          </dl>
 
-        {/* Side card — 340px-ish, tone-tinted */}
-        <div className="w-full shrink-0 lg:w-[340px]" data-testid="side-card">
-          {useCustomSideCard ? (
-            customSideCard
-          ) : (
-            <div
-              className={cn(
-                'glass-panel flex h-full flex-col gap-3 p-5',
-                TONE_BORDER_BG[board.sideCard.tone]
-              )}
-              data-testid="default-side-card"
-            >
-              <ProvenanceChip
-                provenance={board.sideCard.provenance}
-                label={PROVENANCE_LABEL[board.sideCard.provenance]}
-              />
+          <p className="mt-1 text-base font-bold text-foreground">{board.sideCard.punchline}</p>
 
-              <h2 className={cn('text-lg font-bold', TONE_TEXT[board.sideCard.tone])}>
-                {board.sideCard.title}
-              </h2>
-
-              <dl className="flex flex-col gap-2">
-                {board.sideCard.rows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex items-baseline justify-between gap-3 text-sm"
-                  >
-                    <dt className="text-muted-foreground">{row.label}</dt>
-                    <dd className="text-right font-semibold text-foreground">
-                      {row.value}
-                      {row.source && (
-                        <Link
-                          to={row.source}
-                          aria-label={`Source for ${row.label}`}
-                          title="Open the source"
-                          className="ml-1.5 inline-flex align-middle text-primary hover:underline"
-                        >
-                          <BookOpen size={12} aria-hidden="true" />
-                        </Link>
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              <p className="mt-1 text-base font-bold text-foreground">{board.sideCard.punchline}</p>
-
-              {board.sideCard.footnote && (
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {board.sideCard.footnote}
-                </p>
-              )}
-            </div>
+          {board.sideCard.footnote && (
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {board.sideCard.footnote}
+            </p>
           )}
         </div>
-      </div>
+      )}
+    </div>
+  )
 
-      <hr className="my-8 border-border" />
-
+  const gridAndRelated = (
+    <>
       {/* 3-card grid */}
       <div>
         <h2 className="text-lg font-bold text-foreground">{board.gridTitle}</h2>
@@ -376,9 +386,9 @@ export function PersonaBoardView({
       </div>
 
       {/* Related on this site — the variant's modules, workshops and Command
-          Center tools. Until round 9 (2026-09-19) only the workshops rendered;
-          the moduleIds and businessToolIds were validated metadata nobody could
-          reach from the board. See src/data/boardRelatedLinks.ts. */}
+        Center tools. Until round 9 (2026-09-19) only the workshops rendered;
+        the moduleIds and businessToolIds were validated metadata nobody could
+        reach from the board. See src/data/boardRelatedLinks.ts. */}
       {relatedLinks.length > 0 && (
         <div className="mt-6">
           <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -412,6 +422,163 @@ export function PersonaBoardView({
           </ul>
         </div>
       )}
+    </>
+  )
+
+  const toolsRow = (
+    <>
+      {/* Round 9, wave 1.3 (2026-09-19) — every tool the role can reach, so a
+        tool without a board card still has a board. See src/data/roleTools.ts. */}
+      <RoleToolsRow personaId={personaId} />
+    </>
+  )
+
+  if (decision) {
+    const fullPathCount = fullPathModuleCount(personaId)
+    // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
+    const persona = PERSONAS[personaId]
+    return (
+      <div className="w-full" data-testid="exec-decision-mode">
+        {variantChips}
+
+        <div className="min-w-0">{heroText}</div>
+
+        {/* Your next step — the one thing this board asks of a sponsor. */}
+        <section
+          className="glass-panel mt-6 flex flex-col gap-3 border-primary/40 bg-primary/5 p-5"
+          aria-labelledby={nextHeadingId}
+          data-testid="exec-next-step"
+        >
+          <h2
+            id={nextHeadingId}
+            className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary-legible"
+          >
+            Your next step
+          </h2>
+          <div>
+            <Button
+              variant="gradient"
+              size="lg"
+              data-testid="exec-next-step-link"
+              onClick={() => {
+                logRoleBoardCtaClick(personaId, active.id, 'decision_next_href', decision.nextHref)
+                navigate(decision.nextHref)
+              }}
+            >
+              {decision.nextLabel}
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            After that:{' '}
+            <Link
+              to={decision.afterHref}
+              data-testid="exec-after-that-link"
+              className="font-semibold text-primary-legible underline-offset-4 hover:underline"
+              onClick={() =>
+                logRoleBoardCtaClick(
+                  personaId,
+                  active.id,
+                  'decision_after_href',
+                  decision.afterHref
+                )
+              }
+            >
+              {decision.afterLabel}
+            </Link>
+          </p>
+        </section>
+
+        {/* Track strip — the essentials only; the full path is optional. */}
+        <div className="mt-8 border-t border-border pt-6" data-testid="exec-essentials-track">
+          <h2 className="text-base font-bold text-foreground">
+            Background, if you want it: {persona.essentials.length} essentials,{' '}
+            {formatTrackMinutes(persona.essentialsMinutes)}
+          </h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {essentialsTrackChips(personaId, board.trackChips).map((chip, i) => {
+              // eslint-disable-next-line security/detect-object-injection -- i is a small array index, not user input
+              const moduleId = persona.essentials[i]
+              return (
+                <li key={chip}>
+                  <Link
+                    to={`/learn/${moduleId}`}
+                    className="rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                  >
+                    {chip}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+          <Link
+            to={FULL_PATH_HREF}
+            data-testid="exec-full-path-link"
+            className="mt-3 inline-block text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Full path, optional — {fullPathCount} modules
+          </Link>
+        </div>
+
+        {/* Everything else on this board, folded — nothing removed. */}
+        <div className="mt-8 border-t border-border pt-4">
+          <Button
+            type="button"
+            variant="ghost"
+            aria-expanded={moreOpen}
+            aria-controls={moreRegionId}
+            data-testid="exec-more-toggle"
+            onClick={() => setMoreOpen((o) => !o)}
+            className="h-auto w-full justify-between px-0 py-2 text-sm font-semibold text-foreground hover:bg-transparent"
+          >
+            More for this question
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={cn('transition-transform', moreOpen && 'rotate-180')}
+            />
+          </Button>
+          <div id={moreRegionId} hidden={!moreOpen} data-testid="exec-more-region">
+            {moreOpen && (
+              <div className="mt-4">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+                  <div className="min-w-0 flex-1">
+                    {ctaRow}
+                    {proofChips}
+                  </div>
+                  {sideCard}
+                </div>
+                <hr className="my-8 border-border" />
+                {gridAndRelated}
+                {toolsRow}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full">
+      {variantChips}
+
+      {/* Hero + side card row */}
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        {/* Hero */}
+        <div className="min-w-0 flex-1">
+          {heroText}
+          {ctaRow}
+          {proofChips}
+        </div>
+
+        {/* Side card — 340px-ish, tone-tinted */}
+        {sideCard}
+      </div>
+
+      <hr className="my-8 border-border" />
+
+      {gridAndRelated}
 
       {/* Track strip */}
       <div className="mt-8 border-t border-border pt-6">
@@ -451,9 +618,7 @@ export function PersonaBoardView({
         </ul>
       </div>
 
-      {/* Round 9, wave 1.3 (2026-09-19) — every tool the role can reach, so a
-          tool without a board card still has a board. See src/data/roleTools.ts. */}
-      <RoleToolsRow personaId={personaId} />
+      {toolsRow}
     </div>
   )
 }

@@ -19,7 +19,7 @@ export type PagePersonaNotes = Record<PersonaId, string>
 export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/': {
     executive:
-      'Pick Executive and choose the question — mandate, risk, roadmap, deadlines, evidence or the whole programme — each board is three cards that answer it, with the proof behind each.',
+      'Pick Executive and choose the question — mandate, risk, roadmap, deadlines, evidence or the whole programme — each board leads with your next step, and the cards and proof behind it are one click away under "More for this question".',
     grc: 'Pick GRC and choose the question — what applies, what is already proven, the controls, the risk register, vendor assurance or what "done" means — before any tool asks you for an inventory.',
     developer:
       'Pick Developer and choose the question: the pilot board runs a real hybrid ML-KEM + X25519 key exchange in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
