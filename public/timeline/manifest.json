@@ -1,8 +1,8 @@
 {
-  "generated": "2026-09-27",
-  "generatedBy": "maintenance/lineage/rebuild_manifest.py",
+  "generated": "2026-10-16",
+  "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_10112026.csv",
+  "csv": "timeline_10162026_r4.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3391,7 +3391,7 @@
     },
     {
       "refId": "united-states-nist-piv-standards-pqc-working-drafts-released",
-      "label": "PIV-Standards-PQC-Working-Drafts-Released",
+      "label": "PIV Standards PQC Working Drafts Released",
       "url": "https://www.nist.gov/news-events/news/2026/06/working-drafts-post-quantum-cryptography-updates-piv-standards",
       "status": "downloaded",
       "file": "timeline/PIV-Standards-PQC-Working-Drafts-Released.html",
@@ -3402,12 +3402,13 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-02T03:22:46.754887+00:00",
-      "admittedBy": "admit.py",
-      "superseded_file": "_superseded-10012026/timeline/PIV-Standards-PQC-Working-Drafts-Released.html"
+      "admittedBy": "evidence admission",
+      "filename": "PIV-Standards-PQC-Working-Drafts-Released.html",
+      "verifiedAt": "2026-10-16"
     },
     {
       "refId": "singapore-mas-quantum-resilience-supervisory-expectations-an",
-      "label": "Quantum-Resilience-Supervisory-Expectations-Announced",
+      "label": "Quantum-Resilience Supervisory Expectations Announced",
       "url": "https://www.mas.gov.sg/news/speeches/2026/md-remarks-for-mas-ar-2025-2026",
       "status": "downloaded",
       "file": "timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html",
@@ -3418,12 +3419,13 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-02T03:22:56.080370+00:00",
-      "admittedBy": "admit.py",
-      "superseded_file": "_superseded-10012026/timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html"
+      "admittedBy": "evidence admission",
+      "filename": "Quantum-Resilience-Supervisory-Expectations-Announced.html",
+      "verifiedAt": "2026-10-16"
     },
     {
       "refId": "united-states-nist-fips-140-2-certificates-move-to-the-histo",
-      "label": "FIPS-140-2-certificates-move-to-the-Historical-List",
+      "label": "FIPS 140-2 certificates move to the Historical List",
       "url": "https://csrc.nist.gov/Projects/FIPS-140-3-Transition-Effort",
       "status": "downloaded",
       "file": "timeline/FIPS-140-2-certificates-move-to-the-Historical-List.html",
@@ -3434,10 +3436,12 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-10T15:59:08.842427+00:00",
+      "filename": "FIPS-140-2-certificates-move-to-the-Historical-List.html",
+      "verifiedAt": "2026-10-16",
       "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-09-27T23:44:23.497514+00:00"
+  "rebuiltAt": "2026-10-16T12:44:28.577351+00:00"
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r18.csv
+ * Source: src/data/role_board_content_10162026_r21.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3196,14 +3196,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
           'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3266,14 +3259,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
         trackNote:
           'Worth saying plainly: at 205 minutes this is longer than the executive track (130 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3336,14 +3322,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
           'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3405,14 +3384,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3478,14 +3450,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3551,14 +3516,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'Quantum threats',
-          'TLS basics',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
