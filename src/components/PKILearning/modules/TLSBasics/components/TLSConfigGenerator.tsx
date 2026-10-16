@@ -297,7 +297,13 @@ backend app_servers
 }
 
 function generateCaddyConfig(mode: string): string {
-  const header = `# PQC TLS Configuration (${modeLabel(mode)})\n# Server: Caddy\n# Requires OpenSSL 3.5+ for PQC key exchange support\n`
+  // Caddy terminates TLS with Go's crypto/tls, not OpenSSL. Go 1.24 added the
+  // X25519MLKEM768 hybrid group and turned it on by default
+  // (https://go.dev/doc/go1.24); Caddy 2.10.0 is the
+  // first release built on it. Curve names are the ones the Caddyfile accepts
+  // (https://caddyserver.com/docs/caddyfile/directives/tls): x25519mlkem768,
+  // x25519, secp256r1, secp384r1, secp521r1 — there is no pure ML-KEM group.
+  const header = `# PQC TLS Configuration (${modeLabel(mode)})\n# Server: Caddy\n# Caddy uses Go's crypto/tls, not OpenSSL. Requires Caddy 2.10+ (built with Go 1.24+),\n# where the X25519MLKEM768 hybrid group is available and on by default.\n`
 
   if (mode === 'classical') {
     return (
@@ -308,8 +314,8 @@ example.com {
         # TLS 1.3 only
         protocols tls1.3
 
-        # Classical key exchange curves
-        curves x25519 p256
+        # Classical key exchange only (removes the default hybrid group)
+        curves x25519 secp256r1
     }
 
     reverse_proxy localhost:8080
@@ -327,9 +333,9 @@ example.com {
         protocols tls1.3
 
         # Hybrid PQC + classical key exchange
-        # x25519_mlkem768: ML-KEM-768 combined with X25519
-        # Falls back to x25519 and p256 for non-PQC clients
-        curves x25519_mlkem768 x25519 p256
+        # x25519mlkem768: ML-KEM-768 combined with X25519 (Caddy's default)
+        # Falls back to x25519 and secp256r1 for non-PQC clients
+        curves x25519mlkem768 x25519 secp256r1
     }
 
     reverse_proxy localhost:8080
@@ -337,20 +343,21 @@ example.com {
     )
   }
 
-  // pure-pqc
+  // pure-pqc: Caddy offers no ML-KEM-only group, so the closest it can do is
+  // the hybrid group alone, with no classical fallback.
   return (
     header +
     `
+# Note: Caddy has no ML-KEM-only key exchange group (no mlkem768 or
+# mlkem1024 setting). The strictest option is the hybrid group alone.
 example.com {
     tls {
         # TLS 1.3 only
         protocols tls1.3
 
-        # Pure PQC key exchange — no classical fallback
-        # mlkem768: FIPS 203 ML-KEM at security Category 3 (~192-bit)
-        # mlkem1024: FIPS 203 ML-KEM at security Category 5 (~256-bit)
-        # WARNING: clients without PQC support will fail to connect
-        curves mlkem768 mlkem1024
+        # Hybrid group only — no classical-only fallback
+        # WARNING: clients without X25519MLKEM768 support will fail to connect
+        curves x25519mlkem768
     }
 
     reverse_proxy localhost:8080
