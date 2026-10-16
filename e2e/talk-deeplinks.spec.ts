@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Deep links that must land on their target, not just on the right page:
 //   - /about#about-data-foundation scrolls to the Platform Data section;
-//   - /openssl?cmd=genpkey opens the Workbench with genpkey selected.
+//   - /openssl?cmd=genpkey opens the Workbench with genpkey selected;
+//   - /algorithms?tab=validation&section=kat lands on the KAT section header.
 // The app scrolls inside its own content container (the parent of
 // #main-content), not the window, so offsets are measured against that
 // container. Run against the production build:
@@ -79,6 +80,20 @@ for (const viewport of VIEWPORTS) {
         'false'
       )
       await expect(page.getByText(/openssl genpkey/).first()).toBeVisible()
+    })
+
+    test('/algorithms?tab=validation&section=kat lands on the KAT section header', async ({
+      page,
+    }) => {
+      await page.goto('/algorithms?tab=validation&section=kat')
+      await expect(page.getByRole('tab', { name: /validation/i }).first()).toHaveAttribute(
+        'aria-selected',
+        'true'
+      )
+      const offset = await settledOffset(page, '[data-deeplink-id="validation-kat"]')
+      test.info().annotations.push({ type: 'offset', description: String(offset) })
+      expect(offset).toBeGreaterThanOrEqual(0)
+      expect(offset).toBeLessThanOrEqual(300)
     })
   })
 }
