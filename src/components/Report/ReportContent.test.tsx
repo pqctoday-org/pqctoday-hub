@@ -339,6 +339,7 @@ describe('ReportContent', () => {
       renderReport()
       expect(screen.getByText('Print / Save as PDF')).toBeInTheDocument()
       expect(screen.getByText('Export CSV')).toBeInTheDocument()
+      expect(screen.queryByText('Engineering migration plan (ZIP)')).not.toBeInTheDocument()
       expect(screen.getByText('Edit Answers')).toBeInTheDocument()
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
@@ -353,6 +354,7 @@ describe('ReportContent', () => {
           expect(screen.getByText('Export CSV')).toBeInTheDocument()
           expect(screen.queryByText('Print Executive Brief')).not.toBeInTheDocument()
           expect(screen.queryByText(/Board Pack/)).not.toBeInTheDocument()
+          expect(screen.getByText('Engineering migration plan (ZIP)')).toBeInTheDocument()
         } finally {
           usePersonaStore.getState().setPersona(null)
         }
