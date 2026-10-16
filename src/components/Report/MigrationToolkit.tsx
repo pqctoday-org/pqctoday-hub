@@ -12,6 +12,7 @@ import { Button } from '../ui/button'
 import { SectionInfoTip } from './sections/reportContentShared'
 import clsx from 'clsx'
 import { migrateLayerHref } from '@/utils/migrateLinks'
+import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
 
 const priorityConfig = {
   Critical: { color: 'text-destructive', bg: 'bg-destructive/10' },
@@ -19,20 +20,6 @@ const priorityConfig = {
   Medium: { color: 'text-primary', bg: 'bg-primary/10' },
   Low: { color: 'text-success', bg: 'bg-success/10' },
 } as const
-
-const fipsConfig = {
-  validated: { label: 'FIPS', color: 'text-success', bg: 'bg-success/10' },
-  partial: { label: 'Partial', color: 'text-warning', bg: 'bg-warning/10' },
-  no: { label: 'No FIPS', color: 'text-muted-foreground', bg: 'bg-muted' },
-} as const
-
-function getFipsStatus(fips: string) {
-  const lower = fips.toLowerCase()
-  if (lower.startsWith('yes') && !lower.includes('mode')) return fipsConfig.validated
-  if (lower.includes('partial') || lower.includes('mode') || lower.includes('fips'))
-    return fipsConfig.partial
-  return fipsConfig.no
-}
 
 interface MigrationToolkitProps {
   /** Infrastructure layer IDs from the assessment (e.g. ['Hardware', 'Cloud']). */
@@ -277,7 +264,6 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                   </td>
                 </tr>
                 {items.slice(0, 5).map((item) => {
-                  const fips = getFipsStatus(item.fipsValidated)
                   const priority =
                     priorityConfig[item.pqcMigrationPriority as keyof typeof priorityConfig]
 
@@ -321,11 +307,11 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                         </span>
                       </td>
                       <td className="py-2 pr-3 hidden md:table-cell">
-                        <span
-                          className={clsx('text-xs px-1.5 py-0.5 rounded', fips.bg, fips.color)}
-                        >
-                          {fips.label}
-                        </span>
+                        <FipsStatusBadge
+                          fipsValidated={item.fipsValidated}
+                          productId={item.productId}
+                          softwareName={item.softwareName}
+                        />
                       </td>
                       <td className="py-2">
                         {priority ? (

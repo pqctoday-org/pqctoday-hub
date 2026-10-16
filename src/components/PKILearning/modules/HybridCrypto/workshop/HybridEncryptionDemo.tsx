@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useRef } from 'react'
+import { Link } from 'react-router'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -215,7 +216,7 @@ const STEPS: Step[] = [
         label: 'HKDF-Extract Salt',
         value: 'ML-KEM shared secret',
         description:
-          'KEM output used as salt — both secrets must be secret for the output to be secret',
+          'KEM output used as the HMAC key of HKDF-Extract. Under the standard assumption that HMAC is a dual PRF, the output stays secret if either input does',
       },
       {
         label: 'Info',
@@ -226,7 +227,8 @@ const STEPS: Step[] = [
       {
         label: 'Output',
         value: '32 bytes (256-bit hybrid session key)',
-        description: 'Quantum-safe if either X25519 ECDH or ML-KEM-768 remains secure',
+        description:
+          'Stays secret if either the X25519 or the ML-KEM-768 secret does (dual-PRF assumption on HMAC)',
       },
     ],
   },
@@ -648,6 +650,19 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
               secret.
             </li>
           </ul>
+          <p>
+            What this construction does not do: it mixes in only the two secrets and a fixed label,
+            not the exchanged key shares or public keys. Deployed combiners bind those too (X-Wing
+            hashes the X25519 key share and public key into its output; TLS 1.3 feeds the whole
+            handshake transcript into its key schedule), so treat this as the idea, not a design to
+            copy.
+          </p>
+          <p>
+            <Link to="/playground/tls-simulator" className="text-primary underline">
+              Then watch the same idea in a real TLS 1.3 handshake →
+            </Link>{' '}
+            The TLS simulator negotiates the X25519MLKEM768 group with real OpenSSL.
+          </p>
           <p className="text-xs text-muted-foreground mt-2">
             Note: softhsmv3 WASM uses X25519 (Montgomery) for the classical leg via{' '}
             <code>CKM_EC_MONTGOMERY_KEY_PAIR_GEN</code> + <code>CKM_ECDH1_DERIVE</code>. This demo

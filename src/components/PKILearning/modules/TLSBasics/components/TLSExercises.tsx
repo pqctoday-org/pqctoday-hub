@@ -149,7 +149,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-          groups: ['ML-KEM-1024'],
+          groups: ['MLKEM1024'],
           signatureAlgorithms: ['mldsa87'],
           certificates: {
             certPem: DEFAULT_MLDSA87_CLIENT_CERT,
@@ -159,7 +159,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
         })
         setServerConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-          groups: ['ML-KEM-1024'],
+          groups: ['MLKEM1024'],
           signatureAlgorithms: ['mldsa87'],
           certificates: {
             certPem: DEFAULT_MLDSA87_SERVER_CERT,
@@ -237,18 +237,18 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       },
     },
     {
-      id: 'hrr-classical',
-      title: '7. HelloRetryRequest — Classical Group Mismatch',
+      id: 'hrr-key-share',
+      title: '7. HelloRetryRequest — Missing Key Share',
       description:
-        'Trigger a HelloRetryRequest by giving the client only P-384 while the server only accepts X25519. The server will ask the client to retry with a compatible group, adding an extra round trip.',
+        'The client supports both X25519 and X25519MLKEM768 but lists X25519 first, so its ClientHello carries a key share only for X25519. The server supports only X25519MLKEM768. Because the client did list the hybrid group in supported_groups, the server replies with a HelloRetryRequest naming X25519MLKEM768, and the client resends its ClientHello with a hybrid key share.',
       badge: 'HRR',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Look for the "HRR" badge and the 2-RTT indicator in results. The extra round trip means a second ClientHello with a new key_share — check the "vs #1" column in the Comparison Table to see the exact byte overhead. Compare Wire Data sizes between this run and Scenario 1.',
+        'Look for the "HRR" badge and the 2-RTT indicator in results. The Protocol Log shows two ClientHellos: a small first one (X25519 key share, about 200 B) and a retry of about 1.4 KB carrying the ML-KEM-768 + X25519 key share. The negotiated group is X25519MLKEM768. Compare with Scenario 3 (same group, 1-RTT): listing X25519MLKEM768 first on the client removes the retry.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-          groups: ['P-384'],
+          groups: ['X25519', 'X25519MLKEM768'],
           signatureAlgorithms: ['rsa_pss_rsae_sha256', 'ecdsa_secp256r1_sha256'],
           certificates: {
             certPem: DEFAULT_CLIENT_CERT,
@@ -258,7 +258,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
         })
         setServerConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-          groups: ['X25519'],
+          groups: ['X25519MLKEM768'],
           signatureAlgorithms: ['rsa_pss_rsae_sha256', 'ecdsa_secp256r1_sha256'],
           certificates: {
             certPem: DEFAULT_SERVER_CERT,
@@ -270,18 +270,18 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       },
     },
     {
-      id: 'hrr-pqc',
-      title: '8. HelloRetryRequest — PQC Group Mismatch',
+      id: 'no-common-group',
+      title: '8. No Common Group — Handshake Failure',
       description:
-        'Simulate a PQC migration scenario: the client offers only ML-KEM-1024 but the server only supports X25519MLKEM768. The server sends a HelloRetryRequest, forcing the client to retry with the hybrid group.',
-      badge: 'HRR + PQC',
-      badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+        'The client offers only pure ML-KEM-1024; the server supports only the hybrid X25519MLKEM768. These are different group codepoints, so the two sides share no group at all. A HelloRetryRequest cannot fix this — the server can only ask for a group the client listed — so the server aborts with a handshake_failure alert.',
+      badge: 'Failure',
+      badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'This is a realistic PQC migration scenario. Compare the handshake bytes with Scenario 4 (Full PQC, 1-RTT) — the HRR adds a second ClientHello carrying a ~1.5 KB ML-KEM key_share. The Comparison Table shows the combined cost of PQC signatures + PQC key exchange + extra round trip. Hybrid groups (X25519MLKEM768) avoid this mismatch by supporting both classical and PQC peers.',
+        'The handshake fails with no HRR: the Protocol Log shows one ClientHello, then a fatal handshake_failure alert from the server ("no suitable key share"). A hybrid group does not match a pure ML-KEM or a pure X25519 offer. To fix it, add X25519MLKEM768 to the client groups: listed first it negotiates in 1-RTT; listed after ML-KEM-1024 it triggers an HRR, as in Scenario 7.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-          groups: ['ML-KEM-1024'],
+          groups: ['MLKEM1024'],
           signatureAlgorithms: ['mldsa87', 'rsa_pss_rsae_sha256'],
           certificates: {
             certPem: DEFAULT_MLDSA87_CLIENT_CERT,
