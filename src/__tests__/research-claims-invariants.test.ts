@@ -137,14 +137,7 @@ const RULES: Rule[] = [
  * corrected CSV ships an entry stops matching; the second test then fails until the
  * entry is deleted, so the list cannot rot.
  */
-const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
-  // Q&A research-quantum-impact-learn-003 (Ring-LWE)
-  { file: /module_qa_combined_\d+/, text: 'Module-LWE (MLWE) and Ring-LWE (RLWE)' },
-  // Q&A research-quantum-impact-learn-005 (Part 11 "15 years")
-  { file: /module_qa_combined_\d+/, text: 'Part 11 must be preserved for at least 15 years' },
-  // Q&A healthcare-pqc-learn-006 (HIPAA "7-year" PHI retention; owner chose 6 years)
-  { file: /module_qa_combined_\d+/, text: 'HIPAA mandates a minimum 7-year retention requirement' },
-]
+const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = []
 
 const isPending = (s: Sentence) =>
   PENDING_DATA_FIXES.some((p) => p.file.test(s.file) && s.text.includes(p.text))

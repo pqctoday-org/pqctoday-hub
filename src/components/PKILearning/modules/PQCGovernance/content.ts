@@ -42,7 +42,8 @@ export const content: ModuleContent = {
     getStandard('BSI TR-02102-1'), // m-pqc-governance: 1344
     getStandard('NIST IR 8545'), // bt-policy-generator: HQC-128; m-pqc-governance: HQC-128
     getStandard('FrodoKEM-key-encapsulation-from-learning-with-errors'), // bt-policy-generator: 1344
-    getStandard('Security-Requirements-for-Cryptographic-Modules'), // bt-kpi-dashboard: FIPS 140-2
+    // bt-kpi-dashboard: FIPS 140-2/3 is covered by FIPS-140-3-STANDARD above; FIPS 140-2
+    // is superseded and retired from the Library (2026-10-16).
   ],
 
   algorithms: [

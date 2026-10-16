@@ -3,7 +3,7 @@ import type { TLSConfig, TLSRunRecord } from '@/store/tls-learning.store'
 import { buildRunManifest, type RunManifest } from '@/services/runManifest'
 
 /** Must equal the tls-simulator entry's `version` in workshopRegistry (pinned by a test). */
-export const TLS_SIMULATOR_VERSION = '1.0.2'
+export const TLS_SIMULATOR_VERSION = '1.0.3'
 
 /** What a TLS simulator run does not show. Shown in the saved record verbatim. */
 export const TLS_RUN_LIMITATIONS = [
