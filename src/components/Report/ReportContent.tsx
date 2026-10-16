@@ -50,6 +50,7 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
+import { EngineeringPlanExport } from './EngineeringPlanExport'
 import {
   REPORT_SECTION_ORDER,
   REPORT_SECTION_LABELS,
@@ -901,6 +902,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             <BoardPackExport result={result} variant="outline" />
                           </>
                         )}
+                        {!showBoardExports && <EngineeringPlanExport result={result} />}
                         <Button
                           variant="ghost"
                           onClick={handleCSVExport}
