@@ -25,6 +25,7 @@ import {
 } from '../PKILearning/modules/TLSBasics/utils/defaultCertificates'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
+import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
 
 export const TLSSimulatorTab: React.FC = () => {
   const {
@@ -188,58 +189,78 @@ export const TLSSimulatorTab: React.FC = () => {
       {/* Citation chips + Learn cross-link */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex flex-wrap gap-1.5">
-          {[
-            { label: 'RFC 8446', href: 'https://www.rfc-editor.org/rfc/rfc8446', title: 'TLS 1.3' },
-            {
-              label: 'FIPS 203',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
-              title: 'ML-KEM',
-            },
-            {
-              label: 'FIPS 204',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
-              title: 'ML-DSA',
-            },
-            {
-              label: 'FIPS 205',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
-              title: 'SLH-DSA',
-            },
-            {
-              label: 'RFC 9954',
-              href: 'https://www.rfc-editor.org/info/rfc9954',
-              title: 'Hybrid key exchange in TLS 1.3 (design)',
-            },
-            {
-              label: 'RFC 10024',
-              href: 'https://www.rfc-editor.org/info/rfc10024',
-              title: 'X25519MLKEM768 and other PQ/T hybrid groups for TLS 1.3',
-            },
-            {
-              label: 'draft-ietf-tls-mlkem (RFC Editor queue)',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-              title: 'Pure ML-KEM key agreement for TLS 1.3 — approved, awaiting RFC number',
-            },
-            {
-              label: 'draft-ietf-tls-mldsa (RFC Editor queue)',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-              title: 'ML-DSA in TLS 1.3 — approved, awaiting RFC number',
-            },
-            {
-              label: 'BSI TR-02102-2',
-              href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html',
-              title: 'BSI TLS recommendations',
-            },
-          ].map((cite) => (
+          {(
+            [
+              {
+                label: 'RFC 9846',
+                href: 'https://www.rfc-editor.org/info/rfc9846',
+                title: 'TLS 1.3 (obsoletes RFC 8446)',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 203',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
+                title: 'ML-KEM',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 204',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
+                title: 'ML-DSA',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 205',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
+                title: 'SLH-DSA',
+                stage: 'Released',
+              },
+              {
+                label: 'RFC 9954',
+                href: 'https://www.rfc-editor.org/info/rfc9954',
+                title: 'Hybrid key exchange in TLS 1.3 (design)',
+                stage: 'Released',
+              },
+              {
+                label: 'RFC 10024',
+                href: 'https://www.rfc-editor.org/info/rfc10024',
+                title: 'X25519MLKEM768 and other PQ/T hybrid groups for TLS 1.3',
+                stage: 'Released',
+              },
+              {
+                label: 'draft-ietf-tls-mlkem',
+                href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
+                title:
+                  'Pure ML-KEM key agreement for TLS 1.3 — approved, in the RFC Editor queue, no RFC number yet',
+                stage: 'Draft',
+              },
+              {
+                label: 'draft-ietf-tls-mldsa',
+                href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
+                title: 'ML-DSA in TLS 1.3 — approved, in the RFC Editor queue, no RFC number yet',
+                stage: 'Draft',
+              },
+              {
+                label: 'BSI TR-02102-2',
+                href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html',
+                title: 'BSI TLS recommendations',
+                stage: 'Released',
+              },
+            ] satisfies { label: string; href: string; title: string; stage: LifecycleLabel }[]
+          ).map((cite) => (
             <a
               key={cite.label}
               href={cite.href}
               target="_blank"
               rel="noopener noreferrer"
-              title={cite.title}
+              title={`${cite.title} (${cite.stage})`}
               className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors flex items-center gap-1"
             >
               {cite.label}
+              {/* Same lifecycle label the Library shows, so a draft reads as a draft. */}
+              <span className={`px-1 rounded ${LIFECYCLE_STYLES[cite.stage].badge}`}>
+                {LIFECYCLE_STYLES[cite.stage].label}
+              </span>
               <ExternalLink size={9} className="opacity-50" />
             </a>
           ))}
