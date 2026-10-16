@@ -24166,6 +24166,25 @@
       "superseded_file": "_superseded-10162026/migrate-proofs/Isidore-Mini-Core-6b4bd0b3-2.html",
       "identity": "SKIPPED",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "QiSpace-SDK-Cryptographic-Module",
+      "refId": "QiSpace-SDK-Cryptographic-Module",
+      "file": "migrate-proofs/QiSpace-SDK-Cryptographic-Module-baa51742.pdf",
+      "filename": "QiSpace-SDK-Cryptographic-Module-baa51742.pdf",
+      "url": "https://www.quantropi.com/wp-content/uploads/2026/03/FINAL-SDK-V5-3.pdf",
+      "status": "downloaded",
+      "sizeBytes": 702590,
+      "contentType": "application/pdf",
+      "sha256": "068bc7f80767dacbd7e403d057b7b42cb263abf1fe25ea457b4aa8ce061caedd",
+      "addedAt": "2026-10-16T13:47:07.859526+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-10-16T13:47:08.845836+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-10-16T13:47:07.859526+00:00"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
