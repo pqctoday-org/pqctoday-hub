@@ -4,7 +4,6 @@ import {
   LIFECYCLE_FILTER_OPTIONS,
   LIFECYCLE_LABELS,
   LIFECYCLE_STYLES,
-  getGroupLifecycleLabel,
   lifecycleLabelFromStatusBucket,
   parseLifecycleLabel,
   parseLifecycleParam,
@@ -174,26 +173,6 @@ describe('parseLifecycleParam (the ?lifecycle= URL value)', () => {
     for (const raw of [null, undefined, '', 'Archived', 'Round 2']) {
       expect(parseLifecycleParam(raw), String(raw)).toBeNull()
     }
-  })
-})
-
-describe('getGroupLifecycleLabel', () => {
-  it('returns the furthest label across a document and its older revisions', () => {
-    expect(getGroupLifecycleLabel('Draft', ['Released'])).toBe('Released')
-    expect(getGroupLifecycleLabel('Released', ['Draft', 'Expired'])).toBe('Released')
-    expect(getGroupLifecycleLabel('Expired', ['Historical'])).toBe('Expired')
-    expect(getGroupLifecycleLabel('Draft', ['Draft'])).toBe('Draft')
-  })
-
-  it('returns the label itself when there are no older revisions', () => {
-    for (const label of LIFECYCLE_LABELS) expect(getGroupLifecycleLabel(label, [])).toBe(label)
-  })
-
-  it('never lets a lapsed or replaced revision outrank a Research Paper or Misc document', () => {
-    expect(getGroupLifecycleLabel('Research Paper', ['Expired', 'Historical'])).toBe(
-      'Research Paper'
-    )
-    expect(getGroupLifecycleLabel('Misc', ['Expired', 'Historical'])).toBe('Misc')
   })
 })
 

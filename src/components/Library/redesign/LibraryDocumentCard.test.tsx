@@ -82,16 +82,28 @@ describe('LibraryDocumentCard — source affordance', () => {
     }
   })
 
-  it("shows the furthest label of a revision group instead of the current row's own", () => {
+  it("shows the current row's own label, never an older revision's", () => {
     render(
       <LibraryDocumentCard
-        item={makeItem({ lifecycleLabel: 'Draft', groupLifecycleLabel: 'Released' })}
+        item={makeItem({
+          lifecycleLabel: 'Draft',
+          priorRevisions: [
+            {
+              referenceId: 'OLD',
+              documentTitle: 'Older edition',
+              documentStatus: 'Published',
+              lifecycleLabel: 'Released',
+              downloadUrl: '',
+              supersededBy: 'X',
+            },
+          ],
+        })}
         bookmarked={false}
         onToggleBookmark={noop}
         onOpen={noop}
       />
     )
-    expect(screen.getByText('Released')).toBeInTheDocument()
-    expect(screen.queryByText('Draft')).toBeNull()
+    expect(screen.getByText('Draft')).toBeInTheDocument()
+    expect(screen.queryByText('Released')).toBeNull()
   })
 })
