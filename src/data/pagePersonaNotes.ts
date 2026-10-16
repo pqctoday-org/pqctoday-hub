@@ -352,7 +352,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/library': {
     executive:
       'Pick the "Plan migration" door for guidance and report picks rather than raw specifications; sort by Urgency, and each document\'s panel shows a Migration urgency value and an "Open document" link to the original.',
-    grc: 'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Authoritative sources only" under Advanced drops the rest.',
+    grc: 'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Mapped to NIST CSWP 39" under Advanced keeps only documents tied to a CSWP 39 maturity requirement.',
     developer:
       'Search "ML-KEM", "FIPS 203" or "hybrid TLS", or open Advanced and filter by Algorithm family; the "Reference" door keeps standards, specs and policy, and "Builds on" in a document\'s panel lists what it depends on.',
     architect:

@@ -508,7 +508,7 @@ export function LibraryViewRedesign({
   if (cswp39Only)
     activeFilterChips.push({
       id: 'cswp39',
-      label: 'Authoritative sources',
+      label: 'Mapped to NIST CSWP 39',
       onClear: () => setParam('cswp39', null),
     })
   for (const code of geoFilter)
