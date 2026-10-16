@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ResearcherFieldWatchCard } from './ResearcherFieldWatchCard'
 import { useResearchFieldsStore } from '@/store/useResearchFieldsStore'
 import type { FieldWatchRow } from '@/data/researchFieldWatch'
+import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
 
 // The card reports against the CORPUS RELEASE window, not a per-visitor
 // timestamp, so the fixtures model a release and a row dated inside its window.
@@ -64,6 +65,7 @@ vi.mock('@/data/researchFieldWatch', async (importOriginal) => {
       rows: activeFixtureRows,
       releaseDateMs: RELEASE,
       windowStartMs: WINDOW_START,
+      otherShare: actual.computeOtherFieldShare(activeFixtureRows),
     }),
   }
 })
@@ -81,7 +83,8 @@ describe('ResearcherFieldWatchCard', () => {
   it('renders the illustrative provenance chip and the title', () => {
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByText(/illustrative/i)).toBeInTheDocument()
-    expect(screen.getByText('Changed in your fields')).toBeInTheDocument()
+    // The title is board copy (role_board_content CSV), not a literal here.
+    expect(screen.getByText(PERSONA_JOURNEY_BOARD.researcher.sideCard.title)).toBeInTheDocument()
   })
 
   it('empty state: no followed fields yet shows the picker prompt, no data rows', () => {
@@ -120,7 +123,27 @@ describe('ResearcherFieldWatchCard', () => {
 
     const row = screen.getByTestId('field-watch-row')
     expect(row).toHaveTextContent('Lattice-based')
-    expect(row).toHaveTextContent('1 updated')
+    // Says what is counted: documents whose own date falls in the window.
+    expect(row).toHaveTextContent('1 published or revised in window')
+    expect(row).not.toHaveTextContent(/\bupdated\b/)
+  })
+
+  it('states the Other / Uncategorized share computed from the corpus, not a fixed figure', () => {
+    activeFixtureRows = [
+      ...FIXTURE_ROWS,
+      {
+        referenceId: 'FIX-OTHER',
+        algorithmFamily: '',
+        lastUpdateDateMs: null,
+        isDeprecated: false,
+        deprecatedAtMs: null,
+      },
+    ]
+    render(<ResearcherFieldWatchCard />)
+    // 2 active rows (the deprecated one is excluded), 1 of them uncategorised.
+    expect(screen.getByTestId('field-watch-other-share')).toHaveTextContent(
+      /^50% of the 2 active documents \(1\) have no recognised algorithm family/
+    )
   })
 
   it('states the window it is reporting over, so the number is not a bare unexplained count', () => {

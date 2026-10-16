@@ -37,9 +37,10 @@ import type { AlgorithmFamily } from '@/components/common/AlgorithmFamilyFilter'
  *     returns `null` for blank/unrecognized tokens (by design, for a filter that
  *     should just exclude non-matches); a follow-list needs every row to land
  *     somewhere so the "since last visit" counts stay honest about how much of
- *     the corpus isn't cleanly classified. Measured against the real CSV:
- *     ~43% of rows (blank AlgorithmFamily + a handful of non-family free text
- *     like "Guidelines", "Various", "N/A") land here.
+ *     the corpus isn't cleanly classified (blank AlgorithmFamily + a handful of
+ *     non-family free text like "Guidelines", "Various", "N/A"). Its share moves
+ *     with every library release, so it is computed from the shipped CSV
+ *     (`computeOtherFieldShare` in researchFieldWatch.ts), never written here.
  *  2. Researcher-facing labels/descriptions for each bucket (the filter only
  *     needed a label for a dropdown option; a follow list benefits from one
  *     sentence of "what this covers").
@@ -126,7 +127,7 @@ export const RESEARCH_FIELD_BUCKETS: ResearchFieldBucket[] = [
     id: OTHER_FIELD_BUCKET_ID,
     label: 'Other / Uncategorized',
     description:
-      'Rows with a blank or unrecognized AlgorithmFamily value — not a designed topic, just the honest overflow bucket (~43% of the catalog today).',
+      'Rows with a blank or unrecognized AlgorithmFamily value — not a designed topic, just the honest overflow bucket.',
   },
 ]
 

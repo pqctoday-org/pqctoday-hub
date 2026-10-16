@@ -113,7 +113,7 @@ export function ResearcherFieldWatchCard() {
             >
               <dt className="text-muted-foreground">{field.label}</dt>
               <dd className="text-right font-semibold text-foreground">
-                {field.revisionCount} updated
+                {field.revisionCount} published or revised in window
               </dd>
             </div>
           ))}
@@ -169,6 +169,13 @@ export function ResearcherFieldWatchCard() {
 
       {showPicker && (
         <div className="border-t border-border pt-3">
+          {corpus.otherShare.total > 0 && (
+            <p className="mb-2 text-xs text-muted-foreground" data-testid="field-watch-other-share">
+              {corpus.otherShare.percent}% of the {corpus.otherShare.total.toLocaleString('en-US')}{' '}
+              active documents ({corpus.otherShare.other.toLocaleString('en-US')}) have no
+              recognised algorithm family and count under Other / Uncategorized.
+            </p>
+          )}
           <FilterDropdown
             items={FIELD_OPTIONS}
             selectedId=""
