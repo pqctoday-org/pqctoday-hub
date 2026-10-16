@@ -1,0 +1,31 @@
+{
+  "_comment": "Inputs for the npm part of the generated notices at /licenses/ (scripts/sbom/notices.ts). The package list itself is not typed here: it is every package whose modules the production build puts in its chunks, plus `servedCopies` (packages whose files the build copies into the site as they are). Each package's own licence files are copied from node_modules. `upstreamTexts` covers packages that ship no licence file but whose upstream project has one (files in ./texts/). `elections` records which licence PQC Today uses for a package offered under a choice. Anything else without a licence file gets the standard text of its declared licence with the author from its package.json.",
+  "servedCopies": {
+    "pyodide": "public/pyodide/ (Python runtime for the Developer tabs)",
+    "@oqs/liboqs-js": "public/dist/ (liboqs WebAssembly build)",
+    "monaco-editor": "public/monaco/editor.worker.js (editor worker)"
+  },
+  "upstreamTexts": {
+    "pyodide": {
+      "texts": ["pyodide-0.28.3-LICENSE.txt", "cpython-3.13.2-LICENSE.txt"],
+      "note": "Pyodide's files are under MPL-2.0, and stay under it; their source is https://github.com/pyodide/pyodide/tree/0.28.3. The runtime contains CPython 3.13.2 (PSF licence). Other libraries compiled into the Pyodide runtime are listed in Pyodide's own repository and are not reproduced here yet."
+    }
+  },
+  "elections": {
+    "jszip": {
+      "use": "MIT",
+      "offered": "MIT OR GPL-3.0-or-later"
+    },
+    "dompurify": {
+      "use": "Apache-2.0",
+      "offered": "MPL-2.0 OR Apache-2.0"
+    }
+  },
+  "otherServedFiles": [
+    {
+      "name": "coi-serviceworker v0.1.7 (public/coi-serviceworker.js)",
+      "license": "MIT",
+      "texts": ["coi-serviceworker-LICENSE.txt"]
+    }
+  ]
+}

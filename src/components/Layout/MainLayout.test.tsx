@@ -126,6 +126,15 @@ describe('MainLayout', () => {
       const year = new Date().getFullYear()
       expect(screen.getByText(new RegExp(`© ${year} PQC Today`))).toBeInTheDocument()
     })
+
+    it('links the source code from the footer (exact commit, else the repository)', () => {
+      renderLayout()
+      const link = screen.getByTestId('footer-source-link')
+      expect(link).toHaveTextContent('Source code')
+      expect(link.getAttribute('href')).toMatch(
+        /^https:\/\/github\.com\/pqctoday-org\/pqctoday-hub(\/tree\/[0-9a-f]{40})?$/
+      )
+    })
   })
 
   describe('Rail — no persona selected (null)', () => {

@@ -149,6 +149,21 @@ describe('AboutView', () => {
 
     const repoLink = screen.getByRole('link', { name: /View GitHub Repository/i })
     expect(repoLink).toHaveAttribute('href', 'https://github.com/pqctoday-org/pqctoday-hub')
+
+    // Source of the running version: the exact commit when the build recorded one,
+    // otherwise the repository; the version is shown with it.
+    const sourceLink = screen.getByTestId('about-source-link')
+    expect(sourceLink.getAttribute('href')).toMatch(
+      /^https:\/\/github\.com\/pqctoday-org\/pqctoday-hub(\/tree\/[0-9a-f]{40})?$/
+    )
+    expect(sourceLink).toHaveTextContent(/Source code/)
+    if (typeof __APP_VERSION__ !== 'undefined' && __APP_VERSION__)
+      expect(sourceLink).toHaveTextContent(`v${__APP_VERSION__}`)
+
+    expect(screen.getByRole('link', { name: /Open-source licences/i })).toHaveAttribute(
+      'href',
+      '/licenses/'
+    )
   })
 
   // Mobile UX layer (Phase 7). AboutView is never sim-embedded (no widget

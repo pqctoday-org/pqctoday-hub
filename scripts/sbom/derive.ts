@@ -32,7 +32,12 @@ export interface Curated {
   groups: readonly SbomGroup[]
   /** package.json dependency -> why it is intentionally not on the page. */
   excluded: Readonly<Record<string, string>>
+  /** Row name -> why its licence is not yet known. Every other row must state one. */
+  licensePending?: Readonly<Record<string, string>>
 }
+
+/** A typed licence that says nothing ("not recorded", "?", empty). */
+export const NO_LICENSE = /^\s*(not recorded|not declared|unknown|\?)?\s*$/i
 
 export interface Derived {
   content: string
@@ -598,6 +603,26 @@ export function derive(root: string, curated: Curated): Derived {
     }
   }
 
+  // ---- every non-npm row states its licence ----------------------------------
+  const pending = curated.licensePending ?? {}
+  const rowNames = new Set(curated.groups.flatMap((g) => g.components.map((c) => c.name)))
+  for (const g of curated.groups)
+    for (const c of g.components) {
+      if (!('license' in c) || typeof c.license !== 'string') continue
+      const why = pending[c.name]
+      if (NO_LICENSE.test(c.license)) {
+        if (!why?.trim())
+          bad(
+            `"${c.name}": no licence recorded ("${c.license}") — record it from the component's own licence file, or list the row in SBOM_LICENSE_PENDING with the reason`
+          )
+      } else if (why !== undefined)
+        bad(
+          `"${c.name}": licence "${c.license}" is recorded, so remove it from SBOM_LICENSE_PENDING`
+        )
+    }
+  for (const name of Object.keys(pending))
+    if (!rowNames.has(name)) bad(`SBOM_LICENSE_PENDING names "${name}", which is not an SBOM row`)
+
   // ---- row sources must resolve --------------------------------------------
   for (const g of curated.groups)
     for (const c of g.components) {
@@ -759,12 +784,20 @@ export function derive(root: string, curated: Curated): Derived {
       })
   for (const g of curated.groups)
     for (const c of g.components) {
-      if ('embedded' in c && c.embedded !== undefined)
+      if ('embedded' in c && c.embedded !== undefined) {
+        const b = builds[c.embedded]
+        const refs = [
+          ...(c.source ? [{ type: 'source-distribution', url: c.source }] : []),
+          ...(b?.repo && b.commit
+            ? [{ type: 'vcs', url: `https://github.com/${b.repo}/commit/${b.commit}` }]
+            : []),
+        ]
         cdx.push({
           type: 'library',
           name: c.name,
           version: embedded[c.embedded],
           licenses: cdxLicense(c.license),
+          ...(refs.length ? { externalReferences: refs } : {}),
           properties: [
             {
               name: 'pqctoday:evidence',
@@ -772,7 +805,7 @@ export function derive(root: string, curated: Curated): Derived {
             },
           ],
         })
-      else if ('built' in c && c.built !== undefined) {
+      } else if ('built' in c && c.built !== undefined) {
         const b = builds[c.built]
         cdx.push({
           type: 'application',

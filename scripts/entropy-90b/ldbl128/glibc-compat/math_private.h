@@ -1,4 +1,9 @@
-/* SPDX-License-Identifier: GPL-3.0-only
+/* SPDX-License-Identifier: LGPL-2.1-or-later
+ * Contains code from the GNU C Library (issignaling() below),
+ * Copyright (C) Free Software Foundation, Inc., licensed under the
+ * GNU Lesser General Public License 2.1 or later; this file as a whole is
+ * therefore distributed under that licence.
+ *
  * Minimal stand-in for glibc's internal <math_private.h>, just enough to
  * compile glibc 2.41's sysdeps/ieee754/ldbl-128 {e_logl,e_log2l,e_expl,
  * e_powl,s_log1pl}.c with emscripten; see ../ldbl128_wrappers.c for why. */

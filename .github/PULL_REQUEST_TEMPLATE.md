@@ -1,5 +1,7 @@
 <!-- markdownlint-disable MD041 -->
 
+> **Outside pull requests are not merged.** Code changes are made only by the maintainer. If you are not the maintainer, thank you: your pull request will be read and then closed, and the maintainer will make any change it points to in their own words. Feedback is best sent as an issue or a discussion. By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
 ## Change type
 
 <!-- Select one: data:library | data:compliance | data:migrate | data:threats | enrichment | xref | module:content | tool:registry | tool:wasm-backend | vocab:change | schema:change | validation:vector | validation:adapter -->

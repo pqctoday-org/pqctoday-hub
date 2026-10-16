@@ -251,6 +251,48 @@ describe('SBOM gate', () => {
     expect(content).toContain("'pqctoday-tpm': { repo: 'org/tpm', commit: null")
   })
 
+  it('fails on a row with no licence unless it is listed as pending with a reason (strongSwan was "not recorded")', () => {
+    const t = makeTree()
+    const row = t.curated.groups[1].components.find((c) => c.name === 'strongSwan')!
+    ;(row as { license: string }).license = 'not recorded'
+    expect(derive(t.root, t.curated).problems.join('\n')).toMatch(
+      /"strongSwan": no licence recorded \("not recorded"\)/
+    )
+    expect(
+      derive(t.root, { ...t.curated, licensePending: { strongSwan: 'origin unknown' } }).problems
+    ).toEqual([])
+    expect(
+      derive(t.root, { ...t.curated, licensePending: { strongSwan: ' ' } }).problems.join('\n')
+    ).toMatch(/"strongSwan": no licence recorded/)
+  })
+
+  it('fails on a stale or unknown SBOM_LICENSE_PENDING entry', () => {
+    const t = makeTree()
+    const p = derive(t.root, {
+      ...t.curated,
+      licensePending: { strongSwan: 'was unknown', Nobody: 'gone' },
+    }).problems.join('\n')
+    expect(p).toMatch(
+      /"strongSwan": licence "x" is recorded, so remove it from SBOM_LICENSE_PENDING/
+    )
+    expect(p).toMatch(/SBOM_LICENSE_PENDING names "Nobody", which is not an SBOM row/)
+  })
+
+  it('gives an embedded row its source archive and build commit in the CycloneDX file', () => {
+    const t = makeTree()
+    const row = t.curated.groups[1].components.find((c) => c.name === 'strongSwan')!
+    ;(row as { source?: string }).source = 'https://example.org/strongswan-6.0.5.tar.bz2'
+    const { files, problems } = derive(t.root, t.curated)
+    expect(problems).toEqual([])
+    const doc = JSON.parse(files['public/data/pqctoday-sbom.cdx.json']) as {
+      components: { name: string; externalReferences?: { type: string; url: string }[] }[]
+    }
+    expect(doc.components.find((c) => c.name === 'strongSwan')?.externalReferences).toEqual([
+      { type: 'source-distribution', url: 'https://example.org/strongswan-6.0.5.tar.bz2' },
+      { type: 'vcs', url: `https://github.com/org/hsm/commit/${COMMIT}` },
+    ])
+  })
+
   it('fails when a direct dependency is neither listed nor excluded (three was missing)', () => {
     const t = makeTree()
     t.curated.groups[0].components = t.curated.groups[0].components.filter(

@@ -3,8 +3,9 @@
 # Required teams: library-smes, compliance-smes, migrate-smes, threats-smes,
 #   enrichment-reviewers, module-smes, tool-smes, editorial-board, crypto-engineering
 
-# Fallback — maintainer owns everything not matched below
-*                                                   @ericamador
+# Fallback — the PQC Today maintainer account owns everything not matched below
+# (the organisation has no teams yet; see the note at the top).
+*                                                   @eramusa
 
 # Library & algorithm data
 src/data/library_*.csv                              @pqctoday-org/library-smes

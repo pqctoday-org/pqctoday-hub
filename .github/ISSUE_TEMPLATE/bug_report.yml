@@ -8,6 +8,8 @@ body:
       value: |
         Thanks for taking the time to report a bug! Please fill out the information below to help us investigate.
 
+        By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
   - type: textarea
     id: description
     attributes:

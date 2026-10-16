@@ -114,6 +114,14 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
     expect(sbomVersionLabel(byName(/^strongSwan/))).toBe('v6.0.5')
   })
 
+  it('records strongSwan’s licence and links the exact source it was built from', () => {
+    const ss = byName(/^strongSwan/)
+    expect(sbomLicense(ss)).toBe('GPL-2.0-or-later')
+    expect(sbomHref(ss)).toMatch(
+      /^https:\/\/github\.com\/pqctoday-org\/pqctoday-hsm\/commit\/[0-9a-f]{40}$/
+    )
+  })
+
   it('does not invent a release for bundles whose binary embeds none', () => {
     // The LMS module has no recorded origin; the page must say so, not guess.
     const lms = sbomVersionLabel(byName(/^LMS\/HSS/))

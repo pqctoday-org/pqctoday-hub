@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Info, Shield, ExternalLink, Scale, Heart } from 'lucide-react'
+import { Info, Shield, ExternalLink, Scale, Heart, Code, FileText } from 'lucide-react'
 import { Link } from 'react-router'
 import { LinkToUsButton } from '@/components/ui/LinkToUsButton'
+import { BUILD_COMMIT, shortCommit, sourceCodeUrl } from '@/utils/sourceLink'
+
+const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : null
 
 export function LicenseSection() {
   return (
@@ -44,6 +47,28 @@ export function LicenseSection() {
           >
             <ExternalLink size={16} />
             View GitHub Repository
+          </a>
+          <a
+            href={sourceCodeUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="about-source-link"
+            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+          >
+            <Code size={16} />
+            {BUILD_COMMIT
+              ? `Source code of this version (${APP_VERSION ? `v${APP_VERSION}, ` : ''}commit ${shortCommit()})`
+              : `Source code${APP_VERSION ? ` (v${APP_VERSION})` : ''}`}
+          </a>
+          <a
+            href="/licenses/"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="about-licenses-link"
+            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+          >
+            <FileText size={16} />
+            Open-source licences
           </a>
           <Link
             to="/terms"

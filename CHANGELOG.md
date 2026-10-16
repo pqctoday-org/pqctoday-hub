@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.161.0] - 2026-10-15
+
+The site now links the exact source code of the version you are viewing and lists the licence of every third-party package and engine it ships. The repository no longer redistributes full copies of third-party documents, and one Library title is corrected.
+
+### Added
+
+- **A "Source code" link on every page** [view:/about] [persona:developer] [persona:ops] [persona:grc]: the footer links to the exact source of the version you are viewing, and the About page shows that link next to the version number.
+- **Open-source licences at /licenses/** [persona:developer] [persona:grc] [persona:ops]: the page gives the licence text of every npm package in the site's production bundle and a notices file for each WebAssembly engine. strongSwan is listed under GPL-2.0-or-later, with a link to its exact source.
+- **Credit for adapted framework material** [view:/learn] [persona:grc] [persona:curious]: Learn pages that adapt CC BY 4.0 framework material now credit it on the page.
+
+### Changed
+
+- **No more full copies of third-party documents in the repository** [persona:researcher] [persona:developer]: the 11 reference PDFs and two copied texts are removed. A list now gives each one's publisher link and checksum, and our own extracted data stays. The KMIP test cases carry the OASIS notice.
+- **How to contribute** [persona:developer] [persona:curious]: feedback is welcome through GitHub issues; code changes are made by the maintainer.
+
+### Fixed
+
+- **/report shows a sample report instead of an empty page** [view:/report] [persona:executive] [persona:grc] [persona:curious]: visitors who have not run the assessment yet see the sample report, under a banner that marks it as a sample, with a button to start their own. Its link no longer changes between releases.
+- **Two broken links fixed** [view:/learn/soc-implementation-pqc] [view:/playground] [persona:ops] [persona:developer]: the SOC Implementation guide now links Quantum Threats, and the KMIP playground's "Docker sandbox" link opens the Docker sandbox.
+- **A Library paper shows its correct title** [view:/library] [persona:researcher]: IACR ePrint 2010/560 is "On CCA-Secure Somewhat Homomorphic Encryption" (it read "Fully").
+
 ## [4.160.0] - 2026-10-15
 
 Five certification modules now name the official document behind ten more of their statements. The Homomorphic Encryption module adds a two-round refresh that restores precision, runs the encrypted scoring service on an x86 machine and an MX95 Pro board, and generates the OpenFHE key set on both boards. The playground retires the Step-CA scenario, and the TPM emulator now comes from a tagged release.

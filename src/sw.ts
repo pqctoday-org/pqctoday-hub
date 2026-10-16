@@ -112,7 +112,9 @@ self.addEventListener('fetch', (event) => {
       // exempt from the shell fallback below, which would otherwise answer a
       // proof link with index.html — as it has been doing, since a proof link
       // is a navigation and that check runs before the precache lookup.
-      const isStandaloneDoc = /^\/migrate-proofs\/.+\.html$/.test(url.pathname)
+      // The generated licence notices (/licenses/) are the same kind of page.
+      const isStandaloneDoc =
+        /^\/migrate-proofs\/.+\.html$/.test(url.pathname) || /^\/licenses(\/|$)/.test(url.pathname)
 
       // Navigation (SPA): serve index.html from precache for all routes
       if (request.mode === 'navigate' && !isStandaloneDoc) {

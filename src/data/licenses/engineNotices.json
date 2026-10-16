@@ -1,0 +1,257 @@
+{
+  "_comment": "Third-party contents of every WebAssembly engine the site serves, for the generated notices at /licenses/ (scripts/sbom/notices.ts, run by the production build). One entry per bundle in public/wasm/wasm-provenance.json and src/data/sbomWasmArtifacts.json; the build fails if a bundle has no entry, an entry names a bundle that is not served, or a text file is missing. Rust crates are not typed here: they are read from the binaries at build time and their licence files come from crateLicenseTexts.json. `texts` are files in ./texts/, copied verbatim from the upstream source named in `textSources`. `incomplete` says what these notices do not yet cover; the engine repositories will ship their own notices.",
+  "textSources": {
+    "softhsmv3-LICENSE.txt": "pqctoday-org/pqctoday-hsm LICENSE at 496f9e529d3d92248dc414e153b06afca8d3ff4f (SoftHSMv3 header followed by the original SoftHSM2 licence)",
+    "openssl-3.6.3-LICENSE.txt": "https://github.com/openssl/openssl/blob/openssl-3.6.3/LICENSE.txt",
+    "pkcs11-provider-COPYING.txt": "pqctoday-org/pqctoday-hsm src/vendor/pkcs11-provider/COPYING at 496f9e529d3d92248dc414e153b06afca8d3ff4f",
+    "pkcs11-provider-LicenseRef-Public-Domain-PKCS11-Headers.txt": "pqctoday-org/pqctoday-hsm src/vendor/pkcs11-provider/LICENSES/LicenseRef-Public-Domain-PKCS11-Headers.txt at 496f9e529d3d92248dc414e153b06afca8d3ff4f",
+    "openssh-V_10_3_P1-LICENCE.txt": "https://github.com/openssh/openssh-portable/blob/V_10_3_P1/LICENCE",
+    "strongswan-6.0.5-COPYING.txt": "https://github.com/strongswan/strongswan/blob/6.0.5/COPYING",
+    "strongswan-6.0.5-LICENSE.txt": "https://github.com/strongswan/strongswan/blob/6.0.5/LICENSE",
+    "pqctoday-tpm-LICENSE.txt": "pqctoday-org/pqctoday-tpm LICENSE at acb13517f36534239c80050c90774759c6050d5a",
+    "libtpms-LICENSE.txt": "pqctoday-org/pqctoday-tpm libtpms/LICENSE at acb13517f36534239c80050c90774759c6050d5a",
+    "swtpm-LICENSE.txt": "pqctoday-org/pqctoday-tpm swtpm/LICENSE at acb13517f36534239c80050c90774759c6050d5a",
+    "emscripten-LICENSE.txt": "https://github.com/emscripten-core/emscripten/blob/6.0.4/LICENSE (identical at 6.0.10)",
+    "emscripten-musl-COPYRIGHT.txt": "https://github.com/emscripten-core/emscripten/blob/6.0.4/system/lib/libc/musl/COPYRIGHT (identical at 6.0.10)",
+    "emscripten-compiler-rt-LICENSE.txt": "https://github.com/emscripten-core/emscripten/blob/6.0.4/system/lib/compiler-rt/LICENSE.TXT (identical at 6.0.10)",
+    "emscripten-libcxx-LICENSE.txt": "https://github.com/emscripten-core/emscripten/blob/6.0.4/system/lib/libcxx/LICENSE.TXT",
+    "emscripten-libcxxabi-LICENSE.txt": "https://github.com/emscripten-core/emscripten/blob/6.0.4/system/lib/libcxxabi/LICENSE.TXT",
+    "rust-LICENSE-MIT.txt": "https://github.com/rust-lang/rust/blob/master/LICENSE-MIT",
+    "rust-LICENSE-APACHE.txt": "https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE",
+    "pyodide-0.28.3-LICENSE.txt": "https://github.com/pyodide/pyodide/blob/0.28.3/LICENSE",
+    "cpython-3.13.2-LICENSE.txt": "https://github.com/python/cpython/blob/v3.13.2/LICENSE",
+    "coi-serviceworker-LICENSE.txt": "https://github.com/gzuidhof/coi-serviceworker/blob/master/LICENSE",
+    "spdx/Apache-2.0.txt": "pqctoday-org/pqctoday-hsm src/vendor/pkcs11-provider/LICENSES/Apache-2.0.txt (the standard Apache License 2.0 text)",
+    "spdx/GPL-2.0.txt": "https://github.com/strongswan/strongswan/blob/6.0.5/COPYING (the standard GNU GPL version 2 text)",
+    "spdx/LGPL-2.1.txt": "public/wasm/entropy90b/licenses/LICENSE.glibc-ldbl128 (the standard GNU LGPL version 2.1 text)",
+    "spdx/MPL-2.0.txt": "https://github.com/pyodide/pyodide/blob/0.28.3/LICENSE (the standard Mozilla Public License 2.0 text)",
+    "spdx/MIT.txt": "standard SPDX text (https://spdx.org/licenses/MIT.html)",
+    "spdx/ISC.txt": "standard SPDX text (https://spdx.org/licenses/ISC.html)",
+    "spdx/BSD-2-Clause.txt": "standard SPDX text (https://spdx.org/licenses/BSD-2-Clause.html)",
+    "spdx/BSD-3-Clause.txt": "standard SPDX text (https://spdx.org/licenses/BSD-3-Clause.html)",
+    "spdx/0BSD.txt": "standard SPDX text (https://spdx.org/licenses/0BSD.html)",
+    "spdx/Zlib.txt": "standard SPDX text (https://spdx.org/licenses/Zlib.html)"
+  },
+  "toolchains": {
+    "emscripten-c": [
+      {
+        "name": "Emscripten runtime (JavaScript glue and system libraries)",
+        "license": "MIT OR NCSA",
+        "texts": ["emscripten-LICENSE.txt"]
+      },
+      {
+        "name": "musl libc (as shipped with Emscripten)",
+        "license": "MIT",
+        "texts": ["emscripten-musl-COPYRIGHT.txt"]
+      },
+      {
+        "name": "compiler-rt (as shipped with Emscripten)",
+        "license": "Apache-2.0 WITH LLVM-exception OR NCSA OR MIT",
+        "texts": ["emscripten-compiler-rt-LICENSE.txt"]
+      }
+    ],
+    "emscripten-cxx": [
+      {
+        "name": "Emscripten runtime (JavaScript glue and system libraries)",
+        "license": "MIT OR NCSA",
+        "texts": ["emscripten-LICENSE.txt"]
+      },
+      {
+        "name": "musl libc (as shipped with Emscripten)",
+        "license": "MIT",
+        "texts": ["emscripten-musl-COPYRIGHT.txt"]
+      },
+      {
+        "name": "compiler-rt (as shipped with Emscripten)",
+        "license": "Apache-2.0 WITH LLVM-exception OR NCSA OR MIT",
+        "texts": ["emscripten-compiler-rt-LICENSE.txt"]
+      },
+      {
+        "name": "libc++ (as shipped with Emscripten)",
+        "license": "Apache-2.0 WITH LLVM-exception OR NCSA OR MIT",
+        "texts": ["emscripten-libcxx-LICENSE.txt"]
+      },
+      {
+        "name": "libc++abi (as shipped with Emscripten)",
+        "license": "Apache-2.0 WITH LLVM-exception OR NCSA OR MIT",
+        "texts": ["emscripten-libcxxabi-LICENSE.txt"]
+      }
+    ],
+    "rust": [
+      {
+        "name": "Rust standard library (core, alloc, std)",
+        "license": "MIT OR Apache-2.0",
+        "texts": ["rust-LICENSE-MIT.txt", "rust-LICENSE-APACHE.txt"]
+      }
+    ]
+  },
+  "bundles": [
+    {
+      "key": "softhsm-cpp-engine",
+      "title": "softhsmv3 PKCS#11 engine (C++)",
+      "toolchain": "emscripten-cxx",
+      "components": [
+        {
+          "name": "softhsmv3 (PQC Today fork of SoftHSM2 v2.7.0)",
+          "license": "BSD-2-Clause",
+          "texts": ["softhsmv3-LICENSE.txt"],
+          "changes": "Modified by PQC Today from SoftHSM2 v2.7.0; the changes are listed at the top of the licence file below."
+        },
+        {
+          "name": "OpenSSL libcrypto (the binary does not state its version; texts from OpenSSL 3.6.3)",
+          "license": "Apache-2.0",
+          "texts": ["openssl-3.6.3-LICENSE.txt"]
+        }
+      ],
+      "incomplete": [
+        "The exact set of Emscripten system libraries linked is not recorded by the build; the toolchain libraries are listed from the toolchain."
+      ]
+    },
+    {
+      "key": "softhsmrustv3-engine",
+      "title": "softhsmrustv3 PKCS#11 engine (Rust)",
+      "toolchain": "rust",
+      "components": [
+        {
+          "name": "softhsmrustv3 (PQC Today)",
+          "license": "BSD-2-Clause",
+          "texts": ["softhsmv3-LICENSE.txt"]
+        }
+      ],
+      "incomplete": []
+    },
+    {
+      "key": "cacp-kmip",
+      "title": "pqctoday-kmip KMIP 3.0 control plane (Rust)",
+      "toolchain": "rust",
+      "components": [
+        {
+          "name": "pqctoday-kmip (PQC Today)",
+          "license": "MIT",
+          "texts": [],
+          "note": "PQC Today's own code; its source and licence are in the pqctoday-hsm repository at the build commit above."
+        }
+      ],
+      "incomplete": []
+    },
+    {
+      "key": "openssl-pkcs11",
+      "title": "OpenSSL with the PKCS#11 provider",
+      "toolchain": "emscripten-c",
+      "alsoToolchain": "rust",
+      "components": [
+        {
+          "name": "OpenSSL 3.6.3",
+          "license": "Apache-2.0",
+          "texts": ["openssl-3.6.3-LICENSE.txt"]
+        },
+        {
+          "name": "pkcs11-provider (vendored in pqctoday-hsm)",
+          "license": "Apache-2.0",
+          "texts": [
+            "pkcs11-provider-COPYING.txt",
+            "spdx/Apache-2.0.txt",
+            "pkcs11-provider-LicenseRef-Public-Domain-PKCS11-Headers.txt"
+          ]
+        },
+        {
+          "name": "softhsmrustv3 PKCS#11 engine (PQC Today), linked in",
+          "license": "BSD-2-Clause",
+          "texts": ["softhsmv3-LICENSE.txt"]
+        }
+      ],
+      "incomplete": [
+        "Whether PQC Today changed the vendored pkcs11-provider files is not yet recorded; if it did, Apache-2.0 asks for a change notice in each changed file.",
+        "The OpenSSL link script is not yet in a public repository."
+      ]
+    },
+    {
+      "key": "openssh-pkcs11",
+      "title": "OpenSSH server (PKCS#11 build)",
+      "toolchain": "emscripten-c",
+      "components": [
+        {
+          "name": "OpenSSH (openssh-portable V_10_3_P1)",
+          "license": "LicenseRef-OpenSSH (BSD-style, see LICENCE)",
+          "texts": ["openssh-V_10_3_P1-LICENCE.txt"],
+          "changes": "Built with PQC Today patches and a PKCS#11 connector from the pqctoday-hsm openssh-pkcs11 folder at the build commit."
+        },
+        {
+          "name": "OpenSSL libcrypto (the binary does not state its version; texts from OpenSSL 3.6.3)",
+          "license": "Apache-2.0",
+          "texts": ["openssl-3.6.3-LICENSE.txt"]
+        }
+      ],
+      "incomplete": [
+        "The licence of the PQC Today connector code in openssh-pkcs11/ is still being corrected upstream (its LICENSE file names PQC Today under BSD-2-Clause rather than the OpenSSH licence)."
+      ]
+    },
+    {
+      "key": "strongswan",
+      "title": "strongSwan IKEv2 / VPN",
+      "toolchain": "emscripten-c",
+      "components": [
+        {
+          "name": "strongSwan 6.0.5",
+          "license": "GPL-2.0-or-later",
+          "texts": ["strongswan-6.0.5-LICENSE.txt", "strongswan-6.0.5-COPYING.txt"],
+          "changes": "Modified by PQC Today: strongswan-6.0.5-pqc.patch, strongswan-6.0.5-wasm.patch and the strongswan-pkcs11 plugin in pqctoday-hsm.",
+          "sourceOffer": [
+            "Complete corresponding source: the upstream release https://download.strongswan.org/strongswan-6.0.5.tar.bz2 plus the patches, plugin and build script (scripts/build-strongswan-wasm.sh) in https://github.com/pqctoday-org/pqctoday-hsm/tree/bf53023b78b42078b5936dab91809eaeb9f756e3"
+          ]
+        }
+      ],
+      "incomplete": [
+        "The GPL-2.0 text is not yet included in the pqctoday-hsm strongswan-pkcs11 folder itself."
+      ]
+    },
+    {
+      "key": "pqctoday-tpm",
+      "title": "PQC TPM 2.0 emulator (libtpms / swtpm fork)",
+      "toolchain": "emscripten-c",
+      "components": [
+        {
+          "name": "pqctoday-tpm (PQC Today changes)",
+          "license": "BSD-3-Clause",
+          "texts": ["pqctoday-tpm-LICENSE.txt"]
+        },
+        {
+          "name": "libtpms (including the TCG TPM 2.0 reference code)",
+          "license": "BSD-3-Clause AND LicenseRef-TCG",
+          "texts": ["libtpms-LICENSE.txt"],
+          "changes": "Modified by PQC Today (ML-KEM and ML-DSA support)."
+        },
+        {
+          "name": "swtpm",
+          "license": "BSD-3-Clause",
+          "texts": ["swtpm-LICENSE.txt"],
+          "changes": "Modified by PQC Today."
+        },
+        {
+          "name": "OpenSSL 3.6.3 (built for WebAssembly)",
+          "license": "Apache-2.0",
+          "texts": ["openssl-3.6.3-LICENSE.txt"]
+        }
+      ],
+      "incomplete": []
+    },
+    {
+      "key": "lms",
+      "title": "LMS/HSS hash-based signature module",
+      "toolchain": null,
+      "components": [],
+      "incomplete": [
+        "The origin and licence of this module are not recorded: the binary carries no version or origin string and there is no build record. It will be rebuilt from a recorded source or removed."
+      ]
+    },
+    {
+      "key": "entropy90b",
+      "title": "NIST SP 800-90B entropy estimators",
+      "toolchain": null,
+      "noticesFile": "public/wasm/entropy90b/THIRD_PARTY_NOTICES.txt",
+      "licensesDir": "public/wasm/entropy90b/licenses",
+      "components": [],
+      "incomplete": []
+    }
+  ]
+}

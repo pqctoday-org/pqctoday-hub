@@ -68,3 +68,7 @@ The workshop has 5 interactive steps:
 - `crypto-agility` — the algorithm-rotation capability Playbook 1 and Playbook 4 invoke
 - `research-quantum-impact` — strategic CTI inputs: arXiv preprints, resource-estimation models, CRQC hardware milestones
 - `migration-program` — the Phase 1/2 inventory and CBOM that produce the cryptographic posture registry
+
+## Source and licence
+
+Parts of this module are adapted from the Applied Quantum PQC Migration Framework v2.1 (https://pqcframework.com) by Marin Ivezić / Applied Quantum, "SOC Implementation" section, pp. 165–175, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). The material was condensed, reorganised and adapted for this module.

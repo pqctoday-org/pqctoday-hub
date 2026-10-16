@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.160.0",
+  "version": "4.161.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -37,6 +37,7 @@
     "gen:sbom-versions:check": "tsx scripts/gen-sbom-versions.ts --check",
     "check:sbom-production": "tsx scripts/sbom/check-production.ts",
     "sbom:refresh-crate-licenses": "tsx scripts/sbom/refresh-crate-licenses.ts",
+    "sbom:refresh-crate-license-texts": "tsx scripts/sbom/refresh-crate-license-texts.ts",
     "sbom:snapshot-bundle": "SBOM_BUNDLE_UPDATE=1 NODE_OPTIONS=--max-old-space-size=10240 vite build --outDir node_modules/.tmp/sbom-snapshot-dist --emptyOutDir",
     "check:sbom-bundle": "tsx scripts/sbom/check-bundle.ts",
     "predev": "npm run gen:timeline-facts && npm run gen:landing-counts && npm run gen:sbom-versions && npm run generate:role-board-content && npm run generate:data-filenames && npm run sync:pyodide-runtime && npm run sync:pyodide-shims && npm run build:monaco-worker && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",

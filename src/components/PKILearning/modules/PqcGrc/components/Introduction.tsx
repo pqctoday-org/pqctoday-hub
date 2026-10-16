@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { AppliedQuantumCredit } from '@/components/PKILearning/common/FrameworkCredit'
 import {
   KRI_LEVELS,
   KRIS,
@@ -462,5 +463,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
     },
   ]
 
-  return <LearnStepper steps={steps} />
+  return (
+    <>
+      <LearnStepper steps={steps} />
+      <AppliedQuantumCredit section="GRC Implementation" pages="176–185" />
+    </>
+  )
 }

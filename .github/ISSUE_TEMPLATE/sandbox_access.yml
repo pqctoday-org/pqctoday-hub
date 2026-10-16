@@ -8,6 +8,8 @@ body:
       value: |
         Sandbox scenarios run inside isolated Docker containers hosted by PQC Today. Fill this in and we'll provision an environment for you — containers are spun up on demand and destroyed after the session.
 
+        By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
   - type: input
     id: contact
     attributes:

@@ -8,6 +8,8 @@ body:
       value: |
         Thanks for helping keep PQC Today accurate. Share what you know and a source — the maintainer will validate and implement the change. You'll be credited in the release notes.
 
+        By sending feedback, you agree that PQC Today, LLC may use it freely, in any version of the project, including commercially licensed versions.
+
   - type: dropdown
     id: suggestion_type
     attributes:
