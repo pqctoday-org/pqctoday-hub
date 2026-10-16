@@ -918,3 +918,101 @@ describe('corpus trust invariants — freshness (C5)', () => {
     ).toEqual([])
   })
 })
+
+/**
+ * Learn-module fact guard (2026-10-16).
+ *
+ * Phrases that were wrong in Learn module sources and must not come back:
+ *   - Rosenpass described as ML-KEM. Rosenpass uses Classic McEliece-460896
+ *     (static keys) and the round-3 Kyber-512 (ephemeral keys), not FIPS 203
+ *     ML-KEM. A sentence naming both is allowed only when it says "not ... ML-KEM".
+ *   - "one-time decision" for algorithm choice: choices are revisited per wave.
+ *   - draft-ietf-tls-ecdhe-mlkem: published as RFC 10024. Allowed only in a
+ *     sentence that also names RFC 10024 (an explicit history note).
+ *   - draft-ietf-ipsecme-ikev2-pqc-auth revisions older than -12.
+ *   - mlkem768x25519-sha256@openssh.com: OpenSSH's name has no @openssh.com suffix.
+ *   - X25519MLKEM768 offered as a strongSwan proposal keyword: it is a TLS group
+ *     name; strongSwan uses mlkem512/768/1024 with the keN_ prefix.
+ *
+ * Scope: Learn module code and Markdown (plus the protocol matrix notes) ONLY.
+ * The quiz and Q&A CSVs carry some of the same phrases and are corrected
+ * separately, so they are deliberately not scanned here.
+ * Library IDs passed to getStandard()/findStandard() are record keys, not
+ * reader-facing text, so they are stripped before scanning.
+ */
+describe('learn-module fact guard', () => {
+  const MODULES_DIR = path.join(REPO_ROOT, 'src', 'components', 'PKILearning', 'modules')
+  const EXTRA_FILES = [path.join(REPO_ROOT, 'src', 'data', 'pqcProtocolMatrix.ts')]
+
+  function walk(dir: string, out: string[]): string[] {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) walk(full, out)
+      else if (/\.(tsx?|md)$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name)) out.push(full)
+    }
+    return out
+  }
+
+  /**
+   * Split source text into rough sentences. Markdown lines are separate
+   * sentences; in code, the end of a string literal at a line end is a break,
+   * while JSX text wrapped over several lines stays one sentence.
+   */
+  function sentences(text: string, isMarkdown: boolean): string[] {
+    const cleaned = text
+      .replace(/\b(?:getStandard|findStandard|hasStandard)\(\s*['"`][^'"`]*['"`]\s*\)/g, '')
+      .replace(/\b(?:id|localFile|url|href):\s*['"`][^'"`]*['"`]/g, '')
+      .replace(isMarkdown ? /\r?\n/g : /['"`][\s,;})\]]*\r?\n/g, '. ')
+      .replace(/\r?\n\s*\r?\n/g, '. ')
+      .replace(/\s+/g, ' ')
+    return cleaned.split(/(?<=[.!?;])\s+/)
+  }
+
+  interface Rule {
+    name: string
+    test: (s: string) => boolean
+  }
+  const RULES: Rule[] = [
+    {
+      name: 'Rosenpass described with ML-KEM',
+      test: (s) => /rosenpass/i.test(s) && /ML-KEM/.test(s) && !/not (?:FIPS 203 )?ML-KEM/i.test(s),
+    },
+    { name: '"one-time decision"', test: (s) => /one-time decision/i.test(s) },
+    {
+      name: 'draft-ietf-tls-ecdhe-mlkem (now RFC 10024)',
+      test: (s) => /draft-ietf-tls-ecdhe-mlkem/.test(s) && !/RFC 10024/.test(s),
+    },
+    {
+      name: 'ikev2-pqc-auth revision older than -12',
+      test: (s) => /ikev2-pqc-auth-(?:0\d|1[01])\b/.test(s),
+    },
+    {
+      name: 'mlkem768x25519-sha256@openssh.com',
+      test: (s) => /mlkem768x25519-sha256@openssh\.com/.test(s),
+    },
+    {
+      name: 'X25519MLKEM768 as a strongSwan proposal keyword',
+      test: (s) =>
+        /X25519MLKEM768/.test(s) &&
+        /strongswan|proposal/i.test(s) &&
+        !/not a strongSwan keyword/i.test(s),
+    },
+  ]
+
+  it('module sources do not reintroduce corrected facts', () => {
+    const files = [...walk(MODULES_DIR, []), ...EXTRA_FILES.filter((f) => fs.existsSync(f))]
+    expect(files.length).toBeGreaterThan(100)
+    const hits: string[] = []
+    for (const file of files) {
+      const text = fs.readFileSync(file, 'utf-8')
+      for (const sentence of sentences(text, file.endsWith('.md'))) {
+        for (const rule of RULES) {
+          if (rule.test(sentence)) {
+            hits.push(`${path.relative(REPO_ROOT, file)} [${rule.name}]: ${sentence.slice(0, 200)}`)
+          }
+        }
+      }
+    }
+    expect(hits, hits.join('\n')).toEqual([])
+  })
+})
