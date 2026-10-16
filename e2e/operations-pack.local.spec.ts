@@ -46,9 +46,7 @@ test('ops user builds an operations pack from saved tool results', async ({ page
 
   await page.goto('/playground/hsm-capacity', { waitUntil: 'domcontentloaded' })
   await page.getByTestId('hsm-capacity-save-to-pack').click({ timeout: 30_000 })
-  await expect(page.getByTestId('hsm-capacity-save-to-pack')).toHaveText(
-    'Saved to operations pack'
-  )
+  await expect(page.getByTestId('hsm-capacity-save-to-pack')).toHaveText('Saved to operations pack')
 
   await page.goto('/playground/cert-capacity', { waitUntil: 'domcontentloaded' })
   await page.getByTestId('cert-capacity-save-to-pack').click({ timeout: 30_000 })
