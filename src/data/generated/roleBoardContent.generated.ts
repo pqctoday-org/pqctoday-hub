@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r35.csv
+ * Source: src/data/role_board_content_10162026_r36.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -1788,7 +1788,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/refresh-cycle-alignment',
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
-          'Sizing model with its sources published',
+          'Sizing model with every assumption shown',
           'Sizes from FIPS 204; throughput rates are estimates',
         ],
         sideCard: {
