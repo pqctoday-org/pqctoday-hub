@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /** Deep-link remediation PR 1 — ?id= on a phone: not-found, widening, push. */
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import '@testing-library/jest-dom'
@@ -10,6 +10,20 @@ import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/d
 import { lensProtocolsFor, threatTouchesProtocol } from '@/data/threatProtocolLens'
 import { protocolLensSlug } from '@/components/Threats/threatsUrlParams'
 import { MobileThreatsView } from './MobileThreatsView'
+
+// No persona carries default industries any more (owner decisions, 15 Oct 2026),
+// but the persona-default scope mechanism remains; give executive a fixture
+// default here so these tests keep covering it.
+vi.mock('@/data/personaConfig', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/data/personaConfig')>()
+  return {
+    ...actual,
+    PERSONA_THREATS_DEFAULT_INDUSTRIES: {
+      ...actual.PERSONA_THREATS_DEFAULT_INDUSTRIES,
+      executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+    },
+  }
+})
 
 function LocationProbe() {
   return <output data-testid="location-search">{useLocation().search}</output>

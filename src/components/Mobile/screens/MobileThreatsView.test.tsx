@@ -16,6 +16,20 @@ import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
+// No persona carries default industries any more (owner decisions, 15 Oct 2026),
+// but the persona-default scope mechanism remains; give executive a fixture
+// default here so these tests keep covering it.
+vi.mock('@/data/personaConfig', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/data/personaConfig')>()
+  return {
+    ...actual,
+    PERSONA_THREATS_DEFAULT_INDUSTRIES: {
+      ...actual.PERSONA_THREATS_DEFAULT_INDUSTRIES,
+      executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+    },
+  }
+})
+
 // Claim-ledger fixture keyed to a real row id, so the sheet can be tested
 // whether or not public/threats/claim-status.json is on this branch.
 const CAVEAT_ROW = vi.hoisted(() => ({ id: '' }))

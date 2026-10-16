@@ -547,10 +547,18 @@ describe('MainLayout', () => {
     // visible `roleLabel`, and clicking it opens PersonaSwitchModal, which now
     // also contains the region/industry FilterDropdown pickers.
     it('shows a region/industry summary falling back to the persona default when the store is untouched', () => {
-      usePersonaStore.getState().setPersona('executive')
+      // curious still carries a persona-default region; executive, GRC, developer,
+      // architect and ops have none (owner decisions, 15 Oct 2026).
+      usePersonaStore.getState().setPersona('curious')
       renderLayout()
       const button = screen.getByRole('button', { name: /switch role/i })
       expect(button).toHaveTextContent('Americas')
+    })
+
+    it('shows "Global" for an executive, who has no persona-implied region', () => {
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout()
+      expect(screen.getByRole('button', { name: /switch role/i })).toHaveTextContent('Global')
     })
 
     it('shows "Global" with no persona selected and no custom region/industry set', () => {
