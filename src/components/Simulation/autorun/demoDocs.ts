@@ -710,7 +710,7 @@ function hybridTransition(sector: DemoSector): DemoDoc {
       '',
       '| Protocol | Classical | PQC | Hybrid standard | Status |',
       '| --- | --- | --- | --- | --- |',
-      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | draft-ietf-tls-ecdhe-mlkem (RFC-editor queue); X25519MLKEM768 widely deployed | Pilot |',
+      '| TLS 1.3 KEM | X25519 | ML-KEM-768 | RFC 10024; X25519MLKEM768 widely deployed | Pilot |',
       `| IKEv2 / IPsec | ECDH P-256 | ML-KEM-768 | RFC 9370 / draft-ietf-ipsecme-ikev2-mlkem (RFC-editor queue) | Planned ${PROGRAM_START_YEAR} |`,
       `| SSH KEX | ECDH P-256 | ML-KEM-768 | draft-ietf-sshm-mlkem-hybrid-kex (hybrid sntrup761 already RFC 9941) | Planned ${PROGRAM_START_YEAR} |`,
       `| Code signing | ECDSA P-256 | ML-DSA-65 | FIPS 204 | Track B ${PROGRAM_START_YEAR + 1} |`,

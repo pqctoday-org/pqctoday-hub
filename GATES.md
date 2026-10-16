@@ -82,6 +82,8 @@ outside this repository on each PR head before merge. (`gate:cacp` was removed f
 
 `test` (matrix ×2) ≈ 8 min each: `vitest run --shard=N/2` — the unit suite.
 
+**Page-load budget — report-only.** `e2e/perf-budget.spec.ts` (nightly full suite, `chromium` project) loads `/`, `/learn`, `/migrate`, `/library`, `/threats` and `/report` from the build and prints each page's downloaded JavaScript (decoded KB), DOMContentLoaded, load and LCP, marking a page `OVER` when it passes its budget. It never fails on a budget: runner timing varies. `PERF_BUDGET_ENFORCE=1` makes an over-budget page fail (use on a quiet machine). Production builds also ship only the newest dated library and threats enrichment file (`scripts/lib/newestEnrichmentOnly.ts`, checked at build time; the build log prints one line per family).
+
 `gate-cacp` — **removed 2026-09-27** (owner decision). It gated every hub PR on pqctoday-hsm's state. `npm run gate:cacp` stays available to run by hand.
 
 ## GitHub — PR check (`.github/workflows/pr-check.yml`, every PR to main)
