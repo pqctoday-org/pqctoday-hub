@@ -68,13 +68,15 @@ describe('PersonaBoardView', () => {
     }
   )
 
-  it('has a capstone chip for exactly the 7 personas that define one', () => {
-    const personasWithCapstone = ALL_PERSONAS.filter(
+  it('every persona except the researcher defines a capstone chip', () => {
+    // The researcher's chip is a pending board-copy row (Learn already shows the
+    // researcher a locked capstone); once it lands the researcher joins this list
+    // and the chip renders through the same data-driven path as the others.
+    const personasWithout = ALL_PERSONAS.filter(
       // eslint-disable-next-line security/detect-object-injection -- id is drawn from ALL_PERSONAS itself
-      (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip !== undefined
+      (id) => PERSONA_JOURNEY_BOARD[id].capstoneChip === undefined
     )
-    expect(personasWithCapstone).toHaveLength(7)
-    expect(personasWithCapstone).not.toContain('researcher')
+    expect(personasWithout.filter((id) => id !== 'researcher')).toEqual([])
   })
 
   it.each(
@@ -89,10 +91,16 @@ describe('PersonaBoardView', () => {
     expect(screen.getByTestId('capstone-chip').textContent).toBe(board.capstoneChip?.label)
   })
 
-  it('renders NO capstone chip at all for researcher (not an empty one)', () => {
-    expect(PERSONA_JOURNEY_BOARD.researcher.capstoneChip).toBeUndefined()
-    renderBoard(<PersonaBoardView personaId="researcher" />)
-    expect(screen.queryByTestId('capstone-chip')).toBeNull()
+  it('renders a capstone chip exactly when the board defines one (never an empty chip)', () => {
+    for (const personaId of ALL_PERSONAS) {
+      // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
+      const chip = PERSONA_JOURNEY_BOARD[personaId].capstoneChip
+      const { unmount } = renderBoard(<PersonaBoardView personaId={personaId} />)
+      const rendered = screen.queryByTestId('capstone-chip')
+      if (chip) expect(rendered?.textContent, personaId).toBe(chip.label)
+      else expect(rendered, personaId).toBeNull()
+      unmount()
+    }
   })
 
   it('renders the default data-driven side card when no override is passed', () => {

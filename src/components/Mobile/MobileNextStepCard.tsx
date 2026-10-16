@@ -5,12 +5,13 @@
  * so this reads the same data module and renders the phone chrome.
  */
 import { Link } from 'react-router'
-import { usePersonaStore } from '@/store/usePersonaStore'
 import { ArrowRight } from 'lucide-react'
 import { nextStepFor } from '@/data/nextSteps'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 export function MobileNextStepCard({ route }: { route: string }) {
-  const persona = usePersonaStore((st) => st.selectedPersona)
+  // A persona can override a page's exit (PERSONA_NEXT_STEPS).
+  const persona = usePersonaStore((s) => s.selectedPersona)
   const step = nextStepFor(route, persona)
   if (!step) return null
   return (

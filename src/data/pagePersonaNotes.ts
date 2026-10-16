@@ -246,7 +246,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     architect:
       '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
     researcher:
-      'Your path ends not in a quiz but in "Your capstone: reproduce a known-answer test" — "Run the ACVP vectors" and "Find the published vectors"; the "Advanced" tray adds a browse-by-Algorithms / Standards filter for your role.',
+      '"Check our work: reproduce a known-answer test" sits above your path — "Run the ACVP vectors" and "Find the published vectors"; the "Practice quiz" is open any time, and the Capstone Quiz unlocks after your Essentials.',
     'cert-engineer':
       'Your path starts at the certificate: eight essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.',
     ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',

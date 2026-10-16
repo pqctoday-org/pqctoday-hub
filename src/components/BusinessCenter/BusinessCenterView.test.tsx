@@ -271,6 +271,28 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Learn the crypto APIs')).toBeInTheDocument()
   })
 
+  it('shows a researcher the four research questions mapped to existing pages, not board questions', () => {
+    mockPersonaStore.selectedPersona = 'researcher'
+    renderView()
+    const expected: [string, string][] = [
+      ['What changed in the standards?', '/library?qv=new&sort=newest'],
+      ['Can I reproduce it?', '/playground/drbg-demo'],
+      ['How sure is the threat timeline?', '/threats'],
+      ['Who holds the patents?', '/patents'],
+    ]
+    for (const [q, href] of expected) {
+      expect(screen.getByText(q).closest('a')).toHaveAttribute('href', href)
+    }
+    expect(screen.queryByText('What will it cost?')).not.toBeInTheDocument()
+    expect(screen.queryByText('Who owns it?')).not.toBeInTheDocument()
+    expect(screen.queryByText('Start Executive Learning')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Watch the guided overview/)).not.toBeInTheDocument()
+    expect(screen.getByText('Read the revision log')).toBeInTheDocument()
+    // The tool row is the researcher's own sequence, not the ROI-first generic one.
+    expect(screen.getByText('CRQC Scenario Planner')).toBeInTheDocument()
+    expect(screen.queryByText('ROI Calculator')).not.toBeInTheDocument()
+  })
+
   it('shows the 6 CSWP.39 Fig 3 zones in fixed order when assessment is in progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
     mockAssessmentStore.industry = 'Technology'

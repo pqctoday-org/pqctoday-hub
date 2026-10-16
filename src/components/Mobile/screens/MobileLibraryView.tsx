@@ -83,13 +83,18 @@ export function MobileLibraryView() {
 
   // The open document lives in ?ref — the same param desktop reads — so a
   // shared /library?ref= link opens its sheet on a phone too, and Back closes it.
-  // ?q and ?purpose seed the search box and door once, on arrival.
+  // ?q, ?purpose and ?qv seed the search box, door and quick view once, on arrival.
   const [params, setParams] = useSearchParams()
   const [purpose, setPurpose] = useState<PurposeSelection>(() => {
     const p = params.get('purpose')
     return DOORS.some((d) => d.id === p) ? (p as PurposeSelection) : 'all'
   })
-  const [quickView, setQuickView] = useState<QuickView>('all')
+  // ?qv seeds the quick view once, as on desktop, so a link to the recent
+  // changes (/library?qv=new) opens filtered on a phone too.
+  const [quickView, setQuickView] = useState<QuickView>(() => {
+    const qv = params.get('qv')
+    return QUICK_VIEWS.some((v) => v.id === qv) ? (qv as QuickView) : 'all'
+  })
   const [searchText, setSearchText] = useState(() => params.get('q') ?? '')
   const detailRef = params.get('ref')
   const sortParam = params.get('sort')

@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   computeResearchFieldWatch,
+  computeOtherFieldShare,
   loadFieldWatchCorpus,
   FIELD_WATCH_WINDOW_DAYS,
   type FieldWatchRow,
@@ -199,5 +200,28 @@ describe('loadFieldWatchCorpus — real CSV sanity (not the fixture-driven tests
     const c = loadFieldWatchCorpus(true)
     expect(c).not.toBe(a)
     expect(c.rows).toEqual(a.rows) // same content, fresh object
+  })
+})
+
+describe('computeOtherFieldShare', () => {
+  it('counts active rows whose only bucket is Other / Uncategorized; deprecated rows are excluded', () => {
+    const share = computeOtherFieldShare([
+      row({ referenceId: 'A', algorithmFamily: 'Lattice-based' }),
+      row({ referenceId: 'B', algorithmFamily: '' }),
+      row({ referenceId: 'C', algorithmFamily: 'Guidelines' }),
+      row({ referenceId: 'D', algorithmFamily: 'Hash-based; Various' }),
+      row({ referenceId: 'E', algorithmFamily: '', isDeprecated: true }),
+    ])
+    expect(share).toEqual({ other: 2, total: 4, percent: 50 })
+  })
+
+  it('an empty corpus reports 0%, not NaN', () => {
+    expect(computeOtherFieldShare([])).toEqual({ other: 0, total: 0, percent: 0 })
+  })
+
+  it('the shipped corpus carries its computed share', () => {
+    const corpus = loadFieldWatchCorpus(true)
+    expect(corpus.otherShare).toEqual(computeOtherFieldShare(corpus.rows))
+    expect(corpus.otherShare.total).toBeGreaterThan(0)
   })
 })

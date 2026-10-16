@@ -26,6 +26,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
+import type { PersonaId } from '@/data/personaIds'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import {
   CSWP39_ZONE_ORDER,
@@ -63,15 +64,42 @@ import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboard
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 
+// What a persona's Command Center learn button opens, and how many of its
+// recommended sequence the welcome state foregrounds. The intro (lede and the
+// four questions) comes from commandCenterIntroFor.
+function learnCtaFor(persona: PersonaId | null): { label: string; to: string } {
+  switch (persona) {
+    case 'grc':
+      return { label: 'Start GRC Learning', to: '/learn/pqc-grc' }
+    case 'developer':
+      return { label: 'Learn the crypto APIs', to: '/learn/crypto-dev-apis' }
+    case 'architect':
+      return { label: 'Start the architecture path', to: '/learn/arch-quantum-impact' }
+    case 'researcher':
+      return { label: 'Read the revision log', to: '/revisions' }
+    case null:
+    case 'executive':
+      return { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' }
+    default:
+      return { label: 'Open your learning path', to: '/learn' }
+  }
+}
+
+function topToolCountFor(persona: PersonaId | null): number {
+  if (persona === 'developer') return 4
+  if (persona === 'researcher') return 2
+  return 3
+}
+
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const intro = commandCenterIntroFor(selectedPersona)
-  // Top 3 of the persona's own recommended sequence — foregrounded so the
+  const learnCta = learnCtaFor(selectedPersona)
+  // Top N of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
-  const isDeveloper = selectedPersona === 'developer'
   const topToolIds = getBusinessRoleSequence(selectedPersona)
-    .steps.slice(0, isDeveloper ? 4 : 3)
+    .steps.slice(0, topToolCountFor(selectedPersona))
     .map((s) => s.id)
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
@@ -117,7 +145,12 @@ function WelcomeState() {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Start with these tools
           </p>
-          <div className={clsx('grid gap-3', isDeveloper ? 'sm:grid-cols-2' : 'sm:grid-cols-3')}>
+          <div
+            className={clsx(
+              'grid gap-3',
+              topTools.length % 2 === 0 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
+            )}
+          >
             {topTools.map((tool) => {
               const Icon = tool.icon
               return (
@@ -147,32 +180,10 @@ function WelcomeState() {
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
         </Button>
-        {selectedPersona === 'grc' ? (
-          <Button variant="outline" onClick={() => navigate('/learn/pqc-grc')}>
-            <BookOpen size={16} className="mr-2" />
-            Start GRC Learning
-          </Button>
-        ) : isDeveloper ? (
-          <Button variant="outline" onClick={() => navigate('/learn/crypto-dev-apis')}>
-            <BookOpen size={16} className="mr-2" />
-            Learn the crypto APIs
-          </Button>
-        ) : selectedPersona === 'architect' ? (
-          <Button variant="outline" onClick={() => navigate('/learn/arch-quantum-impact')}>
-            <BookOpen size={16} className="mr-2" />
-            Start the architecture path
-          </Button>
-        ) : !selectedPersona || selectedPersona === 'executive' ? (
-          <Button variant="outline" onClick={() => navigate('/learn/exec-quantum-impact')}>
-            <BookOpen size={16} className="mr-2" />
-            Start Executive Learning
-          </Button>
-        ) : (
-          <Button variant="outline" onClick={() => navigate('/learn')}>
-            <BookOpen size={16} className="mr-2" />
-            Open your learning path
-          </Button>
-        )}
+        <Button variant="outline" onClick={() => navigate(learnCta.to)}>
+          <BookOpen size={16} className="mr-2" />
+          {learnCta.label}
+        </Button>
       </div>
     </div>
   )

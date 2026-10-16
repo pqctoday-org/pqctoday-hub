@@ -4,6 +4,7 @@ import {
   EXECUTIVE_SEQUENCE,
   GRC_SEQUENCE,
   DEVELOPER_SEQUENCE,
+  RESEARCHER_SEQUENCE,
   GENERIC_SEQUENCE,
   getBusinessRoleSequence,
   isValidBusinessToolId,
@@ -13,6 +14,7 @@ const ALL_SEQUENCES = {
   executive: EXECUTIVE_SEQUENCE,
   grc: GRC_SEQUENCE,
   developer: DEVELOPER_SEQUENCE,
+  researcher: RESEARCHER_SEQUENCE,
   generic: GENERIC_SEQUENCE,
 }
 
@@ -47,6 +49,15 @@ describe('businessRoleConfig', () => {
     expect(getBusinessRoleSequence('executive')).toBe(EXECUTIVE_SEQUENCE)
     expect(getBusinessRoleSequence('grc')).toBe(GRC_SEQUENCE)
     expect(getBusinessRoleSequence('developer')).toBe(DEVELOPER_SEQUENCE)
+    expect(getBusinessRoleSequence('researcher')).toBe(RESEARCHER_SEQUENCE)
+  })
+
+  it('the researcher sequence holds no program deliverables (ROI, RACI, roadmap, board deck)', () => {
+    const ids = RESEARCHER_SEQUENCE.steps.map((s) => s.id)
+    expect(ids[0]).toBe('crqc-scenario')
+    for (const id of ['roi-calculator', 'raci-builder', 'roadmap-builder', 'board-pitch']) {
+      expect(ids).not.toContain(id)
+    }
   })
 
   it('the developer sequence starts at the refactor audit and never at ROI or RACI', () => {
@@ -57,7 +68,7 @@ describe('businessRoleConfig', () => {
   })
 
   it('getBusinessRoleSequence falls back to the generic sequence for every other persona and null', () => {
-    for (const persona of ['architect', 'ops', 'researcher', 'curious'] as const) {
+    for (const persona of ['architect', 'ops', 'curious'] as const) {
       expect(getBusinessRoleSequence(persona), persona).toBe(GENERIC_SEQUENCE)
     }
     expect(getBusinessRoleSequence(null)).toBe(GENERIC_SEQUENCE)

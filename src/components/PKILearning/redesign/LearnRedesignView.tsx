@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, PRACTICE_QUIZ_LABEL, type PersonaId } from '@/data/learningPersonas'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { usePersonaPathItems } from '../usePersonaPathItems'
 import { WhereToStartTree } from '../WhereToStartTree'
@@ -138,7 +138,7 @@ export const LearnRedesignView = () => {
               className="gap-1.5"
             >
               <ListChecks size={14} aria-hidden="true" />
-              Quiz
+              {PRACTICE_QUIZ_LABEL}
             </Button>
           }
         />

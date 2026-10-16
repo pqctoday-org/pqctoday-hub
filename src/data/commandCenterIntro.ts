@@ -11,6 +11,7 @@
  * how exceptions are closed.
  */
 import type { PersonaId } from '@/data/learningPersonas'
+import { LIBRARY_RECENT_CHANGES_ROUTE } from '@/data/nextSteps'
 
 export interface CommandCenterQuestion {
   q: string
@@ -156,9 +157,45 @@ const ARCHITECT_INTRO: CommandCenterIntro = {
   ],
 }
 
+// The Researcher / Academic set: the four questions a researcher checks first,
+// each mapped to the existing page or tool that answers it. A researcher is not
+// running a program, so neither the board questions nor the executive overview
+// apply.
+const RESEARCHER_INTRO: CommandCenterIntro = {
+  lede: 'Checking a post-quantum claim comes down to four questions: what changed, whether it reproduces, how firm the threat estimate is, and who holds the patents. Start with whichever you need first.',
+  showGuidedOverview: false,
+  questions: [
+    {
+      q: 'What changed in the standards?',
+      desc: 'New and revised documents in the Library, newest first, each with its source and date.',
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+      cta: 'Recent standards changes',
+    },
+    {
+      q: 'Can I reproduce it?',
+      desc: 'Run the SP 800-90A HMAC_DRBG yourself and check it against pinned NIST ACVP vectors.',
+      to: '/playground/drbg-demo',
+      cta: 'SP 800-90A DRBG',
+    },
+    {
+      q: 'How sure is the threat timeline?',
+      desc: 'Quantum threats by industry, with the cryptography at risk and the migration window behind the dates.',
+      to: '/threats',
+      cta: 'Threats',
+    },
+    {
+      q: 'Who holds the patents?',
+      desc: 'Patent filings on post-quantum schemes: who filed, where, and on which algorithms.',
+      to: '/patents',
+      cta: 'Patents',
+    },
+  ],
+}
+
 export function commandCenterIntroFor(persona: PersonaId | null): CommandCenterIntro {
   if (persona === 'grc') return GRC_INTRO
   if (persona === 'developer') return DEVELOPER_INTRO
   if (persona === 'architect') return ARCHITECT_INTRO
+  if (persona === 'researcher') return RESEARCHER_INTRO
   return BOARD_INTRO
 }

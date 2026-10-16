@@ -3,6 +3,11 @@
 import { describe, it, expect } from 'vitest'
 import {
   PERSONAS,
+  PERSONA_IDS,
+  PATH_QUIZ_ID,
+  PRACTICE_QUIZ_LABEL,
+  capstoneTitle,
+  pathModuleCount,
   inferPersonaFromAssessment,
   essentialsQuizCategories,
   type PathItem,
@@ -224,5 +229,24 @@ describe('persona-path reach guard (WS17)', () => {
         `${id} on ${persona}`
       ).toContain(id)
     }
+  })
+})
+
+describe('pathModuleCount — one module count for Home, Learn and the Report', () => {
+  it.each(PERSONA_IDS)('%s: counts the path modules and never the quiz', (id) => {
+    const persona = PERSONAS[id]
+    const modules = persona.recommendedPath.filter((m) => m !== PATH_QUIZ_ID)
+    expect(pathModuleCount(id)).toBe(modules.length)
+    expect(pathModuleCount(id)).toBe(
+      persona.pathItems.filter((p) => p.type === 'module').length - 1
+    )
+  })
+})
+
+describe('capstone wording', () => {
+  it('says "Capstone Quiz" only once the capstone is unlocked', () => {
+    expect(capstoneTitle('Researcher', true)).toBe('Capstone Quiz — Researcher')
+    expect(capstoneTitle('Researcher', false)).not.toMatch(/quiz/i)
+    expect(PRACTICE_QUIZ_LABEL).toBe('Practice quiz')
   })
 })

@@ -22,9 +22,20 @@ describe('commandCenterIntroFor', () => {
     }
   })
 
+  it('gives the researcher the four research questions, with no walkthrough', () => {
+    const r = commandCenterIntroFor('researcher')
+    expect(r.questions.map((q) => q.to)).toEqual([
+      '/library?qv=new&sort=newest',
+      '/playground/drbg-demo',
+      '/threats',
+      '/patents',
+    ])
+    expect(r.showGuidedOverview).toBe(false)
+  })
+
   it('links only to tools that exist', () => {
     const ids = new Set(BUSINESS_TOOLS.map((t) => t.id))
-    for (const p of ['grc', 'developer', 'executive'] as const) {
+    for (const p of ['grc', 'developer', 'executive', 'architect', 'researcher'] as const) {
       for (const q of commandCenterIntroFor(p).questions) {
         const m = q.to.match(/^\/business\/tools\/([^/?#]+)/)
         if (m) expect(ids.has(m[1]), q.to).toBe(true)

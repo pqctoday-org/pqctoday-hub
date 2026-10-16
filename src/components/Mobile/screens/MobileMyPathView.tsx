@@ -3,7 +3,12 @@ import { useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { CheckCircle2, Circle, ChevronDown, Lock, Trophy, CheckSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PERSONAS, essentialsQuizCategories, type PersonaId } from '@/data/learningPersonas'
+import {
+  PERSONAS,
+  capstoneTitle,
+  essentialsQuizCategories,
+  type PersonaId,
+} from '@/data/learningPersonas'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useLearnStore } from '@/store/useLearnStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
@@ -326,7 +331,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
           )}
           <div className="min-w-0">
             <p className="text-[12.5px] font-bold text-foreground">
-              Capstone quiz — {personaData.label}
+              {capstoneTitle(personaData.label, progress.capstoneUnlocked)}
             </p>
             <p className="text-[10.5px] leading-relaxed text-muted-foreground">
               {progress.capstoneUnlocked

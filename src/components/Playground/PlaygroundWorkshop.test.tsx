@@ -9,6 +9,7 @@ import { FEATURE_PLAYGROUNDS } from './cryptoLabMeta'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore } from '@/store/useSandboxStore'
+import { playgroundToolsForRole, toolsForRole } from '@/data/roleTools'
 
 // Tools shown in the grid exclude the marquee "environment" cards.
 const GRID_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
@@ -117,7 +118,18 @@ describe('Crypto Lab Workbench', () => {
     // coincidentally landing on 3.
     usePersonaStore.setState({ selectedPersona: 'developer' })
     renderWorkbench()
-    expect(screen.getByText('3 tools matched to your role')).toBeInTheDocument()
+    expect(screen.getByText(/· 3 to start$/)).toBeInTheDocument()
+  })
+
+  it('explains the overview counts from the registry: all tools, tagged for the role, to start', () => {
+    usePersonaStore.setState({ selectedPersona: 'researcher' })
+    renderWorkbench()
+    const total = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
+    const tagged = playgroundToolsForRole('researcher').length
+    expect(tagged).toBe(toolsForRole('researcher').playground.length) // same count as the Home board
+    expect(
+      screen.getByText(`${total} tools · ${tagged} tagged for Researcher · 3 to start`)
+    ).toBeInTheDocument()
   })
 
   it('searches across all categories and shows a flat result list', () => {

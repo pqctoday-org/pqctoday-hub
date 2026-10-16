@@ -15,7 +15,7 @@
  * starting point, not a constraint.
  */
 
-import type { PersonaId } from '@/data/learningPersonas'
+import type { PersonaId } from './personaIds'
 
 export interface NextStep {
   /** Route the exit points at. */
@@ -971,12 +971,21 @@ function isToolRoute(route: string): boolean {
   )
 }
 
+/** The Library filtered to new and updated documents, newest first. */
+export const LIBRARY_RECENT_CHANGES_ROUTE = '/library?qv=new&sort=newest'
+
 /**
- * Per-role exits for routed pages, consulted before NEXT_STEPS. Curious
- * journey review (16 Oct 2026): a newcomer learning for themselves can't
- * answer an organisation's assessment, so Home and Explore lead to Explore and
- * the six-minute TLS handshake instead; the assessment stays one click away
- * from Explore.
+ * Per-role exits for routed pages, consulted before NEXT_STEPS. The one place
+ * a persona changes where a page leads.
+ *
+ * Curious journey review (16 Oct 2026): a newcomer learning for themselves
+ * can't answer an organisation's assessment, so Home and Explore lead to
+ * Explore and the six-minute TLS handshake instead; the assessment stays one
+ * click away from Explore.
+ *
+ * Researcher (owner decision R1(a), 16 Oct 2026): the board promises a
+ * reference shelf with no funnel, so Home leads to what changed in the
+ * standards rather than to the readiness assessment.
  */
 export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextStep>>> = {
   curious: {
@@ -991,6 +1000,42 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'About six minutes: a real TLS 1.3 connection in your browser, using the hybrid X25519MLKEM768 key exchange. Assessing an organisation instead? The readiness assessment is in the menu.',
     },
   },
+  researcher: {
+    '/': {
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+      label: 'See the recent standards changes',
+      why: 'The Library lists the documents that are new or were revised, newest first, each with its source and date.',
+    },
+  },
+}
+
+/**
+ * The rest of what Home does for a persona, where it differs from the default
+ * (the "Start Your Journey" CTA and the belt ScoreCard). The Home footer next
+ * step itself comes from PERSONA_NEXT_STEPS['/'], so the start CTA and the
+ * footer are declared side by side for each persona that has both.
+ */
+export interface PersonaHomeFunnel {
+  /** Replaces the "Start Your Journey" CTA under the board. */
+  startCta: { label: string; sub: string; to: string }
+  /** The learning path is offered, not pushed: the ScoreCard opens collapsed. */
+  learningPathOptional: boolean
+}
+
+export const PERSONA_HOME_FUNNEL: Partial<Record<PersonaId, PersonaHomeFunnel>> = {
+  researcher: {
+    startCta: {
+      label: 'Browse the evidence',
+      sub: 'Recent standards changes in the Library',
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+    },
+    learningPathOptional: true,
+  },
+}
+
+export function homeFunnelFor(persona: PersonaId | null): PersonaHomeFunnel | undefined {
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union
+  return persona ? PERSONA_HOME_FUNNEL[persona] : undefined
 }
 
 export function nextStepFor(route: string, persona?: PersonaId | null): NextStep | undefined {

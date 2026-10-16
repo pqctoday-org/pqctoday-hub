@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { loadLatestCSV } from './csvUtils'
 import { parseDateMs } from './libraryData'
-import { mapAlgorithmFamilyToFields, RESEARCH_FIELD_BUCKETS } from './researchFieldTaxonomy'
+import {
+  mapAlgorithmFamilyToFields,
+  OTHER_FIELD_BUCKET_ID,
+  RESEARCH_FIELD_BUCKETS,
+} from './researchFieldTaxonomy'
 
 /**
- * researchFieldWatch — the "changed in your fields since last visit" counter
+ * researchFieldWatch — the "recent corpus changes by algorithm family" counter
  * behind the Researcher persona's field-watch card
  * (IMPLEMENTATION-PLAN-2026-08-01.md §6).
  *
@@ -157,6 +161,31 @@ export function computeResearchFieldWatch(
   }
 }
 
+export interface OtherFieldShare {
+  /** Active rows that land only in the Other / Uncategorized bucket. */
+  other: number
+  /** All active rows. */
+  total: number
+  /** `other / total` as a whole percentage (0 when there are no rows). */
+  percent: number
+}
+
+/**
+ * How much of the ACTIVE catalogue has no recognised algorithm family and so
+ * lands in Other / Uncategorized. Computed from the shipped library CSV
+ * rather than written down, because it moves with every library release (it
+ * was ~43% on the July catalogue and 56% on the October one).
+ */
+export function computeOtherFieldShare(rows: FieldWatchRow[]): OtherFieldShare {
+  const active = rows.filter((r) => !r.isDeprecated)
+  const other = active.filter((r) => {
+    const fields = mapAlgorithmFamilyToFields(r.algorithmFamily)
+    return fields.length === 1 && fields[0] === OTHER_FIELD_BUCKET_ID
+  }).length
+  const total = active.length
+  return { other, total, percent: total === 0 ? 0 : Math.round((other / total) * 100) }
+}
+
 // ── Real-data adapter ────────────────────────────────────────────────────
 
 interface RawFieldWatchRow {
@@ -198,6 +227,8 @@ export interface FieldWatchCorpus {
   releaseDateMs: number | null
   /** Start of the reporting window (`releaseDateMs` - 90 days), or `null`. */
   windowStartMs: number | null
+  /** Share of active documents in the Other / Uncategorized bucket. */
+  otherShare: OtherFieldShare
 }
 
 let cachedCorpus: FieldWatchCorpus | null = null
@@ -233,6 +264,11 @@ export function loadFieldWatchCorpus(forceReload = false): FieldWatchCorpus {
   const windowStartMs =
     releaseDateMs === null ? null : releaseDateMs - FIELD_WATCH_WINDOW_DAYS * MS_PER_DAY
 
-  cachedCorpus = { rows: data, releaseDateMs, windowStartMs }
+  cachedCorpus = {
+    rows: data,
+    releaseDateMs,
+    windowStartMs,
+    otherShare: computeOtherFieldShare(data),
+  }
   return cachedCorpus
 }

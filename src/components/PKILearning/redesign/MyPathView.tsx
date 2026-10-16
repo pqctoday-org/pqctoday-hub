@@ -16,7 +16,12 @@ import {
   FlaskConical,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PERSONAS, essentialsQuizCategories, type PersonaId } from '@/data/learningPersonas'
+import {
+  PERSONAS,
+  capstoneTitle,
+  essentialsQuizCategories,
+  type PersonaId,
+} from '@/data/learningPersonas'
 import { useModuleStore } from '@/store/useModuleStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { MODULE_CATALOG, MODULE_STEP_COUNTS } from '../moduleData'
@@ -268,13 +273,18 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
           yourself. It points at a surface that already exists and already runs
           real ACVP vectors in the browser — no new machinery, and nothing here
           claims to have verified the reader did it. The claim is the task, not
-          a score. */}
+          a score.
+
+          Renamed 2026-10-16 from "Your capstone: …": the researcher's path
+          also ends in the Essentials-gated Capstone Quiz card below, and two
+          things called the capstone told two stories. This is the hands-on
+          check; the capstone is the quiz, named so only once it unlocks. */}
       {personaId === 'researcher' && (
         <div className="glass-panel rounded-xl border-l-4 border-l-primary p-4">
           <div className="mb-1 flex items-center gap-2">
             <FlaskConical size={15} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="text-sm font-semibold text-foreground">
-              Your capstone: reproduce a known-answer test
+              Check our work: reproduce a known-answer test
             </span>
           </div>
           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -375,7 +385,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
           )}
           <div className="min-w-0">
             <div className="text-sm font-semibold text-foreground">
-              Capstone Quiz — {persona.label}
+              {capstoneTitle(persona.label, progress.capstoneUnlocked)}
             </div>
             <p className="text-xs text-muted-foreground">
               {progress.capstoneUnlocked

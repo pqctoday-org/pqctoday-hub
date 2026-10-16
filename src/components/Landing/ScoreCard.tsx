@@ -2,13 +2,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { motion } from 'framer-motion'
-import { ArrowRight, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
+import { ArrowRight, ChevronDown, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
 import { getBeltTierLabel } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, pathModuleCount, type PersonaId } from '@/data/learningPersonas'
+import { homeFunnelFor } from '@/data/nextSteps'
 import { AchievementBadgeGrid } from './AchievementBadgeGrid'
 
 const fadeUp = {
@@ -170,15 +171,52 @@ function GraduateCTA() {
 // ── ScoreCard ────────────────────────────────────────────────────────────────
 
 export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [expanded, setExpanded] = useState(false)
+  // A persona whose Home offers the learning path rather than pushing it (the
+  // researcher) sees the ScoreCard collapsed under one disclosure line.
+  const optional = !embedded && homeFunnelFor(selectedPersona)?.learningPathOptional === true
+  if (!optional || !selectedPersona) return <ScoreCardBody embedded={embedded} />
+
+  const moduleCount = pathModuleCount(selectedPersona)
+  return (
+    <section aria-label="Optional learning path" data-testid="scorecard-optional">
+      <div className="glass-panel p-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-expanded={expanded}
+          aria-controls="scorecard-optional-body"
+          onClick={() => setExpanded((v) => !v)}
+          className="w-full justify-between gap-2 text-sm"
+        >
+          <span className="flex items-center gap-2">
+            <GraduationCap size={14} aria-hidden="true" />
+            Optional learning path ({moduleCount} modules)
+          </span>
+          <ChevronDown
+            size={14}
+            aria-hidden="true"
+            className={expanded ? 'rotate-180 transition-transform' : 'transition-transform'}
+          />
+        </Button>
+        {expanded && (
+          <div id="scorecard-optional-body" className="mt-4">
+            <ScoreCardBody embedded />
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function ScoreCardBody({ embedded }: { embedded: boolean }) {
   const result = useAwarenessScore()
   const [showScoring, setShowScoring] = useState(false)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // eslint-disable-next-line security/detect-object-injection
   const personaLabel = selectedPersona ? PERSONAS[selectedPersona]?.label : null
-  const personaModuleCount = selectedPersona
-    ? // eslint-disable-next-line security/detect-object-injection
-      PERSONAS[selectedPersona]?.pathItems.filter((item) => item.type === 'module').length
-    : null
+  const personaModuleCount = selectedPersona ? pathModuleCount(selectedPersona) : null
 
   const { hasStarted, score, belt, nextBelt, pointsToNextBelt, thresholdGates, streak } = result
 

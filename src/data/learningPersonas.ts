@@ -1676,3 +1676,30 @@ export function essentialsQuizCategories(personaId: PersonaId): string[] {
   }
   return [...cats]
 }
+
+/** The path item every persona's path ends on — the quiz, not a learning module. */
+export const PATH_QUIZ_ID = 'quiz'
+
+/**
+ * How many learning modules a persona's path holds — the one number Home
+ * (ScoreCard), Learn (My Path) and the Report all show. The trailing quiz is a
+ * path stop but not a module, so it is never counted.
+ */
+export function pathModuleCount(personaId: PersonaId): number {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union
+  return PERSONAS[personaId].pathItems.filter(
+    (p) => p.type === 'module' && p.moduleId !== PATH_QUIZ_ID
+  ).length
+}
+
+/**
+ * The open quiz at /learn/quiz is a practice quiz: anyone can take it at any
+ * time. Only the Essentials-gated quiz is the capstone, and it is called the
+ * Capstone Quiz only once it is unlocked, so Home and Learn never name a quiz
+ * the visitor cannot take.
+ */
+export const PRACTICE_QUIZ_LABEL = 'Practice quiz'
+
+export function capstoneTitle(personaLabel: string, unlocked: boolean): string {
+  return unlocked ? `Capstone Quiz — ${personaLabel}` : `Capstone (locked) — ${personaLabel}`
+}
