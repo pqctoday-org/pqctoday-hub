@@ -303,7 +303,7 @@ function generateCaddyConfig(mode: string): string {
   // first release built on it. Curve names are the ones the Caddyfile accepts
   // (https://caddyserver.com/docs/caddyfile/directives/tls): x25519mlkem768,
   // x25519, secp256r1, secp384r1, secp521r1 — there is no pure ML-KEM group.
-  const header = `# PQC TLS Configuration (${modeLabel(mode)})\n# Server: Caddy\n# Caddy uses Go's crypto/tls, not OpenSSL. Requires Caddy 2.10+ (built with Go 1.24+),\n# where the X25519MLKEM768 hybrid group is available and on by default.\n`
+  const header = `# PQC TLS Configuration (${modeLabel(mode)})\n# Server: Caddy\n# Requires Caddy 2.10+ (built with Go 1.24+); Caddy uses Go's crypto/tls, not OpenSSL.\n# The X25519MLKEM768 hybrid group is available and on by default.\n`
 
   if (mode === 'classical') {
     return (
