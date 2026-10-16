@@ -95,7 +95,7 @@ describe('collections', () => {
     expect(emptyCollection('  ').name).toBe('Untitled collection')
   })
 
-  it('mark as seen moves the saved state on, except for removed records', () => {
+  it('mark as seen moves the saved state on; a removed record is marked seen-gone', () => {
     const c = collectionFromRecords('A', [draft, fips], NOW)
     const now = { ...draft, lifecycleLabel: 'Released' }
     const seen = markSeen(
@@ -106,7 +106,7 @@ describe('collections', () => {
     )
     expect(seen.entries[0].saved.lifecycle).toBe('Released')
     expect(seen.entries[0].seenAt).toBe(NOW.toISOString())
-    expect(seen.entries[1]).toEqual(c.entries[1])
+    expect(seen.entries[1]).toEqual({ ...c.entries[1], goneSeenAt: NOW.toISOString() })
   })
 
   it('renders a table with the saved state', () => {

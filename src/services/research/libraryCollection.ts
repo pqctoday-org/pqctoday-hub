@@ -50,6 +50,9 @@ export interface CollectionEntry {
   saved: SavedRecordState
   /** ISO time `saved` was last refreshed with "Mark as seen"; absent until then. */
   seenAt?: string
+  /** ISO time the user marked the record as seen after it left the Library
+   * (deprecated or removed); it is then no longer listed as changed. */
+  goneSeenAt?: string
 }
 
 export interface LibraryCollection {
@@ -151,8 +154,9 @@ export const removeFromCollection = (c: LibraryCollection, referenceId: string) 
 
 /**
  * "Mark as seen": replace the saved state of the given records with their
- * current state, so they leave the "changed since you saved" list. Records
- * the lookup cannot find (removed from the Library) keep their saved state.
+ * current state, so they leave the "changed since you saved" list. A renamed
+ * record takes its new id. Records the lookup cannot find (deprecated or
+ * removed) keep their saved state and are marked as seen-gone.
  */
 export function markSeen(
   c: LibraryCollection,
@@ -166,7 +170,14 @@ export function markSeen(
     entries: c.entries.map((e) => {
       if (!ids.has(e.referenceId)) return e
       const current = lookup(e.referenceId)
-      return current ? { ...e, saved: recordState(current), seenAt: now.toISOString() } : e
+      if (!current) return { ...e, goneSeenAt: now.toISOString() }
+      // A renamed record is kept under its new id from now on.
+      return {
+        ...e,
+        referenceId: current.referenceId,
+        saved: recordState(current),
+        seenAt: now.toISOString(),
+      }
     }),
   }
 }
@@ -228,6 +239,7 @@ export function readCollection(
           lastVerified: isString(e.saved?.lastVerified) ? e.saved.lastVerified : '',
         },
         ...(isString(e.seenAt) ? { seenAt: e.seenAt } : {}),
+        ...(isString(e.goneSeenAt) ? { goneSeenAt: e.goneSeenAt } : {}),
       })),
   }
 }

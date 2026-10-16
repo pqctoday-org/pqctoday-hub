@@ -9,6 +9,7 @@ import { useEffect, useRef, type FC, type ReactNode } from 'react'
 import { FlaskConical } from 'lucide-react'
 import { CollectionsList } from './CollectionsList'
 import { BookmarksToCollection } from './BookmarksToCollection'
+import { ChangedSinceSaved } from './ChangedSinceSaved'
 
 const PANEL_ID = 'research-workspace'
 
@@ -49,6 +50,14 @@ export const ResearchWorkspacePanel: FC = () => {
           screen.
         </p>
       </div>
+
+      <Block
+        title="Changed since you saved"
+        testId="research-changes"
+        intro="Each visit compares your collections with the current Library: a new revision, a lifecycle change, a new successor, deprecation, a newer last-verified date, or removal."
+      >
+        <ChangedSinceSaved placement="workspace" />
+      </Block>
 
       <Block
         title="Collections"

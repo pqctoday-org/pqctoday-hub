@@ -67,6 +67,7 @@ import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
 import { BookmarksToCollection } from '@/components/shared/research/BookmarksToCollection'
+import { ChangedSinceSaved } from '@/components/shared/research/ChangedSinceSaved'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -740,6 +741,10 @@ export function LibraryViewRedesign({
               </>
             }
           />
+
+          {/* Records in the user's collections that changed since they were
+              saved (shown only when something changed). */}
+          {!simEmbed && <ChangedSinceSaved placement="library" />}
 
           {/* Bookmarks view: the researcher's evidence bundle (bookmarked
               records, citations, saved run records, what is missing). */}
