@@ -65,5 +65,6 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'vpn-sim-run': 'VPN Simulator Run',
   'run-manifest': 'Saved Run Record',
   'library-collection': 'Library Collection',
+  'research-question': 'Research Question',
   'ops-test-plan': 'Operations Test Plan',
 }

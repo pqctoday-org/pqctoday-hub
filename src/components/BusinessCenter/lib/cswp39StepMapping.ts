@@ -128,6 +128,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'run-manifest': 'compliance',
   // Researcher workspace: a collection of cited sources is reference evidence.
   'library-collection': 'compliance',
+  'research-question': 'compliance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -198,6 +199,7 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // Researcher workspace artifacts, saved from the Library and the researcher
   // Command Center, not from a Command Center builder.
   'library-collection': 'mitigation',
+  'research-question': 'mitigation',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

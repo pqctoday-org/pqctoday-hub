@@ -34,7 +34,7 @@ export const OPERATIONS_PACK_TYPES: ReadonlySet<ExecutiveDocumentType> =
 /** Researcher workspace artifacts open in the workspace panel on the
  * researcher's Command Center. */
 export const RESEARCH_WORKSPACE_TYPES: ReadonlySet<ExecutiveDocumentType> =
-  new Set<ExecutiveDocumentType>(['library-collection'])
+  new Set<ExecutiveDocumentType>(['library-collection', 'research-question'])
 
 /** Where a saved Command Center artifact's history entry leads. Artifacts
  * made outside a Learn module open where they were made: the operations

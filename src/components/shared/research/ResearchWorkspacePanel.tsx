@@ -10,6 +10,7 @@ import { FlaskConical } from 'lucide-react'
 import { CollectionsList } from './CollectionsList'
 import { BookmarksToCollection } from './BookmarksToCollection'
 import { ChangedSinceSaved } from './ChangedSinceSaved'
+import { ResearchQuestionForm } from './ResearchQuestionForm'
 
 const PANEL_ID = 'research-workspace'
 
@@ -45,11 +46,19 @@ export const ResearchWorkspacePanel: FC = () => {
           <FlaskConical size={16} aria-hidden="true" /> Research workspace
         </h2>
         <p className="mt-1 max-w-3xl text-xs text-muted-foreground">
-          Your own working notes: the sources you collected and the state each one was in when you
-          saved it. They stay in your browser and go into the evidence bundle. Best used on a larger
-          screen.
+          Your own working notes: your question, the sources you collected and the state each one
+          was in when you saved it. They stay in your browser and go into the evidence bundle. Best
+          used on a larger screen.
         </p>
       </div>
+
+      <Block
+        title="Research question"
+        testId="research-question"
+        intro="What you are checking, what kind of question it is, which sources count and which do not, and how much evidence is enough."
+      >
+        <ResearchQuestionForm />
+      </Block>
 
       <Block
         title="Changed since you saved"

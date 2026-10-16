@@ -52,6 +52,9 @@ describe('artifactHistoryRoute', () => {
     expect(
       artifactHistoryRoute({ type: 'library-collection', moduleId: 'library-collection:1' })
     ).toBe('/business#research-workspace')
+    expect(
+      artifactHistoryRoute({ type: 'research-question', moduleId: 'research-question:1' })
+    ).toBe('/business#research-workspace')
   })
 
   it('keeps the Learn workshop route for module artifacts', () => {

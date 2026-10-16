@@ -102,6 +102,8 @@ export type ExecutiveDocumentType =
   // Researcher evidence workspace, Layer 2: a named set of Library record ids,
   // each with the user's annotation and the record's state as saved.
   | 'library-collection'
+  // Researcher evidence workspace: the question, its type, inclusion and exclusion criteria and evidence threshold.
+  | 'research-question'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */
