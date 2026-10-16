@@ -1,0 +1,76 @@
+Third-party notices for the strongswan engine bundle
+============================================================
+
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit bf53023b78b42078b5936dab91809eaeb9f756e3
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/bf53023b78b42078b5936dab91809eaeb9f756e3).
+Code written by PQC Today, LLC is under the licence in that repository.
+This file lists the third-party code compiled into the bundle, its
+licence and where its full licence text is (LICENSES/ next to this file).
+
+Components
+----------
+
+strongSwan
+  Version:   6.0.5
+  Licence:   GPL-2.0-or-later (with strongSwan's OpenSSL linking exception)
+  Copyright: The strongSwan authors and secunet Security Networks AG, see the headers of the source files
+  Source:    https://download.strongswan.org/strongswan-6.0.5.tar.bz2 (SHA-256 437460893655d6cfbc2def79d2da548cb5175b865520c507201ab2ec2e7895d9)
+  Changes:   PQC Today, LLC patches: strongswan-6.0.5-pqc.patch, strongswan-6.0.5-wasm.patch, the strongswan-pkcs11/ plugin and strongswan-wasm-shims/, applied by scripts/build-strongswan-wasm.sh
+  Source:    Complete corresponding source: the strongSwan 6.0.5 tarball above plus https://github.com/pqctoday-org/pqctoday-hsm/tree/bf53023b78b42078b5936dab91809eaeb9f756e3 (patches, plugin, shims and build script). It stays available there, and on request from PQC Today, LLC, for at least three years after this bundle is published.
+  Text:      LICENSES/strongswan/COPYING
+  Text:      LICENSES/strongswan/LICENSE
+  Text:      LICENSES/strongswan/NOTICE
+
+SoftHSMv3, the PQC Today fork of SoftHSM2
+  Version:   SoftHSM2 2.7.0 base
+  Licence:   BSD-2-Clause
+  Copyright: Copyright (c) 2008-2013 .SE (The Internet Infrastructure Foundation)
+  Copyright: Copyright (c) 2010-2018 SURFnet bv
+  Copyright: Copyright (c) 2022 NLnet Labs
+  Copyright: Copyright (c) 2014, 2020 Red Hat, Inc.
+  Copyright: Copyright (c) 2024-2026 PQC Today
+  Source:    https://github.com/softhsm/SoftHSMv2 (upstream); this repository (fork)
+  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; see LICENSE and CHANGELOG.md
+  Text:      LICENSES/softhsmv3/LICENSE
+
+OASIS PKCS#11 v3.2 headers
+  Version:   3.2
+  Licence:   LicenseRef-OASIS-IPR
+  Copyright: Copyright (c) OASIS Open 2016, 2019, 2024
+  Source:    https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/include/pkcs11-v3.2/
+  Text:      LICENSES/oasis-pkcs11-headers/NOTICE.txt
+
+OpenSSL
+  Version:   3.6.3
+  Licence:   Apache-2.0
+  Copyright: Copyright (c) 1998-2026 The OpenSSL Project Authors
+  Source:    https://www.openssl.org/source/openssl-3.6.3.tar.gz (SHA-256 243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1), unmodified; built by scripts/build-openssl-wasm.sh
+  Text:      LICENSES/openssl/LICENSE.txt
+
+hash-sigs (HSS/LMS), PQC Today fork of cisco/hash-sigs
+  Version:   commit 21294a0f2e4cfcc66b6bc58b7717fd4cb6757931
+  Licence:   BSD-3-Clause
+  Copyright: Copyright (c) 2017 Cisco Systems, Inc.
+  Source:    https://github.com/pqctoday-org/hash-sigs (fork of https://github.com/cisco/hash-sigs); submodule src/lib/crypto/stateful/hash-sigs
+  Changes:   SP 800-208 SHAKE-256 parameter sets and OpenSSL hashing, by PQC Today
+  Text:      LICENSES/hash-sigs/license.txt
+
+XMSS reference implementation
+  Version:   commit 171ccbd26f098542a67eb5d2b128281c80bd71a6
+  Licence:   CC0-1.0
+  Source:    https://github.com/XMSS/xmss-reference; submodule src/lib/crypto/stateful/xmss-reference
+  Text:      LICENSES/xmss-reference/LICENSE
+
+Emscripten runtime (emscripten library code, musl libc, libc++, libc++abi, compiler-rt)
+  Version:   Emscripten SDK used for the build (texts from emsdk 6.0.4)
+  Licence:   (MIT OR NCSA) AND MIT AND (Apache-2.0 WITH LLVM-exception OR NCSA OR MIT)
+  Copyright: Copyright (c) 2010-2014 Emscripten authors
+  Copyright: Copyright (c) 2005-2020 Rich Felker, et al. (musl)
+  Copyright: LLVM Project contributors (libc++, libc++abi, compiler-rt)
+  Source:    https://github.com/emscripten-core/emscripten
+  Text:      LICENSES/emscripten-runtime/LICENSE
+  Text:      LICENSES/emscripten-runtime/musl-COPYRIGHT
+  Text:      LICENSES/emscripten-runtime/libcxx-LICENSE.TXT
+  Text:      LICENSES/emscripten-runtime/libcxxabi-LICENSE.TXT
+  Text:      LICENSES/emscripten-runtime/compiler-rt-LICENSE.TXT
+

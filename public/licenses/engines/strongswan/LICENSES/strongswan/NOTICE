@@ -1,0 +1,46 @@
+strongswan-pkcs11: PQC-enabled strongSwan PKCS#11 plugin
+=========================================================
+
+This folder is derived from the pkcs11 plugin of strongSwan
+(src/libstrongswan/plugins/pkcs11/ in the strongSwan source,
+https://www.strongswan.org/, https://github.com/strongswan/strongswan).
+The comparison baseline is the strongSwan 6.0.5 release tarball,
+https://download.strongswan.org/strongswan-6.0.5.tar.bz2
+(SHA-256 437460893655d6cfbc2def79d2da548cb5175b865520c507201ab2ec2e7895d9).
+
+Licence: GNU General Public License, version 2 or (at your option) any later
+version (GPL-2.0-or-later). The full text is in COPYING in this folder. The
+copyright notices of the original authors (Martin Willi, Tobias Brunner,
+secunet Security Networks AG and others) are kept in each source file.
+strongSwan's own licence statement, including its OpenSSL linking exception,
+is in the LICENSE file of the strongSwan source tarball named above.
+
+pkcs11.h is the g10 Code GmbH header shipped with strongSwan; it carries its
+own permissive notice, which is kept.
+
+Changes by PQC Today, LLC (2026)
+--------------------------------
+Modified from strongSwan 6.0.5 (each file carries a "Modified by" line):
+  Makefile.am           adds pkcs11_kem.c/.h to the plugin sources
+  pkcs11.h              PKCS#11 v3.2 key types, mechanisms, attributes and
+                        parameter sets for ML-KEM, ML-DSA and SLH-DSA
+  pkcs11_dh.c           keeps the ECDH peer value alive until derive; marks the
+                        derived secret readable (CKA_SENSITIVE/CKA_EXTRACTABLE)
+  pkcs11_plugin.c       registers the ML-KEM key exchange and PQC signature
+                        types; stops advertising MODP groups the token lacks
+  pkcs11_private_key.c  ML-DSA, SLH-DSA, Ed448 and Ed25519 signing via the token
+  pkcs11_public_key.c   ML-DSA, SLH-DSA, Ed448 and Ed25519 public keys and
+                        verification, SubjectPublicKeyInfo handling
+New files written by PQC Today, LLC, under the same GPL-2.0-or-later terms:
+  pkcs11_kem.c, pkcs11_kem.h, test_ss.c, tests/, README.md
+All other files are unchanged from strongSwan 6.0.5 (the same files differ
+from strongSwan 6.0.7, the baseline of ../strongswan-pkcs11.patch).
+
+The complete change set against a pristine strongSwan tree is
+../strongswan-pkcs11.patch (regenerate it with
+../regen-strongswan-pkcs11-patch.sh). The WebAssembly build applies further
+patches to strongSwan itself: ../strongswan-6.0.5-pqc.patch,
+../strongswan-6.0.5-wasm.patch and the shims in ../strongswan-wasm-shims/,
+driven by ../scripts/build-strongswan-wasm.sh.
+
+strongSwan is excluded from any commercial licence offered by PQC Today, LLC.
