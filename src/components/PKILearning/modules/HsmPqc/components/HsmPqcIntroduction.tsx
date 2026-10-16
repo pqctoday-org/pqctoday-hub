@@ -526,14 +526,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  PQC delivered via AWS-LC SDK, not HSM firmware change. Zero downtime for SDK
-                  update. AWS-LC has its own CMVP certificates as a Level 1 software module (AWS-LC
-                  3, #5298/#5314, approve ML-KEM but not ML-DSA); they do not change the HSM&apos;s
-                  Level 3 certificate. Checked 24 Sep 2026.
+                  ML-DSA-44/65/87 keys are generated and used inside the HSM, in FIPS mode on
+                  hsm2m.medium clusters from 1 September 2026, through vendor-defined PKCS#11
+                  mechanisms (CKM_CLOUDHSM_ML_DSA). AWS-LC has its own CMVP certificates as a Level
+                  1 software module (AWS-LC 3, #5298/#5314, approve ML-KEM but not ML-DSA); they do
+                  not change the HSM&apos;s Level 3 certificate, and #4703 lists no PQC algorithm.
+                  Checked 15 Oct 2026.
                 </p>
                 <p>
-                  <strong>Limitation:</strong> Native PKCS#11 PQC mechanisms not yet in firmware.
-                  ML-KEM encapsulation/decapsulation not supported.
+                  <strong>Limitation:</strong> no standard PKCS#11 v3.2 PQC mechanisms (CKM_ML_DSA)
+                  and no ML-KEM encapsulation/decapsulation.
                 </p>
               </div>
             </div>

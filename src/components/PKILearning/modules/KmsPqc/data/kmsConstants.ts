@@ -394,7 +394,8 @@ export const ENTERPRISE_SCENARIO = {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
-      pqcCapability: 'ML-KEM-768/1024 GA, X-Wing GA, ML-DSA preview',
+      pqcCapability:
+        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
     },
     {
       id: 'azure-kv',
