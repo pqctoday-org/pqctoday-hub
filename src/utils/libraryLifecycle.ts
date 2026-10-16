@@ -105,33 +105,6 @@ export function parseLifecycleParam(raw: string | null | undefined): LifecycleLa
   return parseLifecycleLabel(raw)
 }
 
-/** How far along a label is, for picking the furthest stage across a document's
- *  revisions (higher = further). Research Paper and Misc are not stages; they
- *  rank above Expired and Historical so a lapsed or replaced revision never
- *  outranks them. */
-const LABEL_RANK: Record<LifecycleLabel, number> = {
-  Released: 5,
-  Draft: 4,
-  'Research Paper': 3,
-  Misc: 2,
-  Unverified: 1.5,
-  Expired: 1,
-  Historical: 0,
-}
-
-/** The furthest label across a revision group: the surviving record's own label
- *  plus its older revisions' labels. */
-export function getGroupLifecycleLabel(
-  primary: LifecycleLabel,
-  priorLabels: LifecycleLabel[]
-): LifecycleLabel {
-  return [primary, ...priorLabels].reduce(
-    // eslint-disable-next-line security/detect-object-injection -- both are LifecycleLabel keys
-    (best, cur) => (LABEL_RANK[cur] > LABEL_RANK[best] ? cur : best),
-    primary
-  )
-}
-
 export const LIFECYCLE_STYLES: Record<
   LifecycleLabel,
   { badge: string; label: string; dot: string }

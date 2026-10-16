@@ -222,11 +222,12 @@ describe('attachPriorRevisions', () => {
     expect(out.map((i) => i.referenceId)).toEqual(['SURV', 'OTHER'])
   })
 
-  it('computes the furthest groupLifecycleLabel across the group', () => {
+  it("keeps the survivor's own label: an older revision never raises it", () => {
     const items = [item('SURV', { lifecycleLabel: 'Draft' })]
     const priors = [prior('OLD', 'SURV', { lifecycleLabel: 'Released' })]
     const out = attachPriorRevisions(items, priors)
-    expect(out[0].groupLifecycleLabel).toBe('Released')
+    expect(out[0].lifecycleLabel).toBe('Draft')
+    expect(out[0].priorRevisions?.[0].lifecycleLabel).toBe('Released')
   })
 
   it('ignores priors with no supersededBy', () => {
@@ -268,7 +269,6 @@ describe('libraryData revision collapse (real data)', () => {
     expect(ids.has('draft-ietf-plants-merkle-tree-certs-00')).toBe(false)
     const surv = libraryData.find((i) => i.referenceId === 'draft-ietf-plants-merkle-tree-certs')!
     expect(surv.priorRevisions?.length ?? 0).toBeGreaterThanOrEqual(2)
-    expect(surv.groupLifecycleLabel).toBeDefined()
   })
 
   it('child instances in the dependency tree carry the same enrichment (priorRevisions)', () => {
@@ -403,10 +403,17 @@ describe('library lifecycle labels (loader)', () => {
     }
   })
 
-  it('collapses a revision group to its furthest label', () => {
+  it('labels a revision group by its current record only (researcher audit, 15 Oct 2026)', () => {
+    // Active Internet-Drafts were shown as "Released" because one older revision
+    // carried an unrecognised status. The card must match the Lifecycle filter.
     for (const item of libraryData.filter((i) => i.priorRevisions?.length)) {
-      expect(LIFECYCLE_LABELS, item.referenceId).toContain(item.groupLifecycleLabel)
+      expect(LIFECYCLE_LABELS, item.referenceId).toContain(item.lifecycleLabel)
+      expect(item, item.referenceId).not.toHaveProperty('groupLifecycleLabel')
     }
+    const pqcAuth = libraryData.find((i) =>
+      i.referenceId.startsWith('draft-ietf-ipsecme-ikev2-pqc-auth')
+    )
+    if (pqcAuth) expect(pqcAuth.lifecycleLabel).not.toBe('Released')
   })
 })
 
