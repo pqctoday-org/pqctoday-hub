@@ -80,8 +80,7 @@ const MENTIONS_ADVISORY = /advis(es|ed) against|not for new use|2026-10-01|1 Oct
  * Matched by a sentence substring. Once the newer CSVs ship these no longer match;
  * the second test then fails until the entry is deleted, so the list cannot rot.
  */
-const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
-]
+const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = []
 
 const isPending = (s: { file: string; text: string }) =>
   PENDING_DATA_FIXES.some((p) => p.file.test(s.file) && s.text.includes(p.text))

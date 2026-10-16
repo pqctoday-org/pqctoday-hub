@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
-import { ExternalLink, Loader2, Play } from 'lucide-react'
+import { Download, ExternalLink, Loader2, Play } from 'lucide-react'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
@@ -26,6 +26,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
+import { bundleFilename, downloadBlob } from '@/services/exportBundle'
+import { runManifestToMarkdown } from '@/services/runManifest'
+import { tlsRunManifest, TLS_SIMULATOR_VERSION } from './tlsRunManifest'
 
 export const TLSSimulatorTab: React.FC = () => {
   const {
@@ -41,7 +44,34 @@ export const TLSSimulatorTab: React.FC = () => {
     clearSession,
     clientMessage,
     serverMessage,
+    runHistory,
   } = useTLSStore()
+  const runStartedAt = useRef<string>('')
+  // The record must describe THIS run: the history entry is added just after
+  // the result renders, so ignore an older entry until the new one exists.
+  const newest = runHistory[runHistory.length - 1]
+  const lastRun =
+    results && newest && new Date(newest.timestamp).toISOString() >= runStartedAt.current
+      ? newest
+      : undefined
+
+  // "Save what this run showed": a small file with the run's settings, results
+  // and what it does not prove (curious journey review, 16 Oct 2026).
+  const saveRunRecord = useCallback(() => {
+    if (!lastRun) return
+    const manifest = tlsRunManifest({
+      run: lastRun,
+      clientConfig,
+      serverConfig,
+      toolVersion: TLS_SIMULATOR_VERSION,
+      startedAt: runStartedAt.current || new Date(lastRun.timestamp).toISOString(),
+      finishedAt: new Date(lastRun.timestamp).toISOString(),
+    })
+    downloadBlob(
+      new Blob([runManifestToMarkdown(manifest)], { type: 'text/markdown' }),
+      bundleFilename('tls-demo-run', 'md')
+    )
+  }, [lastRun, clientConfig, serverConfig])
 
   /* HSM mode toggle removed: it never produced a successful handshake for
    * end-users and the "HSM ON" toggle was misleading. softhsm v3 +
@@ -102,6 +132,7 @@ export const TLSSimulatorTab: React.FC = () => {
   const triggerSimulation = useCallback(async () => {
     setIsSimulating(true)
     setResults(null)
+    runStartedAt.current = new Date().toISOString()
 
     const currentCommands = [
       `CLIENT_SEND: ${clientMessage}`,
@@ -340,6 +371,17 @@ export const TLSSimulatorTab: React.FC = () => {
       </WhyThisMatters>
 
       <div className="flex justify-end gap-3">
+        {lastRun && (
+          <Button
+            variant="outline"
+            onClick={saveRunRecord}
+            className="flex items-center gap-2 px-4 py-3"
+            title="Downloads a small file with the settings, the results and what this run does not prove"
+          >
+            <Download size={16} aria-hidden="true" />
+            Save what this run showed
+          </Button>
+        )}
         {results && (
           <Button
             variant="ghost"
