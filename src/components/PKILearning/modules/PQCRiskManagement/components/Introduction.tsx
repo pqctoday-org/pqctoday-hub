@@ -329,7 +329,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   scope, not a blanket RSA/ECC ban
                 </li>
                 <li>&bull; EU/ANSSI: Active PQC transition guidance</li>
-                <li>&bull; Financial regulators examining quantum risk</li>
               </ul>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -337,7 +336,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Data breach costs averaging $4.44M globally (IBM, 2025)</li>
                 <li>&bull; Supply chain trust dependent on digital signatures</li>
-                <li>&bull; Competitive advantage from early PQC adoption</li>
+                <li>&bull; Possible competitive advantage from early PQC adoption</li>
                 <li>&bull; Insurance and audit implications</li>
               </ul>
             </div>

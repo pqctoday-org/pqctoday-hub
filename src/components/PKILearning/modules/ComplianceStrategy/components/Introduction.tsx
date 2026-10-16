@@ -137,28 +137,33 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
             </div>
             <p className="text-xs text-muted-foreground">
               European bodies have published PQC migration guidance. ANSSI recommends hybrid
-              cryptography combining classical and PQC algorithms. BSI endorses ML-KEM
-              (FIPS&nbsp;203) and ML-DSA (FIPS&nbsp;204) with specific parameter recommendations.
-              ETSI provides interoperability guidance for hybrid key exchanges.
+              cryptography combining classical and PQC algorithms, and makes it mandatory inside the
+              French regulated perimeter (classified and Diffusion Restreinte data, vital
+              information systems, ANSSI-certified or qualified products). BSI&apos;s TR-02102-1
+              currently recommends PQC only in hybrid use and endorses ML-KEM (FIPS&nbsp;203) and
+              ML-DSA (FIPS&nbsp;204) with specific parameter recommendations. ETSI provides
+              interoperability guidance for hybrid key exchanges.
             </p>
           </div>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-secondary/30 mt-4">
           <div className="text-sm font-bold text-foreground mb-2">
-            Hybrid Now, Pure PQC Later: The Two-Phase Transition
+            Hybrid or Pure PQC: It Depends on the Authority and the System
           </div>
           <p className="text-xs text-muted-foreground mb-2">
-            All major frameworks converge on a two-phase transition arc. In <strong>Phase 1</strong>{' '}
-            (now through roughly 2028), organizations deploy <strong>hybrid mode</strong> &mdash;
-            running a classical algorithm alongside a PQC algorithm in parallel. ANSSI and BSI
-            require this during transition because it preserves security even if PQC implementations
-            have undiscovered flaws. In <strong>Phase 2</strong> (2028 onward, timed to your
-            earliest jurisdiction deadline), organizations move to <strong>pure PQC</strong>: CNSA
-            2.0&apos;s &ldquo;exclusive&rdquo; requirements mean dropping the classical component
-            once FIPS 140-3 validated implementations are widely available and proven.
+            Authorities do not agree on hybrid deployment, and the answer depends on which systems
+            are in scope. ANSSI makes hybrid mandatory inside the French regulated perimeter and
+            recommends it everywhere else, except for hash-based signatures (SLH-DSA, XMSS, LMS),
+            which may be used alone. BSI&apos;s TR-02102-1 currently recommends PQC only in hybrid
+            use. ETSI TS 119 312 specifies hybrid signatures for trust services. NSA does not
+            require hybrids for National Security Systems: CNSA 2.0 sets pure ML-KEM-1024 and
+            ML-DSA-87 as the end state, and allows hybrids as an interim step where a protocol needs
+            them. Many programs therefore deploy <strong>hybrid</strong> now and plan{' '}
+            <strong>pure PQC</strong> later, but that is a common migration pattern, not a rule
+            every framework imposes.
           </p>
           <p className="text-xs text-muted-foreground">
-            <strong>Executive rule of thumb:</strong> Start hybrid deployments now. Plan your
+            <strong>Planning rule of thumb:</strong> Start hybrid deployments now. Plan your
             transition to pure PQC to meet your earliest jurisdiction deadline &mdash; which you
             will identify in the Jurisdiction Mapper workshop below.
           </p>
@@ -473,10 +478,13 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             <p className="text-xs text-muted-foreground">
               The Cryptographic Module Validation Program certifies cryptographic implementations
               for government use. PQC algorithm implementations (FIPS 203/204/205) must undergo CMVP
-              validation before deployment in federal systems. Validation exists on a spectrum: full
-              CMVP validation (gold standard), modules in process, FIPS-mode operation, and partial
-              compliance (FedRAMP, WebTrust). This certification backlog is a key dependency in
-              migration timelines.
+              validation before deployment in federal systems. These are separate assurance
+              programs, not points on one scale. CAVP validates an algorithm implementation. CMVP
+              validates a cryptographic module (FIPS 140-3), and a module &ldquo;in process&rdquo;
+              is not yet validated. &ldquo;FIPS mode&rdquo; is a vendor configuration claim unless a
+              CMVP certificate covers that exact module and version. FedRAMP authorizes a cloud
+              service, and WebTrust audits a certificate authority; neither validates cryptography.
+              This certification backlog is a key dependency in migration timelines.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

@@ -60,13 +60,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">
-                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Mandate
+                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Position
               </div>
               <p className="text-xs text-muted-foreground">
-                France&apos;s ANSSI requires hybrid mode during transition &mdash; PQC-only is not
-                acceptable until algorithms are more mature. Exception: hash-based signatures (
-                <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>/SPHINCS+, LMS, XMSS) may be
-                used standalone.
+                France&apos;s ANSSI recommends hybrid mode during transition, and makes it mandatory
+                inside the French regulated perimeter (classified and Diffusion Restreinte data,
+                vital information systems, ANSSI-certified or qualified products). Exception:
+                hash-based signatures (<InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
+                /SPHINCS+, LMS, XMSS) may be used standalone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -88,7 +89,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
                 (ML-KEM-1024 + ML-DSA-87) for national security systems, with exclusive-use
                 deadlines running to 2030&ndash;2033 by equipment class. CNSA 2.0 does not require
-                hybrid &mdash; it permits pure PQC (hybrid is mandated by ANSSI/BSI, not the NSA).
+                hybrid &mdash; it permits pure PQC (ANSSI and BSI recommend hybrid; ANSSI mandates
+                it only in its regulated perimeter).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

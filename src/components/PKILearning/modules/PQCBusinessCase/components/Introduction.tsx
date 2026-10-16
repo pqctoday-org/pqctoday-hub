@@ -45,13 +45,14 @@ const Step1WhyConceptsCosts: React.FC = () => (
           financial language that executives and boards understand.
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-          <blockquote className="text-sm italic text-foreground/90">
-            &ldquo;Organizations that delay PQC migration face compounding costs: rising compliance
-            penalties, increasing breach exposure from harvest-now-decrypt-later attacks, and the
-            growing technical debt of maintaining legacy cryptographic systems.&rdquo;
-          </blockquote>
+          <p className="text-sm text-foreground/90">
+            Delay tends to compound cost: more data exposed to harvest-now-decrypt-later collection,
+            more legacy cryptography to unwind, and less time before published transition dates.
+          </p>
           <p className="text-xs text-muted-foreground mt-2">
-            &mdash; Industry consensus from NIST, CISA, and leading CISOs
+            Our summary. Sources for the dates: NIST IR 8547 (draft) proposes deprecating RSA and
+            elliptic-curve algorithms after 2030; the joint CISA, NSA and NIST quantum-readiness
+            factsheet (2023) urges organizations to start inventories and roadmaps now.
           </p>
         </div>
         <p>
@@ -332,10 +333,10 @@ const Step1WhyConceptsCosts: React.FC = () => (
           </div>
           <ul className="text-[11px] text-muted-foreground space-y-1">
             <li>
-              &bull; The only large-scale PQC migration cost figure published by an accountable body
-              is the U.S. federal civilian estimate: <strong>$7.1B for 2025–2035</strong> (OMB,
-              Report to Congress). It was built bottom-up from agency cryptographic inventories —
-              which is why it is quotable and most vendor figures are not.
+              &bull; The major PQC migration cost figure published by an accountable body is the
+              U.S. federal civilian estimate: <strong>$7.1B for 2025–2035</strong> (OMB, Report to
+              Congress). It was built bottom-up from agency cryptographic inventories — which is why
+              it is quotable and most vendor figures are not.
             </li>
             <li>
               &bull; Beware round numbers with no owner. Per-organization PQC program costs
@@ -429,14 +430,16 @@ const Step1WhyConceptsCosts: React.FC = () => (
 
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-2">
-            Timeline &amp; urgency anchors (authoritative)
+            Timeline &amp; urgency anchors (one published planning scenario)
           </div>
           <ul className="text-[11px] text-muted-foreground space-y-1">
             <li>
               &bull; Full migration runs <strong>5–7 years (small)</strong>,{' '}
               <strong>8–12 (medium)</strong>, and <strong>12–15+ (large enterprises)</strong> —
               against a fault-tolerant quantum window of <strong>2028–2033</strong> (Campbell,{' '}
-              <em>Computers</em> 2026, 15(1):9, peer-reviewed).
+              <em>Computers</em> 2026, 15(1):9, peer-reviewed). This is one paper&apos;s planning
+              scenario, not an official forecast — test your plan against earlier and later quantum
+              dates too.
             </li>
             <li>
               &bull; <strong>Mosca&apos;s inequality (X + Y &gt; Z):</strong> if migration time (X)

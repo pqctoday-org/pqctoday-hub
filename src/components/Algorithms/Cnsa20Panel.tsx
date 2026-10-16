@@ -93,12 +93,13 @@ export function Cnsa20Panel() {
       <div className="mt-4 rounded border border-border bg-card/50 p-3">
         <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
           <Scale size={15} className="text-primary" aria-hidden="true" />
-          Jurisdictional mandate, at a glance
+          Jurisdictional position, at a glance
         </h4>
         <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground leading-relaxed">
           <li>
-            <strong className="text-foreground">BSI / ANSSI (Europe):</strong> require hybrid (PQC +
-            classical) during the transition.
+            <strong className="text-foreground">BSI / ANSSI (Europe):</strong> recommend hybrid (PQC
+            + classical) during the transition; ANSSI makes it mandatory in the French regulated
+            perimeter.
           </li>
           <li>
             <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> mandate pure

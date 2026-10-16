@@ -372,8 +372,9 @@ const Step2ModelsEscalationKpis: React.FC = () => (
           </div>
           <p className="text-[11px] text-muted-foreground/80 mt-2">
             <strong>Decision cadence:</strong> weekly PMO &middot; monthly SteerCo &middot;
-            quarterly Board / Risk Committee. The CISO should lead in most organizations — PQC
-            migration is a security risk response, not a technology refresh.
+            quarterly Board / Risk Committee. We recommend the CISO leads in most organizations —
+            PQC migration is a security risk response, not a technology refresh. (OMB M-26-15 sets
+            the structure for US federal agencies only.)
           </p>
         </div>
 
