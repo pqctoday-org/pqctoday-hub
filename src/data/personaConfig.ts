@@ -482,7 +482,9 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
   },
   curious: {
     tab: 'transition',
-    filters: { status: 'Certified', fn: 'KEM' },
+    // No function filter: the three highlighted schemes are one KEM and two
+    // signatures, and a KEM filter hid two of them (curious journey review).
+    filters: { status: 'Certified' },
     openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },

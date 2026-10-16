@@ -125,6 +125,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'The supported set is listed at the top (pure ML-DSA certificates, hybrid key shares per the IETF drafts); use INSPECT and the HEX view to check the key share and signature encodings against the drafts.',
     ops: 'Set the server side the way your edge is configured, tick Require Client Certificate (mTLS) if you use it, and run the interaction: the Config File tab is the snippet shape you will deploy, and the Learn module holds the Apache, nginx, HAProxy and Caddy versions.',
+    curious:
+      'Leave the settings as they are and press Start Full Interaction: your browser runs a real TLS 1.3 connection whose key exchange (X25519MLKEM768) is post-quantum, while the RSA certificate that proves who the server is stays classical. It is a teaching run, not a test of any product or of what your own browser uses.',
   },
   '/playground/vpn-sim': {
     developer:

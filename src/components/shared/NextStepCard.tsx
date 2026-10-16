@@ -7,6 +7,7 @@
  * was completed. Renders nothing for a route with no entry.
  */
 import { Link } from 'react-router'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { ArrowRight } from 'lucide-react'
 import { nextStepFor } from '@/data/nextSteps'
 import { cn } from '@/lib/utils'
@@ -18,7 +19,8 @@ interface NextStepCardProps {
 }
 
 export function NextStepCard({ route, className }: NextStepCardProps) {
-  const step = nextStepFor(route)
+  const persona = usePersonaStore((st) => st.selectedPersona)
+  const step = nextStepFor(route, persona)
   if (!step) return null
   return (
     <section

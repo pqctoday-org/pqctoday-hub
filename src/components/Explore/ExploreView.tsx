@@ -113,8 +113,9 @@ export function ExploreView() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground mb-0.5">Ready to go deeper?</p>
             <p className="text-xs text-muted-foreground">
-              Unlock algorithms, playground tools, and technical documentation when you&apos;re
-              ready to explore beyond the basics.
+              Every page is already open. This shows the controls simplified for you: the full
+              algorithm tables, the Playground&apos;s workbench tabs (engine choice, ACVP and
+              conformance suites, KMIP developer tools), and no more simplified-view notices.
             </p>
           </div>
           <Button
@@ -126,7 +127,7 @@ export function ExploreView() {
             }}
             className="shrink-0"
           >
-            Unlock Advanced Views
+            Show advanced controls everywhere
           </Button>
         </div>
       )}
