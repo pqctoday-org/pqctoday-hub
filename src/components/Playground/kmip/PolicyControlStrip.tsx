@@ -12,6 +12,12 @@ import type { KmipEngine, PolicyStatus } from '@/wasm/kmip/kmipEngine'
 import { POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import { PolicyRulesView } from './PolicyRulesView'
 import { PolicyTester } from './PolicyTester'
+import {
+  policyDefaultAlgorithm,
+  policyDefaultLabel,
+  resolvePolicyDefault,
+  type PolicyDefault,
+} from './policyDefault'
 
 /** Is this resolved algorithm name a post-quantum one? Drives the green/blue
  * colouring of the resolved-default values. Classical = ECDSA / RSA / ECDH / AES. */
@@ -25,7 +31,8 @@ const isActive = (p: PolicyPreset, policy: PolicyStatus): boolean =>
   (p.name === 'training-permissive' && policy.name === 'built-in-permissive')
 
 /** One resolved default ("Signing default → ML-DSA-87"). */
-function DefaultCard({ label, algo }: { label: string; algo?: string | null }) {
+function DefaultCard({ label, value }: { label: string; value: PolicyDefault }) {
+  const algo = policyDefaultAlgorithm(value)
   return (
     <div className="min-w-[140px] flex-1 rounded-lg border border-border bg-background/50 px-2.5 py-2">
       <p className="text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -40,7 +47,7 @@ function DefaultCard({ label, algo }: { label: string; algo?: string | null }) {
             : 'text-muted-foreground'
         }`}
       >
-        {algo ?? '—'}
+        {policyDefaultLabel(value)}
       </p>
     </div>
   )
@@ -70,14 +77,9 @@ export function PolicyControlStrip({
   // current engine policy state, so it always reflects the live active policy
   // without a memo/effect to keep in sync. `policy` is referenced so the
   // dependency is explicit to readers even though dry_run reads engine state.
-  const resolveDefault = (op: string): string | null => {
+  const resolveDefault = (op: string): PolicyDefault => {
     void policy.fingerprint
-    try {
-      const r = engine.dryRun({ op })
-      return r.kind === 'Deny' ? null : (r.algorithm ?? null)
-    } catch {
-      return null
-    }
+    return resolvePolicyDefault(engine, op)
   }
   const defaults = {
     sign: resolveDefault('CreateKeyPair:Sign'),
@@ -151,8 +153,8 @@ export function PolicyControlStrip({
               'Built-in permissive — allows everything. Pick a policy to constrain the engine.'}
           </p>
           <div className="mt-2.5 flex flex-wrap gap-2">
-            <DefaultCard label="Signing default" algo={defaults.sign} />
-            <DefaultCard label="Key-exchange default" algo={defaults.kem} />
+            <DefaultCard label="Signing default" value={defaults.sign} />
+            <DefaultCard label="Key-exchange default" value={defaults.kem} />
             <div className="min-w-[80px] rounded-lg border border-border bg-background/50 px-2.5 py-2 text-center">
               <p className="text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Rules

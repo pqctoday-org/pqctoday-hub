@@ -84,6 +84,12 @@ import { KeyConfigPanel } from './operate/KeyConfigPanel'
 import { GuidedLifecyclePanel } from './operate/GuidedLifecyclePanel'
 import type { OperateContext } from './operate/types'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { OP_TEMPLATES } from '@/wasm/kmip/ttlv/opTemplates'
+
+// Counted from the operation templates and the algorithm list, so the tour's
+// "N of M operations run here" cannot drift from what the engine does.
+const OPS_SUPPORTED = OP_TEMPLATES.filter((t) => t.supported).length
+const SPEC_ONLY_ALGORITHMS = ALGORITHMS.filter((a) => a.runnable === false).map((a) => a.value)
 
 /** Jargon glossary (A-grade review item #8) — hover/focus definitions for the
  * three protocol acronyms a first-time visitor hits in the very first
@@ -962,7 +968,7 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip-operate-mode"] button',
           targetText: 'Single Request',
           act: () => clickByText('[data-tour="kmip-operate-mode"] button', 'Single Request'),
-          body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
+          body: `${OPS_SUPPORTED} of the ${OP_TEMPLATES.length} operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The ${OP_TEMPLATES.length - OPS_SUPPORTED} that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending. Running an operation does not mean every algorithm behind it is implemented: ${SPEC_ONLY_ALGORITHMS.join(', ')} are specification-only here.`,
         },
         {
           title: 'The Dev tab: build it, or prove it against OASIS',

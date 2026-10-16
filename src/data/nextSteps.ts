@@ -832,9 +832,9 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     why: 'Every Playground tool links to the Learn module it practises.',
   },
   '/playground/cacp': {
-    to: '/playground/cacp-kmip',
-    label: 'Run the KMIP control plane',
-    why: 'The control-plane tool runs KMIP 3.0 operations against a live key store, step by step.',
+    to: '/learn/kms-pqc',
+    label: 'Learn how a KMS manages PQC keys',
+    why: 'The KMS module explains the key hierarchy, rotation and provider choices behind the policy you just changed.',
   },
   '/playground/hsm': {
     to: '/learn/hsm-pqc',
