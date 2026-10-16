@@ -23,7 +23,7 @@ const ROLE_ORDER: PersonaId[] = [
 const FIRST_WIN_COPY: Record<PersonaId, string> = {
   executive: 'First win — answer the board · 11 min',
   grc: 'First win — trace one obligation to its source · 10 min',
-  developer: 'First win — run a real ML-KEM handshake · 5 min',
+  developer: 'First win — run a real hybrid ML-KEM + X25519 key exchange · 5 min',
   architect: 'First win — flip a policy, watch it rekey · 15 min',
   ops: 'First win — size your HSM fleet · 10 min',
   researcher: 'No funnel — open the evidence workspace',

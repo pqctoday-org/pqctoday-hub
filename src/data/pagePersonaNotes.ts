@@ -22,7 +22,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Pick Executive and choose the question — mandate, risk, roadmap, deadlines, evidence or the whole programme — each board is three cards that answer it, with the proof behind each.',
     grc: 'Pick GRC and choose the question — what applies, what is already proven, the controls, the risk register, vendor assurance or what "done" means — before any tool asks you for an inventory.',
     developer:
-      'Pick Developer and choose the question: the pilot board reaches a real ML-KEM handshake in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
+      'Pick Developer and choose the question: the pilot board runs a real hybrid ML-KEM + X25519 key exchange in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
     architect:
       'Pick Architect and choose the question: the control-plane board changes one KMIP policy line and rekeys the estate live; the others cover inventory, key stores, protocols, sequencing and defending the design.',
     researcher:
@@ -192,7 +192,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/report': {
     executive:
       'Your view opens "Recommended Actions (Top 5)" first; at the foot of the report, "Print Executive Brief" and "Board Pack ZIP" produce the version you hand to the board.',
-    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk.',
+    grc: '"Compliance Impact" marks each framework "PQC Required" or "No PQC mandate yet" with its deadline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk, and "Compliance Pack ZIP" adds an applicability register: each framework in scope, why it applies, its binding status and source.',
     developer:
       'Your view opens "Cryptographic Bill of Materials (CBOM)" and "Cryptographic Discovery" first; "Algorithm Migration Priority" names each replacement with a "Try in Playground" link, and "Export CSV" downloads that table.',
     architect:
@@ -239,8 +239,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/learn': {
     executive:
-      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the Executive track chip narrows the catalogue to the modules written for your role.',
-    grc: 'In "Browse all", the "Workforce view" button is shown for your role and maps modules to NICE work roles; the "Advanced" tray adds a "NICE proficiency" filter — Awareness, Practitioner, Expert.',
+      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to the leadership and GRC modules.',
+    grc: '"My Path" opens on your Essentials in order — PQC 101, risk, data sensitivity, PQC GRC, compliance, governance, vendors, closure; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to them, and the "Workforce view" button maps modules to NICE work roles.',
     developer:
       '"Browse all" has a search ("try \'TLS\' or \'HSM\'"), track chips such as Protocols, Software Infrastructure and Hardware Infrastructure, and a "Shortest first" sort.',
     architect:
@@ -292,7 +292,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Under "Replace what you own", the "Crypto libraries & frameworks" domain lists the libraries; use "Filter products…" to narrow, and a product\'s detail shows its CPE and PURL identifiers.',
     architect:
-      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Drop-in, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
+      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Upgrade / configure, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
     'cert-engineer':
@@ -324,7 +324,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Your lens opens on the Migration zone with the Migration Roadmap card, the Deployment Playbook under Mitigation; "NIST CSWP.39 — by document section" above the plan jumps by section, and "Export ZIP" bundles every artifact as Markdown.',
     architect:
-      'Your lens opens on the Governance zone with Crypto Architecture, RACI Matrix, Vendor Scorecard and Supply Chain Matrix cards first; the Migration zone holds the Hybrid Transition Plan and MTI Recommendation, reached from the Zones rail.',
+      'The "Architecture pack" panel at the top holds your scope, decision records and test plan, and downloads them with your saved architecture artifacts as one document that lists what is still missing; the Migration zone holds the Hybrid Transition Plan and MTI Recommendation.',
     researcher:
       'Your lens opens on Data-Centric Risk Management with the Risk Register and Risk Treatment Plan cards; "NIST CSWP.39 — by document section" lists the plan by section, and the accordion at the bottom quotes NIST CSWP 39\'s definition.',
     'cert-engineer':
@@ -352,7 +352,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/library': {
     executive:
       'Pick the "Plan migration" door for guidance and report picks rather than raw specifications; sort by Urgency, and each document\'s panel shows a Migration urgency value and an "Open document" link to the original.',
-    grc: 'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Authoritative sources only" under Advanced drops the rest.',
+    grc: 'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Mapped to NIST CSWP 39" under Advanced keeps only documents tied to a CSWP 39 maturity requirement.',
     developer:
       'Search "ML-KEM", "FIPS 203" or "hybrid TLS", or open Advanced and filter by Algorithm family; the "Reference" door keeps standards, specs and policy, and "Builds on" in a document\'s panel lists what it depends on.',
     architect:

@@ -339,22 +339,27 @@ describe('ReportContent', () => {
       renderReport()
       expect(screen.getByText('Print / Save as PDF')).toBeInTheDocument()
       expect(screen.getByText('Export CSV')).toBeInTheDocument()
+      expect(screen.queryByText('Engineering migration plan (ZIP)')).not.toBeInTheDocument()
       expect(screen.getByText('Edit Answers')).toBeInTheDocument()
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
 
-    it('offers a developer the PDF and CSV, not the executive brief or board pack', () => {
-      usePersonaStore.getState().setPersona('developer')
-      try {
-        renderReport()
-        expect(screen.getByText('Download report (PDF)')).toBeInTheDocument()
-        expect(screen.getByText('Export CSV')).toBeInTheDocument()
-        expect(screen.queryByText('Print Executive Brief')).not.toBeInTheDocument()
-        expect(screen.queryByText(/Board Pack/)).not.toBeInTheDocument()
-      } finally {
-        usePersonaStore.getState().setPersona(null)
+    it.each(['developer', 'ops'] as const)(
+      'offers %s the PDF and CSV, not the executive brief or board pack',
+      (persona) => {
+        usePersonaStore.getState().setPersona(persona)
+        try {
+          renderReport()
+          expect(screen.getByText('Download report (PDF)')).toBeInTheDocument()
+          expect(screen.getByText('Export CSV')).toBeInTheDocument()
+          expect(screen.queryByText('Print Executive Brief')).not.toBeInTheDocument()
+          expect(screen.queryByText(/Board Pack/)).not.toBeInTheDocument()
+          expect(screen.getByText('Engineering migration plan (ZIP)')).toBeInTheDocument()
+        } finally {
+          usePersonaStore.getState().setPersona(null)
+        }
       }
-    })
+    )
 
     it('calls window.print when Print / Save as PDF is clicked', () => {
       const printMock = vi.fn()

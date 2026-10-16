@@ -55,7 +55,7 @@ export function KeyConfigPanel({ operate }: { operate: OperateContext }) {
         <div className="mb-3 -mt-2" data-testid="kmip-key-size">
           <p className="mb-1 text-[10px] font-medium text-muted-foreground">
             {algo === 'RSA' ? 'Key size' : 'Curve'} — a real request parameter, not a label;
-            policies with a minimum (FIPS-only, BSI, 2030 roadmap) gate on it.
+            policies with a minimum (FIPS-approved algorithms, BSI, 2030 roadmap) gate on it.
           </p>
           <div className="flex gap-1.5">
             {chosen.sizes.map((s) => (

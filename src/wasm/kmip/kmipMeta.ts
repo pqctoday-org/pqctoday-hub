@@ -543,7 +543,8 @@ export const POLICY_PRESETS: PolicyPreset[] = [
       'Lazy, transparent migration: each legacy key rekeys to its PQC equivalent the first time it is used.',
     tone: 'migration',
     category: 'Post-quantum',
-    illustrates: 'Algorithm substitution — rekey-on-use, no flag day, no code change.',
+    illustrates:
+      'Algorithm substitution — rekey-on-use, no flag day; clients that look keys up by name need no code change.',
     example: { op: 'Sign', algorithm: 'ECDSA-P256', date: '2026-07-01' },
   },
   // ── Migration & transition ────────────────────────────────────────────────
@@ -653,12 +654,13 @@ export const POLICY_PRESETS: PolicyPreset[] = [
     file: 'fips-only.yaml',
     files: ['fips-only-signing.yaml', 'fips-only-encryption.yaml', 'fips-only-global.yaml'],
     name: 'fips-only',
-    label: 'FIPS-only',
+    label: 'FIPS-approved algorithms',
     blurb:
-      'Restrict to FIPS 203/204/205 + FIPS-validated classical (incl. ECDH); SHA-1 signing and RSA PKCS#1 v1.5 encryption denied; deny Round-4 / alternate PQC.',
+      'Restrict to FIPS 203/204/205 + FIPS-approved classical algorithms (incl. ECDH); SHA-1 signing and RSA PKCS#1 v1.5 encryption denied; deny Round-4 / alternate PQC.',
     tone: 'compliance',
     category: 'Compliance regimes',
-    illustrates: 'FIPS 140-3 algorithm boundary — allowlist + min-key-length.',
+    illustrates:
+      'An approved-algorithm allowlist + minimum key lengths. An allowlist does not make this in-browser engine a FIPS 140-3 validated module.',
     example: { op: 'Encapsulate', algorithm: 'FrodoKEM-976' },
   },
   {

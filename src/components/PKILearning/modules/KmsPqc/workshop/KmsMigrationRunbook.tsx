@@ -29,42 +29,56 @@ const configSelections: ConfigSelection[] = [
   },
 ]
 
+// Every command below is one the provider documents. Where a provider has no
+// PQC key type yet, the snippet says so instead of inventing one.
 function generateConfig(selections: Record<string, string>): string {
   const { provider, operation } = selections
 
   if (provider === 'aws') {
     if (operation === 'create-key') {
       return [
-        '# AWS KMS — Create PQC key',
+        '# AWS KMS — Create an ML-DSA signing key (GA since June 2025)',
+        '# AWS KMS has no ML-KEM keys; ML-KEM is used only in hybrid TLS to the endpoint,',
+        '# which you enable in the client (e.g. AWS CRT HTTP client, postQuantumTlsEnabled).',
         'aws kms create-key \\',
-        '  --key-spec ML_KEM_768 \\',
-        '  --key-usage ENCRYPT_DECRYPT',
+        '  --key-spec ML_DSA_65 \\',
+        '  --key-usage SIGN_VERIFY',
       ].join('\n')
     }
     if (operation === 'rotate-key') {
       return [
-        '# AWS KMS — Enable automatic key rotation',
+        '# AWS KMS — Automatic rotation covers symmetric encryption keys only',
         'aws kms enable-key-rotation \\',
-        '  --key-id <key-id> \\',
-        '  --rotation-period-in-days 90',
+        '  --key-id <symmetric-key-id> \\',
+        '  --rotation-period-in-days 365',
+        '',
+        '# Asymmetric (ML-DSA) keys: create a new key, then move the alias to it',
+        'aws kms update-alias \\',
+        '  --alias-name alias/<signing-alias> \\',
+        '  --target-key-id <new-ml-dsa-key-id>',
       ].join('\n')
     }
     return [
-      '# AWS KMS — Re-encrypt data with new PQC key',
+      '# AWS KMS — Move a data key wrapped by an RSA key to a symmetric AES-256 KMS key',
       'aws kms re-encrypt \\',
-      '  --source-key-id <old-key-id> \\',
-      '  --destination-key-id <new-pqc-key-id>',
+      '  --ciphertext-blob fileb://dek.enc \\',
+      '  --source-key-id <old-rsa-key-id> \\',
+      '  --source-encryption-algorithm RSAES_OAEP_SHA_256 \\',
+      '  --destination-key-id <aes-256-key-id>',
     ].join('\n')
   }
 
   if (provider === 'azure') {
     if (operation === 'create-key') {
       return [
-        '# Azure Key Vault — Create PQC key',
+        '# Azure Key Vault — no PQC key types in the Key Vault API yet',
+        '# Until they ship, wrap data keys with AES-256 in Managed HSM',
+        '# (quantum-resistant) and keep RSA keys only where a peer requires them.',
         'az keyvault key create \\',
-        '  --vault-name <vault> \\',
+        '  --hsm-name <managed-hsm> \\',
         '  --name <key-name> \\',
-        '  --kty ML-KEM-768',
+        '  --kty oct-HSM \\',
+        '  --size 256',
       ].join('\n')
     }
     if (operation === 'rotate-key') {
@@ -77,61 +91,62 @@ function generateConfig(selections: Record<string, string>): string {
       ].join('\n')
     }
     return [
-      '# Azure Key Vault — Re-encrypt with new PQC key',
-      '# 1. Decrypt with old key',
-      'az keyvault key decrypt \\',
-      '  --vault-name <vault> \\',
-      '  --name <old-key-name> \\',
-      '  --algorithm RSA-OAEP \\',
-      '  --value <ciphertext>',
-      '',
-      '# 2. Re-encrypt with new PQC key',
-      'az keyvault key encrypt \\',
-      '  --vault-name <vault> \\',
-      '  --name <new-pqc-key-name> \\',
-      '  --algorithm ML-KEM-768 \\',
-      '  --value <plaintext>',
+      '# Azure Key Vault — Re-wrapping data keys',
+      '# There is no PQC key type to re-encrypt to yet. Plan the move in two steps:',
+      '#  1. unwrap each data key with the old RSA key (in your application),',
+      '#  2. wrap it again with an AES-256 key in Managed HSM,',
+      '# then repeat with an ML-KEM key type once Key Vault offers one.',
     ].join('\n')
   }
 
   if (provider === 'gcp') {
     if (operation === 'create-key') {
       return [
-        '# GCP Cloud KMS — Create PQC key',
+        '# GCP Cloud KMS — ML-DSA signing key (GA since 16 Jul 2026)',
         'gcloud kms keys create <key-name> \\',
         '  --keyring=<ring> \\',
         '  --location=global \\',
-        '  --purpose=encryption \\',
-        '  --algorithm=ML-KEM-768',
+        '  --purpose=asymmetric-signing \\',
+        '  --default-algorithm=pq-sign-ml-dsa-65',
+        '',
+        '# ML-KEM key for key encapsulation (Preview; SOFTWARE protection level)',
+        'gcloud kms keys create <kem-key-name> \\',
+        '  --keyring=<ring> \\',
+        '  --location=global \\',
+        '  --purpose=key-encapsulation \\',
+        '  --default-algorithm=ml-kem-768',
       ].join('\n')
     }
     if (operation === 'rotate-key') {
       return [
-        '# GCP Cloud KMS — Create new key version',
+        '# GCP Cloud KMS — Create a new key version (same algorithm as the key)',
+        '# Asymmetric keys have no primary version: callers name the version they use,',
+        '# so update them to the new version number.',
         'gcloud kms keys versions create \\',
         '  --key=<key-name> \\',
         '  --keyring=<ring> \\',
-        '  --location=global \\',
-        '  --algorithm=ML-KEM-768',
+        '  --location=global',
       ].join('\n')
     }
     return [
-      '# GCP Cloud KMS — Re-encrypt with new key version',
-      'gcloud kms re-encrypt \\',
-      '  --key=<key-name> \\',
-      '  --keyring=<ring> \\',
-      '  --location=global \\',
-      '  --ciphertext-file=<encrypted-file> \\',
-      '  --plaintext-file=<output-file>',
+      '# GCP Cloud KMS — Re-encrypt under the new primary version of a symmetric key',
+      'gcloud kms decrypt --key=<key-name> --keyring=<ring> --location=global \\',
+      '  --ciphertext-file=<encrypted-file> --plaintext-file=<plain-file>',
+      'gcloud kms encrypt --key=<key-name> --keyring=<ring> --location=global \\',
+      '  --plaintext-file=<plain-file> --ciphertext-file=<new-encrypted-file>',
+      '# KEM keys: encapsulate to the new version on the client and decapsulate with',
+      '# gcloud kms decapsulate; there is no in-place re-encryption.',
     ].join('\n')
   }
 
   // HashiCorp Vault
   if (operation === 'create-key') {
     return [
-      '# HashiCorp Vault — Create PQC transit key',
+      '# HashiCorp Vault — Create a transit key',
+      '# AES-256-GCM is quantum-resistant for data at rest. PQC key types in Transit',
+      '# depend on your Vault edition and version: check its documentation first.',
       'vault write transit/keys/<name> \\',
-      '  type=ml-kem-768',
+      '  type=aes256-gcm96',
     ].join('\n')
   }
   if (operation === 'rotate-key') {
@@ -179,7 +194,8 @@ const checklistSections: ChecklistSection[] = [
       },
       {
         id: 'mig-re-encrypt',
-        label: 'Re-encrypt data encryption keys with new PQC keys',
+        label:
+          'Re-wrap data encryption keys under quantum-resistant keys (AES-256, or an ML-KEM key where the provider offers one)',
         critical: true,
       },
       {

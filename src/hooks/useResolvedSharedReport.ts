@@ -13,7 +13,7 @@ import {
   AVAILABLE_INFRASTRUCTURE,
 } from './assessmentData'
 import { REGION_COUNTRIES_MAP } from '../data/personaConfig'
-import { EXAMPLE_REPORT_RESULT, EXAMPLE_REPORT_PERSONA } from '../data/exampleReport'
+import { EXAMPLE_REPORT_PERSONA, exampleReportResultFor } from '../data/exampleReport'
 import { logReportShareLinkOpened } from '../utils/analytics'
 import { decodeShareToken, type ReportShareSchemaV1 } from '../utils/reportShareToken'
 
@@ -140,7 +140,7 @@ export const REPORT_LINK_PARAMS = ['share', 'example', 'i', 'cy', 'a', 's', 'p',
  */
 export function sampleReportView(livePersona: PersonaId | null): SharedReportView {
   return {
-    result: EXAMPLE_REPORT_RESULT,
+    result: exampleReportResultFor(livePersona),
     persona: livePersona ?? toValidPersona(EXAMPLE_REPORT_PERSONA),
     approximate: false,
     sample: true,
@@ -178,13 +178,6 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
     livePersonaRef.current = livePersona
   }, [livePersona])
 
-  /* eslint-disable react-hooks/set-state-in-effect --
-     Genuinely a one-time-per-paramsKey decode with real side effects
-     (logReportShareLinkOpened analytics, computeAssessment for the legacy
-     formats) that must not run during render — the resolvedKeyRef guard
-     above is what keeps this from cascading on every render, the same
-     guarded-effect shape OnboardingCTAs.tsx and others in this codebase
-     use for the identical rule. */
   useEffect(() => {
     if (resolvedKeyRef.current === paramsKey) return
     resolvedKeyRef.current = paramsKey
@@ -202,7 +195,8 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
     if (searchParams.get('example') === '1') {
       logReportShareLinkOpened()
       setSharedView({
-        result: EXAMPLE_REPORT_RESULT,
+        // GRC sees the comprehensive-track example; everyone else the quick one.
+        result: exampleReportResultFor(livePersonaRef.current),
         // Renders under the VIEWER's own persona when one is set, not always
         // the example's authored 'curious' — falls back to the example's own
         // authored persona for a first-time visitor with none selected yet.
@@ -279,7 +273,6 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
     logReportShareLinkOpened()
     setSharedView({ result: computeAssessment(input), persona: null, approximate: true })
   }, [paramsKey, searchParams])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   return sharedView
 }

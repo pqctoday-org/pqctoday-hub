@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-16',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's

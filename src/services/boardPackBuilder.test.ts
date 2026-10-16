@@ -177,3 +177,34 @@ describe('buildBoardPackBlob', () => {
     expect(files['board-pack/key-findings.md']).toContain('No findings recorded')
   })
 })
+
+describe('Compliance pack (GRC)', () => {
+  it('adds an applicability register for GRC, strongest tier first, and names the folder for it', async () => {
+    const files = await extract(
+      await buildBoardPackBlob({ result: baseResult, profile: { ...baseProfile, persona: 'grc' } })
+    )
+    const path = Object.keys(files).find((f) => f.endsWith('applicability-register.csv'))
+    expect(path).toBe('compliance-pack/applicability-register.csv')
+    const csv = files[path as string]
+    expect(csv).toContain(
+      'framework_id,framework,tier,why_it_applies,binding_status,requires_pqc,binding_basis,deadline,source'
+    )
+    const tiers = csv
+      .split('\n')
+      .filter((l) => /^[^#,][^,]*,/.test(l) && !l.startsWith('framework_id'))
+      .map(
+        (l) => l.match(/,(mandatory|recognized|cross-border|advisory|derived|informational),/)?.[1]
+      )
+      .filter(Boolean)
+    expect(tiers.length).toBeGreaterThan(0)
+    expect(tiers[0]).toBe('mandatory')
+  })
+
+  it('leaves the executive board pack unchanged', async () => {
+    const files = await extract(
+      await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
+    )
+    expect(Object.keys(files).some((f) => f.endsWith('applicability-register.csv'))).toBe(false)
+    expect(Object.keys(files).every((f) => f.startsWith('board-pack/'))).toBe(true)
+  })
+})

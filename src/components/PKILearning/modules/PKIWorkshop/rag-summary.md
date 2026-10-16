@@ -9,7 +9,7 @@ The PKI Workshop is a hands-on learning module that teaches Public Key Infrastru
 - Certificate lifecycle: key generation, CSR creation (PKCS#10 / RFC 2986), CA signing, certificate parsing, and revocation (CRL per RFC 5280 Section 5, OCSP per RFC 6960)
 - Classical vs PQC algorithms: RSA/ECDSA signatures (quantum-vulnerable via Shor's algorithm) vs ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) post-quantum replacements
 - Hybrid and composite certificates: combining classical and PQC algorithms during the transition. Backward compatibility depends on the format — Alt-Sig/Catalyst and the classical certificate of a Related Certificates pair keep a classical signature a legacy validator can still verify (Chameleon, an expired individual draft, is historical only); COMPOSITE certificates do not (both components must verify, and a validator without composite support cannot parse the key at all).
-- Merkle Tree Certificates (MTCs): IETF draft-davidben-tls-merkle-tree-certs proposal by Google and Cloudflare that batches certificates into a Merkle tree, replacing per-certificate PQ signatures with compact inclusion proofs (~736 bytes vs ~12.3 KB for traditional PQC chains)
+- Merkle Tree Certificates (MTCs): draft-ietf-plants-merkle-tree-certs in the IETF PLANTS working group (it replaced draft-davidben-tls-merkle-tree-certs; latest version -07, 7 October 2026; not yet proposed for publication) batches certificates into a Merkle tree, replacing per-certificate PQ signatures with compact inclusion proofs (384–736 bytes). With ML-DSA-44, a leaf + one intermediate plus the CertificateVerify signature is 9,884 B of keys and signatures (2 × 1,312 + 3 × 2,420, no SCTs or metadata); a landmark MTC needs 4,468 B (leaf key + CertificateVerify + 736 B proof)
 - PQC migration challenges: certificate size growth (ML-DSA-87 public keys ~2,592 bytes vs ~91 bytes (SPKI) for ECDSA P-256), constrained device support, cross-signed trust chains, and CNSA 2.0 exclusive-use deadlines (2030 for software/firmware signing and networking; 2033 for large PKI systems)
 
 ## Workshop Activities
@@ -25,4 +25,4 @@ The PKI Workshop is a hands-on learning module that teaches Public Key Infrastru
 
 - RFC 5280 (X.509v3 certificates and CRL profile), RFC 2986 (PKCS#10 CSR), RFC 6960 (OCSP), RFC 9810 (CMP, obsoletes RFC 4210) (CMP enrollment)
 - FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), NIST IR 8547 (PQC transition guidance), NIST SP 800-131A Rev 2 (algorithm deprecation)
-- CNSA 2.0 (NSA PQC timeline), IETF draft-davidben-tls-merkle-tree-certs (Merkle Tree Certificates)
+- CNSA 2.0 (NSA PQC timeline), IETF draft-ietf-plants-merkle-tree-certs (Merkle Tree Certificates; replaced draft-davidben-tls-merkle-tree-certs)

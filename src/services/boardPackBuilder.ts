@@ -24,6 +24,7 @@ import {
   withEducationNoticeMarkdown,
 } from '@/data/educationNotice'
 import type { AssessmentResult, MigrationEffortItem } from '@/hooks/assessmentTypes'
+import { applicableFrameworks, TIER_ORDER, type UserProfile } from '@/utils/applicabilityEngine'
 
 export interface BoardPackProfile {
   industry: string
@@ -171,6 +172,52 @@ function buildComplianceCsv(result: AssessmentResult): string {
   return [header, ...rows].join('\n') + '\n'
 }
 
+/**
+ * GRC's applicability register: every framework the applicability engine puts in
+ * scope for the profile's country and sector, strongest tier first, with why it
+ * applies, its reviewed binding status, whether it requires PQC, the cited basis
+ * and the source. Unlike compliance-deadlines.csv (the frameworks the reader
+ * selected), this is what the engine says applies — the starting point of a
+ * control-to-evidence workflow.
+ */
+export function buildApplicabilityRegisterCsv(profile: BoardPackProfile): string {
+  const header = [
+    'framework_id',
+    'framework',
+    'tier',
+    'why_it_applies',
+    'binding_status',
+    'requires_pqc',
+    'binding_basis',
+    'deadline',
+    'source',
+  ].join(',')
+  const results = applicableFrameworks({
+    industry: profile.industry || null,
+    country: profile.country || null,
+    region: (profile.region as UserProfile['region']) ?? null,
+  }).sort((a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier))
+  const rows = results.map(({ item: fw, tier, reason }) =>
+    [
+      escapeCsv(fw.id),
+      escapeCsv(fw.label),
+      tier,
+      escapeCsv(reason),
+      escapeCsv(fw.bindingStatus ?? 'not yet classified'),
+      escapeCsv(fw.pqcRequirement),
+      escapeCsv(fw.bindingBasis ?? ''),
+      escapeCsv(fw.deadline),
+      escapeCsv(fw.website ?? ''),
+    ].join(',')
+  )
+  return [header, ...rows].join('\n') + '\n'
+}
+
+/** GRC readers get a compliance pack: the board pack plus the applicability register. */
+export function isCompliancePack(profile: BoardPackProfile): boolean {
+  return profile.persona === 'grc'
+}
+
 function buildProfileJson(result: AssessmentResult, profile: BoardPackProfile): string {
   return JSON.stringify(
     {
@@ -299,7 +346,14 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
     { path: 'profile.json', content: buildProfileJson(result, profile) },
     { path: 'program-effort.md', content: withEducationNoticeMarkdown(buildProgramEffort(result)) },
   ]
-  return buildZipBundle(files.map((f) => ({ ...f, path: `board-pack/${f.path}` })))
+  if (isCompliancePack(profile)) {
+    files.push({
+      path: 'applicability-register.csv',
+      content: withEducationNoticeCsv(buildApplicabilityRegisterCsv(profile)),
+    })
+  }
+  const folder = isCompliancePack(profile) ? 'compliance-pack' : 'board-pack'
+  return buildZipBundle(files.map((f) => ({ ...f, path: `${folder}/${f.path}` })))
 }
 
 /**
@@ -309,7 +363,8 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
  */
 export async function downloadBoardPack(input: BuildBoardPackInput): Promise<void> {
   const blob = await buildBoardPackBlob(input)
-  downloadBlob(blob, `pqc-board-pack-${profileSlug(input.profile)}.zip`)
+  const kind = isCompliancePack(input.profile) ? 'compliance-pack' : 'board-pack'
+  downloadBlob(blob, `pqc-${kind}-${profileSlug(input.profile)}.zip`)
 }
 
 function profileSlug(profile: BoardPackProfile): string {

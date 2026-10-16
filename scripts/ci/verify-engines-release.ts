@@ -10,7 +10,9 @@
  * for every bundle with a pinned `release`, it downloads the release tarball
  * from the producer's GitHub release, checks the tarball's SHA-256 against the
  * pin, unpacks it, and checks that it holds exactly the locked files with the
- * locked hashes.
+ * locked hashes. Licence notices in the tarball (public/licenses/engines/<bundle>/,
+ * since engines-2) are not locked engine files; each must be committed in this
+ * tree with the same bytes.
  *
  * It needs the network, so it is not part of every PR. It runs in
  * `gate:release` (before a Hub release) and weekly in
@@ -38,6 +40,8 @@ export interface ReleaseProblem {
     | 'not in lock'
     | 'changed in release'
     | 'unreadable tarball'
+    | 'notice not committed'
+    | 'notice differs'
 }
 
 const sha256 = (buf: Buffer): string => createHash('sha256').update(buf).digest('hex')
@@ -52,6 +56,9 @@ export function readTarGz(gz: Buffer): Map<string, Buffer> {
       .subarray(off + start, off + start + len)
       .toString('utf8')
       .replace(/\0.*$/s, '')
+  // A long path (over 100 bytes) comes in a pax extended header ('x', record
+  // "path=...") or a GNU long-name entry ('L') just before its file.
+  let longName: string | undefined
   while (off + 512 <= tar.length) {
     if (tar.subarray(off, off + 512).every((b) => b === 0)) break
     const name = field(0, 100)
@@ -59,15 +66,26 @@ export function readTarGz(gz: Buffer): Map<string, Buffer> {
     const type = field(156, 1)
     const prefix = field(345, 155)
     if (Number.isNaN(size)) throw new Error('bad tar header')
-    const path = (prefix ? `${prefix}/${name}` : name).replace(/^\.\//, '')
     const start = off + 512
-    if (type === '0' || type === '') files.set(path, Buffer.from(tar.subarray(start, start + size)))
+    const body = tar.subarray(start, start + size)
+    if (type === 'x') {
+      const m = /(?:^|\n)\d+ path=([^\n]*)\n/.exec(body.toString('utf8'))
+      if (m) longName = m[1]
+    } else if (type === 'L') {
+      longName = body.toString('utf8').replace(/\0.*$/s, '')
+    } else {
+      const path = (longName ?? (prefix ? `${prefix}/${name}` : name)).replace(/^\.\//, '')
+      if (type === '0' || type === '') files.set(path, Buffer.from(body))
+      longName = undefined
+    }
     off = start + Math.ceil(size / 512) * 512
   }
   return files
 }
 
 export type Fetcher = (url: string) => Promise<Buffer>
+/** Reads a committed file of the consumer tree; undefined when it does not exist. */
+export type TreeReader = (path: string) => Buffer | undefined
 
 export function releaseUrl(repo: string, tag: string, asset: string): string {
   return `https://github.com/${repo}/releases/download/${tag}/${asset}`
@@ -75,7 +93,8 @@ export function releaseUrl(repo: string, tag: string, asset: string): string {
 
 export async function verifyRelease(
   lock: EnginesLock,
-  fetcher: Fetcher
+  fetcher: Fetcher,
+  readTree?: TreeReader
 ): Promise<ReleaseProblem[]> {
   const problems: ReleaseProblem[] = []
   for (const [name, b] of Object.entries(lock.bundles)) {
@@ -104,8 +123,20 @@ export async function verifyRelease(
       else if (data.length !== meta.bytes || sha256(data) !== meta.sha256)
         problems.push({ bundle: name, file: f, what: 'changed in release' })
     }
-    for (const f of files.keys()) {
-      if (!(f in b.files)) problems.push({ bundle: name, file: f, what: 'not in lock' })
+    // Since engines-2 every tarball also carries its licence notices under
+    // public/licenses/engines/<bundle>/. They are not engine files, so they are
+    // not locked; the consumer commits them as published, and each must match.
+    const noticesDir = `public/licenses/engines/${name}/`
+    for (const [f, data] of files) {
+      if (f in b.files) continue
+      if (!f.startsWith(noticesDir)) {
+        problems.push({ bundle: name, file: f, what: 'not in lock' })
+        continue
+      }
+      const committed = readTree?.(f)
+      if (!committed) problems.push({ bundle: name, file: f, what: 'notice not committed' })
+      else if (sha256(committed) !== sha256(data))
+        problems.push({ bundle: name, file: f, what: 'notice differs' })
     }
   }
   return problems
@@ -130,7 +161,14 @@ async function main(argv: string[]): Promise<number> {
     console.error('engines-release: no bundle is pinned to a release')
     return 2
   }
-  const problems = await verifyRelease(lock, httpFetcher)
+  const readTree: TreeReader = (p) => {
+    try {
+      return readFileSync(join(root, p))
+    } catch {
+      return undefined
+    }
+  }
+  const problems = await verifyRelease(lock, httpFetcher, readTree)
   if (problems.length === 0) {
     const tags = [...new Set(pinned.map(([, b]) => b.release?.tag))].join(', ')
     console.log(`engines-release: ${pinned.length} pinned bundles match ${tags}`)

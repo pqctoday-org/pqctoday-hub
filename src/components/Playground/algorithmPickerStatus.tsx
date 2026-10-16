@@ -17,6 +17,7 @@
 import { useEffect, useState } from 'react'
 import { loadPQCAlgorithmsData } from '../../data/pqcAlgorithmsData'
 import { isDraftTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
+import { getAlgorithmAdvisory } from '../../data/algorithmAdvisories'
 
 /** Picker option id (as used in KeyGenerationSection's FilterDropdown) → exact CSV `algorithm` name. */
 export const PICKER_ID_TO_ALGO_NAME: Record<string, string> = {
@@ -63,7 +64,7 @@ export const PICKER_ID_TO_ALGO_NAME: Record<string, string> = {
   'FN-DSA-1024': 'FN-DSA-1024',
   'FN-DSA-padded-512': 'FN-DSA-512',
   'FN-DSA-padded-1024': 'FN-DSA-1024',
-  // MAYO — NIST Additional Sig Round 2
+  // MAYO — NIST Additional Sig Round 3 (since May 2026)
   'MAYO-1': 'MAYO-1',
   'MAYO-2': 'MAYO-2',
   'MAYO-3': 'MAYO-3',
@@ -121,7 +122,7 @@ export function getPickerTier(
 /**
  * Novice-friendly "what is this" note per tier (playground.md item 5) — explains the
  * algorithm's role rather than assuming the reader already knows what e.g. "NIST
- * Additional Sig Round 2" implies. Shown as the badge's tooltip so it piggybacks on
+ * Additional Sig Round 3" implies. Shown as the badge's tooltip so it piggybacks on
  * the same UI element from item 1 instead of adding a second one.
  */
 const TIER_ROLE_NOTE: Partial<Record<AlgorithmStatusTier, string>> = {
@@ -131,15 +132,31 @@ const TIER_ROLE_NOTE: Partial<Record<AlgorithmStatusTier, string>> = {
     'Defined in a draft NIST Special Publication, not yet final — sizes/parameters can still change.',
   'ietf-draft': 'Defined in an IETF Internet-Draft — not yet a published RFC.',
   'round2-candidate':
-    'A backup signature candidate still under NIST evaluation (Additional Signatures Round 2) — not a primary standard like ML-KEM/ML-DSA.',
+    'A backup signature candidate still under NIST evaluation (NIST additional signatures, Round 3 since May 2026) — not a primary standard like ML-KEM/ML-DSA.',
   'round4-not-selected':
     'A concluded NIST PQC Round 4 candidate that was not selected as a standard.',
-  eliminated: 'Publicly broken, withdrawn, or lost a national competition — do not deploy.',
+  eliminated:
+    'Publicly broken, withdrawn, not advanced to the next NIST round, or lost a national competition — do not deploy.',
   regional:
     'A national/regional standard (e.g. BSI, KpqC) — final within that jurisdiction, but not a NIST FIPS.',
   unverified: 'Status not yet fact-checked against an authoritative source.',
   'non-standardized':
     'Not on any FIPS/IETF/regional standards track — an actively-maintained implementation, not a certified or draft standard.',
+}
+
+/** Advisory badge for picker options (e.g. the BSI's Classic McEliece notice), shown
+ *  regardless of tier: an advisory changes how to use an algorithm, not its status. */
+export function PickerAdvisoryBadge({ id }: { id: string }) {
+  const advisory = getAlgorithmAdvisory(PICKER_ID_TO_ALGO_NAME[id] ?? id)
+  if (!advisory) return null
+  return (
+    <span
+      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium ml-auto shrink-0"
+      title={advisory.note}
+    >
+      {advisory.label}
+    </span>
+  )
 }
 
 /**

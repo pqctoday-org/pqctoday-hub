@@ -26,27 +26,27 @@ export const CODE_EXAMPLES: CodeExample[] = [
     operation: 'keygen',
     language: 'Java',
     algorithm: 'ML-DSA-65',
-    code: `// JCA/JCE with Bouncy Castle provider
-Security.addProvider(new BouncyCastleProvider());
-
-KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-    "ML-DSA-65", "BC"
-);
+    code: `// JCA/JCE — JDK 24+ built-in provider (JEP 497)
+KeyPairGenerator kpg =
+    KeyPairGenerator.getInstance("ML-DSA");
+kpg.initialize(NamedParameterSpec.ML_DSA_65);
 KeyPair kp = kpg.generateKeyPair();
 PublicKey pub = kp.getPublic();
-PrivateKey priv = kp.getPrivate();`,
-    notes: 'Bouncy Castle provider must be registered. Algorithm name is string-based.',
+PrivateKey priv = kp.getPrivate();
+
+// JDK 21 or earlier: register Bouncy Castle and use
+// KeyPairGenerator.getInstance("ML-DSA-65", "BC")`,
+    notes:
+      'Built into JDK 24+ (first LTS: JDK 25). On JDK 21, register the Bouncy Castle provider. Algorithm name is string-based.',
   },
   {
     apiId: 'openssl',
     operation: 'keygen',
     language: 'C',
     algorithm: 'ML-DSA-65',
-    code: `// OpenSSL 3.x with oqsprovider
-OSSL_PROVIDER_load(NULL, "oqsprovider");
-
+    code: `// OpenSSL 3.5+ — ML-DSA is in the default provider
 EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(
-    NULL, "ML-DSA-65", "provider=oqsprovider"
+    NULL, "ML-DSA-65", NULL
 );
 EVP_PKEY_keygen_init(ctx);
 EVP_PKEY *pkey = NULL;
@@ -54,7 +54,8 @@ EVP_PKEY_keygen(ctx, &pkey);
 
 EVP_PKEY_CTX_free(ctx);
 // pkey now holds ML-DSA-65 key pair`,
-    notes: 'oqsprovider must be installed and configured. EVP API is algorithm-agnostic.',
+    notes:
+      'Native since OpenSSL 3.5. oqsprovider is only needed on OpenSSL before 3.5 or for non-standardised algorithms. EVP API is algorithm-agnostic.',
   },
   {
     apiId: 'pkcs11',
@@ -84,21 +85,21 @@ C_GenerateKeyPair(session, &mech,
     apiId: 'ksp-cng',
     operation: 'keygen',
     language: 'C',
-    algorithm: 'RSA-2048 (PQC not yet available)',
-    code: `// Windows CNG — Key Storage Provider
-// Note: PQC not yet available in CNG
-NCRYPT_PROV_HANDLE hProv;
-NCryptOpenStorageProvider(&hProv,
-    MS_KEY_STORAGE_PROVIDER, 0);
+    algorithm: 'ML-DSA-65',
+    code: `// Windows CNG (BCrypt) — Windows 11 24H2+ / Server 2025
+BCRYPT_ALG_HANDLE hAlg;
+BCryptOpenAlgorithmProvider(&hAlg,
+    BCRYPT_MLDSA_ALGORITHM, NULL, 0);
 
-NCRYPT_KEY_HANDLE hKey;
-NCryptCreatePersistedKey(hProv, &hKey,
-    BCRYPT_RSA_ALGORITHM,
-    L"MyKeyName", 0, 0);
-NCryptSetProperty(hKey, NCRYPT_LENGTH_PROPERTY,
-    (PBYTE)&keyLength, sizeof(DWORD), 0);
-NCryptFinalizeKey(hKey, 0);`,
-    notes: 'CNG does not support PQC algorithms yet. Shown for API pattern comparison.',
+BCRYPT_KEY_HANDLE hKey;
+BCryptGenerateKeyPair(hAlg, &hKey, 0, 0);
+// Parameter set must be set before finalizing
+BCryptSetProperty(hKey, BCRYPT_PARAMETER_SET_NAME,
+    (PUCHAR)BCRYPT_MLDSA_PARAMETER_SET_65,
+    sizeof(BCRYPT_MLDSA_PARAMETER_SET_65), 0);
+BCryptFinalizeKeyPair(hKey, 0);`,
+    notes:
+      'ML-KEM and ML-DSA are generally available in the default CNG provider; SLH-DSA is defined but not implemented by it. Older Windows builds return STATUS_NOT_SUPPORTED. Use NCrypt with a KSP for persisted keys.',
   },
   {
     apiId: 'bouncy-castle',
@@ -145,15 +146,14 @@ var priv = (MLDsaPrivateKeyParameters)kp.Private;`,
     operation: 'sign',
     language: 'Java',
     algorithm: 'ML-DSA-65',
-    code: `// JCA/JCE signing with ML-DSA-65
-Signature signer = Signature.getInstance(
-    "ML-DSA-65", "BC"
-);
+    code: `// JCA/JCE signing with ML-DSA (JDK 24+)
+// The parameter set comes from the key
+Signature signer = Signature.getInstance("ML-DSA");
 signer.initSign(privateKey);
 signer.update(message);
 byte[] signature = signer.sign();`,
     notes:
-      'Standard JCA Signature API — algorithm-agnostic. Same code works for RSA, ECDSA, ML-DSA.',
+      'Same Signature engine calls as RSA or ECDSA; what changes is the algorithm name, the key type and the ~3.3 KB signature size your storage and protocols must carry.',
   },
   {
     apiId: 'openssl',
@@ -195,22 +195,20 @@ C_Sign(session, msg, msgLen, sig, &sigLen);`,
     operation: 'kem-encapsulate',
     language: 'Java',
     algorithm: 'ML-KEM-768',
-    code: `// JCA/JCE KEM encapsulation (JDK 21+ KEM API)
-// or via Bouncy Castle lightweight API:
-MLKEMExtractor extractor =
-    new MLKEMExtractor(privateKey);
-MLKEMEncapsulator encapsulator =
-    new MLKEMEncapsulator(publicKey);
+    code: `// JCA/JCE KEM encapsulation — JDK 24+ ML-KEM (JEP 496)
+KEM kem = KEM.getInstance("ML-KEM");
 
-SecretWithEncapsulation enc =
-    encapsulator.encapsulate();
-byte[] ciphertext = enc.getEncapsulation();
-byte[] sharedSecret = enc.getSecret();
+// Sender: encapsulate to the recipient's public key
+KEM.Encapsulator enc = kem.newEncapsulator(publicKey);
+KEM.Encapsulated e = enc.encapsulate();
+byte[] ciphertext = e.encapsulation();
+SecretKey sharedSecret = e.key();
 
-// Decapsulate on receiver side:
-byte[] decSecret =
-    extractor.extractSecret(ciphertext);`,
-    notes: 'KEM is a new operation type — not sign or encrypt. JDK 21 adds javax.crypto.KEM API.',
+// Receiver: decapsulate with the private key
+KEM.Decapsulator dec = kem.newDecapsulator(privateKey);
+SecretKey decSecret = dec.decapsulate(ciphertext);`,
+    notes:
+      'KEM is a new operation type — not sign or encrypt. The javax.crypto.KEM API arrived in JDK 21; the ML-KEM implementation behind it in JDK 24 (on JDK 21, use Bouncy Castle).',
   },
   {
     apiId: 'openssl',
@@ -230,7 +228,8 @@ unsigned char *ss = OPENSSL_malloc(ssLen);
 EVP_PKEY_encapsulate(ctx,
     ct, &ctLen, ss, &ssLen);
 EVP_PKEY_CTX_free(ctx);`,
-    notes: 'EVP_PKEY_encapsulate is new in OpenSSL 3.x for KEM operations.',
+    notes:
+      'EVP_PKEY_encapsulate arrived in OpenSSL 3.0; ML-KEM keys for it are native from OpenSSL 3.5.',
   },
   {
     apiId: 'pkcs11',
@@ -272,10 +271,8 @@ C_EncapsulateKey(session, &mech,
     operation: 'verify',
     language: 'Java',
     algorithm: 'ML-DSA-65',
-    code: `// JCA/JCE verification
-Signature verifier = Signature.getInstance(
-    "ML-DSA-65", "BC"
-);
+    code: `// JCA/JCE verification (JDK 24+)
+Signature verifier = Signature.getInstance("ML-DSA");
 verifier.initVerify(publicKey);
 verifier.update(message);
 boolean valid = verifier.verify(signature);`,

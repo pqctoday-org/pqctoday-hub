@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-agility',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('NIST SP 800-208'),
@@ -42,6 +42,9 @@ export const content: ModuleContent = {
     getStandard('Advancing-Our-Amazing-Bet-on-Asymmetric-Cryptography'), // m-crypto-agility: April 2024
     getStandard('Classic-McEliece-Implementation'), // m-crypto-agility: 1,357,824 bytes; m-crypto-agility: 261,120; m-crypto-agility: 8192128
     getStandard('X25519Kyber768Draft00-hybrid-post-quantum-KEM-for-HPKE'), // m-crypto-agility: 1,216 bytes
+    // 2026-10-16: the Introduction now quotes the CSWP 39upd1 definition of crypto agility
+    // (it replaced a quote attributed to NIST IR 8547 that the IR does not contain).
+    getStandard('NIST CSWP 39'),
   ],
 
   algorithms: [
@@ -68,11 +71,11 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      "The Crypto Agility module teaches how to design systems that can rapidly swap cryptographic algorithms, protocols, and implementations without significant code or infrastructure changes. Crypto agility is NIST's top recommendation for PQC transition preparedness.",
+      'The Crypto Agility module teaches how to design systems that can switch cryptographic algorithms, protocols, and implementations with as little change as possible to the applications that use them. Callers can be insulated from the primitive, but credentials, encodings, key/signature/ciphertext sizes, negotiation, storage, rollback and tests still change with each algorithm. NIST devotes a white paper, CSWP 39 (Considerations for Achieving Crypto Agility), to it.',
     keyConcepts:
-      'Crypto agility is the ability to rapidly switch cryptographic algorithms, protocols, and implementations without significant application code changes. Three dimensions of agility: Algorithm agility — swap algorithms (RSA to ML-KEM) via configuration, not code rewrites. Protocol agility — support multiple protocol versions simultaneously (TLS 1.2/1.3, hybrid key exchange). Implementation agility — switch between crypto providers (OpenSSL, BoringSSL, AWS-LC) without application changes.',
+      'Crypto agility is the ability to switch cryptographic algorithms, protocols, and implementations without rewriting the applications that call them. Three dimensions of agility: Algorithm agility — select algorithms in configuration rather than hard-coding them; moving from RSA encryption to ML-KEM still changes the call pattern (a KEM cannot encrypt data directly — NIST SP 800-227) and key and ciphertext sizes. Protocol agility — support multiple protocol versions simultaneously (TLS 1.2/1.3, hybrid key exchange). Implementation agility — switch between crypto providers (OpenSSL, BoringSSL, AWS-LC) without changing application call sites.',
     workshopSummary:
-      'The workshop has 3 interactive steps: Abstraction Layer Demo — interactive demonstration of how algorithm-agnostic APIs enable instant backend swaps; select different crypto providers and see how the same API calls produce results from different algorithm implementations. CBOM Scanner — scan a sample enterprise architecture to discover and catalog all quantum-vulnerable cryptographic algorithms in use; produces a CycloneDX-format CBOM with risk assessments.',
+      'The workshop has 3 interactive steps: Abstraction Layer Demo — interactive demonstration of how algorithm-agnostic APIs keep call sites unchanged when the backend changes, and what still changes around them; select different crypto providers and see how the same API calls produce results from different algorithm implementations. CBOM Scanner — scan a sample enterprise architecture to discover and catalog all quantum-vulnerable cryptographic algorithms in use; produces a CycloneDX-format CBOM with risk assessments.',
     relatedStandards:
       'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). CISA Post-Quantum Cryptography Initiative. CycloneDX CBOM Specification. NIST SP 800-227',
   },

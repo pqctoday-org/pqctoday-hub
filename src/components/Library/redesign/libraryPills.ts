@@ -16,6 +16,21 @@ export function lifecyclePillClass(label: LifecycleLabel): string {
   return LIFECYCLE_STYLES[label]?.badge ?? 'bg-muted text-muted-foreground'
 }
 
+/** The catalog's "not checked yet" placeholder for `document_status`. It is
+ *  not a publisher status, so it is never shown as one. */
+const STATUS_PLACEHOLDER = 'unverified — needs review'
+
+/** The publisher's own status words for display, or '' when there is nothing
+ *  worth a line: blank, the "Unverified — needs review" placeholder, or the
+ *  same word the lifecycle chip already shows. */
+export function publisherStatusText(documentStatus: string | undefined, label: LifecycleLabel) {
+  const raw = (documentStatus ?? '').trim()
+  const lower = raw.toLowerCase()
+  if (!raw || lower === STATUS_PLACEHOLDER) return ''
+  if (lower === lifecycleLabel(label).toLowerCase()) return ''
+  return raw
+}
+
 /** Urgency pill — only Critical/High are shown on cards (per the design). */
 export function urgencyPillClass(urgency: string): string {
   switch (urgency) {
@@ -35,7 +50,9 @@ export function urgencyPillClass(urgency: string): string {
 export interface TrustInfo {
   score: number | null
   pillClass: string
-  source: 'Authoritative' | 'Needs review'
+  /** Plain word for the same score the pill shows, using the pill's thresholds.
+   *  Never "Authoritative": that reads as a standards status, and trust is not maturity. */
+  source: 'High trust' | 'Moderate trust' | 'Needs review'
 }
 
 export function trustInfo(referenceId: string): TrustInfo {
@@ -50,7 +67,13 @@ export function trustInfo(referenceId: string): TrustInfo {
           ? 'bg-warning/15 text-warning'
           : 'bg-muted text-muted-foreground'
   const source: TrustInfo['source'] =
-    ts && (ts.tier === 'Authoritative' || ts.tier === 'High') ? 'Authoritative' : 'Needs review'
+    score == null
+      ? 'Needs review'
+      : score >= 80
+        ? 'High trust'
+        : score >= 66
+          ? 'Moderate trust'
+          : 'Needs review'
   return { score, pillClass, source }
 }
 

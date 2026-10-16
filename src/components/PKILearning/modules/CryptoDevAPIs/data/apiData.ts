@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { describeRuntimeSupport } from './pqcSupportData'
 
 export type PlatformScope = 'cross-platform' | 'java' | 'windows' | 'all'
 export type KeyStorageModel = 'software' | 'hardware' | 'both'
@@ -67,9 +68,8 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     errorHandling:
       'Java checked exceptions: NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException. Provider-not-found errors are compile-time catchable.',
     providerPattern:
-      'Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
-    pqcStatus:
-      'JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); the javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds these plus SLH-DSA (and Falcon) on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.',
+      'KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA"); // JDK 24+ built-in\n// or a third-party provider: Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
+    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 21 LTS does not have them, and the first LTS that does is JDK 25. The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.`,
     strengths: [
       'Mature provider architecture — swap algorithms without code changes',
       'Extensive ecosystem — hundreds of providers available',
@@ -78,13 +78,13 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'FIPS 140-2/3 validated providers available (e.g., BC-FIPS, IBM JCEFIPS)',
     ],
     limitations: [
-      'No native PQC — requires third-party providers',
+      'Native PQC only from JDK 24 (ML-KEM, ML-DSA); SLH-DSA and older JDKs need a third-party provider',
       'String-based algorithm names prone to typos',
       'JCE historically had jurisdiction policy files limiting key sizes',
       'Performance overhead from JNI bridge when using native providers',
       'KeyStore format fragmentation (JKS, PKCS12, BKS)',
     ],
-    radar: { maturity: 9, pqcReadiness: 6, platformReach: 7, hsmIntegration: 7, communitySize: 9 },
+    radar: { maturity: 9, pqcReadiness: 7, platformReach: 7, hsmIntegration: 7, communitySize: 9 },
     languages: ['Java', 'Kotlin', 'Scala', 'Groovy'],
     standards: ['FIPS 140-2/3 (via providers)', 'NIST SP 800-56A/B', 'PKCS#12'],
   },
@@ -150,7 +150,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     keyStorage: 'software',
     abstractionLevel: 'medium',
     description:
-      'The most widely deployed open-source cryptographic library. OpenSSL 3.x introduced a provider model that separates algorithm implementations from the core library, enabling pluggable PQC support via oqsprovider.',
+      'The most widely deployed open-source cryptographic library. OpenSSL 3.x introduced a provider model that separates algorithm implementations from the core library; OpenSSL 3.5 put ML-KEM, ML-DSA and SLH-DSA in the default provider.',
     architectureSummary:
       'EVP (Envelope) API provides algorithm-agnostic operations. EVP_PKEY for keys, EVP_MD_CTX for hashing, EVP_CIPHER_CTX for symmetric crypto, EVP_PKEY_CTX for asymmetric operations. Providers loaded at runtime via OSSL_PROVIDER_load().',
     keyObjects: [
@@ -169,12 +169,11 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     errorHandling:
       'Return codes (1 = success, 0 = failure) plus error queue (ERR_get_error, ERR_error_string). Error queue is thread-local. Must drain queue after failures.',
     providerPattern:
-      'OSSL_PROVIDER *prov = OSSL_PROVIDER_load(NULL, "oqsprovider"); EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL);',
-    pqcStatus:
-      'OpenSSL 3.5+ ships NATIVE ML-KEM, ML-DSA, and SLH-DSA — no external provider needed. For OpenSSL 3.2–3.4, the oqsprovider (wrapping liboqs) adds PQC. Hybrid key exchange in TLS via s_client/s_server.',
+      'EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL); // OpenSSL 3.5+ default provider\n// before 3.5, or for non-standardised algorithms: OSSL_PROVIDER_load(NULL, "oqsprovider");',
+    pqcStatus: `${describeRuntimeSupport('openssl')}. OpenSSL 3.5+ ships these natively — no external provider needed, and its default TLS key shares offer X25519MLKEM768. oqsprovider (wrapping liboqs) is for OpenSSL before 3.5 or for algorithms that are not standardised (e.g. FN-DSA, HQC).`,
     strengths: [
       'Ubiquitous — default on most Linux/BSD/macOS systems',
-      'Provider model enables PQC without core changes',
+      'Native ML-KEM, ML-DSA and SLH-DSA since 3.5; provider model for anything else',
       'Massive community and ecosystem',
       'FIPS 140-3 validated provider module available',
       'Bindings for every major language (Rust, Python, Go, Ruby, Node.js)',
@@ -287,8 +286,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'NTSTATUS return codes (STATUS_SUCCESS, STATUS_INVALID_PARAMETER, STATUS_NOT_SUPPORTED). HRESULT wrappers in .NET. Error codes documented but not always descriptive.',
     providerPattern:
       'BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_RSA_ALGORITHM, NULL, 0); NCryptOpenStorageProvider(&hProv, MS_KEY_STORAGE_PROVIDER, 0);',
-    pqcStatus:
-      'Native PQC GA since November 2025: CNG exposes ML-KEM, ML-DSA, and SLH-DSA APIs on Windows 11 24H2+ and Windows Server 2025, backed by SymCrypt (which implements ML-KEM and ML-DSA). Schannel TLS hybrid key exchange remains preview and disabled by default.',
+    pqcStatus: `${describeRuntimeSupport('windows-cng')}. ML-KEM and ML-DSA are generally available since November 2025 on Windows 11 24H2+ and Windows Server 2025. BCRYPT_SLHDSA_ALGORITHM is defined but not currently implemented by the default CNG provider; composite ML-DSA/ML-KEM identifiers are Windows Insider only. Primitive availability in CNG is separate from what Schannel negotiates in TLS.`,
     strengths: [
       'Deep Windows OS integration — certificate store, smart card, TPM 2.0',
       'Key isolation — keys can be non-exportable and process-isolated',
@@ -298,14 +296,14 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     ],
     limitations: [
       'Windows-only — no cross-platform story',
-      'PQC APIs are new (GA Nov 2025) and require Windows 11 24H2+ / Server 2025',
+      'PQC APIs are new (GA Nov 2025), require Windows 11 24H2+ / Server 2025, and cover ML-KEM and ML-DSA only (no SLH-DSA in the default provider)',
       'Limited to Microsoft-approved algorithm set',
       'Custom KSP development requires Windows Driver Kit knowledge',
       'Documentation is extensive but scattered across MSDN',
     ],
     radar: {
       maturity: 8,
-      pqcReadiness: 2,
+      pqcReadiness: 6,
       platformReach: 4,
       hsmIntegration: 8,
       communitySize: 5,
@@ -347,8 +345,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Java/C# exceptions: InvalidCipherTextException, DataLengthException, InvalidKeyException. Lightweight API throws runtime exceptions. JCA mode uses standard JCA exception hierarchy.',
     providerPattern:
       'Security.addProvider(new BouncyCastleProvider()); // JCA mode\n// or Lightweight API:\nMLDSAKeyPairGenerator gen = new MLDSAKeyPairGenerator(); gen.init(new MLDSAKeyGenerationParameters(random, MLDSAParameters.ml_dsa_65));',
-    pqcStatus:
-      'Most comprehensive PQC support in managed languages: ML-KEM (all parameter sets), ML-DSA, SLH-DSA (all 12 variants), FN-DSA (Falcon), LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. Both JCA and lightweight API.',
+    pqcStatus: `${describeRuntimeSupport('bouncy-castle')}. Most comprehensive PQC support in managed languages: ML-KEM (all parameter sets), ML-DSA, SLH-DSA (all 12 variants), FN-DSA (Falcon), LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. Both JCA and lightweight API.`,
     strengths: [
       'Supports ML-KEM, ML-DSA, SLH-DSA (all 12 variants), FN-DSA, LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU',
       'Dual API: JCA compatible + standalone lightweight',

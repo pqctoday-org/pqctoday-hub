@@ -34,7 +34,6 @@ function docWith(label: LifecycleLabel, overrides: Partial<LibraryItem> = {}): L
     documentTitle: `Test document ${label}`,
     documentStatus: 'Final',
     lifecycleLabel: label,
-    groupLifecycleLabel: undefined,
     priorRevisions: undefined,
     supersededByRefs: undefined,
     replacesRefs: undefined,
@@ -104,14 +103,15 @@ describe('Library detail drawer', () => {
     expect(within(drawer).queryByText(OLD_ONLY)).toBeNull()
   })
 
-  it('shows the furthest label of a revision group, and the label of each older revision', () => {
+  it("shows the current record's own label, and the label of each older revision", () => {
     const drawer = openDrawer(
       docWith('Draft', {
-        groupLifecycleLabel: 'Released',
-        priorRevisions: [priorWith('Misc'), priorWith('Research Paper')],
+        priorRevisions: [priorWith('Released'), priorWith('Misc'), priorWith('Research Paper')],
       })
     )
-    expect(within(drawer).getAllByText('Released').length).toBeGreaterThan(0)
+    // The header keeps Draft; Released appears only on the older revision's own row.
+    expect(within(drawer).getAllByText('Draft').length).toBeGreaterThan(0)
+    expect(within(drawer).getAllByText('Released')).toHaveLength(1)
     const misc = within(drawer).getByText('Older edition Misc').closest('div')?.parentElement
     expect(misc).not.toBeNull()
     expect(within(misc as HTMLElement).getByText('Misc')).toBeInTheDocument()

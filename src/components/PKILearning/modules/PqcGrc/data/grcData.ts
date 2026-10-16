@@ -373,7 +373,7 @@ export const VENDOR_TIERS: VendorTier[] = [
     description: 'PQC readiness directly constrains the migration timeline.',
     examples: 'HSM vendors, certificate authorities, cloud platforms, payment processors, MSSPs.',
     treatment:
-      'Detailed assessment + active engagement. Require a CycloneDX 1.6+ CBOM and a product-security review.',
+      'Detailed assessment + active engagement. Illustrative policy: ask for a CBOM (e.g. CycloneDX 1.6+) and a product-security review.',
   },
   {
     tier: 2,

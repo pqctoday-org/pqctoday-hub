@@ -124,7 +124,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00001047',
     description: 'ECDSA with SHA3-224 prehash (PKCS#11 v3.2 §6.3)',
     keySize: '256-521 bits',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ecdsa-sha3-256',
@@ -133,7 +133,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00001048',
     description: 'ECDSA with SHA3-256 prehash (PKCS#11 v3.2 §6.3)',
     keySize: '256-521 bits',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ecdsa-sha3-384',
@@ -142,7 +142,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00001049',
     description: 'ECDSA with SHA3-384 prehash (PKCS#11 v3.2 §6.3)',
     keySize: '384-521 bits',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ecdsa-sha3-512',
@@ -151,7 +151,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000104a',
     description: 'ECDSA with SHA3-512 prehash (PKCS#11 v3.2 §6.3)',
     keySize: '521 bits',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-pkcs5-pbkd2',
@@ -160,7 +160,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x000003b0',
     description: 'PBKDF2 key derivation (BIP39 seed generation, PKCS#11 v3.2 §5.7.3.1)',
     keySize: 'Variable (1–512 bytes)',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hkdf-derive',
@@ -202,7 +202,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     keySize: 'EC curve order (P-256/384/521)',
     pkcs11Version: 'v3.2',
   },
-  // PQC — PKCS#11 v3.2 CSD01 mechanisms (OASIS pkcs11t.h)
+  // PQC — PKCS#11 v3.2 mechanisms (OASIS Standard, 3 June 2026; pkcs11t.h)
   {
     id: 'ckm-ml-kem-key-pair-gen',
     name: 'CKM_ML_KEM_KEY_PAIR_GEN',
@@ -210,7 +210,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000000f',
     description: 'Generate ML-KEM key pair (FIPS 203)',
     keySize: 'ML-KEM-512/768/1024',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ml-kem',
@@ -219,7 +219,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000017',
     description: 'ML-KEM encapsulate/decapsulate via C_EncapsulateKey/C_DecapsulateKey',
     keySize: 'ML-KEM-512/768/1024',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ml-dsa-key-pair-gen',
@@ -228,7 +228,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000001c',
     description: 'Generate ML-DSA key pair (FIPS 204)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-ml-dsa',
@@ -237,7 +237,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000001d',
     description: 'Pure ML-DSA sign/verify via C_Sign/C_Verify',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa',
@@ -247,7 +247,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     description:
       'HashML-DSA (generic): hash algorithm specified in CK_HASH_SIGN_ADDITIONAL_CONTEXT',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha224',
@@ -256,7 +256,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000023',
     description: 'HashML-DSA pre-hash with SHA-224 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha256',
@@ -265,7 +265,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000024',
     description: 'HashML-DSA pre-hash with SHA-256 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha384',
@@ -274,7 +274,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000025',
     description: 'HashML-DSA pre-hash with SHA-384 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha512',
@@ -283,7 +283,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000026',
     description: 'HashML-DSA pre-hash with SHA-512 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha3-224',
@@ -292,7 +292,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000027',
     description: 'HashML-DSA pre-hash with SHA3-224 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha3-256',
@@ -301,7 +301,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000028',
     description: 'HashML-DSA pre-hash with SHA3-256 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha3-384',
@@ -310,7 +310,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000029',
     description: 'HashML-DSA pre-hash with SHA3-384 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-sha3-512',
@@ -319,7 +319,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000002a',
     description: 'HashML-DSA pre-hash with SHA3-512 (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-shake128',
@@ -328,7 +328,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000002b',
     description: 'HashML-DSA pre-hash with SHAKE-128 XOF (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-ml-dsa-shake256',
@@ -337,7 +337,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000002c',
     description: 'HashML-DSA pre-hash with SHAKE-256 XOF (FIPS 204 HashML-DSA)',
     keySize: 'ML-DSA-44/65/87',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-slh-dsa-key-pair-gen',
@@ -346,7 +346,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000002d',
     description: 'Generate SLH-DSA key pair (FIPS 205)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-slh-dsa',
@@ -355,7 +355,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000002e',
     description: 'Pure SLH-DSA sign/verify via C_MessageSignInit/C_SignMessage (FIPS 205)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f (SHA2 + SHAKE variants)',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa',
@@ -365,7 +365,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     description:
       'HashSLH-DSA (generic): hash algorithm specified in CK_HASH_SIGN_ADDITIONAL_CONTEXT',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha224',
@@ -374,7 +374,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000036',
     description: 'HashSLH-DSA pre-hash with SHA-224 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha256',
@@ -383,7 +383,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000037',
     description: 'HashSLH-DSA pre-hash with SHA-256 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha384',
@@ -392,7 +392,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000038',
     description: 'HashSLH-DSA pre-hash with SHA-384 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha512',
@@ -401,7 +401,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00000039',
     description: 'HashSLH-DSA pre-hash with SHA-512 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha3-224',
@@ -410,7 +410,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003a',
     description: 'HashSLH-DSA pre-hash with SHA3-224 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha3-256',
@@ -419,7 +419,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003b',
     description: 'HashSLH-DSA pre-hash with SHA3-256 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha3-384',
@@ -428,7 +428,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003c',
     description: 'HashSLH-DSA pre-hash with SHA3-384 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-sha3-512',
@@ -437,7 +437,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003d',
     description: 'HashSLH-DSA pre-hash with SHA3-512 (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-shake128',
@@ -446,7 +446,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003e',
     description: 'HashSLH-DSA pre-hash with SHAKE-128 XOF (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hash-slh-dsa-shake256',
@@ -455,7 +455,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x0000003f',
     description: 'HashSLH-DSA pre-hash with SHAKE-256 XOF (FIPS 205 HashSLH-DSA)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hss-key-pair-gen',
@@ -464,7 +464,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00004032',
     description: 'Generate HSS/LMS stateful hash-based key pair (NIST SP 800-208)',
     keySize: 'LMS (H=5/10/15/20/25)',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
   {
     id: 'ckm-hss',
@@ -473,7 +473,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     mechanismCode: '0x00004033',
     description: 'HSS/LMS stateful sign/verify via C_Sign/C_Verify',
     keySize: 'LMS (H=5/10/15/20/25)',
-    pkcs11Version: 'v3.2 (CSD01)',
+    pkcs11Version: 'v3.2',
   },
 ]
 
@@ -875,12 +875,12 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorId: 'aws-cloudhsm',
     vendorName: 'AWS CloudHSM',
     currentFirmware: 'Current (classical)',
-    targetFirmware: 'SDK update (provider-managed)',
-    pqcAlgorithmsAdded: ['ML-DSA-44/65/87 (preview)'],
+    targetFirmware: 'Provider-managed (plus Client SDK 5 update)',
+    pqcAlgorithmsAdded: ['ML-DSA-44/65/87'],
     upgradeComplexity: 'low',
-    estimatedDowntime: 'Zero — SDK update only',
+    estimatedDowntime: 'None for the customer — provider-managed',
     notes:
-      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. CAVP validations required for new algorithm implementations.',
+      'ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. AWS manages the HSM side; customers update the client SDK.',
   },
   {
     vendorId: 'azure-dhsm',

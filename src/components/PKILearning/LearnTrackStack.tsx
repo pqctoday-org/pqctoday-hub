@@ -200,7 +200,7 @@ const TRACK_META: {
     colorFallback: '#22c55e',
   },
   {
-    track: 'Executive',
+    track: 'Governance & Risk',
     icon: Briefcase,
     description:
       'Risk management, business case, governance, compliance, crypto posture management, vendor risk, migration',

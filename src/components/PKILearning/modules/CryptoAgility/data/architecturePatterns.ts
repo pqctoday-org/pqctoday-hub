@@ -44,21 +44,21 @@ export const MACRO_ARCHITECTURE_PATTERNS = [
     id: 'provider-model',
     label: 'Provider Model / App-Level Abstraction',
     description:
-      'Applications statically or dynamically link to a cryptography library (like OpenSSL or BouncyCastle) through an abstraction layer (like JCA). Changing algorithms requires only config updates, but must be done per-application.',
+      'Applications statically or dynamically link to a cryptography library (like OpenSSL or BouncyCastle) through an abstraction layer (like JCA). The design goal is that the algorithm is selected in configuration, so call sites do not change. It must still be done per application, and key and signature sizes, encodings, storage and tests still change with the algorithm.',
     icon: 'Layers',
   },
   {
     id: 'service-mesh',
     label: 'Service Mesh / Sidecar Proxy',
     description:
-      'Cryptographic operations for data-in-transit (e.g., mTLS) are completely offloaded to an infrastructure layer proxy (like Envoy or Istio). Applications speak plaintext to the proxy. Zero code or config changes needed at the application level to migrate protocols.',
+      'Cryptographic operations for data-in-transit (e.g., mTLS) are completely offloaded to an infrastructure layer proxy (like Envoy or Istio). Applications speak plaintext to the proxy, so the proxy TLS configuration changes rather than application code. Certificates, peer support for the new key exchange, and anything the application does with crypto outside the mesh still need their own migration.',
     icon: 'Network',
   },
   {
     id: 'external-kms',
     label: 'External KMS / Cloud HSM',
     description:
-      'Cryptography is outsourced over the network to a centralized service (like AWS KMS, Azure Key Vault, or an on-prem HSM cluster). Agility is achieved instantly across the enterprise when the central service is upgraded by the provider.',
+      'Cryptography is outsourced over the network to a centralized service (like AWS KMS, Azure Key Vault, or an on-prem HSM cluster). Callers are insulated from the primitive, so the change is made once in the service rather than in every application. It is not instant: callers still choose new key types, handle larger keys, signatures and ciphertexts, store them, and switch from encrypt calls to KEM encapsulate/decapsulate where a KEM replaces RSA encryption (a KEM cannot encrypt data directly — NIST SP 800-227). Rollback and testing remain per application.',
     icon: 'Cloud',
   },
 ]
@@ -97,8 +97,9 @@ export const APP_CODE_SAMPLE = `// Application code — UNCHANGED across all bac
 import { cryptoService } from './crypto'
 
 async function establishSession(peerPublicKey: Uint8Array) {
-  // This call works identically whether the backend
-  // is RSA-2048, ML-KEM-768, or X25519MLKEM768
+  // The call site is the same whether the backend
+  // is RSA-2048, ML-KEM-768, or X25519MLKEM768 —
+  // but ciphertext and key sizes differ per backend
   const { sharedSecret, ciphertext } =
     await cryptoService.keyExchange(peerPublicKey)
 

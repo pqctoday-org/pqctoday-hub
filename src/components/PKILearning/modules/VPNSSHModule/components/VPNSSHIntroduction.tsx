@@ -129,8 +129,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Combined Secret</div>
               <p className="text-xs text-muted-foreground">
-                SKEYSEED derived from both DH and KEM shared secrets via PRF. Secure if either
-                holds.
+                SKEYSEED derived from both DH and KEM shared secrets via PRF. The keys stay secret
+                as long as either exchange is unbroken, provided the PRF acts as a sound combiner.
               </p>
             </div>
           </div>

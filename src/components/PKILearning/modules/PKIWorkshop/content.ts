@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pki-workshop',
   version: '1.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-01',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('FIPS 204'),
@@ -92,6 +92,8 @@ export const content: ModuleContent = {
     ecdsaP256Size: '648 bytes',
     mlDsa65Size: '5.6 KB',
     ecdsaMinSigSize: '72 bytes',
-    chainGrowthSize: '4.1 KB',
+    // ML-DSA-44 leaf + intermediate (2 × 1,312 B keys) + 3 × 2,420 B signatures
+    // (2 certificate signatures + CertificateVerify), no SCTs or metadata
+    chainGrowthSize: '9.9 KB',
   },
 }

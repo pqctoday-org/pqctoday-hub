@@ -1,7 +1,10 @@
 # BSI TR-02102-1 (Germany) — illustrative alignment with the BSI's published
 # cryptographic guidance. The instructive contrast with fips-only / cnsa-2.0:
-# BSI recognises FrodoKEM and Classic McEliece for long-term confidentiality and
-# *mandates HYBRID* (classical + PQC) key establishment during the transition —
+# BSI TR-02102-1 (2026-01) lists FrodoKEM and Classic McEliece for long-term
+# confidentiality and *mandates HYBRID* (classical + PQC) key establishment during
+# the transition. On 2026-10-01 the BSI advised against Classic McEliece for NEW
+# developments (Hinweis Classic McEliece); the TR still lists it until its next
+# revision, so this policy still allows it for existing deployments —
 # so this policy ALLOWS exactly the conservative KEMs that the FIPS/CNSA policies
 # DENY. Same engine, same ops; the regulator's maths is a policy edit.
 #
@@ -16,9 +19,10 @@ metadata:
   description: |
     Illustrative BSI TR-02102-1 alignment. Key establishment must be HYBRID:
     either a combined hybrid KEM (X25519MLKEM768 / SecP256r1MLKEM768) or a
-    standalone PQC KEM (ML-KEM, FrodoKEM, Classic McEliece — BSI recognises
-    the conservative lattice/code KEMs for long-term confidentiality) that
-    declares its classical partner via x-pqctoday-hybrid-partner at creation.
+    standalone PQC KEM (ML-KEM, FrodoKEM, Classic McEliece — TR-02102-1
+    lists the conservative lattice/code KEMs for long-term confidentiality;
+    since 2026-10-01 the BSI advises against Classic McEliece for new
+    developments) that declares its classical partner via x-pqctoday-hybrid-partner at creation.
     Signatures use ML-DSA / SLH-DSA / stateful hash-based schemes (LMS, HSS,
     XMSS, XMSS-MT) or — until end-2035, per BSI's transition allowance —
     classical ECDSA/RSA/EdDSA; RSA signing must use PSS and RSA encryption
@@ -37,8 +41,9 @@ metadata:
 
 rules:
 
-  # 1. KEM allowlist — BSI-recognised PQC KEMs (note FrodoKEM / Classic McEliece,
-  #    which fips-only and cnsa-2.0 deny). Classical KEM/DH stays allowed because
+  # 1. KEM allowlist — PQC KEMs listed in TR-02102-1 (note FrodoKEM / Classic
+  #    McEliece, which fips-only and cnsa-2.0 deny; the BSI has advised against
+  #    Classic McEliece for new developments since 2026-10-01). Classical KEM/DH stays allowed because
   #    BSI requires it as the *hybrid* partner, not standalone. The combined
   #    hybrid KEMs (the one hybrid primitive this stack actually implements)
   #    were missing — a hybrid-mandating policy that denied the hybrid KEM

@@ -17,7 +17,7 @@ export const content: ModuleContent = {
   moduleId: 'skills-team-structure',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-16',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. A staffing module: what the programme must deliver and by when drives it, so the

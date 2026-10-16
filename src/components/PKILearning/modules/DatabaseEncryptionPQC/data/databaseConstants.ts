@@ -260,16 +260,16 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     step: 2,
     title: 'PQC-Capable External KMS Setup',
     description:
-      'Configure a PQC-capable KMS (Thales CipherTrust, AWS KMS preview, or Azure Key Vault) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
+      'Configure a PQC-capable KMS (for example Thales CipherTrust or Azure Key Vault; AWS KMS offers no ML-KEM keys) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
-      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS with ML-KEM preview. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
+      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but no ML-KEM KMS keys. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
     downtime: 'None',
     risk: 'medium',
     tooling: [
       'Thales CipherTrust (roadmap)',
-      'AWS KMS (PQC preview)',
+      'AWS KMS (ML-DSA signing keys; no ML-KEM keys)',
       'HashiCorp Vault 1.17+',
       'KMIP 3.0 client',
     ],

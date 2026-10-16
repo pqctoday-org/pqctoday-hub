@@ -209,10 +209,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               FDA 21 CFR Part 11 establishes requirements for electronic records and electronic
               signatures in pharmaceutical manufacturing and clinical trials. It mandates that
               electronic records must be{' '}
-              <strong>trustworthy, reliable, and equivalent to paper records</strong>. Digital
-              signatures used under Part 11 rely on RSA or ECDSA &mdash; both quantum-vulnerable. A
-              CRQC could forge signatures on regulatory submissions, batch release records, or
-              clinical trial data, undermining the entire chain of trust that supports drug safety.
+              <strong>trustworthy, reliable, and equivalent to paper records</strong>. Part 11 names
+              no signature algorithm, but the electronic signatures deployed today typically use RSA
+              or ECDSA &mdash; both quantum-vulnerable. A CRQC could forge signatures on regulatory
+              submissions, batch release records, or clinical trial data, undermining the chain of
+              trust that supports drug safety. How long those records must be kept comes from the
+              applicable predicate rule (for example 21 CFR 312.62(c)), not from Part 11 itself.
             </p>
           </div>
 

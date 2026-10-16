@@ -18,6 +18,7 @@ import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { MIGRATION_KEYS, MIGRATION_POLICIES, type MigrationPolicyChip } from './migrationKeys'
 import { useMigrationEngine } from './useMigrationEngine'
 import { MigrationKeyCard } from './MigrationKeyCard'
+import { QuickRunCard } from './QuickRunCard'
 
 export function MigrationView() {
   const { engine, policyName, bootError } = useMigrationEngine()
@@ -121,6 +122,15 @@ export function MigrationView() {
           tampering with a signature or ciphertext and re-checking it is part of the demo.
         </p>
       </div>
+
+      {/* ── Quick run — the three-step first win (remounts on Reset estate) ── */}
+      <QuickRunCard
+        key={epoch}
+        engine={engine}
+        activePolicy={activePolicy}
+        switchPolicy={switchPolicy}
+        onKeystoreChange={onKeystoreChange}
+      />
 
       {/* ── Policy rail ───────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-2" data-tour="migration-policy-rail">

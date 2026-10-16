@@ -1,14 +1,13 @@
 {
   "_meta": {
-    "description": "Indicative coverage status for quantum-related scenarios under typical cyber insurance policies. Based on review of public quantum exclusion language.",
+    "description": "Indicative coverage status for quantum-related scenarios under typical cyber insurance policies. No insurer or market body has published a quantum-specific exclusion that this model could find, so every cell is 'ambiguous': the outcome turns on general cyber wording, in particular whether cyber cover is affirmed or excluded, and whether an attack attributed to a state falls under a state-backed cyber-attack exclusion.",
     "sources": [
-      "Lloyd's Market Bulletin Y5258 — Quantum Computer Exclusion Clause (2023) (https://assets.lloyds.com/assets/pdf-market-bulletin-y5258/1/pdf-market-bulletin-y5258.pdf)",
-      "Munich Re — Cyber Insurance & Quantum Risk (https://www.munichre.com/en/solutions/reinsurance-property-casualty/cyber-reinsurance.html)",
-      "Marsh — Quantum Risk & Insurance Gap Analysis 2023"
+      "Lloyd's Market Bulletin Y5258 — Providing clarity for Lloyd's customers on coverage for cyber exposures (2019): policies must affirm or exclude cyber cover (https://assets.lloyds.com/assets/y5258-providing-clarity-for-lloyd-s-customers-on-coverage-for-cyber-exposures/1/Y5258%20-%20Providing%20clarity%20for%20Lloyd%E2%80%99s%20customers%20on%20coverage%20for%20cyber%20exposures.pdf)",
+      "Lloyd's Market Bulletin Y5381 — Cyber-attack exclusions (17 August 2022): standalone cyber policies must exclude losses from state-backed cyber-attacks from 31 March 2023 (https://assets.lloyds.com/media/e9a4058c-4c25-48d6-99d3-0c466987e099/Y5381%20Market%20Bulletin%20-%20Cyber-attack%20exclusions.pdf)"
     ],
     "coverageValues": {
       "covered": "Typically covered under standard cyber policy language",
-      "excluded": "Explicitly excluded by quantum/nation-state clauses or war exclusions",
+      "excluded": "Explicitly excluded by policy wording, for example a state-backed cyber-attack or war exclusion",
       "ambiguous": "Coverage unclear — policy wording does not specifically address quantum-origin attacks; subject to dispute at claims time"
     },
     "note": "Educational model — actual coverage depends on specific policy wording. Consult a licensed insurance professional."
@@ -39,33 +38,33 @@
   "matrix": {
     "financial": {
       "hndl": "ambiguous",
-      "key-forgery": "excluded",
+      "key-forgery": "ambiguous",
       "auth-bypass": "ambiguous",
-      "supply-chain": "excluded"
+      "supply-chain": "ambiguous"
     },
     "healthcare": {
       "hndl": "ambiguous",
-      "key-forgery": "excluded",
+      "key-forgery": "ambiguous",
       "auth-bypass": "ambiguous",
-      "supply-chain": "excluded"
+      "supply-chain": "ambiguous"
     },
     "technology": {
       "hndl": "ambiguous",
       "key-forgery": "ambiguous",
-      "auth-bypass": "covered",
+      "auth-bypass": "ambiguous",
       "supply-chain": "ambiguous"
     },
     "government": {
-      "hndl": "excluded",
-      "key-forgery": "excluded",
-      "auth-bypass": "excluded",
-      "supply-chain": "excluded"
+      "hndl": "ambiguous",
+      "key-forgery": "ambiguous",
+      "auth-bypass": "ambiguous",
+      "supply-chain": "ambiguous"
     },
     "energy": {
       "hndl": "ambiguous",
-      "key-forgery": "excluded",
+      "key-forgery": "ambiguous",
       "auth-bypass": "ambiguous",
-      "supply-chain": "excluded"
+      "supply-chain": "ambiguous"
     }
   }
 }

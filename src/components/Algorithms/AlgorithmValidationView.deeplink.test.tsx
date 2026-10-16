@@ -133,3 +133,19 @@ describe('AlgorithmValidationView — deep links', () => {
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, case: null, polarity: null })
   })
 })
+
+describe('AlgorithmValidationView — arrival scroll', () => {
+  beforeEach(() => usePersonaStore.setState({ selectedPersona: 'cert-engineer' }))
+
+  it('aligns a linked section to its top, not its centre', async () => {
+    // A section is taller than the viewport; centring it landed the
+    // ?section=kat link on the AES tiles, far below the KAT header.
+    const scroll = vi.fn()
+    Element.prototype.scrollIntoView = scroll
+    // jsdom has no layout; the hook only scrolls an element that has a box.
+    vi.spyOn(Element.prototype, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList)
+    render(<AlgorithmValidationView sectionParam="kat" />)
+    await vi.waitFor(() => expect(scroll).toHaveBeenCalled())
+    expect(scroll).toHaveBeenCalledWith({ block: 'start', behavior: 'smooth' })
+  })
+})

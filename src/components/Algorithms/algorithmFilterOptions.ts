@@ -76,7 +76,10 @@ export const REGION_ITEMS = [
 
 export const STATUS_ITEMS = [
   { id: 'All', label: 'All Statuses' },
-  { id: 'Certified', label: 'Certified' },
+  // id stays 'Certified' (URL ?status= value and persona presets); the label
+  // must not say "Certified": algorithms are standardised, implementations
+  // are validated, and this bucket also holds FIPS-pending and non-US picks.
+  { id: 'Certified', label: 'Standardised or selected' },
   { id: 'Candidate', label: 'Candidate' },
   { id: 'To Be Checked', label: 'To Be Checked' },
 ]

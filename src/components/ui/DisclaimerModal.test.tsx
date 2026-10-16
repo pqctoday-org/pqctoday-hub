@@ -52,7 +52,7 @@ describe('DisclaimerModal', () => {
     expect(screen.getByText(/may contain inaccuracies/)).toBeInTheDocument()
   })
 
-  it('contains GitHub and LinkedIn links', () => {
+  it('contains GitHub and email links', () => {
     renderBanner()
     const githubLink = screen.getByRole('link', { name: /GitHub Discussions/ })
     expect(githubLink).toHaveAttribute(
@@ -62,8 +62,8 @@ describe('DisclaimerModal', () => {
     expect(githubLink).toHaveAttribute('target', '_blank')
     expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer')
 
-    const linkedinLink = screen.getByRole('link', { name: /Eric Amador/ })
-    expect(linkedinLink).toHaveAttribute('href', 'https://www.linkedin.com/in/eric-amador-971850a')
+    const emailLink = screen.getByRole('link', { name: /pqctoday@proton\.me/ })
+    expect(emailLink).toHaveAttribute('href', 'mailto:pqctoday@proton.me')
   })
 
   it('dismisses on Escape key', async () => {

@@ -67,4 +67,10 @@ describe('parseCbom', () => {
     )
     expect(r.format).toBe('CycloneDX 1.6')
   })
+
+  it('refuses a CycloneDX file older than 1.6, which cannot carry cryptographic assets', () => {
+    expect(() =>
+      parseCbom(cbom([{ type: 'cryptographic-asset', name: 'RSA-2048' }], '1.5'), ['RSA-2048'])
+    ).toThrow(/CycloneDX 1\.5 file/)
+  })
 })

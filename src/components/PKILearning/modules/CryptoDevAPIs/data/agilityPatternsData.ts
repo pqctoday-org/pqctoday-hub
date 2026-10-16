@@ -22,7 +22,7 @@ export const AGILITY_PATTERNS: AgilityPattern[] = [
     ],
     tradeoffs: [
       {
-        pro: 'Zero application code changes when switching algorithms',
+        pro: 'Call sites stay the same when switching algorithms; the algorithm identifier, key/signature sizes, encodings, storage and error paths still need review',
         con: 'Limited to algorithms your provider supports',
       },
       {
@@ -37,12 +37,13 @@ export const AGILITY_PATTERNS: AgilityPattern[] = [
     codeExamples: [
       {
         language: 'Java',
-        code: `// Switch provider via configuration — zero code change
-// config.properties: crypto.provider=BC
+        code: `// Switch algorithm and provider via configuration
+// config.properties: crypto.sig=ML-DSA  crypto.provider=SUN
+String alg = config.get("crypto.sig");
 String providerName = config.get("crypto.provider");
-Signature sig = Signature.getInstance("ML-DSA-65", providerName);`,
+Signature sig = Signature.getInstance(alg, providerName);`,
         notes:
-          'JCA provider name is the only change. Application code is identical for RSA, ECDSA, or ML-DSA.',
+          'The Signature calls stay the same for RSA, ECDSA or ML-DSA. Still review what changes around them: key and signature sizes (ML-DSA-65 signatures are ~3.3 KB), key encodings and storage, and the exceptions a missing algorithm raises.',
       },
       {
         language: 'C (OpenSSL)',
@@ -66,7 +67,7 @@ OSSL_PROVIDER_load(NULL, provName ? provName : "default");
     ],
     tradeoffs: [
       {
-        pro: 'Algorithm changes require only config updates, not code deploys',
+        pro: 'Swapping between algorithms the code already supports is a config change, not a code deploy (a new algorithm family, with new sizes or call patterns, still needs code)',
         con: 'Need to validate config at startup to catch typos',
       },
       {
@@ -88,7 +89,7 @@ signing:
   fallback: ECDSA-P256
 kem:
   algorithm: ML-KEM-768
-  provider: oqsprovider
+  provider: default # OpenSSL 3.5+ (oqsprovider only before 3.5)
   hybrid: true
   classical: X25519`,
         notes:
@@ -112,7 +113,7 @@ let signature = signer.sign(&message)?;`,
     id: 'hybrid-composite',
     name: 'Hybrid / Composite Operations',
     description:
-      'Run classical and PQC algorithms in parallel, combining their outputs. If either algorithm is broken, the combined result remains secure. This is the recommended transition strategy.',
+      'Run classical and PQC algorithms in parallel, combining their outputs. For key exchange, the shared secret stays secret as long as either algorithm is unbroken, provided the combiner is a sound one (for example the TLS hybrid design or X-Wing); for signatures, a forgery requires breaking both algorithms, provided the verifier requires both signatures to be valid. This is the recommended transition strategy.',
     whenToUse: [
       'Transitioning from classical to PQC (the current moment)',
       'Regulatory uncertainty about PQC algorithm maturity',
@@ -153,7 +154,8 @@ mlkemSS, mlkemCT := mlkem768.Encapsulate(pubKey)
 combined := hkdf.New(sha256.New,
     append(x25519SS, mlkemSS...),
     salt, info)`,
-        notes: 'Shared secrets combined via HKDF. This is how TLS hybrid key exchange works.',
+        notes:
+          'Illustrative sketch: shared secrets combined via a KDF. For TLS you do not write this yourself — Go 1.24+ crypto/tls negotiates X25519MLKEM768 by default.',
       },
     ],
   },
@@ -261,7 +263,8 @@ export const STACK_RECOMMENDATIONS: {
   {
     language: 'C/C++',
     api: 'OpenSSL',
-    recommendation: 'Use OpenSSL 3.x provider model with oqsprovider for PQC',
+    recommendation:
+      'OpenSSL 3.5+ has ML-KEM, ML-DSA and SLH-DSA natively; use oqsprovider only before 3.5 or for non-standardised algorithms',
     patterns: ['provider-abstraction', 'config-driven'],
   },
   {
@@ -272,21 +275,23 @@ export const STACK_RECOMMENDATIONS: {
   },
   {
     language: 'Go',
-    api: 'circl',
-    recommendation: 'Cloudflare circl provides hybrid KEM patterns out of the box',
+    api: 'crypto/mlkem, crypto/tls (+ circl)',
+    recommendation:
+      'crypto/tls negotiates X25519MLKEM768 by default (Go 1.24+); crypto/mldsa arrives in Go 1.27. circl adds SLH-DSA and other hybrids',
     patterns: ['hybrid-composite', 'algorithm-negotiation'],
   },
   {
     language: 'C#',
-    api: '.NET + BC C#',
+    api: '.NET 10 (+ BC C#)',
     recommendation:
-      'System.Security.Cryptography for classical, BC C# for PQC — bridge via interface abstraction',
+      '.NET 10 MLKem / MLDsa where the OS backend supports them (check IsSupported); BC C# as fallback — bridge via interface abstraction',
     patterns: ['config-driven', 'hybrid-composite'],
   },
   {
     language: 'Python',
-    api: 'cryptography + liboqs',
-    recommendation: 'Use for prototyping and testing PQC migration — not production crypto',
+    api: 'cryptography 48+ (+ liboqs-python)',
+    recommendation:
+      'cryptography 48+ provides ML-KEM and ML-DSA with OpenSSL 3.5+; liboqs-python for SLH-DSA and experiments',
     patterns: ['config-driven', 'feature-flags'],
   },
   {

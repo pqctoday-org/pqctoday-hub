@@ -1795,7 +1795,8 @@ export interface PersonaJourneyBoard {
      *                  become your data
      */
     provenance: 'sourced' | 'illustrative' | 'guidance'
-    rows: { label: string; value: string }[]
+    /** `source`: an in-app link to the document behind this row, when it has one. */
+    rows: { label: string; value: string; source?: string }[]
     punchline: string
     footnote?: string
     /**
@@ -2260,7 +2261,7 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
   const essentialsH = Math.floor(persona.essentialsMinutes / 60)
   const essentialsM = persona.essentialsMinutes % 60
   const essentialsPhrase =
-    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM}`
+    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM} minutes`
 
   const totalQuarters = Math.round((persona.estimatedMinutes / 60) * 4)
   const fullWhole = Math.floor(totalQuarters / 4)
@@ -2274,7 +2275,8 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
           ? '¾'
           : ''
 
-  return `${essentialsPhrase}, not ${fullWhole}${fractionGlyph}`
+  // Both figures carry their unit ("6 hours 20, not 39¾" read as a riddle).
+  return `${essentialsPhrase} of essentials, not the full ${fullWhole}${fractionGlyph} hours`
 }
 
 /**

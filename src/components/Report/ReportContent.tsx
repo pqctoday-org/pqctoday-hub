@@ -50,6 +50,7 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
+import { EngineeringPlanExport } from './EngineeringPlanExport'
 import {
   REPORT_SECTION_ORDER,
   REPORT_SECTION_LABELS,
@@ -183,9 +184,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   // The sender's persona (ephemeral, from the token) drives section gating
   // for a shared/example view — never the recipient's own persona store.
   const selectedPersona = shared ? (sharedView.persona ?? null) : livePersona
-  // The executive brief and board pack are board artifacts; a developer's
-  // report offers the full PDF and CSV instead.
-  const showBoardExports = selectedPersona !== 'developer'
+  // The executive brief and board pack are board artifacts; developer and
+  // IT ops / DevOps reports offer the full PDF and CSV instead.
+  const showBoardExports = selectedPersona !== 'developer' && selectedPersona !== 'ops'
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   // Subscribe to each primitive field separately — a selector that builds a new
   // object every call breaks useSyncExternalStore's snapshot caching (zustand +
@@ -886,21 +887,27 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </Button>
                         {showBoardExports && (
                           <>
-                            <Button
-                              variant="ghost"
-                              onClick={() => {
-                                flushSync(() => setShowBoardBrief(true))
-                                window.print()
-                                setShowBoardBrief(false)
-                              }}
-                              className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                            >
-                              <Briefcase size={16} />
-                              Print Executive Brief
-                            </Button>
+                            {/* The executive brief is a board summary; GRC prints the full
+                              report and takes the compliance pack instead (GRC journey
+                              audit, 15 Oct 2026). */}
+                            {selectedPersona !== 'grc' && (
+                              <Button
+                                variant="ghost"
+                                onClick={() => {
+                                  flushSync(() => setShowBoardBrief(true))
+                                  window.print()
+                                  setShowBoardBrief(false)
+                                }}
+                                className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                              >
+                                <Briefcase size={16} />
+                                Print Executive Brief
+                              </Button>
+                            )}
                             <BoardPackExport result={result} variant="outline" />
                           </>
                         )}
+                        {!showBoardExports && <EngineeringPlanExport result={result} />}
                         <Button
                           variant="ghost"
                           onClick={handleCSVExport}

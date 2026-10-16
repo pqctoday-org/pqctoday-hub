@@ -17,6 +17,7 @@ import {
 } from '@/components/BusinessCenter/lib/cswp39Tier'
 import { CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 
 const TIER_STYLES: Record<MaturityTier, string> = {
@@ -26,36 +27,6 @@ const TIER_STYLES: Record<MaturityTier, string> = {
   4: 'bg-status-success/15 text-status-success border-status-success/30',
 }
 
-// Same 4 board-level questions BusinessCenterView.tsx's own private
-// BOARD_QUESTIONS/TOP_TOOL_IDS literals carry — replicated (module-local
-// consts, not exported) rather than imported, matching this session's
-// precedent for small real literals living alongside desktop-only JSX.
-const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = [
-  {
-    q: "What's at risk?",
-    desc: 'Size your quantum exposure by system and data sensitivity.',
-    to: '/assess',
-    cta: 'Run risk assessment',
-  },
-  {
-    q: "What's the deadline?",
-    desc: 'See the mandates and dates that apply to your sector and region.',
-    to: '/compliance?tab=compliance',
-    cta: 'Compliance deadlines',
-  },
-  {
-    q: 'What will it cost?',
-    desc: 'Model the budget, ROI, and the cost of waiting.',
-    to: '/business/tools/roi-calculator',
-    cta: 'ROI calculator',
-  },
-  {
-    q: 'Who owns it?',
-    desc: 'Assign accountability and set the governance model.',
-    to: '/business/tools/raci-builder',
-    cta: 'RACI builder',
-  },
-]
 // "Missing for next tier" text is missingForNextTier() (cswp39Tier.ts) — moved
 // there 2026-08-24 (audit R1.4) so it reads the same T thresholds and boolean
 // gates the tier functions above it use, instead of a parallel copy.
@@ -110,6 +81,7 @@ export function MobileCommandCenterView() {
   const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
 
   if (metrics.isFullyEmpty) {
+    const intro = commandCenterIntroFor(selectedPersona)
     // Top 3 of the persona's own recommended sequence — see BusinessCenterView's
     // WelcomeState for the desktop equivalent of this same shared config.
     const topToolIds = getBusinessRoleSequence(selectedPersona)
@@ -132,20 +104,19 @@ export function MobileCommandCenterView() {
           <h2 className="text-[14px] font-bold text-foreground">
             Welcome to your PQC Command Center
           </h2>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">
-            A post-quantum migration is a program, and every program answers the same four
-            board-level questions.
-          </p>
-          <Link
-            to="/simulation?run=exec"
-            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-4 text-[11.5px] font-bold text-primary-foreground"
-          >
-            <PlayCircle size={13} aria-hidden="true" />
-            New here? Watch the guided overview
-          </Link>
+          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{intro.lede}</p>
+          {intro.showGuidedOverview && (
+            <Link
+              to="/simulation?run=exec"
+              className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-4 text-[11.5px] font-bold text-primary-foreground"
+            >
+              <PlayCircle size={13} aria-hidden="true" />
+              New here? Watch the guided overview
+            </Link>
+          )}
         </div>
         <div className="mt-3 flex flex-col gap-2">
-          {BOARD_QUESTIONS.map((item) => (
+          {intro.questions.map((item) => (
             <Link key={item.q} to={item.to} className="glass-panel p-3">
               <p className="text-[12.5px] font-bold text-foreground">{item.q}</p>
               <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">

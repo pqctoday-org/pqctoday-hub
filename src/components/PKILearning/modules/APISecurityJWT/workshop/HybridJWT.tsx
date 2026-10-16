@@ -209,8 +209,9 @@ export const HybridJWT: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Hybrid JWT Creation</h3>
         <p className="text-sm text-muted-foreground">
-          During the PQC transition, a hybrid JWT combines a classical and a PQC signature so the
-          token stays secure if either algorithm fails. Composite mode follows{' '}
+          During the PQC transition, a hybrid JWT combines a classical and a PQC signature, so
+          forging a token requires breaking both algorithms, provided the verifier requires both
+          signatures to be valid. Composite mode follows{' '}
           <a
             href="https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/"
             target="_blank"
@@ -573,9 +574,10 @@ export const HybridJWT: React.FC = () => {
           define unwraps the inner JWT, and that path carries no PQC protection, so it must be
           retired on a schedule. Composite mode needs every verifier upgraded to
           draft-ietf-jose-pq-composite-sigs, but yields one token (
-          {MLDSA65_INFO.sigBytes!.toLocaleString()} B ML-DSA-65 + 64 B Ed25519 signature) that stays
-          secure while either algorithm holds. Either way, the verifier&apos;s algorithm allowlist
-          is what stops a downgrade to the classical-only path.
+          {MLDSA65_INFO.sigBytes!.toLocaleString()} B ML-DSA-65 + 64 B Ed25519 signature); forging
+          it requires breaking both algorithms, because the verifier must check both. Either way,
+          the verifier&apos;s algorithm allowlist is what stops a downgrade to the classical-only
+          path.
         </p>
       </div>
     </div>
