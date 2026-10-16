@@ -51,7 +51,7 @@ const TEST_LINKS = [
     desc: 'Selected NIST ACVP-Server reference samples and KATs, each result tagged with its evidence class',
   },
   {
-    to: '/algorithms?tab=validation',
+    to: '/algorithms?tab=validation&section=kat',
     label: 'Validation tab',
     desc: 'Known-answer tests and implementation-attack notes per algorithm family',
   },

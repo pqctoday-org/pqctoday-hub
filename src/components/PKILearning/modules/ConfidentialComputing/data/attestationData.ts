@@ -414,7 +414,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM has ML-DSA preview via SDK only — no native PKCS#11 PQC mechanism support yet. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS supports ML-KEM for key agreement (preview) — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS supports ML-KEM for key agreement (preview) — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
   },
   {
     id: 'tdx-marvell-kmip',
