@@ -4,6 +4,7 @@ import { threatsData, type ThreatData } from '@/data/threatsData'
 import { softwareData } from '@/data/migrateData'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import { timelineData, type CountryData } from '@/data/timelineData'
+import { findCountryNextMilestone } from '@/components/Report/countryMilestone'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -88,6 +89,8 @@ export interface ExecutiveModuleData {
   // Derived
   isAssessmentComplete: boolean
   migrationDeadlineYear: number | null
+  /** True only when that milestone's timeline row is curated as a binding mandate. */
+  migrationDeadlineBinding?: boolean
   /** Program start year for pace-to-deadline. Not derived by the hook — tools
    *  that capture it (e.g. the KPI tracker) merge it into the data they pass to
    *  `buildDimensions`. Optional; absent → pace-to-deadline stays manual. */
@@ -216,19 +219,14 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       myTimelineCountrySet.has(c.countryName.toLowerCase())
     )
 
-    // Derive earliest mandatory deadline year from user's country events
-    let migrationDeadlineYear: number | null = null
-    if (userCountryData) {
-      for (const body of userCountryData.bodies) {
-        for (const event of body.events) {
-          if (event.phase === 'Regulation' || event.phase === 'Deadline') {
-            if (!migrationDeadlineYear || event.endYear < migrationDeadlineYear) {
-              migrationDeadlineYear = event.endYear
-            }
-          }
-        }
-      }
-    }
+    // The country's next upcoming milestone, the same one the readiness report shows.
+    // This used to take the earliest Regulation/Deadline row of any year, so board decks
+    // could cite a past or non-binding year as "a binding PQC deadline".
+    const nextMilestone = userCountryData
+      ? findCountryNextMilestone(userCountryData.countryName)
+      : null
+    const migrationDeadlineYear: number | null = nextMilestone?.year ?? null
+    const migrationDeadlineBinding = nextMilestone?.binding ?? false
 
     return {
       threatsByIndustry,
@@ -269,6 +267,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       myTimelineCountryData,
       isAssessmentComplete: assessmentStatus === 'complete',
       migrationDeadlineYear,
+      migrationDeadlineBinding,
     }
   }, [
     effectiveIndustry,
