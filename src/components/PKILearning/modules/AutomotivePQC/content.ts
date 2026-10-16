@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
   version: '1.1.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-03',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('FIPS 203'),
@@ -55,7 +55,6 @@ export const content: ModuleContent = {
     getStandard('ISO-11898-1-2024-Road-vehicles-Controller-area-network-CAN-P'), // m-automotive-pqc: ISO 11898-1:2024
     getStandard('ISO-21448-2022-Road-vehicles-Safety-of-the-intended-function'), // m-automotive-pqc: ISO 21448
     getStandard('ISO-SAE-21434-2021-Road-vehicles-Cybersecurity-engineering'), // m-automotive-pqc: 21434
-    getStandard('Road-vehicles-Controller-area-network-CAN-Part-1-Data-link-l'), // m-automotive-pqc: ISO 11898-1:2015
     getStandard('Road-vehicles-Vehicle-to-grid-communication-interface-Part-1'), // m-automotive-pqc: ISO 15118
     getStandard('Road-vehicles-Vehicle-to-grid-communication-interface-Part-2'), // m-automotive-pqc: ISO 15118-20
     getStandard('Use-of-FN-DSA-in-TLS-1-3'), // m-automotive-pqc: 666 bytes

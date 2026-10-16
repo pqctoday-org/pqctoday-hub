@@ -23,6 +23,7 @@
 import { describe, it, expect } from 'vitest'
 import fs from 'fs'
 import path from 'path'
+import Papa from 'papaparse'
 
 const ROOT = process.cwd()
 
@@ -61,14 +62,29 @@ interface Sentence {
   text: string
 }
 
-/** Every sentence of every source. "312.62(c)" survives: a split needs whitespace after the stop. */
+/** Split text into sentences. "312.62(c)" survives: a split needs whitespace after the stop. */
+const toSentences = (text: string): string[] =>
+  text
+    .replace(/\s+/g, ' ')
+    .split(/(?<=[.!?;])\s+/)
+    .filter((t) => t.trim() !== '')
+
+/**
+ * Text units of a source: for a CSV, each CELL is split into sentences on its own, so a
+ * question that ends "…as ML-KEM." is never glued to the next cell's first sentence (the
+ * full stop there is followed by a quote and comma, not whitespace). Other files are split
+ * line by line.
+ */
+function unitsOf(file: string): string[] {
+  const raw = fs.readFileSync(file, 'utf-8')
+  if (!file.endsWith('.csv')) return raw.split(/\r?\n/).flatMap(toSentences)
+  const parsed = Papa.parse<string[]>(raw, { skipEmptyLines: true })
+  return parsed.data.flatMap((row) => row.flatMap(toSentences))
+}
+
+/** Every sentence of every source. */
 const SENTENCES: Sentence[] = SOURCES.flatMap((file) =>
-  fs
-    .readFileSync(file, 'utf-8')
-    .split(/\r?\n/)
-    .flatMap((line) => line.replace(/\s+/g, ' ').split(/(?<=[.!?;])\s+/))
-    .filter((text) => text.trim() !== '')
-    .map((text) => ({ file: path.relative(ROOT, file), text }))
+  unitsOf(file).map((text) => ({ file: path.relative(ROOT, file), text }))
 )
 
 interface Rule {
@@ -126,16 +142,39 @@ const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
   { file: /module_qa_combined_\d+/, text: 'Module-LWE (MLWE) and Ring-LWE (RLWE)' },
   // Q&A research-quantum-impact-learn-005 (Part 11 "15 years")
   { file: /module_qa_combined_\d+/, text: 'Part 11 must be preserved for at least 15 years' },
-  // Quiz aisec-008 explanation (FHE "LWE or Ring-LWE, the same lattice problems underlying ML-KEM")
-  { file: /pqcquiz_\d+/, text: 'the same lattice problems underlying ML-KEM' },
-  // Quiz rqi-006 explanation ("over 50 years of classical cryptanalysis")
-  { file: /pqcquiz_\d+/, text: 'resisted over 50 years of classical cryptanalysis' },
   // Q&A healthcare-pqc-learn-006 (HIPAA "7-year" PHI retention; owner chose 6 years)
   { file: /module_qa_combined_\d+/, text: 'HIPAA mandates a minimum 7-year retention requirement' },
 ]
 
 const isPending = (s: Sentence) =>
   PENDING_DATA_FIXES.some((p) => p.file.test(s.file) && s.text.includes(p.text))
+
+describe('Ring-LWE rule: wording cases (aisec-008)', () => {
+  const rule = RULES.find((r) => r.name.startsWith('Ring-LWE given'))!
+  it('passes the corrected FHE explanation, sentence by sentence', () => {
+    const corrected =
+      'Most practical fully homomorphic encryption (FHE) schemes — BGV, CKKS, and TFHE — are based on the Learning With Errors (LWE) problem or its ring variant (Ring-LWE). ML-KEM (FIPS 203) uses the related Module-LWE problem.'
+    expect(toSentences(corrected).some((t) => rule.test(t))).toBe(false)
+  })
+  it('flags the old wordings', () => {
+    expect(
+      rule.test(
+        'These schemes rely on LWE or Ring-LWE, the same lattice problems underlying ML-KEM.'
+      )
+    ).toBe(true)
+    expect(
+      rule.test(
+        'the hardness of ML-KEM and ML-DSA rests on the Learning With Errors (LWE) problem and its variants Module-LWE (MLWE) and Ring-LWE (RLWE)'
+      )
+    ).toBe(true)
+  })
+  it('keeps a question cell apart from the next cell', () => {
+    const units = Papa.parse<string[]>('id,q,e\nx,"…as ML-KEM.","Based on Ring-LWE."', {
+      skipEmptyLines: true,
+    }).data.flatMap((row) => row.flatMap(toSentences))
+    expect(units.some((t) => rule.test(t))).toBe(false)
+  })
+})
 
 describe('research and healthcare claim invariants', () => {
   for (const rule of RULES) {
