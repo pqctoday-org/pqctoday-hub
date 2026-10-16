@@ -7,6 +7,7 @@ import { ComplianceImpactSection } from './ComplianceImpactSection'
 import type { ComplianceImpact } from '../../../hooks/assessmentTypes'
 import { complianceFrameworks, type ComplianceFramework } from '../../../data/complianceData'
 import type { BindingStatus } from '../../../utils/bindingSplit'
+import { applicableFrameworks } from '../../../utils/applicabilityEngine'
 
 vi.mock(
   'framer-motion',
@@ -87,7 +88,20 @@ describe('ComplianceImpactSection: binding chip', () => {
     deadline: fw.deadline,
     notes: fw.notes,
   })
-  const [fwA, fwB, fwC] = complianceFrameworks
+  // The section renders for a US Finance & Banking reader (see renderSection). The
+  // chip says Binding only for a framework in that reader's mandatory tier, so the
+  // tests pick their frameworks by what the engine says, not by list position.
+  const reader = { industry: 'Finance & Banking', country: 'United States' }
+  const inScopeIds = new Set(
+    applicableFrameworks(reader)
+      .filter((r) => r.tier === 'mandatory')
+      .map((r) => r.item.id)
+  )
+  const inScope = complianceFrameworks.filter((f) => inScopeIds.has(f.id))
+  const outOfScope = complianceFrameworks.filter(
+    (f) => !applicableFrameworks(reader, [f]).some((r) => r.tier === 'mandatory')
+  )
+  const [fwA, fwB, fwC] = inScope
 
   it("shows no binding chip, and today's wording, while no framework has been reviewed", () => {
     renderSection(undefined, [impactFor(fwA)])
@@ -131,6 +145,18 @@ describe('ComplianceImpactSection: binding chip', () => {
     } finally {
       fwA.bindingBasis = was
     }
+  })
+
+  it("says Binding for others when the framework binds only outside the reader's scope", () => {
+    // D2′: a mandatory_for_scope (or binding) framework the reader selected, but which
+    // the engine does not put in their mandatory tier, is not "binding on you".
+    const [elsewhere] = outOfScope
+    mark(elsewhere, 'mandatory_for_scope')
+    mark(fwA, 'mandatory_for_scope')
+    renderSection(undefined, [impactFor(fwA), impactFor(elsewhere)])
+    const chips = screen.getAllByTestId('binding-chip')
+    expect(chips.map((c) => c.textContent)).toEqual(['Binding', 'Binding for others'])
+    expect(chips[1]).toHaveAttribute('title', expect.stringContaining('outside that scope'))
   })
 
   it('replaces the stopgap sentence with what Binding means once frameworks are reviewed', () => {

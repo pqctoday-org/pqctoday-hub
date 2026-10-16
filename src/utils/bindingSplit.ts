@@ -88,6 +88,29 @@ export const BINDING_GROUP_META: Record<
 }
 
 /**
+ * The Report's per-framework chip. A framework the reader selected is not
+ * necessarily in their scope: `mandatory_for_scope` means binding only within
+ * the instrument's own stated scope (federal systems, one sector, one country),
+ * and even a `binding` law binds only where it applies. So "Binding" is shown
+ * only when the applicability engine puts the framework in the reader's
+ * mandatory tier; otherwise it is "Binding for others" (owner decision D2′,
+ * GRC journey audit, 15 Oct 2026). The Applicability panel needs no such check:
+ * it only groups by binding status inside the mandatory tier.
+ */
+export type BindingChip = BindingGroup | 'elsewhere'
+
+export const BINDING_ELSEWHERE_META = {
+  chip: 'Binding for others',
+  description:
+    'Binding within its own stated scope, but your country and sector are outside that scope',
+} as const
+
+export function bindingChipFor(status: BindingStatus | undefined, inScope: boolean): BindingChip {
+  const group = bindingGroupOf(status)
+  return group === 'binding' && !inScope ? 'elsewhere' : group
+}
+
+/**
  * Split a list of applicable frameworks into the three groups, keeping each
  * group in the order given. Every item lands in exactly one group.
  */
