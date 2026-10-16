@@ -16,6 +16,21 @@ export function lifecyclePillClass(label: LifecycleLabel): string {
   return LIFECYCLE_STYLES[label]?.badge ?? 'bg-muted text-muted-foreground'
 }
 
+/** The catalog's "not checked yet" placeholder for `document_status`. It is
+ *  not a publisher status, so it is never shown as one. */
+const STATUS_PLACEHOLDER = 'unverified — needs review'
+
+/** The publisher's own status words for display, or '' when there is nothing
+ *  worth a line: blank, the "Unverified — needs review" placeholder, or the
+ *  same word the lifecycle chip already shows. */
+export function publisherStatusText(documentStatus: string | undefined, label: LifecycleLabel) {
+  const raw = (documentStatus ?? '').trim()
+  const lower = raw.toLowerCase()
+  if (!raw || lower === STATUS_PLACEHOLDER) return ''
+  if (lower === lifecycleLabel(label).toLowerCase()) return ''
+  return raw
+}
+
 /** Urgency pill — only Critical/High are shown on cards (per the design). */
 export function urgencyPillClass(urgency: string): string {
   switch (urgency) {

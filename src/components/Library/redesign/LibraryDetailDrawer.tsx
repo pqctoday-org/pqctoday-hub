@@ -34,7 +34,13 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
-import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
+import {
+  lifecycleLabel,
+  lifecyclePillClass,
+  formatLibDate,
+  trustInfo,
+  publisherStatusText,
+} from './libraryPills'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 
 interface LibraryDetailDrawerProps {
@@ -166,11 +172,7 @@ function DrawerPanel({
   const enrichment = libraryEnrichments[item.referenceId]
   const ts = getTrustScore('library', item.referenceId)
   const trust = trustInfo(item.referenceId)
-  const rawStatus = item.documentStatus?.trim() ?? ''
-  const documentStatusText =
-    rawStatus && rawStatus.toLowerCase() !== lifecycleLabel(item.lifecycleLabel).toLowerCase()
-      ? rawStatus
-      : ''
+  const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
   const relatedLeaders = relatedLeadersFor(item)
 
   return (
@@ -278,7 +280,8 @@ function DrawerPanel({
               {/* The publisher's own status words ("Internet-Draft (RFC Editor
                   Queue)", "Proposed Standard", …) on their own line, so maturity
                   is never read off the trust score further down. Skipped when it
-                  only repeats the lifecycle chip. */}
+                  is blank, the "Unverified — needs review" placeholder, or only
+                  repeats the lifecycle chip. */}
               {documentStatusText && (
                 <p
                   data-testid="drawer-document-status"

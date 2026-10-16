@@ -17,6 +17,7 @@ import { getTrustScore } from '@/data/trustScore'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
 import { LibraryControlDeck } from './LibraryControlDeck'
+import { publisherStatusText } from './libraryPills'
 import { LibraryViewRedesign } from './LibraryViewRedesign'
 
 vi.mock('@/embed/platform', () => ({ isNativeApp: () => false }))
@@ -70,6 +71,20 @@ describe('Library card: lifecycle beside trust', () => {
     expect(trust.getAttribute('title')).toMatch(/does not say how mature/)
   })
 
+  it('never puts the "Unverified — needs review" placeholder in the hover text', () => {
+    render(
+      <LibraryDocumentCard
+        item={draftWithScore({ documentStatus: 'Unverified — needs review' })}
+        bookmarked={false}
+        onToggleBookmark={noop}
+        onOpen={noop}
+      />
+    )
+    const title = screen.getByTestId('library-card-lifecycle').getAttribute('title') ?? ''
+    expect(title).not.toMatch(/unverified/i)
+    expect(title).toMatch(/^Lifecycle: Draft\./)
+  })
+
   it('shows the lifecycle label exactly once on the card', () => {
     render(
       <LibraryDocumentCard
@@ -118,6 +133,16 @@ describe('Library drawer: document status on its own line', () => {
     expect(within(drawer).queryByTestId('drawer-document-status')).toBeNull()
   })
 
+  it.each([
+    'Unverified — needs review',
+    '  unverified — NEEDS review  ',
+    'UNVERIFIED — NEEDS REVIEW',
+  ])('never shows the "%s" placeholder as a status', (placeholder) => {
+    const drawer = openDrawer(draftWithScore({ documentStatus: placeholder }))
+    expect(within(drawer).queryByTestId('drawer-document-status')).toBeNull()
+    expect(within(drawer).queryByText(/unverified/i)).toBeNull()
+  })
+
   it('leaves the line out when there is no status', () => {
     const drawer = openDrawer(draftWithScore({ documentStatus: '' }))
     expect(within(drawer).queryByTestId('drawer-document-status')).toBeNull()
@@ -159,5 +184,16 @@ describe('the CSWP 39 filter is named for what it filters', () => {
     )
     expect(screen.getAllByText('Mapped to NIST CSWP 39').length).toBeGreaterThan(0)
     expect(screen.queryByText(/Authoritative sources/)).toBeNull()
+  })
+})
+
+describe('publisherStatusText', () => {
+  it('drops blank, placeholder and lifecycle-repeating statuses, keeps real ones', () => {
+    expect(publisherStatusText('', 'Draft')).toBe('')
+    expect(publisherStatusText(undefined, 'Draft')).toBe('')
+    expect(publisherStatusText('Unverified — needs review', 'Released')).toBe('')
+    expect(publisherStatusText(' unverified — needs REVIEW ', 'Released')).toBe('')
+    expect(publisherStatusText('released', 'Released')).toBe('')
+    expect(publisherStatusText(' Proposed Standard ', 'Released')).toBe('Proposed Standard')
   })
 })

@@ -15,6 +15,7 @@ import {
   urgencyPillClass,
   trustInfo,
   formatLibDate,
+  publisherStatusText,
 } from './libraryPills'
 import { documentWeight } from '@/data/libraryDocumentWeight'
 
@@ -37,7 +38,7 @@ export function LibraryDocumentCard({
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
   // The lifecycle pill is this row's own label; older revisions never raise it.
   const lifecycle = item.lifecycleLabel
-  const statusText = item.documentStatus?.trim()
+  const statusText = publisherStatusText(item.documentStatus, lifecycle)
   const revisionCount = item.priorRevisions?.length ?? 0
 
   return (
