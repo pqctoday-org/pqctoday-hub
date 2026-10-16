@@ -13,11 +13,19 @@ const HIGHLIGHT_CLASSES = ['ring-2', 'ring-primary', 'ring-offset-2']
  * `selector` is resolved with `document.querySelector`, so give target rows a
  * stable attribute (e.g. `data-deeplink-id="<id>"`) rather than relying on
  * `id=` values that may contain spaces or punctuation.
+ *
+ * `block` defaults to 'center', right for a row or card. A target taller than
+ * the viewport (a whole page section) must use 'start': centring it lands in
+ * the middle of the section, far below its header.
  */
 export function useScrollToDeepLinkTarget(
   targetKey: string | null,
   selector: string | null,
-  { timeoutMs = 4000, highlightMs = 3000 }: { timeoutMs?: number; highlightMs?: number } = {}
+  {
+    timeoutMs = 4000,
+    highlightMs = 3000,
+    block = 'center',
+  }: { timeoutMs?: number; highlightMs?: number; block?: ScrollLogicalPosition } = {}
 ) {
   useEffect(() => {
     if (!targetKey || !selector) return
@@ -34,7 +42,7 @@ export function useScrollToDeepLinkTarget(
         (candidate) => candidate.getClientRects().length > 0
       )
       if (el) {
-        el.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        el.scrollIntoView({ block, behavior: 'smooth' })
         el.classList.add(...HIGHLIGHT_CLASSES)
         clearHighlight = setTimeout(() => el.classList.remove(...HIGHLIGHT_CLASSES), highlightMs)
         return

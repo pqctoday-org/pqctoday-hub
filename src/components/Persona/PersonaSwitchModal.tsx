@@ -32,8 +32,9 @@ import {
 } from '@/data/personaConfig'
 import { REGIONS, INDUSTRY_ICONS } from '@/data/regionIndustryOptions'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
-import { logPersonaSelected, logRegionSelected, logIndustrySelected } from '@/utils/analytics'
+import { logPersonaSelected, logRegionSelected } from '@/utils/analytics'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useScopeSector } from '@/hooks/useScopeSector'
 
 const REGION_ITEMS: FilterDropdownItem[] = REGIONS.map((r) => ({
   id: r.id,
@@ -72,20 +73,9 @@ interface Props {
 }
 
 export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
-  const {
-    selectedPersona,
-    setPersona,
-    selectedRegion,
-    selectedIndustries,
-    setRegion,
-    setIndustries,
-  } = usePersonaStore()
-  const {
-    setCountry,
-    setIndustry: setAssessIndustry,
-    assessmentStatus,
-    editFromStep,
-  } = useAssessmentStore()
+  const { selectedPersona, setPersona, selectedRegion, selectedIndustries, setRegion } =
+    usePersonaStore()
+  const { setCountry, assessmentStatus, editFromStep } = useAssessmentStore()
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Region/industry, folded into this same modal (2026-08-01 follow-up:
@@ -114,13 +104,9 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
     if (assessmentStatus === 'complete') editFromStep(0)
   }
 
-  const handleIndustrySelect = (id: string) => {
-    const industries = id === 'All' ? [] : [id]
-    setIndustries(industries)
-    setAssessIndustry(industries[0] ?? '')
-    if (industries[0]) logIndustrySelected(industries[0])
-    if (assessmentStatus === 'complete') editFromStep(0)
-  }
+  // Shared with the inline scope step on an empty Compliance register, so a
+  // sector picked in either place is the same write.
+  const handleIndustrySelect = useScopeSector()
 
   // Trap focus within modal
   useEffect(() => {

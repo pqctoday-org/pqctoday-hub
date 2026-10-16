@@ -26,6 +26,11 @@
       "name": "coi-serviceworker v0.1.7 (public/coi-serviceworker.js)",
       "license": "MIT",
       "texts": ["coi-serviceworker-LICENSE.txt"]
+    },
+    {
+      "name": "flag-icons v7.5.0 (public/flags/, all flags except g7, nato and int, which are drawn for this project)",
+      "license": "MIT",
+      "texts": ["flag-icons-7.5.0-LICENSE.txt"]
     }
   ]
 }

@@ -212,10 +212,10 @@ function DrawerPanel({
                 </span>
                 <span
                   className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-                    item.groupLifecycleLabel ?? item.lifecycleLabel
+                    item.lifecycleLabel
                   )}`}
                 >
-                  {lifecycleLabel(item.groupLifecycleLabel ?? item.lifecycleLabel)}
+                  {lifecycleLabel(item.lifecycleLabel)}
                 </span>
                 {item.status && (
                   <span

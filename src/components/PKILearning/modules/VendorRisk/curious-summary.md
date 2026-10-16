@@ -8,8 +8,8 @@ A single vendor dependency relying purely on classical encryption can completely
 
 ### The Key Takeaway
 
-Organizations must mandate the delivery of a Crypto Bill of Materials (CBOM), such as CycloneDX 1.6+, from all vendors. This standardized inventory reveals all algorithms, allowing automatic scoring of vendor readiness and enabling strict contractual deadlines.
+Organizations can choose to require a Crypto Bill of Materials (CBOM), such as CycloneDX 1.6+, from their vendors — a procurement control, not an external mandate. This standardized inventory reveals all algorithms, allowing automatic scoring of vendor readiness and enabling strict contractual deadlines.
 
 ### What's Happening
 
-Procurement and compliance teams are beginning to require Cryptographic Bills of Materials (CBOMs) in vendor contracts, using frameworks like CycloneDX 1.6+ to systematically score third-party PQC readiness before renewal deadlines.
+Some procurement and compliance teams are choosing to ask for Cryptographic Bills of Materials (CBOMs) in vendor contracts, using frameworks like CycloneDX 1.6+ to systematically score third-party PQC readiness before renewal deadlines.

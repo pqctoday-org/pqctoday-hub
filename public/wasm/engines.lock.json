@@ -5,9 +5,9 @@
     "cacp-kmip": {
       "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "release": {
-        "tag": "engines-1",
+        "tag": "engines-2",
         "asset": "cacp-kmip-496f9e52.tar.gz",
-        "tarballSha256": "7495a6e556ba1ed738e1f43f5cf766ad53acf2b932ac1cf10cb00b4ff957a9f8"
+        "tarballSha256": "cdc735a0b6aff6ad082829cbe8266730dd32fe1457b5289ea593372a334f79d0"
       },
       "files": {
         "public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm": {
@@ -95,9 +95,9 @@
     "openssh-pkcs11": {
       "hsmCommit": "bc92034d12d32b3a1b32111d2114e6a1fb8a6205",
       "release": {
-        "tag": "engines-1",
+        "tag": "engines-2",
         "asset": "openssh-pkcs11-bc92034d.tar.gz",
-        "tarballSha256": "c6abd7536e0bbd73cfed32fac9024c1d312794277df879d6e3f48e192f9ebedc"
+        "tarballSha256": "b36f520737bbcdbfc4e13932741322a4799a9fdd263ae9c67308c1110367ea2f"
       },
       "files": {
         "public/wasm/openssh-server.js": {
@@ -111,16 +111,20 @@
       }
     },
     "openssl-pkcs11": {
-      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
-      "release": null,
+      "hsmCommit": "07b1264903eaeae124a4df08acb77ec71bca3792",
+      "release": {
+        "tag": "engines-2",
+        "asset": "openssl-pkcs11-07b12649.tar.gz",
+        "tarballSha256": "a7cbf49cbf38bec9f5085fefcd3a75f21827fd55c052f8547cef496b7a07ca7a"
+      },
       "files": {
         "public/wasm/openssl.js": {
           "sha256": "e2464cf4b12acd0915490476ac102b55617b4124c4d7050a0b8d22f2aaaed3c2",
           "bytes": 267489
         },
         "public/wasm/openssl.wasm": {
-          "sha256": "77494bd4920b67b49aec429128102347b2438a30abb8769bcb15407206a399da",
-          "bytes": 7929794
+          "sha256": "fa2002f25d50396a800671cdea301f841e0621a5aeaf30e7061e864123020ede",
+          "bytes": 7934812
         }
       }
     },
@@ -143,9 +147,9 @@
     "softhsm-cpp-engine": {
       "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "release": {
-        "tag": "engines-1",
+        "tag": "engines-2",
         "asset": "softhsm-cpp-engine-496f9e52.tar.gz",
-        "tarballSha256": "917e9484102639e07a607a3dd0cd0c9d505c9299398624d346016de974924754"
+        "tarballSha256": "0eeabbe666433c6d7c1e1e2a20e79750a549cbeddf6eef1ad4dd621fd4ef3bdb"
       },
       "files": {
         "public/wasm/libsofthsmv3.wasm": {
@@ -165,9 +169,9 @@
     "softhsmrustv3-engine": {
       "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "release": {
-        "tag": "engines-1",
+        "tag": "engines-2",
         "asset": "softhsmrustv3-engine-496f9e52.tar.gz",
-        "tarballSha256": "62a18c76b59646ff2a0478eace2db64c450538642775ca4a3b46292a3885efad"
+        "tarballSha256": "df5a24370997676d1fca8e53a4524ed4aa40a0cc603c315deb7b4c998b697c5d"
       },
       "files": {
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
@@ -187,9 +191,9 @@
     "strongswan": {
       "hsmCommit": "bf53023b78b42078b5936dab91809eaeb9f756e3",
       "release": {
-        "tag": "engines-1",
+        "tag": "engines-2",
         "asset": "strongswan-bf53023b.tar.gz",
-        "tarballSha256": "d3543fdb8e50597e1f82367e5bb5a717570c0841b1c6fdbbd6e799a6e448a855"
+        "tarballSha256": "68f294f64faa5257a5ff6b88be5a8fae9070b80eeaf74e494c5612314a367586"
       },
       "files": {
         "public/wasm/strongswan.wasm": {

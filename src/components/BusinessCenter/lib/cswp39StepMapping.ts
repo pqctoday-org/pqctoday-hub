@@ -112,6 +112,11 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   // (FIPS 140-3, CC, EUCC/eIDAS or PCI), so it sits with the other
   // conformance-evidence artifacts rather than with architecture.
   'certification-plan': 'compliance',
+  // Architecture pack, Layer 2.
+  'architecture-scope': 'governance',
+  'architecture-decision-record': 'architecture',
+  'architecture-test-plan': 'architecture',
+  'kmip-quick-run': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -160,6 +165,12 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // Center builder. Certification is how a mitigation is evidenced, so it
   // buckets with mitigation rather than with governance.
   'certification-plan': 'mitigation',
+  // Architecture pack, Layer 2: produced in the Command Center's architecture
+  // pack panel (scope, decisions, test plan) and by the KMIP quick run.
+  'architecture-scope': 'governance',
+  'architecture-decision-record': 'migration',
+  'architecture-test-plan': 'migration',
+  'kmip-quick-run': 'mitigation',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

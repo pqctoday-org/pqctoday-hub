@@ -59,6 +59,7 @@ const CAVP_CERT_NO = /\ba\d{4}\b/
 // "No formal CMVP/CAVP certification" and "CAVP/CMVP certification not yet
 // published" mention it only to deny it.
 const CAVP =
+  // claims-lint-allow: a pattern that recognises CAVP wording in catalogue text; it claims nothing
   /cavp[- ](validated|certified|project|pqc|algorithm|:)|cavp,|nist cavp|algorithm validation (a\d|only|\()|validated by nist cavp|cryptographic algorithm validation program|first validated|\ba\d{4}\b|cavp-validated|algorithm validation a\d/
 const IN_PROCESS =
   /pending|in process|in progress|submitted|submission|iut list|under review|lab testing/

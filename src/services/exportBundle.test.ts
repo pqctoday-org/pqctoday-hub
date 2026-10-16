@@ -12,6 +12,17 @@ describe('exportBundle', () => {
     const zip = await JSZip.loadAsync(await blob.arrayBuffer())
     expect(await zip.file('pack/README.md')!.async('string')).toBe('# Hello')
     expect(await zip.file('pack/data/rows.csv')!.async('string')).toBe('a,b\n1,2\n')
+    // No NOTICE.md was given, so the education notice is added in the top folder.
+    expect(await zip.file('pack/NOTICE.md')!.async('string')).toContain('Status notice')
+  })
+
+  it("keeps the bundle's own NOTICE.md instead of adding a second one", async () => {
+    const blob = await buildZipBundle([
+      { path: 'pack/NOTICE.md', content: 'own notice' },
+      { path: 'pack/a.md', content: 'a' },
+    ])
+    const zip = await JSZip.loadAsync(await blob.arrayBuffer())
+    expect(await zip.file('pack/NOTICE.md')!.async('string')).toBe('own notice')
   })
 
   it('names files {slug}-{date}.{ext}', () => {

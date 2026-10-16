@@ -8,13 +8,16 @@ import {
   SUPPORT_STATUS_COLORS,
   SUPPORT_STATUS_LABELS,
   ROADMAP_EVENTS,
-  type SupportStatus,
+  RUNTIME_SUPPORT,
+  READINESS_FILTER_OPTIONS,
+  TABLE_REVIEW_DATE,
+  type MatrixStatus,
 } from '../data/pqcSupportData'
 import { CRYPTO_APIS } from '../data/apiData'
 import { Button } from '@/components/ui/button'
 
 type FamilyFilter = 'All' | 'KEM' | 'Signature' | 'Hash-based Sig'
-type StatusFilter = 'All' | SupportStatus
+type StatusFilter = 'All' | MatrixStatus
 
 const FAMILY_ITEMS = [
   { id: 'All', label: 'All Families' },
@@ -23,13 +26,15 @@ const FAMILY_ITEMS = [
   { id: 'Hash-based Sig', label: 'Hash-based Sig' },
 ]
 
-const STATUS_ITEMS = [
-  { id: 'All', label: 'All Status' },
-  { id: 'supported', label: 'Supported' },
-  { id: 'experimental', label: 'Experimental' },
-  { id: 'planned', label: 'Planned' },
-  { id: 'unavailable', label: 'N/A' },
-]
+const STATUS_ITEMS = READINESS_FILTER_OPTIONS
+
+type Tab = 'matrix' | 'runtimes' | 'roadmap'
+
+const TAB_LABELS: Record<Tab, string> = {
+  matrix: 'Support Matrix',
+  runtimes: 'Language Runtimes',
+  roadmap: 'Roadmap Timeline',
+}
 
 interface CellDetail {
   apiId: string
@@ -40,7 +45,7 @@ export const PQCSupportMatrix: React.FC = () => {
   const [familyFilter, setFamilyFilter] = useState<FamilyFilter>('All')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All')
   const [selectedCell, setSelectedCell] = useState<CellDetail | null>(null)
-  const [activeTab, setActiveTab] = useState<'matrix' | 'roadmap'>('matrix')
+  const [activeTab, setActiveTab] = useState<Tab>('matrix')
 
   const filteredAlgos = PQC_ALGORITHMS.filter(
     (a) => familyFilter === 'All' || a.family === familyFilter
@@ -61,14 +66,14 @@ export const PQCSupportMatrix: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
-          {(['matrix', 'roadmap'] as const).map((tab) => (
+          {(['matrix', 'runtimes', 'roadmap'] as const).map((tab) => (
             <Button
               variant="ghost"
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              {tab === 'matrix' ? 'Support Matrix' : 'Roadmap Timeline'}
+              {TAB_LABELS[tab]}
             </Button>
           ))}
         </div>
@@ -94,7 +99,7 @@ export const PQCSupportMatrix: React.FC = () => {
         <div className="space-y-4">
           {/* Legend */}
           <div className="flex flex-wrap gap-2">
-            {(Object.entries(SUPPORT_STATUS_COLORS) as [SupportStatus, string][]).map(
+            {(Object.entries(SUPPORT_STATUS_COLORS) as [MatrixStatus, string][]).map(
               ([status, cls]) => (
                 <div key={status} className={`text-xs px-2 py-1 rounded border ${cls}`}>
                   {SUPPORT_STATUS_LABELS[status]}
@@ -130,7 +135,7 @@ export const PQCSupportMatrix: React.FC = () => {
                     </td>
                     {filteredAlgos.map((algo) => {
                       const cell = getCell(api.id, algo.id)
-                      const status = cell?.status ?? 'unavailable'
+                      const status = cell?.status ?? 'not-implemented'
                       if (statusFilter !== 'All' && status !== statusFilter) {
                         return (
                           <td key={algo.id} className="p-2 text-center text-muted-foreground/30">
@@ -191,6 +196,28 @@ export const PQCSupportMatrix: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{selectedDetail.notes}</p>
                 </div>
               </div>
+              {selectedDetail.protocolNote && (
+                <div className="mt-3">
+                  <div className="font-semibold text-xs text-muted-foreground mb-1">
+                    Protocol integration
+                  </div>
+                  <p className="text-sm text-muted-foreground">{selectedDetail.protocolNote}</p>
+                </div>
+              )}
+              {selectedDetail.evidenceUrl && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Source:{' '}
+                  <a
+                    href={selectedDetail.evidenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline break-all"
+                  >
+                    {selectedDetail.evidenceUrl}
+                  </a>{' '}
+                  (checked {selectedDetail.checkedDate})
+                </p>
+              )}
               {selectedDetail.codeSnippet && (
                 <div className="mt-3">
                   <div className="font-semibold text-xs text-muted-foreground mb-1">
@@ -206,6 +233,66 @@ export const PQCSupportMatrix: React.FC = () => {
         </div>
       )}
 
+      {activeTab === 'runtimes' && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Standardised PQC primitives in each language runtime or library, with the backend each
+            one depends on. Primitive availability and protocol (TLS, X.509) support are listed
+            separately because they often ship in different releases. Table reviewed{' '}
+            {TABLE_REVIEW_DATE}.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="text-left text-muted-foreground border-b border-border">
+                  <th className="p-2 font-medium">Runtime / API</th>
+                  <th className="p-2 font-medium">Algorithm</th>
+                  <th className="p-2 font-medium">Status</th>
+                  <th className="p-2 font-medium">Minimum version</th>
+                  <th className="p-2 font-medium">Backend / protocol</th>
+                </tr>
+              </thead>
+              <tbody>
+                {RUNTIME_SUPPORT.map((row) => (
+                  <tr
+                    key={`${row.runtimeId}-${row.algorithm}`}
+                    className="border-b border-border align-top"
+                  >
+                    <td className="p-2">
+                      <div className="font-medium text-foreground">{row.runtime}</div>
+                      <code className="text-xs text-primary break-words">{row.api}</code>
+                    </td>
+                    <td className="p-2 whitespace-nowrap text-foreground">{row.algorithm}</td>
+                    <td className="p-2">
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded border whitespace-nowrap ${SUPPORT_STATUS_COLORS[row.status]}`}
+                      >
+                        {SUPPORT_STATUS_LABELS[row.status]}
+                      </span>
+                    </td>
+                    <td className="p-2 text-muted-foreground">{row.minVersion}</td>
+                    <td className="p-2 text-xs text-muted-foreground space-y-1">
+                      <p>{row.backend}</p>
+                      <p>
+                        <span className="font-semibold">Protocol:</span> {row.protocolNote}
+                      </p>
+                      <a
+                        href={row.evidenceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Source
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {activeTab === 'roadmap' && (
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
@@ -213,33 +300,37 @@ export const PQCSupportMatrix: React.FC = () => {
           </p>
           <div className="relative pl-8">
             <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-border" />
-            {ROADMAP_EVENTS.sort((a, b) => a.date.localeCompare(b.date)).map((event, i) => {
-              const api = CRYPTO_APIS.find((a) => a.id === event.apiId)
-              return (
-                <div key={i} className="relative mb-4">
-                  <div className="absolute left-[-29px] w-3 h-3 rounded-full bg-primary border-2 border-background top-1.5" />
-                  <div className="glass-panel p-3">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-xs text-muted-foreground">{event.date}</span>
-                      <span className="font-semibold text-foreground">
-                        {api?.name ?? event.apiId}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">{event.event}</p>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {event.algorithms.map((a) => (
-                        <span
-                          key={a}
-                          className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30"
-                        >
-                          {a}
+            {[...ROADMAP_EVENTS]
+              .sort((a, b) => a.date.localeCompare(b.date))
+              .map((event, i) => {
+                const api = CRYPTO_APIS.find((a) => a.id === event.apiId)
+                return (
+                  <div key={i} className="relative mb-4">
+                    <div className="absolute left-[-29px] w-3 h-3 rounded-full bg-primary border-2 border-background top-1.5" />
+                    <div className="glass-panel p-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {event.date}
                         </span>
-                      ))}
+                        <span className="font-semibold text-foreground">
+                          {api?.name ?? event.apiId}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">{event.event}</p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {event.algorithms.map((a) => (
+                          <span
+                            key={a}
+                            className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30"
+                          >
+                            {a}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
           </div>
         </div>
       )}

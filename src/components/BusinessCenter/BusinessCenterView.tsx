@@ -58,81 +58,21 @@ import {
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
+import { ArchitecturePackPanel } from './ArchitecturePackPanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
-
-// The four board-level questions every PQC program has to answer, each mapped to
-// the surface that answers it. Turns an empty state into a "what a program looks
-// like" primer instead of three bare buttons.
-type WelcomeQuestion = { q: string; desc: string; to: string; cta: string }
-
-const BOARD_QUESTIONS: WelcomeQuestion[] = [
-  {
-    q: "What's at risk?",
-    desc: 'Size your quantum exposure by system and data sensitivity.',
-    to: '/assess',
-    cta: 'Run risk assessment',
-  },
-  {
-    q: "What's the deadline?",
-    desc: 'See the mandates and dates that apply to your sector and region.',
-    to: '/compliance?tab=compliance',
-    cta: 'Compliance deadlines',
-  },
-  {
-    q: 'What will it cost?',
-    desc: 'Model the budget, ROI, and the cost of waiting.',
-    to: '/business/tools/roi-calculator',
-    cta: 'ROI calculator',
-  },
-  {
-    q: 'Who owns it?',
-    desc: 'Assign accountability and set the governance model.',
-    to: '/business/tools/raci-builder',
-    cta: 'RACI builder',
-  },
-]
-
-// The Developer / Engineer equivalent: the four engineering questions a
-// migration has to answer, each mapped to an existing tool. Board questions
-// (ROI, RACI) are not a developer's first step.
-const ENGINEERING_QUESTIONS: WelcomeQuestion[] = [
-  {
-    q: 'Where is the vulnerable crypto?',
-    desc: 'Find the call sites, APIs and providers your code depends on.',
-    to: '/business/tools/crypto-api-refactor-audit',
-    cta: 'Crypto API refactor audit',
-  },
-  {
-    q: 'What does the inventory look like?',
-    desc: 'Record algorithms, libraries and keys as a CycloneDX CBOM.',
-    to: '/business/tools/crypto-cbom-builder',
-    cta: 'CBOM builder',
-  },
-  {
-    q: 'Does it work on my stack?',
-    desc: 'Try ML-KEM, ML-DSA and SLH-DSA with real OpenSSL commands.',
-    to: '/openssl',
-    cta: 'OpenSSL Studio',
-  },
-  {
-    q: 'Does the handshake still work?',
-    desc: 'Run a real TLS 1.3 handshake with hybrid and PQC groups.',
-    to: '/playground/tls-simulator',
-    cta: 'TLS 1.3 simulator',
-  },
-]
+import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const intro = commandCenterIntroFor(selectedPersona)
   // Top 3 of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
   const isDeveloper = selectedPersona === 'developer'
   const topToolIds = getBusinessRoleSequence(selectedPersona)
     .steps.slice(0, isDeveloper ? 4 : 3)
     .map((s) => s.id)
-  const questions = isDeveloper ? ENGINEERING_QUESTIONS : BOARD_QUESTIONS
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
     .filter((t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t))
@@ -144,12 +84,8 @@ function WelcomeState() {
         <h2 className="text-xl font-semibold text-foreground mb-2">
           Welcome to your PQC Command Center
         </h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-          {isDeveloper
-            ? 'Changing the cryptography in a codebase comes down to four engineering questions. Start with whichever you need first.'
-            : 'A post-quantum migration is a program, and every program answers the same four board-level questions. Start with whichever you need first.'}
-        </p>
-        {!isDeveloper && (
+        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{intro.lede}</p>
+        {intro.showGuidedOverview && (
           <div className="mb-6">
             <Link to="/simulation?run=exec">
               <Button variant="gradient" size="sm" className="gap-1.5">
@@ -160,7 +96,7 @@ function WelcomeState() {
           </div>
         )}
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
-          {questions.map((item) => (
+          {intro.questions.map((item) => (
             <Link
               key={item.q}
               to={item.to}
@@ -625,6 +561,10 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Architecture pack — the architect's review document. Shown even with
+           nothing saved, because its missing-section list is the path. */}
+      {selectedPersona === 'architect' && <ArchitecturePackPanel />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so

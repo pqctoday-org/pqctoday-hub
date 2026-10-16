@@ -28,6 +28,7 @@ import {
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface HsmPqcIntroductionProps {
@@ -172,12 +173,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <span className="text-sm font-bold text-foreground">Cloud HSMs</span>
               </div>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; AWS CloudHSM (ML-DSA preview via SDK)</li>
-                <li>&bull; Azure Dedicated HSM (Thales backend, upgrade pending)</li>
-                <li>&bull; Google Cloud HSM (PQC on roadmap)</li>
+                <li>&bull; AWS CloudHSM (ML-DSA in the HSM; FIPS mode on hsm2m.medium)</li>
+                <li>
+                  &bull; Azure Dedicated HSM (Thales Luna backend; PQC by firmware upgrade;
+                  retiring)
+                </li>
+                <li>&bull; Google Cloud HSM (no PQC at the HSM level yet)</li>
               </ul>
               <p className="text-xs text-warning mt-2 font-medium">
-                Cloud HSMs currently lack firmware-level PQC support
+                Cloud PQC support is uneven: check each service&apos;s own documentation (checked 15
+                Oct 2026)
               </p>
             </div>
           </div>
@@ -192,9 +197,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         >
           <div className="space-y-4 text-sm text-foreground/80">
             <p>
-              The <strong>PKCS#11 v3.2 draft</strong> (OASIS) introduces new mechanism types for
-              post-quantum cryptography. These define how applications interact with PQC keys inside
-              HSMs via the standard Cryptoki API.
+              <strong>PKCS#11 v3.2</strong> (OASIS Standard, 3 June 2026) introduces new mechanism
+              types for post-quantum cryptography. These define how applications interact with PQC
+              keys inside HSMs via the standard Cryptoki API.
             </p>
 
             <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
@@ -246,7 +251,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
 
             {/* PQC Mechanisms Table */}
-            <h3 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2 Draft)</h3>
+            <h3 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -489,11 +494,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) are
-                in production with firmware-level PQC support. Cloud HSMs currently lag: AWS
-                CloudHSM is ML-DSA preview-only; Azure Dedicated HSM has PQC available via
-                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring — no new
-                customer onboardings); GCP Cloud HSM remains roadmap (Cloud KMS software is in
-                preview for ML-KEM/ML-DSA/SLH-DSA).
+                in production with firmware-level PQC support. Cloud HSMs are uneven: AWS CloudHSM
+                generates and uses ML-DSA keys inside the HSM, in FIPS mode on hsm2m.medium from 1
+                September 2026, but its CMVP certificate does not list ML-DSA yet; Azure Dedicated
+                HSM has PQC available via customer-requested firmware upgrade (note: Azure Dedicated
+                HSM is retiring — no new customer onboardings); Google Cloud KMS offers PQC keys
+                only at the software protection level, not in Cloud HSM (checked 15 Oct 2026).
               </p>
             </div>
           </div>
@@ -521,14 +527,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  PQC delivered via AWS-LC SDK, not HSM firmware change. Zero downtime for SDK
-                  update. AWS-LC has its own CMVP certificates as a Level 1 software module (AWS-LC
-                  3, #5298/#5314, approve ML-KEM but not ML-DSA); they do not change the HSM&apos;s
-                  Level 3 certificate. Checked 24 Sep 2026.
+                  ML-DSA-44/65/87 keys are generated and used inside the HSM, in FIPS mode on
+                  hsm2m.medium clusters from 1 September 2026, through vendor-defined PKCS#11
+                  mechanisms (CKM_CLOUDHSM_ML_DSA). AWS-LC has its own CMVP certificates as a Level
+                  1 software module (AWS-LC 3, #5298/#5314, approve ML-KEM but not ML-DSA); they do
+                  not change the HSM&apos;s Level 3 certificate, and #4703 lists no PQC algorithm.
+                  Checked 15 Oct 2026.
                 </p>
                 <p>
-                  <strong>Limitation:</strong> Native PKCS#11 PQC mechanisms not yet in firmware.
-                  ML-KEM encapsulation/decapsulation not supported.
+                  <strong>Limitation:</strong> no standard PKCS#11 v3.2 PQC mechanisms (CKM_ML_DSA)
+                  and no ML-KEM encapsulation/decapsulation.
                 </p>
               </div>
             </div>
@@ -909,6 +917,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         </div>
       </section>
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hsm" />
+      <RecordDecisionLink topic="hsm-choice" />
       <ReadingCompleteButton />
     </div>
   )

@@ -51,14 +51,18 @@ export function latestDatedCsv(dataDir: string, regex: RegExp): string | null {
   return sorted.length > 0 ? join(dataDir, sorted[0].path) : null
 }
 
-/** Matches `role_board_content_MMDDYYYY.csv`. */
-export const ROLE_BOARD_CONTENT_RE = /^role_board_content_(\d{2})(\d{2})(\d{4})\.csv$/
+// Each also takes the optional `_rN` same-day revision every other data file
+// accepts (a second edit on one day is written as `<name>_MMDDYYYY_r1.csv`).
+// Without it a same-day revision matched nothing and the generator stopped.
 
-/** Matches `role_board_ctas_MMDDYYYY.csv`. */
-export const ROLE_BOARD_CTAS_RE = /^role_board_ctas_(\d{2})(\d{2})(\d{4})\.csv$/
+/** Matches `role_board_content_MMDDYYYY[_rN].csv`. */
+export const ROLE_BOARD_CONTENT_RE = /^role_board_content_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
 
-/** Matches `role_board_variants_MMDDYYYY.csv`. */
-export const ROLE_BOARD_VARIANTS_RE = /^role_board_variants_(\d{2})(\d{2})(\d{4})\.csv$/
+/** Matches `role_board_ctas_MMDDYYYY[_rN].csv`. */
+export const ROLE_BOARD_CTAS_RE = /^role_board_ctas_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
+/** Matches `role_board_variants_MMDDYYYY[_rN].csv`. */
+export const ROLE_BOARD_VARIANTS_RE = /^role_board_variants_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
 
 /**
  * Ascending chronological comparator for dated-CSV path lists — drop-in for

@@ -22,7 +22,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'Pick Executive and choose the question — mandate, risk, roadmap, deadlines, evidence or the whole programme — each board is three cards that answer it, with the proof behind each.',
     grc: 'Pick GRC and choose the question — what applies, what is already proven, the controls, the risk register, vendor assurance or what "done" means — before any tool asks you for an inventory.',
     developer:
-      'Pick Developer and choose the question: the pilot board reaches a real ML-KEM handshake in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
+      'Pick Developer and choose the question: the pilot board runs a real hybrid ML-KEM + X25519 key exchange in this tab in minutes; the others cover parameter sets, inventory, sizes, deadlines and closure.',
     architect:
       'Pick Architect and choose the question: the control-plane board changes one KMIP policy line and rekeys the estate live; the others cover inventory, key stores, protocols, sequencing and defending the design.',
     researcher:
@@ -192,7 +192,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/report': {
     executive:
       'Your view opens "Recommended Actions (Top 5)" first; at the foot of the report, "Print Executive Brief" and "Board Pack ZIP" produce the version you hand to the board.',
-    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk.',
+    grc: 'The "Compliance Impact" section marks each framework "PQC Required" or "No PQC mandate yet" with its deadline and links into the Library and Timeline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk, and "Compliance Pack ZIP" at the foot adds an applicability register — every framework in scope for your country and sector, with why it applies, its binding status and source.',
     developer:
       'Your view opens "Cryptographic Bill of Materials (CBOM)" and "Cryptographic Discovery" first; "Algorithm Migration Priority" names each replacement with a "Try in Playground" link, and "Export CSV" downloads that table.',
     architect:
@@ -239,8 +239,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/learn': {
     executive:
-      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the Executive track chip narrows the catalogue to the modules written for your role.',
-    grc: 'In "Browse all", the "Workforce view" button is shown for your role and maps modules to NICE work roles; the "Advanced" tray adds a "NICE proficiency" filter — Awareness, Practitioner, Expert.',
+      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to the leadership and GRC modules.',
+    grc: '"My Path" opens on your Essentials in order — PQC 101, risk, data sensitivity, PQC GRC, compliance, governance, vendors, closure; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to them, and the "Workforce view" button maps modules to NICE work roles.',
     developer:
       '"Browse all" has a search ("try \'TLS\' or \'HSM\'"), track chips such as Protocols, Software Infrastructure and Hardware Infrastructure, and a "Shortest first" sort.',
     architect:
@@ -292,7 +292,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Under "Replace what you own", the "Crypto libraries & frameworks" domain lists the libraries; use "Filter products…" to narrow, and a product\'s detail shows its CPE and PURL identifiers.',
     architect:
-      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Drop-in, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
+      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Upgrade / configure, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
     'cert-engineer':

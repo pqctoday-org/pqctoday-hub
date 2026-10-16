@@ -37,7 +37,7 @@ export function LibraryDocumentCard({
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
   // The lifecycle pill reflects the most-advanced edition across this record and
   // its prior revisions (matches the live card), not just the current row.
-  const lifecycle = item.groupLifecycleLabel ?? item.lifecycleLabel
+  const lifecycle = item.lifecycleLabel
   const revisionCount = item.priorRevisions?.length ?? 0
 
   return (

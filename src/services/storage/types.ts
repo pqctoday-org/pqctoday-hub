@@ -81,6 +81,12 @@ export type ExecutiveDocumentType =
   | 'migration-verification'
   | 'sim-roadmap'
   | 'certification-plan'
+  // Security architect's architecture pack, Layer 2 (produced in the pack panel
+  // and the KMIP quick run, not by a Command Center builder).
+  | 'architecture-scope'
+  | 'architecture-decision-record'
+  | 'architecture-test-plan'
+  | 'kmip-quick-run'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

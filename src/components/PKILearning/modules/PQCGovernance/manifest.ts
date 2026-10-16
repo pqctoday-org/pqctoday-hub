@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-governance',
-  contentVersion: 10,
+  contentVersion: 11,
   lm_id: 'LM-037',
   title: 'PQC Governance & Policy',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
     "Without a policy naming owners, deadlines, and exceptions, migration stalls as everyone's job and no one's.",
   difficulty: 'beginner',
   frameworkPhase: 'p0',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 3,
   learnSections: [
     { id: 'model', label: 'Governance & RACI' },

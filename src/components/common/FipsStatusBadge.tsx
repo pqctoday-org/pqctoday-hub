@@ -52,6 +52,8 @@ export const FipsStatusBadge: React.FC<FipsStatusBadgeProps> = ({
 
   const certs =
     productId || softwareName ? getCertsForProduct(productId ?? '', softwareName ?? '') : []
+  // Active FIPS 140 certificates decide first, by their classicalOnly flag:
+  // a classical-only certificate never counts as PQC inside the boundary.
   const boundary = pqcBoundary(fipsValidated, certs)
   const validated = state === 'module' || state === 'embedded'
   const label = validated

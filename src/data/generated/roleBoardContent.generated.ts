@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10042026.csv
+ * Source: src/data/role_board_content_10162026_r21.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1296 documents, trust-tiered',
+          '1298 documents, trust-tiered',
           'Regulatory data verified 10 Oct 2026',
         ],
         sideCard: {
@@ -164,7 +164,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1296 documents, trust-tiered',
+          '1298 documents, trust-tiered',
           'Regulatory data verified 10 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -301,7 +301,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1296 documents, trust-tiered',
+          '1298 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -441,7 +441,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1296 documents, trust-tiered', 'Regulatory data verified 10 Oct 2026'],
+        proofChips: ['1298 documents, trust-tiered', 'Regulatory data verified 10 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -512,7 +512,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1296 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1298 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -654,7 +654,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1296 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1298 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -723,7 +723,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1296 documents, trust-tiered', 'Regulatory data verified 10 Oct 2026'],
+        proofChips: ['1298 documents, trust-tiered', 'Regulatory data verified 10 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -862,7 +862,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
 
-        headline: 'Five minutes to a real ML-KEM handshake.',
+        headline: 'Five minutes to a real hybrid ML-KEM + X25519 key exchange.',
         sub: 'Not a diagram. ML-KEM and X25519 combined through a real HKDF pipeline in this tab, every intermediate value inspectable. Then we tell you what to change in your stack.',
         ctaPrimary: 'Run ML-KEM + X25519 now',
         ctaPrimaryHref: '/playground/hybrid-encrypt',
@@ -887,10 +887,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             'Real sizes, not illustrative — the second of the four anti-patterns the Crypto Agility module already teaches.',
         },
         gridTitle: 'What you walk out with',
-        gridSub: 'A handshake you have actually run',
+        gridSub: 'A key exchange you have actually run',
         gridCards: [
           {
-            title: 'The same handshake, inside a real migration',
+            title: 'The same key exchange, inside a real migration',
             body: "Phase 5 of the simulation runs this exact hybrid pattern across a whole organisation's estate, not just one pipeline.",
             href: '/simulation?phase=p5',
           },
@@ -2481,7 +2481,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1296 documents, trust-tiered',
+          '1298 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -3171,10 +3171,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             'An illustrative framing of the harvest-now-decrypt-later argument. The dates it depends on are on the timeline, with sources.',
         },
         gridTitle: 'Where you can go next',
-        gridSub: 'Optional, none of it sequenced',
+        gridSub: 'Optional — every page is open',
         gridCards: [
           {
-            title: 'One guided path',
+            title: 'A suggested path',
             body: 'The learning path is a single route through post-quantum cryptography, ordered for whichever role you pick.',
             href: '/learn',
           },
@@ -3193,18 +3193,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
-          'Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.',
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+          'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3250,7 +3243,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Try the actual command line',
-            body: 'Nothing to install — the same OpenSSL your browser padlock depends on, running in a tab, if you want to go past what the simulator shows.',
+            body: 'Nothing to install — OpenSSL, one of the most widely used TLS libraries, running in a tab, if you want to go past what the simulator shows.',
             href: '/playground/openssl-studio',
           },
           {
@@ -3266,15 +3259,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
         trackNote:
           'Worth saying plainly: at 205 minutes this is longer than the executive track (130 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3333,18 +3319,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
-          'Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.',
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+          'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3366,7 +3345,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Meet the people doing the work',
         ctaSecondaryHref: '/leaders',
-        proofChips: ['Plain English by default', 'Every claim links to its own source'],
+        proofChips: ['Plain English by default', 'Sources listed on every page'],
         sideCard: {
           title: 'Where it already stands',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -3403,17 +3382,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3468,7 +3440,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The hard problem is inventory, not cryptography',
-            body: 'Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.',
+            body: 'Swapping an algorithm in one place can be quick. Finding every place your organisation uses one is the part that takes years.',
             href: '/report?example=1',
           },
         ] as [
@@ -3476,17 +3448,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
     {
@@ -3510,7 +3475,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Plain English by default',
-          'Every claim links to its own source',
+          'Sources listed on every page',
           'Nothing to install',
         ],
         sideCard: {
@@ -3549,17 +3514,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Start anywhere. Nothing is locked.',
+        trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: [
-          'PQC 101',
-          'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
-          'TLS basics',
-        ],
-        capstoneChip: { label: 'Quantum-Native' },
+        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        capstoneChip: { label: 'PQC Foundations' },
       },
     },
   ],

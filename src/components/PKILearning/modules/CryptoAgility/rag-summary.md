@@ -13,7 +13,7 @@ The Crypto Agility module teaches how to design systems that can rapidly swap cr
   - **Implementation agility** — switch between crypto providers (OpenSSL, BoringSSL, AWS-LC) without application changes
 - **Three architecture patterns**:
   - **Provider Model** — applications use abstraction APIs (JCA, OpenSSL Providers) and swap backends via config
-  - **Service Mesh / Proxy** — crypto for data-in-transit (mTLS) offloaded to infrastructure proxies (Envoy, Istio); zero app code changes
+  - **Service Mesh / Proxy** — crypto for data-in-transit (mTLS) offloaded to infrastructure proxies (Envoy, Istio); no crypto code changes for the application behind the proxy
   - **External KMS / HSM** — crypto operations outsourced to a central service (AWS KMS, Azure Key Vault); upgrading the KMS upgrades the enterprise
 - **CBOM (Cryptographic Bill of Materials)** — uses the CycloneDX standard to inventory all cryptographic algorithms, key sizes, usage locations, security levels, and compliance requirements across an organization
 - **CBOM generation tools**: IBM Quantum Safe Explorer, Keyfactor CBOM Generator, InfoSec Global AgileSec, Cryptosense Analyzer, manual audit and code scanning

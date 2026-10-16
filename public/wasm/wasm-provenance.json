@@ -155,14 +155,24 @@
     {
       "name": "openssl-pkcs11",
       "files": ["public/wasm/openssl.js", "public/wasm/openssl.wasm"],
-      "buildScript": "pqctoday-priv/build-wasm.sh",
-      "sourceDirs": ["rust", "src/vendor/pkcs11-provider", "scripts/build-openssl-wasm.sh"],
+      "buildScript": "scripts/build-openssl-studio-wasm.sh",
+      "sourceDirs": [
+        "rust",
+        "src/vendor/pkcs11-provider",
+        "wasm/openssl-studio",
+        "scripts/build-openssl-studio-wasm.sh"
+      ],
       "cargoManifest": "rust/Cargo.toml",
-      "extraInputs": ["src/vendor/pkcs11-provider", "scripts/build-openssl-wasm.sh"],
+      "extraInputs": [
+        "src/vendor/pkcs11-provider",
+        "wasm/openssl-studio",
+        "scripts/build-openssl-wasm.sh"
+      ],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
-      "builtAt": "2026-10-03",
+      "hsmCommit": "07b1264903eaeae124a4df08acb77ec71bca3792",
+      "builtAt": "2026-10-15",
+      "_rebuild20261015_engines2": "Re-pinned 2026-10-15 to hsm main 07b1264903eaeae124a4df08acb77ec71bca3792 (the #367 merge), published as the openssl-pkcs11 bundle of engine release engines-2. Built in the HSM repository with scripts/build-openssl-studio-wasm.sh (OpenSSL 3.6.3, the repository's pkcs11-provider, the Rust engine as a wasm32-unknown-emscripten staticlib and the shims in wasm/openssl-studio/), in the pinned emsdk 6.0.4 image. openssl.js unchanged; openssl.wasm 7929794 -> 7934812 bytes.",
       "_rebuild20261003_repin2": "Re-pinned 2026-10-03 (evening) to hsm main 496f9e529d3d92248dc414e153b06afca8d3ff4f (the #324 merge; the range since 272c9b04 adds #318/#320 educational FHE custody, #323 replication admin, #325 store lock, #327 verify-signer and #324 per-connection contexts, all behind educational build features or leaving the default context unchanged), owner decision 2026-10-03 for the FHE-validated release. Built from a clean detached hsm worktree at that commit with submodules initialised. Every link input rebuilt as for the 272c9b04 pin (staticlib without acvp in pqc-rust; FORCE=1 provider build and the OpenSSL 3.6.3 deps in emsdk 6.0.4; the link script in buildScript against a fresh extract of the verified tarball). openssl.wasm 7912410 -> 7929794 bytes, sha256 a65e42e6b0ca1b6e... -> 77494bd4920b67b4...; exports 65/65 and imports 65/65 identical; openssl.js same line set (9 lines reordered).",
       "_rebuild20261003_repin": "Re-pinned 2026-10-03 to hsm main 272c9b0426e610812acfe49f97dc9e1905a7327f (the #322 merge; the range since b8402936 adds #316 educational K2-K4 replication, the K1 prerequisites ba9c5d41 and the store fixes d6b83649), owner decision 2026-10-03 to pin current main for 4.148.0. Built from a clean detached hsm worktree at that commit with submodules initialised. Every link input rebuilt: (1) libsofthsmrustv3.a via cargo rustc --locked --release --target wasm32-unknown-emscripten --lib --crate-type staticlib (no acvp) in pqc-rust; (2) libpkcs11-provider.a via FORCE=1 scripts/build-pkcs11-provider-wasm.sh and deps/openssl-wasm via scripts/build-openssl-wasm.sh (OpenSSL 3.6.3, tarball sha256 243a86649cf6f23e...), emscripten/emsdk:6.0.4 --cpus=6; (3) the link script named in buildScript, in emsdk:6.0.4, against a fresh extract of the verified tarball (the expected apps/openssl link failure on pqctoday_cms_init, then the custom link). openssl.wasm 7907385 -> 7912410 bytes, sha256 a664de57b1d8526d... -> a65e42e6b0ca1b6e...; exports 65/65 and imports 65/65 identical; openssl.js unchanged; openssl-link-inputs.json records hsm 272c9b04.",
       "_rebuild20261002_final": "Re-pinned 2026-10-02 to hsm main b840293655a5f0f46be028b7ba8c5fc71ed72078, the merge of #313 after #314 (d7: Rust certificate discovery, private objects by default) and #312 (C++ Session::resetOp fix); merged by the owner at 20:04Z in that order. Built BEFORE the merges from a local trial merge 1b66080431f9207579e86ef851324b6d3f5ded5e (ceddd554 + #312 head ea0e072b + #314 head ad8dc304 + #313 head e9f145a5); `git diff 1b66080431 b840293655` is EMPTY for the whole tree including submodule pins, so these are exactly final main's artifacts. Every link input rebuilt: (1) libsofthsmrustv3.a via `cargo rustc --locked --release --target wasm32-unknown-emscripten --lib --crate-type staticlib` (no --features acvp) in pqc-rust, copied to rust/target/wasm32-unknown-emscripten/release/; (2) libpkcs11-provider.a via FORCE=1 scripts/build-pkcs11-provider-wasm.sh and deps/openssl-wasm via scripts/build-openssl-wasm.sh (OpenSSL 3.6.3, tarball sha256 243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1), emscripten/emsdk:6.0.4 --cpus=6; (3) pqctoday-priv/build-wasm.sh in emsdk:6.0.4 with HUB_ROOT=this hub worktree, HSM_ROOT=the trial worktree, OPENSSL_SRC=fresh extract of the verified tarball. openssl.wasm 7907738 -> 7907385 bytes, sha256 e264cc66b3e067cc38bad09114a3c669c6fb8e6a7672d53f6349e247d4d08064 -> a664de57b1d8526d1091c916db7c01a2ec584a54477d82bde74d806c55fc75fa; exports 65/65 and imports 65/65 identical; openssl.js same line set (9 lines reordered). openssl-link-inputs.json regenerated by the script.",

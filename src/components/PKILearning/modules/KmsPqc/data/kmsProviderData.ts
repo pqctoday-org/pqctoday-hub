@@ -93,7 +93,7 @@ gcloud kms keys create my-pqc-key \\
 gcloud kms keys create my-xwing-key \\
   --default-algorithm=X_WING`,
     notes:
-      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. All four are in Preview — ML-DSA and SLH-DSA signatures since February 2025, ML-KEM and X-Wing KEMs since September 2025; none are GA yet.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. The signing algorithms (ML-DSA-44/65/87, their external-mu variants, and SLH-DSA-SHA2-128S) have been generally available since 16 July 2026; ML-KEM-768/1024 and X-Wing KEMs have been in Preview since 23 September 2025, and HPKE key import with them since 6 August 2026. Google\u2019s algorithm table lists all of them at the SOFTWARE protection level only, not Cloud HSM (Cloud KMS release notes and algorithms page, checked 15 Oct 2026).',
   },
   {
     id: 'azure-kv',

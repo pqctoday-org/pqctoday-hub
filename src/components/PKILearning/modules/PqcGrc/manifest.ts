@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-grc',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-058',
   title: 'PQC GRC',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 8,
   learnSections: [
     { id: 'kri-cascade', label: 'KRI Cascade Thresholds' },

@@ -2,11 +2,7 @@
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
-import {
-  getGroupLifecycleLabel,
-  resolveLifecycleLabel,
-  type LifecycleLabel,
-} from '../utils/libraryLifecycle'
+import { resolveLifecycleLabel, type LifecycleLabel } from '../utils/libraryLifecycle'
 
 /**
  * A prior (deprecated) revision of a document, attached to its surviving active
@@ -110,10 +106,6 @@ export interface LibraryItem {
   /** Older (deprecated) revisions of this same document, collapsed into this
    *  surviving tile. Present only when this record superseded ≥1 other. */
   priorRevisions?: PriorRevision[]
-  /** Furthest lifecycle label across this record and its priorRevisions. Tiles
-   *  render this (falling back to lifecycleLabel) so a collapsed group shows the
-   *  furthest stage reached. */
-  groupLifecycleLabel?: LifecycleLabel
 }
 
 // C-001: Single source of truth for categories
@@ -388,7 +380,9 @@ function rfcNumber(rec: { referenceId: string; downloadUrl: string }): string | 
 
 /**
  * Attach prior (deprecated) revisions to their surviving active record, keyed by
- * `supersededBy`, and compute `groupLifecycleLabel`. Deprecated rows are never
+ * `supersededBy`. The tile keeps its own lifecycle label: an older revision never
+ * changes it, so a draft whose earlier edition was mislabelled stays a draft and
+ * the card always agrees with the Lifecycle filter. Deprecated rows are never
  * added to the returned array — they only enrich the survivor — so the grid
  * still renders one tile per logical document. Exported for unit testing.
  *
@@ -413,14 +407,7 @@ export function attachPriorRevisions(items: LibraryItem[], priors: PriorRevision
       .filter((rev) => !(itemRfc && rfcNumber(rev) === itemRfc))
       .sort((a, b) => (b.deprecatedAt ?? '').localeCompare(a.deprecatedAt ?? ''))
     if (sorted.length === 0) return item
-    return {
-      ...item,
-      priorRevisions: sorted,
-      groupLifecycleLabel: getGroupLifecycleLabel(
-        item.lifecycleLabel,
-        sorted.map((r) => r.lifecycleLabel)
-      ),
-    }
+    return { ...item, priorRevisions: sorted }
   })
 }
 
@@ -729,7 +716,7 @@ const nowMs = Date.now()
 
 // Inject status + citationCount, THEN build the dependency tree as the final step
 // so `children[]` reference the same fully-enriched objects as the top-level array
-// (priorRevisions/groupLifecycleLabel/status/citationCount all present). This is what
+// (priorRevisions/status/citationCount all present). This is what
 // lets findByRef(...) resolve a child and still see priorRevisions in the detail view.
 export const libraryData: LibraryItem[] = buildTree(
   currentItems.map((item) => ({
