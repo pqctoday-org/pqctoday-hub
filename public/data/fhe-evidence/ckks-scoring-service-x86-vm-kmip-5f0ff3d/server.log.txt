@@ -1,0 +1,94 @@
+2026/10/16 05:28:28 ckks-server listening on https://127.0.0.1:18443 (TLS 1.3 only, X25519MLKEM768 only, client certificate required); parameter set 3; GOMAXPROCS 12; go1.25.4
+2026/10/16 05:28:28 pins: 1 signer(s), 1 lineage(s), paramHash 89eedf447250eb3abd28feb751832b9981358fd5af72ac0078d8e8d08963670a6e41f943e051971beb3a4d0dc54bb0ed, generator version 1; models: 1; nothing is written to disk
+http: 2026/10/16 05:28:28 http: TLS handshake error from 127.0.0.1:33790: EOF
+2026/10/16 05:28:28 request client="data-owner-1" GET /v1/health status=200 in=0B out=911B 0ms
+2026/10/16 05:28:29 request client="data-owner-1" GET /v1/models status=200 in=0B out=1513B 0ms
+2026/10/16 05:28:30 key admitted key_id=540abde1d6d416dd lineage=b1b8d9b1d4f48bb11c188956985b9c53d32173d7427a8c5f878af3d6269abf0e signer=aeac5e1c908f9416b35740e1dd57948fe6315e28ab502714d30c6826cce98b94 pk_chunks=2 relin_chunks=24 verify_ms=40 assemble_ms=99
+2026/10/16 05:28:30 request client="data-owner-1" POST /v1/keys status=201 in=93930661B out=453B 941ms
+2026/10/16 05:28:39 job queued job=1a5f0e4735360bcb41a23837f6146f7c model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:28:39 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 1646ms
+2026/10/16 05:28:39 request client="data-owner-1" GET /v1/jobs/1a5f0e4735360bcb41a23837f6146f7c status=200 in=0B out=209B 0ms
+2026/10/16 05:28:39 request client="data-owner-1" GET /v1/jobs/1a5f0e4735360bcb41a23837f6146f7c status=200 in=0B out=209B 0ms
+2026/10/16 05:28:39 job finished job=1a5f0e4735360bcb41a23837f6146f7c state=done run_ms=325 cpu_ms=321
+2026/10/16 05:28:39 request client="data-owner-1" GET /v1/jobs/1a5f0e4735360bcb41a23837f6146f7c status=200 in=0B out=587B 0ms
+2026/10/16 05:28:39 request client="data-owner-1" GET /v1/jobs/1a5f0e4735360bcb41a23837f6146f7c/outputs/score status=200 in=0B out=2097176B 0ms
+2026/10/16 05:28:39 job deleted job=1a5f0e4735360bcb41a23837f6146f7c
+2026/10/16 05:28:39 request client="data-owner-1" DELETE /v1/jobs/1a5f0e4735360bcb41a23837f6146f7c status=204 in=0B out=0B 0ms
+2026/10/16 05:28:49 job queued job=30401e0fcb3bbde41d8705a3f619c936 model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:28:49 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 1650ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:49 job finished job=30401e0fcb3bbde41d8705a3f619c936 state=done run_ms=320 cpu_ms=316
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=200 in=0B out=584B 0ms
+2026/10/16 05:28:49 request client="data-owner-1" GET /v1/jobs/30401e0fcb3bbde41d8705a3f619c936/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:28:49 job deleted job=30401e0fcb3bbde41d8705a3f619c936
+2026/10/16 05:28:49 request client="data-owner-1" DELETE /v1/jobs/30401e0fcb3bbde41d8705a3f619c936 status=204 in=0B out=0B 0ms
+2026/10/16 05:28:51 job queued job=b1ba61ae0915a325889f35569400d570 model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:28:51 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 1648ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=209B 0ms
+2026/10/16 05:28:51 job finished job=b1ba61ae0915a325889f35569400d570 state=done run_ms=301 cpu_ms=297
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570 status=200 in=0B out=585B 0ms
+2026/10/16 05:28:51 request client="data-owner-1" GET /v1/jobs/b1ba61ae0915a325889f35569400d570/outputs/score status=200 in=0B out=2097176B 2ms
+2026/10/16 05:28:51 job deleted job=b1ba61ae0915a325889f35569400d570
+2026/10/16 05:28:51 request client="data-owner-1" DELETE /v1/jobs/b1ba61ae0915a325889f35569400d570 status=204 in=0B out=0B 0ms
+2026/10/16 05:28:53 job queued job=bd108a3a96d616b133e73d8f848651bf model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:28:53 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 1648ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=209B 0ms
+2026/10/16 05:28:53 job finished job=bd108a3a96d616b133e73d8f848651bf state=done run_ms=294 cpu_ms=292
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=200 in=0B out=584B 0ms
+2026/10/16 05:28:53 request client="data-owner-1" GET /v1/jobs/bd108a3a96d616b133e73d8f848651bf/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:28:53 job deleted job=bd108a3a96d616b133e73d8f848651bf
+2026/10/16 05:28:53 request client="data-owner-1" DELETE /v1/jobs/bd108a3a96d616b133e73d8f848651bf status=204 in=0B out=0B 0ms
+2026/10/16 05:28:56 job queued job=f97aea8a4d1d75cb79c0ee25a846ab35 model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:28:56 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 3247ms
+2026/10/16 05:28:56 job queued job=d738eed581a8ae6dd43594840bafe3be model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=1
+2026/10/16 05:28:56 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 3277ms
+2026/10/16 05:28:57 job finished job=f97aea8a4d1d75cb79c0ee25a846ab35 state=done run_ms=281 cpu_ms=280
+2026/10/16 05:28:57 job finished job=d738eed581a8ae6dd43594840bafe3be state=done run_ms=283 cpu_ms=283
+2026/10/16 05:29:00 job queued job=27d31f6a0f3e790825a857793e7fd19c model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=0
+2026/10/16 05:29:00 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 3278ms
+2026/10/16 05:29:00 job queued job=6d743729702db1e06705dfd4cb015459 model=credit-default-lr-v1 key_id=540abde1d6d416dd queue_depth=1
+2026/10/16 05:29:00 request client="data-owner-1" POST /v1/jobs status=202 in=192942409B out=99B 3247ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/f97aea8a4d1d75cb79c0ee25a846ab35 status=200 in=0B out=587B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/f97aea8a4d1d75cb79c0ee25a846ab35/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:29:00 job deleted job=f97aea8a4d1d75cb79c0ee25a846ab35
+2026/10/16 05:29:00 request client="data-owner-1" DELETE /v1/jobs/f97aea8a4d1d75cb79c0ee25a846ab35 status=204 in=0B out=0B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/d738eed581a8ae6dd43594840bafe3be status=200 in=0B out=583B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/d738eed581a8ae6dd43594840bafe3be/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:29:00 job deleted job=d738eed581a8ae6dd43594840bafe3be
+2026/10/16 05:29:00 request client="data-owner-1" DELETE /v1/jobs/d738eed581a8ae6dd43594840bafe3be status=204 in=0B out=0B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 job finished job=27d31f6a0f3e790825a857793e7fd19c state=done run_ms=280 cpu_ms=279
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=200 in=0B out=587B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/27d31f6a0f3e790825a857793e7fd19c/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:29:00 job deleted job=27d31f6a0f3e790825a857793e7fd19c
+2026/10/16 05:29:00 request client="data-owner-1" DELETE /v1/jobs/27d31f6a0f3e790825a857793e7fd19c status=204 in=0B out=0B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=209B 0ms
+2026/10/16 05:29:00 job finished job=6d743729702db1e06705dfd4cb015459 state=done run_ms=317 cpu_ms=315
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459 status=200 in=0B out=587B 0ms
+2026/10/16 05:29:00 request client="data-owner-1" GET /v1/jobs/6d743729702db1e06705dfd4cb015459/outputs/score status=200 in=0B out=2097176B 1ms
+2026/10/16 05:29:00 job deleted job=6d743729702db1e06705dfd4cb015459
+2026/10/16 05:29:00 request client="data-owner-1" DELETE /v1/jobs/6d743729702db1e06705dfd4cb015459 status=204 in=0B out=0B 0ms
+2026/10/16 05:29:01 request client="data-owner-1" GET /v1/health status=200 in=0B out=1147B 0ms

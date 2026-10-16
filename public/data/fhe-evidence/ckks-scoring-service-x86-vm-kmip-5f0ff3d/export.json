@@ -1,0 +1,15 @@
+{
+ "paramSet": 3,
+ "name": "CKKS_N16QP1468H192H32_METABTS2_LATTIGO_V6_2_0",
+ "keys": 51,
+ "limbsPerCall": 8,
+ "evkCalls": 1201,
+ "bytes": 4410835077,
+ "seconds": 196.799,
+ "mbPerSecond": 22.4,
+ "slowestCallSeconds": 0.2454,
+ "peakRssKiB": null,
+ "clientPeakRssKiB": 107856,
+ "transport": "kmip",
+ "manifestEntries": 1204
+}

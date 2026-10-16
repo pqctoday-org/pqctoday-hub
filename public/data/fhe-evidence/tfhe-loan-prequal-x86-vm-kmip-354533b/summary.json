@@ -1,0 +1,30 @@
+{
+ "applicants": 1016,
+ "edge_cases": 16,
+ "mismatches": 0,
+ "approved": 243,
+ "server_compute_s_per_applicant": {
+  "min": 0.835,
+  "median": 0.905,
+  "max": 1.088
+ },
+ "client_wall_s_per_applicant": {
+  "min": 1.051,
+  "median": 1.112,
+  "max": 2.448
+ },
+ "applicants_per_hour_by_wall": 3237,
+ "token_decrypt_kmip": {
+  "outputs": 6096,
+  "released": 6096,
+  "refused": 0,
+  "errors": 0,
+  "wall_ms": {
+   "min": 17.3,
+   "median": 24.788,
+   "p95": 42.78,
+   "max": 1395.707
+  },
+  "wall_ms_total": 175606.805
+ }
+}

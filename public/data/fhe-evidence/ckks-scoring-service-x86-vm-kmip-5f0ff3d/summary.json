@@ -1,0 +1,34 @@
+{
+ "run": "2026-10-16-id3-x86-vm-mx95pro-kmip-r3",
+ "kind": "x86-vm",
+ "serverRunMs_first": 325.485,
+ "uploadUntilAcceptedMs_first": 1656,
+ "serverRunMs_repetitions": [
+  320.502,
+  301.658,
+  294.86
+ ],
+ "uploadMs_repetitions": [
+  1657,
+  1649,
+  1649
+ ],
+ "cycleMs_repetitions": [
+  2003,
+  2001,
+  1999
+ ],
+ "serverWallMsAllJobs": {
+  "min": 280.0,
+  "median": 301.0,
+  "max": 325.0,
+  "n": 8
+ },
+ "serverPeakRssMiB": 1177.57421875,
+ "accuracyBits_allSlots": 21.000361596762993,
+ "auc": {
+  "auc_encrypted": 0.7172984311903541,
+  "auc_plaintextPolynomial": 0.717298511821587,
+  "auc_exactSigmoid": 0.717298511821587
+ }
+}
