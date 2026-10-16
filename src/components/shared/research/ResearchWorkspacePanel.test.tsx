@@ -21,6 +21,7 @@ describe('ResearchWorkspacePanel', () => {
       'research-changes',
       'research-claims',
       'research-reproductions',
+      'research-bundle-reviewer',
     ]) {
       expect(screen.getByTestId(id)).toBeInTheDocument()
     }

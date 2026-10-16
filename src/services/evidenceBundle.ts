@@ -25,6 +25,23 @@ import { recordRevision, recordsForBookmarks } from './research/libraryCollectio
 import { siteBuildInfo, type RunManifest } from './runManifest'
 import { cell, readRunManifest, VECTOR_MATCH_SENTENCE } from './runEvidence'
 import { runManifestToJson, siteProvenanceLine } from './runRecordExport'
+import { RESEARCH_WORKSPACE_PATH } from '@/data/researchWorkspace'
+import type { LibraryIndex } from './research/collectionChanges'
+import {
+  bundleCollections,
+  collectionSectionMarkdown,
+  collectionsJson,
+  questionsSectionMarkdown,
+  researchJson,
+  savedClaimMatrices,
+  savedQuestions,
+  savedReproductions,
+  type BundleCollection,
+  type SavedOf,
+} from './research/bundleSections'
+import type { ResearchQuestion } from './research/researchQuestion'
+import type { ClaimMatrix } from './research/claimMatrix'
+import type { ReproductionRecord } from './research/reproductionRecord'
 import {
   buildRolePack,
   type RolePack,
@@ -44,9 +61,9 @@ export const EVIDENCE_BUNDLE_STATEMENT =
   'This is your own working record, not a PQC Today assessment or a validation.'
 
 export const EVIDENCE_BUNDLE_DISCLAIMER =
-  `${EVIDENCE_BUNDLE_STATEMENT} It was built in your browser from the Library records you ` +
-  'bookmarked and the run records you saved on PQC Today; nothing was uploaded, and nobody else ' +
-  'has reviewed it.'
+  `${EVIDENCE_BUNDLE_STATEMENT} It was built in your browser from the Library records, research ` +
+  'notes and run records you saved on PQC Today; nothing was uploaded, and nobody else has ' +
+  'reviewed it.'
 
 const RUN_TOOL_NAMES = RUN_TOOLS.map((t) => t.title).join(', ')
 
@@ -55,10 +72,31 @@ export const EVIDENCE_BUNDLE_RECIPE: RolePackRecipe = {
   disclaimer: EVIDENCE_BUNDLE_DISCLAIMER,
   sections: [
     {
+      type: 'library-collection',
+      purpose:
+        'Your named collections of Library records, each record with your annotation, its current state and, where it differs, the state you saved it in.',
+      multiple: true,
+      toolPath: RESEARCH_WORKSPACE_PATH,
+    },
+    {
+      type: 'claim-matrix',
+      purpose:
+        'Your atomic claims, each with the status you gave it, the Library records for and against it, your confidence rationale and open questions.',
+      multiple: true,
+      toolPath: RESEARCH_WORKSPACE_PATH,
+    },
+    {
       type: 'run-manifest',
       purpose: `Reproductions you ran and saved to your evidence (from: ${RUN_TOOL_NAMES}), each with how it ran, its results and what it does not show.`,
       multiple: true,
       toolPath: FIRST_RUN_TOOL.path,
+    },
+    {
+      type: 'reproduction-record',
+      purpose:
+        'Two saved runs of the same tool compared: what differed, a second implementation where you have one, your conclusion and what would falsify it.',
+      multiple: true,
+      toolPath: RESEARCH_WORKSPACE_PATH,
     },
   ],
 }
@@ -116,6 +154,9 @@ export interface EvidenceBundleInput {
   origin?: string
   site?: RunManifest['site']
   now?: Date
+  /** The current Library, to show each collection record's current state and
+   * what changed since it was saved. Without it, saved state only. */
+  libraryIndex?: LibraryIndex
 }
 
 export interface EvidenceBundleRun {
@@ -130,6 +171,12 @@ export interface EvidenceBundle {
   pack: RolePack
   records: EvidenceRecord[]
   runs: EvidenceBundleRun[]
+  questions: SavedOf<ResearchQuestion>[]
+  collections: BundleCollection[]
+  claimMatrices: SavedOf<ClaimMatrix>[]
+  reproductions: SavedOf<ReproductionRecord>[]
+  /** Whether collection records were checked against the current Library. */
+  libraryChecked: boolean
   /** Every gap listed under "What is missing". */
   missing: RolePackExtraMissing[]
 }
@@ -160,7 +207,8 @@ export function savedRuns(documents: ExecutiveDocument[]): EvidenceBundleRun[] {
 
 const METHODS = [
   'Built in your browser from the Library records you bookmarked and the run records you saved to your evidence. Nothing was uploaded.',
-  'Library records show their state on the bundle date (revision, lifecycle, superseded-by, last verified), not the state when you bookmarked them. Check the URL for the current document before citing it.',
+  'Bookmarked Library records show their state on the bundle date (revision, lifecycle, superseded-by, last verified). Collection records show that state and, where it differs, the state you saved them in. Check the URL for the current document before citing it.',
+  'Claim statuses (fact, estimate, scenario, recommendation) are set by the author, not by PQC Today. The site checks only that each fact cites at least one Library record.',
   '"Last verified" is the date the Library last checked the record against its source document; "not re-verified" means it has not been re-checked since it was added.',
   'Run records hold digests and per-case results, not the test vectors. The pinned vector file is linked from each record so the run can be repeated.',
   `${VECTOR_MATCH_SENTENCE} A run shows that the code on this site produced these results for these inputs on the build named in the record, and nothing more.`,
@@ -174,7 +222,24 @@ export function buildEvidenceBundle(input: EvidenceBundleInput): EvidenceBundle 
   const runs = savedRuns(input.documents)
   const keys = citationKeys(records.map((r) => r.referenceId))
 
+  const docs = input.documents
+  const questions = savedQuestions(docs)
+  const collections = bundleCollections(docs, input.libraryIndex)
+  const claimMatrices = savedClaimMatrices(docs)
+  const reproductions = savedReproductions(docs)
+  const libraryChecked = !!input.libraryIndex
+
   const extraSections: RolePackExtraSection[] = [
+    {
+      key: 'question',
+      title: 'Research question',
+      purpose:
+        'What you are checking, the kind of question, which sources count and which do not, and how much evidence is enough.',
+      position: 'before',
+      body: questionsSectionMarkdown(questions),
+      toolPath: RESEARCH_WORKSPACE_PATH,
+      linkText: 'Write it in your research workspace at',
+    },
     {
       key: 'records',
       title: 'Bookmarked Library records',
@@ -236,18 +301,74 @@ export function buildEvidenceBundle(input: EvidenceBundleInput): EvidenceBundle 
     })
   }
 
+  const changedRecords = collections.flatMap((c) => c.entries.filter((e) => e.changes.length))
+  if (changedRecords.length) {
+    extraMissing.push({
+      label: `${changedRecords.length} collection record${changedRecords.length === 1 ? ' has' : 's have'} changed since you saved ${changedRecords.length === 1 ? 'it' : 'them'}`,
+      detail: `${[...new Set(changedRecords.map((e) => e.referenceId))].join(', ')}: check whether the change affects what you cite, then mark it as seen.`,
+      toolPath: RESEARCH_WORKSPACE_PATH,
+      linkText: 'Review the changes at',
+    })
+  }
+  const unsupported = claimMatrices.flatMap((m) =>
+    m.value.claims.filter((c) => c.status === 'fact' && c.supporting.length === 0)
+  )
+  if (unsupported.length) {
+    extraMissing.push({
+      label: `${unsupported.length} fact${unsupported.length === 1 ? '' : 's'} without a supporting record`,
+      detail: `${unsupported.map((c) => c.id).join(', ')}: a fact needs at least one supporting Library record id.`,
+      toolPath: RESEARCH_WORKSPACE_PATH,
+      linkText: 'Add one in your claim matrix at',
+    })
+  }
+  const noFalsification = reproductions.filter((r) => !r.value.falsification.trim())
+  if (noFalsification.length) {
+    extraMissing.push({
+      label: 'Falsification condition not stated',
+      detail: `${noFalsification.length} reproduction record${noFalsification.length === 1 ? ' does' : 's do'} not say what result would show the conclusion wrong.`,
+      toolPath: RESEARCH_WORKSPACE_PATH,
+      linkText: 'State it at',
+    })
+  }
+  if (reproductions.length && !reproductions.some((r) => r.value.secondImplementation.trim())) {
+    extraMissing.push({
+      label: 'No second implementation compared',
+      detail:
+        'None of your reproduction records gives a second implementation’s result for the same vectors.',
+      toolPath: RESEARCH_WORKSPACE_PATH,
+      linkText: 'Add one to a reproduction record at',
+    })
+  }
+
+  const collectionByModule = new Map(collections.map((c) => [c.moduleId, c]))
   const pack = buildRolePack(EVIDENCE_BUNDLE_RECIPE, {
-    documents: runs.map((r) => r.doc),
+    documents: [
+      ...runs.map((r) => r.doc),
+      ...collections.flatMap((c) =>
+        docs.filter((d) => d.moduleId === c.moduleId && d.type === 'library-collection')
+      ),
+      ...claimMatrices.map((m) => m.doc),
+      ...reproductions.map((r) => r.doc),
+    ],
     title: input.title,
     author: input.author,
-    scope: 'Your bookmarked Library records and the run records you saved',
+    scope:
+      'Your research question, bookmarked and collected Library records, claims and the run records you saved',
     origin: input.origin,
     now,
     coverLines: [`- ${siteProvenanceLine(site)}`, '', `**${EVIDENCE_BUNDLE_STATEMENT}**`],
     extraSections,
     extraMissing,
     // Each run section is the saved record's own text, with its file named.
+    // A collection section shows each record's current state next to the
+    // state saved with it (also in collections.json).
     renderDocument: (doc) => {
+      if (doc.type === 'library-collection') {
+        const c = collectionByModule.get(doc.moduleId)
+        return c
+          ? `${collectionSectionMarkdown(c, libraryChecked)}\n\nAlso in \`collections.json\`.`
+          : undefined
+      }
       const run = runs.find((r) => r.doc.id === doc.id)
       return run ? `${doc.data.trim()}\n\nFull record: \`${run.path}\`` : undefined
     },
@@ -258,6 +379,11 @@ export function buildEvidenceBundle(input: EvidenceBundleInput): EvidenceBundle 
     pack,
     records,
     runs,
+    questions,
+    collections,
+    claimMatrices,
+    reproductions,
+    libraryChecked,
     missing: [
       ...pack.missing.map((m) => ({
         label: m.label,
@@ -271,11 +397,15 @@ export function buildEvidenceBundle(input: EvidenceBundleInput): EvidenceBundle 
 
 const README = `# Evidence bundle
 
-- bundle.md: the bundle, in order: cover, bookmarked Library records, references, saved run records, methods and limitations, and what is missing.
+- bundle.md: the bundle, in order: cover, research question, bookmarked Library records, references, collections (each record's current state and the state you saved), claim matrix, saved run records, reproduction records, methods and limitations, and what is missing.
 - bundle.pdf: the same document as a PDF.
 - references.bib and references.csl.json: citations for the bookmarked records.
 - records.csv: the bookmarked records as a table.
 - runs/: each saved run record as JSON (digests and per-case results, not the vectors).
+- collections.json: your collections, each record with its saved and current state and what changed.
+- research.json: your research questions, claim matrices and reproduction records.
+
+A reviewer can open this zip read-only in the research workspace on PQC Today ("Open a bundle").
 
 ${EVIDENCE_BUNDLE_DISCLAIMER}
 `
@@ -284,9 +414,10 @@ ${EVIDENCE_BUNDLE_DISCLAIMER}
  * PDF is rendered by the caller (it needs the PDF library). */
 export function evidenceBundleFiles(
   bundle: EvidenceBundle,
-  opts: { pdf?: Blob; today?: string } = {}
+  opts: { pdf?: Blob; today?: string; now?: Date } = {}
 ): BundleFile[] {
-  const today = opts.today ?? new Date().toISOString().slice(0, 10)
+  const generated = opts.now ?? new Date()
+  const today = opts.today ?? generated.toISOString().slice(0, 10)
   const dir = 'evidence-bundle'
   return [
     { path: `${dir}/README.md`, content: README },
@@ -302,5 +433,13 @@ export function evidenceBundleFiles(
       path: `${dir}/${r.path}`,
       content: runManifestToJson(r.manifest),
     })),
+    {
+      path: `${dir}/collections.json`,
+      content: collectionsJson(bundle.collections, generated, bundle.libraryChecked),
+    },
+    {
+      path: `${dir}/research.json`,
+      content: researchJson(bundle, generated),
+    },
   ]
 }

@@ -14,6 +14,7 @@ import { ChangedSinceSaved } from './ChangedSinceSaved'
 import { ResearchQuestionForm } from './ResearchQuestionForm'
 import { ClaimMatrixEditor } from './ClaimMatrixEditor'
 import { CompareRuns } from './CompareRuns'
+import { BundleReviewer } from './BundleReviewer'
 
 const PANEL_ID = 'research-workspace'
 
@@ -94,6 +95,14 @@ export const ResearchWorkspacePanel: FC = () => {
         intro="Two saved runs of the same tool side by side: what differed in how they ran and in their results. Add a second implementation's result, your conclusion and what would falsify it."
       >
         <CompareRuns />
+      </Block>
+
+      <Block
+        title="Open a bundle (read-only)"
+        testId="research-bundle-reviewer"
+        intro="For a reviewer: open an evidence bundle zip someone sent you to read its question, collections, claims, reproductions and runs, and see which records changed in the Library since it was made. Nothing is saved and the file stays in your browser."
+      >
+        <BundleReviewer />
       </Block>
     </section>
   )

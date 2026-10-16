@@ -113,12 +113,20 @@ describe('evidence bundle: empty state', () => {
     expect(bundle.markdown).toContain('- Generated: 2026-10-16')
     expect(bundle.markdown).toContain('Site version 4.163.0 · commit f74fe1d17aaa')
     expect(bundle.markdown).toContain(EVIDENCE_BUNDLE_STATEMENT)
-    expect(bundle.markdown).toContain('## 4. Methods and limitations')
+    expect(bundle.markdown).toContain('## 8. Methods and limitations')
   })
 
   it('lists every missing section with a link to the tool that produces it', () => {
     const labels = bundle.missing.map((m) => m.label)
-    expect(labels).toEqual(['Saved Run Record', 'Bookmarked Library records', 'References'])
+    expect(labels).toEqual([
+      'Library Collection',
+      'Claim Matrix',
+      'Saved Run Record',
+      'Reproduction Record',
+      'Research question',
+      'Bookmarked Library records',
+      'References',
+    ])
     expect(bundle.missing.every((m) => m.toolPath)).toBe(true)
     const missingPart = bundle.markdown.slice(bundle.markdown.indexOf('## What is missing'))
     expect(missingPart).toContain('Produce it with /playground/drbg-demo')
@@ -135,6 +143,8 @@ describe('evidence bundle: empty state', () => {
       'evidence-bundle/references.bib',
       'evidence-bundle/references.csl.json',
       'evidence-bundle/records.csv',
+      'evidence-bundle/collections.json',
+      'evidence-bundle/research.json',
     ])
     const csl = files.find((f) => f.path.endsWith('.csl.json'))?.content as string
     expect(JSON.parse(csl)).toEqual([])
@@ -160,10 +170,10 @@ describe('evidence bundle: with bookmarks and two saved runs', async () => {
   it('puts the sections in the fixed order', () => {
     const order = [
       '# ML-KEM certificate drafts',
-      '## 1. Bookmarked Library records',
-      '## 2. References',
-      '## 3. Saved Run Record',
-      '## 4. Methods and limitations',
+      '## 2. Bookmarked Library records',
+      '## 3. References',
+      '## 6. Saved Run Record',
+      '## 8. Methods and limitations',
       '## What is missing',
     ].map((h) => md.indexOf(h))
     expect(order.every((i) => i >= 0)).toBe(true)
@@ -206,7 +216,7 @@ describe('evidence bundle: with bookmarks and two saved runs', async () => {
   })
 
   it('says how each run was produced and that a vector match is not a validation', () => {
-    const runPart = md.slice(md.indexOf('## 3. Saved Run Record'), md.indexOf('## 4.'))
+    const runPart = md.slice(md.indexOf('## 6. Saved Run Record'), md.indexOf('## 8.'))
     expect(runPart.split(MODE_TEXT['in-browser-implementation']).length - 1).toBe(2)
     expect(runPart.split(VECTOR_MATCH_SENTENCE).length - 1).toBe(2)
     expect(runPart).toContain('Negative controls: 1 of 1 passed')
@@ -234,9 +244,11 @@ describe('evidence bundle: other gaps', () => {
       site: SITE,
       now: NOW,
     })
-    const labels = bundle.missing.map((m) => m.label)
+    const labels = bundle.missing.map((m) => m.label).filter((l) => /bookmark|negative/.test(l))
     expect(labels).toEqual(['1 bookmark is no longer in the Library', 'No negative control saved'])
-    expect(bundle.missing[1].toolPath).toBe('/playground/drbg-demo')
+    expect(bundle.missing.find((m) => m.label === 'No negative control saved')?.toolPath).toBe(
+      '/playground/drbg-demo'
+    )
   })
 })
 

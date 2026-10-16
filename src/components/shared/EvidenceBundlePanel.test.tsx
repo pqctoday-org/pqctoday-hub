@@ -10,6 +10,7 @@ import type { BundleFile } from '@/services/exportBundle'
 const zipped = vi.hoisted(() => ({ files: [] as BundleFile[], downloads: [] as string[] }))
 
 vi.mock('@/data/libraryData', () => ({
+  REFERENCE_ID_ALIASES: {},
   libraryData: [
     {
       referenceId: 'FIPS 203',

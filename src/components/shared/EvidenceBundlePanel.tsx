@@ -19,6 +19,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveDocument } from '@/services/storage/types'
 import { FIRST_RUN_TOOL } from '@/data/runTools'
+import type { IndexableRecord } from '@/services/research/collectionChanges'
 
 const EMPTY: ExecutiveDocument[] = []
 
@@ -37,12 +38,14 @@ async function downloadEvidenceBundle(opts: {
   title?: string
   author?: string
 }): Promise<void> {
-  const [{ libraryData }, bundleMod, exportMod, pdfMod] = await Promise.all([
+  const [libraryMod, bundleMod, exportMod, pdfMod, changesMod] = await Promise.all([
     import('@/data/libraryData'),
     import('@/services/evidenceBundle'),
     import('@/services/exportBundle'),
     import('@/services/export/pdfExport'),
+    import('@/services/research/collectionChanges'),
   ])
+  const { libraryData } = libraryMod
   const { records, missingIds } = bundleMod.recordsForBookmarks(libraryData, opts.bookmarkIds)
   const bundle = bundleMod.buildEvidenceBundle({
     records,
@@ -51,6 +54,11 @@ async function downloadEvidenceBundle(opts: {
     title: opts.title,
     author: opts.author,
     origin: window.location.origin,
+    // Collections show each record's current state next to the saved one.
+    libraryIndex: changesMod.buildLibraryIndex(
+      libraryData as unknown as IndexableRecord[],
+      libraryMod.REFERENCE_ID_ALIASES ?? {}
+    ),
   })
   const title = opts.title?.trim() || bundleMod.EVIDENCE_BUNDLE_TITLE
   const pdf = pdfMod.buildArtifactPdf(bundle.markdown, title, { wideTable: true }).output('blob')
@@ -104,9 +112,10 @@ export const EvidenceBundlePanel: FC<EvidenceBundlePanelProps> = ({ placement })
         <PackageCheck size={16} aria-hidden="true" /> Evidence bundle
       </h2>
       <p className="mt-1 max-w-3xl text-xs text-muted-foreground">
-        One zip you can cite or hand to a reviewer: your bookmarked Library records with their
-        revision, lifecycle and last-verified date, their BibTeX and CSL-JSON, every run record you
-        saved to your evidence, the methods and limitations, and what is still missing. It is your
+        One zip you can cite or hand to a reviewer: your research question, your bookmarked and
+        collected Library records with their revision, lifecycle and last-verified date (and the
+        state you saved them in), their BibTeX and CSL-JSON, your claim matrix, every run record and
+        reproduction you saved, the methods and limitations, and what is still missing. It is your
         own working record, not a PQC Today assessment or a validation. It is built in your browser
         and nothing is uploaded.
       </p>
