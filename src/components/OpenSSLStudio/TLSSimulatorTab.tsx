@@ -206,19 +206,24 @@ export const TLSSimulatorTab: React.FC = () => {
               title: 'SLH-DSA',
             },
             {
-              label: 'draft-ietf-tls-hybrid-design-16',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/16/',
-              title: 'Hybrid KEX in TLS 1.3',
+              label: 'RFC 9954',
+              href: 'https://www.rfc-editor.org/info/rfc9954',
+              title: 'Hybrid key exchange in TLS 1.3 (design)',
             },
             {
-              label: 'draft-ietf-tls-mlkem-07',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/07/',
-              title: 'ML-KEM Key Agreement for TLS 1.3',
+              label: 'RFC 10024',
+              href: 'https://www.rfc-editor.org/info/rfc10024',
+              title: 'X25519MLKEM768 and other PQ/T hybrid groups for TLS 1.3',
             },
             {
-              label: 'draft-ietf-tls-mldsa-02',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/02/',
-              title: 'ML-DSA for TLS 1.3',
+              label: 'draft-ietf-tls-mlkem (RFC Editor queue)',
+              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
+              title: 'Pure ML-KEM key agreement for TLS 1.3 — approved, awaiting RFC number',
+            },
+            {
+              label: 'draft-ietf-tls-mldsa (RFC Editor queue)',
+              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
+              title: 'ML-DSA in TLS 1.3 — approved, awaiting RFC number',
             },
             {
               label: 'BSI TR-02102-2',
@@ -259,8 +264,8 @@ export const TLSSimulatorTab: React.FC = () => {
           </li>
           <li>
             <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-            X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF
-            draft-ietf-tls-ecdhe-mlkem); pure ML-KEM-512/768/1024 groups (draft-connolly-tls-mlkem)
+            X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, RFC 10024);
+            pure ML-KEM-512/768/1024 groups (draft-ietf-tls-mlkem, in the RFC Editor queue)
           </li>
           <li>
             <span className="text-status-success font-semibold">✓ Classical certs</span> — RSA-2048,

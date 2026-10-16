@@ -19,10 +19,10 @@ The TLS Basics module provides a comprehensive introduction to Transport Layer S
 - **PQC size trade-off** — ML-KEM-768 public keys are approximately 1,184 bytes versus 32 bytes for X25519, increasing handshake overhead
 - **Mutual TLS (mTLS)** — the simulator supports both standard TLS and mutual authentication where both client and server present certificates
 - **PQC certificate support** — the simulator includes pre-loaded ML-DSA-65 and ML-DSA-87 certificates for testing post-quantum authentication
-- **Quantum downgrade attack** (Westerbaan/Cloudflare) — an active MITM adversary intercepts the ClientHello and removes the ML-KEM key_share entry, forcing a fallback to classical-only ECDH; distinct from passive HNDL harvesting because it actively prevents PQC even when both endpoints support it
+- **Quantum downgrade attack** (Westerbaan/Cloudflare) — an active MITM adversary cannot silently remove the ML-KEM key_share from a TLS 1.3 ClientHello (the handshake transcript is signed and MACed, so tampering is detected); instead it makes PQC connection attempts fail so that a client configured for compatibility fallback retries with a classical-only ClientHello; distinct from passive HNDL harvesting because it actively prevents PQC even when both endpoints support it
 - **Maximum compatibility mode** — the default server posture during transition: serve a classical certificate to any client, PQC only to capable clients; eliminates breakage but provides zero protection against downgrade attacks, and is fundamentally incompatible with PQC Continuity enforcement
 - **PQ Lock / PQC HSTS** — an HTTP-layer signal where a server tells the browser it supports PQC key exchange; the browser caches this signal and refuses future connections that omit PQC (implemented in Chromium, analogous to HSTS); provides session-level downgrade protection once the first PQC connection succeeds
-- **PQC Continuity / downgrade limit** (`draft-sheffer-tls-pqc-continuity`, Sheffer; Westerbaan et al.) — a TLS-layer cached commitment: the server declares a duration (the "downgrade limit," e.g., one year) and the client caches it, refusing classical-only connections within that window; pins the server to PQC across connection gaps, closing the attack surface that PQ Lock leaves open for first-visit interception
+- **PQC Continuity / downgrade limit** (`draft-sheffer-tls-pqc-continuity`, an individual Internet-Draft by Sheffer et al., not adopted by the TLS working group) — a proposed TLS-layer cached commitment: the server declares a duration (the "downgrade limit," e.g., one year) and the client caches it, refusing classical-only connections within that window; like PQ Lock it needs one prior successful PQC connection, so it cannot protect a first visit
 
 ## Workshop / Interactive Activities
 
@@ -37,7 +37,7 @@ The workshop is a live TLS handshake simulator with the following features:
 
 ## Workshop / Interactive Activities (Downgrade Scenario)
 
-- **Downgrade Attack Scenario tab** — interactive walkthrough of a quantum downgrade attack: configure an attacker-in-the-middle that removes ML-KEM from the ClientHello key_share, observe the server falling back to X25519, and compare the negotiated session against a non-attacked connection; then apply PQ Lock and PQC Continuity mitigations and observe the attack being blocked
+- **Downgrade Attack Scenario tab** — interactive walkthrough of a quantum downgrade attack: an attacker-in-the-middle makes the PQC attempt fail, the client retries in compatibility mode with a classical-only ClientHello, the server negotiates X25519, and compare the negotiated session against a non-attacked connection; then apply PQ Lock (and the proposed PQC Continuity) after a prior PQC visit and observe the fallback being refused
 
 ## Related Standards
 

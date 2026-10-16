@@ -6,7 +6,7 @@ SLH-DSA (Stateless Hash-Based Digital Signature Algorithm, **FIPS 205**) is NIST
 
 ## Why It Matters
 
-Hash-based signatures were the first quantum-safe construction anyone trusted, but the early designs (LMS and XMSS, both **stateful**) had a brutal operational catch: the signer has to remember every signature it ever produced, forever. Lose that counter, even briefly — accidental reboot, accidental restore-from-backup, accidental clone of a VM — and the whole key is compromised. SLH-DSA fixes that by being **stateless**: every signature is fresh, no counter to track, safe in distributed systems, serverless functions, and multi-instance HSMs. The price is signature size — anywhere from 8 KB to 50 KB depending on the parameter set — which makes SLH-DSA the bulky-but-rock-solid option compared with ML-DSA's 2–4 KB lattice signatures.
+Hash-based signatures were the first quantum-safe construction anyone trusted, but the early designs (LMS and XMSS, both **stateful**) had a brutal operational catch: the signer has to remember every signature it ever produced, forever. Lose that counter, even briefly — accidental reboot, accidental restore-from-backup, accidental clone of a VM — and the whole key is compromised. SLH-DSA fixes that by being **stateless**: every signature is fresh, no counter to track, safe in distributed systems, serverless functions, and multi-instance HSMs. The price is signature size — anywhere from 8 KB to 50 KB depending on the parameter set — which makes SLH-DSA the bulky but conservative option compared with ML-DSA's 2–4 KB lattice signatures.
 
 ## The Key Takeaway
 

@@ -109,7 +109,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'system',
       label: 'Fallback refused',
       detail:
-        'Client refuses the classical retry and surfaces a connection error instead of a silently-downgraded session. The attacker can deny service but cannot force a quantum-vulnerable session. PQC Continuity (draft-sheffer-tls-pqc-continuity) extends this: the server pre-declares a downgrade limit (e.g. 1 year), cached by the client, closing the first-visit gap that PQ Lock alone cannot address.',
+        'Client refuses the classical retry and surfaces a connection error instead of a silently-downgraded session. The attacker can deny service but cannot force a quantum-vulnerable session. PQC Continuity (draft-sheffer-tls-pqc-continuity, an individual Internet-Draft, not adopted by the TLS working group) proposes the same idea at the TLS layer: the server signs a downgrade limit (e.g. 1 year) that the client caches. Like PQ Lock, it needs one earlier successful PQC connection, so neither can protect the very first visit.',
       isBlocked: true,
     },
   ],
@@ -252,16 +252,17 @@ export function TLSDowngradeScenario() {
           <div className="flex items-center gap-2 mb-1">
             <Lock className="w-4 h-4 text-status-success" />
             <span className="text-sm font-semibold">
-              PQ Lock + PQC Continuity — attack detected and blocked
+              PQ Lock + proposed PQC Continuity — attack blocked after a prior PQC visit
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold">PQ Lock</span> (HTTP-layer, Chromium): browser caches
             that this server supports PQC; future classical-only negotiations are rejected.{' '}
             <span className="font-semibold">PQC Continuity</span> (
-            <code>draft-sheffer-tls-pqc-continuity</code>, Sheffer; Westerbaan et al.): server
-            pre-declares a "downgrade limit" duration; client caches and enforces it across browser
-            restarts, closing the first-visit attack gap that PQ Lock alone cannot address.
+            <code>draft-sheffer-tls-pqc-continuity</code>, an individual Internet-Draft by Sheffer
+            et al., not adopted by the TLS working group): server signs a "downgrade limit" duration
+            that the client caches across restarts, for TLS clients other than browsers too. Both
+            need one earlier successful PQC connection; neither protects the first visit.
           </p>
         </div>
       )}
@@ -315,8 +316,10 @@ export function TLSDowngradeScenario() {
                   PQC Continuity (downgrade limit)
                 </td>
                 <td className="py-2 pr-4 text-muted-foreground">TLS extension (server-signed)</td>
-                <td className="py-2 pr-4 text-status-success">✓ Yes (cached duration)</td>
-                <td className="py-2 text-muted-foreground">IETF draft (Sheffer; Westerbaan)</td>
+                <td className="py-2 pr-4 text-status-warning">⚠ Only after first success</td>
+                <td className="py-2 text-muted-foreground">
+                  Individual Internet-Draft (Sheffer et al.; not WG-adopted)
+                </td>
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-medium text-foreground">MTC public log audit</td>

@@ -134,7 +134,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     ],
     standardOptions: [
       { id: 'fips-203', label: 'FIPS 203 (ML-KEM algorithm spec)' },
-      { id: 'tls-hybrid', label: 'draft-ietf-tls-hybrid-design (X25519MLKEM768)' },
+      { id: 'tls-hybrid', label: 'RFC 9954 / RFC 10024 (X25519MLKEM768)' },
       { id: 'cnsa-2', label: 'CNSA 2.0 (NSA mandate)' },
       { id: 'etsi-ts', label: 'ETSI TS 103 744 (TLS profile)' },
     ],
