@@ -10,8 +10,9 @@ metadata:
   description: |
     Key establishment must be HYBRID: either a combined hybrid KEM
     (X25519MLKEM768 / SecP256r1MLKEM768) or a standalone PQC KEM (ML-KEM,
-    FrodoKEM, Classic McEliece — BSI recognises the conservative
-    lattice/code KEMs for long-term confidentiality) that declares its
+    FrodoKEM, Classic McEliece — TR-02102-1 lists the conservative
+    lattice/code KEMs for long-term confidentiality; since 2026-10-01 the
+    BSI advises against Classic McEliece for new developments) that declares its
     classical partner via x-pqctoday-hybrid-partner at creation (enforced
     in the sibling `-global` module). Classical KEM/DH stays allowed
     because BSI requires it as the HYBRID partner, not standalone.
@@ -23,8 +24,9 @@ metadata:
     - { framework: "FIPS 203 ML-KEM", status: aligned }
 
 rules:
-  # KEM allowlist — BSI-recognised PQC KEMs (note FrodoKEM / Classic
-  # McEliece, which fips-only and cnsa-2.0 deny), the combined hybrid KEMs,
+  # KEM allowlist — PQC KEMs listed in TR-02102-1 (note FrodoKEM / Classic
+  # McEliece, which fips-only and cnsa-2.0 deny; BSI advises against Classic
+  # McEliece for new developments since 2026-10-01), the combined hybrid KEMs,
   # and classical ECDH/X25519 as the hybrid partner.
   - type: algorithm_allowlist
     ops: ["CreateKeyPair:KeyAgreement"]
