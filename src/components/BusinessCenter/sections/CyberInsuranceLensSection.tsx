@@ -320,17 +320,33 @@ export function CyberInsuranceLensSection() {
                   )
                 })}
               </div>
+              {/* CHANGED 2026-10-16 (GRC journey audit): this used to cite a "Lloyd's
+                  Y5258 quantum exclusion clause" at a dead link. Y5258 (2019) is the
+                  affirm-or-exclude cyber cover rule; no quantum-specific exclusion was
+                  found, so every cell is now Ambiguous and the note names the two
+                  bulletins that actually bear on it. */}
               <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
-                Based on{' '}
+                No insurer has published a quantum-specific exclusion we could find, so each
+                scenario turns on general cyber wording: Lloyd&apos;s{' '}
                 <a
-                  href="https://assets.lloyds.com/assets/pdf-market-bulletin-y5258/1/pdf-market-bulletin-y5258.pdf"
+                  href="https://assets.lloyds.com/assets/y5258-providing-clarity-for-lloyd-s-customers-on-coverage-for-cyber-exposures/1/Y5258%20-%20Providing%20clarity%20for%20Lloyd%E2%80%99s%20customers%20on%20coverage%20for%20cyber%20exposures.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  Lloyd's Y5258 quantum exclusion clause
-                </a>
-                . Actual coverage depends on specific policy wording.
+                  Y5258
+                </a>{' '}
+                (policies must affirm or exclude cyber cover) and{' '}
+                <a
+                  href="https://assets.lloyds.com/media/e9a4058c-4c25-48d6-99d3-0c466987e099/Y5381%20Market%20Bulletin%20-%20Cyber-attack%20exclusions.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Y5381
+                </a>{' '}
+                (state-backed cyber-attack exclusions). Actual coverage depends on your policy
+                wording — ask your broker.
               </p>
             </div>
 

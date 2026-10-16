@@ -93,6 +93,7 @@ const Step1WhyAndCascade: React.FC = () => (
           Every KRI carries a threshold that triggers a <em>specific</em> action; an indicator with
           no trigger is a chart, not a control.
         </p>
+        <IllustrativeTemplate />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {LEVEL_ORDER.map((level) => {
             const meta = KRI_LEVELS[level]
@@ -151,6 +152,7 @@ const Step2AppetiteAndHorizon: React.FC = () => (
         <div className="text-xs font-bold text-foreground">
           Operational tolerances (program language)
         </div>
+        <IllustrativeTemplate />
         <div className="space-y-2">
           {RISK_TOLERANCES.map((t) => (
             <div key={t.id} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -256,6 +258,7 @@ const Step3HandoffAndVendors: React.FC = () => (
           An organization can migrate its own cryptography flawlessly and still be exposed through
           its vendors. GRC tiers third parties by how their readiness affects the migration.
         </p>
+        <IllustrativeTemplate />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {VENDOR_TIERS.map((v) => (
             <div
@@ -274,11 +277,12 @@ const Step3HandoffAndVendors: React.FC = () => (
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          For Tier 1 vendors, require a machine-readable{' '}
-          <InlineTooltip term="CBOM">CBOM</InlineTooltip> (CycloneDX 1.6+). A vendor who cannot
-          produce one has a level of cryptographic visibility that should itself concern the
-          organization. Maintain a documented substitution assessment for each — concentration on a
-          single HSM vendor, CA, or crypto library is its own risk.
+          For Tier 1 vendors, consider making a machine-readable{' '}
+          <InlineTooltip term="CBOM">CBOM</InlineTooltip> (for example CycloneDX 1.6+) a procurement
+          requirement — a control you choose, not an external mandate. A vendor who cannot produce
+          one has a level of cryptographic visibility that should itself concern the organization.
+          Maintain a documented substitution assessment for each — concentration on a single HSM
+          vendor, CA, or crypto library is its own risk.
         </p>
       </div>
     </section>
@@ -305,6 +309,7 @@ const Step4AssuranceAndCrisis: React.FC = () => (
           SteerCo minutes, the board-approved risk-appetite statement, Regulatory Horizon Reports,
           vendor records, and the exception register).
         </p>
+        <IllustrativeTemplate />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {AUDIT_TIMELINE.map((m) => (
             <div key={m.when} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -315,11 +320,12 @@ const Step4AssuranceAndCrisis: React.FC = () => (
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <p className="text-xs text-foreground/90">
-            <strong>Insurance.</strong> Cyber underwriters now ask about cryptographic inventories,
-            migration plans, and crypto-agility at renewal. GRC should ensure the program&apos;s
-            documentation is presentable to underwriters: a documented, governed, measured program
-            is a demonstrably better risk than a vague intention to &quot;migrate when standards are
-            ready,&quot; and may avert higher premiums or explicit quantum exclusions.
+            <strong>Insurance.</strong> Ask your broker whether your insurer&apos;s renewal
+            questionnaire covers cryptographic inventories, migration plans or crypto-agility, and
+            how the policy&apos;s cyber wording and any state-backed attack exclusion would treat a
+            quantum-enabled attack. Keep the program&apos;s documentation presentable to
+            underwriters either way: a documented, governed, measured program is easier to explain
+            at renewal than an intention to &quot;migrate when standards are ready.&quot;
           </p>
         </div>
       </div>
@@ -433,6 +439,18 @@ const Step5ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
 }
+
+/**
+ * Every threshold, tier and cadence on this page is a worked example of a
+ * policy, not an external requirement (GRC journey audit, 15 Oct 2026). The
+ * label sits above each set of cards so it is visible at the point of use, not
+ * only in a closing paragraph.
+ */
+const IllustrativeTemplate: React.FC = () => (
+  <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+    Illustrative policy template — your organization sets these values, no regulation does
+  </p>
+)
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
