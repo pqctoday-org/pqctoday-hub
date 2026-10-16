@@ -42,7 +42,11 @@ describe('Crypto Lab Workbench', () => {
   it('renders the Overview with the brand, tool count and four full-playground cards', () => {
     renderWorkbench()
     expect(screen.getByText('Crypto Lab')).toBeInTheDocument()
-    expect(screen.getByText(`${GRID_COUNT} tools · runs in-browser`)).toBeInTheDocument()
+    const docker = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
+    // Docker sandbox scenarios are in the grid but are not counted as in-browser.
+    expect(
+      screen.getByText(`${GRID_COUNT - docker} in-browser tools · ${docker} Docker scenarios`)
+    ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
     ).toBeInTheDocument()

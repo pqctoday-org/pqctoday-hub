@@ -2260,7 +2260,7 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
   const essentialsH = Math.floor(persona.essentialsMinutes / 60)
   const essentialsM = persona.essentialsMinutes % 60
   const essentialsPhrase =
-    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM}`
+    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM} minutes`
 
   const totalQuarters = Math.round((persona.estimatedMinutes / 60) * 4)
   const fullWhole = Math.floor(totalQuarters / 4)
@@ -2274,7 +2274,8 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
           ? '¾'
           : ''
 
-  return `${essentialsPhrase}, not ${fullWhole}${fractionGlyph}`
+  // Both figures carry their unit ("6 hours 20, not 39¾" read as a riddle).
+  return `${essentialsPhrase} of essentials, not the full ${fullWhole}${fractionGlyph} hours`
 }
 
 /**

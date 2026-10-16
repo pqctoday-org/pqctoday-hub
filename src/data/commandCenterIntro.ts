@@ -122,8 +122,43 @@ const DEVELOPER_INTRO: CommandCenterIntro = {
   ],
 }
 
+// The Security Architect's set: the four questions a design review asks, each
+// mapped to an existing tool. The architecture pack above the intro collects
+// the answers into one document.
+const ARCHITECT_INTRO: CommandCenterIntro = {
+  lede: 'An architecture review asks four questions: what depends on what, which transition mode applies where, who holds which key, and whether the design works. The architecture pack above collects your answers into one document.',
+  showGuidedOverview: false,
+  questions: [
+    {
+      q: 'What depends on what?',
+      desc: 'Record the algorithms, libraries, keys and certificates in use as a CycloneDX CBOM.',
+      to: '/business/tools/crypto-cbom-builder',
+      cta: 'CBOM builder',
+    },
+    {
+      q: 'Which transition mode, where?',
+      desc: 'Choose classical, hybrid or pure PQC per system and protocol.',
+      to: '/business/tools/hybrid-transition-planner',
+      cta: 'Hybrid transition planner',
+    },
+    {
+      q: 'Who holds which key?',
+      desc: 'Map key custody and operations across cloud and on-premises services.',
+      to: '/business/tools/cloud-responsibility-matrix',
+      cta: 'Cloud responsibility matrix',
+    },
+    {
+      q: 'Does the rekey work?',
+      desc: 'Change a policy and watch the KMIP engine replace a key behind the same name.',
+      to: '/playground/cacp?tab=migration',
+      cta: 'KMIP quick run',
+    },
+  ],
+}
+
 export function commandCenterIntroFor(persona: PersonaId | null): CommandCenterIntro {
   if (persona === 'grc') return GRC_INTRO
   if (persona === 'developer') return DEVELOPER_INTRO
+  if (persona === 'architect') return ARCHITECT_INTRO
   return BOARD_INTRO
 }

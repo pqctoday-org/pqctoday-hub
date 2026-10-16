@@ -157,10 +157,20 @@ function WelcomeState() {
             <BookOpen size={16} className="mr-2" />
             Learn the crypto APIs
           </Button>
-        ) : (
+        ) : selectedPersona === 'architect' ? (
+          <Button variant="outline" onClick={() => navigate('/learn/arch-quantum-impact')}>
+            <BookOpen size={16} className="mr-2" />
+            Start the architecture path
+          </Button>
+        ) : !selectedPersona || selectedPersona === 'executive' ? (
           <Button variant="outline" onClick={() => navigate('/learn/exec-quantum-impact')}>
             <BookOpen size={16} className="mr-2" />
             Start Executive Learning
+          </Button>
+        ) : (
+          <Button variant="outline" onClick={() => navigate('/learn')}>
+            <BookOpen size={16} className="mr-2" />
+            Open your learning path
           </Button>
         )}
       </div>
