@@ -126,3 +126,6 @@ public/wasm/entropy90b/
 
 # Published evidence artifacts are hash-pinned (src/data/fhe/fhe-evidence.v1.json): byte-exact, never reformatted
 public/data/fhe-evidence/
+
+# Engine licence notices, committed exactly as published in the engine release
+public/licenses/engines/

@@ -6,7 +6,7 @@
  * Two parallel models exported here:
  *
  *   1. CSWP39_SECTIONS — authoritative 4-section structure that matches the
- *      actual NIST CSWP.39 (Dec 2025) document outline:
+ *      actual NIST CSWP.39-upd1 (19 Dec 2025, updated 29 Jun 2026) document outline:
  *        §3 Crypto Agility for Security Protocols
  *        §4 Crypto Agility in System Implementations
  *        §5 Strategic Plan for Managing Crypto Risks
@@ -28,7 +28,10 @@ export interface CSWP39SourceMetadata {
   documentLabel: string
   documentTitle: string
   documentVersion: string
+  /** Original publication date of this edition (ISO). */
   publicationDate: string
+  /** Date of the latest in-place update to this edition (ISO), when NIST has issued one. */
+  updatedDate?: string
   sourceUrl: string
   localPdfPath: string
   dataExtractedAt: string
@@ -37,9 +40,13 @@ export interface CSWP39SourceMetadata {
 
 export const CSWP39_SOURCE_METADATA: CSWP39SourceMetadata = {
   documentLabel: 'NIST CSWP.39-upd1',
-  documentTitle: 'Considerations for Achieving Cryptographic Agility',
-  documentVersion: 'Final (upd1)',
+  documentTitle: 'Considerations for Achieving Crypto Agility: Strategies and Practices',
+  // NIST CSWP 39upd1 (DOI 10.6028/NIST.CSWP.39-upd1) carries "December 19, 2025 (includes
+  // updates as of 06-29-2026)". The original CSWP 39 was withdrawn on 29 June 2026 and is
+  // superseded in its entirety by 39upd1.
+  documentVersion: 'Final (upd1), updated 2026-06-29',
   publicationDate: '2025-12-19',
+  updatedDate: '2026-06-29',
   sourceUrl: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf',
   localPdfPath: '/library/NIST_CSWP_39.pdf',
   dataExtractedAt: '2026-07-19',
@@ -367,7 +374,7 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
 // ────────────────────────────────────────────────────────────────────────────
 // CSWP39_SECTIONS — authoritative document outline
 //
-// Mirrors the actual NIST CSWP.39 (2025-12-19) section structure so the
+// Mirrors the actual NIST CSWP.39-upd1 (2025-12-19, updated 2026-06-29) section structure so the
 // Command Center can surface §3 / §4 / §5 / §6 explicitly for auditors who
 // expect to see them by section number, separate from the synthesized 5-step
 // migration model in CSWP39_STEPS.

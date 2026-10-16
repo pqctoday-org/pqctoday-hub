@@ -35,9 +35,9 @@ const EXERCISES = [
     id: 'ex-4',
     title: 'Scenario: Cross-Border Data Center Operator',
     prompt:
-      'You operate data centers in Germany, France, and the UK. GDPR obligations apply alongside BSI TR-02102 and ANSSI hybrid PQC recommendations. Germany requires BSI-certified modules for classified workloads; France recommends hybrid schemes only. Identify where requirements align and where they conflict. What is your unified migration strategy?',
+      "You operate data centers in Germany, France, and the UK. GDPR obligations apply alongside BSI TR-02102 and ANSSI hybrid PQC recommendations. Germany's BSI recommends PQC only in hybrid use (TR-02102-1); France's ANSSI recommends hybrid generally and makes it mandatory inside its regulated perimeter. Identify where requirements align and where they conflict. What is your unified migration strategy?",
     workshopHint:
-      'Use the Regulatory Gap Assessment (Step 4) with Germany, France, and UK selected. Note that BSI requires hybrid ML-KEM + X25519 for classified workloads while ANSSI currently recommends hybrids pending further analysis — these are compatible approaches.',
+      'Use the Regulatory Gap Assessment (Step 4) with Germany, France, and UK selected. Note that both authorities point to hybrid key establishment (BSI by recommendation, ANSSI by recommendation and, in its regulated perimeter, by obligation), so one hybrid design can satisfy both.',
   },
 ]
 

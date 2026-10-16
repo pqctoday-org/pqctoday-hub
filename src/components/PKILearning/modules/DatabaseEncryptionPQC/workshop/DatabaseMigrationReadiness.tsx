@@ -50,7 +50,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     category: 'technical',
     label: 'PQC-capable KMS available',
     description:
-      'Thales CipherTrust (roadmap), AWS KMS (ML-KEM preview), or Azure Managed HSM with PQC support provisioned and accessible from all database hosts.',
+      'Thales CipherTrust (roadmap), AWS KMS (ML-DSA signing keys and hybrid post-quantum TLS only; no ML-KEM KMS keys), or Azure Managed HSM with PQC support provisioned and accessible from all database hosts.',
     priority: 'critical',
   },
   {

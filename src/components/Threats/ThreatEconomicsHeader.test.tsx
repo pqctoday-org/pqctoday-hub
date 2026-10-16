@@ -15,6 +15,14 @@ const DEFAULT_Z = getCrqcForecast().planningYear
 const CURRENT_YEAR = new Date().getFullYear()
 
 describe('ThreatEconomicsHeader — Mosca two-clock calculator', () => {
+  it('labels the default result as example values until an input changes', () => {
+    render(<ThreatEconomicsHeader />)
+    fireEvent.click(screen.getByRole('button', { name: /Mosca calculator/i }))
+    expect(screen.getByTestId('threat-economics-example-hndl')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Credential validity/i), { target: { value: '2' } })
+    expect(screen.queryByTestId('threat-economics-example-hndl')).toBeNull()
+  })
+
   it('frames both attacker models and runs a separate clock for each', () => {
     render(<ThreatEconomicsHeader />)
     // both framing cards are always visible

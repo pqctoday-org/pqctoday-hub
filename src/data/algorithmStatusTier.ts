@@ -18,7 +18,7 @@ export type AlgorithmStatusTier =
   | 'fips-draft' // NIST FIPS in development, not yet final (FN-DSA/FIPS 206 announced — no public draft published yet; HQC pre-FIPS-number)
   | 'sp-draft' // NIST Special Publication in draft (e.g. SP 800-230 parameter sets)
   | 'ietf-draft' // an Internet-Draft, not yet an RFC
-  | 'round2-candidate' // NIST Additional Signatures Round 2 (MAYO, CROSS, UOV, SNOVA, etc.)
+  | 'round2-candidate' // NIST additional signatures candidate, Round 3 since 14 May 2026 (MAYO, UOV, SNOVA, SQIsign, FAEST, ...); id kept for compatibility
   | 'round4-not-selected' // concluded and not selected (BIKE)
   | 'eliminated' // publicly broken, withdrawn, or a lost national competition (LAC)
   | 'regional' // final within its own jurisdiction (KpqC/BSI winners), not FIPS-Certified

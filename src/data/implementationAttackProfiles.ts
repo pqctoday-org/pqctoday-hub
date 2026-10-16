@@ -183,14 +183,14 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'FN-DSA / Falcon',
     family: 'Lattice-based Signature (NTRU)',
     summary:
-      'FN-DSA is the most side-channel-vulnerable NIST PQC standard due to its use of floating-point Gaussian sampling over the reals. Constant-time implementation is notoriously difficult. Key material leaks through floating-point register timing and power traces. Multiple independent research groups have demonstrated practical attacks.',
+      'FN-DSA (Falcon) is NIST-selected but not yet a standard: FIPS 206 is still in development. Its key generation and signing use floating-point Gaussian sampling, which makes it the most delicate of the selected signature schemes to implement. Constant-time software implementations exist, but devices without a floating-point unit, or with a variable-time one, are a known limitation, and a masked implementation against power analysis is still an open problem (Falcon v1.2 specification, §1).',
     attacks: [
       {
         category: 'side-channel',
         status: 'yes',
         severity: 'critical',
         detail:
-          'Floating-point Gaussian sampler leaks key material via power/EM traces; constant-time implementation extremely difficult',
+          'Floating-point Gaussian sampling: timing leaks on variable-time floating-point units; masking against power/EM analysis is still an open problem',
       },
       {
         category: 'fault-injection',
@@ -202,7 +202,8 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         category: 'rng-failure',
         status: 'yes',
         severity: 'critical',
-        detail: 'Nonce reuse in signing enables full key recovery',
+        detail:
+          'Signing prepends a fresh random 320-bit salt so the same hash is never signed twice; two signatures of one hash break the security proof (Falcon v1.2 §2.2.2). A failing RNG that repeats salts removes that protection.',
       },
       {
         category: 'secret-handling',
@@ -228,10 +229,10 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     ],
     references: [
       {
-        referenceId: 'PROACT-2025-SCA-Lattice-PQC',
-        title: 'Side-Channel and Fault Attacks on ML-KEM and ML-DSA (PROACT 2025)',
-        url: 'https://proact-school.cs.ru.nl/assets/uploads/slides/PROACT2025.pdf',
-        localFile: 'library/PROACT-2025-SCA-Lattice-PQC.pdf',
+        referenceId: 'Falcon-Spec-v12',
+        title: 'Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU, v1.2',
+        url: 'https://falcon-sign.info/falcon.pdf',
+        localFile: 'library/Falcon-Spec-v12.pdf',
       },
     ],
   },
@@ -425,25 +426,28 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'SLH-DSA / SPHINCS+',
     family: 'Hash-based Signature',
     summary:
-      'Rowhammer-based universal signature forgery demonstrated. DRAM bit flips during signature generation produce valid signatures without knowledge of the private key. Rowhammer is persistent and remotely triggerable. Hash-based operations are inherently constant-time, providing natural side-channel resistance.',
+      'Rowhammer-based universal signature forgery demonstrated. DRAM bit flips during signature generation produce valid signatures without knowledge of the private key. Rowhammer is persistent and remotely triggerable. Hash-based schemes are not immune to physical attacks: FIPS 205 §3.2 tells implementers to protect SLH-DSA against side-channel and fault attacks, citing published power-analysis and fault attacks on SPHINCS.',
     attacks: [
       {
         category: 'side-channel',
-        status: 'no',
-        detail: 'Hash operations are inherently constant-time; no known SCA vulnerabilities',
+        status: 'yes',
+        severity: 'medium',
+        detail:
+          'Differential power analysis of SPHINCS and XMSS is published; FIPS 205 §3.2 requires protecting implementations against side-channel attacks. The default hedged variant adds fresh randomness to signing for this reason.',
       },
       {
         category: 'fault-injection',
         status: 'yes',
         severity: 'critical',
         detail:
-          'Rowhammer bit flips forge signatures without the private key; remotely triggerable',
+          'Rowhammer bit flips forge signatures without the private key; remotely triggerable. Earlier fault attacks on SPHINCS are cited in FIPS 205 §3.2.',
       },
       {
         category: 'rng-failure',
         status: 'yes',
         severity: 'critical',
-        detail: 'Weak PRNG compromises semantic security',
+        detail:
+          "A weak RNG at key generation exposes the private seeds and breaks every signature; signing itself can run deterministically, so RNG failure there loses the hedged variant's side-channel protection rather than the key",
       },
       {
         category: 'secret-handling',
@@ -470,6 +474,12 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         url: 'https://doi.org/10.48550/arXiv.2509.13048',
         localFile: 'library/ArXiv-2025-SLH-DSA-Rowhammer.html',
       },
+      {
+        referenceId: 'NIST-FIPS-205',
+        title: 'FIPS 205: Stateless Hash-Based Digital Signature Standard (SLH-DSA), §3.2',
+        url: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
+        localFile: 'library/FIPS_205.pdf',
+      },
     ],
   },
   {
@@ -480,10 +490,18 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     attacks: [
       {
         category: 'side-channel',
-        status: 'no',
-        detail: 'Hash operations are inherently constant-time; no known SCA vulnerabilities',
+        status: 'yes',
+        severity: 'medium',
+        detail:
+          'Differential power analysis of XMSS is published (cited in FIPS 205 §3.2); hashing secret one-time keys is not automatically leak-free on real hardware',
       },
-      { category: 'fault-injection', status: 'unknown' },
+      {
+        category: 'fault-injection',
+        status: 'yes',
+        severity: 'high',
+        detail:
+          'Re-signing the same tree root lets a fault produce a usable forgery; SP 800-208 §8.1 requires each root to be signed only once',
+      },
       {
         category: 'rng-failure',
         status: 'yes',
@@ -495,7 +513,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'critical',
         detail:
-          'State reuse produces identical one-time signatures, enabling full key recovery. State must be crash-safe and persistent.',
+          'Reusing a one-time key to sign two different messages lets an attacker forge signatures on arbitrary messages (SP 800-208 §1.2). State must be crash-safe and persistent.',
       },
       {
         category: 'api-misuse',
@@ -524,7 +542,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'Hybrid KEM (X25519+ML-KEM)',
     family: 'Hybrid KEM (PQC + Classical)',
     summary:
-      'Hybrid KEMs like X25519MLKEM768 and SecP256r1MLKEM768 inherit the ML-KEM implementation attack surface for the PQC component. The classical ECDH component (X25519 or ECDH P-256/P-384) adds its own constant-time requirements. Security is at least as strong as the stronger component.',
+      'Hybrid KEMs like X25519MLKEM768 and SecP256r1MLKEM768 inherit the ML-KEM implementation attack surface for the PQC component. The classical ECDH component (X25519 or ECDH P-256/P-384) adds its own constant-time requirements. A well-designed hybrid stays secure if at least one component is secure, but only when the shared secrets go through a sound key combiner (NIST SP 800-227 §4.6 lists the approved ones). That is a confidentiality property: it does not cancel an implementation flaw in either component.',
     attacks: [
       {
         category: 'side-channel',
@@ -557,7 +575,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
     ],
     countermeasures: [
-      'Use a standards-compliant combiner (RFC 9180 HPKE or TLS 1.3 hybrid draft)',
+      'Use the combiner the protocol specifies (for TLS 1.3, the ECDHE-MLKEM key-share draft feeds both secrets into the key schedule) or an approved key combiner from NIST SP 800-227 §4.6.2',
       'Ensure both components draw independent randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
       'Apply ML-KEM masking countermeasures to the PQC component',
       'Validate ECDH public keys (point-on-curve, cofactor check) before use',
@@ -568,6 +586,12 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         title: 'Nonce Reuse in Cryptography',
         url: 'https://www.emergentmind.com/topics/nonce-reuse',
         localFile: 'library/EmergentMind-Nonce-Reuse-Crypto.html',
+      },
+      {
+        referenceId: 'NIST-SP-800-227',
+        title: 'NIST SP 800-227: Recommendations for Key-Encapsulation Mechanisms, §4.6',
+        url: 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf',
+        localFile: 'library/NIST_SP_800-227.pdf',
       },
     ],
   },
@@ -595,7 +619,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'critical',
         detail:
-          'ECDSA nonce reuse = full classical key recovery. ML-DSA nonce reuse = PQC key recovery. Both must use deterministic nonce generation (RFC 6979 / hedged).',
+          'ECDSA nonce reuse = full classical key recovery; use RFC 6979 deterministic or hedged nonces. ML-DSA takes no caller-supplied nonce: FIPS 204 §3.4 defines a hedged (default) and a deterministic signing variant, and the hedged one adds fresh randomness to resist side-channel and fault attacks.',
       },
       {
         category: 'secret-handling',
@@ -630,6 +654,12 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         title: 'Cryptographic Failures: 2025 OWASP Top 10 Risk',
         url: 'https://www.invicti.com/blog/web-security/cryptographic-failures',
         localFile: 'library/Invicti-OWASP-CryptoFailures-2025.html',
+      },
+      {
+        referenceId: 'NIST-FIPS-204',
+        title: 'FIPS 204: Module-Lattice-Based Digital Signature Standard (ML-DSA), §3.4',
+        url: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
+        localFile: 'library/FIPS_204.pdf',
       },
     ],
   },

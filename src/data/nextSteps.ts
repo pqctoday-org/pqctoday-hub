@@ -834,9 +834,9 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     why: 'Every Playground tool links to the Learn module it practises.',
   },
   '/playground/cacp': {
-    to: '/playground/cacp-kmip',
-    label: 'Run the KMIP control plane',
-    why: 'The control-plane tool runs KMIP 3.0 operations against a live key store, step by step.',
+    to: '/learn/kms-pqc',
+    label: 'Learn how a KMS manages PQC keys',
+    why: 'The KMS module explains the key hierarchy, rotation and provider choices behind the policy you just changed.',
   },
   '/playground/hsm': {
     to: '/learn/hsm-pqc',
@@ -971,34 +971,59 @@ function isToolRoute(route: string): boolean {
   )
 }
 
+/** The Library filtered to new and updated documents, newest first. */
+export const LIBRARY_RECENT_CHANGES_ROUTE = '/library?qv=new&sort=newest'
+
 /**
- * What Home leads a persona to, where it differs from the default funnel
- * (readiness assessment → report, "Start Your Journey", the belt ScoreCard).
- * One map read by the Home footer next step, the Home start CTA and the
- * ScoreCard, so a persona's Home cannot point two ways at once.
+ * Per-role exits for routed pages, consulted before NEXT_STEPS. The one place
+ * a persona changes where a page leads.
+ *
+ * Curious journey review (16 Oct 2026): a newcomer learning for themselves
+ * can't answer an organisation's assessment, so Home and Explore lead to
+ * Explore and the six-minute TLS handshake instead; the assessment stays one
+ * click away from Explore.
+ *
+ * Researcher (owner decision R1(a), 16 Oct 2026): the board promises a
+ * reference shelf with no funnel, so Home leads to what changed in the
+ * standards rather than to the readiness assessment.
+ */
+export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextStep>>> = {
+  curious: {
+    '/': {
+      to: '/explore',
+      label: 'Explore the topic in plain words',
+      why: 'Every area of the site as a plain question, with a first stop and how long it takes.',
+    },
+    '/explore': {
+      to: '/playground/tls-simulator',
+      label: 'Watch a real post-quantum handshake',
+      why: 'About six minutes: a real TLS 1.3 connection in your browser, using the hybrid X25519MLKEM768 key exchange. Assessing an organisation instead? The readiness assessment is in the menu.',
+    },
+  },
+  researcher: {
+    '/': {
+      to: LIBRARY_RECENT_CHANGES_ROUTE,
+      label: 'See the recent standards changes',
+      why: 'The Library lists the documents that are new or were revised, newest first, each with its source and date.',
+    },
+  },
+}
+
+/**
+ * The rest of what Home does for a persona, where it differs from the default
+ * (the "Start Your Journey" CTA and the belt ScoreCard). The Home footer next
+ * step itself comes from PERSONA_NEXT_STEPS['/'], so the start CTA and the
+ * footer are declared side by side for each persona that has both.
  */
 export interface PersonaHomeFunnel {
-  /** Replaces the '/' entry of NEXT_STEPS for this persona. */
-  nextStep: NextStep
   /** Replaces the "Start Your Journey" CTA under the board. */
   startCta: { label: string; sub: string; to: string }
   /** The learning path is offered, not pushed: the ScoreCard opens collapsed. */
   learningPathOptional: boolean
 }
 
-/** The Library filtered to new and updated documents, newest first. */
-export const LIBRARY_RECENT_CHANGES_ROUTE = '/library?qv=new&sort=newest'
-
 export const PERSONA_HOME_FUNNEL: Partial<Record<PersonaId, PersonaHomeFunnel>> = {
-  // Researcher (owner decision R1(a), 16 Oct 2026): the board promises a
-  // reference shelf with no funnel, so Home leads to what changed in the
-  // standards rather than to the readiness assessment.
   researcher: {
-    nextStep: {
-      to: LIBRARY_RECENT_CHANGES_ROUTE,
-      label: 'See the recent standards changes',
-      why: 'The Library lists the documents that are new or were revised, newest first, each with its source and date.',
-    },
     startCta: {
       label: 'Browse the evidence',
       sub: 'Recent standards changes in the Library',
@@ -1013,11 +1038,9 @@ export function homeFunnelFor(persona: PersonaId | null): PersonaHomeFunnel | un
   return persona ? PERSONA_HOME_FUNNEL[persona] : undefined
 }
 
-export function nextStepFor(route: string, persona: PersonaId | null = null): NextStep | undefined {
-  if (route === '/') {
-    const override = homeFunnelFor(persona)
-    if (override) return override.nextStep
-  }
+export function nextStepFor(route: string, persona?: PersonaId | null): NextStep | undefined {
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union; route is a literal from the calling component
+  const override = persona ? PERSONA_NEXT_STEPS[persona]?.[route] : undefined
   // eslint-disable-next-line security/detect-object-injection -- route is a literal from the calling component, not user input
-  return NEXT_STEPS[route]
+  return override ?? NEXT_STEPS[route]
 }

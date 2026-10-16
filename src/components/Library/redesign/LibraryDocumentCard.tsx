@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * LibraryDocumentCard — the redesign's medium-density card. Shows the essentials
- * (refId + status, title, lifecycle + ≤2 categories + urgency, org · date, trust
- * + source, bookmark + Open) and opens the detail drawer on click. The dense data
+ * (refId + status, title, ≤2 categories + urgency, org · date, lifecycle chip |
+ * trust + source, bookmark + Open) and opens the detail drawer on click. The dense data
  * the live card carried (CSWP-39 grid, region chips, analysis) lives in the drawer.
  */
 import { Building2, Bookmark, ExternalLink, Layers } from 'lucide-react'
@@ -15,6 +15,7 @@ import {
   urgencyPillClass,
   trustInfo,
   formatLibDate,
+  publisherStatusText,
 } from './libraryPills'
 import { documentWeight } from '@/data/libraryDocumentWeight'
 
@@ -35,9 +36,9 @@ export function LibraryDocumentCard({
   const weight = documentWeight(item.referenceId)
   const cats = (item.categories ?? []).slice(0, 2)
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
-  // The lifecycle pill reflects the most-advanced edition across this record and
-  // its prior revisions (matches the live card), not just the current row.
-  const lifecycle = item.groupLifecycleLabel ?? item.lifecycleLabel
+  // The lifecycle pill is this row's own label; older revisions never raise it.
+  const lifecycle = item.lifecycleLabel
+  const statusText = publisherStatusText(item.documentStatus, lifecycle)
   const revisionCount = item.priorRevisions?.length ?? 0
 
   return (
@@ -111,13 +112,6 @@ export function LibraryDocumentCard({
       )}
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        <span
-          className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-            lifecycle
-          )}`}
-        >
-          {lifecycleLabel(lifecycle)}
-        </span>
         {cats.map((c) => (
           <span
             key={c}
@@ -168,13 +162,36 @@ export function LibraryDocumentCard({
         )}
       </div>
 
-      <div className="mt-auto flex items-center gap-2 border-t border-border pt-2.5">
+      {/* Two different questions, side by side and styled apart: how far along
+          the document is (lifecycle: a rounded, outlined chip) and how well this
+          catalog record is sourced (trust: a filled "Trust NN" tag). A Draft can
+          carry a high trust score; neither implies the other. */}
+      <div
+        data-testid="library-card-meta"
+        className="mt-auto flex min-w-0 items-center gap-2 border-t border-border pt-2.5"
+      >
+        <span
+          data-testid="library-card-lifecycle"
+          title={`Lifecycle: ${lifecycleLabel(lifecycle)}${
+            statusText ? ` (${statusText})` : ''
+          }. This is how far along the document is, not a trust rating.`}
+          className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
+            lifecycle
+          )}`}
+        >
+          {lifecycleLabel(lifecycle)}
+        </span>
+        <span aria-hidden="true" className="h-3.5 w-px shrink-0 bg-border" />
         {trust.score != null && (
-          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${trust.pillClass}`}>
+          <span
+            data-testid="library-card-trust"
+            title="Trust score: how well this catalog record is sourced and checked. It does not say how mature the document is."
+            className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${trust.pillClass}`}
+          >
             Trust {trust.score}
           </span>
         )}
-        <span className="text-[11px] text-muted-foreground">{trust.source}</span>
+        <span className="truncate text-[11px] text-muted-foreground">{trust.source}</span>
         <div className="ml-auto flex items-center gap-1">
           <Button
             type="button"

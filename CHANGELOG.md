@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.162.0] - 2026-10-16
+
+The Terms of Service now cover the website only, and say plainly that they add nothing to the source code licence. Flag images now come from a set with a known licence, and the browser engines come from a published engine release with their licence notices.
+
+### Changed
+
+- **Clearer Terms of Service** [view:/terms] [persona:grc] [persona:developer] [persona:curious]: the terms apply to the website, while your rights to the source code come only from its licence. The "You must not" lists are now plain disclaimers (not certified, not for production keys, not professional advice), and the export section is a notice about the law.
+- **Flags with a known licence** [view:/compliance] [persona:curious] [persona:grc]: country and organisation flags now come from the open flag-icons set (MIT), credited at /licenses/. G7, NATO and "international" are shown as simple labelled badges.
+- **Contact by email** [persona:curious] [persona:executive]: the welcome banner's contact link is now pqctoday@proton.me.
+- **Engines from a published release, with their notices** [view:/openssl] [persona:developer] [persona:ops]: all six browser engines are taken from the engines-2 release, and each ships its full third-party licence notices. OpenSSL Studio uses the engine built in the public HSM repository; the other engines are unchanged.
+
+### Data
+
+- **Reviewer name on review records** [persona:grc] [persona:researcher]: review records name the PQC Today account as reviewer.
+- **One Library title correction recorded** [view:/library] [persona:researcher]: the change record for the corrected IACR ePrint 2010/560 title, shipped in 4.161.0, is now marked as shipped.
+
 ## [4.161.0] - 2026-10-15
 
 The site now links the exact source code of the version you are viewing and lists the licence of every third-party package and engine it ships. The repository no longer redistributes full copies of third-party documents, and one Library title is corrected.

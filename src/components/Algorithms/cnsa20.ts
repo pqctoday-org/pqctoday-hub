@@ -255,7 +255,7 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
       return {
         body: 'BSI / ANSSI',
         stance: 'require',
-        note: 'German BSI (TR-02102) and French ANSSI require hybrid (PQC + classical) during the transition — pure PQC alone is not yet accepted.',
+        note: 'German BSI (TR-02102-1) currently recommends PQC only in hybrid use; French ANSSI recommends hybrid and makes it mandatory in its regulated perimeter (hash-based signatures excepted).',
       }
     case 'NIST':
       return {

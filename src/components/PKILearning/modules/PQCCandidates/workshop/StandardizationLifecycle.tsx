@@ -26,22 +26,22 @@ const ROUNDS = [
     description:
       '14 schemes advance per NIST IR 8528 (Oct 2024). New cryptanalysis emerges (Ran wedge, Furue–Ikematsu). Teams revise parameters. Candidates that cannot recover are dropped.',
     rangeStart: '2024-10-24',
-    rangeEnd: '2026-01-01',
+    rangeEnd: '2026-05-14',
   },
   {
     id: 'round-3',
     label: 'Round 3 — Down-selection',
     description:
-      'Nine schemes advance: FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK. Final cryptanalysis. NIST drafts FIPS profiles for the most-mature winners.',
-    rangeStart: '2026-01-01',
-    rangeEnd: '2027-06-01',
+      'Nine schemes advance (14 May 2026): FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK. HAWK is withdrawn in July 2026, leaving eight. NIST expects this round to last approximately two years.',
+    rangeStart: '2026-05-14',
+    rangeEnd: '2028-05-14',
   },
   {
     id: 'standardisation',
     label: 'Standardisation — Draft FIPS',
     description:
-      'Selected schemes move to draft FIPS publications. Public comment period. Errata cycle. ISO/IEC SC 27 begins adoption. KpqC and CACR finalise their parallel selections.',
-    rangeStart: '2027-06-01',
+      'Selected schemes move to draft FIPS publications, on dates NIST has not set. Public comment period. Errata cycle. ISO/IEC SC 27 begins adoption. KpqC and CACR finalise their parallel selections.',
+    rangeStart: '2028-05-14',
     rangeEnd: '2029-12-31',
   },
 ]

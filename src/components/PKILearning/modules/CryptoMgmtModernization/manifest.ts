@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-mgmt-modernization',
-  contentVersion: 11,
+  contentVersion: 13,
   lm_id: 'LM-052',
   title: 'Cryptographic Management Modernization',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '55 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p1',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 4,
   learnSections: [
     { id: 'why-now', label: 'Why Modernize Crypto Now' },

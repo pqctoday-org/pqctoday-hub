@@ -126,7 +126,7 @@ export const EU_EXECUTIVE_INTENTS: Intent[] = [
   {
     label: 'ANSSI (France)',
     description:
-      'ML-KEM-768 and ML-DSA-65 require hybridization with a classical algorithm — no standalone PQC yet; SLH-DSA is usable alone; FrodoKEM-976 is the hybrid pick',
+      'ANSSI recommends hybridizing ML-KEM-768 and ML-DSA-65 with a classical algorithm (mandatory in its regulated perimeter); SLH-DSA is usable alone; FrodoKEM-976 is the hybrid pick',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',

@@ -26,7 +26,6 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
-import { LIBRARY_RECENT_CHANGES_ROUTE } from '@/data/nextSteps'
 import type { PersonaId } from '@/data/personaIds'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import {
@@ -60,155 +59,47 @@ import {
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
+import { ArchitecturePackPanel } from './ArchitecturePackPanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 
-// The four board-level questions every PQC program has to answer, each mapped to
-// the surface that answers it. Turns an empty state into a "what a program looks
-// like" primer instead of three bare buttons.
-type WelcomeQuestion = { q: string; desc: string; to: string; cta: string }
-
-const BOARD_QUESTIONS: WelcomeQuestion[] = [
-  {
-    q: "What's at risk?",
-    desc: 'Size your quantum exposure by system and data sensitivity.',
-    to: '/assess',
-    cta: 'Run risk assessment',
-  },
-  {
-    q: "What's the deadline?",
-    desc: 'See the mandates and dates that apply to your sector and region.',
-    to: '/compliance?tab=compliance',
-    cta: 'Compliance deadlines',
-  },
-  {
-    q: 'What will it cost?',
-    desc: 'Model the budget, ROI, and the cost of waiting.',
-    to: '/business/tools/roi-calculator',
-    cta: 'ROI calculator',
-  },
-  {
-    q: 'Who owns it?',
-    desc: 'Assign accountability and set the governance model.',
-    to: '/business/tools/raci-builder',
-    cta: 'RACI builder',
-  },
-]
-
-// The Developer / Engineer equivalent: the four engineering questions a
-// migration has to answer, each mapped to an existing tool. Board questions
-// (ROI, RACI) are not a developer's first step.
-const ENGINEERING_QUESTIONS: WelcomeQuestion[] = [
-  {
-    q: 'Where is the vulnerable crypto?',
-    desc: 'Find the call sites, APIs and providers your code depends on.',
-    to: '/business/tools/crypto-api-refactor-audit',
-    cta: 'Crypto API refactor audit',
-  },
-  {
-    q: 'What does the inventory look like?',
-    desc: 'Record algorithms, libraries and keys as a CycloneDX CBOM.',
-    to: '/business/tools/crypto-cbom-builder',
-    cta: 'CBOM builder',
-  },
-  {
-    q: 'Does it work on my stack?',
-    desc: 'Try ML-KEM, ML-DSA and SLH-DSA with real OpenSSL commands.',
-    to: '/openssl',
-    cta: 'OpenSSL Studio',
-  },
-  {
-    q: 'Does the handshake still work?',
-    desc: 'Run a real TLS 1.3 handshake with hybrid and PQC groups.',
-    to: '/playground/tls-simulator',
-    cta: 'TLS 1.3 simulator',
-  },
-]
-
-// The Researcher / Academic equivalent: the four questions a researcher
-// checks first, each mapped to the existing page or tool that answers it. A
-// researcher is not running a program, so neither the board questions nor
-// the executive overview apply.
-const RESEARCHER_QUESTIONS: WelcomeQuestion[] = [
-  {
-    q: 'What changed in the standards?',
-    desc: 'New and revised documents in the Library, newest first, each with its source and date.',
-    to: LIBRARY_RECENT_CHANGES_ROUTE,
-    cta: 'Recent standards changes',
-  },
-  {
-    q: 'Can I reproduce it?',
-    desc: 'Run the SP 800-90A HMAC_DRBG yourself and check it against pinned NIST ACVP vectors.',
-    to: '/playground/drbg-demo',
-    cta: 'SP 800-90A DRBG',
-  },
-  {
-    q: 'How sure is the threat timeline?',
-    desc: 'Quantum threats by industry, with the cryptography at risk and the migration window behind the dates.',
-    to: '/threats',
-    cta: 'Threats',
-  },
-  {
-    q: 'Who holds the patents?',
-    desc: 'Patent filings on post-quantum schemes: who filed, where, and on which algorithms.',
-    to: '/patents',
-    cta: 'Patents',
-  },
-]
-
-interface WelcomeCopy {
-  questions: WelcomeQuestion[]
-  intro: string
-  /** Show the executive guided-overview simulation link. */
-  showOverview: boolean
-  /** How many of the role's sequence to foreground. */
-  topToolCount: number
-  learnCta: { label: string; to: string }
+// What a persona's Command Center learn button opens, and how many of its
+// recommended sequence the welcome state foregrounds. The intro (lede and the
+// four questions) comes from commandCenterIntroFor.
+function learnCtaFor(persona: PersonaId | null): { label: string; to: string } {
+  switch (persona) {
+    case 'grc':
+      return { label: 'Start GRC Learning', to: '/learn/pqc-grc' }
+    case 'developer':
+      return { label: 'Learn the crypto APIs', to: '/learn/crypto-dev-apis' }
+    case 'architect':
+      return { label: 'Start the architecture path', to: '/learn/arch-quantum-impact' }
+    case 'researcher':
+      return { label: 'Read the revision log', to: '/revisions' }
+    case null:
+    case 'executive':
+      return { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' }
+    default:
+      return { label: 'Open your learning path', to: '/learn' }
+  }
 }
 
-function welcomeCopyFor(persona: PersonaId | null): WelcomeCopy {
-  switch (persona) {
-    case 'developer':
-      return {
-        questions: ENGINEERING_QUESTIONS,
-        intro:
-          'Changing the cryptography in a codebase comes down to four engineering questions. Start with whichever you need first.',
-        showOverview: false,
-        topToolCount: 4,
-        learnCta: { label: 'Learn the crypto APIs', to: '/learn/crypto-dev-apis' },
-      }
-    case 'researcher':
-      return {
-        questions: RESEARCHER_QUESTIONS,
-        intro:
-          'Checking a post-quantum claim comes down to four questions: what changed, whether it reproduces, how firm the threat estimate is, and who holds the patents. Start with whichever you need first.',
-        showOverview: false,
-        topToolCount: 2,
-        learnCta: { label: 'Read the revision log', to: '/revisions' },
-      }
-    default:
-      return {
-        questions: BOARD_QUESTIONS,
-        intro:
-          'A post-quantum migration is a program, and every program answers the same four board-level questions. Start with whichever you need first.',
-        showOverview: true,
-        topToolCount: 3,
-        learnCta:
-          persona === 'grc'
-            ? { label: 'Start GRC Learning', to: '/learn/pqc-grc' }
-            : { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' },
-      }
-  }
+function topToolCountFor(persona: PersonaId | null): number {
+  if (persona === 'developer') return 4
+  if (persona === 'researcher') return 2
+  return 3
 }
 
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const copy = welcomeCopyFor(selectedPersona)
+  const intro = commandCenterIntroFor(selectedPersona)
+  const learnCta = learnCtaFor(selectedPersona)
   // Top N of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
   const topToolIds = getBusinessRoleSequence(selectedPersona)
-    .steps.slice(0, copy.topToolCount)
+    .steps.slice(0, topToolCountFor(selectedPersona))
     .map((s) => s.id)
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
@@ -221,8 +112,8 @@ function WelcomeState() {
         <h2 className="text-xl font-semibold text-foreground mb-2">
           Welcome to your PQC Command Center
         </h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{copy.intro}</p>
-        {copy.showOverview && (
+        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{intro.lede}</p>
+        {intro.showGuidedOverview && (
           <div className="mb-6">
             <Link to="/simulation?run=exec">
               <Button variant="gradient" size="sm" className="gap-1.5">
@@ -233,7 +124,7 @@ function WelcomeState() {
           </div>
         )}
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
-          {copy.questions.map((item) => (
+          {intro.questions.map((item) => (
             <Link
               key={item.q}
               to={item.to}
@@ -289,9 +180,9 @@ function WelcomeState() {
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
         </Button>
-        <Button variant="outline" onClick={() => navigate(copy.learnCta.to)}>
+        <Button variant="outline" onClick={() => navigate(learnCta.to)}>
           <BookOpen size={16} className="mr-2" />
-          {copy.learnCta.label}
+          {learnCta.label}
         </Button>
       </div>
     </div>
@@ -671,7 +562,7 @@ export function BusinessCenterView() {
         title={zoneEmphasis.headline ?? 'Command Center'}
         description={
           zoneEmphasis.tagline ??
-          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
+          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025, updated June 2026).'
         }
       />
 
@@ -691,6 +582,10 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Architecture pack — the architect's review document. Shown even with
+           nothing saved, because its missing-section list is the path. */}
+      {selectedPersona === 'architect' && <ArchitecturePackPanel />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so

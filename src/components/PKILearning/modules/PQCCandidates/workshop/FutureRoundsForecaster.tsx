@@ -9,12 +9,12 @@ const PHASES = [
   {
     id: 'now',
     label: 'Now (2025–2026)',
-    body: 'Round 3 down-selection of the 9 on-ramp candidates. ML-KEM, ML-DSA, SLH-DSA, FN-DSA in active production deployment. HQC alternate published. ISO/IEC SC 27 drafts in progress.',
+    body: 'Round 3 evaluation of the on-ramp candidates (nine selected in May 2026; HAWK withdrawn in July). ML-KEM, ML-DSA and SLH-DSA in production deployment; FN-DSA (FIPS 206) and HQC not yet published as standards. ISO/IEC SC 27 drafts in progress.',
   },
   {
     id: 'near',
     label: 'Near (2027–2028)',
-    body: 'Earliest projected on-ramp standardisation. Lattice (HAWK), isogeny (SQIsign), one or two MPCitH schemes (likely FAEST or MQOM) reach draft FIPS. Multivariate candidates likely still in evaluation.',
+    body: 'Round 3 runs about two years from May 2026 (NIST). The 7th NIST PQC Standardization Conference is planned for late spring/early summer 2027. NIST has set no standardisation year; HAWK, the only lattice candidate, was withdrawn in July 2026.',
   },
   {
     id: 'mid',
@@ -39,9 +39,10 @@ const KEM_OUTCOME_TONE: Record<string, string> = {
 export const FutureRoundsForecaster: React.FC = () => {
   // Forecast bucketing — purely illustrative; clearly labelled as forecast
   const forecast = {
-    fastTrack: CANDIDATES.filter((c) => ['hawk', 'sqisign', 'faest', 'mqom'].includes(c.id)),
+    fastTrack: CANDIDATES.filter((c) => ['sqisign', 'faest', 'mqom'].includes(c.id)),
     extended: CANDIDATES.filter((c) => ['uov', 'mayo', 'qr-uov', 'snova'].includes(c.id)),
     monitoring: CANDIDATES.filter((c) => ['sdith'].includes(c.id)),
+    withdrawn: CANDIDATES.filter((c) => c.status === 'withdrawn'),
   }
 
   return (
@@ -50,10 +51,11 @@ export const FutureRoundsForecaster: React.FC = () => {
         <div className="flex items-start gap-2">
           <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
           <p className="text-xs text-foreground/85 leading-relaxed">
-            <strong className="text-status-warning">Forecast, not commitment.</strong> NIST IR 8528
-            signals expected timelines and the most-mature candidates. The numbers below are
-            illustrative — actual standardisation cadence depends on Round 3 cryptanalysis,
-            reparameterisation outcomes, and international body alignment.
+            <strong className="text-status-warning">Forecast, not commitment.</strong> NIST expects
+            Round 3 (from 14 May 2026) to last approximately two years and has named no
+            standardisation year. The numbers below are illustrative — actual standardisation
+            cadence depends on Round 3 cryptanalysis, reparameterisation outcomes, and international
+            body alignment.
           </p>
         </div>
       </div>
@@ -80,10 +82,10 @@ export const FutureRoundsForecaster: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <ForecastBucket
-            label="Fast-track to 2027"
+            label="Most mature so far"
             tone="border-status-success/40 bg-status-success/5 text-status-success"
             items={forecast.fastTrack}
-            hint="Most-mature parameter sets; expected to reach draft FIPS earliest."
+            hint="Most-mature parameter sets so far; NIST has set no standardisation year."
           />
           <ForecastBucket
             label="Extended track"
@@ -98,6 +100,12 @@ export const FutureRoundsForecaster: React.FC = () => {
             hint="Conservative foundation; analysis ongoing, no rush to standardise."
           />
         </div>
+        {forecast.withdrawn.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            Withdrawn: {forecast.withdrawn.map((c) => c.name).join(', ')} — the submission team
+            withdrew it from the process on 29 July 2026 after a new key-recovery attack (NIST).
+          </p>
+        )}
       </div>
 
       {/* KEM history rationale */}

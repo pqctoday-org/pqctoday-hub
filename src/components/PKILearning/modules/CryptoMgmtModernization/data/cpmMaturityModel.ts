@@ -51,12 +51,12 @@ export const PILLARS: PillarDef[] = [
     id: 'lifecycle',
     label: 'Lifecycle / CLM',
     question:
-      'Can you renew, rotate, and retire every cert and key without manual toil at 47-day cadence?',
+      'Can you renew, rotate, and retire every cert and key without manual toil — publicly trusted TLS server certs at the 47-day cadence, internal PKI on its own policy?',
     indicators: {
       1: 'Manual cert renewal via email reminders. Frequent expiry outages.',
       2: 'ACME/EST automation for public TLS; manual for internal CAs.',
       3: 'End-to-end automation across public and internal CAs; root-rotation runbooks tested.',
-      4: 'Fully automated lifecycle, 47-day-ready, shadow-cert discovery, proactive revocation.',
+      4: 'Fully automated lifecycle, 47-day-ready for public TLS, shadow-cert discovery, proactive revocation.',
     },
   },
   {

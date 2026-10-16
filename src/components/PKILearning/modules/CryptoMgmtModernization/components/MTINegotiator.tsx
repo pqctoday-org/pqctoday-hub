@@ -133,7 +133,7 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
   // Must interop with non-PQC peers -> hybrid KEM MTI
   if (interopProfile.includes('non-pqc-peers')) {
     return {
-      mti: 'X25519MLKEM768 (IETF draft-ietf-tls-hybrid-design)',
+      mti: 'X25519MLKEM768 (RFC 10024)',
       alternates: ['ML-KEM-768 (FIPS 203, pure-PQC fallback)'],
       rationale:
         'Hybrid KEM keeps the X25519 half for legacy interop while ML-KEM-768 provides the PQC half; pure ML-KEM-768 is the post-transition alternate.',

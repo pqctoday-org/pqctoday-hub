@@ -72,28 +72,38 @@ aws kms sign \\
         { name: 'X-Wing', status: 'Preview — X25519+ML-KEM-768 hybrid' },
       ],
       sign: [
-        { name: 'ML-DSA-65', status: 'Preview' },
-        { name: 'SLH-DSA', status: 'Preview' },
+        { name: 'ML-DSA-44/65/87', status: 'GA (16 Jul 2026), incl. external-μ' },
+        { name: 'SLH-DSA-SHA2-128s', status: 'GA (16 Jul 2026)' },
       ],
     },
     envelopeEncryptionModel:
-      'Encrypt/Decrypt with HSM-backed keys. ML-KEM key types available for KEM operations. Powered by BoringCrypto and Tink.',
+      'KEM keys use the KEY_ENCAPSULATION purpose: you encapsulate on the client with the public key, and Cloud KMS decapsulates with the private key. PQC keys are at the SOFTWARE protection level only. Powered by BoringCrypto and Tink.',
     autoRotation: true,
     kmipSupport: false,
-    fipsLevel: 'FIPS 140-2 Level 1 (software) / Level 3 (HSM-backed)',
+    fipsLevel:
+      'FIPS 140-2 Level 1 (software) — PQC keys; Level 3 applies to classical Cloud HSM keys only',
     hybridSupport: true,
-    apiPattern: `// Google Cloud KMS — ML-KEM key creation
-gcloud kms keys create my-pqc-key \\
+    apiPattern: `# Google Cloud KMS — ML-KEM key (Preview, SOFTWARE protection level)
+gcloud kms keys create my-pqc-kem-key \\
   --keyring=my-ring \\
   --location=global \\
-  --purpose=asymmetric-encrypt \\
-  --default-algorithm=ML_KEM_768
+  --purpose=key-encapsulation \\
+  --default-algorithm=ml-kem-768
 
-// X-Wing hybrid KEM
+# X-Wing hybrid KEM (X25519 + ML-KEM-768)
 gcloud kms keys create my-xwing-key \\
-  --default-algorithm=X_WING`,
+  --keyring=my-ring \\
+  --location=global \\
+  --purpose=key-encapsulation \\
+  --default-algorithm=kem-xwing
+
+# Encapsulate on the client with the public key (e.g. Go crypto/mlkem),
+# then let Cloud KMS decapsulate with the private key:
+gcloud kms decapsulate --version=1 --key=my-pqc-kem-key \\
+  --keyring=my-ring --location=global \\
+  --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
     notes:
-      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. All four are in Preview — ML-DSA and SLH-DSA signatures since February 2025, ML-KEM and X-Wing KEMs since September 2025; none are GA yet.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. The signing algorithms (ML-DSA-44/65/87, their external-mu variants, and SLH-DSA-SHA2-128S) have been generally available since 16 July 2026; ML-KEM-768/1024 and X-Wing KEMs have been in Preview since 23 September 2025, and HPKE key import with them since 6 August 2026. Google\u2019s algorithm table lists all of them at the SOFTWARE protection level only, not Cloud HSM (Cloud KMS release notes and algorithms page, checked 15 Oct 2026).',
   },
   {
     id: 'azure-kv',

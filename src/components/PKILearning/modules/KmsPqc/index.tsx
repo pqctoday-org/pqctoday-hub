@@ -50,7 +50,7 @@ const PARTS: WorkshopPart[] = [
     id: 'aws-policy-lab',
     title: 'Step 6: AWS Policy Lab',
     description:
-      'Write and validate an AWS KMS Key Policy that enforces Hybrid PQC TLS connections.',
+      'Write and check an IAM policy that lets administrators create ML-DSA signing keys only, and see why post-quantum TLS is a client setting.',
     icon: Lock,
   },
 ]

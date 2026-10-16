@@ -57,7 +57,7 @@ export const PILLAR_DEFS: PillarDef[] = [
     verb: 'Mandate',
     title: 'Compliance Frameworks',
     blurb:
-      'CNSA 2.0, NIS2, DORA, national PQC mandates — the laws that require validated PQC by a deadline.',
+      'CNSA 2.0 and national PQC timelines, plus resilience rules such as NIS2 and DORA — which apply to you, and which set a PQC date.',
     countLabel: 'frameworks',
     samples: ['CNSA 2.0', 'DORA', 'NIS2'],
     connector: null,

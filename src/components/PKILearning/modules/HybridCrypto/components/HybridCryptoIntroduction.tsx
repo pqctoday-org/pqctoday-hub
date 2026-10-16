@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { Button } from '@/components/ui/button'
 
 interface HybridCryptoIntroductionProps {
@@ -60,13 +61,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">
-                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Mandate
+                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Position
               </div>
               <p className="text-xs text-muted-foreground">
-                France&apos;s ANSSI requires hybrid mode during transition &mdash; PQC-only is not
-                acceptable until algorithms are more mature. Exception: hash-based signatures (
-                <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>/SPHINCS+, LMS, XMSS) may be
-                used standalone.
+                France&apos;s ANSSI recommends hybrid mode during transition, and makes it mandatory
+                inside the French regulated perimeter (classified and Diffusion Restreinte data,
+                vital information systems, ANSSI-certified or qualified products). Exception:
+                hash-based signatures (<InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
+                /SPHINCS+, LMS, XMSS) may be used standalone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -88,14 +90,17 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
                 (ML-KEM-1024 + ML-DSA-87) for national security systems, with exclusive-use
                 deadlines running to 2030&ndash;2033 by equipment class. CNSA 2.0 does not require
-                hybrid &mdash; it permits pure PQC (hybrid is mandated by ANSSI/BSI, not the NSA).
+                hybrid &mdash; it permits pure PQC (ANSSI and BSI recommend hybrid; ANSSI mandates
+                it only in its regulated perimeter).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Defense in Depth</div>
               <p className="text-xs text-muted-foreground">
-                If either the classical or PQC component is broken, the other still provides
-                security. Belt and suspenders.
+                Key exchange: the shared secret stays secret as long as either component KEM is
+                unbroken, provided the combiner is a sound one (for example the TLS hybrid design or
+                X-Wing). Signatures: a forgery requires breaking both algorithms, provided the
+                verifier requires both signatures to be valid.
               </p>
             </div>
           </div>
@@ -1185,7 +1190,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 icon: ShieldCheck,
                 color: 'text-status-success',
                 label: 'Hybrid EU-CMA',
-                desc: 'Secure if either EC-Schnorr or ML-DSA is unforgeable',
+                desc: "Paper's claim for the full scheme: a forgery requires breaking both EC-Schnorr and ML-DSA (this simplified demo is not covered by that proof)",
               },
               {
                 icon: ShieldCheck,
@@ -1258,6 +1263,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>.
         </p>
       </div>
+      <RecordDecisionLink topic="transition-mode" />
       <ReadingCompleteButton />
     </div>
   )

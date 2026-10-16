@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-034',
   title: 'PQC Risk Management',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'p3',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 0,
   learnSections: [
     { id: 'crqc', label: 'CRQC Timeline Modeling' },

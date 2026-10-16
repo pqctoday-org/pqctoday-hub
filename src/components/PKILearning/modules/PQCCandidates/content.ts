@@ -74,18 +74,13 @@ export const content: ModuleContent = {
       year: 2025,
       source: 'NIST IR 8545',
     },
-    {
-      label: 'Earliest projected on-ramp standardisation window',
-      year: 2027,
-      source: 'NIST IR 8528',
-    },
   ],
 
   narratives: {
     overview:
-      'PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.',
+      'PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families; HAWK was withdrawn in July 2026, leaving eight, and NIST expects the round to last about two years with no standardisation year set. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.',
     keyConcepts:
-      'Four mathematical families on the table: MPC-in-the-Head (FAEST, MQOM, SDitH) — symmetric-primitive trust, large signatures, small keys. Multivariate (UOV, MAYO, QR-UOV, SNOVA) — tiny signatures, big keys, recovering from the 2025 wedge attack. Isogeny (SQIsign) — smallest combined size of any PQC candidate but young assumptions and slow signing. Lattice (HAWK) — integer-only sampling alternative to FN-DSA.',
+      'Four mathematical families on the table: MPC-in-the-Head (FAEST, MQOM, SDitH) — symmetric-primitive trust, large signatures, small keys. Multivariate (UOV, MAYO, QR-UOV, SNOVA) — tiny signatures, big keys, recovering from the 2025 wedge attack. Isogeny (SQIsign) — smallest combined size of any PQC candidate but young assumptions and slow signing. Lattice (HAWK) — integer-only sampling alternative to FN-DSA; withdrawn from the process in July 2026 after a key-recovery attack.',
     validationProcess:
       'A candidate enters a round, gets benchmarked against NIST evaluation criteria (security, performance, implementation characteristics, IP), and is subjected to public cryptanalysis. Attacks like the 2022 SIKE break and the 2025 Ran wedge attack cull candidates or force reparameterisation. NIST publishes a status report (IR series) at the end of each round summarising what advanced and why.',
     worldwideProcess:

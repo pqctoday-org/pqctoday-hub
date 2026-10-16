@@ -19,7 +19,7 @@ interface NextStepCardProps {
 }
 
 export function NextStepCard({ route, className }: NextStepCardProps) {
-  // A persona can override a page's exit (Home, for the researcher).
+  // A persona can override a page's exit (PERSONA_NEXT_STEPS).
   const persona = usePersonaStore((s) => s.selectedPersona)
   const step = nextStepFor(route, persona)
   if (!step) return null

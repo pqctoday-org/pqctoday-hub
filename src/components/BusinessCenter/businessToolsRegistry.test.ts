@@ -67,6 +67,10 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'data-at-rest-strategy',
   'sim-roadmap',
   'certification-plan',
+  'architecture-scope',
+  'architecture-decision-record',
+  'architecture-test-plan',
+  'kmip-quick-run',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -85,6 +89,13 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   // only means anything as the output of working one scheme's path end to
   // end, so there is deliberately no standalone builder for it.
   'certification-plan',
+  // Architecture pack, Layer 2: scope, decision records and the test plan are
+  // edited inside the Command Center's architecture pack panel; the KMIP quick
+  // run result is saved from the KMIP Migration tab.
+  'architecture-scope',
+  'architecture-decision-record',
+  'architecture-test-plan',
+  'kmip-quick-run',
 ])
 
 describe('Command Center registry — drift guard', () => {

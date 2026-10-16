@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Hardware Security Modules (HSMs) are physical, highly secure, tamper-resistant devices that protect a network's most sensitive cryptographic keys (meeting standards like FIPS 140-3). The new PKCS#11 v3.2 draft outlines how these devices will handle Post-Quantum Cryptography.
+Hardware Security Modules (HSMs) are physical, highly secure, tamper-resistant devices that protect a network's most sensitive cryptographic keys (meeting standards like FIPS 140-3). PKCS#11 v3.2, an OASIS Standard since June 2026, defines how these devices handle Post-Quantum Cryptography.
 
 ## Why It Matters
 
@@ -10,7 +10,7 @@ Classical cryptography used tiny memory buffers. For example, ECDSA uses roughly
 
 ## The Key Takeaway
 
-The physical hardware upgrades are happening right now. Major on-premise HSM vendors (such as Thales, Entrust, and Utimaco) already offer production-ready PQC firmware updates. Meanwhile, major Cloud HSM providers are currently lagging behind, mostly offering preview SDKs rather than core firmware updates.
+The physical hardware upgrades are happening right now. Major on-premise HSM vendors (such as Thales, Entrust, and Utimaco) already ship PQC firmware updates, though the algorithms each one supports differ (Thales and Utimaco do not yet offer SLH-DSA, for example) and only some of their FIPS 140 certificates list PQC algorithms yet. Cloud HSMs are uneven: AWS CloudHSM now creates and uses ML-DSA signing keys inside the HSM, while Google offers its post-quantum keys only in software for now (checked October 2026).
 
 ## What's Happening
 

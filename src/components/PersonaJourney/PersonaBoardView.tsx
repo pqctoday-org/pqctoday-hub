@@ -10,6 +10,7 @@ import {
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { essentialsTrackChips } from '@/data/trackChips'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { RoleToolsRow } from './RoleToolsRow'
 import { boardRelatedLinks } from '@/data/boardRelatedLinks'
@@ -293,7 +294,19 @@ export function PersonaBoardView({
                     className="flex items-baseline justify-between gap-3 text-sm"
                   >
                     <dt className="text-muted-foreground">{row.label}</dt>
-                    <dd className="text-right font-semibold text-foreground">{row.value}</dd>
+                    <dd className="text-right font-semibold text-foreground">
+                      {row.value}
+                      {row.source && (
+                        <Link
+                          to={row.source}
+                          aria-label={`Source for ${row.label}`}
+                          title="Open the source"
+                          className="ml-1.5 inline-flex align-middle text-primary hover:underline"
+                        >
+                          <BookOpen size={12} aria-hidden="true" />
+                        </Link>
+                      )}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -406,7 +419,7 @@ export function PersonaBoardView({
         {board.trackNote && <p className="mt-1 text-xs text-muted-foreground">{board.trackNote}</p>}
 
         <ul className="mt-3 flex flex-wrap gap-2">
-          {board.trackChips.map((chip, i) => {
+          {essentialsTrackChips(personaId, board.trackChips).map((chip, i) => {
             // trackChips are persona-appropriate labels, not module titles (see
             // personaConfig.test.ts's drift guard) - but they're positionally
             // 1:1 with the persona's real essentials module ids, so each chip

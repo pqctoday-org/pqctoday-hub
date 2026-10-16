@@ -43,7 +43,11 @@ describe('Crypto Lab Workbench', () => {
   it('renders the Overview with the brand, tool count and four full-playground cards', () => {
     renderWorkbench()
     expect(screen.getByText('Crypto Lab')).toBeInTheDocument()
-    expect(screen.getByText(`${GRID_COUNT} tools · runs in-browser`)).toBeInTheDocument()
+    const docker = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
+    // Docker sandbox scenarios are in the grid but are not counted as in-browser.
+    expect(
+      screen.getByText(`${GRID_COUNT - docker} in-browser tools · ${docker} Docker scenarios`)
+    ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
     ).toBeInTheDocument()
@@ -78,7 +82,11 @@ describe('Crypto Lab Workbench', () => {
     const directory = screen.getByRole('navigation', { name: 'All Crypto Lab pages' })
     const expected = new Set([
       ...FEATURE_PLAYGROUNDS.map(({ to }) => to),
-      ...WORKSHOP_TOOLS.map(({ id }) => `/playground/${id}`),
+      // The KMIP environment tool redirects to /playground/cacp (a feature
+      // playground), so it is listed once, under that address.
+      ...WORKSHOP_TOOLS.filter(({ id }) => !isEnvironmentTool(id)).map(
+        ({ id }) => `/playground/${id}`
+      ),
     ])
     const actual = new Set(
       within(directory)

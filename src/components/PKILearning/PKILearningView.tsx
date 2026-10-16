@@ -142,7 +142,9 @@ export const PKILearningView: React.FC = () => {
       flagResourceType: 'Learn Module',
       extra: (
         <>
-          <WipModuleBadge moduleMeta={moduleMeta} />
+          {/* Only modules flagged as work in progress say so; the endorse and flag
+              actions are in the page actions for every module. */}
+          {moduleMeta.workInProgress && <WipModuleBadge moduleMeta={moduleMeta} />}
           {hasReviewRecord && (
             <ReviewedBadge
               domain="module"

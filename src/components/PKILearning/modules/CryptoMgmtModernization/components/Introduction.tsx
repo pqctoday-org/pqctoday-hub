@@ -69,9 +69,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard
-              label="Certificates & PKI — 47-day TLS by 2029"
+              label="Certificates & PKI — 47-day public TLS by 2029"
               value="47 d"
-              note="CA/B Forum SC-081v3 (April 2025), ratified into TLS BR §6.3.2: 398d until 2026-03-15, then 200d, then 100d from 2027-03-15, then 47d from 2029-03-15. Manual CLM breaks mathematically at this cadence."
+              note="CA/B Forum SC-081v3 (April 2025), ratified into TLS BR §6.3.2: 398d until 2026-03-15, then 200d, then 100d from 2027-03-15, then 47d from 2029-03-15. It applies to publicly trusted TLS server certificates only; private PKI, device, code-signing and document-signing certificates follow their own policies. Manual CLM breaks mathematically at this cadence."
             />
             <StatCard
               label="Crypto Libraries — FIPS 140-3 CMVP queue"
@@ -89,7 +89,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               note="CNSSP 15 requires new NSS acquisitions to be CNSA 2.0-compliant from 1 Jan 2027, phases out equipment that cannot support CNSA 2.0 by 31 Dec 2030, and mandates CNSA 2.0 algorithms by 31 Dec 2031 (NSA CNSA 2.0 FAQ Ver. 2.1, Dec 2024). The 2022 advisory per-class timetable runs software/firmware signing exclusive by 2030, web/cloud/OS by 2033. HSM/KMS rekey lead times measured in years."
             />
           </div>
-          <Quote cite="NIST CSWP.39 §5, Considerations for Achieving Crypto Agility (December 2025)">
+          <Quote cite="NIST CSWP.39 (upd1) §5, Considerations for Achieving Crypto Agility (December 2025, updated June 2026)">
             Inventory the use of cryptography for data protection across the organization by
             adopting an assets-centric approach &hellip; to identify the organization&rsquo;s use
             cases and most valuable assets,{' '}
@@ -105,11 +105,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
             <li>
-              <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence is mathematically
-              incompatible with manual CLM; certificate-related outages are common and costly. The
-              average enterprise manages over 114,000 certificates, many still tracked in
-              spreadsheets (Entrust / Ponemon Institute, 2024 Global PKI &amp; PQC Trends Study
-              &mdash; quoted below).
+              <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence for publicly
+              trusted TLS server certificates is mathematically incompatible with manual CLM;
+              internal PKI sets its own validity policy, but the same automation serves it.
+              Certificate-related outages are common and costly. Organizations manage an average of
+              114,591 internal certificates (Ponemon Institute, Trends in PKI Security: A Global
+              Study, sponsored by CyberArk, February 2026).
             </li>
             <li>
               <strong>Crypto Libraries</strong> &mdash; a module on the NIST CMVP Modules-in-Process
@@ -149,9 +150,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            NIST CSWP.39 (December 2025, <em>Considerations for Achieving Crypto Agility</em>)
-            defines the <strong>Crypto Agility Strategic Plan</strong> as a continuously repeated
-            five-step process. CPM is the organisational discipline that executes this loop.
+            NIST CSWP.39 (December 2025, updated June 2026,{' '}
+            <em>Considerations for Achieving Crypto Agility</em>) defines the{' '}
+            <strong>Crypto Agility Strategic Plan</strong> as a continuously repeated five-step
+            process. CPM is the organisational discipline that executes this loop.
           </p>
           <ol className="space-y-2 list-decimal list-inside">
             <li>
@@ -188,7 +190,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </div>
           </div>
           <p className="text-xs text-muted-foreground text-right">
-            Source: NIST CSWP.39, December 2025
+            Source: NIST CSWP.39, December 2025 (updated June 2026)
           </p>
         </div>
       </section>
@@ -479,8 +481,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-accent mb-1">3. Lifecycle (CLM)</div>
               <p className="text-[11px] text-muted-foreground">
-                Provisioning → rotation → retirement. 47-day cert automation (ACME/EST/CMP),
-                shadow-cert discovery, root rotation, revocation propagation.
+                Provisioning → rotation → retirement. 47-day public TLS cert automation
+                (ACME/EST/CMP), shadow-cert discovery, root rotation, revocation propagation.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -781,11 +783,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             and $10.1M NPV over three years &mdash; with $7.9M in labor savings, $2.8M from reduced
             security incidents, and $2.8M in revenue and efficiency gains. Treat as upper-bound
             benchmark for a specific product, not a guaranteed outcome for any CLM platform.
-          </Quote>
-          <Quote cite="Entrust / Ponemon Institute, 2024 Global PKI &amp; PQC Trends Study">
-            The average enterprise manages over 114,000 certificates. Many still rely on manual
-            spreadsheets or home-grown tools for PKI management &mdash; an operating model
-            incompatible with a 47-day maximum validity window.
           </Quote>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">

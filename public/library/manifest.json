@@ -22786,6 +22786,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-15T13:11:19.804238+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece",
+      "title": "BSI: Hinweise zu aktuellen Entwicklungen um Classic McEliece",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Krypto/Hinweis_Classic_McEliece.pdf?__blob=publicationFile&v=2",
+      "status": "downloaded",
+      "filename": "BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece.pdf",
+      "sizeBytes": 162449,
+      "contentType": "application/pdf",
+      "sha256": "91080d26a4d0a04ce44f9ebf2bb7e07b705e91976933da31bb2004ad086d38b9",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T05:33:35.591884+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [

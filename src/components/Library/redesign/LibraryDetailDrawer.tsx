@@ -34,7 +34,13 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
-import { lifecycleLabel, lifecyclePillClass, formatLibDate, trustInfo } from './libraryPills'
+import {
+  lifecycleLabel,
+  lifecyclePillClass,
+  formatLibDate,
+  trustInfo,
+  publisherStatusText,
+} from './libraryPills'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 
 interface LibraryDetailDrawerProps {
@@ -166,6 +172,7 @@ function DrawerPanel({
   const enrichment = libraryEnrichments[item.referenceId]
   const ts = getTrustScore('library', item.referenceId)
   const trust = trustInfo(item.referenceId)
+  const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
   const relatedLeaders = relatedLeadersFor(item)
 
   return (
@@ -211,11 +218,13 @@ function DrawerPanel({
                   {item.referenceId}
                 </span>
                 <span
-                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
-                    item.groupLifecycleLabel ?? item.lifecycleLabel
+                  data-testid="drawer-lifecycle"
+                  title={`Lifecycle: ${lifecycleLabel(item.lifecycleLabel)}. This is how far along the document is, not a trust rating.`}
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${lifecyclePillClass(
+                    item.lifecycleLabel
                   )}`}
                 >
-                  {lifecycleLabel(item.groupLifecycleLabel ?? item.lifecycleLabel)}
+                  {lifecycleLabel(item.lifecycleLabel)}
                 </span>
                 {item.status && (
                   <span
@@ -268,6 +277,20 @@ function DrawerPanel({
                   </span>
                 )}
               </div>
+              {/* The publisher's own status words ("Internet-Draft (RFC Editor
+                  Queue)", "Proposed Standard", …) on their own line, so maturity
+                  is never read off the trust score further down. Skipped when it
+                  is blank, the "Unverified — needs review" placeholder, or only
+                  repeats the lifecycle chip. */}
+              {documentStatusText && (
+                <p
+                  data-testid="drawer-document-status"
+                  className="mt-1 text-[12px] text-muted-foreground"
+                >
+                  <span className="font-semibold text-foreground/80">Document status:</span>{' '}
+                  {documentStatusText}
+                </p>
+              )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <ItemShareButton
@@ -473,6 +496,10 @@ function DrawerPanel({
             <FrameworkCrosswalkPanel item={item} />
 
             <Section title="Trust & evidence">
+              <p className="mb-2 text-[12px] text-muted-foreground">
+                Trust rates how well this catalog record is sourced and checked. It does not say how
+                mature the document is; see its lifecycle and document status at the top.
+              </p>
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <KeyFact
                   label="Trust score"

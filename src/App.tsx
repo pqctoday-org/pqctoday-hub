@@ -260,6 +260,13 @@ function HistorySeeder() {
   return null
 }
 
+/** `/playground/cacp-kmip` is the same view as `/playground/cacp`: send it to
+ * the one canonical address, keeping `?tab=` and any `#hash`. */
+function KmipToolRedirect() {
+  const { search, hash } = useLocation()
+  return <Navigate to={{ pathname: '/playground/cacp', search, hash }} replace />
+}
+
 function App() {
   const commonRoutes = (
     <>
@@ -311,6 +318,7 @@ function App() {
         <Route path="interactive" element={<PlaygroundView />} />
         <Route path="hsm" element={<HsmPlayground />} />
         <Route path="cacp" element={<KmipPlaygroundView />} />
+        <Route path="cacp-kmip" element={<KmipToolRedirect />} />
         <Route path="docker" element={<DockerPlaygroundView />} />
         <Route path=":toolId" element={<PlaygroundToolRoute />} />
       </Route>

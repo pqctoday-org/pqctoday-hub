@@ -4,6 +4,7 @@ import {
   NEXT_STEPS,
   PAGE_NEXT_STEP_ROUTES,
   PERSONA_HOME_FUNNEL,
+  PERSONA_NEXT_STEPS,
   homeFunnelFor,
   nextStepFor,
 } from './nextSteps'
@@ -98,23 +99,47 @@ describe('persona Home funnel (researcher decision R1)', () => {
     expect(homeFunnelFor('researcher')?.learningPathOptional).toBe(true)
   })
 
-  it('every other persona, and no persona, keeps the default Home next step', () => {
-    for (const p of PERSONA_IDS.filter((id) => !(id in PERSONA_HOME_FUNNEL))) {
+  it('every persona without a Home override, and no persona, keeps the default Home next step', () => {
+    // eslint-disable-next-line security/detect-object-injection -- id is the typed PersonaId union
+    for (const p of PERSONA_IDS.filter((id) => !PERSONA_NEXT_STEPS[id]?.['/'])) {
       expect(nextStepFor('/', p), p).toBe(NEXT_STEPS['/'])
     }
     expect(nextStepFor('/', null)).toBe(NEXT_STEPS['/'])
   })
 
-  it('an override only ever replaces the Home exit, never another route', () => {
+  it('the researcher override replaces only the Home exit, never another route', () => {
     expect(nextStepFor('/library', 'researcher')).toBe(NEXT_STEPS['/library'])
   })
 
   it('override targets are known routes and read like the other exits', () => {
-    for (const [p, f] of Object.entries(PERSONA_HOME_FUNNEL)) {
-      for (const to of [f.nextStep.to, f.startCta.to]) {
-        expect(known.has(to.split('?')[0]), `${p}: ${to}`).toBe(true)
+    for (const [p, steps] of Object.entries(PERSONA_NEXT_STEPS)) {
+      for (const [route, step] of Object.entries(steps)) {
+        expect(known.has(route), `${p}: ${route}`).toBe(true)
+        expect(known.has(step.to.split('?')[0]), `${p}: ${step.to}`).toBe(true)
+        expect(step.why, `${p}: ${route}`).toMatch(/[.!?]$/)
       }
-      expect(f.nextStep.why, p).toMatch(/[.!?]$/)
     }
+    for (const [p, f] of Object.entries(PERSONA_HOME_FUNNEL)) {
+      expect(known.has(f.startCta.to.split('?')[0]), `${p}: ${f.startCta.to}`).toBe(true)
+    }
+  })
+
+  it('a persona with its own Home start CTA also has its own Home next step', () => {
+    for (const p of Object.keys(PERSONA_HOME_FUNNEL) as (keyof typeof PERSONA_NEXT_STEPS)[]) {
+      // eslint-disable-next-line security/detect-object-injection -- p is a key of the typed map
+      expect(PERSONA_NEXT_STEPS[p]?.['/'], p).toBeDefined()
+    }
+  })
+})
+
+describe('curious next steps (curious journey review, 16 Oct 2026)', () => {
+  it('sends a curious reader from Home to Explore and from Explore to the TLS handshake', () => {
+    expect(nextStepFor('/', 'curious')?.to).toBe('/explore')
+    expect(nextStepFor('/explore', 'curious')?.to).toBe('/playground/tls-simulator')
+  })
+
+  it('leaves every other role on the shared exit', () => {
+    expect(nextStepFor('/', 'executive')).toEqual(nextStepFor('/'))
+    expect(nextStepFor('/explore', null)).toEqual(nextStepFor('/explore'))
   })
 })

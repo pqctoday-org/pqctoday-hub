@@ -24,6 +24,7 @@ import {
 import clsx from 'clsx'
 import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
 import { isDraftTier } from '../../data/algorithmStatusTier'
+import { getAlgorithmAdvisory } from '../../data/algorithmAdvisories'
 import { Button } from '@/components/ui/button'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
@@ -371,6 +372,24 @@ function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
   )
 }
 
+/** Dated advisory chip (e.g. the BSI's 1 Oct 2026 Classic McEliece notice). Independent
+ *  of the status tier: the algorithm stays standardised; the advice for new use changed. */
+function AdvisoryBadge({ algo }: { algo: AlgorithmDetail }) {
+  const advisory = getAlgorithmAdvisory(algo.name)
+  if (!advisory) return null
+  return (
+    <a
+      href={advisory.sourceUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium hover:underline"
+      title={advisory.note}
+    >
+      {advisory.label}
+    </a>
+  )
+}
+
 /**
  * CNSA 2.0 chip — shown only for algorithms with a meaningful CNSA 2.0 stance
  * (required selections, the firmware-only stateful-hash approval, and the
@@ -656,6 +675,7 @@ function BrowseTable({
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <AlgoName algo={algo} onOpenAlgorithm={onOpenAlgorithm} />
                         <DraftBadge algo={algo} />
+                        <AdvisoryBadge algo={algo} />
                         <Cnsa20Badge algo={algo} />
                         <ResearchNeededBadge algo={algo} />
                         <NoImplementationBadge algo={algo} />
@@ -780,6 +800,7 @@ function BrowseTable({
                   </label>
                   <AlgoName algo={algo} onOpenAlgorithm={onOpenAlgorithm} />
                   <DraftBadge algo={algo} />
+                  <AdvisoryBadge algo={algo} />
                   <Cnsa20Badge algo={algo} />
                   <ResearchNeededBadge algo={algo} />
                   <NoImplementationBadge algo={algo} />

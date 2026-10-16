@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'verification-closure',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-061',
   title: 'Decommissioning & Program Closure',
   description:
@@ -13,10 +13,10 @@ const manifest: ModuleManifest = {
   duration: '40 min',
   difficulty: 'intermediate',
   frameworkPhase: 'verify-close',
-  track: 'Executive',
+  track: 'Governance & Risk',
   // 9, not 10, since WS8 moved soc-implementation-pqc out of this track:
   // conformance.test.ts asserts trackOrder === the module's index in the
-  // trackOrder-sorted MODULE_TRACKS array, so the Executive track must stay
+  // trackOrder-sorted MODULE_TRACKS array, so the Governance & Risk track must stay
   // contiguous from 0.
   trackOrder: 9,
   learnSections: [

@@ -45,6 +45,7 @@ import { InlineTooltip } from '../ui/InlineTooltip'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import { logEvent } from '../../utils/analytics'
 import {
   hsm_generateMLDSAKeyPair,
@@ -185,6 +186,8 @@ const RAIL: RailEntry[] = [
 
 export const HsmPlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   const { error } = useSettingsContext()
   const {
     engineMode,
@@ -325,7 +328,7 @@ export const HsmPlayground = () => {
     if (
       loc.tab === 'build' &&
       (loc.dtab === 'acvp' || loc.dtab === 'conformance') &&
-      (role === 'curious' || role === 'executive' || role === 'grc')
+      workbenchHidden
     ) {
       // ACVP and Conformance are engineering-workbench suites, gated for
       // curious/executive (matches the ExecutiveRedirectBanner) — don't
@@ -407,13 +410,10 @@ export const HsmPlayground = () => {
   // gated ACVP/Conformance suite mid-session, fall back to Standard rather
   // than leaving them on a surface whose trigger is now hidden.
   useEffect(() => {
-    if (
-      (devSubTab === 'acvp' || devSubTab === 'conformance') &&
-      (role === 'curious' || role === 'executive' || role === 'grc')
-    ) {
+    if ((devSubTab === 'acvp' || devSubTab === 'conformance') && workbenchHidden) {
       setDevSubTab(DEFAULT_DEV_SUB_TAB)
     }
-  }, [role, devSubTab])
+  }, [workbenchHidden, devSubTab])
 
   // Stamp every logged call with the surface it came from (§3.4 — one shared
   // log, grouped by origin). The header row itself is emitted lazily by
@@ -447,11 +447,7 @@ export const HsmPlayground = () => {
   const goTo = (loc: HsmLocation) => {
     if (loc.rail) setRail(loc.rail)
     if (loc.itab) setInspectView(loc.itab)
-    if (
-      loc.dtab &&
-      !((role === 'curious' || role === 'executive' || role === 'grc') && loc.dtab !== 'standard')
-    )
-      setDevSubTab(loc.dtab)
+    if (loc.dtab && !(workbenchHidden && loc.dtab !== 'standard')) setDevSubTab(loc.dtab)
     handleTabChange(loc.tab)
   }
 
@@ -819,7 +815,7 @@ export const HsmPlayground = () => {
             {/* Engine mode selector — an engineering-workbench control, gated
                 for curious/executive same as the ACVP suite; they run on the
                 'rust' default without needing to choose. */}
-            {role !== 'curious' && role !== 'executive' && role !== 'grc' ? (
+            {!workbenchHidden ? (
               <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
                 <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
                   Engine:

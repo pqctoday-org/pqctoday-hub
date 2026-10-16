@@ -1507,15 +1507,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 845,
-    essentials: [
-      'pqc-101',
-      'pqc-candidates',
-      'quantum-threats',
-      'pqc-risk-management',
-      'compliance-strategy',
-      'tls-basics',
-    ],
-    essentialsMinutes: 205,
+    // Curious journey review (owner decision C2, 16 Oct 2026): a beginner's
+    // must-do set is the idea, the threat and one real handshake — about 1½
+    // hours. Candidates, risk and compliance stay on the full path as the
+    // optional "at work" modules.
+    essentials: ['pqc-101', 'quantum-threats', 'tls-basics'],
+    essentialsMinutes: 90,
     quizDescription:
       'Test your understanding of quantum threats, PQC algorithm families, risk basics, compliance timelines, migration concepts, practical security foundations, and real-world digital identity applications.',
     quizCategories: [

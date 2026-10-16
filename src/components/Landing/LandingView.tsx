@@ -104,7 +104,7 @@ export const PERSONA_HERO_TAGLINE: Record<string, string> = {
     'ML-KEM, ML-DSA and SLH-DSA can be CAVP-tested today; the module certificate is the long pole. Run the vectors, then trace the path.',
   ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
   curious:
-    "Nothing breaks today. But what runs the padlock icon will look very different in five years — here's the short version.",
+    "No publicly known quantum computer can break today's encryption. But what runs the padlock icon is already changing — here's the short version.",
 }
 
 // Rendered until the live derivation below resolves (and if it ever can't find

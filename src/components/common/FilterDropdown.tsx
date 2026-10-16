@@ -94,7 +94,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       ? defaultLabel
       : multiCount === 1
         ? (normalizedItems.find((i) => i.id === multiSelectedIds![0])?.label ?? defaultLabel)
-        : `${multiCount} selected`
+        : // Every option ticked reads as "2 selected" next to a full list, as if
+          // something were filtered out; say what it is.
+          multiCount === normalizedItems.length
+          ? 'All selected'
+          : `${multiCount} selected`
   const multiButtonIcon =
     multiCount === 1
       ? (normalizedItems.find((i) => i.id === multiSelectedIds![0])?.icon ?? defaultIcon)

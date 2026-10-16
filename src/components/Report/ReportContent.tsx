@@ -890,18 +890,23 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </Button>
                         {showBoardExports && (
                           <>
-                            <Button
-                              variant="ghost"
-                              onClick={() => {
-                                flushSync(() => setShowBoardBrief(true))
-                                window.print()
-                                setShowBoardBrief(false)
-                              }}
-                              className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                            >
-                              <Briefcase size={16} />
-                              Print Executive Brief
-                            </Button>
+                            {/* The executive brief is a board summary; GRC prints the full
+                              report and takes the compliance pack instead (GRC journey
+                              audit, 15 Oct 2026). */}
+                            {selectedPersona !== 'grc' && (
+                              <Button
+                                variant="ghost"
+                                onClick={() => {
+                                  flushSync(() => setShowBoardBrief(true))
+                                  window.print()
+                                  setShowBoardBrief(false)
+                                }}
+                                className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                              >
+                                <Briefcase size={16} />
+                                Print Executive Brief
+                              </Button>
+                            )}
                             <BoardPackExport result={result} variant="outline" />
                           </>
                         )}

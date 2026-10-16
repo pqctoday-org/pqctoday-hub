@@ -126,7 +126,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'RFC 9882 (ML-DSA in CMS)',
       'RFC 9814 (SLH-DSA in CMS)',
       'draft-ietf-pquip-pqc-engineers (PQC for engineers guide)',
-      'draft-ietf-tls-hybrid-design (X25519MLKEM768)',
+      'RFC 9954 (hybrid design) and RFC 10024 (X25519MLKEM768)',
     ],
     libraryRefs: ['RFC 9629', 'draft-ietf-pquip-pqc-engineers-14'],
     websiteUrl: 'https://datatracker.ietf.org/wg/pquip/about/',
