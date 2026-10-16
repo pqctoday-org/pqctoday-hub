@@ -58,4 +58,10 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'architecture-decision-record': 'Architecture Decision Record',
   'architecture-test-plan': 'Architecture Test Plan',
   'kmip-quick-run': 'KMIP Quick Run Result',
+  'ops-scope': 'Operations Scope',
+  'hsm-capacity-plan': 'HSM Capacity Plan',
+  'cert-capacity-plan': 'Certificate Capacity Plan',
+  'protocol-config': 'Protocol Configuration',
+  'vpn-sim-run': 'VPN Simulator Run',
+  'ops-test-plan': 'Operations Test Plan',
 }

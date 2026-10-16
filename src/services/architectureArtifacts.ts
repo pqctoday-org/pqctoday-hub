@@ -279,10 +279,12 @@ export const testPlanFromChecklist = (lines: ChecklistLine[]): TestPlanInputs =>
 
 const tableCell = (s: string) => s.replace(/\|/g, '\\|').replace(/\n/g, ' ').trim()
 
-export function testPlanMarkdown(p: TestPlanInputs): string {
+/** The test plan as Markdown. The operations pack reuses it with its own
+ * title (`Operations test plan`). */
+export function testPlanMarkdown(p: TestPlanInputs, title = 'Architecture test plan'): string {
   const count = (r: TestResult) => p.lines.filter((l) => l.result === r).length
   return [
-    '# Architecture test plan',
+    `# ${title}`,
     '',
     `${p.lines.length} checks: ${count('pass')} pass, ${count('fail')} fail, ${count('not-run')} not run, ${count('not-applicable')} not applicable.`,
     '',

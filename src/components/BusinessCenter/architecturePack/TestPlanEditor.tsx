@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
-import { checklistFor } from '@/data/migrationTestChecklist'
+import { checklistFor, type ChecklistRole } from '@/data/migrationTestChecklist'
 import {
   TEST_RESULT_LABELS,
   testPlanFromChecklist,
@@ -13,6 +13,7 @@ import {
   type TestPlanInputs,
   type TestResult,
 } from '@/services/architectureArtifacts'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { ARCHITECTURE_PACK_MODULE_ID, useSaveArtifact } from './saveArtifact'
 
 const RESULT_ITEMS = (Object.keys(TEST_RESULT_LABELS) as TestResult[]).map((id) => ({
@@ -20,16 +21,32 @@ const RESULT_ITEMS = (Object.keys(TEST_RESULT_LABELS) as TestResult[]).map((id) 
   label: TEST_RESULT_LABELS[id],
 }))
 
-export function TestPlanEditor() {
+export interface TestPlanEditorProps {
+  /** Whose checklist lines seed a new plan. */
+  checklistRole?: ChecklistRole
+  type?: Extract<ExecutiveDocumentType, 'architecture-test-plan' | 'ops-test-plan'>
+  moduleId?: string
+  title?: string
+  /** Prefix for data-testid attributes. */
+  testId?: string
+}
+
+/** Test plan editor shared by the architecture pack (default) and the
+ * operations pack, which passes its own role, type, module and title. */
+export function TestPlanEditor({
+  checklistRole = 'architect',
+  type = 'architecture-test-plan',
+  moduleId = ARCHITECTURE_PACK_MODULE_ID,
+  title = 'Architecture test plan',
+  testId = 'architecture-test-plan',
+}: TestPlanEditorProps = {}) {
   const saved = useModuleStore((s) =>
-    (s.artifacts.executiveDocuments ?? []).find(
-      (d) => d.moduleId === ARCHITECTURE_PACK_MODULE_ID && d.type === 'architecture-test-plan'
-    )
+    (s.artifacts.executiveDocuments ?? []).find((d) => d.moduleId === moduleId && d.type === type)
   )
   const [plan, setPlan] = useState<TestPlanInputs>(
     () =>
       (saved?.inputs as TestPlanInputs | undefined) ??
-      testPlanFromChecklist(checklistFor('architect'))
+      testPlanFromChecklist(checklistFor(checklistRole))
   )
   const [newLine, setNewLine] = useState('')
   const [note, setNote] = useState<string | null>(null)
@@ -49,10 +66,10 @@ export function TestPlanEditor() {
 
   const onSave = () => {
     save({
-      type: 'architecture-test-plan',
-      moduleId: ARCHITECTURE_PACK_MODULE_ID,
-      title: 'Architecture test plan',
-      data: testPlanMarkdown(plan),
+      type,
+      moduleId,
+      title,
+      data: testPlanMarkdown(plan, title),
       inputs: plan,
       revisionSummary: saved ? 'Test plan updated' : undefined,
     })
@@ -60,7 +77,7 @@ export function TestPlanEditor() {
   }
 
   return (
-    <div className="space-y-3" data-testid="architecture-test-plan-editor">
+    <div className="space-y-3" data-testid={`${testId}-editor`}>
       <ol className="space-y-2">
         {plan.lines.map((l, i) => (
           <li
@@ -102,12 +119,7 @@ export function TestPlanEditor() {
         </Button>
       </div>
       <div className="flex items-center gap-3">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={onSave}
-          data-testid="architecture-test-plan-save"
-        >
+        <Button size="sm" variant="outline" onClick={onSave} data-testid={`${testId}-save`}>
           Save test plan
         </Button>
         {note && <span className="text-[11px] text-status-success">{note}</span>}
