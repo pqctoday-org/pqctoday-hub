@@ -292,7 +292,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Under "Replace what you own", the "Crypto libraries & frameworks" domain lists the libraries; use "Filter products…" to narrow, and a product\'s detail shows its CPE and PURL identifiers.',
     architect:
-      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Drop-in, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
+      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Upgrade / configure, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
     'cert-engineer':

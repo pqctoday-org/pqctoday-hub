@@ -19,6 +19,9 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SectorExposureHero } from './SectorExposureHero'
 import type { ThreatData } from '@/data/threatsData'
+import { MemoryRouter } from 'react-router'
+
+const renderInRouter = (ui: React.ReactElement) => render(ui, { wrapper: MemoryRouter })
 
 type QuantumConstantsModule =
   typeof import('@/components/PKILearning/modules/QuantumThreats/data/quantumConstants')
@@ -59,7 +62,7 @@ describe('SectorExposureHero — Mosca migration-deadline card', () => {
     mockGetCrqcForecast.mockReturnValue(forecast(NOW_YEAR + 3, NOW_YEAR + 10, NOW_YEAR + 5))
     const expectedDeadline = NOW_YEAR + 5 - 25 - 5 // = NOW_YEAR - 25
 
-    render(
+    renderInRouter(
       <SectorExposureHero
         applicable={noThreats}
         scopedIndustries={['Government/Defense']}
@@ -84,6 +87,16 @@ describe('SectorExposureHero — Mosca migration-deadline card', () => {
     expect(screen.getByText(/already passed/)).toBeInTheDocument()
     expect(screen.getByText(/may already be exposed/)).toBeInTheDocument()
 
+    // It never presents the site's example inputs as the visitor's own
+    // result: the card is labelled, says so, and links to a calculator that
+    // takes the visitor's values.
+    expect(screen.getByText('Example values')).toBeInTheDocument()
+    expect(screen.queryByText(/how far behind you already are/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Enter your own data lifetime/ })).toHaveAttribute(
+      'href',
+      '/business/tools/breach-simulator'
+    )
+
     // The old "latest safe start for" future-tense caption must not appear
     // next to a 25-year-past date.
     expect(screen.queryByText(/latest safe start for/)).not.toBeInTheDocument()
@@ -95,7 +108,7 @@ describe('SectorExposureHero — Mosca migration-deadline card', () => {
     mockGetCrqcForecast.mockReturnValue(forecast(NOW_YEAR + 35, NOW_YEAR + 45, NOW_YEAR + 40))
     const expectedDeadline = NOW_YEAR + 40 - 7 - 5 // = NOW_YEAR + 28
 
-    render(
+    renderInRouter(
       <SectorExposureHero
         applicable={noThreats}
         scopedIndustries={['Cloud/SaaS']}
@@ -117,7 +130,9 @@ describe('SectorExposureHero — Mosca migration-deadline card', () => {
 describe('SectorExposureHero — one CRQC window (ruling R5)', () => {
   it('states the forecast window with its one wording, and uses its planning year as Z', () => {
     mockGetCrqcForecast.mockReturnValue(forecast(2030, 2041, 2035))
-    render(<SectorExposureHero applicable={noThreats} scopedIndustries={[]} variant="horizon" />)
+    renderInRouter(
+      <SectorExposureHero applicable={noThreats} scopedIndustries={[]} variant="horizon" />
+    )
     expect(
       screen.getByText('CRQC expert forecast: 2030–2041 (one expert survey)')
     ).toBeInTheDocument()
@@ -141,7 +156,7 @@ describe('SectorExposureHero — HNDL/HNFL totals (UX-19)', () => {
       relatedModules: [],
       threatClass,
     })
-    render(
+    renderInRouter(
       <SectorExposureHero
         applicable={[t('hndl', 'A'), t('both', 'B')]}
         scopedIndustries={[]}

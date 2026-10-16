@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Radar, Clock, ShieldAlert } from 'lucide-react'
+import { Link } from 'react-router'
 import type { ThreatData } from '@/data/threatsData'
 import { getThreatClass } from './threatClassification'
 import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
@@ -205,11 +206,16 @@ export const SectorExposureHero = ({
         <Card>
           <div className="mb-1.5 flex items-center justify-between">
             <Eyebrow>{rem < 0 ? 'Your Mosca migration window' : 'Your migration deadline'}</Eyebrow>
-            <span
-              className={`flex items-center gap-1 text-[10px] font-bold uppercase ${urgencyTone}`}
-            >
-              <Clock size={12} aria-hidden="true" />
-              {urgency}
+            <span className="flex items-center gap-2">
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                Example values
+              </span>
+              <span
+                className={`flex items-center gap-1 text-[10px] font-bold uppercase ${urgencyTone}`}
+              >
+                <Clock size={12} aria-hidden="true" />
+                {urgency}
+              </span>
             </span>
           </div>
           {rem < 0 ? (
@@ -246,13 +252,20 @@ export const SectorExposureHero = ({
           )}
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
             {rem < 0
-              ? `The recommended start date has already passed — this is not a future target, it is how far behind you already are. Long-lived data for ${sectorLabel} may already be exposed once a CRQC arrives.`
-              : `About ${rem}y of runway before you must have started migrating.`}
+              ? `With these example values the safe-start line has already passed: migration for ${sectorLabel} should already have started, and long-lived data may already be exposed once a CRQC arrives.`
+              : `With these example values there are about ${rem} years left before migration must have started.`}{' '}
+            The values are this site&apos;s planning estimates, not your figures.{' '}
+            <Link to="/business/tools/breach-simulator" className="text-primary underline">
+              Enter your own data lifetime and migration time
+            </Link>
+            .
           </p>
           <div className="mt-3 border-t border-border pt-2 font-mono text-[11px] text-muted-foreground">
             Z {z} − X {dataLife} − Y {MIGRATION_YEARS} = {deadline}
             <div className="mt-0.5 text-[10px]">
-              X = data lifetime, Y = migration time. Mosca&apos;s inequality.
+              Mosca&apos;s inequality. Z = this site&apos;s planning year for a cryptographically
+              relevant quantum computer; X = data lifetime, estimated for{' '}
+              {driver ?? 'no sector picked'}; Y = an example migration time.
             </div>
           </div>
         </Card>

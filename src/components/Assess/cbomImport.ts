@@ -97,6 +97,20 @@ export function parseCbom(text: string, wizardOptions: string[]): CbomImportResu
     )
   }
 
+  // Cryptographic assets entered CycloneDX in 1.6, so an older file cannot be
+  // a CBOM. A file that omits specVersion is still read; the asset check
+  // below decides.
+  const [major, minor] = specVersion.split('.').map((x) => Number.parseInt(x, 10))
+  if (
+    Number.isFinite(major) &&
+    Number.isFinite(minor) &&
+    (major < 1 || (major === 1 && minor < 6))
+  ) {
+    throw new CbomParseError(
+      `This is a CycloneDX ${specVersion} file. Cryptographic assets were added in CycloneDX 1.6, so export your CBOM as 1.6 or later, or answer the question by hand.`
+    )
+  }
+
   const { found, assets } = collectAlgorithmStrings(doc)
   if (assets === 0) {
     throw new CbomParseError(

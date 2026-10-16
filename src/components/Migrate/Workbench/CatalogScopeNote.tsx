@@ -14,6 +14,29 @@ export interface CatalogScopeCounts {
   planned: number
   none: number
   unknown: number
+  /** The same status buckets, counted inside the PQC-relevant population only. */
+  relevant: StatusBuckets
+  /** Migration-baseline rows whose status is available or partial. */
+  baselineWithPqc: number
+  /** Rows in neither population (blank catalogue_population). */
+  unassigned: number
+}
+
+export interface StatusBuckets {
+  available: number
+  partial: number
+  planned: number
+  none: number
+  unknown: number
+}
+
+function bucketOf(status: string | undefined): keyof StatusBuckets {
+  const s = (status || '').toLowerCase()
+  if (s === 'available') return 'available'
+  if (s === 'partial') return 'partial'
+  if (s === 'roadmap' || s === 'planned') return 'planned'
+  if (s === 'none') return 'none'
+  return 'unknown'
 }
 
 /**
@@ -31,16 +54,22 @@ export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
     planned: 0,
     none: 0,
     unknown: 0,
+    relevant: { available: 0, partial: 0, planned: 0, none: 0, unknown: 0 },
+    baselineWithPqc: 0,
+    unassigned: 0,
   }
   for (const item of items) {
-    if (item.cataloguePopulation === 'pqc_relevant') counts.pqcRelevant += 1
-    else if (item.cataloguePopulation === 'migration_baseline') counts.baseline += 1
-    const s = (item.pqcStatusCanonical || '').toLowerCase()
-    if (s === 'available') counts.available += 1
-    else if (s === 'partial') counts.partial += 1
-    else if (s === 'roadmap' || s === 'planned') counts.planned += 1
-    else if (s === 'none') counts.none += 1
-    else counts.unknown += 1
+    const bucket = bucketOf(item.pqcStatusCanonical)
+    counts[bucket] += 1
+    if (item.cataloguePopulation === 'pqc_relevant') {
+      counts.pqcRelevant += 1
+      counts.relevant[bucket] += 1
+    } else if (item.cataloguePopulation === 'migration_baseline') {
+      counts.baseline += 1
+      if (bucket === 'available' || bucket === 'partial') counts.baselineWithPqc += 1
+    } else {
+      counts.unassigned += 1
+    }
   }
   return counts
 }
@@ -59,10 +88,16 @@ export function CatalogScopeNote({ items }: { items: SoftwareItem[] }) {
       A curated catalogue of {c.total} products — not an exhaustive list of the market.{' '}
       {hasPopulations ? (
         <>
-          {c.pqcRelevant} products with PQC capability or a PQC plan ({c.available} available ·{' '}
-          {c.partial} partial · {c.planned} planned or on a roadmap), and {c.baseline}{' '}
-          migration-baseline products tracked because they matter to a PQC migration but have no
-          confirmed PQC support yet. The two groups are counted separately.
+          {c.pqcRelevant} PQC-relevant products ({c.relevant.available} available ·{' '}
+          {c.relevant.partial} partial · {c.relevant.planned} planned or on a roadmap ·{' '}
+          {c.relevant.unknown} not yet determined
+          {c.relevant.none > 0 ? ` · ${c.relevant.none} none` : ''}), and {c.baseline}{' '}
+          migration-baseline products tracked because they matter to a PQC migration
+          {c.baselineWithPqc > 0
+            ? ` (${c.baselineWithPqc} of them already have some PQC support)`
+            : ', with no confirmed PQC support yet'}
+          .{c.unassigned > 0 ? ` ${c.unassigned} more are not yet assigned to either group.` : ''}{' '}
+          The groups are counted separately.
         </>
       ) : (
         <>

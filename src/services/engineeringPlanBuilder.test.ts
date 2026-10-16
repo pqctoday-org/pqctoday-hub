@@ -52,6 +52,7 @@ describe('engineering migration plan', () => {
       await buildEngineeringPlanBlob({ result, products: [product({ softwareName: 'LibA' })] })
     )
     expect(Object.keys(files).sort()).toEqual([
+      'engineering-plan/NOTICE.md',
       'engineering-plan/README.md',
       'engineering-plan/algorithm-backlog.csv',
       'engineering-plan/migration-plan.md',
