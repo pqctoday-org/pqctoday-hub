@@ -20,6 +20,7 @@ import {
   RESEARCHER_FIELD_WATCH_VARIANT_ID,
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { essentialsTrackChips } from '@/data/trackChips'
 
 const ALL_PERSONAS = Object.keys(PERSONA_JOURNEY_BOARD) as PersonaId[]
 
@@ -164,7 +165,7 @@ describe('PersonaBoardView', () => {
     renderBoard(<PersonaBoardView personaId={personaId} />)
     const essentials = PERSONAS[personaId].essentials
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
-    const chips = PERSONA_JOURNEY_BOARD[personaId].trackChips
+    const chips = essentialsTrackChips(personaId, PERSONA_JOURNEY_BOARD[personaId].trackChips)
     // Scoped to the track strip: since round 9 the "Related on this site" row
     // renders module titles too, and a chip label can equal a module title.
 

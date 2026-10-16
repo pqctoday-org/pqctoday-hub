@@ -22,6 +22,7 @@ import {
 } from './personaConfig'
 import { ROLE_CROSSWALK, personaToRoles } from './roleCrosswalk'
 import { PERSONAS, type PersonaId } from './learningPersonas'
+import { PENDING_CHIP_RETIREMENT } from './trackChips'
 import type { PhaseId } from './frameworkPhases'
 import { EXEC_TOUR_STAGES } from '@/components/Simulation/autorun/execTourConfig'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
@@ -179,6 +180,16 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
     it(`${personaId}: trackChips count matches essentials.length`, () => {
       const board = PERSONA_JOURNEY_BOARD[personaId]
       const essentials = PERSONAS[personaId].essentials
+      if (PENDING_CHIP_RETIREMENT.has(personaId)) {
+        // Extra chips wait for the data lane's retirement; the renderer shows
+        // only the first essentials.length. Fails once the extras are gone, so
+        // the PENDING_CHIP_RETIREMENT entry is removed with them.
+        expect(
+          board.trackChips.length,
+          `${personaId}: no extra chips left, delete it from PENDING_CHIP_RETIREMENT`
+        ).toBeGreaterThan(essentials.length)
+        return
+      }
       expect(
         board.trackChips.length,
         `${personaId} has ${essentials.length} essentials but ${board.trackChips.length} trackChips`
