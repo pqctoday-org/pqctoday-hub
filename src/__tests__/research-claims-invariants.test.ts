@@ -126,10 +126,6 @@ const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
   { file: /module_qa_combined_\d+/, text: 'Module-LWE (MLWE) and Ring-LWE (RLWE)' },
   // Q&A research-quantum-impact-learn-005 (Part 11 "15 years")
   { file: /module_qa_combined_\d+/, text: 'Part 11 must be preserved for at least 15 years' },
-  // Quiz aisec-008 explanation (FHE "LWE or Ring-LWE, the same lattice problems underlying ML-KEM")
-  { file: /pqcquiz_\d+/, text: 'the same lattice problems underlying ML-KEM' },
-  // Quiz rqi-006 explanation ("over 50 years of classical cryptanalysis")
-  { file: /pqcquiz_\d+/, text: 'resisted over 50 years of classical cryptanalysis' },
   // Q&A healthcare-pqc-learn-006 (HIPAA "7-year" PHI retention; owner chose 6 years)
   { file: /module_qa_combined_\d+/, text: 'HIPAA mandates a minimum 7-year retention requirement' },
 ]
