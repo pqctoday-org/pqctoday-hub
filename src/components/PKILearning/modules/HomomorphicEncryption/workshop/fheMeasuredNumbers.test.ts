@@ -15,6 +15,7 @@ import {
   COMPUTE_SERVICE_MACHINES,
   OPENFHE_EXPORT_BOARDS,
   OPENFHE_ITERATIVE,
+  TFHE_LOAN,
 } from '../data/fheComputeService'
 import { FLOOD_ID2, FLOOD_ID3, FLOOD_ID3_BOARDS, GATE_F_BAR_BITS } from '../data/fheFloodSizing'
 import { ROTATION_MEASURED, SHARED_MEASURED } from './fheRotationSharedData'
@@ -797,6 +798,228 @@ describe('the encrypted risk-scoring service on an x86-64 VM and on an MX95 Pro 
         expect(body, `${folder}/${f}`).not.toMatch(/@[a-z0-9-]+\.[a-z]+/i)
         expect(body, `${folder}/${f}`).not.toMatch(/([0-9a-f]{2}:){5}[0-9a-f]{2}/i)
       }
+  })
+})
+
+describe('the runs with the token on the MX95 Pro over KMIP (pqctoday-fhe #36 and #38)', () => {
+  const CKKS = {
+    folder: 'ckks-scoring-service-x86-vm-kmip-5f0ff3d',
+    record: 'ckks-scoring-service-x86-vm-mx95pro-kmip-5f0ff3d',
+  }
+  const LOAN = {
+    folder: 'tfhe-loan-prequal-x86-vm-kmip-354533b',
+    record: 'tfhe-loan-prequal-x86-vm-mx95pro-kmip-354533b',
+  }
+  const text = (folder: string, file: string) =>
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
+    fs.readFileSync(path.join(ROOT, folder, file), 'utf8')
+  const files = (folder: string) =>
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folders under public/
+    fs.readdirSync(path.join(ROOT, folder)).sort()
+  const prov = (folder: string) =>
+    Object.fromEntries(
+      text(folder, 'provenance.txt')
+        .split('\n')
+        .filter((l) => l.includes(': '))
+        .map((l) => [l.slice(0, l.indexOf(': ')), l.slice(l.indexOf(': ') + 2)])
+    )
+  const median = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+  const thousands = (n: number) => Math.round(n).toLocaleString('en-US')
+  const sha = (b: string | Buffer) => crypto.createHash('sha256').update(b).digest('hex')
+  const record = (id: string) => EVIDENCE_MANIFEST.records.find((r) => r.id === id)!
+
+  it('the CKKS numbers the Learn text quotes equal the run files', () => {
+    const s = json(CKKS.folder, 'summary.json')
+    const e = json(CKKS.folder, 'export.json')
+    const r = json(CKKS.folder, 'receive.json')
+    const p = prov(CKKS.folder)
+    const m = COMPUTE_SERVICE_MACHINES.kmip
+    expect(String(Math.round(median(s.serverRunMs_repetitions)))).toBe(m.medianMs)
+    expect(`${s.serverWallMsAllJobs.min}–${s.serverWallMsAllJobs.max}`).toBe(m.rangeMs)
+    expect(thousands(s.serverPeakRssMiB)).toBe(m.peakMiB)
+    expect(m.admission).toBe(
+      `${Math.round(parseFloat(p.key_admitted.match(/verify_ms ([\d.]+)/)![1]))} ms to verify and ${Math.round(parseFloat(p.key_admitted.match(/assemble_ms ([\d.]+)/)![1]))} ms to assemble`
+    )
+    expect(e.transport).toBe('kmip')
+    expect(e.bytes).toBe(4_410_835_077)
+    expect(thousands(e.evkCalls)).toBe(m.exportCalls)
+    expect(String(Math.round(e.seconds))).toBe(m.exportS)
+    expect(e.mbPerSecond.toFixed(1)).toBe(m.exportMBs)
+    expect(r.hashMismatches).toBe(0)
+    expect(r.tokenManifest.mismatches).toBe(0)
+    expect(text(CKKS.folder, 'token-decrypt.txt')).toBe(
+      `released 524292 B in ${m.releaseS} s (wall 0.231 s over KMIP)\n`
+    )
+    expect((0.231).toFixed(2)).toBe(m.releaseWallS)
+    expect(p.total_wall_s).toBe(m.runS)
+    expect(p.result).toBe('PASS')
+    expect(p.token_model).toContain('KMIP server (PQCTODAY_FHE_1_0)')
+    expect(p.seed).toContain('random, generated in the token over KMIP')
+    expect(p.server_cpus).toBe('12')
+    expect(s.accuracyBits_allSlots.toFixed(2)).toBe(COMPUTE_SERVICE_MACHINES.accuracyBits)
+    expect(s.auc.auc_encrypted.toFixed(6)).toBe('0.717298')
+    expect(s.auc.auc_plaintextPolynomial.toFixed(6)).toBe('0.717299')
+    expect(text(CKKS.folder, 'accuracy-verdict.txt')).toContain(
+      'decisions at 0.5 and 0.25: 100.000 % and 100.000 % agree'
+    )
+  })
+
+  it('the TFHE loan numbers the Learn text quotes equal the run files', () => {
+    const s = json(LOAN.folder, 'summary.json')
+    const t = s.token_decrypt_kmip
+    expect(thousands(s.applicants)).toBe(TFHE_LOAN.applicants)
+    expect(s.edge_cases).toBe(TFHE_LOAN.edgeCases)
+    expect(s.mismatches).toBe(TFHE_LOAN.mismatches)
+    expect(s.approved).toBe(TFHE_LOAN.approved)
+    const c = s.server_compute_s_per_applicant
+    expect(c.median.toFixed(3)).toBe(TFHE_LOAN.serverMedianS)
+    expect(`${c.min.toFixed(3)}–${c.max.toFixed(3)}`).toBe(TFHE_LOAN.serverRangeS)
+    expect(s.client_wall_s_per_applicant.median.toFixed(3)).toBe(TFHE_LOAN.clientWallMedianS)
+    expect(thousands(s.applicants_per_hour_by_wall)).toBe(TFHE_LOAN.perHourByWall)
+    expect(thousands(t.outputs)).toBe(TFHE_LOAN.outputs)
+    expect(t.released).toBe(t.outputs)
+    expect(t.refused).toBe(0)
+    expect(t.errors).toBe(0)
+    expect(t.wall_ms.median.toFixed(1)).toBe(TFHE_LOAN.decryptMedianMs)
+    expect(t.wall_ms.p95.toFixed(1)).toBe(TFHE_LOAN.decryptP95Ms)
+    // every output has a timed line (init, size query, decrypt), and the last line is the summary
+    const lines = text(LOAN.folder, 'decrypt-timings.jsonl')
+      .trim()
+      .split('\n')
+      .map((l) => JSON.parse(l))
+    expect(lines).toHaveLength(t.outputs + 1)
+    expect(lines.at(-1).summary).toEqual(t)
+    for (const l of lines.slice(0, -1)) {
+      expect(l.released).toBe(true)
+      expect(Object.keys(l.calls_ms)).toEqual(['init', 'size', 'decrypt'])
+    }
+    // the corrected engine's TFHE parameter fingerprint
+    expect(json(LOAN.folder, 'token-export.json').param_hash).toMatch(/^e3219e9e/)
+    expect(json(LOAN.folder, 'token-export.json').transport).toBe('kmip')
+  })
+
+  it('both are reference-level, no-badge records of the merged runs, listing every file', () => {
+    for (const [{ folder, record: id }, merge, first] of [
+      [CKKS, '5f0ff3daf142c5064681cb3ca7d5f0946b139f2d', 'summary.md'],
+      [LOAN, '354533be3fc88003a705cb667d84812568caebcc', 'summary.json'],
+    ] as const) {
+      const rec = record(id)
+      expect(rec, id).toBeTruthy()
+      expect(rec.level).toBe('reference')
+      expect(rec.producer).toBe('pqctoday-fhe')
+      expect(rec.claimScope).toBe('reference-library')
+      expect(rec.badge).toBe(false)
+      expect(rec.parts).toBeUndefined()
+      expect(rec.engine?.commit).toBe(merge)
+      expect(rec.notes).toContain(merge)
+      expect(rec.notes).toContain('not a security claim')
+      expect(rec.notes).toContain('no evidence device covers an x86-64 VM')
+      expect(rec.artifacts.map((a) => a.name).sort()).toEqual(files(folder))
+      expect(rec.artifacts[0].name).toBe(first)
+      expect(files(folder).some((f) => f.endsWith('.log'))).toBe(false)
+      for (const a of rec.artifacts)
+        expect(a.url).toBe(`https://www.pqctoday.com/data/fhe-evidence/${folder}/${a.name}`)
+    }
+    expect(record(LOAN.record).scenarioId).toBe('tfhe-single-hsm')
+    expect(record(LOAN.record).notes).toContain('non-commercial purposes only')
+    expect(record(LOAN.record).notes).toContain(
+      'first published run under the corrected HSM engine'
+    )
+  })
+
+  // sha256 of each run file in the FHE repository (pqctoday-fhe #36 and #38), the logs under .txt names
+  const CKKS_FHE_SHA256: Record<string, string> = {
+    'accuracy-verdict.txt': '57e9deedcdc8c824ff190b5ef0f671d82e4ad276d435146253504108726a2192',
+    'bench.json': '3d8d000e6f5beb8b1db90bbdfa43084548b72f9300447ed724451e00af077e9f',
+    'check.json': '338be846ff3e7f58a623bea7ecb6be1566dba9df920ea6beae3b47e5de9ba44b',
+    'export.json': 'c6c8e78f493615d12a9137e851cc6ab3d4a1e32d2f33e3f7cfd305073f949d90',
+    'health-after.json': '098dd2f8fa828e1f2ede0e545bb6263d96eb7038bb355a51f886f907eeae4c71',
+    'health-before.json': 'd8fca0f128f97e2bd0680351b9cdd767760e7722985f7c2532b10b4a2cda407b',
+    'manifest.txt': '14b972168daed79aa45583f7caa3c85a5522aef6898df5f51383e3c862dec44b',
+    'models.json': 'e201f38bb679c4ea0f36fed0e2e24c773c34fe559cf26c447ba8218c9f5a138d',
+    'provenance.txt': '581f37811af818963c7d6c2fdbfb8a9a98aaec984af3593aca6a0c126d62c57a',
+    'receive.json': '972d4ae833c9f1b31cbd49eb74d9bd75ad3f384946b172e215ca495e7cb2477e',
+    'run.log.txt': '073ec2d2657a4e035082357d03006e862405ca93a297e3ed10b001caf2322e69',
+    'server-process-status.txt': '5a1170edb4c82ed27a9387bbf7695079cd05efeb128473e913072356a022cda3',
+    'server-start.log.txt': '2ffd731c6e46a59e75aa5ca76c60539a4a6cc5414eba9a63f24e63eb8b37c572',
+    'server.log.txt': 'b532a7d2f267472b4c4060802773a2fbe35f9f25669c841f6794becfc26fa867',
+    'summary.json': 'cf8a9c2f2c8465b09597bbfa9bf490ec498986e5484bf4f26713963c7f37516e',
+    'summary.md': '36a50ee33c7dea136aeff29a3e20d822b86c2dcd16536c75d7f86bb2e7da7c11',
+    'timing.json': '15136a52622cbc3678430eeca0ed6e0c7da0ad4ef8bf8d4753db7ff939ba95da',
+    'token-decrypt.txt': 'c42def24b805d6b04a6be9fca01ce6d2731656e3e1a4f1c592756b90c32a77a9',
+    'token-init.txt': '78973f7d8ab767a5062ba71e17160f174869d1803fd6f87ff7cc85ffac1ba400',
+    'upload-key.json': '679221afc4f1fa98ffea722b11c08ff6eb206727f3d77f1684f2281caea685a7',
+  }
+  const LOAN_FHE_SHA256: Record<string, string> = Object.fromEntries(
+    record(LOAN.record).artifacts.map((a) => [a.name, a.sha256])
+  )
+  const NOTE_LINE =
+    'note_public_copy: labels differ from the FHE repository copy (the machine label was renamed to x86-vm in the public copy); the measurements are unchanged'
+  // the old machine label, written so that this test file does not hold the label itself
+  const OLD = `x${1}`
+  const restoreLabel = (s: string) =>
+    s
+      .replace(`\n${NOTE_LINE}\n`, '\n')
+      .replaceAll('2026-10-16-id3-x86-vm-mx95pro-kmip-r3', `2026-10-16-id3-${OLD}-mx95pro-kmip-r3`)
+      .replaceAll('server_label: x86-vm', `server_label: ${OLD}-vm`)
+      .replaceAll('server x86-vm (ssh)', `server ${OLD}-vm (ssh)`)
+      .replaceAll('] x86-vm service run', `] ${OLD} service run`)
+      .replaceAll('kind: x86-vm', `kind: ${OLD}`)
+      .replaceAll('"kind": "x86-vm"', `"kind": "${OLD}"`)
+
+  it('the CKKS run files equal the FHE repository copy, except the documented label substitution', () => {
+    expect(files(CKKS.folder)).toEqual(Object.keys(CKKS_FHE_SHA256).sort())
+    const changed = ['provenance.txt', 'run.log.txt', 'summary.json', 'summary.md']
+    for (const f of files(CKKS.folder)) {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folder under public/
+      const bytes = fs.readFileSync(path.join(ROOT, CKKS.folder, f))
+      if (!changed.includes(f)) {
+        expect(sha(bytes), f).toBe(CKKS_FHE_SHA256[f])
+        continue
+      }
+      const restored = restoreLabel(bytes.toString('utf8'))
+      expect(restored, f).not.toContain('x86-vm')
+      expect(sha(restored), f).toBe(CKKS_FHE_SHA256[f])
+      // the record's notes give each relabelled file's original sha256
+      expect(record(CKKS.record).notes, f).toContain(CKKS_FHE_SHA256[f])
+    }
+    expect(text(CKKS.folder, 'provenance.txt')).toContain(`\n${NOTE_LINE}\n`)
+    expect(record(CKKS.record).notes).toContain(
+      'copied byte for byte except the machine label in four of them'
+    )
+  })
+
+  it('the loan run files are the six files of the merged run, byte for byte', () => {
+    expect(files(LOAN.folder)).toEqual([
+      'decrypt-timings.jsonl',
+      'prepare.json',
+      'server-host.txt',
+      'server-memory.txt',
+      'summary.json',
+      'token-export.json',
+    ])
+    for (const f of files(LOAN.folder)) {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test folder under public/
+      expect(sha(fs.readFileSync(path.join(ROOT, LOAN.folder, f))), f).toBe(LOAN_FHE_SHA256[f])
+    }
+    expect(record(LOAN.record).notes).toContain('all six copied byte for byte')
+  })
+
+  it('no machine label, address, host or user name, serial or home path in the files or records', () => {
+    const label = new RegExp(`(^|[^0-9A-Za-z])${OLD}([^0-9A-Za-z]|$)|${OLD}-vm`, 'im')
+    for (const { folder, record: id } of [CKKS, LOAN]) {
+      for (const f of files(folder)) {
+        const body = text(folder, f).replace(/127\.0\.0\.1|0\.0\.0\.0/g, '')
+        expect(body, `${folder}/${f}`).not.toMatch(label)
+        expect(body, `${folder}/${f}`).not.toMatch(/(\d{1,3}\.){3}\d{1,3}/)
+        expect(body, `${folder}/${f}`).not.toMatch(/\/Users\/|\/home\/|ericamador|eram2207/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/@[a-z0-9-]+\.[a-z]+/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/([0-9a-f]{2}:){5}[0-9a-f]{2}/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/pqc-(kv260|mx95)|crypto-[a-z]|control network/i)
+        expect(body, `${folder}/${f}`).not.toMatch(/PRIVATE KEY/)
+      }
+      expect(JSON.stringify(record(id))).not.toMatch(label)
+    }
   })
 })
 

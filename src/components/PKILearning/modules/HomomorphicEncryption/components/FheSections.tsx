@@ -19,6 +19,7 @@ import {
 } from './FheContextSections'
 import { EvidenceCite } from './FheEvidenceCite'
 import {
+  COMPUTE_SERVICE_KMIP_REF,
   COMPUTE_SERVICE_LIMITS,
   COMPUTE_SERVICE_MACHINES_INTRO,
   COMPUTE_SERVICE_MACHINES_SAME_RESULT,
@@ -33,6 +34,9 @@ import {
   OPENFHE_EXPORT_ROWS,
   OPENFHE_ITERATIVE_INTRO,
   OPENFHE_ITERATIVE_ROWS,
+  TFHE_LOAN_LIMITS,
+  TFHE_LOAN_REF,
+  TFHE_LOAN_ROWS,
   citeMerged,
 } from '../data/fheComputeService'
 import { Button } from '@/components/ui/button'
@@ -649,6 +653,14 @@ export const FheKeysOperationsSection: React.FC = () => (
         object type and no X.509 OID. Each library serializes keys its own way, and a key is
         meaningless without its exact parameter set.
       </p>
+      <p className="text-xs text-muted-foreground">
+        No standard defines an FHE mechanism either. This lab&apos;s HSM therefore serves FHE key
+        custody as vendor-defined PKCS#11 mechanisms, for key generation, public-key derivation and
+        decryption, listed in its mechanism list and carried over KMIP&apos;s PKCS_11 operation. It
+        offers no FHE encryption mechanism: the data owner encrypts under the public key itself (
+        <EvidenceCite of="scoringX86VmKmip">CKKS run over KMIP</EvidenceCite>,{' '}
+        <EvidenceCite of="tfheLoanKmip">TFHE run over KMIP</EvidenceCite>).
+      </p>
     </div>
 
     <p className="text-xs text-muted-foreground">
@@ -843,10 +855,44 @@ export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleVi
           </li>
         </ul>
         <p className="text-xs text-muted-foreground mt-2">
-          No standard PKCS#11 mechanism exists for any of this today. It would use vendor-defined
-          mechanisms.
+          No standard PKCS#11 mechanism exists for any of this today, so this lab&apos;s HSM uses
+          vendor-defined mechanisms, also reachable over KMIP (section 5).
         </p>
       </div>
+    </div>
+
+    <div
+      id="fhe-security-model"
+      className="bg-muted/50 rounded-lg p-4 border border-border space-y-2"
+    >
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <ShieldCheck size={14} className="text-primary" />
+        The security model as implemented in this lab&apos;s HSM
+      </h3>
+      <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+        <li>
+          <strong>Roles:</strong> FHE keys follow the normal PKCS#11 user and security-officer
+          roles. Key generation, public-key derivation, attribute reads and decryption are user
+          operations; there is no FHE-specific role, and so no separate decrypt role as the controls
+          below recommend.
+        </li>
+        <li>
+          <strong>Destroying a seed:</strong> FHE seeds are created with{' '}
+          <span className="font-mono">CKA_DESTROYABLE = FALSE</span>, so only the security officer
+          can destroy one, through a signed administrative request.
+        </li>
+        <li>
+          <strong>Decryption budget:</strong> each decryption spends one unit of a counter fixed by
+          the officer&apos;s enrolled decryption policy. Refused and malformed requests spend a unit
+          too; the size query spends none.
+        </li>
+        <li>
+          <strong>Decryption calls:</strong> PKCS#11 single-part,{' '}
+          <span className="font-mono">C_DecryptInit</span>, a size query, then{' '}
+          <span className="font-mono">C_Decrypt</span>. Over KMIP each output took a median of 24.8
+          ms (<EvidenceCite of="tfheLoanKmip">TFHE run over KMIP</EvidenceCite>).
+        </li>
+      </ul>
     </div>
 
     <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
@@ -997,6 +1043,14 @@ export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleVi
         ran at 8.3 MB/s, about 7 % of a 1 Gb/s link, and sending the stream to the Mac over SSH
         added about 5 % to the generation time. The fastest board run, six MX95 Pro cores at 30
         limbs per call, reaches 54 MB/s, about half of a 1 Gb/s link.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        <strong>Over KMIP:</strong> with the token on the MX95 Pro reached over KMIP, the 4.41 GB
+        key set of the second parameter set went out in 1,201 bounded calls in 197 s (22.4 MB/s),
+        with 0 manifest mismatches (<EvidenceCite of="scoringX86VmKmip">KMIP run</EvidenceCite>).
+        This is a separate measurement, not a comparison with the SSH-stream figures above: the
+        parameter set, the token&apos;s settings and the transport all differ, and each is one run,
+        so it does not show KMIP to be slower or faster.
       </p>
     </div>
 
@@ -1451,16 +1505,33 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
         <strong className="text-foreground">On other machines:</strong>{' '}
         {COMPUTE_SERVICE_MACHINES_INTRO} (
         <EvidenceCite of="scoringX86Vm">virtual machine run</EvidenceCite>,{' '}
-        <EvidenceCite of="scoringMx95pro">MX95 Pro run</EvidenceCite>):
+        <EvidenceCite of="scoringMx95pro">MX95 Pro run</EvidenceCite>,{' '}
+        <EvidenceCite of="scoringX86VmKmip">run with the token over KMIP</EvidenceCite>):
       </p>
       <FactsTable rows={COMPUTE_SERVICE_MACHINE_ROWS} />
       <p className="text-xs text-muted-foreground">{COMPUTE_SERVICE_MACHINES_SAME_RESULT}</p>
       <p className="text-xs text-muted-foreground">{COMPUTE_SERVICE_LIMITS}</p>
       <p className="text-[11px] text-muted-foreground">
-        Merged: {citeMerged(COMPUTE_SERVICE_REF)}; {citeMerged(COMPUTE_SERVICE_RUNS_REF)}. The
-        custodian of the virtual machine and board runs was built from pqctoday-hsm main at{' '}
-        {COMPUTE_SERVICE_RUNS_CUSTODIAN_COMMIT}.
+        Merged: {citeMerged(COMPUTE_SERVICE_REF)}; {citeMerged(COMPUTE_SERVICE_RUNS_REF)};{' '}
+        {citeMerged(COMPUTE_SERVICE_KMIP_REF)}. The custodian of the first virtual machine run and
+        the board run was built from pqctoday-hsm main at {COMPUTE_SERVICE_RUNS_CUSTODIAN_COMMIT}.
       </p>
+    </div>
+
+    <div id="fhe-tfhe-loan" className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <Server size={14} className="text-primary" />
+        TFHE: an encrypted loan pre-qualification
+      </h3>
+      <p className="text-xs text-muted-foreground">
+        The same pattern with TFHE&apos;s exact integers: a compute service on an x86-64 virtual
+        machine pre-qualifies encrypted loan applications, the token on the MX95 Pro holds the keys
+        and is reached over KMIP, and the data owner on a Mac encrypts and reads the results (
+        <EvidenceCite of="tfheLoanKmip">loan run</EvidenceCite>):
+      </p>
+      <FactsTable rows={TFHE_LOAN_ROWS} />
+      <p className="text-xs text-muted-foreground">{TFHE_LOAN_LIMITS}</p>
+      <p className="text-[11px] text-muted-foreground">Merged: {citeMerged(TFHE_LOAN_REF)}.</p>
     </div>
   </div>
 )
