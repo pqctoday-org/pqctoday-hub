@@ -128,6 +128,8 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'run-manifest': 'compliance',
   // Researcher workspace: a collection of cited sources is reference evidence.
   'library-collection': 'compliance',
+  'claim-matrix': 'compliance',
+  'reproduction-record': 'compliance',
   'research-question': 'compliance',
 }
 
@@ -199,6 +201,8 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // Researcher workspace artifacts, saved from the Library and the researcher
   // Command Center, not from a Command Center builder.
   'library-collection': 'mitigation',
+  'claim-matrix': 'mitigation',
+  'reproduction-record': 'mitigation',
   'research-question': 'mitigation',
 }
 

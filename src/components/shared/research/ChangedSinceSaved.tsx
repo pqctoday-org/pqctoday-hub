@@ -9,7 +9,7 @@
  * Shown on the Library page (only when something changed) and in the
  * researcher's research workspace. The Library data loads on mount.
  */
-import { useEffect, useMemo, useState, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import { Link } from 'react-router'
 import { BellDot, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -22,13 +22,11 @@ import {
   savedCollections,
 } from '@/services/research/libraryCollection'
 import {
-  buildLibraryIndex,
   collectionChanges,
   indexLookup,
   type ChangedRecord,
-  type IndexableRecord,
-  type LibraryIndex,
 } from '@/services/research/collectionChanges'
+import { useLibraryIndex } from './useLibraryIndex'
 import {
   libraryRecordPath,
   recordRevisionsPath,
@@ -36,30 +34,6 @@ import {
 } from '@/data/researchWorkspace'
 
 const EMPTY: ExecutiveDocument[] = []
-
-/** Loads the Library index once per mount. */
-function useLibraryIndex(): LibraryIndex | null {
-  const [index, setIndex] = useState<LibraryIndex | null>(null)
-  useEffect(() => {
-    let live = true
-    import('@/data/libraryData')
-      .then((m) => {
-        if (live) {
-          setIndex(
-            buildLibraryIndex(
-              m.libraryData as unknown as IndexableRecord[],
-              m.REFERENCE_ID_ALIASES ?? {}
-            )
-          )
-        }
-      })
-      .catch((e: unknown) => console.error('Library data did not load for change check', e))
-    return () => {
-      live = false
-    }
-  }, [])
-  return index
-}
 
 interface ChangedSinceSavedProps {
   placement: 'library' | 'workspace'

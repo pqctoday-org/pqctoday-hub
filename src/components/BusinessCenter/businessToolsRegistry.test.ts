@@ -80,6 +80,8 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'run-manifest',
   'library-collection',
   'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -118,6 +120,8 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   'run-manifest',
   'library-collection',
   'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ])
 
 describe('Command Center registry — drift guard', () => {

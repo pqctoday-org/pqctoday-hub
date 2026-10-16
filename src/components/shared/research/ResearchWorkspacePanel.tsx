@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * The researcher's evidence workspace on the Command Center (Layer 2 of the
- * evidence workspace): collections of Library records with the state saved
- * with each one. Everything stays in the browser; the evidence bundle above
+ * evidence workspace): the research question, collections of Library records
+ * with the state saved with each one, what changed since, the claim matrix and
+ * reproduction records. Everything stays in the browser; the evidence bundle above
  * carries it out.
  */
 import { useEffect, useRef, type FC, type ReactNode } from 'react'
@@ -11,6 +12,8 @@ import { CollectionsList } from './CollectionsList'
 import { BookmarksToCollection } from './BookmarksToCollection'
 import { ChangedSinceSaved } from './ChangedSinceSaved'
 import { ResearchQuestionForm } from './ResearchQuestionForm'
+import { ClaimMatrixEditor } from './ClaimMatrixEditor'
+import { CompareRuns } from './CompareRuns'
 
 const PANEL_ID = 'research-workspace'
 
@@ -75,6 +78,22 @@ export const ResearchWorkspacePanel: FC = () => {
       >
         <BookmarksToCollection testId="workspace-bookmarks-to-collection" />
         <CollectionsList />
+      </Block>
+
+      <Block
+        title="Claim matrix"
+        testId="research-claims"
+        intro="Atomic claims, each with the status you give it (fact, estimate, scenario or recommendation), the Library records for and against it, why you are confident, and what is still open."
+      >
+        <ClaimMatrixEditor />
+      </Block>
+
+      <Block
+        title="Compare runs"
+        testId="research-reproductions"
+        intro="Two saved runs of the same tool side by side: what differed in how they ran and in their results. Add a second implementation's result, your conclusion and what would falsify it."
+      >
+        <CompareRuns />
       </Block>
     </section>
   )

@@ -102,6 +102,11 @@ export type ExecutiveDocumentType =
   // Researcher evidence workspace, Layer 2: a named set of Library record ids,
   // each with the user's annotation and the record's state as saved.
   | 'library-collection'
+  // Researcher evidence workspace: atomic claims with a user-set status and supporting and contrary Library record ids.
+  | 'claim-matrix'
+  // Researcher evidence workspace: two saved run records compared, with a
+  // conclusion and what would falsify it.
+  | 'reproduction-record'
   // Researcher evidence workspace: the question, its type, inclusion and exclusion criteria and evidence threshold.
   | 'research-question'
 
