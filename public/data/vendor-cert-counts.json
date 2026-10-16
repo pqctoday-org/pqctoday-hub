@@ -7,6 +7,20 @@
     "total": 95
   },
   {
+    "vendor": "Cisco Systems, Inc.",
+    "fips": 22,
+    "acvp": 2,
+    "cc": 38,
+    "total": 62
+  },
+  {
+    "vendor": "Samsung Electronics Co., Ltd.",
+    "fips": 18,
+    "acvp": 1,
+    "cc": 43,
+    "total": 62
+  },
+  {
     "vendor": "Amazon Web Services, Inc.",
     "fips": 11,
     "acvp": 49,
@@ -14,25 +28,11 @@
     "total": 60
   },
   {
-    "vendor": "Cisco Systems, Inc.",
-    "fips": 21,
-    "acvp": 2,
-    "cc": 37,
-    "total": 60
-  },
-  {
-    "vendor": "Samsung Electronics Co., Ltd.",
-    "fips": 18,
-    "acvp": 1,
-    "cc": 41,
-    "total": 60
-  },
-  {
     "vendor": "Infineon Technologies AG",
     "fips": 0,
     "acvp": 0,
-    "cc": 57,
-    "total": 57
+    "cc": 58,
+    "total": 58
   },
   {
     "vendor": "Apple Inc.",
@@ -77,17 +77,17 @@
     "total": 28
   },
   {
+    "vendor": "Palo Alto Networks, Inc.",
+    "fips": 21,
+    "acvp": 0,
+    "cc": 4,
+    "total": 25
+  },
+  {
     "vendor": "Juniper Networks, Inc.",
     "fips": 20,
     "acvp": 0,
     "cc": 4,
-    "total": 24
-  },
-  {
-    "vendor": "Palo Alto Networks, Inc.",
-    "fips": 21,
-    "acvp": 0,
-    "cc": 3,
     "total": 24
   },
   {
@@ -203,6 +203,13 @@
     "total": 12
   },
   {
+    "vendor": "NXP Semiconductors",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 12,
+    "total": 12
+  },
+  {
     "vendor": "Ciena Corporation",
     "fips": 7,
     "acvp": 2,
@@ -221,13 +228,6 @@
     "fips": 9,
     "acvp": 0,
     "cc": 2,
-    "total": 11
-  },
-  {
-    "vendor": "NXP Semiconductors",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 11,
     "total": 11
   },
   {
@@ -309,6 +309,13 @@
   },
   {
     "vendor": "KYOCERA Document Solutions Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 8,
+    "total": 9
+  },
+  {
+    "vendor": "Canon Inc.",
     "fips": 1,
     "acvp": 0,
     "cc": 8,
@@ -434,13 +441,6 @@
     "total": 7
   },
   {
-    "vendor": "Canon Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 6,
-    "total": 7
-  },
-  {
     "vendor": "Xerox Corporation",
     "fips": 0,
     "acvp": 0,
@@ -554,6 +554,13 @@
   },
   {
     "vendor": "Secunet Security Networks AG",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 5,
+    "total": 5
+  },
+  {
+    "vendor": "High Security Labs Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 5,
@@ -701,13 +708,6 @@
   },
   {
     "vendor": "Cigent Technology, Inc.",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "High Security Labs Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
@@ -980,6 +980,20 @@
     "total": 3
   },
   {
+    "vendor": "Gigamon, Inc",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 3,
+    "total": 3
+  },
+  {
+    "vendor": "Dell Technologies",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 3,
+    "total": 3
+  },
+  {
     "vendor": "LG Electronics, Inc.",
     "fips": 0,
     "acvp": 0,
@@ -1016,6 +1030,13 @@
   },
   {
     "vendor": "Theben Smart Energy GmbH",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 3,
+    "total": 3
+  },
+  {
+    "vendor": "Sagemcom Dr. Neuhaus GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
@@ -1645,13 +1666,6 @@
     "total": 2
   },
   {
-    "vendor": "Gigamon, Inc",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
     "vendor": "NetScout Systems, Inc.",
     "fips": 0,
     "acvp": 0,
@@ -1660,13 +1674,6 @@
   },
   {
     "vendor": "Shift5, Inc.",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Dell Technologies",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
@@ -1722,13 +1729,6 @@
     "total": 2
   },
   {
-    "vendor": "Sagemcom Dr. Neuhaus GmbH",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
     "vendor": "Solarwinds Worldwide, LLC",
     "fips": 0,
     "acvp": 0,
@@ -1775,6 +1775,13 @@
     "fips": 0,
     "acvp": 2,
     "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "Saab Danmark A/S",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 2,
     "total": 2
   },
   {
@@ -4249,13 +4256,6 @@
     "total": 1
   },
   {
-    "vendor": "Saab Danmark A/S",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
     "vendor": "Chunghwa Telecom laboratories",
     "fips": 1,
     "acvp": 0,
@@ -4413,6 +4413,20 @@
     "vendor": "Provision",
     "fips": 0,
     "acvp": 1,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "MaxVision Rugged Portable Computers LLC",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 1,
+    "total": 1
+  },
+  {
+    "vendor": "Seagate Technology LLC.",
+    "fips": 1,
+    "acvp": 0,
     "cc": 0,
     "total": 1
   }
