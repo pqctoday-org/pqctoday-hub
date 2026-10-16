@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ResearcherFieldWatchCard } from './ResearcherFieldWatchCard'
+import { RESEARCH_TOPIC_TAGS_PENDING_NOTE as TOPIC_TAGS_PENDING_NOTE } from '@/data/researchTopics'
 import { useResearchFieldsStore } from '@/store/useResearchFieldsStore'
 import type { FieldWatchRow } from '@/data/researchFieldWatch'
 import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
@@ -66,12 +67,16 @@ vi.mock('@/data/researchFieldWatch', async (importOriginal) => {
       releaseDateMs: RELEASE,
       windowStartMs: WINDOW_START,
       otherShare: actual.computeOtherFieldShare(activeFixtureRows),
+      topicTaggedCount: actual.countTopicTaggedRows(activeFixtureRows),
     }),
   }
 })
 
-function resetStore(overrides: { followedFields?: string[] } = {}) {
-  useResearchFieldsStore.setState({ followedFields: overrides.followedFields ?? [] })
+function resetStore(overrides: { followedFields?: string[]; followedTopics?: string[] } = {}) {
+  useResearchFieldsStore.setState({
+    followedFields: overrides.followedFields ?? [],
+    followedTopics: overrides.followedTopics ?? [],
+  })
 }
 
 describe('ResearcherFieldWatchCard', () => {
@@ -226,5 +231,77 @@ describe('ResearcherFieldWatchCard', () => {
     })
     render(<ResearcherFieldWatchCard />)
     expect(screen.getAllByTestId('field-watch-row')).toHaveLength(3)
+  })
+})
+
+// Rows tagged with research topics, for the "Library is tagged" case.
+const TOPIC_ROWS: FieldWatchRow[] = [
+  ...FIXTURE_ROWS,
+  {
+    referenceId: 'FIX-TOPIC',
+    algorithmFamily: '',
+    lastUpdateDateMs: ROW_TIMESTAMP,
+    isDeprecated: false,
+    deprecatedAtMs: null,
+    researchTopics: ['cryptanalysis'],
+  },
+]
+
+describe('ResearcherFieldWatchCard — research topics', () => {
+  beforeEach(() => {
+    resetStore()
+    activeFixtureRows = FIXTURE_ROWS
+  })
+
+  it('before any row is tagged, the topic group shows the honest note instead of a picker', () => {
+    render(<ResearcherFieldWatchCard />)
+    const group = screen.getByTestId('field-watch-topic-group')
+    expect(group).toHaveTextContent('Research topics')
+    expect(screen.getByTestId('field-watch-topic-note')).toHaveTextContent(TOPIC_TAGS_PENDING_NOTE)
+    // Only the algorithm-family picker is offered.
+    expect(screen.getAllByTestId('filter-dropdown')).toHaveLength(1)
+  })
+
+  it('a followed topic is never shown as a zero count while nothing is tagged', () => {
+    resetStore({ followedTopics: ['cryptanalysis'] })
+    render(<ResearcherFieldWatchCard />)
+    expect(screen.getByTestId('field-watch-topics-pending')).toHaveTextContent(
+      TOPIC_TAGS_PENDING_NOTE
+    )
+    expect(screen.queryAllByTestId('field-watch-row')).toHaveLength(0)
+    expect(screen.queryByTestId('field-watch-punchline')).toBeNull()
+    expect(screen.queryByTestId('corpus-deprecated')).toBeNull()
+  })
+
+  it('followed fields still count normally while topics are pending', () => {
+    resetStore({ followedFields: ['lattice-based'], followedTopics: ['cryptanalysis'] })
+    render(<ResearcherFieldWatchCard />)
+    expect(screen.getAllByTestId('field-watch-row')).toHaveLength(1)
+    expect(screen.getByTestId('field-watch-topics-pending')).toBeInTheDocument()
+  })
+
+  it('once rows are tagged, the topic picker appears and topics count like fields', () => {
+    activeFixtureRows = TOPIC_ROWS
+    resetStore({ followedTopics: ['cryptanalysis'] })
+    render(<ResearcherFieldWatchCard />)
+    const row = screen.getByTestId('field-watch-row')
+    expect(row).toHaveTextContent('Cryptanalysis')
+    expect(row).toHaveTextContent('1 published or revised in window')
+    expect(screen.queryByTestId('field-watch-topics-pending')).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: /edit your fields/i }))
+    expect(screen.getAllByTestId('filter-dropdown')).toHaveLength(2)
+    expect(screen.queryByTestId('field-watch-topic-note')).toBeNull()
+  })
+
+  it('choosing a topic in the second picker follows it without touching fields', () => {
+    activeFixtureRows = TOPIC_ROWS
+    resetStore({ followedFields: ['lattice-based'] })
+    render(<ResearcherFieldWatchCard />)
+    fireEvent.click(screen.getByRole('button', { name: /edit your fields/i }))
+    fireEvent.click(screen.getAllByTestId('filter-dropdown')[1])
+    fireEvent.click(screen.getByRole('option', { name: /^Formal analysis$/ }))
+    expect(useResearchFieldsStore.getState().followedTopics).toEqual(['formal-analysis'])
+    expect(useResearchFieldsStore.getState().followedFields).toEqual(['lattice-based'])
   })
 })

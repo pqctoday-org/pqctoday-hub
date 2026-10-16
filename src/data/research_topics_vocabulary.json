@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "id": "implementation-attacks",
+      "label": "Implementation attacks",
+      "definition": "Attacks on how a scheme is implemented rather than on its mathematics: side channels, fault injection, timing, and their countermeasures.",
+      "include": [
+        "side-channel analysis",
+        "power or electromagnetic analysis",
+        "timing attacks",
+        "fault injection",
+        "masking and constant-time countermeasures",
+        "implementation hardening"
+      ],
+      "exclude": [
+        "attacks on the underlying hard problem (use cryptanalysis)",
+        "estimates of the quantum computer needed to break RSA or ECC (use quantum-threat)"
+      ]
+    },
+    {
+      "id": "cryptanalysis",
+      "label": "Cryptanalysis",
+      "definition": "Mathematical attacks on post-quantum or classical schemes and their parameters, including breaks, improved attacks and parameter re-estimates.",
+      "include": [
+        "attacks on PQC candidates or standards",
+        "lattice reduction or decoding attack cost",
+        "structural attacks",
+        "parameter security re-estimates",
+        "broken or withdrawn candidates"
+      ],
+      "exclude": [
+        "side-channel or fault attacks (use implementation-attacks)",
+        "resource estimates for a quantum computer breaking RSA or ECC (use quantum-threat)"
+      ]
+    },
+    {
+      "id": "formal-analysis",
+      "label": "Formal analysis",
+      "definition": "Security proofs, security models and machine-checked verification of schemes, protocols or implementations.",
+      "include": [
+        "security proofs and reductions",
+        "protocol models (e.g. Tamarin, ProVerif)",
+        "verified implementations",
+        "combiner security proofs"
+      ],
+      "exclude": ["informal security discussion without a proof or model"]
+    },
+    {
+      "id": "protocol-integration",
+      "label": "Protocol integration",
+      "definition": "How post-quantum algorithms are carried in network and messaging protocols, including hybrid key exchange and signature formats.",
+      "include": [
+        "TLS",
+        "SSH",
+        "IKEv2/IPsec",
+        "QUIC",
+        "MLS",
+        "OpenPGP",
+        "COSE/JOSE",
+        "HPKE",
+        "DNSSEC",
+        "hybrid key exchange"
+      ],
+      "exclude": ["certificate formats and PKI operations (use pki-certificates)"]
+    },
+    {
+      "id": "pki-certificates",
+      "label": "PKI and certificates",
+      "definition": "Certificates, certificate formats and public-key infrastructure operations with post-quantum or hybrid keys.",
+      "include": [
+        "X.509 algorithm identifiers",
+        "composite and related certificates",
+        "certificate transparency",
+        "Merkle tree certificates",
+        "CA and relying-party operations",
+        "CMS signatures"
+      ],
+      "exclude": ["transport protocols that only carry certificates (use protocol-integration)"]
+    },
+    {
+      "id": "hsm-key-management",
+      "label": "HSMs and key management",
+      "definition": "Hardware security modules, key management systems and key-handling interfaces for post-quantum keys.",
+      "include": [
+        "HSMs",
+        "KMS",
+        "PKCS #11",
+        "KMIP",
+        "key lifecycle, backup and rotation",
+        "stateful hash-based signature state management"
+      ],
+      "exclude": ["general certificate operations (use pki-certificates)"]
+    },
+    {
+      "id": "entropy-rng",
+      "label": "Entropy and random numbers",
+      "definition": "Random bit generation: entropy sources, DRBGs, health tests, conditioning and their validation.",
+      "include": [
+        "SP 800-90A/B/C",
+        "entropy sources and estimation",
+        "DRBGs",
+        "QRNGs as entropy sources",
+        "health tests"
+      ],
+      "exclude": []
+    },
+    {
+      "id": "migration-agility",
+      "label": "Migration and crypto agility",
+      "definition": "Planning and executing the move to post-quantum cryptography: inventory, prioritisation, crypto agility and migration practice.",
+      "include": [
+        "cryptographic inventory and CBOM",
+        "migration roadmaps and playbooks",
+        "crypto agility",
+        "hybrid transition strategy",
+        "harvest-now-decrypt-later risk assessment"
+      ],
+      "exclude": [
+        "binding requirements and deadlines set by governments or regulators (use policy-regulation)"
+      ]
+    },
+    {
+      "id": "policy-regulation",
+      "label": "Policy and regulation",
+      "definition": "Government, regulatory and standards-body requirements, guidance and deadlines for post-quantum cryptography.",
+      "include": [
+        "national guidance (e.g. NSA CNSA 2.0, BSI, ANSSI, NCSC)",
+        "regulatory deadlines",
+        "procurement and compliance requirements",
+        "certification schemes"
+      ],
+      "exclude": [
+        "the technical content of a standard itself, when no requirement or deadline is stated"
+      ]
+    },
+    {
+      "id": "performance-benchmarks",
+      "label": "Performance and benchmarks",
+      "definition": "Measured speed, size, memory or energy of post-quantum algorithms and implementations, and how they were measured.",
+      "include": [
+        "cycle counts and timings",
+        "key, signature and ciphertext sizes in practice",
+        "hardware acceleration",
+        "constrained-device performance",
+        "handshake latency measurements"
+      ],
+      "exclude": ["parameter tables copied from a specification without measurement"]
+    },
+    {
+      "id": "domain-applications",
+      "label": "Domain applications",
+      "definition": "Post-quantum cryptography applied in a specific industry or application domain.",
+      "include": [
+        "healthcare and genomics",
+        "finance and payments",
+        "automotive and V2X",
+        "IoT and embedded devices",
+        "telecom and 5G",
+        "aviation and space",
+        "energy and industrial control",
+        "government and defence systems",
+        "blockchain"
+      ],
+      "exclude": [
+        "documents that only mention a sector in passing",
+        "general protocol or PKI work that is not specific to one domain"
+      ]
+    },
+    {
+      "id": "quantum-threat",
+      "label": "Quantum threat",
+      "definition": "When and how a cryptographically relevant quantum computer could break today's public-key cryptography: resource estimates, hardware progress and timeline surveys.",
+      "include": [
+        "CRQC resource estimates (qubits, run time) for RSA or ECC",
+        "quantum hardware milestones",
+        "expert timeline surveys",
+        "Shor and Grover cost analysis"
+      ],
+      "exclude": [
+        "attacks on post-quantum schemes, classical or quantum (use cryptanalysis)",
+        "regulatory deadlines (use policy-regulation)"
+      ]
+    }
+  ]
+}

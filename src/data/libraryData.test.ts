@@ -15,6 +15,8 @@ import {
   type PriorRevision,
 } from './libraryData'
 import { LIFECYCLE_LABELS, resolveLifecycleLabel } from '../utils/libraryLifecycle'
+import { loadLatestCSV } from './csvUtils'
+import { isResearchTopicId } from './researchTopics'
 import { LIBRARY_EXECUTIVE_PICKS } from './libraryExecutivePicks'
 import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
 import { LIBRARY_CURIOUS_PICKS } from './libraryCuriousPicks'
@@ -478,6 +480,44 @@ describe('attachSuccessionLinks', () => {
           doc.referenceId
         )
       }
+    }
+  })
+})
+
+describe('library research topics (loader)', () => {
+  const header =
+    'reference_id,document_title,document_status,document_type,applicable_industries,dependencies,status'
+  const load = (csv: string) =>
+    loadLatestCSV<RawLibraryRow, LibraryItem>(
+      { './library_01012026.csv': csv },
+      /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+      transformLibraryRow
+    ).data
+
+  it('gives every row no topics when the CSV has no research_topics column', () => {
+    const items = load(`${header}\nDOC-1,Doc 1,Published,Standard,,,active\n`)
+    expect(items).toHaveLength(1)
+    expect(items[0].researchTopics).toEqual([])
+  })
+
+  it('parses the research_topics column when present, keeping only known ids', () => {
+    const items = load(
+      `${header},research_topics\n` +
+        'DOC-1,Doc 1,Published,Standard,,,active,cryptanalysis; Formal-Analysis\n' +
+        'DOC-2,Doc 2,Published,Standard,,,active,\n' +
+        'DOC-3,Doc 3,Published,Standard,,,active,not-a-topic;quantum-threat\n'
+    )
+    expect(items.map((i) => i.researchTopics)).toEqual([
+      ['cryptanalysis', 'formal-analysis'],
+      [],
+      ['quantum-threat'],
+    ])
+  })
+
+  it('every shipped row carries a researchTopics array of known ids', () => {
+    for (const item of libraryData) {
+      expect(Array.isArray(item.researchTopics)).toBe(true)
+      for (const id of item.researchTopics) expect(isResearchTopicId(id)).toBe(true)
     }
   })
 })

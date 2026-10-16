@@ -2,6 +2,7 @@
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
+import { parseResearchTopics } from './researchTopics'
 import { resolveLifecycleLabel, type LifecycleLabel } from '../utils/libraryLifecycle'
 
 /**
@@ -99,6 +100,10 @@ export interface LibraryItem {
   mathFamily?: string[]
   /** Standardisation-round lifecycle (`Standardised`, `Draft`, `Round 2`, etc.). Sourced from enrichment dimension `PQC Round`. */
   pqcRound?: string
+  /** Research-topic ids from the CSV `research_topics` column (semicolon-separated,
+   *  multi-label), keeping only ids in `research_topics_vocabulary.json`. Empty
+   *  when the column is absent or blank — most rows are not tagged yet. */
+  researchTopics: string[]
   /** Number of other library items that name this item in their `dependencies`
    *  field. Derived in a single pass over `libraryData` at module load and
    *  used as the researcher persona's default "Most cited" sort. */
@@ -343,6 +348,9 @@ export interface RawLibraryRow {
    *  heuristic when present. Sparse — most rows still fall back to the
    *  heuristic. See `resolvePurpose` for the resolution logic. */
   purpose?: string
+  /** Optional research-topic ids, `;`-separated (see `researchTopics.ts`). Older
+   *  CSVs have no such column; the loader then gives every row no topics. */
+  research_topics?: string
 }
 
 /**
@@ -493,6 +501,7 @@ export function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     mathFamily:
       row.math_family && row.math_family.trim() ? splitSemicolon(row.math_family) : undefined,
     pqcRound: row.pqc_round?.trim() || undefined,
+    researchTopics: parseResearchTopics(row.research_topics),
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories

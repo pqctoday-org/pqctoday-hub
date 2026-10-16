@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'
 import { useResearchFieldsStore } from '@/store/useResearchFieldsStore'
 import { RESEARCH_FIELD_BUCKETS } from '@/data/researchFieldTaxonomy'
+import { RESEARCH_TOPICS, RESEARCH_TOPIC_TAGS_PENDING_NOTE } from '@/data/researchTopics'
 import {
   computeResearchFieldWatch,
   loadFieldWatchCorpus,
@@ -51,6 +52,11 @@ const FIELD_OPTIONS: FilterDropdownItem[] = RESEARCH_FIELD_BUCKETS.map((b) => ({
   label: b.label,
 }))
 
+const TOPIC_OPTIONS: FilterDropdownItem[] = RESEARCH_TOPICS.map((t) => ({
+  id: t.id,
+  label: t.label,
+}))
+
 /** The card shows at most this many followed-field rows (design mockup shows 3). */
 const MAX_VISIBLE_FIELDS = 3
 
@@ -59,15 +65,21 @@ const SIDE_CARD = PERSONA_JOURNEY_BOARD.researcher.sideCard
 
 export function ResearcherFieldWatchCard() {
   const followedFields = useResearchFieldsStore((s) => s.followedFields)
+  const followedTopics = useResearchFieldsStore((s) => s.followedTopics)
   const toggleFollowedField = useResearchFieldsStore((s) => s.toggleFollowedField)
+  const toggleFollowedTopic = useResearchFieldsStore((s) => s.toggleFollowedTopic)
 
-  const [showPicker, setShowPicker] = useState(followedFields.length === 0)
+  const [showPicker, setShowPicker] = useState(
+    followedFields.length === 0 && followedTopics.length === 0
+  )
 
   const corpus = loadFieldWatchCorpus()
+  const topicsTagged = corpus.topicTaggedCount > 0
 
   const summary = useMemo(
-    () => computeResearchFieldWatch(followedFields, corpus.windowStartMs, corpus.rows),
-    [followedFields, corpus]
+    () =>
+      computeResearchFieldWatch(followedFields, corpus.windowStartMs, corpus.rows, followedTopics),
+    [followedFields, followedTopics, corpus]
   )
 
   const releaseLabel =
@@ -75,14 +87,20 @@ export function ResearcherFieldWatchCard() {
       ? null
       : formatVerifiedDate(new Date(corpus.releaseDateMs).toISOString().slice(0, 10))
 
-  const visibleFields = summary.fields.slice(0, MAX_VISIBLE_FIELDS)
-  const hasFollowedFields = followedFields.length > 0
+  // Topic rows only count once the Library carries topic tags; until then a
+  // followed topic is listed under the pending note instead of as a 0.
+  const countedRows = topicsTagged ? [...summary.fields, ...summary.topics] : summary.fields
+  const visibleFields = countedRows.slice(0, MAX_VISIBLE_FIELDS)
+  const hasFollowedFields = followedFields.length > 0 || followedTopics.length > 0
+  const hasCountedSelection =
+    followedFields.length > 0 || (topicsTagged && followedTopics.length > 0)
+  const topicsPending = !topicsTagged && followedTopics.length > 0
 
-  function handleMultiSelect(nextIds: string[]) {
+  function syncSelection(nextIds: string[], current: string[], toggle: (id: string) => void) {
     const next = new Set(nextIds)
-    const current = new Set(followedFields)
-    for (const id of next) if (!current.has(id)) toggleFollowedField(id)
-    for (const id of current) if (!next.has(id)) toggleFollowedField(id)
+    const now = new Set(current)
+    for (const id of next) if (!now.has(id)) toggle(id)
+    for (const id of now) if (!next.has(id)) toggle(id)
   }
 
   return (
@@ -103,7 +121,13 @@ export function ResearcherFieldWatchCard() {
         )}
       </div>
 
-      {hasFollowedFields ? (
+      {topicsPending && (
+        <p className="text-xs text-muted-foreground" data-testid="field-watch-topics-pending">
+          {RESEARCH_TOPIC_TAGS_PENDING_NOTE}
+        </p>
+      )}
+
+      {hasCountedSelection ? (
         <dl className="flex flex-col gap-2">
           {visibleFields.map((field) => (
             <div
@@ -134,10 +158,12 @@ export function ResearcherFieldWatchCard() {
           </div>
         </dl>
       ) : (
-        <p className="text-sm text-muted-foreground">{SIDE_CARD.emptyState}</p>
+        !hasFollowedFields && (
+          <p className="text-sm text-muted-foreground">{SIDE_CARD.emptyState}</p>
+        )
       )}
 
-      {hasFollowedFields && (
+      {hasCountedSelection && (
         <p className="mt-1 text-base font-bold text-foreground" data-testid="field-watch-punchline">
           {summary.nothingRetracted
             ? SIDE_CARD.punchline
@@ -176,15 +202,35 @@ export function ResearcherFieldWatchCard() {
               recognised algorithm family and count under Other / Uncategorized.
             </p>
           )}
+          <p className="mb-1 text-xs font-semibold text-foreground">Algorithm families</p>
           <FilterDropdown
             items={FIELD_OPTIONS}
             selectedId=""
             onSelect={() => {}}
             multiSelectedIds={followedFields}
-            onMultiSelect={handleMultiSelect}
+            onMultiSelect={(ids) => syncSelection(ids, followedFields, toggleFollowedField)}
             defaultLabel="Choose fields to follow"
             searchable
           />
+
+          <div className="mt-3" data-testid="field-watch-topic-group">
+            <p className="mb-1 text-xs font-semibold text-foreground">Research topics</p>
+            {topicsTagged ? (
+              <FilterDropdown
+                items={TOPIC_OPTIONS}
+                selectedId=""
+                onSelect={() => {}}
+                multiSelectedIds={followedTopics}
+                onMultiSelect={(ids) => syncSelection(ids, followedTopics, toggleFollowedTopic)}
+                defaultLabel="Choose topics to follow"
+                searchable
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground" data-testid="field-watch-topic-note">
+                {RESEARCH_TOPIC_TAGS_PENDING_NOTE}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

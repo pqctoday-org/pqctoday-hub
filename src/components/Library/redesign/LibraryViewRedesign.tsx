@@ -68,6 +68,13 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
 import { BookmarksToCollection } from '@/components/shared/research/BookmarksToCollection'
 import { ChangedSinceSaved } from '@/components/shared/research/ChangedSinceSaved'
+import {
+  RESEARCH_TOPIC_PARAM,
+  researchTopicCounts,
+  researchTopicLabel,
+  resolveResearchTopicParam,
+} from '@/data/researchTopics'
+import { ResearchTopicFilter } from './ResearchTopicFilter'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -82,6 +89,7 @@ const FILTER_PARAMS = [
   'sector',
   'tier',
   'algo',
+  'topic',
 ]
 
 const PURPOSE_LABELS: Record<LibraryPurpose, string> = {
@@ -201,6 +209,10 @@ export function LibraryViewRedesign({
   const filterText = params.get('q') ?? ''
   // Old shared links (?lifecycle=Published) open with the matching new label.
   const lifecycleBucket = parseLifecycleParam(params.get('lifecycle')) ?? 'All'
+  // Research topics the Library has documents for — empty until rows are
+  // tagged, which hides the facet and makes a ?topic= link filter nothing.
+  const libraryTopics = useMemo(() => researchTopicCounts(libraryData), [])
+  const topicFilter = resolveResearchTopicParam(params.get(RESEARCH_TOPIC_PARAM), libraryTopics)
   const cswp39Only = params.get('cswp39') === '1'
   const quickView = (params.get('qv') as LibraryQuickView | null) ?? 'all'
   const prefsOff = params.get('prefs') === 'off'
@@ -234,6 +246,7 @@ export function LibraryViewRedesign({
       'sector',
       'tier',
       'algo',
+      'topic',
     ].some((k) => {
       const v = params.get(k)
       return Boolean(v) && v !== 'all' && v !== 'All'
@@ -276,6 +289,7 @@ export function LibraryViewRedesign({
     certRelevantOnly,
     certRelevantIdSet,
     lifecycleBucket,
+    topicFilter,
     sortBy,
     sortExplicit,
     selectedPersona,
@@ -444,6 +458,7 @@ export function LibraryViewRedesign({
       certRelevantOnly,
       certRelevantIdSet,
       lifecycleBucket,
+      topicFilter,
       semanticIdSet,
       newOnly,
     })
@@ -523,6 +538,12 @@ export function LibraryViewRedesign({
       id: 'lifecycle',
       label: lifecycleBucket,
       onClear: () => setParam('lifecycle', null),
+    })
+  if (topicFilter !== 'All')
+    activeFilterChips.push({
+      id: 'topic',
+      label: researchTopicLabel(topicFilter) ?? topicFilter,
+      onClear: () => setParam(RESEARCH_TOPIC_PARAM, null),
     })
   if (quickView !== 'all')
     activeFilterChips.push({
@@ -728,12 +749,18 @@ export function LibraryViewRedesign({
               activeOrg !== 'All' ||
               cswp39Only ||
               algoFamilyFilter.length > 0 ||
+              topicFilter !== 'All' ||
               geoFilter.length > 0 ||
               sectorFilter.length > 0
             }
             advancedExtra={
               <>
                 <AlgorithmFamilyFilter params={params} setParams={setParams} />
+                <ResearchTopicFilter
+                  topics={libraryTopics}
+                  selectedId={topicFilter}
+                  onSelect={(id) => setParam(RESEARCH_TOPIC_PARAM, id, { replace: true })}
+                />
                 <GeoFilter options={geoOptions} params={params} setParams={setParams} />
                 <SectorFilter params={params} setParams={setParams} />
                 {/* Trust-tier control removed 2026-08-11 (all five pages).

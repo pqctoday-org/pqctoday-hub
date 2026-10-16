@@ -287,4 +287,51 @@ describe('MobileLibraryView', () => {
       expect(screen.getByPlaceholderText(/Search — try/i)).toHaveValue('ML-KEM')
     })
   })
+
+  // ?topic= from a shared desktop link: filters the list and shows a removable
+  // chip, but only for a topic the Library actually has documents for.
+  describe('?topic= (same param as desktop)', () => {
+    function LocationProbe() {
+      return <output data-testid="loc">{useLocation().search}</output>
+    }
+    const renderAt = (query: string) =>
+      render(
+        <MemoryRouter initialEntries={[`/library${query}`]}>
+          <MobileLibraryView />
+          <LocationProbe />
+        </MemoryRouter>
+      )
+    const shown = () => Number(screen.getByTestId('library-count').textContent!.split(' ')[0])
+
+    const tagged: (typeof libraryData)[number][] = []
+    afterEach(() => {
+      for (const item of tagged) item.researchTopics = []
+      tagged.length = 0
+    })
+
+    it('an untagged or unknown topic filters nothing and shows no chip', () => {
+      renderAt('?topic=not-a-topic')
+      expect(shown()).toBe(libraryData.length)
+      expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+    })
+
+    it('a tagged topic filters the list, shows a chip, and the chip removes it', () => {
+      const picks = libraryData.filter((d) => d.researchTopics.length === 0).slice(0, 2)
+      for (const item of picks) {
+        item.researchTopics = ['quantum-threat']
+        tagged.push(item)
+      }
+      const expected = libraryData.filter((d) => d.researchTopics.includes('quantum-threat')).length
+      renderAt('?topic=quantum-threat')
+      expect(shown()).toBe(expected)
+      expect(
+        within(screen.getByTestId('library-link-filters')).getByText('Quantum threat')
+      ).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Topic filter' }))
+      expect(new URLSearchParams(screen.getByTestId('loc').textContent ?? '').has('topic')).toBe(
+        false
+      )
+      expect(shown()).toBe(libraryData.length)
+    })
+  })
 })

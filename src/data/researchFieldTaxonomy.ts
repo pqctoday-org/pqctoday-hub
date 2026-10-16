@@ -63,6 +63,13 @@ import type { AlgorithmFamily } from '@/components/common/AlgorithmFamilyFilter'
  * buckets that would sit permanently empty against the real data would be
  * worse than not having them — flagging this explicitly per the plan's own
  * instruction to surface, not paper over, this kind of judgment call.
+ *
+ * UPDATE 2026-10-16: those document-topic concerns are now covered by a
+ * separate, explicitly tagged vocabulary — research topics
+ * (`researchTopics.ts`, CSV column `research_topics`) — which the field-watch
+ * card offers as a second group next to these algorithm-family buckets. The
+ * two are kept apart on purpose: different columns, different ids, and a
+ * topic is only counted when a row has actually been tagged with it.
  */
 
 /** A single row's `AlgorithmFamily` value may legitimately count toward more
