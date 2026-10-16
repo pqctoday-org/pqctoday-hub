@@ -203,7 +203,9 @@ describe('ComplianceImpactSection: binding chip', () => {
     try {
       renderSection(undefined, [impactFor(fwA)])
       const note = screen.getByTestId('binding-scope-note')
-      expect(note).toHaveTextContent('applies to “all Federal agencies that use cryptography-based security systems”')
+      expect(note).toHaveTextContent(
+        'applies to “all Federal agencies that use cryptography-based security systems”'
+      )
       expect(note).not.toHaveTextContent('our translation')
     } finally {
       fwA.bindingScope = was.scope
