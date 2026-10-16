@@ -526,6 +526,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         lastModifiedAt={lastModifiedAt}
                         defaultOpen={cfg('riskScore').state === 'open'}
                         industry={industry}
+                        input={shared ? undefined : (getInput() ?? undefined)}
                       />
                     )}
 

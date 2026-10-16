@@ -7,7 +7,7 @@
 import { Calendar, ShieldAlert, AlertTriangle, ArrowRight, Briefcase } from 'lucide-react'
 import { Link } from 'react-router'
 import clsx from 'clsx'
-import type { AssessmentResult } from '../../../hooks/assessmentTypes'
+import type { AssessmentInput, AssessmentResult } from '../../../hooks/assessmentTypes'
 import { RiskGauge } from '../../shared/widgets/RiskGauge'
 import { riskConfig } from '@/data/riskConfig'
 import { GlossaryAutoWrap } from '../../PKILearning/common/GlossaryAutoWrap'
@@ -46,6 +46,7 @@ export const RiskScoreSection = ({
   lastModifiedAt,
   defaultOpen,
   industry,
+  input,
 }: {
   result: AssessmentResult
   previousRiskScore: number | null
@@ -54,6 +55,8 @@ export const RiskScoreSection = ({
   /** Drives which composite weighting the "how this was calculated" table
    *  reports — B+ remediation 3.6. */
   industry: string
+  /** The reader's own answers, for "how your answers moved it"; absent in a shared view. */
+  input?: AssessmentInput
 }) => {
   const config = riskConfig[result.riskLevel]
   return (
@@ -122,7 +125,7 @@ export const RiskScoreSection = ({
           the LAST step of the calculation. This shows the steps before it —
           which weights this industry uses and what each category contributed —
           so the number stops arriving as an oracle. */}
-      <RiskScoreWorking result={result} industry={industry} />
+      <RiskScoreWorking result={result} industry={industry} input={input} />
     </CollapsibleSection>
   )
 }
