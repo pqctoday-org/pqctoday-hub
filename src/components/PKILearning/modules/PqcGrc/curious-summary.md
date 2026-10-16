@@ -12,4 +12,4 @@ Three instruments do most of the work: a Key Risk Indicator cascade that shows t
 
 ### What's Happening
 
-Cyber-insurance underwriters are already pricing quantum readiness at renewal, and a documented, governed, measured migration program is a demonstrably better risk than a vague intention to migrate later. The organizations that maintain an evidence dossier can answer the attestation surge after any public quantum event with an export, not a project.
+Whether your insurer asks about quantum readiness at renewal is a question for your broker, but a documented, governed, measured migration program is easier to explain to an underwriter than a vague intention to migrate later. The organizations that maintain an evidence dossier can answer the attestation surge after any public quantum event with an export, not a project.
