@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { libraryData } from '@/data/libraryData'
 import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // QuizCard — the knowledge-check footer for a Learn walkthrough: a lesson's
 // question bank, answered one pick per question with an immediate reveal +

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // learn-pqc-candidates.spec.ts — E2E for the PQC Candidates & Standardisation
 // Lifecycle learn module at /learn/pqc-candidates.

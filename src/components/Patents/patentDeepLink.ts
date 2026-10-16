@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Which Patents tab a URL lands on (desktop only). The `?patent=` ID helpers
  * shared with the mobile screen live in '@/data/patentsScope'.

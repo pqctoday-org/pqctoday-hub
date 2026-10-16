@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { MigrationStep, MigrationReference, SoftwareCategoryGap } from '../types/MigrateTypes'
 import type { PhaseId } from './frameworkPhases'
 import { softwareData } from './migrateData'

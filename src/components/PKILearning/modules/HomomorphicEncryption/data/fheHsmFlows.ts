@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 import type { CkksEvidenceKey } from './fheCkksEvidence'
 import { KEY_LIFECYCLE_FLOWS, KEY_LIFECYCLE_META } from './fheKeyLifecycleFlows'

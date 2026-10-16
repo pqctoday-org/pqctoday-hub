@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ML-KEM reference-sample depth for the validation workbench (remediation plan
 // 2026-09-24, WS-D D1-2..D1-5). Rows, per engine:

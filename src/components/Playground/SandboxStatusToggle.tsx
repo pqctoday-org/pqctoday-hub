@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Container, Loader2, ExternalLink, RefreshCw } from 'lucide-react'
 import clsx from 'clsx'

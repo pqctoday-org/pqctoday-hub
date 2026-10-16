@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Regulatory data for the OT module: NERC CIP (corrected), IEC 62351 part
  * scopes (corrected), and the cross-sector regimes.

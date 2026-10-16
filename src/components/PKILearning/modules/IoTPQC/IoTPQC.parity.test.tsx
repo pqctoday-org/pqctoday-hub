@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render-parity test for the IoT & Embedded Device PQC module (LM-074).
  * Originally captured for the ModuleShell conversion; updated 2026-10-01 for

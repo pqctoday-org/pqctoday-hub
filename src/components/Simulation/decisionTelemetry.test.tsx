@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-16 — a wrong (trap/warn) pick in the decision card emits keyed telemetry;
  * the correct pick does not.

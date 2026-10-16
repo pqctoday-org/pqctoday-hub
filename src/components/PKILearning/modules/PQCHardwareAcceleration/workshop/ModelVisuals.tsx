@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One animated SVG per acceleration model. Each draws the MECHANISM the
  * layman analogy describes — not decoration — so a reader can map "one cook,

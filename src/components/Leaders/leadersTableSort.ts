@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Table-view column sort ↔ URL. The page-level `?sort=` (card view: name |
  * country | category | relevance) is reused when the table sort means the

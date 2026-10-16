@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Engine per-rule TRACE validation — the wasm engine now returns a `trace`
 // (one entry per enabled rule: resolve/deny/pass/skip) that drives the visual

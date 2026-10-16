@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ModuleStatusPanel — per-module status strip for the modular-policy plan
 // (WS-7A/7B, 2026-08-28 gaps-remediation plan). `KmipEngine`'s

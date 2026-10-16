@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GlossaryStrip — always-visible four-chip legend that defines the four
  * primary kinds of artefact on the Compliance page (Body / Standard /

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ModuleCompletionWatcher (A4) — fires the ModuleCompletionCard the moment a
  * module's status transitions to 'completed' (the store sets that when all learn

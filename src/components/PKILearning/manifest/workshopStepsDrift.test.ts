@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * UX batch 2 (B+ round 8, 2026-09-19) — CC-1 drift guard.
  *

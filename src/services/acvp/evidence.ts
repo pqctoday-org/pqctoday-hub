@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Evidence sidecar (F-6): everything PQC Today knows about a run that is NOT
  * part of the ACVP protocol response — engine identity, timestamps, per-test

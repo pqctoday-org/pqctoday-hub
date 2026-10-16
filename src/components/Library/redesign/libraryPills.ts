@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared pill/label helpers for the Library redesign cards + drawer. Token-only
  * styling (per the app's semantic-token standard).

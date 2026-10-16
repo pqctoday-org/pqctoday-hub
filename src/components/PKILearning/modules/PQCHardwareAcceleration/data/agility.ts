@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Crypto agility × acceleration: which primitive each algorithm spends its time
  * in, and which accelerator therefore helps it. Primitive usage follows the

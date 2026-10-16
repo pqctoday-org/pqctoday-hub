@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 #
 # Copy a finished build (from build-wasm.sh) into public/wasm/entropy90b/ and
 # verify every staged file against the build's own BUILDINFO.json hashes.

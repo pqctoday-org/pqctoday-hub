@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KMIP binding rules — which earlier steps' outputs may fill a given op
  * step's parameter slot, and what a KMIP pipeline is missing before it can

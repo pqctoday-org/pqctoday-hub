@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // /report's "Risk Breakdown" section (REPORT_SECTION_ORDER: 'riskBreakdown').
 // Extracted from ReportContent.tsx — see reportSectionToCswp39.ts.
 import React from 'react'

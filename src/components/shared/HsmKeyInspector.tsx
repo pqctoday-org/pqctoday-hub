@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * HsmKeyInspector — portable PKCS#11 key table with attribute inspection.
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "How long is this, and what does it settle?" — B+ remediation 3.3 (2026-08-10).
  *

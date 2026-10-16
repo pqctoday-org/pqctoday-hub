@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { FHE_HSM_FLOWS, FLOW_STEP_META, engineStatusOf } from './fheHsmFlows'
 import { FHE_STEP_COSTS, FHE_STEP_KEYS, KEY_SIZES } from './fheHsmCosts'

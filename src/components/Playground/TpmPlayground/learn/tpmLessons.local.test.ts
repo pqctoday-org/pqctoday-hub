@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Curriculum guarantee for the TPM Learn tab (Phase 1 WS6 of the 2026-07-23
 // remediation plan). Replays every lesson step against the REAL pqctpm WASM

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // HKDF and SP 800-108 KBKDF from NIST ACVP-Server reference samples, plus the
 // explicit X9.63 unsupported row (gap-closure plan 2026-09-25, P5 item 2 —

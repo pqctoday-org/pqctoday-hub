@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { AlgorithmTransition } from '../../data/algorithmsData'
 import type { AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import { FileSignature, Lock, Hash, Key, ArrowRight } from 'lucide-react'

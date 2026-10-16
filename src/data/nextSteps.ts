@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.2 (2026-09-19) — the declared next step out of every routed
  * item: 65 modules, 34 playground tools, 37 business tools, 29 pages.

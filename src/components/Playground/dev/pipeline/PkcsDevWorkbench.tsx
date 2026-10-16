@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PkcsDevWorkbench — the PKCS#11 Developer tab's shared Builder/Code
  * workbench (dev-tabs-pkcs11-kmip plan, WS-D + WS-F; renamed from

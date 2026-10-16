@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // GlossaryRail — persistent, collapsible right column shared by every sub-tab
 // of a playground's learn hub (mounted once via GlossaryContext). Search + a

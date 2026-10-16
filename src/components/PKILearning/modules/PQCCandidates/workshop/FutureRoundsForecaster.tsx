@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Clock, AlertTriangle, Compass, GitBranch } from 'lucide-react'
 import { KEM_HISTORY } from '../data/kemHistory'

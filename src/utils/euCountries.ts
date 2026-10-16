@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * EU member states (all 27 members + the "European Union" grouping itself).
  * Frameworks listing "European Union" in their countries field apply to users in any of these.

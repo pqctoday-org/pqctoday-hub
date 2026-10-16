@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tpmLessons.ts — the TPM 2.0 playground's guided curriculum: 8 lessons
 // (T1–T8) whose steps run REAL wire commands against the same WASM TPM the

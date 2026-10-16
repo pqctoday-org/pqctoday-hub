@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-08 — the app-wide snapshot (Drive/backup) includes the Migration Simulation
  * run, so a signed-in player's run resumes across devices.

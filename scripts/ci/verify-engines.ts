@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * scripts/ci/verify-engines.ts — the engine files this site ships are exactly
  * the ones recorded in public/wasm/engines.lock.json.

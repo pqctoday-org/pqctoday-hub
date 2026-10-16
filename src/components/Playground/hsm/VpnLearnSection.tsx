@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // VpnLearnSection — educational reference panels for the IKEv2/IPsec VPN simulator.
 // Mirrors SshLearnSection: collapsible glass-panel sections, data driven from

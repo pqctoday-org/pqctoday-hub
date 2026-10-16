@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FiveGService } from '../FiveGService'
 
 export function parseDigestHex(_ctx: FiveGService, stdout: string): string {

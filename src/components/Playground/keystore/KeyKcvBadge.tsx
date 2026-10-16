@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useEffect } from 'react'
 import type { Key } from '../../../types'
 import { hash } from '../../../utils/webCrypto'

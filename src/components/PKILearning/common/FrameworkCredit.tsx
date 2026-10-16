@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 import React from 'react'
 
 export const APPLIED_QUANTUM_FRAMEWORK_URL = 'https://pqcframework.com'

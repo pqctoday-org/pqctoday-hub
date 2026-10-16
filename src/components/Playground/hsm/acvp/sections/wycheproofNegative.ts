@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PROJECT WYCHEPROOF adversarial test vectors, maintained by GOOGLE / C2SP.
 // Source: https://github.com/C2SP/wycheproof (Apache-2.0, see

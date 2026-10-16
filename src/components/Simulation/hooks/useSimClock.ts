@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * useSimClock (PR6) — the Simulation's Mosca-clock derivation, extracted from
  * SimulationView so it can be unit-tested in isolation. Pure: no React state or

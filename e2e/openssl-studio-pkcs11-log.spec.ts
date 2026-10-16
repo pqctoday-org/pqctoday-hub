@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // OpenSSL Studio was the only PKCS#11-capable playground with no call log at
 // all — a 2026-08-02 audit found it surfaced only friendly narration

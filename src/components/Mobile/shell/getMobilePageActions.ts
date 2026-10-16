@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ROUTE_VIEW_TYPE, ROUTE_PAGE_ID, pageIdForNestedRoute } from '@/data/routePageMeta'
 import type { ViewType } from '@/data/authoritativeSourcesData'
 import type { PageId } from '@/data/userManualData'

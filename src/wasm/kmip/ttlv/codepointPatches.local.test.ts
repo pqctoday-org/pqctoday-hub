@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // codepointPatches.local.test.ts — completeness + non-corruption guard for
 // codepointTable.ts's hand-curated patch tables. Every patched tag/enum

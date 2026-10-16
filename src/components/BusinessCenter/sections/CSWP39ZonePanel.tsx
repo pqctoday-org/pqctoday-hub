@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Per-zone Command Center panel for one CSWP.39 Fig 3 zone.
  *

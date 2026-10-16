@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A standards citation that links to the document in this app's own library
  * when it exists there, and renders as plain text when it does not.

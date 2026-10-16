@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SIM_TREES — the Simulation's per-phase activity trees, loaded from the dated,
  * self-contained snapshots under ./trees (one file per phase). The latest dated

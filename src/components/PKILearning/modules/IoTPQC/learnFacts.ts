@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every computed number the Learn tab quotes, derived from the same constants
  * and models the workshop uses. The Learn prose reads these; it never types a

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * trust-artifacts.test.ts — guards the shared signed-artifact registry
  * (remediation plan item 3.1, 2026-08-10).

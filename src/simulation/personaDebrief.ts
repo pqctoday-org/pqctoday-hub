@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * personaDebrief (W7.4) — what this run means for the seat the player sat in.
  *

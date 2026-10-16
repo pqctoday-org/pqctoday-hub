@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Matrix-alignment drift guard.
  *
@@ -137,7 +137,7 @@ describe('HSM capacity ↔ protocol matrix — maturity chips', () => {
     const tls = getUseCaseMaturity('tls')
     expect(tls?.kem?.label).toContain('KEM')
     expect(tls?.sig?.label).toContain('Sig')
-    // TLS hybrid KEM: RFC Ed queue + production posture → success tone.
+    // TLS hybrid KEM: published RFC + production posture → success tone.
     expect(tls?.kem?.tone).toBe('success')
 
     const dnssec = getUseCaseMaturity('dnssec')

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { VENDOR_MIGRATION_DATA, getVendorPqcStatus } from './networkProviderData'
 import { isInCatalog, getCatalogStatus } from '@/data/catalogStatus'

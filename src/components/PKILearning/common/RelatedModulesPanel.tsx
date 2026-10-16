@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * RelatedModulesPanel — "Related modules" for one module, rendered from
  * `src/data/moduleRelations.ts`.

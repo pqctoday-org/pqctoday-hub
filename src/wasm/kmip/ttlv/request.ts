@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // request.ts — wrap a payload in a full KMIP 3.0 Request Message envelope.
 // Ported from pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/kmip.py's

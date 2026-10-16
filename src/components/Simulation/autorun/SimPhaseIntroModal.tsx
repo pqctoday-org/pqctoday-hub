@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * SimPhaseIntroModal — the "what to expect" card shown the FIRST time each phase is
  * focused in the auto-run. All content is the verbatim framework summary / gate /

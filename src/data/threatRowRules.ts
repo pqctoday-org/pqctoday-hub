@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Row-level rules for the threats CSV (`quantum_threats_hsm_industries_*.csv`)
  * that more than one reader needs: the page's loader (`threatsData.ts`), the

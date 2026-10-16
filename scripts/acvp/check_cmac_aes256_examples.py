@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Check src/data/acvp/aescmac_test.json against NIST's CSRC AES-CMAC example PDF.
 

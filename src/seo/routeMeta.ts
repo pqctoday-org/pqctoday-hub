@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { TOOL_ROUTE_META } from './toolRouteMeta.generated'
 
 const BASE_URL = 'https://www.pqctoday.com'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Error-path / required-operation probes (plan WS-G G-8, G-2) on BOTH real
 // shipped wasm engines — the C++ engine (Emscripten, loaded in Node) and the

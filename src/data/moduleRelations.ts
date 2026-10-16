@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * moduleRelations — module↔module relations computed from tags the manifests
  * already carry, with an explicit seam for a hand-authored graph to override.

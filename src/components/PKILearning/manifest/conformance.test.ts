@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A1 conformance — every co-located manifest must reproduce the legacy
  * moduleData.ts maps exactly — for all 60 catalog modules. The final assertion

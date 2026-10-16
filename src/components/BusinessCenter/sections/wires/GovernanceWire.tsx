@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GovernanceWire — Command Center Fig 3 Governance zone data wire.
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef } from 'react'
 import { ReleaseNotesSection } from './sections/ReleaseNotesSection'
 import { VisionSection } from './sections/VisionSection'

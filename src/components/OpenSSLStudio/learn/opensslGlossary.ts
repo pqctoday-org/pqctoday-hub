@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // opensslGlossary.ts — OpenSSL Studio's glossary content for the shared
 // learnkit GlossaryProvider/GlossaryRail/Term components. Mirrors

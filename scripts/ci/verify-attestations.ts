@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * verify-attestations.ts — CI-side trust-engine signature verification.
  *

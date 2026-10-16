@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ROUTE_META, isNoindexRoute } from './routeMeta'
 import { TOOL_ROUTE_META, type ToolRouteKind } from './toolRouteMeta.generated'
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ProtocolMatrixEmbed (C5 — vertical slice) — renders the Algorithms page's
  * "Protocol Support" tab (PQCProtocolMatrix) inside the simulation.

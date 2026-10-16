@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link addressability (2026-10-03): the phone Records section lists and
 // searches the certification records, and the `?cert=` sheet shows the same

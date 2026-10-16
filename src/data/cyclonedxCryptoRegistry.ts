@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * cyclonedxCryptoRegistry — bundled copy of the CycloneDX v1.7 Cryptography
  * Registry (cyclonedx.org/registry/cryptography/), vendored at

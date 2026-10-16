@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The crypto-agility story, in three steps — B+ remediation 4.5 (2026-08-10).
  *

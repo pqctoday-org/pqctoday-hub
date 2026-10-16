@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drift guard — no module can silently end up with an empty (or duplicated)
  * "Related modules" panel, and no module can silently lose its reverse tool

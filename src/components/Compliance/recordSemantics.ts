@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One place for what a certification record's type, status and pqcCoverage
  * MEAN, so every consumer (records table, detail popover, trend chart,

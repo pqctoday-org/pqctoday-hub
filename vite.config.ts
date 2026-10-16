@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /// <reference types="vitest" />
 import { defineConfig, configDefaults } from 'vitest/config'
 import { bundledPackagesPlugin } from './scripts/sbom/vite-plugin-bundle-packages'
 import { licensesPlugin } from './scripts/sbom/notices'
+import { newestEnrichmentOnlyPlugin } from './scripts/lib/newestEnrichmentOnly'
 import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
@@ -253,6 +254,9 @@ function coiGuardHtml(): Plugin {
 export default defineConfig({
   plugins: [
     bundledPackagesPlugin(process.cwd()),
+    // Production ships only the newest dated library and threats enrichment file (each repeats
+    // every earlier entry); dev and Vitest keep them all. See scripts/lib/newestEnrichmentOnly.ts.
+    newestEnrichmentOnlyPlugin(path.resolve(__dirname, 'src/data/doc-enrichments')),
     // Open-source licence notices served at /licenses/ (fails the build on a missing licence).
     licensesPlugin(process.cwd(), {
       version:

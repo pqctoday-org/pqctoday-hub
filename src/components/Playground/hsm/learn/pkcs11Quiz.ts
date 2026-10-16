@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // pkcs11Quiz.ts — knowledge-check question banks for the PKCS#11 Learn tab,
 // keyed by `Pkcs11Lesson.id`. Every question is answerable from the lesson

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Shared Root CA for mTLS - signs both server and client certs
 export const DEFAULT_ROOT_CA = `-----BEGIN CERTIFICATE-----
 MIIDWTCCAkGgAwIBAgIUIGayZpXJ6PsiIKh+Cqixcq4XXbowDQYJKoZIhvcNAQEL

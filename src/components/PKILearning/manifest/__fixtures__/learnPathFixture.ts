@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Test-only manifest exercising every WS-0 learn-path feature at once: two
  * paths over a shared core, a path-specific optional reference, a module-wide

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop step 4 — why an FPGA is not a magic speed-up. Three limits, all
  * shown with PQC Today's KV260 numbers (data/measurements.ts):

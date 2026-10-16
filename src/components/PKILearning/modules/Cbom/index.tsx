@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Layers, FileText, ShieldCheck, Fingerprint } from 'lucide-react'
 import { CbomIntroduction } from './components/CbomIntroduction'

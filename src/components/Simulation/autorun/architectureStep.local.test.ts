@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-04 — architecture step completion math + the auto-run's genuine edge
  * decisions. Focused coverage beyond the generic per-kind fixture in

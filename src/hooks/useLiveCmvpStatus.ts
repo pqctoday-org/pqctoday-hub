@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Looks up a certification record in the published snapshot
  * (`public/data/compliance-data.json`) by its EXACT certificate / validation

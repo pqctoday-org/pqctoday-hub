@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Structural rules of the certificate and handshake models — the bugs the
  * 2026-10-01 audit found (I2-I5, I17) must stay fixed.

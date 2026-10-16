@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Convergence integration test — validates that ⌘K palette mode and the
  * Assistant share one MiniSearch instance + one entityIndex (the goal of the

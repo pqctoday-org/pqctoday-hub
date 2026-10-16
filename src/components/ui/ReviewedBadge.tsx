@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { CheckCircle, Circle } from 'lucide-react'
 import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'

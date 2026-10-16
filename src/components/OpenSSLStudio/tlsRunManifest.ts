@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { TLSConfig, TLSRunRecord } from '@/store/tls-learning.store'
 import { buildRunManifest, type RunManifest } from '@/services/runManifest'
 

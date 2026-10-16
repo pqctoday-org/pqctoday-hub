@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The /navigate filter model — which categories and sub-categories are on,
  * and how many nodes to show — plus the one ranking function every consumer

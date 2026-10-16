@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-15 — close the loop back to the Command Center. The Assess→Sim bridge is
  * read-only; this is the opt-in INVERSE: turn a simulation run into a draft

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // kmipMeta.ts — display metadata for the KMIP playground: the TTLV tag
 // dictionary (codepoint → human name), ResultStatus naming, the algorithm

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The numbers the key-rotation, shared-decryption and flood-sizing views quote must equal the
  * published run files they link to (public/data/fhe-evidence), so a number cannot drift from its

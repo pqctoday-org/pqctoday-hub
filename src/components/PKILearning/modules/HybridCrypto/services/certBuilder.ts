@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // X.509 certificate builder using @peculiar/asn1-schema for standards-compliant DER encoding.
 // All ASN.1 encoding goes through Peculiar's schema-validated serializer — no hand-rolled DER.
 //

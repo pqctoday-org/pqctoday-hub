@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // usePkcs11Conformance — the PKCS#11 v3.2 Profiles conformance runner's
 // state + run logic (WS-11; see pkcs11-hsm-playground-ws11-conformance-

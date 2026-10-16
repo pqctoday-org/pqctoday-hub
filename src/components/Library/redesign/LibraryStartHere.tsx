@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryStartHere — the always-present "Start here — picked for {persona}" block.
  * Three entry-document cards; click opens the detail drawer. Replaces the live

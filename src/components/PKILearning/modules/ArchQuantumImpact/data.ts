@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { RoleGuideData } from '../../common/roleGuide/types'
 
 export const ARCH_GUIDE_DATA: RoleGuideData = {

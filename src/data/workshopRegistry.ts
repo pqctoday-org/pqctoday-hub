@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Flow discovery + persona matching live in `services/workshopFlowLoader`
 // (runtime JSON manifest under public/workshop/). This module keeps the pure
 // step-list helpers shared by the panel, the video player, and the hooks.

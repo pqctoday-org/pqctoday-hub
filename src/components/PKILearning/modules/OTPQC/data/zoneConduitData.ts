@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Zone & Conduit Planner data (workshop Step 2): the Purdue reference model
  * mapped onto IEC 62443 zones and conduits.

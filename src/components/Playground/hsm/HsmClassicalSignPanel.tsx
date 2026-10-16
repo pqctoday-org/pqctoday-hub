@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { PenLine, CheckCircle, XCircle, Loader2, Plus, X } from 'lucide-react'
 import { Button } from '../../ui/button'

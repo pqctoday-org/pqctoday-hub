@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { afterEach, describe, expect, it } from 'vitest'
 // eslint-disable-next-line testing-library/no-manual-cleanup -- the afterEach below must unmount before it clears the head
 import { cleanup, render, screen, waitFor } from '@testing-library/react'

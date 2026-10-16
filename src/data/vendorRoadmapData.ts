@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { VendorRoadmap } from '../types/MigrateTypes'
 import { compareDatasets } from '../utils/dataComparison'
 import { loadLatestCSV } from './csvUtils'

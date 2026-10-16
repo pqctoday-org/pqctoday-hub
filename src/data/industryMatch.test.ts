@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Guards for the sector-key industry join (vendor-risk remediation,
 // 2026-08-27). The defect this replaces: raw substring joins between the

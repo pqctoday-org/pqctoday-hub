@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every evidence.json schema version ever produced, pinned. A document is
  * validated against the schema of ITS OWN `evidenceVersion` — never against

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Small presentational helpers shared across the workbench. Semantic tokens only.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Command Center panel for the architect: edit the pack's own artifacts
 // (scope, decision records, test plan) and download every saved architecture

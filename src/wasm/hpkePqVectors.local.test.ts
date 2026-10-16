@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Published-vector replay of the post-quantum CKM_HPKE suites (hsm #310,
 // eda62b31) through the hub's own JS/WASM binding in ./softhsm — the

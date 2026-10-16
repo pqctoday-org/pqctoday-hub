@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // P0.3 — a bad raw source must be caught BEFORE conditioning, because after
 // conditioning it looks random. P0.5 — the combined-source conclusion comes

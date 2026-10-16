@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure logic for the Entropy Evidence Lab (SP 800-90B) workshop step.
  *

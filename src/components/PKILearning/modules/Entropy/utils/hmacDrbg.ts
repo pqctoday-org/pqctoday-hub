@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * HMAC_DRBG with SHA-256, following NIST SP 800-90A Rev. 1 §10.1.2.
  *

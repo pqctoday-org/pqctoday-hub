@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * useSimulationStore — persisted game state for the Migration Simulation
  * (Mission Control). Holds the setup dials, the active phase, per-phase manual

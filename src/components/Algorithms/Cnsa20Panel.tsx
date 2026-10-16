@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // CNSA 2.0 lens panel for the Algorithms page (Wave-5 gap-closers #1–#5).
 // Additive: rendered only when the user opens the CNSA 2.0 lens; the rest of

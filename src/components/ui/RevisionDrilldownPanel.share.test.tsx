@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // The revision panel covers its parent overlay's Share, so when the caller
 // passes the entity's canonical link it carries its own Share for it.
 import { describe, it, expect, vi, beforeEach } from 'vitest'

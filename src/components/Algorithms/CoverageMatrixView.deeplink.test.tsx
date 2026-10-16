@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** `?engine=` / `?case=` / `?polarity=` on the coverage matrix (Validation tab). */
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'

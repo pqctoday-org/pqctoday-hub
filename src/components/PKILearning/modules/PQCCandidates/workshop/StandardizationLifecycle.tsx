@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { ChevronRight, ChevronLeft, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'

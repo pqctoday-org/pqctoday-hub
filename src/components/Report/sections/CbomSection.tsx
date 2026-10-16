@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cryptographic Bill of Materials — Report section (the Communicate
  * expression of Framework 2.1 Phase 2, `frameworkPhases.ts` p2.communicate).

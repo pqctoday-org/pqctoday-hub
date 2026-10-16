@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tpmWireDecode.ts — shared TPM wire-format decode helpers, extracted from
 // ExecutionLog.tsx's module-private copies (Phase 1 WS2 of the 2026-07-23

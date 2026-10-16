@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.3 (2026-09-19) — "Tools for this role", under the board's
  * track strip: every playground and business tool the role can reach, from

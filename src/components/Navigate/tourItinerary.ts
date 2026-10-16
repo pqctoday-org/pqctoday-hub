@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure route-building for the /navigate guided tour — picks WHICH categories
  * and nodes to visit and in what order. Camera geometry lives in

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Implementation / side-channel attack profiles — the single source of truth for
 // the Algorithms "Implementation Attacks" view AND the Threats cross-link.
 // Pure data (no UI imports) so consumers don't pull in the view component.

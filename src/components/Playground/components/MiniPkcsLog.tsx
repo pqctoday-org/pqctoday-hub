@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MiniPkcsLog — inline PKCS#11 call log with parameter inspection.
  *

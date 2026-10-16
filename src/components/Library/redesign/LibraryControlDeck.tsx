@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryControlDeck — the consolidated control row for the redesign. Search
  * leads; sort, view toggle and an Advanced disclosure sit to its right. Advanced

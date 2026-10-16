@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Drift guard (2026-08-24 audit R1.2): pins the 4 severity thresholds at
 // their exact boundary values. VendorConcentrationRiskPanel (desktop) and

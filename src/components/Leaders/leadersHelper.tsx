@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Building2, Briefcase, School } from 'lucide-react'
 
 export const getSectorIcon = (sector: string, size: number = 16, className?: string) => {

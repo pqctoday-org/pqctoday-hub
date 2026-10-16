@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Bell, Shield, AlertTriangle, CheckCircle, Info, Activity } from 'lucide-react'
 import { IDS_RULE_CATEGORIES } from '../data/networkConstants'

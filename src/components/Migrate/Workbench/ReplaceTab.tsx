@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigationType } from 'react-router'
 import { ArrowRight, Clock, Search, AlertTriangle, Check, Plus } from 'lucide-react'

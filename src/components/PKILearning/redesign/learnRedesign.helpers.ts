@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Shared, dependency-light helpers for the redesigned /learn surface.
 // Counts are DERIVED from the manifest-driven catalog (never hard-coded) so the

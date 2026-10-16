@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Derivations — reconstruct the legacy moduleData.ts maps from a manifest, so
  * those maps become derived views. Each function here is the inverse of a hand-

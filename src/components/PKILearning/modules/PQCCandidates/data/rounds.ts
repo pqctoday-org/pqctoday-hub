@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * NIST PQC standardisation lifecycle events — the timeline ribbon shown in
  * the Learn tab and the rounds simulator in Workshop step 1.

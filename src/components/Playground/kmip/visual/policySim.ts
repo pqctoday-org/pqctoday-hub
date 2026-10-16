@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // policySim.ts — an ILLUSTRATIVE client-side re-implementation of the policy
 // engine's precedence walk, used ONLY to drive the graph visualisation (which

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Per-step data volume and compute cost for the FHE + HSM flows ─────────
 //

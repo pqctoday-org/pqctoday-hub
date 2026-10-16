@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The SOC use cases moved to `@/data/socQuantumPlaybook` (2026-09-23) so the
  * Threats page could read the same list. The Learn module must render exactly

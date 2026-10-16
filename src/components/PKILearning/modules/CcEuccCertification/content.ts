@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 /**
  * Structured content for the Cryptographic Product Certification module — Common Criteria, EUCC & eIDAS deep dive (LM-068).

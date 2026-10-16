@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The cross-target matrix every WS-H evidence run must account for (plan §11
  * Q3, decided 24 Sep 2026): WASM C++/Rust + native macOS + Linux x86-64 +

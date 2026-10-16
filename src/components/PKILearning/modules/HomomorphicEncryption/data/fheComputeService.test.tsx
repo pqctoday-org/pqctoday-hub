@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Section 9's two merged results: the HSM's key export in OpenFHE and the encrypted risk-scoring
  * service. The numbers are the merged pull requests' measured values; the citations are full merge

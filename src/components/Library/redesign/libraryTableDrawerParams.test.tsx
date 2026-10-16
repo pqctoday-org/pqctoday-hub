@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link PR 2 (Library): table rows open the drawer through `?ref`, the
  * table honours/writes `?sort`, the drawer links "Builds on" ids, carries the

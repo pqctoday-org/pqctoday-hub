@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * HPKE (RFC 9180) composed from PKCS#11 v3.2 primitives.
  *

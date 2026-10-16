@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The "Open-source maintainers" list on a product (desktop product detail and phone product sheet).
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
 import { motion, useReducedMotion } from 'framer-motion'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Closed status-maturity enum for algorithm rows (WORKSTREAMS.md §WS-A).
  *

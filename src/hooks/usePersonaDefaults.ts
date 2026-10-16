@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * usePersonaDefaults — URL-state primitives for the "persona-aware default
  * filter" pattern used across /library, /migrate, /threats, /timeline,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the full 100-iteration Monte Carlo sections (sections/mctFullAcvp.ts,
 // gap-closure P5): SHA-2 / SHA-3 standard and alternate MCT and the AES-CBC

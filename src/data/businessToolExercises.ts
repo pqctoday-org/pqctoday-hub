@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — "Try it" under a Command Center tool, one
  * question per tool answerable from the tool's own inputs and outputs, with a

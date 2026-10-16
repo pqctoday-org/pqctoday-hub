@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A calendar file is consumed by software that will not forgive an approximate
  * grammar, and by a human who will act on the dates. Both are pinned here:

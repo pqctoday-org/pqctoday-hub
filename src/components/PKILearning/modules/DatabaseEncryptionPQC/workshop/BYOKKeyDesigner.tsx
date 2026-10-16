@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { KeyRound, ShieldCheck, CheckCircle, XCircle } from 'lucide-react'
 import { BYOK_ARCHITECTURES } from '../data/databaseConstants'

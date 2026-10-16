@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Fails the unit run when any test's heap passes a budget: 85% of the V8 heap
  * limit the workers run with (they inherit NODE_OPTIONS from this process, so

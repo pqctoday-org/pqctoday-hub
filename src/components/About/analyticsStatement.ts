@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * What the About page says about analytics and where your data goes, in one place.
  * The desktop About (DataPrivacySection) and the phone About (MobileAboutView) both

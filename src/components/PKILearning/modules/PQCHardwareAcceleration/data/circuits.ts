@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * How big our own AMD KV260 (Zynq UltraScale+ K26, 117,120 LUTs, 144 block-RAM
  * tiles, 1,248 DSPs) accelerator circuits are, from our Vivado/Vitis HLS

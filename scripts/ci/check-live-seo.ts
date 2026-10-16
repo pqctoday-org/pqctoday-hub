@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** Verify that production serves the same complete static route set this checkout declares. */
 import { SEARCH_ROUTES, indexableRoutes } from '../../src/seo/searchRoutes'
 import { validateSnapshot } from '../lib/prerenderChecks'

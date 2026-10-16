@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GRC insurance and procurement claims (GRC journey audit, 15 Oct 2026).
  *

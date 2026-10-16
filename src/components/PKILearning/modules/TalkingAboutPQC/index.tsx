@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { ArrowRight, MessageSquareWarning, MessagesSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'

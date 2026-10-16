@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pkcs11LogPanel — prop-based PKCS#11 call log for learning modules.
  *

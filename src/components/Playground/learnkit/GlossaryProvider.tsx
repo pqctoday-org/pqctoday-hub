@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState, type ReactNode } from 'react'
 import { GlossaryContext } from './GlossaryContext'
 import type { GlossaryData } from './glossaryTypes'

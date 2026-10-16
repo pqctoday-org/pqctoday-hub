@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // B-3-style provenance gate for the WS-F fixtures: every pinned public NIST
 // ACVP-Server file must still hash to the SHA-256 recorded next to its
 // upstream commit + path. A reformat or hand edit of a single byte fails here.

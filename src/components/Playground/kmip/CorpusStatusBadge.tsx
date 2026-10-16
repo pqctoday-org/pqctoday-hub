@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { CheckCircle2, XCircle, MinusCircle } from 'lucide-react'
 import type { TestStatus } from '@/wasm/kmip/corpus/runner'
 import { STATUS_LABEL } from './useKmipCorpus'

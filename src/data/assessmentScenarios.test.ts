@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A scenario is only useful if it actually FILLS the wizard. A value that no
  * longer matches an option is not a type error — these are `string[]` fields —

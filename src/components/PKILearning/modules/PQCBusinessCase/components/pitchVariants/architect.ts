@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { FormData, PitchVariant } from './types'

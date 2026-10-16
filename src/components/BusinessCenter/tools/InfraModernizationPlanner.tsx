@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Infrastructure Modernization Planner — Phase 6 (Infrastructure Modernization &
  * Performance) Command Center deliverable.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsScopeControl — a labelled segmented control replacing the live page's
  * near-invisible top-right `Switch`. Makes the corpus scope (and the fact that

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { CONCEPT_LEARN_MODULE } from './conceptPeekLinks'
 import { EXEC_TOUR_CONCEPTS } from './execTourConfig'

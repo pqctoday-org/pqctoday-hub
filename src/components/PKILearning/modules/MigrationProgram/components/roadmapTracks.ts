@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Two-Track roadmap model — the typed vocabulary the Roadmap Builder uses to
  * place milestones on the framework's two parallel migration tracks plus the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Multi-part message signing (PKCS#11 v3.0 §5.15 / v3.2): C_MessageSignInit →
 // C_SignMessageBegin → C_SignMessageNext × N, and the verify counterpart.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A tiny, fully synthetic coverage-matrix input set for unit tests (never
  * imported by app code). Two engines, three mechanisms:

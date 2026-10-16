@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Learn-tab structure for the HomomorphicEncryption module: the nine sections
  * in learning order (matching the manifest), a "Key takeaways" box in each,

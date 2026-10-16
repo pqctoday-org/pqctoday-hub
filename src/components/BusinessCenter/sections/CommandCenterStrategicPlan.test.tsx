@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Phase 10 item 2 (2026 pages design-plan audit) — the CSWP.39 Fig 3 zone map
  * was missing a functional "step N of 6 — iterative loop" prev/next control;

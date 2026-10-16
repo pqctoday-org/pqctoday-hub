@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Focused integration test for ComplianceLandscape's Phase 3
  * semantic-search wire-up. Asserts the hook is invoked with the

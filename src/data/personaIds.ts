@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical persona identity — dependency-free so it can be imported from
  * scripts and persistence validators without pulling in the full learning

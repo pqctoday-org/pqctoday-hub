@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Regression guard for a real, live bug found while investigating 3
  * pre-existing failing tests during the dev-tabs-pkcs11-kmip G9/W6 gate

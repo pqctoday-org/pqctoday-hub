@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // aria-modal without a focus trap let Tab walk out of the panel into the page
 // (and into the overlay that opened it). The panel is usually opened from
 // INSIDE another focus-locked overlay, so the nested case is the one to prove.

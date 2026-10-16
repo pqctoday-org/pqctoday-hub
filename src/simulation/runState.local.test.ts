@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 nav remediation (WP2) — "has this run started?" has one definition, and
  * difficulty can only change in place on a fresh run. Mid-run, the Mode dial

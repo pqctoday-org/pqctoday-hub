@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared presentational chrome for the Simulation (WS-05 extraction): the small
  * style/label maps and the resume helper used by BOTH the SimulationView shell

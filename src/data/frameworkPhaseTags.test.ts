@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Wave-1 drift-guard for the Applied Quantum `frameworkPhase` tags scattered
  * across the downstream registries.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useEffect } from 'react'
 import { FileSignature, CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'

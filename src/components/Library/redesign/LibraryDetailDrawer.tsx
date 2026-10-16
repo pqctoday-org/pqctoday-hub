@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryDetailDrawer — the drill-down home for the dense per-document data the
  * medium-density card drops. Right-anchored overlay with a transform-only

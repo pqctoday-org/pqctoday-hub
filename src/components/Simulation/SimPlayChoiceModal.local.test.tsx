@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Play This Phase picker (WP2.4). The guarantee under test is unchanged: the
 // spanning Foundations band is playable here, alongside every lifecycle phase,

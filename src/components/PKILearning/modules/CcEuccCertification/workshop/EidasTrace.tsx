@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: CC/EU author
 /**
  * Workshop step `eidas-trace` (EUCC & eIDAS path). The learner traces a

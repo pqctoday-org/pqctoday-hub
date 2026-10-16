@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Evidence records for katRunner specs (Algorithms KAT view, Learn KAT
  * panels), read from the generated case-evidence.kat.generated.json — see

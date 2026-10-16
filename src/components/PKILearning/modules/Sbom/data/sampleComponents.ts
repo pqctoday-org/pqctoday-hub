@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Small local sample set for the SBOM Format Explorer workshop step —
  * deliberately generic software components (not cryptographic assets, which

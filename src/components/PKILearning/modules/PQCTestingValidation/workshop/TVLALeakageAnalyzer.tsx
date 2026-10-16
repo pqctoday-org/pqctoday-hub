@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Cpu, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import { TVLA_TARGETS, TVLA_STAGES, type TVLATarget } from '../data/testingConstants'

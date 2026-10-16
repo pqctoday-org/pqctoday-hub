@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Anchor KAT tests — verify pinned PQC vectors against our openssl.wasm.
  *

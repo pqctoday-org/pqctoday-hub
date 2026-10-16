@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Shared author
 /**
  * Capstone + shared-data contract: the minimum pass conditions are enforced,

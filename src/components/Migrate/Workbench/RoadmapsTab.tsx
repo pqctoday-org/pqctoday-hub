@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Direct access to vendor PQC roadmaps — a flat, searchable list of every
 // vendor that publishes a roadmap (or has enrichment data), each rendered with

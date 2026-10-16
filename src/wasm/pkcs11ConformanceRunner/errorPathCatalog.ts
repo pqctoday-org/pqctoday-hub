@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // errorPathCatalog — the TABLE behind the error-path probes (plan WS-G G-8
 // negative/error-path coverage, G-2 required-operation probes, G-5 citations).

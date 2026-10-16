@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Add to collection" in the Library drawer: keeps this record in one of the
  * user's named collections, with a free-text annotation and the record's

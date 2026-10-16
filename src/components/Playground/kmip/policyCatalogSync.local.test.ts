@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Policy catalog ↔ files sync gate (WP2.4 / report gaps Y24, H5). Kept as a
 // `*.local.test.ts` so it runs on the local gate, not in CI (directive

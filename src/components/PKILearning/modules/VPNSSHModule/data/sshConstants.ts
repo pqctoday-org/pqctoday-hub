@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 export type SSHKexAlgorithm =
   'curve25519-sha256' | 'sntrup761x25519-sha512' | 'mlkem768x25519-sha256'
 

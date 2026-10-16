@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Which routes need cross-origin isolation, and the one-time reload that gets
  * it — the single source for BOTH the inline guard in index.html (which runs

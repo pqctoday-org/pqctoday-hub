@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical CSWP.39 Fig 3 — Crypto Agility Strategic Plan zone model.
  *

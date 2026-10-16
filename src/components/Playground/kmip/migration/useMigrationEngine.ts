@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Dedicated KMIP engine instance for the Migration tab — its own PKCS#11
 // slot (hermetic keystore beside the workbench's slot-0 singleton), booted

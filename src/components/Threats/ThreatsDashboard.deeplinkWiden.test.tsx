@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link remediation PR 1: ?id= for a draft/unknown threat says so; a
  * threat hidden by the page's scoping (persona default, "My threats only",

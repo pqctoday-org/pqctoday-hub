@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // First-paint skeleton for /library. Deliberately lives OUTSIDE
 // LibraryViewRedesign.tsx: the view is a lazy route chunk, so a skeleton

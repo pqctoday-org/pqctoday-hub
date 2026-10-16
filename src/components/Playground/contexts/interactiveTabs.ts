@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The tabs of the interactive Playground lab (/playground/interactive) that a
  * link can open with `?tab=`. Any other value is ignored and the lab opens on

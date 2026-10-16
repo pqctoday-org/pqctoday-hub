@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useMemo } from 'react'
 import { RiskRegisterBuilder } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
 import {

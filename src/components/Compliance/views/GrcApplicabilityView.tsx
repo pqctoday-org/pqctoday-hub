@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GrcApplicabilityView — persona-specific For You body for the GRC persona
  * on /compliance. Added 2026-09-07 (Executive/GRC split): the persona-branch

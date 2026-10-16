@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // WS8e (2026-08-15) — the hub-only routing rule, locked in.
 //

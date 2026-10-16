@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Export the current VPN simulator configuration as a downloadable bundle.
  * Produces a .zip containing strongswan.conf, ipsec.conf / swanctl.conf,

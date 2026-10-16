@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GRC quiz eligibility (plan §4 point 4, executive-grc-split-plan.md):
  * every checkpoint and the Essentials pool must have at least two eligible

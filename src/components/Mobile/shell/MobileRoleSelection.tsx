@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { RoleHomeView } from '@/components/RoleHome/RoleHomeView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MobileSheet } from '../primitives/Sheet'

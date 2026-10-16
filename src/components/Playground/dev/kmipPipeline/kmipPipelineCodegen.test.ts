@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Codegen regression coverage for the KMIP lane (dev-tabs-pkcs11-kmip plan
 // G6). The deniable-step test locks in a REAL bug found and fixed during

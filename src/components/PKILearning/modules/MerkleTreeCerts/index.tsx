@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useState, type FC } from 'react'
 import { TreePine, Search, ShieldCheck, BarChart3, FileCheck } from 'lucide-react'
 import { MTCIntroduction } from './components/MTCIntroduction'

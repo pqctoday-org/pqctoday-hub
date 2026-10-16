@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Every registered katRunner case (src/data/validation/testRegistry.ts, each
 // with its KatKind) run through the REAL runKAT on BOTH shipped wasm engines —

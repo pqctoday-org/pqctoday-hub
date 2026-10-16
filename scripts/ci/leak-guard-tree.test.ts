@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Tree mode of scripts/ci/leak-guard.ts: whole-tree scan against a frozen
 // baseline. Fixtures are assembled from fragments so this file contains no
 // literal match itself.

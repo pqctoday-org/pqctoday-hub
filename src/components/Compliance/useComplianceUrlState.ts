@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'

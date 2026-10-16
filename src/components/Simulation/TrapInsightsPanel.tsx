@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TrapInsightsPanel (PR-5) — a local dashboard over the misconception telemetry
  * the sim records. Ranks the Common-Failure (trap) moves the player has fallen

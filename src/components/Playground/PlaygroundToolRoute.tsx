@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router'
 import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import type { Step } from '../components/StepWizard'
 import type { LogEntry } from '@/components/PKILearning/common/WorkshopOperationLog'

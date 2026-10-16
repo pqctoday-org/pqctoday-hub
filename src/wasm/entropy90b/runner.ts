@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Environment-neutral runner for the NIST SP 800-90B estimator tool compiled
  * to WebAssembly (public/wasm/entropy90b/ea_*.mjs + .wasm).

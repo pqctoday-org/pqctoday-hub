@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KmipPlaygroundView — the in-browser crypto-agile KMIP 3.0 playground. Drives
 // the pqctoday-kmip control plane + softhsmrustv3 engine, compiled to wasm and

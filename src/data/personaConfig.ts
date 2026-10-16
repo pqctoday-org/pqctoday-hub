@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read + cross-check against live
 // routes/modules/tests; fixed 2 stale citations, removed orphaned
 // MODULE_INDUSTRY_RELEVANCE (zero consumers, contradicted personaLensRegistry.ts)

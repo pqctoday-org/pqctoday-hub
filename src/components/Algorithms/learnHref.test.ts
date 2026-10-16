@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Driftguard for the industry → learn-path deep links (G7, 2026-09-17).
 // learnHref() falls back to the module top when a path is missing, which is

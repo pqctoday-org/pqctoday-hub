@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // The post-deploy SBOM check walks the deployed chunk graph to find the About chunk. On the
 // 4.149.0 deploy it failed although the site was fine: catalog note text naming a ".json" file
 // read as a chunk name, was fetched, answered 404, and the rejection took the whole batch (the

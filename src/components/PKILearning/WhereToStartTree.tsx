@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Where do I start?" router + framework crosswalk widget (Applied Quantum
  * App. B routing, p.192; App. G crosswalk, p.199).

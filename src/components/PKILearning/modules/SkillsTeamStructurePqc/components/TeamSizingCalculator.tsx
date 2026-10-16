@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 import React, { useState, useMemo, useCallback } from 'react'
 import { Calculator, Info } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'

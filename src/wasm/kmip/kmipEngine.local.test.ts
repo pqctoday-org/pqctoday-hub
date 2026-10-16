@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Unit tests for the PURE decision-extraction layer of the CACP engine wrapper
 // (WP2.5 / report gap T3). These functions sit between the wasm boundary and

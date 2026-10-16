@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ShieldCheck, AlertTriangle, XCircle } from 'lucide-react'
 
 export type UrlQuality = 'url_authoritative' | 'url_needs_review' | 'missing' | string

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8, Wave D (2026-09-18) — modules whose guided workshop is offered
  * inside the phone shell (MobileModuleShell) instead of the "switch to a

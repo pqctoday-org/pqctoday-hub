@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical data: the random inputs each PQC operation draws, and the RBG
  * security-strength rule FIPS 203 / 204 / 205 attach to them.

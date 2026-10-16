@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — phone twin of the page "Try it" block (the
  * Mobile tree may not import desktop components). Same data as the desktop

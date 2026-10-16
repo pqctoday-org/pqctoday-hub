@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simFeed — the Simulation's scripted live-feed, loaded from a dated CSV
  * (`sim_feed_<MMDDYYYY>.csv`) with records for every quarter Q1 2026 → Q4 2040.

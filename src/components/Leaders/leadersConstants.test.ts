@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The guidance block is also a set of filter shortcuts. A category string that
  * no longer exists in the data would render a confident recommendation that

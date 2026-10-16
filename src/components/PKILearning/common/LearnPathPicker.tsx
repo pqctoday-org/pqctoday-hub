@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * In-module learn-path picker (WS-0, 2026-09-24) plus the small labels and
  * wrapper module content uses to express path scope.

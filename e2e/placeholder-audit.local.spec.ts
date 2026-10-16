@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Runs the unresolved-placeholder warning against the REAL generated output of
  * every business tool, and prints what each one flags.

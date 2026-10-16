@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Link, useLocation } from 'react-router'
 import { FlaskConical, BookOpen, Lightbulb } from 'lucide-react'
 import { getAlgoCtasWithFallback } from '@/data/algorithmCtaMap'

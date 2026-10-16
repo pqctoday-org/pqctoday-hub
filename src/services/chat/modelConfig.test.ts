@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { prebuiltAppConfig } from '@mlc-ai/web-llm'
 import { DEFAULT_LOCAL_MODEL, SUPPORTED_LOCAL_MODELS } from './modelConfig'

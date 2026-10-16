@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Guards against duplicate glossary terms shipping again — the glossary once
 // carried 11 duplicated term names with conflicting definitions (including
 // three different CBOM entries and two SBOM entries).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the generic EvidenceBadge — verifies the conditional
  * rendering surface: tier chip, freshness pill, confidence score, and

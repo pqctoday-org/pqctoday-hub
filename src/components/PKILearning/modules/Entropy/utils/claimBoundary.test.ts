@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Claim-boundary regression checks (plan §10.2) for the strings review pass 2
 // found WRONG or UNSUPPORTED on shared surfaces. Each pattern names the source

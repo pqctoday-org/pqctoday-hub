@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ExternalLink, Calendar, X, ChevronDown, ListChecks } from 'lucide-react'
 import { Link } from 'react-router'
 import { createPortal } from 'react-dom'

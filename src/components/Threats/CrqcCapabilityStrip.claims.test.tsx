@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The capability strip when the published claims differ from today's file: no file at all, an
  * estimate whose claim is missing, sources that disagree, a claim that did not hold. The real

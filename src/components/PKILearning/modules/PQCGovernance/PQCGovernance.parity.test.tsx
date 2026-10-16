@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render-parity golden test for the PQCGovernance ModuleShell conversion.
  * Captured against the PRE-conversion module; must stay green after

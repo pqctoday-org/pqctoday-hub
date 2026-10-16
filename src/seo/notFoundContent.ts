@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * What the "page not found" page says. Shared by the screen the app shows for an address it does not
  * know (src/components/NotFound) and by the saved 404.html that GitHub Pages serves, with a 404 status,

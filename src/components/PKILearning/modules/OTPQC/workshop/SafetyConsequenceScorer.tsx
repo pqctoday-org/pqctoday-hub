@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, Shield, Users, Zap, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'

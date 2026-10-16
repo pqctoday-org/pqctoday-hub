@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Compliance For-You opens the Library / Threat / Timeline pop-ups as local
 // state, so /compliance never names the item. Each pop-up therefore carries
 // Share (clean canonical link) AND an "Open on its page" link to that same

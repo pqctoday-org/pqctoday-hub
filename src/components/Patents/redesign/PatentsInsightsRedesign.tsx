@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsInsightsRedesign — the prioritised Insights tab. Recomposes the existing
  * chart primitives (lifted/exported from PatentsInsights) into a clear hierarchy:

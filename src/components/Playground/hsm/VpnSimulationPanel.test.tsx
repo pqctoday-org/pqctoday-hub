@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Smoke tests for VpnSimulationPanel. The panel is under active development,
 // so assertions stay resilient: stable testids and data-driven text only —

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // RequestSimulator — the Simulate tab. Build a KMIP request, run it, and show
 // the AUTHORITATIVE verdict from the WASM engine's dryRun alongside the

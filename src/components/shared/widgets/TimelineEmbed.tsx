@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TimelineEmbed (C6) — renders the interactive Gantt chart inside the
  * simulation without the full TimelineView chrome (no PageHeader, no filter

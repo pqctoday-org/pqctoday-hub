@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // learnLessons.ts — the 10 guided lessons driving the Learn tab. Content
 // ported from the design handoff's cacp3-lessons-data.js (prose/structure
@@ -620,7 +620,7 @@ export const LESSONS: Lesson[] = [
       { label: 'CryptographicAlgorithm value', a: 'ML-KEM-768', b: 'X25519MLKEM768', same: false },
     ],
     notes: [
-      "X25519MLKEM768 is a single first-class KMIP 3.0 CSD02 CryptographicAlgorithm value (published codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching draft-ietf-tls-ecdhe-mlkem exactly.",
+      "X25519MLKEM768 is a single first-class KMIP 3.0 CSD02 CryptographicAlgorithm value (published codepoint 0x5C) — one managed object, ordinary Encapsulate/Decapsulate. Your client code doesn't know two algorithms are running underneath; the engine combines both secrets by pure concatenation (ss_mlkem ‖ ss_x25519, 64 B total) — no KDF, matching RFC 10024 §4.3 exactly.",
       "A second hybrid variant exists for shops standardized on NIST curves instead of X25519: SecP256r1MLKEM768 (draft codepoint 0x5D, IANA TLS group 0x11EB) — same idea, ECDH P-256 in place of X25519, same pure-concatenation combiner (ss_p256 ‖ ss_mlkem). Not run as its own step here since the wire flow is identical to X25519MLKEM768 above; try it directly in the Commands tab's algorithm picker.",
       '⚠ What about hybrid SIGNATURES — e.g. "need both ECDSA and ML-DSA to verify"? KMIP has no native composite-signature algorithm or dual-sign operation yet; no committee draft defines one. Two spec-compliant workarounds exist today: (1) an extension codepoint (KMIP reserves 8XXXXXXX) registering a single composite name, planned but not yet standard, or (2) two independently-linked keys signed together inside ONE Batch request — which you actually can run: see the Batch & Macros tab\'s "Provision & sign" recipe pattern.',
     ],

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef } from 'react'
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import clsx from 'clsx'

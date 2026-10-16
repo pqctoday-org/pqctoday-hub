@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link arrivals on /algorithms (2026-09-28 remediation): ?highlight
  * widens hidden rows with an Undo, unknown names say "not found", ?protocol

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the shared, persona-agnostic PersonaBoardView skeleton. Renders
  * each of the 7 real PERSONA_JOURNEY_BOARD entries and asserts the shared

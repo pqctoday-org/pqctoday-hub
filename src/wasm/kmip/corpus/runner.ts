@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // runner.ts — replay one OASIS KMIP 3.0 conformance test transcript,
 // hermetically, entirely in the browser: classify → parse → for each

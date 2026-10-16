@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection -- every bracket access below is keyed by a
    typed union (Region / PersonaId) or a value drawn from AVAILABLE_INDUSTRIES itself, never
    free-form user input; RegionIndustryPill.tsx (folded into this modal) used the same

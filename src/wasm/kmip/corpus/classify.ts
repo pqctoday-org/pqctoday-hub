@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // classify.ts — pre-flight skip classification for a corpus test, ported
 // verbatim from pqctoday-hsm/kmip/conformance/harness/dispatcher_replay.py.

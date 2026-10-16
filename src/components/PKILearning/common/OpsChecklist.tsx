@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
 import { Wrench, ChevronDown, ChevronRight, Copy, Check, FileType2 } from 'lucide-react'
 import { CompleteStepAction } from './CompleteStepAction'

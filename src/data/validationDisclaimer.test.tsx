@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A-4 (ACVP remediation plan 2026-09-24): the §2.2 disclaimer is visible —
  * without opening anything — on the validation workbench and the Algorithms

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Loader for the industry-landscape source: three dated CSV families sharing
 // one maintenance-flow source id (`industry-landscape`).

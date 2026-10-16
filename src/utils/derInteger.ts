@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Canonicalize a positive-integer magnitude for DER `INTEGER` content, per
 // the two's-complement minimality rule X.690 §8.3.2 requires: the value

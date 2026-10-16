@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `algorithm_id` — the stable key `?algo=` deep links use (added 09292026).
  * Guards the wired CSV's column against the slug scheme the loader, the

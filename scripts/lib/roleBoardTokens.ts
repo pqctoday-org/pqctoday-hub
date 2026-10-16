@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The role-board token registry — the closed vocabulary of `{token:args}`
  * placeholders a `role_board_content_*.csv` row's `content` field may contain.

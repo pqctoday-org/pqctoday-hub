@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ComplianceRecord, ComplianceSource } from './types'
 import type { TrustTier } from '@/data/trustScore'
 import { matchesTrustTierFilter } from '../common/TrustTierFilter'

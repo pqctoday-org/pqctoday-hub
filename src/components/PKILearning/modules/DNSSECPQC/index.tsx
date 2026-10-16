@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Ruler, GitCompareArrows, ListChecks } from 'lucide-react'
 import { DNSSECIntroduction } from './components/DNSSECIntroduction'

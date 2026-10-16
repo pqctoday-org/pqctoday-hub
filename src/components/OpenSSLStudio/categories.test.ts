@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `/openssl?cmd=` opens the command category it names, and the PQC Assistant
  * names these categories in its links (promptBuilder.ts reads OPENSSL_CATEGORIES).

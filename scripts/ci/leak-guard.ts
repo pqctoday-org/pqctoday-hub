@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * scripts/ci/leak-guard.ts — warn when a change would publish private
  * internals (owner decision 2026-10-02/03).

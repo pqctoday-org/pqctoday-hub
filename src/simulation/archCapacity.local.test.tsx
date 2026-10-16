@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 content plan decision P5 — the Pilots architecture step can need more
  * migration decisions than the P5 effort gate has unlocked. The rule stays;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { CsvColumnConfig } from './csvExport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { LibraryItem } from '@/data/libraryData'

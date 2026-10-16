@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
  * Source: the latest dated CSV of each tracked data source in src/data/.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mosca's Inequality (X + Y > Z) — gap-closer #1 (spec §6, Assess #1).
  *

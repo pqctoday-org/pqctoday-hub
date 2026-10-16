@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the quota-guarded persist storage (B1 persistence hardening).
  * A failing write (e.g. QuotaExceededError) must be caught and logged, never

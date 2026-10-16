@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The Threats page's URL contract, parsed in one place for both the desktop
  * dashboard and the mobile screen (which ignored every parameter until

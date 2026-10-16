@@ -11,7 +11,7 @@ The source code in the Platform's GitHub repositories is not governed by these T
 
 ## 2. License
 
-The Platform's source code is licensed under the **GNU General Public License v3.0 (GPL-3.0-only)**. The full license text is available in the [LICENSE](./LICENSE) file. Nothing in these Terms restricts rights granted under the GPL-3.0.
+The Platform's source code is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0-only)**, with a commercial licence on request; see [COPYRIGHT.md](./COPYRIGHT.md). The full license text is available in the [LICENSE](./LICENSE) file. Nothing in these Terms restricts rights granted under the AGPL-3.0.
 
 ## 3. Educational Purpose and Cryptographic Disclaimer
 
@@ -54,7 +54,7 @@ PQC Today, LLC does not endorse use of the Platform to develop weapons, conduct 
 
 ## 6. No Warranty
 
-THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, OR NON-INFRINGEMENT. This is consistent with Sections 15 and 16 of the GPL-3.0 license.
+THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, OR NON-INFRINGEMENT. This is consistent with Sections 15 and 16 of the AGPL-3.0 license.
 
 The Platform aggregates data from public sources including NIST, ETSI, IETF, BSI, ANSSI, ISO/IEC, and others. Content may be inaccurate, incomplete, or outdated. You should independently verify all information before making decisions based on it.
 
@@ -78,7 +78,7 @@ The Platform is not affiliated with, endorsed by, or sponsored by any of these o
 
 ## 9. Intellectual Property
 
-- The Platform's source code is licensed under GPL-3.0.
+- The Platform's source code is licensed under AGPL-3.0-only (see COPYRIGHT.md for the third-party parts that keep their own licences).
 - Original educational content, data compilations, and visualizations are copyright of the PQC Today maintainers.
 - Third-party standards, specifications, and documents referenced by the Platform are subject to their respective licenses and copyright terms.
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { IaCPattern } from './platformEngConstants'
 
 export const IAC_PATTERNS: IaCPattern[] = [
@@ -104,7 +104,7 @@ controller:
 controller:
   config:
     ssl-protocols: "TLSv1.3"
-    # X25519MLKEM768 = ML-KEM-768 + X25519 hybrid TLS group (draft-ietf-tls-ecdhe-mlkem)
+    # X25519MLKEM768 = ML-KEM-768 + X25519 hybrid TLS group (RFC 10024)
     ssl-ciphers: "TLS_AES_256_GCM_SHA384"
     # Enable PQC key exchange groups (nginx + OpenSSL 3.5)
     ssl-ecdh-curve: "X25519MLKEM768:X25519:P-256"

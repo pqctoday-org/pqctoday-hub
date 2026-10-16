@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PROJECT WYCHEPROOF adversarial test vectors for ML-KEM (FIPS 203) and ML-DSA
 // (FIPS 204), maintained by GOOGLE / C2SP. Source: https://github.com/C2SP/wycheproof

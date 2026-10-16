@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * P11ShimGate — the P1 proof harness for dev-tabs-pkcs11-kmip plan WS-B.
  *

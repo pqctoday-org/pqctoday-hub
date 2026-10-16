@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The wizard screen — control deck + two-pane (step rail + question pane), driven
 // by useAssessFlow. Rendered only when a track is active, so the hook is always

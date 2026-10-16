@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The nine NIST PQC Additional Signatures Round 2 → Round 3 candidates.
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Redesigned NIST CSWP.39 explorer: turns a ~10-section vertical dump into a
 // navigable, role-aware playbook with three sub-views — the 5-step agility

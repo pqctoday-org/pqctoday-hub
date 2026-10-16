@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Validates the emitter's output against the OFFICIAL CycloneDX 1.7 JSON Schema
  * (vendored under ./schema). This is the airtight check behind the structural

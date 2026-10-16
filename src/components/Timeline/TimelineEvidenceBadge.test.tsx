@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TimelineEvidenceBadge tests. computeFreshnessState stays exported for the
  * shared EvidenceBadge (other domains); the timeline badge no longer uses it.

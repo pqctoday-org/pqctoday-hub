@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Wizard navigation for the Assess redesign. Renders RENDER_ORDER_* but reads /
 // writes store.currentStep through the track-relative mapping so the legacy

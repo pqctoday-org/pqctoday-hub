@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — one exercise per workshop step, with feedback
  * that explains why. The 90 band's education row asks for "an exercise with

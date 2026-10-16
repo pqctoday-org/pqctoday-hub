@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Conformance harness for the hybrid-certificate workshop, run in Node
 // against the SAME path the browser uses: SoftHSM PKCS#11 keys → the

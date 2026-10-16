@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 # Run acvp_native_runner.py for every fixture bundle inside an EXISTING
 # container, against a PKCS#11 .so already present in that container, and copy
 # the three output files per fixture back into the evidence run directory.

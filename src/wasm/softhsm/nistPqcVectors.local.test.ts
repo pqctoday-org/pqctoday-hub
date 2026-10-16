@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Proves the ML-KEM/ML-DSA/SLH-DSA vectors in src/data/acvp/{mlkem,mldsa,slhdsa_ctx}_test.json
 // are genuinely accepted by the real Rust engine — not just structurally valid

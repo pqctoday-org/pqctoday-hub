@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Role packs: one document that bundles the artifacts a role has saved, in a
  * fixed order, and lists the ones still missing with the tool that produces

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ML-KEM encapsulation-key check depth (gap-closure plan 2026-09-25, P5 item
 // 3). Section 7b (mlkemAcvp.ts) carries ONE invalid NIST encapsulation key per

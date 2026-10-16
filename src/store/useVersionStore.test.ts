@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for the learn-module change detection in the version store (B2).
  * Key invariant: a caught-up or freshly-seeded user sees NO module changes

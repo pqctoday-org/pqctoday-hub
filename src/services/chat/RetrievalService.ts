@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type MiniSearch from 'minisearch'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'

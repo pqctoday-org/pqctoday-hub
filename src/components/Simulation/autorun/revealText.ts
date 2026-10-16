@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import {
   BUSINESS_TOOLS,
   ARTIFACT_TYPE_TO_TOOL_ID,

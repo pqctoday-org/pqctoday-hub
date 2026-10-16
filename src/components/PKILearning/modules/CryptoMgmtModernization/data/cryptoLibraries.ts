@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Crypto library posture data for the LibraryCBOMBuilder workshop.
  * Version / EoL / FIPS 140-3 validation / PQC support / CVE posture.

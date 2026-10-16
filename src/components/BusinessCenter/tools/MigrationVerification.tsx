@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Migration Verification & Program Closure — the framework's 9th block
  * (Applied Quantum v2.1 p140-144). Closes the loop a CBOM "migration status"

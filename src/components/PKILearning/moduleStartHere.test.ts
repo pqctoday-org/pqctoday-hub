@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8, Wave C (2026-09-18) — "Start here" drift guard.
  *

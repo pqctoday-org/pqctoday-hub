@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cut-over guard — every legacy moduleData/moduleEnrichment map is rebuilt from
  * the manifest collection, byte-for-byte, checked against a FROZEN golden

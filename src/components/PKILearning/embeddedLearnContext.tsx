@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * EmbeddedLearn context — true only when a Learn module is rendered INSIDE the
  * Simulation (embedded panel) rather than on its own hub page. Modules use it to

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 #
 # Build the NIST SP 800-90B estimator tool to WebAssembly in the pinned emsdk
 # container (OrbStack / Docker BuildKit) and export the artefacts.

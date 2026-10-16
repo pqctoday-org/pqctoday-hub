@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drill data for the TalkingAboutPQC workshop. Dates come from
  * regulatoryTimelines.ts so a change on the Timeline flows through here.

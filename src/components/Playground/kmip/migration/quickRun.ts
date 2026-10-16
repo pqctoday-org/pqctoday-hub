@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Quick run — the three-step first win on the Migration tab: create a signing
 // key behind a label under the classical policy, switch the policy, then use

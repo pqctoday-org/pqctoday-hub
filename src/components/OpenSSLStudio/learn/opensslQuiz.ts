@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // opensslQuiz.ts — knowledge-check question banks for the OpenSSL Studio
 // Learn tab, keyed by `OpenSslLesson.id`. Every question is answerable from

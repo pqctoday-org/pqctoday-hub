@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CBOM Report section — real-browser verification of the golden path added
  * in cbom-cyclonedx17-registry-report-section-plan-07092026.md Part 2.

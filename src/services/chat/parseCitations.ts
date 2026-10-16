@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Parse LLM-generated claim citations from a fenced ```citations block
  * (a JSON array of {claimExcerpt, chunkId}), emitted after the prose

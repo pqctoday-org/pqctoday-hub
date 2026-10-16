@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ThreatsEmbed — renders the Quantum Threats dashboard inside the simulation (under
  * the "● Simulation mode" header) instead of navigating the player out to /threats.

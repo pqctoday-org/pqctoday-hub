@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the SLH-DSA reference-sample section (sections/slhdsaAcvp.ts), driven
 // through the REAL useAcvpSuite hook in dual-engine mode (C++ Emscripten engine

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
 import { Award, AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'

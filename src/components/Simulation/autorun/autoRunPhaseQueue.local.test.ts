@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tests for `autoRunPhaseQueue` (Play This Phase's real engine queue) and
  * `isPhaseMode` — the follow-up to `simulation-unified-play-mechanism-plan-

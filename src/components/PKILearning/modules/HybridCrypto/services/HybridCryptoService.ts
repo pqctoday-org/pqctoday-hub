@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'

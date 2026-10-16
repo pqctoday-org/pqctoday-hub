@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Transient flag: true while the auto-run playthrough is active, so embedded tools
  * initialize their forms with demo content sourced from the framework / hub data /

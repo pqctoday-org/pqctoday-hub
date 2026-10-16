@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Where the researcher's evidence workspace lives, and the links its lists
  * use. Kept free of imports so start-up code (the history seeder) can use it.

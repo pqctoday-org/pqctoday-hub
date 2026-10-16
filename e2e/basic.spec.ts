@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
 
 // Verify dynamic module rendering via e2e initialization

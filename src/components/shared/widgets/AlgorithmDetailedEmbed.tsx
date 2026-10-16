@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * AlgorithmDetailedEmbed (C5-full Phase 5) — the Algorithms "Detailed Comparison"
  * tab, embedded in the sim. Same shape as AlgorithmTransitionEmbed: sources its

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Round-trip + serializer tests for the visual editor's editable policy model.
 // This is the correctness bar for the whole feature (implementation plan §7):

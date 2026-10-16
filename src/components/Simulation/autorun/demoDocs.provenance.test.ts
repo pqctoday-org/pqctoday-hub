@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guardrail: demoDocs.ts is hand-authored narration,
  * the one place in the simulation where factual drift has crept in before

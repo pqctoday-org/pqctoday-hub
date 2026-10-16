@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Per-persona "verdict" for the Quantum Risk Report hero (redesign). The same
  * assessed risk is re-led for each role: the score, gauge and action list stay

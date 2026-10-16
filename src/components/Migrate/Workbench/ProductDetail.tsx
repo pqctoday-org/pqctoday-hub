@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Expanded per-product detail for the workbench — reuses the same data +
 // components as the existing /migrate SoftwareTable expanded row, so nothing

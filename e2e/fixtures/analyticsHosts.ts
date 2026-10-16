@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Single source of truth for the analytics hosts automated browsers must never
  * contact. Pure module: no Playwright import, so `playwright.config.ts` (which

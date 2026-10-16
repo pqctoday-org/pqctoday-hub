@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * sectorTrack.test.ts — CI guard: every moduleId in SECTOR_STEPS must resolve
  * in SIM_LEARN_MODULES (i.e. have embeddable: true in its manifest).

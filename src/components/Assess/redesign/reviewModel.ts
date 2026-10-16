@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Answer summaries for the Review screen — one short value string per step, plus
 // a flag for answers that came from the "I'm not sure" smart default.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Each test builds a minimal consistent tree on disk, breaks exactly one thing, and
 // expects the SBOM gate to name it. The passing baseline proves the gate is not
 // simply failing on everything; the failing cases are the ways the live About page

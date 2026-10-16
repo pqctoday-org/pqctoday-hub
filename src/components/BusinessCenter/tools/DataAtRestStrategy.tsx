@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Data-at-Rest Strategy — Phase 5 Activity 5.6 Command Center gap-closer.
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // keyIdentity — the one string that stands in for "this exact PKCS#11
 // object" across the hub's key registry: which WASM instance it lives in,

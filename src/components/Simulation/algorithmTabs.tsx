@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SIM_ALGORITHM_TABS (C5-full) — the single registry of embeddable Algorithms
  * tabs, replacing the three bespoke per-tab predicates + mount arms. Each entry

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The claim matrix (researcher evidence workspace, Layer 2): atomic claims,
  * each with a claim status the user sets (fact / estimate / scenario /

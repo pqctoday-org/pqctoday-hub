@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * release:freeze (plan WS-J J-4 tooling). Nothing is frozen here: the real
  * tree is only read (dry run), and every sabotage runs on files in os.tmpdir().

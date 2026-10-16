@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Regression test for the "Roadmap Builder never receives picks made in the
  * Migration Workbench" bug: RoadmapBuilder used to read `myProducts` alone

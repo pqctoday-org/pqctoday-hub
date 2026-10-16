@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared output contracts passed between the Business Case workshop steps.
  * Previously each step (and BoardPitchBuilder) declared its own local copy of

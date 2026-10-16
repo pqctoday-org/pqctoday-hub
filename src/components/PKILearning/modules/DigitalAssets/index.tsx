@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert, Landmark } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'

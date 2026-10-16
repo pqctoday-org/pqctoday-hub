@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Link } from 'react-router'

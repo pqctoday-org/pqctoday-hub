@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Shared flow model for the Assess wizard — consumed by BOTH the legacy
 // AssessWizard (validators only) and the redesign (orders, domains, copy,

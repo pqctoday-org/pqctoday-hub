@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render-parity smoke test for the AcvpLabWorkflow module, mirroring the
  * pattern every other ModuleShell-based module uses.

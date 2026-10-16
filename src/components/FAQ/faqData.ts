@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { PersonaId } from '@/data/learningPersonas'
 
 export interface FAQItem {
@@ -670,7 +670,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Is PQC Today open source?',
         answer:
-          'Yes, PQC Today is fully open source under the GPL-3.0 license, with source code available on GitHub at pqctoday-org/pqctoday-hub. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
+          'Yes, PQC Today is fully open source under the AGPL-3.0 license, with source code available on GitHub at pqctoday-org/pqctoday-hub. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
         deepLink: '/about',
       },
       {

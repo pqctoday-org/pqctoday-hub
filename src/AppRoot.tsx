@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { StrictMode, Suspense } from 'react'
 import { MotionConfig } from 'framer-motion'
 import { Toaster } from 'react-hot-toast'
