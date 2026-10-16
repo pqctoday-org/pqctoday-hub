@@ -9,7 +9,7 @@ Think of post-quantum cryptography as an Olympic trial that never stops. NIST pi
 - **MPC-in-the-Head** — Prove you know a secret by simulating what would happen if a group of people computed something together. The math relies on AES (the same cipher protecting your wifi). Signatures are pretty big, but the security argument is rock-solid.
 - **Multivariate** — Build a giant puzzle of quadratic equations with a hidden shortcut. You can solve it; an attacker can't. Tiny signatures, huge keys. Some parameters got dinged by a clever attack in 2025 — fixes are in progress.
 - **Isogeny** — Walk a graph of mathematical curves. Has the absolute smallest signatures of anything in the contest, fits in a single network packet. But the math is new and one cousin (SIKE) was broken spectacularly in 2022.
-- **Lattice (the HAWK variant)** — Same family as the winners, but uses integers instead of decimal numbers. Easier and safer to implement on small devices.
+- **Lattice (the HAWK variant)** — Same family as the winners, but uses integers instead of decimal numbers. Easier and safer to implement on small devices. Its team withdrew it in July 2026 after a new attack, so it is no longer in the running.
 
 **The bigger picture.** Korea is running its own competition (KpqC). China is running theirs (CACR). The ISO body is turning NIST winners into international standards. The Internet engineering folks at IETF decide which numbers to actually use in TLS, SSH, certificates. Lots of parallel work — and your software will eventually need to handle whichever combination your country / industry ends up using.
 

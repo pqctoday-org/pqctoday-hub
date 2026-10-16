@@ -137,18 +137,19 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
   },
   {
     id: 'sig-round-3-selection',
-    date: '2026-01-01',
+    date: '2026-05-14',
     kind: 'selection',
     title: 'Round 3 down-selection',
     detail:
       'Nine third-round candidates advance: FAEST, MQOM, SDitH (MPCitH); UOV, MAYO, QR-UOV, SNOVA (Multivariate); SQIsign (Isogeny); HAWK (Lattice). Five Round-2 schemes did not advance (CROSS, LESS, Mirath, PERK, RYDE).',
   },
   {
-    id: 'sig-standard-projection',
-    date: '2027-06-01',
-    kind: 'standardisation',
-    title: 'Earliest projected standardisation window',
+    id: 'hawk-withdrawn',
+    date: '2026-07-29',
+    kind: 'selection',
+    title: 'HAWK withdrawn',
     detail:
-      'NIST flags a longer expected timeline for multivariate candidates; lattice / isogeny / MPCitH winners could see draft FIPS as early as 2027. Dates here are forecast, not commitment.',
+      'The HAWK submission team withdraws it from the additional signatures process after a new attack roughly halves the lattice-reduction block size needed for key recovery. Eight third-round candidates remain. NIST expects Round 3 to last approximately two years and has set no standardisation year.',
+    affects: ['hawk'],
   },
 ]
