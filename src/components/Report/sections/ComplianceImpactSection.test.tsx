@@ -152,11 +152,35 @@ describe('ComplianceImpactSection: binding chip', () => {
     // the engine does not put in their mandatory tier, is not "binding on you".
     const [elsewhere] = outOfScope
     mark(elsewhere, 'mandatory_for_scope')
-    mark(fwA, 'mandatory_for_scope')
+    mark(fwA, 'binding')
     renderSection(undefined, [impactFor(fwA), impactFor(elsewhere)])
     const chips = screen.getAllByTestId('binding-chip')
     expect(chips.map((c) => c.textContent)).toEqual(['Binding', 'Binding for others'])
     expect(chips[1]).toHaveAttribute('title', expect.stringContaining('outside that scope'))
+    expect(screen.queryByTestId('binding-scope-note')).not.toBeInTheDocument()
+  })
+
+  it('says Binding for its scope, with its basis on the page, for an in-scope scoped framework', () => {
+    mark(fwA, 'mandatory_for_scope')
+    const was = fwA.bindingBasis
+    fwA.bindingBasis = 'FIPS PUB 140-3'
+    try {
+      renderSection(undefined, [impactFor(fwA)])
+      expect(screen.getByTestId('binding-chip')).toHaveTextContent('Binding for its scope')
+      expect(screen.getByTestId('binding-scope-note')).toHaveTextContent(
+        /applies only to the systems.*basis: FIPS PUB 140-3/
+      )
+    } finally {
+      fwA.bindingBasis = was
+    }
+  })
+
+  it('gives an out-of-scope scoped framework no basis note: it is Binding for others', () => {
+    const [elsewhere] = outOfScope
+    mark(elsewhere, 'mandatory_for_scope')
+    renderSection(undefined, [impactFor(elsewhere)])
+    expect(screen.getByTestId('binding-chip')).toHaveTextContent('Binding for others')
+    expect(screen.queryByTestId('binding-scope-note')).not.toBeInTheDocument()
   })
 
   it('replaces the stopgap sentence with what Binding means once frameworks are reviewed', () => {

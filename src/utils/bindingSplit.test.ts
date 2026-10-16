@@ -105,8 +105,9 @@ describe('splitByBinding', () => {
 })
 
 describe('bindingChipFor', () => {
-  it('says Binding only in scope, and Binding for others outside it', () => {
-    expect(bindingChipFor('mandatory_for_scope', true)).toBe('binding')
+  it('says Binding (or Binding for its scope) only in scope, and Binding for others outside it', () => {
+    expect(bindingChipFor('binding', true)).toBe('binding')
+    expect(bindingChipFor('mandatory_for_scope', true)).toBe('scoped')
     expect(bindingChipFor('mandatory_for_scope', false)).toBe('elsewhere')
     expect(bindingChipFor('binding', false)).toBe('elsewhere')
   })

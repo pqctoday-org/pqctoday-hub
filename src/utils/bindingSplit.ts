@@ -96,8 +96,19 @@ export const BINDING_GROUP_META: Record<
  * mandatory tier; otherwise it is "Binding for others" (owner decision D2′,
  * GRC journey audit, 15 Oct 2026). The Applicability panel needs no such check:
  * it only groups by binding status inside the mandatory tier.
+ *
+ * In scope, a `mandatory_for_scope` framework reads "Binding for its scope"
+ * (owner decision, executive journey audit, 15 Oct 2026): it binds only the
+ * systems or organisations its own text names, e.g. FIPS 140-3 and US federal
+ * systems, so a bare "Binding" overstates it even for a reader in scope.
  */
-export type BindingChip = BindingGroup | 'elsewhere'
+export type BindingChip = BindingGroup | 'elsewhere' | 'scoped'
+
+export const BINDING_SCOPED_META = {
+  chip: 'Binding for its scope',
+  description:
+    'Binding only for the systems or organisations its own text names; check whether yours are covered',
+} as const
 
 export const BINDING_ELSEWHERE_META = {
   chip: 'Binding for others',
@@ -107,7 +118,9 @@ export const BINDING_ELSEWHERE_META = {
 
 export function bindingChipFor(status: BindingStatus | undefined, inScope: boolean): BindingChip {
   const group = bindingGroupOf(status)
-  return group === 'binding' && !inScope ? 'elsewhere' : group
+  if (group !== 'binding') return group
+  if (!inScope) return 'elsewhere'
+  return status === 'mandatory_for_scope' ? 'scoped' : 'binding'
 }
 
 /**
