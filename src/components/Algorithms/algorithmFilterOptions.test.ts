@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The filter values the Algorithms page offers are also the values the PQC
  * Assistant puts in its links (promptBuilder.ts reads them from

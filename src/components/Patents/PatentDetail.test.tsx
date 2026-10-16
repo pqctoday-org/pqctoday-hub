@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Grade-A remediation Phase 2 (pqctoday-priv/grade-a-remediation/PLAN-00-TOP-
  * CONNECTING-PLAN.md §6, PLAN-11-REFERENCE-TRUST-TAIL.md): PatentDetail's

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimPlayChoiceModal — the unified PLAY entry point (simulation-unified-play-
  * mechanism-plan-07052026.md, rev. 3). Always shows all 3 scopes with their

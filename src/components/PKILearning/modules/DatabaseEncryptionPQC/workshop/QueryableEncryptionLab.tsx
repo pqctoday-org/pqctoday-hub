@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { Search, CheckCircle, XCircle, Clock } from 'lucide-react'
 import { QUERYABLE_ENCRYPTION_SCHEMES } from '../data/databaseConstants'

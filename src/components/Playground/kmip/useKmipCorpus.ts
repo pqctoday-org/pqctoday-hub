@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // useKmipCorpus — state + fetch/run logic for the OASIS KMIP 3.0 conformance
 // corpus (95 mandatory + 7 optional OASIS tests, plus 42 vendored PQC

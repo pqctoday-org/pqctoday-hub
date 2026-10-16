@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // compare.ts — recursively compare an expected ResponseMessage (from the
 // OASIS transcript XML) against the actual decoded response, modulo the

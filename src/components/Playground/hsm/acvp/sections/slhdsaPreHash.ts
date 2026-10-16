@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // HashSLH-DSA (pre-hash) reference-sample depth — the NIST ACVP coverage that
 // closes the CKM_HASH_SLH_DSA* capability cells instead of waiving them.

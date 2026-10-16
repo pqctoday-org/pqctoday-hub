@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simMoves — the simulation's strategic decision layer. Each phase offers a few
  * "next moves": sound plays, trap plays (drawn from the framework's Common

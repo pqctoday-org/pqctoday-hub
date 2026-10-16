@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Inline badge linking to the official record (NIST CMVP / CAVP certificate
  * page, or the CC / EUCC / ANSSI record) for a certificate ID the caller

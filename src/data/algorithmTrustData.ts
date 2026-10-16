@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Synchronous loader for the algorithm reference CSV, exposing only the
  * trust-relevant fields (peer review, vetting body, FIPS standard) needed

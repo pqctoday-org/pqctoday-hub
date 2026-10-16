@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Changed since you saved": on each visit, every record in the user's
  * collections is compared with the current Library (new revision, lifecycle

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """ML-DSA-65 sign / verify with pyca/cryptography (48+ with OpenSSL 3.5+, or 47+ with AWS-LC)."""
 
 import sys

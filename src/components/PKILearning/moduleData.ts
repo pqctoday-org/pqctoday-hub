@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleItem } from './ModuleCard'
 import type { PhaseId } from '@/data/frameworkPhases'
 import { MANIFESTS } from './manifest/registry'

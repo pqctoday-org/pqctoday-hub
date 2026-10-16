@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * check-bundle — compare the npm packages a fresh production build actually bundled
  * (node_modules/.tmp/sbom-bundled.json, written by the build's SBOM plugin) with the committed

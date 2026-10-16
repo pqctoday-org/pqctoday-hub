@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-H H-4/H-5/H-6 comparator. Runs on the COMMITTED evidence run (so the
 // committed matrix must be reproducible) and on in-memory COPIES of it for
 // every sabotage: a flipped verdict, a flipped shared-secret byte, a tampered

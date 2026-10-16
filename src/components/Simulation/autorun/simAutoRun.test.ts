@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Validation walk — the auto-run director IS the end-to-end sim check. Driving
  * every gating step to genuine completion must (a) complete each step by the sim's

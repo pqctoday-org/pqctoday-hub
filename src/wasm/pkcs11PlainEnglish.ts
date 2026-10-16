@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Short plain-English translations for PKCS#11 function calls, used by
 // Pkcs11LogPanel's Beginner mode. Keep each phrase to 4–8 words; never
 // replace or hide the raw fn / args / rv fields.

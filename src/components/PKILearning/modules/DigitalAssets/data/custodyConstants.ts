@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Constants and typed data for the Custody Architecture Explorer flow.
  * Vendor-neutral reference architecture for corporate crypto custody platforms.

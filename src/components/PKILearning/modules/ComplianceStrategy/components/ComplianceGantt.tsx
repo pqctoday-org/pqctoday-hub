@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, Fragment } from 'react'
 import { Flag, ClipboardList, ShieldCheck } from 'lucide-react'
 import type { TimelinePhase, Phase, CountryData } from '@/types/timeline'

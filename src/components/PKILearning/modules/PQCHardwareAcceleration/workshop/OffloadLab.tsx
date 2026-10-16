@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop step 5 — the costs that live OUTSIDE the accelerator:
  *   A. the round trip (fixed cost per call + cost per job vs the CPU)

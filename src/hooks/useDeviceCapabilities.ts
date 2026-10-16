@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One place that answers "can this device run this tool?" (WS8b, 2026-08-02).
  *

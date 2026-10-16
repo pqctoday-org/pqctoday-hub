@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Claim ladder + evidence-classification scenarios for the acvp-lab-workflow
  * module.

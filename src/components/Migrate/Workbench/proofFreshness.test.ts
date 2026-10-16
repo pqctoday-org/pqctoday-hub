@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The freshness label is a claim about our own evidence, shown next to a claim
  * about a vendor's product. Getting it wrong in the reassuring direction —

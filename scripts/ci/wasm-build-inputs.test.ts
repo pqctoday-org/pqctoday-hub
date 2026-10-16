@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Unit tests for the Cargo build-graph derivation behind check-wasm-provenance.ts.
 // Pure: fixture manifests and an in-memory tree, no hsm checkout. The historical
 // replay against real hsm commits is wasm-build-inputs.local.test.ts.

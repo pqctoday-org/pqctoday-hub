@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CommandPalette — the three visibility fixes: per-group cap with "Show N more",
  * the Authoritative-only hidden-results hint, and the loading status line.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // HsmLearnView — the HSM playground's "Learn" tab: two tracks ("PKCS#11
 // Foundations" and "v3.2 & the PQC transformation"), each a sequence of

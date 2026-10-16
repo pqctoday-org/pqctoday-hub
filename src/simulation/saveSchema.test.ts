@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W0.5 regression — a run export must reproduce the run, and a malformed import
  * must change nothing.

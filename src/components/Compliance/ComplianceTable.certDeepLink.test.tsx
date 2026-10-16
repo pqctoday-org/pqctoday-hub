@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // `?cert=` used to open only when the record's row was among the ~25 rows the
 // virtualiser mounted first (the popover lived in each row behind a mount-time

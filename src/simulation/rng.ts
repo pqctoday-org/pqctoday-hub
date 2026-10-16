@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deterministic PRNG for the simulation (mulberry32). Pure and seedable so a
  * given seed + turn reproduces a quarter byte-for-byte — which makes the quarter

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimRunComplete — the run-end ceremony. Fires once every lifecycle phase reaches its top
  * band (the migration is complete, not merely declared). It celebrates the THREE objectives

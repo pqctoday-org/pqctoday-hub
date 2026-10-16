@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // AES-CBC and AES-CTR from NIST ACVP-Server reference samples, plus
 // product-authored CBC length / IV probes (remediation plan 2026-09-24, WS-E).

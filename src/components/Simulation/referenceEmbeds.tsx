@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SIM_REFERENCE_EMBEDS — the full-page reference resources that open EMBEDDED in
  * the sim (under the "● Simulation mode" header) instead of navigating away to

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * assessBridge — READ-ONLY adapter from the Assessment to the Simulation.
  *

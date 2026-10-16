@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // `?req=` — the requires_pqc narrowing the Industry Landscape tile links with.
 // Parsing is tested here; that the register actually renders fewer instruments

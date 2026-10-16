@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 1 (2026-09-28): `?cert=` widening + not-found, `?framework=`
 // not-found, and the drawer following the URL.

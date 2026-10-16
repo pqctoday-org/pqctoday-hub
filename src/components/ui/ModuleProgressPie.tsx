@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 interface ModuleProgressPieProps {
   /** 0–100 percentage of learn sections checked */

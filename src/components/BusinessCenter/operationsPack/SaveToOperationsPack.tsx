@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // "Save to operations pack" button for the tools whose results belong in the
 // IT operations pack (capacity calculators, config generators, VPN simulator).

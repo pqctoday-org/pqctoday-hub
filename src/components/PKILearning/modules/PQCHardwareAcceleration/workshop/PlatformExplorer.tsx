@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop step 3 — our own measurements across three generations of Arm
  * cores (Apple M4 Pro, Cortex-A55, Cortex-A53). Data: data/measurements.ts,

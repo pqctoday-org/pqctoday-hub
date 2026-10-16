@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Fleet key-rotation model for step 5 (Fleet Key Manager). Moved from the
  * Energy & Utilities module and generalised 2026-10-01.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The regions the Timeline page's region filter offers, and what `?region=`
  * accepts: the id in the URL and the label shown on the page.

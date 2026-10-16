@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The researcher workspace inside the evidence bundle, end to end: build the
  * bundle from saved artifacts, zip it, and read the zip back read-only.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The outcome-framed track chooser — replaces the legacy ModeSelector's
 // "6 questions / 13 questions" effort framing with "here's exactly which report

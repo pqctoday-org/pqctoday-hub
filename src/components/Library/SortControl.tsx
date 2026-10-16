@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable react-refresh/only-export-components */
 import { ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'

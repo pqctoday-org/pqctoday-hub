@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimTour (WS-12) — a skippable, remembered first-run walkthrough. A simple
  * centred guide (not anchored coachmarks) introducing the dials, the Mosca clock,

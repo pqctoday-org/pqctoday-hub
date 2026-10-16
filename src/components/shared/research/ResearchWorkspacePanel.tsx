@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The researcher's evidence workspace on the Command Center (Layer 2 of the
  * evidence workspace): the research question, collections of Library records

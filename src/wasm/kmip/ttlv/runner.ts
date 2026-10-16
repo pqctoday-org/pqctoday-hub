@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // runner.ts — the full pipeline from a friendly request tree to a decoded
 // response tree: buildRequest → toWireTree → engine.encodeTtlv →

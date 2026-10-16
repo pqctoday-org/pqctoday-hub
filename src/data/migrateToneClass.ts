@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tone -> (text, bg, border) token classes for Migrate decision/status
 // badges. Pure-moved out of workbenchUi.tsx (2026-08-24 audit R3.7) — that

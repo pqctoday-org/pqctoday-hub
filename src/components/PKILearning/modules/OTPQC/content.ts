@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Structured content for the OT & Industrial Control Systems PQC module
  * (ot-pqc, LM-075). Rebuilt 2026-10-01 in the IoT/OT split from the old

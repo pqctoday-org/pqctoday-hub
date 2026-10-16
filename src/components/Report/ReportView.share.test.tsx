@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ACCURACY-0708-2: a shared/example /report link must render an EPHEMERAL,
 // read-only view — it must never write into the recipient's own persisted

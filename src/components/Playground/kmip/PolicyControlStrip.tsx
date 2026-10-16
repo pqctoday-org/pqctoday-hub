@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PolicyControlStrip — the persistent "brain" of the CACP playground. The active
 // policy is the one decision that drives every operation below it, so it lives in

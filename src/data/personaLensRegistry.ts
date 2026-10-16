@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * personaLensRegistry — one entry per routed surface, declaring HOW that
  * surface adapts to the reader's role, or stating plainly that it does not.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Direct coverage for the Wave 4 (WP4.5) simulation achievements — no prior
  * test exercised ACHIEVEMENT_CATALOG's condition functions at all before this.

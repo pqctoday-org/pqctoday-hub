@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 export type QKDRegion = 'Asia' | 'Europe' | 'Americas'
 export type QKDOperatorType = 'Telecom' | 'Government' | 'Research' | 'Financial'
 export type QKDTechnology = 'Fiber' | 'Satellite' | 'Free-Space' | 'Hybrid'

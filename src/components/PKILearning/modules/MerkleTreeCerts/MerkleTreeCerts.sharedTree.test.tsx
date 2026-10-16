@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The /learn workshop hands the tree built in Step 1 to Steps 2 and 3, the same
  * wiring the Playground's MerkleWorkshopSteps uses. Without it, Step 2 silently

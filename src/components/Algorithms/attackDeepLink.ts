@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `?attack=` resolution for the Validation tab's Implementation Attacks
  * profiles. Profiles are keyed by display strings that name several schemes

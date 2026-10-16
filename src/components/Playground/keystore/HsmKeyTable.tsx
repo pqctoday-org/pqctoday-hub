@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * HsmKeyTable — displays PKCS#11 key handles registered via HsmContext.
  * All keys are session objects (non-persistent) — no export/download.

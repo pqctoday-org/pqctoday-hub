@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Threat-classification engine for the Threats page (PER-PAGE-CHANGES Threats
  * #2–#6). One pure, side-effect-free derivation layer that the Threats UI reads

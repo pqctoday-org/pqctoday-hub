@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Phone product sheet: if the on-demand maintainers list cannot be fetched (a tab left open across a
  * release, or no connection), the sheet stays and only the list is left out, not the whole screen.

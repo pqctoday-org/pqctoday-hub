@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Multi-part message signing (sections/multiMessageSign.ts) on both real wasm
 // engines, driven through the real useAcvpSuite hook in dual-engine mode.

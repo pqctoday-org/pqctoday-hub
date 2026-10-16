@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { getFrameworkById } from '@/data/complianceData'
 
 export type ComplianceRegion = 'US Federal' | 'EU' | 'Industry-Specific' | 'Global'

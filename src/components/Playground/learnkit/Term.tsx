@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Term — glossary-aware label wrapper. Native `<abbr title>` for an
 // immediate, keyboard-accessible tooltip, wired to `GlossaryContext` so

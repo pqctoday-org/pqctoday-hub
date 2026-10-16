@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-0 (2026-09-24) — the in-module learn-path picker, path-scoped workshop
  * stepper, and LearnSection's optional/off-path rendering, through the real

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure logic behind the Combining Sources workshop (Entropy remediation plan
  * P0.3 and P0.5, 2026-09-24).

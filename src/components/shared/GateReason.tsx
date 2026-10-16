@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — the visible reason beside a disabled forward
  * control. The Assess bar (`ux` 94) never leaves a reader guessing why Next

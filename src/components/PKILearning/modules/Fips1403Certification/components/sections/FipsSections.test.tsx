@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: FIPS author
 /**
  * Render sanity for Path A: every FIPS section renders its teaching anchors,

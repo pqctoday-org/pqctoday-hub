@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { GitBranch, MessageSquare, Shield, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'

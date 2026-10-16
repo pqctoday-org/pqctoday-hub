@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // RuleInspector — edit the selected rule's fields, rendered from the catalog
 // FieldSpec. Precedence up/down, enable/disable, delete.

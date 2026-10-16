@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS22 Stage 3 integration check — a real MiniSearch index built the way
  * production builds it (published corpus + registry-derived tool AND page

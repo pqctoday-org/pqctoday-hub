@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KPI targets — per-persona × per-country overrides for the `defaultTarget`
  * values declared in `kpiCatalog.ts`. Used to render red-line ticks on

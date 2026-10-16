@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Playground algorithm picker → `/algorithms` status enum (WORKSTREAMS.md §WS-A, item 1
  * of playground.md). Every algorithm-selection dropdown in the playground offers FN-DSA,

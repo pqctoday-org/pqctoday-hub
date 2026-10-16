@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * usePatentKpis — the five headline numbers for the redesign's control deck,
  * computed over the SCOPED corpus (after the PQC & hybrid / All crypto toggle).

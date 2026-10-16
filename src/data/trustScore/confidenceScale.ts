@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 export const CONFIDENCE_SCALE = {
   high: 85,
   medium: 60,

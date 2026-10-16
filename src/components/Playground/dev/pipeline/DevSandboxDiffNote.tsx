@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * DevSandboxDiffNote — the WS-I honesty surface every Developer tab shows:
  * a collapsible note stating, in plain language, exactly how running a

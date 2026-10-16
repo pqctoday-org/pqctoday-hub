@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `lastReviewed` must be backed by a review record. `lastEdited` must not leak into it.
  *

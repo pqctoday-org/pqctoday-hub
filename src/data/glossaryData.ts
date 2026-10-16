@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { GlossaryTerm } from './glossary/types'
 import algorithms from './glossary/algorithms.json'
 import protocols from './glossary/protocols.json'

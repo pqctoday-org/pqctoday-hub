@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'

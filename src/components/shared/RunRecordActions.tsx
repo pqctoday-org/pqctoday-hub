@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The "Download run record (JSON)" button, the "Save to my evidence" button
  * (when the tool passes `getManifest`) and the one-line provenance (site

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Crypto Lab command palette (⌘K / `/`). Type-to-run any tool by name, algorithm
 // or intent, plus verb shortcuts that jump to an intent view. Keyboard: ↑/↓ move

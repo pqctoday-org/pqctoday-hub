@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression test for a bug found in the 4.143.0 live check (2026-10-02):
 // HSM playground Learn lesson B10 "Trust & wrapping policy", run on a fresh

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ACVP-format compatible prototype — local prompt → response CLI (WS-F, F-8).
 //   npx tsx scripts/acvp-respond.ts --prompt p.json --engine cpp|rust --out dir
 //        [--expected expectedResults.json] [--no-evidence] [--emit-bundle dir]

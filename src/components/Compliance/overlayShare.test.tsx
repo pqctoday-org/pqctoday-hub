@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Share inside every Compliance item overlay (deep-link PR 4): the icon sits in
 // the open overlay's header and Copy link writes the CLEAN canonical link —
 // never the reader's filters — without closing the overlay.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Behavioural embed test (WP5.7, local-only) — moves the "headless, no hard
  * navigation" side of the embed contract (embedContract.ts:19-25) from a

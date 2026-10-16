@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W3 — the evidence record for one run of the NIST SP 800-90B estimator tool.
  *

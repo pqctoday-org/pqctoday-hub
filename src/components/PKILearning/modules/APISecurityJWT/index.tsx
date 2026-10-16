@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Search, PenLine, Layers, Lock, BarChart3, Activity, ShieldAlert } from 'lucide-react'
 import { APISecurityIntroduction } from './components/APISecurityIntroduction'

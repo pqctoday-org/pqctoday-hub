@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ReportLockedOverlay — the redesign's "you can see what you're missing" pattern.
  * Wraps a blurred preview of a comprehensive-only section with a lock, a specific

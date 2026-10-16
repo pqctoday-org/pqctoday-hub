@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every place a library document's lifecycle label is shown reads `lifecycleLabel`
  * (Released, Draft, Expired, Historical, Research Paper, Misc). Before the Library

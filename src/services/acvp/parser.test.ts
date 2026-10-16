@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // F-1 (pinned schema, precise rejection) + F-2 (IR preserves every identity
 // field and group property; round-trips back to the prompt) + the portable IR
 // goldens a non-JS runner is checked against.

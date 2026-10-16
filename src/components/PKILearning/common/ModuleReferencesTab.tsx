@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ExternalLink, BookOpen, CalendarCheck, Quote } from 'lucide-react'
 import { Link } from 'react-router'
 import { getLibraryItemsForModule } from '@/data/libraryData'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState, type ReactNode } from 'react'
 import {
   Info,
@@ -253,7 +253,7 @@ export function MobileAboutView() {
                     <>
                       <Row title="Open source license">
                         Released under{' '}
-                        <span className="font-semibold text-foreground">GNU GPLv3</span>. Free to
+                        <span className="font-semibold text-foreground">GNU AGPL-3.0</span>. Free to
                         copy, distribute and modify, provided modifications stay under the same
                         license.
                         <div className="mt-2 flex flex-col gap-1.5">

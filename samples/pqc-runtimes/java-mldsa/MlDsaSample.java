@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ML-DSA-65 sign / verify with the JDK (JEP 497, JDK 24+). Run: java MlDsaSample.java
 
 import java.nio.charset.StandardCharsets;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 2 (2026-09-29): tab-scoped item params (`reqfw`, `prod`, the
 // CSWP.39 sub-view params), the stuck `?industry=` alias, Landscape's own

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Engineering migration plan — the developer / IT-ops counterpart of the
  * board pack. Bundles what an engineering team acts on into a ZIP:

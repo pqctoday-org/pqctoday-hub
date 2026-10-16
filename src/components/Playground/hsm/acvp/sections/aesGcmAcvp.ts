@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // AES-GCM NIST ACVP-Server reference samples (remediation plan 2026-09-24,
 // WS-E). Every case of the pinned ACVP-AES-GCM-1.0 sample, per engine:

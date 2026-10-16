@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The End-Quarter engine (WS-05) — a PURE, seeded function. Given the current
  * turn state (and the gating callbacks the view already computes), it returns the

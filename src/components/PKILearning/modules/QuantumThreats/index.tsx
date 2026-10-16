@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { BarChart3, Grid3X3, GitCompare, Clock, PenLine, TrendingUp } from 'lucide-react'
 import { CrqcTrajectoryChart } from '@/components/Threats/CrqcTrajectoryChart'

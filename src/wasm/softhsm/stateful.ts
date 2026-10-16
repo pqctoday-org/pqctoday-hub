@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // stateful.ts — the hub's ONLY implementation of stateful hash-based signature
 // operations (HSS/LMS, XMSS, XMSS-MT) against either WASM engine.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Grounds isFipsValidated()/isNistPick() against real values pulled from the
  * live data files, not invented strings. Regression guard for the bug where

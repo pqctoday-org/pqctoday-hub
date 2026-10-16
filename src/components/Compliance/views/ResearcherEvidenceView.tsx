@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ResearcherEvidenceView — persona-specific For You body for the Researcher
  * persona on /compliance. Closes audit P1 #11 (audit-2026-05-15.md §5.2).

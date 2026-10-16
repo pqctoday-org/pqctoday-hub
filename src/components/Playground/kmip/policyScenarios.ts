@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // policyScenarios.ts — the validated positive/negative test-scenario matrix for
 // the CACP policy engine. ONE source of truth, consumed twice:

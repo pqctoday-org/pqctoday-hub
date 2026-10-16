@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The "Download run record (JSON)" action on the DRBG, Entropy Testing and
 // Source Combining steps: the button exists once there is a result, the

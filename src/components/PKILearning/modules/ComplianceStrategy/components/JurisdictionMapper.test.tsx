@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Browse Migrate Catalog" used to be a bare navigate('/migrate') although the
  * matched products are known — it now carries them (?product= / ?productIds=),

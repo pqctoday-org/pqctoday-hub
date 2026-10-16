@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Claim-boundary regression checks for the certification-engineer journey
 // (review of 15 Oct 2026). Each pattern names the source that contradicts it;

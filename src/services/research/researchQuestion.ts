@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The research question (researcher evidence workspace, Layer 2): what the
  * researcher is checking, what kind of question it is, which sources count

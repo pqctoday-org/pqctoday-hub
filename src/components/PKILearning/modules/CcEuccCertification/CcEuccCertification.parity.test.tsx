@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 /**
  * Render parity + scaffold contract (build spec §4) for Common Criteria, EUCC & eIDAS Certification. Four authors fill owner files in parallel;

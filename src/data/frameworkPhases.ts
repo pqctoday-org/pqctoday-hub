@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * Canonical Migration-Program phase model (Applied Quantum Phase 0–7 + Foundations).
  *

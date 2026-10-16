@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-H H-2(a): the WASM baseline targets (wasm-cpp, wasm-rust) — both engines
  * via the hub's own Node CLI core (src/services/acvp/node/cli.ts, unchanged),

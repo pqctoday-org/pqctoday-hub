@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PhaseContextBanner — a compact "you arrived from the Migration Program rail"
  * acknowledgement. When a `?phase=<id>` param is present it shows which phase

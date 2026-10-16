@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Maps each step key to its (now slot-prop-aware) legacy step component, so the
 // redesign question pane can render the real data-driven step bodies.

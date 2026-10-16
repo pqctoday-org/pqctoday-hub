@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 content integration (WP-A.3) — every Learn module has a place in the
  * Simulation, or an explicit reason not to.

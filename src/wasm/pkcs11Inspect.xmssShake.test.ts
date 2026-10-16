@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression test for Commit 7 of the v3.2 audit-remediation plan: the 6
 // missing XMSS-SHAKE parameter sets (CKP_XMSS 0x7-0xc). These ordinals are

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** Shared category metadata for /navigate — kept in one place so ForceClusterView (3D colors) and NavigateDetailPanel (dots/labels) can't drift apart. */
 import type { ForceClusterNodeType } from '@/data/forceClusterGraph'
 

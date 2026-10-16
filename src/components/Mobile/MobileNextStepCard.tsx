@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.2 (2026-09-19) — phone twin of shared/NextStepCard. The
  * mobile tree may not import desktop components (eslint no-restricted-imports),

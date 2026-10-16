@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * listDiff — token-level add/remove rendering for semicolon-delimited cells.
  *

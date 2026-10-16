@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router'
 import { Search, Menu, X, Bot, Map, HelpCircle, type LucideIcon } from 'lucide-react'

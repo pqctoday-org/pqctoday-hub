@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { CheckCircle2, Circle, ChevronDown, Lock, Trophy, CheckSquare } from 'lucide-react'

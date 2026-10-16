@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Crypto API Refactor Audit (M7 / CSWP.39 Section 4.1)
  *

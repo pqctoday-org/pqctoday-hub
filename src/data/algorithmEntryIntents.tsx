@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure-move extraction (IMPLEMENTATION-PLAN.md §5.4, E-3) — `Intent`,
  * `INTENTS`, `PERSONA_INTENTS` and `EU_EXECUTIVE_INTENTS` were exported from

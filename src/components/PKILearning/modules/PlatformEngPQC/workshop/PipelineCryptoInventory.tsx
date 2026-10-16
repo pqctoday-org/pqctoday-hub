@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDown, ChevronUp, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'

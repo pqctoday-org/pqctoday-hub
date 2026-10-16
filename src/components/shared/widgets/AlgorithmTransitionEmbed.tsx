@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * AlgorithmTransitionEmbed (C5-full) — the Algorithms "Transition Guide" tab,
  * rendered headless inside the simulation. Now that AlgorithmsView's shared state

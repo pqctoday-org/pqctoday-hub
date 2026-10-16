@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { TIER_LABELS, type StepTierResult } from '../lib/cswp39Tier'
 
 const TIER_STYLES: Record<number, string> = {

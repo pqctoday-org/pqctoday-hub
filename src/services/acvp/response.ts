@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Response serializer (F-4). Emits ONLY the protocol fields the pinned spec
  * permits: vsId + testGroups[tgId, tests[tcId, <one field>]] — no PQC Today

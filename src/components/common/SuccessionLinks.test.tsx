@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * An older document links to the newer one that updates or replaces it, and the
  * newer one lists what it replaces with a link back. The library data has no

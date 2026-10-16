@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
 import { BarChart3, AlertTriangle, Loader2 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'

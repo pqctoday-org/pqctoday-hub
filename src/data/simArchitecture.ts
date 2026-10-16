@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simArchitecture — per-organisation-size system + protocol topologies for the
  * Simulation. Nodes backed by a real product carry a `productRef` (the

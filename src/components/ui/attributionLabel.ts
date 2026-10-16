@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Reader-facing attribution. Curated chunks keep their "human" label; anything
  * produced by an extraction tool is shown as "automated extraction", never the

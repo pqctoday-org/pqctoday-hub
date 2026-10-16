@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // v20260405-0001 — softhsm proxy bridge
 //
 // strongSwan charon WASM worker — charon + softhsmv3 wired via PKCS#11 proxy.

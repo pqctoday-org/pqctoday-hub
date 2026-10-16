@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure-move extraction (IMPLEMENTATION-PLAN.md §5.4, E-4) — the PQC-only
  * scope toggle's localStorage key, URL param name, and the two read

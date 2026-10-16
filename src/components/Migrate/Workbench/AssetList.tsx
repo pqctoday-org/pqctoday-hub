@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronRight, Check, Plus, Search } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'

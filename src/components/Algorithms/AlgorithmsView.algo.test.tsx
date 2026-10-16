@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PR 2 deep links on /algorithms: the `?algo=<algorithm_id>` detail drawer,
  * tabs implied by `?usecase` / `?attack`, `tab` pinned whenever a tab-bound

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Historical replay of the wasm staleness check against REAL pqctoday-hsm
 // commits (local tier: needs a sibling ../pqctoday-hsm with full history).
 //

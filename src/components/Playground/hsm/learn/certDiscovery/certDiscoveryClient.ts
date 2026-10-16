@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Main-thread side of the "Discovering certificates" lesson: owns the
 // dedicated worker (its own Rust engine instance — see certDiscovery.worker.ts)

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Derives a compact, structured summary from the same `CbomComponentInput[]`
  * data `buildCbomDocument()` consumes — so a saved CBOM can be rendered as

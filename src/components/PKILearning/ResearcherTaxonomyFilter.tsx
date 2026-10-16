@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // P2-3: secondary axis for researcher mode — browse modules by the PQC
 // algorithm they cover or the standard they reference. Renders as two chip

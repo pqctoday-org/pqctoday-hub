@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * smimeMultipart — wraps a raw DER `.p7m` (CMS SignedData or
  * AuthEnvelopedData) into the MIME structures that mail clients expect.

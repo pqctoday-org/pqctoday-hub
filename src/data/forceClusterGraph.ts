@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Live derivation of the /navigate force-cluster graph. Every node and edge is
  * computed at call time from the hub's real, already-live data sources — no

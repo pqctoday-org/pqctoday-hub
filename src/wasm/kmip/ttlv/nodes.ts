@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // nodes.ts — the "friendly" KMIP TTLV tree: tag/type/value by NAME (e.g.
 // `leaf('CryptographicAlgorithm', 'Enumeration', 'AES')`), not by raw wire

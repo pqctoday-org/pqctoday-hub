@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { CheckCircle, AlertCircle, GitBranch } from 'lucide-react'
 import { PIPELINE_INTEGRATION_PATTERNS } from '../data/secretsConstants'

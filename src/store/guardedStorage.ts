@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * guardedJSONStorage — a drop-in replacement for `createJSONStorage(() => localStorage)`
  * that catches write failures (B1 persistence hardening).

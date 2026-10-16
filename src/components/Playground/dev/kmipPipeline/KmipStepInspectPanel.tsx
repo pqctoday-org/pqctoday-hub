@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KmipStepInspectPanel — opt-in real-data view for one KMIP pipeline step,
  * fed by the ###STEP <id> detail### line kmipPipelineCodegen.ts now emits.

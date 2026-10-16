@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // J-5 two-person review records: the validator is the gate, so every rule is
 // proven to FAIL on a record that breaks it. Names below are test fixtures,
 // not review records — no real record is created by these tests.

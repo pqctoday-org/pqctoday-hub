@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WP4.4 — the free instant "↺ try again" after a wrong pick is Easy-difficulty-
  * only; above Easy the pick sticks (the setback stays a real consequence, not an

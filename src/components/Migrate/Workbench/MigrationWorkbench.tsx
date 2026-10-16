@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Top-level "PQC Migration Workbench" — the asset-first /migrate redesign.
 // Header + posture command center + two tabs (Replace what you own / Plan &

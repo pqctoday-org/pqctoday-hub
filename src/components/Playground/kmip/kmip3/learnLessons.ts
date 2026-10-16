@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // learnLessons.ts — the 10 guided lessons driving the Learn tab. Content
 // ported from the design handoff's cacp3-lessons-data.js (prose/structure

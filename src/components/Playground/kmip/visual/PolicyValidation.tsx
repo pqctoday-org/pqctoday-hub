@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PolicyValidation — the Check tab. Static lint issues (from validate()) merged
 // with the engine loader's own warnings from the last apply. Click an issue to

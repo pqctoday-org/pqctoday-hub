@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Compute and record the Wycheproof adoption census — the artifact that makes
 "support completely Wycheproof tests" a CHECKABLE claim rather than a vague one.

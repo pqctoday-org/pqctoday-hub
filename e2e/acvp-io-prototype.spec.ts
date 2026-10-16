@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-F (F-5): the ACVP-format import/response-export prototype, in a real
 // browser against the real C++ and Rust WASM engines. Nightly full suite only
 // (NOT in SMOKE_SPECS — it loads both engines and is WASM-heavy).

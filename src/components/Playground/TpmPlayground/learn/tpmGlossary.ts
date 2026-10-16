@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tpmGlossary.ts — the TPM 2.0 playground's glossary content for the shared
 // learnkit GlossaryProvider/GlossaryRail/Term components. Mirrors

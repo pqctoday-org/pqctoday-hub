@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { test as base, expect, type BrowserContext } from '@playwright/test'
 import { BLOCKED_ANALYTICS_HOSTS, isBlockedAnalyticsUrl } from './analyticsHosts'
 

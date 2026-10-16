@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import type { PersonaId } from '@/data/personaIds'
 

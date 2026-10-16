@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Cpu, FileCode, Network, Link2, KeyRound, Radio } from 'lucide-react'
 import { IoTPQCIntroduction } from './components/IoTPQCIntroduction'

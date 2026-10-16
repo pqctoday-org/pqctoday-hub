@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Brain, BookOpen, Zap, Clock } from 'lucide-react'
 import { BELT_RANKS } from '@/hooks/useAwarenessScore'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * UX-13: on the live site a /threats?id=… dialog was seen to open, close and
  * reopen on every fresh load. That cycle was not produced by this component —

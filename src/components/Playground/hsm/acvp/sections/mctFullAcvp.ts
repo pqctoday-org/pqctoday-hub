@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Full 100-iteration Monte Carlo Tests (gap-closure plan 2026-09-25, P5 item 2 —
 // WS-E remainder). Sections 10f (shaAcvp.ts) and 12b (aesCbcCtrAcvp.ts) check

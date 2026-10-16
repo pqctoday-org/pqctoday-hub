@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pins the exact bug the 2026-08-30 palette audit found: the KMIP
 // Developer tab's Dry-run op picker used to be a hand-maintained

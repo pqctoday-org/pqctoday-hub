@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Optional per-module enrichments used by the persona-path view to surface:
 //   - P2-1: "Try in /playground" affordance for ops persona, when a module

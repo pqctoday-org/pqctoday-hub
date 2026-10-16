@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // LearnView — the KMIP3.0 tab's "Learn" sub-tab (first position, the
 // on-ramp): ten guided walkthroughs, each running real KMIP 3.0

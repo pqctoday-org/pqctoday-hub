@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Catalog drift-guard + factory sanity for the visual editor's rule catalog.
 // Live-reads `pqctoday-hsm/kmip/src/policy/rule.rs`'s

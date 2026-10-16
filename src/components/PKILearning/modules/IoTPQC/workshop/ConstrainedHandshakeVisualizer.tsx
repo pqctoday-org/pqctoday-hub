@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Step 3 — Constrained handshakes: DTLS 1.3 vs EDHOC, plus a BLE Mesh /
  * Matter provisioning view. Every number is a model estimate built from exact

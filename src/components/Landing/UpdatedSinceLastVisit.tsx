@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8 UX fix (2026-09-19): the tracker's revisions fix — "surface
  * 'updated since your last visit' on the landing". One line, only when there

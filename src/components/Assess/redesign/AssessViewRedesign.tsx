@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // AssessViewRedesign — the rebuilt /assess page (handoff: design_handoff_assess_redesign).
 //

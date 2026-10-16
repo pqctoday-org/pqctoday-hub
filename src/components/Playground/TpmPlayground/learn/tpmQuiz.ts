@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tpmQuiz.ts — knowledge-check question banks for the TPM Learn tab, keyed
 // by `TpmLesson.id`. Every question is answerable from what the lesson just

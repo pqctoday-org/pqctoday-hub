@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */ // keys are trusted module/persona ids
 import { useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'

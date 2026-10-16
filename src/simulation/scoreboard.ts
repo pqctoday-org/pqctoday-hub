@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * scoreboard — the ONE program-progress model every UI surface reads from
  * (WP2.2, a-grade-remediation-plan Wave 2).

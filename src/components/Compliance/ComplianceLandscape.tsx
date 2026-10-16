@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo, useEffect, useRef } from 'react'
 
 /** Remembers that a reader opened the full landscape — B+ remediation 4.6. */

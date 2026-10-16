@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { ComplianceRecord } from './types'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { ChevronDown, ChevronUp, ExternalLink, Download } from 'lucide-react'
 import { Link } from 'react-router'

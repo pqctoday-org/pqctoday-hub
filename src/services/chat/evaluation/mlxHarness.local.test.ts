@@ -1,5 +1,5 @@
 // @vitest-environment node
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Exercise the production retrieval, prompt, citation, grounding, and deep-link
  * pipeline against a native MLX OpenAI-compatible server. No browser/WebGPU.

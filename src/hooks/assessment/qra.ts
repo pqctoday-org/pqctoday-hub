@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Quantum Readiness Assessment (QRA) — gap-closer #3, the single highest-value
  * artifact (spec §6.1, Assess #3; framework §3.4 p.76). Phase 3.

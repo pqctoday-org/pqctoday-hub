@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CSV export for certification records. Every export carries the dataset
  * scope and the record scope the reader chose (current only vs. including

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A tour that ends on a 404 is worse than no tour — it teaches the reader that
  * the guidance is not maintained. Every route a tour step sends someone to is

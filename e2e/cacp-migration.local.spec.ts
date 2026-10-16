@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Migration tab — milestone-1 acceptance against the REAL wasm engine:
 //   • the tab boots its dedicated engine with migration-classical active,

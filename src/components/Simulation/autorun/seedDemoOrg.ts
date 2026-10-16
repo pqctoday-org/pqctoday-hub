@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * seedDemoOrg — populate the shared inputs the simulation's embedded resources read,
  * so the auto-run never shows a "missing inputs" / empty state (No Report Yet, Select

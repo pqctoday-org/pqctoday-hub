@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Legacy ⇄ FIPS algorithm name aliases for the Patents search index.
  *

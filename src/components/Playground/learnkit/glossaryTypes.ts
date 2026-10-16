@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // glossaryTypes.ts — protocol-agnostic shapes for the shared glossary rail.
 // Extracted from the KMIP playground's kmip3/glossary.ts so a second

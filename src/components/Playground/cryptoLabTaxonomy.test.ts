@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Drift gate for the Crypto Lab taxonomy. The tool catalog is partly GENERATED
 // (sandbox `sbx-*` tools come from `sandboxScenarios.ts`, itself synced from the

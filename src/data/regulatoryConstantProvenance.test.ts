@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every hand-coded date in regulatoryTimelines.ts is classified, and the ones
  * that restate a timeline row match the REVIEWED row (timeline remediation r2

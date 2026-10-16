@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // EXTERNAL composite certificate vectors — artifacts produced by OTHER
 // implementations, vendored from the IETF Hackathon pqc-certificates repo
 // (round r5): https://github.com/IETF-Hackathon/pqc-certificates

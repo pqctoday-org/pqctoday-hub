@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The numbered Create → Activate → Use → Revoke button flow, extracted from
 // KmipPlaygroundView's "Plane 2 · KMIP Lifecycle" section (K4b, gaps-closeout

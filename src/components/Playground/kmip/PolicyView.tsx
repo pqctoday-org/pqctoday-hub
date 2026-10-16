@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection -- index keys are typed
    `PolicyTone` / `Disposition` enum values and known preset file names, never
    user input. */

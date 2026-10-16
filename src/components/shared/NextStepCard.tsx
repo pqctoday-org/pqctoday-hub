@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.2 (2026-09-19) — the declared exit from an item, from
  * `src/data/nextSteps.ts`. One card, rendered unconditionally at the foot of

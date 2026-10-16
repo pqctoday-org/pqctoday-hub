@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // RSA dedicated SigVer from the NIST ACVP-Server RSA-SigVer-FIPS186-5 sample
 // (remediation plan 2026-09-24, WS-E), per engine: every case (1 valid + 5

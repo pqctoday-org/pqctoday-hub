@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Radio, Satellite, ShieldCheck, Plane, Scale, Rocket } from 'lucide-react'
 import { AerospaceIntroduction } from './components/AerospaceIntroduction'

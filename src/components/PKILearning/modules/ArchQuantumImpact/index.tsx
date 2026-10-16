@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, type FC } from 'react'
 import { AlertTriangle, BookOpen, Rocket, ClipboardCheck, GitMerge } from 'lucide-react'

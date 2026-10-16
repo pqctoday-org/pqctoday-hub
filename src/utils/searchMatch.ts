@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared "match all the words" matching for the page-level search boxes
  * (Glossary drawer, Library filter, Learn browse-all).

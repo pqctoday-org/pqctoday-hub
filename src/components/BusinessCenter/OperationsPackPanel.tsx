@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Command Center panel for IT operations: edit the pack's own artifacts
 // (scope, test plan) and download every saved operations artifact as one

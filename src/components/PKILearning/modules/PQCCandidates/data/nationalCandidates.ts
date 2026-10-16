@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Candidate schemes advancing in non-NIST national standardisation tracks.
  * Limited to schemes published as finalists in their respective national

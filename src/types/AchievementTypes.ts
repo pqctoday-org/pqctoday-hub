@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 /** Achievement categories matching priority behaviors */
 export type AchievementCategory = 'consistency' | 'workshop-depth' | 'cross-feature' | 'business'

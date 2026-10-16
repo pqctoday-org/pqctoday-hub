@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // VpnComparisonPanel — side-by-side classical / hybrid / pure-PQC IKEv2 handshake
 // comparison. Mirrors SshComparisonPanel; all numbers come from ikev2Constants.ts

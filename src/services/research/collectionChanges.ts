@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Changed since you saved": compare each collection record's saved state
  * with the current Library row. Pure: the caller passes the Library index, so

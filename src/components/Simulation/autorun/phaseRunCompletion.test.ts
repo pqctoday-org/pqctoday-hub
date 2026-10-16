@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Play-This-Phase completion — the progress counter must land on N/N (not N-1/N)
  * once every queued step has genuinely completed. Regression test for the

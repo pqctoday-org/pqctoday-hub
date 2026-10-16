@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read + scenario-id cross-check
 // against all 24 real SANDBOX_SCENARIOS; removed one dead/miskeyed override
 /**

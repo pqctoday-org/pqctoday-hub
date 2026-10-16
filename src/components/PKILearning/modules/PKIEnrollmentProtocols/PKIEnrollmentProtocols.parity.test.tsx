@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render-parity golden test for the PKIEnrollmentProtocols ModuleShell
  * conversion (A2 hard tail, clean-fit). Captured against the PRE-conversion

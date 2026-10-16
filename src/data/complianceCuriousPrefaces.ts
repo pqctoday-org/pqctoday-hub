@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Plain-English "About this regulation" prefaces shown to the curious persona
  * on `/compliance` framework detail (P11-P1-04). Renders above the technical

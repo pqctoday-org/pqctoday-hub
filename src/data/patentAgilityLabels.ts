@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { CryptoAgilityMode } from '@/types/PatentTypes'
 
 // Pure-moved out of PatentsTable.tsx (2026-08-24 audit R3.5) — that file

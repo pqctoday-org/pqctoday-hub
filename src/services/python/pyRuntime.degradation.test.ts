@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * G9/W4 degradation check: where `crossOriginIsolated` is not true, the
  * runtime must fall back to best-effort mode without erroring — and jsdom

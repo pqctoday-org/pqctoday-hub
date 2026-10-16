@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the gap-closure P5 WS-E remainder sections — sections/kdfDeriveAcvp.ts
 // (HKDF, SP 800-108 KBKDF, X9.63 unsupported row) and sections/ecKeyVerSigGenAcvp.ts

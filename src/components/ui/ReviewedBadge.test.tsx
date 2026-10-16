@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Guards the badge's VISIBLE wording. The reviewed state used to render as
 // "LLM · eramusa · May 2026 · via registry review" — a check icon, a name and a

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 nav remediation (WP3 / D4, D7) — Play-mode overlays must always offer a
  * way out that does NOT advance the run. The three auto-run intros used to exit

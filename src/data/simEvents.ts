@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simEvents — the End-Quarter world-event pool for the simulation turn loop.
  * `{sector}` / `{country}` / `{authority}` tokens are substituted at draw

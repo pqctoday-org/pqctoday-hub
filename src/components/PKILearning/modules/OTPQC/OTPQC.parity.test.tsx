@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render-parity test for the OTPQC module shell. Originally the golden for
  * the Energy & Utilities ModuleShell conversion; updated 2026-10-01 for the

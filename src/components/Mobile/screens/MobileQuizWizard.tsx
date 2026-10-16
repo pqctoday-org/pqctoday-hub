@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useQuizState } from '@/components/PKILearning/modules/Quiz/hooks/useQuizState'

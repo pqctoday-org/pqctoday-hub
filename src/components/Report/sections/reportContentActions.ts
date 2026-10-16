@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Share/export actions for /report, extracted from ReportContent.tsx so every
 // section module can reuse them without reaching into the top-level
 // component. Pure functions over their explicit params — no component state.

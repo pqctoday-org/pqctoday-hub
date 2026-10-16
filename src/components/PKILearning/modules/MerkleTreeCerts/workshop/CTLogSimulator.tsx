@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CTLogSimulator — Certificate Transparency Log with SoftHSMv3 ML-DSA signing.
  *

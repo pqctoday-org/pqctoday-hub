@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cold-start index build must not freeze the page (design note
  * cold-search-index-design-10012026.md). `initialize()` builds the MiniSearch index in

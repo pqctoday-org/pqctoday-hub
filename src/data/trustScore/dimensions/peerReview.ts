@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { DimensionResult, PeerReviewStatus } from '../types'
 
 const PEER_REVIEW_SCORES: Record<PeerReviewStatus, number> = {

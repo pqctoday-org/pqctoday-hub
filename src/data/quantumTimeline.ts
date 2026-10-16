@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * quantumTimeline — the single source for the Q-Day horizon, aligned to the
  * Applied Quantum PQC Migration Framework: a first CRQC ("Q-Day") in 2029 that

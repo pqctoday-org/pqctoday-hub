@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PolicyTester — a Plane-1 "what would the policy decide?" dry-run. Pick an
 // algorithm and whether it's a NEW key or an EXISTING one, and see the engine's

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CertEngineerSchemesView — the For You body for the cert-engineer persona on
  * /compliance (added 2026-09-29 with the persona). The reader produces or

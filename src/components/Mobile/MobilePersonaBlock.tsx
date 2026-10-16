@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — phone twin of shared/PersonaBlock (the mobile
  * tree may not import desktop components). Active persona's paragraph only;

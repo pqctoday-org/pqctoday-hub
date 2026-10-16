@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Tags } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { ResearchTopicCount } from '@/data/researchTopics'

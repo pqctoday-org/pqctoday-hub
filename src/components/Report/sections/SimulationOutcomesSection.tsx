@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Simulation outcomes — Report render surface (Wave 5, WP5.1). Framework 2.1's
  * "communicate" expression for p5's pilot-results ref and verify-close's

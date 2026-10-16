@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The Landscape centrepiece: a three-pillar pipeline that makes the page's
 // premise legible — Define → Validate → Mandate. Selecting a pillar filters the

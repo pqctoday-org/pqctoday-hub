@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * scripts/ci/verify-engines-release.ts — the engine files this site ships are
  * the ones published in the engine release each bundle is pinned to.

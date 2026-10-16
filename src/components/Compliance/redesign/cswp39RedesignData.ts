@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Curated data for the redesigned CSWP.39 explorer that isn't already in
 // cswp39Data.ts: which persona owns each agility step, the regulation→deliverable

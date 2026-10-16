@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useNavigate } from 'react-router'
 import type { PersonaId } from '@/data/learningPersonas'
 import { NAV_PATH_LABELS } from '@/data/personaConfig'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
 //
 // TLS 1.3 simulation combination matrix — runs the SHIPPED public/wasm/openssl.wasm

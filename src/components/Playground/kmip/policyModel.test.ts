@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-non-literal-fs-filename -- test reads fixed
    policy fixtures from the repo's own public/ dir, not user input. */
 import { readFileSync } from 'node:fs'

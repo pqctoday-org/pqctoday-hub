@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { getThreatHorizon } from './riskWindows'
 import { ESTIMATED_QUANTUM_THREAT_YEAR, COUNTRY_PLANNING_HORIZON } from '../assessmentData'

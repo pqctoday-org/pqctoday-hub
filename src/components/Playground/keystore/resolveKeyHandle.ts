@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // resolveKeyHandle — re-resolve a registered key's CURRENT PKCS#11 handle
 // via its durable CKA_UNIQUE_ID before every live query, instead of

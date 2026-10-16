@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Inspector — the right-hand "look inside" pane of the manual workbench. One
 // tabbed card instead of three stacked bands: the Keystore the engine populated,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ReportEmbed — renders the Executive Report INSIDE the simulation instead of
  * navigating the player out to /report.

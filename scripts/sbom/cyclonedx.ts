@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Builds the complete, machine-readable SBOM (CycloneDX) that the About page's curated rows
  * summarise. Everything in it was derived by derive.ts from the shipped build; this module only

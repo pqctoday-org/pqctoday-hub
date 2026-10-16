@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Drift guard for the mobile UX layer (design_handoff_pqc_mobile_ux
 // IMPLEMENTATION-PLAN.md, improvement-plan Phase R3.4). The plan's Phase 5

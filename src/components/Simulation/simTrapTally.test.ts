@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { recordTrapPick, readTrapTally, trapTallyTotal, clearTrapTally } from './simTrapTally'
 

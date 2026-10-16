@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "How this hub adapts to you" — B+ remediation 1.1 (2026-08-10).
  *

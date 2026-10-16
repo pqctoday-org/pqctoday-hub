@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The single prompt → response pipeline shared by the browser panel and the
  * Node CLI (F-8). Neither caller re-implements parsing, dispatch or

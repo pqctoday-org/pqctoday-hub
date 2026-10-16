@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * markdownToPdf — render an artifact's markdown into a vector A4 PDF.
  *

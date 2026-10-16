@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Batch + active-policy integration test — regression coverage for the gap
 // found during the CACP A-grade review (2026-07-03): the review confirmed

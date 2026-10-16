@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * TransformationStatusPanel — the board's headline, replacing the static Mosca "over by N
  * years" doom gauge. Shows program maturity (0–4), the three objectives with on-time state,

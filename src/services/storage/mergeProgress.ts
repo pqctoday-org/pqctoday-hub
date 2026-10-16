@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Lossless merge of two LearningProgress slices (B1 #3 — two-device sync).
  *

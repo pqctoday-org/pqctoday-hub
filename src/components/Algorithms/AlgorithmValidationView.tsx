@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { ShieldAlert, FlaskConical, ChevronDown, Grid3x3 } from 'lucide-react'
 import clsx from 'clsx'

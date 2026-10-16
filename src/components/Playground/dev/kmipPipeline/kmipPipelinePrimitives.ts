@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KMIP/CACP step vocabulary for the KMIP Developer tab's graphical pipeline
  * builder (dev-tabs-pkcs11-kmip plan, WS-E). Same structural role as

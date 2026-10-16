@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * mls-group-messaging.spec.ts — smoke test for the MLS Group Messaging
  * module. Catches:

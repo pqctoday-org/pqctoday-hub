@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CuriousOrientationView — persona-specific For You body for the curious
  * persona on /compliance. Closes the post-2026-05-21 audit finding: curious

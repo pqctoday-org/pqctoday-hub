@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ACCURACY-0705, item 3b: the compliance "comply" pillar's traceability chain
 // used to be an IDENTICAL, hardcoded 4-node claim ("Requires FIPS 140-3

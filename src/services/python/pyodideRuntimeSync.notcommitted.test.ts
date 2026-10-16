@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // public/pyodide/* is Pyodide's self-hosted runtime — 7 files, 12 MB, copied
 // straight out of node_modules/pyodide by `npm run sync:pyodide-runtime`, which

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Parallel PQC standardisation tracks running outside the NIST process.
  * Survey-level entries for all bodies; drill-down detail for the most

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The Algorithm Explorer's fit verdicts are computed from benchmark stack +
  * buffers (utils/sizing.ts assessFit), and the summary and Learn prose are

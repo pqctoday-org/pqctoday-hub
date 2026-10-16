@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W7.2/W7.3 — a chapter states what it costs, what it produces, and ends by
  * asking the learner to account for a change.

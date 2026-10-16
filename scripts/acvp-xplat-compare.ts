@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-H H-5/H-6: cross-target comparison of one evidence run (logic:
 // src/services/acvp-xplat/compare.ts + node/runDir.ts).
 //   npx tsx scripts/acvp-xplat-compare.ts --run evidence/acvp-xplat/<runId>          # write matrix + divergences

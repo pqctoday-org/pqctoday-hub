@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A deliberately small JSON Schema (draft 2020-12) SUBSET interpreter for the
  * pinned ACVP schemas in ./schemas/.

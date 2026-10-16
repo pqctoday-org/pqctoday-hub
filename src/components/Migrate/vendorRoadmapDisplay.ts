@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pure extraction (2026-08-24, real production feedback on the mobile
 // Migrate screen) from VendorRoadmapPanel.tsx -- desktop's JSX for this data

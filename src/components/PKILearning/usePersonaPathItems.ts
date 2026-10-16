@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
 import { PERSONAS, pathModuleCount, type PersonaId, type PathItem } from '@/data/learningPersonas'
 import { MODULE_CATALOG, MODULE_TO_TRACK } from './moduleData'

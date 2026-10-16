@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Fragment, useState, useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, ChevronUp, User } from 'lucide-react'

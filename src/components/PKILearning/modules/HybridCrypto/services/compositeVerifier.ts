@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Composite certificate VERIFIER — the counterpart to buildCompositeCertDraft19.
 //
 // Why this exists: the workshop mints composite certificates, but nothing in

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ACCURACY-0705, item 4: an empty-string pqcCoverage must render as "Not read"
 // (the source page could not be read — unknown), NOT fall through to the same

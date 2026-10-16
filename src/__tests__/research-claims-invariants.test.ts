@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Research and healthcare claim invariants (researcher journey audit, 16 Oct 2026).
  *

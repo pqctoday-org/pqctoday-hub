@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Compare runs": pick two saved run records of the same tool, see what
  * differed in how they ran and in their results, add a second

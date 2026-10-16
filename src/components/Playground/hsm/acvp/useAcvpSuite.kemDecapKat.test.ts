@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression for commit 285ca5d3f ("stop fabricating ACVP error code"):
 // useAcvpSuite's ML-KEM Decapsulate KAT step used to log a fabricated

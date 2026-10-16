@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryViewRedesign — the rebuilt /library page (handoff: design_handoff_library_redesign).
  *

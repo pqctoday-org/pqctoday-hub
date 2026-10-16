@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * SimScenarioIntroCard — the one-time scenario-framing card shown at the very start
  * of the auto-run (before the first maturity pass). For the US scenario it frames

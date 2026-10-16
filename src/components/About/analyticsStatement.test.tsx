@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The desktop About and the phone About say the same thing about analytics and
  * about where your data goes, because both build it from analyticsStatement.ts.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Embed contract (WS-09) — the rules a hub resource must satisfy to render INSIDE
  * the simulation (under the sim header) instead of navigating away.

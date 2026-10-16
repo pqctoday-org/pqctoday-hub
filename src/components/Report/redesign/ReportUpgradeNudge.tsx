@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ReportUpgradeNudge — shown on a QUICK-assessment report only. One prominent
  * affordance that ties together the locked sections: finish the remaining

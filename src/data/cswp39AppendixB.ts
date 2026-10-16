@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // NIST CSWP 39upd1 (Considerations for Achieving Crypto Agility: Strategies and Practices,
 // Dec 19 2025, with updates as of Jun 29 2026; the original CSWP 39 was withdrawn and

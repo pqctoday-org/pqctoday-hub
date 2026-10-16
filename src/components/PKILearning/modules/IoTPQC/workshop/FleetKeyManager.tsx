@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Step 5 — Fleet Key Manager (moved from Energy & Utilities' Smart Meter Key
  * Manager and generalised to device fleets, 2026-10-01). See data/fleetData.ts

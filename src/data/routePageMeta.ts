@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure-move extraction (IMPLEMENTATION-PLAN.md §5.4, E-5) — every one of
  * these was module-private (or, for ROUTE_VIEW_TYPE, exported but still

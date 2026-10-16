@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { BUSINESS_TOOL_EXERCISES } from './businessToolExercises'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'

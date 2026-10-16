@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Render-level checks for the Entropy P0 remediation (2026-09-24):
 // - the DRBG step's known-answer check runs the real HMAC_DRBG over the pinned

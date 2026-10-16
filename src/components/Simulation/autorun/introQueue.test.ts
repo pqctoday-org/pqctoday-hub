@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W7.1/W7.3 — the introductory journey is short because it is MEASURED short.
  *

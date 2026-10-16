@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // /report's "Assessment Profile" section (REPORT_SECTION_ORDER: 'assessmentProfile').
 // Extracted from ReportContent.tsx — see reportSectionToCswp39.ts.
 import { Briefcase } from 'lucide-react'

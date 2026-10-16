@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Completion screen — hands off to the report; on fast track it foreshadows the
 // genuinely-locked sections with the gold fast→full upgrade affordance.

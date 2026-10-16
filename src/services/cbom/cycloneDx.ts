@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared CycloneDX 1.7 CBOM (Cryptographic Bill of Materials) emitter.
  *

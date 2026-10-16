@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useRef, useCallback } from 'react'
 import { useChatStore } from '@/store/useChatStore'
 import { usePageContext } from '@/hooks/usePageContext'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Dated advisories from a standards or national body that change how an algorithm
  * should be used without changing its standards status. Classic McEliece stays a

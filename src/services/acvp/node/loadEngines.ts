@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Node-only engine loaders for the CLI (F-8) and the real-engine local tests.
  * Never import from browser code.

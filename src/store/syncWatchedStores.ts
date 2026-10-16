@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Single source of truth for which Zustand stores are *watched for changes* in
  * order to trigger a debounced persistence save.

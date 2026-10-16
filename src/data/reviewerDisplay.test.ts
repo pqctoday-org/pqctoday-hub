@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { reviewerDisplay, REVIEWER_DISPLAY_ALIASES } from './reviewerDisplay'
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure filter/sort/URL-param helpers for the PQC Protocol Support matrix,
  * shared by the desktop PQCProtocolMatrix and the phone

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Agility Workbench scenario picker — asserts the panel shows ONLY the validated
 // scenarios tied to the active policy, swaps the list when the policy changes,

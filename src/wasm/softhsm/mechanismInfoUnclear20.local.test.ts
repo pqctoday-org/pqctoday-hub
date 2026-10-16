@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // MEASURED classification of the 20 C_GetMechanismInfo cross-engine
 // disagreements that E20's triage could not classify (open-gaps

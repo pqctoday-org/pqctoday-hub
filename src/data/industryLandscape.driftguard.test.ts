@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Driftguards for the industry-landscape source. These pin the cross-source
 // contracts the Industry Landscape tab depends on:

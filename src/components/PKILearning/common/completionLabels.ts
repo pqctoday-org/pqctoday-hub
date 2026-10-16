@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical wording for the unified step-completion action across the simulation
  * and the standalone tools. Two words by step nature (see the sim save/validate

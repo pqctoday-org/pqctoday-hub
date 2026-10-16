@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The Learn → landscape reverse edge, kept in a module that imports ONLY the
 // landscape loader. industryCrossRefs.ts imports the workshop registry (every

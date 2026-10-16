@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * phaseMaturity — the framework's per-phase Maturity Indicators (Level 0–4),
  * transcribed verbatim from the Applied Quantum PQC Migration Framework v2.1

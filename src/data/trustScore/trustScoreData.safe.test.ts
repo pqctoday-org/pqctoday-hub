@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guards for safeComputeAllScores(): the trust-score pipeline must never
  * throw into the UI, but a failure must never be silent either — it logs

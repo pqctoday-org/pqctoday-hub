@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Shared-widget re-export of ReportTimelineStrip so Business Center and other
  * callers can embed the country PQC-phase strip without reaching into

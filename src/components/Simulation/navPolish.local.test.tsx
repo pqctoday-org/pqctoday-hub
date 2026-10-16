@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 nav remediation (WP6.5, WP7b, WP7e) — smaller ways back:
  *  - a migration (edge) decision can be undone, freeing its capacity slot;

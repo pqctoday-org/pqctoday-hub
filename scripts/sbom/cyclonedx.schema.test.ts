@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Validates the committed complete SBOM (public/data/pqctoday-sbom.cdx.json) against the official
 // CycloneDX 1.7 JSON Schema vendored for the CBOM (src/services/cbom/schema), and the license
 // mapping that produces it. A structurally invalid SBOM is worse than none for anyone who

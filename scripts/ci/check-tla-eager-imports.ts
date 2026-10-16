@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * check-tla-eager-imports.ts — fails the build when a chunk reads another chunk's export before that
  * chunk has finished starting up, which leaves it undefined in production (or "not a function") while

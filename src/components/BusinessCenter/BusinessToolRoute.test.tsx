@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W3-1 / W3-2 (audit 2026-08-10): a tool opened directly at
  * /business/tools/:id showed no standards provenance and no hub resources.

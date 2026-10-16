@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Direct unit coverage for migrateSimulationState (Wave 2 exit check: "all
  * store migrations covered by a migrate test"). Previously this logic only

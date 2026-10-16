@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * release-freeze — snapshot a conference/release candidate (ACVP validation
  * remediation plan 2026-09-24, WS-J J-4: "freeze a conference release

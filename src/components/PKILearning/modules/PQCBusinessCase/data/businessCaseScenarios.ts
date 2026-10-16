@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Industry-specific cost-of-inaction profiles for the PQC Business Case module.
  * Used by the CostOfInactionAnalyzer workshop step.

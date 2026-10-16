@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the ML-KEM reference-sample section (sections/mlkemAcvp.ts), driven
 // through the REAL useAcvpSuite hook in dual-engine mode: the C++ engine

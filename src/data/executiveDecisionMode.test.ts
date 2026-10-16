@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every executive decision-mode link must land on a real page: a top-level
  * route declared in App.tsx, a real Command Center tool id, and query values

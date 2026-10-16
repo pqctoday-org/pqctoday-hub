@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Renders a run of prose with any standards citation inside it linked to the
  * document in this app's own library.

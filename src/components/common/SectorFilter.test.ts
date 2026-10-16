@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { DEFAULT_SECTOR_OPTIONS, matchesSectorFilter } from './SectorFilter'
 import { libraryData } from '../../data/libraryData'

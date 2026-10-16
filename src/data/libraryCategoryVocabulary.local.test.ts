@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guardrail (local-only, not run in CI): `manual_category` must not carry two
  * spellings of the same category.

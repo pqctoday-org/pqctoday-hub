@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { logEvent } from './analytics'
 
 const DISCUSSIONS_NEW_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new'

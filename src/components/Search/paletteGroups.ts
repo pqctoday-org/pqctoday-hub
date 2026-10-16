@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure grouping / capping / hint helpers for the ⌘K palette, kept out of
  * CommandPalette.tsx so they can be unit-tested (and so that file only exports

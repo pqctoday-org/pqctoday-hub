@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The seven acceleration models this module compares, each with a plain-English
  * mini-explainer in the same three-paragraph shape PQCCandidates uses for the

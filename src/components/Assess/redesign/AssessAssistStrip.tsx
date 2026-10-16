@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The single consolidated assist strip — replaces the legacy stack of
 // PersonaHint + WhyWeAskHint + info banner. One quiet "Why we ask" disclosure.

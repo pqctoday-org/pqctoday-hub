@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Library citation export: BibTeX and CSL-JSON for a set of Library records
  * (the bookmarked set or the current filter). Pure functions; the Library

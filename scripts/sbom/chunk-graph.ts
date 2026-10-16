@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Chunk-graph walk used by check-production.ts: find the lazy-loaded About chunk of a deployed
  * build by following chunk references from the entry chunk.

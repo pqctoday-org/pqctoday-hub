@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The weight line is only useful if it actually reaches rows. A silent
  * regression here — a moved manifest path, a renamed field — would blank the

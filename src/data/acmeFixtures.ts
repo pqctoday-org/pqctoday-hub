@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mocked ACME server responses (RFC 8555) for the interactive walkthrough.
  * Transport is simulated; crypto (ML-DSA-65 keypair, CSR, signature) is real via softhsmv3.

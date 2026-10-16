@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Integration test for the Learn walkthroughs' step specs — replays every
 // lesson side's step sequence against the REAL wasm engine exactly the way

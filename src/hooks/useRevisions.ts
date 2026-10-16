@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * useRevisions — loads and parses /data/revisions.jsonl at app startup.
  * Returns RevisionEntry[] sorted by merge_timestamp descending.

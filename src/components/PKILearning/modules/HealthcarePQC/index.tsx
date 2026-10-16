@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Fingerprint, FlaskConical, HeartPulse, Activity, Building2 } from 'lucide-react'
 import { HealthcarePQCIntroduction } from './components/HealthcarePQCIntroduction'

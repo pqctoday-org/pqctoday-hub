@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Constants for the Entropy & Randomness module.
  * Reference random samples generated via Node.js crypto.randomBytes() to serve as

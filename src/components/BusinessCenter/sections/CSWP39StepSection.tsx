@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { CSWP39StepCard } from '@/components/Compliance/CSWP39StepCard'
 import { CSWP39_CROSS_WALK, type CSWP39Step } from '@/components/Compliance/cswp39Data'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'

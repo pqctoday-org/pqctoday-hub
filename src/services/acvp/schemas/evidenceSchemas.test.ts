@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Versioned evidence schemas: a frozen v1 bundle keeps validating after v2
 // landed (and would NOT validate against v2 — which is exactly the failure
 // this registry exists to prevent), pinned schema files never change, and an

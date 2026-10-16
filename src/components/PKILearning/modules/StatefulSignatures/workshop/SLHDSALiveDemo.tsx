@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useRef } from 'react'
 import { Loader2, CheckCircle, XCircle, Info, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'

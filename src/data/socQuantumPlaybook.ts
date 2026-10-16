@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The SOC's quantum detection use cases and incident-response playbooks —
  * one copy, read by both the SOC Implementation Learn module

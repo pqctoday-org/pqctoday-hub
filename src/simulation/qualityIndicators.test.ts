@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W7.5 — the indicators say what KIND of run happened. They are not a
  * competence measure and the tests pin the distinctions that make that true.

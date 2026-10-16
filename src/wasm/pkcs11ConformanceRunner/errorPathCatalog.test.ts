@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // The error-path probe table (plan WS-G G-8 / G-2 / G-5) is data: these
 // checks keep it honest without an engine — every kind cites a PKCS #11 v3.2
 // section and says why no existing test covers it, the expansion follows the

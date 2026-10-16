@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // tagRules.ts — the tag-classification tables shared by bindings.ts
 // (placeholder harvesting) and compare.ts (response comparison). Every

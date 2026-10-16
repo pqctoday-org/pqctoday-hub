@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Per-step UX metadata for the 5G SUCI Playground.
 // Kept separate from constants.ts so FiveGService step-reads stay unchanged
 // and this UX layer can be reverted independently.

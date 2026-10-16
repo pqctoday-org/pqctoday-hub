@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryDocumentCard — the redesign's medium-density card. Shows the essentials
  * (refId + status, title, ≤2 categories + urgency, org · date, lifecycle chip |

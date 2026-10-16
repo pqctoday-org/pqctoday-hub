@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Program effort rollup shared by the board pack's program-effort.md and its
  * sources of figures, so both state the same figures from the same assumptions.

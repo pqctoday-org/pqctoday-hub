@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Sources of figures for the board pack: one record per figure the pack exports,
  * saying what kind of figure it is and where it comes from.

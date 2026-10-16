@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * RunActionsMenu (PR2) — collapses the simulation command bar's secondary run
  * actions (Exit to hub, Export, Import, Reset run, Start over) into one "⋯ More"

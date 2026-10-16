@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // VendorConcentrationRiskPanel — "Vendor risk" tab addition, 2026-08-02
 // (design_handoff_2026_pages/IMPLEMENTATION-PLAN-MIGRATE-2026-08-01.md §3.3).

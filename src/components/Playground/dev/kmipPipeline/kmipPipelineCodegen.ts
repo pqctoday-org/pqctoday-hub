@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * KMIP/CACP pipeline code generation (dev-tabs-pkcs11-kmip plan WS-E).
  *

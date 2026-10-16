@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 2 (2026-09-29): `?cswpview=`, `?step=`, `?mtier=`, `?dossier=`.
 import { describe, it, expect, vi, beforeEach } from 'vitest'

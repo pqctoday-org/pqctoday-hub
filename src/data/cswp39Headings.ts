@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The real section headings of NIST CSWP 39-upd1, "Considerations for Achieving
  * Crypto Agility: Strategies and Practices" (published 2025-12-19; CSWP 39 was

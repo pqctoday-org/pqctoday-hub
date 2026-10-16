@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Presentational metadata for the Crypto Lab Workbench (/playground).
 // Pure data — descriptions, icons, role labels and the special-playground
 // feature cards. Tool data itself is sourced from `workshopRegistry`.

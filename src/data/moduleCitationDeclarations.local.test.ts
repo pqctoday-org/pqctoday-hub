@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guardrail (local-only, not run in CI): when a learn module asserts a DATE or a
  * VERSION for a document, that document must be in the module's own `standards[]`.

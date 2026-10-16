@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The user's saved Library collections: each record with its annotation and
  * the state saved with it. Records can be removed; a collection can be

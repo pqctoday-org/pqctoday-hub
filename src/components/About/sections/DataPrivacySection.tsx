@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
@@ -92,7 +92,7 @@ export function DataPrivacySection() {
                   >
                     publicly available
                   </a>{' '}
-                  for inspection under GPLv3.
+                  for inspection under AGPL-3.0.
                 </li>
               </ul>
 

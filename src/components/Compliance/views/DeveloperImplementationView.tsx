@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * DeveloperImplementationView — persona-specific For You body for the developer
  * persona on /compliance. Bonus item from the 2026-05-20 page-audit set: the

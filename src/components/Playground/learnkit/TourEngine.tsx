@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // TourEngine — the coachmark tour engine (dimmed veil + spotlight "hole" +
 // positioned tooltip card) driving the REAL app, generalized out of the

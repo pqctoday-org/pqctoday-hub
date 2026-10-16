@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Core (Shared author)
 /**
  * Common core (plan r2 Common Core 1–2): `four-questions` and

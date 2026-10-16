@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * Structured content for the SocImplementationPqc module.
  * Source: Applied Quantum — The Applied Quantum PQC Migration Framework,

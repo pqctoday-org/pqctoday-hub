@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { GraduationCap } from 'lucide-react'
 import clsx from 'clsx'
 import { EDUCATION_NOTICE } from '@/data/educationNotice'

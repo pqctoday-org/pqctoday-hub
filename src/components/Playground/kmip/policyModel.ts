@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection, security/detect-non-literal-regexp --
    trusted-input parser: all object keys are known string literals or numeric loop
    counters, and the only data is locally-served policy YAML (no user-controlled

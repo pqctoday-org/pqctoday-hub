@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 #
 # Runs INSIDE the emsdk container (Dockerfile.wasm, stage "tool"). Compiles the
 # NIST SP 800-90B mains against the WASM dependency prefix and writes the

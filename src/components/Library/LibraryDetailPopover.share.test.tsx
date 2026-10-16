@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link PR 4: the Library pop-up (opened over other pages, e.g. the
  * Compliance For-You view) carries its own Share and no longer touches the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Off the Beaten Path" previously only ever listed Learn modules — a user
  * who explored Patents, or used a Playground tool their persona's milestones

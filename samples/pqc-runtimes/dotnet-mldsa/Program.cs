@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ML-DSA-65 sign / verify with .NET 10 System.Security.Cryptography.MLDsa.
 // Needs OpenSSL 3.5+ on Linux/macOS, or Windows with CNG ML-DSA (Windows Server 2025 / Windows 11).
 using System.Security.Cryptography;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read + cross-check against the
 // live wizard's 13 real steps; removed the orphaned 'vendors' step block
 // (Step12VendorDependency.tsx deleted, was imported nowhere)

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One shared list of PQC migration test lines, tagged by the roles whose test
  * plans use them. The architect's test plan, the operations test plan and the

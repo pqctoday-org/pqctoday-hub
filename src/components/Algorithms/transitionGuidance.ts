@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The 2030 "deprecated" / 2035 "disallowed" dates shown for classical
  * algorithms come from NIST IR 8547, which is still an initial public draft

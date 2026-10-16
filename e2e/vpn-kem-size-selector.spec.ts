@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // vpn-kem-size-selector.spec.ts — E2E coverage for the real, user-facing
 // ML-KEM Size control added to VpnSimulationPanel.tsx (2026-08-31). Unlike

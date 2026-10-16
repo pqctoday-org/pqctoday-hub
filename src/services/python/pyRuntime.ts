@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * pyRuntime — shared, lazily-booted Pyodide instance for the hub's Developer
  * tabs (dev-tabs-pkcs11-kmip plan, WS-A; true timeout added G9/W4).

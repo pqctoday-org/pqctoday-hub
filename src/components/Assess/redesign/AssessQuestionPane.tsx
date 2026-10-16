@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The question pane — domain tag + heading + the single assist strip + the real
 // (slot-prop-suppressed) step body + footer control deck. Reuses the legacy step

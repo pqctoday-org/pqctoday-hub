@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Learn tab for IoT & Embedded Device PQC (LM-074). Rewritten 2026-10-01.
  *
