@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { Map, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
-import { findCountryNextMilestone } from './countryMilestone'
+import { findCountryMilestoneGroups, findCountryNextMilestone } from './countryMilestone'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './sections/reportContentShared'
 
@@ -122,6 +122,10 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
     [countryName]
   )
   const deadlineYear = milestone?.year ?? null
+  const milestoneGroups = useMemo(
+    () => (countryName ? findCountryMilestoneGroups(countryName) : []),
+    [countryName]
+  )
 
   // Binding legal mandate (HARD) vs guidance/roadmap — read from the milestone's own
   // timeline row (mandate_type), not a per-country label. Anything not curated HARD is
@@ -197,6 +201,42 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
         {deadlineBadge}
       </div>
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
+        {milestoneGroups.length > 0 && (
+          <div
+            className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+            data-testid="scoped-milestones"
+          >
+            <p className="mb-2 text-xs font-semibold text-foreground">
+              Upcoming milestones in {countryName}, by the body that set them
+            </p>
+            <ul className="space-y-1.5 text-xs">
+              {milestoneGroups.map((g) => (
+                <li key={g.body}>
+                  <span className="font-medium text-foreground">{g.body}:</span>{' '}
+                  {g.milestones.map((m, i) => (
+                    <span key={`${m.year}-${m.title}`} className="text-muted-foreground">
+                      {i > 0 && ' · '}
+                      {m.year} {m.title}{' '}
+                      <span
+                        className={clsx(
+                          'rounded px-1 py-px text-[10px] font-medium',
+                          m.binding
+                            ? 'bg-destructive/10 text-destructive'
+                            : 'bg-muted text-muted-foreground'
+                        )}
+                      >
+                        {m.binding ? 'binding' : 'guidance'}
+                      </span>
+                    </span>
+                  ))}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Each date applies only to the systems or organisations its issuing body covers.
+            </p>
+          </div>
+        )}
         <div className="space-y-4">
           {lanes.map((lane) => {
             const laneStyle = LANE_CONFIG[lane.category] ?? LANE_CONFIG['long-term']
