@@ -3330,6 +3330,23 @@
       "replacedAt": "2026-09-27T22:45:53.022228+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "2026-09-27 regional-scheme remediation (d2): new row; evidence is the row's own website URL"
+    },
+    {
+      "refId": "UN-ECE-WP29",
+      "filename": "UN-ECE-WP29.pdf",
+      "sizeBytes": 448517,
+      "contentType": "application/pdf",
+      "url": "https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security",
+      "sha256": "c41424c6f17784aa7cf8d3de79491e6bce142a674748039f1235dc8c37ea9654",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T15:08:55.796336+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "compliance/UN-ECE-WP29.pdf",
+      "status": "downloaded",
+      "acquisition": "manual",
+      "acquiredAt": "2026-10-16"
     }
   ],
   "blocked": {
