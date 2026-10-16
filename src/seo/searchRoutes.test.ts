@@ -42,7 +42,16 @@ describe('search route manifest', () => {
     // module catalog and the two sources, so adding a module or a tool does not need a second edit here.
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'page')).toHaveLength(26)
     expect(SEARCH_ROUTES.filter((route) => route.kind === 'learn')).toHaveLength(MANIFESTS.length)
-    expect(indexableRoutes()).toHaveLength(Object.keys(ROUTE_META).length + TOOL_ROUTE_META.length)
+    // The Docker sandbox is a separate product: its 23 scenario pages and the
+    // /playground/docker overview are kept out of search.
+    const sandboxPages = SEARCH_ROUTES.filter(
+      (route) => route.kind === 'sandbox-tool' || route.path === '/playground/docker'
+    )
+    expect(sandboxPages).toHaveLength(24)
+    expect(sandboxPages.every((route) => !route.index)).toBe(true)
+    expect(indexableRoutes()).toHaveLength(
+      Object.keys(ROUTE_META).length + TOOL_ROUTE_META.length - sandboxPages.length
+    )
   })
 
   it('gives tool routes unique metadata and a content region', () => {
