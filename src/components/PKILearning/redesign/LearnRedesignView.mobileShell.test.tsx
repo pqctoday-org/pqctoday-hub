@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { LearnRedesignView } from './LearnRedesignView'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONA_IDS, pathModuleCount } from '@/data/learningPersonas'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -43,5 +44,21 @@ describe('LearnRedesignView — mobile UX layer wiring', () => {
     usePersonaStore.getState().setPersona('executive')
     renderLearn()
     expect(screen.getByText(/My path · Executive \/ Business Leader/)).toBeInTheDocument()
+  })
+})
+
+describe('LearnRedesignView — the open quiz and the module count', () => {
+  it('labels the always-open quiz a practice quiz, not the capstone', () => {
+    usePersonaStore.getState().setPersona('researcher')
+    renderLearn()
+    expect(screen.getByRole('button', { name: 'Practice quiz' })).toBeInTheDocument()
+  })
+
+  it.each(PERSONA_IDS)('%s: My Path states the shared module count (quiz excluded)', (p) => {
+    usePersonaStore.getState().setPersona(p)
+    renderLearn()
+    expect(
+      screen.getAllByText(new RegExp(`· ${pathModuleCount(p)} modules ·`)).length
+    ).toBeGreaterThan(0)
   })
 })

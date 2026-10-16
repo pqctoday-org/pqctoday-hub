@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { PERSONAS, type PersonaId, type PathItem } from '@/data/learningPersonas'
+import { PERSONAS, pathModuleCount, type PersonaId, type PathItem } from '@/data/learningPersonas'
 import { MODULE_CATALOG, MODULE_TO_TRACK } from './moduleData'
 import type { ModuleTableItem } from './ModuleTable'
 
@@ -90,7 +90,7 @@ export function usePersonaPathItems(
       })
     }
 
-    const moduleCount = persona.pathItems.filter((p) => p.type === 'module').length
+    const moduleCount = pathModuleCount(persona.id)
     const checkpointCount = persona.pathItems.filter((p) => p.type === 'checkpoint').length
 
     const flatItems: ModuleTableItem[] = persona.pathItems.map((item) => {

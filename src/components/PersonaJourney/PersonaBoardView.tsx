@@ -426,7 +426,7 @@ export function PersonaBoardView({
             )
           })}
 
-          {/* Absent for researcher only — no capstone at all, not an empty chip. */}
+          {/* Rendered only when the board defines one — never an empty chip. */}
           {board.capstoneChip && (
             <li
               data-testid="capstone-chip"

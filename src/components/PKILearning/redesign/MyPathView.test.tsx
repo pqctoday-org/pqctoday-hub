@@ -7,7 +7,7 @@ import { MyPathView } from './MyPathView'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PERSONAS } from '@/data/learningPersonas'
 
-const renderMyPath = (personaId: 'developer' | 'architect' = 'developer') =>
+const renderMyPath = (personaId: 'developer' | 'architect' | 'researcher' = 'developer') =>
   render(
     <MemoryRouter initialEntries={['/learn']}>
       <MyPathView personaId={personaId} onOpenCatalog={() => {}} />
@@ -35,6 +35,9 @@ describe('MyPathView — Essentials tier (A1)', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(new RegExp(`Finish the ${count} Essentials`))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Locked/i })).toBeDisabled()
+    // A locked capstone is not called a quiz the learner can take.
+    expect(screen.queryByText(/Capstone Quiz/)).toBeNull()
+    expect(screen.getByText(`Capstone (locked) — ${PERSONAS.developer.label}`)).toBeInTheDocument()
   })
 
   it('unlocks the capstone once every Essential is complete', () => {
@@ -42,6 +45,14 @@ describe('MyPathView — Essentials tier (A1)', () => {
     renderMyPath('developer')
     expect(screen.getByRole('button', { name: /Take the capstone/i })).toBeEnabled()
     expect(screen.getByText(/unlocked it/i)).toBeInTheDocument()
+    expect(screen.getByText(`Capstone Quiz — ${PERSONAS.developer.label}`)).toBeInTheDocument()
+  })
+
+  it('a researcher sees one capstone: the hands-on check is not also called the capstone', () => {
+    renderMyPath('researcher')
+    expect(screen.getByText('Check our work: reproduce a known-answer test')).toBeInTheDocument()
+    expect(screen.queryByText(/Your capstone/i)).toBeNull()
+    expect(screen.getByText(`Capstone (locked) — ${PERSONAS.researcher.label}`)).toBeInTheDocument()
   })
 
   it('switches to the Full track journey via the toggle', () => {
