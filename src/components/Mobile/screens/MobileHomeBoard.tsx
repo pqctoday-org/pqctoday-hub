@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PERSONAS } from '@/data/learningPersonas'
+import { essentialsTrackChips } from '@/data/trackChips'
 import {
   PERSONA_JOURNEY_BOARD_VARIANTS,
   resolveRoleBoardVariant,
@@ -347,7 +348,7 @@ export function MobileHomeBoard({
           <p className="mt-1 text-[10.5px] text-muted-foreground">{board.trackNote}</p>
         )}
         <ul className="mt-2.5 flex flex-wrap gap-1.5">
-          {board.trackChips.map((chip, i) => {
+          {essentialsTrackChips(persona, board.trackChips).map((chip, i) => {
             const moduleId = PERSONAS[persona].essentials[i]
             return (
               <li key={chip}>
