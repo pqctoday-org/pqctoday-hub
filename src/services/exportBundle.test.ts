@@ -22,6 +22,9 @@ describe('exportBundle', () => {
       'architecture-pack-2026-10-16.pdf'
     )
     expect(bundleFilename('***', 'zip', '2026-10-16')).toBe('export-2026-10-16.zip')
+    expect(bundleFilename('TLS demo run', 'json', '2026-10-16')).toBe(
+      'tls-demo-run-2026-10-16.json'
+    )
   })
 
   it('downloads through a temporary object URL and releases it', () => {
