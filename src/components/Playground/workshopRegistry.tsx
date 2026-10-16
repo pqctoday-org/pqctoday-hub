@@ -568,7 +568,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     requires: [],
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
     startHere: ['developer'],
     intro: {
       whatYouWillDo:

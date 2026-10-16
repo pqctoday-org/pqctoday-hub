@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { NEXT_STEPS, PAGE_NEXT_STEP_ROUTES } from './nextSteps'
+import { NEXT_STEPS, PAGE_NEXT_STEP_ROUTES, nextStepFor } from './nextSteps'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -79,5 +79,17 @@ describe('NEXT_STEPS (round 9, wave 1.2)', () => {
   it('has no entry for a route that does not exist', () => {
     const orphans = Object.keys(NEXT_STEPS).filter((r) => !known.has(r))
     expect(orphans).toEqual([])
+  })
+})
+
+describe('curious next steps (curious journey review, 16 Oct 2026)', () => {
+  it('sends a curious reader from Home to Explore and from Explore to the TLS handshake', () => {
+    expect(nextStepFor('/', 'curious')?.to).toBe('/explore')
+    expect(nextStepFor('/explore', 'curious')?.to).toBe('/playground/tls-simulator')
+  })
+
+  it('leaves every other role on the shared exit', () => {
+    expect(nextStepFor('/', 'executive')).toEqual(nextStepFor('/'))
+    expect(nextStepFor('/explore', null)).toEqual(nextStepFor('/explore'))
   })
 })

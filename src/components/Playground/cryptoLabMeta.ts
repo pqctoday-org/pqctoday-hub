@@ -182,7 +182,9 @@ export const PERSONA_FEATURED_TOOL_IDS: Record<PersonaId | 'none', readonly stri
   researcher: ['source-combining', 'lms-hss', 'suci-flow', 'hd-wallet'],
   'cert-engineer': ['entropy-test', 'drbg-demo', 'firmware-signing'],
   ops: ['vpn-sim', 'hsm-capacity', 'hybrid-certs'],
-  curious: ['merkle-proof', 'pki-workshop', 'qrng-demo'],
+  // The TLS simulator is the curious first win ("see what breaks · 6 min");
+  // it leads, then the beginner QRNG demo (curious journey review, 16 Oct 2026).
+  curious: ['tls-simulator', 'qrng-demo', 'merkle-proof'],
 }
 
 const FEATURED_ACCENTS: readonly FeatureAccent[] = ['secondary', 'success', 'primary', 'warning']

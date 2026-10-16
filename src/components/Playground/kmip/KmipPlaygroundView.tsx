@@ -42,6 +42,7 @@ import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import {
   getKmipEngine,
   decisionOf,
@@ -288,6 +289,8 @@ function whatThisMeans(r: OpResult): string | null {
 export function KmipPlaygroundView() {
   const { pathname } = useLocation()
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -378,7 +381,7 @@ export function KmipPlaygroundView() {
   // A persona switch (or a stale ?tab=dev link) can land a gated persona on
   // the hidden Dev tab — fall back to Learn rather than an empty shell. Dev
   // is persona-gated only, never Expert-gated (D5).
-  const devHidden = role === 'curious' || role === 'executive' || role === 'grc'
+  const devHidden = workbenchHidden
   useEffect(() => {
     if (devHidden && plane === 'dev') setPlane('learn')
   }, [devHidden, plane])

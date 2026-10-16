@@ -561,10 +561,12 @@ export function AlgorithmsView() {
             {algorithmData.length || 'Dozens of'} algorithms — three you actually need to know
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-            NIST selected three post-quantum algorithms in 2024 (FIPS 203 / 204 / 205): one for key
-            exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a hash-based backup
-            (SLH-DSA). Everything else on this page is either a classical algorithm being retired or
-            a candidate still in standardisation.
+            NIST published its first three post-quantum standards in August 2024 (FIPS 203 / 204 /
+            205): one for key exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a
+            hash-based backup (SLH-DSA). The rest of this page also covers hash-based signatures
+            already standardised for firmware (LMS / XMSS), algorithms selected but not yet
+            published (FN-DSA, HQC), other countries&apos; standards, and the classical algorithms
+            being retired.
           </p>
           <ul className="text-sm text-foreground/90 space-y-2 mb-5">
             <li>
@@ -577,7 +579,8 @@ export function AlgorithmsView() {
             </li>
             <li>
               <strong className="text-primary">SLH-DSA-SHA2-128s</strong> — hash-based backup
-              signature for the highest-security scenarios. Signature ~7.8 KB.
+              signature whose security rests only on hash functions. Much larger signatures: ~7.8
+              KB.
             </li>
           </ul>
           <div className="flex flex-col sm:flex-row gap-2">

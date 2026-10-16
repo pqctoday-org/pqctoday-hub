@@ -5,11 +5,13 @@
  * so this reads the same data module and renders the phone chrome.
  */
 import { Link } from 'react-router'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { ArrowRight } from 'lucide-react'
 import { nextStepFor } from '@/data/nextSteps'
 
 export function MobileNextStepCard({ route }: { route: string }) {
-  const step = nextStepFor(route)
+  const persona = usePersonaStore((st) => st.selectedPersona)
+  const step = nextStepFor(route, persona)
   if (!step) return null
   return (
     <section

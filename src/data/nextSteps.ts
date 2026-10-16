@@ -15,6 +15,8 @@
  * starting point, not a constraint.
  */
 
+import type { PersonaId } from '@/data/learningPersonas'
+
 export interface NextStep {
   /** Route the exit points at. */
   to: string
@@ -969,7 +971,31 @@ function isToolRoute(route: string): boolean {
   )
 }
 
-export function nextStepFor(route: string): NextStep | undefined {
+/**
+ * Per-role exits for routed pages, consulted before NEXT_STEPS. Curious
+ * journey review (16 Oct 2026): a newcomer learning for themselves can't
+ * answer an organisation's assessment, so Home and Explore lead to Explore and
+ * the six-minute TLS handshake instead; the assessment stays one click away
+ * from Explore.
+ */
+export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextStep>>> = {
+  curious: {
+    '/': {
+      to: '/explore',
+      label: 'Explore the topic in plain words',
+      why: 'Every area of the site as a plain question, with a first stop and how long it takes.',
+    },
+    '/explore': {
+      to: '/playground/tls-simulator',
+      label: 'Watch a real post-quantum handshake',
+      why: 'About six minutes: a real TLS 1.3 connection in your browser, using the hybrid X25519MLKEM768 key exchange. Assessing an organisation instead? The readiness assessment is in the menu.',
+    },
+  },
+}
+
+export function nextStepFor(route: string, persona?: PersonaId | null): NextStep | undefined {
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union; route is a literal from the calling component
+  const override = persona ? PERSONA_NEXT_STEPS[persona]?.[route] : undefined
   // eslint-disable-next-line security/detect-object-injection -- route is a literal from the calling component, not user input
-  return NEXT_STEPS[route]
+  return override ?? NEXT_STEPS[route]
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import { PkcsDevWorkbench } from './pipeline/PkcsDevWorkbench'
 import { AcvpSuiteWorkbench } from './pipeline/suites/AcvpSuiteWorkbench'
 import { ConformanceSuiteWorkbench } from './pipeline/suites/ConformanceSuiteWorkbench'
@@ -41,6 +42,8 @@ interface DeveloperTabProps {
  */
 export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps) => {
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   // ACVP/Conformance are engineering-workbench surfaces — the same gating the
   // two top-level tabs had before this merge (see HsmPlayground.tsx's
   // curious/executive checks), ported here to the sub-tab level. Gating both
@@ -49,7 +52,7 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
   // gating the content here too means a stale/hand-crafted `dtab=acvp` deep
   // link can never render the panel even for the one render before that
   // effect fires.
-  const showWorkbenchTabs = role !== 'curious' && role !== 'executive' && role !== 'grc'
+  const showWorkbenchTabs = !workbenchHidden
 
   return (
     <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange(v as TestSuite)}>
