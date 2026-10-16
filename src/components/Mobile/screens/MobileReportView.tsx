@@ -137,6 +137,21 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         {isComprehensive ? 'Comprehensive Assessment' : 'Quick Assessment'}
       </p>
 
+      {sharedView?.sample && (
+        <div className="mb-3 rounded-xl border border-primary/40 bg-primary/10 p-3">
+          <p className="text-[11.5px] leading-relaxed text-foreground">
+            This is a sample report for a fictional US bank. Run your own assessment to see yours.
+          </p>
+          <Link
+            to="/assess"
+            className="mt-2 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-4 text-[12px] font-bold text-primary-foreground"
+          >
+            <ClipboardCheck size={14} aria-hidden="true" />
+            Start Assessment
+          </Link>
+        </div>
+      )}
+
       <div className={cn('rounded-2xl border p-4 text-center', tier.border, tier.bg)}>
         <p className={cn('text-[38px] font-extrabold leading-none', tier.color)}>
           {result.riskScore}
