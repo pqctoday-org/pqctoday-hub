@@ -135,6 +135,14 @@ export interface ComplianceFramework {
   /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
   bindingBasis?: string
   /**
+   * Who a mandatory-for-scope framework binds, quoted word for word from its own text
+   * (compliance file `binding_scope`), and an English version when the original is in
+   * another language (`binding_scope_en`). The English is the site's own translation,
+   * not the source's, and is labelled so wherever it is shown.
+   */
+  bindingScope?: string
+  bindingScopeEn?: string
+  /**
    * ISO date this row's fields were last checked against its primary source
    * — added 2026-07-16 (compliance-maintenance audit). Sparse by design:
    * only rows actually re-verified carry a real date; blank means "not yet
@@ -177,6 +185,8 @@ interface RawComplianceRow {
   last_verified?: string
   binding_status?: string
   binding_basis?: string
+  binding_scope?: string
+  binding_scope_en?: string
 }
 
 // '[0-9]' not a bare '*' — the broad pattern also matched
@@ -372,6 +382,8 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     lastVerified: row.last_verified?.trim() || undefined,
     bindingStatus: parseBindingStatus(row.binding_status),
     bindingBasis: row.binding_basis?.trim() || undefined,
+    bindingScope: row.binding_scope?.trim() || undefined,
+    bindingScopeEn: row.binding_scope_en?.trim() || undefined,
   }
 })
 
