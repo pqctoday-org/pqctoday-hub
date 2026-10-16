@@ -320,9 +320,9 @@ export function CyberInsuranceLensSection() {
                   )
                 })}
               </div>
-              {/* CHANGED 2026-10-16 (GRC journey audit): this used to cite a "Lloyd's
-                  Y5258 quantum exclusion clause" at a dead link. Y5258 (2019) is the
-                  affirm-or-exclude cyber cover rule; no quantum-specific exclusion was
+              {/* CHANGED 2026-10-16 (GRC journey audit): this note used to cite a
+                  Lloyd's bulletin at a dead link and misdescribe it. That bulletin, Y5258
+                  (2019), is the affirm-or-exclude cyber cover rule; no quantum-specific exclusion was
                   found, so every cell is now Ambiguous and the note names the two
                   bulletins that actually bear on it. */}
               <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
