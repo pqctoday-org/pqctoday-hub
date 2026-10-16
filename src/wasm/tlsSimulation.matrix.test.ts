@@ -253,6 +253,32 @@ describe('HelloRetryRequest', () => {
     expect(detail(r, 'round_trips')).toBe('2')
     expect(detail(r, 'key_exchange')).toBe('Key Exchange: x25519')
   })
+
+  it('Learn exercise 7: classical key share first, hybrid-only server → HRR to X25519MLKEM768', () => {
+    // Client lists both groups but sends a key share only for X25519 (first in
+    // its list); the shared group X25519MLKEM768 has no key share → HRR.
+    const r = runSim({ clientGroups: 'X25519:X25519MLKEM768', serverGroups: 'X25519MLKEM768' })
+    expect(r.status).toBe('success')
+    expect(find(r, 'hello_retry').length).toBeGreaterThan(0)
+    expect(detail(r, 'round_trips')).toBe('2')
+    expect(detail(r, 'key_exchange')).toBe('Key Exchange: X25519MLKEM768')
+  })
+
+  it.each([
+    { clientGroups: 'MLKEM1024', serverGroups: 'X25519MLKEM768' },
+    { clientGroups: 'P-384', serverGroups: 'X25519' },
+  ])(
+    'no common group ($clientGroups vs $serverGroups) → handshake_failure, no HRR',
+    ({ clientGroups, serverGroups }) => {
+      // Learn exercise 8: with no mutually supported group there is nothing to
+      // retry, so the server aborts instead of sending a HelloRetryRequest.
+      const r = runSim({ clientGroups, serverGroups })
+      expect(r.status).not.toBe('success')
+      expect(find(r, 'hello_retry')).toHaveLength(0)
+      expect(find(r, 'alert').some((e) => e.details.includes('handshake failure'))).toBe(true)
+      expect(find(r, 'error').some((e) => e.details.includes('no suitable key share'))).toBe(true)
+    }
+  )
 })
 
 // ── Misconfiguration is loud, not silent ─────────────────────────────────────
