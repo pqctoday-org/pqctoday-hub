@@ -183,9 +183,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   // The sender's persona (ephemeral, from the token) drives section gating
   // for a shared/example view — never the recipient's own persona store.
   const selectedPersona = shared ? (sharedView.persona ?? null) : livePersona
-  // The executive brief and board pack are board artifacts; a developer's
-  // report offers the full PDF and CSV instead.
-  const showBoardExports = selectedPersona !== 'developer'
+  // The executive brief and board pack are board artifacts; developer and
+  // IT ops / DevOps reports offer the full PDF and CSV instead.
+  const showBoardExports = selectedPersona !== 'developer' && selectedPersona !== 'ops'
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   // Subscribe to each primitive field separately — a selector that builds a new
   // object every call breaks useSyncExternalStore's snapshot caching (zustand +
