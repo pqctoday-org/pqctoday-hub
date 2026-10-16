@@ -636,13 +636,15 @@ export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
   // Global, not a persona-implied country — plan §5: applicability comes from
   // the user's own explicit region/industry selections, not the job title.
   grc: 'global',
-  developer: 'americas',
+  // Global (owner decision D2, 15 Oct 2026): a developer's jurisdiction is their own
+  // selection, as for executive and GRC.
+  developer: 'global',
   architect: 'global',
   researcher: 'All',
   // Certification schemes are national; applicability comes from the user's
   // own region, as for GRC.
   'cert-engineer': 'global',
-  ops: 'americas',
+  ops: 'global', // owner decision D2, 15 Oct 2026
   curious: 'americas',
 }
 
@@ -748,11 +750,13 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
   // No persona-implied industry (plan §5) — same rationale as researcher/curious
   // below: GRC's applicable scope comes from the user's own industry selection.
   grc: [],
-  developer: ['Technology', 'Cross-cutting & Other'],
-  architect: ['Technology', 'Telecommunications', 'Cross-cutting & Other'],
+  // No persona-implied industry (owner decision D2, 15 Oct 2026): a job title does
+  // not say which sectors someone works in.
+  developer: [],
+  architect: [],
   researcher: [],
   'cert-engineer': [],
-  ops: ['Energy & Utilities', 'Telecommunications', 'Cross-cutting & Other'],
+  ops: [], // owner decision D2, 15 Oct 2026
   curious: [],
 }
 
