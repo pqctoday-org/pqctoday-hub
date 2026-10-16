@@ -562,7 +562,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Understand the requirements and workflows for PQC Today container scenarios that exercise full cryptographic applications outside the browser.',
     kind: 'lab',
-    index: true,
+    index: false,
     sourceGlobs: ['src/components/Playground/DockerPlaygroundView.tsx'],
     contentRegion: '#main-content',
   },
@@ -847,7 +847,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Measure concurrent TLS 1.3 handshake throughput with Apache Bench against ephemeral nginx (session resumption OFF, so...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -861,7 +861,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Sign JSON Web Tokens with ML-DSA-65 using OpenSSL raw signatures and measure the impact on HTTP request-header limits...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -875,7 +875,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Drive headless Chromium to connect to the nginx TLS endpoint and compare a classical X25519 handshake vs a hybrid X25...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -889,7 +889,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit i...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -903,7 +903,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Verify ML-DSA-65 certificate chains end-to-end — from Root CA through Intermediate to Leaf — validating that PQC sign...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -917,7 +917,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 — the key-wrapping pattern cloud KMS services (AWS, Azure, ...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -931,7 +931,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Migrate PostgreSQL client-server TLS from a classical RSA-2048 cert + prime256v1 ECDHE to an ML-DSA-65 server cert ov...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -945,7 +945,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Secure IoT endpoint firmware updates with NIST SP 800-208 Stateful Hash-Based Signatures (HSS/LMS), generated and ver...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -959,7 +959,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment;...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -973,7 +973,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Re...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -987,7 +987,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Run a real Mosquitto 2.1.2 TLS broker (built against OpenSSL 3.6) and compare a classical ECDSA-P256 / secp256r1 arm ...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1001,7 +1001,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Measure the real-world performance impact of migrating from classical to PQC TLS — handshake latency, certificate siz...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1015,7 +1015,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65, demonstrating the supply-ch...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1029,7 +1029,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Build a hierarchical PQC Certificate Authority with OpenSSL 3.6 — a mixed-algorithm chain: Root CA (SLH-DSA-SHA2-128s...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1043,7 +1043,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair →...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1057,7 +1057,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Produce a real RFC 9580 v6 OpenPGP signature with an ML-DSA-65 + Ed25519 composite key (public-key-algorithm 30, RFC ...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1071,7 +1071,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Compare legacy RSA-2048 S/MIME encryption sequences against open-source ML-DSA & ML-KEM cryptographic integration pro...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1085,7 +1085,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Encrypt GitOps secrets with SOPS + age using the X-Wing hybrid KEM (X25519 + ML-KEM-768) via the age-plugin-pqctoday ...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1099,7 +1099,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined wit...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1113,7 +1113,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Demonstrate post-quantum software signing with the forked Sigstore cosign (v3.0.6 + ML-DSA-65) — sign a manifest with...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1127,7 +1127,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Execute OpenSSL TLS 1.3 handshakes with configurable certificate formats. In pure-ML-DSA mode the server cert is an M...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1141,7 +1141,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Walk the TCG TPM 2.0 V1.85 key hierarchy and see the concrete cost of migrating each key role (EK / SRK / AIK / IDevI...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',
@@ -1155,7 +1155,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     description:
       'Secure site-to-site IPsec routing hidden behind SoftHSMv3 IKEv2 Key Exchanges, contrasting classical Diffie-Hellman v...',
     kind: 'sandbox-tool',
-    index: true,
+    index: false,
     sourceGlobs: [
       'src/data/sandboxScenarios.ts',
       'src/components/Playground/SandboxScenarioEmbed.tsx',

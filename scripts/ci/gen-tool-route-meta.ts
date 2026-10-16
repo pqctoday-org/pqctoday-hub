@@ -66,7 +66,7 @@ const LABS: ToolRouteRecord[] = [
     description:
       'Understand the requirements and workflows for PQC Today container scenarios that exercise full cryptographic applications outside the browser.',
     kind: 'lab',
-    index: true,
+    index: false,
     sourceGlobs: ['src/components/Playground/DockerPlaygroundView.tsx'],
     contentRegion: '#main-content',
   },
@@ -106,7 +106,9 @@ const records: ToolRouteRecord[] = [
     title: `${tool.name} — PQC Crypto Lab | PQC Today`,
     description: cleanDescription(tool.description),
     kind: (tool.sandbox ? 'sandbox-tool' : 'browser-tool') as Kind,
-    index: true,
+    // The Docker sandbox is a separate product the Hub no longer embeds, so its
+    // scenario pages stay reachable but are kept out of search (noindex, no sitemap).
+    index: !tool.sandbox,
     sourceGlobs: tool.sandbox
       ? [
           'src/data/sandboxScenarios.ts',

@@ -66,5 +66,11 @@ describe('isNoindexRoute', () => {
   it('does not flag indexable routes', () => {
     expect(isNoindexRoute('/')).toBe(false)
     expect(isNoindexRoute('/simulation')).toBe(false)
+    expect(isNoindexRoute('/playground/hsm')).toBe(false)
+  })
+  it('flags the Docker sandbox pages, a separate product kept out of search', () => {
+    expect(isNoindexRoute('/playground/docker')).toBe(true)
+    expect(isNoindexRoute('/playground/sbx-vpn')).toBe(true)
+    expect(getRouteMeta('/playground/sbx-vpn/').noindex).toBe(true)
   })
 })

@@ -162,7 +162,7 @@ describe('SandboxScenarioEmbed', () => {
   it('shows an unreachable message when the status probe fails', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('ECONNREFUSED')))
     renderAt(`/playground/sbx-${firstScenario.id}`)
-    expect(await screen.findByText(/pqctoday-sandbox is not reachable/i)).toBeInTheDocument()
+    expect(await screen.findByText(/The Docker sandbox is not connected/i)).toBeInTheDocument()
     expect(document.querySelector('iframe')).toBeNull()
   })
 
