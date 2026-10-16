@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { Suspense, lazy, useRef, useState } from 'react'
 import { Download, FileCheck2, Loader2, Upload } from 'lucide-react'
 import { Link } from 'react-router'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Community leaders behind a patent's inventors, for PatentDetail's
  * `/leaders?leader=<name>` links.

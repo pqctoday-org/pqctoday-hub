@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** Deep-link remediation PR 1 — ?id= on a phone: not-found, widening, push. */
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'

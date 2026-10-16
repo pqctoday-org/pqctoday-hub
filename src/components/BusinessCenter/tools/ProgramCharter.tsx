@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Program Charter — Phase 0 (Executive Mandate) Command Center gap-closer.
  *

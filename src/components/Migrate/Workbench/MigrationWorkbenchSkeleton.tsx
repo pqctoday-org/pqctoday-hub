@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // First-paint skeleton for /migrate. Same reasoning as LibraryViewSkeleton:
 // MigrationWorkbench is a lazy route chunk, so the skeleton has to live in an

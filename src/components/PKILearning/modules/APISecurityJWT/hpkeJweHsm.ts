@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * HsmHpkeOps backed by SoftHSM3 (Rust engine) through PKCS#11 CKM_HPKE.
  *

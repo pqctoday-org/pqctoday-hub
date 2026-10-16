@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Phase 3 tests for Step5Compliance's free-text business-context
  * rescue: opt-in disclosure that proposes frameworks not visible in

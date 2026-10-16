@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { Plus, TreePine, Loader2, Trash2, Info, AlertTriangle } from 'lucide-react'
 import { Input } from '@/components/ui/input'

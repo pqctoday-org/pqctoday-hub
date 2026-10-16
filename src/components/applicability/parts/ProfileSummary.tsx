@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Globe } from 'lucide-react'
 import { useAssessmentFormStore } from '../../../store/useAssessmentFormStore'
 import { FilterDropdown } from '../../common/FilterDropdown'

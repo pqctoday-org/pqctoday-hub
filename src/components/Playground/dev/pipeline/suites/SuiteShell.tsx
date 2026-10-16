@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // SuiteShell — the Build tab's shared Builder/Code chrome for the ACVP and
 // Conformance suites (design handoff design_handoff_kmip_pkcs11_playground

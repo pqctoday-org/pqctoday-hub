@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Maps PKCS#11 return codes and WASM runtime errors to user-readable messages
  * with actionable retry suggestions.

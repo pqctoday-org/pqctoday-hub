@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression test for the 2026-09-26 key-deleting defect: navigating from the
 // HSM playground's Build tab to Inspect › Keys wiped the user's keys, because

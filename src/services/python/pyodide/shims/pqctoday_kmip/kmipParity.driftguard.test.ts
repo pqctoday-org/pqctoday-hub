@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Shim parity driftguard for the KMIP lane (dev-tabs-pkcs11-kmip plan G6).
 // Same role as ../p11Parity.driftguard.test.ts: a checked-in manifest of

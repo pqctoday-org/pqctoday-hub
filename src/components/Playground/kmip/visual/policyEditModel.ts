@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection -- trusted-input model: keys
    come from the shipped policy grammar / the typed rule catalog, never from
    user-controlled property names. */

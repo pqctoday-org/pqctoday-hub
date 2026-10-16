@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** Phone product sheet: maintainer → Community links, same as desktop. Real data. */
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, within } from '@testing-library/react'

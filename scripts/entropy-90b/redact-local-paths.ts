@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Published measurement files describe how a dataset was recorded (the
  * command line), but must not carry the recording machine's local paths: a

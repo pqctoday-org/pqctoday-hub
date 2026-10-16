@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // AcvpSuiteWorkbench — the Build tab's Cryptographic Validation Workbench
 // (historically "the ACVP suite"; it mixes evidence classes, so the visible

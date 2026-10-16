@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */ // keys are trusted (PersonaId literals from PERSONAS)
 //
 // Driftguard for persona-path PLACEMENT — the half of discoverability that

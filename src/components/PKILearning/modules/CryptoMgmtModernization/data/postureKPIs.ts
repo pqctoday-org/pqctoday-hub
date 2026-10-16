@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Posture KPI taxonomy used by PostureKPIDesigner.
  * Each KPI belongs to exactly one pillar; audience is a suggested stakeholder.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CPM capability maturity model.
  * 5 pillars x 4 tiers (CSWP.39), with per-asset-class indicators.

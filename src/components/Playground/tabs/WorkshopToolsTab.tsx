@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useEffect, Suspense, useCallback } from 'react'
 import { ArrowLeft, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'

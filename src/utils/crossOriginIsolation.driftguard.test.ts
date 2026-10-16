@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
 /**
  * Only routes in COI_ROUTE_PREFIXES get the cross-origin-isolation reload. A

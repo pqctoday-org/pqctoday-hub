@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The values the Algorithms page's filter dropdowns offer (and its URL accepts
  * as `?family=`, `?fn=`, `?region=`, `?status=` and `?level=`).

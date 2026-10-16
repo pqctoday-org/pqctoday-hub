@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pinned registry of the ACVP {algorithm, mode, revision} triples this
  * prototype accepts (F-1). A triple not listed here is rejected — there is no

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Parity tests for the illustrative simulator (policySim.ts) against the
 // Rust engine's semantics (pqctoday-hsm/kmip/src/policy/rule.rs::check_pass2),

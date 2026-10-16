@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 2 (2026-09-29): the phone view honours `?reqfw=` and `?step=`
 // (and lets `cswpview` / legacy `tab` values pick a section) like desktop.

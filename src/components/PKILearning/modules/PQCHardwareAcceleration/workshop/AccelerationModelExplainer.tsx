@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop step 1 — the seven acceleration models, each in plain English
  * first (analogy / what's different / the catch), then an animated diagram

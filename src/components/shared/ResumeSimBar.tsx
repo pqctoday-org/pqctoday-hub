@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ResumeSimBar — a sim-branded header strip shown on hub pages while a PQC Today
  * Sim run is in progress. The player reaches hub resources from inside the sim

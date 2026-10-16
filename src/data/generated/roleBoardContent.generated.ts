@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
  * Source: src/data/role_board_content_10162026_r33.csv

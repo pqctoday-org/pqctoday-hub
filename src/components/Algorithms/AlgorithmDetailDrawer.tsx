@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * AlgorithmDetailDrawer — the per-algorithm detail opened by `?algo=<algorithm_id>`
  * (AlgorithmsView). Right-anchored overlay, same shape as the Library and

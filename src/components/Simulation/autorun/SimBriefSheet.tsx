@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimBriefSheet (sim-mobile-full-play WS-2/WS-3) — the phone "read it, answer
  * one check, file it" screen shared by two step kinds:

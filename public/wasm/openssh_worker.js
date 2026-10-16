@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // openssh_worker.js — runs the REAL OpenSSH WASM handshake off the main thread.
 //

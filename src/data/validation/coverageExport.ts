@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * coverageExport — human-readable renderings of the coverage matrix (plan
  * WS-C C-6): a Markdown file and a standalone, script-free HTML page, both

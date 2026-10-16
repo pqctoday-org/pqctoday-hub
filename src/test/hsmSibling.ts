@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The sibling pqctoday-hsm checkout, and what a guard does when it is missing.
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 4 (2026-09-29): an open product row and a Roadmaps vendor
 // card each carry their own Share — the top-bar Share can hold the plan

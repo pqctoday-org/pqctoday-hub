@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Glossary widget that surfaces NIST CSWP 39's primary crypto-agility definition
 // alongside the alternative definitions catalogued in Appendix B (p.41). Mounted

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Review screen — every answer grouped by domain, editable, with recommended
 // defaults flagged, before the report is generated.

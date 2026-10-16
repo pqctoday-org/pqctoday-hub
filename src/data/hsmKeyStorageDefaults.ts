@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // hsmKeyStorageDefaults.ts — data + math for the "Memory space required" section
 // of HsmCapacityCalculator. Models HSM key-object storage (private key + the

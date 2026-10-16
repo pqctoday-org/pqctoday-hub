@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The point of "how this was calculated" is that it is TRUE. A disclosure that
  * describes a formula the scorer is not running is worse than no disclosure —

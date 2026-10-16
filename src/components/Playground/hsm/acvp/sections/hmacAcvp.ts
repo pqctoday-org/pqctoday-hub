@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // HMAC key / message / tag-length matrix (remediation plan 2026-09-24, WS-E).
 // Per engine, for all 11 HMAC digests both engines advertise:

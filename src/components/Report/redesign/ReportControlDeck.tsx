@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ReportControlDeck — the redesign's consolidated control bar: a derived track
  * label (Fast / Full report — NOT a toggle; it reflects which assessment was

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Codegen regression coverage (dev-tabs-pkcs11-kmip plan G6). Snapshots
 // every shipped template's emitted Python so a codegen change shows up as

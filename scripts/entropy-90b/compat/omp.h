@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-3.0-only
+/* SPDX-License-Identifier: AGPL-3.0-only
  *
  * Single-threaded OpenMP stand-in for the WebAssembly build of the NIST
  * SP 800-90B EntropyAssessment tool.

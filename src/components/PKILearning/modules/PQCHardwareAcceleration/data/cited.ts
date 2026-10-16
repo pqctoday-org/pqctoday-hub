@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * THIRD-PARTY, CITED facts — NOT measured by PQC Today. Rendered visually
  * separate from data/measurements.ts ("Published, not measured by us").

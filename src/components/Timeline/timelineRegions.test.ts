@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The Timeline's region filter offers the same regions the rest of the site
  * defines (the persona region and its country lists). A region missing here

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Manifest registry — assembles every co-located modules/<X>/manifest.ts into a
  * single collection, mirroring src/simulation/index.ts's tree assembly. During

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Drift guard for the Mechanism Discovery name table (MECH_TABLE in
 // session.ts) vs. what the two real engines actually advertise via

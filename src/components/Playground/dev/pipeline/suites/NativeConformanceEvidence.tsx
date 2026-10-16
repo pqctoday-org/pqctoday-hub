@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // NativeConformanceEvidence — WS-G G-6: the pqctoday-hsm engines' own PKCS#11
 // v3.2 conformance suites, shown from src/data/validation/

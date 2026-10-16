@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The category list is what the page filters by and what `?cat=` takes — and
  * what the PQC Assistant names in its links (promptBuilder.ts). It once stopped

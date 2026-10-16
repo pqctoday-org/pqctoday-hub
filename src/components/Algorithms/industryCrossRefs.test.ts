@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Unit tests for the Industry Landscape cross-reference resolvers. These run
 // against the REAL loaded data, not fixtures, wherever the assertion is about a

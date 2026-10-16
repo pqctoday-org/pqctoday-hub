@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WorkshopResultCard (sim-mobile-full-play WS-3, plan §4.4) — a pre-computed
  * result for the 6 gating `workshop` steps, shown inside SimBriefSheet on a

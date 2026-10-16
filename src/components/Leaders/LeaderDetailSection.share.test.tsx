@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Share inside the expanded inline Community card (cards + table views): the
 // clean /leaders?leader=<leaderId> link, never the reader's filters.
 import { describe, it, expect, vi, beforeEach } from 'vitest'

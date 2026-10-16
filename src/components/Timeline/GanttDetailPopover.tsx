@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'

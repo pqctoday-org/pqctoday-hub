@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8 UX fix (2026-09-19): reviewed data revisions that merged after
  * the reader's previous landing visit. Returns null until there is something

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { motion } from 'framer-motion'
 import { Info, Shield, ExternalLink, Scale, Heart, Code, FileText } from 'lucide-react'
 import { Link } from 'react-router'
@@ -22,12 +22,13 @@ export function LicenseSection() {
       <div className="prose prose-invert max-w-none">
         <p className="text-muted-foreground">
           PQC Today is open source software released under the{' '}
-          <strong>GNU General Public License v3.0 (GPLv3)</strong>.
+          <strong>GNU Affero General Public License v3.0 (AGPL-3.0-only)</strong>.
         </p>
         <p className="text-muted-foreground mt-2">
           You are free to copy, distribute, and modify this software, provided that any
-          modifications are also released under the same license terms. This ensures that the
-          project remains free and accessible to the PQC community.
+          modifications are also released under the same license terms, including when you run a
+          changed version as a service for others. For use without these terms, PQC Today, LLC
+          offers a commercial licence on request (pqctoday@proton.me).
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <a

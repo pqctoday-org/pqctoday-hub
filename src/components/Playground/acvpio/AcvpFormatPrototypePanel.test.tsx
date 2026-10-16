@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // F-5 / F-9: the browser flow is local-only. An import → run → download of a
 // real NIST fixture must make NO fetch / XHR / sendBeacon / WebSocket call and
 // write nothing to localStorage / sessionStorage / IndexedDB. The engine is the

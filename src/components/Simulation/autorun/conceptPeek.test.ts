@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { conceptBody } from './SimConceptPeek'
 import { EXEC_TOUR_CONCEPTS, EXEC_TOUR_OPENING_CONCEPTS, EXEC_TOUR_STAGES } from './execTourConfig'

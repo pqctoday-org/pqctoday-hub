@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Import CHANGELOG.md as raw text
 import changelogContent from '../../CHANGELOG.md?raw'

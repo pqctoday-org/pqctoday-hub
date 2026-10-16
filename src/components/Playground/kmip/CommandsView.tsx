@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // CommandsView — "Reference": a category-sorted, individually-parameterized
 // tester for every KMIP 3.0 operation (all 66 CSD02 defines — 64 carried

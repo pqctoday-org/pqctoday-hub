@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Migration estate config sanity — the card labels ARE the API surface the
 // policies pattern-match on, so drift between MIGRATION_KEYS and

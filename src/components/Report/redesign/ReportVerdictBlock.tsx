@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ReportVerdictBlock — the redesign's persona-aware "verdict": the same assessed
  * risk re-led for the active role. Sits above the existing "Do this first" hero so

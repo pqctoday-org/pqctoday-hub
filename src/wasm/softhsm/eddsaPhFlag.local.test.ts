@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pins the CK_EDDSA_PARAMS.phFlag read width against BOTH real engines.
 //

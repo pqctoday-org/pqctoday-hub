@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * Two merged results the Learn tab quotes in section 9 (2026-10-12 work, merged 2026-10-14):
  *  - an encrypted risk-scoring service that computes on CKKS ciphertexts under the token's keys

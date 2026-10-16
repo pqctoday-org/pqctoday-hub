@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { CheckCircle2, FlaskConical, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'

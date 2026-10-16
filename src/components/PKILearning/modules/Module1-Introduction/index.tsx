@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { BarChart3, KeyRound, PenLine, Shapes } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'

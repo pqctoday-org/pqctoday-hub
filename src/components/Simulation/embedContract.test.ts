@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * WS-09 — embed contract: a step the sim offers to embed must resolve to a real
  * mounted component, so a tool can't ship embed-broken.

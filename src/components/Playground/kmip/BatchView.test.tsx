@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Unit test for BatchView's per-item "chained"/"direct" UID toggle (K5,
 // gaps-closeout WP-4.1) — the item-rewrite logic the toggle button applies,

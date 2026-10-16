@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * LibraryRecentlyChanged — one horizontal strip of New & Updated documents,
  * replacing the live page's two stacked feeds (ActivityFeed + ContentUpdatesFeed)

@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Custom Service Worker — Workbox PWA caching + Cross-Origin Isolation headers.
 // Enables SharedArrayBuffer for WASM threading on GitHub Pages without server-side headers.
 

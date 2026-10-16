@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Regression guard for withTpmLock (tpmBridge.ts) — the reentrancy fix for
 // the 2026-07-24 TPM playground concurrency remediation. Pure logic, no WASM

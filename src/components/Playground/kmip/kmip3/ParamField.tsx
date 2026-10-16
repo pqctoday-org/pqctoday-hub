@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ParamField — one editable field in the Reference tab's per-op parameter
 // form, switched on `OpParam.kind`. Composes existing primitives (`Input`,

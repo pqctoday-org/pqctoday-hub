@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Cost-of-inaction model for the Business Case workshop's Cost of Inaction step.
  *

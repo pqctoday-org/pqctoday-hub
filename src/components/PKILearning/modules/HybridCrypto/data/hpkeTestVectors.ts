@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Official HPKE test vectors, vendored verbatim from RFC 9180 Appendix A.3:
 // DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-128-GCM — all four HPKE modes.
 // Source: https://www.rfc-editor.org/rfc/rfc9180.html#appendix-A.3

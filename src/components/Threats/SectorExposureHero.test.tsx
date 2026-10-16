@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Grade-A remediation Phase 2 (PLAN-08-THREATS.md): the "your migration
  * deadline" card computes `deadline = z - dataLife - MIGRATION_YEARS`, which

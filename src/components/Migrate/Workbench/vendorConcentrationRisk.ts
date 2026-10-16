@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pure extraction (2026-08-24 audit fix) from VendorConcentrationRiskPanel.tsx
 // — the "Vendor risk" tab's concentration/single-source/cert-gap/geographic

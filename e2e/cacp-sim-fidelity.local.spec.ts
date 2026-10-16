@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // CACP visual-sim FIDELITY audit — beyond verdict parity, does what the graph
 // SHOWS match what the engine DOES? For every scenario we compare, engine vs

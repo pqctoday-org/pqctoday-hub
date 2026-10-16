@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useId } from 'react'
 import { CheckCircle2, ExternalLink, HelpCircle, History, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'

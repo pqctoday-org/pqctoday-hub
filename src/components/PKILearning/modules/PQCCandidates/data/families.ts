@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The four mathematical families represented in the NIST signature on-ramp
  * Round 2 → Round 3 selection. Each entry summarises the hardness assumption,

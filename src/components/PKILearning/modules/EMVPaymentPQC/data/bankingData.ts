@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Banking and interbank-settlement data for the Financial Services & Payments
  * module (the banking half of the card/banking/retail merge).

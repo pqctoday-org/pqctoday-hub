@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * An importer that silently drops half a reader's inventory is worse than no
  * importer — they would carry a confident report built on a partial premise.

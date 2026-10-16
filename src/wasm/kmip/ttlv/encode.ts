@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // encode.ts — resolves a friendly `KmipNode` tree (tag/enum by NAME) into
 // the wire-ready `TtlvNode` shape (`{tag: "0x...", type, value, children}`)

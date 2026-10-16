@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The IT operations pack recipe: the artifacts a change board or an on-call
  * team needs for a PQC change, in a fixed order — scope, windows, capacity,

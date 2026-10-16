@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // lessonRunner — the shared step-outcome classifier and engine-boot guard for
 // the PKCS#11 Learn tab, used by BOTH HsmLearnView.tsx (the real UI runner)

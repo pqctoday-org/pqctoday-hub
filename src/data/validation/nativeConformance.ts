@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // WS-G G-6 — the engines' own PKCS#11 v3.2 conformance suites, imported from
 // the reports pqctoday-hsm commits, so the Hub never hand-writes their counts.

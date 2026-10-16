@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Reproduction records (researcher evidence workspace, Layer 2): two saved
  * run records of the same tool compared side by side — what differed in how

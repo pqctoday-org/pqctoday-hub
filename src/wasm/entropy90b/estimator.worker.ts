@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /// <reference lib="webworker" />
 /**
  * W2 — Web Worker hosting one run of the NIST SP 800-90B tool (WASM).

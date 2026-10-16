@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Content hash of the RAG corpus — the CHUNKS ONLY, deliberately not the file.
  *

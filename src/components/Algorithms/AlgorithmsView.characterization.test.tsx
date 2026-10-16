@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Characterization tests for AlgorithmsView's URL-sync contract — the SAFETY NET
  * for the upcoming `useAlgorithmExplorer` extraction (C5-full). These pin the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One Escape closes only the TOPMOST overlay — proved on the three real
  * stacked pairs that used to close together on a single press:

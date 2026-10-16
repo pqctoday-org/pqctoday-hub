@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // glossary.ts — the KMIP 3.0 Command Lab's "explain everything" data layer:
 // wire-tag meanings (ported from the design handoff's cacp3-glossary.js,

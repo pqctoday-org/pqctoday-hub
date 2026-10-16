@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Boot-time signature verification latency model for a microcontroller
  * root of trust (moved from the IoT/OT module's Hardware Constraints

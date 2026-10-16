@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Product → maintainer Community links (open_source_maintainers). Real data. The list is a lazily
  * loaded component (see ProductMaintainers.tsx), so each test waits for it to appear.

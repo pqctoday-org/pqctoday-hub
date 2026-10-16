@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Tiny "sample" badge surfaced next to data points (cert numbers, firmware
  * revisions, HSM products) that come from the illustrative educational

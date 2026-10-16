@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * record-source-checks.ts — run the two source checkers and record, per vector
  * file, that its expected values match the pinned trusted upstream.

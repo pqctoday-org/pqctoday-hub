@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Hover-popover badge that shows the §-reference for an artifact and, on
  * hover/focus, expands to a small popover with the parent section's summary

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W1 — parity of the WASM SP 800-90B tool against the native reference build.
  *

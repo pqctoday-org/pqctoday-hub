@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Persona-gating tests for HsmPlayground — curious/executive personas get an
 // advisory ExecutiveRedirectBanner already; this covers the newer, real

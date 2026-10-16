@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Per-(zone, artifact-type) rules that derive whether the user's assessment
  * answers imply a missing artifact is "Suggested" (i.e., high priority to

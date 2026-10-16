@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simAssets — the Simulation's enterprise risk/value model: the critical assets
  * (grounded in the hub's own assess-engine sensitivity data + the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { autoRunWalkthroughQueue } from './simAutoRun'
 import { EXEC_TOUR_STAGES, EXEC_TOUR_REVEAL_TYPES } from './execTourConfig'

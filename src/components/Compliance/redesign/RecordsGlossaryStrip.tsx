@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Persistent acronym glossary for the Product Records tab. Replaces the
 // hidden "Glossary" toggle — these terms gate comprehension of the whole

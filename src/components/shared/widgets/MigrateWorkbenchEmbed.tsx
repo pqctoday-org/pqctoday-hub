@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MigrateWorkbenchEmbed — renders the new PQC Migration Workbench inside the
  * simulation, under the "● Simulation mode" header.

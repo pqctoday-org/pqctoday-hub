@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Crypto Lab taxonomy — the editorial metadata the redesign layers on top of the
 // tool registry: intent "verbs" (the "I want to…" row) and per-category

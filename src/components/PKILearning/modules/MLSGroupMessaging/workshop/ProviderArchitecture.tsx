@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { CheckCircle2, AlertCircle, Cpu, Lock } from 'lucide-react'
 import { CRYPTO_ROUTING, MLS_LIBRARY_REFS } from '../data/mlsData'

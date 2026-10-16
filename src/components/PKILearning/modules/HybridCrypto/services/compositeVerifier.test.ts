@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeAll } from 'vitest'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { p256 } from '@noble/curves/nist.js'

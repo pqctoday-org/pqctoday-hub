@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drift guard — every tool's declared `requires` matches what its code actually
  * needs, re-derived from the component tree on every run.

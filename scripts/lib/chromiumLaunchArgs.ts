@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Chromium launch args for build/audit scripts that open app pages through the
  * `playwright` package directly (prerender, role-board audit, mobile-UX DOM

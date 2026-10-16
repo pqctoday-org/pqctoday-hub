@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Covers the Adaptive Proportion Test added 2026-08-12 — SP 800-90B §4.4.2, the
 // second of the two continuous health tests the standard requires. Until this

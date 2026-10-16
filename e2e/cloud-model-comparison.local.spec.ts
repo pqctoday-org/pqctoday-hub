@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect, type Page } from '@playwright/test'
 import { writeFile } from 'node:fs/promises'
 import { loadEnv } from 'vite'

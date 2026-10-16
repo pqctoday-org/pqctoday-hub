@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The architecture pack's own artifacts (Layer 2): scope, decision records and
  * the test plan. Each is stored in the artifact store as Markdown (`data`) plus

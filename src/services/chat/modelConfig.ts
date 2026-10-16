@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 /** Pinned provider defaults used by stores, services, and snapshot restore. */
 export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash'

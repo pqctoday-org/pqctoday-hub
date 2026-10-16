@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES, CRQC_ESTIMATE_KIND_LABELS } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'

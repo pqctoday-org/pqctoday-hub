@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Inline three-state pill for an artifact's approval status (draft → in-review
  * → approved). Drives `useModuleStore.updateExecutiveDocument` to advance

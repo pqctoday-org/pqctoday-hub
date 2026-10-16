@@ -618,8 +618,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   data changes since the user's last visit. Auto-opens for returning users with unseen changes;
   filters by persona and industry; shows deep-linked new/updated items from library, migrate,
   threats, timeline, and leaders data sources
-- **Terms of Service** (`/terms`): Legal compliance page covering GPL-3.0 licensing, educational
-  crypto disclaimer, export compliance (ECCN 5D002), prohibited destinations, acceptable use,
+- **Terms of Service** (`/terms`): Terms for the website covering the AGPL-3.0 licence, educational
+  crypto disclaimer, export compliance (ECCN 5D002), acceptable use,
   and privacy (client-side processing; anonymous usage counting with Google Analytics 4, as the
   Terms explain)
 - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
@@ -956,9 +956,9 @@ to report a vulnerability. For the current point-in-time numbers, run
 
 ## License
 
-This project is licensed under [GPL-3.0-only](LICENSE). See [Terms of Service](TERMS.md) for usage terms, export compliance (ECCN 5D002), and sanctions restrictions.
+AGPL-3.0-only, with a commercial licence on request. See [COPYRIGHT.md](COPYRIGHT.md) for the copyright, the third-party parts that keep their own licences, and how to ask for a commercial licence; the licence text is in [LICENSE](LICENSE). [Terms of Service](TERMS.md) covers the website (disclaimers, export notice).
 
-**Fork policy**: forks and redistributions (source or built artifacts) must be licensed under GPL-3.0-only and include the corresponding source. Private/internal forks with no distribution have no obligation to publish changes.
+Forks and redistributions (source or built artifacts) stay under AGPL-3.0-only and include the corresponding source. Running a changed version as a network service also means offering its source to the people who use it (AGPL section 13). Versions published before 16 October 2026 were released under GPL-3.0-only and stay under it for whoever has them.
 
 ---
 

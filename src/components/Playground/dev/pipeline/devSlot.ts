@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * devSlot — finds or creates the Developer tabs' own PKCS#11 token slot,
  * LABELED so it is never confused with the rest of the HSM playground's

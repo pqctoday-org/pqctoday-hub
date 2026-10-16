@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Self-hosts Monaco instead of letting @monaco-editor/react fetch it from
  * jsdelivr's CDN at runtime — the hub's CSP only allows script-src 'self'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useEffect } from 'react'
 import { PenTool, Loader2, Info, X, Check } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Grader for the AWS KMS policy lab. The lab's task is an IAM policy for the
 // people who create KMS keys: they may create ML-DSA signing keys only. Every

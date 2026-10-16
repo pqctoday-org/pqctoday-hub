@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Scale, ExternalLink } from 'lucide-react'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
@@ -108,8 +108,8 @@ export function TermsView() {
         <Section number={2} slug="license" title="License">
           <p>
             The Platform&apos;s source code is licensed under the{' '}
-            <strong>GNU General Public License v3.0 (GPL-3.0-only)</strong>. The full license text
-            is available in the{' '}
+            <strong>GNU Affero General Public License v3.0 (AGPL-3.0-only)</strong>, with a
+            commercial licence on request. The full license text is available in the{' '}
             <a
               href="https://github.com/pqctoday-org/pqctoday-hub/blob/main/LICENSE"
               target="_blank"
@@ -119,7 +119,7 @@ export function TermsView() {
               LICENSE file
               <ExternalLink size={12} />
             </a>
-            . Nothing in these Terms restricts rights granted under the GPL-3.0.
+            . Nothing in these Terms restricts rights granted under the AGPL-3.0.
           </p>
         </Section>
 
@@ -227,7 +227,7 @@ export function TermsView() {
             warranties of any kind, express or implied, including but not limited to warranties of
             merchantability, fitness for a particular purpose, accuracy, or non-infringement.
           </p>
-          <p>This is consistent with Sections 15 and 16 of the GPL-3.0 license.</p>
+          <p>This is consistent with Sections 15 and 16 of the AGPL-3.0 license.</p>
           <p>
             The Platform aggregates data from public sources including NIST, ETSI, IETF, BSI, ANSSI,
             ISO/IEC, and others. Content may be inaccurate, incomplete, or outdated. You should
@@ -282,7 +282,7 @@ export function TermsView() {
 
         <Section number={9} slug="intellectual-property" title="Intellectual Property">
           <ul className="list-disc pl-5 space-y-1">
-            <li>The Platform&apos;s source code is licensed under GPL-3.0.</li>
+            <li>The Platform&apos;s source code is licensed under AGPL-3.0-only.</li>
             <li>
               Original educational content, data compilations, and visualizations are copyright of
               the PQC Today maintainers.
@@ -394,7 +394,7 @@ export function TermsView() {
         {/* Footer note */}
         <p className="text-xs text-muted-foreground text-center pt-4 pb-8">
           PQC Today is an open-source, community-driven educational platform. These Terms supplement
-          &mdash; and do not replace &mdash; the rights and obligations under the GPL-3.0 license.
+          &mdash; and do not replace &mdash; the rights and obligations under the AGPL-3.0 license.
         </p>
       </div>
     </div>

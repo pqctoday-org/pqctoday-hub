@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // LessonsTour — the KMIP playground's binding of the shared coachmark tour
 // engine (`learnkit/TourEngine.tsx`, dev-tabs-pkcs11-kmip plan G5) to this

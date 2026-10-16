@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The unit tests for `splitCitations` prove the parsing. These prove the
  * rendering, which is a separate question: the component falls back to plain

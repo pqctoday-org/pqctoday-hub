@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pkcs11CertificateDemo — WP-3 showcase. KMIP Register (and Import) now
 // mirror a certificate onto the engine as a real CKO_CERTIFICATE PKCS#11

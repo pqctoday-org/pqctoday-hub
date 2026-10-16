@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Two lenses on the same catalog — B+ remediation 4.6 (2026-08-10).
  *

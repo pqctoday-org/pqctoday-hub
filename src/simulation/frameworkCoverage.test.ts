@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * W0 acceptance — the coverage manifest is complete, source-anchored, and
  * counted honestly.

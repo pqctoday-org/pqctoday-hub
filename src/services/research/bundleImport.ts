@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Read-only re-import of an evidence bundle zip, for a reviewer: the run
  * records (`runs/*.json`), the collections with their saved and current

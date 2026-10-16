@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "What this transition costs you" — B+ remediation 3.2 (2026-08-10).
  *

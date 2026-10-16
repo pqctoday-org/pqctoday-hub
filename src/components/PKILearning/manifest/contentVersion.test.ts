@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Learn-content versioning + drift reconciliation (B2).
  * Guards the declarative rename-map + orphan detection so a renamed/removed

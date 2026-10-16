@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ReactElement } from 'react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'

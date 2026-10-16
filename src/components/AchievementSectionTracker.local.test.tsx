@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Wave 4 (WP4.5) — /simulation must register as a tracked section so the
  * Explorer/Full Journey achievements can count a simulation visit; previously

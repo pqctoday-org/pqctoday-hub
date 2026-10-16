@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * IoT & Embedded Device PQC — the single source of every number the module
  * shows. Learn prose, the workshop steps and the exercises all read from here

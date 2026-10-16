@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { X, FlaskConical, ShieldCheck, GitCompare, BookOpen, Construction } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'

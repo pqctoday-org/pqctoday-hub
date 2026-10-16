@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection -- array index swaps use numeric
    loop counters and map lookups use typed `BatchErrorContinuation` keys, never
    user input. */

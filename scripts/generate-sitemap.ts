@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Sitemap generator — emits public/sitemap.xml from ROUTE_META, the same source
  * of truth the prerender step uses, so the sitemap can never drift from the set

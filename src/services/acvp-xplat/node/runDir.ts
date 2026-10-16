@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Node-only I/O for a WS-H evidence run directory (never import from browser
  * code). Layout — evidence/acvp-xplat/<runId>/:

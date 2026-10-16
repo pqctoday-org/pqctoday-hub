@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useState } from 'react'
 import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'

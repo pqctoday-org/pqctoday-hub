@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Two-Track sequencing lesson (Applied Quantum §5, p.94–114).
  *

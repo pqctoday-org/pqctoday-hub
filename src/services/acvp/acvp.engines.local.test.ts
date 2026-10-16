@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // WS-F real-engine proof (local venue: `npm run test:local -- src/services/acvp`,
 // per the 2026-07-01 directive that real-WASM suites are local-only).

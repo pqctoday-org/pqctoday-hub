@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * How a page picks which statement of a claim to show. A page that points at a claim id gets
  * the LATEST statement: a newer statement that replaces or updates the claim is shown first,

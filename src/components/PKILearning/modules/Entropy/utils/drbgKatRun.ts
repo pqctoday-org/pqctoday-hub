@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The DRBG step's known-answer check: every pinned NIST HMAC_DRBG vector, then
  * one-bit variants of two of them that must NOT match. Shared by the

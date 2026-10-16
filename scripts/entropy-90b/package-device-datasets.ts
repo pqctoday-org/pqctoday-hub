@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * D5 — package a SELECTION of the D2/D3 device datasets for the Hub's
  * "Entropy Evidence Lab" workshop step, with full provenance.

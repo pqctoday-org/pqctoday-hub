@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
 import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'

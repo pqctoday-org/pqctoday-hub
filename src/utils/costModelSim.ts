@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Simplified, illustrative simulation of the six PQC-migration cost-model
  * families taught in the Business Case Learn module. Every figure here is

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // algorithmListParser.ts — pure parsing for `openssl list ...` output, which
 // is human-formatted text with (verified live against the real bundled

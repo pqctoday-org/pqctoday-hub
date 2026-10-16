@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Driftguard for the PKCS#11 pipeline builder's palette metadata contract:
 // pipelineCatalogMeta.ts's own header promises "every id here must exist

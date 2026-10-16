@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Prompt parser (F-1 + F-2): text → framing → pinned-schema selection →
  * schema validation → uniqueness checks → IR. Implements rules P1–P6

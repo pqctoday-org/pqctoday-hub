@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * contentFreshness — the machine-auditable manifest of every time-sensitive
  * claim the simulation surfaces (CMVP/FIPS status, the protocol matrix snapshot,

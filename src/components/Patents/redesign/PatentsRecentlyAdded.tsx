@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PatentsRecentlyAdded — a horizontal strip highlighting patents new since the
  * last corpus update (status === 'New', derived by comparing the current dated

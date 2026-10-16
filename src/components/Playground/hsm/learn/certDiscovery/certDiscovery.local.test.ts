@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Replays the "Discovering certificates" lesson's engine work against a
 // FRESH Rust softhsmrustv3 instance (vitest gives every test file its own

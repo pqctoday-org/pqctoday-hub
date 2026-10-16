@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Icon registry for the Industry Landscape tab. `use_case_icon` values in
 // industry_landscape_*.csv must be keys of USE_CASE_ICONS (driftguard-tested)

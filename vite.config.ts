@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /// <reference types="vitest" />
 import { defineConfig, configDefaults } from 'vitest/config'
 import { bundledPackagesPlugin } from './scripts/sbom/vite-plugin-bundle-packages'

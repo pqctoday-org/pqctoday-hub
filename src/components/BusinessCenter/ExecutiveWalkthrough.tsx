@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ExecutiveWalkthrough — "Board pack in 3 steps," shown once to first-time
  * executive visitors on /business, per design_handoff_2026_pages/

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { describeReadinessFailure, validateSnapshot, type ReadinessFacts } from './prerenderChecks'
 import { SNAPSHOT_MAX_BYTES } from './snapshotBudget'

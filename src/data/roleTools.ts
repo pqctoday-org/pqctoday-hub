@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.3 (2026-09-19) — every tool a role can reach from its own
  * board. The six question-variant boards carry three to six curated cards

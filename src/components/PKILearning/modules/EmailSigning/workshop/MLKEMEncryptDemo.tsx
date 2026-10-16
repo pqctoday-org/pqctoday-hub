@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * MLKEMEncryptDemo — Phase 4 end-to-end CMS encrypt + decrypt using
  * ML-KEM-768 (or RSA / X25519 fallback) recipients.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // What the active policy resolves a "let the policy decide" create to, for the
 // Signing / Key-exchange default pills. Three outcomes must stay distinct:

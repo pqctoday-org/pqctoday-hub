@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The rebuild's whole promise is that the board a role sees and the badges a
  * role can be given are THE SAME LIST. Before this, the grid hid rungs the

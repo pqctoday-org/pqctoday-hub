@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pure unit tests for classifyStepOutcome — no WASM engine needed, since the
 // function only reasons about an `expect` value and a slice of log entries.

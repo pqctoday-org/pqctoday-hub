@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * UnifiedSearchService.searchPaletteWithHidden — how many results the
  * "Authoritative only" palette filter removed, so the ⌘K palette can say so.

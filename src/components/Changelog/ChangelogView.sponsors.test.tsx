@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Sponsor-acknowledgment panel on /changelog — makes /sponsor's "Thank-you
  * note in the monthly changelog" benefit literally true (ACCURACY-0709-3).

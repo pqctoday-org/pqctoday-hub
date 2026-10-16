@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * conceptPeekLinks — the "learn more" Learn module for each concept peek
  * (WP2.3). Drift-guarded by conceptPeekLinks.test.ts against MODULE_CATALOG,

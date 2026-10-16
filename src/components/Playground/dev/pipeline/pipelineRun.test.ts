@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Round-trip and seam tests for the shared pipeline persistence module
 // (dev-tabs-pkcs11-kmip plan G6). "Test the seam, not the halves" — the

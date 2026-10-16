@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Evidence-label guards (ACVP remediation plan 2026-09-24, WS-A A-2, WS-I):
  * a button, label, spec or result string may say "NIST"/"ACVP" only when the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SpecDrawerHost — opens the library's document drawer *in place*, on whatever
  * page you're already on, from a `?spec=<library reference_id>` param.

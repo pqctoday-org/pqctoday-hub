@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The tools that save a run record (run manifest) to "my evidence", and where
  * each one lives. Kept free of imports so start-up code (the history seeder)

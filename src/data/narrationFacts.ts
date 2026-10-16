@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * narrationFacts — single source for the real-world facts the simulation's
  * narration templates (demoDocs / derivedFinancialDocs / realToolDocs) used to

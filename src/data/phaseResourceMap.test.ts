@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drift guard for phaseResourceMap. The map is hand-maintained; this test only
  * checks structural integrity against the live registries so a new/removed

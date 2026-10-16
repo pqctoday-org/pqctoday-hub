@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Sample SBOMs for the SBOM -> CBOM mapper tool.
  * Intentionally simplified for teaching; not full spec-compliant documents.

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // /report's leading overview sections — countryTimeline, riskScore,
 // keyFindings, executiveSummary (REPORT_SECTION_ORDER). Grouped in one module
 // since each is a small, single-CollapsibleSection block. Visibility/phase

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // section61CitationDrift.local.test.ts — §6.1.x citation drift guard
 // (2026-07-24 CSD02 migration). Hub-side counterpart to

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Grade-A remediation, Phase 2 correctness fix (2026-08-02): table view never
 // received onSelectFramework, so clicking a row in table view did nothing —

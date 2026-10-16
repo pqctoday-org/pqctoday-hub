@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ML-DSA reference-sample depth for the ACVP workbench (remediation plan
 // 2026-09-24, WS-D D2-2/D2-3/D2-5 + D4 conference minimum).

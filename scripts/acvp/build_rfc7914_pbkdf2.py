@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Build src/data/acvp/pbkdf2_rfc7914_test.json from RFC 7914 section 11.
 

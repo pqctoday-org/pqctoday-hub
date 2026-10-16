@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // editorControls.tsx — small field controls for the visual policy editor's
 // inspector and simulator. All semantic-token styled; the tag editor supports

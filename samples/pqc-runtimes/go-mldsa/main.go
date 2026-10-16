@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ML-DSA-65 sign / verify with the Go standard library (crypto/mldsa, Go 1.27+).
 package main

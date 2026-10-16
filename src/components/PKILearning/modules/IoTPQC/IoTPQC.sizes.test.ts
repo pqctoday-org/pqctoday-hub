@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Exact sizes are the standards' own numbers. This pins every size the module
  * shows to two independent copies: the hub's algorithm registry (generated

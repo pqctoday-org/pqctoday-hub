@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Static data for the CSWP.39 Framework Explorer tab on the Compliance page,
  * and the CSWP.39 section accordion on the Command Center.

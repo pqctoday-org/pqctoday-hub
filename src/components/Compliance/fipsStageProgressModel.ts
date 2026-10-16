@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * PQC progress along the FIPS 140-3 track, month by month (Product Records tab).
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type DatabaseType = 'relational' | 'document' | 'cache' | 'time-series' | 'graph'

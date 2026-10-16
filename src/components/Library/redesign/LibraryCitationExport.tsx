@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Cite" — export Library records as BibTeX or CSL-JSON, either the
  * bookmarked set or the documents the current filter shows. Rides the global

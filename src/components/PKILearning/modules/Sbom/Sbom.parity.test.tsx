@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Render test for the SBOM ModuleShell module — asserts the gradient header,
  * the in-page description, and the standard six-tab set all render.

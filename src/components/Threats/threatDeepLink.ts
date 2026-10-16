@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `?id=` deep-link helpers shared by the desktop dashboard and the mobile
  * screen (deep-link remediation PR 1, 2026-09-28).

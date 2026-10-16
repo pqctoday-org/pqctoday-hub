@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // CKA_EC_POINT is a DER OCTET STRING around the SEC 1 point. A P-521
 // uncompressed point is 133 bytes, which needs the long-form length (0x81 0x85);

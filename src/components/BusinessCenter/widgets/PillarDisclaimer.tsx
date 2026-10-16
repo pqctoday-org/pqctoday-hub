@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Disclaimer noting that the five Crypto Posture Management pillar tags
  * (inventory, governance, lifecycle, observability, assurance) are an

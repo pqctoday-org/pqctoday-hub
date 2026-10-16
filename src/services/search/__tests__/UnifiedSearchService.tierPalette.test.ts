@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * UnifiedSearchService.searchPalette — tier-aware ordering + Authoritative-
  * only toggle (§14.3 step 2 + step 5 of trust-engine-explainability).

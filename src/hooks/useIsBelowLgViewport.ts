@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useState } from 'react'
 
 /** Tailwind's `lg` breakpoint (`--breakpoint-lg: 64rem` in theme.css) — the

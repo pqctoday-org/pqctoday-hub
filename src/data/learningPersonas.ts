@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read; hand-verified every
 // module id, estimatedMinutes sum (all 6 personas), and quiz-category
 // against live code; fixed one stale explanatory comment (researcher path)

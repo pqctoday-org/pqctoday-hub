@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * InspectChip — the compact "N calls · K keys — Inspect →" status chip the
  * redesigned workshops show at the top of every Operate/Build surface in

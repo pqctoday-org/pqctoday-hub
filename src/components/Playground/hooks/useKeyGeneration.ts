@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { createLogger } from '../../../utils/logger'
 import type { Key, LogEntry } from '../../../types'

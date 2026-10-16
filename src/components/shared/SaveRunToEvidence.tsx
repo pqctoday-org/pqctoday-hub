@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Save to my evidence": keeps a run record (run manifest) in the artifact
  * store as a `run-manifest` document, so the evidence bundle can include it.

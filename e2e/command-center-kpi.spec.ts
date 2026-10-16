@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // E2E — Command Center KPI surfaces (dashboard + tracker)
 //   * persona selector toggles KPI set
 //   * disabled / "unlock assessment" state renders

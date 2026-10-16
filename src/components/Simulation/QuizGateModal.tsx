@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * QuizGateModal (WP2.5) — the comprehension check gating a Learn module's
  * "Mark complete" in the embed header. Reuses the real quiz bank's own

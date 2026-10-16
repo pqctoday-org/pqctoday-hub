@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * DataTable — unified sortable table with optional pagination, row expansion,
  * and tree hierarchy support.

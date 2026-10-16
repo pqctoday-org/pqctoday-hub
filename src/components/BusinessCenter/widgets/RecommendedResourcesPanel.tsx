@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Link } from 'react-router'
 import { ExternalLink, FlaskConical, Library, BookOpen } from 'lucide-react'
 import { authoritativeSources } from '@/data/authoritativeSourcesData'

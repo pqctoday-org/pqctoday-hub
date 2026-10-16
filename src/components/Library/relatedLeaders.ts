@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Community leaders related to a library document — shared by the detail
  * drawer and the legacy LibraryDetailPopover (Compliance still hosts it), so

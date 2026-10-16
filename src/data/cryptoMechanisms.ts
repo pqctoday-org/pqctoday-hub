@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Canonical crypto-mechanism vocabulary for the Industry Landscape source.
 // Every `classical_mechanisms` / `pqc_mechanisms` / `mechanisms_referenced`

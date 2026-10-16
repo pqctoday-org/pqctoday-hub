@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Shared author
 /**
  * The module's anchor product (build spec §5): one fictional network HSM, sold

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Raw PKCS#11 helpers for the classical / symmetric / hash / MAC reference-sample
 // sections (remediation plan 2026-09-24, WS-E). Like pkcs11Raw.ts, every helper

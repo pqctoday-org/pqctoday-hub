@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // opTemplates.ts — one request-building function per KMIP 3.0 operation (all
 // 66 CSD02 defines — 64 carried over from CSD01 plus CSD02's

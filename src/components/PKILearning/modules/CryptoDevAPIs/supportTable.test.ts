@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guard for the module's single source of truth on PQC platform support
  * (data/pqcSupportData.ts) and for platform claims that have gone stale

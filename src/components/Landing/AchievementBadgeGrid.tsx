@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useRef, useState } from 'react'
 import { Info, Lock } from 'lucide-react'
 import { useAchievementStore } from '@/store/useAchievementStore'

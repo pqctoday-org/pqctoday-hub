@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Known-answer tests for the Entropy module's HMAC_DRBG (SHA-256).
 //

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // cacpSessionStorage — WS-4c (2026-08-28 gaps-remediation plan) persistence
 // for the CACP playground across a page reload. Deliberately narrow: which

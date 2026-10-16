@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The maintainers list is loaded on demand. If its code cannot be fetched (a tab left open across a
  * release, or no connection), the product view must stay and only the list is left out, not be

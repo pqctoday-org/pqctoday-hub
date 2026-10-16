@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * industryMatch — sector-key join between a user's industry (Assess /
  * persona vocabulary, e.g. 'Finance & Banking') and a data row's industry

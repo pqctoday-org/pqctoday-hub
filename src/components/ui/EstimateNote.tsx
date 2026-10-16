@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * EstimateNote — "Our estimate" beside a block of figures the site models
  * itself (cost bands, staffing sizes, latency budgets, sizing ratios) rather

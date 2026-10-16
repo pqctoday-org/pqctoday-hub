@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // algoFacts.ts — real published algorithm size/security facts (FIPS 203/204/
 // 205 parameter tables; classical sizes are the standard textbook figures).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * refresh-crate-license-texts — LOCAL ONLY (needs the cargo registry the Rust wasm was built
  * from, and the sibling pqctoday-hsm checkout for the vendored forks).

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Canonical Region + industry option lists — icon/label/description — shared
  * by every UI that lets a user pick a region or industry.

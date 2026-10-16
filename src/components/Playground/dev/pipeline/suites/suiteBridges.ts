@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pyodide JS modules for the suite Code views. Registered per run with
 // `py.registerJsModule('acvp_native', …)` / `('pkcs11_conformance', …)` next

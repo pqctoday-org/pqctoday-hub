@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ── Two key-lifecycle scenarios for the "FHE + HSM Flows" workshop step (2026-10-11) ─────
 // 1. CKKS key rotation without decrypting stored data (pqctoday-hsm #351 and #354, merged).

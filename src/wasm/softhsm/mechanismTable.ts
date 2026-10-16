@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * mechanismTable.ts — the single source of truth mapping CKM_ mechanism type
  * codes to their canonical name / description / family for the Mechanism

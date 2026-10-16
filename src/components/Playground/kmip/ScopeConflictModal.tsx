@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // ScopeConflictModal — WS-7B (2026-08-28 gaps-remediation plan), built as
 // future-proofing per an explicit decision, not wired to a live call site.

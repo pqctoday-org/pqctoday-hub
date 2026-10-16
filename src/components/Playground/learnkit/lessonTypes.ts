@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // lessonTypes.ts — protocol-agnostic shapes for a Learn tab's guided
 // curriculum, generalized from the KMIP playground's kmip3/learnLessons.ts.

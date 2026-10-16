@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * testRegistry — the machine-readable TEST inventory the coverage matrix joins
  * against the capability inventory (plan WS-C C-2). Static on purpose: the

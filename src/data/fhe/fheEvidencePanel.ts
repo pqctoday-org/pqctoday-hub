@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * What the workshop's results panel shows for one validated step (owner decision 2026-10-03:
  * "Summary + key numbers table"). Built only from the signed manifest record: the optional

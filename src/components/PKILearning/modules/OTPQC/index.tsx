@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, type FC } from 'react'
 import { Network, Layers, Factory, AlertTriangle, Map, FileSignature } from 'lucide-react'
 import { OTPQCIntroduction } from './components/OTPQCIntroduction'

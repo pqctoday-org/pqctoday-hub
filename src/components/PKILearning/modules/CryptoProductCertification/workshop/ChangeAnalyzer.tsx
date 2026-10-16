@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Shared author
 /**
  * Optional workshop step `change-analyzer` (plan r1 Workshop 4): pick a change

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 """
 Build src/data/acvp/aesgcm_test.json from NIST's CAVP GCM test vectors.
 

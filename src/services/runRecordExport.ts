@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * JSON download of a run manifest (`runManifest.ts`), shared by the tools that
  * offer "Download run record (JSON)".

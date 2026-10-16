@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A short form for the research question: the question, its type, which
  * sources count and which do not, and the evidence threshold. Saved

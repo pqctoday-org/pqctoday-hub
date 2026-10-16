@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure adapters mapping the Library CBOM Builder's catalog/SBOM rows onto the
  * shared CycloneDX 1.7 component model (`services/cbom/cycloneDx.ts`), plus the

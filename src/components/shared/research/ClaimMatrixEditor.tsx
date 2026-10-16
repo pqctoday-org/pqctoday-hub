@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A simple table editor for the claim matrix: one row per atomic claim, with
  * a status the user sets, supporting and contrary Library record ids, a

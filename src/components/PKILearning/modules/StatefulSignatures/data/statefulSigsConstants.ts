@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import {
   CKP_LMS_SHA256_M32_H5,
   CKP_LMS_SHA256_M32_H10,

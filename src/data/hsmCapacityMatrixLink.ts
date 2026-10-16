@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Grounding link between the HSM Capacity Calculator's use cases and the PQC
  * Protocol Support Matrix (src/data/pqcProtocolMatrix.ts).

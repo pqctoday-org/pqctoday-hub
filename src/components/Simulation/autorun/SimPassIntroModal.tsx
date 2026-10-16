@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * SimPassIntroModal — the card shown before each MATURITY PASS of the auto-run.
  *

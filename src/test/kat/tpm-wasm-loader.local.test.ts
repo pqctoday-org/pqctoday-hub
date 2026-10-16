@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // WS0(b) spike result, kept as a living guarantee: the shipped pqctpm WASM
 // (public/wasm/pqctpm.{js,wasm}) loads and executes inside vitest via the

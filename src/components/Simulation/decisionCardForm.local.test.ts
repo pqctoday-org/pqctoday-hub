@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Guardrail (local-only, not run in CI): the correct decision card must not
  * be guessable by grammatical FORM alone — a task-shaped label ("Learn: X",

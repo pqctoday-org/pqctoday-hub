@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // The curated Software Bill of Materials the About page renders (SbomSection.tsx).
 //

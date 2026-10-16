@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Real-engine KAT for the WS-G mechanism inventory: loads BOTH shipped WASM
 // engines, captures C_GetMechanismList + C_GetMechanismInfo through

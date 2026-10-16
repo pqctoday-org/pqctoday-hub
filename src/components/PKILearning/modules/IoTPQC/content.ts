@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Structured content for the IoT & Embedded Device PQC module (LM-074).
  * Rewritten 2026-10-01 for the IoT/OT split: OT, rail, V2X and secure-boot

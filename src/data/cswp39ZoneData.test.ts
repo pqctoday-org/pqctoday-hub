@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { PILLAR_TO_STEP, PILLAR_TO_ZONE, CSWP39_ZONE_ORDER, legacyToZoneId } from './cswp39ZoneData'
 import type { PillarId } from '@/types/MaturityTypes'

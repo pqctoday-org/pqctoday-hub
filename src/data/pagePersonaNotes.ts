@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8, Wave C (2026-09-19) — "What this means for you" on eleven routed
  * reference pages. /navigate is a full-screen canvas with no header to sit under,
@@ -177,7 +177,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       "The site gives information, not legal or compliance advice; decisions remain yours and your counsel's.",
     grc: 'The License and Third-Party Content sections say what you may reuse and how to attribute it; check them before putting tables in an audit file.',
     developer:
-      'The source code licence is GPL-3.0-only, and nothing in these terms restricts the rights it grants.',
+      'The source code licence is AGPL-3.0-only, and nothing in these terms restricts the rights it grants.',
     architect:
       'Simulations and tools are educational; the Cryptographic Disclaimer says production designs need your own validation.',
     researcher:

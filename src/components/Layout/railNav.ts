@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Pure, testable logic behind the two-axis rail (persona-journeys A-grade
  * redesign, 2026-08-01). MainLayout.tsx renders from this; this file owns no

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { industryComplianceConfigs } from '../../data/industryAssessConfig'
 import { sectorCodesOverlap } from '../../utils/applicabilityEngine'
 import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'

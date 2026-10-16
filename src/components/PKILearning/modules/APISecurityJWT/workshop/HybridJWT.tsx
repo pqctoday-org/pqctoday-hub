@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
 import { Layers, ArrowRight, CheckCircle, XCircle, ShieldCheck } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'

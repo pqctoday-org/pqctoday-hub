@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @reviewed 2026-09-01 by eram2207usa — full read + module-id cross-check
 // against all 65 real manifests; added 3 real modules that were missing
 // entirely (pqc-grc, skills-team-structure, soc-implementation-pqc)

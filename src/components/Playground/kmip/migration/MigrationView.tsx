@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Migration tab — validate a complete PQC migration against the real agility
 // engine. Section 1 (this milestone): build the seven-key CLASSICAL estate

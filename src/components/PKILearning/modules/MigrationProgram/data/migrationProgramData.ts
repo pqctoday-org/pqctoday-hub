@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Static reference data for the Migration Program Management workshop steps.
  * Covers migration phases, KPI dimensions, stakeholder roles, and playbook checklists.

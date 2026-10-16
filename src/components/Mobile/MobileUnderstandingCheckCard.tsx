@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /** Round 9, wave 2 (2026-09-19) — phone twin of shared/UnderstandingCheckCard (same data, mobile chrome). */
 import { Link } from 'react-router'
 import { GraduationCap, ArrowRight } from 'lucide-react'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimConfirmDialog — styled, focus-managed confirm for destructive run actions
  * (Reset run / Start over), replacing the native `window.confirm` those used.

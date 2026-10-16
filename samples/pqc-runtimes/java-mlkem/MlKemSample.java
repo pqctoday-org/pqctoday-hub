@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ML-KEM-768 round trip with the JDK (JEP 496, JDK 24+). Run: java MlKemSample.java
 
 import java.security.KeyPair;

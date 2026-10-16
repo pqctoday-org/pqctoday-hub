@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // ML-KEM-768 round trip with the Go standard library (crypto/mlkem, Go 1.24+).
 package main

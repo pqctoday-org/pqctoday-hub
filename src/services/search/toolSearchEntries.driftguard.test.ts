@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Drift guard — every browser-runnable tool is reachable from global search,
  * and no container-only scenario leaks into it.

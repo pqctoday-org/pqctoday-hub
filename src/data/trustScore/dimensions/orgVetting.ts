@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { DimensionResult, ScoredResourceType } from '../types'
 
 /** Well-known standards and compliance bodies — bonus for recognized names. */

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Wave sequencing metadata for the plan board (handoff §Wave). Tokens, not hex.
 
 export interface WaveMeta {

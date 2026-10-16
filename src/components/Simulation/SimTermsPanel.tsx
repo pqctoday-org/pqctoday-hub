@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimTermsPanel (07-29 review U-M4/E3) — always-available terms reference for
  * the sim console. The plain-language GUIDED_DEFS previously existed ONLY for

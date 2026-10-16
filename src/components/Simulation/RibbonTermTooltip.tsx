@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * RibbonTermTooltip — hover/tap plain-English definitions for ribbon/rail term
  * labels (educational-value gap-closing, 07182026). Sources content from

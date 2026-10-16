@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * `usePhaseFilter` — read the `?phase=<id>` query param and expose a matcher so
  * any page can narrow its phase-tagged items to the active phase.

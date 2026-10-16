@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 4 (2026-09-29): a phone item sheet covers the header's Share,
 // so every sheet that shows ONE item carries its own Share next to Close —

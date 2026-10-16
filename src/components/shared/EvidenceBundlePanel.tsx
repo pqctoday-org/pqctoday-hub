@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Download evidence bundle": one zip with the researcher's bookmarked Library
  * records (table, CSV, BibTeX, CSL-JSON), every run record saved to "my

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Multi-part message-signing targets: every mechanism × parameter set that
 // sections/multiMessageSign.ts runs and testRegistry.ts registers. One table so

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.1 (2026-09-19) — "Related content" for playground and
  * business tools, from `src/data/toolRelations.ts`. Same slot and shape as

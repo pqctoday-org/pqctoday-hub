@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // suiteCodegen — generated Python for the Build tab's Validation (historically
 // "ACVP") and Conformance suites (design handoff design_handoff_kmip_pkcs11_playground §3.6).

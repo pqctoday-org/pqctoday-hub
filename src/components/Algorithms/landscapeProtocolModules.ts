@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.6 (2026-09-19) — the protocol edge from the Industry
  * Landscape to Learn. A landscape row names one sector module in

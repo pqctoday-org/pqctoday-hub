@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * qualityIndicators (W7.5) — how this run actually went, as opposed to how far
  * it got.

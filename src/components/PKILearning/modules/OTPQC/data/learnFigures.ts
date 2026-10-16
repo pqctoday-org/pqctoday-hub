@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Every number the Learn tab, the exercises and rag-summary.md quote about a
  * workshop result is computed HERE from the same functions the workshop runs

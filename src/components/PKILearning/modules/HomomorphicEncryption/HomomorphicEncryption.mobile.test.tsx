@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The workshop on the phone shell (owner decision 2026-10-12): the module is on
  * MOBILE_WORKSHOP_READY, so the phone shell mounts the real workshop — eight flow scenarios in

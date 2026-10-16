@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Curated "Cert-relevant set" library picks for the ops persona
  * (P04 audit — persona-overwhelm-p0, PR 2 / P1).

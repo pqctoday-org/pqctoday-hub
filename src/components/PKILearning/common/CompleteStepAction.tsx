@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * CompleteStepAction — the single primary button for finishing a step, shared by
  * the executive save components and the simulation embed header so tools and

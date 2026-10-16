@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * trapRemediation (WP2.7) — maps a specific trap/pitfall title to the Learn
  * module that actually teaches the misconception behind it, so the Trap

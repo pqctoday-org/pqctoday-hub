@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo, type FC } from 'react'
 import { Database, ListChecks, Scale, SlidersHorizontal, Map } from 'lucide-react'
 import { DataAssetIntroduction } from './components/DataAssetIntroduction'

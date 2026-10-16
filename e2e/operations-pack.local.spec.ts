@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // E2E — IT operations pack: an ops user saves results from the capacity
 // calculators and the SSH config generator, sees them counted in the Command
 // Center's operations pack, and downloads the zip with one CSV per table. The

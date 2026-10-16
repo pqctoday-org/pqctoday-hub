@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { CSWP39StepId } from './cswp39Tier'

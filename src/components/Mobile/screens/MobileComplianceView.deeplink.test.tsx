@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Deep-link PR 1 (2026-09-28): the phone view honours the same params as desktop.
 import { describe, it, expect, beforeEach } from 'vitest'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Timeline scope helpers (C6) — pure functions that filter `CountryData[]` to a
  * scope. THE single source of truth for "what rows does scope X select?", used by

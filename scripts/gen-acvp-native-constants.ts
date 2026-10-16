@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-H: derive tools/acvp-native/pkcs11_constants.py from the hub's PKCS#11
 // tables (logic: src/services/acvp-xplat/nativeConstants.ts).
 //   npx tsx scripts/gen-acvp-native-constants.ts          # write

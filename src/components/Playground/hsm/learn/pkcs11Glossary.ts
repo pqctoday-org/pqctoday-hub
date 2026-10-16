@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // pkcs11Glossary.ts — the PKCS#11 Learn tab's "explain everything" data
 // layer, mirroring kmip/kmip3/glossary.ts's shape for the shared

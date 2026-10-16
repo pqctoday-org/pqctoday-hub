@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ErrorDetailPanel — excType/message + a click-to-expand full traceback.
  * Shared by both pipeline builders' Inspect views (StepInspectPanel on the

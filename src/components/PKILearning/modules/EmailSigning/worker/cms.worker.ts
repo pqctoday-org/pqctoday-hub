@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // IMPORTANT: this worker is `type: 'classic'` (Web Worker constructor option
 // in CMSSigningService). In Vite dev mode, classic workers cannot consume

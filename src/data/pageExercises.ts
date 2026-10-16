@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * "Try it" questions for routed reference pages, rendered under the page by
  * RoutePageExercise (desktop: the shared ToolExercise with family 'page';

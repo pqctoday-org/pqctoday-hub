@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Urgency Tiers 1–4 — gap-closer #2 (spec, Assess #2; framework §3.2 p.75).
  *

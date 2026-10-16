@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: AGPL-3.0-only
 #
 # Run one, several or all post-quantum runtime samples and check their output
 # against expected.json (every SIZE line must match; the last line must be

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useBodyScrollLock, bodyScrollLockCount } from './useBodyScrollLock'

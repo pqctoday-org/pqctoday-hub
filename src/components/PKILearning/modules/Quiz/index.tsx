@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
 import { fips1403Stage } from '@/data/kpiCatalog'
 import { useAssessmentStore } from '@/store/useAssessmentStore'

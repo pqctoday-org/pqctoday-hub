@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // SLH-DSA reference-sample depth for the validation workbench (remediation
 // plan 2026-09-24, WS-D D3-2..D3-4). Rows, per engine:

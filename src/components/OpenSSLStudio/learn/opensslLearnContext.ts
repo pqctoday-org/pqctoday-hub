@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // opensslLearnContext — what a lesson step runs against. Two implementations
 // share this one interface so the SAME lesson step code (opensslLessons.ts)

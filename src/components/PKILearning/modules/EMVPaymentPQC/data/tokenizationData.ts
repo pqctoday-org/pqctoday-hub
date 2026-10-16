@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { TokenizationFlow, MobileWallet } from './emvConstants'
 
 export const TOKENIZATION_FLOWS: TokenizationFlow[] = [

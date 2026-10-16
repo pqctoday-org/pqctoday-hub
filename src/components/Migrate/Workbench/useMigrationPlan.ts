@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Derived "posture" for the Migration Workbench. All numbers are computed over
 // the user's PLANNED assets only (not the whole catalog) — that is the key

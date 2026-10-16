@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Right-anchored drill-down drawer for any pillar row. Its centrepiece is the
 // traceability chain — the page's whole premise made visible: a mandate →

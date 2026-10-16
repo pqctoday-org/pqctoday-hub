@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { CheckCircle2, AlertCircle, Circle } from 'lucide-react'
 import type { InfraLayerCoverage } from '../hooks/useBusinessMetrics'
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { logModuleTabSwitch } from '@/utils/analytics'
 import { useEmbeddedLearn } from '@/components/PKILearning/embeddedLearnContext'

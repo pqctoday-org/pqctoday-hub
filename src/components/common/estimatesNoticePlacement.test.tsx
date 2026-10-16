@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Where the "estimates are still open" notice must appear (follow-up release). A page that
  * quotes or takes a CRQC year or qubit count carries it; a page that quotes none does not.

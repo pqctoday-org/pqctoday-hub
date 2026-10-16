@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 /**
  * Structured content for the PCI Certification deep dive (LM-071).

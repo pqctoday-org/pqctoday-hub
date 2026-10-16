@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The Command Center's empty-state intro: the sentence and the four questions it
  * opens with. One copy for both shells (BusinessCenterView and

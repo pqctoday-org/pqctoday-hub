@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 2 (2026-09-19) — the "Try it" question for the routed PAGES,
  * mounted once in MainLayout after the outlet (modules and tools render their

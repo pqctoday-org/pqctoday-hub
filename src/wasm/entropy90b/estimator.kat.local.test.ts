@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
 /**
  * KAT: the WASM build of the NIST SP 800-90B tool must reproduce the pinned

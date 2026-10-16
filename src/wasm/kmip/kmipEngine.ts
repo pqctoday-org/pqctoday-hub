@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // kmipEngine.ts — thin async wrapper around the in-browser crypto-agile KMIP 3.0
 // control plane (pqctoday-kmip-wasm: the pqctoday-kmip library core bundled with

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * One-time notice for users whose assessment country gained its own sim archetype
  * in the Phase 3 consolidation (CA/EU/JP/KR/SG/IN previously resolved to a nearby

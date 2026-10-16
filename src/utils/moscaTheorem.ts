@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mosca's inequality: if the time data must stay secure (x) plus the time to
  * migrate (y) exceeds the time until a CRQC exists (z), you are already too

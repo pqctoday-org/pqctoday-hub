@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useCallback } from 'react'
 import { useOpenSSLStore } from '../store'
 import type { WorkerMessage, WorkerResponse } from '../worker/types'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { CheckCircle2, FileSearch, Loader2, XCircle } from 'lucide-react'
 import clsx from 'clsx'

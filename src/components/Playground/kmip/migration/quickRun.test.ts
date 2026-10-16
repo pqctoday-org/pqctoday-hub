@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import { buildQuickRunSummary, QUICK_RUN_LABEL, type QuickRunRecord } from './quickRun'
 import { MIGRATION_KEYS } from './migrationKeys'

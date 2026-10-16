@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * p11Bridge — exposes the raw PKCS#11 v3.2 C_* entry points of the hub's own
  * softhsmv3 WASM engine to Pyodide, so the Python-side `p11.py` shim can

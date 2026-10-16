@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Shared author
 /**
  * Shared sections (plan r2): `pqc-impact`, `agility-latency`,

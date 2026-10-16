@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // @vitest-environment node
 //
 // Keeps samples/pqc-runtimes/expected.json honest: every sample it lists has a
@@ -47,7 +47,7 @@ describe('samples/pqc-runtimes/expected.json', () => {
 
   it.each(entries)('%s prints the OK line for its own id', (id, sample) => {
     const source = readFileSync(join(SAMPLES_DIR, sample.source), 'utf8')
-    expect(source).toContain('SPDX-License-Identifier: GPL-3.0-only')
+    expect(source).toContain('SPDX-License-Identifier: AGPL-3.0-only')
     // Each sample builds "OK <id>" from a literal containing its id.
     expect(source).toContain(id)
   })

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 /**
  * The corrected flood sizing of the CKKS decryption policy (2026-10-11) in one place: the

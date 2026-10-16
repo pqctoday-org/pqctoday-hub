@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Export the user's migration plan as a CycloneDX-flavoured JSON document.
 // 07092026: this builds its OWN inline object shape (below) — it does NOT

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { PREFIX_CTA_MAP, librarySpecHref } from './algorithmCtaMap'
 import { findLibraryItemByRef } from './libraryData'

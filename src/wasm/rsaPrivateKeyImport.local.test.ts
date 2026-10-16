@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Verifies hsm_importRSAPrivateKey and RSA-OAEP decryption against both real
 // engines on NIST's own vectors: rsa_oaep_test.json is the ACVP KTS-IFC
 // (SP 800-56B rev 2) sample, tgId 1 (OAEP SHA2-512) and tgId 3 (OAEP SHA-1),

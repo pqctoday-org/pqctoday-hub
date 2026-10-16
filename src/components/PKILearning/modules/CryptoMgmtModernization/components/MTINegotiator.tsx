@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mandatory-to-Implement (MTI) Negotiator (M6 / CSWP.39 §3.1.1)
  *

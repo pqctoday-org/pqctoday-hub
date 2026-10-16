@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // KAT for the ML-DSA context / message-length / pre-hash depth section
 // (sections/mldsaDepth.ts, WS-D D2-6), driven through the REAL useAcvpSuite

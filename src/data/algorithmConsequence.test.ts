@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The consequence line is the one place on the Transition Guide where a number
  * is asserted in prose, so it gets the same treatment every other derived

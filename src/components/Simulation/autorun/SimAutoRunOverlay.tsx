@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * SimAutoRunOverlay — an opaque transport bar pinned to the bottom of the screen
  * during the live auto-run. On each new phase it expands for ~10s to show that

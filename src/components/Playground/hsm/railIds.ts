@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The PKCS#11 workshop's Operate rail — the seven crypto-primitive panels
  * (design handoff design_handoff_kmip_pkcs11_playground, 2026-09-02). Ids

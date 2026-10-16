@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import ReactGA from 'react-ga4'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'

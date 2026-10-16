@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useCallback, useEffect, useState } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { Shield, FileCode, Key, BarChart3, CheckCircle, ExternalLink, Timer } from 'lucide-react'
 import { Link } from 'react-router'

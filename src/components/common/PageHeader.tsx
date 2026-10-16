@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'

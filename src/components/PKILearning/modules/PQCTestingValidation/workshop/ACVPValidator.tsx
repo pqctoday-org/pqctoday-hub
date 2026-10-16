@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { CheckCircle, FileBadge, Code, HardDrive, RefreshCcw, ExternalLink } from 'lucide-react'
 

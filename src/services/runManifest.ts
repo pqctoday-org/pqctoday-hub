@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * A small, shareable record of one run of a Playground tool: what ran, with
  * which inputs, on which build of the site, what happened, and what the run

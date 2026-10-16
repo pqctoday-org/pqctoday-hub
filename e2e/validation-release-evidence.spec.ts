@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // WS-J J-2 gap fill. The existing validation specs already cover a single-
 // engine run (acvp-validator), dual-engine NIST positive/negative/skip rows
 // (acvp-mldsa-evidence) and the ML-DSA prompt import → response.json download

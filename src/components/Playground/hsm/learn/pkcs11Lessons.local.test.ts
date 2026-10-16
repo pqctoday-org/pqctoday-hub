@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // Integration test for the PKCS#11 Learn tab's lesson step specs — replays
 // every lesson's step sequence against the REAL wasm engine, in the same

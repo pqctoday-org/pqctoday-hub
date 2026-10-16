@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mermaid loading + rasterisation helpers shared by MermaidDiagram (inline
  * SVG preview) and any caller that needs a PNG (e.g. embedding a live diagram

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 // PolicyTimeline — the "visual diagram" half of the Policy view: every rule that
 // carries a temporal bound (`effective_from` / `effective_until` / `after`) drawn

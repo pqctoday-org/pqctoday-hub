@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { FC } from 'react'
 import { UserCheck, Key, Database, BarChart3, Shield, ArrowRightLeft } from 'lucide-react'
 import { IAMPQCIntroduction } from './components/IAMPQCIntroduction'

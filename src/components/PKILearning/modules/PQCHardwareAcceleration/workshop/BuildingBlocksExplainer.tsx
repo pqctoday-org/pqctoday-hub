@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Workshop step 2 — the five primitives acceleration actually targets:
  * Montgomery reduction, the NTT, the Keccak permutation, and the two sponge

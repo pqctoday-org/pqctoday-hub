@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * simEmbedModules — the Learn modules the Simulation can embed in-place. Derived
  * from the manifests flagged `embeddable` (the single source of truth): a module

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Role guides (the *QuantumImpact modules and the SOC module) link to other
  * Learn modules by id in `modules: [{ id, label }]` lists. An id with no

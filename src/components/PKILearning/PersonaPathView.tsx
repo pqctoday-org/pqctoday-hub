@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 import { Fragment, useMemo } from 'react'
 import { Sparkles, CheckSquare } from 'lucide-react'
 import { Button } from '../ui/button'

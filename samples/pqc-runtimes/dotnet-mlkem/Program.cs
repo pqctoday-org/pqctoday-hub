@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // ML-KEM-768 round trip with .NET 10 System.Security.Cryptography.MLKem.
 // Needs OpenSSL 3.5+ on Linux/macOS, or Windows with CNG ML-KEM (Windows Server 2025 / Windows 11).
 using System.Security.Cryptography;

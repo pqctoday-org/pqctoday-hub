@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 // Regression coverage for the Grade-A remediation OS-2 fix: parseDocsMap
 // normalizes openssl_docs_map.csv keys to lower case, but the algorithm
 // names OpenSSL Studio's shipped presets emit (WorkbenchPresets.tsx) are

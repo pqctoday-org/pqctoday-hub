@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * 09-28 nav remediation (WP2) — the ONE definition of "this run has started".
  *

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * ANSSI certificates carry the product name their own certification report
  * states (2026-09-27). The ANSSI catalogue PDF had printed ANSSI-CC-2025-26's
