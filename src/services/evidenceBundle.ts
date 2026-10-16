@@ -21,6 +21,7 @@ import { EVIDENCE_BUNDLE_LINK, FIRST_RUN_TOOL, RUN_TOOLS } from '@/data/runTools
 import { toBibtex, toCslJson, citationKeys, type CitableItem } from '@/utils/citationExport'
 import { generateCsv } from '@/utils/csvExport'
 import type { BundleFile } from './exportBundle'
+import { recordRevision, recordsForBookmarks } from './research/libraryCollection'
 import { siteBuildInfo, type RunManifest } from './runManifest'
 import { cell, readRunManifest, VECTOR_MATCH_SENTENCE } from './runEvidence'
 import { runManifestToJson, siteProvenanceLine } from './runRecordExport'
@@ -69,39 +70,8 @@ export type EvidenceRecord = CitableItem &
   Pick<LibraryItem, 'lastUpdateDate'> &
   Partial<Pick<LibraryItem, 'supersededByRefs'>>
 
-/** The bookmarked records found anywhere in the Library tree (top-level rows
- * and their children), in bookmark order, and the ids no longer there. */
-export function recordsForBookmarks<T extends { referenceId: string; children?: T[] }>(
-  all: T[],
-  ids: string[]
-): { records: T[]; missingIds: string[] } {
-  const index = new Map<string, T>()
-  const walk = (items: T[]) => {
-    for (const it of items) {
-      if (!index.has(it.referenceId)) index.set(it.referenceId, it)
-      if (it.children?.length) walk(it.children)
-    }
-  }
-  walk(all)
-  const records: T[] = []
-  const missingIds: string[] = []
-  for (const id of ids) {
-    const r = index.get(id)
-    if (r) records.push(r)
-    else missingIds.push(id)
-  }
-  return { records, missingIds }
-}
-
-/**
- * A record's revision: the draft number for an IETF draft (`-07`), otherwise
- * the date the Library last recorded an update to the document.
- */
-export function recordRevision(r: EvidenceRecord): string {
-  const m = /draft-[a-z0-9-]+?-(\d{2})(?:\b|\.)/i.exec(`${r.referenceId} ${r.downloadUrl}`)
-  if (m) return `draft -${m[1]}`
-  return r.lastUpdateDate?.trim() || r.initialPublicationDate?.trim() || 'not stated'
-}
+/** A record's revision (draft number or last update date); shared with collections. */
+export { recordRevision, recordsForBookmarks }
 
 const supersededBy = (r: EvidenceRecord) => (r.supersededByRefs ?? []).join('; ')
 

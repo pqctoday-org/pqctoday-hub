@@ -62,6 +62,7 @@ import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
 import { ArchitecturePackPanel } from './ArchitecturePackPanel'
 import { OperationsPackPanel } from './OperationsPackPanel'
 import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
+import { ResearchWorkspacePanel } from '@/components/shared/research/ResearchWorkspacePanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
@@ -591,6 +592,7 @@ export function BusinessCenterView() {
       {selectedPersona === 'architect' && <ArchitecturePackPanel />}
       {selectedPersona === 'ops' && <OperationsPackPanel />}
       {selectedPersona === 'researcher' && <EvidenceBundlePanel placement="command-center" />}
+      {selectedPersona === 'researcher' && <ResearchWorkspacePanel />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so

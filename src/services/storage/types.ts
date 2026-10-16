@@ -99,6 +99,9 @@ export type ExecutiveDocumentType =
   // from a researcher tool. `output` holds the manifest JSON (digests and
   // per-case results, never the full vectors).
   | 'run-manifest'
+  // Researcher evidence workspace, Layer 2: a named set of Library record ids,
+  // each with the user's annotation and the record's state as saved.
+  | 'library-collection'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

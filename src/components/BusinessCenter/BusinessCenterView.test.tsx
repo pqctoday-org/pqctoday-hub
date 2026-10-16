@@ -295,12 +295,15 @@ describe('BusinessCenterView', () => {
     expect(screen.getByTestId('evidence-bundle-download')).toHaveTextContent(
       'Download evidence bundle'
     )
+    // The research workspace sits under it.
+    expect(screen.getByTestId('research-workspace')).toBeInTheDocument()
   })
 
   it('offers the evidence bundle only to the researcher', () => {
     mockPersonaStore.selectedPersona = 'developer'
     renderView()
     expect(screen.queryByTestId('evidence-bundle')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('research-workspace')).not.toBeInTheDocument()
   })
 
   it('shows the 6 CSWP.39 Fig 3 zones in fixed order when assessment is in progress', () => {

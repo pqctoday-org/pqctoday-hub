@@ -48,6 +48,12 @@ describe('artifactHistoryRoute', () => {
     ).toBe('/learn/entropy-randomness?tab=workshop')
   })
 
+  it('opens researcher workspace items in the research workspace', () => {
+    expect(
+      artifactHistoryRoute({ type: 'library-collection', moduleId: 'library-collection:1' })
+    ).toBe('/business#research-workspace')
+  })
+
   it('keeps the Learn workshop route for module artifacts', () => {
     expect(
       artifactHistoryRoute({ type: 'deployment-playbook', moduleId: 'migration-program' })
