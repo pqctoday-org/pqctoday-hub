@@ -129,7 +129,12 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [showTerminal, setShowTerminal] = useState(true)
   const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
   const [historyCollapsed, setHistoryCollapsed] = useState(true)
-  const [studioTab, setStudioTab] = useState<'learn' | 'explore' | 'workbench'>('learn')
+  // A ?cmd= link names a Workbench command (it is also what the page writes
+  // when a reader picks one), so it opens on the Workbench with that command
+  // selected. Without it the page opens on Learn.
+  const [studioTab, setStudioTab] = useState<'learn' | 'explore' | 'workbench'>(() =>
+    !embedded && searchParams.has('cmd') ? 'workbench' : 'learn'
+  )
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
