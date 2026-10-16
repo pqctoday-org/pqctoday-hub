@@ -33,6 +33,6 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   compliance: 'compliance_10162026_r32.csv',
   algorithms: 'algorithms_transitions_10162026_r2.csv',
   authoritativeSources: 'pqc_authoritative_sources_reference_10012026_r2.csv',
-  certificationXref: 'migrate_certification_xref_10162026.csv',
+  certificationXref: 'migrate_certification_xref_10162026_r1.csv',
   quiz: 'pqcquiz_10162026_r47.csv',
 }
