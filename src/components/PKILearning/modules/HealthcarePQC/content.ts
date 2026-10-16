@@ -33,7 +33,7 @@ export const content: ModuleContent = {
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
-    getStandard('Cybersecurity-in-Medical-Devices-Quality-System-Consideratio'), // m-healthcare-pqc: September 2023
+    getStandard('FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023'), // m-healthcare-pqc: September 2023 guidance, current edition
     getStandard('IEC-62443-4-2-2019-Security-for-industrial-automation-and-co'), // m-healthcare-pqc: IEC 62443-4
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('ICS-Medical-Advisory-ICSMA-17-241-01-Abbott-Laboratories-Acc'), // m-healthcare-pqc: wave 4c
