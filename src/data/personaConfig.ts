@@ -629,7 +629,10 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  * (which writes ?prefs=off).
  */
 export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
-  executive: 'americas',
+  // Global, as for GRC below (plan §5): an executive's jurisdiction comes from their
+  // own selection, not the job title — a persona default made "the deadlines that
+  // bind you" read as Americas-wide (executive journey audit, 15 Oct 2026).
+  executive: 'global',
   // Global, not a persona-implied country — plan §5: applicability comes from
   // the user's own explicit region/industry selections, not the job title.
   grc: 'global',
@@ -739,7 +742,9 @@ export const INDUSTRY_SLUG_TO_LABEL: Record<string, string> = {
  * that don't belong to any single sector but are broadly relevant.
  */
 export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
-  executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+  // No persona-implied industry (plan §5): three default sectors made applicability
+  // read as if one executive ran a bank, an agency and everything else at once.
+  executive: [],
   // No persona-implied industry (plan §5) — same rationale as researcher/curious
   // below: GRC's applicable scope comes from the user's own industry selection.
   grc: [],

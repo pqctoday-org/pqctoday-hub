@@ -47,15 +47,18 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Fiduciary Duty</div>
               <p className="text-xs text-muted-foreground">
-                Directors and officers have a duty of care to protect organizational assets against
-                known threats. Quantum risk is now well-documented.
+                Boards oversee material cyber risk. Quantum risk is now publicly documented, so it
+                belongs in that oversight; what it means for directors legally depends on
+                jurisdiction.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Regulatory Pressure</div>
               <p className="text-xs text-muted-foreground">
-                <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip>, NIS2, DORA, and sector
-                mandates set hard deadlines for PQC migration.
+                <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (US national security
+                systems) and EO 14412 (US federal civilian systems) set dated PQC milestones; the EU
+                PQC roadmap targets 2030 and 2035. NIS2 and DORA add cyber risk-management duties,
+                not PQC deadlines.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

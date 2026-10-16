@@ -35,7 +35,7 @@ type SortDirection = 'asc' | 'desc' | null
 function jurisdictionStanceLabel(stance: JurisdictionStance): string {
   switch (stance) {
     case 'require':
-      return 'Hybrid required'
+      return 'Hybrid expected'
     case 'prefer-pure':
       return 'Prefers pure'
     case 'interim':

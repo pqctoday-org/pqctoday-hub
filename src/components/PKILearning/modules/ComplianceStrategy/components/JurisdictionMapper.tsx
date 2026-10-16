@@ -123,7 +123,7 @@ function detectConflicts(
   if (hasUS && frOrDe) {
     conflicts.push({
       description:
-        'ANSSI (France) and BSI (Germany) emphasize hybrid mode as mandatory during transition, while NSA CNSA 2.0 focuses on pure PQC adoption. Plan for hybrid deployments that satisfy both.',
+        'ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; NSA CNSA 2.0 targets pure PQC and does not require hybrids. Plan for hybrid deployments that satisfy both.',
       jurisdictions: ['United States', 'France/Germany'],
       severity: 'low',
     })

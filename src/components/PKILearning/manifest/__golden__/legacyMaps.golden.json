@@ -230,7 +230,7 @@
       "id": "exec-quantum-impact",
       "lm_id": "LM-047",
       "title": "Executive Quantum Impact",
-      "description": "Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.",
+      "description": "Why quantum matters to leadership: board oversight, regulatory milestones (CNSA 2.0, EO 14412, EU PQC roadmap), and building a board-level PQC action plan.",
       "duration": "30 min",
       "difficulty": "beginner",
       "frameworkPhase": "p0"
@@ -3917,7 +3917,7 @@
           "id": "exec-quantum-impact",
           "lm_id": "LM-047",
           "title": "Executive Quantum Impact",
-          "description": "Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.",
+          "description": "Why quantum matters to leadership: board oversight, regulatory milestones (CNSA 2.0, EO 14412, EU PQC roadmap), and building a board-level PQC action plan.",
           "duration": "30 min",
           "difficulty": "beginner",
           "frameworkPhase": "p0"

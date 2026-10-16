@@ -41,7 +41,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **BSI** (Germany) — Governmental regulatory agency. TR-02102 series: binding Technical Guidelines for German government and critical infrastructure. Annual updates. TR-02102-1 (cryptographic mechanisms), -2 (TLS), -3 (IPsec), -4 (SSH).
 
-**ANSSI** (France) — Governmental regulatory agency. Requires hybrid PQC (classical + PQC) for sensitive French systems. Unique position: permits standalone SLH-DSA (hash-only security assumption). Three-phase roadmap: Phase 1 classical preferred (2022–2025), Phase 2 hybrid preferred (2025–2030), Phase 3 PQC preferred (2030+).
+**ANSSI** (France) — Governmental regulatory agency. Recommends hybrid PQC (classical + PQC), and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Unique position: permits standalone SLH-DSA (hash-only security assumption). Three-phase roadmap: Phase 1 classical preferred (2022–2025), Phase 2 hybrid preferred (2025–2030), Phase 3 PQC preferred (2030+).
 
 **NSA** (US) — Governmental regulatory agency. CNSA 2.0 (September 2022) mandates ML-KEM-1024 and ML-DSA-87 for National Security Systems (NSS). Binding for US government and DoD contractors.
 
@@ -116,7 +116,7 @@ NIST FIPS 203 → CAVP algorithm validation (via ACVP) → CMVP module certifica
 
 1. **NIST vs CMVP**: NIST wrote the standard; CMVP certifies implementations against it.
 2. **ETSI TS vs ETSI TR**: TS = normative ("shall"), TR = informational guidance.
-3. **ANSSI's unique position**: Requires hybrid PQC (classical + PQC) for sensitive systems; permits standalone SLH-DSA.
+3. **ANSSI's unique position**: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; permits standalone SLH-DSA.
 4. **CCRA vs EUCC**: CCRA is the global 31-nation scheme; EUCC is the EU-specific harmonized adaptation managed by ENISA.
 5. **IETF vs NIST**: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).
 6. **ISO/IEC vs ETSI**: ISO/IEC is global (170+ countries, 5-stage IS process); ETSI is European (800+ members, TC-based TS/TR process).

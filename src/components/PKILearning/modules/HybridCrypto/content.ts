@@ -109,7 +109,7 @@ export const content: ModuleContent = {
     hybridRationale:
       'Hybrid cryptography solves the dilemma of PQC being newer (less cryptanalysis) while the HNDL threat is real now. If either the classical or PQC component is broken, the other still provides security.',
     anssiMandate:
-      'ANSSI requires hybrid mode for all PQC deployments. Exception: hash-based signatures (SLH-DSA, LMS, XMSS) leveraging functions like SHA-3 may be used standalone due to their conservative security assumptions.',
+      'ANSSI recommends hybrid mode for PQC deployments and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Exception: hash-based signatures (SLH-DSA, LMS, XMSS) leveraging functions like SHA-3 may be used standalone due to their conservative security assumptions.',
     nistRecommendation:
       'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
     certFormatExplain:
