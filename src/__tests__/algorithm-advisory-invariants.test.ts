@@ -81,8 +81,6 @@ const MENTIONS_ADVISORY = /advis(es|ed) against|not for new use|2026-10-01|1 Oct
  * the second test then fails until the entry is deleted, so the list cannot rot.
  */
 const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
-  { file: /pqc_complete_algorithm_reference_09292026\.csv$/, text: 'recommended Level 5' },
-  { file: /pqc_complete_algorithm_reference_09292026\.csv$/, text: 'BSI-recommended' },
   { file: /algorithms_transitions_07282026\.csv$/, text: 'BSI TR-02102-1 recommended' },
 ]
 
