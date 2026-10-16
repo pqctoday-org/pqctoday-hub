@@ -784,6 +784,8 @@ describe('corpus trust invariants — PROV chain (C4)', () => {
         // Module Q&A CSVs live in their own subdirectory and are referenced
         // by the corpus generator from there.
         path.join(REPO_ROOT, 'src', 'data', 'module-qa', file),
+        // ...and are archived into archive/module-qa/ once newer files exist.
+        path.join(REPO_ROOT, 'src', 'data', 'archive', 'module-qa', file),
       ]
       if (!candidates.some((p) => fs.existsSync(p))) missing.push(file)
     }

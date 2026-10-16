@@ -7,6 +7,7 @@
  */
 
 import Papa from 'papaparse'
+import { sortCSVFiles } from './csvUtils'
 
 // ── Raw CSV row shape ───────────────────────────────────────────────────────
 
@@ -45,6 +46,19 @@ const csvModules = import.meta.glob<string>('./module-qa/module_qa_combined_*.cs
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
+const COMBINED_QA_RE = /module_qa_combined_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
+/**
+ * The newest combined Q&A file among `paths`, by date and then revision, both
+ * compared as numbers. The loader used to take `Object.keys().sort().reverse()[0]`,
+ * a string sort of MMDDYYYY file names: it ranks a January 2027 file below an
+ * October 2026 one (`01…` < `10…`) and `_r9` above `_r10`.
+ */
+export function latestCombinedQaPath(paths: string[]): string | null {
+  const entries = sortCSVFiles(Object.fromEntries(paths.map((p) => [p, ''])), COMBINED_QA_RE)
+  return entries.length > 0 ? entries[0].path : null
+}
+
 function splitSemi(val: string | undefined): string[] {
   if (!val) return []
   return val
@@ -60,11 +74,11 @@ function addAll(target: Set<string>, values: string[]): void {
 // ── Load & aggregate ────────────────────────────────────────────────────────
 
 function loadModuleQaCrossRefs(): ModuleQaCrossRefs[] {
-  // Pick the latest combined CSV (sorted descending by filename date)
-  const paths = Object.keys(csvModules).sort().reverse()
-  if (paths.length === 0) return []
+  // Pick the latest combined CSV (by date, then revision — see latestCombinedQaPath)
+  const latest = latestCombinedQaPath(Object.keys(csvModules))
+  if (latest === null) return []
 
-  const content = csvModules[paths[0]]
+  const content = csvModules[latest]
   const { data } = Papa.parse<RawModuleQaRow>(content.trim(), {
     header: true,
     skipEmptyLines: true,
