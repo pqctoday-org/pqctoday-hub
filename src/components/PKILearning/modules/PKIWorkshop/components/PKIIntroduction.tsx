@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { Button } from '@/components/ui/button'
 
 interface PKIIntroductionProps {
@@ -421,6 +422,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           </Link>
         </div>
       </section>
+      <RecordDecisionLink topic="pki-design" />
       <ReadingCompleteButton />
     </div>
   )

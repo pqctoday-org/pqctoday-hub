@@ -28,6 +28,7 @@ import {
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface HsmPqcIntroductionProps {
@@ -909,6 +910,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         </div>
       </section>
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hsm" />
+      <RecordDecisionLink topic="hsm-choice" />
       <ReadingCompleteButton />
     </div>
   )
