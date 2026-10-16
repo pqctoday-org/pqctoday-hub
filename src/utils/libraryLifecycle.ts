@@ -11,6 +11,8 @@ import { getDocumentStatusBucket, type DocumentStatusBucket } from './documentSt
  * Expired    lapsed or obsoleted without a replacement
  * Historical replaced or updated by a newer document (was "Superseded")
  * Research Paper, Misc: new; they come only from the `lifecycle_state` column.
+ * Unverified status text no rule recognises, or that says it needs review
+ *            (document labels, 16 Oct 2026: there is no "Released" default).
  */
 export const LIFECYCLE_LABELS = [
   'Released',
@@ -19,6 +21,7 @@ export const LIFECYCLE_LABELS = [
   'Historical',
   'Research Paper',
   'Misc',
+  'Unverified',
 ] as const
 
 export type LifecycleLabel = (typeof LIFECYCLE_LABELS)[number]
@@ -72,6 +75,8 @@ export function lifecycleLabelFromStatusBucket(bucket: DocumentStatusBucket): Li
       return 'Expired'
     case 'Superseded':
       return 'Historical'
+    case 'Unverified':
+      return 'Unverified'
   }
 }
 
@@ -109,6 +114,7 @@ const LABEL_RANK: Record<LifecycleLabel, number> = {
   Draft: 4,
   'Research Paper': 3,
   Misc: 2,
+  Unverified: 1.5,
   Expired: 1,
   Historical: 0,
 }
@@ -159,6 +165,12 @@ export const LIFECYCLE_STYLES: Record<
     badge: 'bg-muted/50 text-muted-foreground border border-dashed border-border',
     label: 'Misc',
     dot: 'bg-muted-foreground/60',
+  },
+  Unverified: {
+    badge:
+      'bg-status-warning/10 text-muted-foreground border border-dashed border-status-warning/40',
+    label: 'Unverified',
+    dot: 'bg-status-warning/60',
   },
 }
 

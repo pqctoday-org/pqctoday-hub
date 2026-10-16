@@ -12,8 +12,8 @@ import {
 } from './libraryLifecycle'
 import { getDocumentStatusBucket, type DocumentStatusBucket } from './documentStatusBucket'
 
-describe('the six lifecycle labels', () => {
-  it('are exactly Released, Draft, Expired, Historical, Research Paper and Misc', () => {
+describe('the lifecycle labels', () => {
+  it('are exactly Released, Draft, Expired, Historical, Research Paper, Misc and Unverified', () => {
     expect([...LIFECYCLE_LABELS]).toEqual([
       'Released',
       'Draft',
@@ -21,6 +21,7 @@ describe('the six lifecycle labels', () => {
       'Historical',
       'Research Paper',
       'Misc',
+      'Unverified',
     ])
   })
 
@@ -90,7 +91,7 @@ describe('resolveLifecycleLabel', () => {
     for (const lifecycleState of [undefined, '', 'current', 'deprecated', 'Round 2']) {
       expect(resolveLifecycleLabel({ lifecycleState, documentStatus: 'Final' })).toBe('Released')
       expect(resolveLifecycleLabel({ lifecycleState, documentStatus: 'Proposed Standard' })).toBe(
-        'Draft'
+        'Released'
       )
       expect(resolveLifecycleLabel({ lifecycleState, documentStatus: 'Internet-Draft' })).toBe(
         'Draft'
@@ -119,6 +120,7 @@ describe('the old five buckets map to the new labels', () => {
       Draft: 'Draft',
       Expired: 'Expired',
       Superseded: 'Historical',
+      Unverified: 'Unverified',
     }
     for (const [bucket, label] of Object.entries(expected)) {
       expect(lifecycleLabelFromStatusBucket(bucket as DocumentStatusBucket)).toBe(label)
@@ -130,7 +132,7 @@ describe('the old five buckets map to the new labels', () => {
       ['Final', 'Released'],
       ['Published', 'Released'],
       ['In force', 'Released'],
-      ['Proposed Standard', 'Draft'],
+      ['Proposed Standard', 'Released'],
       ['Round 4 Submission', 'Draft'],
       ['Internet-Draft (WG Document)', 'Draft'],
       ['Initial Public Draft', 'Draft'],
@@ -192,5 +194,40 @@ describe('getGroupLifecycleLabel', () => {
       'Research Paper'
     )
     expect(getGroupLifecycleLabel('Misc', ['Expired', 'Historical'])).toBe('Misc')
+  })
+})
+
+describe('every active library row gets a deliberate label (document labels, 16 Oct 2026)', () => {
+  // The latest library CSV, read the way the loader reads it. A status text no
+  // rule recognises becomes Unverified; this pins which texts those are, so a
+  // new unrecognised status fails here and gets a rule (or a lifecycle_state).
+  it('marks only "needs review" texts Unverified', async () => {
+    const fs = await import('fs')
+    const path = await import('path')
+    const Papa = (await import('papaparse')).default
+    const dir = path.join(process.cwd(), 'src/data')
+    const key = (f: string) => {
+      const m = f.match(/^library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+      return m ? `${m[3]}${m[1]}${m[2]}-${(m[4] ?? '0').padStart(3, '0')}` : ''
+    }
+    const latest = fs
+      .readdirSync(dir)
+      .filter((f) => key(f) !== '')
+      .sort((a, b) => key(a).localeCompare(key(b)))
+      .pop()!
+    const rows = Papa.parse<Record<string, string>>(
+      fs.readFileSync(path.join(dir, latest), 'utf-8'),
+      { header: true, skipEmptyLines: true }
+    ).data.filter((r) => (r.status || 'active') === 'active')
+    const unverified = rows
+      .filter(
+        (r) =>
+          resolveLifecycleLabel({
+            lifecycleState: r.lifecycle_state,
+            documentStatus: r.document_status,
+          }) === 'Unverified'
+      )
+      .map((r) => r.document_status.trim())
+    expect([...new Set(unverified)].filter((s) => !/unverified|needs review/i.test(s))).toEqual([])
   })
 })
