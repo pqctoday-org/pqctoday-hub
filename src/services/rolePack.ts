@@ -12,6 +12,7 @@
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { TYPE_LABELS } from '@/data/artifactLabels'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 
 export interface RolePackSection {
   type: ExecutiveDocumentType
@@ -179,5 +180,6 @@ export function buildRolePack(recipe: RolePackRecipe, input: RolePackInput): Rol
   }
 
   lines.push('---', '', recipe.disclaimer, '')
-  return { markdown: lines.join('\n'), present, missing }
+  // Every pack states the platform's status notice first (Markdown and PDF alike).
+  return { markdown: withEducationNoticeMarkdown(lines.join('\n')), present, missing }
 }

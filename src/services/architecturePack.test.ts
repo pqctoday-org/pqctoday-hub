@@ -9,6 +9,7 @@ import {
   buildArchitecturePack,
 } from './architecturePack'
 import { buildRolePack, demoteHeadings, toolPathFor } from './rolePack'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
 
 const now = new Date('2026-10-16T12:00:00Z')
 
@@ -33,6 +34,7 @@ describe('architecture pack', () => {
     expect(pack.markdown).toContain('https://example.test/business/tools/mti-negotiator')
     expect(pack.markdown).toContain('Scope: not stated')
     expect(pack.markdown).toContain(ARCHITECTURE_PACK_DISCLAIMER)
+    expect(pack.markdown.startsWith(`**Notice — ${EDUCATION_NOTICE}**`)).toBe(true)
   })
 
   it('every section type links to a tool page that exists', () => {
