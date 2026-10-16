@@ -67,7 +67,7 @@ OSSL_PROVIDER_load(NULL, provName ? provName : "default");
     ],
     tradeoffs: [
       {
-        pro: 'Algorithm changes require only config updates, not code deploys',
+        pro: 'Swapping between algorithms the code already supports is a config change, not a code deploy (a new algorithm family, with new sizes or call patterns, still needs code)',
         con: 'Need to validate config at startup to catch typos',
       },
       {
@@ -113,7 +113,7 @@ let signature = signer.sign(&message)?;`,
     id: 'hybrid-composite',
     name: 'Hybrid / Composite Operations',
     description:
-      'Run classical and PQC algorithms in parallel, combining their outputs. If either algorithm is broken, the combined result remains secure. This is the recommended transition strategy.',
+      'Run classical and PQC algorithms in parallel, combining their outputs. For key exchange, the shared secret stays secret as long as either algorithm is unbroken, provided the combiner is a sound one (for example the TLS hybrid design or X-Wing); for signatures, a forgery requires breaking both algorithms, provided the verifier requires both signatures to be valid. This is the recommended transition strategy.',
     whenToUse: [
       'Transitioning from classical to PQC (the current moment)',
       'Regulatory uncertainty about PQC algorithm maturity',

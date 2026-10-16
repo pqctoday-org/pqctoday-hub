@@ -156,7 +156,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-DSA-44/65/87'],
     formFactor: 'cloud',
     notes:
-      "Dedicated managed HSM. ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. Through its PKCS#11 library (version 2.40) ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA), not the standard v3.2 CKM_ML_DSA. (AWS KMS supports ML-KEM separately.) The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
+      "Dedicated managed HSM. ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. Through its PKCS#11 library (version 2.40) ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA), not the standard v3.2 CKM_ML_DSA. (AWS KMS, a separate service, offers ML-DSA signing keys and uses ML-KEM only for hybrid post-quantum TLS to its endpoints; it does not offer ML-KEM KMS keys.) The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
     firmwareVersion: 'Provider-managed',
     pkcs11Version: '2.40 (ML-DSA via vendor-defined mechanisms)',
     hybridSupport: false,
@@ -336,7 +336,8 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP decrypt → recovers plaintext DEK directly',
     vendorNotes: {
       onPrem: 'All three on-prem vendors support native decapsulation in firmware',
-      cloud: 'AWS CloudHSM: SDK-based. Azure/GCP: not yet available',
+      cloud:
+        'AWS CloudHSM: no ML-KEM, so no decapsulation. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
     },
   },
   {

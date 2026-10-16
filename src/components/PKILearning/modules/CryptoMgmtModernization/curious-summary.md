@@ -8,7 +8,7 @@ software, and keys.
 
 ## Why it matters even if quantum never happens
 
-- TLS certificates will last only **47 days** by March 2029. Manually tracking thousands of
+- Public website (TLS) certificates will last only **47 days** by March 2029. Manually tracking thousands of
   them stops working.
 - Every crypto library and HSM has a FIPS 140-3 "driver's license" (a CMVP certificate) that
   can **expire or be revoked**. You have to watch for those notices monthly.

@@ -32,7 +32,7 @@ export function Pkcs11BypassDemo({ engine }: { engine: KmipEngine }) {
       const uid = str(created.summary?.publicKeyUid)
       if (!created.ok || !uid) {
         // The most common cause is a non-permissive policy active above (CNSA
-        // 2.0 / FIPS-only / a PQC-only profile) that forbids creating an RSA
+        // 2.0 / FIPS-approved algorithms / a PQC-only profile) that forbids creating an RSA
         // key at all — this demo needs one. Surface the engine's own reason.
         setError(
           created.message

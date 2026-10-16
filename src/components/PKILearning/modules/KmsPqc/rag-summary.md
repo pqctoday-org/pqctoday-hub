@@ -20,7 +20,7 @@ workshop_steps: 5
 - Enterprise architecture patterns for multi-cloud PQC key management
 - KMIP v3.0 protocol operations and PQC key type enumerations
 - Cross-provider key sync via KMIP orchestration
-- AWS KMS Key Policies for enforcing Hybrid PQC TLS (aws:tlsCipherSuites)
+- AWS KMS policy controls for PQC keys (kms:KeySpec, kms:KeyUsage on CreateKey); hybrid post-quantum TLS to KMS is a client setting, verified in CloudTrail (tlsDetails.keyExchange)
 
 ## Workshop
 
@@ -29,7 +29,7 @@ workshop_steps: 5
 3. Hybrid Key Wrapping — X25519+ML-KEM-768 combiner with provider API mapping
 4. KMS Rotation Planner — Enterprise rotation planning with provider-specific strategies
 5. KMIP Protocol Explorer — KMIP v3.0 vs provider API comparison, PQC key type mapping, cross-provider sync visualizer, migration readiness checklist
-6. AWS Policy Lab — Write and validate an AWS KMS Key Policy JSON to strictly enforce Hybrid PQC TLS connections
+6. AWS Policy Lab — Write and check an IAM policy that allows only ML-DSA signing keys to be created (kms:KeySpec, kms:KeyUsage)
 
 ## Key Standards
 

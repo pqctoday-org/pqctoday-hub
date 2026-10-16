@@ -153,7 +153,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
           <div>
             <h4 className="text-sm font-bold text-foreground mb-2">
               Application Code
-              <span className="text-xs text-success ml-2 font-normal">(never changes)</span>
+              <span className="text-xs text-success ml-2 font-normal">(call sites unchanged)</span>
             </h4>
             <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto font-mono max-h-64 overflow-y-auto">
               {APP_CODE_SAMPLE}
@@ -201,8 +201,11 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
               ) : backend.type === 'pqc' ? (
                 <>
                   <strong>Post-quantum:</strong> ML-KEM-768 provides NIST Level 3 quantum
-                  resistance. The same application code works because the abstraction layer handles
-                  the different key sizes and encapsulation mechanics.
+                  resistance. The keyExchange() call site stays the same because the abstraction
+                  layer maps it to KEM encapsulation. What the layer cannot hide: the 1,184-byte
+                  public key and 1,088-byte ciphertext must fit your buffers, storage and messages,
+                  and peers must support ML-KEM. Code that used RSA to encrypt data directly needs a
+                  new call pattern, because a KEM cannot encrypt data directly (NIST SP 800-227).
                 </>
               ) : (
                 <>

@@ -97,8 +97,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Defense in Depth</div>
               <p className="text-xs text-muted-foreground">
-                If either the classical or PQC component is broken, the other still provides
-                security. Belt and suspenders.
+                Key exchange: the shared secret stays secret as long as either component KEM is
+                unbroken, provided the combiner is a sound one (for example the TLS hybrid design or
+                X-Wing). Signatures: a forgery requires breaking both algorithms, provided the
+                verifier requires both signatures to be valid.
               </p>
             </div>
           </div>
@@ -1188,7 +1190,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 icon: ShieldCheck,
                 color: 'text-status-success',
                 label: 'Hybrid EU-CMA',
-                desc: 'Secure if either EC-Schnorr or ML-DSA is unforgeable',
+                desc: "Paper's claim for the full scheme: a forgery requires breaking both EC-Schnorr and ML-DSA (this simplified demo is not covered by that proof)",
               },
               {
                 icon: ShieldCheck,

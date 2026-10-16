@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Crypto agility is the engineering capability to rapidly switch cryptographic algorithms, protocols, and provider implementations without requiring significant changes to the underlying application code.
+Crypto agility is the engineering capability to rapidly switch cryptographic algorithms, protocols, and provider implementations without rewriting the underlying application code. Larger keys and signatures, new encodings and new call patterns (a KEM is not an encryption function) still need review and testing.
 
 ## Why It Matters
 
@@ -14,4 +14,4 @@ The transition demands architectural patterns that completely decouple the crypt
 
 ## What's Happening
 
-NIST lists Crypto Agility as its top recommendation for quantum preparedness. Tech giants are already utilizing this agility—Google Chrome and Apple's iMessage have natively enabled hybrid PQC key exchanges through rapid, phased rollouts.
+NIST devotes a white paper, CSWP 39, to crypto agility. Tech giants are already utilizing this agility—Google Chrome and Apple's iMessage have natively enabled hybrid PQC key exchanges through rapid, phased rollouts.

@@ -92,7 +92,7 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       badge: 'MTC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'With ML-DSA-44, the traditional chain requires ~11.7 KB (3 signatures + 3 keys + SCTs: 7,260 + 3,936 + 476 B gives 11,672 B) while the MTC approach needs only ~4.5 KB (1 root signature + inclusion proof). The reduction is even more dramatic with SLH-DSA. Note the tradeoff: MTC clients must periodically synchronize with the transparency service.',
+        "With ML-DSA-44, the tool shows ~11.8 KB for the traditional chain (3 certificate signatures + 3 public keys including the root's, 2 SCTs and certificate metadata: 7,260 + 3,936 + 238 + 600 B gives 12,034 B) and ~4.3 KB for a standalone MTC (1 CA signature + CA key + cosignatures + 384 B inclusion proof + metadata: 4,444 B). Counting only what a server actually sends (leaf and intermediate keys, two certificate signatures and the CertificateVerify signature), the chain is 9,884 B, as in the Introduction. The reduction is even more dramatic with SLH-DSA. Note the tradeoff: MTC clients must periodically synchronize with the transparency service.",
       workshopStep: 5,
     },
   ]

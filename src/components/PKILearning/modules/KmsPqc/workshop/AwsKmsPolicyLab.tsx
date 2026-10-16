@@ -1,54 +1,45 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect } from 'react'
-import { ShieldCheck, ShieldAlert, Cloud, Code, FileJson } from 'lucide-react'
+import React, { useMemo, useState } from 'react'
+import { ShieldCheck, ShieldAlert, Cloud, Code, FileJson, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { validateKmsPqcPolicy, type PolicyValidationResult } from '../utils/kmsPolicyEngine'
+import { validateKmsPqcPolicy } from '../utils/kmsPolicyEngine'
 
+// An IAM policy for the people who create KMS keys. kms:CreateKey is governed
+// by IAM policy, not by a key policy (the key does not exist yet).
 const INITIAL_JSON = `{
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowUseOfTheKey",
+      "Sid": "AllowKeyAdministration",
       "Effect": "Allow",
-      "Principal": { "AWS": "arn:aws:iam::111122223333:role/AppRole" },
-      "Action": ["kms:Encrypt", "kms:Decrypt", "kms:GenerateDataKey"],
+      "Action": ["kms:DescribeKey", "kms:ListKeys", "kms:TagResource"],
       "Resource": "*"
     }
   ]
 }`
 
-export const AwsKmsPolicyLab: React.FC = () => {
-  const [policyJson, setPolicyJson] = useState(INITIAL_JSON)
-  const [validation, setValidation] = useState<PolicyValidationResult>({
-    isValidJson: true,
-    hasDenyStatement: false,
-    enforcesPqcCipherSuite: false,
-    protectsDecryptAction: false,
-    isFullySecure: false,
-  })
-
-  // Validate dynamically
-  useEffect(() => {
-    setValidation(validateKmsPqcPolicy(policyJson))
-  }, [policyJson])
-
-  const insertSnippet = () => {
-    const snippet = `    ,{
-      "Sid": "EnforceHybridPQCTLS",
-      "Effect": "Deny",
-      "Principal": "*",
-      "Action": "kms:Decrypt",
+const SOLUTION = `    ,{
+      "Sid": "CreateMlDsaSigningKeysOnly",
+      "Effect": "Allow",
+      "Action": "kms:CreateKey",
       "Resource": "*",
       "Condition": {
-        "StringNotEquals": {
-          "aws:tlsCipherSuites": "TLS_AES_256_GCM_SHA384_PQ"
+        "StringEquals": {
+          "kms:KeySpec": ["ML_DSA_65", "ML_DSA_87"],
+          "kms:KeyUsage": "SIGN_VERIFY"
         }
       }
     }`
+
+export const AwsKmsPolicyLab: React.FC = () => {
+  const [policyJson, setPolicyJson] = useState(INITIAL_JSON)
+  const validation = useMemo(() => validateKmsPqcPolicy(policyJson), [policyJson])
+
+  const insertSnippet = () => {
     const insertPos = policyJson.lastIndexOf(']')
     if (insertPos !== -1) {
       setPolicyJson(
-        policyJson.substring(0, insertPos) + snippet + '\n  ' + policyJson.substring(insertPos)
+        policyJson.substring(0, insertPos) + SOLUTION + '\n  ' + policyJson.substring(insertPos)
       )
     }
   }
@@ -56,18 +47,17 @@ export const AwsKmsPolicyLab: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <h2 className="text-2xl font-bold text-foreground">AWS KMS Key Policy Lab</h2>
+        <h2 className="text-2xl font-bold text-foreground">AWS KMS Policy Lab</h2>
         <p className="text-muted-foreground mt-2">
-          Configure an AWS KMS Key Policy to strictly enforce Hybrid PQC TLS connections for all
-          `kms:Decrypt` requests, protecting sensitive Master Keys from HNDL harvesting.
+          Write an IAM policy that lets your key administrators create post-quantum signing keys,
+          and nothing weaker. AWS KMS offers ML-DSA keys for signing (key specs{' '}
+          <code>ML_DSA_44</code>, <code>ML_DSA_65</code>, <code>ML_DSA_87</code>, key usage{' '}
+          <code>SIGN_VERIFY</code>).
         </p>
-        {/* 2026-09-19: this hint used to live inside the starter policy as a `//`
-            comment, which is not JSON — "Valid JSON Syntax" stayed red on load
-            and even after Insert Solution Snippet. The policy is valid JSON now
-            and the task is stated here instead. */}
         <p className="text-sm text-muted-foreground mt-2">
-          Your task: add a Deny statement on <code>kms:Decrypt</code> whose condition requires{' '}
-          <code>aws:tlsCipherSuites</code> to be a <code>_PQ</code> suite.
+          Your task: add an <code>Allow</code> statement for <code>kms:CreateKey</code> whose
+          condition limits <code>kms:KeySpec</code> to ML-DSA specs and requires{' '}
+          <code>kms:KeyUsage</code> to be <code>SIGN_VERIFY</code>.
         </p>
       </div>
 
@@ -76,7 +66,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <div className="min-w-0 glass-panel overflow-hidden flex flex-col h-[500px]">
           <div className="bg-muted px-4 py-2 flex justify-between items-center border-b gap-2 flex-wrap">
             <span className="font-mono text-xs flex items-center gap-2 min-w-0 truncate">
-              <FileJson size={14} className="shrink-0" /> key-policy.json
+              <FileJson size={14} className="shrink-0" /> key-admin-iam-policy.json
             </span>
             <Button
               variant="ghost"
@@ -88,7 +78,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
             </Button>
           </div>
           <textarea
-            aria-label="key-policy.json editor"
+            aria-label="key-admin-iam-policy.json editor"
             value={policyJson}
             onChange={(e) => setPolicyJson(e.target.value)}
             spellCheck={false}
@@ -97,40 +87,43 @@ export const AwsKmsPolicyLab: React.FC = () => {
         </div>
 
         {/* Validation Dashboard */}
-        <div className="min-w-0 glass-panel p-6 flex flex-col justify-between h-[500px]">
+        <div className="min-w-0 glass-panel p-6 flex flex-col justify-between h-[500px] overflow-y-auto">
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-              <Cloud size={20} /> Evaluation Engine
+              <Cloud size={20} /> Policy checks
             </h3>
 
-            <div className="space-y-4">
-              <ValidationRow label="Valid JSON Syntax" isSuccess={validation.isValidJson} />
+            <div className="space-y-3">
+              <ValidationRow label="Valid JSON syntax" isSuccess={validation.isValidJson} />
               <ValidationRow
-                label="Contains explicit 'Deny' statement"
-                isSuccess={validation.hasDenyStatement}
+                label="Allows the 'kms:CreateKey' action"
+                isSuccess={validation.allowsCreateKey}
               />
               <ValidationRow
-                label="Protects 'kms:Decrypt' action"
-                isSuccess={validation.protectsDecryptAction}
+                label="'kms:KeySpec' limited to ML-DSA specs"
+                isSuccess={validation.restrictsKeySpecToMlDsa}
               />
               <ValidationRow
-                label="Condition enforces aws:tlsCipherSuites with '_PQ'"
-                isSuccess={validation.enforcesPqcCipherSuite}
+                label="'kms:KeyUsage' must be SIGN_VERIFY"
+                isSuccess={validation.requiresSignVerify}
+              />
+              <ValidationRow
+                label="Uses only condition keys AWS has"
+                isSuccess={validation.usesOnlyRealConditionKeys}
               />
             </div>
           </div>
 
-          <div className="mt-8">
-            {validation.isFullySecure ? (
-              <div className="bg-success/10 border border-success/30 p-4 rounded-lg flex gap-3 text-success-foreground animate-pulse-slow">
+          <div className="mt-6">
+            {validation.isComplete ? (
+              <div className="bg-success/10 border border-success/30 p-4 rounded-lg flex gap-3 text-success-foreground">
                 <ShieldCheck size={28} className="shrink-0 text-success" />
                 <div>
-                  <h4 className="font-bold text-md mb-1">Policy is Quantum-Secure</h4>
+                  <h4 className="font-bold text-md mb-1">New signing keys will be ML-DSA</h4>
                   <p className="text-sm opacity-90">
-                    Excellent. By denying decryption requests where the TLS Cipher Suite does not
-                    end in <code className="bg-background/50 px-1 rounded">_PQ</code>, you have
-                    guaranteed that AWS KMS will reject classical-only connections. Your root keys
-                    are protected against Store-Now-Decrypt-Later.
+                    Administrators under this policy can only create ML-DSA signing keys. It does
+                    not touch existing keys, and it says nothing about how clients connect: that
+                    part is below.
                   </p>
                 </div>
               </div>
@@ -138,20 +131,33 @@ export const AwsKmsPolicyLab: React.FC = () => {
               <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-status-error">
                 <ShieldAlert size={28} className="shrink-0" />
                 <div className="w-full">
-                  <h4 className="font-bold text-md mb-1">Policy is Vulnerable</h4>
-                  <p className="text-sm opacity-90 mb-2">
-                    {validation.errorMessage ||
-                      'The policy fails to enforce Hybrid PQC TLS requirements.'}
+                  <h4 className="font-bold text-md mb-1">Not there yet</h4>
+                  <p className="text-sm opacity-90">
+                    {validation.errorMessage ?? 'The policy does not meet the task yet.'}
                   </p>
-                  <code className="block bg-background/50 p-2 rounded text-xs overflow-x-auto whitespace-nowrap mt-2 text-foreground">
-                    "Condition": &#123; "StringNotEquals": &#123; "aws:tlsCipherSuites":
-                    "TLS_AES_256_GCM_SHA384_PQ" &#125; &#125;
-                  </code>
                 </div>
               </div>
             )}
           </div>
         </div>
+      </div>
+
+      <div className="glass-panel p-5 space-y-2 text-sm text-muted-foreground">
+        <h3 className="flex items-center gap-2 font-semibold text-foreground">
+          <Info size={16} /> What a policy cannot do: require post-quantum TLS
+        </h3>
+        <p>
+          AWS KMS endpoints accept hybrid post-quantum TLS (ECDH with ML-KEM), but no IAM or key
+          policy condition can require it. It is a client setting: for example, in the AWS SDK for
+          Java 2.x, build the AWS CRT HTTP client with <code>postQuantumTlsEnabled(true)</code>{' '}
+          (aws-crt-client 2.30.22 or later). To check that it is in use, look at the{' '}
+          <code>tlsDetails.keyExchange</code> field of the call's CloudTrail entry, which shows a
+          hybrid group such as <code>X25519MLKEM768</code>.
+        </p>
+        <p>
+          AWS KMS has no ML-KEM keys. ML-KEM appears only in the TLS key exchange that protects
+          calls in transit; data encrypted under KMS keys uses AES-256-GCM.
+        </p>
       </div>
     </div>
   )

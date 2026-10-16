@@ -221,7 +221,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'preview',
     pqcMigrationNotes:
-      'AWS KMS supports ML-KEM for key agreement (preview). Nitro attestation documents still use ECDSA P-384. AWS has committed to PQC TLS for KMS, but attestation document PQC migration timeline is not yet public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints; it does not offer ML-KEM KMS keys. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
     steps: [
       {
         id: 'nitro-1',
@@ -414,7 +414,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS supports ML-KEM for key agreement (preview) — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but no ML-KEM KMS keys — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
   },
   {
     id: 'tdx-marvell-kmip',

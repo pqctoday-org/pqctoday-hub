@@ -116,12 +116,14 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
-              <div className="text-xs font-bold text-destructive mb-2">Classical: RSA Dual-Use</div>
+              <div className="text-xs font-bold text-destructive mb-2">
+                Classical: separation is good practice
+              </div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; RSA-OAEP: direct encryption of data/keys</li>
                 <li>&bull; RSA-PSS: digital signatures</li>
-                <li>&bull; One key pair serves both purposes</li>
-                <li>&bull; Simple key inventory: 1 key pair per entity</li>
+                <li>&bull; One RSA key pair can do both, but should not (NIST SP 800-57)</li>
+                <li>&bull; AWS KMS permits only one usage per key</li>
               </ul>
             </div>
             <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -129,8 +131,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; ML-KEM: key encapsulation only (KEM)</li>
                 <li>&bull; ML-DSA: digital signatures only</li>
-                <li>&bull; Two key pairs per entity minimum</li>
-                <li>&bull; Key inventory doubles during transition</li>
+                <li>&bull; Separate key pairs are mandatory, not just good practice</li>
+                <li>&bull; Inventory grows where classical keys were dual-use</li>
               </ul>
             </div>
           </div>
@@ -305,7 +307,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             <code className="text-xs bg-muted px-1.5 py-0.5 rounded border border-border">
               KDF(classical_shared || pqc_shared)
             </code>
-            . This ensures that if either algorithm is broken, the derived key remains secure.
+            . With a sound combiner, the derived key stays secret as long as either shared secret
+            does.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

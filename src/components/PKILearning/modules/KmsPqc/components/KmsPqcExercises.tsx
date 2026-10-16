@@ -73,14 +73,14 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'As of mid-2026: AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87, since 2025) in FIPS 140-3 Level 3 HSMs; Google Cloud KMS lists ML-KEM-768/1024, X-Wing, ML-DSA-65, and SLH-DSA in preview; Azure Key Vault is rolling out ML-KEM/ML-DSA key types via SymCrypt (2026-2027, tier/region dependent). Verify each provider current docs for the latest.',
+        'As of mid-2026: AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87, since 2025) in FIPS 140-3 Level 3 HSMs; Google Cloud KMS has ML-DSA and SLH-DSA signing generally available (since 16 Jul 2026) and ML-KEM-768/1024 and X-Wing in Preview, all at the software protection level; Azure Key Vault is rolling out ML-KEM/ML-DSA key types via SymCrypt (2026-2027, tier/region dependent). Verify each provider current docs for the latest.',
       config: { step: 2 },
     },
     {
       id: 'compliance-rotation',
       title: '5. Compliance-Driven Rotation',
       description:
-        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2025-2033), NIST IR 8547 (2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
+        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2025-2033), the NIST IR 8547 initial public draft (proposed 2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:

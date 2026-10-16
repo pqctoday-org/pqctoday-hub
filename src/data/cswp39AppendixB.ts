@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// NIST CSWP 39 (Considerations for Achieving Crypto Agility, Dec 19 2025) - primary
+// NIST CSWP 39upd1 (Considerations for Achieving Crypto Agility: Strategies and Practices,
+// Dec 19 2025, with updates as of Jun 29 2026; the original CSWP 39 was withdrawn and
+// superseded by 39upd1 on Jun 29 2026) - primary
 // crypto-agility definition plus the alternative definitions catalogued in Appendix B
 // (p.41 of the published PDF). Definitions are verbatim from the source document with
 // only ASCII sanitisation (smart quotes / em-dashes converted) so that the strings can
@@ -23,7 +25,8 @@ export interface CryptoAgilityDefinition {
 
 export const CSWP39_PRIMARY_DEFINITION: CryptoAgilityDefinition = {
   source: 'NIST CSWP 39',
-  citation: 'Considerations for Achieving Crypto Agility, Dec 19 2025, Section 1 / Exec Summary',
+  citation:
+    'Considerations for Achieving Crypto Agility: Strategies and Practices (CSWP 39upd1), Dec 19 2025, updated Jun 29 2026, Section 1 / Exec Summary',
   definition:
     'Cryptographic (crypto) agility describes the capabilities needed to replace and adapt cryptographic algorithms in protocols, applications, software, hardware, firmware, and infrastructures while preserving security and ongoing operations.',
   url: 'https://doi.org/10.6028/NIST.CSWP.39-upd1',

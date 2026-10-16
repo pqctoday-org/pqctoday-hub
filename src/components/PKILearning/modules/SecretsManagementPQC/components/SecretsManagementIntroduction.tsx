@@ -408,11 +408,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
                 'No direct PQC — relies on Cloud KMS CMEK for secret encryption',
-                'Cloud KMS PQC preview: ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, SLH-DSA',
-                'Enable CMEK on Secret Manager with Cloud KMS ML-KEM key ring',
+                'Cloud KMS PQC: ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
+                'CMEK uses a symmetric AES-256 Cloud KMS key, which is already quantum-resistant; PQC keys cannot be used as CMEK',
                 'FIPS mode not available for Secret Manager',
               ],
-              note: 'GCP Cloud KMS has the most advanced PQC preview among major cloud providers. Configure Secret Manager with a Cloud KMS CMEK using an ML-KEM key for immediate protection.',
+              note: 'Secret Manager has no PQC setting of its own. Data at rest is protected with AES-256 (optionally your own CMEK); the quantum-relevant exposure is the TLS connection to the API.',
             },
           ].map((item) => (
             <div key={item.provider} className="bg-muted/50 rounded-lg p-4 border border-border">

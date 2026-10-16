@@ -202,7 +202,7 @@ const STEPS: Step[] = [
     id: 'hkdf-combine',
     title: 'Step 6 — Decapsulate & HKDF Combine',
     description:
-      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Defense-in-depth: if X25519 is broken by a quantum computer, the ML-KEM secret still protects. If ML-KEM has an unforeseen flaw, the X25519 secret still protects.',
+      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Because HKDF is a sound combiner (dual-PRF assumption on HMAC), a quantum break of X25519 alone, or an unforeseen flaw in ML-KEM alone, does not expose the session key.',
     code: `const kemSS = hsm_extractKeyValue(module, session,\n  hsm_decapsulate(module, session, kemPriv, ct, 768))\nconst hybridKey = hsm_hkdf(\n  module, session, ecdhHandle,\n  CKM_SHA256, true, true,\n  kemSS,\n  encode('hybrid-kem-x25519-mlkem768-v1'),\n  32\n)`,
     language: 'javascript',
     actionLabel: 'Decapsulate & Combine',
@@ -527,9 +527,9 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           `  Salt (KEM SS):   ${toHex(decapSSBytes)}\n` +
           `  Info:            "hybrid-kem-x25519-mlkem768-v1"\n\n` +
           `32-byte hybrid session key:\n${toHex(hybridKey)}\n\n` +
-          `Defense-in-depth: this key is quantum-safe if either\n` +
-          `  • X25519 ECDH remains secure (classical assumption), or\n` +
-          `  • ML-KEM-768 remains secure (MLWE lattice assumption)`
+          `With this HKDF combiner (dual-PRF assumption on HMAC), the key stays secret if either\n` +
+          `  • X25519 ECDH remains unbroken (classical assumption), or\n` +
+          `  • ML-KEM-768 remains unbroken (MLWE lattice assumption)`
         )
       }
 
@@ -552,8 +552,8 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
           Live PKCS#11 demo: X25519 ECDH + ML-KEM-768 encapsulation + HKDF-SHA-256 combiner. Both
-          secrets contribute to the 32-byte hybrid session key — quantum-safe if either component
-          remains secure (
+          secrets contribute to the 32-byte hybrid session key, which stays secret as long as either
+          component KEM is unbroken, given a sound combiner such as this HKDF construction (
           <a
             href="/library?ref=FIPS%20203"
             className="text-primary underline"
