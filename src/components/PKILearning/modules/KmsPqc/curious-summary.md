@@ -10,7 +10,7 @@ Organizations must deploy ML-KEM _exclusively_ for key encapsulation (envelope e
 
 ## The Key Takeaway
 
-Administrators must essentially double their existing key inventory and dramatically upgrade their centralized Key Management Systems (KMS) architecture. This infrastructure must be capable of generating, storing, and transmitting these new, significantly larger quantum-safe keys.
+Because post-quantum algorithms cannot share one key pair between encryption and signing, organisations that used dual-purpose keys will need more keys, and must upgrade their centralized Key Management Systems (KMS) architecture. This infrastructure must be capable of generating, storing, and transmitting these new, significantly larger quantum-safe keys.
 
 ## What's Happening
 

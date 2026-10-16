@@ -61,7 +61,17 @@ export function ReviewedBadge({
   // meaning hidden in `title`. Next to the other state, which says "Unreviewed"
   // outright, the two did not read as the same axis, and a screen-reader user
   // got a bare name with no indication of what it asserted.
-  const reviewedLabel = latest.authored_by_llm ? 'Reviewed (LLM)' : 'Reviewed'
+  // `authored_by_llm` marks a change an LLM drafted; `reviewer_display` names
+  // who approved it. Say "human-reviewed" only when that is a person — some
+  // approvals are recorded by an automated agent.
+  const automatedReviewer = /agent|automated|claude|codex|gpt|\bbot\b/i.test(
+    latest.reviewer_display ?? ''
+  )
+  const reviewedLabel = !latest.authored_by_llm
+    ? 'Reviewed'
+    : automatedReviewer
+      ? 'LLM-drafted · automated review'
+      : 'LLM-drafted · human-reviewed'
   const title = `Reviewed by ${latest.reviewer_display} via ${latest.approval_method}${offlineSuffix}`
 
   // The reviewer string is free text and can be long — "claude-agent

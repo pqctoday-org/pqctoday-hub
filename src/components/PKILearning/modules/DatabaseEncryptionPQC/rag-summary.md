@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-KEM preview), or Azure Key Vault with KMIP v2.1 connectivity. Object type: `CryptographicAlgorithm = ML-KEM`.
+2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys and hybrid post-quantum TLS on its endpoints; no ML-KEM KMS keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: `CryptographicAlgorithm = ML-KEM`.
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to wrap 256-bit DEK. Store KEM ciphertext (1,568 bytes) + wrapped DEK alongside old RSA entry during transition.
 
@@ -45,7 +45,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 ### BYOK — Bring Your Own Key (65% PQC Readiness)
 
 - Customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
-- ML-KEM-1024 wrapping for import: AWS KMS and Azure Key Vault planned 2026
+- ML-KEM-1024 wrapping for import: Azure Key Vault planned 2026; AWS KMS offers no ML-KEM keys (its post-quantum support is ML-DSA signing keys and hybrid post-quantum TLS on its endpoints)
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 

@@ -87,7 +87,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               <li>
                 0-RTT early data (optional){' '}
                 <span className="text-status-warning font-normal">
-                  — vulnerable to replay attacks; servers must mitigate (RFC 8446 §8)
+                  — vulnerable to replay attacks; servers must mitigate (RFC 9846 §8)
                 </span>
               </li>
               <li>Encrypted handshake messages</li>
@@ -265,34 +265,61 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <RefreshCw size={20} /> HelloRetryRequest (HRR)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          If the server does not support any of the key exchange groups offered in the client&apos;s
-          initial ClientHello, it responds with a <strong>HelloRetryRequest</strong> instead of a
-          ServerHello. This tells the client to retry with a different key share. The result is a
-          2-RTT handshake instead of the standard 1-RTT.
+          A client lists every group it supports in{' '}
+          <code className="text-xs bg-muted px-1 rounded">supported_groups</code> but usually sends
+          a key share for only one or two of them. If the server selects a group that both sides
+          support but the ClientHello carried no{' '}
+          <code className="text-xs bg-muted px-1 rounded">key_share</code> for it, the server
+          responds with a <strong>HelloRetryRequest</strong> instead of a ServerHello, naming the
+          group it wants. The client resends its ClientHello with a key share for that group, making
+          a 2-RTT handshake instead of the standard 1-RTT (RFC 9846 §4.1.1, §4.1.4). If client and
+          server have no supported group in common, no retry can help: the server aborts the
+          handshake with a <code className="text-xs bg-muted px-1 rounded">handshake_failure</code>{' '}
+          alert.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground mb-1">When Does HRR Happen?</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>Client offers X25519 only, server requires ML-KEM</li>
-              <li>Client offers ML-KEM-768, server wants ML-KEM-1024</li>
-              <li>Client&apos;s key_share group doesn&apos;t match any server preference</li>
+              <li>
+                Client supports X25519 and X25519MLKEM768 but sends a key share only for X25519; the
+                server selects X25519MLKEM768
+              </li>
+              <li>
+                Client supports ML-KEM-768 and ML-KEM-1024 with a key share only for ML-KEM-768; the
+                server accepts only ML-KEM-1024
+              </li>
+              <li>
+                Not an HRR: no group in common (e.g. client X25519 only, server X25519MLKEM768 only)
+                ends in handshake_failure
+              </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground mb-1">PQC Migration Impact</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>During PQC rollout, mismatched groups are common</li>
               <li>
-                Hybrid groups (X25519MLKEM768) minimize HRR — classical clients still match X25519
+                During PQC rollout, clients often send a classical key share first and an HRR
+                upgrades them to the hybrid group the server prefers
               </li>
-              <li>HRR adds latency but never breaks the connection</li>
+              <li>
+                X25519MLKEM768 is its own group codepoint (RFC 10024): a classical-only client
+                matches only if the server also supports plain X25519 as a separate group
+              </li>
+              <li>
+                Offering X25519 as a fallback needs a policy that prevents silent downgrade to
+                classical-only key exchange
+              </li>
+              <li>
+                HRR costs a round trip; a server with no group in common fails the handshake instead
+              </li>
             </ul>
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          In the simulator, try configuring the client with only ML-KEM-1024 and the server with
-          only X25519 to observe a group negotiation mismatch.
+          In the simulator, set the client groups to X25519 then X25519MLKEM768 and the server to
+          X25519MLKEM768 only to observe an HRR. Set the client to ML-KEM-1024 only and the server
+          to X25519 only to observe a handshake failure with no common group.
         </p>
       </section>
 
@@ -328,8 +355,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             security rather than lattice problems, providing{' '}
             <strong>cryptographic diversity</strong>— if lattices are broken, SLH-DSA remains
             secure. The trade-off is significantly larger signatures (~7.9 KB (7,856 B) for
-            SLH-DSA-SHA2-128s vs 2,420 B, about 2.4 KB, for ML-DSA-44). Both are available in the
-            simulator&apos;s signature algorithm options.
+            SLH-DSA-SHA2-128s vs 2,420 B, about 2.4 KB, for ML-DSA-44). The simulator&apos;s
+            signature options offer ML-DSA only: no IETF working-group draft yet specifies SLH-DSA
+            for TLS 1.3 (only an individual draft, draft-reddy-tls-slhdsa, exists).
           </p>
         </div>
         <Button

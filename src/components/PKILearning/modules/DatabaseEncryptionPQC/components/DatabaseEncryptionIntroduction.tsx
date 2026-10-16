@@ -330,7 +330,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <p className="text-xs text-muted-foreground">
               Customer generates keys in on-prem HSM, uploads to cloud KMS. Can enforce ML-KEM-1024
               wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support ML-KEM
-              import format (AWS/Azure: planned 2026).
+              import format (AWS KMS offers no ML-KEM keys; Azure: planned 2026).
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">

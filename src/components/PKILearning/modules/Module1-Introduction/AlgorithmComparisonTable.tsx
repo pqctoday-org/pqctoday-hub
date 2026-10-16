@@ -46,7 +46,7 @@ const ALGO_DATA = [
     privKeyB: 4032,
     outputB: 3309,
     level: 'L3 (AES-192)',
-    note: 'Lattice-based signature. Drop-in replacement for ECDSA in certificates and code signing.',
+    note: 'Lattice-based signature. Replaces ECDSA in certificates and code signing; keys and signatures are much larger, so certificate chains, storage and protocols must allow for them.',
   },
   {
     name: 'SLH-DSA-128s',

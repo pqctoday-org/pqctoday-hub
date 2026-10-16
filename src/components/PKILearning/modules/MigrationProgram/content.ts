@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.1',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -37,7 +37,9 @@ export const content: ModuleContent = {
     // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
     getStandard('OMB-M-23-02'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
-    getStandard('Security-Requirements-for-Cryptographic-Modules'), // bt-kpi-tracker: FIPS 140-2
+    // bt-kpi-tracker: FIPS 140-2/3. FIPS 140-2 is superseded and retired from the
+    // Library (2026-10-16), so the KPI is cited to the standard that replaced it.
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],

@@ -2,9 +2,8 @@
 import React, { useState, useMemo } from 'react'
 import { Map, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
-import { timelineData, transformToGanttData } from '../../data/timelineData'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
-import { COUNTRY_PLANNING_MANDATE } from '../../hooks/assessmentData'
+import { findCountryMilestoneGroups, findCountryNextMilestone } from './countryMilestone'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './sections/reportContentShared'
 
@@ -67,22 +66,6 @@ const CATEGORY_MAP: Record<string, number> = {
   'long-term': 2,
 }
 
-/** Find the earliest hard deadline year from the country's timeline phases. */
-function findCountryDeadlineYear(countryName: string): number | null {
-  const ganttData = transformToGanttData(timelineData)
-  const countryData = ganttData.find(
-    (g) => g.country.countryName.toLowerCase() === countryName.toLowerCase()
-  )
-  if (!countryData) return null
-
-  const deadlinePhases = countryData.phases.filter((p) =>
-    p.phase.toLowerCase().includes('deadline')
-  )
-  if (deadlinePhases.length === 0) return null
-
-  return Math.min(...deadlinePhases.map((p) => p.startYear))
-}
-
 /** Compute phase ranges adapted to deadline proximity. */
 function computePhaseRanges(
   deadlineYear: number | null
@@ -134,18 +117,23 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   defaultOpen = true,
 }) => {
   const [open, setOpen] = useState(defaultOpen)
-  const deadlineYear = useMemo(
-    () => (countryName ? findCountryDeadlineYear(countryName) : null),
+  const milestone = useMemo(
+    () => (countryName ? findCountryNextMilestone(countryName) : null),
+    [countryName]
+  )
+  const deadlineYear = milestone?.year ?? null
+  const milestoneGroups = useMemo(
+    () => (countryName ? findCountryMilestoneGroups(countryName) : []),
     [countryName]
   )
 
-  // Binding legal mandate (HARD) vs soft guidance/roadmap (SOFT) — same single source
-  // (timeline CSV mandate_type). A SOFT year is a published target, not a binding
-  // deadline, so it's labelled + styled as guidance rather than a red regulatory deadline.
-  // eslint-disable-next-line security/detect-object-injection
-  const isSoft = countryName ? COUNTRY_PLANNING_MANDATE[countryName] === 'SOFT' : false
-  const deadlineBadge = deadlineYear ? (
+  // Binding legal mandate (HARD) vs guidance/roadmap — read from the milestone's own
+  // timeline row (mandate_type), not a per-country label. Anything not curated HARD is
+  // labelled + styled as guidance rather than a red regulatory deadline.
+  const isSoft = milestone ? !milestone.binding : false
+  const deadlineBadge = milestone ? (
     <span
+      title={milestone.title}
       className={clsx(
         'text-xs font-mono px-2 py-1 rounded border',
         isSoft
@@ -153,7 +141,8 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
           : 'border-destructive/30 bg-destructive/10 text-destructive'
       )}
     >
-      {countryName} {isSoft ? 'guidance target' : 'deadline'}: {deadlineYear}
+      {countryName} next {isSoft ? 'guidance target' : 'deadline'}: {deadlineYear} —{' '}
+      {milestone.title}
     </span>
   ) : null
 
@@ -212,6 +201,42 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
         {deadlineBadge}
       </div>
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
+        {milestoneGroups.length > 0 && (
+          <div
+            className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+            data-testid="scoped-milestones"
+          >
+            <p className="mb-2 text-xs font-semibold text-foreground">
+              Upcoming milestones in {countryName}, by the body that set them
+            </p>
+            <ul className="space-y-1.5 text-xs">
+              {milestoneGroups.map((g) => (
+                <li key={g.body}>
+                  <span className="font-medium text-foreground">{g.body}:</span>{' '}
+                  {g.milestones.map((m, i) => (
+                    <span key={`${m.year}-${m.title}`} className="text-muted-foreground">
+                      {i > 0 && ' · '}
+                      {m.year} {m.title}{' '}
+                      <span
+                        className={clsx(
+                          'rounded px-1 py-px text-[10px] font-medium',
+                          m.binding
+                            ? 'bg-destructive/10 text-destructive'
+                            : 'bg-muted text-muted-foreground'
+                        )}
+                      >
+                        {m.binding ? 'binding' : 'guidance'}
+                      </span>
+                    </span>
+                  ))}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Each date applies only to the systems or organisations its issuing body covers.
+            </p>
+          </div>
+        )}
         <div className="space-y-4">
           {lanes.map((lane) => {
             const laneStyle = LANE_CONFIG[lane.category] ?? LANE_CONFIG['long-term']
@@ -325,7 +350,8 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
                 <span className="text-muted-foreground/30">|</span>
                 <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="inline-block w-3 h-3 rounded-sm border border-destructive/30 bg-destructive/10" />
-                  Regulatory deadline ({currentYear + ' \u2192 ' + deadlineYear})
+                  {isSoft ? 'Guidance target' : 'Regulatory deadline'} (
+                  {currentYear + ' \u2192 ' + deadlineYear})
                 </span>
               </>
             )}

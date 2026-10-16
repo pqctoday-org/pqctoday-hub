@@ -70,18 +70,18 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Libraries',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "As of mid-2026, AWS-LC (Amazon's FIPS-validated fork) is a strong fit: FIPS 140-3 validated, ML-KEM-768 in the FIPS module, Java bindings via aws-lc-rs-java. wolfSSL is also FIPS-validated and has ML-KEM support, making it a strong alternative especially for embedded POS terminal code. BoringSSL's \"BoringCrypto\" FIPS module is validated but limited to Google's internal use case. FIPS and PQC support move quickly, so confirm each option against the PQC Library Explorer and current CMVP listings.",
+        "As of October 2026, AWS-LC (Amazon's fork of BoringSSL) is the closest fit: its AWS-LC 3 FIPS 140-3 certificates (CMVP #5298, #5314) list ML-KEM as an approved algorithm, but not ML-DSA — so ML-DSA signing would sit outside the validated boundary. Java applications reach AWS-LC through the Amazon Corretto Crypto Provider. wolfSSL has a FIPS 140-3 module and ML-KEM support, but its certificate (#4718) lists no PQC algorithm. BoringSSL's \"BoringCrypto\" FIPS module is validated but limited to Google's internal use case. FIPS and PQC support move quickly, so confirm each option against the PQC Library Explorer and current CMVP listings.",
       config: { step: 4 },
     },
     {
       id: 'support-matrix',
       title: '5. Support Matrix — Identify PQC gaps for a cross-vendor PKI migration',
       description:
-        'In the PQC Support Matrix (Step 6), look for cells showing "Planned" or "N/A" status. Your PKI uses Windows CNG for CA signing and PKCS#11 for HSM key storage. You need ML-DSA and ML-KEM support. Identify which API/algorithm combinations are gaps and what temporary mitigations exist.',
+        'In the PQC Support Matrix (Step 6), open the KSP / CNG row. Your PKI uses Windows CNG for CA signing and PKCS#11 for HSM key storage. You need ML-DSA for CA signing and ML-KEM for key transport, and policy asks for an SLH-DSA root as a hedge against lattice breaks. Which of the three FIPS algorithms does the default CNG provider NOT implement, and what are your options for it? Click the cell to see the source and check date.',
       badge: 'Matrix',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'Windows CNG shows "Planned" for both ML-DSA and ML-KEM — meaning your CA signing stack needs a mitigation. Options: (1) Use OpenSSL or Bouncy Castle as an intermediate layer for PQC operations while CNG handles classical key storage. (2) Deploy an oqsprovider-enabled OpenSSL as the CA signing backend with PKCS#11 for key storage (decoupled from CNG). For HSM-backed key storage, choose a vendor with confirmed PKCS#11 v3.2 PQC support (Thales Luna Firmware 7.9.0+ with Client 10.9.0+, or Utimaco Quantum Protect) — both ship it in production today.',
+        'CNG shows ML-KEM and ML-DSA as Stable (generally available since November 2025 on Windows 11 24H2+ and Windows Server 2025), so the CA signing and key transport needs are covered on current Windows builds. SLH-DSA shows "Not implemented": BCRYPT_SLHDSA_ALGORITHM is defined, but Microsoft documents it as not currently implemented by the default CNG provider. Options for the SLH-DSA root: (1) sign it with OpenSSL 3.5+ or Bouncy Castle, which implement SLH-DSA natively; (2) generate it in an HSM through PKCS#11 v3.2 (CKM_SLH_DSA) — Thales Luna (Firmware 7.9.0+ with Client 10.9.0+) and Utimaco Quantum Protect ship v3.2 PQC mechanisms; (3) use a third-party CNG key storage provider that adds SLH-DSA. Also note what the matrix separates: a CNG primitive being available does not mean Schannel negotiates it in TLS.',
       config: { step: 5 },
     },
     {
@@ -92,7 +92,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
-        'The wizard recommends the "Add Bouncy Castle Provider" path: minimal code changes, production-ready PQC support immediately. The before code uses Signature.getInstance("SHA256withRSA") hardcoded; the after code reads the algorithm from configuration and uses a factory pattern. The critical insight: crypto agility is not about changing one line — it\'s about factoring algorithm selection out of business logic entirely.',
+        'The wizard recommends "JCA: Use JDK 24+ built-in ML-KEM and ML-DSA": on JDK 24+ (first LTS: JDK 25) the default providers already implement ML-DSA, so no extra library is needed; on JDK 21 you would register Bouncy Castle instead. The before code hardcodes an RSA KeyPairGenerator; the after code uses the "ML-DSA" family with a NamedParameterSpec. The engine calls barely change, but the migration is more than one line: key stores, database columns and wire formats must hold larger keys and ~3.3 KB signatures, and peers must understand the new algorithm identifiers. Crypto agility is about factoring all of that out of business logic.',
       config: { step: 7 },
     },
   ]

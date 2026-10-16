@@ -42,6 +42,7 @@ import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import {
   getKmipEngine,
   decisionOf,
@@ -84,6 +85,12 @@ import { KeyConfigPanel } from './operate/KeyConfigPanel'
 import { GuidedLifecyclePanel } from './operate/GuidedLifecyclePanel'
 import type { OperateContext } from './operate/types'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { OP_TEMPLATES } from '@/wasm/kmip/ttlv/opTemplates'
+
+// Counted from the operation templates and the algorithm list, so the tour's
+// "N of M operations run here" cannot drift from what the engine does.
+const OPS_SUPPORTED = OP_TEMPLATES.filter((t) => t.supported).length
+const SPEC_ONLY_ALGORITHMS = ALGORITHMS.filter((a) => a.runnable === false).map((a) => a.value)
 
 /** Jargon glossary (A-grade review item #8) — hover/focus definitions for the
  * three protocol acronyms a first-time visitor hits in the very first
@@ -288,6 +295,8 @@ function whatThisMeans(r: OpResult): string | null {
 export function KmipPlaygroundView() {
   const { pathname } = useLocation()
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -378,7 +387,7 @@ export function KmipPlaygroundView() {
   // A persona switch (or a stale ?tab=dev link) can land a gated persona on
   // the hidden Dev tab — fall back to Learn rather than an empty shell. Dev
   // is persona-gated only, never Expert-gated (D5).
-  const devHidden = role === 'curious' || role === 'executive' || role === 'grc'
+  const devHidden = workbenchHidden
   useEffect(() => {
     if (devHidden && plane === 'dev') setPlane('learn')
   }, [devHidden, plane])
@@ -763,7 +772,7 @@ export function KmipPlaygroundView() {
       steps: [
         {
           title: 'Why crypto-agility?',
-          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, with no code change. Watch that happen live.',
+          body: 'A "harvest-now, decrypt-later" attacker is already recording your encrypted traffic, betting a future quantum computer will crack it. The defence isn\'t a one-time swap to PQC — it\'s changing algorithms by policy, so clients that look keys up by name need no code change. Watch that happen live.',
         },
         {
           title: 'Start on the "before"',
@@ -793,7 +802,7 @@ export function KmipPlaygroundView() {
           title: 'Create again — identical action',
           target: '[data-tour="create-btn"]',
           act: () => onCreate(),
-          body: 'The exact same Auto Create now resolves to a PQC algorithm. Same request, zero code change, now quantum-safe. That is crypto-agility.',
+          body: 'The exact same Auto Create now resolves to a PQC algorithm. Same request, no change on the client side — the server policy picked the algorithm. That is crypto-agility. (Applications that store or transmit the keys still have to handle the larger PQC key sizes.)',
         },
         {
           title: "That's the loop",
@@ -962,7 +971,7 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip-operate-mode"] button',
           targetText: 'Single Request',
           act: () => clickByText('[data-tour="kmip-operate-mode"] button', 'Single Request'),
-          body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
+          body: `${OPS_SUPPORTED} of the ${OP_TEMPLATES.length} operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The ${OP_TEMPLATES.length - OPS_SUPPORTED} that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending. Running an operation does not mean every algorithm behind it is implemented: ${SPEC_ONLY_ALGORITHMS.join(', ')} are specification-only here.`,
         },
         {
           title: 'The Dev tab: build it, or prove it against OASIS',

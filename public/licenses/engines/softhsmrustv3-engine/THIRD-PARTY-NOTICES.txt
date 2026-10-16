@@ -1,0 +1,898 @@
+Third-party notices for the softhsmrustv3-engine engine bundle
+============================================================
+
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit 496f9e529d3d92248dc414e153b06afca8d3ff4f
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/496f9e529d3d92248dc414e153b06afca8d3ff4f).
+Code written by PQC Today, LLC is under the licence in that repository.
+This file lists the third-party code compiled into the bundle, its
+licence and where its full licence text is (LICENSES/ next to this file).
+
+Components
+----------
+
+Rust crates (147, from rust/Cargo.lock, target wasm32-unknown-unknown)
+----------------------------------------
+
+aead 0.6.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aead-0.6.1/LICENSE-APACHE
+  Text:      LICENSES/crates/aead-0.6.1/LICENSE-MIT
+
+aes 0.8.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/block-ciphers
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-MIT
+
+aes 0.9.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/block-ciphers
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-0.9.1/LICENSE-MIT
+
+aes-gcm 0.11.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/AEADs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-gcm-0.11.1/LICENSE-MIT
+
+aes-kw 0.3.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/key-wraps
+  Text:      LICENSES/crates/aes-kw-0.3.1/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-kw-0.3.1/LICENSE-MIT
+
+base16ct 0.2.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/base16ct
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/base16ct-0.2.0/LICENSE-MIT
+
+base16ct 1.0.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/base16ct-1.0.0/LICENSE-MIT
+
+base64ct 1.8.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/base64ct-1.8.3/LICENSE-MIT
+
+block-buffer 0.10.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/block-buffer-0.10.4/LICENSE-MIT
+
+block-buffer 0.12.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/block-buffer-0.12.0/LICENSE-MIT
+
+block-padding 0.4.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/block-buffer-0.12.0/LICENSE-MIT
+
+bumpalo 3.20.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/fitzgen/bumpalo
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-MIT
+
+byteorder 1.5.0
+  Licence:   Unlicense OR MIT
+  Source:    https://github.com/BurntSushi/byteorder
+  Text:      LICENSES/crates/byteorder-1.5.0/COPYING
+  Text:      LICENSES/crates/byteorder-1.5.0/LICENSE-MIT
+  Text:      LICENSES/crates/byteorder-1.5.0/UNLICENSE
+
+cbc 0.2.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/block-modes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cbc-0.2.1/LICENSE-MIT
+
+cfg-if 1.0.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-lang/cfg-if
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+chacha20 0.10.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/stream-ciphers
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-gcm-0.11.1/LICENSE-MIT
+
+chacha20poly1305 0.11.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/AEADs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-gcm-0.11.1/LICENSE-MIT
+
+cipher 0.4.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cipher-0.4.4/LICENSE-MIT
+
+cipher 0.5.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cipher-0.5.2/LICENSE-MIT
+
+classic-mceliece-multi 0.1.0
+  Licence:   MIT
+  Changes:   modified by PQC Today, LLC; see rust/classic-mceliece-multi/PATCHES.md at the commit above
+  Text:      LICENSES/crates/classic-mceliece-multi-0.1.0/LICENSE.txt
+
+cmac 0.7.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/MACs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmac-0.7.2/LICENSE-MIT
+
+cmov 0.5.4
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-MIT
+
+console_error_panic_hook 0.1.7
+  Licence:   Apache-2.0/MIT
+  Source:    https://github.com/rustwasm/console_error_panic_hook
+  Text:      LICENSES/crates/console_error_panic_hook-0.1.7/LICENSE-APACHE
+  Text:      LICENSES/crates/console_error_panic_hook-0.1.7/LICENSE-MIT
+
+const-oid 0.10.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/const-oid-0.10.2/LICENSE-MIT
+
+const-oid 0.9.6
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/const-oid
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/const-oid-0.9.6/LICENSE-MIT
+
+cpubits 0.1.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cpubits-0.1.0/LICENSE-MIT
+
+crunchy 0.2.4
+  Licence:   MIT
+  Source:    https://github.com/eira-fransham/crunchy
+  Text:      LICENSES/crates/crunchy-0.2.4/LICENSE
+
+crypto-bigint 0.5.5
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/crypto-bigint
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.5.5/LICENSE-MIT
+
+crypto-bigint 0.7.5
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/crypto-bigint
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.7.5/LICENSE-MIT
+
+crypto-common 0.1.7
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-common-0.1.7/LICENSE-MIT
+
+crypto-common 0.2.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-common-0.2.2/LICENSE-MIT
+
+ctr 0.10.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/block-modes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cbc-0.2.1/LICENSE-MIT
+
+ctutils 0.4.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ctutils-0.4.0/LICENSE-MIT
+
+curve25519-dalek 4.1.3
+  Licence:   BSD-3-Clause
+  Source:    https://github.com/dalek-cryptography/curve25519-dalek/tree/main/curve25519-dalek
+  Text:      LICENSES/crates/curve25519-dalek-4.1.3/LICENSE
+
+dbl 0.3.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/block-buffer-0.10.4/LICENSE-MIT
+
+der 0.7.10
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/der
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/der-0.7.10/LICENSE-MIT
+
+der 0.8.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/const-oid-0.10.2/LICENSE-MIT
+
+der_derive 0.7.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/der/derive
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/const-oid-0.9.6/LICENSE-MIT
+
+digest 0.10.7
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmac-0.7.2/LICENSE-MIT
+
+digest 0.11.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/digest-0.11.2/LICENSE-MIT
+
+ecdsa 0.16.9
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures/tree/master/ecdsa
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+ed25519 2.2.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures/tree/master/ed25519
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ed25519-2.2.3/LICENSE-MIT
+
+ed25519-dalek 2.2.0
+  Licence:   BSD-3-Clause
+  Source:    https://github.com/dalek-cryptography/curve25519-dalek/tree/main/ed25519-dalek
+  Text:      LICENSES/crates/ed25519-dalek-2.2.0/LICENSE
+
+ed448 0.5.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ed448-0.5.0/LICENSE-MIT
+
+ed448-goldilocks 0.14.0-pre.15
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/ed448-goldilocks
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ed448-goldilocks-0.14.0-pre.15/LICENSE-MIT
+
+elliptic-curve 0.13.8
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits/tree/master/elliptic-curve
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/elliptic-curve-0.13.8/LICENSE-MIT
+
+elliptic-curve 0.14.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/elliptic-curve-0.14.1/LICENSE-MIT
+
+ff 0.13.1
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/zkcrypto/ff
+  Text:      LICENSES/crates/ff-0.13.1/LICENSE-APACHE
+  Text:      LICENSES/crates/ff-0.13.1/LICENSE-MIT
+
+ff 0.14.0
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/zkcrypto/ff
+  Text:      LICENSES/crates/ff-0.13.1/LICENSE-APACHE
+  Text:      LICENSES/crates/ff-0.13.1/LICENSE-MIT
+
+fips204 0.4.6
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/integritychain/fips204
+  Changes:   modified by PQC Today, LLC; see rust/fips204-patched/PATCHES.md at the commit above
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/elliptic-curve-0.13.8/LICENSE-MIT
+
+fips205 0.4.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/integritychain/fips205
+  Changes:   modified by PQC Today, LLC; see rust/fips205-patched/PATCHES.md at the commit above
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/elliptic-curve-0.13.8/LICENSE-MIT
+
+flagset 0.4.7
+  Licence:   Apache-2.0
+  Source:    https://github.com/enarx/flagset
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+
+frodo-kem 0.1.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/KEMs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/frodo-kem-0.1.0/LICENSE-MIT
+
+generic-array 0.14.7
+  Licence:   MIT
+  Source:    https://github.com/fizyk20/generic-array.git
+  Text:      LICENSES/crates/generic-array-0.14.7/LICENSE
+
+getrandom 0.2.17
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/getrandom
+  Text:      LICENSES/crates/getrandom-0.2.17/LICENSE-APACHE
+  Text:      LICENSES/crates/getrandom-0.2.17/LICENSE-MIT
+
+getrandom 0.4.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/getrandom
+  Text:      LICENSES/crates/getrandom-0.2.17/LICENSE-APACHE
+  Text:      LICENSES/crates/getrandom-0.4.2/LICENSE-MIT
+
+ghash 0.6.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/universal-hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-gcm-0.11.1/LICENSE-MIT
+
+group 0.13.0
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/zkcrypto/group
+  Text:      LICENSES/crates/group-0.13.0/COPYRIGHT
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+group 0.14.0
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/zkcrypto/group
+  Text:      LICENSES/crates/group-0.13.0/COPYRIGHT
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+hash2curve 0.14.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/hash2curve-0.14.0/LICENSE-MIT
+
+hbs-lms 0.1.1
+  Licence:   Apache-2.0
+  Source:    https://github.com/Fraunhofer-AISEC/hbs-lms-rust
+  Changes:   modified by PQC Today, LLC; see rust/hbs-lms-patched/PATCHES.md at the commit above
+  Text:      LICENSES/crates/hbs-lms-0.1.1/LICENSE
+
+hkdf 0.12.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/KDFs/
+  Text:      LICENSES/crates/aes-kw-0.3.1/LICENSE-APACHE
+  Text:      LICENSES/crates/hkdf-0.12.4/LICENSE-MIT
+
+hmac 0.12.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/MACs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmac-0.7.2/LICENSE-MIT
+
+hybrid-array 0.2.3
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hybrid-array
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/hybrid-array-0.2.3/LICENSE-MIT
+
+hybrid-array 0.4.13
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hybrid-array
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-MIT
+
+inout 0.1.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/inout-0.1.4/LICENSE-MIT
+
+inout 0.2.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/inout-0.2.2/LICENSE-MIT
+
+js-sys 0.3.94
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen/tree/master/crates/js-sys
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+k256 0.13.4
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/k256
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/k256-0.13.4/LICENSE-MIT
+
+keccak 0.1.6
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/sponges/tree/master/keccak
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+keccak 0.2.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/sponges
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+kem 0.3.0-pre.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits/tree/master/kem
+  Text:      LICENSES/crates/kem-0.3.0-pre.0/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-kw-0.3.1/LICENSE-MIT
+
+lazy_static 1.5.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-lang-nursery/lazy-static.rs
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/lazy_static-1.5.0/LICENSE-MIT
+
+libm 0.2.16
+  Licence:   MIT
+  Source:    https://github.com/rust-lang/compiler-builtins
+  Text:      LICENSES/crates/libm-0.2.16/LICENSE.txt
+
+md-5 0.10.6
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/md-5-0.10.6/LICENSE-MIT
+
+ml-kem 0.2.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/KEMs
+  Changes:   modified by PQC Today, LLC; see rust/ml-kem-patched/PATCHES.md at the commit above
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/frodo-kem-0.1.0/LICENSE-MIT
+
+num-bigint 0.4.8
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-num/num-bigint
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/num-bigint-0.4.8/LICENSE-MIT
+
+num-bigint-dig 0.8.6
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/dignifiedquire/num-bigint
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/num-bigint-0.4.8/LICENSE-MIT
+
+num-integer 0.1.46
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-num/num-integer
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/num-bigint-0.4.8/LICENSE-MIT
+
+num-iter 0.1.45
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-num/num-iter
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/num-bigint-0.4.8/LICENSE-MIT
+
+num-traits 0.2.19
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-num/num-traits
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/num-bigint-0.4.8/LICENSE-MIT
+
+once_cell 1.21.3
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/matklad/once_cell
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+p224 0.13.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/p224
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/p224-0.13.2/LICENSE-MIT
+
+p256 0.13.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/p256
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/p256-0.13.2/LICENSE-MIT
+
+p384 0.13.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/p384
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/p384-0.13.1/LICENSE-MIT
+
+p521 0.13.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/p521
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/elliptic-curve-0.13.8/LICENSE-MIT
+
+pbkdf2 0.12.2
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/password-hashes/tree/master/pbkdf2
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/pbkdf2-0.12.2/LICENSE-MIT
+
+pem-rfc7468 0.7.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/pem-rfc7468
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.5.5/LICENSE-MIT
+
+pkcs1 0.7.5
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/pkcs1
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/pkcs1-0.7.5/LICENSE-MIT
+
+pkcs8 0.10.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/pkcs8
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/der-0.7.10/LICENSE-MIT
+
+pkcs8 0.11.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/const-oid-0.10.2/LICENSE-MIT
+
+poly1305 0.9.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/universal-hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/poly1305-0.9.1/LICENSE-MIT
+
+polyval 0.7.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/universal-hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/aes-gcm-0.11.1/LICENSE-MIT
+
+ppv-lite86 0.2.21
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/cryptocorrosion/cryptocorrosion
+  Text:      LICENSES/crates/ppv-lite86-0.2.21/LICENSE-APACHE
+  Text:      LICENSES/crates/ppv-lite86-0.2.21/LICENSE-MIT
+
+primeorder 0.13.6
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/primeorder
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/p256-0.13.2/LICENSE-MIT
+
+proc-macro2 1.0.106
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/dtolnay/proc-macro2
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+quote 1.0.45
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/dtolnay/quote
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+rand 0.10.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/rand
+  Text:      LICENSES/crates/rand-0.10.1/COPYRIGHT
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-APACHE
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-MIT
+
+rand 0.8.6
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/rand
+  Text:      LICENSES/crates/rand-0.10.1/COPYRIGHT
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-APACHE
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-MIT
+
+rand_chacha 0.3.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/rand
+  Text:      LICENSES/crates/rand-0.10.1/COPYRIGHT
+  Text:      LICENSES/crates/getrandom-0.2.17/LICENSE-APACHE
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-MIT
+
+rand_core 0.10.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/rand_core
+  Text:      LICENSES/crates/rand_core-0.10.0/COPYRIGHT
+  Text:      LICENSES/crates/rand_core-0.10.0/LICENSE-APACHE
+  Text:      LICENSES/crates/rand_core-0.10.0/LICENSE-MIT
+
+rand_core 0.6.4
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/rust-random/rand
+  Text:      LICENSES/crates/rand-0.10.1/COPYRIGHT
+  Text:      LICENSES/crates/rand_core-0.10.0/LICENSE-APACHE
+  Text:      LICENSES/crates/rand-0.10.1/LICENSE-MIT
+
+rfc6979 0.4.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures/tree/master/rfc6979
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+ripemd 0.1.3
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-common-0.1.7/LICENSE-MIT
+
+rsa 0.9.10
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/RSA
+  Text:      LICENSES/crates/rsa-0.9.10/LICENSE-APACHE
+  Text:      LICENSES/crates/rsa-0.9.10/LICENSE-MIT
+
+sec1 0.7.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/sec1
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/sec1-0.7.3/LICENSE-MIT
+
+sec1 0.8.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.7.5/LICENSE-MIT
+
+serde 1.0.228
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/serde-rs/serde
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+serde_core 1.0.228
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/serde-rs/serde
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+serde_derive 1.0.228
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/serde-rs/serde
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+serdect 0.4.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/serdect-0.4.3/LICENSE-MIT
+
+sha1 0.10.6
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/md-5-0.10.6/LICENSE-MIT
+
+sha2 0.10.9
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/md-5-0.10.6/LICENSE-MIT
+
+sha3 0.10.8
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/sha3-0.10.8/LICENSE-MIT
+
+sha3 0.11.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/sha3-0.11.0/LICENSE-MIT
+
+shake 0.1.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/XOFs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/shake-0.1.0/LICENSE-MIT
+
+signature 1.6.4
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits/tree/master/signature
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+signature 2.2.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits/tree/master/signature
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ed25519-2.2.3/LICENSE-MIT
+
+signature 3.0.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ed448-0.5.0/LICENSE-MIT
+
+smallvec 1.15.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/servo/rust-smallvec
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/smallvec-1.15.1/LICENSE-MIT
+
+sp800-185 0.2.0
+  Licence:   MIT
+  Source:    https://github.com/quininer/sp800-185
+  Text:      LICENSES/crates/sp800-185-0.2.0/LICENSE
+
+spin 0.9.9
+  Licence:   MIT
+  Source:    https://github.com/mvdnes/spin-rs.git
+  Text:      LICENSES/crates/spin-0.9.9/LICENSE
+
+spki 0.7.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/spki
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/pkcs1-0.7.5/LICENSE-MIT
+
+spki 0.8.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.7.5/LICENSE-MIT
+
+sponge-cursor 0.1.0
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/shake-0.1.0/LICENSE-MIT
+
+subtle 2.6.1
+  Licence:   BSD-3-Clause
+  Source:    https://github.com/dalek-cryptography/subtle
+  Text:      LICENSES/crates/subtle-2.6.1/LICENSE
+
+syn 2.0.117
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/dtolnay/syn
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+thiserror 2.0.18
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/dtolnay/thiserror
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+thiserror-impl 2.0.18
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/dtolnay/thiserror
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+tiny-keccak 1.5.0
+  Licence:   CC0-1.0
+  Text:      LICENSES/crates/tiny-keccak-1.5.0/LICENSE
+
+tiny-keccak 2.0.2
+  Licence:   CC0-1.0
+  Text:      LICENSES/crates/tiny-keccak-1.5.0/LICENSE
+
+tinyvec 1.11.0
+  Licence:   Zlib OR Apache-2.0 OR MIT
+  Source:    https://github.com/Lokathor/tinyvec
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/tinyvec-1.11.0/LICENSE-MIT.md
+  Text:      LICENSES/crates/tinyvec-1.11.0/LICENSE-ZLIB.md
+
+typenum 1.20.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/paholg/typenum
+  Text:      LICENSES/crates/typenum-1.20.1/LICENSE
+  Text:      LICENSES/crates/typenum-1.20.1/LICENSE-APACHE
+  Text:      LICENSES/crates/typenum-1.20.1/LICENSE-MIT
+
+unicode-ident 1.0.24
+  Licence:   (MIT OR Apache-2.0) AND Unicode-3.0
+  Source:    https://github.com/dtolnay/unicode-ident
+  Text:      LICENSES/crates/proc-macro2-1.0.106/LICENSE-APACHE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+  Text:      LICENSES/crates/unicode-ident-1.0.24/LICENSE-UNICODE
+
+universal-hash 0.6.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/traits
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/universal-hash-0.6.1/LICENSE-MIT
+
+wasm-bindgen 0.2.117
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+wasm-bindgen-macro 0.2.117
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen/tree/master/crates/macro
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+wasm-bindgen-macro-support 0.2.117
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen/tree/master/crates/macro-support
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+wasm-bindgen-shared 0.2.117
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen/tree/master/crates/shared
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+web-sys 0.3.94
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/wasm-bindgen/wasm-bindgen/tree/master/crates/web-sys
+  Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
+  Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
+
+x25519-dalek 2.0.1
+  Licence:   BSD-3-Clause
+  Source:    https://github.com/dalek-cryptography/curve25519-dalek/tree/main/x25519-dalek
+  Text:      LICENSES/crates/x25519-dalek-2.0.1/LICENSE
+
+x448 0.14.0-pre.8
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/x448
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/ed448-goldilocks-0.14.0-pre.15/LICENSE-MIT
+
+xmss 0.1.0-pre.0
+  Licence:   MIT/Apache-2.0
+  Source:    https://github.com/RustCrypto/signatures
+  Changes:   modified by PQC Today, LLC; see rust/xmss-patched/PROVENANCE.md at the commit above
+  Text:      LICENSES/crates/hbs-lms-0.1.1/LICENSE
+  Text:      LICENSES/crates/group-0.13.0/LICENSE-MIT
+
+xts-mode 0.6.0
+  Licence:   MIT
+  Source:    https://github.com/pheki/xts-mode
+  Text:      LICENSES/crates/xts-mode-0.6.0/LICENSE.md
+
+zerocopy 0.8.40
+  Licence:   BSD-2-Clause OR Apache-2.0 OR MIT
+  Source:    https://github.com/google/zerocopy
+  Text:      LICENSES/crates/zerocopy-0.8.40/LICENSE-APACHE
+  Text:      LICENSES/crates/zerocopy-0.8.40/LICENSE-BSD
+  Text:      LICENSES/crates/zerocopy-0.8.40/LICENSE-MIT
+
+zeroize 1.8.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/utils
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/zeroize-1.8.2/LICENSE-MIT
+
+zeroize_derive 1.4.3
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/utils/tree/master/zeroize/derive
+  Text:      LICENSES/crates/cmov-0.5.4/LICENSE-APACHE
+  Text:      LICENSES/crates/zeroize_derive-1.4.3/LICENSE-MIT
+
+Crates written by PQC Today, LLC (this repository): softhsmrustv3 0.17.0

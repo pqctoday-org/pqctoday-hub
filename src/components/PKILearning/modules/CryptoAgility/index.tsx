@@ -14,7 +14,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'abstraction-layer',
     title: 'Step 1: Abstraction Layer',
-    description: 'See how algorithm-agnostic APIs enable instant backend swaps.',
+    description:
+      'See how algorithm-agnostic APIs keep call sites unchanged when the backend changes.',
     icon: Layers,
   },
   {

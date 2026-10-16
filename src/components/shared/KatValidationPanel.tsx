@@ -33,12 +33,15 @@ interface KatValidationPanelProps {
   specs: KatTestSpec[]
   label: string
   authorityNote: string
+  /** Called once a run finishes without an exception, with every result and the run's start/end times. */
+  onComplete?: (results: KATResult[], run: { startedAt: string; finishedAt: string }) => void
 }
 
 export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   specs,
   label,
   authorityNote,
+  onComplete,
 }) => {
   const hsm = useHSM()
   const [results, setResults] = useState<KATResult[]>([])
@@ -51,6 +54,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
     setError(null)
     setResults([])
     setLogEntries([])
+    const startedAt = new Date().toISOString()
 
     const beginOp = (message: string) => {
       const startedAt = performance.now()
@@ -114,6 +118,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
           throw e
         }
       }
+      onComplete?.(out, { startedAt, finishedAt: new Date().toISOString() })
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {

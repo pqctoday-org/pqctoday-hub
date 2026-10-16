@@ -17,6 +17,20 @@ import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/d
 import { ThreatsDashboard } from './ThreatsDashboard'
 import { Button } from '@/components/ui/button'
 
+// No persona carries default industries any more (owner decisions, 15 Oct 2026),
+// but the persona-default scope mechanism remains; give executive a fixture
+// default here so these tests keep covering it.
+vi.mock('@/data/personaConfig', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/data/personaConfig')>()
+  return {
+    ...actual,
+    PERSONA_THREATS_DEFAULT_INDUSTRIES: {
+      ...actual.PERSONA_THREATS_DEFAULT_INDUSTRIES,
+      executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+    },
+  }
+})
+
 vi.mock('./ThreatDetailDialog', () => ({
   ThreatDetailDialog: ({
     threat,

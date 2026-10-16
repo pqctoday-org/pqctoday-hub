@@ -2,7 +2,7 @@
 /**
  * LibraryControlDeck — the consolidated control row for the redesign. Search
  * leads; sort, view toggle and an Advanced disclosure sit to its right. Advanced
- * expands the org dropdown, an "authoritative only" toggle, the geo/sector/trust
+ * expands the org dropdown, a "Mapped to NIST CSWP 39" toggle, the geo/sector/trust
  * multiselects (passed in), and a reset link. Replaces the live page's sprawling
  * control row + 5-control filter drawer.
  */
@@ -29,6 +29,9 @@ interface LibraryControlDeckProps {
   orgs: string[]
   activeOrg: string
   onOrg: (o: string) => void
+  /** The `?cswp39` filter: keeps documents mapped to a CSWP 39 maturity
+   *  requirement. It says nothing about trust, so the button is labelled by
+   *  what it filters, not "Authoritative". */
   authOnly: boolean
   onAuthOnly: (v: boolean) => void
   onReset: () => void
@@ -121,9 +124,10 @@ export function LibraryControlDeck({
             variant={authOnly ? 'secondary' : 'outline'}
             onClick={() => onAuthOnly(!authOnly)}
             aria-pressed={authOnly}
+            title="Show only documents mapped to a NIST CSWP 39 crypto-agility maturity requirement. This is not a trust rating."
             className="h-auto px-3 py-2 text-[13px]"
           >
-            Authoritative sources only
+            Mapped to NIST CSWP 39
           </Button>
           {advancedExtra}
           <Button

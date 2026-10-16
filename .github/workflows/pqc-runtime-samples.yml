@@ -1,0 +1,119 @@
+name: PQC runtime samples
+
+# TEST-ONLY workflow. It compiles and runs the small ML-KEM / ML-DSA programs in
+# samples/pqc-runtimes/ on each language's official toolchain and checks their
+# output against samples/pqc-runtimes/expected.json. Those samples back the
+# "which language supports PQC" table on the site, so a toolchain change that
+# breaks a claim shows up here.
+#
+# Repo policy: public CI never runs scheduled data collection or scraping. This
+# schedule only runs tests (same precedent as e2e-nightly.yml): it writes no
+# data, makes no commits, uploads no artefacts and needs no network beyond
+# installing the toolchains. It is not part of the site build or deploy.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch: {}
+  # main-only, like ci.yml (owner decision D20, 2026-09-27: PRs are validated
+  # by the local gates, not by GitHub jobs).
+  push:
+    branches: [main]
+    paths:
+      - 'samples/pqc-runtimes/**'
+      - 'src/components/PKILearning/modules/CryptoDevAPIs/**'
+      - '.github/workflows/pqc-runtime-samples.yml'
+
+concurrency:
+  group: pqc-runtime-samples-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: samples/pqc-runtimes
+
+jobs:
+  go:
+    # crypto/mlkem needs Go 1.24+, crypto/mldsa Go 1.27+; both run on 1.27.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: samples/pqc-runtimes
+          filter: blob:none
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.x'
+          cache: false # standard library only: no go.sum, nothing to cache
+      - run: go version
+      - run: ./run-all.sh go-mlkem go-mldsa
+
+  python:
+    # pyca/cryptography 48+ supports ML-KEM / ML-DSA on OpenSSL 3.5+; the PyPI
+    # wheels bundle their own OpenSSL (4.0.x for 49.0.0), so the runner's
+    # system OpenSSL does not matter. --only-binary guarantees the wheel.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: samples/pqc-runtimes
+          filter: blob:none
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --only-binary ':all:' 'cryptography==49.0.0'
+      - run: >-
+          python -c "import cryptography; from cryptography.hazmat.backends.openssl.backend import backend;
+          print('cryptography', cryptography.__version__, '/', backend.openssl_version_text())"
+      - run: ./run-all.sh python-mlkem python-mldsa
+        env:
+          PYTHON: python
+
+  dotnet:
+    # .NET's MLKem / MLDsa use the OS crypto provider and need OpenSSL 3.5+ on
+    # Linux. Ubuntu runners ship OpenSSL 3.0 (IsSupported is false, the samples
+    # would only print SKIP), so the samples run in the official .NET 10 SDK
+    # Alpine image, whose OpenSSL is 3.5+. GitHub's JavaScript actions cannot
+    # run inside Alpine containers, so checkout happens on the host and the
+    # samples run through `docker run`. A SKIP here fails the job.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: samples/pqc-runtimes
+          filter: blob:none
+      - name: Run the .NET samples in the .NET 10 SDK (Alpine) image
+        working-directory: .
+        # Steps run under `bash -eo pipefail`, so a failing sample fails the job
+        # through the pipe; the grep then turns a SKIP into a failure too.
+        run: |
+          docker run --rm \
+            -e DOTNET_CLI_TELEMETRY_OPTOUT=1 -e DOTNET_NOLOGO=1 \
+            -v "$GITHUB_WORKSPACE/samples/pqc-runtimes:/w" -w /w \
+            mcr.microsoft.com/dotnet/sdk:10.0-alpine \
+            sh -c 'apk add --no-cache bash jq >/dev/null && dotnet --version && bash ./run-all.sh dotnet-mlkem dotnet-mldsa' \
+            | tee "$RUNNER_TEMP/dotnet-samples.txt"
+          ! grep -q '^SKIP' "$RUNNER_TEMP/dotnet-samples.txt"
+
+  java:
+    # JEP 496 (ML-KEM) and JEP 497 (ML-DSA) shipped in JDK 24; run on the
+    # Temurin 25 LTS.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: samples/pqc-runtimes
+          filter: blob:none
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '25'
+      - run: java -version
+      - run: ./run-all.sh java-mlkem java-mldsa

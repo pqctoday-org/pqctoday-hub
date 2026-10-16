@@ -49,8 +49,8 @@ export const CLMVendorEvaluator: React.FC = () => {
               <h3 className="font-bold">47-Day ACME / EST Automation</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              By 2029, TLS certificates will have a maximum lifespan of 47 days. Does the vendor
-              support fully automated ACME/EST enrollment?
+              By 2029, publicly trusted TLS server certificates will have a maximum lifespan of 47
+              days. Does the vendor support fully automated ACME/EST enrollment?
             </p>
             {vendor.api ? (
               <div className="flex items-center gap-2 text-success font-medium text-sm">

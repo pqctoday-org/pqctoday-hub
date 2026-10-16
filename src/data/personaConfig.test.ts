@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getBeltTierLabel,
+  ALGORITHM_PERSONA_DEFAULTS,
   PERSONA_BELT_TIER_LABELS,
   isComplianceFrameworkEmphasized,
   PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS,
@@ -21,6 +22,7 @@ import {
 } from './personaConfig'
 import { ROLE_CROSSWALK, personaToRoles } from './roleCrosswalk'
 import { PERSONAS, type PersonaId } from './learningPersonas'
+import { PENDING_CHIP_RETIREMENT } from './trackChips'
 import type { PhaseId } from './frameworkPhases'
 import { EXEC_TOUR_STAGES } from '@/components/Simulation/autorun/execTourConfig'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
@@ -44,24 +46,24 @@ describe('getBeltTierLabel', () => {
     expect(getBeltTierLabel('ops', 'Brown Belt')).toBe('Rolling Out')
   })
 
-  it('maps executive belts to "Briefed → Aligned → Sponsoring → Board-Ready"', () => {
+  it('maps executive belts to "Briefed → Mandated → Funded → Governing"', () => {
     expect(getBeltTierLabel('executive', 'White Belt')).toBe('Briefed')
     expect(getBeltTierLabel('executive', 'Yellow Belt')).toBe('Briefed')
-    expect(getBeltTierLabel('executive', 'Orange Belt')).toBe('Aligned')
-    expect(getBeltTierLabel('executive', 'Green Belt')).toBe('Aligned')
-    expect(getBeltTierLabel('executive', 'Blue Belt')).toBe('Sponsoring')
-    expect(getBeltTierLabel('executive', 'Brown Belt')).toBe('Sponsoring')
-    expect(getBeltTierLabel('executive', 'Black Belt')).toBe('Board-Ready')
+    expect(getBeltTierLabel('executive', 'Orange Belt')).toBe('Mandated')
+    expect(getBeltTierLabel('executive', 'Green Belt')).toBe('Mandated')
+    expect(getBeltTierLabel('executive', 'Blue Belt')).toBe('Funded')
+    expect(getBeltTierLabel('executive', 'Brown Belt')).toBe('Funded')
+    expect(getBeltTierLabel('executive', 'Black Belt')).toBe('Governing')
   })
 
-  it('maps curious belts to "Aware → Informed → Confident → Quantum-Native"', () => {
+  it('maps curious belts to "Aware → Informed → Confident → Fluent"', () => {
     expect(getBeltTierLabel('curious', 'White Belt')).toBe('Aware')
     expect(getBeltTierLabel('curious', 'Yellow Belt')).toBe('Aware')
     expect(getBeltTierLabel('curious', 'Orange Belt')).toBe('Informed')
     expect(getBeltTierLabel('curious', 'Green Belt')).toBe('Informed')
     expect(getBeltTierLabel('curious', 'Blue Belt')).toBe('Confident')
     expect(getBeltTierLabel('curious', 'Brown Belt')).toBe('Confident')
-    expect(getBeltTierLabel('curious', 'Black Belt')).toBe('Quantum-Native')
+    expect(getBeltTierLabel('curious', 'Black Belt')).toBe('Fluent')
   })
 
   it('returns null for unknown belt names', () => {
@@ -178,6 +180,16 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
     it(`${personaId}: trackChips count matches essentials.length`, () => {
       const board = PERSONA_JOURNEY_BOARD[personaId]
       const essentials = PERSONAS[personaId].essentials
+      if (PENDING_CHIP_RETIREMENT.has(personaId)) {
+        // Extra chips wait for the data lane's retirement; the renderer shows
+        // only the first essentials.length. Fails once the extras are gone, so
+        // the PENDING_CHIP_RETIREMENT entry is removed with them.
+        expect(
+          board.trackChips.length,
+          `${personaId}: no extra chips left, delete it from PENDING_CHIP_RETIREMENT`
+        ).toBeGreaterThan(essentials.length)
+        return
+      }
       expect(
         board.trackChips.length,
         `${personaId} has ${essentials.length} essentials but ${board.trackChips.length} trackChips`
@@ -338,4 +350,42 @@ describe('PERSONA_REPORT_CONFIG — no persona gets the generic report', () => {
     // present upward, so 'hidden' would be the wrong tool here.
     expect(Object.values(dev).every((c) => c.state !== 'hidden')).toBe(true)
   })
+})
+
+describe('curious Algorithms default (curious journey review, 16 Oct 2026)', () => {
+  it('does not filter by function, so its one KEM and two signature highlights all show', () => {
+    const d = ALGORITHM_PERSONA_DEFAULTS.curious
+    expect(d.filters?.fn).toBeUndefined()
+    expect(d.highlight).toEqual(['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'])
+  })
+})
+
+/**
+ * Beginner-board source links (16 Oct 2026). A curious side card that calls
+ * itself `sourced` must give every row a source link (owner decision: beginner
+ * boards first; other roles' sourced cards are a later data-lane pass). Boards whose sources are still
+ * being added through the data lane are listed here; the entry fails once the
+ * sources exist, so it is removed with them.
+ */
+const PENDING_SOURCED_CARDS = new Set<string>()
+
+describe('sourced side cards link every row to its source', () => {
+  for (const [personaId, variants] of Object.entries(PERSONA_JOURNEY_BOARD_VARIANTS)) {
+    if (personaId !== 'curious') continue
+    for (const v of variants) {
+      const key = `${personaId}/${v.id}`
+      if (v.board.sideCard.provenance !== 'sourced') continue
+      it(key, () => {
+        const missing = v.board.sideCard.rows.filter((r) => !r.source).map((r) => r.label)
+        if (PENDING_SOURCED_CARDS.has(key)) {
+          expect(
+            missing.length,
+            `${key} has all its sources now; drop it from PENDING`
+          ).toBeGreaterThan(0)
+        } else {
+          expect(missing, `${key}: rows without a source`).toEqual([])
+        }
+      })
+    }
+  }
 })

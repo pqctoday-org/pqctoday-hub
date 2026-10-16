@@ -208,10 +208,10 @@ export const SIGNING_ALGORITHMS = new Set([
   'secp256k1',
 ])
 // Compliance data now comes from the dedicated compliance CSV (single source of truth)
-import { complianceDB } from '@/data/complianceData'
+import { complianceDB, type ComplianceProvenance } from '@/data/complianceData'
 export const COMPLIANCE_DB: Record<
   string,
-  { requiresPQC: boolean; deadline: string; notes: string }
+  { requiresPQC: boolean; deadline: string; notes: string } & ComplianceProvenance
 > = complianceDB
 /** Expose compliance deadline/notes for UI tooltips in the wizard. */
 export const COMPLIANCE_DESCRIPTIONS: Record<string, { deadline: string; notes: string }> =

@@ -19,7 +19,7 @@ export type LibraryExecutivePick = LibraryCuriousPick
 export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
   {
     referenceId: 'NIST CSWP 39',
-    label: 'NIST CSWP 39 — Considerations for Achieving Cryptographic Agility',
+    label: 'NIST CSWP 39 — Considerations for Achieving Crypto Agility: Strategies and Practices',
     blurb:
       "NIST's strategies and practices for cryptographic agility: replacing and adapting algorithms in protocols, applications and infrastructure without disruption. The companion to the PQC transition.",
   },

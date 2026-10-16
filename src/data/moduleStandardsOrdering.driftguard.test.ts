@@ -45,7 +45,7 @@ function strideSample<T>(items: T[], n: number): T[] {
  * that test fail; do not re-introduce a cross-repo read.
  */
 const MAX_EVIDENCE_DOCS = 0
-const POLICY_TRACKS = new Set(['Executive', 'Role Guides'])
+const POLICY_TRACKS = new Set(['Governance & Risk', 'Role Guides'])
 
 /**
  * The generic PQC specifications nearly every module cites as background —

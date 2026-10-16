@@ -754,7 +754,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
               wg: 'TLS Working Group',
               role: 'TLS 1.3 PQC integration',
               output:
-                'draft-ietf-tls-hybrid-design (X25519MLKEM768), now deployed in Chrome/Firefox/Cloudflare.',
+                'RFC 9954 (hybrid design) and RFC 10024 (X25519MLKEM768), deployed in Chrome, Firefox and Cloudflare.',
             },
             {
               wg: 'COSE (CBOR Object Signing and Encryption)',

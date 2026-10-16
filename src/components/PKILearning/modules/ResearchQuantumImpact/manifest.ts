@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'research-quantum-impact',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-051',
   title: 'Researcher Quantum Impact',
   description:
     'Quantum threats to research: long-lived data confidentiality, publication integrity, emerging PQC research frontiers, and funding opportunities.',
   whyThisMatters:
-    'A paper published today with weak crypto protecting its underlying data can be compromised decades before its confidentiality requirement expires — research data often has the longest harvest-now-decrypt-later exposure window of any sector.',
+    'A paper published today with weak crypto protecting its underlying data can be compromised decades before its confidentiality requirement expires — research data is among the longest harvest-now-decrypt-later exposures, for example participant-linked genomic data that stays sensitive for the participant\u2019s lifetime and affects relatives.',
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

@@ -5,7 +5,12 @@ import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { findLibraryItemByRef, findLibrarySuccessor, type LibraryItem } from '@/data/libraryData'
+import {
+  findLibraryItemByRef,
+  findLibrarySuccessor,
+  libraryData,
+  type LibraryItem,
+} from '@/data/libraryData'
 import {
   LIBRARY_DOORS as DOORS,
   type LibraryPurposeSelection as PurposeSelection,
@@ -13,6 +18,12 @@ import {
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
 import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
+import {
+  RESEARCH_TOPIC_PARAM,
+  researchTopicCounts,
+  researchTopicLabel,
+  resolveResearchTopicParam,
+} from '@/data/researchTopics'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
@@ -83,13 +94,18 @@ export function MobileLibraryView() {
 
   // The open document lives in ?ref — the same param desktop reads — so a
   // shared /library?ref= link opens its sheet on a phone too, and Back closes it.
-  // ?q and ?purpose seed the search box and door once, on arrival.
+  // ?q, ?purpose and ?qv seed the search box, door and quick view once, on arrival.
   const [params, setParams] = useSearchParams()
   const [purpose, setPurpose] = useState<PurposeSelection>(() => {
     const p = params.get('purpose')
     return DOORS.some((d) => d.id === p) ? (p as PurposeSelection) : 'all'
   })
-  const [quickView, setQuickView] = useState<QuickView>('all')
+  // ?qv seeds the quick view once, as on desktop, so a link to the recent
+  // changes (/library?qv=new) opens filtered on a phone too.
+  const [quickView, setQuickView] = useState<QuickView>(() => {
+    const qv = params.get('qv')
+    return QUICK_VIEWS.some((v) => v.id === qv) ? (qv as QuickView) : 'all'
+  })
   const [searchText, setSearchText] = useState(() => params.get('q') ?? '')
   const detailRef = params.get('ref')
   const sortParam = params.get('sort')
@@ -99,6 +115,10 @@ export function MobileLibraryView() {
   // a removable chip, as Community does for its link-only filters. A value that is
   // not a label filters nothing.
   const lifecycle = parseLifecycleParam(params.get('lifecycle')) ?? 'All'
+  // ?topic= from a shared desktop link works the same way: it filters the list
+  // and shows as a removable chip. An id with no tagged documents filters nothing.
+  const libraryTopics = useMemo(() => researchTopicCounts(libraryData), [])
+  const topic = resolveResearchTopicParam(params.get(RESEARCH_TOPIC_PARAM), libraryTopics)
   // Same resolution as desktop's resolveLibraryDeepLink (live ref, else the
   // document that superseded it), read straight from libraryData.
   const selected: LibraryItem | null = useMemo(
@@ -166,6 +186,7 @@ export function MobileLibraryView() {
     certRelevantOnly: quickView === 'cert',
     certRelevantIdSet,
     lifecycleBucket: lifecycle,
+    topicFilter: topic,
     sortBy: sortBy ?? 'published',
     sortExplicit: sortBy !== undefined,
     selectedPersona,
@@ -176,6 +197,12 @@ export function MobileLibraryView() {
   const clearLifecycle = useCallback(() => {
     const next = new URLSearchParams(params)
     next.delete('lifecycle')
+    setParams(next, { replace: true })
+  }, [params, setParams])
+
+  const clearTopic = useCallback(() => {
+    const next = new URLSearchParams(params)
+    next.delete(RESEARCH_TOPIC_PARAM)
     setParams(next, { replace: true })
   }, [params, setParams])
 
@@ -270,24 +297,43 @@ export function MobileLibraryView() {
         ))}
       </div>
 
-      {lifecycle !== 'All' && (
+      {(lifecycle !== 'All' || topic !== 'All') && (
         <div
           className="mb-3 flex flex-wrap items-center gap-1.5"
           data-testid="library-link-filters"
         >
-          <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
-            <span className="text-muted-foreground">Status:</span>
-            <span className="truncate font-medium text-foreground">{lifecycle}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              aria-label="Remove Status filter"
-              onClick={clearLifecycle}
-              className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
-            >
-              <X size={12} aria-hidden="true" />
-            </Button>
-          </span>
+          {lifecycle !== 'All' && (
+            <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
+              <span className="text-muted-foreground">Status:</span>
+              <span className="truncate font-medium text-foreground">{lifecycle}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label="Remove Status filter"
+                onClick={clearLifecycle}
+                className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          )}
+          {topic !== 'All' && (
+            <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
+              <span className="text-muted-foreground">Topic:</span>
+              <span className="truncate font-medium text-foreground">
+                {researchTopicLabel(topic) ?? topic}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label="Remove Topic filter"
+                onClick={clearTopic}
+                className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          )}
         </div>
       )}
 

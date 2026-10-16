@@ -5,6 +5,7 @@ import { Play, BookOpen, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'
 import type { Region } from '@/store/usePersonaStore'
+import { homeFunnelFor } from '@/data/nextSteps'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { WorkshopRegion } from '@/types/Workshop'
@@ -77,6 +78,13 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
   const { open: openPanel } = useRightPanelStore()
 
   const isCurious = persona === 'curious'
+  // A persona whose Home leads somewhere other than the learning modules
+  // (the researcher: the Library's recent changes) gets that as its third CTA.
+  const startCta = homeFunnelFor(persona)?.startCta ?? {
+    label: 'Start Your Journey',
+    sub: 'Jump into the learning modules',
+    to: '/learn',
+  }
   const [flowInfo, setFlowInfo] = useState<FlowInfo | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -147,20 +155,18 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
           </div>
         </Button>
 
-        {/* CTA 3: Start journey */}
+        {/* CTA 3: Start journey (or the persona's own first stop) */}
         <Button
           variant="outline"
-          onClick={() => navigate('/learn')}
+          onClick={() => navigate(startCta.to)}
           className="flex flex-col items-center gap-2 h-auto py-4 px-4 text-left hover:border-primary/50 hover:bg-muted/30 transition-all"
         >
           <div className="p-2 rounded-lg bg-accent/10 text-accent">
             <BookOpen size={18} aria-hidden="true" />
           </div>
           <div className="text-center">
-            <p className="text-sm font-semibold text-foreground leading-tight">
-              Start Your Journey
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">Jump into the learning modules</p>
+            <p className="text-sm font-semibold text-foreground leading-tight">{startCta.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{startCta.sub}</p>
           </div>
         </Button>
       </div>

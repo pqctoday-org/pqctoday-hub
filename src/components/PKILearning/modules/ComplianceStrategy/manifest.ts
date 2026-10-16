@@ -3,17 +3,17 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'compliance-strategy',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-035',
   title: 'Compliance & Regulatory Strategy',
   description:
     'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
   whyThisMatters:
-    "Regulatory deadlines (CNSA 2.0, NIS2, DORA) are already law in some jurisdictions and proposed in others — a strategy built from live framework data, not last year's summary, is the difference between meeting a deadline and discovering it too late.",
+    "PQC deadlines (CNSA 2.0, EO 14412, the EU PQC roadmap) sit beside general cyber-resilience duties (NIS2, DORA) that reach the same systems — a strategy built from live framework data, not last year's summary, is the difference between meeting a deadline and discovering it too late.",
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 1,
   learnSections: [
     { id: 'frameworks', label: 'Compliance Landscape' },

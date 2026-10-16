@@ -80,9 +80,46 @@ export const GENERIC_SEQUENCE: BusinessRoleSequence = {
   ],
 }
 
+/**
+ * Developer / Engineer: the four Command Center tools the Developer home
+ * board already links to, in the order an engineer uses them — find the call
+ * sites, record them as a CBOM, check what the change must satisfy, then
+ * verify it. Without this Developers got GENERIC_SEQUENCE, which starts at
+ * the ROI calculator.
+ */
+export const DEVELOPER_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? From call sites to a verified change',
+  guidance: 'Build these in order to reach a reviewable engineering record.',
+  steps: [
+    { step: 1, label: 'Refactor audit', id: 'crypto-api-refactor-audit' },
+    { step: 2, label: 'CBOM', id: 'crypto-cbom-builder' },
+    { step: 3, label: 'Requirements', id: 'compliance-checklist' },
+    { step: 4, label: 'Verify', id: 'migration-verification' },
+  ],
+}
+
+/**
+ * Researcher / Academic: the researcher's questions are answered by the
+ * Library, the Playground, Threats and Patents rather than by Command Center
+ * deliverables, so the sequence holds only the two existing tools a
+ * researcher would open — the CRQC scenario model behind the threat timeline
+ * (also the researcher board's threat-model CTA) and the CVE digest. Without
+ * this researchers got GENERIC_SEQUENCE, which starts at the ROI calculator.
+ */
+export const RESEARCHER_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Test the threat model',
+  guidance: 'Two tools that let you vary the assumptions behind the dates.',
+  steps: [
+    { step: 1, label: 'CRQC scenarios', id: 'crqc-scenario' },
+    { step: 2, label: 'CVE watch', id: 'crypto-vulnerability-watch' },
+  ],
+}
+
 const BUSINESS_ROLE_SEQUENCES: Partial<Record<PersonaId, BusinessRoleSequence>> = {
   executive: EXECUTIVE_SEQUENCE,
   grc: GRC_SEQUENCE,
+  developer: DEVELOPER_SEQUENCE,
+  researcher: RESEARCHER_SEQUENCE,
 }
 
 /** Resolve the recommended sequence for a persona, falling back to the

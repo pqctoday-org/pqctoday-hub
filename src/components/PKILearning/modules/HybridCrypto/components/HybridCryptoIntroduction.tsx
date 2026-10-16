@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { Button } from '@/components/ui/button'
 
 interface HybridCryptoIntroductionProps {
@@ -60,13 +61,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">
-                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Mandate
+                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Position
               </div>
               <p className="text-xs text-muted-foreground">
-                France&apos;s ANSSI requires hybrid mode during transition &mdash; PQC-only is not
-                acceptable until algorithms are more mature. Exception: hash-based signatures (
-                <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>/SPHINCS+, LMS, XMSS) may be
-                used standalone.
+                France&apos;s ANSSI recommends hybrid mode during transition, and makes it mandatory
+                inside the French regulated perimeter (classified and Diffusion Restreinte data,
+                vital information systems, ANSSI-certified or qualified products). Exception:
+                hash-based signatures (<InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
+                /SPHINCS+, LMS, XMSS) may be used standalone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -88,14 +90,17 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
                 (ML-KEM-1024 + ML-DSA-87) for national security systems, with exclusive-use
                 deadlines running to 2030&ndash;2033 by equipment class. CNSA 2.0 does not require
-                hybrid &mdash; it permits pure PQC (hybrid is mandated by ANSSI/BSI, not the NSA).
+                hybrid &mdash; it permits pure PQC (ANSSI and BSI recommend hybrid; ANSSI mandates
+                it only in its regulated perimeter).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Defense in Depth</div>
               <p className="text-xs text-muted-foreground">
-                If either the classical or PQC component is broken, the other still provides
-                security. Belt and suspenders.
+                Key exchange: the shared secret stays secret as long as either component KEM is
+                unbroken, provided the combiner is a sound one (for example the TLS hybrid design or
+                X-Wing). Signatures: a forgery requires breaking both algorithms, provided the
+                verifier requires both signatures to be valid.
               </p>
             </div>
           </div>
@@ -429,8 +434,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="flex items-start gap-2">
                 <span className="text-primary font-bold shrink-0">4.</span>
                 <span>
-                  <strong>Key Derivation:</strong> Combined shared secret = KDF(X25519_ss ||
-                  ML-KEM_ss) &rarr; session key
+                  <strong>Key Derivation:</strong> Combined shared secret = KDF(both shared secrets,
+                  concatenated in the order the group defines) &rarr; session key
                 </span>
               </div>
             </div>
@@ -509,16 +514,21 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               Combiner Construction (SP 800-227 + SP 800-56C)
             </h4>
             <p className="text-xs text-muted-foreground">
-              The high-level <code className="text-[11px]">KDF(X25519_ss || ML-KEM_ss)</code> above
-              hides three real requirements that SP 800-227 defers to{' '}
-              <strong>SP 800-56C-Rev2</strong>:
+              The high-level &ldquo;KDF(both shared secrets)&rdquo; above hides three real
+              requirements that SP 800-227 defers to <strong>SP 800-56C-Rev2</strong>:
             </p>
             <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
               <li>
-                <strong>Concatenation order is fixed per protocol.</strong> Hybrid TLS 1.3 drafts
-                concatenate as <code>classical_ss || pqc_ss</code> with a protocol-specific label;
-                swapping order silently breaks interop. Order does not add security, but binding to
-                a known order prevents cross-protocol confusion.
+                <strong>Concatenation order is fixed per group.</strong> In TLS 1.3 (RFC 10024
+                §4.3), X25519MLKEM768 concatenates <code>ML-KEM_ss || X25519_ss</code>, while
+                SecP256r1MLKEM768 and SecP384r1MLKEM1024 concatenate{' '}
+                <code>ECDHE_ss || ML-KEM_ss</code>; the result enters the TLS key schedule as its
+                shared-secret input. SP 800-56C-Rev2 approves this when the first secret comes from
+                a FIPS-approved scheme, so X25519MLKEM768 puts ML-KEM first (X25519 is not
+                approved), while the NIST-curve groups put ECDHE first because certified P-256 and
+                P-384 implementations are more widely available (RFC 10024 §5). Swapping order
+                silently breaks interop. Order does not add security, but binding to a known order
+                prevents cross-protocol confusion.
               </li>
               <li>
                 <strong>HKDF vs KMAC.</strong> SP 800-56C permits either an HMAC-based extractor
@@ -754,7 +764,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </span>
               </div>
               <div className="pl-24 text-muted-foreground">
-                key_share: X25519MLKEM768 public key (1,216 bytes)
+                key_share: ML-KEM-768 encapsulation key || X25519 public key (1,184 + 32 = 1,216
+                bytes)
               </div>
               <div className="flex items-start gap-3 mt-1.5">
                 <span className="text-success font-bold shrink-0 w-20">Server</span>
@@ -765,13 +776,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </span>
               </div>
               <div className="pl-24 text-muted-foreground">
-                key_share: ciphertext (1,120 bytes) = X25519 ct || ML-KEM ct
+                key_share: ML-KEM-768 ciphertext || X25519 public key (1,088 + 32 = 1,120 bytes)
               </div>
               <div className="flex items-start gap-3 mt-1.5">
                 <span className="text-foreground font-bold shrink-0 w-20">Both</span>
                 <span className="text-muted-foreground">&rarr;</span>
                 <span>
-                  <strong>HKDF</strong>(X25519_ss || ML-KEM_ss) &rarr; handshake keys
+                  <strong>HKDF</strong>(ML-KEM_ss || X25519_ss) &rarr; handshake keys (RFC 10024
+                  §4.3)
                 </span>
               </div>
             </div>
@@ -1178,7 +1190,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 icon: ShieldCheck,
                 color: 'text-status-success',
                 label: 'Hybrid EU-CMA',
-                desc: 'Secure if either EC-Schnorr or ML-DSA is unforgeable',
+                desc: "Paper's claim for the full scheme: a forgery requires breaking both EC-Schnorr and ML-DSA (this simplified demo is not covered by that proof)",
               },
               {
                 icon: ShieldCheck,
@@ -1251,6 +1263,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>.
         </p>
       </div>
+      <RecordDecisionLink topic="transition-mode" />
       <ReadingCompleteButton />
     </div>
   )

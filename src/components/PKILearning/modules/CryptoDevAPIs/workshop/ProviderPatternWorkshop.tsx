@@ -36,14 +36,14 @@ const API_ITEMS = [
 
 const PROVIDER_PATTERNS: Record<string, { pattern: string; description: string }> = {
   'jca-jce': {
-    pattern: 'Security.addProvider(new BouncyCastleProvider())',
+    pattern: 'JDK 24+ default provider, or Security.addProvider(new BouncyCastleProvider())',
     description:
-      'JCA provider registered once at startup. Algorithm selection by string name and provider ID.',
+      'ML-KEM and ML-DSA are in the default JDK providers from JDK 24; third-party providers are registered once at startup. Algorithm selection by string name and optional provider ID.',
   },
   openssl: {
-    pattern: 'OSSL_PROVIDER_load(NULL, "oqsprovider")',
+    pattern: 'Default provider (3.5+) — OSSL_PROVIDER_load(NULL, "oqsprovider") only before 3.5',
     description:
-      'OpenSSL 3.x provider loaded by name. All subsequent EVP calls use configured providers.',
+      'OpenSSL 3.5+ has ML-KEM, ML-DSA and SLH-DSA in the default provider. Extra providers are loaded by name; all subsequent EVP calls use the configured providers.',
   },
   pkcs11: {
     pattern: 'C_Initialize() → C_GetSlotList() → C_OpenSession()',

@@ -48,7 +48,7 @@ const entry = (over: Partial<RevisionEntry> = {}): RevisionEntry =>
     module_id: null,
     tool_id: 'PT-001',
     record_ids: ['PT-001'],
-    reviewer_id: 'ericamador',
+    reviewer_id: 'pqctoday',
     reviewer_display: 'eramusa',
     approval_method: 'offline',
     approved_via: 'registry review',
@@ -75,11 +75,22 @@ describe('ReviewedBadge — visible wording', () => {
     expect(text).not.toContain('LLM')
   })
 
-  it('marks an LLM-authored review as such, so it is not read as human sign-off', () => {
+  it('says an LLM-drafted change was approved by a person when a person is named', () => {
     state.revisions = [entry({ authored_by_llm: true })]
     const { container } = render(<ReviewedBadge domain="tool" entityId="PT-001" />)
 
-    expect(container.textContent ?? '').toContain('Reviewed (LLM)')
+    expect(container.textContent ?? '').toContain('LLM-drafted · human-reviewed')
+  })
+
+  it("never calls an automated agent's approval a human review", () => {
+    state.revisions = [
+      entry({ authored_by_llm: true, reviewer_display: 'claude-agent (automated remediation)' }),
+    ]
+    const { container } = render(<ReviewedBadge domain="tool" entityId="PT-001" />)
+
+    const text = container.textContent ?? ''
+    expect(text).toContain('LLM-drafted · automated review')
+    expect(text).not.toContain('human')
   })
 
   it('says "Unreviewed" when nothing matches', () => {

@@ -67,6 +67,21 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'data-at-rest-strategy',
   'sim-roadmap',
   'certification-plan',
+  'architecture-scope',
+  'architecture-decision-record',
+  'architecture-test-plan',
+  'kmip-quick-run',
+  'ops-scope',
+  'hsm-capacity-plan',
+  'cert-capacity-plan',
+  'protocol-config',
+  'vpn-sim-run',
+  'ops-test-plan',
+  'run-manifest',
+  'library-collection',
+  'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -85,6 +100,28 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   // only means anything as the output of working one scheme's path end to
   // end, so there is deliberately no standalone builder for it.
   'certification-plan',
+  // Architecture pack, Layer 2: scope, decision records and the test plan are
+  // edited inside the Command Center's architecture pack panel; the KMIP quick
+  // run result is saved from the KMIP Migration tab.
+  'architecture-scope',
+  'architecture-decision-record',
+  'architecture-test-plan',
+  'kmip-quick-run',
+  // IT operations pack, Layer 2: scope and test plan are edited in the
+  // operations pack panel; the rest are saved from the capacity calculators,
+  // the config generators and the VPN simulator.
+  'ops-scope',
+  'hsm-capacity-plan',
+  'cert-capacity-plan',
+  'protocol-config',
+  'vpn-sim-run',
+  'ops-test-plan',
+  // Researcher evidence bundle: saved from a researcher tool's run record.
+  'run-manifest',
+  'library-collection',
+  'research-question',
+  'claim-matrix',
+  'reproduction-record',
 ])
 
 describe('Command Center registry — drift guard', () => {

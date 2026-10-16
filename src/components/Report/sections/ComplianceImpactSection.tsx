@@ -6,17 +6,45 @@ import { Link } from 'react-router'
 import { CheckCircle, ArrowRight, BookOpen, Calendar } from 'lucide-react'
 import clsx from 'clsx'
 import type { ComplianceImpact } from '../../../hooks/assessmentTypes'
-import { bindingDataPresent, complianceFrameworks } from '../../../data/complianceData'
-import { BINDING_GROUP_META, bindingGroupOf, type BindingGroup } from '../../../utils/bindingSplit'
+import {
+  bindingDataPresent,
+  complianceFrameworks,
+  type ComplianceFramework,
+} from '../../../data/complianceData'
+import {
+  BINDING_ELSEWHERE_META,
+  BINDING_GROUP_META,
+  BINDING_SCOPED_META,
+  bindingChipFor,
+  type BindingChip,
+} from '../../../utils/bindingSplit'
+import { applicableFrameworks } from '../../../utils/applicabilityEngine'
 import { ApplicabilityPanel } from '../../applicability/ApplicabilityPanel'
 import { AskAssistantButton } from '../../ui/AskAssistantButton'
 import { CollapsibleSection } from './reportContentShared'
 
 /** The chip beside a framework's PQC chip: is it binding on organisations like yours? */
-const BINDING_CHIP_CLASS: Record<BindingGroup, string> = {
+const BINDING_CHIP_CLASS: Record<BindingChip, string> = {
   binding: 'bg-status-error/10 text-status-error',
+  scoped: 'bg-status-error/10 text-status-error',
+  elsewhere: 'bg-muted text-muted-foreground',
   guidance: 'bg-muted text-muted-foreground',
   unclassified: 'bg-muted/20 text-muted-foreground',
+}
+
+/** Chip label and tooltip text for one framework, given whether it is in the reader's scope. */
+function chipMeta(chip: BindingChip): { chip: string; description: string } {
+  if (chip === 'elsewhere') return BINDING_ELSEWHERE_META
+  if (chip === 'scoped') return BINDING_SCOPED_META
+  return BINDING_GROUP_META[chip]
+}
+
+/** True when the engine puts this framework in the reader's mandatory tier. */
+function inReaderScope(fw: ComplianceFramework, industry: string, country: string): boolean {
+  const [result] = applicableFrameworks({ industry: industry || null, country: country || null }, [
+    fw,
+  ])
+  return result?.tier === 'mandatory'
 }
 
 export const ComplianceImpactSection = ({
@@ -79,21 +107,25 @@ export const ComplianceImpactSection = ({
                 (() => {
                   const fw = complianceFrameworks.find((f) => f.label === c.framework)
                   if (!fw) return null
-                  const group = bindingGroupOf(fw.bindingStatus)
+                  const chip = bindingChipFor(
+                    fw.bindingStatus,
+                    inReaderScope(fw, industry, country)
+                  )
+                  const meta = chipMeta(chip)
                   return (
                     <span
                       data-testid="binding-chip"
                       title={
                         fw.bindingBasis
-                          ? `${BINDING_GROUP_META[group].description}. Basis: ${fw.bindingBasis}`
-                          : BINDING_GROUP_META[group].description
+                          ? `${meta.description}. Basis: ${fw.bindingBasis}`
+                          : meta.description
                       }
                       className={clsx(
                         'text-xs font-bold px-2 py-0.5 rounded-full',
-                        BINDING_CHIP_CLASS[group]
+                        BINDING_CHIP_CLASS[chip]
                       )}
                     >
-                      {BINDING_GROUP_META[group].chip}
+                      {meta.chip}
                     </span>
                   )
                 })()}
@@ -119,6 +151,32 @@ export const ComplianceImpactSection = ({
             <strong>Deadline:</strong> {c.deadline}
           </p>
           <p className="text-xs text-muted-foreground">{c.notes}</p>
+          {(() => {
+            const fw = complianceFrameworks.find((f) => f.label === c.framework)
+            if (!fw || !bindingDataPresent()) return null
+            if (bindingChipFor(fw.bindingStatus, inReaderScope(fw, industry, country)) !== 'scoped')
+              return null
+            return (
+              <p className="text-xs text-muted-foreground" data-testid="binding-scope-note">
+                <strong>Binding for its scope:</strong>{' '}
+                {fw.bindingScope ? (
+                  <>
+                    its text says it applies to &ldquo;{fw.bindingScope}&rdquo;
+                    {fw.bindingScopeEn ? (
+                      <> (our translation: &ldquo;{fw.bindingScopeEn}&rdquo;)</>
+                    ) : null}
+                    . Check whether yours are covered
+                  </>
+                ) : (
+                  <>
+                    it applies only to the systems or organisations its own text names. Check
+                    whether yours are covered
+                  </>
+                )}
+                {fw.bindingBasis ? ` — basis: ${fw.bindingBasis}` : ''}.
+              </p>
+            )
+          })()}
           {(() => {
             const fullFw = complianceFrameworks.find((f) => f.label === c.framework)
             if (!fullFw) return null
@@ -179,8 +237,10 @@ export const ComplianceImpactSection = ({
           <>
             . Binding means a law, regulation or enforceable rule that applies to organisations like
             yours; guidance and drafts are issued by a body in your country but nobody is required
-            to follow them. A framework marked Not yet classified has not been reviewed for this
-            yet.
+            to follow them. A framework you selected that binds only within a scope your country and
+            sector fall outside is marked Binding for others. A framework marked Binding for its
+            scope binds only the systems or organisations its own text names; check whether yours
+            are covered. A framework marked Not yet classified has not been reviewed for this yet.
           </>
         ) : (
           <>
@@ -189,7 +249,13 @@ export const ComplianceImpactSection = ({
           </>
         )}
       </p>
-      <ApplicabilityPanel variant="report-section" />
+      {/* The report's own profile, not the assessment store: a sample or shared
+          report carries its industry and country in the result, and the store can be
+          empty (or hold someone else's run) while it is shown. */}
+      <ApplicabilityPanel
+        variant="report-section"
+        profileOverride={{ industry: industry || null, country: country || null }}
+      />
     </div>
   </CollapsibleSection>
 )

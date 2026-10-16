@@ -35,6 +35,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 import { applyRoleOrder, roleFramingFor, roleNoteFor } from './roleLens'
 import { useRevisions } from '@/hooks/useRevisions'
 import { formatChangeDate, summarizeRecentChanges } from './recentChanges'
+import { InlineScopeStep, isScopeIncomplete, scopeValue } from '@/components/common/InlineScopeStep'
 import {
   buildObligations,
   groupObligations,
@@ -124,6 +125,19 @@ export function ObligationsTab({
     countryItems,
     profile,
   }
+  // What the register is actually using — the page override, else the profile
+  // fallback (assessment answer). The inline step asks only for what is missing.
+  const usedCountry = scopeValue(
+    countryValue !== COUNTRY_ANY ? countryValue : profile.country,
+    'Global'
+  )
+  const usedSector = scopeValue(sectorValue !== COUNTRY_ANY ? sectorValue : profile.industry)
+  const scopeStep = {
+    country: usedCountry,
+    countryItems,
+    onCountryChange,
+    sector: usedSector,
+  }
 
   return (
     <div className="space-y-4">
@@ -146,6 +160,10 @@ export function ObligationsTab({
         </p>
       )}
 
+      {rows.length > 0 && isScopeIncomplete(usedCountry, usedSector) && (
+        <InlineScopeStep {...scopeStep} variant="strip" />
+      )}
+
       {rows.length === 0 ? (
         // The zero state IS the first screen for anyone who has not taken the
         // assessment, so it carries the controls that fix it rather than
@@ -159,15 +177,14 @@ export function ObligationsTab({
             The applicability tiers are computed from a country and a sector — without both, no
             instrument can be shown as mandatory rather than merely relevant.
           </p>
-          {/* CHANGED 2026-08-11: this card used to repeat the Country and Sector
-              pickers that the scope bar above already shows, so a reader with no
-              scope set saw the same two controls twice on one screen. It now says
-              where the controls are instead of being a second copy of them. */}
-          <p className="mx-auto mt-3 max-w-xl text-xs text-muted-foreground">
-            Set your <span className="font-medium text-foreground">sector</span> in the scope
-            selector at the top right, and your{' '}
-            <span className="font-medium text-foreground">country</span> just above.
-          </p>
+          {/* CHANGED 2026-10-16 (owner decision D3, GRC journey audit): the
+              pickers are back in this card. On 2026-08-11 they were replaced by a
+              pointer ("sector at the top right, country just above") to avoid a
+              second copy of the scope bar's controls — but sector lives only in
+              the top-bar modal, and a new GRC or Executive reader lands here from
+              Home with neither set. The card now offers only what is missing and
+              writes through the same handlers, so there is still one scope. */}
+          <InlineScopeStep {...scopeStep} />
         </div>
       ) : (
         groups.map((group) => {

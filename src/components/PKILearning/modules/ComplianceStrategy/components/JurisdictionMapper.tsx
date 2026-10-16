@@ -25,6 +25,7 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 import { migrateProductHref } from '@/utils/migrateLinks'
 
 import { JURISDICTIONS, type JurisdictionConfig } from '../data/jurisdictions'
+import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
 
 function getEarliestDeadline(country: CountryData): number | null {
   let earliest: number | null = null
@@ -123,7 +124,7 @@ function detectConflicts(
   if (hasUS && frOrDe) {
     conflicts.push({
       description:
-        'ANSSI (France) and BSI (Germany) emphasize hybrid mode as mandatory during transition, while NSA CNSA 2.0 focuses on pure PQC adoption. Plan for hybrid deployments that satisfy both.',
+        'ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; NSA CNSA 2.0 targets pure PQC and does not require hybrids. Plan for hybrid deployments that satisfy both.',
       jurisdictions: ['United States', 'France/Germany'],
       severity: 'low',
     })
@@ -185,10 +186,6 @@ function ProductPreviewCard({ product }: { product: SoftwareItem }) {
   const isFullPqc = support.startsWith('yes')
   const isLimited = support.startsWith('partial') || support.startsWith('limited')
 
-  const fipsLower = (product.fipsValidated || '').toLowerCase()
-  const isFips = fipsLower.includes('fips 140') || fipsLower.includes('fips 203')
-  const isFipsPartial = !isFips && fipsLower.startsWith('yes')
-
   return (
     <div className="p-3 rounded-lg border border-border bg-background/50 space-y-1.5">
       <div className="flex items-start justify-between gap-2">
@@ -216,16 +213,13 @@ function ProductPreviewCard({ product }: { product: SoftwareItem }) {
               Limited
             </span>
           )}
-          {isFips && (
-            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success/15 text-status-success font-medium">
-              FIPS
-            </span>
-          )}
-          {isFipsPartial && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-status-warning/15 text-status-warning font-medium">
-              FIPS Partial
-            </span>
-          )}
+          <FipsStatusBadge
+            fipsValidated={product.fipsValidated}
+            productId={product.productId}
+            softwareName={product.softwareName}
+            hideNegative
+            className="text-[10px]"
+          />
         </div>
       </div>
       <p className="text-xs text-muted-foreground line-clamp-2">{product.productBrief}</p>

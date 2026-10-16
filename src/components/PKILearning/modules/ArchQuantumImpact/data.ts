@@ -297,7 +297,8 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
     {
       id: 'qw-hsm-check',
       label: 'Check your HSM vendor\u2019s PQC roadmap',
-      description: 'Thales, Entrust, and Utimaco have published PQC timelines. Review yours.',
+      description:
+        'Thales, Entrust, and Utimaco ship PQC firmware, with different algorithm sets. Check what yours supports.',
     },
     {
       id: 'qw-cert-size',

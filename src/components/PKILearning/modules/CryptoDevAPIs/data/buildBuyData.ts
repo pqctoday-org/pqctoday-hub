@@ -141,7 +141,7 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
       'Your team cannot maintain and patch open-source dependencies',
     ],
     pqcImplications:
-      'Open source leads PQC adoption. OpenSSL oqsprovider, Bouncy Castle, liboqs, and cloudflare/circl provide the fastest path to PQC. However, of the libraries named in this module only AWS-LC has a PQC algorithm (ML-KEM) approved on an active CMVP certificate (AWS-LC 3, #5298/#5314; checked 24 Sep 2026). Bouncy Castle #4943 approves LMS signature verification only; wolfCrypt #4718 lists no PQC algorithm.',
+      'Open source leads PQC adoption. OpenSSL 3.5+ (native), Bouncy Castle, liboqs, and the Go, Java, .NET and Python standard crypto libraries provide the fastest path to PQC. However, of the libraries named in this module only AWS-LC has a PQC algorithm (ML-KEM) approved on an active CMVP certificate (AWS-LC 3, #5298/#5314; checked 24 Sep 2026). Bouncy Castle #4943 approves LMS signature verification only; wolfCrypt #4718 lists no PQC algorithm.',
     estimatedTCO: {
       year1: '$50K-200K (integration engineering, testing)',
       year3: '$150K-500K (maintenance, patching, compliance verification)',
@@ -399,7 +399,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     situation:
       'Mid-size bank needs TLS for web services (OpenSSL/Nginx), Java backend crypto (Bouncy Castle), and is beginning PQC readiness assessment under regulatory pressure.',
     decision:
-      'Use OpenSSL for TLS termination, Bouncy Castle for Java application crypto, and plan oqsprovider integration for PQC. Supplement with Thales HSM for key protection (commercial component).',
+      'Use OpenSSL for TLS termination, Bouncy Castle for Java application crypto, and plan the move to OpenSSL 3.5+ (native ML-KEM/ML-DSA) for PQC. Supplement with Thales HSM for key protection (commercial component).',
     outcome:
       'Cost-effective crypto stack covering all needs. PQC prototyping via Bouncy Castle ML-KEM/ML-DSA. Hybrid approach: open source for algorithms + commercial HSM for key protection.',
     libraryUsed: 'OpenSSL + Bouncy Castle + Thales Luna HSM',
@@ -421,7 +421,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     decision:
       "Use Bouncy Castle's ML-DSA implementation via JCA provider. Entire PQC integration done in 2 sprints. No FIPS requirement (not in regulated industry).",
     outcome:
-      'PQC-ready document signing launched in 4 weeks. Zero licensing cost. JCA provider model means classical and PQC signatures use identical application code.',
+      'PQC-ready document signing launched in 4 weeks. Zero licensing cost. JCA provider model kept the signing call sites unchanged; the work went into larger signature storage, new algorithm identifiers in document metadata, and verifier compatibility.',
     libraryUsed: 'Bouncy Castle (Java, JCA provider)',
     lessonsLearned: [
       'JCA provider model is ideal for algorithm agility',

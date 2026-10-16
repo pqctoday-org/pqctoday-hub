@@ -5,12 +5,19 @@ import {
   EXAMPLE_REPORT_RESULT,
   EXAMPLE_REPORT_SHARE_TOKEN,
   EXAMPLE_REPORT_GENERATED_AT,
+  EXAMPLE_REPORT_GRC_PAYLOAD,
+  EXAMPLE_REPORT_GRC_RESULT,
+  exampleReportResultFor,
 } from './exampleReport'
 import { decodeShareToken } from '@/utils/reportShareToken'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_ALGORITHMS,
   AVAILABLE_COMPLIANCE,
+  AVAILABLE_USE_CASES,
+  AVAILABLE_INFRASTRUCTURE,
+  DATA_RETENTION_YEARS,
+  CREDENTIAL_LIFETIME_YEARS,
 } from '@/hooks/assessmentData'
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 
@@ -78,5 +85,27 @@ describe('EXAMPLE_REPORT_SHARE_TOKEN — stable across builds', () => {
     const schema = decodeShareToken(EXAMPLE_REPORT_SHARE_TOKEN)
     if (schema?.v !== 2) throw new Error('expected v2 schema')
     expect(schema.result.generatedAt).toBe(EXAMPLE_REPORT_GENERATED_AT)
+  })
+})
+
+describe('GRC worked example', () => {
+  it('is a comprehensive-track assessment, so the GRC report sections have data', () => {
+    expect(EXAMPLE_REPORT_GRC_RESULT.assessmentProfile?.mode).toBe('comprehensive')
+    expect(EXAMPLE_REPORT_RESULT.assessmentProfile?.mode).toBe('quick')
+  })
+
+  it('uses canonical assess-wizard keys for every extended answer', () => {
+    const p = EXAMPLE_REPORT_GRC_PAYLOAD
+    for (const u of p.cryptoUseCases ?? []) expect(AVAILABLE_USE_CASES).toContain(u)
+    for (const i of p.infrastructure ?? []) expect(AVAILABLE_INFRASTRUCTURE).toContain(i)
+    for (const r of p.dataRetention ?? []) expect(Object.keys(DATA_RETENTION_YEARS)).toContain(r)
+    for (const c of p.credentialLifetime ?? [])
+      expect(Object.keys(CREDENTIAL_LIFETIME_YEARS)).toContain(c)
+  })
+
+  it('is what a GRC reader gets; everyone else keeps the quick example', () => {
+    expect(exampleReportResultFor('grc')).toBe(EXAMPLE_REPORT_GRC_RESULT)
+    expect(exampleReportResultFor('executive')).toBe(EXAMPLE_REPORT_RESULT)
+    expect(exampleReportResultFor(null)).toBe(EXAMPLE_REPORT_RESULT)
   })
 })

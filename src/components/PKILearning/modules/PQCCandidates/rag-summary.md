@@ -1,6 +1,6 @@
 # PQC Candidates & Standardisation Lifecycle
 
-PQC standardisation is a **rolling process**, not a single event. NIST finalised FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA) in August 2024, added HQC as an alternate KEM in March 2025, and is mid-flight on a signature on-ramp: NIST IR 8528 (Oct 2024) down-selected the first round to 14 second-round candidates, and NIST IR 8610 (final, May 2026) advanced nine candidates to the third round (FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign, UOV; CROSS, LESS, Mirath, PERK, RYDE were eliminated).
+PQC standardisation is a **rolling process**, not a single event. NIST finalised FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA) in August 2024, added HQC as an alternate KEM in March 2025, and is mid-flight on a signature on-ramp: NIST IR 8528 (Oct 2024) down-selected the first round to 14 second-round candidates, and NIST IR 8610 (final, May 2026) advanced nine candidates to the third round (FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign, UOV; CROSS, LESS, Mirath, PERK, RYDE were eliminated). The HAWK team withdrew HAWK from the process on 29 July 2026 after a new key-recovery attack, leaving eight third-round candidates; NIST expects the third round to last approximately two years and has set no standardisation year.
 
 ## Four mathematical families
 
@@ -24,4 +24,4 @@ Candidates enter a round, get benchmarked against NIST evaluation criteria (secu
 
 ## Looking ahead
 
-NIST flags a longer expected timeline for any multivariate standardisation. Earliest projected on-ramp standardisation window is 2027 for lattice / isogeny / MPCitH winners. The PQC algorithm portfolio will keep growing — crypto agility is the operational implication.
+NIST flags a longer expected timeline for any multivariate standardisation. NIST has named no standardisation year for any third-round candidate; the 7th NIST PQC Standardization Conference is planned for late spring/early summer 2027. The PQC algorithm portfolio will keep growing — crypto agility is the operational implication.

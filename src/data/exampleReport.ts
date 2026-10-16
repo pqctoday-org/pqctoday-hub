@@ -45,5 +45,36 @@ export const EXAMPLE_REPORT_SHARE_TOKEN = encodeShareToken({
   persona: EXAMPLE_REPORT_PERSONA,
 })
 
+/**
+ * The GRC worked example (GRC journey audit, 15 Oct 2026). GRC is pointed at the
+ * comprehensive assessment, but `?example=1` showed every reader the quick-track
+ * sample above, so the GRC report sections that need retention, credential
+ * lifetime, use cases and infrastructure (HNDL/HNFL windows, domain scores) were
+ * empty in the very example GRC was sent to. Same fictional bank, answered on the
+ * comprehensive track; every value is a canonical assess-wizard key.
+ */
+export const EXAMPLE_REPORT_GRC_PAYLOAD: AssessmentInput = {
+  ...EXAMPLE_REPORT_SHARE_PAYLOAD,
+  cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures / code signing'],
+  dataRetention: ['7y', '10-25y'],
+  credentialLifetime: ['3-10y'],
+  systemCount: '51-200',
+  teamSize: '11-50',
+  cryptoAgility: 'partially-abstracted',
+  infrastructure: ['Hardware', 'Security Stack', 'Cloud'],
+  vendorDependency: 'mixed',
+  timelinePressure: 'within-2-3y',
+}
+
+export const EXAMPLE_REPORT_GRC_RESULT = {
+  ...computeAssessment(EXAMPLE_REPORT_GRC_PAYLOAD),
+  generatedAt: EXAMPLE_REPORT_GENERATED_AT,
+}
+
+/** The worked example a reader of this persona should see. */
+export function exampleReportResultFor(persona: string | null | undefined) {
+  return persona === 'grc' ? EXAMPLE_REPORT_GRC_RESULT : EXAMPLE_REPORT_RESULT
+}
+
 /** Convenience URL for direct linking from the curious empty state. */
 export const EXAMPLE_REPORT_URL = `/report?share=${EXAMPLE_REPORT_SHARE_TOKEN}`

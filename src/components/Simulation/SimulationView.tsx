@@ -68,7 +68,12 @@ import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete
 import { SimPhaseRunComplete } from './autorun/SimPhaseRunComplete'
 import { SimBriefSheet } from './autorun/SimBriefSheet'
 import { WorkshopResultCard } from './autorun/WorkshopResultCard'
-import { docFor } from './autorun/simAutoRun'
+import {
+  autoRunIntroQueue,
+  autoRunWalkthroughQueue,
+  docFor,
+  estimatedMinutes,
+} from './autorun/simAutoRun'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { edgeKey } from '@/data/simArchitecture'
 import {
@@ -285,6 +290,23 @@ function resourceStepsFor(phase: PhaseId, sector: string, seat: string): TreeSte
 // The store's seed SEAT (useSimulationStore SEED.seat). SEAT defaults from the
 // user's persona only while it is still this seed value — once the player has
 // switched SEAT themselves, the persona default no longer overrides it.
+/**
+ * The landing's stated run lengths, from the same estimator as the play-choice
+ * modal (never an advertised figure). Trees are static, so compute once, lazily.
+ */
+let landingMinutes: { walkthrough: number; intro: number } | null = null
+function getLandingMinutes(): { walkthrough: number; intro: number } {
+  landingMinutes ??= {
+    walkthrough: estimatedMinutes(autoRunWalkthroughQueue(false).map((i) => i.step)),
+    intro: estimatedMinutes(autoRunIntroQueue().map((i) => i.step)),
+  }
+  return landingMinutes
+}
+const fmtMinutes = (min: number) => `about ${Math.round(min)} minutes`
+const fmtMinuteAdj = (min: number) => `${Math.round(min)}-minute`
+
+/** sourceInputKey of a result loaded from the sample organisation, not an assessment. */
+const SAMPLE_ORG_KEY = '__sample_org__'
 const SEAT_SEED_DEFAULT = 'executive'
 
 // Event-time clock at module scope so it stays out of the component render body
@@ -1105,6 +1127,10 @@ export function SimulationView() {
   // read-only Assess → Sim bridge: offer to import a completed assessment as the
   // Phase-0 scoping artifact (data only; the sim's gate still decides it counts).
   const assessSnap = useAssessSnapshot()
+  // The sample organisation is loaded as an assessment result (loadSampleOrg), so a
+  // snapshot alone does not mean the reader assessed anything; the marker says which.
+  const sampleRun = useAssessmentResultStore((s) => s.sourceInputKey === SAMPLE_ORG_KEY)
+  const ownAssessment = !!assessSnap && !sampleRun
   // SELF-UNLOCK: the sim unlocks off the assessment RESULT (useAssessSnapshot),
   // which is normally computed by the /report page. A player who completes the
   // assessment from the sim gate and is returned here never visits /report, so
@@ -1157,7 +1183,7 @@ export function SimulationView() {
     // reads as "different from what's stored" and overwrites this demo profile.
     useAssessmentResultStore.setState({
       completedAt: new Date().toISOString(),
-      sourceInputKey: '__sample_org__',
+      sourceInputKey: SAMPLE_ORG_KEY,
     })
   }, [])
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
@@ -2227,6 +2253,14 @@ export function SimulationView() {
               >
                 Explore with a sample organization
               </Button>
+              <p
+                className="mt-2 text-[11px] leading-relaxed text-muted-foreground"
+                data-testid="sim-landing-length"
+              >
+                The Executive Overview takes {fmtMinutes(getLandingMinutes().walkthrough)}, or start
+                with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. At the end you get a
+                program maturity score, a run grade and a migration roadmap you can save.
+              </p>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
                 “Watch the full migration” loads a sample Finance &amp; Banking · US run — pick how
                 you'd like to play it. Run your own assessment anytime to replace it with your real
@@ -3272,11 +3306,19 @@ export function SimulationView() {
           <div className="flex flex-wrap items-center gap-1.5">
             <div
               title={profileTitle}
-              aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. From your assessment.`}
+              aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. ${ownAssessment ? 'From your assessment.' : 'Sample data, not your organisation.'}`}
               className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 py-1.5 pl-3 pr-1.5"
             >
               <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/70">
                 Profile
+              </span>
+              {/* Executive journey remediation D3: say on every board screen whether
+                  the numbers are a sample or the reader's own assessment. */}
+              <span
+                data-testid="sim-data-source"
+                className="rounded-full border border-background/40 px-2 py-0.5 font-mono text-sim-micro font-bold uppercase tracking-[0.08em] text-background"
+              >
+                {ownAssessment ? 'Your assessment' : 'Sample data'}
               </span>
               <span className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-background">
                 {sizeOpt.label}
@@ -3820,7 +3862,14 @@ export function SimulationView() {
                 2) GUTTERS — max-width + px so embeds don't run edge-to-edge on wide
                    screens (they have no page container in the sim). */}
               <EmbedRunContextProvider
-                value={{ country, sector, size: sizeKey, seat, phase: sel, isSample: !assessSnap }}
+                value={{
+                  country,
+                  sector,
+                  size: sizeKey,
+                  seat,
+                  phase: sel,
+                  isSample: !ownAssessment,
+                }}
               >
                 <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
                   {/* W6.1/W6.2 — explicit simulation context. An embedded hub
@@ -3835,7 +3884,7 @@ export function SimulationView() {
                       </span>
                       <span className="text-muted-foreground">
                         <span className="font-bold text-foreground">
-                          {assessSnap ? 'Your assessed organization' : 'Sample organization'}
+                          {ownAssessment ? 'Your assessed organization' : 'Sample organization'}
                         </span>{' '}
                         · {sizeOpt.label} · {sector} · {country} · seat: {seatOpt.label}
                       </span>

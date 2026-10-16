@@ -744,14 +744,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'kms-pqc/aws-policy-lab': {
     prompt:
-      'The solution snippet adds a Deny statement on kms:Decrypt whose condition is StringNotEquals on aws:tlsCipherSuites = TLS_AES_256_GCM_SHA384_PQ. When does that Deny actually fire?',
+      'The solution adds an Allow on kms:CreateKey with kms:KeySpec limited to ML-DSA specs and kms:KeyUsage = SIGN_VERIFY. Which statement about this policy is true?',
     options: [
-      "Whenever the caller's TLS cipher suite is anything other than the PQ hybrid suite — classical-only connections are refused",
-      'Only when the caller uses the PQ hybrid suite, forcing them back to classical TLS',
-      'On every Decrypt call regardless of TLS, so the AppRole must be re-allowed separately',
+      'It is an IAM policy, because kms:CreateKey is authorised by IAM, and it does nothing to make clients use post-quantum TLS',
+      'It is a key policy that forces every Decrypt call on the key to use hybrid post-quantum TLS',
+      'It also lets administrators create ML-KEM keys, because KEY_AGREEMENT is implied by SIGN_VERIFY',
     ],
     answer: 0,
-    why: 'A Deny combined with a not-equals condition inverts the check: the statement matches exactly when the negotiated cipher suite is not the PQ suite, so classical-only connections are rejected while PQ hybrid TLS connections fall through to the Allow. That is what protects the master key from harvest-now-decrypt-later capture of its Decrypt traffic.',
+    why: 'A key policy cannot govern the creation of a key that does not exist yet, so kms:CreateKey belongs in an IAM policy. AWS has no condition key for TLS cipher suites: hybrid post-quantum TLS to KMS is enabled in the client (for example the AWS CRT HTTP client with postQuantumTlsEnabled) and verified in CloudTrail (tlsDetails.keyExchange). AWS KMS has no ML-KEM keys at all.',
   },
   // stateful-signatures
   'stateful-signatures/state-management': {
@@ -1179,7 +1179,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // vendor-risk
   'vendor-risk/contract-clauses': {
     prompt:
-      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year NIST IR 8547 disallows RSA/ECC?',
+      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year the NIST IR 8547 initial public draft proposes to disallow RSA/ECC (US federal context)?',
     options: ['2030', '2033', '2035'],
     answer: 2,
     why: "The dropdown stacks the milestones: 2030 is CNSA 2.0 exclusivity for signing and networking plus the NIST deprecation target, 2033 covers browsers, servers, cloud and operating systems, and 2035 is the point where CNSA 2.0 applies to every NSS and NIST's draft schedule disallows classical public-key algorithms.",

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import clsx from 'clsx'
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { flushSync } from 'react-dom'
 import {
@@ -25,6 +26,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
+import type { PersonaId } from '@/data/personaIds'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import {
   CSWP39_ZONE_ORDER,
@@ -57,46 +59,50 @@ import {
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
+import { ArchitecturePackPanel } from './ArchitecturePackPanel'
+import { OperationsPackPanel } from './OperationsPackPanel'
+import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
+import { ResearchWorkspacePanel } from '@/components/shared/research/ResearchWorkspacePanel'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 
-// The four board-level questions every PQC program has to answer, each mapped to
-// the surface that answers it. Turns an empty state into a "what a program looks
-// like" primer instead of three bare buttons.
-const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = [
-  {
-    q: "What's at risk?",
-    desc: 'Size your quantum exposure by system and data sensitivity.',
-    to: '/assess',
-    cta: 'Run risk assessment',
-  },
-  {
-    q: "What's the deadline?",
-    desc: 'See the mandates and dates that apply to your sector and region.',
-    to: '/compliance?tab=compliance',
-    cta: 'Compliance deadlines',
-  },
-  {
-    q: 'What will it cost?',
-    desc: 'Model the budget, ROI, and the cost of waiting.',
-    to: '/business/tools/roi-calculator',
-    cta: 'ROI calculator',
-  },
-  {
-    q: 'Who owns it?',
-    desc: 'Assign accountability and set the governance model.',
-    to: '/business/tools/raci-builder',
-    cta: 'RACI builder',
-  },
-]
+// What a persona's Command Center learn button opens, and how many of its
+// recommended sequence the welcome state foregrounds. The intro (lede and the
+// four questions) comes from commandCenterIntroFor.
+function learnCtaFor(persona: PersonaId | null): { label: string; to: string } {
+  switch (persona) {
+    case 'grc':
+      return { label: 'Start GRC Learning', to: '/learn/pqc-grc' }
+    case 'developer':
+      return { label: 'Learn the crypto APIs', to: '/learn/crypto-dev-apis' }
+    case 'architect':
+      return { label: 'Start the architecture path', to: '/learn/arch-quantum-impact' }
+    case 'researcher':
+      return { label: 'Read the revision log', to: '/revisions' }
+    case null:
+    case 'executive':
+      return { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' }
+    default:
+      return { label: 'Open your learning path', to: '/learn' }
+  }
+}
+
+function topToolCountFor(persona: PersonaId | null): number {
+  if (persona === 'developer') return 4
+  if (persona === 'researcher') return 2
+  return 3
+}
 
 function WelcomeState() {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  // Top 3 of the persona's own recommended sequence — foregrounded so the
+  const intro = commandCenterIntroFor(selectedPersona)
+  const learnCta = learnCtaFor(selectedPersona)
+  // Top N of the persona's own recommended sequence — foregrounded so the
   // best starting points aren't one extra click away at /business/tools.
   const topToolIds = getBusinessRoleSequence(selectedPersona)
-    .steps.slice(0, 3)
+    .steps.slice(0, topToolCountFor(selectedPersona))
     .map((s) => s.id)
   const topTools = topToolIds
     .map((id) => BUSINESS_TOOLS.find((t) => t.id === id))
@@ -109,20 +115,19 @@ function WelcomeState() {
         <h2 className="text-xl font-semibold text-foreground mb-2">
           Welcome to your PQC Command Center
         </h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
-          A post-quantum migration is a program, and every program answers the same four board-level
-          questions. Start with whichever you need first.
-        </p>
-        <div className="mb-6">
-          <Link to="/simulation?run=exec">
-            <Button variant="gradient" size="sm" className="gap-1.5">
-              <PlayCircle size={14} aria-hidden="true" />
-              New here? Watch the guided overview
-            </Button>
-          </Link>
-        </div>
+        <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{intro.lede}</p>
+        {intro.showGuidedOverview && (
+          <div className="mb-6">
+            <Link to="/simulation?run=exec">
+              <Button variant="gradient" size="sm" className="gap-1.5">
+                <PlayCircle size={14} aria-hidden="true" />
+                New here? Watch the guided overview
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="grid gap-3 sm:grid-cols-2 text-left max-w-2xl mx-auto">
-          {BOARD_QUESTIONS.map((item) => (
+          {intro.questions.map((item) => (
             <Link
               key={item.q}
               to={item.to}
@@ -143,7 +148,12 @@ function WelcomeState() {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Start with these tools
           </p>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div
+            className={clsx(
+              'grid gap-3',
+              topTools.length % 2 === 0 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
+            )}
+          >
             {topTools.map((tool) => {
               const Icon = tool.icon
               return (
@@ -173,17 +183,10 @@ function WelcomeState() {
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
         </Button>
-        {selectedPersona === 'grc' ? (
-          <Button variant="outline" onClick={() => navigate('/learn/pqc-grc')}>
-            <BookOpen size={16} className="mr-2" />
-            Start GRC Learning
-          </Button>
-        ) : (
-          <Button variant="outline" onClick={() => navigate('/learn/exec-quantum-impact')}>
-            <BookOpen size={16} className="mr-2" />
-            Start Executive Learning
-          </Button>
-        )}
+        <Button variant="outline" onClick={() => navigate(learnCta.to)}>
+          <BookOpen size={16} className="mr-2" />
+          {learnCta.label}
+        </Button>
       </div>
     </div>
   )
@@ -562,7 +565,7 @@ export function BusinessCenterView() {
         title={zoneEmphasis.headline ?? 'Command Center'}
         description={
           zoneEmphasis.tagline ??
-          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
+          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025, updated June 2026).'
         }
       />
 
@@ -582,6 +585,14 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Role packs — the architect's review document, the operations pack and
+           the researcher's evidence bundle.
+           Shown even with nothing saved, because the missing-section list is the path. */}
+      {selectedPersona === 'architect' && <ArchitecturePackPanel />}
+      {selectedPersona === 'ops' && <OperationsPackPanel />}
+      {selectedPersona === 'researcher' && <EvidenceBundlePanel placement="command-center" />}
+      {selectedPersona === 'researcher' && <ResearchWorkspacePanel />}
 
       {/* Curious users land here only via URL deep-link (PERSONA_NAV_PATHS.curious
           omits /business). Show a soft preview banner instead of a hard 403 so

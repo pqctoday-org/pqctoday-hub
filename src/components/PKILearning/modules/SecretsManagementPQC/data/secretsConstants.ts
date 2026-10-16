@@ -437,9 +437,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'GCP Secret Manager',
     pqcAlgorithms: [
-      'Inherits Cloud KMS: ML-KEM (preview)',
-      'ML-DSA (preview)',
-      'X-Wing hybrid KEM (preview)',
+      'None in Secret Manager itself; Cloud KMS offers ML-DSA/SLH-DSA signing (GA) and ML-KEM/X-Wing KEMs (Preview)',
     ],
     encryptionAtRest: 'Google-managed keys with AES-256, optionally Cloud KMS CMEK',
     encryptionInTransit: 'TLS 1.3 (ML-KEM hybrid via BoringSSL/Chrome TLS)',
@@ -448,7 +446,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'External Secrets Operator + GCP provider / Config Connector',
     fipsMode: false,
     roadmapNote:
-      'PQC in Secret Manager relies on Cloud KMS CMEK configuration. Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview). FIPS mode not available for Secret Manager directly.',
+      'Secret Manager encrypts with AES-256, optionally under a symmetric Cloud KMS CMEK; PQC keys cannot serve as CMEK. Cloud KMS PQC keys (ML-DSA/SLH-DSA signing GA since 16 Jul 2026; ML-KEM/X-Wing in Preview) are for your own signing and key-encapsulation use. FIPS mode not available for Secret Manager directly.',
   },
   {
     id: 'delinea-secret-server',

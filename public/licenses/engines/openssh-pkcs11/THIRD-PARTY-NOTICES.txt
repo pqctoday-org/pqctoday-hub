@@ -1,0 +1,74 @@
+Third-party notices for the openssh-pkcs11 engine bundle
+============================================================
+
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit bc92034d12d32b3a1b32111d2114e6a1fb8a6205
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/bc92034d12d32b3a1b32111d2114e6a1fb8a6205).
+Code written by PQC Today, LLC is under the licence in that repository.
+This file lists the third-party code compiled into the bundle, its
+licence and where its full licence text is (LICENSES/ next to this file).
+
+Components
+----------
+
+OpenSSH portable
+  Version:   10.3p1 (tag V_10_3_P1, commit 2d98db98331803cbb820211b2fb0d31a6e71e58e)
+  Licence:   LicenseRef-OpenSSH (BSD-style and ISC terms, see the text)
+  Copyright: Tatu Ylonen, the OpenBSD project and the other authors named in the licence text
+  Source:    https://github.com/openssh/openssh-portable
+  Changes:   ML-DSA and SLH-DSA key types and PKCS#11 signing, by PQC Today, LLC; see openssh-pkcs11/NOTICE
+  Text:      LICENSES/openssh/LICENSE
+  Text:      LICENSES/openssh/NOTICE
+
+SoftHSMv3, the PQC Today fork of SoftHSM2
+  Version:   SoftHSM2 2.7.0 base
+  Licence:   BSD-2-Clause
+  Copyright: Copyright (c) 2008-2013 .SE (The Internet Infrastructure Foundation)
+  Copyright: Copyright (c) 2010-2018 SURFnet bv
+  Copyright: Copyright (c) 2022 NLnet Labs
+  Copyright: Copyright (c) 2014, 2020 Red Hat, Inc.
+  Copyright: Copyright (c) 2024-2026 PQC Today
+  Source:    https://github.com/softhsm/SoftHSMv2 (upstream); this repository (fork)
+  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; see LICENSE and CHANGELOG.md
+  Text:      LICENSES/softhsmv3/LICENSE
+
+OASIS PKCS#11 v3.2 headers
+  Version:   3.2
+  Licence:   LicenseRef-OASIS-IPR
+  Copyright: Copyright (c) OASIS Open 2016, 2019, 2024
+  Source:    https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/include/pkcs11-v3.2/
+  Text:      LICENSES/oasis-pkcs11-headers/NOTICE.txt
+
+OpenSSL
+  Version:   3.6.3
+  Licence:   Apache-2.0
+  Copyright: Copyright (c) 1998-2026 The OpenSSL Project Authors
+  Source:    https://www.openssl.org/source/openssl-3.6.3.tar.gz (SHA-256 243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1), unmodified; built by scripts/build-openssl-wasm.sh
+  Text:      LICENSES/openssl/LICENSE.txt
+
+hash-sigs (HSS/LMS), PQC Today fork of cisco/hash-sigs
+  Version:   commit 21294a0f2e4cfcc66b6bc58b7717fd4cb6757931
+  Licence:   BSD-3-Clause
+  Copyright: Copyright (c) 2017 Cisco Systems, Inc.
+  Source:    https://github.com/pqctoday-org/hash-sigs (fork of https://github.com/cisco/hash-sigs); submodule src/lib/crypto/stateful/hash-sigs
+  Changes:   SP 800-208 SHAKE-256 parameter sets and OpenSSL hashing, by PQC Today
+  Text:      LICENSES/hash-sigs/license.txt
+
+XMSS reference implementation
+  Version:   commit 171ccbd26f098542a67eb5d2b128281c80bd71a6
+  Licence:   CC0-1.0
+  Source:    https://github.com/XMSS/xmss-reference; submodule src/lib/crypto/stateful/xmss-reference
+  Text:      LICENSES/xmss-reference/LICENSE
+
+Emscripten runtime (emscripten library code, musl libc, libc++, libc++abi, compiler-rt)
+  Version:   Emscripten SDK used for the build (texts from emsdk 6.0.4)
+  Licence:   (MIT OR NCSA) AND MIT AND (Apache-2.0 WITH LLVM-exception OR NCSA OR MIT)
+  Copyright: Copyright (c) 2010-2014 Emscripten authors
+  Copyright: Copyright (c) 2005-2020 Rich Felker, et al. (musl)
+  Copyright: LLVM Project contributors (libc++, libc++abi, compiler-rt)
+  Source:    https://github.com/emscripten-core/emscripten
+  Text:      LICENSES/emscripten-runtime/LICENSE
+  Text:      LICENSES/emscripten-runtime/musl-COPYRIGHT
+  Text:      LICENSES/emscripten-runtime/libcxx-LICENSE.TXT
+  Text:      LICENSES/emscripten-runtime/libcxxabi-LICENSE.TXT
+  Text:      LICENSES/emscripten-runtime/compiler-rt-LICENSE.TXT
+

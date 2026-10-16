@@ -7,12 +7,56 @@ import { useTLSStore } from '@/store/tls-learning.store'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { RUN_MANIFEST_MODULE_PREFIX, runToolPath } from '@/data/runTools'
+import { RESEARCH_WORKSPACE_PATH } from '@/data/researchWorkspace'
+
+// Same value as OPERATIONS_PACK_PANEL_PATH in services/operationsPack.ts (a
+// test keeps them equal); not imported, so app start-up does not load the
+// Command Center tool registry that module depends on.
+export const OPERATIONS_PACK_HISTORY_ROUTE = '/business#operations-pack'
+
+export const OPERATIONS_PACK_TYPES: ReadonlySet<ExecutiveDocumentType> =
+  new Set<ExecutiveDocumentType>([
+    'ops-scope',
+    'hsm-capacity-plan',
+    'cert-capacity-plan',
+    'protocol-config',
+    'vpn-sim-run',
+    'ops-test-plan',
+  ])
 
 /**
  * Seeds history events from existing store data. Waits for all stores to finish
  * rehydrating from localStorage before reading. Guarded by the `seeded` flag —
  * calling multiple times is safe.
  */
+/** Researcher workspace artifacts open in the workspace panel on the
+ * researcher's Command Center. */
+export const RESEARCH_WORKSPACE_TYPES: ReadonlySet<ExecutiveDocumentType> =
+  new Set<ExecutiveDocumentType>([
+    'library-collection',
+    'research-question',
+    'claim-matrix',
+    'reproduction-record',
+  ])
+
+/** Where a saved Command Center artifact's history entry leads. Artifacts
+ * made outside a Learn module open where they were made: the operations
+ * pack, the architecture pack, the KMIP playground's Migration tab, or (for
+ * a saved run record) the tool that ran it; researcher workspace items open
+ * in the research workspace. */
+export function artifactHistoryRoute(doc: Pick<ExecutiveDocument, 'type' | 'moduleId'>): string {
+  if (OPERATIONS_PACK_TYPES.has(doc.type)) return OPERATIONS_PACK_HISTORY_ROUTE
+  if (doc.moduleId.startsWith('architecture-pack')) return '/business#architecture-pack'
+  if (doc.moduleId === 'kmip-playground') return '/playground/cacp?tab=migration'
+  if (doc.type === 'run-manifest' && doc.moduleId.startsWith(RUN_MANIFEST_MODULE_PREFIX)) {
+    return runToolPath(doc.moduleId.slice(RUN_MANIFEST_MODULE_PREFIX.length).split(':')[0])
+  }
+  if (RESEARCH_WORKSPACE_TYPES.has(doc.type)) return RESEARCH_WORKSPACE_PATH
+  return `/learn/${doc.moduleId}?tab=workshop`
+}
+
 export function seedHistoryFromStores() {
   // Wait for all persisted stores to finish hydrating before reading their state.
   // Zustand persist hydration is async — reading immediately gives INITIAL_STATE.
@@ -169,7 +213,7 @@ function seedModuleEvents(out: Omit<HistoryEvent, 'id'>[]) {
       timestamp: doc.createdAt,
       title: `Created ${doc.type}: ${doc.title}`,
       moduleId: doc.moduleId,
-      route: `/learn/${doc.moduleId}?tab=workshop`,
+      route: artifactHistoryRoute(doc),
     })
   }
 }

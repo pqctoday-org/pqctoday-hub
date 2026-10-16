@@ -43,7 +43,7 @@ const STEPS: CuriousStep[] = [
   {
     icon: Clock,
     title: 'The clock is already ticking',
-    body: 'NIST has published the first three post-quantum algorithms. CNSA 2.0 mandates them by 2027. Industries are mid-migration right now.',
+    body: 'NIST published its first three post-quantum standards in 2024. For U.S. National Security Systems, new acquisitions must be CNSA 2.0-compliant from January 2027; other sectors and countries are on their own, mostly later, timelines.',
     ctaLabel: 'See the timeline',
     ctaPath: '/timeline',
   },
@@ -63,7 +63,7 @@ const STEPS: CuriousStep[] = [
   {
     icon: Scale,
     title: 'Why you can check us',
-    body: 'Every claim here names its source, and we publish who funds the site and what that funding cannot buy. If something looks wrong, the page tells you where it came from so you can go and check.',
+    body: 'Our sources, corrections and editorial rules are public, and we publish who funds the site and what that funding cannot buy. If something looks wrong, check the sources listed on that page.',
     ctaLabel: 'Read our independence policy',
     ctaPath: '/editorial-independence',
   },

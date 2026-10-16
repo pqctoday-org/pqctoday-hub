@@ -22,7 +22,15 @@ import { useState } from 'react'
 import { ChevronDown, Calculator } from 'lucide-react'
 import { Button } from '../ui/button'
 import { INDUSTRY_COMPOSITE_WEIGHTS, DEFAULT_COMPOSITE_WEIGHTS } from '../../hooks/assessmentData'
-import type { AssessmentResult } from '../../hooks/assessmentTypes'
+import type { AssessmentInput, AssessmentResult } from '../../hooks/assessmentTypes'
+import { computeAssessment } from '../../hooks/assessment/orchestrator'
+import { answerImpacts, type AnswerSource } from './answerImpact'
+
+const SOURCE_LABEL: Record<AnswerSource, string> = {
+  yours: 'Your answer',
+  'not-known': 'You said "don\'t know"; the cautious default was used',
+  'not-answered': 'Not answered; the default was used',
+}
 
 export interface WorkingRow {
   label: string
@@ -90,12 +98,16 @@ export function riskScoreWorking(
 export function RiskScoreWorking({
   result,
   industry,
+  input,
 }: {
   result: AssessmentResult
   industry: string
+  /** The answers behind `result`; when given and they reproduce it, each answer's effect is shown. */
+  input?: AssessmentInput
 }) {
   const [open, setOpen] = useState(false)
   const working = riskScoreWorking(result, industry)
+  const impacts = open && input ? answerImpacts(input, result, computeAssessment) : null
   // The legacy additive scoring path produces no category scores, so there is
   // no weighted working to show. Rendering an empty disclosure would be worse
   // than rendering none — it would imply the number has a breakdown it doesn't.
@@ -190,6 +202,50 @@ export function RiskScoreWorking({
               </>
             )}
           </p>
+          {impacts && (
+            <div className="mt-3" data-testid="answer-impacts">
+              <p className="mb-1.5 text-[11px] font-semibold text-foreground">
+                How each answer moved the score
+              </p>
+              <p className="mb-2 text-[11px] leading-relaxed text-muted-foreground">
+                Points are measured by re-running the score as if you had answered
+                &ldquo;don&rsquo;t know&rdquo; to that question alone. The weights come from
+                published data for{' '}
+                {working.weightSource === 'industry' ? 'your industry' : 'the default profile'}.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+                      <th className="py-1 text-left font-semibold">Question</th>
+                      <th className="py-1 text-left font-semibold">Where the value came from</th>
+                      <th className="py-1 text-right font-semibold">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {impacts.map((row) => (
+                      <tr key={row.question} className="border-b border-border/50">
+                        <td className="py-1.5 pr-2 text-foreground">{row.question}</td>
+                        <td className="py-1.5 pr-2 text-muted-foreground">
+                          {SOURCE_LABEL[row.source]}
+                          {row.publishedData && row.source === 'yours' && (
+                            <>, plus {row.publishedData}</>
+                          )}
+                        </td>
+                        <td className="py-1.5 text-right font-mono text-foreground">
+                          {row.source !== 'yours'
+                            ? '—'
+                            : row.points > 0
+                              ? `+${row.points}`
+                              : `${row.points}`}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
           <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
             Change any answer in the assessment and this table changes with it — the score is
             computed from your answers on every run, never stored and re-shown.

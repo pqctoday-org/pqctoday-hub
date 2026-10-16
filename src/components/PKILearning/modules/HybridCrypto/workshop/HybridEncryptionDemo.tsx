@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useRef } from 'react'
+import { Link } from 'react-router'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -201,7 +202,7 @@ const STEPS: Step[] = [
     id: 'hkdf-combine',
     title: 'Step 6 — Decapsulate & HKDF Combine',
     description:
-      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Defense-in-depth: if X25519 is broken by a quantum computer, the ML-KEM secret still protects. If ML-KEM has an unforeseen flaw, the X25519 secret still protects.',
+      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Because HKDF is a sound combiner (dual-PRF assumption on HMAC), a quantum break of X25519 alone, or an unforeseen flaw in ML-KEM alone, does not expose the session key.',
     code: `const kemSS = hsm_extractKeyValue(module, session,\n  hsm_decapsulate(module, session, kemPriv, ct, 768))\nconst hybridKey = hsm_hkdf(\n  module, session, ecdhHandle,\n  CKM_SHA256, true, true,\n  kemSS,\n  encode('hybrid-kem-x25519-mlkem768-v1'),\n  32\n)`,
     language: 'javascript',
     actionLabel: 'Decapsulate & Combine',
@@ -215,7 +216,7 @@ const STEPS: Step[] = [
         label: 'HKDF-Extract Salt',
         value: 'ML-KEM shared secret',
         description:
-          'KEM output used as salt — both secrets must be secret for the output to be secret',
+          'KEM output used as the HMAC key of HKDF-Extract. Under the standard assumption that HMAC is a dual PRF, the output stays secret if either input does',
       },
       {
         label: 'Info',
@@ -226,7 +227,8 @@ const STEPS: Step[] = [
       {
         label: 'Output',
         value: '32 bytes (256-bit hybrid session key)',
-        description: 'Quantum-safe if either X25519 ECDH or ML-KEM-768 remains secure',
+        description:
+          'Stays secret if either the X25519 or the ML-KEM-768 secret does (dual-PRF assumption on HMAC)',
       },
     ],
   },
@@ -525,9 +527,9 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           `  Salt (KEM SS):   ${toHex(decapSSBytes)}\n` +
           `  Info:            "hybrid-kem-x25519-mlkem768-v1"\n\n` +
           `32-byte hybrid session key:\n${toHex(hybridKey)}\n\n` +
-          `Defense-in-depth: this key is quantum-safe if either\n` +
-          `  • X25519 ECDH remains secure (classical assumption), or\n` +
-          `  • ML-KEM-768 remains secure (MLWE lattice assumption)`
+          `With this HKDF combiner (dual-PRF assumption on HMAC), the key stays secret if either\n` +
+          `  • X25519 ECDH remains unbroken (classical assumption), or\n` +
+          `  • ML-KEM-768 remains unbroken (MLWE lattice assumption)`
         )
       }
 
@@ -550,8 +552,8 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
           Live PKCS#11 demo: X25519 ECDH + ML-KEM-768 encapsulation + HKDF-SHA-256 combiner. Both
-          secrets contribute to the 32-byte hybrid session key — quantum-safe if either component
-          remains secure (
+          secrets contribute to the 32-byte hybrid session key, which stays secret as long as either
+          component KEM is unbroken, given a sound combiner such as this HKDF construction (
           <a
             href="/library?ref=FIPS%20203"
             className="text-primary underline"
@@ -648,6 +650,19 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
               secret.
             </li>
           </ul>
+          <p>
+            What this construction does not do: it mixes in only the two secrets and a fixed label,
+            not the exchanged key shares or public keys. Deployed combiners bind those too (X-Wing
+            hashes the X25519 key share and public key into its output; TLS 1.3 feeds the whole
+            handshake transcript into its key schedule), so treat this as the idea, not a design to
+            copy.
+          </p>
+          <p>
+            <Link to="/playground/tls-simulator" className="text-primary underline">
+              Then watch the same idea in a real TLS 1.3 handshake →
+            </Link>{' '}
+            The TLS simulator negotiates the X25519MLKEM768 group with real OpenSSL.
+          </p>
           <p className="text-xs text-muted-foreground mt-2">
             Note: softhsmv3 WASM uses X25519 (Montgomery) for the classical leg via{' '}
             <code>CKM_EC_MONTGOMERY_KEY_PAIR_GEN</code> + <code>CKM_ECDH1_DERIVE</code>. This demo

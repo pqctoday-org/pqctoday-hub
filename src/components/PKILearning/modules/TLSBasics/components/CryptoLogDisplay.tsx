@@ -119,7 +119,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     const clean = hexData.replace(/\s/g, '').slice(0, 20)
     const typeByte = parseInt(clean.substring(0, 2), 16)
 
-    // RFC 8446 Record Types
+    // RFC 9846 Record Types
     if (typeByte === 0x17)
       return {
         type: 'Application Data (TLS 1.3)',
@@ -147,7 +147,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     return null
   }
 
-  // Per-flight educational annotations (RFC 8446 §4)
+  // Per-flight educational annotations (RFC 9846 §4)
   const FLIGHT_NOTES: Record<string, string> = {
     ClientHello:
       'Client advertises supported cipher suites, key_share groups (e.g. ML-KEM-768 encapsulation key), and extensions. §4.1.2',

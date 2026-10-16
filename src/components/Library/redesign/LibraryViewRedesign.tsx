@@ -56,10 +56,25 @@ import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryStartHere } from './LibraryStartHere'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
+import {
+  LibraryCitationExport,
+  itemsByReferenceIds,
+  type CitationScope,
+} from './LibraryCitationExport'
 import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
+import { BookmarksToCollection } from '@/components/shared/research/BookmarksToCollection'
+import { ChangedSinceSaved } from '@/components/shared/research/ChangedSinceSaved'
+import {
+  RESEARCH_TOPIC_PARAM,
+  researchTopicCounts,
+  researchTopicLabel,
+  resolveResearchTopicParam,
+} from '@/data/researchTopics'
+import { ResearchTopicFilter } from './ResearchTopicFilter'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -74,6 +89,7 @@ const FILTER_PARAMS = [
   'sector',
   'tier',
   'algo',
+  'topic',
 ]
 
 const PURPOSE_LABELS: Record<LibraryPurpose, string> = {
@@ -101,6 +117,7 @@ const REGION_LABELS = new Map<string, string>([
   ['JP', 'Japan'],
   ['KR', 'South Korea'],
   ['CN', 'China'],
+  ['RU', 'Russia'],
   ['SG', 'Singapore'],
   ['IN', 'India'],
   ['HK', 'Hong Kong'],
@@ -192,6 +209,10 @@ export function LibraryViewRedesign({
   const filterText = params.get('q') ?? ''
   // Old shared links (?lifecycle=Published) open with the matching new label.
   const lifecycleBucket = parseLifecycleParam(params.get('lifecycle')) ?? 'All'
+  // Research topics the Library has documents for — empty until rows are
+  // tagged, which hides the facet and makes a ?topic= link filter nothing.
+  const libraryTopics = useMemo(() => researchTopicCounts(libraryData), [])
+  const topicFilter = resolveResearchTopicParam(params.get(RESEARCH_TOPIC_PARAM), libraryTopics)
   const cswp39Only = params.get('cswp39') === '1'
   const quickView = (params.get('qv') as LibraryQuickView | null) ?? 'all'
   const prefsOff = params.get('prefs') === 'off'
@@ -225,6 +246,7 @@ export function LibraryViewRedesign({
       'sector',
       'tier',
       'algo',
+      'topic',
     ].some((k) => {
       const v = params.get(k)
       return Boolean(v) && v !== 'all' && v !== 'All'
@@ -267,6 +289,7 @@ export function LibraryViewRedesign({
     certRelevantOnly,
     certRelevantIdSet,
     lifecycleBucket,
+    topicFilter,
     sortBy,
     sortExplicit,
     selectedPersona,
@@ -340,6 +363,22 @@ export function LibraryViewRedesign({
     const csv = generateCsv(displayedItems, LIBRARY_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-library'))
   }, [displayedItems])
+
+  // Citation export reads the lists at click time (refs), so the top-bar
+  // registration below does not re-run on every filter or bookmark change.
+  const displayedItemsRef = useRef(displayedItems)
+  displayedItemsRef.current = displayedItems
+  const bookmarksRef = useRef(libraryBookmarks)
+  bookmarksRef.current = libraryBookmarks
+  const getCitationItems = useCallback(
+    (scope: CitationScope) =>
+      scope === 'filtered'
+        ? displayedItemsRef.current
+        : itemsByReferenceIds(libraryData, bookmarksRef.current),
+    []
+  )
+  const bookmarkCount = libraryBookmarks.length
+  const filteredCount = displayedItems.length
 
   const resetFilters = useCallback(() => {
     const next = new URLSearchParams(params)
@@ -419,6 +458,7 @@ export function LibraryViewRedesign({
       certRelevantOnly,
       certRelevantIdSet,
       lifecycleBucket,
+      topicFilter,
       semanticIdSet,
       newOnly,
     })
@@ -499,6 +539,12 @@ export function LibraryViewRedesign({
       label: lifecycleBucket,
       onClear: () => setParam('lifecycle', null),
     })
+  if (topicFilter !== 'All')
+    activeFilterChips.push({
+      id: 'topic',
+      label: researchTopicLabel(topicFilter) ?? topicFilter,
+      onClear: () => setParam(RESEARCH_TOPIC_PARAM, null),
+    })
   if (quickView !== 'all')
     activeFilterChips.push({
       id: 'qv',
@@ -508,7 +554,7 @@ export function LibraryViewRedesign({
   if (cswp39Only)
     activeFilterChips.push({
       id: 'cswp39',
-      label: 'Authoritative sources',
+      label: 'Mapped to NIST CSWP 39',
       onClear: () => setParam('cswp39', null),
     })
   for (const code of geoFilter)
@@ -549,6 +595,13 @@ export function LibraryViewRedesign({
         ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
         : undefined,
       onExport: handleExportCsv,
+      extra: (
+        <LibraryCitationExport
+          getItems={getCitationItems}
+          bookmarkCount={bookmarkCount}
+          filteredCount={filteredCount}
+        />
+      ),
       endorseUrl: buildEndorsementUrl({
         category: 'library-resource-endorsement',
         title: 'Endorse: PQC Library',
@@ -573,7 +626,7 @@ export function LibraryViewRedesign({
       flagResourceType: 'Library',
     })
     return () => clearPageActions()
-  }, [simEmbed, handleExportCsv])
+  }, [simEmbed, handleExportCsv, getCitationItems, bookmarkCount, filteredCount])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
@@ -696,12 +749,18 @@ export function LibraryViewRedesign({
               activeOrg !== 'All' ||
               cswp39Only ||
               algoFamilyFilter.length > 0 ||
+              topicFilter !== 'All' ||
               geoFilter.length > 0 ||
               sectorFilter.length > 0
             }
             advancedExtra={
               <>
                 <AlgorithmFamilyFilter params={params} setParams={setParams} />
+                <ResearchTopicFilter
+                  topics={libraryTopics}
+                  selectedId={topicFilter}
+                  onSelect={(id) => setParam(RESEARCH_TOPIC_PARAM, id, { replace: true })}
+                />
                 <GeoFilter options={geoOptions} params={params} setParams={setParams} />
                 <SectorFilter params={params} setParams={setParams} />
                 {/* Trust-tier control removed 2026-08-11 (all five pages).
@@ -709,6 +768,19 @@ export function LibraryViewRedesign({
               </>
             }
           />
+
+          {/* Records in the user's collections that changed since they were
+              saved (shown only when something changed). */}
+          {!simEmbed && <ChangedSinceSaved placement="library" />}
+
+          {/* Bookmarks view: the researcher's evidence bundle (bookmarked
+              records, citations, saved run records, what is missing). */}
+          {showOnlyLibraryBookmarks && !simEmbed && <EvidenceBundlePanel placement="library" />}
+          {showOnlyLibraryBookmarks && !simEmbed && (
+            <div className="-mt-3 mb-4">
+              <BookmarksToCollection />
+            </div>
+          )}
 
           {showNarrowBanner && (
             <div className="flex items-center gap-2 rounded-lg border border-secondary/30 bg-secondary/10 px-3 py-2 text-[12.5px]">

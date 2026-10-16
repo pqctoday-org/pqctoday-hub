@@ -1,8 +1,8 @@
 {
-  "generated": "2026-09-27",
-  "generatedBy": "maintenance/lineage/rebuild_manifest.py",
+  "generated": "2026-10-16",
+  "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_10112026.csv",
+  "csv": "timeline_10162026_r7.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -2166,6 +2166,30 @@
       "admittedAt": "2026-09-27"
     },
     {
+      "refId": "european-union-ec-cryptographic-inventory-mandate",
+      "label": "Cryptographic Inventory Mandate",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "status": "downloaded",
+      "file": "timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
+      "filename": "European_Union_EC_Cryptographic_Inventory_Mandate.html",
+      "sizeBytes": 67568,
+      "contentType": "text/html",
+      "sha256": "c8a89eb15941b1f8cd6899607fdf20758056da16ffc8ad6e446b6b6730b57bb7",
+      "verifiedAt": "2026-10-16"
+    },
+    {
+      "refId": "european-union-ec-high-priority-system-migration-begins",
+      "label": "High-Priority System Migration Begins",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "status": "downloaded",
+      "file": "timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
+      "filename": "European_Union_EC_Cryptographic_Inventory_Mandate.html",
+      "sizeBytes": 67568,
+      "contentType": "text/html",
+      "sha256": "c8a89eb15941b1f8cd6899607fdf20758056da16ffc8ad6e446b6b6730b57bb7",
+      "verifiedAt": "2026-10-16"
+    },
+    {
       "refId": "singapore-mas-financial-sector-pqc-migration-plans-due",
       "label": "MAS advisory on addressing cybersecurity risks associated with quantum",
       "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
@@ -2362,6 +2386,18 @@
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-27"
+    },
+    {
+      "refId": "nigeria-ndpc-nigeria-data-protection-act-2023-enacted",
+      "label": "Nigeria Data Protection Act 2023 Enacted",
+      "url": "https://ndpc.gov.ng/download/nigeria-data-protection-act-2023",
+      "status": "downloaded",
+      "file": "timeline/Nigeria_NDPC_Nigeria_Data_Protection_Act_2023_Enacted.html",
+      "filename": "Nigeria_NDPC_Nigeria_Data_Protection_Act_2023_Enacted.html",
+      "sizeBytes": 449570,
+      "contentType": "text/html",
+      "sha256": "804bc896028a9ddc7db6b9b00cd076cb858dfed584612441c75386610a62da3f",
+      "verifiedAt": "2026-10-16"
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-eo-14306-deadline",
@@ -3391,7 +3427,7 @@
     },
     {
       "refId": "united-states-nist-piv-standards-pqc-working-drafts-released",
-      "label": "PIV-Standards-PQC-Working-Drafts-Released",
+      "label": "PIV Standards PQC Working Drafts Released",
       "url": "https://www.nist.gov/news-events/news/2026/06/working-drafts-post-quantum-cryptography-updates-piv-standards",
       "status": "downloaded",
       "file": "timeline/PIV-Standards-PQC-Working-Drafts-Released.html",
@@ -3402,12 +3438,13 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-02T03:22:46.754887+00:00",
-      "admittedBy": "admit.py",
-      "superseded_file": "_superseded-10012026/timeline/PIV-Standards-PQC-Working-Drafts-Released.html"
+      "admittedBy": "evidence admission",
+      "filename": "PIV-Standards-PQC-Working-Drafts-Released.html",
+      "verifiedAt": "2026-10-16"
     },
     {
       "refId": "singapore-mas-quantum-resilience-supervisory-expectations-an",
-      "label": "Quantum-Resilience-Supervisory-Expectations-Announced",
+      "label": "Quantum-Resilience Supervisory Expectations Announced",
       "url": "https://www.mas.gov.sg/news/speeches/2026/md-remarks-for-mas-ar-2025-2026",
       "status": "downloaded",
       "file": "timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html",
@@ -3418,12 +3455,13 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-02T03:22:56.080370+00:00",
-      "admittedBy": "admit.py",
-      "superseded_file": "_superseded-10012026/timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html"
+      "admittedBy": "evidence admission",
+      "filename": "Quantum-Resilience-Supervisory-Expectations-Announced.html",
+      "verifiedAt": "2026-10-16"
     },
     {
       "refId": "united-states-nist-fips-140-2-certificates-move-to-the-histo",
-      "label": "FIPS-140-2-certificates-move-to-the-Historical-List",
+      "label": "FIPS 140-2 certificates move to the Historical List",
       "url": "https://csrc.nist.gov/Projects/FIPS-140-3-Transition-Effort",
       "status": "downloaded",
       "file": "timeline/FIPS-140-2-certificates-move-to-the-Historical-List.html",
@@ -3434,10 +3472,12 @@
       "identity": "SKIPPED",
       "unified": "converted",
       "admittedAt": "2026-10-10T15:59:08.842427+00:00",
+      "filename": "FIPS-140-2-certificates-move-to-the-Historical-List.html",
+      "verifiedAt": "2026-10-16",
       "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-09-27T23:44:23.497514+00:00"
+  "rebuiltAt": "2026-10-16T16:03:38.929952+00:00"
 }

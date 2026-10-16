@@ -95,7 +95,7 @@ export const KmsRotationPlanner: React.FC = () => {
           },
           { name: 'Identify 400 quantum-vulnerable certificates (RSA + ECDSA)', status: 'done' },
           {
-            name: 'Map KMS provider PQC capabilities (AWS: GA, GCP: Preview, Azure: Planned)',
+            name: 'Map KMS provider PQC capabilities (AWS: ML-DSA GA; GCP: signing GA, KEMs Preview; Azure: planned)',
             status: 'in-progress',
           },
           { name: 'Map compliance deadlines (CNSA 2.0: 2027, NIST: 2030)', status: 'in-progress' },
@@ -110,7 +110,10 @@ export const KmsRotationPlanner: React.FC = () => {
           { name: 'Configure AWS KMS ML-DSA signing keys', status: 'in-progress' },
           { name: 'Issue hybrid TLS certificates (300 servers)', status: 'pending' },
           { name: 'Enable ML-KEM hybrid TLS for AWS KMS API transit', status: 'pending' },
-          { name: 'Configure GCP Cloud KMS X-Wing hybrid keys (preview)', status: 'pending' },
+          {
+            name: 'Configure GCP Cloud KMS X-Wing key-encapsulation keys (Preview)',
+            status: 'pending',
+          },
           { name: 'Generate ML-DSA-65 code signing keys (50 keys)', status: 'pending' },
           { name: 'Configure KMIP cross-provider key sync', status: 'pending' },
           {

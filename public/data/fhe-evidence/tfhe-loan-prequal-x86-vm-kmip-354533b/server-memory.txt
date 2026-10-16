@@ -1,0 +1,3 @@
+MemoryCurrent=909611008
+MemoryPeak=910454784
+CPUUsageNSec=6708307530000

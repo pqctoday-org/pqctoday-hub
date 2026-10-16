@@ -123,6 +123,12 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
     onScreenNotice: 'src/components/common/SimplifiedViewNotice.tsx',
     note: 'Curious gets a labelled simplified build; executive’s row is dashed with a legend.',
   },
+  '/cacp-kmip': {
+    lens: 'per-persona-view',
+    configKeys: ['PERSONA_MARKED_NAV_PATHS'],
+    onScreenNotice: 'src/components/common/SimplifiedViewNotice.tsx',
+    note: 'Redirect only: /playground/cacp-kmip sends readers to /playground/cacp, which renders inside the Playground, so the Playground lens applies.',
+  },
   '/openssl': {
     lens: 'deliberately-none',
     onScreenNotice: 'src/components/Layout/railNav.ts',

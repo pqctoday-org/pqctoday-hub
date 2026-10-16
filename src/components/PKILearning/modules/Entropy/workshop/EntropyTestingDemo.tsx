@@ -32,7 +32,10 @@ import { LagPlot } from '../components/LagPlot'
 import { BitFlipExperiment } from '../components/BitFlipExperiment'
 import { StreamingEntropyMonitor } from '../components/StreamingEntropyMonitor'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
-import type { KatTestSpec } from '@/utils/katRunner'
+import type { KATResult, KatTestSpec } from '@/utils/katRunner'
+import { entropyTestingRunManifest } from '../utils/entropyRunRecords'
+import { downloadRunManifestJson } from '@/services/runRecordExport'
+import { RunRecordActions } from '@/components/shared/RunRecordActions'
 
 // Group 4 (algorithm known-answer tests): these check the SHA-256 and HMAC
 // primitives only. Until 2026-09-24 they were labelled "SP 800-90B" / "health
@@ -111,6 +114,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const [showPasteInput, setShowPasteInput] = useState(false)
   const [pasteHex, setPasteHex] = useState('')
   const [pasteHexError, setPasteHexError] = useState<string | null>(null)
+  const [selfCheckRun, setSelfCheckRun] = useState<{
+    results: KATResult[]
+    startedAt: string
+    finishedAt: string
+  } | null>(null)
 
   const loadSample = useCallback((type: SampleType) => {
     setTestResults(null)
@@ -166,6 +174,36 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
       health: runHealthTests(sampleData),
     })
   }, [sampleData])
+
+  const handleSelfChecksComplete = useCallback(
+    (results: KATResult[], run: { startedAt: string; finishedAt: string }) =>
+      setSelfCheckRun({ results, ...run }),
+    []
+  )
+
+  const buildRunManifestRecord = useCallback(() => {
+    if (!selfCheckRun) return null
+    return entropyTestingRunManifest({
+      specs: PRIMITIVE_SELF_CHECK_SPECS,
+      results: selfCheckRun.results,
+      startedAt: selfCheckRun.startedAt,
+      finishedAt: selfCheckRun.finishedAt,
+      sample:
+        sampleData && testResults
+          ? {
+              label: sampleLabel,
+              lengthBytes: sampleData.length,
+              visual: testResults.visual,
+              health: testResults.health,
+            }
+          : undefined,
+    })
+  }, [selfCheckRun, sampleData, sampleLabel, testResults])
+
+  const handleDownloadRunRecord = useCallback(() => {
+    const manifest = buildRunManifestRecord()
+    if (manifest) downloadRunManifestJson(manifest, 'entropy-self-check-run')
+  }, [buildRunManifestRecord])
 
   const bins = sampleData ? binnedFrequency(sampleData, 16) : null
   const maxBinCount = bins ? Math.max(...bins) : 0
@@ -488,6 +526,13 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         specs={PRIMITIVE_SELF_CHECK_SPECS}
         label="Primitive self-checks (SHA-256, HMAC) — not entropy or RBG tests"
         authorityNote="FIPS 180-4 · FIPS 198-1 — algorithm correctness only"
+        onComplete={handleSelfChecksComplete}
+      />
+      <RunRecordActions
+        onDownload={handleDownloadRunRecord}
+        getManifest={buildRunManifestRecord}
+        canDownload={!!selfCheckRun}
+        testId="entropy-run-record"
       />
       <PlaygroundNextStep
         toolId="source-combining"

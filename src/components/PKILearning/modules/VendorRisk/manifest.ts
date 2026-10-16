@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vendor-risk',
-  contentVersion: 8,
+  contentVersion: 10,
   lm_id: 'LM-038',
   title: 'Vendor & Supply Chain Risk',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
   duration: '30 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p7',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 5,
   learnSections: [
     { id: 'readiness', label: 'Vendor PQC Readiness' },

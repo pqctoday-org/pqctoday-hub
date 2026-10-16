@@ -17,6 +17,9 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { cn } from '@/lib/utils'
 import { useApplicability } from '@/hooks/useApplicability'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
+import { InlineScopeStep, isScopeIncomplete, scopeValue } from '@/components/common/InlineScopeStep'
 import {
   allComplianceFrameworks,
   complianceFrameworks,
@@ -352,6 +355,19 @@ export function MobileComplianceView({
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const { profile, isEmpty } = useApplicability()
+  // The phone has no scope bar, so the empty state's country picker writes the
+  // assessment answer directly — the same value the applicability engine reads.
+  const setCountry = useAssessmentStore((s) => s.setCountry)
+  const countryItems = useMemo(
+    () => ALL_JURISDICTIONS.map((j) => j.name).sort((a, b) => a.localeCompare(b)),
+    []
+  )
+  const scopeStep = {
+    country: scopeValue(profile.country, 'Global'),
+    countryItems,
+    onCountryChange: setCountry,
+    sector: scopeValue(profile.industry),
+  }
 
   const rows = useMemo(() => buildObligations(profile), [profile])
   const groups = useMemo(
@@ -448,13 +464,19 @@ export function MobileComplianceView({
         <div className="glass-panel p-4 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Set a country and sector in your assessment profile to see which rules bind you.
+            Pick a country and a sector to see which rules bind you.
           </p>
+          <InlineScopeStep {...scopeStep} />
         </div>
       )}
 
       {section === 'obligations' && !isEmpty && (
         <div className="flex flex-col gap-3">
+          {/* One of the two is set (the register shows), the other still is not —
+              keep offering it rather than dropping the picker after one choice. */}
+          {isScopeIncomplete(scopeStep.country, scopeStep.sector) && (
+            <InlineScopeStep {...scopeStep} variant="strip" />
+          )}
           <p className="text-[11.5px] italic leading-relaxed text-muted-foreground">{framing}</p>
           {groups.map((group) => {
             const meta = TIER_META[group.tier]

@@ -5,7 +5,7 @@ import { ArrowRight, Route } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, pathModuleCount, type PersonaId } from '@/data/learningPersonas'
 import { MODULE_CATALOG } from './moduleData'
 import { computeNextIncompleteModuleId } from './PersonaPathView'
 
@@ -26,10 +26,7 @@ export const RecommendedPathBanner = ({ personaId, onResume }: RecommendedPathBa
   const modules = useModuleStore((s) => s.modules)
   const reduced = usePrefersReducedMotion()
 
-  const moduleCount = useMemo(
-    () => persona.pathItems.filter((p) => p.type === 'module').length,
-    [persona.pathItems]
-  )
+  const moduleCount = pathModuleCount(personaId)
   const checkpointCount = useMemo(
     () => persona.pathItems.filter((p) => p.type === 'checkpoint').length,
     [persona.pathItems]

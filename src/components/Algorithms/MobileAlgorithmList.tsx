@@ -8,6 +8,7 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
+import { isTransitionGuidanceDate, TRANSITION_GUIDANCE_NOTE } from './transitionGuidance'
 
 interface MobileAlgorithmListProps {
   data: AlgorithmTransition[]
@@ -139,6 +140,14 @@ export const MobileAlgorithmList = ({
               >
                 {algo.deprecationDate.split(' ')[0]} {/* simplified date */}
               </span>
+              {isTransitionGuidanceDate(algo.deprecationDate) && (
+                <span
+                  className="text-[10px] text-muted-foreground"
+                  title={TRANSITION_GUIDANCE_NOTE}
+                >
+                  Proposed (NIST IR 8547 draft)
+                </span>
+              )}
               {pqcDetail && <AlgorithmCheckButton algorithm={pqcDetail} />}
               <AlgoCtaStrip algoName={pqcName} className="justify-end" />
             </div>

@@ -40,8 +40,10 @@ export const CryptoAgilityPatterns: React.FC = () => {
           <h3 className="font-bold text-foreground">Crypto Agility Patterns</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Five software design patterns for building algorithm-agile systems that can swap
-          cryptographic algorithms without code changes. Essential for PQC migration.
+          Five software design patterns for building algorithm-agile systems that keep algorithm
+          choice out of business logic. They shrink a PQC migration, but do not remove it: algorithm
+          identifiers, key and signature sizes, encodings and storage, negotiation and error paths
+          still change.
         </p>
       </div>
 

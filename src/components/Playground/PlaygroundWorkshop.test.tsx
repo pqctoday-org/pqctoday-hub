@@ -9,6 +9,7 @@ import { FEATURE_PLAYGROUNDS } from './cryptoLabMeta'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore } from '@/store/useSandboxStore'
+import { playgroundToolsForRole, toolsForRole } from '@/data/roleTools'
 
 // Tools shown in the grid exclude the marquee "environment" cards.
 const GRID_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
@@ -42,7 +43,11 @@ describe('Crypto Lab Workbench', () => {
   it('renders the Overview with the brand, tool count and four full-playground cards', () => {
     renderWorkbench()
     expect(screen.getByText('Crypto Lab')).toBeInTheDocument()
-    expect(screen.getByText(`${GRID_COUNT} tools · runs in-browser`)).toBeInTheDocument()
+    const docker = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
+    // Docker sandbox scenarios are in the grid but are not counted as in-browser.
+    expect(
+      screen.getByText(`${GRID_COUNT - docker} in-browser tools · ${docker} Docker scenarios`)
+    ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
     ).toBeInTheDocument()
@@ -77,7 +82,11 @@ describe('Crypto Lab Workbench', () => {
     const directory = screen.getByRole('navigation', { name: 'All Crypto Lab pages' })
     const expected = new Set([
       ...FEATURE_PLAYGROUNDS.map(({ to }) => to),
-      ...WORKSHOP_TOOLS.map(({ id }) => `/playground/${id}`),
+      // The KMIP environment tool redirects to /playground/cacp (a feature
+      // playground), so it is listed once, under that address.
+      ...WORKSHOP_TOOLS.filter(({ id }) => !isEnvironmentTool(id)).map(
+        ({ id }) => `/playground/${id}`
+      ),
     ])
     const actual = new Set(
       within(directory)
@@ -109,7 +118,18 @@ describe('Crypto Lab Workbench', () => {
     // coincidentally landing on 3.
     usePersonaStore.setState({ selectedPersona: 'developer' })
     renderWorkbench()
-    expect(screen.getByText('3 tools matched to your role')).toBeInTheDocument()
+    expect(screen.getByText(/· 3 to start$/)).toBeInTheDocument()
+  })
+
+  it('explains the overview counts from the registry: all tools, tagged for the role, to start', () => {
+    usePersonaStore.setState({ selectedPersona: 'researcher' })
+    renderWorkbench()
+    const total = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
+    const tagged = playgroundToolsForRole('researcher').length
+    expect(tagged).toBe(toolsForRole('researcher').playground.length) // same count as the Home board
+    expect(
+      screen.getByText(`${total} tools · ${tagged} tagged for Researcher · 3 to start`)
+    ).toBeInTheDocument()
   })
 
   it('searches across all categories and shows a flat result list', () => {

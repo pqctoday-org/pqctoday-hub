@@ -8,7 +8,7 @@
  */
 import type { FamilyId } from './families'
 
-export type CandidateStatus = 'advancing' | 'reparameterised' | 'shrunk' | 'stable'
+export type CandidateStatus = 'advancing' | 'reparameterised' | 'shrunk' | 'stable' | 'withdrawn'
 
 export interface Candidate {
   /** Stable URL-safe ID */
@@ -181,11 +181,10 @@ export const CANDIDATES: Candidate[] = [
     hardness: 'Search Module Lattice Isomorphism (smLIP) + One-More-SVP (omSVP)',
     whyAdvanced:
       'Compact lattice signatures with integer-only arithmetic — eliminates the floating-point side-channel hazard that makes FN-DSA hard to deploy on constrained hardware.',
-    status: 'stable',
+    status: 'withdrawn',
     caveats:
-      'omSVP discrepancy required formal-definition refinement during Round 2. NIST flagged smLIP for further community analysis.',
-    referenceUrl:
-      'https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes',
+      'Withdrawn by its submission team on 29 July 2026, after a new attack roughly halved the lattice-reduction block size needed to recover an equivalent private key (NIST Round 3 page). It advanced to Round 3 in May 2026 but is no longer a candidate.',
+    referenceUrl: 'https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures',
   },
 ]
 

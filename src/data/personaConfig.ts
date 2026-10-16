@@ -385,7 +385,7 @@ export const PERSONA_ABSENT_PATHS: Record<PersonaId, Record<string, PersonaAbsen
   curious: {
     '/business': {
       reason:
-        'The Command Center works from your own assessment answers, so it opens after you finish the assessment.',
+        'The Command Center is a worked example of an organisation’s migration programme. It is most useful once you have assessment answers for a real organisation.',
       insteadPath: '/assess',
       insteadLabel: 'Assess',
     },
@@ -482,7 +482,9 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
   },
   curious: {
     tab: 'transition',
-    filters: { status: 'Certified', fn: 'KEM' },
+    // No function filter: the three highlighted schemes are one KEM and two
+    // signatures, and a KEM filter hid two of them (curious journey review).
+    filters: { status: 'Certified' },
     openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },
@@ -629,18 +631,23 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  * (which writes ?prefs=off).
  */
 export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
-  executive: 'americas',
+  // Global, as for GRC below (plan §5): an executive's jurisdiction comes from their
+  // own selection, not the job title — a persona default made "the deadlines that
+  // bind you" read as Americas-wide (executive journey audit, 15 Oct 2026).
+  executive: 'global',
   // Global, not a persona-implied country — plan §5: applicability comes from
   // the user's own explicit region/industry selections, not the job title.
   grc: 'global',
-  developer: 'americas',
+  // Global (owner decision D2, 15 Oct 2026): a developer's jurisdiction is their own
+  // selection, as for executive and GRC.
+  developer: 'global',
   architect: 'global',
   researcher: 'All',
   // Certification schemes are national; applicability comes from the user's
   // own region, as for GRC.
   'cert-engineer': 'global',
-  ops: 'americas',
-  curious: 'americas',
+  ops: 'global', // owner decision D2, 15 Oct 2026
+  curious: 'global', // owner decision, 16 Oct 2026: no persona-implied region
 }
 
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
@@ -739,15 +746,19 @@ export const INDUSTRY_SLUG_TO_LABEL: Record<string, string> = {
  * that don't belong to any single sector but are broadly relevant.
  */
 export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
-  executive: ['Finance & Banking', 'Government & Defense', 'Cross-cutting & Other'],
+  // No persona-implied industry (plan §5): three default sectors made applicability
+  // read as if one executive ran a bank, an agency and everything else at once.
+  executive: [],
   // No persona-implied industry (plan §5) — same rationale as researcher/curious
   // below: GRC's applicable scope comes from the user's own industry selection.
   grc: [],
-  developer: ['Technology', 'Cross-cutting & Other'],
-  architect: ['Technology', 'Telecommunications', 'Cross-cutting & Other'],
+  // No persona-implied industry (owner decision D2, 15 Oct 2026): a job title does
+  // not say which sectors someone works in.
+  developer: [],
+  architect: [],
   researcher: [],
   'cert-engineer': [],
-  ops: ['Energy & Utilities', 'Telecommunications', 'Cross-cutting & Other'],
+  ops: [], // owner decision D2, 15 Oct 2026
   curious: [],
 }
 
@@ -1683,8 +1694,9 @@ export function isComplianceFrameworkEmphasized(
  *
  * The 7 generic belts (White → Black) still drive scoring math, but Executive
  * and Curious see role-relevant tier names alongside the belt — "Briefed →
- * Aligned → Sponsoring → Board-Ready" for execs, "Aware → Informed → Confident
- * → Quantum-Native" for curious. Other personas inherit the belt names as-is.
+ * Mandated → Funded → Governing" for execs (decision outcomes, owner
+ * decision 2026-10-16), "Aware → Informed → Confident
+ * → Fluent" for curious. Other personas inherit the belt names as-is.
  *
  * Mapping: 7 belts collapse into 4 tiers
  *   White / Yellow         → tier[0]
@@ -1695,11 +1707,11 @@ export function isComplianceFrameworkEmphasized(
 export const PERSONA_BELT_TIER_LABELS: Partial<
   Record<PersonaId, [string, string, string, string]>
 > = {
-  executive: ['Briefed', 'Aligned', 'Sponsoring', 'Board-Ready'],
+  executive: ['Briefed', 'Mandated', 'Funded', 'Governing'],
   // GRC (2026-09-07 split, plan §5) — learning labels, not certification
   // claims: they track progress through the curriculum, not an audit outcome.
   grc: ['Oriented', 'Scoped', 'Evidence-Ready', 'Assurance-Ready'],
-  curious: ['Aware', 'Informed', 'Confident', 'Quantum-Native'],
+  curious: ['Aware', 'Informed', 'Confident', 'Fluent'],
   // B+ remediation 2.3 (2026-08-10): four of six roles previously fell through
   // to the generic karate-belt names while executive and curious got ladders
   // written in their own language — "generic copy on the one reader who reads
@@ -1784,7 +1796,8 @@ export interface PersonaJourneyBoard {
      *                  become your data
      */
     provenance: 'sourced' | 'illustrative' | 'guidance'
-    rows: { label: string; value: string }[]
+    /** `source`: an in-app link to the document behind this row, when it has one. */
+    rows: { label: string; value: string; source?: string }[]
     punchline: string
     footnote?: string
     /**
@@ -2249,7 +2262,7 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
   const essentialsH = Math.floor(persona.essentialsMinutes / 60)
   const essentialsM = persona.essentialsMinutes % 60
   const essentialsPhrase =
-    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM}`
+    essentialsM === 0 ? `${essentialsH} hours` : `${essentialsH} hours ${essentialsM} minutes`
 
   const totalQuarters = Math.round((persona.estimatedMinutes / 60) * 4)
   const fullWhole = Math.floor(totalQuarters / 4)
@@ -2263,7 +2276,8 @@ export function formatEssentialsVsFull(personaId: PersonaId): string {
           ? '¾'
           : ''
 
-  return `${essentialsPhrase}, not ${fullWhole}${fractionGlyph}`
+  // Both figures carry their unit ("6 hours 20, not 39¾" read as a riddle).
+  return `${essentialsPhrase} of essentials, not the full ${fullWhole}${fractionGlyph} hours`
 }
 
 /**

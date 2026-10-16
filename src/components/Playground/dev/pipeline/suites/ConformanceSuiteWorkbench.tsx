@@ -15,6 +15,7 @@ import { CheckCircle, XCircle, MinusCircle, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import {
   usePkcs11Conformance,
   TIER_A_CASES,
@@ -40,6 +41,8 @@ const StatusIcon = ({ status }: { status: RowStatus }) => {
 
 export const ConformanceSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   const suite = usePkcs11Conformance()
   const {
     rows,
@@ -63,7 +66,7 @@ export const ConformanceSuiteWorkbench = () => {
 
   const code = useMemo(() => emitConformanceSuite(selection, engineMode), [selection, engineMode])
 
-  if (role === 'curious' || role === 'executive' || role === 'grc') return null
+  if (workbenchHidden) return null
 
   const runCode = async () => {
     setCodeRunning(true)

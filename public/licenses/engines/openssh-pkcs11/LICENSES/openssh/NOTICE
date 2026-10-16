@@ -1,0 +1,50 @@
+openssh-pkcs11: ML-DSA and SLH-DSA for OpenSSH through PKCS#11
+==============================================================
+
+This folder patches and builds OpenSSH portable,
+https://github.com/openssh/openssh-portable, tag V_10_3_P1
+(commit 2d98db98331803cbb820211b2fb0d31a6e71e58e), fetched by
+scripts/build-wasm.sh. OpenSSH is distributed under the terms in LICENSE in
+this folder, which is the LICENCE file of that OpenSSH release, unchanged.
+Those terms cover OpenSSH and every OpenSSH file changed by this folder.
+
+Changes by PQC Today, LLC (2026)
+--------------------------------
+patches/apply_mldsa_patches.py edits these OpenSSH files at build time:
+  Makefile.in, myproposal.h, sshkey.h, sshkey.c, ssh-pkcs11.c,
+  sshd-auth.c, sshd.c
+It registers the ssh-mldsa-44/65/87 and ssh-slh-dsa-* key types, adds
+ML-DSA/SLH-DSA signing through PKCS#11 (CKM_ML_DSA, CKM_SLH_DSA), and adds the
+new objects to the build. The changes to OpenSSH files are under the OpenSSH
+terms in LICENSE.
+
+New files written by PQC Today, LLC, compiled into the build or used to make
+it: patches/ssh-mldsa.c, patches/ssh-slhdsa.c, patches/native_paramsweep_test.c,
+patches/apply_mldsa_patches.py, wasm-shims/*.c, scripts/*.sh, *.cjs. They are
+written against OpenSSH's internal interfaces and are provided under the
+BSD 2-Clause terms below. Where they follow OpenSSH's own code (for example
+the user-authentication request layout in wasm-shims/sshd_wasm_main.c), the
+OpenSSH terms in LICENSE apply to those parts as well.
+
+BSD 2-Clause License
+
+Copyright (c) 2026, PQC Today
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS

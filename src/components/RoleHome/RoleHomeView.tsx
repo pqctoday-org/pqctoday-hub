@@ -68,7 +68,7 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
   },
   developer: {
     urgency: 'OpenSSL, BoringSSL and JOSE already ship PQC. Find what fits your stack.',
-    firstWin: 'First win — run a real ML-KEM handshake · 5 min',
+    firstWin: 'First win — run a real hybrid ML-KEM + X25519 key exchange · 5 min',
     track: 'essentials',
   },
   architect: {
@@ -93,7 +93,8 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
     track: 'fullCorpus',
   },
   curious: {
-    urgency: 'Nothing breaks today. But the padlock icon will look very different in five years.',
+    urgency:
+      'No publicly known quantum computer can break today’s encryption. What runs underneath the padlock is changing anyway.',
     firstWin: 'First win — see what breaks · 6 min',
     track: 'essentials',
   },

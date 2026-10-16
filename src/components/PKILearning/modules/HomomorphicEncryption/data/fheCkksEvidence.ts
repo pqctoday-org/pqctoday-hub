@@ -35,6 +35,8 @@ export const CKKS_EVIDENCE = {
   // the encrypted risk-scoring service on other machines, 2026-10-15
   scoringMx95pro: 'ckks-scoring-service-mx95pro-m5max-ed7b92e',
   scoringX86Vm: 'ckks-scoring-service-x86-vm-m5max-ed7b92e',
+  // the same service with the token on the MX95 Pro reached over KMIP, 2026-10-16
+  scoringX86VmKmip: 'ckks-scoring-service-x86-vm-mx95pro-kmip-5f0ff3d',
   // the same programs with the token on the boards
   metaBtsLmssMx95pro: 'ckks-metabts2-lmss-stream-mx95pro-mac-m5max-dc9ad8b',
   metaBtsLmssMx95: 'ckks-metabts2-lmss-stream-mx95-mac-m5max-dc9ad8b',
@@ -42,6 +44,8 @@ export const CKKS_EVIDENCE = {
   openfhe: 'openfhe-ckks-reference-m5max-039034f',
   seal: 'seal-ckks-reference-m5max-039034f',
   tfheVectors: 'tfhe-rs-test-vectors-7361df1',
+  // TFHE loan pre-qualification with the token on the MX95 Pro over KMIP, 2026-10-16
+  tfheLoanKmip: 'tfhe-loan-prequal-x86-vm-mx95pro-kmip-354533b',
   threshold: 'ckks-threshold-2of2-lattigo-m5max-8beec58',
 } as const
 

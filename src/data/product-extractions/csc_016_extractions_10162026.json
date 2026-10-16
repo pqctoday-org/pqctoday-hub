@@ -1,0 +1,54 @@
+[
+  {
+    "platform_name": "QiSpace SDK Cryptographic Module",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "QiSpace for IoT",
+    "product_brief": "An SDK providing a complete set of cryptographic capabilities to harden security for systems and applications on major embedded platforms.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Hardware, Application",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "STM32 Cortex M Series MCU, RA Cortex M Series MCU, PIC32 Cortex M Series MCU, STM32 Cortex M Series MPU, RL Low Power Series, SAM Cortex M Series MCU, Legacy Arm Processors, RX 32-bit, SPC5 32-bit Automotive, RZ 32/64-bit Multicore MPUs, RISC-V Processors, Stellar 32-bit Automotive, RH850 Automotive Series MCUs, AVR32",
+    "target_industries": "IoT, Embedded Systems",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "NIST PQC standards, Quantropi novel digital signature (GHPPK-DS)",
+    "authoritative_source_url": "www.quantropi.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Strong entropy generation",
+    "constrained_device_&_iot_suitability": "Specifically optimized for IoT solutions with an efficient 64-byte ciphertext size and ~ 8K of memory utilization at NIST L5 for key exchange; 264-byte signature size and less than 11K of memory utilization at NIST L5 for digital signatures. Supports high-performance down to ultra-low-power MCUs.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Subscription pricing ranges from $7.5K to $40K depending on package and support level.",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "Signature Schemes": "Quantropi’s novel digital signature (GHPPK -DS) is specifically optimized for IoT solutions with an efficient 264-byte signature size",
+      "Authoritative Source URL": "www.quantropi.com"
+    },
+    "withheld_no_excerpt": [
+      "PQC Support",
+      "PQC Capability Description",
+      "FIPS Validated",
+      "License",
+      "Crypto Primitives"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "local",
+      "generated_at": "2026-10-16"
+    }
+  }
+]

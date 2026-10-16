@@ -170,9 +170,11 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           The nine third-round candidates (NIST IR 8610, May 2026) break down into four mathematical
-          families. Diversity across families is the entire point — if lattice math falls, the
-          portfolio survives. The workshop's <strong>Family Math Explainer</strong> step shows
-          animated visualisations of each construction.
+          families. One has since left: the HAWK team withdrew it on 29 July 2026 after a new key-
+          recovery attack (NIST Round 3 page), leaving eight. Diversity across families is the
+          entire point — if lattice math falls, the portfolio survives. The workshop's{' '}
+          <strong>Family Math Explainer</strong> step shows animated visualisations of each
+          construction.
         </p>
         <div className="space-y-3">
           {FAMILY_LIST.map((fam) => (
@@ -307,20 +309,21 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
           <Compass size={20} /> What's coming next
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          NIST signals a longer expected timeline for any multivariate standardisation, and is
-          unlikely to standardise any of them without a further round of evaluation. Lattice (HAWK),
-          isogeny (SQIsign), and the MPCitH candidates are on the faster track — earliest projected
-          standardisation window is 2027. Korea targets 2029. ISO adoption will follow.
+          NIST expects the third round, announced on 14 May 2026, to last approximately two years,
+          and names no standardisation year for any candidate. It signals a longer expected timeline
+          for multivariate schemes, which are unlikely to be standardised without a further round.
+          HAWK, the only lattice candidate, was withdrawn in July 2026. Korea targets 2029. ISO
+          adoption will follow.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="rounded-lg border border-status-success/30 bg-status-success/5 p-4">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle size={16} className="text-status-success" />
-              <span className="text-sm font-bold text-status-success">Likely 2027 winners</span>
+              <span className="text-sm font-bold text-status-success">Most mature so far</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              HAWK, SQIsign, and at least one MPCitH scheme (likely FAEST or MQOM) are positioned
-              for earliest standardisation.
+              SQIsign and the MPCitH schemes (FAEST, MQOM, SDitH) are being evaluated through Round
+              3; NIST has set no standardisation year. HAWK was withdrawn in July 2026.
             </p>
           </div>
           <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 p-4">

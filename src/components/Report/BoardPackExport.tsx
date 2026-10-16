@@ -33,6 +33,9 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
   const budgetOwner = useReportOwnershipStore((s) => s.budgetOwner)
   const accountableExecutive = useReportOwnershipStore((s) => s.accountableExecutive)
   const [status, setStatus] = useState<'idle' | 'busy' | 'done'>('idle')
+  // GRC gets the same pack plus the applicability register (boardPackBuilder's
+  // isCompliancePack), named for what it is.
+  const grc = selectedPersona === 'grc'
 
   const handleClick = async () => {
     if (status === 'busy') return
@@ -76,7 +79,7 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
       onClick={handleClick}
       disabled={status === 'busy'}
       className="gap-1.5"
-      aria-label="Generate Board Pack ZIP"
+      aria-label={grc ? 'Generate Compliance Pack ZIP' : 'Generate Board Pack ZIP'}
     >
       {status === 'busy' ? (
         <Loader2 size={14} className="animate-spin" aria-hidden="true" />
@@ -85,7 +88,13 @@ export const BoardPackExport: React.FC<Props> = ({ result, variant = 'default' }
       ) : (
         <Package size={14} aria-hidden="true" />
       )}
-      {status === 'busy' ? 'Building…' : status === 'done' ? 'Downloaded' : 'Board Pack ZIP'}
+      {status === 'busy'
+        ? 'Building…'
+        : status === 'done'
+          ? 'Downloaded'
+          : grc
+            ? 'Compliance Pack ZIP'
+            : 'Board Pack ZIP'}
     </Button>
   )
 }

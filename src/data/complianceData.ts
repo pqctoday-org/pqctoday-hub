@@ -135,6 +135,14 @@ export interface ComplianceFramework {
   /** Short public citation of the instrument that makes it binding, from `binding_basis` (for example "Regulation (EU) 2022/2554, Article 6"). */
   bindingBasis?: string
   /**
+   * Who a mandatory-for-scope framework binds, quoted word for word from its own text
+   * (compliance file `binding_scope`), and an English version when the original is in
+   * another language (`binding_scope_en`). The English is the site's own translation,
+   * not the source's, and is labelled so wherever it is shown.
+   */
+  bindingScope?: string
+  bindingScopeEn?: string
+  /**
    * ISO date this row's fields were last checked against its primary source
    * — added 2026-07-16 (compliance-maintenance audit). Sparse by design:
    * only rows actually re-verified carry a real date; blank means "not yet
@@ -177,6 +185,8 @@ interface RawComplianceRow {
   last_verified?: string
   binding_status?: string
   binding_basis?: string
+  binding_scope?: string
+  binding_scope_en?: string
 }
 
 // '[0-9]' not a bare '*' — the broad pattern also matched
@@ -372,6 +382,8 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     lastVerified: row.last_verified?.trim() || undefined,
     bindingStatus: parseBindingStatus(row.binding_status),
     bindingBasis: row.binding_basis?.trim() || undefined,
+    bindingScope: row.binding_scope?.trim() || undefined,
+    bindingScopeEn: row.binding_scope_en?.trim() || undefined,
   }
 })
 
@@ -498,7 +510,42 @@ export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = framework
  * Maps compliance frameworks to the COMPLIANCE_DB shape
  * for backward compatibility with assessment scoring.
  */
-type ComplianceDBEntry = { requiresPQC: boolean; deadline: string; notes: string }
+type ComplianceDBEntry = {
+  requiresPQC: boolean
+  deadline: string
+  notes: string
+} & ComplianceProvenance
+
+/**
+ * Where a framework's figures come from, carried from the catalog row into the
+ * assessment result so an export can say how each deadline was sourced. Every
+ * field is optional and only present when the row states it.
+ */
+export type ComplianceProvenance = Partial<
+  Pick<
+    ComplianceFramework,
+    'website' | 'lastVerified' | 'bindingStatus' | 'bindingBasis' | 'deadlineKind'
+  >
+>
+
+const PROVENANCE_FIELDS = [
+  'website',
+  'lastVerified',
+  'bindingStatus',
+  'bindingBasis',
+  'deadlineKind',
+] as const
+
+function provenanceOf(row: ComplianceProvenance): ComplianceProvenance {
+  const out: ComplianceProvenance = {}
+  for (const key of PROVENANCE_FIELDS) {
+    // eslint-disable-next-line security/detect-object-injection
+    const value = row[key]
+    // eslint-disable-next-line security/detect-object-injection
+    if (value) (out as Record<string, unknown>)[key] = value
+  }
+  return out
+}
 
 /**
  * Collapse rows by `label`, resolving collisions deterministically.
@@ -518,12 +565,19 @@ type ComplianceDBEntry = { requiresPQC: boolean; deadline: string; notes: string
  * false". A fixture can; the live values are pinned separately, as data.
  */
 export function mergeFrameworksByLabel(
-  rows: Array<Pick<ComplianceFramework, 'label' | 'requiresPQC' | 'deadline' | 'notes'>>
+  rows: Array<
+    Pick<ComplianceFramework, 'label' | 'requiresPQC' | 'deadline' | 'notes'> & ComplianceProvenance
+  >
 ): Record<string, ComplianceDBEntry> {
   return rows.reduce<Record<string, ComplianceDBEntry>>((acc, fw) => {
     const existing = acc[fw.label]
     if (!existing || fw.requiresPQC || !existing.requiresPQC) {
-      acc[fw.label] = { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes }
+      acc[fw.label] = {
+        requiresPQC: fw.requiresPQC,
+        deadline: fw.deadline,
+        notes: fw.notes,
+        ...provenanceOf(fw),
+      }
     }
     return acc
   }, {})

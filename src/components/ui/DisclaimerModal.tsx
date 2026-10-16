@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Construction, ExternalLink, MessageSquare, X } from 'lucide-react'
+import { Construction, ExternalLink, Mail, MessageSquare, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -99,14 +99,11 @@ export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' |
               <ExternalLink size={10} />
             </a>
             <a
-              href="https://www.linkedin.com/in/eric-amador-971850a"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:pqctoday@proton.me"
               className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
             >
-              <ExternalLink size={12} />
-              Eric Amador
-              <ExternalLink size={10} />
+              <Mail size={12} />
+              pqctoday@proton.me
             </a>
           </div>
         </div>

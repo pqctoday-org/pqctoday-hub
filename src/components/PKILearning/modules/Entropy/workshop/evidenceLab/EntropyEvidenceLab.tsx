@@ -55,6 +55,12 @@ import {
 } from './EvidenceLabScreens'
 import { ProvesPanel } from './ProvesPanel'
 import { IDLE_RUN, SELECTED, type RunState } from './runState'
+import { evidenceLabRunManifest } from '../../utils/entropyRunRecords'
+import entropyManifest from '../../manifest'
+import { downloadRunManifestJson } from '@/services/runRecordExport'
+import { bundleFilename, downloadBlob } from '@/services/exportBundle'
+import { RunProvenanceLine } from '@/components/shared/RunRecordActions'
+import { SaveRunToEvidence } from '@/components/shared/SaveRunToEvidence'
 
 const SCREENS: Array<{ title: string; proves: string[]; doesNotProve: string[] }> = [
   {
@@ -128,17 +134,12 @@ function refId(ref: DataRef): string {
   return ref.kind === 'device' ? ref.datasetId : ref.d4Id
 }
 
-function downloadJson(name: string, obj: unknown) {
-  if (typeof URL.createObjectURL !== 'function') return
-  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = name
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 0)
+/** The estimator's own result record, unchanged (its schema is the tool-result record's). */
+function downloadToolRecord(prefix: string, obj: unknown) {
+  downloadBlob(
+    new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' }),
+    bundleFilename(prefix, 'json')
+  )
 }
 
 function distinct(bytes: Uint8Array): number {
@@ -467,11 +468,11 @@ export const EntropyEvidenceLab: FC = () => {
 
   const exportRecord = (which: 'sequential' | 'restart') => {
     const rec = which === 'sequential' ? seqRecord : restartRecord
-    if (rec) downloadJson(`sp800-90b-${which}-${rec.dataset.sha256.slice(0, 12)}.json`, rec)
+    if (rec) downloadToolRecord(`sp800-90b-${which}-${rec.dataset.sha256.slice(0, 12)}`, rec)
   }
 
-  const exportEvidence = () => {
-    if (!labCase || !manifest) return
+  const buildEvidenceManifest = () => {
+    if (!labCase || !manifest) return null
     const datasetInfo = (ref: DataRef | undefined) => {
       if (!ref) return null
       if (ref.kind === 'device') return deviceDataset(manifest, ref.datasetId)
@@ -487,11 +488,10 @@ export const EntropyEvidenceLab: FC = () => {
         teachingNote: spec.teachingNote,
       }
     }
-    downloadJson(`entropy-evidence-${labCase.id}.json`, {
+    const evidence = {
       schema: 'pqctoday.entropy.evidence-lab-export/1',
-      notice:
+      scope:
         'Estimator output for this dataset under the recorded conditions. Not an ESV submission, lab analysis, CMVP review or certificate. The tool output is NIST SP800-90B_EntropyAssessment JSON, not an ESV format.',
-      exportedAt: new Date().toISOString(),
       case: { id: labCase.id, title: labCase.title, provenance: labCase.provenance },
       datasets: {
         sequential: datasetInfo(labCase.sequential),
@@ -506,7 +506,36 @@ export const EntropyEvidenceLab: FC = () => {
       healthCutoffs: cutoffs ? { ...cutoffs, basis: cutoffBasis?.basis } : null,
       conclusion,
       learner: { verdict: chosen, check: verdictCheck, note },
+    }
+    return evidenceLabRunManifest({
+      moduleVersion: `${entropyManifest.id} content ${entropyManifest.contentVersion}`,
+      evidence,
+      sequential: {
+        ran: !!seqRecord,
+        ok: !!seqRecord && !seqError,
+        h: seqH,
+        hashConfirmedByTool: !!seqRecord?.datasetHashConfirmedByTool,
+      },
+      nativeReference: { sequential: seqReference },
+      restart: restartEval ? { status: restartEval.status, message: restartEval.message } : null,
+      learnerCheck: verdictCheck,
+      conclusion: conclusion
+        ? {
+            verdict: conclusion.verdict,
+            label: VERDICT_LABELS[conclusion.verdict],
+            limits: conclusion.limits,
+          }
+        : null,
+      startedAt: seqRecord?.execution.startedAt ?? new Date().toISOString(),
+      finishedAt: new Date().toISOString(),
     })
+  }
+
+  const exportEvidence = () => {
+    const manifestRecord = buildEvidenceManifest()
+    if (manifestRecord && labCase) {
+      downloadRunManifestJson(manifestRecord, `entropy-evidence-${labCase.id}`)
+    }
   }
 
   const draftNote = () => {
@@ -655,6 +684,23 @@ export const EntropyEvidenceLab: FC = () => {
               onDraft={draftNote}
               onExport={exportEvidence}
             />
+          )}
+          {screen === 5 && labCase && conclusion && (
+            <div className="flex flex-wrap items-center gap-3">
+              <SaveRunToEvidence
+                getManifest={buildEvidenceManifest}
+                runKey={JSON.stringify([
+                  labCase.id,
+                  track,
+                  seqRecord?.execution.startedAt ?? null,
+                  conclusion.verdict,
+                  chosen,
+                  note,
+                ])}
+                testId="evl-run-record"
+              />
+              <RunProvenanceLine testId="evl-provenance" />
+            </div>
           )}
 
           <ProvesPanel proves={s.proves} doesNotProve={s.doesNotProve} />

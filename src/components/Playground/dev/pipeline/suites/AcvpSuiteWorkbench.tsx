@@ -26,6 +26,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { hidesWorkbench } from '@/utils/workbenchAccess'
 import { useHsmContext } from '../../../hsm/HsmContext'
 import {
   useAcvpSuite,
@@ -119,6 +120,8 @@ AcvpResultRow.displayName = 'AcvpResultRow'
 
 export const AcvpSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
+  const viewAccess = usePersonaStore((s) => s.viewAccess)
+  const workbenchHidden = hidesWorkbench(role, viewAccess)
   const { engineMode } = useHsmContext()
   const suite = useAcvpSuite()
   // The per-case evidence file (10.8 MB) loads on demand, not with the app.
@@ -180,7 +183,7 @@ export const AcvpSuiteWorkbench = () => {
 
   // Engineering-workbench surface — same gate as the suite trigger in
   // DeveloperTab; belt and braces for a stale/hand-crafted deep link.
-  if (role === 'curious' || role === 'executive' || role === 'grc') return null
+  if (workbenchHidden) return null
 
   const runCode = async () => {
     setCodeRunning(true)

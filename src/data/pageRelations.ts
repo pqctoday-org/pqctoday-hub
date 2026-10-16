@@ -16,7 +16,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   '/': [
     P('/explore', 'Explore', 'Every topic on the site in plain words, with a first stop for each'),
     P('/assess', 'Assess', 'A fast or full track of questions, then a score and priorities'),
-    P('/learn', 'Learn', 'Sixty-five modules with guided workshops, by track and by role'),
+    P('/learn', 'Learn', 'Guided modules with hands-on workshops, by track and by role'),
   ],
   '/assess': [
     P(
@@ -49,9 +49,9 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/playground/cacp': [
     P(
-      '/playground/cacp-kmip',
-      'KMIP Control Plane',
-      'The step-by-step tool for the same control plane'
+      '/learn/crypto-agility',
+      'Crypto Agility',
+      'The module on changing algorithms by policy instead of by code'
     ),
     P('/learn/kms-pqc', 'KMS & PQC', 'The module on key-management systems and crypto agility'),
     P('/playground/hsm', 'PKCS#11 HSM', 'The key store the control plane governs'),

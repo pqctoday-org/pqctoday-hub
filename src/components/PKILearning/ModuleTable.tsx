@@ -368,7 +368,7 @@ export const ModuleTable = ({
                           question={`Tell me about the ${module.title} module — what will I learn and why does it matter for PQC migration?`}
                         />
                         <Button variant="gradient" size="sm" onClick={() => navigate(module.id)}>
-                          {status === 'in-progress'
+                          {status === 'in-progress' && progressPct > 0
                             ? 'Resume'
                             : status === 'completed'
                               ? 'Review'

@@ -39,10 +39,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           Post-quantum digital signatures are dramatically larger than their classical counterparts.
           While an <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> P-256 signature is just{' '}
           <strong>64 bytes</strong>, an <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip>{' '}
-          signature is <strong>2,420 bytes</strong> &mdash; a <strong>37&times;</strong> increase. A
-          typical TLS certificate chain contains three signatures (Root CA, Intermediate CA, and
-          end-entity), three public keys, and multiple Certificate Transparency{' '}
-          <InlineTooltip term="SCT">SCTs</InlineTooltip>.
+          signature is <strong>2,420 bytes</strong> &mdash; a <strong>37&times;</strong> increase.
+          In a typical TLS handshake the server sends a leaf and one intermediate certificate (two
+          public keys and two certificate signatures; the root is already in the client&apos;s trust
+          store), signs the handshake once more in CertificateVerify, and usually adds Certificate
+          Transparency <InlineTooltip term="SCT">SCTs</InlineTooltip>.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
@@ -54,10 +55,13 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-xs text-muted-foreground">ML-DSA-44 signature</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-2xl font-bold text-destructive">18&ndash;36 KB</div>
+            <div className="text-2xl font-bold text-destructive">9,884 B</div>
             <div className="text-xs text-muted-foreground">
-              PQC TLS chain overhead
-              <span className="block text-[10px] mt-0.5">(incl. cert body, SANs, extensions)</span>
+              ML-DSA-44 keys + signatures per handshake
+              <span className="block text-[10px] mt-0.5">
+                (2 &times; 1,312 B keys + 3 &times; 2,420 B signatures; SCTs and cert metadata not
+                counted; 13,831 B with ML-DSA-65, 19,065 B with ML-DSA-87)
+              </span>
             </div>
           </div>
         </div>
@@ -435,6 +439,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               </li>
               <li>
                 &bull; 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
+              </li>
+              <li>
+                &bull; 7 October 2026: <code>draft-ietf-plants-merkle-tree-certs-07</code>, the
+                latest version; not yet proposed for publication
               </li>
               <li className="text-warning font-medium pt-1">
                 &bull; Status: Active IETF draft — not yet standardized as an RFC. Not recommended

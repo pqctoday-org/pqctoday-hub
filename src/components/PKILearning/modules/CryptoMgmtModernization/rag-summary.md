@@ -13,8 +13,10 @@ schedule or never?"
 ## Why now — three forcing functions independent of quantum arrival
 
 1. **47-day TLS certificate cadence** by March 2029 (CA/B Forum Ballot SC-081v3, April 2025).
-   Validity reduces from 398d → 200d (from 2026-03-15) → 100d (from 2027-03-15) → 47d (from 2029-03-15), per TLS BR §6.3.2. Manual CLM becomes
-   mathematically impossible at this cadence.
+   Validity reduces from 398d → 200d (from 2026-03-15) → 100d (from 2027-03-15) → 47d (from 2029-03-15), per TLS BR §6.3.2.
+   The schedule applies to publicly trusted TLS server certificates under the Baseline Requirements, not to
+   private PKI, device, code-signing or document-signing certificates, which follow their own policies. Manual CLM
+   becomes mathematically impossible at this cadence.
 2. **FIPS 140-3 Level 3 validation drift**. Every CMVP certificate is bound to a specific
    version, firmware, and platform. The September 2025 FIPS 140-3 Implementation Guidance
    retroactively added new self-test requirements for ML-KEM/ML-DSA/SLH-DSA. The CMVP
@@ -30,7 +32,7 @@ schedule or never?"
    keys). Continuously refreshed, not point-in-time.
 2. **Governance** — policy, standards, exception handling, ownership (deep-dive in
    `pqc-governance` LM-037).
-3. **Lifecycle / CLM** — provisioning → rotation → retirement. 47-day ACME/EST/CMP automation,
+3. **Lifecycle / CLM** — provisioning → rotation → retirement. ACME/EST/CMP automation (47-day-ready for public TLS),
    shadow-cert discovery via CT logs, root and intermediate CA rotation, revocation propagation.
 4. **Observability** — posture metrics, SIEM drift alerts, coverage trends.
 5. **Assurance / FIPS** — audit, attestation, CMVP validation tracking for libraries and

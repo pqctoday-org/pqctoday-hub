@@ -25,7 +25,7 @@ export function TransparencyBanner() {
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today is built from publicly available information with thorough verification, but is
           not endorsed by the organizations cited and may contain inaccuracies.{' '}
-          <Link to="/about#transparency" className="text-primary hover:underline">
+          <Link to="/about#about-transparency" className="text-primary hover:underline">
             Learn more &rarr;
           </Link>
         </p>

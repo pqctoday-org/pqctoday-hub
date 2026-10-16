@@ -1215,7 +1215,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
       'Keygen and decrypt; CKKS bootstrapping-key generation as a bounded stream (measured: 3.94 GB in 1,001 calls; 4.41 GB in 1,201 calls for the second parameter set); the security-officer-only rotation key.',
     staysSecret: 'The seed and secret key. Evaluation keys leave the HSM, so they must be signed.',
     watchOut:
-      'No PKCS#11 v3.2 or KMIP mechanism exists for FHE yet, so these are vendor-defined operations today.',
+      'No PKCS#11 v3.2 or KMIP standard defines an FHE mechanism yet. This lab’s HSM serves FHE key custody as vendor-defined PKCS#11 mechanisms (key generation, public-key derivation, decryption), listed in its mechanism list and carried over KMIP’s PKCS_11 operation; it offers no FHE encryption mechanism.',
   },
   {
     id: 'tfhe-transciphering',

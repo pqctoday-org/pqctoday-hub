@@ -7,7 +7,10 @@
  *    pqctoday-hsm #360, end-to-end run in pqctoday-fhe #28), and OpenFHE's iterative (two-round)
  *    bootstrapping on those keys (pqctoday-fhe #31, 2026-10-15);
  *  - the scoring service on an x86-64 virtual machine and on an MX95 Pro board with the token on a
- *    second board (pqctoday-fhe #32, 2026-10-15).
+ *    second board (pqctoday-fhe #32, 2026-10-15), and on the virtual machine with the token on the
+ *    MX95 Pro reached over KMIP (pqctoday-fhe #36, 2026-10-16);
+ *  - a TFHE loan pre-qualification with the token on the MX95 Pro over KMIP (pqctoday-fhe #38,
+ *    2026-10-16).
  * Every number is copied from the merged pull requests' measured results (single runs on an Apple
  * M5 Max, in containers; for the OpenFHE set the token's export was also run on both MX95 boards,
  * pqctoday-fhe #29). Nothing here is interpolated.
@@ -31,6 +34,20 @@ export const COMPUTE_SERVICE_RUNS_REF: MergedRef = {
   repo: 'pqctoday-fhe',
   pr: 32,
   mergeCommit: 'ed7b92ee2bb3fae7bc9cb22e24a80490c786d1fd',
+}
+
+/** The scoring service on the x86-64 VM with the token on the MX95 Pro, reached over KMIP. */
+export const COMPUTE_SERVICE_KMIP_REF: MergedRef = {
+  repo: 'pqctoday-fhe',
+  pr: 36,
+  mergeCommit: '5f0ff3daf142c5064681cb3ca7d5f0946b139f2d',
+}
+
+/** The TFHE loan pre-qualification with the token on the MX95 Pro, reached over KMIP. */
+export const TFHE_LOAN_REF: MergedRef = {
+  repo: 'pqctoday-fhe',
+  pr: 38,
+  mergeCommit: '354533be3fc88003a705cb667d84812568caebcc',
 }
 
 /** The HSM main commit the custodian of those runs was built from (it contains pqctoday-hsm #360). */
@@ -104,7 +121,8 @@ export const COMPUTE_SERVICE_ROWS: { topic: string; value: string }[] = [
  * peak 1,714 MiB, 17,813 requests an hour by the server's run time). x86-64 VM and MX95 Pro:
  * pqctoday-fhe #32, medians of three repetitions with the range over all 8 jobs of the run, taken
  * from the run files in public/data/fhe-evidence/ckks-scoring-service-*-ed7b92e (a test recomputes
- * them).
+ * them). The run with the token over KMIP is pqctoday-fhe #36
+ * (ckks-scoring-service-x86-vm-kmip-5f0ff3d), on the same virtual machine.
  */
 export const COMPUTE_SERVICE_MACHINES = {
   mac: { perHourByRunTime: '17,800' },
@@ -129,12 +147,24 @@ export const COMPUTE_SERVICE_MACHINES = {
     tokenPeakMiB: '83',
     timesTheMac: '21',
   },
+  kmip: {
+    medianMs: '302',
+    rangeMs: '280–325',
+    peakMiB: '1,178',
+    admission: '40 ms to verify and 99 ms to assemble',
+    exportCalls: '1,201',
+    exportS: '197',
+    exportMBs: '22.4',
+    releaseS: '0.176',
+    releaseWallS: '0.23',
+    runS: '240',
+  },
   accuracyBits: '21.00',
   auc: '0.717298 against 0.717299',
 } as const
 
 export const COMPUTE_SERVICE_MACHINES_INTRO =
-  'The same service, built as a static binary for each processor, also ran on an x86-64 virtual machine and on an MX95 Pro board, the latter with the token on a second board (the base MX95), so the three roles sat on three machines. The data owner’s client was a container on the Mac in every run'
+  'The same service, built as a static binary for each processor, also ran on an x86-64 virtual machine and on an MX95 Pro board, the latter with the token on a second board (the base MX95), so the three roles sat on three machines. A third run used the virtual machine again, with the token on the MX95 Pro reached over KMIP. The data owner’s client was a container on the Mac in every run'
 
 export const COMPUTE_SERVICE_MACHINE_ROWS: { topic: string; value: string }[] = [
   {
@@ -149,14 +179,18 @@ export const COMPUTE_SERVICE_MACHINE_ROWS: { topic: string; value: string }[] = 
     topic: 'MX95 Pro board',
     value: `6 Cortex-A55 cores and 15.4 GiB, the token on the base MX95 board (it exported its 4.41 GB key set in ${COMPUTE_SERVICE_MACHINES.pro.tokenExportS} s, ${COMPUTE_SERVICE_MACHINES.pro.tokenExportMBs} MB/s, ${COMPUTE_SERVICE_MACHINES.pro.tokenPeakMiB} MiB peak): ${COMPUTE_SERVICE_MACHINES.pro.medianS} s per batch (median of three repetitions; ${COMPUTE_SERVICE_MACHINES.pro.rangeS} s over all 8 jobs), about ${COMPUTE_SERVICE_MACHINES.pro.timesTheMac} times the Mac, peak ${COMPUTE_SERVICE_MACHINES.pro.peakMiB} MiB, key set admitted with ${COMPUTE_SERVICE_MACHINES.pro.admission}, ${COMPUTE_SERVICE_MACHINES.pro.perHourSequential} requests an hour one at a time with the ${COMPUTE_SERVICE.requestMiB} MiB upload (${COMPUTE_SERVICE_MACHINES.pro.perHourByRunTime} by server time alone), whole run ${COMPUTE_SERVICE_MACHINES.pro.runS} s.`,
   },
+  {
+    topic: 'x86-64 virtual machine, token over KMIP',
+    value: `The same virtual machine, the token on the MX95 Pro board reached over KMIP, with a random seed generated in the token and decryption under the security officer’s enrolled policy. The token exported the 4.41 GB key set in ${COMPUTE_SERVICE_MACHINES.kmip.exportCalls} bounded calls over KMIP in ${COMPUTE_SERVICE_MACHINES.kmip.exportS} s (${COMPUTE_SERVICE_MACHINES.kmip.exportMBs} MB/s, 0 manifest mismatches): ${COMPUTE_SERVICE_MACHINES.kmip.medianMs} ms per batch (median of three repetitions; ${COMPUTE_SERVICE_MACHINES.kmip.rangeMs} ms over all 8 jobs), peak ${COMPUTE_SERVICE_MACHINES.kmip.peakMiB} MiB, key set admitted with ${COMPUTE_SERVICE_MACHINES.kmip.admission}, the score released over KMIP in ${COMPUTE_SERVICE_MACHINES.kmip.releaseS} s (${COMPUTE_SERVICE_MACHINES.kmip.releaseWallS} s wall), whole run ${COMPUTE_SERVICE_MACHINES.kmip.runS} s.`,
+  },
 ]
 
 /** One sentence under the table: the result did not depend on the machine. */
-export const COMPUTE_SERVICE_MACHINES_SAME_RESULT = `The scores were identical on all three machines: ${COMPUTE_SERVICE_MACHINES.accuracyBits} bits against the plaintext cubic, the same decision on every slot at 0.5 and 0.25, AUC ${COMPUTE_SERVICE_MACHINES.auc}.`
+export const COMPUTE_SERVICE_MACHINES_SAME_RESULT = `The scores were identical on all three machines: ${COMPUTE_SERVICE_MACHINES.accuracyBits} bits against the plaintext cubic, the same decision on every slot at 0.5 and 0.25, AUC ${COMPUTE_SERVICE_MACHINES.auc}. The run with the token over KMIP gave the same accuracy.`
 
 /** Limits the service states about itself. */
 export const COMPUTE_SERVICE_LIMITS =
-  'Limits: the certificates are classical test certificates (the key exchange is post-quantum, the authentication is not); one tenant; keys and jobs live in memory only, so a restart drops them; a program of 3 multiplications and one batch size (32,768 customers); one run per machine; the virtual machine and board runs use the published test seed, so their secret key is public and they measure time, memory and correctness, not secrecy; the x86 run is a virtual machine, not a dedicated host, and its cores were not pinned; the board’s service listens on loopback and is reached through an ssh tunnel with TLS inside it. A deeper model would need the refresh step and its 4.4 GB of extra keys.'
+  'Limits: the certificates are classical test certificates (the key exchange is post-quantum, the authentication is not); one tenant; keys and jobs live in memory only, so a restart drops them; a program of 3 multiplications and one batch size (32,768 customers); one run per machine; the first virtual machine run and the board run use the published test seed, so their secret key is public and they measure time, memory and correctness, not secrecy (the run over KMIP used a random seed generated in the token); the x86 run is a virtual machine, not a dedicated host, and its cores were not pinned; the board’s service listens on loopback and is reached through an ssh tunnel with TLS inside it. A deeper model would need the refresh step and its 4.4 GB of extra keys.'
 
 /** The HSM's key export in OpenFHE (registry ID 4, OpenFHE v1.6.0 at its 128-bit-checked settings). */
 export const OPENFHE_EXPORT = {
@@ -271,3 +305,50 @@ export const OPENFHE_ITERATIVE_INTRO =
 
 export const OPENFHE_EXPORT_LIMITS =
   'Limits: owner release only, because no flood bound has been measured for this set; about 13 bits after one bootstrap is OpenFHE’s default precision at these settings, and a second round raises it; OpenFHE itself ran on one platform only, a container on a Mac, because the boards ran the token’s export and not OpenFHE; the two-round results come from one seeded input vector and a few runs per setting (four up to precision 15, two above), with the variant that raises the modulus first only.'
+
+/**
+ * TFHE loan pre-qualification (pqctoday-fhe #38, 2026-10-16): the compute service on an x86-64
+ * virtual machine, the token on the MX95 Pro over KMIP, the data owner on a Mac. Equal to the run
+ * files in public/data/fhe-evidence/tfhe-loan-prequal-x86-vm-kmip-354533b (a test recomputes them).
+ */
+export const TFHE_LOAN = {
+  applicants: '1,016',
+  edgeCases: 16,
+  mismatches: 0,
+  approved: 243,
+  serverMedianS: '0.905',
+  serverRangeS: '0.835–1.088',
+  clientWallMedianS: '1.112',
+  perHourByWall: '3,237',
+  outputs: '6,096',
+  decryptMedianMs: '24.8',
+  decryptP95Ms: '42.8',
+} as const
+
+export const TFHE_LOAN_ROWS: { topic: string; value: string }[] = [
+  {
+    topic: 'What it computes',
+    value:
+      'Four illustrative rules (credit score, debt-to-income, loan-to-value, recent delinquencies), the decision and the approved amount, as a 12-step TFHE program on encrypted integers; 6 encrypted outputs per applicant. The applicants come from the public HMDA 2023 loan register; credit score and delinquencies are synthetic.',
+  },
+  {
+    topic: 'Result',
+    value: `${TFHE_LOAN.applicants} applicants (${TFHE_LOAN.edgeCases} hand-made edge cases), ${TFHE_LOAN.mismatches} mismatches against the plaintext engine, ${TFHE_LOAN.approved} approved.`,
+  },
+  {
+    topic: 'Speed',
+    value: `Server compute median ${TFHE_LOAN.serverMedianS} s per applicant (${TFHE_LOAN.serverRangeS} s) on a 12-vCPU x86-64 virtual machine; ${TFHE_LOAN.perHourByWall} applicants an hour by wall time (median ${TFHE_LOAN.clientWallMedianS} s each).`,
+  },
+  {
+    topic: 'Decryption over KMIP',
+    value: `All ${TFHE_LOAN.outputs} outputs decrypted on the MX95 Pro over KMIP, each a single-part decryption (init, size query, decrypt): median ${TFHE_LOAN.decryptMedianMs} ms, p95 ${TFHE_LOAN.decryptP95Ms} ms, 0 refused, 0 errors.`,
+  },
+  {
+    topic: 'Before anything was sent',
+    value:
+      'The data owner checked the token-signed manifest of the exported server key and public key, and the service admits the server key only under the token’s device id.',
+  },
+]
+
+export const TFHE_LOAN_LIMITS =
+  'Limits: test PKI, one tenant, one run; the rules are illustrative, not a lender’s credit policy; TFHE-rs is used here for non-commercial purposes only (BSD-3-Clause-Clear with no patent grant; Zama states commercial use requires its patent licence). It is the first published run under the corrected HSM engine, whose TFHE parameter fingerprint begins e3219e9e.'

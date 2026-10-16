@@ -4,26 +4,38 @@
     "mip": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/modules-in-process/modules-in-process-list",
     "iut": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/modules-in-process/iut-list"
   },
-  "retrievedAt": "2026-10-11T20:45:19Z",
+  "retrievedAt": "2026-10-16T15:01:52Z",
   "note": "Stage 2 of the FIPS 140-3 track. A listing says a MODULE validation is under way; it does not say which algorithms are in scope. NIST withholds some MIP entries (notDisplayed). Entries that leave a list are kept with leftListOn.",
   "mip": [
     {
       "module": "AMD ASP Cryptographic CoProcessor (\"Granite Ridge\")",
       "vendor": "Advanced Micro Devices (AMD)",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-23",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-09-23"
+        }
+      ]
     },
     {
       "module": "AMD ASP Cryptographic CoProcessor (\"Phoenix2\")",
       "vendor": "Advanced Micro Devices (AMD)",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-23",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-09-23"
+        }
+      ]
     },
     {
       "module": "Alibaba Cloud Crypto",
@@ -32,7 +44,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Cost Recovery",
@@ -47,7 +59,45 @@
       "stage": "Review",
       "stageDate": "2026-08-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
+    },
+    {
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-15",
+      "firstSeen": "2026-09-26",
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-09-24"
+        },
+        {
+          "stage": "Review",
+          "stageDate": "2026-10-06"
+        }
+      ]
+    },
+    {
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-15",
+      "firstSeen": "2026-09-26",
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-09-24"
+        },
+        {
+          "stage": "Review",
+          "stageDate": "2026-10-06"
+        }
+      ]
     },
     {
       "module": "AWS Key Management Service HSM",
@@ -56,7 +106,7 @@
       "stage": "Review",
       "stageDate": "2026-10-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -71,7 +121,7 @@
       "stage": "Review",
       "stageDate": "2026-09-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS-LC 4 Cryptographic Module (dynamic)",
@@ -80,7 +130,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS-LC 4 Cryptographic Module (static)",
@@ -89,7 +139,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -104,7 +154,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-05",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS-LC 5 Cryptographic Module (static)",
@@ -113,7 +163,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-05",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Apple corecrypto Module OS 26 [Apple silicon, Kernel, Software, SL1]",
@@ -122,7 +172,7 @@
       "stage": "Review",
       "stageDate": "2026-07-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
@@ -131,7 +181,17 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-09-17"
+        },
+        {
+          "stage": "Review",
+          "stageDate": "2026-10-09"
+        }
+      ]
     },
     {
       "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
@@ -140,7 +200,7 @@
       "stage": "Review",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -155,7 +215,7 @@
       "stage": "Review",
       "stageDate": "2026-07-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AC8025 HSM",
@@ -164,7 +224,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Review",
@@ -179,7 +239,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-02-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Barco ICMP-XS Cryptographic Module",
@@ -188,7 +248,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TASS Crypto Engine",
@@ -197,7 +257,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -212,7 +272,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Security Builder FIPS Module",
@@ -221,7 +281,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -236,7 +296,7 @@
       "stage": "Review",
       "stageDate": "2026-08-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 22.04 GnuTLS Cryptographic Module",
@@ -245,7 +305,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 22.04 Libgcrypt Cryptographic Module",
@@ -254,7 +314,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 22.04 OpenSSL Cryptographic Module",
@@ -263,11 +323,15 @@
       "stage": "Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
           "stageDate": "2026-07-24"
+        },
+        {
+          "stage": "Comment Resolution - CMVP",
+          "stageDate": "2026-09-23"
         }
       ]
     },
@@ -278,7 +342,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -293,7 +357,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 24.04 Libgcrypt Cryptographic Module",
@@ -302,7 +366,7 @@
       "stage": "Review",
       "stageDate": "2026-09-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 24.04 OpenSSL Cryptographic Module",
@@ -311,7 +375,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Chainguard FIPS Provider for OpenSSL",
@@ -320,20 +384,24 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Check Point Gaia OS R82.10 Cryptography Module running on Check Point Firewall models MHO140, MHO175, 3920, 3950, 3970, 3980, 9100, 9200, 9300, 9400, 9700, 9800, 19100, 19200, 29100, 29200, 700S, 700M, 7000L, 7000XL, 7000Ultra, and Cloud Firewall and Cloud Management series VM with VMware ESXi 8.0.0",
       "vendor": "Check Point Software Technologies",
       "standard": "FIPS 140-3",
-      "stage": "Pending Review",
-      "stageDate": "2026-10-09",
+      "stage": "Review",
+      "stageDate": "2026-10-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
           "stageDate": "2026-08-06"
+        },
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-10-09"
         }
       ]
     },
@@ -341,14 +409,18 @@
       "module": "Check Point Gaia OS R82.20 Cryptography Module running on Check Point Firewall models MHO140, MHO175, 3920, 3950, 3970, 3980, 9100, 9200, 9300, 9400, 9700, 9800, 19100, 19200, 29100, 29200, 700S, 700M, 7000L, 7000XL, 7000Ultra, and Cloud Firewall and Cloud Management series VM with VMware ESXi 8.0.0",
       "vendor": "Check Point Software Technologies",
       "standard": "FIPS 140-3",
-      "stage": "Pending Review",
-      "stageDate": "2026-10-09",
+      "stage": "Review",
+      "stageDate": "2026-10-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
           "stageDate": "2026-08-12"
+        },
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-10-09"
         }
       ]
     },
@@ -379,7 +451,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco 8800 Series Routers with MACsec",
@@ -388,7 +460,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-01-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco 8800 Series Routers without MACsec",
@@ -397,7 +469,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-01-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco FTD FX-OS on 4K/9K Cryptographic Module",
@@ -406,13 +478,14 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-15",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
           "stageDate": "2026-09-25"
         }
-      ]
+      ],
+      "leftListOn": "2026-10-16"
     },
     {
       "module": "Citrix FIPS Cryptographic Module",
@@ -421,16 +494,22 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HF SDR Cryptography Module",
       "vendor": "Codan DTC",
       "standard": "FIPS 140-3",
-      "stage": "Cost Recovery",
-      "stageDate": "2026-10-09",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-12",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Cost Recovery",
+          "stageDate": "2026-10-09"
+        }
+      ]
     },
     {
       "module": "Code Siren Post-Quantum Cryptographic (PQC) Library for Desktop",
@@ -439,7 +518,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Code Siren Post-Quantum Cryptographic (PQC) Library for Mobile",
@@ -448,7 +527,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Commvault Crypto Library",
@@ -457,7 +536,7 @@
       "stage": "Review",
       "stageDate": "2026-09-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "ComPLUS Streamcaster Series Mesh 9k Radio",
@@ -466,7 +545,7 @@
       "stage": "Review",
       "stageDate": "2026-08-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "CIQ Linux Kernel - Kernel Cryptographic API",
@@ -475,7 +554,7 @@
       "stage": "Review",
       "stageDate": "2026-09-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Rocky Linux 9 NSS Cryptographic Module",
@@ -484,7 +563,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Dell BSAFE Crypto Module for C 3.1",
@@ -493,7 +572,7 @@
       "stage": "Review",
       "stageDate": "2026-09-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "DigiCert TrustCore NanoCrypto Module",
@@ -502,7 +581,16 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
+    },
+    {
+      "module": "DINAMO NG Hardware Security Module",
+      "vendor": "DINAMO Cyber Security Company",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-15",
+      "firstSeen": "2026-10-16",
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TM400ENB",
@@ -511,7 +599,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Entrust AuthorityTM Security Kernel",
@@ -520,7 +608,7 @@
       "stage": "Review",
       "stageDate": "2026-07-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "nShield 5s Hardware Security Module",
@@ -529,7 +617,7 @@
       "stage": "Review",
       "stageDate": "2026-07-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "OTP Token",
@@ -538,7 +626,7 @@
       "stage": "Review",
       "stageDate": "2026-10-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -553,7 +641,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiWeb 7.6.7 firmware",
@@ -562,7 +650,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiWeb-VM 7.6.7 Software",
@@ -571,7 +659,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Cost Recovery",
@@ -586,20 +674,24 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiOS 7.2/7.4",
       "vendor": "Fortinet, Inc.",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-29",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
           "stageDate": "2026-09-16"
+        },
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-09-29"
         }
       ]
     },
@@ -610,7 +702,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -625,7 +717,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-07-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Go Cryptographic Module",
@@ -634,7 +726,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Geotab Cryptographic Module",
@@ -643,7 +735,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Review",
@@ -658,7 +750,7 @@
       "stage": "Review",
       "stageDate": "2026-09-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Google Tensor 6th Gen UFS Inline Storage Encryption Engine",
@@ -677,7 +769,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Android Kernel Cryptographic Module",
@@ -686,7 +778,7 @@
       "stage": "Review",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -711,11 +803,11 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
-          "stageDate": "2026-05-18"
+          "stageDate": "2026-06-05"
         }
       ]
     },
@@ -726,7 +818,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BoringCrypto",
@@ -735,7 +827,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Google Kernel Cryptographic Module",
@@ -744,16 +836,37 @@
       "stage": "Review",
       "stageDate": "2026-09-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Google UFS Inline Storage Encryption Cryptographic Module",
       "vendor": "Google, LLC",
       "standard": "FIPS 140-3",
-      "stage": "Review",
-      "stageDate": "2026-07-29",
+      "stage": "Comment Resolution - Lab",
+      "stageDate": "2026-10-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Review",
+          "stageDate": "2026-07-29"
+        }
+      ]
+    },
+    {
+      "module": "Inline Crypto Engine (ICE)",
+      "vendor": "Google, LLC",
+      "standard": "FIPS 140-3",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-14",
+      "firstSeen": "2026-09-26",
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-06-04"
+        }
+      ]
     },
     {
       "module": "Inline Crypto Engine (ICE)",
@@ -762,16 +875,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
-    },
-    {
-      "module": "Inline Crypto Engine (ICE)",
-      "vendor": "Google, LLC",
-      "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-22",
-      "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Integrated Compute Complex (ICC)",
@@ -780,7 +884,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -795,7 +899,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "River Cryptographic Module",
@@ -804,7 +908,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Hikvision FIPS Provider",
@@ -813,7 +917,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Aruba Networking VIA Cryptographic Module",
@@ -832,7 +936,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "iLO 5 & iLO 6 Cryptographic Module",
@@ -841,7 +945,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Hitachi Embedded Storage Manager Kernel Crypto API Cryptographic Module",
@@ -850,7 +954,7 @@
       "stage": "Review",
       "stageDate": "2026-08-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HP Inc. Linux KCAPI FIPS Module",
@@ -859,7 +963,7 @@
       "stage": "Review",
       "stageDate": "2026-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -874,7 +978,7 @@
       "stage": "Review",
       "stageDate": "2026-09-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "EX4100 and EX4100-H MACsec platforms with Junos 25.2R2",
@@ -883,7 +987,7 @@
       "stage": "Review",
       "stageDate": "2026-09-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "EX4100-F platform with Junos 25.2R2",
@@ -892,25 +996,40 @@
       "stage": "Review",
       "stageDate": "2026-09-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking EX4400 Ethernet Switch",
       "vendor": "HPE Juniper Networking",
       "standard": "FIPS 140-3",
       "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-04",
+      "stageDate": "2026-10-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking Junos 24.4R1 MX240/480/960 series and EX9204/9208/9214 Series Routing and Switching platforms with MACsec capability",
       "vendor": "HPE Juniper Networking",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-09-23",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-09-23"
+        }
+      ]
+    },
+    {
+      "module": "HPE Juniper Networking MX304 Universal Routing Platform with MACsec and IPsec for Junos 26.2R1",
+      "vendor": "HPE Juniper Networking",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-14",
+      "firstSeen": "2026-10-15",
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking SRX1K/4K/5K/2300/4300 Services Gateways",
@@ -919,7 +1038,7 @@
       "stage": "Review",
       "stageDate": "2026-08-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking SRX2300/4120/4700 Services Gateways",
@@ -928,7 +1047,7 @@
       "stage": "Review",
       "stageDate": "2026-08-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking SRX380 SD-WAN Gateway",
@@ -937,7 +1056,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networks SRX300, SRX320, SRX340, SRX345, and SRX345-DUAL Firewalls",
@@ -946,7 +1065,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Review",
@@ -961,7 +1080,7 @@
       "stage": "Review",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -973,10 +1092,16 @@
       "module": "IBM 4770-001 EP11 Hardware Security Module",
       "vendor": "IBM",
       "standard": "FIPS 140-3",
-      "stage": "Pending Review",
-      "stageDate": "2026-09-21",
+      "stage": "Review",
+      "stageDate": "2026-10-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Pending Review",
+          "stageDate": "2026-09-21"
+        }
+      ]
     },
     {
       "module": "IBM® NVMe FlashCore™ Module 4",
@@ -985,20 +1110,24 @@
       "stage": "Review",
       "stageDate": "2026-09-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FIPS Applet on RookySE",
       "vendor": "IDEMIA",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-10-02",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
           "stageDate": "2026-09-18"
+        },
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-10-02"
         }
       ]
     },
@@ -1019,7 +1148,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Infoblox Trinzic Hardware Appliances (TE/ND)",
@@ -1028,7 +1157,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Infoblox Trinzic Hardware Appliances (TE/TR/ND)",
@@ -1037,7 +1166,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-30",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Infoblox Trinzic Virtual Appliances",
@@ -1046,7 +1175,7 @@
       "stage": "Review",
       "stageDate": "2026-09-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -1071,7 +1200,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-06-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Inline Crypto Engine (ICE)",
@@ -1080,7 +1209,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-06-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Non-Volatile Memory express (NVMe) Data Path Security Cluster (DPSC) Module",
@@ -1089,7 +1218,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Non-Volatile Memory express (NVMe) Data Path Security Cluster (DPSC) Module",
@@ -1098,7 +1227,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-05-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "diskAshur DT3",
@@ -1107,7 +1236,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "diskAshur PRO3",
@@ -1116,7 +1245,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "KeyPair FIPS Provider Plus",
@@ -1125,7 +1254,7 @@
       "stage": "Review",
       "stageDate": "2026-08-19",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Harris AES Load Module",
@@ -1144,7 +1273,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Review",
@@ -1159,7 +1288,7 @@
       "stage": "Review",
       "stageDate": "2026-09-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BC-FNA (Bouncy Castle FIPS .NET API)",
@@ -1168,16 +1297,22 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-05-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "LS2 HSM Family module",
       "vendor": "Marvell Semiconductor, Inc.",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - Lab",
-      "stageDate": "2026-08-07",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-08-07"
+        }
+      ]
     },
     {
       "module": "Marvell LS2 HSM Family",
@@ -1186,16 +1321,22 @@
       "stage": "Review",
       "stageDate": "2026-09-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Micron® MSA12-P5 Controller Sub Chip Security Subsystem",
       "vendor": "Micron Technology, Inc.",
       "standard": "FIPS 140-3",
-      "stage": "Pending Resubmission",
-      "stageDate": "2026-05-27",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Pending Resubmission",
+          "stageDate": "2026-05-27"
+        }
+      ]
     },
     {
       "module": "Micron® MTC22-P4 Controller Sub Chip Security Subsystem",
@@ -1204,7 +1345,7 @@
       "stage": "Finalization",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1219,7 +1360,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-01",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "MolecuLightDX Cryptographic Module",
@@ -1238,7 +1379,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Cost Recovery",
@@ -1263,7 +1404,7 @@
       "stage": "Review",
       "stageDate": "2026-09-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -1278,7 +1419,7 @@
       "stage": "Review",
       "stageDate": "2026-09-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Key Variable Loader (KVL) 5000 PIKE",
@@ -1287,7 +1428,7 @@
       "stage": "Review",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "KMF/Wave/Console CRYPTR",
@@ -1296,7 +1437,7 @@
       "stage": "Review",
       "stageDate": "2026-09-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Motorola Solutions Advanced Crypto Engine (MACE) HSM - Security Level 2",
@@ -1305,7 +1446,16 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-06",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
+    },
+    {
+      "module": "Motorola Solutions Advanced Crypto Engine (MACE) HSM - Security Level 3",
+      "vendor": "Motorola Solutions, Inc.",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-15",
+      "firstSeen": "2026-10-15",
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Motorola Solutions Cryptographic Software Module",
@@ -1314,7 +1464,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "NetApp CryptoMod",
@@ -1323,7 +1473,7 @@
       "stage": "Review",
       "stageDate": "2026-08-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Nokia SR Cryptographic Module (SRCM)",
@@ -1332,7 +1482,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -1347,7 +1497,7 @@
       "stage": "Review",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Ad Noctem Connect 2.3",
@@ -1356,7 +1506,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1371,7 +1521,7 @@
       "stage": "Review",
       "stageDate": "2026-09-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Digipass GO7",
@@ -1380,7 +1530,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Cost Recovery",
@@ -1395,7 +1545,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle OpenSSL FIPS Provider",
@@ -1404,16 +1554,22 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-06-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Phison PASCARI D Series EDSFF NVMe TCG OPAL SSC Self-Encrypting Enterprise SSD",
       "vendor": "Phison Electronics Corporation",
       "standard": "FIPS 140-3",
-      "stage": "Cost Recovery",
-      "stageDate": "2026-10-09",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-12",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Cost Recovery",
+          "stageDate": "2026-10-09"
+        }
+      ]
     },
     {
       "module": "Phison TCG OPAL SSC Self-Encrypting SSD PS3112/PS5012 Series",
@@ -1422,7 +1578,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-10-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Review",
@@ -1437,7 +1593,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PQCryptoLib-Core",
@@ -1446,7 +1602,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1461,7 +1617,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Quadient Postal Security Device",
@@ -1470,7 +1626,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1485,11 +1641,15 @@
       "stage": "Review",
       "stageDate": "2026-08-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
           "stageDate": "2026-09-23"
+        },
+        {
+          "stage": "Comment Resolution - CMVP",
+          "stageDate": "2026-10-09"
         }
       ]
     },
@@ -1500,7 +1660,26 @@
       "stage": "Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
+      "stageHistory": [
+        {
+          "stage": "Comment Resolution - Lab",
+          "stageDate": "2026-09-23"
+        },
+        {
+          "stage": "Comment Resolution - CMVP",
+          "stageDate": "2026-10-09"
+        }
+      ]
+    },
+    {
+      "module": "Qualcomm® Crypto Engine Core",
+      "vendor": "Qualcomm Technologies, Inc.",
+      "standard": "FIPS 140-3",
+      "stage": "Comment Resolution - CMVP",
+      "stageDate": "2026-10-09",
+      "firstSeen": "2026-09-26",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1515,7 +1694,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1530,22 +1709,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
-      "stageHistory": [
-        {
-          "stage": "Comment Resolution - Lab",
-          "stageDate": "2026-09-23"
-        }
-      ]
-    },
-    {
-      "module": "Qualcomm® Crypto Engine Core",
-      "vendor": "Qualcomm Technologies, Inc.",
-      "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - CMVP",
-      "stageDate": "2026-10-09",
-      "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1560,7 +1724,7 @@
       "stage": "Review",
       "stageDate": "2026-09-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Qualcomm® Inline Crypto Engine (UFS)",
@@ -1569,7 +1733,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -1584,7 +1748,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -1599,7 +1763,7 @@
       "stage": "Review",
       "stageDate": "2026-08-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -1614,7 +1778,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-08-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Qualcomm® Snapdragon Guardian Crypto Engine",
@@ -1623,7 +1787,7 @@
       "stage": "Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -1638,7 +1802,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 8 Kernel Cryptographic API",
@@ -1647,7 +1811,7 @@
       "stage": "Review",
       "stageDate": "2026-09-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 9 gnutls",
@@ -1656,7 +1820,7 @@
       "stage": "Review",
       "stageDate": "2026-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -1671,7 +1835,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
@@ -1686,7 +1850,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-08-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Riverbed Cryptographic Module",
@@ -1695,7 +1859,7 @@
       "stage": "Review",
       "stageDate": "2026-08-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "CryptoComply 140-3 FIPS Provider with PQC",
@@ -1704,7 +1868,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung Kernel Cryptographic Module",
@@ -1713,11 +1877,15 @@
       "stage": "Pending Review",
       "stageDate": "2026-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
           "stageDate": "2026-07-07"
+        },
+        {
+          "stage": "Review",
+          "stageDate": "2026-09-10"
         }
       ]
     },
@@ -1728,7 +1896,7 @@
       "stage": "Review",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -1743,7 +1911,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs BM1743 Series",
@@ -1752,7 +1920,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs BM1743 Series",
@@ -1761,7 +1929,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM1753 Series",
@@ -1770,7 +1938,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -1785,7 +1953,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -1800,7 +1968,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -1815,7 +1983,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-04-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM1753 Series",
@@ -1824,7 +1992,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-05-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM1753 Series",
@@ -1833,7 +2001,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-04-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM9D3a Series",
@@ -1842,7 +2010,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM9D3a Series",
@@ -1851,7 +2019,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung SAS TCG Enterprise SSC SEDs PM1653a Series",
@@ -1860,7 +2028,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Resubmission",
@@ -1875,7 +2043,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-05-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung SCrypto Cryptographic Module v2.9",
@@ -1884,7 +2052,7 @@
       "stage": "Review",
       "stageDate": "2026-08-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SAP SE Garden Linux 1877 Kernel Cryptographic Module",
@@ -1893,7 +2061,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SAP SE Garden Linux OpenSSL Cryptographic Module",
@@ -1902,7 +2070,7 @@
       "stage": "Pending Review",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Cost Recovery",
@@ -1914,14 +2082,18 @@
       "module": "Seagate SSG5 TCG Enterprise SSC SED FIPS 140 Module",
       "vendor": "Seagate Technology LLC.",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - CMVP",
-      "stageDate": "2026-10-09",
+      "stage": "Finalization",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
           "stageDate": "2026-09-22"
+        },
+        {
+          "stage": "Comment Resolution - CMVP",
+          "stageDate": "2026-10-09"
         }
       ]
     },
@@ -1932,7 +2104,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-08-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Silvus Streamcaster Series Mesh 4k Radio",
@@ -1941,7 +2113,7 @@
       "stage": "Review",
       "stageDate": "2026-08-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Silvus Streamcaster Series Mesh SL5200 OEM",
@@ -1950,7 +2122,7 @@
       "stage": "Review",
       "stageDate": "2026-08-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Silvus Streamcaster Series Mesh SM5200 Radio",
@@ -1959,7 +2131,7 @@
       "stage": "Review",
       "stageDate": "2026-08-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PE9010 and PE9030 M.2 2280D NVMe TCG Opal SSC SED",
@@ -1968,7 +2140,7 @@
       "stage": "Pending Review",
       "stageDate": "2025-08-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SK hynix PE9010 E1.S NVMe TCG Opal SSC SED",
@@ -1977,7 +2149,7 @@
       "stage": "Pending Review",
       "stageDate": "2025-12-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SK hynix PEB110 E1.S NVMe TCG Opal SSC SED",
@@ -1986,7 +2158,7 @@
       "stage": "Pending Review",
       "stageDate": "2025-12-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SK hynix PS1010 And PS1030 NVMe Opal SEDs",
@@ -1995,7 +2167,7 @@
       "stage": "Pending Review",
       "stageDate": "2025-11-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Solidigm™ P5336 SSD (ADP-RRR VE)",
@@ -2004,7 +2176,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -2019,7 +2191,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - CMVP",
@@ -2034,7 +2206,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Trusted Platform Module ST33TPHF2XSPI / ST33TPHF2XI2C",
@@ -2043,7 +2215,7 @@
       "stage": "Review",
       "stageDate": "2026-08-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise Kernel Crypto API Cryptographic Module",
@@ -2052,7 +2224,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-08-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise Libica Cryptographic Module",
@@ -2061,7 +2233,7 @@
       "stage": "Comment Resolution - CMVP",
       "stageDate": "2026-09-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "iShield Key Module",
@@ -2070,7 +2242,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2025-12-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IDCore 3230 / 230 Platform",
@@ -2079,7 +2251,7 @@
       "stage": "Review",
       "stageDate": "2026-08-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IDPrime PIV 4.0 FIDO on IDCore3230 Platform",
@@ -2098,7 +2270,7 @@
       "stage": "Review",
       "stageDate": "2026-08-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IDPrime930C/3930C",
@@ -2107,7 +2279,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IDPrime930C/3930C FIDO2.1",
@@ -2116,7 +2288,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Thales Cryptovisor K7 Cryptographic Module",
@@ -2125,7 +2297,7 @@
       "stage": "Review",
       "stageDate": "2026-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Pending Review",
@@ -2134,26 +2306,39 @@
       ]
     },
     {
+      "module": "Thales Luna K7 Cryptographic Module",
+      "vendor": "Thales",
+      "standard": "FIPS 140-3",
+      "stage": "Pending Review",
+      "stageDate": "2026-10-15",
+      "firstSeen": "2026-10-15",
+      "lastSeen": "2026-10-16"
+    },
+    {
       "module": "THCL FIPS Provider for OpenSSL",
       "vendor": "Thales DIS (Singapore) Pte. Ltd.",
       "standard": "FIPS 140-3",
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-04-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "OpenSSL FIPS Provider",
       "vendor": "The OpenSSL Corporation",
       "standard": "FIPS 140-3",
-      "stage": "Comment Resolution - CMVP",
-      "stageDate": "2026-10-09",
+      "stage": "Comment Resolution - Lab",
+      "stageDate": "2026-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11",
+      "lastSeen": "2026-10-16",
       "stageHistory": [
         {
           "stage": "Comment Resolution - Lab",
           "stageDate": "2026-09-21"
+        },
+        {
+          "stage": "Comment Resolution - CMVP",
+          "stageDate": "2026-10-09"
         }
       ]
     },
@@ -2174,7 +2359,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-07-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River eLxr Pro OpenSSL Cryptographic Module",
@@ -2183,7 +2368,7 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-09-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "wolfCrypt",
@@ -2192,7 +2377,7 @@
       "stage": "Pending Resubmission",
       "stageDate": "2026-04-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Zimperium zKeyBox white-box cryptography library",
@@ -2201,16 +2386,16 @@
       "stage": "Comment Resolution - Lab",
       "stageDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     }
   ],
   "mipMeta": {
-    "nistLastUpdated": "2026-10-11",
-    "displayed": 192,
+    "nistLastUpdated": "2026-10-16",
+    "displayed": 197,
     "notDisplayed": 12,
-    "total": 204,
-    "currentlyListed": 192,
-    "leftList": 12
+    "total": 209,
+    "currentlyListed": 197,
+    "leftList": 13
   },
   "iut": [
     {
@@ -2219,7 +2404,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AMD Versal ACAP",
@@ -2227,7 +2412,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-19",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Infraguard Processor Module version 2",
@@ -2235,7 +2420,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-26",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Alphawave Co-Wave AW400-O DSP",
@@ -2243,7 +2428,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Key Management Service HSM (2.4.0, h3.0)",
@@ -2251,7 +2436,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-05-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Key Management Service HSM (2.4.0, h4.0)",
@@ -2259,7 +2444,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-05-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Amazon Linux Kernel Cryptographic Module",
@@ -2267,7 +2452,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Amazon Linux OpenSSL FIPS Provider",
@@ -2275,7 +2460,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Key Management Service HSM",
@@ -2283,7 +2468,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-11-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Key Management Service HSM (2.2.0, h3.0)",
@@ -2291,7 +2476,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Key Management Service HSM (2.3.0, h3.0)",
@@ -2299,7 +2484,8 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-11",
+      "leftListOn": "2026-10-15"
     },
     {
       "module": "AWS Key Management Service HSM (2.3.0, h4.0)",
@@ -2307,7 +2493,8 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-11",
+      "leftListOn": "2026-10-15"
     },
     {
       "module": "AWS Nitro Ethernet Storage Encryption (ESE) Engine",
@@ -2315,7 +2502,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-26",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AWS Nitro Networking Cryptographic Module",
@@ -2323,7 +2510,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Aegis Fortress L3 Cryptographic Module",
@@ -2331,7 +2518,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Aegis Secure Key 3z, 3NX, and 3NXC Cryptographic Module",
@@ -2339,7 +2526,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Apricorn FIPS 140-3 Level 2 Module",
@@ -2347,7 +2534,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Arculus Cryptographic Module 1.0.8A",
@@ -2355,7 +2542,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Arista Crypto Module v5.0",
@@ -2363,7 +2550,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Axiado AX3005 Trusted Control/Compute Unit",
@@ -2371,7 +2558,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Axiado AX3085 Trusted Control/Compute Unit System-In-Package",
@@ -2379,7 +2566,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Infosec HSM Cryptographic Module",
@@ -2387,7 +2574,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-29",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TASS CloudHSM",
@@ -2395,7 +2582,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-06-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PGP Cryptographic Engine (Kernel Mode)",
@@ -2403,7 +2590,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PGP Cryptographic Engine",
@@ -2411,7 +2598,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "VMware’s Linux Kernel Cryptographic Module 6.12",
@@ -2419,7 +2606,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-05-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "VMware’s VPN Crypto Module v24.11",
@@ -2427,7 +2614,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-04-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Brocade Fabric OS FIPS Cryptographic Module",
@@ -2435,7 +2622,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 26.04 GnuTLS Cryptographic Module",
@@ -2443,7 +2630,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Canonical Ltd. Ubuntu 26.04 Libgcrypt Cryptographic Module",
@@ -2451,7 +2638,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IP-20G, IP-20C, IP-20S, IP-20C-HP, IP-20N, IP-20A, IP-50C, IP-50E",
@@ -2459,7 +2646,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-06-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Certes CMDP",
@@ -2467,7 +2654,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Certes Enforcement Point Appliances",
@@ -2475,7 +2662,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Virtual Certes Enforcement Point Appliance",
@@ -2483,7 +2670,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WaveLogic 5 Extreme Encryption Module",
@@ -2491,7 +2678,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WaveLogic 6 Extreme Encryption Modem",
@@ -2499,7 +2686,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WaveLogic 6 Extreme Encryption Module",
@@ -2507,7 +2694,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Waveserver 5 Control Processor Module",
@@ -2515,7 +2702,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco ASR 9000 Aggregated Services Routers with MACsec",
@@ -2523,7 +2710,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco ASR 9000 Aggregated Services Routers without MACsec",
@@ -2531,7 +2718,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco Catalyst 9100 Wi-Fi 6/6E Wireless Access Points",
@@ -2539,7 +2726,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco Catalyst 9100 Wi-Fi 6/6E/7 Wireless Access Points",
@@ -2547,7 +2734,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco Meraki Wi-Fi 6/6E Wireless Access Points",
@@ -2555,7 +2742,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-05-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco Network Convergence System 1014",
@@ -2563,7 +2750,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-05-19",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cisco Outdoor and Industrial Wireless, and 802.11ac Wave 2 Access Points",
@@ -2571,7 +2758,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HF SDR Cryptography Module",
@@ -2588,7 +2775,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-03-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Commcrete Crypto Core",
@@ -2596,7 +2783,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-30",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Commvault Crypto Library",
@@ -2604,7 +2791,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-05-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Gen 3.5 TRANSEC",
@@ -2612,7 +2799,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Kernel Cryptographic Module",
@@ -2620,7 +2807,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "cPacket cStor 100S Packet Capture Appliance",
@@ -2628,7 +2815,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-05-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Rocky Linux from CIQ (RLC) 10 GnuTLS Cryptographic Module",
@@ -2636,7 +2823,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Rocky Linux from CIQ (RLC) 10 Kernel Cryptographic API",
@@ -2644,7 +2831,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Rocky Linux from CIQ (RLC) 10 NSS Cryptographic Module",
@@ -2652,7 +2839,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Rocky Linux from CIQ (RLC) 10 OpenSSL FIPS Provider",
@@ -2660,7 +2847,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "CyberCogs Hardware Security Module (CCHSM)",
@@ -2668,7 +2855,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "DL450",
@@ -2676,7 +2863,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Dell BSAFE Crypto Module for Java 8.0",
@@ -2684,7 +2871,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "DINAMO NG Hardware Security Module",
@@ -2692,7 +2879,8 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-11",
+      "leftListOn": "2026-10-15"
     },
     {
       "module": "Ericsson IPSEC Cryptographic Module",
@@ -2700,7 +2888,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Extreme Networks 5520 Series with Fabric Engine",
@@ -2708,7 +2896,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Extreme Networks 5720 and 7520 Series with Fabric Engine",
@@ -2716,7 +2904,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BIG-IP Next Cryptographic Library Module",
@@ -2724,7 +2912,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-11-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BIG-IP Next Dataplane Cryptographic Module",
@@ -2732,7 +2920,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BIG-IP Next Tenant Cryptographic Module",
@@ -2740,7 +2928,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-11-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "F5OS Cryptographic Module v2.0 Chassis and Appliance",
@@ -2748,7 +2936,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "F5OS Cryptographic Module v2.1.0 – s15k / s15k-DF",
@@ -2756,7 +2944,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiGate 7.6",
@@ -2764,7 +2952,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiGate-VM 7.6",
@@ -2772,7 +2960,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiOS 7.6",
@@ -2780,7 +2968,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiProxy 7.4",
@@ -2788,7 +2976,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FortiProxy-VM 7.4",
@@ -2796,7 +2984,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Isidore Mini Core",
@@ -2804,7 +2992,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-29",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "G+D PIV200 and G+D FIDO201 Applet on Sm@rtCafé Expert 8.1",
@@ -2812,7 +3000,15 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-05-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
+    },
+    {
+      "module": "G+D SCE8.1 with HID Applet 2.7.9",
+      "vendor": "Giesecke+Devrient ePayments GmbH",
+      "standard": "FIPS 140-3",
+      "iutDate": "2026-10-15",
+      "firstSeen": "2026-10-16",
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Satellite Crypto Module",
@@ -2820,7 +3016,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "B227 True Random Number Generator (TRNG) Cryptographic Module",
@@ -2828,7 +3024,15 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
+    },
+    {
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "standard": "FIPS 140-3",
+      "iutDate": "2026-10-14",
+      "firstSeen": "2026-10-15",
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Inline Crypto Engine (ICE)",
@@ -2836,7 +3040,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Integrated Compute Complex (ICC)",
@@ -2844,7 +3048,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Look-aside Cryptography and Compression Engine (LCE)",
@@ -2852,7 +3056,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Non-Volatile Memory express (NVMe) Data Path Security Cluster (DPSC) Module",
@@ -2860,7 +3064,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-02-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "iLO 7",
@@ -2868,7 +3072,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "iLO 7 secure enclave",
@@ -2876,7 +3080,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Phylax Cryptographic Module",
@@ -2884,7 +3088,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-05-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HIRSCH uTrust FIDO Cryptographic Module",
@@ -2892,7 +3096,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-12-02",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AP-570 Series, AP-670 Series, AP-730 Series, AP-750 Series, and AP-605R Access Points with AOS FIPS Firmware",
@@ -2900,7 +3104,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-10-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Access Point Cryptographic Module",
@@ -2908,7 +3112,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "AP47 Platform Series Access Points",
@@ -2916,7 +3120,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking MX10004 Universal Routing Platform with MACsec and IPsec for Junos 26.2R1",
@@ -2924,7 +3128,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking MX240/480/960 series and EX9204/08/14 series Ethernet Switches with MACsec for Junos 26.2R1",
@@ -2932,7 +3136,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking MX301 Universal Routing Platform with MACsec and IPsec for Junos 26.2R1",
@@ -2940,7 +3144,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "HPE Juniper Networking MX304 Universal Routing Platform with MACsec and IPsec for Junos 26.2R1",
@@ -2948,7 +3152,8 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-11",
+      "leftListOn": "2026-10-15"
     },
     {
       "module": "Hyundai AutoEver CryptoLIB V2.0 Core",
@@ -2956,7 +3161,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-06-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Trident HSM Cryptographic Module",
@@ -2964,7 +3169,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IBM 4770-001 CCA Hardware Security Module",
@@ -2972,7 +3177,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IBM® NVMe FlashCore™ Module 4",
@@ -2980,7 +3185,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-06-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "IBM® NVMe FlashCore™ Module 5",
@@ -2988,7 +3193,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TRANSEC Module",
@@ -2996,7 +3201,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TRANSEC Vanguard",
@@ -3004,7 +3209,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-03-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Trizinc Hardware Appliances",
@@ -3021,7 +3226,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Crypto Module for Intel® Lunar Lake processors",
@@ -3029,7 +3234,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Crypto Module for Intel® Panther Lake and Wildcat Lake processors",
@@ -3037,7 +3242,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Integrated Management Complex (IMC) and B227 True Random Number Generator (TRNG) Cryptographic Module",
@@ -3045,7 +3250,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-07-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Look-aside Cryptography and Compression Engine (LCE)",
@@ -3053,7 +3258,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-07-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "JTM-2700LQ",
@@ -3061,7 +3266,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Junos® OS EX4400 series of switches",
@@ -3069,7 +3274,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-01-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BC-FJA (Bouncy Castle FIPS Java API)",
@@ -3077,7 +3282,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "ArmorFlash MX78 series",
@@ -3085,7 +3290,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-06-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Orion X650",
@@ -3093,7 +3298,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-31",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Aquila1 DSP MACSEC Cryptographic Module",
@@ -3101,7 +3306,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Marvell eHSM32 Level 3 embedded Hardware Security Module",
@@ -3109,7 +3314,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-03-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Marvell eHSM64 Level 3 embedded Hardware Security Module",
@@ -3117,7 +3322,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-03-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Marvell LS2 HSM Family",
@@ -3125,7 +3330,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "MediaTek CryptoCore v2",
@@ -3133,7 +3338,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "MediaTek CryptoCore v2.1",
@@ -3141,7 +3346,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-02-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Voltage Cryptographic Module v6.0",
@@ -3149,7 +3354,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Adaptec® SmartRAID 3200 Storage Adapters",
@@ -3157,7 +3362,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Micron® MYS11-P6 Controller Sub Chip Security Subsystem",
@@ -3165,7 +3370,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Micron® MSA12-P5 Controller Sub Chip Security Subsystem",
@@ -3173,7 +3378,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "BitLocker Dump Filter (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3181,7 +3386,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Boot Manager (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3189,7 +3394,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Code Integrity (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3197,7 +3402,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cryptographic Primitives Library (Windows 11 version 23H2)",
@@ -3205,7 +3410,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Cryptographic Primitives Library (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3213,7 +3418,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "DPU FunOS Cryptolib",
@@ -3230,7 +3435,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Kernel Mode Cryptographic Primitives Library (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3238,7 +3443,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Microsoft Azure Linux 3 Kernel Crypto API",
@@ -3246,7 +3451,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SBP",
@@ -3263,7 +3468,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SymCrypt Cryptographic Library (Linux-based OS on Intel x64, AMD x64)",
@@ -3271,7 +3476,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-05-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Windows OS Loader (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",
@@ -3279,7 +3484,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Motorola BoringCrypto Android 15",
@@ -3287,7 +3492,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Motorola Solutions Cryptographic Firmware Module",
@@ -3295,7 +3500,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Skyhigh Security Secure Web Gateway Crypto Module",
@@ -3303,7 +3508,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Nexthop FIPS Module",
@@ -3311,7 +3516,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-26",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Nexthop OAM Security Module v1",
@@ -3319,7 +3524,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-10-06",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Scalar and Express P2-series Self-Encrypting SSDs",
@@ -3327,7 +3532,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-26",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "N32S035",
@@ -3335,7 +3540,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Trusted Platform Module 2.0 NS350 FW30.50 and FW31.50",
@@ -3343,7 +3548,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "EdgeLock® Enclave on i.MX91 Applications Processors",
@@ -3351,7 +3556,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-11-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "EdgeLock® Enclave on i.MX95 Applications Processors",
@@ -3359,7 +3564,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "EdgeLock® Secure Enclave",
@@ -3367,7 +3572,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-19",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FlexCryptoCore",
@@ -3375,7 +3580,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-22",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Acme Packet 1100, Acme Packet 3900, Acme Packet 3950, Acme Packet 4900 and Acme Packet 6400",
@@ -3383,7 +3588,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Acme Packet 4600 and Acme Packet 6350",
@@ -3391,7 +3596,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Acme Packet VME",
@@ -3399,7 +3604,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Enterprise Communication Broker",
@@ -3407,7 +3612,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-27",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux 10 GnuTLS Cryptographic Module",
@@ -3415,7 +3620,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux 10 Kernel Crypto API Cryptographic Module",
@@ -3423,7 +3628,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux 10 NSS Cryptographic Module",
@@ -3431,7 +3636,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux 9 NSS Cryptographic Module",
@@ -3439,7 +3644,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux OpenSSL FIPS Provider",
@@ -3447,7 +3652,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Linux Unbreakable Enterprise Kernel (UEK8) FIPS Cryptographic Module",
@@ -3455,7 +3660,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Solaris Kernel Cryptographic Framework",
@@ -3463,7 +3668,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle Solaris Userland Cryptographic Framework",
@@ -3471,7 +3676,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-01",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Oracle T93 Cryptographic Module",
@@ -3479,7 +3684,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "ProxKey Cryptographic Module",
@@ -3487,7 +3692,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-03-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Palo Alto Networks Core Crypto Module",
@@ -3495,7 +3700,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PAN-OS 12.1 running on PA-400 Series, PA-500 Series, PA-1400 Series, PA-3400 Series, PA-5400 Series, PA-5450, PA-5500 Series, and PA-7500 NGFW",
@@ -3503,7 +3708,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PAN-OS 12.1 VM-Series",
@@ -3511,7 +3716,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Panorama 12.1 running on M-300 and M-700",
@@ -3519,7 +3724,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Panorama Virtual Appliance 12.1",
@@ -3527,7 +3732,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Prisma SD-WAN Controller's Cryptographic Module",
@@ -3535,7 +3740,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-09-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WildFire 12.1 running on WF-500-B",
@@ -3543,7 +3748,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Phison TCG OPAL SSC Self-Encrypting SSD PS5028 Series",
@@ -3551,7 +3756,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Portal26 Cryptographic Engine",
@@ -3559,7 +3764,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "FlashBlade Data Encryption Module",
@@ -3567,7 +3772,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-03-08",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TwinStarAMD",
@@ -3575,7 +3780,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "QCA2066 Module",
@@ -3583,7 +3788,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "QCC2072 Module",
@@ -3591,7 +3796,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "QCC2076 Module",
@@ -3599,7 +3804,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WCN6856 Module",
@@ -3607,7 +3812,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "WCN7851 Module",
@@ -3615,7 +3820,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "QiSpace™ SDK Cryptographic Module",
@@ -3623,7 +3828,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-10-06",
       "firstSeen": "2026-10-11",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Quantum eMotion SecureKey Cryptographic Module",
@@ -3631,7 +3836,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-13",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "PhioTX - D",
@@ -3639,7 +3844,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-09-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "RN1212-HSM",
@@ -3647,7 +3852,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-04-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 10 gnutls",
@@ -3655,7 +3860,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 10 Kernel Cryptographic API",
@@ -3663,7 +3868,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 9 gnutls",
@@ -3671,7 +3876,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-02-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux 9 NSS Cryptographic Module",
@@ -3679,7 +3884,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-02-03",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Red Hat Enterprise Linux FIPS Provider",
@@ -3687,7 +3892,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-21",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SBC 5400 Session Border Controller 12.1",
@@ -3695,7 +3900,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SBC 7000 Session Border Controller 12.1",
@@ -3703,7 +3908,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-23",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SBC Software Edition Session Border Controller 12.1",
@@ -3711,7 +3916,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-08-19",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung BoringCrypto Module v1.8",
@@ -3719,7 +3924,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung Flash Memory Protector V4.0",
@@ -3727,7 +3932,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-25",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung Flash Memory Protector V5.0, V6.0, V7.0",
@@ -3735,7 +3940,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-11-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung NVMe TCG Opal SSC SEDs PM9D3a Series",
@@ -3743,7 +3948,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Samsung SCrypto Cryptographic Module v2.9",
@@ -3751,7 +3956,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-04-16",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SAP SE Garden Linux 1877 GnuTLS Cryptographic Module",
@@ -3759,7 +3964,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SAP SE Garden Linux 1877 Libgcrypt Cryptographic Module",
@@ -3767,7 +3972,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Primus HSM Cryptographic Module",
@@ -3775,7 +3980,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-12-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "CE Crypto Module",
@@ -3783,7 +3988,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "CN Series Encryptors",
@@ -3791,7 +3996,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-09-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Solidigm® N200 NL SSD (KXD NL)",
@@ -3799,7 +4004,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-30",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Solidigm® P5336 SSD (ADP-RRR) Value Endurance (VE) E1.L",
@@ -3807,7 +4012,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-10-24",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SonicWall NSv S/M/L Virtual Firewalls",
@@ -3815,7 +4020,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SonicWall SMA Series v12.5",
@@ -3823,7 +4028,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-02",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SonicWall TZ280/280W/280P/380/380W/480/580/680 Series Firewalls, SonicWall NSa 2800/3800/4800/5800/6800 Series Firewalls",
@@ -3831,7 +4036,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise GnuTLS Cryptographic Module",
@@ -3839,7 +4044,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise Kernel Crypto API Cryptographic Module",
@@ -3847,7 +4052,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise Libgcrypt Cryptographic Module",
@@ -3855,7 +4060,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise Libica Cryptographic Module",
@@ -3863,7 +4068,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise NSS Cryptographic Module",
@@ -3871,7 +4076,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "SUSE Linux Enterprise OpenSSL 3 Cryptographic Module",
@@ -3879,7 +4084,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-07",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Symmatrics symmetric key delivery protocol cryptographic module",
@@ -3887,7 +4092,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-06-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Synology Cryptographic Module",
@@ -3895,7 +4100,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-04-26",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Synology GnuTLS Cryptographic Library",
@@ -3903,7 +4108,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-02",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Synology Kernel 5.10 Cryptographic Library",
@@ -3911,7 +4116,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-07-02",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Luna K7 Cryptographic Module",
@@ -3919,7 +4124,8 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-07-29",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-11",
+      "leftListOn": "2026-10-15"
     },
     {
       "module": "MultiApp v5.1",
@@ -3927,7 +4133,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-12",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "ProtectServer PCIe HSM 3",
@@ -3935,7 +4141,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Thales Advanced Security Platform (TASP)",
@@ -3943,7 +4149,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-10",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Thales CipherTrust Manager Core Security Module",
@@ -3951,7 +4157,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-05-14",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Thales Luna G7 Cryptographic Module",
@@ -3959,7 +4165,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-04-17",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Luna M7 Cryptographic Module (v7.15.1)",
@@ -3967,7 +4173,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-12-18",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Secure Communications Processor",
@@ -3975,7 +4181,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-11-11",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Black Bastion",
@@ -3983,7 +4189,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-09-09",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TW-140 Shadow",
@@ -3991,7 +4197,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TW-750 Shadow",
@@ -3999,7 +4205,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-15",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "TrustedHSM",
@@ -4007,7 +4213,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-08-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "ViaPHY3 Cryptographic Module",
@@ -4015,7 +4221,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River GnuTLS Cryptographic Module",
@@ -4023,7 +4229,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River Kernel Crypto API Cryptographic Module",
@@ -4031,7 +4237,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River Libgcrypt Cryptographic Module",
@@ -4039,7 +4245,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River Linux Kernel Cryptographic Module",
@@ -4047,7 +4253,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River NSS Cryptographic Module",
@@ -4055,7 +4261,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2025-03-04",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "Wind River OpenSSL Cryptographic Module for Linux",
@@ -4063,7 +4269,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-20",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "kvHSM",
@@ -4071,7 +4277,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-08-28",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "wolfCrypt Post Quantum",
@@ -4079,7 +4285,7 @@
       "standard": "FIPS 140-3",
       "iutDate": "2026-01-06",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     },
     {
       "module": "YubiHSM 2 Cryptographic Module",
@@ -4087,15 +4293,15 @@
       "standard": "FIPS 140-3",
       "iutDate": "2024-07-05",
       "firstSeen": "2026-09-26",
-      "lastSeen": "2026-10-11"
+      "lastSeen": "2026-10-16"
     }
   ],
   "iutMeta": {
-    "nistLastUpdated": "2026-10-11",
-    "displayed": 230,
+    "nistLastUpdated": "2026-10-16",
+    "displayed": 227,
     "notDisplayed": 0,
-    "total": 230,
-    "currentlyListed": 230,
-    "leftList": 4
+    "total": 227,
+    "currentlyListed": 227,
+    "leftList": 9
   }
 }

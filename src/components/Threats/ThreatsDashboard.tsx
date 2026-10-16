@@ -87,6 +87,7 @@ import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
+import { InlineScopeStep } from '@/components/common/InlineScopeStep'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
 import { DeepLinkNotice } from '../common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
@@ -628,6 +629,35 @@ export const ThreatsDashboard: React.FC<{
           : [],
     [selectedIndustries, personaDefaultActive, personaDefaultThreatIndustries]
   )
+  // The site sector a scope corresponds to, when it is exactly one sector's
+  // mapping (Finance & Banking → its four threat industries), so the hero can
+  // say "N threats apply to Finance & Banking" instead of "your 4 sectors".
+  const heroSectorName = useMemo<string | undefined>(() => {
+    const key = heroScopedIndustries.join('|')
+    if (!key) return undefined
+    for (const [sector, mapped] of Object.entries(INDUSTRY_TO_THREATS_MAP)) {
+      const present = mapped.filter((ind) => threatsData.some((d) => d.industry === ind))
+      if (present.length > 0 && present.join('|') === key) return sector
+    }
+    return undefined
+  }, [heroScopedIndustries])
+
+  // A sector picked on the empty exposure card: the shared write (persona store
+  // + assessment answer) happens inside InlineScopeStep; this narrows the page
+  // the same way the "Your sector" filter does, URL included.
+  const handleHeroSector = useCallback(
+    (sector: string) => {
+      // eslint-disable-next-line security/detect-object-injection
+      const mapped = (INDUSTRY_TO_THREATS_MAP[sector] ?? []).filter((ind) =>
+        threatsData.some((d) => d.industry === ind)
+      )
+      setSelectedIndustries(mapped)
+      syncFiltersToUrl({ industry: mapped })
+      logEvent('Threats', 'Filter Industry', mapped.join(','))
+    },
+    [syncFiltersToUrl]
+  )
+
   // Threats applicable to the scoped sector(s) — the hero's exposure set (sector
   // scope only; criticality/class/search filters don't shrink "your exposure").
   const heroApplicable = useMemo<ThreatItem[]>(
@@ -919,7 +949,23 @@ export const ThreatsDashboard: React.FC<{
           defaultOpen
           className="mb-4"
         >
-          <SectorExposureHero applicable={heroApplicable} scopedIndustries={heroScopedIndustries} />
+          {/* No sector at all (persona defaults no longer supply one, 2026-10-16):
+              offer the picker instead of an "all sectors" count. */}
+          {heroScopedIndustries.length === 0 && (
+            <div className="mb-3">
+              <InlineScopeStep
+                sector="All"
+                onSectorChange={handleHeroSector}
+                variant="strip"
+                stripHint={`Pick it to see the threats that apply to you, not all ${threatsData.length}.`}
+              />
+            </div>
+          )}
+          <SectorExposureHero
+            applicable={heroApplicable}
+            scopedIndustries={heroScopedIndustries}
+            sectorName={heroSectorName}
+          />
         </CollapsibleSection>
 
         {/* CRQC Threat Horizon — defaults open, not a click away. Detail tiers (per-source
@@ -934,7 +980,7 @@ export const ThreatsDashboard: React.FC<{
           className="scroll-mt-20 mb-4"
         >
           <div className="space-y-4">
-            <ThreatEconomicsHeader defaultExpanded />
+            <ThreatEconomicsHeader />
             <CrqcCapabilityStrip expanded={detailOpen} onExpandedChange={setDetailOpen} />
             {detailOpen && <CrqcTrajectoryChart />}
           </div>

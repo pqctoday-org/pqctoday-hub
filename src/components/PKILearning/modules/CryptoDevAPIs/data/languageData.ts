@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { describeRuntimeSupport, runtimeHasNativePqc } from './pqcSupportData'
 
 export type MemorySafety = 'manual' | 'ownership' | 'gc' | 'refcount' | 'comptime'
 export type FFICapability = 'native' | 'excellent' | 'good' | 'moderate' | 'limited'
@@ -6,6 +7,7 @@ export type FFICapability = 'native' | 'excellent' | 'good' | 'moderate' | 'limi
 export interface CryptoLibEntry {
   name: string
   description: string
+  /** For libraries covered by pqcSupportData, derive this with runtimeHasNativePqc() */
   pqcSupport: boolean
 }
 
@@ -49,7 +51,11 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     ffiDescription:
       'Native C ABI compatibility. Directly calls C libraries without wrappers. Can expose C++ classes via extern "C" for other languages.',
     cryptoLibraries: [
-      { name: 'OpenSSL', description: 'De facto standard — libcrypto/libssl', pqcSupport: true },
+      {
+        name: 'OpenSSL',
+        description: `De facto standard — libcrypto/libssl. ${describeRuntimeSupport('openssl')}`,
+        pqcSupport: runtimeHasNativePqc('openssl'),
+      },
       {
         name: 'Botan',
         description:
@@ -72,7 +78,13 @@ export const DEV_LANGUAGES: DevLanguage[] = [
         pqcSupport: true,
       },
     ],
-    pqcBindings: ['OpenSSL oqsprovider', 'Botan 3.x (native)', 'liboqs (C, direct)', 'wolfSSL'],
+    pqcBindings: [
+      'OpenSSL 3.5+ (native ML-KEM, ML-DSA, SLH-DSA)',
+      'oqsprovider (OpenSSL before 3.5, or non-standardised algorithms)',
+      'Botan 3.x (native)',
+      'liboqs (C, direct)',
+      'wolfSSL',
+    ],
     notableDeployments: [
       'OpenSSL powers most web servers (Apache, Nginx)',
       'Chrome/BoringSSL uses ML-KEM for TLS',
@@ -146,7 +158,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'pqcrypto (PQClean wrappers)',
       'oqs-rs (liboqs bindings)',
       'aws-lc-rs (ML-KEM)',
-      'openssl crate + oqsprovider',
+      'openssl crate (OpenSSL 3.5+ native PQC)',
     ],
     notableDeployments: [
       'Rustls — pure Rust TLS library (used by curl, Hyper)',
@@ -203,7 +215,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
         pqcSupport: true,
       },
     ],
-    pqcBindings: ['liboqs via @cImport', 'OpenSSL oqsprovider via @cImport'],
+    pqcBindings: ['liboqs via @cImport', 'OpenSSL 3.5+ via @cImport'],
     notableDeployments: [
       'Bun JavaScript runtime uses Zig + BoringSSL for TLS',
       'TigerBeetle financial database uses Zig for deterministic computation',
@@ -250,8 +262,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     cryptoLibraries: [
       {
         name: 'JCA/JCE',
-        description: 'Built-in Java crypto framework with provider architecture',
-        pqcSupport: false,
+        description: `Built-in Java crypto framework with provider architecture. ${describeRuntimeSupport('java')}`,
+        pqcSupport: runtimeHasNativePqc('java'),
       },
       {
         name: 'Bouncy Castle',
@@ -272,7 +284,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
     ],
     pqcBindings: [
-      'Bouncy Castle (native Java)',
+      'JDK 24+ built-in (ML-KEM via javax.crypto.KEM, ML-DSA via Signature)',
+      'Bouncy Castle (native Java; adds SLH-DSA and more)',
       'BC-FIPS (certified)',
       'Amazon Corretto Crypto Provider (via AWS-LC)',
     ],
@@ -282,7 +295,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'Apache Kafka, Spring Security, Keycloak',
     ],
     pros: [
-      'JCA provider architecture — swap algorithms without code changes',
+      'JCA provider architecture — swap providers without touching call sites (algorithm names, key sizes and encodings still change)',
       'Bouncy Castle provides best-in-class PQC for managed languages',
       'Massive enterprise ecosystem and developer pool',
       'Platform independent — same code runs on any JVM',
@@ -296,7 +309,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'String-based algorithm names in JCA are error-prone',
     ],
     cryptoDevContext:
-      'Java is the dominant language for enterprise crypto applications. The JCA provider model is the gold standard for algorithm agility. Bouncy Castle provides the most complete PQC implementation in any managed language. The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
+      'Java is the dominant language for enterprise crypto applications. The JCA provider model is the gold standard for algorithm agility. JDK 24+ ships ML-KEM and ML-DSA in the default providers (JDK 25 is the first LTS with them; JDK 21 LTS has neither). Bouncy Castle provides the most complete PQC implementation in any managed language, including SLH-DSA. The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 10,
@@ -321,8 +334,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     cryptoLibraries: [
       {
         name: 'cryptography',
-        description: 'High-level API wrapping OpenSSL — Fernet, X.509, AEAD',
-        pqcSupport: false,
+        description: `High-level API wrapping OpenSSL — Fernet, X.509, AEAD. ${describeRuntimeSupport('python-cryptography')}`,
+        pqcSupport: runtimeHasNativePqc('python-cryptography'),
       },
       {
         name: 'pyOpenSSL',
@@ -346,9 +359,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
     ],
     pqcBindings: [
-      'liboqs-python (cffi)',
-      'oqs-python (ctypes)',
-      'cryptography + OpenSSL oqsprovider',
+      'cryptography 48.0.0+ (ML-KEM, ML-DSA with OpenSSL 3.5+; 47.0.0+ with AWS-LC/BoringSSL)',
+      'liboqs-python (SLH-DSA and non-standardised algorithms)',
     ],
     notableDeployments: [
       "Certbot (Let's Encrypt client)",
@@ -360,7 +372,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'Rapid prototyping — fastest path from idea to working crypto code',
       'Excellent for crypto research and experimentation',
       'Large data science ecosystem for crypto analysis',
-      'liboqs-python provides easy PQC experimentation',
+      'cryptography 48+ wheels include ML-KEM and ML-DSA; liboqs-python covers the rest for experimentation',
       'Widely used for PKI tooling and certificate management',
     ],
     cons: [
@@ -396,8 +408,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     cryptoLibraries: [
       {
         name: 'crypto/*',
-        description: 'Standard library: AES, SHA, RSA, ECDSA, Ed25519, HKDF — high quality',
-        pqcSupport: false,
+        description: `Standard library: AES, SHA, RSA, ECDSA, Ed25519, HKDF, plus crypto/mlkem and crypto/mldsa. ${describeRuntimeSupport('go')}`,
+        pqcSupport: runtimeHasNativePqc('go'),
       },
       {
         name: 'x/crypto',
@@ -406,7 +418,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
       {
         name: 'cloudflare/circl',
-        description: 'Cloudflare crypto: HPKE, ML-KEM, ML-DSA, SLH-DSA, hybrid KEM',
+        description:
+          'Cloudflare crypto: HPKE, ML-KEM, ML-DSA, SLH-DSA, hybrid KEM — use it for what the standard library lacks (e.g. SLH-DSA)',
         pqcSupport: true,
       },
       {
@@ -415,7 +428,11 @@ export const DEV_LANGUAGES: DevLanguage[] = [
         pqcSupport: true,
       },
     ],
-    pqcBindings: ['cloudflare/circl (pure Go)', 'liboqs-go (cgo)', 'filippo.io experimental PQC'],
+    pqcBindings: [
+      'Standard library: crypto/mlkem (Go 1.24+), crypto/mldsa (Go 1.27+)',
+      'cloudflare/circl (pure Go; SLH-DSA and more)',
+      'liboqs-go (cgo)',
+    ],
     notableDeployments: [
       'Cloudflare edge servers (circl for hybrid TLS)',
       'Kubernetes PKI (cfssl)',
@@ -427,17 +444,17 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'Simple concurrency (goroutines) for parallel crypto operations',
       'Fast compilation — rapid development cycle',
       'Strong cross-compilation without cgo dependency',
-      'cloudflare/circl provides production-quality PQC in pure Go',
+      'ML-KEM (Go 1.24) and ML-DSA (Go 1.27) are in the standard library; crypto/tls negotiates X25519MLKEM768 by default',
     ],
     cons: [
       'cgo overhead makes C library integration expensive',
       'GC prevents reliable key material zeroing',
       'No generics until Go 1.18 — limited type-level algorithm abstraction',
       'Smaller crypto library ecosystem than Java/C++',
-      'No FIPS-validated pure Go crypto library',
+      'FIPS 140-3 mode (GOFIPS140, Go 1.24+) is newer than C/Java validated modules — check the CMVP listing for status',
     ],
     cryptoDevContext:
-      "Go is excellent for crypto infrastructure tools (PKI, Vault, TLS services) where the standard library covers most needs. Cloudflare's circl provides the best pure-Go PQC implementation. Avoid cgo for crypto — it negates Go's cross-compilation advantage. The FIPS gap is a concern for regulated environments.",
+      "Go is excellent for crypto infrastructure tools (PKI, Vault, TLS services) where the standard library covers most needs — including PQC: crypto/mlkem since Go 1.24 (with X25519MLKEM768 on by default in crypto/tls) and crypto/mldsa since Go 1.27. Cloudflare's circl fills the remaining gaps such as SLH-DSA in pure Go. Avoid cgo for crypto — it negates Go's cross-compilation advantage.",
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 7,
@@ -462,9 +479,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
     cryptoLibraries: [
       {
         name: 'System.Security.Cryptography',
-        description:
-          'Built-in: AES, RSA, ECDSA, ECDH, SHA-2/3 — wraps CNG on Windows, OpenSSL on Linux',
-        pqcSupport: false,
+        description: `Built-in: AES, RSA, ECDSA, ECDH, SHA-2/3 — wraps CNG on Windows, OpenSSL on Linux. ${describeRuntimeSupport('dotnet')}`,
+        pqcSupport: runtimeHasNativePqc('dotnet'),
       },
       {
         name: 'Bouncy Castle C#',
@@ -478,14 +494,14 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
       {
         name: 'CNG interop',
-        description: 'Direct access to Windows CNG via P/Invoke or CngKey',
-        pqcSupport: false,
+        description: `Direct access to Windows CNG via P/Invoke or CngKey. ${describeRuntimeSupport('windows-cng')}`,
+        pqcSupport: runtimeHasNativePqc('windows-cng'),
       },
     ],
     pqcBindings: [
-      'Bouncy Castle C# (native .NET)',
-      'liboqs-dotnet (P/Invoke)',
-      'CNG (when Microsoft adds PQC)',
+      '.NET 10 System.Security.Cryptography (MLKem, MLDsa; SlhDsa [Experimental])',
+      'Bouncy Castle C# (pure managed alternative; works on older .NET and any OS)',
+      'CNG via P/Invoke (ML-KEM, ML-DSA on Windows 11 24H2+ / Server 2025)',
     ],
     notableDeployments: [
       'ASP.NET Core web applications (Kestrel TLS)',
@@ -497,19 +513,19 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'CNG integration gives hardware key isolation on Windows',
       'Span<T> and stackalloc enable secure memory management for crypto',
       'Cross-platform via .NET 6+ (Windows, Linux, macOS)',
-      'Bouncy Castle C# provides comprehensive PQC',
+      '.NET 10 adds MLKem, MLDsa and SlhDsa; Bouncy Castle C# remains a comprehensive alternative',
       'Strong typing with nullable reference types',
       'NativeAOT for high-performance crypto services',
     ],
     cons: [
-      'System.Security.Cryptography has no PQC yet — depends on Bouncy Castle',
+      'Built-in PQC needs .NET 10 plus OpenSSL 3.5+ (Linux) or a PQC-capable Windows build; SlhDsa is still [Experimental] (SYSLIB5006)',
       'Cross-platform crypto behavior differs (CNG on Windows vs OpenSSL on Linux)',
       'Smaller open-source crypto ecosystem than Java',
       'GC pause during key operations (mitigated by Span<T>)',
       'FIPS story depends on platform (Windows CNG validated, Linux OpenSSL validated)',
     ],
     cryptoDevContext:
-      '.NET is the enterprise choice for Windows-centric environments. System.Security.Cryptography auto-selects the best platform backend (CNG/OpenSSL). Bouncy Castle C# fills the PQC gap. Span<T> makes .NET better than Java for sensitive key material handling. The cross-platform story has improved dramatically with .NET 6+.',
+      '.NET is the enterprise choice for Windows-centric environments. System.Security.Cryptography auto-selects the best platform backend (CNG/OpenSSL), and in .NET 10 it gains MLKem and MLDsa plus an [Experimental] SlhDsa — available only where that backend has PQC (OpenSSL 3.5+ or a PQC-capable Windows CNG), so check IsSupported. Bouncy Castle C# is the alternative when you need older .NET or an OS backend without PQC. Span<T> makes .NET better than Java for sensitive key material handling.',
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 7,

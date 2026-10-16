@@ -394,7 +394,8 @@ export const ENTERPRISE_SCENARIO = {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
-      pqcCapability: 'ML-KEM-768/1024 GA, X-Wing GA, ML-DSA preview',
+      pqcCapability:
+        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
     },
     {
       id: 'azure-kv',
@@ -962,7 +963,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 3,
     providerSupport: {
       'aws-kms': 'Hybrid TLS (GA)',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'Preview (software)',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'TLS Preview',
       'fortanix-dsm': 'Available',
@@ -980,7 +981,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 5,
     providerSupport: {
       'aws-kms': 'Hybrid TLS only',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'Preview (software)',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Available',
@@ -998,7 +999,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 2,
     providerSupport: {
       'aws-kms': 'GA',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'GA (software)',
       'hashicorp-vault': 'Experimental',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Planned',
@@ -1016,7 +1017,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 3,
     providerSupport: {
       'aws-kms': 'GA',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'GA (software)',
       'hashicorp-vault': 'Experimental',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Planned',
@@ -1034,7 +1035,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 5,
     providerSupport: {
       'aws-kms': 'GA',
-      'gcp-kms': 'N/A',
+      'gcp-kms': 'GA (software)',
       'hashicorp-vault': 'Experimental',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Planned',
@@ -1052,7 +1053,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 1,
     providerSupport: {
       'aws-kms': 'N/A',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'GA (software)',
       'hashicorp-vault': 'Experimental',
       'thales-ciphertrust': 'N/A',
       'fortanix-dsm': 'Planned',
@@ -1070,7 +1071,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 3,
     providerSupport: {
       'aws-kms': 'N/A',
-      'gcp-kms': 'Preview',
+      'gcp-kms': 'N/A',
       'hashicorp-vault': 'Experimental',
       'thales-ciphertrust': 'N/A',
       'fortanix-dsm': 'Planned',

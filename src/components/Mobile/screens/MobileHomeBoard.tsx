@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { Check } from 'lucide-react'
+import { useId, useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { ArrowRight, BookOpen, Check, ChevronDown } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PERSONAS } from '@/data/learningPersonas'
+import { essentialsTrackChips } from '@/data/trackChips'
 import {
   PERSONA_JOURNEY_BOARD_VARIANTS,
   resolveRoleBoardVariant,
@@ -18,6 +19,13 @@ import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { cn } from '@/lib/utils'
 import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
+import { useExecDecisionMode } from '@/services/featureFlags'
+import {
+  executiveDecisionStep,
+  formatTrackMinutes,
+  fullPathModuleCount,
+  FULL_PATH_HREF,
+} from '@/data/executiveDecisionMode'
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
 
@@ -97,6 +105,10 @@ export function MobileHomeBoard({
   const navigate = useNavigate()
   const [cardsExpanded, setCardsExpanded] = useState(false)
   const { selectedRegion, selectedIndustries } = usePersonaStore()
+  const [moreOpen, setMoreOpen] = useState(false)
+  const nextHeadingId = useId()
+  const moreRegionId = useId()
+  const decisionModeOn = useExecDecisionMode()
 
   if (!persona) {
     return <MobileHomeSkipped onOpenRoleSwitch={onOpenRoleSwitch} />
@@ -110,9 +122,13 @@ export function MobileHomeBoard({
   const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
   const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
   const roleContext = [regionLabel, industryLabel].filter(Boolean).join(' · ')
+  // Executive decision mode (design note 16 Oct 2026) — same branch as the
+  // desktop PersonaBoardView: one next step, one "after that" link, the rest
+  // folded under "More for this question".
+  const decision = executiveDecisionStep(persona, active.id, decisionModeOn)
 
-  return (
-    <div className="px-4 pb-4 pt-4">
+  const headerRow = (
+    <>
       <div className="mb-4 flex items-center justify-between">
         <span className="text-[13px] font-semibold text-foreground">
           {PERSONAS[persona].label}
@@ -127,10 +143,14 @@ export function MobileHomeBoard({
           Change
         </Button>
       </div>
+    </>
+  )
 
+  const variantChips = (
+    <>
       {/* Scenario chip row — horizontal scroll, snap, matching the handoff and
-          CuriousMobileBoard's own precedent ("six chips wrapping at 390px
-          would push the headline below the fold"). */}
+        CuriousMobileBoard's own precedent ("six chips wrapping at 390px
+        would push the headline below the fold"). */}
       <div
         className="-mx-4 mb-5 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1"
         role="radiogroup"
@@ -163,7 +183,11 @@ export function MobileHomeBoard({
           )
         })}
       </div>
+    </>
+  )
 
+  const heroText = (
+    <>
       <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
         {board.heroEyebrow}
       </p>
@@ -172,7 +196,11 @@ export function MobileHomeBoard({
       </h1>
       <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/90">{board.sub}</p>
       <MobilePersonaPageNote route="/" className="mt-3" />
+    </>
+  )
 
+  const ctaButtons = (
+    <>
       <div className="mt-4 flex flex-col gap-2.5">
         <Button
           type="button"
@@ -196,7 +224,11 @@ export function MobileHomeBoard({
           {board.ctaSecondary}
         </Button>
       </div>
+    </>
+  )
 
+  const proofChips = (
+    <>
       <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Proof points">
         {board.proofChips.map((chip, i) => (
           <li
@@ -213,7 +245,11 @@ export function MobileHomeBoard({
           </li>
         ))}
       </ul>
+    </>
+  )
 
+  const sideCard = (
+    <>
       {/* Side card */}
       <section className={cn('glass-panel mt-5 flex flex-col gap-2.5 p-3.5', tone.panel)}>
         <span className="w-fit rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
@@ -227,7 +263,20 @@ export function MobileHomeBoard({
               className="flex items-baseline justify-between gap-3 border-t border-border/50 pt-1.5 text-[11.5px] first:border-t-0 first:pt-0"
             >
               <dt className="text-muted-foreground">{row.label}</dt>
-              <dd className="text-right font-semibold text-foreground">{row.value}</dd>
+              <dd className="text-right font-semibold text-foreground">
+                {row.value}
+                {row.source && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => navigate(row.source!)}
+                    aria-label={`Source for ${row.label}`}
+                    className="ml-1 inline-flex h-auto p-0 align-middle text-primary"
+                  >
+                    <BookOpen size={11} aria-hidden="true" />
+                  </Button>
+                )}
+              </dd>
             </div>
           ))}
         </dl>
@@ -245,14 +294,13 @@ export function MobileHomeBoard({
           </p>
         )}
       </section>
+    </>
+  )
 
-      {/* Workshop entry — Phase 6's own follow-up (dock had no way in from
-          Home). Renders nothing when idle-with-no-flow, running (the dock
-          already owns that state) or video mode. */}
-      <MobileWorkshopEntry />
-
+  const supportingCards = (
+    <>
       {/* Supporting cards — collapsed by default (handoff: "the board was
-          five scrolls long before this"). */}
+        five scrolls long before this"). */}
       <div className="mt-4">
         <Button
           type="button"
@@ -309,9 +357,13 @@ export function MobileHomeBoard({
           </div>
         )}
       </div>
+    </>
+  )
 
+  const relatedRow = (
+    <>
       {/* Related on this site — desktop parity (PersonaBoardView): the variant's
-          modules, workshops and Command Center tools (src/data/boardRelatedLinks.ts). */}
+        modules, workshops and Command Center tools (src/data/boardRelatedLinks.ts). */}
       {relatedLinks.length > 0 && (
         <div className="mt-4">
           <h2 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
@@ -339,6 +391,145 @@ export function MobileHomeBoard({
           </div>
         </div>
       )}
+    </>
+  )
+
+  const workshopEntry = (
+    <>
+      {/* Workshop entry — Phase 6's own follow-up (dock had no way in from
+        Home). Renders nothing when idle-with-no-flow, running (the dock
+        already owns that state) or video mode. */}
+      <MobileWorkshopEntry />
+    </>
+  )
+
+  if (decision) {
+    const personaData = PERSONAS[persona]
+    return (
+      <div className="px-4 pb-4 pt-4" data-testid="exec-decision-mode">
+        {headerRow}
+        {variantChips}
+        {heroText}
+
+        {/* Your next step — the one thing this board asks of a sponsor. */}
+        <section
+          className="glass-panel mt-4 flex flex-col gap-2.5 border-primary/40 bg-primary/5 p-3.5"
+          aria-labelledby={nextHeadingId}
+          data-testid="exec-next-step"
+        >
+          <h2
+            id={nextHeadingId}
+            className="text-[10px] font-bold uppercase tracking-wide text-primary-legible"
+          >
+            Your next step
+          </h2>
+          <Button
+            type="button"
+            variant="gradient"
+            data-testid="exec-next-step-link"
+            onClick={() => {
+              logRoleBoardCtaClick(persona, active.id, 'decision_next_href', decision.nextHref)
+              navigate(decision.nextHref)
+            }}
+            className="h-11 w-full rounded-[10px] text-[13.5px] font-bold"
+          >
+            {decision.nextLabel}
+            <ArrowRight size={16} aria-hidden="true" />
+          </Button>
+          <p className="text-[12px] text-muted-foreground">
+            After that:{' '}
+            <Link
+              to={decision.afterHref}
+              data-testid="exec-after-that-link"
+              onClick={() =>
+                logRoleBoardCtaClick(persona, active.id, 'decision_after_href', decision.afterHref)
+              }
+              className="font-semibold text-primary-legible underline underline-offset-4"
+            >
+              {decision.afterLabel}
+            </Link>
+          </p>
+        </section>
+
+        {workshopEntry}
+
+        {/* Track strip — the essentials only; the full path is optional. */}
+        <div className="mt-5 border-t border-border pt-4" data-testid="exec-essentials-track">
+          <h2 className="text-[12.5px] font-bold text-foreground">
+            Background, if you want it: {personaData.essentials.length} essentials,{' '}
+            {formatTrackMinutes(personaData.essentialsMinutes)}
+          </h2>
+          <ul className="mt-2.5 flex flex-wrap gap-1.5">
+            {essentialsTrackChips(persona, board.trackChips).map((chip, i) => {
+              const moduleId = personaData.essentials[i]
+              return (
+                <li key={chip}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => navigate(`/learn/${moduleId}`)}
+                    className="h-auto rounded-full border border-border bg-muted/30 px-2.5 py-1 text-[10.5px] font-semibold text-muted-foreground"
+                  >
+                    {chip}
+                  </Button>
+                </li>
+              )
+            })}
+          </ul>
+          <Link
+            to={FULL_PATH_HREF}
+            data-testid="exec-full-path-link"
+            className="mt-2.5 inline-block text-[11px] text-muted-foreground underline underline-offset-4"
+          >
+            Full path, optional — {fullPathModuleCount(persona)} modules
+          </Link>
+        </div>
+
+        {/* Everything else on this board, folded — nothing removed. */}
+        <div className="mt-5 border-t border-border pt-3">
+          <Button
+            type="button"
+            variant="ghost"
+            aria-expanded={moreOpen}
+            aria-controls={moreRegionId}
+            data-testid="exec-more-toggle"
+            onClick={() => setMoreOpen((o) => !o)}
+            className="h-11 w-full justify-between rounded-[11px] border border-border bg-muted/20 px-3 text-[12px] font-semibold text-foreground"
+          >
+            More for this question
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={cn('transition-transform', moreOpen && 'rotate-180')}
+            />
+          </Button>
+          <div id={moreRegionId} hidden={!moreOpen} data-testid="exec-more-region">
+            {moreOpen && (
+              <>
+                {ctaButtons}
+                {proofChips}
+                {sideCard}
+                {supportingCards}
+                {relatedRow}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 pb-4 pt-4">
+      {headerRow}
+      {variantChips}
+      {heroText}
+      {ctaButtons}
+      {proofChips}
+      {sideCard}
+      {workshopEntry}
+      {supportingCards}
+      {relatedRow}
 
       {/* Track strip */}
       <div className="mt-5 border-t border-border pt-4">
@@ -347,7 +538,7 @@ export function MobileHomeBoard({
           <p className="mt-1 text-[10.5px] text-muted-foreground">{board.trackNote}</p>
         )}
         <ul className="mt-2.5 flex flex-wrap gap-1.5">
-          {board.trackChips.map((chip, i) => {
+          {essentialsTrackChips(persona, board.trackChips).map((chip, i) => {
             const moduleId = PERSONAS[persona].essentials[i]
             return (
               <li key={chip}>

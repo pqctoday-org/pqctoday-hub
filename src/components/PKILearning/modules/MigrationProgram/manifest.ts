@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'migration-program',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-039',
   title: 'Migration Program Mgmt',
   description:
@@ -13,7 +13,7 @@ const manifest: ModuleManifest = {
     'Discovery, prioritization, rollout, validation: this is the operating model that turns a PQC mandate into shipped systems.',
   difficulty: 'intermediate',
   frameworkPhase: 'p4',
-  track: 'Executive',
+  track: 'Governance & Risk',
   trackOrder: 6,
   learnSections: [
     { id: 'roadmap', label: 'Program Overview' },

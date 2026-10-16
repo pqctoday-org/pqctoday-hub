@@ -47,8 +47,9 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   developer:
     // ACCURACY-0705: 'Standardized' isn't a real filter value (see
     // AlgorithmFilters.tsx STATUS_ITEMS) — this instructed users into a
-    // zero-result filter. 'Certified' is the actual status value.
-    "Filter by 'Certified' status and compare key/signature sizes — performance varies 10× across families.",
+    // zero-result filter. 'Certified' is the status id; its label reads
+    // 'Standardised or selected'.
+    'Filter Status = Standardised or selected and compare key/signature sizes — performance varies 10× across families.',
   architect:
     'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
   grc: 'Use the Transition tab to see certified replacements for your classical algorithms — certified status alone does not establish compliance; confirm applicability against your obligations register.',
@@ -56,7 +57,7 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
   'cert-engineer':
     'The Validation tab opens first: known-answer tests you can run, and implementation-attack notes per family. A CAVP algorithm validation is the prerequisite for a module certificate, not the certificate itself.',
-  ops: 'Filter Status = Certified and look for Production deployment chips on Protocol Support — these are the algorithms safe to deploy in OpenSSL, nginx and HSMs today.',
+  ops: "Filter Status = Standardised or selected, then look for Production deployment chips on Protocol Support. That bucket also holds FIPS-pending and non-US picks, so check each row's standard before you deploy it, and check your product's own validation for approved use.",
   curious:
     'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
 }
@@ -560,10 +561,12 @@ export function AlgorithmsView() {
             {algorithmData.length || 'Dozens of'} algorithms — three you actually need to know
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-            NIST selected three post-quantum algorithms in 2024 (FIPS 203 / 204 / 205): one for key
-            exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a hash-based backup
-            (SLH-DSA). Everything else on this page is either a classical algorithm being retired or
-            a candidate still in standardisation.
+            NIST published its first three post-quantum standards in August 2024 (FIPS 203 / 204 /
+            205): one for key exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a
+            hash-based backup (SLH-DSA). The rest of this page also covers hash-based signatures
+            already standardised for firmware (LMS / XMSS), algorithms selected but not yet
+            published (FN-DSA, HQC), other countries&apos; standards, and the classical algorithms
+            being retired.
           </p>
           <ul className="text-sm text-foreground/90 space-y-2 mb-5">
             <li>
@@ -576,7 +579,8 @@ export function AlgorithmsView() {
             </li>
             <li>
               <strong className="text-primary">SLH-DSA-SHA2-128s</strong> — hash-based backup
-              signature for the highest-security scenarios. Signature ~7.8 KB.
+              signature whose security rests only on hash functions. Much larger signatures: ~7.8
+              KB.
             </li>
           </ul>
           <div className="flex flex-col sm:flex-row gap-2">

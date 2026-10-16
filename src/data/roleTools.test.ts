@@ -32,3 +32,25 @@ describe('toolsForRole (round 9, wave 1.3)', () => {
     }
   })
 })
+
+describe('Command Center tools that name a role', () => {
+  it('counts only tools whose audience is the role; a role without one names none', () => {
+    for (const p of PERSONA_IDS) {
+      const r = toolsForRole(p)
+      for (const t of r.businessNamingRole) expect(r.business, `${p}: ${t.id}`).toContain(t)
+    }
+    // The researcher's Command Center tools are suggestions, not tools written for it.
+    const researcher = toolsForRole('researcher')
+    expect(researcher.businessNamingRole).toEqual([])
+    expect(researcher.business.map((t) => t.id)).toEqual([
+      'crqc-scenario',
+      'crypto-vulnerability-watch',
+    ])
+    // The developer's sequence includes business-audience tools that do not name it.
+    const developer = toolsForRole('developer')
+    const named = developer.businessNamingRole.map((t) => t.id)
+    expect(named).toContain('crypto-api-refactor-audit')
+    expect(named).not.toContain('compliance-checklist')
+    expect(developer.businessNamingRole.every((t) => t.audience === 'developer')).toBe(true)
+  })
+})

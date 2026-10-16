@@ -7,7 +7,7 @@ import { useTLSStore } from '@/store/tls-learning.store'
 // Key-share sizes (client share / server share in bytes) per group.
 // Keys match the canonical group names stored in tls-learning.store.
 // Hybrids carry both components: e.g. X25519MLKEM768 = ML-KEM-768 ek 1,184 + X25519 32.
-// Source: FIPS 203, RFC 7748, draft-ietf-tls-ecdhe-mlkem.
+// Source: FIPS 203, RFC 7748, RFC 10024.
 const GROUP_KEY_SHARE: Record<string, { ek: number; ct: number }> = {
   X25519MLKEM768: { ek: 1216, ct: 1120 },
   SecP256r1MLKEM768: { ek: 1249, ct: 1153 },
@@ -36,7 +36,7 @@ const MESSAGES = [
   {
     label: 'ClientHello',
     sublabel: '+ key_share (encapsulation key), supported_groups',
-    rfcRef: 'RFC 8446 §4.1.1',
+    rfcRef: 'RFC 9846 §4.1.2',
     direction: 'right' as const,
     encrypted: false,
     mtls: false,
@@ -44,7 +44,7 @@ const MESSAGES = [
   {
     label: 'ServerHello',
     sublabel: '+ key_share (ciphertext for KEM / ECDH response)',
-    rfcRef: 'RFC 8446 §4.1.3',
+    rfcRef: 'RFC 9846 §4.1.3',
     direction: 'left' as const,
     encrypted: false,
     mtls: false,
@@ -52,7 +52,7 @@ const MESSAGES = [
   {
     label: '{EncryptedExtensions}',
     sublabel: '',
-    rfcRef: 'RFC 8446 §4.3.1',
+    rfcRef: 'RFC 9846 §4.3.1',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -60,7 +60,7 @@ const MESSAGES = [
   {
     label: '{CertificateRequest}',
     sublabel: 'mTLS: server requests client cert',
-    rfcRef: 'RFC 8446 §4.3.2',
+    rfcRef: 'RFC 9846 §4.3.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: true,
@@ -68,7 +68,7 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Server identity',
-    rfcRef: 'RFC 8446 §4.4.2',
+    rfcRef: 'RFC 9846 §4.4.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -76,7 +76,7 @@ const MESSAGES = [
   {
     label: '{CertificateVerify}',
     sublabel: 'Signature proof (ML-DSA / ECDSA / RSA-PSS / Ed25519)',
-    rfcRef: 'RFC 8446 §4.4.3',
+    rfcRef: 'RFC 9846 §4.4.3',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -84,7 +84,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Server handshake MAC',
-    rfcRef: 'RFC 8446 §4.4.4',
+    rfcRef: 'RFC 9846 §4.4.4',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -92,7 +92,7 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Client identity (mTLS)',
-    rfcRef: 'RFC 8446 §4.4.2',
+    rfcRef: 'RFC 9846 §4.4.2',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -100,7 +100,7 @@ const MESSAGES = [
   {
     label: '{CertificateVerify}',
     sublabel: 'Client signature (mTLS)',
-    rfcRef: 'RFC 8446 §4.4.3',
+    rfcRef: 'RFC 9846 §4.4.3',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -108,7 +108,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Client handshake MAC',
-    rfcRef: 'RFC 8446 §4.4.4',
+    rfcRef: 'RFC 9846 §4.4.4',
     direction: 'right' as const,
     encrypted: true,
     mtls: false,
@@ -116,7 +116,7 @@ const MESSAGES = [
   {
     label: 'Application Data',
     sublabel: 'Encrypted with traffic keys',
-    rfcRef: 'RFC 8446 §7.3',
+    rfcRef: 'RFC 9846 §7.3',
     direction: 'both' as const,
     encrypted: true,
     mtls: false,

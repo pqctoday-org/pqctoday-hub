@@ -48,4 +48,27 @@ describe('OpenSSLStudioView Tabs', () => {
 
     expect(screen.getByRole('button', { name: /terminal/i })).toBeInTheDocument()
   })
+
+  it('opens on the Workbench when a ?cmd= link names a command', () => {
+    render(
+      <MemoryRouter initialEntries={['/openssl?cmd=genpkey']}>
+        <OpenSSLStudioView />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByRole('tab', { name: /workbench/i })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: /learn/i })).toHaveAttribute('aria-selected', 'false')
+    expect(screen.queryByText('OpenSslLearnView')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /terminal/i })).toBeInTheDocument()
+  })
+
+  it('ignores ?cmd= when embedded (the embedded studio keeps its own state)', () => {
+    render(
+      <MemoryRouter initialEntries={['/playground/openssl-studio?cmd=genpkey']}>
+        <OpenSSLStudioView embedded />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('OpenSslLearnView')).toBeInTheDocument()
+  })
 })

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileHomeBoard } from './MobileHomeBoard'
 import { PERSONA_JOURNEY_BOARD_VARIANTS, resolveRoleBoardVariant } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { EXECUTIVE_DECISION_STEPS } from '@/data/executiveDecisionMode'
+import { PERSONAS } from '@/data/learningPersonas'
+
+const DECISION_MODE_FLAG = 'pqc-feature-exec-decision-mode'
 
 function renderBoard(props: Partial<React.ComponentProps<typeof MobileHomeBoard>> = {}) {
   return render(
@@ -14,7 +18,10 @@ function renderBoard(props: Partial<React.ComponentProps<typeof MobileHomeBoard>
   )
 }
 
+// The full board layout: every role, and executive with decision mode off.
 describe('MobileHomeBoard — persona selected', () => {
+  beforeEach(() => localStorage.setItem(DECISION_MODE_FLAG, '0'))
+
   it('renders all six real scenario chips for the persona, order-1 active by default', () => {
     renderBoard({ persona: 'executive' })
     const variants = PERSONA_JOURNEY_BOARD_VARIANTS.executive
@@ -114,5 +121,71 @@ describe('MobileHomeBoard — no persona (skipped personalization)', () => {
     renderBoard({ persona: null, onOpenRoleSwitch })
     fireEvent.click(screen.getByRole('button', { name: 'Pick a role' }))
     expect(onOpenRoleSwitch).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('MobileHomeBoard — executive decision mode (on by default)', () => {
+  it.each(PERSONA_JOURNEY_BOARD_VARIANTS.executive.map((v) => v.id))(
+    '%s: shows the next step and one "after that" link',
+    (variantId) => {
+      renderBoard({ persona: 'executive', variantId })
+      // eslint-disable-next-line security/detect-object-injection -- variantId comes from the real variant list
+      const step = EXECUTIVE_DECISION_STEPS[variantId]
+      const board = resolveRoleBoardVariant('executive', variantId).board
+      expect(screen.getByText(board.headline)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: step.nextLabel })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: step.afterLabel })).toHaveAttribute(
+        'href',
+        step.afterHref
+      )
+    }
+  )
+
+  it('shows the essentials and the full path as a text link', () => {
+    renderBoard({ persona: 'executive', variantId: 'mandate' })
+    const track = screen.getByTestId('exec-essentials-track')
+    const board = resolveRoleBoardVariant('executive', 'mandate').board
+    for (const chip of board.trackChips) {
+      expect(within(track).getByText(chip)).toBeInTheDocument()
+    }
+    const fullCount = PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length
+    expect(within(track).getByRole('link')).toHaveTextContent(
+      `Full path, optional — ${fullCount} modules`
+    )
+  })
+
+  it('folds CTAs, proof chips, side card, cards and related links under "More"', () => {
+    renderBoard({ persona: 'executive', variantId: 'mandate' })
+    const board = resolveRoleBoardVariant('executive', 'mandate').board
+    const toggle = screen.getByRole('button', { name: /More for this question/ })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveAttribute('aria-controls')
+    expect(screen.queryByText(board.sideCard.punchline)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: board.ctaPrimary })).not.toBeInTheDocument()
+    expect(screen.queryByRole('list', { name: 'Proof points' })).not.toBeInTheDocument()
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText(board.sideCard.punchline)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: board.ctaPrimary })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Proof points' })).toBeInTheDocument()
+    expect(screen.getByText('Related on this site')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(board.gridTitle) }))
+    expect(screen.getByText(board.gridCards[0].title)).toBeInTheDocument()
+  })
+
+  it('switching the flag off restores the full board', () => {
+    localStorage.setItem(DECISION_MODE_FLAG, '0')
+    renderBoard({ persona: 'executive', variantId: 'mandate' })
+    expect(screen.queryByTestId('exec-decision-mode')).not.toBeInTheDocument()
+    const board = resolveRoleBoardVariant('executive', 'mandate').board
+    expect(screen.getByText(board.sideCard.punchline)).toBeInTheDocument()
+  })
+
+  it('other roles are unaffected', () => {
+    renderBoard({ persona: 'grc' })
+    expect(screen.queryByTestId('exec-decision-mode')).not.toBeInTheDocument()
+    const board = resolveRoleBoardVariant('grc', undefined).board
+    expect(screen.getByText(board.sideCard.punchline)).toBeInTheDocument()
   })
 })

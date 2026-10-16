@@ -21,7 +21,10 @@ interface RoleToolsRowProps {
 
 export function RoleToolsRow({ personaId }: RoleToolsRowProps) {
   const [open, setOpen] = useState(false)
-  const { playground, business } = toolsForRole(personaId)
+  const { playground, business, businessNamingRole } = toolsForRole(personaId)
+  // Only tools whose registry audience is this role "name" it; the rest of
+  // the Command Center list is the role's suggested starting sequence.
+  const suggested = business.length - businessNamingRole.length
   const all = [
     ...playground.map((t) => ({
       key: `pg-${t.id}`,
@@ -51,9 +54,15 @@ export function RoleToolsRow({ personaId }: RoleToolsRowProps) {
       >
         Tools for this role
       </h2>
-      <p className="mt-1 text-xs text-muted-foreground">
-        {playground.length} Playground {playground.length === 1 ? 'tool' : 'tools'} and{' '}
-        {business.length} Command Center {business.length === 1 ? 'tool' : 'tools'} name this role.
+      <p className="mt-1 text-xs text-muted-foreground" data-testid="role-tools-counts">
+        {playground.length} Playground {playground.length === 1 ? 'tool' : 'tools'}
+        {businessNamingRole.length > 0
+          ? ` and ${businessNamingRole.length} Command Center ${businessNamingRole.length === 1 ? 'tool' : 'tools'}`
+          : ''}{' '}
+        name this role.
+        {suggested > 0
+          ? ` ${suggested} ${businessNamingRole.length > 0 ? 'more ' : ''}Command Center ${suggested === 1 ? 'tool is a' : 'tools are'} suggested starting ${suggested === 1 ? 'point' : 'points'}.`
+          : ''}
       </p>
       <ul className="mt-3 flex flex-wrap gap-2" aria-label="Tools for this role">
         {shown.map((t) => (

@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { RecommendedPathBanner } from './RecommendedPathBanner'
 import { useModuleStore } from '../../store/useModuleStore'
-import { PERSONAS } from '@/data/learningPersonas'
+import { PERSONAS, pathModuleCount } from '@/data/learningPersonas'
 
 describe('RecommendedPathBanner', () => {
   beforeEach(() => {
@@ -21,7 +21,8 @@ describe('RecommendedPathBanner', () => {
     )
 
     const persona = PERSONAS.executive
-    const moduleCount = persona.pathItems.filter((p) => p.type === 'module').length
+    // The shared count: path modules, the trailing quiz excluded.
+    const moduleCount = pathModuleCount('executive')
     const checkpointCount = persona.pathItems.filter((p) => p.type === 'checkpoint').length
     const expectedHours = `~${Math.round(persona.estimatedMinutes / 60)}h`
 

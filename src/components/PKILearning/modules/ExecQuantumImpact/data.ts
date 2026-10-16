@@ -26,21 +26,21 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       id: 'regulatory-deadlines',
       title: 'Regulatory Compliance Deadlines',
       description:
-        'CNSA 2.0, NIS2, DORA, and sector-specific regulations mandate PQC migration on fixed timelines.',
+        'CNSA 2.0 (national security systems) and EO 14412 (US federal civilian systems) set dated PQC milestones, and the EU PQC roadmap targets 2030/2035. NIS2 and DORA impose cyber risk-management duties that reach the same systems, but no PQC deadline.',
       severity: 'critical',
       timeframe: '2025-2035 deadlines',
       exampleScenario:
-        'Your US government contracts require CNSA 2.0 compliance by 2030 for software/firmware. Non-compliance means contract loss, re-compete exclusion, and potential debarment.',
+        'You sell into US national security systems: CNSA 2.0 expects exclusive use of its algorithms for software and firmware signing by 2030. If you sell to federal civilian agencies, EO 14412 directs a FAR rule on contractor PQC requirements, so procurement terms may change once that rule is final.',
     },
     {
       id: 'board-liability',
-      title: 'Board & Fiduciary Liability',
+      title: 'Board Oversight & Disclosure',
       description:
-        'Directors face increasing personal liability for cybersecurity failures. Quantum risk is a known and documented threat.',
+        'Boards are expected to oversee material cyber risk, and US-listed companies must describe how they manage and govern it. Quantum risk is now publicly documented, so it belongs in that oversight. Whether directors carry personal exposure depends on jurisdiction and facts — a question for counsel.',
       severity: 'high',
       timeframe: 'Growing annually',
       exampleScenario:
-        'A shareholder derivative suit alleges board negligence after a post-quantum data breach. The plaintiffs point to NIST advisories from 2024 warning organizations to begin migration, arguing the board had constructive notice.',
+        'Illustrative scenario, not legal advice: a shareholder derivative suit alleges board negligence after a post-quantum data breach. The plaintiffs point to NIST advisories from 2024 warning organizations to begin migration, arguing the board had constructive notice.',
     },
     {
       id: 'vendor-supply-chain',
@@ -56,21 +56,21 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       id: 'competitive-disadvantage',
       title: 'Competitive Disadvantage',
       description:
-        'Early PQC adopters gain trust advantages in regulated markets; laggards face customer attrition.',
+        'Buyers in regulated markets are starting to ask suppliers about PQC readiness. Early movers may gain a trust advantage; how much is not yet measured.',
       severity: 'medium',
       timeframe: '2026-2030',
       exampleScenario:
-        'A competitor wins a major government contract partly because they demonstrated PQC-ready infrastructure. Your RFP response could not make the same claim.',
+        'Illustrative scenario: a competitor wins a major government contract partly because they demonstrated PQC-ready infrastructure. Your RFP response could not make the same claim.',
     },
     {
       id: 'insurance-cost',
-      title: 'Rising Cyber Insurance Costs',
+      title: 'Cyber Insurance Questions',
       description:
-        'Insurers are beginning to factor quantum risk into policy pricing and exclusion clauses.',
+        'No published evidence yet shows insurers pricing or excluding quantum risk. It is worth asking your broker whether renewal questionnaires cover cryptographic inventory or a PQC plan.',
       severity: 'medium',
       timeframe: '2026-2030',
       exampleScenario:
-        'Your cyber insurance renewal includes a new quantum-risk questionnaire. Organizations without a documented PQC migration plan face 15-25% premium increases or coverage exclusions.',
+        'Illustrative scenario: your broker asks whether you hold a cryptographic inventory and a PQC migration plan. A documented answer is cheap to prepare now and avoids an open question at renewal.',
     },
   ],
 
@@ -125,7 +125,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       category: 'Risk & Strategy',
       skill: 'PQC Compliance Landscape',
       description:
-        'Understanding of CNSA 2.0, NIS2, DORA, and sector-specific PQC mandates and their timelines.',
+        'Understanding of which rules set dated PQC milestones (CNSA 2.0, EO 14412, the EU PQC roadmap) and which set general cyber-resilience duties (NIS2, DORA).',
       targetLevel: 'intermediate',
       linkedModules: [
         { id: 'compliance-strategy', label: 'Compliance & Regulatory Strategy' },

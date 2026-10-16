@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
-import { ExternalLink, Loader2, Play } from 'lucide-react'
+import { Download, ExternalLink, Loader2, Play } from 'lucide-react'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
@@ -25,6 +25,11 @@ import {
 } from '../PKILearning/modules/TLSBasics/utils/defaultCertificates'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
+import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
+import { bundleFilename, downloadBlob } from '@/services/exportBundle'
+import { runManifestToMarkdown } from '@/services/runManifest'
+import { SaveRunToEvidence } from '@/components/shared/SaveRunToEvidence'
+import { tlsRunManifest, TLS_SIMULATOR_VERSION } from './tlsRunManifest'
 
 export const TLSSimulatorTab: React.FC = () => {
   const {
@@ -40,7 +45,39 @@ export const TLSSimulatorTab: React.FC = () => {
     clearSession,
     clientMessage,
     serverMessage,
+    runHistory,
   } = useTLSStore()
+  const runStartedAt = useRef<string>('')
+  // The record must describe THIS run: the history entry is added just after
+  // the result renders, so ignore an older entry until the new one exists.
+  const newest = runHistory[runHistory.length - 1]
+  const lastRun =
+    results && newest && new Date(newest.timestamp).toISOString() >= runStartedAt.current
+      ? newest
+      : undefined
+
+  // "Save what this run showed": a small file with the run's settings, results
+  // and what it does not prove (curious journey review, 16 Oct 2026).
+  const buildRunRecord = useCallback(() => {
+    if (!lastRun) return null
+    return tlsRunManifest({
+      run: lastRun,
+      clientConfig,
+      serverConfig,
+      toolVersion: TLS_SIMULATOR_VERSION,
+      startedAt: runStartedAt.current || new Date(lastRun.timestamp).toISOString(),
+      finishedAt: new Date(lastRun.timestamp).toISOString(),
+    })
+  }, [lastRun, clientConfig, serverConfig])
+
+  const saveRunRecord = useCallback(() => {
+    const manifest = buildRunRecord()
+    if (!manifest) return
+    downloadBlob(
+      new Blob([runManifestToMarkdown(manifest)], { type: 'text/markdown' }),
+      bundleFilename('tls-demo-run', 'md')
+    )
+  }, [buildRunRecord])
 
   /* HSM mode toggle removed: it never produced a successful handshake for
    * end-users and the "HSM ON" toggle was misleading. softhsm v3 +
@@ -101,6 +138,7 @@ export const TLSSimulatorTab: React.FC = () => {
   const triggerSimulation = useCallback(async () => {
     setIsSimulating(true)
     setResults(null)
+    runStartedAt.current = new Date().toISOString()
 
     const currentCommands = [
       `CLIENT_SEND: ${clientMessage}`,
@@ -188,53 +226,78 @@ export const TLSSimulatorTab: React.FC = () => {
       {/* Citation chips + Learn cross-link */}
       <div className="glass-panel p-4 space-y-3">
         <div className="flex flex-wrap gap-1.5">
-          {[
-            { label: 'RFC 8446', href: 'https://www.rfc-editor.org/rfc/rfc8446', title: 'TLS 1.3' },
-            {
-              label: 'FIPS 203',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
-              title: 'ML-KEM',
-            },
-            {
-              label: 'FIPS 204',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
-              title: 'ML-DSA',
-            },
-            {
-              label: 'FIPS 205',
-              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
-              title: 'SLH-DSA',
-            },
-            {
-              label: 'draft-ietf-tls-hybrid-design-16',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/16/',
-              title: 'Hybrid KEX in TLS 1.3',
-            },
-            {
-              label: 'draft-ietf-tls-mlkem-07',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/07/',
-              title: 'ML-KEM Key Agreement for TLS 1.3',
-            },
-            {
-              label: 'draft-ietf-tls-mldsa-02',
-              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/02/',
-              title: 'ML-DSA for TLS 1.3',
-            },
-            {
-              label: 'BSI TR-02102-2',
-              href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html',
-              title: 'BSI TLS recommendations',
-            },
-          ].map((cite) => (
+          {(
+            [
+              {
+                label: 'RFC 9846',
+                href: 'https://www.rfc-editor.org/info/rfc9846',
+                title: 'TLS 1.3 (obsoletes RFC 8446)',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 203',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
+                title: 'ML-KEM',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 204',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
+                title: 'ML-DSA',
+                stage: 'Released',
+              },
+              {
+                label: 'FIPS 205',
+                href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
+                title: 'SLH-DSA',
+                stage: 'Released',
+              },
+              {
+                label: 'RFC 9954',
+                href: 'https://www.rfc-editor.org/info/rfc9954',
+                title: 'Hybrid key exchange in TLS 1.3 (design)',
+                stage: 'Released',
+              },
+              {
+                label: 'RFC 10024',
+                href: 'https://www.rfc-editor.org/info/rfc10024',
+                title: 'X25519MLKEM768 and other PQ/T hybrid groups for TLS 1.3',
+                stage: 'Released',
+              },
+              {
+                label: 'draft-ietf-tls-mlkem',
+                href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
+                title:
+                  'Pure ML-KEM key agreement for TLS 1.3 — approved, in the RFC Editor queue, no RFC number yet',
+                stage: 'Draft',
+              },
+              {
+                label: 'draft-ietf-tls-mldsa',
+                href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
+                title: 'ML-DSA in TLS 1.3 — approved, in the RFC Editor queue, no RFC number yet',
+                stage: 'Draft',
+              },
+              {
+                label: 'BSI TR-02102-2',
+                href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html',
+                title: 'BSI TLS recommendations',
+                stage: 'Released',
+              },
+            ] satisfies { label: string; href: string; title: string; stage: LifecycleLabel }[]
+          ).map((cite) => (
             <a
               key={cite.label}
               href={cite.href}
               target="_blank"
               rel="noopener noreferrer"
-              title={cite.title}
+              title={`${cite.title} (${cite.stage})`}
               className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors flex items-center gap-1"
             >
               {cite.label}
+              {/* Same lifecycle label the Library shows, so a draft reads as a draft. */}
+              <span className={`px-1 rounded ${LIFECYCLE_STYLES[cite.stage].badge}`}>
+                {LIFECYCLE_STYLES[cite.stage].label}
+              </span>
               <ExternalLink size={9} className="opacity-50" />
             </a>
           ))}
@@ -259,8 +322,8 @@ export const TLSSimulatorTab: React.FC = () => {
           </li>
           <li>
             <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-            X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF
-            draft-ietf-tls-ecdhe-mlkem); pure ML-KEM-512/768/1024 groups (draft-connolly-tls-mlkem)
+            X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, RFC 10024);
+            pure ML-KEM-512/768/1024 groups (draft-ietf-tls-mlkem, in the RFC Editor queue)
           </li>
           <li>
             <span className="text-status-success font-semibold">✓ Classical certs</span> — RSA-2048,
@@ -314,6 +377,18 @@ export const TLSSimulatorTab: React.FC = () => {
       </WhyThisMatters>
 
       <div className="flex justify-end gap-3">
+        {lastRun && (
+          <Button
+            variant="outline"
+            onClick={saveRunRecord}
+            className="flex items-center gap-2 px-4 py-3"
+            title="Downloads a small file with the settings, the results and what this run does not prove"
+          >
+            <Download size={16} aria-hidden="true" />
+            Save what this run showed
+          </Button>
+        )}
+        {lastRun && <SaveRunToEvidence getManifest={buildRunRecord} testId="tls-run-record" />}
         {results && (
           <Button
             variant="ghost"

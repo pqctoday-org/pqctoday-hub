@@ -82,7 +82,7 @@ const NIST_LEVEL: Record<string, string> = {
   mldsa87: 'NIST L5',
 }
 
-// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, draft-ietf-tls-ecdhe-mlkem
+// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, RFC 10024
 const GROUP_SIZE: Record<string, string> = {
   X25519: 'key share: 32 B',
   'P-256': 'key share: 65 B',
@@ -724,8 +724,8 @@ export const TLSServerPanel: React.FC = () => {
               </div>
               <p className="text-[10px] text-muted-foreground mb-2">
                 SLH-DSA (FIPS 205) is not listed: OpenSSL registers no SLH-DSA TLS signature
-                schemes, so it cannot be negotiated here. No IETF draft standardizes SLH-DSA for TLS
-                1.3 (signatures are 7–50 KB).
+                schemes, so it cannot be negotiated here. No IETF working-group draft yet specifies
+                SLH-DSA for TLS 1.3 (an individual draft exists; signatures are 7–50 KB).
               </p>
               <details className="text-xs">
                 <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">

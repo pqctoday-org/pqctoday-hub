@@ -112,6 +112,25 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   // (FIPS 140-3, CC, EUCC/eIDAS or PCI), so it sits with the other
   // conformance-evidence artifacts rather than with architecture.
   'certification-plan': 'compliance',
+  // Architecture pack, Layer 2.
+  'architecture-scope': 'governance',
+  'architecture-decision-record': 'architecture',
+  'architecture-test-plan': 'architecture',
+  'kmip-quick-run': 'architecture',
+  // IT operations pack, Layer 2.
+  'ops-scope': 'governance',
+  'hsm-capacity-plan': 'architecture',
+  'cert-capacity-plan': 'architecture',
+  'protocol-config': 'architecture',
+  'vpn-sim-run': 'architecture',
+  'ops-test-plan': 'architecture',
+  // Researcher evidence bundle: a saved run record is conformance evidence.
+  'run-manifest': 'compliance',
+  // Researcher workspace: a collection of cited sources is reference evidence.
+  'library-collection': 'compliance',
+  'claim-matrix': 'compliance',
+  'reproduction-record': 'compliance',
+  'research-question': 'compliance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -160,6 +179,31 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // Center builder. Certification is how a mitigation is evidenced, so it
   // buckets with mitigation rather than with governance.
   'certification-plan': 'mitigation',
+  // Architecture pack, Layer 2: produced in the Command Center's architecture
+  // pack panel (scope, decisions, test plan) and by the KMIP quick run.
+  'architecture-scope': 'governance',
+  'architecture-decision-record': 'migration',
+  'architecture-test-plan': 'migration',
+  'kmip-quick-run': 'mitigation',
+  // IT operations pack, Layer 2: produced in the operations pack panel (scope,
+  // test plan), the HSM and certificate capacity calculators, the SSH and TLS
+  // config generators and the VPN simulator, none of which is a Command Center
+  // builder.
+  'ops-scope': 'governance',
+  'hsm-capacity-plan': 'migration',
+  'cert-capacity-plan': 'migration',
+  'protocol-config': 'migration',
+  'vpn-sim-run': 'mitigation',
+  'ops-test-plan': 'migration',
+  // Researcher evidence bundle: a run record saved from a researcher tool
+  // (DRBG, entropy tools, TLS simulator), not from a Command Center builder.
+  'run-manifest': 'mitigation',
+  // Researcher workspace artifacts, saved from the Library and the researcher
+  // Command Center, not from a Command Center builder.
+  'library-collection': 'mitigation',
+  'claim-matrix': 'mitigation',
+  'reproduction-record': 'mitigation',
+  'research-question': 'mitigation',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

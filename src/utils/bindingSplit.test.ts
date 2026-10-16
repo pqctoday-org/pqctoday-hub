@@ -4,6 +4,7 @@ import {
   BINDING_GROUPS,
   BINDING_GROUP_META,
   BINDING_STATUSES,
+  bindingChipFor,
   bindingGroupOf,
   parseBindingStatus,
   splitByBinding,
@@ -100,5 +101,20 @@ describe('splitByBinding', () => {
 
   it('returns empty groups for an empty list', () => {
     expect(splitByBinding([])).toEqual({ binding: [], guidance: [], unclassified: [] })
+  })
+})
+
+describe('bindingChipFor', () => {
+  it('says Binding (or Binding for its scope) only in scope, and Binding for others outside it', () => {
+    expect(bindingChipFor('binding', true)).toBe('binding')
+    expect(bindingChipFor('mandatory_for_scope', true)).toBe('scoped')
+    expect(bindingChipFor('mandatory_for_scope', false)).toBe('elsewhere')
+    expect(bindingChipFor('binding', false)).toBe('elsewhere')
+  })
+
+  it('leaves guidance, drafts and unclassified alone whatever the scope', () => {
+    expect(bindingChipFor('recommendation', false)).toBe('guidance')
+    expect(bindingChipFor('draft', true)).toBe('guidance')
+    expect(bindingChipFor(undefined, false)).toBe('unclassified')
   })
 })

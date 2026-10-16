@@ -77,6 +77,9 @@ import {
   type SourceValidation,
 } from './sourceAssessment'
 import { RbgConstructionPanel } from './RbgConstructionPanel'
+import { sourceCombiningRunManifest } from '../utils/entropyRunRecords'
+import { downloadRunManifestJson } from '@/services/runRecordExport'
+import { RunRecordActions } from '@/components/shared/RunRecordActions'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
@@ -272,6 +275,12 @@ export const SourceCombiningDemo: React.FC = () => {
   const [rawA, setRawA] = useState<Uint8Array | null>(null)
   const [rawB, setRawB] = useState<Uint8Array | null>(null)
   const [onDemandA, setOnDemandA] = useState<TestResult[] | null>(null)
+  /** What the current raw samples were collected as, and when (for the run record). */
+  const [collected, setCollected] = useState<{
+    a: RawSourceCondition
+    b: RawSourceCondition
+    at: string
+  } | null>(null)
   const [onDemandB, setOnDemandB] = useState<TestResult[] | null>(null)
   /** Counterexample switch: feed a failed source's samples to the conditioner anyway. */
   const [useFailedSource, setUseFailedSource] = useState(false)
@@ -375,6 +384,7 @@ export const SourceCombiningDemo: React.FC = () => {
     (a: RawSourceCondition, b: RawSourceCondition) => {
       setRawA(simulateRawSamples(a, TOTAL_SAMPLES, getRandomBytes))
       setRawB(simulateRawSamples(b, TOTAL_SAMPLES, getRandomBytes))
+      setCollected({ a, b, at: new Date().toISOString() })
       setOnDemandA(null)
       setOnDemandB(null)
       resetPipeline()
@@ -481,6 +491,79 @@ export const SourceCombiningDemo: React.FC = () => {
         failedSourceOutputUsed,
       })
     : null
+
+  const buildRunManifestRecord = () => {
+    if (!assessment || !healthA || !healthB || !collected) return null
+    const cx = COUNTEREXAMPLES.find((c) => c.id === activeCounterexample)
+    return sourceCombiningRunManifest({
+      scenario: cx ? `Counterexample loaded: ${cx.label}` : 'Custom settings',
+      sources: [
+        {
+          name: 'Source A',
+          condition: collected.a,
+          failed: healthA.failed,
+          includedInRequest: includeA,
+          startup: healthA.startup,
+          continuous: healthA.continuous,
+        },
+        {
+          name: 'Source B',
+          condition: collected.b,
+          failed: healthB.failed,
+          includedInRequest: includeB,
+          startup: healthB.startup,
+          continuous: healthB.continuous,
+        },
+      ],
+      assumptions: {
+        independence,
+        adversaryControl,
+        failureHandling,
+        sourceValidation,
+        inputFreshness,
+        rbgClass,
+        useFailedSourceAnyway: String(useFailedSource),
+      },
+      combination: assembly,
+      conditioning: conditioningMode,
+      seedPath,
+      entropyAccount: { creditedInputBits: credited, seedEntropyBits },
+      conditionedOutputChecks: diagnostics,
+      verdict: {
+        id: assessment.verdict,
+        label: VERDICT_LABELS[assessment.verdict],
+        reasons: assessment.reasons,
+      },
+      startedAt: collected.at,
+      finishedAt: new Date().toISOString(),
+    })
+  }
+
+  const handleDownloadRunRecord = () => {
+    const manifest = buildRunManifestRecord()
+    if (manifest) downloadRunManifestJson(manifest, 'source-combining-run')
+  }
+
+  // Identifies this run for "Save to my evidence" (the builder above is not
+  // memoised): the collection time plus every setting the record carries.
+  const runRecordKey = assessment
+    ? JSON.stringify([
+        collected?.at,
+        activeCounterexample,
+        includeA,
+        includeB,
+        independence,
+        adversaryControl,
+        failureHandling,
+        sourceValidation,
+        inputFreshness,
+        rbgClass,
+        useFailedSource,
+        combinationMode,
+        conditioningMode,
+        assessment.verdict,
+      ])
+    : undefined
 
   const combineLabel = COMBINATION_LABELS[combinationMode]
   const conditionLabel = CONDITIONING_LABELS[conditioningMode]
@@ -1006,6 +1089,13 @@ export const SourceCombiningDemo: React.FC = () => {
             </ul>
           </div>
         )}
+        <RunRecordActions
+          onDownload={handleDownloadRunRecord}
+          getManifest={buildRunManifestRecord}
+          runKey={runRecordKey}
+          canDownload={!!assessment && !!collected}
+          testId="source-combining-run-record"
+        />
       </div>
 
       {/* Standards Referenced */}

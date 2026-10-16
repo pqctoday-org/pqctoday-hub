@@ -216,7 +216,9 @@ export function buildTimelineDefault(data: Data, persona: PersonaId): string {
     }
   }
   const yearsRemaining = year - new Date().getFullYear()
-  const base = `${country} has a binding PQC deadline targeting ${year} (${yearsRemaining} years out).`
+  const base = data.migrationDeadlineBinding
+    ? `${country} has a binding PQC deadline in ${year} (${yearsRemaining} years out).`
+    : `${country}'s next published PQC milestone is ${year} (${yearsRemaining} years out) - a target or guidance date, not a binding deadline; confirm which obligations apply to you.`
   switch (persona) {
     case 'developer':
       return `${base} Recommended cadence: complete library upgrades + hybrid PoC in Year 1; progressive rollout + CBOM automation in Year 2; leave >=12 months for regression and interop testing before the deadline.`
@@ -359,7 +361,7 @@ export function buildPeerBenchmarkDefault(data: Data): string {
   )
   if (data.migrationDeadlineYear) {
     parts.push(
-      `The ${data.migrationDeadlineYear} deadline is the anchor - peers that started in year T-4 or earlier are on track; later starters are showing schedule slippage.`
+      `The ${data.migrationDeadlineYear} milestone is the anchor - work back from it to set the program start, allowing for procurement, testing and vendor lead times.`
     )
   }
   parts.push(
