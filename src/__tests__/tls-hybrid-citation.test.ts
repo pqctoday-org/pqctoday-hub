@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The hybrid TLS key-exchange specification is RFC 10024 (X25519MLKEM768,
  * SecP256r1MLKEM768, SecP384r1MLKEM1024). Lesson text, sample data and

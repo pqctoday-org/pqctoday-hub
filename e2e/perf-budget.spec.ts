@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Page-load budget for the six pages most readers land on, measured against the
  * production build (`vite preview`).

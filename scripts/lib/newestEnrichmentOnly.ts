@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Production builds ship only the newest dated file of an enrichment family
  * whose newest file already holds every entry of the older ones.
