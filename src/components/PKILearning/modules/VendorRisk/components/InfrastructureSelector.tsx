@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router'
-import { Package, ExternalLink, Trash2, CheckCircle, ShieldAlert } from 'lucide-react'
+import { Package, ExternalLink, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMigrateSelectionStore, useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/data/infrastructureLayers'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
 
 /** Resolve product keys to SoftwareItem objects, grouped by infrastructure layer */
 function resolveSelections(keys: string[]): Map<string, SoftwareItem[]> {
@@ -31,28 +32,6 @@ function resolveSelections(keys: string[]): Map<string, SoftwareItem[]> {
     }
   }
   return grouped
-}
-
-function renderFipsBadge(status: string) {
-  const lower = (status || '').toLowerCase()
-  const isFipsCertified = lower.includes('fips 140') || lower.includes('fips 203')
-  const isPartial = !isFipsCertified && lower.startsWith('yes')
-
-  if (isFipsCertified) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success text-status-success">
-        <CheckCircle size={9} /> FIPS
-      </span>
-    )
-  }
-  if (isPartial) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-status-warning text-status-warning">
-        <ShieldAlert size={9} /> Partial
-      </span>
-    )
-  }
-  return null
 }
 
 function renderPqcBadge(support: string) {
@@ -177,7 +156,12 @@ export const InfrastructureSelector: React.FC = () => {
                           {item.softwareName}
                         </span>
                         {renderPqcBadge(item.pqcSupport)}
-                        {renderFipsBadge(item.fipsValidated)}
+                        <FipsStatusBadge
+                          fipsValidated={item.fipsValidated}
+                          productId={item.productId}
+                          softwareName={item.softwareName}
+                          hideNegative
+                        />
                       </div>
                       <Button
                         variant="ghost"
