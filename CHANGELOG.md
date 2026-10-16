@@ -130,6 +130,7 @@ Each role now starts from its own questions and downloads (including a new opera
 - **Microsoft's post-quantum features in Windows added to its roadmap** [view:/migrate] [persona:architect] [persona:executive]: post-quantum algorithms are generally available in Windows 11 and Windows Server 2025, with ML-DSA certificates in AD Certificate Services; hybrid TLS key exchange and composite algorithms in the APIs are in preview.
 - **Roadmap summaries filled in for AWS and Futurex** [view:/migrate] [persona:architect].
 - **Compliance bases and scope** [view:/compliance] [persona:grc] [persona:cert-engineer]: DISA STIG, Brazil's BACEN Resolution 4.893, UN Regulation No. 155 (UN-ECE WP.29) and PCI DSS now say who they apply to in their own words and name their basis; the evidence for DISA STIG, PCI DSS and the DoD instruction names where its saved copy came from.
+- **Library: a research-topics field** [view:/library] [persona:researcher]: each Library entry now has a research-topics field, empty until entries are tagged.
 - **ARINC 653P0-4 in the Library** [view:/library] [persona:researcher] [persona:architect]: the current edition of ARINC 653 Part 0 replaces the earlier one.
 - **Quiz and lesson answers corrected** [view:/learn/quiz] [persona:curious] [persona:grc]: two quiz explanations and three lesson Q&A answers (VPN and SSH, operations) are corrected.
 
