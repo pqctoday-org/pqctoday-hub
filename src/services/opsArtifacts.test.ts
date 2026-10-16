@@ -115,7 +115,8 @@ describe('protocol configuration', () => {
       config,
       source: 'PQC SSH Config Generator',
     })
-    expect(md).toContain('- Needs: OpenSSH 9.9+ on this server')
+    // The whole requirement, not a line cut mid-sentence.
+    expect(md).toContain('- Needs: OpenSSH 9.9+\n')
     expect(md).toContain(`- How it was checked: ${NOT_MACHINE_CHECKED}`)
     expect(md).toContain('```\n# PQC SSH Server Configuration')
   })

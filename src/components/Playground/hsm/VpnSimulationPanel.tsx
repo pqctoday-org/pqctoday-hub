@@ -2534,6 +2534,29 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
 
+  // Every setting that shapes the exchange. The run may only be saved with the
+  // settings it was established with: `currentStep` survives changes to auth,
+  // algorithms, MTU or fragmentation, so `tunnelUp` alone would let a run be
+  // saved under settings that never ran.
+  const runSettingsKey = [
+    selectedMode,
+    kemSize,
+    authMode,
+    clientAlg,
+    clientSize,
+    clientClassAlg,
+    serverAlg,
+    serverSize,
+    serverClassAlg,
+    mtu,
+    allowFragmentation,
+  ].join('|')
+  const [establishedWith, setEstablishedWith] = useState<string | null>(null)
+  useEffect(() => {
+    setEstablishedWith((prev) => (tunnelUp ? (prev ?? runSettingsKey) : null))
+  }, [tunnelUp, runSettingsKey])
+  const runSavable = tunnelUp && establishedWith === runSettingsKey
+
   /** This exchange as a VPN simulator run for the operations pack. Saving
    * again (e.g. after changing the mode) replaces the previous run. */
   const buildRunArtifact = useCallback(() => {
@@ -4570,10 +4593,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <Cpu size={16} /> Tunnel Statistics
           </h2>
           <SaveToOperationsPack
-            key={`${selectedMode}-${kemSize}-${authMode}-${mtu}-${allowFragmentation}`}
             build={buildRunArtifact}
-            disabled={!tunnelUp}
-            disabledReason="Run the exchange until the tunnel is established, then save it."
+            disabled={!runSavable}
+            disabledReason="Run the exchange with the current settings until the tunnel is established, then save it."
             testId="vpn-sim-save-to-pack"
           />
         </div>

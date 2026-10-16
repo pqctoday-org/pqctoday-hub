@@ -61,13 +61,15 @@ MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com`
   if (mode === 'hybrid') {
     return (
       header +
-      `# Requires OpenSSH 9.9+ on this server: older versions reject the unknown
-# name mlkem768x25519-sha256 (on 9.0-9.8, delete it from the list below)
+      `# Requires OpenSSH 9.9+
+# Older versions reject the unknown name mlkem768x25519-sha256 as a config
+# error: on OpenSSH 8.5-9.8, delete it from the KexAlgorithms list below.
 
 # Key exchange algorithms — hybrid PQC + classical, in preference order
 # mlkem768x25519-sha256: ML-KEM-768 (FIPS 203) combined with X25519
 #   (OpenSSH 9.9+; the default from OpenSSH 10.0)
-# sntrup761x25519-sha512@openssh.com: Streamlined NTRU Prime with X25519 (OpenSSH 9.0+)
+# sntrup761x25519-sha512@openssh.com: Streamlined NTRU Prime with X25519
+#   (OpenSSH 8.5+; the default from 9.0 to 9.9)
 # curve25519-sha256: classical fallback for clients without PQC support
 KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com,curve25519-sha256
 
@@ -98,7 +100,7 @@ KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com
 
 # Host key algorithms — this profile changes key exchange only.
 # OpenSSH 10.6+ enables the hybrid ssh-mldsa44-ed25519 host and user keys
-# (experimental in 10.4 under a different name; regenerate 10.4 keys).
+# (experimental in 10.4 with an @openssh.com suffix; regenerate 10.4 keys).
 HostKeyAlgorithms ssh-ed25519
 
 # Accepted public key algorithms for client authentication
@@ -138,8 +140,9 @@ Host *
   if (mode === 'hybrid') {
     return (
       header +
-      `# Requires OpenSSH 9.9+ on this client: older versions reject the unknown
-# name mlkem768x25519-sha256 (on 9.0-9.8, delete it from the list below)
+      `# Requires OpenSSH 9.9+
+# Older versions reject the unknown name mlkem768x25519-sha256 as a config
+# error: on OpenSSH 8.5-9.8, delete it from the KexAlgorithms list below.
 
 Host *
     # Key exchange algorithms — hybrid PQC + classical, in preference order
@@ -174,7 +177,8 @@ Host *
     # WARNING: servers without a PQC key exchange will reject this connection
     KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com
 
-    # Host key algorithms — ed25519 until PQC host keys are standardized
+    # Host key algorithms — this profile changes key exchange only.
+    # OpenSSH 10.6+ enables the hybrid ssh-mldsa44-ed25519 host keys.
     HostKeyAlgorithms ssh-ed25519
 
     # Public key algorithms for client authentication

@@ -16,6 +16,10 @@ import {
 } from './operationsPack'
 import { testPlanFromChecklist, testPlanMarkdown } from './architectureArtifacts'
 import { checklistFor } from '@/data/migrationTestChecklist'
+import {
+  OPERATIONS_PACK_HISTORY_ROUTE,
+  OPERATIONS_PACK_TYPES,
+} from '@/services/history/seedHistory'
 
 const now = new Date('2026-10-16T12:00:00Z')
 
@@ -39,6 +43,22 @@ describe('operations pack', () => {
     expect(pack.markdown).toContain('https://example.test/business/tools/deployment-playbook')
     expect(pack.markdown).toContain('https://example.test/playground/hsm-capacity')
     expect(pack.markdown).toContain(OPERATIONS_PACK_DISCLAIMER)
+  })
+
+  it('history links for its own artifact types open the pack', () => {
+    expect(OPERATIONS_PACK_HISTORY_ROUTE).toBe(OPERATIONS_PACK_PANEL_PATH)
+    const own = OPERATIONS_PACK_SECTIONS.map((s) => s.type).filter(
+      (t) =>
+        ![
+          'refresh-cycle-alignment',
+          'infra-modernization-plan',
+          'migration-roadmap',
+          'deployment-playbook',
+          'kpi-tracker',
+          'migration-verification',
+        ].includes(t)
+    )
+    expect([...OPERATIONS_PACK_TYPES].sort()).toEqual([...own].sort())
   })
 
   it('every section links to a page that exists', () => {
@@ -111,6 +131,7 @@ describe('tables to CSV', () => {
     const tables = extractMarkdownTables(md)
     expect(tables).toHaveLength(2)
     expect(tables[0]).toEqual({
+      section: 'Results',
       heading: 'Results',
       header: ['Scenario', 'HSMs'],
       rows: [
@@ -121,6 +142,50 @@ describe('tables to CSV', () => {
     const files = tablesToCsvFiles(tables)
     expect(files.map((f) => f.path)).toEqual(['tables/results.csv', 'tables/results-2.csv'])
     expect(files[0].content).toBe('Scenario,HSMs\nToday,2\nAfter,50')
+  })
+
+  it('reads delimiter rows with colons and single dashes (GFM), as migration verification writes them', () => {
+    const md = ['| System | Negotiation | Proof |', '|---|:--:|:-:|', '| api | yes | no |'].join(
+      '\n'
+    )
+    expect(extractMarkdownTables(md)[0].rows).toEqual([['api', 'yes', 'no']])
+  })
+
+  it('names each CSV after its pack section and heading', () => {
+    const { markdown } = buildOperationsPack({
+      now,
+      documents: [
+        doc({
+          type: 'hsm-capacity-plan',
+          moduleId: 'hsm-capacity',
+          data: '# HSM capacity plan\n\n## Results\n\n| A | B |\n|---|---|\n| 1 | 2 |',
+        }),
+        doc({
+          type: 'cert-capacity-plan',
+          moduleId: 'cert-capacity',
+          data: '# Certificate capacity plan\n\n## Results\n\n| A | B |\n|---|---|\n| 3 | 4 |',
+        }),
+      ],
+    })
+    const paths = tablesToCsvFiles(extractMarkdownTables(markdown)).map((f) => f.path)
+    expect(paths).toContain('tables/hsm-capacity-plan--results.csv')
+    expect(paths).toContain('tables/certificate-capacity-plan--results.csv')
+  })
+
+  it('keeps configuration comments inside code fences as they were generated', () => {
+    const config = '# Requires OpenSSH 9.9+\nKexAlgorithms mlkem768x25519-sha256'
+    const { markdown } = buildOperationsPack({
+      now,
+      documents: [
+        doc({
+          type: 'protocol-config',
+          moduleId: 'vpn-ssh-pqc:ssh-config:sshd_config:hybrid',
+          data: `# Configuration: OpenSSH\n\n\`\`\`\n${config}\n\`\`\`\n`,
+        }),
+      ],
+    })
+    expect(markdown).toContain(`\n${config}\n`)
+    expect(markdown).toContain('#### Configuration: OpenSSH')
   })
 
   it('zips the pack, a README and one CSV per table', () => {

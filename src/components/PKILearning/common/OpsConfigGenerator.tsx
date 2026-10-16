@@ -68,6 +68,30 @@ export const OpsConfigGenerator: React.FC<OpsConfigGeneratorProps> = ({
 
   const configOutput = useMemo(() => generateConfig(values), [generateConfig, values])
 
+  /** The current fragment as a `protocol-config` artifact, one per product
+   * and profile. Memoised on the selections, so the save button knows when
+   * the fragment on screen differs from the one saved. */
+  const buildPackArtifact = useMemo(() => {
+    if (!pack) return null
+    return () => {
+      const d = pack.describe(values)
+      const inputs: ProtocolConfigInputs = {
+        ...d,
+        minimumVersion: requirementsFrom(configOutput),
+        checked: NOT_MACHINE_CHECKED,
+        config: configOutput,
+        source: pack.source,
+      }
+      return {
+        type: 'protocol-config' as const,
+        moduleId: `${pack.moduleId}:${Object.values(values).join(':')}`,
+        title: `${d.product} (${d.profile})`,
+        data: protocolConfigMarkdown(inputs),
+        inputs,
+      }
+    }
+  }, [pack, values, configOutput])
+
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(configOutput)
     setCopied(true)
@@ -122,28 +146,8 @@ export const OpsConfigGenerator: React.FC<OpsConfigGeneratorProps> = ({
         <CodeBlock code={configOutput} />
       </div>
 
-      {pack && (
-        <SaveToOperationsPack
-          key={Object.values(values).join('|')}
-          testId="config-save-to-pack"
-          build={() => {
-            const d = pack.describe(values)
-            const inputs: ProtocolConfigInputs = {
-              ...d,
-              minimumVersion: requirementsFrom(configOutput),
-              checked: NOT_MACHINE_CHECKED,
-              config: configOutput,
-              source: pack.source,
-            }
-            return {
-              type: 'protocol-config',
-              moduleId: `${pack.moduleId}:${Object.values(values).join(':')}`,
-              title: `${d.product} (${d.profile})`,
-              data: protocolConfigMarkdown(inputs),
-              inputs,
-            }
-          }}
-        />
+      {buildPackArtifact && (
+        <SaveToOperationsPack testId="config-save-to-pack" build={buildPackArtifact} />
       )}
 
       {/* Disclaimer */}

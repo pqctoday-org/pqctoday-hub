@@ -92,6 +92,9 @@ export const buildOperationsPack = (input: RolePackInput): RolePack =>
 // ── Tables to CSV ──────────────────────────────────────────────────────────
 
 export interface MarkdownTable {
+  /** Nearest level-2 heading above the table (a pack section), without the
+   * hashes and without the pack's "n." numbering; empty before the first. */
+  section: string
   /** Nearest heading above the table, without the hashes. */
   heading: string
   header: string[]
@@ -99,7 +102,8 @@ export interface MarkdownTable {
 }
 
 const isTableLine = (l: string) => /^\s*\|.*\|\s*$/.test(l)
-const isSeparator = (l: string) => /^\s*\|(\s*:?-{3,}:?\s*\|)+\s*$/.test(l)
+// GFM: a delimiter cell is dashes with optional colons; one dash is enough.
+const isSeparator = (l: string) => /^\s*\|(\s*:?-+:?\s*\|)+\s*$/.test(l)
 
 /** Split one Markdown table row into cells, honouring `\|` escapes. */
 export function splitRow(line: string): string[] {
@@ -127,18 +131,20 @@ export function splitRow(line: string): string[] {
 export function extractMarkdownTables(markdown: string): MarkdownTable[] {
   const lines = markdown.split('\n')
   const tables: MarkdownTable[] = []
+  let section = ''
   let heading = ''
   let inFence = false
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
-    if (/^\s*```/.test(line)) {
+    if (/^\s*(```|~~~)/.test(line)) {
       inFence = !inFence
       continue
     }
     if (inFence) continue
-    const h = /^#{1,6}\s+(.*)$/.exec(line)
+    const h = /^(#{1,6})\s+(.*)$/.exec(line)
     if (h) {
-      heading = h[1].trim()
+      heading = h[2].trim()
+      if (h[1].length === 2) section = heading.replace(/^\d+\.\s+/, '')
       continue
     }
     if (isTableLine(line) && i + 1 < lines.length && isSeparator(lines[i + 1])) {
@@ -149,7 +155,7 @@ export function extractMarkdownTables(markdown: string): MarkdownTable[] {
         rows.push(splitRow(lines[j]))
         j++
       }
-      tables.push({ heading, header, rows })
+      tables.push({ section, heading, header, rows })
       i = j - 1
     }
   }
@@ -163,11 +169,21 @@ const slug = (s: string) =>
     .replace(/^-+|-+$/g, '')
     .slice(0, 60) || 'table'
 
-/** One CSV per table, named after its heading; repeated names get a suffix. */
+/** The CSV name for a table: its pack section, then its own heading when that
+ * says something more (e.g. `hsm-capacity-plan--results`). */
+function tableName(t: MarkdownTable, idx: number): string {
+  const sec = t.section ? slug(t.section) : ''
+  const head = t.heading ? slug(t.heading.replace(/^\d+\.\s+/, '')) : ''
+  if (sec && head && !sec.includes(head) && !head.includes(sec)) return `${sec}--${head}`
+  return sec || head || `table-${idx + 1}`
+}
+
+/** One CSV per table, named after its section and heading; repeated names get
+ * a suffix. */
 export function tablesToCsvFiles(tables: MarkdownTable[], folder = 'tables'): BundleFile[] {
   const used = new Map<string, number>()
   return tables.map((t, idx) => {
-    const base = slug(t.heading || `table-${idx + 1}`)
+    const base = tableName(t, idx)
     const n = (used.get(base) ?? 0) + 1
     used.set(base, n)
     const name = n === 1 ? base : `${base}-${n}`
@@ -182,7 +198,7 @@ export function tablesToCsvFiles(tables: MarkdownTable[], folder = 'tables'): Bu
 const README = `# Operations pack
 
 - operations-pack.md: the whole pack, in order, with the list of missing sections.
-- tables/: every table in the pack as a CSV, named after the section it comes from.
+- tables/: every table in the pack as a CSV, named after its section and heading.
 
 ${OPERATIONS_PACK_DISCLAIMER}
 `

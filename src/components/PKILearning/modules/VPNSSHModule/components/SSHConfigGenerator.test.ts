@@ -19,7 +19,7 @@ describe('SSH config generator', () => {
 
   it('puts ML-KEM first in the hybrid and PQC-only profiles and keeps a fallback only in hybrid', () => {
     for (const c of all) {
-      const kex = /KexAlgorithms\s+(\S+)/.exec(c.text)?.[1] ?? ''
+      const kex = /^\s*KexAlgorithms\s+(\S+)/m.exec(c.text)?.[1] ?? ''
       if (c.mode === 'classical') expect(kex).not.toMatch(/mlkem|sntrup/)
       if (c.mode === 'hybrid')
         expect(kex).toBe(

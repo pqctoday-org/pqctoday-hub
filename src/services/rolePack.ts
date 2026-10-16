@@ -70,11 +70,26 @@ export function toolPathFor(section: RolePackSection): string | null {
 }
 
 /** Push every Markdown heading in an artifact down two levels, so its own
- * `#` and `##` sit under the pack's `## n. Section` heading. */
+ * `#` and `##` sit under the pack's `## n. Section` heading. Lines inside
+ * fenced code blocks (``` or ~~~) are left alone: a `# comment` in a
+ * configuration fragment is not a heading. */
 export function demoteHeadings(markdown: string): string {
-  return markdown.replace(/^(#{1,6})(\s)/gm, (_m, hashes: string, sp: string) => {
-    return `${'#'.repeat(Math.min(6, hashes.length + 2))}${sp}`
-  })
+  let fence: string | null = null
+  return markdown
+    .split('\n')
+    .map((line) => {
+      const f = /^\s*(```|~~~)/.exec(line)
+      if (f) {
+        if (fence === null) fence = f[1]
+        else if (f[1] === fence) fence = null
+        return line
+      }
+      if (fence !== null) return line
+      return line.replace(/^(#{1,6})(\s)/, (_m, hashes: string, sp: string) => {
+        return `${'#'.repeat(Math.min(6, hashes.length + 2))}${sp}`
+      })
+    })
+    .join('\n')
 }
 
 const isoDate = (ms: number) => new Date(ms).toISOString().slice(0, 10)

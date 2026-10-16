@@ -64,7 +64,9 @@ test('ops user builds an operations pack from saved tool results', async ({ page
   const names = Object.keys(zip.files)
   expect(names).toContain('operations-pack/operations-pack.md')
   expect(names).toContain('operations-pack/README.md')
-  expect(names.some((n) => /^operations-pack\/tables\/results.*\.csv$/.test(n))).toBe(true)
+  expect(
+    names.some((n) => /^operations-pack\/tables\/hsm-capacity-plan--results\.csv$/.test(n))
+  ).toBe(true)
   const md = await zip.file('operations-pack/operations-pack.md')!.async('string')
   expect(md).toContain('## 4. HSM Capacity Plan')
   expect(md).toContain('Editorial estimate (not a measurement)')

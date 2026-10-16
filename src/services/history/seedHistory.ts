@@ -7,6 +7,22 @@ import { useTLSStore } from '@/store/tls-learning.store'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
+
+// Same value as OPERATIONS_PACK_PANEL_PATH in services/operationsPack.ts (a
+// test keeps them equal); not imported, so app start-up does not load the
+// Command Center tool registry that module depends on.
+export const OPERATIONS_PACK_HISTORY_ROUTE = '/business#operations-pack'
+
+export const OPERATIONS_PACK_TYPES: ReadonlySet<ExecutiveDocumentType> =
+  new Set<ExecutiveDocumentType>([
+    'ops-scope',
+    'hsm-capacity-plan',
+    'cert-capacity-plan',
+    'protocol-config',
+    'vpn-sim-run',
+    'ops-test-plan',
+  ])
 
 /**
  * Seeds history events from existing store data. Waits for all stores to finish
@@ -169,7 +185,11 @@ function seedModuleEvents(out: Omit<HistoryEvent, 'id'>[]) {
       timestamp: doc.createdAt,
       title: `Created ${doc.type}: ${doc.title}`,
       moduleId: doc.moduleId,
-      route: `/learn/${doc.moduleId}?tab=workshop`,
+      // Operations pack artifacts come from Playground tools and the pack
+      // panel, not from a Learn module, so they open the pack.
+      route: OPERATIONS_PACK_TYPES.has(doc.type)
+        ? OPERATIONS_PACK_HISTORY_ROUTE
+        : `/learn/${doc.moduleId}?tab=workshop`,
     })
   }
 }
