@@ -66,6 +66,16 @@ export interface ComplianceImpact {
   requiresPQC: boolean | null
   deadline: string
   notes: string
+  /** The framework's published source, when the catalog row has one. */
+  website?: string
+  /** ISO date the catalog row was last checked against its source. */
+  lastVerified?: string
+  /** Whether the framework binds organisations like the reader's (catalog wording). */
+  bindingStatus?: string
+  /** Short citation of the instrument that makes it binding. */
+  bindingBasis?: string
+  /** fixed | phased | ongoing | none | unknown — why the row has (or lacks) a date. */
+  deadlineKind?: string
 }
 
 export interface RecommendedAction {
