@@ -58,7 +58,9 @@ export function QuickRunCard({ engine, activePolicy, switchPolicy, onKeystoreCha
   const run = useCallback(
     (spec: Parameters<KmipEngine['runOp']>[0], log: string[]) => {
       const r = engine.runOp(spec)
-      for (const e of r.audit ?? []) log.push(`${spec.op}: ${e.event?.type ?? 'event'}`)
+      // One line per request: the op and the audit event types it produced.
+      const types = (r.audit ?? []).map((e) => e.event?.type ?? 'event')
+      log.push(`${spec.op}: ${types.length > 0 ? types.join(', ') : '(no audit events)'}`)
       if (!r.ok) throw new Error(r.message ?? `${spec.op} failed`)
       return r
     },

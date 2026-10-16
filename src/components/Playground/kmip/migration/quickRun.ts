@@ -38,7 +38,7 @@ export interface QuickRunRecord {
   signatureBytesAfter: number
   /** Verification of the step-3 signature with the new public key. */
   verified: boolean
-  /** `op: event type` for every audit event the run produced, in order. */
+  /** One `op: event types` line per request the run made, in order. */
   events: string[]
   appVersion: string | null
   buildCommit: string | null
