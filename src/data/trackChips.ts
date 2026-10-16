@@ -10,7 +10,7 @@ import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
  * Self-expiring: personaConfig.test fails once a listed role's board has no
  * extra chips, so this entry is deleted with the data that makes it moot.
  */
-export const PENDING_CHIP_RETIREMENT: ReadonlySet<PersonaId> = new Set<PersonaId>(['curious'])
+export const PENDING_CHIP_RETIREMENT: ReadonlySet<PersonaId> = new Set<PersonaId>()
 
 /**
  * The chips a board renders: one per Essentials module, in order, each linking
