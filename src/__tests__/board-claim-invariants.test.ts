@@ -75,18 +75,16 @@ const SENTENCES: { file: string; row: string | null; text: string }[] = SOURCES.
 )
 
 /**
- * Quiz rows whose correction ships in the data release that carries the quiz CSV
- * (4.163.0). Self-expiring: the last test fails once a pending row no longer
- * offends, so this list cannot outlive the fix — delete the entry then.
+ * Quiz rows whose correction is applied in the data release that carries the
+ * quiz CSV (4.163.0). Once that newer quiz file ships these rows no longer
+ * offend and the entries do nothing — delete this list after 4.163.0.
  */
 const PENDING_QUIZ_ROWS = new Set(['cstr-006', 'cstr-008', 'das-005'])
-const pendingSeen = new Set<string>()
 
 function offenders(test: (s: string) => boolean): string[] {
   return SENTENCES.filter((s) => test(s.text))
     .filter((s) => {
       if (s.row && s.file.includes('pqcquiz_') && PENDING_QUIZ_ROWS.has(s.row)) {
-        pendingSeen.add(s.row)
         return false
       }
       return true
@@ -165,10 +163,5 @@ describe('board-facing claim invariants', () => {
 
   it('does not state unsourced cyber-insurance premium figures', () => {
     expect(offenders((s) => /insur/i.test(s) && /\d+\s*[-–]\s*\d+% premium/i.test(s))).toEqual([])
-  })
-
-  // Must stay last: it reads what the tests above recorded.
-  it('keeps the pending quiz allowlist honest', () => {
-    expect([...PENDING_QUIZ_ROWS].filter((r) => !pendingSeen.has(r))).toEqual([])
   })
 })

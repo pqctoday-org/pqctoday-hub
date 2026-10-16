@@ -418,7 +418,7 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">MAS</td>
                 <td className="py-2 px-2 font-mono text-primary">Guidance</td>
                 <td className="py-2 px-2">
-                  Monetary Authority of Singapore issued PQC readiness guidance (November 2024)
+                  Monetary Authority of Singapore issued PQC readiness guidance (February 2024)
                   directing financial institutions to begin cryptographic inventory and migration
                   planning. No hard mandate yet; best-practice alignment with NIST standards
                   expected. Particularly relevant for financial sector organizations.
