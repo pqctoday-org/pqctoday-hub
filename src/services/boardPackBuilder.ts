@@ -17,7 +17,7 @@
  *
  * Pure data builder — no React, no DOM. Returns a Blob ready for download.
  */
-import JSZip from 'jszip'
+import { buildZipBundle, downloadBlob, type BundleFile } from './exportBundle'
 import {
   EDUCATION_NOTICE,
   withEducationNoticeCsv,
@@ -273,30 +273,33 @@ function buildProgramEffort(result: AssessmentResult): string {
 
 export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Blob> {
   const { result, profile, appVersion } = input
-  const zip = new JSZip()
-  const folder = zip.folder('board-pack')!
   // A board pack is read, forwarded and quoted by people who never opened this
   // app, so the notice is in the archive AND in every file inside it — a reader
   // who opens only `key-findings.md` still meets it (education-notice
   // remediation 2026-09-26).
-  folder.file(
-    'NOTICE.md',
-    `# Status notice\n\n${EDUCATION_NOTICE}\n\nEvery figure, finding, deadline and recommendation in this pack was produced\nby an educational and demonstration platform from self-reported inputs. None\nof it is an assessment, an audit, a certification, or legal or compliance\nadvice, and none of it may be relied upon as such.\n`
-  )
-  folder.file('README.md', withEducationNoticeMarkdown(buildReadme(profile, appVersion)))
-  folder.file(
-    'executive-summary.md',
-    withEducationNoticeMarkdown(buildExecutiveSummary(result, profile))
-  )
-  folder.file('key-findings.md', withEducationNoticeMarkdown(buildKeyFindings(result)))
-  folder.file(
-    'recommended-actions.md',
-    withEducationNoticeMarkdown(buildRecommendedActions(result))
-  )
-  folder.file('compliance-deadlines.csv', withEducationNoticeCsv(buildComplianceCsv(result)))
-  folder.file('profile.json', buildProfileJson(result, profile))
-  folder.file('program-effort.md', withEducationNoticeMarkdown(buildProgramEffort(result)))
-  return zip.generateAsync({ type: 'blob' })
+  const files: BundleFile[] = [
+    {
+      path: 'NOTICE.md',
+      content: `# Status notice\n\n${EDUCATION_NOTICE}\n\nEvery figure, finding, deadline and recommendation in this pack was produced\nby an educational and demonstration platform from self-reported inputs. None\nof it is an assessment, an audit, a certification, or legal or compliance\nadvice, and none of it may be relied upon as such.\n`,
+    },
+    { path: 'README.md', content: withEducationNoticeMarkdown(buildReadme(profile, appVersion)) },
+    {
+      path: 'executive-summary.md',
+      content: withEducationNoticeMarkdown(buildExecutiveSummary(result, profile)),
+    },
+    { path: 'key-findings.md', content: withEducationNoticeMarkdown(buildKeyFindings(result)) },
+    {
+      path: 'recommended-actions.md',
+      content: withEducationNoticeMarkdown(buildRecommendedActions(result)),
+    },
+    {
+      path: 'compliance-deadlines.csv',
+      content: withEducationNoticeCsv(buildComplianceCsv(result)),
+    },
+    { path: 'profile.json', content: buildProfileJson(result, profile) },
+    { path: 'program-effort.md', content: withEducationNoticeMarkdown(buildProgramEffort(result)) },
+  ]
+  return buildZipBundle(files.map((f) => ({ ...f, path: `board-pack/${f.path}` })))
 }
 
 /**
@@ -306,12 +309,7 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
  */
 export async function downloadBoardPack(input: BuildBoardPackInput): Promise<void> {
   const blob = await buildBoardPackBlob(input)
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `pqc-board-pack-${profileSlug(input.profile)}.zip`
-  a.click()
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, `pqc-board-pack-${profileSlug(input.profile)}.zip`)
 }
 
 function profileSlug(profile: BoardPackProfile): string {
