@@ -77,8 +77,32 @@ import {
   type RsaAlg,
 } from '@/data/hsmKeyStorageDefaults'
 import { EstimateNote } from '@/components/ui/EstimateNote'
+import { SaveToOperationsPack } from '@/components/BusinessCenter/operationsPack/SaveToOperationsPack'
+import { hsmCapacityPlanMarkdown, type HsmCapacityPlanInputs } from '@/services/opsArtifacts'
 
 type Workload = 'classical' | 'pqc'
+
+// The calculator's caveats, shown in its disclaimer and copied into a saved
+// HSM capacity plan so the plan carries them.
+const CAVEAT_MODEL_HEADLINE =
+  'Simplified educational model — not a substitute for a consultant-grade capacity analysis.'
+const CAVEAT_MODEL_BODY =
+  'This simulator assumes per-site demand with geo-redundant active-active replication (each location independently sized for the full workload), a single uniform HSM SKU per scenario, peak-window sizing, and best-case PKCS#11 throughput. It does not model latency budgets, per-tenant key isolation, geo-failover, cold-start surges, batching, partition slots, firmware-specific limits, or compliance-driven duty-cycle constraints. Use it to sanity-check ranges and explore trade-offs, not to size a production fleet.'
+const CAVEAT_RATES =
+  'HSM performance numbers are illustrative reference values from public vendor datasheets (Thales Luna 7, Entrust nShield 5c, Utimaco SecurityServer). No vendor currently publishes production ML-DSA hardware-accelerated TPS; that value is an extrapolation. Adjust every parameter to match your measured environment, and engage a vendor or HSM architect for a real deployment.'
+
+/** Snapshot one HSM profile's rates, marking each one the user changed. */
+function profileSnapshot(profile: HsmProfile, defaults: HsmProfile) {
+  return {
+    name: profile.name,
+    sourceNote: profile.sourceNote,
+    rates: ALGO_IDS.map((algo) => ({
+      algorithm: ALGO_LABELS[algo],
+      opsPerSec: profile.opsPerSec[algo],
+      userEntered: profile.opsPerSec[algo] !== defaults.opsPerSec[algo],
+    })),
+  }
+}
 type Redundancy = 'n+1' | '2n'
 
 interface UseCaseState {
@@ -1545,29 +1569,66 @@ export function HsmCapacityCalculator() {
     )
   }, [scenarios])
 
+  /** The current inputs, rates and results as an HSM capacity plan for the
+   * operations pack. One plan per browser: saving again updates it. */
+  const buildCapacityPlan = useCallback(() => {
+    const inputs: HsmCapacityPlanInputs = {
+      deploymentSize: size,
+      redundancy: redundancy === '2n' ? '2N' : 'N+1',
+      locations: numLocations,
+      targetUtilizationPct,
+      migrationHorizon,
+      hybridSigningTransition,
+      codeSigningAlgorithm: codeSigningAlg,
+      useCases: USE_CASES.map((uc) => ({
+        label: uc.name,
+        enabled: !!useCaseState[uc.id]?.enabled,
+        tps: useCaseState[uc.id]?.tps ?? 0,
+      })),
+      profiles: [
+        profileSnapshot(classicalHsm, CLASSICAL_HSM_DEFAULT),
+        profileSnapshot(pqcHsm, PQC_HSM_DEFAULT),
+      ],
+      scenarios: scenarios.map((s) => ({
+        label: s.label,
+        hsmProfile: s.hsmProfile.name,
+        bottleneck: ALGO_LABELS[s.bottleneck],
+        hsmsRequired: s.requiredWithRedundancy,
+        hsmsDeployed: s.deployedHsms,
+        sufficient: s.sufficient,
+        fleetUtilizationPct: s.fleetUtilizationPct,
+      })),
+      caveats: [`${CAVEAT_MODEL_HEADLINE} ${CAVEAT_MODEL_BODY}`, CAVEAT_RATES],
+    }
+    return {
+      type: 'hsm-capacity-plan' as const,
+      moduleId: 'hsm-capacity',
+      title: 'HSM capacity plan',
+      data: hsmCapacityPlanMarkdown(inputs),
+      inputs,
+    }
+  }, [
+    size,
+    redundancy,
+    numLocations,
+    targetUtilizationPct,
+    migrationHorizon,
+    hybridSigningTransition,
+    codeSigningAlg,
+    useCaseState,
+    classicalHsm,
+    pqcHsm,
+    scenarios,
+  ])
+
   return (
     <div className="space-y-6">
       {/* Disclaimer */}
       <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 px-4 py-3 space-y-1.5">
         <p className="text-xs text-status-warning leading-relaxed">
-          <span className="font-semibold">
-            Simplified educational model — not a substitute for a consultant-grade capacity
-            analysis.
-          </span>{' '}
-          This simulator assumes per-site demand with geo-redundant active-active replication (each
-          location independently sized for the full workload), a single uniform HSM SKU per
-          scenario, peak-window sizing, and best-case PKCS#11 throughput. It does not model latency
-          budgets, per-tenant key isolation, geo-failover, cold-start surges, batching, partition
-          slots, firmware-specific limits, or compliance-driven duty-cycle constraints. Use it to
-          sanity-check ranges and explore trade-offs, not to size a production fleet.
+          <span className="font-semibold">{CAVEAT_MODEL_HEADLINE}</span> {CAVEAT_MODEL_BODY}
         </p>
-        <p className="text-xs text-status-warning leading-relaxed">
-          HSM performance numbers are illustrative reference values from public vendor datasheets
-          (Thales Luna 7, Entrust nShield 5c, Utimaco SecurityServer). No vendor currently publishes
-          production ML-DSA hardware-accelerated TPS; that value is an extrapolation. Adjust every
-          parameter to match your measured environment, and engage a vendor or HSM architect for a
-          real deployment.
-        </p>
+        <p className="text-xs text-status-warning leading-relaxed">{CAVEAT_RATES}</p>
       </div>
 
       {/* Fleet sizing model — collapsible */}
@@ -2915,7 +2976,8 @@ export function HsmCapacityCalculator() {
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-2">
+        <SaveToOperationsPack build={buildCapacityPlan} testId="hsm-capacity-save-to-pack" />
         <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
           <Download size={14} />
           Export CSV

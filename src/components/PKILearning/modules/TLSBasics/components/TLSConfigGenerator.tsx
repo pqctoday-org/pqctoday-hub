@@ -2,6 +2,7 @@
 import React, { useCallback, useMemo } from 'react'
 import {
   OpsConfigGenerator,
+  type ConfigPackOptions,
   type ConfigSelection,
 } from '@/components/PKILearning/common/OpsConfigGenerator'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
@@ -416,6 +417,24 @@ with socket.create_connection(('example.com', 443)) as sock:
         print(f'Cipher: {tls.cipher()}')
         tls.sendall(b'GET / HTTP/1.1\\r\\nHost: example.com\\r\\n\\r\\n')`
 
+const SERVER_NAMES: Record<string, string> = {
+  nginx: 'nginx',
+  apache: 'Apache httpd',
+  haproxy: 'HAProxy',
+  caddy: 'Caddy',
+}
+
+const TLS_PACK: ConfigPackOptions = {
+  moduleId: 'tls-basics:tls-config',
+  source: 'PQC TLS Config Generator (TLS Basics module)',
+  describe: (values) => ({
+    product: `${SERVER_NAMES[values.serverType ?? 'nginx'] ?? values.serverType} TLS`,
+    profile: modeLabel(values.tlsMode ?? 'hybrid').replace(/ Mode$/, ''),
+    doesNotChange:
+      'Server certificate and its signature algorithm: key exchange groups only; clients must also offer a matching group',
+  }),
+}
+
 export const TLSConfigGenerator: React.FC = () => {
   const stableGenerateConfig = useCallback(
     (values: Record<string, string>) => generateConfig(values),
@@ -431,6 +450,7 @@ export const TLSConfigGenerator: React.FC = () => {
         description="Generate server-specific TLS configurations with post-quantum key exchange support."
         selections={stableSelections}
         generateConfig={stableGenerateConfig}
+        pack={TLS_PACK}
       />
 
       <details className="glass-panel p-4 group">

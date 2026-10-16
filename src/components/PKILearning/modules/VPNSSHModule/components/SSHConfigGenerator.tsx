@@ -2,6 +2,7 @@
 import React, { useCallback, useMemo } from 'react'
 import {
   OpsConfigGenerator,
+  type ConfigPackOptions,
   type ConfigSelection,
 } from '@/components/PKILearning/common/OpsConfigGenerator'
 
@@ -195,6 +196,20 @@ export function generateConfig(values: Record<string, string>): string {
   return generateSshClientConfig(mode)
 }
 
+const SSH_PACK: ConfigPackOptions = {
+  moduleId: 'vpn-ssh-pqc:ssh-config',
+  source: 'PQC SSH Config Generator (VPN/IPsec & SSH module)',
+  describe: (values) => ({
+    product:
+      values.configType === 'ssh_config'
+        ? 'OpenSSH client (ssh_config)'
+        : 'OpenSSH server (sshd_config)',
+    profile: modeLabel(values.mode ?? 'hybrid').replace(/ Mode$/, ''),
+    doesNotChange:
+      'Host and user authentication: key exchange only; host and user keys stay as configured',
+  }),
+}
+
 export const SSHConfigGenerator: React.FC = () => {
   const stableGenerateConfig = useCallback(
     (values: Record<string, string>) => generateConfig(values),
@@ -209,6 +224,7 @@ export const SSHConfigGenerator: React.FC = () => {
       description="Generate SSH server and client configurations with post-quantum key exchange support."
       selections={stableSelections}
       generateConfig={stableGenerateConfig}
+      pack={SSH_PACK}
     />
   )
 }

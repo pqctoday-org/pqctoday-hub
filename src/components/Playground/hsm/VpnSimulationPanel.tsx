@@ -81,6 +81,12 @@ import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { derCat, derTLV, derBitString, encodeRsaPublicKeyDER } from '../derCodec'
 import { canonicalPositiveInteger } from '@/utils/derInteger'
+import { SaveToOperationsPack } from '@/components/BusinessCenter/operationsPack/SaveToOperationsPack'
+import {
+  VPN_SIM_EXECUTION_NOTES,
+  vpnSimRunMarkdown,
+  type VpnSimRunInputs,
+} from '@/services/opsArtifacts'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -2528,6 +2534,40 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
 
+  /** This exchange as a VPN simulator run for the operations pack. Saving
+   * again (e.g. after changing the mode) replaces the previous run. */
+  const buildRunArtifact = useCallback(() => {
+    const run: VpnSimRunInputs = {
+      keyExchange: keAlgorithmLabel,
+      initiatorAuth: initiatorAuthAlg,
+      responderAuth: responderAuthAlg,
+      mtu,
+      fragmentation: allowFragmentation,
+      messages: steps.map((s) => ({
+        label: s.label,
+        bytes: s.message.payloads.reduce((a, p) => a + p.sizeBytes, 0),
+      })),
+      totalBytes: wireTotals.total,
+      ranAt: Date.now(),
+      executionNotes: VPN_SIM_EXECUTION_NOTES,
+    }
+    return {
+      type: 'vpn-sim-run' as const,
+      moduleId: 'vpn-sim',
+      title: `VPN simulator run: ${keAlgorithmLabel}, ${initiatorAuthAlg} auth`,
+      data: vpnSimRunMarkdown(run),
+      inputs: run,
+    }
+  }, [
+    keAlgorithmLabel,
+    initiatorAuthAlg,
+    responderAuthAlg,
+    mtu,
+    allowFragmentation,
+    steps,
+    wireTotals.total,
+  ])
+
   const handleReset = useCallback(() => {
     setCurrentStep(0)
     setSsLogs([])
@@ -4525,9 +4565,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       </div>
 
       <div className="pt-4 border-t border-border">
-        <h2 className="text-sm font-bold flex items-center gap-2 mb-3">
-          <Cpu size={16} /> Tunnel Statistics
-        </h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-bold flex items-center gap-2">
+            <Cpu size={16} /> Tunnel Statistics
+          </h2>
+          <SaveToOperationsPack
+            key={`${selectedMode}-${kemSize}-${authMode}-${mtu}-${allowFragmentation}`}
+            build={buildRunArtifact}
+            disabled={!tunnelUp}
+            disabledReason="Run the exchange until the tunnel is established, then save it."
+            testId="vpn-sim-save-to-pack"
+          />
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div
             className={`p-3 rounded-xl border flex flex-col justify-center items-center ${currentStep === steps.length - 1 && !hasCrashed ? 'bg-success/10 border-success/30' : 'bg-card border-border'}`}

@@ -6,6 +6,8 @@ import { HardDrive, Zap, Network, Download, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CERT_CAPACITY_DEFAULTS } from '@/data/certCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { SaveToOperationsPack } from '@/components/BusinessCenter/operationsPack/SaveToOperationsPack'
+import { certCapacityPlanMarkdown, type CertCapacityPlanInputs } from '@/services/opsArtifacts'
 
 const ALGO_ABBREV: Record<string, string> = {
   'RSA-2048': 'RSA',
@@ -216,6 +218,34 @@ export function CertCapacityCalculator() {
       csvFilename('cert-capacity')
     )
   }, [results])
+
+  /** The current inputs and results as a certificate capacity plan for the
+   * operations pack. Saving again updates the same plan. */
+  const buildCapacityPlan = useCallback(() => {
+    const plan: CertCapacityPlanInputs = {
+      certCount: inputs.certCount,
+      renewalDays: inputs.renewalDays,
+      handshakesPerSec: inputs.handshakesPerSec,
+      rows: results.map((r) => ({
+        algorithm: r.algo,
+        storageMB: r.storageMB,
+        renewalsPerYear: r.renewalsPerYear,
+        tlsKBPerHandshake: r.tlsBandwidthKBPerHandshake,
+        aggregateMBPerSec: r.tlsAggregateMBPerSec,
+        signOpsPerSecPerCore: r.signaturesPerSecCapacity,
+        cpuCorePercent: r.cpuCorePercent,
+        sizeSource: r.sizeSource,
+        perfSource: r.perfSource,
+      })),
+    }
+    return {
+      type: 'cert-capacity-plan' as const,
+      moduleId: 'cert-capacity',
+      title: 'Certificate capacity plan',
+      data: certCapacityPlanMarkdown(plan),
+      inputs: plan,
+    }
+  }, [inputs, results])
 
   return (
     <div className="space-y-6">
@@ -588,10 +618,13 @@ export function CertCapacityCalculator() {
           <HardDrive size={11} />
           Need to size HSM hardware for this workload? Explore HSMs →
         </a>
-        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
-          <Download size={14} />
-          Export CSV
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <SaveToOperationsPack build={buildCapacityPlan} testId="cert-capacity-save-to-pack" />
+          <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+            <Download size={14} />
+            Export CSV
+          </Button>
+        </div>
       </div>
     </div>
   )
