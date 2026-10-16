@@ -1,0 +1,85 @@
+{
+  "$comment": "Expected output of each sample in this folder. Sizes are the FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) byte lengths. run-all.sh checks every SIZE line against this file.",
+  "samples": {
+    "go-mlkem": {
+      "language": "Go",
+      "algorithm": "ML-KEM-768",
+      "source": "go-mlkem/main.go",
+      "api": "crypto/mlkem",
+      "minToolchain": { "name": "go", "version": "1.24" },
+      "sizes": { "encapsulation_key": 1184, "ciphertext": 1088, "shared_secret": 32 }
+    },
+    "go-mldsa": {
+      "language": "Go",
+      "algorithm": "ML-DSA-65",
+      "source": "go-mldsa/main.go",
+      "api": "crypto/mldsa",
+      "minToolchain": { "name": "go", "version": "1.27" },
+      "sizes": { "public_key": 1952, "signature": 3309 }
+    },
+    "python-mlkem": {
+      "language": "Python",
+      "algorithm": "ML-KEM-768",
+      "source": "python-mlkem/main.py",
+      "api": "cryptography.hazmat.primitives.asymmetric.mlkem",
+      "minToolchain": {
+        "name": "cryptography",
+        "version": "48.0.0",
+        "note": "48.0.0+ with OpenSSL 3.5+ (the PyPI wheels bundle OpenSSL 4.x); 47.0.0+ only when built against AWS-LC or BoringSSL"
+      },
+      "sizes": { "encapsulation_key": 1184, "ciphertext": 1088, "shared_secret": 32 }
+    },
+    "python-mldsa": {
+      "language": "Python",
+      "algorithm": "ML-DSA-65",
+      "source": "python-mldsa/main.py",
+      "api": "cryptography.hazmat.primitives.asymmetric.mldsa",
+      "minToolchain": {
+        "name": "cryptography",
+        "version": "48.0.0",
+        "note": "48.0.0+ with OpenSSL 3.5+ (the PyPI wheels bundle OpenSSL 4.x); 47.0.0+ only when built against AWS-LC or BoringSSL"
+      },
+      "sizes": { "public_key": 1952, "signature": 3309 }
+    },
+    "dotnet-mlkem": {
+      "language": "C# (.NET)",
+      "algorithm": "ML-KEM-768",
+      "source": "dotnet-mlkem/Program.cs",
+      "api": "System.Security.Cryptography.MLKem",
+      "minToolchain": {
+        "name": "dotnet",
+        "version": "10.0",
+        "note": "needs OpenSSL 3.5+ on Linux/macOS or Windows CNG ML-KEM (Windows Server 2025, Windows 11); prints SKIP when MLKem.IsSupported is false"
+      },
+      "sizes": { "encapsulation_key": 1184, "ciphertext": 1088, "shared_secret": 32 }
+    },
+    "dotnet-mldsa": {
+      "language": "C# (.NET)",
+      "algorithm": "ML-DSA-65",
+      "source": "dotnet-mldsa/Program.cs",
+      "api": "System.Security.Cryptography.MLDsa",
+      "minToolchain": {
+        "name": "dotnet",
+        "version": "10.0",
+        "note": "needs OpenSSL 3.5+ on Linux/macOS or Windows CNG ML-DSA (Windows Server 2025, Windows 11); prints SKIP when MLDsa.IsSupported is false"
+      },
+      "sizes": { "public_key": 1952, "signature": 3309 }
+    },
+    "java-mlkem": {
+      "language": "Java",
+      "algorithm": "ML-KEM-768",
+      "source": "java-mlkem/MlKemSample.java",
+      "api": "javax.crypto.KEM (ML-KEM)",
+      "minToolchain": { "name": "jdk", "version": "24" },
+      "sizes": { "encapsulation_key": 1184, "ciphertext": 1088, "shared_secret": 32 }
+    },
+    "java-mldsa": {
+      "language": "Java",
+      "algorithm": "ML-DSA-65",
+      "source": "java-mldsa/MlDsaSample.java",
+      "api": "java.security.Signature (ML-DSA)",
+      "minToolchain": { "name": "jdk", "version": "24" },
+      "sizes": { "public_key": 1952, "signature": 3309 }
+    }
+  }
+}
