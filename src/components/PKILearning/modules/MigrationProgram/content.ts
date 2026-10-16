@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.1',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('NIST IR 8547'),
