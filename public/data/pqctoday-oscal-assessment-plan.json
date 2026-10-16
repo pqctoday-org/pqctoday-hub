@@ -34,12 +34,12 @@
         {
           "uuid": "7ad5813a-ec94-4eea-83f1-fb98510dbaaf",
           "type": "person",
-          "name": "[reviewer ericamador]",
+          "name": "[reviewer pqctoday]",
           "short-name": "eramusa",
           "props": [
             {
               "name": "reviewer_id",
-              "value": "ericamador",
+              "value": "pqctoday",
               "ns": "https://pqctoday.com/ns/oscal"
             },
             {
