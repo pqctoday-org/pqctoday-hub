@@ -1960,6 +1960,23 @@
       "unified": "converted",
       "admittedAt": "2026-10-02T16:25:27.706815+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "vendorId": "VND-027",
+      "refId": "VND-027",
+      "label": "Microsoft Corporation",
+      "file": "vendor-roadmaps/VND-027_Microsoft_Corporation_techcommunity_microsoft_com_blog_microso.html",
+      "filename": "VND-027_Microsoft_Corporation_techcommunity_microsoft_com_blog_microso.html",
+      "url": "https://techcommunity.microsoft.com/blog/microsoft-security-blog/new-windows-features-to-secure-today%e2%80%99s-data-in-a-post-quantum-world/4523370",
+      "status": "downloaded",
+      "sizeBytes": 492582,
+      "contentType": "text/html",
+      "sha256": "ffece9df2e0c7638943a90cf8bfe77f918b6aecadbc8e7862ddfd053b2edb3a6",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-16T15:10:33.352134+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
