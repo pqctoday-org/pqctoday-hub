@@ -101,6 +101,7 @@ const REGION_LABELS = new Map<string, string>([
   ['JP', 'Japan'],
   ['KR', 'South Korea'],
   ['CN', 'China'],
+  ['RU', 'Russia'],
   ['SG', 'Singapore'],
   ['IN', 'India'],
   ['HK', 'Hong Kong'],
