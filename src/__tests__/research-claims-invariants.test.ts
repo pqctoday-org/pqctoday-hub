@@ -107,6 +107,12 @@ const RULES: Rule[] = [
       /\b(50\s*\+|over 50|more than 50)[- ]?years?\b/i.test(s) &&
       /cryptanaly|McEliece|syndrome decoding|no successful attack/i.test(s),
   },
+  {
+    // HIPAA's own retention rule (45 CFR 164.316(b)(2)) is 6 years and covers compliance
+    // documentation; medical-record retention is set by state law.
+    name: 'HIPAA given a 7-year PHI retention requirement (it is 6 years, for documentation)',
+    test: (s) => /HIPAA|PHI/.test(s) && /\b(7|seven)[- ]year (minimum |retention)/i.test(s),
+  },
 ]
 
 /**
@@ -124,6 +130,8 @@ const PENDING_DATA_FIXES: { file: RegExp; text: string }[] = [
   { file: /pqcquiz_\d+/, text: 'the same lattice problems underlying ML-KEM' },
   // Quiz rqi-006 explanation ("over 50 years of classical cryptanalysis")
   { file: /pqcquiz_\d+/, text: 'resisted over 50 years of classical cryptanalysis' },
+  // Q&A healthcare-pqc-learn-006 (HIPAA "7-year" PHI retention; owner chose 6 years)
+  { file: /module_qa_combined_\d+/, text: 'HIPAA mandates a minimum 7-year retention requirement' },
 ]
 
 const isPending = (s: Sentence) =>
