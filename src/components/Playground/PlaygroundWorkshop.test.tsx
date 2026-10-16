@@ -77,7 +77,11 @@ describe('Crypto Lab Workbench', () => {
     const directory = screen.getByRole('navigation', { name: 'All Crypto Lab pages' })
     const expected = new Set([
       ...FEATURE_PLAYGROUNDS.map(({ to }) => to),
-      ...WORKSHOP_TOOLS.map(({ id }) => `/playground/${id}`),
+      // The KMIP environment tool redirects to /playground/cacp (a feature
+      // playground), so it is listed once, under that address.
+      ...WORKSHOP_TOOLS.filter(({ id }) => !isEnvironmentTool(id)).map(
+        ({ id }) => `/playground/${id}`
+      ),
     ])
     const actual = new Set(
       within(directory)

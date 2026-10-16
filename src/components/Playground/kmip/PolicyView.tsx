@@ -49,6 +49,12 @@ import { PolicyRulesDisplay, PolicyRulesLegend } from './PolicyRulesDisplay'
 import { PolicyTimeline } from './PolicyTimeline'
 import { PolicyScenario } from './PolicyScenario'
 import { PolicyGraphView } from './visual/PolicyGraphView'
+import {
+  policyDefaultAlgorithm,
+  policyDefaultLabel,
+  resolvePolicyDefault,
+  type PolicyDefault,
+} from './policyDefault'
 
 /** Tone → dot colour for catalog chips. */
 const TONE_DOT: Record<PolicyTone, string> = {
@@ -206,7 +212,8 @@ function sweepCoverage(engine: KmipEngine, date?: string): Record<string, Dispos
   return out
 }
 
-function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
+function DefaultPill({ label, value }: { label: string; value: PolicyDefault }) {
+  const algo = policyDefaultAlgorithm(value)
   const pqc = !!algo && /^(ML-|SLH-|FN-|Falcon|HQC|BIKE|Frodo|Classic)/i.test(algo)
   return (
     <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
@@ -219,7 +226,7 @@ function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
           algo ? (pqc ? 'text-status-success' : 'text-status-info') : 'text-muted-foreground'
         )}
       >
-        {algo ?? 'denied'}
+        {policyDefaultLabel(value)}
       </p>
     </div>
   )
@@ -327,14 +334,9 @@ export function PolicyView({
   }, [activePreset, models, policyYaml])
 
   // Authoritative resolved defaults — a cheap dry-run of the live engine policy.
-  const resolveDefault = (op: string): string | null => {
+  const resolveDefault = (op: string): PolicyDefault => {
     void policy.fingerprint
-    try {
-      const r = engine.dryRun({ op, date: asOfDate })
-      return r.kind === 'Deny' ? null : (r.algorithm ?? null)
-    } catch {
-      return null
-    }
+    return resolvePolicyDefault(engine, op, asOfDate)
   }
   const signDefault = resolveDefault('CreateKeyPair:Sign')
   const kemDefault = resolveDefault('CreateKeyPair:KeyAgreement')
@@ -631,8 +633,8 @@ export function PolicyView({
             <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               <FlaskConical size={11} /> Resolved defaults
             </span>
-            <DefaultPill label="Signing" algo={signDefault} />
-            <DefaultPill label="Key exchange" algo={kemDefault} />
+            <DefaultPill label="Signing" value={signDefault} />
+            <DefaultPill label="Key exchange" value={kemDefault} />
             <div className="rounded-lg border border-border bg-background/60 px-3 py-2 text-center">
               <p className="text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Rules

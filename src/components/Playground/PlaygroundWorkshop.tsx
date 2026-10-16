@@ -97,7 +97,9 @@ const ALL_PLAYGROUND_ROUTES = Array.from(
   new Map(
     [
       ...FEATURE_PLAYGROUNDS.map(({ to, title }) => [to, { to, title }] as const),
-      ...WORKSHOP_TOOLS.map(
+      // The KMIP environment tool redirects to /playground/cacp, which the
+      // feature list already holds — count that page once.
+      ...WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).map(
         ({ id, name }) => [`/playground/${id}`, { to: `/playground/${id}`, title: name }] as const
       ),
     ].map(([to, route]) => [to, route])

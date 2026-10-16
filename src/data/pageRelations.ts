@@ -49,9 +49,9 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/playground/cacp': [
     P(
-      '/playground/cacp-kmip',
-      'KMIP Control Plane',
-      'The step-by-step tool for the same control plane'
+      '/learn/crypto-agility',
+      'Crypto Agility',
+      'The module on changing algorithms by policy instead of by code'
     ),
     P('/learn/kms-pqc', 'KMS & PQC', 'The module on key-management systems and crypto agility'),
     P('/playground/hsm', 'PKCS#11 HSM', 'The key store the control plane governs'),
