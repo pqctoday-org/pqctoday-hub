@@ -44,9 +44,13 @@ describe('Library "Start here" picks', () => {
     expect(first.referenceId).toBe('NIST CSWP 39')
     // CSWP 39-upd1 (June 2026) retitled the paper "Considerations for Achieving
     // Crypto Agility: Strategies and Practices"; the Library row follows it.
-    expect(first.label).toContain('Considerations for Achieving Crypto Agility: Strategies and Practices')
+    expect(first.label).toContain(
+      'Considerations for Achieving Crypto Agility: Strategies and Practices'
+    )
     const item = libraryData.find((i) => i.referenceId === first.referenceId)
-    expect(item?.documentTitle).toBe('Considerations for Achieving Crypto Agility: Strategies and Practices')
+    expect(item?.documentTitle).toBe(
+      'Considerations for Achieving Crypto Agility: Strategies and Practices'
+    )
   })
 
   it('every pick has a label and a blurb', () => {
