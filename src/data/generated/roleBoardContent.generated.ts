@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r21.csv
+ * Source: src/data/role_board_content_10162026_r25.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2256,13 +2256,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
-          title: 'Changed in your fields',
+          title: 'Recent changes by algorithm family',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [],
           punchline: 'Nothing in the fields you follow was retracted.',
           footnote:
-            'Counts documents in the fields you follow that were updated or retracted in the 90 days before this release of the library.',
+            'Counts documents in the algorithm families you follow whose own publication or revision date falls in the 90 days before this release of the library. It is not a list of changes since your last visit.',
           emptyState: 'Pick a few fields to see what has moved in them lately.',
         },
         gridTitle: 'What the workspace gives you',
@@ -3256,9 +3256,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
+        trackTitle: 'Six modules, about 205 minutes.',
         trackNote:
-          'Worth saying plainly: at 205 minutes this is longer than the executive track (130 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
+          'Take one module at a time and stop whenever you like — your progress is saved between visits.',
         trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
         capstoneChip: { label: 'PQC Foundations' },
       },
