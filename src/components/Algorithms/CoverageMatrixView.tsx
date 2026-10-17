@@ -14,9 +14,10 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
+  ClipboardList,
   ExternalLink,
+  FileText,
   Grid3x3,
-  ShieldCheck,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -44,7 +45,11 @@ import {
   type OpenGap,
   type Polarity,
 } from '@/data/validation/coverageModel'
-import { groupByMechanismOperation, type CoverageGroup } from '@/data/validation/coverageExport'
+import {
+  groupByMechanismOperation,
+  groupMatchesStatus,
+  type CoverageGroup,
+} from '@/data/validation/coverageExport'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const dataUrl = (file: string) =>
@@ -240,8 +245,8 @@ export function CoverageMatrixView({
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
     return groups.filter((g) => {
-      const gp = g.engines[engine].polarity[polarity] // eslint-disable-line security/detect-object-injection
-      if (statusFilter !== 'all' && gp.status !== statusFilter) return false
+      if (!groupMatchesStatus(g, engine, polarity, statusFilter as MatrixStatus | 'all'))
+        return false
       if (!q) return true
       return (
         (g.mechanism ?? '').toLowerCase().includes(q) ||
@@ -282,9 +287,9 @@ export function CoverageMatrixView({
     if (gapStatus !== 'all' && gap.status !== gapStatus) return false
     const q = gapQuery.trim().toLowerCase()
     if (!q) return true
-    return [gap.title, gap.detail, gap.scope, gap.owner, gap.planItem ?? ''].some((value) =>
-      value.toLowerCase().includes(q)
-    )
+    const fields = [gap.title, gap.detail, gap.scope]
+    if (gapView === 'evidence') fields.push(gap.owner, gap.planItem ?? '')
+    return fields.some((value) => value.toLowerCase().includes(q))
   })
   const hiddenGaps = matrix.openGaps.length - baseGaps.length
 
@@ -407,7 +412,7 @@ export function CoverageMatrixView({
                       return (
                         <tr key={d} className="border-t border-border">
                           <th scope="row" className="py-1 pr-2 font-normal text-foreground">
-                            {DIMENSION_LABEL[d]} (G-3)
+                            {DIMENSION_LABEL[d]}
                           </th>
                           <td className="py-1 pr-2 text-foreground">
                             {b.covered} / {t.advertisedCells}
@@ -520,6 +525,13 @@ export function CoverageMatrixView({
         </div>
       </div>
 
+      {statusFilter === 'untested' && (
+        <p className="text-xs text-muted-foreground" data-testid="untested-filter-note">
+          &ldquo;untested&rdquo; lists every group with at least one untested cell, so a group can
+          appear here while its status column shows the strongest evidence among its other cells.
+        </p>
+      )}
+
       {/* Matrix */}
       <div
         className="glass-panel w-full min-w-0 max-w-full overflow-x-auto"
@@ -581,10 +593,10 @@ export function CoverageMatrixView({
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div className="max-w-3xl space-y-1">
               <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
+                <ClipboardList size={16} className="text-primary" aria-hidden="true" />
                 Open gaps register
-                <span className="font-normal text-muted-foreground">
-                  ({matrix.openGaps.length})
+                <span className="font-normal text-muted-foreground" data-testid="gap-total">
+                  ({baseGaps.length})
                 </span>
               </h4>
               <p className="text-xs leading-relaxed text-muted-foreground">
@@ -594,13 +606,14 @@ export function CoverageMatrixView({
               </p>
             </div>
             <div
-              className="inline-flex w-fit rounded-lg border border-border bg-background p-1"
+              role="group"
+              className="flex max-w-full min-w-0 flex-wrap gap-1 self-start rounded-lg border border-border bg-background p-1"
               aria-label="Gap register reading level"
             >
               <Button
                 variant={gapView === 'overview' ? 'secondary' : 'ghost'}
                 size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
+                className="h-auto min-h-7 gap-1.5 whitespace-normal px-2.5 py-1 text-xs"
                 aria-pressed={gapView === 'overview'}
                 onClick={() => setGapView('overview')}
               >
@@ -610,19 +623,20 @@ export function CoverageMatrixView({
               <Button
                 variant={gapView === 'evidence' ? 'secondary' : 'ghost'}
                 size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
+                className="h-auto min-h-7 gap-1.5 whitespace-normal px-2.5 py-1 text-xs"
                 aria-pressed={gapView === 'evidence'}
                 onClick={() => setGapView('evidence')}
               >
-                <ShieldCheck size={13} aria-hidden="true" />
-                Certification evidence
+                <FileText size={13} aria-hidden="true" />
+                Evidence detail
               </Button>
             </div>
           </div>
 
           <div className="mt-3 grid gap-2 sm:grid-cols-3" aria-label="Gap status definitions">
             {GAP_STATUSES.map((status) => {
-              const count = matrix.openGaps.filter((gap) => gap.status === status).length
+              // Counted over the entries the list can show, so a chip never promises more than it lists.
+              const count = baseGaps.filter((gap) => gap.status === status).length
               const statusMeta = gapStatusMeta(status)
               return (
                 <Button
@@ -654,10 +668,22 @@ export function CoverageMatrixView({
             })}
           </div>
 
+          {hiddenGaps > 0 && (
+            <p className="mt-2 text-[11px] text-muted-foreground" data-testid="gap-hidden-note">
+              {matrix.openGaps.length} gaps in total. {hiddenGaps} generated entries &mdash; one per
+              mechanism with no registered test &mdash; are folded away and not included in the
+              counts above; show them at the end of the list.
+            </p>
+          )}
+
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
             <Input
               aria-label="Search open gaps"
-              placeholder="Search finding, engine, standard, owner, or plan"
+              placeholder={
+                gapView === 'evidence'
+                  ? 'Search finding, engine, standard, owner, or tracking reference'
+                  : 'Search finding, engine, or standard'
+              }
               value={gapQuery}
               onChange={(event) => setGapQuery(event.target.value)}
               className="sm:max-w-md"
@@ -748,8 +774,13 @@ function OpenGapCard({
             </h5>
           </div>
           <div className="flex shrink-0 flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-            <span>owner: {gap.owner}</span>
-            {gap.planItem && <span>plan {gap.planItem}</span>}
+            {/* Owner and tracking reference are maintenance detail — evidence view only */}
+            {view === 'evidence' && (
+              <>
+                <span>Owner: {gap.owner === 'unassigned' ? 'not yet assigned' : gap.owner}</span>
+                {gap.planItem && <span>Tracking reference {gap.planItem}</span>}
+              </>
+            )}
             {typeof gap.cells === 'number' && <span>{gap.cells} capability cells</span>}
           </div>
         </div>

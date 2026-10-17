@@ -109,6 +109,29 @@ export function groupByMechanismOperation(matrix: CoverageMatrix): CoverageGroup
   return [...groups.values()]
 }
 
+/**
+ * Whether a group belongs under a matrix status filter. A group's displayed
+ * status is its STRONGEST cell, so filtering on that alone would drop every
+ * group that is only partly untested. The `untested` filter therefore matches
+ * any group with at least one advertised, untested cell; other statuses match
+ * the group's displayed status.
+ */
+export function groupMatchesStatus(
+  group: CoverageGroup,
+  engine: EngineId,
+  polarity: Polarity,
+  filter: MatrixStatus | 'all'
+): boolean {
+  if (filter === 'all') return true
+  if (filter === 'untested') {
+    return group.rows.some((r) => {
+      const c = r.engines[engine] // eslint-disable-line security/detect-object-injection
+      return c.advertised && c.polarity[polarity].status === 'untested' // eslint-disable-line security/detect-object-injection
+    })
+  }
+  return group.engines[engine].polarity[polarity].status === filter // eslint-disable-line security/detect-object-injection
+}
+
 export const levelSummary = (gp: GroupPolarity): string =>
   gp.status === 'unsupported'
     ? 'unsupported'
