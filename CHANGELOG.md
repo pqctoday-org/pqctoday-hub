@@ -47,6 +47,10 @@ The KMIP protocol workshop now runs its own local engine with a real audit trail
 - **Certification lessons match the current validation boundaries** [view:/learn/acvp-lab-workflow] [view:/learn/fips-140-3-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: ACVP response artifacts distinguish local demonstrations from NIST submissions, FIPS level planning no longer turns physical-security examples into automatic level claims, and Common Criteria/EUCC exercises distinguish assurance claims, national certification and scheme recognition.
 - **Workshop controls and results stay inside phone layouts** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer] [persona:ops]: long workshop titles and methodology controls wrap without shifting the page sideways, KMIP inspector actions wrap, and mobile KAT cards show their explanatory result instead of only a pass icon.
 
+### Data
+
+- **Current BSI and ANSSI guidance joins the Library evidence set** [view:/library] [view:/compliance] [persona:architect] [persona:developer] [persona:cert-engineer] [persona:grc] [persona:researcher]: the Library adds ANSSI’s 2026 crypto-agility guidance and refreshes the derived learning fields and evidence-grounded maturity requirements for it and BSI TR-02102-1. The older 2021 ANSSI algorithm-selection guide is deliberately excluded from the current guidance set. Only official publisher links and derived records are public; source files remain private.
+
 ## [4.162.0] - 2026-10-16
 
 Each role now starts from its own questions and downloads (including a new operations pack for IT Ops), beginner pages keep their qualifiers, Library labels say what stage a document is at and how far to trust it, and 20 new certificates join the certification records. The Terms of Service now cover the website only.
