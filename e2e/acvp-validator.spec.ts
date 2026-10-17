@@ -104,7 +104,11 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Wait for the table to populate with pass/fail
     // No explicit wait needed since we already know `isNotRunning` is false which means results appeared!
 
-    // The Execution Log should conclude.
+    // The run button is the stable completion signal. The execution trace is
+    // intentionally collapsed for general-audience users, so waiting for its
+    // final line to become visible would wait forever even after a successful
+    // run. Results have already appeared above, which proves this run started;
+    // aria-busy=false now proves it finished.
     // 2026-07-08: measured 21.6s locally to reach this point (6 real WASM
     // liboqs calls, vector count unchanged since 2025-11-27, no code-level
     // delay) -- only ~8s of headroom under the old 30s cap, which reliably
@@ -121,10 +125,9 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // the full Rust-engine run measured 76.1 s in Chromium against the
     // production build (1085 rows), down from 173.8 s before the streamed
     // table stopped re-rendering every row on every result. 180 s stays.
-    const logSection = page
-      .locator('div', { hasText: 'Cryptographic Validation Workbench run completed' })
-      .last()
-    await expect(logSection).toBeVisible({ timeout: 300000 })
+    await expect(page.getByTestId('acvp-run-selected')).toHaveAttribute('aria-busy', 'false', {
+      timeout: 300000,
+    })
 
     // Validate that at least one ML-KEM and ML-DSA passed
     const mlkemRow = page.getByTestId('acvp-result-row').filter({ hasText: 'ML-KEM-512' }).first()
@@ -303,12 +306,13 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Select KDF only.
     await page.getByTestId('acvp-select-none').click()
     await page.getByTestId('acvp-category-checkbox-kdf').check()
-    await page.getByTestId('acvp-run-selected').click()
+    const runSelected = page.getByTestId('acvp-run-selected')
+    await runSelected.click()
 
-    // Wait for the run to finish: the Run Selected button carries
-    // aria-busy while loading, same attribute the original test's "Run All"
-    // button uses.
-    await expect(page.getByTestId('acvp-run-selected')).toHaveAttribute('aria-busy', 'false', {
+    // Observe both transitions so the initial idle state cannot satisfy the
+    // completion assertion before React processes the click.
+    await expect(runSelected).toHaveAttribute('aria-busy', 'true', { timeout: 10000 })
+    await expect(runSelected).toHaveAttribute('aria-busy', 'false', {
       timeout: 60000,
     })
 
@@ -337,7 +341,14 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // No unrelated category's algorithm name should appear (proves the
     // category guard skipped that section's code entirely, not merely
     // hid its row from the table).
-    const logText = await page.getByTestId('acvp-execution-log').innerText()
+    // General-audience mode deliberately collapses the raw trace. Open it as a
+    // user would before asserting the educational content it exposes.
+    const executionLog = page.getByTestId('acvp-execution-log')
+    if (!(await executionLog.isVisible())) {
+      await page.getByText(/Show raw execution trace/).click()
+      await expect(executionLog).toBeVisible()
+    }
+    const logText = await executionLog.innerText()
     expect(logText).toContain('X9.63')
     expect(logText).not.toContain('AES-GCM')
     expect(logText).not.toContain('ECDSA P-256')
