@@ -36,7 +36,9 @@ export function AlgorithmCompareBar({
         <div className="flex items-center gap-2 shrink-0 max-md:min-w-0 max-md:shrink max-md:overflow-x-auto max-md:no-scrollbar">
           <Scale size={15} className="text-secondary hidden sm:block" />
           <span className="text-sm font-medium text-foreground hidden sm:block whitespace-nowrap">
-            {compareKeys.length} of {MAX_COMPARE} selected
+            {compareKeys.length > MAX_COMPARE
+              ? `${compareKeys.length} selected (up to ${MAX_COMPARE} compared)`
+              : `${compareKeys.length} of ${MAX_COMPARE} selected`}
           </span>
 
           {/* Locked function type — set by the first pick */}
@@ -73,7 +75,7 @@ export function AlgorithmCompareBar({
                   aria-label={`Remove ${name} from comparison`}
                   className="text-muted-foreground hover:text-foreground shrink-0 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 md:p-0.5 p-2 rounded-full hover:bg-muted"
                 >
-                  <X size={12} />
+                  <X size={12} aria-hidden="true" />
                 </Button>
               </span>
             ))}

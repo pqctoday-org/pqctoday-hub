@@ -18,13 +18,19 @@ import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import {
   type AlgorithmDetail,
-  type EvidenceFieldState,
-  evidenceStateLabel,
+  type AlgorithmSizeField,
+  algorithmSizeState,
+  formatAesEquivalent,
+  formatAlgorithmSize,
+  formatLinkQuality,
+  formatSecurityLevel,
+  formatSnapshotDate,
+  formatStackRam,
+  stackRamState,
   getCatalogueFreshness,
   loadedFileMetadata,
   getSecurityLevelColor,
   getCryptoFamilyColor,
-  RESEARCH_NEEDED,
   isResearchNeeded,
 } from '@/data/pqcAlgorithmsData'
 import { tierBadge, tierBadgeClasses } from '@/data/algorithmStatusTier'
@@ -66,14 +72,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function bytes(value: number | null, state?: EvidenceFieldState, unknown = false) {
-  if (state && state !== 'stated') {
-    return <span className="italic text-muted-foreground">{evidenceStateLabel(state)}</span>
+/** A size field's shared text (same words as the table, compare and export). */
+function bytes(algo: AlgorithmDetail, field: AlgorithmSizeField) {
+  const text = formatAlgorithmSize(algo, field)
+  if (algorithmSizeState(algo, field) !== 'stated') {
+    return <span className="italic text-muted-foreground">{text}</span>
   }
-  if (unknown || value === null || value === 0) {
-    return <span className="italic text-muted-foreground">{RESEARCH_NEEDED}</span>
-  }
-  return <span className="font-mono">{value.toLocaleString()} B</span>
+  return <span className="font-mono">{text}</span>
 }
 
 function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => void }) {
@@ -193,13 +198,13 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                       getSecurityLevelColor(algo.securityLevel)
                     )}
                   >
-                    Level {algo.securityLevel}
+                    {formatSecurityLevel(algo)}
                   </span>
                 ) : (
-                  '—'
+                  <span className="italic text-muted-foreground">{formatSecurityLevel(algo)}</span>
                 )}
               </Fact>
-              <Fact label="AES equivalent">{algo.aesEquivalent || '—'}</Fact>
+              <Fact label="AES equivalent">{formatAesEquivalent(algo)}</Fact>
               <Fact label="Standard">
                 <span className="font-mono text-[11.5px]">{algo.fipsStandard || '—'}</span>
               </Fact>
@@ -222,31 +227,11 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
 
             <Section title="Sizes">
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <Fact label="Public key">
-                  {bytes(
-                    algo.publicKeySize,
-                    algo.evidenceStates?.publicKey,
-                    !algo.evidenceStates && algo.sizesUnknown
-                  )}
-                </Fact>
-                <Fact label="Private key">
-                  {bytes(
-                    algo.privateKeySize,
-                    algo.evidenceStates?.privateKey,
-                    !algo.evidenceStates && algo.sizesUnknown
-                  )}
-                </Fact>
-                <Fact label="Signature / ciphertext">
-                  {bytes(
-                    algo.signatureCiphertextSize,
-                    algo.evidenceStates?.signatureOrCiphertext,
-                    !algo.evidenceStates && algo.sizesUnknown
-                  )}
-                </Fact>
+                <Fact label="Public key">{bytes(algo, 'publicKey')}</Fact>
+                <Fact label="Private key">{bytes(algo, 'privateKey')}</Fact>
+                <Fact label="Signature / ciphertext">{bytes(algo, 'signatureOrCiphertext')}</Fact>
                 {algo.evidenceStates?.sharedSecret !== 'not-applicable' && (
-                  <Fact label="Shared secret">
-                    {bytes(algo.sharedSecretSize, algo.evidenceStates?.sharedSecret)}
-                  </Fact>
+                  <Fact label="Shared secret">{bytes(algo, 'sharedSecret')}</Fact>
                 )}
               </dl>
             </Section>
@@ -258,11 +243,11 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                 case study or run the same operation and implementation on your target.
               </p>
               <dl className="grid grid-cols-1 gap-y-2.5">
-                <Fact label="Stack RAM (approx.)">
-                  {algo.stackRAM > 0 ? (
-                    <span className="font-mono">~{(algo.stackRAM / 1000).toFixed(1)} KB</span>
+                <Fact label="Stack RAM">
+                  {stackRamState(algo) === 'stated' ? (
+                    <span className="font-mono">{formatStackRam(algo)}</span>
                   ) : (
-                    <span className="italic text-muted-foreground">{RESEARCH_NEEDED}</span>
+                    <span className="italic text-muted-foreground">{formatStackRam(algo)}</span>
                   )}
                 </Fact>
                 {algo.optimizationTarget && !isResearchNeeded(algo.optimizationTarget) && (
@@ -276,13 +261,13 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                 <Fact label="Source record">{algo.trustedSourceId || 'No source id recorded'}</Fact>
                 <Fact label="Vetting body">{algo.vettingBody || 'Not recorded'}</Fact>
                 <Fact label="Peer review">{algo.peerReviewed || 'Not recorded'}</Fact>
-                <Fact label="Link quality">{algo.statusUrlQuality || 'Not assessed'}</Fact>
+                <Fact label="Link quality">{formatLinkQuality(algo)}</Fact>
                 <Fact label="Confidence">
                   {algo.confidenceScore === undefined ? 'Not scored' : `${algo.confidenceScore}`}
                 </Fact>
                 <Fact label="Catalogue snapshot">
                   {loadedFileMetadata
-                    ? `${loadedFileMetadata.filename}${loadedFileMetadata.date ? ` (${loadedFileMetadata.date.toISOString().slice(0, 10)})` : ''}`
+                    ? `${loadedFileMetadata.filename}${formatSnapshotDate(loadedFileMetadata.date) ? ` (${formatSnapshotDate(loadedFileMetadata.date)})` : ''}`
                     : 'Not recorded'}
                 </Fact>
                 <Fact label="Snapshot freshness">{catalogueFreshness.label}</Fact>

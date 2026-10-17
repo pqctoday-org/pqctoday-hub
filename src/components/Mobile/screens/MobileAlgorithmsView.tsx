@@ -11,7 +11,9 @@ import {
   algorithmIdFromName,
   findAlgorithmByRef,
   type AlgorithmDetail,
+  evidenceStateLabel,
   formatByteField,
+  formatSecurityLevel,
 } from '@/data/pqcAlgorithmsData'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { MobileSheet } from '../primitives/Sheet'
@@ -28,6 +30,13 @@ interface SheetAlgo {
   sharedSecretBytes?: number | null
   /** Per-field evidence states from the catalogue; absent for registry entries. */
   evidence?: AlgorithmDetail['evidenceStates']
+  /** Catalogue security-level text (same words as the desktop table and drawer). */
+  securityText?: string
+}
+
+function securityLevelText(a: SheetAlgo): string {
+  if (a.securityText) return a.securityText
+  return a.securityLevel !== null ? `Level ${a.securityLevel}` : evidenceStateLabel('not-specified')
 }
 
 function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
@@ -41,6 +50,7 @@ function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
     signatureOrCiphertextBytes: d.signatureCiphertextSize,
     sharedSecretBytes: d.sharedSecretSize,
     evidence: d.evidenceStates,
+    securityText: formatSecurityLevel(d),
   }
 }
 
@@ -427,9 +437,7 @@ export function MobileAlgorithmsView() {
               <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Security level
               </dt>
-              <dd className="mt-0.5 text-[12px] text-foreground">
-                {selected.securityLevel ?? '—'}
-              </dd>
+              <dd className="mt-0.5 text-[12px] text-foreground">{securityLevelText(selected)}</dd>
             </div>
             <div>
               <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
@@ -464,7 +472,7 @@ export function MobileAlgorithmsView() {
                   Shared secret
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                  {selected.sharedSecretBytes.toLocaleString()} B
+                  {formatByteField(selected.sharedSecretBytes, selected.evidence?.sharedSecret)}
                 </dd>
               </div>
             )}

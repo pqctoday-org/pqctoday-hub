@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { motion } from 'framer-motion'
-import { type AlgorithmTransition } from '../../data/algorithmsData'
 import {
-  formatByteField,
+  getTransitionFunctionGroup,
+  transitionFunctionLabel,
+  type AlgorithmTransition,
+} from '../../data/algorithmsData'
+import {
+  formatAlgorithmSize,
   loadPQCAlgorithmsData,
   type AlgorithmDetail,
 } from '../../data/pqcAlgorithmsData'
@@ -532,21 +536,14 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         ))
                     const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
                     const isCompared = compareSet.has(pqcName)
-                    const isSignatureType =
-                      algo.function === 'Signature' || algo.function === 'Composite Signature'
+                    const functionGroup = getTransitionFunctionGroup(algo.function)
+                    const isSignatureType = functionGroup === 'Signature'
                     const canCompare =
                       isCompared ||
                       (!maxCompareReached &&
                         (compareType === null ||
                           compareType === (isSignatureType ? 'Signature' : 'KEM')))
-                    const isComparableFunction =
-                      algo.function === 'Signature' ||
-                      algo.function === 'Composite Signature' ||
-                      algo.function === 'Encryption/KEM' ||
-                      algo.function === 'Composite KEM' ||
-                      algo.function === 'Hybrid KEM' ||
-                      algo.function === 'Hybrid KEM (HPKE)' ||
-                      algo.function === 'Hybrid KEM with Access Control'
+                    const isComparableFunction = functionGroup !== null && !!algo.pqc
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
@@ -598,7 +595,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             ) : (
                               <Lock size={24} className="flex-shrink-0" />
                             )}
-                            <span className="truncate">{algo.function}</span>
+                            <span className="truncate">
+                              {transitionFunctionLabel(algo.function)}
+                            </span>
                           </div>
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.classical}px` }}>
@@ -644,12 +643,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   </span>
                                 )}
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
-                                  pk:{' '}
-                                  {formatByteField(
-                                    pqcDetail.publicKeySize,
-                                    pqcDetail.evidenceStates?.publicKey,
-                                    !pqcDetail.evidenceStates && pqcDetail.sizesUnknown
-                                  )}
+                                  pk: {formatAlgorithmSize(pqcDetail, 'publicKey')}
                                 </span>
                               </div>
                             )}
