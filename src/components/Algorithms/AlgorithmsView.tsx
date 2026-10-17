@@ -33,7 +33,11 @@ import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATVa
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { getCatalogueFreshness, getWithheldCatalogueRows } from '@/data/pqcAlgorithmsData'
+import {
+  formatSnapshotDate,
+  getCatalogueFreshness,
+  getWithheldCatalogueRows,
+} from '@/data/pqcAlgorithmsData'
 import {
   algoMatchesHighlight,
   highlightRowSelector,
@@ -130,6 +134,7 @@ export function AlgorithmsView() {
     selectedTransitionId,
     transitionNotFound,
     closeTransition,
+    roleDefaultFilters,
   } = useAlgorithmExplorer(personaDefaults)
 
   const catalogueFreshness = getCatalogueFreshness(metadata?.date)
@@ -449,7 +454,7 @@ export function AlgorithmsView() {
       dataSource:
         `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
         `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
-        `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`,
+        `${formatSnapshotDate(metadata?.date ?? transitionMetadata?.date) ?? 'date not recorded'}`,
       onExport: handleExportCsv,
       endorseUrl: buildEndorsementUrl({
         category: 'algorithm-endorsement',
@@ -603,8 +608,8 @@ export function AlgorithmsView() {
           {withheldTotal > 0 &&
             `; ${withheldTotal} withheld (${withheldParts.join(', ')}) because they cannot support a defensible comparison yet`}
           . Of the rows shown, {catalogueQuality.missingSource} lack either a source identifier or
-          status link and {catalogueQuality.researchGaps} contain an explicit research gap. Open a
-          row to inspect its available provenance.
+          status link and {catalogueQuality.researchGaps} have at least one missing or unresearched
+          field. Open a row to inspect its available provenance.
         </p>
       </aside>
 
@@ -716,9 +721,10 @@ export function AlgorithmsView() {
           {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel.
               Hidden on Protocol Support: that tab filters/sorts its own table
               (family/fn/level/region/status here have no effect on it). */}
-          {activeTab !== 'support' && activeTab !== 'landscape' && (
+          {activeTab !== 'support' && activeTab !== 'landscape' && activeTab !== 'validation' && (
             <>
               <AlgorithmFilters
+                roleDefaultFilters={roleDefaultFilters}
                 cryptoFamily={filterCryptoFamily}
                 onCryptoFamilyChange={handleCryptoFamilyChange}
                 functionGroup={filterFunction}

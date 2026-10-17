@@ -524,10 +524,10 @@ function NoImplementationBadge({ algo }: { algo: AlgorithmDetail }) {
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border font-medium"
-      title="No indexed library or reference implementation found for this algorithm yet."
+      title="No implementation is recorded for this algorithm in the libraries PQC Today has reviewed. That is not evidence that none exists."
     >
       <SearchX size={10} aria-hidden="true" />
-      No known implementation
+      No reviewed implementation evidence
     </span>
   )
 }
@@ -637,6 +637,10 @@ function BrowseTable({
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
+          <caption className="sr-only">
+            Algorithm catalogue: sizes, security level and maturity for the rows matching the
+            current filters
+          </caption>
           <thead>
             <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
               <th className="p-3 w-8" aria-label="Select for comparison" />
