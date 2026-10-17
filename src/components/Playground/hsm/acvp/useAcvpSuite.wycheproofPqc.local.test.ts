@@ -18,7 +18,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { CategoryId, TestResult } from './useAcvpSuite'
@@ -79,7 +79,10 @@ vi.mock('../HsmContext', async () => {
 const run = async (cats: CategoryId[]): Promise<TestResult[]> => {
   const { useAcvpSuite } = await import('./useAcvpSuite')
   const { result } = renderHook(() => useAcvpSuite())
-  const out = await result.current.runTests(new Set(cats))
+  let out: TestResult[] = []
+  await act(async () => {
+    out = await result.current.runTests(new Set(cats))
+  })
   await waitFor(() =>
     expect(result.current.logs.at(-1)).toMatch(/Validation Workbench run completed/)
   )
