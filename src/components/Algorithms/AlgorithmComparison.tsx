@@ -29,7 +29,7 @@ import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
-import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { isCertifiedTier, tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { transitionConsequence } from '@/data/algorithmConsequence'
 import {
   DATE_SOURCE_NOT_RECORDED_NOTE,
@@ -716,13 +716,15 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   {algo.status}
                                 </span>
                               )
-                            ) : algo.status === 'Candidate' ? (
-                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
-                                {algo.status}
-                              </span>
                             ) : (
-                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
-                                {algo.status}
+                              <span
+                                className={clsx(
+                                  'text-xs px-1.5 py-0.5 rounded border',
+                                  tierBadgeClasses(tierBadge(algo.statusTier)?.tone ?? 'inactive')
+                                )}
+                                title={`Catalogue status: ${algo.status}`}
+                              >
+                                {tierBadge(algo.statusTier)?.label ?? algo.status}
                               </span>
                             ))}
                         </td>

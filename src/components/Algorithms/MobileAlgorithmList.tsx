@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
-import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { isCertifiedTier, tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 import {
   DATE_SOURCE_NOT_RECORDED_NOTE,
@@ -117,13 +117,15 @@ export const MobileAlgorithmList = ({
                       <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
                         {algo.status}
                       </span>
-                    ) : algo.status === 'Candidate' ? (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
-                        {algo.status}
-                      </span>
                     ) : (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
-                        {algo.status}
+                      <span
+                        className={clsx(
+                          'text-[10px] px-1.5 py-0.5 rounded border',
+                          tierBadgeClasses(tierBadge(algo.statusTier)?.tone ?? 'inactive')
+                        )}
+                        title={`Catalogue status: ${algo.status}`}
+                      >
+                        {tierBadge(algo.statusTier)?.label ?? algo.status}
                       </span>
                     ))}
                 </div>

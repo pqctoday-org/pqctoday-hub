@@ -27,7 +27,7 @@ import {
   RESEARCH_NEEDED,
   isResearchNeeded,
 } from '@/data/pqcAlgorithmsData'
-import { isDraftTier } from '@/data/algorithmStatusTier'
+import { tierBadge, tierBadgeClasses } from '@/data/algorithmStatusTier'
 import { resolveAlgoXrefs } from '@/data/algoProductXrefData'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
@@ -132,11 +132,20 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                 >
                   {algo.cryptoFamily || '—'}
                 </span>
-                {isDraftTier(algo.statusTier) && (
-                  <span className="rounded border border-status-warning/30 bg-status-warning/15 px-1.5 py-0.5 text-[10px] font-medium text-status-warning">
-                    Draft
-                  </span>
-                )}
+                {(() => {
+                  const badge = tierBadge(algo.statusTier)
+                  return badge ? (
+                    <span
+                      className={clsx(
+                        'rounded border px-1.5 py-0.5 text-[10px] font-medium',
+                        tierBadgeClasses(badge.tone)
+                      )}
+                      title={badge.tooltip}
+                    >
+                      {badge.label}
+                    </span>
+                  ) : null
+                })()}
                 {showCnsa && (
                   <span
                     className={clsx(

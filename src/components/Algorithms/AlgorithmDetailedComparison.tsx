@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
-import { isDraftTier } from '../../data/algorithmStatusTier'
+import { tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { getAlgorithmAdvisory } from '../../data/algorithmAdvisories'
 import { Button } from '@/components/ui/button'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
@@ -422,18 +422,18 @@ function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean
   return Array.from(highlights).some((h) => algoMatchesHighlight(algo.name, h))
 }
 
-function isDraftCandidate(algo: AlgorithmDetail): boolean {
-  return isDraftTier(algo.statusTier)
-}
-
 function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
-  if (!isDraftCandidate(algo)) return null
+  const badge = tierBadge(algo.statusTier)
+  if (!badge) return null
   return (
     <span
-      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium"
-      title="Draft or candidate standard — sizes and parameters may change before finalization"
+      className={clsx(
+        'inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border font-medium',
+        tierBadgeClasses(badge.tone)
+      )}
+      title={badge.tooltip}
     >
-      Draft
+      {badge.label}
     </span>
   )
 }
