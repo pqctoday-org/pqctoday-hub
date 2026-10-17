@@ -360,10 +360,13 @@ describe('buildGeminiSystemPrompt — link value lists match the pages', () => {
       expect(listed('/algorithms', 'fn')).toEqual(ids(FUNCTION_ITEMS))
     })
 
-    it('status offers Certified, Candidate and To Be Checked (the space written as %20)', () => {
-      expect(listed('/algorithms', 'status')).toEqual(['Certified', 'Candidate', 'To Be Checked'])
+    // The status filter offers explicit maturity buckets; the legacy
+    // 'Certified' value is only normalized from old links, never offered.
+    it('status offers the maturity buckets the page filters on, and never Certified', () => {
       expect(listed('/algorithms', 'status')).toEqual(ids(STATUS_ITEMS))
-      expect(prompt).toContain('status=<Certified|Candidate|To%20Be%20Checked>')
+      expect(listed('/algorithms', 'status')).toContain('published-standard')
+      expect(listed('/algorithms', 'status')).not.toContain('Certified')
+      expect(prompt).not.toContain('status=<Certified')
     })
 
     it('level offers 1 to 5', () => {

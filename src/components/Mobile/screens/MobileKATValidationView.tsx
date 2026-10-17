@@ -622,7 +622,7 @@ export function MobileKATValidationView({
                   ))}
                 {p.references.length > 0 && (
                   <div className="mt-2 border-t border-border pt-2">
-                    <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                       Reviewed sources
                     </p>
                     {p.references.map((reference) => (
