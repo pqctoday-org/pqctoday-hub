@@ -295,7 +295,7 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
       return {
         body: 'IETF',
         stance: 'interim',
-        note: 'IETF specifies hybrid/composite constructions (e.g. X25519MLKEM768) as transition mechanisms; standardization is in progress.',
+        note: 'IETF specifies hybrid/composite constructions as transition mechanisms; some are published (e.g. X25519MLKEM768 in RFC 10024), others are still drafts.',
       }
     case 'ETSI':
       return {

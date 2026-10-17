@@ -389,6 +389,18 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // algorithm, but the tier describes the standards status of the mechanism
   // named by the row, and this one is standards-track and published.
   'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
+  // TLS 1.3 hybrid groups, published as RFC 10024 (Standards Track, Aug 2026).
+  'RFC 10024|||RFC 10024': 'final', // X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024
+  // SSH hybrid key exchange, published as RFC 10042 (Informational, Aug 2026);
+  // a published RFC, treated like RFC 9941 above.
+  'RFC 10042|||RFC 10042': 'final', // mlkem768x25519-sha256, mlkem768nistp256-sha256, mlkem1024nistp384-sha384
+  // BSI TR-02102-1 (2026-01) Tables 2.5/2.6 list only FrodoKEM-976/1344 and
+  // mceliece460896/6688128/8192128, so these rows no longer cite BSI.
+  'ISO 18033-2 Amd2|||NIST PQC Round 4 (Alternate)': 'final', // Classic-McEliece-348864
+  'ISO 18033-2 Amd2|||Not listed in BSI TR-02102-1 (BSI lists mceliece460896, 6688128 and 8192128); NOT in NIST FIPS':
+    'final', // Classic-McEliece-6960119
+  'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); ISO 18033-2 Amd2; ANSSI: acceptable in hybrid; not listed by BSI (BSI lists FrodoKEM-976/1344)':
+    'final', // FrodoKEM-640
   // sr25519 (2026-08-16): a Web3 Foundation (Schnorrkel) implementation, not
   // an IETF/NIST/regional standards-track document at all — 'non-standardized'
   // (not 'unverified', whose tooltip claims the status wasn't fact-checked;
