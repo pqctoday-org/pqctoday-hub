@@ -27,7 +27,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import { TEST_REGISTRY } from '@/data/validation/testRegistry'
@@ -161,7 +161,10 @@ const toRunResults = (rows: TestResult[], artifacts: Record<EngineId, string>): 
 const runWholeSuite = async (): Promise<TestResult[]> => {
   const { useAcvpSuite } = await import('./useAcvpSuite')
   const { result } = renderHook(() => useAcvpSuite())
-  const out = await result.current.runTests(new Set(ALL_CATEGORY_IDS))
+  let out: TestResult[] = []
+  await act(async () => {
+    out = await result.current.runTests(new Set(ALL_CATEGORY_IDS))
+  })
   await waitFor(() => expect(result.current.logs.at(-1)).toMatch(/run completed/), {
     timeout: 60_000,
   })
