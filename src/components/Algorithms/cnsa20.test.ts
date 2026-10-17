@@ -36,6 +36,22 @@ describe('classifyCnsa20', () => {
   it('approves stateful hash-based sigs for firmware only', () => {
     expect(classifyCnsa20(a('LMS-SHA256 (H20/W8)')).status).toBe('approved-limited')
     expect(classifyCnsa20(a('XMSS-SHA2_20')).status).toBe('approved-limited')
+    expect(classifyCnsa20(a('LMS_SHA256_M24_H20')).status).toBe('approved-limited')
+  })
+
+  it('excludes the multi-tree variants HSS and XMSS^MT (CNSA 2.0 FAQ Ver. 2.2)', () => {
+    for (const name of [
+      'HSS-LMS-SHA256',
+      'HSS (L2, H10/W8)',
+      'LMS-HSS-SHA256',
+      'XMSS^MT-SHA2_20/2_256',
+      'XMSSMT-SHA2_40/4_256',
+      'XMSS-MT-SHA2_20',
+    ]) {
+      const v = classifyCnsa20(a(name))
+      expect(v.status, name).toBe('excluded')
+      expect(v.label, name).toBe('Not in CNSA 2.0')
+    }
   })
 
   it('treats other PQC families / classical / composites as not-in-suite', () => {
