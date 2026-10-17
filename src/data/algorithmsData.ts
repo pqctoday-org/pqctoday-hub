@@ -72,10 +72,13 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ETSI TS 104 015': 'final', // Covercrypt
   'BSI TR-02102-1': 'regional', // Classic McEliece
   'KpqC Round 2': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — final KpqC winners (Jan 2025)
+  'KpqC final selection (January 2025)': 'regional', // same rows, corrected label (kpqc.or.kr, 16 Jan 2025)
   'Round 2': 'round2-candidate', // MAYO
+  'Round 3': 'round2-candidate', // MAYO — NIST Additional Signatures Round 3 since 14 May 2026; the UI labels this tier Round 3
   Withdrawn: 'eliminated', // HAWK — withdrawn by its submitters, 29 Jul 2026
   'RFC 10024': 'final', // TLS 1.3 hybrid groups (X25519MLKEM768 etc.), Aug 2026
   'Round 4': 'round4-not-selected', // BIKE, Classic-McEliece (NIST-track view)
+  'Not selected by NIST (Round 4 concluded March 2025)': 'round4-not-selected', // BIKE, Classic-McEliece (NIST IR 8545)
   // This file's Region column tags all 'Draft' rows 'IETF', including the
   // SLH-DSA-*-24 rows the reference CSV correctly attributes to SP 800-230
   // — a data mismatch between the two files (flagged, not corrected here).

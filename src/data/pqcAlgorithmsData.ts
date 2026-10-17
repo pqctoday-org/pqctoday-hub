@@ -279,6 +279,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'SP 800-232 (standardised) — lightweight symmetric, NOT a post-quantum public-key algorithm|||SP 800-232':
     'final', // Ascon-AEAD128, Ascon-Hash256
   'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
+  // HQC wording corrected 2026-10-17: NIST selected HQC on 11 March 2025, has
+  // not published a draft FIPS yet, and expects the final standard in 2027
+  // (NIST news release, 11 March 2025; NIST IR 8545).
+  'Candidate|||Selected March 2025; draft FIPS not yet published; final expected 2027':
+    'fips-draft', // HQC
   // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
   // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
   // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
@@ -321,6 +326,12 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // while the other 8 Round 3 candidates remain active.
   'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29, per Round 3 Additional Signatures — Post-Quantum Cryptography: Additional Digital Signature Schemes, NIST CSRC)':
     'eliminated', // HAWK-512/1024
+  // fips_standard corrected 2026-10-17 to name Round 3 for all nine candidates
+  // NIST advanced on 14 May 2026 (HAWK was later withdrawn; it keeps its own key).
+  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 3 (May 2026)':
+    'round2-candidate', // MAYO-1/2/3/5, UOV, FAEST, SNOVA, MQOM, QR-UOV, SDitH
+  'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Signatures Round 3 (May 2026)':
+    'round2-candidate', // SQIsign
   'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
   // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
   // follow-up rather than guessing). The status itself IS verified (csrc.nist.gov's own
@@ -380,6 +391,9 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // lookup throws on an unregistered pair, so the key must exist BEFORE the
   // CSV bumps to -19, and archived CSV snapshots still carry -16/-18.
   'Candidate|||draft-ietf-lamps-pq-composite-kem-19': 'ietf-draft', // Composite ML-KEM
+  // -23 posted 2026-10-14; datatracker shows the draft in the RFC Editor queue
+  // (checked 2026-10-17). Still an Internet-Draft, not an RFC.
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-23': 'ietf-draft', // Composite ML-KEM
   // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
   // IRTF CFRG Internet-Draft, verified against the datatracker directly —
   // not yet an RFC.
@@ -397,6 +411,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // BSI TR-02102-1 (2026-01) Tables 2.5/2.6 list only FrodoKEM-976/1344 and
   // mceliece460896/6688128/8192128, so these rows no longer cite BSI.
   'ISO 18033-2 Amd2|||NIST PQC Round 4 (Alternate)': 'final', // Classic-McEliece-348864
+  // 2026-10-17: Classic McEliece was a Round 4 candidate, not an alternate, and
+  // NIST IR 8545 (March 2025) did not select it. The ISO/IEC 18033-2 Amd 2
+  // standard keeps the tier at 'final'.
+  'ISO 18033-2 Amd2|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-348864
+  'ISO 18033-2 Amd2; BSI TR-02102-1|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-460896/8192128
   'ISO 18033-2 Amd2|||Not listed in BSI TR-02102-1 (BSI lists mceliece460896, 6688128 and 8192128); NOT in NIST FIPS':
     'final', // Classic-McEliece-6960119
   'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); ISO 18033-2 Amd2; ANSSI: acceptable in hybrid; not listed by BSI (BSI lists FrodoKEM-976/1344)':
