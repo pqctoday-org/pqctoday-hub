@@ -275,9 +275,9 @@ describe('MainLayout', () => {
       expect(button.className).toMatch(/border-dashed/)
     })
 
-    it('shows the WIP chip (executive has a marked row: /playground)', () => {
+    it('does not add a detached WIP chip for marked rows', () => {
       renderLayout()
-      expect(screen.getByText('WIP')).toBeInTheDocument()
+      expect(screen.queryByText('WIP')).not.toBeInTheDocument()
     })
   })
 

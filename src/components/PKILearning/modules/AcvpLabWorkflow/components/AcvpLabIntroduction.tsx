@@ -18,6 +18,7 @@ import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { EVIDENCE_CLASSES, EVIDENCE_CLASS_IDS } from '@/data/validation/evidenceClasses'
 import validationCounts from '@/data/validation/validation-counts.generated.json'
 import { UNSUPPORTED_REASONS } from '@/services/acvp/dispatch'
@@ -132,6 +133,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   useSectionAnchors()
+  const certificationEngineer =
+    usePersonaStore((state) => state.selectedPersona) === 'cert-engineer'
   const counts = validationCounts as {
     vectorFiles: { active: number }
     nistReferenceSampleFileCount: number
@@ -142,6 +145,22 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
   return (
     <div className="w-full space-y-8">
       <DraftStatusNotice />
+
+      <div
+        className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm text-foreground"
+        data-testid="acvp-audience-route"
+      >
+        <p className="font-semibold">
+          {certificationEngineer
+            ? 'Certification engineer route'
+            : 'General security practitioner route'}
+        </p>
+        <p className="mt-1 text-foreground/80">
+          {certificationEngineer
+            ? 'Track exact protocol and algorithm-specification revisions, operational-environment identity, adapter limits and the evidence rung each artifact reaches.'
+            : 'Focus on the lifecycle and claim boundaries: a passing sample, an ACVTS disposition and a validation certificate are different evidence.'}
+        </p>
+      </div>
 
       <div className="glass-panel p-5 text-sm text-foreground/80">
         <p>
@@ -160,6 +179,20 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           .
         </p>
       </div>
+
+      <Callout title="Revision discipline: ACVP is a moving protocol family">
+        <p>
+          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>, published 2
+          October 2026 and expiring 5 April 2027 <Cite s="acvpSpec" />. The algorithm JSON
+          specifications evolve separately, so evidence must name the exact core draft,
+          algorithm-specification revision, operational environment and vector-set source.
+        </p>
+        <p>
+          The eight-rung evidence taxonomy in this module is PQC Today editorial policy, not a NIST
+          taxonomy. It prevents a public ACVP-Server sample, an imported prompt and an ACVTS-issued
+          vector set from being reported as if they were interchangeable.
+        </p>
+      </Callout>
 
       {/* 1 ─────────────────────────────────────────────────────────────── */}
       <Section

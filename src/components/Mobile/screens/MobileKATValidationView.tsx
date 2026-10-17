@@ -212,6 +212,7 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
       const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of config.specs) {
+        hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         out.push(await runKAT(M, hSession, spec, { advertised }))
         setResults([...out])
       }
@@ -270,20 +271,27 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
       {results.length > 0 && (
         <div className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
           {results.map((r) => (
-            <div key={r.id} className="flex items-start justify-between gap-2 text-[10.5px]">
-              <span className="text-foreground/80">
-                {r.useCase}
-                {(() => {
-                  const spec = config.specs.find((s) => s.id === r.id)
-                  return spec ? (
-                    <span className="text-muted-foreground">
-                      {' '}
-                      ({KAT_EVIDENCE_META[evidenceForKind(spec.kind)].short})
-                    </span>
-                  ) : null
-                })()}
-              </span>
-              <StatusIcon status={r.status} />
+            <div key={r.id} className="rounded-md bg-muted/30 p-2 text-[10.5px]">
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-medium text-foreground/80">
+                  {r.useCase}
+                  {(() => {
+                    const spec = config.specs.find((s) => s.id === r.id)
+                    return spec ? (
+                      <span className="text-muted-foreground">
+                        {' '}
+                        ({KAT_EVIDENCE_META[evidenceForKind(spec.kind)].short})
+                      </span>
+                    ) : null
+                  })()}
+                </span>
+                <StatusIcon status={r.status} />
+              </div>
+              {r.details && (
+                <p className="mt-1 break-words leading-relaxed text-muted-foreground">
+                  {r.details}
+                </p>
+              )}
             </div>
           ))}
           {done && (
@@ -344,6 +352,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
       const advertised = advertisedMechanisms(M, hsm.slotRef.current)
+      hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
       setResults([await runKAT(M, hSession, spec, { advertised })])
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -422,10 +431,15 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
         results.map((r) => (
           <div
             key={r.id}
-            className="mt-2 flex items-start justify-between gap-2 border-t border-border pt-2 text-[10.5px]"
+            className="mt-2 rounded-md border-t border-border bg-muted/30 p-2 text-[10.5px]"
           >
-            <span className="text-foreground/80">{r.useCase}</span>
-            <StatusIcon status={r.status} />
+            <div className="flex items-start justify-between gap-2">
+              <span className="font-medium text-foreground/80">{r.useCase}</span>
+              <StatusIcon status={r.status} />
+            </div>
+            {r.details && (
+              <p className="mt-1 break-words leading-relaxed text-muted-foreground">{r.details}</p>
+            )}
           </div>
         ))}
     </div>

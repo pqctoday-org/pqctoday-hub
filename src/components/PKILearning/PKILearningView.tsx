@@ -21,7 +21,6 @@ import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { WipModuleBadge } from './common/WipModuleBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { Button } from '@/components/ui/button'
 
@@ -142,9 +141,6 @@ export const PKILearningView: React.FC = () => {
       flagResourceType: 'Learn Module',
       extra: (
         <>
-          {/* Only modules flagged as work in progress say so; the endorse and flag
-              actions are in the page actions for every module. */}
-          {moduleMeta.workInProgress && <WipModuleBadge moduleMeta={moduleMeta} />}
           {hasReviewRecord && (
             <ReviewedBadge
               domain="module"

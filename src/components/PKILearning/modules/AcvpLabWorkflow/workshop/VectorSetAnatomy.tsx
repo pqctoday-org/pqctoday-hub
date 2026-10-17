@@ -61,7 +61,7 @@ export const VectorSetAnatomy: React.FC = () => {
     : 0
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
       <div className="glass-panel space-y-3 p-4 text-sm">
         <p className="text-foreground/80">
           Load one of the two public NIST ACVP-Server sample vector sets the Hub pins. It is parsed

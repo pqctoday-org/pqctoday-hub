@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:642d6973-ba94-475b-88b3-b730d3eb8fcd",
+  "serialNumber": "urn:uuid:1a25722d-ce87-43c8-a22b-ed0e7f285433",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-11T00:00:00.000Z",
+    "timestamp": "2026-10-16T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -5678,7 +5678,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Dedicated managed HSM service in AWS (FIPS 140-2 L3). ML-KEM-768 and ML-DSA-65 available through AWS Crypto Tools SDK integration. Native PKCS#11 PQC mechanisms not yet available in firmware. AWS KMS provides PQC TLS endpoints with ML-KEM hybrid. Managed service with multi-AZ redundancy.",
+      "description": "Dedicated managed HSM service in AWS. The CloudHSM CLI generates ML-DSA-44/65/87 key pairs in the cluster and signs and verifies with them; per AWS, starting September 1, 2026 ML-DSA is available in FIPS mode for hsm2m.medium clusters. Through the PKCS#11 library (compliant with PKCS#11 v2.40), ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA, CKM_CLOUDHSM_EXT_MU_ML_DSA), not the standard PKCS#11 v3.2 ML-DSA mechanisms. The CLI's key generate-asymmetric-pair category lists only ec, ml-dsa and rsa, so no ML-KEM key generation is documented. AWS KMS provides PQC TLS endpoints with ML-KEM hybrid separately. Managed service with multi-AZ redundancy.",
       "externalReferences": [
         {
           "type": "website",
@@ -36725,6 +36725,82 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "Yes, First Validated: 8/21/2026, Certificate A8896"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "04711b2dc85942b4",
+      "name": "Isidore Mini Core",
+      "manufacturer": {
+        "name": "Forward Edge-AI Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Isidore-Mini-Core"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "FIPS 140-3 (IUT status, date 9/29/2026)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f3c7564ffacb7a66",
+      "name": "QiSpace SDK Cryptographic Module",
+      "manufacturer": {
+        "name": "Quantropi Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "QiSpace-SDK-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
         },
         {
           "name": "pqctoday:algorithm_source",

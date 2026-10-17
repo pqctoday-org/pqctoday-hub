@@ -24,7 +24,6 @@ import {
   Container,
   FlaskConical,
   ExternalLink,
-  Wrench,
   RefreshCw,
   Zap,
   Command,
@@ -176,13 +175,6 @@ const DifficultyBadge: React.FC<{ level: ToolDifficulty }> = ({ level }) => (
     )}
   >
     {level}
-  </span>
-)
-
-const WipBadge: React.FC = () => (
-  <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-status-warning/15 text-status-warning border border-status-warning/30">
-    <Wrench className="w-2.5 h-2.5" aria-hidden="true" />
-    WIP
   </span>
 )
 
@@ -341,7 +333,6 @@ const ToolCardView: React.FC<ToolCardProps> = ({
               </Link>
               <DifficultyBadge level={tool.difficulty} />
               {tool.sandbox && <SandboxBadge />}
-              {tool.wip && !tool.sandbox && <WipBadge />}
               {!tool.sandbox && unmet.length > 0 && <DeviceUnmetBadge unmet={unmet} />}
               {recommended && <ForYouBadge />}
               {showCategory && <CategoryChip label={tool.category} />}

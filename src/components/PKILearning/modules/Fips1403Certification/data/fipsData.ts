@@ -441,6 +441,7 @@ export const CMVP_ROUTES: readonly CmvpRoute[] = [
 export type PlannerScenarioId = 'appliance' | 'cloud-partition' | 'host-library' | 'root-key-hsm'
 export type LevelChoice = '1' | '2' | '3' | '4' | 'inherit'
 export type RouteChoice = 'updt-fs' | 'alg' | 'trns' | 'cve'
+export type EntropyArchitecture = 'internal' | 'external' | 'not-used'
 
 export interface PlannerScenario {
   id: PlannerScenarioId
@@ -454,6 +455,8 @@ export interface PlannerScenario {
   widening: readonly AnchorComponentId[]
   /** the level choices this teaching model accepts */
   fittingLevels: readonly LevelChoice[]
+  /** plausible choices that require assumptions or laboratory confirmation */
+  conditionalLevels?: readonly LevelChoice[]
   /** feedback per level choice — the concept, never "higher is better" */
   levelFeedback: Readonly<Record<LevelChoice, string>>
   /** candidate procurement claims; exactly one is defensible */
@@ -481,14 +484,15 @@ export const PLANNER_SCENARIOS: readonly PlannerScenario[] = [
     requiredOut: ['client-sdk'],
     widening: ['network-service', 'tenant-partition'],
     fittingLevels: ['3'],
+    conditionalLevels: ['2'],
     levelFeedback: {
       '1':
         'Under-specified for this threat: people who can touch the box are part of the threat model, so the physical-security area matters. All four HSM certificates verified to approve ML-KEM and ML-DSA (24 September 2026) are overall Level 3. ' +
         RAISE_LATER,
       '2':
-        'Possible in principle, but the planning exercises use Level 3 for HSMs where physical access by an attacker is credible. ' +
+        'Defensible only with stated assumptions: establish the applicable requirement-area targets and show that the physical-security and authentication requirements answer the threat model. Current Level 3 HSM certificates are market examples, not the rule. ' +
         RAISE_LATER,
-      '3': 'Fits: physical access is credible, the buyers ask for a module certificate, and it matches the four HSM certificates verified to approve ML-KEM and ML-DSA on 24 September 2026 (all overall Level 3). Note the PCI nuance: this does not give PTS HSM approval, but PCI PIN Security v3.1 Req 1-3 accepts FIPS Level 3-or-higher HSMs.',
+      '3': 'Defensible for this teaching threat model: physical access is credible and the buyer asks for an HSM module certificate. The four current PQC HSM certificates are supporting market examples, not normative proof that every HSM must target Level 3. Note the PCI nuance: this does not give PTS HSM approval.',
       '4': 'Over-specified: nothing in this threat model calls for more than Level 3, and a higher target adds design and test cost without answering a question the buyers asked. Keep Level 4 for a stated physical-attack case.',
       inherit:
         'Not available here: this appliance IS the HSM module. Something has to be validated, and its level is a design decision.',
@@ -555,9 +559,10 @@ export const PLANNER_SCENARIOS: readonly PlannerScenario[] = [
     requiredOut: ['appliance-hardware', 'firmware', 'tenant-partition', 'network-service'],
     widening: ['client-sdk'],
     fittingLevels: ['1'],
+    conditionalLevels: ['2'],
     levelFeedback: {
       '1': 'Fits: this is a software module on a general-purpose OS — like AWS-LC #5314, whose boundary is one object file and whose physical-security row is N/A. Level 1 is a real validation, not "uncertified".',
-      '2': 'Not the teaching answer: the planning exercises use Level 1 for software modules. What Level 2 would demand of this operational environment is set by the standard — open question: check the current document.',
+      '2': 'Potentially defensible, but not established by “software module” alone. Document the operational environment and applicable requirement-area targets, then confirm the design and evidence with the laboratory.',
       '3': 'Over-specified: a software-only boundary has no physical-security area to raise (N/A in #5314). Picking a higher number does not change where the keys live.',
       '4': 'Over-specified: a software-only boundary has no physical-security area to raise (N/A in #5314).',
       inherit:
@@ -589,12 +594,15 @@ export const PLANNER_SCENARIOS: readonly PlannerScenario[] = [
     requiredIn: ['appliance-hardware', 'firmware', 'crypto-library'],
     requiredOut: ['client-sdk', 'tenant-partition'],
     widening: ['network-service'],
-    fittingLevels: ['3', '4'],
+    fittingLevels: ['4'],
+    conditionalLevels: ['3'],
     levelFeedback: {
       '1': 'Under-specified: physical attack is the stated threat, so the physical-security area is the point.',
       '2': 'Under-specified for a stated physical-attack threat at an unattended site.',
-      '3': 'Defensible if the site adds its own physical controls. ' + RAISE_LATER,
-      '4': 'Fits the one case where Level 4 is argued: a stated physical-attack threat with no one watching the device. What Level 4 requires area by area is in ISO/IEC 19790 as modified by SP 800-140 — open question: check the current document; this module does not paraphrase it.',
+      '3':
+        'Defensible only if stated environmental controls reduce the physical-attack exposure and the applicable requirement-area analysis supports Level 3. External site controls are assumptions; they do not become properties of the module. ' +
+        RAISE_LATER,
+      '4': 'Defensible as a planning target because physical attack at an unattended site is explicit. Confirm every applicable requirement-area target against ISO/IEC 19790 as modified by SP 800-140 with the laboratory; the scenario alone does not prove the module can satisfy Level 4.',
       inherit:
         'No: this appliance IS the HSM module, and its level is the decision you are making.',
     },
@@ -666,37 +674,43 @@ export const BOUNDARY_NOTES: Readonly<
 export const EVIDENCE_OPTIONS: readonly {
   id: string
   label: string
-  needed: boolean
+  requiredFor: 'always' | EntropyArchitecture | 'never'
   why: string
 }[] = [
   {
     id: 'cavp',
     label: 'CAVP algorithm validations for the ML-KEM and ML-DSA functions the module offers',
-    needed: true,
+    requiredFor: 'always',
     why: 'Approved algorithms appear on the certificate with their CAVP references (e.g. “ML-KEM KeyGen A5631”).',
   },
   {
     id: 'casts',
     label: 'Self-tests for each PQC algorithm, as IG 10.3.A requires',
-    needed: true,
+    requiredFor: 'always',
     why: 'Algorithm validation does not prove the module runs its own self-tests; IG 10.3.A names them for ML-KEM, ML-DSA and SLH-DSA.',
   },
   {
     id: 'esv',
-    label: 'Entropy source validation (ESV) where applicable',
-    needed: true,
-    why: 'PQC key generation consumes entropy; ESV is its own validation track (Manual §4.8), completed before submission.',
+    label: 'The module’s ESV evidence for an entropy source inside its boundary',
+    requiredFor: 'internal',
+    why: 'Required in this planner only when the module contains the entropy source. ESV is a separate validation track completed before module submission.',
+  },
+  {
+    id: 'external-entropy',
+    label: 'Evidence identifying and constraining the validated external entropy dependency',
+    requiredFor: 'external',
+    why: 'When entropy is supplied from outside the boundary, the submission must identify the dependency and the evidence and operating conditions it relies on; it is not the module’s own ESV certificate.',
   },
   {
     id: 'vendor-statement',
     label: 'A vendor statement that the code follows FIPS 203 and FIPS 204',
-    needed: false,
+    requiredFor: 'never',
     why: 'A statement is not algorithm validation; CAVP testing exists for these algorithms.',
   },
   {
     id: 'mip',
     label: 'A Modules-in-Process entry for the PQC version',
-    needed: false,
+    requiredFor: 'never',
     why: '“Posting on either list does not imply or guarantee FIPS 140 validation” (Manual §4.2).',
   },
 ]

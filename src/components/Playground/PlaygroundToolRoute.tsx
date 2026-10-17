@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router'
-import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
+import { ArrowLeft, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
@@ -209,16 +209,6 @@ export const PlaygroundToolRoute = () => {
 
       {/* Round 9, wave 2 — "For your role", one paragraph per claimed persona (src/data/personaBlocks.ts). */}
       <PersonaBlock route={`/playground/${tool.id}`} />
-
-      {tool.wip && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">
-          <Wrench className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>
-            This tool is under active development — functionality may be incomplete or subject to
-            change.
-          </span>
-        </div>
-      )}
 
       <Suspense
         fallback={

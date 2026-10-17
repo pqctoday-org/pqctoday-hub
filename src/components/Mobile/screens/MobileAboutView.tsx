@@ -185,7 +185,7 @@ export function MobileAboutView() {
 
                   {group.id === 'trust' && (
                     <>
-                      <Row title="Transparency & disclaimer" badge="WIP">
+                      <Row title="Transparency & disclaimer">
                         This site has not received endorsement from the organisations, standards
                         bodies or agencies it references. Information is sourced publicly and
                         verified through automated and manual review, but may still contain

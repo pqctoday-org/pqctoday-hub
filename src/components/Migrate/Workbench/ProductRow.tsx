@@ -106,7 +106,6 @@ export function ProductRow({
             <Pill tone={verification.tone} title={verification.title}>
               {verification.label}
             </Pill>
-            {product.wip && <Pill tone="warning">WIP</Pill>}
             {sponsored && (
               <Pill tone="primary" icon={ShieldCheck}>
                 Sponsor

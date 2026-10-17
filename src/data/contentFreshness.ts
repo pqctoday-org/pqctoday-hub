@@ -10,7 +10,7 @@
  * Pure + deterministic: the staleness helpers take `now` as a parameter (no
  * `Date.now()` on the evaluated path) so the unit test and the CI script agree.
  *
- * The three sources expose their freshness in structured form; this module only
+ * Source modules expose their freshness in structured form; this module only
  * AGGREGATES them (one-way value imports), and each source imports nothing but
  * the `Freshness` *type* back, so there is no runtime import cycle.
  */
@@ -197,6 +197,24 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   // crypto-product-certification, Path A (FIPS author, 2026-09-24)
   ...FIPS_FRESHNESS_CLAIMS,
 
+  // ── ACVP Lab Workflow ──
+  {
+    id: 'acvp-core-protocol-draft-01',
+    claim:
+      'ACVP core protocol is draft-ietf-acvp-spec-01, published 2 Oct 2026 and expiring 5 Apr 2027',
+    source: 'src/components/PKILearning/modules/AcvpLabWorkflow/data/sources.ts',
+    asOf: '2026-10-16',
+    recheck: 'https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html',
+  },
+  {
+    id: 'acvp-pinned-public-samples',
+    claim:
+      'The teaching fixtures remain pinned to usnistgov/ACVP-Server commit 975de31 and are public reference samples, not ACVTS-issued vectors',
+    source: 'src/components/PKILearning/modules/AcvpLabWorkflow/data/sources.ts',
+    asOf: '2026-10-16',
+    recheck: 'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files',
+  },
+
   // ── crypto-product-certification, CC/EU author (build spec §6.5) ──
   {
     id: 'cpc-cceu-eucc-cir-2024-482-consolidated',
@@ -234,6 +252,24 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
       'src/components/PKILearning/modules/CcEuccCertification/components/sections/CcEuSections.tsx',
     asOf: '2026-09-24',
     recheck: 'https://www.commoncriteriaportal.org/cc/index.cfm',
+  },
+  {
+    id: 'cpc-cceu-cc2022-mandatory-errata',
+    claim:
+      'CC:2022 Release 1 evaluations must use the Common Criteria portal mandatory CC/CEM errata and interpretations package, v1.2 at this check',
+    source:
+      'src/components/PKILearning/modules/CcEuccCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-10-16',
+    recheck: 'https://www.commoncriteriaportal.org/cc/index.cfm',
+  },
+  {
+    id: 'cpc-cceu-eidas-document-roles',
+    claim:
+      'Decision 2016/650 supplies QSCD assessment bases; CIR 2025/1567 governs remote-QSCD management service requirements; CIR 2025/1570 governs notification and is not a PP or algorithm list',
+    source:
+      'src/components/PKILearning/modules/CcEuccCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-10-16',
+    recheck: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32025R1570',
   },
   {
     id: 'cpc-cceu-ccdb-014-v3-1',

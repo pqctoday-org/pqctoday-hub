@@ -8,6 +8,7 @@ const HSM_STUB = {
   hSessionRef: { current: 1 },
   slotRef: { current: 0 },
   initialize: vi.fn().mockResolvedValue(undefined),
+  addStepLog: vi.fn(),
 }
 vi.mock('@/hooks/useHSM', () => ({ useHSM: () => HSM_STUB }))
 
@@ -49,7 +50,10 @@ const result = (id: string, status: string) => ({
 })
 
 describe('KatValidationPanel', () => {
-  beforeEach(() => mockRunKAT.mockReset())
+  beforeEach(() => {
+    mockRunKAT.mockReset()
+    HSM_STUB.addStepLog.mockReset()
+  })
 
   it("counts a 'skip' as not tested — never as passed or failed — and passes the engine's mechanism list", async () => {
     mockRunKAT.mockResolvedValueOnce(result('a', 'pass')).mockResolvedValueOnce(result('b', 'skip'))
@@ -63,6 +67,10 @@ describe('KatValidationPanel', () => {
     expect(within(screen.getAllByTestId('kat-status')[1]).getByText('not tested')).toBeTruthy()
     // 4th argument carries the advertised-mechanism set (empty here: the stub module has no C_GetMechanismList)
     expect(mockRunKAT.mock.calls[0][3]).toEqual({ advertised: new Set() })
+    expect(HSM_STUB.addStepLog.mock.calls.map(([label]) => label)).toEqual([
+      'Test · HMAC check',
+      'Test · KWP round-trip',
+    ])
   })
 
   it('shows the manifest evidence record (class chip + source) for each result', async () => {

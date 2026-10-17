@@ -6,7 +6,8 @@
 // a real KmipEngine.
 import { describe, expect, it } from 'vitest'
 import { toggleItemChaining } from './BatchView'
-import { ID_PLACEHOLDER, type OpSpec } from '@/wasm/kmip/kmipEngine'
+import type { OpSpec } from '@/wasm/kmip/kmipEngine'
+import { ID_PLACEHOLDER } from '@/wasm/kmip/kmipConstants'
 
 describe('toggleItemChaining', () => {
   it('flips a chained ($IDPlaceholder) item to the first keystore UID', () => {

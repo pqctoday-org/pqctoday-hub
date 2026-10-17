@@ -202,6 +202,8 @@ interface Pkcs11LogPanelProps {
    * never edited — Beginner mode is purely additive.
    */
   showBeginnerMode?: boolean
+  /** Start with the additive plain-English column visible. */
+  defaultBeginnerMode?: boolean
   /**
    * Lesson context: every call a lesson step makes is the point (including
    * C_Initialize/C_OpenSession/C_Login when the lesson is about those calls
@@ -275,6 +277,7 @@ export const Pkcs11LogPanel = ({
   emptyMessage = 'No PKCS#11 calls yet — run a live operation to see activity.',
   filterFns,
   showBeginnerMode = false,
+  defaultBeginnerMode = false,
   lessonMode = false,
   defaultHideAdminOps,
   groupOrder = 'newest-first',
@@ -282,7 +285,7 @@ export const Pkcs11LogPanel = ({
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
-  const [beginnerMode, setBeginnerMode] = useState(false)
+  const [beginnerMode, setBeginnerMode] = useState(defaultBeginnerMode)
   const [hideAdminOps, setHideAdminOps] = useState(defaultHideAdminOps ?? !lessonMode)
 
   const visibleLog = log.filter((e) => {

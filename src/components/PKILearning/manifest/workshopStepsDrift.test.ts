@@ -18,7 +18,7 @@ const MODULES = path.resolve(__dirname, '../modules')
 function stepIdsFromManifest(src: string): string[] | null {
   const m = src.match(/^ {2}workshopSteps: \[([\s\S]*?)\n {2}\],\n/m)
   if (!m) return null
-  return [...m[1].matchAll(/\{ id: '([^']+)'/g)].map((x) => x[1])
+  return [...m[1].matchAll(/\{\s*id: '([^']+)'/g)].map((x) => x[1])
 }
 
 function stepIdsFromParts(dir: string): string[] | null {

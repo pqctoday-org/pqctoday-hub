@@ -5,12 +5,13 @@
  * these assertions keep their parts wired to the fixed manifest ids.
  */
 import { afterEach, describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { STEP_EXERCISES } from '@/data/stepExercises'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { Fips1403CertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
@@ -30,7 +31,7 @@ const sectionIds = (manifest.learnSections ?? []).map((s) => s.id)
 const stepIds = (manifest.workshopSteps ?? []).map((s) => s.id)
 const pathIds = (manifest.learnPaths ?? []).map((p) => p.id)
 
-const renderModule = (search = '') =>
+const renderModule = async (search = '') => {
   render(
     <EmbedProvider>
       <MemoryRouter initialEntries={[`/learn/fips-140-3-certification${search}`]}>
@@ -38,12 +39,21 @@ const renderModule = (search = '') =>
       </MemoryRouter>
     </EmbedProvider>
   )
+  await act(async () => {
+    await Promise.resolve()
+  })
+}
 
 describe('Fips1403Certification render parity', () => {
-  afterEach(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
+  afterEach(() => {
+    act(() => {
+      useModuleStore.getState().setActiveLearnPath(manifest.id, '')
+      usePersonaStore.getState().clearPersona()
+    })
+  })
 
-  it('renders the gradient header, the in-page description, and all six tabs', () => {
-    renderModule()
+  it('renders the gradient header, the in-page description, and all six tabs', async () => {
+    await renderModule()
     expect(screen.getByRole('heading', { name: 'FIPS 140-3 Certification' })).toBeInTheDocument()
     expect(screen.getByText(/FIPS 140-3 and the CMVP in depth/)).toBeInTheDocument()
     for (const name of [
@@ -58,22 +68,38 @@ describe('Fips1403Certification render parity', () => {
     }
   })
 
-  it('shows the practitioner-orientation disclaimer exactly once, at the top of the Learn tab', () => {
-    renderModule()
+  it('shows the practitioner-orientation disclaimer exactly once, at the top of the Learn tab', async () => {
+    await renderModule()
     const notes = screen.getAllByTestId('cert-practitioner-disclaimer')
     expect(notes).toHaveLength(1)
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
-  it('renders only its own scheme’s sections (the other scheme moved to its own module)', () => {
-    renderModule()
+  it('uses the runtime role to select certification-engineer depth', async () => {
+    act(() => usePersonaStore.getState().setPersona('cert-engineer'))
+    await renderModule()
+    const route = screen.getByTestId('cert-audience-route')
+    expect(route).toHaveTextContent('Certification engineer route')
+    expect(route).toHaveTextContent('exact document revisions')
+  })
+
+  it('uses the general-practitioner presentation for other runtime roles', async () => {
+    act(() => usePersonaStore.getState().setPersona('ops'))
+    await renderModule()
+    const route = screen.getByTestId('cert-audience-route')
+    expect(route).toHaveTextContent('General security practitioner route')
+    expect(route).toHaveTextContent('what each certificate can support')
+  })
+
+  it('renders only its own scheme’s sections (the other scheme moved to its own module)', async () => {
+    await renderModule()
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
     expect(heading('FIPS 140-3 and the CMVP')).toBeInTheDocument()
     expect(heading('PTS HSM device approval')).not.toBeInTheDocument()
   })
 
-  it('ships no draft placeholder — every owner file has real content', () => {
-    renderModule()
+  it('ships no draft placeholder — every owner file has real content', async () => {
+    await renderModule()
     expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
     expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })

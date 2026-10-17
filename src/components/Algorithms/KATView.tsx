@@ -21,6 +21,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { ValidationDisclaimer, KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
 import { runKAT, advertisedMechanisms, summarizeKatResults } from '@/utils/katRunner'
@@ -148,6 +149,7 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
       const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of config.specs) {
+        hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
         setResults([...out])
@@ -330,6 +332,7 @@ const SLHDSATile: React.FC<{
       const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of specs) {
+        hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
         setResults([...out])
@@ -464,6 +467,7 @@ interface KATViewProps {
 
 export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {}) => {
   const hsm = useHSM()
+  const certificationView = usePersonaStore((s) => s.selectedPersona === 'cert-engineer')
   const [diagOpen, setDiagOpen] = useState(false)
 
   return (
@@ -622,6 +626,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
               onClear={hsm.clearLog}
               title="PKCS#11 Call Log — KAT Validation"
               defaultOpen
+              showBeginnerMode
+              defaultBeginnerMode={!certificationView}
               emptyMessage="Run a KAT to see PKCS#11 operations here."
             />
 

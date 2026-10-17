@@ -6,8 +6,7 @@
  * CertIntroduction wraps each in <LearnSection>, so only the BODY renders here.
  *
  * Sources: every fact was read on 24 September 2026 (plan r2 §0 and the
- * documents cited inline). Library-backed citations go through getStandard();
- * the six rows still pending (build spec §6.2) are cited in plain text.
+ * documents cited inline). Library-backed citations go through getStandard().
  * No ISO/IEC 19790/24759 text and no CEN-edition EN 419221-5 text is quoted;
  * PP excerpts come from the public certified PP on the CC portal.
  */
@@ -59,7 +58,7 @@ export const SourceCite = ({ id, label }: { id: string; label?: string }) => {
   )
 }
 
-/** A source with no library row yet (build spec §6.2) — named in plain text. */
+/** A named source that is intentionally not resolved through the Library. */
 export const PlainSource = ({ children }: { children: ReactNode }) => (
   <span className="italic text-foreground/80">{children}</span>
 )
@@ -232,6 +231,26 @@ export const CcModel = () => (
       which certificates its member countries accept from one another.
     </P>
 
+    <Callout tone="current" title="Use CC:2022 R1 with its mandatory errata">
+      <p>
+        A current evaluation baseline is not the five CC:2022 R1 documents alone. The Common
+        Criteria portal marks the applicable CC:2022 and CEM errata and interpretations as
+        mandatory; this module was checked against the portal&apos;s v1.2 package on 16 October
+        2026. Record that errata version in the evaluation baseline and re-check it before starting
+        or changing an evaluation.
+      </p>
+      <p>
+        <a
+          href="https://www.commoncriteriaportal.org/cc/index.cfm"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary underline decoration-primary/40 underline-offset-2"
+        >
+          Common Criteria publications and mandatory errata
+        </a>
+      </p>
+    </Callout>
+
     <Callout tone="key" title="The question a CC certificate answers">
       <p>
         Does this defined Target of Evaluation (TOE) meet the security functional and assurance
@@ -384,7 +403,8 @@ export const CcModel = () => (
       <SourceCite id="CC-2022-PART3" label="Part 3" />,{' '}
       <SourceCite id="CC-2022-PART4" label="Part 4" />,{' '}
       <SourceCite id="CC-2022-PART5" label="Part 5" />,{' '}
-      <SourceCite id="CC-2022-CEM" label="CEM:2022" />;{' '}
+      <SourceCite id="CC-2022-CEM" label="CEM:2022" />; Common Criteria portal mandatory CC:2022/CEM
+      errata and interpretations v1.2;{' '}
       <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" label="EN 419221-5 PP (v0.15)" />; ANSSI
       certificate and report ANSSI-CC-2025/09 and CSA report CSA_CC_23004 (links in the Decode the
       certificate claim workshop step).
@@ -1117,6 +1137,33 @@ export const EidasChain = () => (
       reference to the certification report issued under Article 30.
     </P>
 
+    <DataTable
+      caption="What each eIDAS and EUCC document does"
+      head={['Document', 'Its job', 'It does not do']}
+      rows={[
+        [
+          'Decision 2016/650',
+          'Identifies security-assessment standards and the interim route for relevant QSCDs',
+          'Assess a QTSP’s remote-signing service',
+        ],
+        [
+          'CIR 2025/1567',
+          'Sets requirements and a reference standard for management of remote QSCDs as a qualified trust service',
+          'Certify the device TOE',
+        ],
+        [
+          'CIR 2025/1570',
+          'Sets the notification information and procedure for certified QSCDs',
+          'Create an algorithm list or Protection Profile',
+        ],
+        [
+          'EUCC and its Annexes',
+          'Provide the CC-based certification scheme and identify applicable PPs and state-of-the-art documents',
+          'Grant qualified trust-service status',
+        ],
+      ]}
+    />
+
     <H3>Two assessments, not one</H3>
     <DataTable
       caption="Service assessment versus product certification"
@@ -1171,10 +1218,14 @@ export const EidasChain = () => (
         ],
       ]}
     />
-    <OpenQuestion>
-      Whether a newer eIDAS implementing act lists EN 419221-5 or EN 419241-2 as standards for QSCD
-      certification under Article 30 was not verified for this module.
-    </OpenQuestion>
+    <Callout tone="key" title="Do not use the notification act as a technical standard">
+      <p>
+        CIR 2025/1570 governs notification of certified QSCDs. It does not itself establish an
+        algorithm profile or Protection Profile. The applicable technical chain must still be
+        established from the device type, Article 30 assessment basis, EUCC Annexes, the selected PP
+        and the scheme&apos;s current cryptographic guidance.
+      </p>
+    </Callout>
 
     <Sources>
       <SourceCite id="EIDAS-REG-910-2014" label="Regulation 910/2014" />,{' '}
@@ -1186,7 +1237,12 @@ export const EidasChain = () => (
         id="CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme"
         label="CIR 2024/482 Annex II"
       />
-      ; <PlainSource>EN 419241-2 PP, ANSSI-CC-PP-2018/02-M01 (library row pending)</PlainSource>.
+      ;{' '}
+      <SourceCite
+        id="ANSSI-CC-PP-2018-02-EN-419241-2"
+        label="EN 419241-2 PP, ANSSI-CC-PP-2018/02-M01"
+      />
+      .
     </Sources>
   </Section>
 )
@@ -1340,7 +1396,10 @@ export const PpEn4192215 = () => (
       <SourceCite id="ANSSI-CC-PP-2016-05-M01" label="ANSSI-CC-PP-2016/05-M01" />,{' '}
       <SourceCite id="CIR-EU-2025-2462-EUCC-Amendment" label="CIR 2025/2462 (Annex I, II)" />;{' '}
       <PlainSource>
-        ENISA FPT_PHP interpretation for EN 419221-5, v1 (library row pending)
+        <SourceCite
+          id="ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation"
+          label="ENISA FPT_PHP interpretation for EN 419221-5, v1"
+        />
       </PlainSource>
       ; CC portal PP list; ANSSI-CC-2025/09; CSA_CC_23004.
     </Sources>

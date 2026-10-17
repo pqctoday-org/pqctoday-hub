@@ -18,6 +18,8 @@ import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/Cry
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
   CC_EU_AS_OF,
+  CC_BASELINE_AS_OF,
+  CC_MANDATORY_ERRATA_VERSION,
   EIDAS_TRACE_SCENARIOS,
   findTraceScenario,
   type TraceLayer,
@@ -61,7 +63,9 @@ function traceText(
   })
   lines.push(
     '',
-    `Sources read ${CC_EU_AS_OF}. eIDAS is a regulation, not a Protection Profile. Practitioner orientation — not laboratory training.`
+    `Certificate fixtures read ${CC_EU_AS_OF}; legal/source roles and CC baseline checked ${CC_BASELINE_AS_OF}.`,
+    `CC:2022 baseline includes mandatory errata ${CC_MANDATORY_ERRATA_VERSION}. eIDAS is a regulation, not a Protection Profile.`,
+    'Practitioner orientation — not laboratory training.'
   )
   return lines.join('\n')
 }
@@ -104,7 +108,7 @@ export const EidasTrace: FC<CertWorkshopStepProps> = ({ config }) => {
   const artifact = traceText(scenario, picks, firstTry)
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6 overflow-x-hidden">
       <div className="glass-panel space-y-3 p-5">
         <div className="flex items-start gap-3">
           <Scale size={20} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
@@ -131,7 +135,7 @@ export const EidasTrace: FC<CertWorkshopStepProps> = ({ config }) => {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         {/* The chain */}
         <nav aria-label="Trace layers" className="glass-panel p-4">
           <p className="mb-2 text-xs text-muted-foreground">
@@ -180,7 +184,7 @@ export const EidasTrace: FC<CertWorkshopStepProps> = ({ config }) => {
         </nav>
 
         {/* The current layer */}
-        <div className="glass-panel space-y-4 p-5">
+        <div className="glass-panel min-w-0 space-y-4 p-5">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Layer {layerIndex + 1} — {layer.title}
           </p>
@@ -277,7 +281,11 @@ export const EidasTrace: FC<CertWorkshopStepProps> = ({ config }) => {
           <h3 className="text-base font-semibold text-foreground">Your trace</h3>
           <CopyButton text={artifact} label="Copy trace" />
         </div>
-        <CodeBlock code={artifact} language="text" className="mt-2 whitespace-pre-wrap" />
+        <CodeBlock
+          code={artifact}
+          language="text"
+          className="mt-2 max-w-full overflow-x-auto whitespace-pre-wrap break-words"
+        />
       </div>
     </div>
   )

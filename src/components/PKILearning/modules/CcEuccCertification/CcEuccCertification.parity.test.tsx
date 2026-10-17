@@ -5,7 +5,7 @@
  * these assertions keep their parts wired to the fixed manifest ids.
  */
 import { afterEach, describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
@@ -30,7 +30,7 @@ const sectionIds = (manifest.learnSections ?? []).map((s) => s.id)
 const stepIds = (manifest.workshopSteps ?? []).map((s) => s.id)
 const pathIds = (manifest.learnPaths ?? []).map((p) => p.id)
 
-const renderModule = (search = '') =>
+const renderModule = async (search = '') => {
   render(
     <EmbedProvider>
       <MemoryRouter initialEntries={[`/learn/cc-eucc-certification${search}`]}>
@@ -38,12 +38,18 @@ const renderModule = (search = '') =>
       </MemoryRouter>
     </EmbedProvider>
   )
+  await act(async () => {
+    await Promise.resolve()
+  })
+}
 
 describe('CcEuccCertification render parity', () => {
-  afterEach(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
+  afterEach(() => {
+    act(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
+  })
 
-  it('renders the gradient header, the in-page description, and all six tabs', () => {
-    renderModule()
+  it('renders the gradient header, the in-page description, and all six tabs', async () => {
+    await renderModule()
     expect(
       screen.getByRole('heading', { name: 'Common Criteria, EUCC & eIDAS Certification' })
     ).toBeInTheDocument()
@@ -60,21 +66,21 @@ describe('CcEuccCertification render parity', () => {
     }
   })
 
-  it('shows the practitioner-orientation disclaimer exactly once, at the top of the Learn tab', () => {
-    renderModule()
+  it('shows the practitioner-orientation disclaimer exactly once, at the top of the Learn tab', async () => {
+    await renderModule()
     const notes = screen.getAllByTestId('cert-practitioner-disclaimer')
     expect(notes).toHaveLength(1)
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
-  it('ships no draft placeholder — every owner file has real content', () => {
-    renderModule()
+  it('ships no draft placeholder — every owner file has real content', async () => {
+    await renderModule()
     expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
     expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })
 
-  it('hides the other path’s sections on a chosen path (offPathSections: hide)', () => {
-    renderModule('?path=eucc-eidas')
+  it('hides the other path’s sections on a chosen path (offPathSections: hide)', async () => {
+    await renderModule('?path=eucc-eidas')
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
     expect(heading('EUCC is a scheme, not a PP')).toBeInTheDocument()
     expect(heading('PP case: Security IC Platform')).toBeInTheDocument()

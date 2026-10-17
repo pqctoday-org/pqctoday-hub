@@ -18,13 +18,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'cc-eucc-certification',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-068',
   title: 'Common Criteria, EUCC & eIDAS Certification',
   description:
     'Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.',
   whyThisMatters:
-    'In Europe a product meets Common Criteria three ways at once: as an international CCRA certificate, as an EUCC certificate under EU law, and as the evaluation behind an eIDAS qualified device. Reading the claim — EAL, augmentations, Protection Profile — is what tells you whether adding PQC is a change the certificate survives.',
+    'In Europe, a Common Criteria evaluation may support an EUCC certificate and, for applicable qualified electronic-signature or seal devices, form part of an eIDAS conformity chain. CCRA recognition is separate and depends on the certificate, scheme, assurance claim and recognition rules. Reading the exact claim is what tells you whether adding PQC is a change the certificate survives.',
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',

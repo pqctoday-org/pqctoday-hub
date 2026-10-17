@@ -72,10 +72,6 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                 <h2 className="text-base font-bold text-foreground">
                   SoftHSMv3 WASM — Test Methodology
                 </h2>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/15 text-warning border border-warning/30">
-                  <Construction size={10} />
-                  WIP
-                </span>
               </div>
               <p className="text-xs text-muted-foreground">
                 PKCS#11 v3.2 emulation exercised through several evidence layers, each labelled
@@ -346,11 +342,11 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
 
           <ValidationDisclaimer />
 
-          {/* WIP disclaimer */}
+          {/* Implementation limitations */}
           <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 flex gap-3">
             <Construction size={15} className="text-warning shrink-0 mt-0.5" />
             <div className="text-xs text-muted-foreground space-y-1">
-              <p className="font-semibold text-warning">Work in Progress</p>
+              <p className="font-semibold text-warning">Implementation limitations</p>
               <p className="leading-relaxed">
                 This PKCS#11 emulator is under active development. Validation coverage is
                 continuously expanded. Some mechanisms (CKM_RSA_OAEP wrapping, ECDH key agreement

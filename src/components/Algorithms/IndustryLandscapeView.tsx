@@ -471,11 +471,6 @@ function StandardChip({ std }: { std: IndustryStandard }) {
           PQC
         </span>
       )}
-      {std.pqcReadiness === 'in-progress' && (
-        <span className="rounded bg-status-warning/15 px-1 text-[10px] font-semibold text-status-warning">
-          PQC WIP
-        </span>
-      )}
     </Link>
   )
 }

@@ -610,7 +610,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master entropy sources and random number generation: NIST SP 800-90 DRBGs, hardware TRNGs, quantum random number generators, and entropy testing.',
     canonical: `${BASE_URL}/learn/entropy-randomness`,
-    structuredData: buildModuleSchema('Entropy & Randomness', 'PT40M', 'Intermediate'),
+    structuredData: buildModuleSchema('Entropy & Randomness', 'PT130M', 'Advanced'),
   },
 
   '/learn/qkd': {

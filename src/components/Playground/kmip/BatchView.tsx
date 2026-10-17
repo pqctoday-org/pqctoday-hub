@@ -33,8 +33,8 @@ import {
   type OpSpec,
   type BatchResult,
   type BatchErrorContinuation,
-  ID_PLACEHOLDER,
 } from '@/wasm/kmip/kmipEngine'
+import { ID_PLACEHOLDER } from '@/wasm/kmip/kmipConstants'
 import { WireTreeView } from './WireTreeView'
 
 interface Recipe {

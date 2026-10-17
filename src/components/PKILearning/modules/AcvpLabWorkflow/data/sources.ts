@@ -91,7 +91,7 @@ export const SOURCES = {
     title: 'Automated Cryptographic Validation Protocol (ACVP) JSON Specification',
     url: 'https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html',
     libraryRefId: 'NIST-ACVP',
-    revision: 'draft-ietf-acvp-spec-01 (14 Aug 2026), as cached',
+    revision: 'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)',
   },
   acvpMlKem: {
     id: 'acvpMlKem',

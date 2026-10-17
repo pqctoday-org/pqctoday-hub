@@ -9,7 +9,14 @@
  * not precached), mounted lazily from the /algorithms Validation tab.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ChevronDown, ExternalLink, Grid3x3 } from 'lucide-react'
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
+  Grid3x3,
+  ShieldCheck,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,16 +31,20 @@ import {
   ENGINE_LABEL,
   DIMENSIONS,
   DIMENSION_LABEL,
+  GAP_STATUSES,
   MATRIX_STATUSES,
   POLARITIES,
   expandMatrix,
   type CoverageMatrix,
   type CoverageMatrixFile,
   type EngineId,
+  type GapStatus,
   type MatrixStatus,
+  type OpenGap,
   type Polarity,
 } from '@/data/validation/coverageModel'
 import { groupByMechanismOperation, type CoverageGroup } from '@/data/validation/coverageExport'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 const dataUrl = (file: string) =>
   `${(import.meta.env.BASE_URL ?? '/').replace(/\/$/, '')}/data/validation/${file}`
@@ -76,6 +87,47 @@ const StatusBadge = ({ status }: { status: MatrixStatus }) => (
 )
 
 const PAGE = 60
+
+type GapView = 'overview' | 'evidence'
+
+const gapStatusMeta = (status: GapStatus) => {
+  switch (status) {
+    case 'open':
+      return {
+        label: 'Open',
+        tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+        why: 'Evidence or support is incomplete. Do not interpret an untested or unreachable capability as working.',
+        takeaway: 'A missing test is a limit on the claim, not evidence of a pass.',
+      }
+    case 'in-progress':
+      return {
+        label: 'In progress',
+        tone: 'border-status-info/40 bg-status-info/10 text-status-info',
+        why: 'Work is underway, but the current evidence boundary still applies until new results are reviewed.',
+        takeaway: 'Planned remediation does not change the result already measured.',
+      }
+    case 'accepted-limitation':
+      return {
+        label: 'Accepted limitation',
+        tone: 'border-border bg-muted/50 text-muted-foreground',
+        why: 'The boundary is understood and intentionally retained. Any capability claim must exclude this scope.',
+        takeaway:
+          'A documented limitation narrows a claim; it does not become a supported capability.',
+      }
+  }
+}
+
+const gapSummary = (detail: string) => {
+  const firstSentence = detail.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? detail
+  if (firstSentence.length <= 300) return firstSentence
+  const shortened = firstSentence.slice(0, 297)
+  return `${shortened.slice(0, shortened.lastIndexOf(' '))}…`
+}
+
+const gapEvidenceParagraphs = (detail: string) =>
+  detail.split(
+    /\s+(?=(?:UPDATE \d{4}-\d{2}-\d{2}|WHY OUR EVIDENCE|THE LESSON|CONSEQUENCE|Remedy:))/
+  )
 
 const DEFAULT_ENGINE: EngineId = 'cpp'
 const toEngine = (v: string | null | undefined): EngineId =>
@@ -127,6 +179,17 @@ export function CoverageMatrixView({
   const [limit, setLimit] = useState(PAGE)
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [showAllGaps, setShowAllGaps] = useState(false)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [gapView, setGapView] = useState<GapView>(() =>
+    selectedPersona === 'cert-engineer' ? 'evidence' : 'overview'
+  )
+  const [gapQuery, setGapQuery] = useState('')
+  const [gapStatus, setGapStatus] = useState<GapStatus | 'all'>('all')
+  const [expandedGapDetails, setExpandedGapDetails] = useState<Set<string>>(() => new Set())
+
+  useEffect(() => {
+    setGapView(selectedPersona === 'cert-engineer' ? 'evidence' : 'overview')
+  }, [selectedPersona])
 
   const fetchMatrix = useCallback(
     () =>
@@ -211,10 +274,27 @@ export function CoverageMatrixView({
     else if (caseGroups.some((g) => g.key === key)) onUpdateParams?.({ case: null })
   }
 
-  const gaps = showAllGaps
+  const baseGaps = showAllGaps
     ? matrix.openGaps
     : matrix.openGaps.filter((g) => g.origin === 'curated' || !g.id.startsWith('untested:'))
-  const hiddenGaps = matrix.openGaps.length - gaps.length
+  const gaps = baseGaps.filter((gap) => {
+    if (gapStatus !== 'all' && gap.status !== gapStatus) return false
+    const q = gapQuery.trim().toLowerCase()
+    if (!q) return true
+    return [gap.title, gap.detail, gap.scope, gap.owner, gap.planItem ?? ''].some((value) =>
+      value.toLowerCase().includes(q)
+    )
+  })
+  const hiddenGaps = matrix.openGaps.length - baseGaps.length
+
+  const toggleGapDetails = (id: string) => {
+    setExpandedGapDetails((previous) => {
+      const next = new Set(previous)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   return (
     <div className="space-y-4" data-testid="coverage-matrix-view">
@@ -480,46 +560,256 @@ export function CoverageMatrixView({
       </div>
 
       {/* Open gaps register (J-7) */}
-      <section className="glass-panel p-3" aria-label="Open gaps register">
-        <h4 className="text-sm font-semibold text-foreground">
-          Open gaps register ({matrix.openGaps.length})
-        </h4>
-        <p className="text-xs text-muted-foreground">
-          Known unsupported and untested areas, each with an owner and status. They stay in the
-          denominators above.
-        </p>
-        <ul className="mt-2 space-y-2">
-          {gaps.map((g) => (
-            <li key={g.id} className="rounded-md border border-border p-2 text-xs">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-foreground">{g.title}</span>
-                <span
+      <section className="glass-panel overflow-hidden" aria-label="Open gaps register">
+        <div className="border-b border-border bg-muted/20 p-4">
+          <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
+            <div className="max-w-3xl space-y-1">
+              <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
+                Open gaps register
+                <span className="font-normal text-muted-foreground">
+                  ({matrix.openGaps.length})
+                </span>
+              </h4>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                These are known limits in test coverage, interface reachability, or engine behavior.
+                A gap stays in the coverage denominator so that missing evidence cannot look like a
+                pass.
+              </p>
+            </div>
+            <div
+              className="inline-flex w-fit rounded-lg border border-border bg-background p-1"
+              aria-label="Gap register reading level"
+            >
+              <Button
+                variant={gapView === 'overview' ? 'secondary' : 'ghost'}
+                size="sm"
+                className="h-7 gap-1.5 px-2.5 text-xs"
+                aria-pressed={gapView === 'overview'}
+                onClick={() => setGapView('overview')}
+              >
+                <BookOpen size={13} aria-hidden="true" />
+                Guided overview
+              </Button>
+              <Button
+                variant={gapView === 'evidence' ? 'secondary' : 'ghost'}
+                size="sm"
+                className="h-7 gap-1.5 px-2.5 text-xs"
+                aria-pressed={gapView === 'evidence'}
+                onClick={() => setGapView('evidence')}
+              >
+                <ShieldCheck size={13} aria-hidden="true" />
+                Certification evidence
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-2 sm:grid-cols-3" aria-label="Gap status definitions">
+            {GAP_STATUSES.map((status) => {
+              const count = matrix.openGaps.filter((gap) => gap.status === status).length
+              const statusMeta = gapStatusMeta(status)
+              return (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  key={status}
+                  aria-pressed={gapStatus === status}
+                  onClick={() => setGapStatus((current) => (current === status ? 'all' : status))}
                   className={clsx(
-                    'rounded border px-1.5 py-0.5 text-[10px]',
-                    g.status === 'accepted-limitation'
-                      ? 'border-border bg-muted/40 text-muted-foreground'
-                      : 'border-status-warning/30 bg-status-warning/10 text-status-warning'
+                    'h-auto min-h-14 justify-start whitespace-normal rounded-lg border p-2 text-left transition-colors',
+                    gapStatus === status
+                      ? 'border-primary/50 bg-primary/10'
+                      : 'border-border bg-background/60 hover:border-primary/30'
                   )}
                 >
-                  {g.status}
-                </span>
-                <span className="text-muted-foreground">owner: {g.owner}</span>
-                {g.planItem && <span className="text-muted-foreground">plan {g.planItem}</span>}
-                {typeof g.cells === 'number' && (
-                  <span className="text-muted-foreground">{g.cells} cells</span>
-                )}
-              </div>
-              <p className="mt-1 text-muted-foreground">{g.detail}</p>
-            </li>
-          ))}
-        </ul>
+                  <span className="block w-full">
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-foreground">
+                        {statusMeta.label}
+                      </span>
+                      <span className="text-xs tabular-nums text-muted-foreground">{count}</span>
+                    </span>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
+                      {statusMeta.takeaway}
+                    </span>
+                  </span>
+                </Button>
+              )
+            })}
+          </div>
+
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Input
+              aria-label="Search open gaps"
+              placeholder="Search finding, engine, standard, owner, or plan"
+              value={gapQuery}
+              onChange={(event) => setGapQuery(event.target.value)}
+              className="sm:max-w-md"
+            />
+            {(gapQuery || gapStatus !== 'all') && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-fit"
+                onClick={() => {
+                  setGapQuery('')
+                  setGapStatus('all')
+                }}
+              >
+                Clear gap filters
+              </Button>
+            )}
+            <span className="text-xs text-muted-foreground sm:ml-auto">
+              Showing {gaps.length} of {baseGaps.length}
+            </span>
+          </div>
+        </div>
+
+        {gaps.length > 0 ? (
+          <ul className="divide-y divide-border">
+            {gaps.map((gap) => (
+              <OpenGapCard
+                key={gap.id}
+                gap={gap}
+                view={gapView}
+                detailsOpen={expandedGapDetails.has(gap.id)}
+                onToggleDetails={() => toggleGapDetails(gap.id)}
+              />
+            ))}
+          </ul>
+        ) : (
+          <div className="p-6 text-center text-sm text-muted-foreground">
+            No gaps match the current filters.
+          </div>
+        )}
         {hiddenGaps > 0 && (
-          <Button variant="ghost" size="sm" className="mt-2" onClick={() => setShowAllGaps(true)}>
-            Show {hiddenGaps} per-mechanism untested entries
-          </Button>
+          <div className="border-t border-border p-3 text-center">
+            <Button variant="ghost" size="sm" onClick={() => setShowAllGaps(true)}>
+              Show {hiddenGaps} generated per-mechanism entries
+            </Button>
+          </div>
         )}
       </section>
     </div>
+  )
+}
+
+function OpenGapCard({
+  gap,
+  view,
+  detailsOpen,
+  onToggleDetails,
+}: {
+  gap: OpenGap
+  view: GapView
+  detailsOpen: boolean
+  onToggleDetails: () => void
+}) {
+  const statusMeta = gapStatusMeta(gap.status)
+  const evidenceId = `gap-evidence-${gap.id.replace(/[^A-Za-z0-9_-]/g, '_')}`
+
+  return (
+    <li className="p-4" data-gap-status={gap.status}>
+      <article aria-labelledby={`gap-title-${gap.id}`}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={clsx(
+                  'rounded border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                  statusMeta.tone
+                )}
+              >
+                {statusMeta.label}
+              </span>
+              <span className="text-[11px] text-muted-foreground">{gap.scope}</span>
+            </div>
+            <h5
+              id={`gap-title-${gap.id}`}
+              className="text-sm font-semibold leading-snug text-foreground"
+            >
+              {gap.title}
+            </h5>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+            <span>owner: {gap.owner}</span>
+            {gap.planItem && <span>plan {gap.planItem}</span>}
+            {typeof gap.cells === 'number' && <span>{gap.cells} capability cells</span>}
+          </div>
+        </div>
+
+        <div
+          className={clsx(
+            'mt-3 grid gap-3',
+            view === 'evidence' && 'lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)]'
+          )}
+        >
+          <div className="rounded-lg border border-border bg-background/50 p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              What this means
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-foreground">{gapSummary(gap.detail)}</p>
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Why it matters
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{statusMeta.why}</p>
+          </div>
+
+          {view === 'evidence' && (
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] content-start gap-x-3 gap-y-1.5 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">
+              <dt className="font-medium text-foreground">Claim boundary</dt>
+              <dd className="text-muted-foreground">{statusMeta.takeaway}</dd>
+              <dt className="font-medium text-foreground">Applies to</dt>
+              <dd className="break-words text-muted-foreground">{gap.scope}</dd>
+              <dt className="font-medium text-foreground">Disposition</dt>
+              <dd className="text-muted-foreground">{statusMeta.label}</dd>
+              <dt className="font-medium text-foreground">Evidence class</dt>
+              <dd className="text-muted-foreground">
+                {gap.origin === 'generated'
+                  ? 'Generated coverage finding'
+                  : 'Reviewed curated finding'}
+              </dd>
+            </dl>
+          )}
+        </div>
+
+        <div className="mt-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 gap-1 px-1.5 text-xs"
+            aria-expanded={detailsOpen}
+            aria-controls={evidenceId}
+            onClick={onToggleDetails}
+          >
+            {detailsOpen ? (
+              <ChevronDown size={13} aria-hidden="true" />
+            ) : (
+              <ChevronRight size={13} aria-hidden="true" />
+            )}
+            {detailsOpen ? 'Hide technical evidence' : 'Show technical evidence'}
+          </Button>
+        </div>
+
+        {detailsOpen && (
+          <div
+            id={evidenceId}
+            className="mt-2 max-w-5xl rounded-lg border border-border bg-muted/20 p-3"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Technical evidence and investigation history
+            </p>
+            <div className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
+              {gapEvidenceParagraphs(gap.detail).map((paragraph, index) => (
+                <p key={`${gap.id}-evidence-${index}`} className="break-words">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
+      </article>
+    </li>
   )
 }
 

@@ -131,9 +131,9 @@ export function WorkshopShell<TId extends string>({
             the HSM and KMIP workbenches — nothing above it renders a heading,
             so both routes failed axe `page-has-heading-one`. Visual size
             unchanged. */}
-        <Heading className="text-xl md:text-2xl font-bold flex items-center gap-2 min-w-0">
+        <Heading className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-2 text-xl font-bold sm:w-auto sm:flex-nowrap md:text-2xl">
           <Icon className="text-secondary shrink-0" aria-hidden="true" />
-          <span className="truncate">{title}</span>
+          <span className="min-w-0 flex-1 truncate">{title}</span>
           {badge}
         </Heading>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

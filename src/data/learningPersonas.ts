@@ -559,7 +559,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2015,
+    estimatedMinutes: 2105,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -782,7 +782,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2385,
+    estimatedMinutes: 2475,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -1069,7 +1069,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3060,
+    estimatedMinutes: 3150,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -1081,7 +1081,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'tls-basics',
       'pki-workshop',
     ],
-    essentialsMinutes: 325,
+    essentialsMinutes: 415,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -1174,7 +1174,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 980,
+    estimatedMinutes: 1070,
     essentials: [
       'crypto-product-certification',
       'fips-140-3-certification',
@@ -1185,7 +1185,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'cc-eucc-certification',
       'pqc-hw-acceleration',
     ],
-    essentialsMinutes: 550,
+    essentialsMinutes: 640,
     quizDescription:
       'Test your knowledge on product certification, FIPS 140-3, ACVP lab workflow, entropy sources, HSMs, PQC testing and validation, Common Criteria/EUCC, hardware acceleration, stateful and hash-based signatures, hybrid cryptography, secure boot, crypto APIs, PQC candidates, PCI certification, and standards bodies.',
     quizCategories: [
@@ -1506,7 +1506,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 845,
+    estimatedMinutes: 935,
     // Curious journey review (owner decision C2, 16 Oct 2026): a beginner's
     // must-do set is the idea, the threat and one real handshake — about 1½
     // hours. Candidates, risk and compliance stay on the full path as the

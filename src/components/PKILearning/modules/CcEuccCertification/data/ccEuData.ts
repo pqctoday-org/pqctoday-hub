@@ -8,7 +8,7 @@
  *  - the two `eidas-trace` scenarios;
  *  - Exercises-tab items and the per-step `stepExercises` (build spec §4).
  *
- * Every fact below was read on 24 September 2026 from the document named next
+ * Core certificate fixtures were read on 24 September 2026 from the document named next
  * to it (plan r2 §0; fetched through pqctoday-priv/scripts/fetch_resilient.py).
  * Items the plan marks UNVERIFIED are carried as `openQuestion` text and must
  * stay labelled as open questions in the UI.
@@ -18,6 +18,8 @@ import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProduc
 
 /** Date every fact in this file was last checked against its source. */
 export const CC_EU_AS_OF = '2026-09-24'
+export const CC_BASELINE_AS_OF = '2026-10-16'
+export const CC_MANDATORY_ERRATA_VERSION = 'v1.2'
 
 // ── CC assurance components ─────────────────────────────────────────────────
 
@@ -519,6 +521,14 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
             feedback:
               'EUCC is a certification scheme under the Cybersecurity Act. It says how a certificate is obtained, not who must obtain one. The duty to use a certified QSCD comes from eIDAS.',
           },
+          {
+            id: 'notification-is-standard',
+            label:
+              'CIR 2025/1570, which defines the algorithms and Protection Profile for every certified QSCD',
+            correct: false,
+            feedback:
+              'CIR 2025/1570 governs what Member States notify about certified QSCDs. It is not an algorithm profile or Protection Profile; establish the technical basis from the device type, Article 30 assessment rules, EUCC Annexes, the selected PP and current cryptographic guidance.',
+          },
         ],
         link: 'eIDAS (910/2014 as amended by 2024/1183): Annex II device requirements, Art 29a remote QSCD management, Art 30 certification',
         sourceIds: ['eIDAS-2-Regulation', 'EIDAS-REG-910-2014'],
@@ -621,12 +631,13 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           },
         ],
         link: 'PP: EN 419221-5:2018 (ANSSI-CC-PP-2016/05-M01), CC 3.1 R4, EAL4 augmented with AVA_VAN.5, strict conformance; with EN 419241-2 for the server-signing QSCD',
-        sourceIds: ['ANSSI-CC-PP-2016-05-EN-419221-5', 'ANSSI-CC-PP-2016-05-M01'],
-        plainSources: [
-          'EN 419241-2 PP — ANSSI-CC-PP-2018/02-M01 (listed in EUCC Annex II; library row pending)',
+        sourceIds: [
+          'ANSSI-CC-PP-2016-05-EN-419221-5',
+          'ANSSI-CC-PP-2016-05-M01',
+          'ANSSI-CC-PP-2018-02-EN-419241-2',
+          'CID-EU-2016-650-QSCD-Security-Assessment',
+          'CIR-EU-2025-1570-QSCD-Certification-Notification',
         ],
-        openQuestion:
-          'Whether a newer eIDAS implementing act lists EN 419221-5 or EN 419241-2 for QSCD certification — open question, check the current Official Journal.',
       },
       {
         id: 'sota',
@@ -659,10 +670,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           },
         ],
         link: 'State-of-the-art: “Hardware assessment in EN 419221-5 (HSM PP)” v1 — FPT_PHP interpretation (EUCC Annex I)',
-        sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment'],
-        plainSources: [
-          'ENISA, “Hardware assessment in EN 419221-5 (HSM PP): interpretation of the FPT_PHP requirements”, version 1, February 2025 (library row pending)',
-        ],
+        sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment', 'ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'],
       },
       {
         id: 'algorithms',
@@ -761,9 +769,10 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           },
         ],
         link: 'Change: IAR → CB classifies; new crypto service = SFR change → typically major → re-evaluation → new certificate (minor → maintenance report, no new certificate)',
-        sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment', 'CCDB-014-Assurance-Continuity-v3-1'],
-        plainSources: [
-          'ENISA, “Guidelines on assurance continuity — practical change scenarios for certified ICT products”, v1, 10 December 2025 (a guideline, not law; library row pending)',
+        sourceIds: [
+          'CIR-EU-2025-2462-EUCC-Amendment',
+          'CCDB-014-Assurance-Continuity-v3-1',
+          'ENISA-EUCC-Assurance-Continuity-Change-Scenarios',
         ],
       },
     ],
@@ -974,10 +983,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           },
         ],
         link: 'Change: product series (CIR 2025/2462) + minor/major test; a new PQC implementation is expected to be major',
-        sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment'],
-        plainSources: [
-          'ENISA, “EUCC guidelines: evaluation methodology for product series”, v1, 9 July 2025 (a guideline; library row pending)',
-        ],
+        sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment', 'ENISA-EUCC-Product-Series-Methodology'],
       },
     ],
   },

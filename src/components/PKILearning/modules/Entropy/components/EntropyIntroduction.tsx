@@ -37,9 +37,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Shuffle size={20} /> Why Entropy Matters
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          All cryptographic security ultimately depends on the quality of randomness used for key
-          generation, nonces, and initialization vectors. A perfectly designed algorithm with a
-          4096-bit key is worthless if the underlying random number generator is predictable. The
+          Cryptographic key generation and randomized operations depend on the quality of randomness
+          used for keys, nonces, and initialization vectors. A perfectly designed algorithm cannot
+          provide its claimed security strength when its random generator is predictable. The
           difference between &quot;secure&quot; and &quot;broken&quot; often comes down to{' '}
           <InlineTooltip term="Entropy">entropy</InlineTooltip> — the measure of true
           unpredictability in the bits that seed your cryptographic operations.
@@ -53,8 +53,8 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <li>Hardware failures (stuck-at) can produce constant output</li>
               <li>
                 <span className="font-medium text-foreground">Stateful Signatures (LMS/XMSS):</span>{' '}
-                Catastrophic tree security failure during key generation if the RNG repeats a seed
-                or lacks entropy.
+                Repeated key-generation material can duplicate signing state; catastrophic failure
+                occurs if cloned or rolled-back state reuses a one-time key or leaf index.
               </li>
             </ul>
           </div>
@@ -74,11 +74,13 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-sm font-bold text-success mb-1">Best Practice</div>
+            <div className="text-sm font-bold text-success mb-1">Design Options</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>Multiple independent entropy sources</li>
-              <li>Defense-in-depth per SP 800-90C</li>
-              <li>Formal validation via NIST ESV program</li>
+              <li>
+                Use additional sources only with justified independence and threat assumptions
+              </li>
+              <li>Select an applicable SP 800-90C RBG construction</li>
+              <li>Use the CMVP Entropy Source Validation process when validation is required</li>
             </ul>
           </div>
         </div>
@@ -282,12 +284,26 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           C++ implementation (SP800-90B_EntropyAssessment) for running these tests on raw noise
           samples.
         </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          <span className="font-medium text-foreground/70">Errata status:</span> NIST lists two
+          numerical corrections for SP 800-90B: one chi-squared critical value and one worked Most
+          Common Value example. They do not change the requirements taught here.{' '}
+          <a
+            href="https://csrc.nist.gov/pubs/sp/800/90/b/final"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Review the current publication status
+          </a>
+          .
+        </p>
       </section>
 
-      {/* Section 5: NIST ESV Program */}
-      <section className="glass-panel p-6">
+      {/* Section 5: CMVP ESV process */}
+      <section data-section-id="esv" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <ShieldCheck size={20} /> NIST ESV Program
+          <ShieldCheck size={20} /> CMVP Entropy Source Validation (ESV) Process
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           SP 800-90B sets the requirements an entropy source must meet. The certificate comes from

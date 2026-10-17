@@ -193,12 +193,6 @@ export interface OpSpec {
   attrs?: Record<string, string>
 }
 
-/** The ID-Placeholder sentinel (KMIP 3.0 §6.1 preamble). Use it as a batch item's `uid`
- * to reference the object the previous UID-producing item created — e.g.
- * CreateKeyPair → Activate(`$IDPlaceholder`) → Sign(`$IDPlaceholder`). The engine
- * substitutes the live UID before each item runs. */
-export const ID_PLACEHOLDER = '$IDPlaceholder'
-
 /** KMIP 3.0 §9.5 Batch Error Continuation Option: how a batch handles a failed
  * item. `Continue` runs every item; `Stop` halts after the first failure (later
  * items are not run/returned); `Undo` halts AND rolls back earlier successes

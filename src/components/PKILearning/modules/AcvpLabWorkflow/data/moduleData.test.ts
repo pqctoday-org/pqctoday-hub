@@ -32,6 +32,13 @@ describe('acvp-lab-workflow sources', () => {
     for (const s of all) expect(s.url, s.id).toMatch(/^https:\/\//)
   })
 
+  it('pins the current core draft publication and expiry metadata', () => {
+    expect(SOURCES.acvpSpec.revision).toBe(
+      'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)'
+    )
+    expect(content.narratives.acvpSpecRevision).toBe(SOURCES.acvpSpec.revision)
+  })
+
   it('usnistgov sources are pinned to a full commit, never a branch', () => {
     for (const s of all.filter((x) => x.url.includes('github.com/usnistgov/'))) {
       expect(s.url, s.id).toMatch(/\/(blob|tree)\/[0-9a-f]{40}\//)

@@ -4,11 +4,11 @@ A closer look at the certificates that matter most in Europe: Common Criteria, t
 
 ### Why It Matters
 
-A Common Criteria grade such as "EAL4+" only means something once you know which extra checks were added. In the EU the same product can meet Common Criteria three ways at once, and each affects what a post-quantum change needs.
+A Common Criteria grade such as "EAL4+" only means something once you know which extra checks were added. A CC evaluation may support an EUCC certificate or form part of an eIDAS device-assessment chain, while international CCRA recognition remains a separate, conditional question.
 
 ### The Key Takeaway
 
-"EAL4+" means nothing until its extra components are named, and EUCC is a legal scheme — not a Protection Profile.
+"EAL4+" means nothing until its extra components are named, and EUCC is a legal scheme — not a Protection Profile. Certification engineers must also use the current mandatory CC:2022 errata, not only the base documents.
 
 ### What's Happening
 

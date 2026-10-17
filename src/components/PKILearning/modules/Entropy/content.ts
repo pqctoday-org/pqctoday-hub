@@ -8,8 +8,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'entropy-randomness',
-  version: '1.0.1',
-  lastReviewed: '2026-08-10',
+  version: '1.0.2',
+  // Keep the review date tied to the latest recorded content review; this audit's
+  // implementation work is tracked separately by lastEdited.
+  lastReviewed: '2026-08-18',
   lastEdited: '2026-10-16',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the prose calls it a draft, which is right — Rev 3 is Initial Public Draft). The list stays short enough
