@@ -26,12 +26,7 @@ import {
 } from '../data/kmsConstants'
 import { Button } from '@/components/ui/button'
 import { AuditTrailPanel } from '@/components/Playground/kmip/AuditTrailPanel'
-import {
-  getKmipEngine,
-  type AuditEvent,
-  type KmipEngine,
-  type OpResult,
-} from '@/wasm/kmip/kmipEngine'
+import type { AuditEvent, KmipEngine, OpResult } from '@/wasm/kmip/kmipEngine'
 
 const PROVIDER_LABELS: Record<string, { name: string; short: string }> = {
   'aws-kms': { name: 'AWS KMS', short: 'AWS' },
@@ -81,7 +76,11 @@ const OperationSimulator: React.FC = () => {
 
   useEffect(() => {
     let mounted = true
-    void getKmipEngine()
+    // Keep the top-level-await WASM engine out of this learning module's
+    // static dependency graph. A static import changes Vite's shared-chunk
+    // ordering and can expose the CACP route before its KMIP tables are ready.
+    void import('@/wasm/kmip/kmipEngine')
+      .then(({ getKmipEngine }) => getKmipEngine())
       .then((loaded) => {
         if (mounted) setEngine(loaded)
       })

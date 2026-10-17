@@ -2979,8 +2979,7 @@
       },
       {
         "id": "entropy-evidence-lab",
-        "label": "Entropy Evidence Lab (SP 800-90B)",
-        "paths": ["certification-engineer"]
+        "label": "Entropy Evidence Lab (SP 800-90B)"
       }
     ],
     "exec-quantum-impact": [

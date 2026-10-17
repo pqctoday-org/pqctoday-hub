@@ -112,43 +112,76 @@ export const DatasetScreen: FC<{
   cases: LabCase[]
   selectedId: string | null
   onSelect: (id: string) => void
-}> = ({ cases, selectedId, onSelect }) => (
-  <div className="space-y-5">
-    {(['device', 'contrast', 'synthetic'] as const).map((g) => (
-      <section key={g} aria-labelledby={`evl-group-${g}`} className="space-y-2">
-        <h4
-          id={`evl-group-${g}`}
-          className="flex items-center gap-2 text-sm font-semibold text-foreground"
-        >
-          {groupIcon(g)}
-          {GROUP_TITLES[g].title}
-        </h4>
-        <p className="text-xs text-muted-foreground">{GROUP_TITLES[g].note}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {cases
-            .filter((c) => c.group === g)
-            .map((c) => {
-              const selected = c.id === selectedId
-              return (
-                <Button
-                  key={c.id}
-                  variant="outline"
-                  size="tile"
-                  className={selected ? SELECTED : undefined}
-                  aria-pressed={selected}
-                  onClick={() => onSelect(c.id)}
-                  data-testid={`evl-case-${c.id}`}
-                >
-                  <span className="text-sm font-semibold">{c.title}</span>
-                  <span className="text-xs text-muted-foreground">{c.lesson}</span>
-                </Button>
-              )
-            })}
-        </div>
-      </section>
-    ))}
-  </div>
-)
+}> = ({ cases, selectedId, onSelect }) => {
+  const selectedCase = cases.find((c) => c.id === selectedId) ?? null
+  return (
+    <div className="space-y-5">
+      <Notice tone="info">
+        <strong>Choose one stored dataset to examine.</strong> This does not activate a live entropy
+        source or run an estimator. It prepares the selected bytes so the next screen can show their
+        provenance, collection conditions and SHA-256 before you choose an assessment track.
+      </Notice>
+      {(['device', 'contrast', 'synthetic'] as const).map((g) => (
+        <section key={g} aria-labelledby={`evl-group-${g}`} className="space-y-2">
+          <h4
+            id={`evl-group-${g}`}
+            className="flex items-center gap-2 text-sm font-semibold text-foreground"
+          >
+            {groupIcon(g)}
+            {GROUP_TITLES[g].title}
+          </h4>
+          <p className="text-xs text-muted-foreground">{GROUP_TITLES[g].note}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {cases
+              .filter((c) => c.group === g)
+              .map((c) => {
+                const selected = c.id === selectedId
+                return (
+                  <Button
+                    key={c.id}
+                    variant="outline"
+                    size="tile"
+                    className={selected ? SELECTED : undefined}
+                    aria-pressed={selected}
+                    onClick={() => onSelect(c.id)}
+                    data-testid={`evl-case-${c.id}`}
+                  >
+                    <span className="flex w-full items-center justify-between gap-2 text-sm font-semibold">
+                      <span>{c.title}</span>
+                      {selected && (
+                        <span className="inline-flex shrink-0 items-center gap-1 text-xs text-primary">
+                          <CheckCircle2 size={14} aria-hidden="true" /> Selected
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{c.lesson}</span>
+                  </Button>
+                )
+              })}
+          </div>
+        </section>
+      ))}
+      <div className="rounded-lg border border-border bg-muted/40 p-3" aria-live="polite">
+        {selectedCase ? (
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-foreground">
+              Selected dataset: {selectedCase.title}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              The bytes are being prepared now. Select Next to inspect their identity and
+              conditions; no entropy estimate exists until you choose a track and run the NIST tool
+              on screen 4. Choosing another dataset clears any results from the previous choice.
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Nothing selected yet. Pick one card to enable Next.
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
 
 // ── Screen 2: sample unit, alphabet and conditions ───────────────────────────
 

@@ -139,6 +139,22 @@ function goToStep(n: number) {
 }
 
 describe('EntropyEvidenceLab', () => {
+  it('explains what selecting a dataset does before any estimator runs', async () => {
+    render(<EntropyEvidenceLab />)
+    expect(await screen.findByText(/Choose one stored dataset to examine/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/does not activate a live entropy source or run an estimator/)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Nothing selected yet/)).toBeInTheDocument()
+
+    const choice = await screen.findByTestId('evl-case-syn-stuck')
+    fireEvent.click(choice)
+    expect(choice).toHaveAttribute('aria-pressed', 'true')
+    expect(within(choice).getByText('Selected')).toBeInTheDocument()
+    expect(screen.getByText('Selected dataset: Synthetic: Stuck source')).toBeInTheDocument()
+    expect(screen.getByText(/no entropy estimate exists until/i)).toBeInTheDocument()
+  })
+
   it('shows a "what this proves / does not prove" panel on every screen', async () => {
     await openRunScreen('kv260-idle-sequential')
     for (let n = 1; n <= 6; n++) {

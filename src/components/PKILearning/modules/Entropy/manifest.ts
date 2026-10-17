@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'entropy-randomness',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-003',
   title: 'Entropy & Randomness',
   description:
@@ -59,10 +59,11 @@ const manifest: ModuleManifest = {
     { id: 'drbg-state-machine', label: 'DRBG State Machine' },
     { id: 'source-combining', label: 'Combining Sources' },
     // Slice 1 (2026-09-24): appended LAST so existing ?step= links keep working.
+    // Shared by both paths: general practitioners need the evidence-boundary
+    // lesson too, while certification engineers use the deeper ESV context.
     {
       id: 'entropy-evidence-lab',
       label: 'Entropy Evidence Lab (SP 800-90B)',
-      paths: ['certification-engineer'],
     },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
