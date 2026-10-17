@@ -71,6 +71,9 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
 /** Maps transition CSV `function` values to category IDs */
 const FUNCTION_TO_CATEGORY: Record<AlgorithmTransition['function'], string> = {
   'Encryption/KEM': 'Key Exchange',
+  // Regional key-agreement guidance rows ("ECDHE (classical only)") are not
+  // inventory choices; an empty id keeps them out of the chips, as before.
+  'Key Agreement': '',
   'Hybrid KEM': 'Key Exchange',
   'Composite KEM': 'Key Exchange',
   'Hybrid KEM (HPKE)': 'Key Exchange',

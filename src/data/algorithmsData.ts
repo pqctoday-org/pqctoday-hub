@@ -9,6 +9,7 @@ export interface AlgorithmTransition {
   pqc: string
   function:
     | 'Encryption/KEM'
+    | 'Key Agreement'
     | 'Signature'
     | 'Hybrid KEM'
     | 'Hash'
@@ -271,12 +272,17 @@ export function getCryptoFamilyFromPQCName(pqcName: string): string {
   return 'N/A'
 }
 
-/** Derive function group from transition's function field */
+/**
+ * Derive function group from transition's function field. Key agreement
+ * (ECDH, DH) rows are key establishment, so they share the KEM group and the
+ * "KEM (key establishment)" filter.
+ */
 export function getTransitionFunctionGroup(
   fn: AlgorithmTransition['function']
 ): 'KEM' | 'Signature' | null {
   if (
     fn === 'Encryption/KEM' ||
+    fn === 'Key Agreement' ||
     fn === 'Hybrid KEM' ||
     fn === 'Composite KEM' ||
     fn === 'Hybrid KEM (HPKE)' ||
@@ -285,4 +291,15 @@ export function getTransitionFunctionGroup(
     return 'KEM'
   if (fn === 'Signature' || fn === 'Composite Signature') return 'Signature'
   return null
+}
+
+/**
+ * Reader-facing words for a transition row's function. The data's
+ * "Encryption/KEM" reads as public-key encryption; these rows are key
+ * encapsulation used for key establishment.
+ */
+export function transitionFunctionLabel(fn: AlgorithmTransition['function']): string {
+  if (fn === 'Encryption/KEM') return 'KEM (key establishment)'
+  if (fn === 'Key Agreement') return 'Key agreement'
+  return fn
 }

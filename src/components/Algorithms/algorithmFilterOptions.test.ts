@@ -22,7 +22,11 @@ import {
   type ExplorerFilterState,
 } from './useAlgorithmExplorer'
 import { loadPQCAlgorithmsData, type AlgorithmDetail } from '@/data/pqcAlgorithmsData'
-import { algorithmsData } from '@/data/algorithmsData'
+import {
+  algorithmsData,
+  getTransitionFunctionGroup,
+  transitionFunctionLabel,
+} from '@/data/algorithmsData'
 import * as AlgorithmFilters from './AlgorithmFilters'
 
 const ids = (items: ReadonlyArray<{ id: string }>) =>
@@ -52,6 +56,19 @@ describe('Algorithms filter values — function', () => {
         0
       )
     }
+  })
+
+  it('labels KEM as key establishment, keeping the KEM id for old links', () => {
+    expect(FUNCTION_ITEMS.find((i) => i.id === 'KEM')?.label).toBe('KEM (key establishment)')
+  })
+
+  it('includes key agreement transition rows under KEM', () => {
+    const keyAgreement = algorithmsData.filter((t) => t.function === 'Key Agreement')
+    expect(keyAgreement.length).toBeGreaterThan(0)
+    const kem = transitionMatches({ fn: 'KEM' })
+    for (const row of keyAgreement) expect(kem).toContain(row)
+    expect(getTransitionFunctionGroup('Key Agreement')).toBe('KEM')
+    expect(transitionFunctionLabel('Encryption/KEM')).toBe('KEM (key establishment)')
   })
 
   it('lower-case spellings select nothing (the comparison is exact)', () => {

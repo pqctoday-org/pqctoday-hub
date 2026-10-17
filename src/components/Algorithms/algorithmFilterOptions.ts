@@ -25,7 +25,9 @@ export const CRYPTO_FAMILY_ITEMS = [
 
 export const FUNCTION_ITEMS = [
   { id: 'All', label: 'All Functions' },
-  { id: 'KEM', label: 'KEM / Encryption' },
+  // Display text only — the id stays 'KEM' so existing ?fn=KEM links work.
+  // Key agreement rows (ECDH, DH) are included: they are key establishment too.
+  { id: 'KEM', label: 'KEM (key establishment)' },
   { id: 'Signature', label: 'Signature' },
 ]
 
