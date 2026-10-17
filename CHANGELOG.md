@@ -58,6 +58,7 @@ The KMIP protocol workshop now runs its own local engine with a real audit trail
 ### Data
 
 - **Algorithm statuses match the latest standards news** [view:/algorithms] [persona:architect] [persona:developer] [persona:researcher] [persona:ops]: the TLS hybrid key exchanges (X25519MLKEM768 and its P-256/P-384 siblings) are shown as published in RFC 10024 and the SSH hybrids as RFC 10042; HAWK, withdrawn by its authors in July 2026, is no longer listed as an active candidate; and FrodoKEM-640 and two Classic McEliece parameter sets no longer claim a BSI recommendation they do not have.
+- **Current BSI and ANSSI guidance joins the Library evidence set** [view:/library] [view:/compliance] [persona:architect] [persona:developer] [persona:cert-engineer] [persona:grc] [persona:researcher]: the Library adds ANSSI’s 2026 crypto-agility guidance and refreshes the derived learning fields and evidence-grounded maturity requirements for it and BSI TR-02102-1. The older 2021 ANSSI algorithm-selection guide is deliberately excluded from the current guidance set. Only official publisher links and derived records are public; source files remain private.
 
 ## [4.162.0] - 2026-10-16
 
