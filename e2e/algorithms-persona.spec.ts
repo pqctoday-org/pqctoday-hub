@@ -80,7 +80,7 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
 
     // Persona hint specific to ops is present.
     await expect(
-      page.getByText(/specification maturity and reviewed deployment evidence/)
+      page.getByText(/specification maturity from reviewed deployment evidence/)
     ).toBeVisible({
       timeout: 10000,
     })

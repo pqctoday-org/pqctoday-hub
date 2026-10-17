@@ -303,7 +303,7 @@ for (const theme of ['light', 'dark'] as const) {
     }, theme)
     await page.setViewportSize({ width: 1280, height: 900 })
     await page.goto('/algorithms?tab=validation&section=attacks')
-    await expect(page.getByText('Reviewed sources').first()).toBeVisible({ timeout: 20_000 })
+    await expect(page.locator('[title^="Severity:"]').first()).toBeAttached({ timeout: 20_000 })
     await injectAxe(page)
 
     const badgeSelectors = [
@@ -312,9 +312,11 @@ for (const theme of ['light', 'dark'] as const) {
       '[title="Severity: Medium"]',
       '[title="Severity: Low"]',
     ]
+    let checked = 0
     for (const selector of badgeSelectors) {
       const badge = page.locator(selector).first()
       if ((await badge.count()) === 0) continue
+      checked += 1
       await badge.scrollIntoViewIfNeeded()
       const violations = await getViolations(page, selector, {
         runOnly: { type: 'rule', values: ['color-contrast'] },
@@ -324,6 +326,10 @@ for (const theme of ['light', 'dark'] as const) {
         `${theme} ${selector} contrast`
       ).toEqual([])
     }
+    expect(
+      checked,
+      'at least the Critical, High and Medium badge kinds are on the page'
+    ).toBeGreaterThanOrEqual(3)
     for (const text of ['Recorded evidence', 'No recorded evidence']) {
       const badge = page.getByText(text, { exact: true }).first()
       if ((await badge.count()) === 0) continue
