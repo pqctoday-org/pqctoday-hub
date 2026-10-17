@@ -61,7 +61,7 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Transition Tab',
-        body: 'Shows how classical algorithms (RSA, ECDH, ECDSA) map to their PQC replacements (ML-KEM, ML-DSA, SLH-DSA). Each card shows the classical algorithm on the left and its quantum-safe successor on the right.',
+        body: 'Shows candidate migration paths from classical algorithms (RSA, ECDH, ECDSA) to post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA and others). Each row shows the classical algorithm on the left and a candidate migration path on the right, with region, publication status and transition timing. A row is educational context, not a drop-in replacement or a compliance determination.',
       },
       {
         heading: 'Detailed Comparison Tab',
@@ -73,7 +73,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|fips-validated|none, ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?transition=<row> to open and highlight one Transition Guide row, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed|support|landscape|validation, ?family=, ?fn=, ?level=, ?region=, ?status= and ?q= to filter, ?quickview=nist-picks|final-nist-standards|none (the older fips-validated value still opens Final NIST standards), ?mode=compare for the Detailed tab, ?section=attacks|kat|coverage for the Validation tab, ?protocol=<id> to open a Protocol Support row, ?industry= for the Landscape tab, ?highlight= to highlight algorithms, ?transition=<row> to open and highlight one Transition Guide row, ?compare= for pre-selected comparisons. On the Protocol Support tab: ?matrixView=detailed, ?matrixQ=, ?matrixStatus=, ?matrixAvailability=, ?matrixSort=key:direction. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [

@@ -205,7 +205,7 @@ describe('AlgorithmsView — deep links', () => {
     renderAt('/algorithms?tab=support&protocol=ssh')
     expect(await screen.findByTestId('protocol-matrix')).toBeInTheDocument()
     expect(
-      screen.queryByRole('heading', { name: /three you actually need to know/ })
+      screen.queryByRole('heading', { name: /three common starting points/ })
     ).not.toBeInTheDocument()
   })
 
@@ -213,7 +213,7 @@ describe('AlgorithmsView — deep links', () => {
     usePersonaStore.setState({ selectedPersona: 'curious', viewAccess: 'preview' })
     renderAt('/algorithms?tab=support')
     expect(
-      await screen.findByRole('heading', { name: /three you actually need to know/ })
+      await screen.findByRole('heading', { name: /three common starting points/ })
     ).toBeInTheDocument()
   })
 
@@ -323,7 +323,7 @@ describe('AlgorithmsView — ?transition row links', () => {
     renderAt(`/algorithms?transition=${transitionRowSlug(mlkem)}`)
     expect(await screen.findByTestId('transition-body')).toBeInTheDocument()
     expect(
-      screen.queryByRole('heading', { name: /three you actually need to know/ })
+      screen.queryByRole('heading', { name: /three common starting points/ })
     ).not.toBeInTheDocument()
   })
 })

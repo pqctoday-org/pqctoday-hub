@@ -312,7 +312,9 @@ export function MobileAlgorithmsView() {
         <div>
           <h1 className="sr-only">Algorithms</h1>
           <p className="text-[11.5px] text-muted-foreground">
-            {Object.keys(ALGORITHM_REGISTRY).length} tracked
+            {/* Counts the quick-reference size registry, not the full catalogue. */}
+            {Object.keys(ALGORITHM_REGISTRY).length} algorithms in this quick reference · the full
+            catalogue lists more
           </p>
         </div>
       </div>

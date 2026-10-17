@@ -33,7 +33,7 @@ import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATVa
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { getCatalogueFreshness } from '@/data/pqcAlgorithmsData'
+import { getCatalogueFreshness, getWithheldCatalogueRows } from '@/data/pqcAlgorithmsData'
 import {
   algoMatchesHighlight,
   highlightRowSelector,
@@ -51,12 +51,12 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
     'Use the Transition tab to explore candidate paths from classical algorithms, then check protocol, API, key-lifecycle, and validation constraints.',
   grc: 'Use the Transition tab to learn which standards and candidate migration paths may be relevant. This educational view does not determine applicability or product compliance.',
   researcher:
-    'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
+    'Detailed Comparison has the full parameter sets and cross-family security comparisons; Validation › Implementation Attacks has the side-channel and fault-injection notes per family.',
   'cert-engineer':
-    'The Validation tab opens first: known-answer tests you can run, and implementation-attack notes per family. A CAVP algorithm validation is the prerequisite for a module certificate, not the certificate itself.',
+    'Validation has known-answer tests you can run and implementation-attack notes per family. A CAVP algorithm validation is the prerequisite for a module certificate, not the certificate itself.',
   ops: "Start with Published standard, then inspect reviewed deployment evidence. Check your exact product's documentation and validation status before deployment.",
   curious:
-    'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
+    'You unlocked the full comparison. Three common starting points from the published NIST standards (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; the other rows are there to compare against.',
 }
 
 export function AlgorithmsView() {
@@ -137,9 +137,21 @@ export function AlgorithmsView() {
     () => ({
       missingSource: algorithmData.filter((row) => !row.trustedSourceId || !row.statusUrl).length,
       researchGaps: algorithmData.filter((row) => row.hasResearchGap).length,
+      // Read after load: the loader counts the rows it withholds as it parses.
+      withheld: getWithheldCatalogueRows(),
     }),
     [algorithmData]
   )
+  const withheldTotal =
+    catalogueQuality.withheld.unclassified + catalogueQuality.withheld.placeholder
+  const withheldParts = [
+    catalogueQuality.withheld.unclassified > 0
+      ? `${catalogueQuality.withheld.unclassified} unclassified`
+      : null,
+    catalogueQuality.withheld.placeholder > 0
+      ? `${catalogueQuality.withheld.placeholder} placeholder${catalogueQuality.withheld.placeholder === 1 ? '' : 's'}`
+      : null,
+  ].filter(Boolean)
 
   // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
   // ?tab=/?highlight=) gets the distilled mobile screen — every entry-strip
@@ -554,8 +566,7 @@ export function AlgorithmsView() {
           Industry use cases
         </h1>
         <p className="mb-3 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-          Learn where cryptography appears and which migration questions to ask. Market estimates
-          and candidate paths are context, not recommendations or compliance conclusions.
+          Learn where cryptography appears and which migration questions to ask.
         </p>
         <IndustryLandscapeView />
       </div>
@@ -587,10 +598,13 @@ export function AlgorithmsView() {
           reviewed on that date. The source file does not yet record a row reviewer, verification
           method, source locator, or next-review date.
         </p>
-        <p className="mt-1">
-          Of {algorithmData.length} published catalogue rows, {catalogueQuality.missingSource} lack
-          either a source identifier or status link and {catalogueQuality.researchGaps} contain an
-          explicit research gap. Open a row to inspect its available provenance.
+        <p className="mt-1" data-testid="catalogue-row-counts">
+          {algorithmData.length} catalogue rows shown
+          {withheldTotal > 0 &&
+            `; ${withheldTotal} withheld (${withheldParts.join(', ')}) because they cannot support a defensible comparison yet`}
+          . Of the rows shown, {catalogueQuality.missingSource} lack either a source identifier or
+          status link and {catalogueQuality.researchGaps} contain an explicit research gap. Open a
+          row to inspect its available provenance.
         </p>
       </aside>
 
@@ -605,24 +619,27 @@ export function AlgorithmsView() {
       {isCuriousPreview && (
         <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 md:p-8">
           <h2 className="text-xl md:text-2xl font-bold text-gradient mb-3">
-            {algorithmData.length || 'Dozens of'} algorithms — three you actually need to know
+            {algorithmData.length || 'Dozens of'} catalogue entries — three common starting points
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
             NIST published its first three post-quantum standards in August 2024 (FIPS 203 / 204 /
-            205): one for key exchange (ML-KEM), one for general-purpose signatures (ML-DSA), and a
-            hash-based backup (SLH-DSA). The rest of this page also covers hash-based signatures
-            already standardised for firmware (LMS / XMSS), algorithms selected but not yet
-            published (FN-DSA, HQC), other countries&apos; standards, and the classical algorithms
-            being retired.
+            205): one for key establishment (ML-KEM), one for general-purpose signatures (ML-DSA),
+            and a hash-based backup (SLH-DSA). The rest of this page also covers hash-based
+            signatures already standardised for firmware (LMS / XMSS), algorithms selected but not
+            yet published (FN-DSA, HQC), other countries&apos; standards, and the classical
+            algorithms being retired.
           </p>
           <ul className="text-sm text-foreground/90 space-y-2 mb-5">
             <li>
-              <strong className="text-primary">ML-KEM-768</strong> — replaces RSA / ECDH for
-              encryption key exchange. Public key ~1.2 KB, ciphertext ~1.1 KB.
+              <strong className="text-primary">ML-KEM-768</strong> — a parameter set of the ML-KEM
+              key-encapsulation mechanism, and the default FIPS 203 recommends; a candidate for key
+              establishment where RSA or ECDH is used today, not a drop-in replacement. Public key
+              ~1.2 KB, ciphertext ~1.1 KB.
             </li>
             <li>
-              <strong className="text-primary">ML-DSA-65</strong> — replaces RSA / ECDSA for digital
-              signatures. Signature ~3.3 KB.
+              <strong className="text-primary">ML-DSA-65</strong> — a mid-level ML-DSA parameter
+              set; a candidate for digital signatures where RSA or ECDSA is used today. Signature
+              ~3.3 KB.
             </li>
             <li>
               <strong className="text-primary">SLH-DSA-SHA2-128s</strong> — hash-based backup
@@ -741,10 +758,9 @@ export function AlgorithmsView() {
                         setSearchParams(
                           (prev) => {
                             const next = new URLSearchParams(prev)
-                            next.set(
-                              'highlight',
-                              'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FN-DSA-512'
-                            )
+                            // Published FIPS examples only: FN-DSA (FIPS 206)
+                            // is selected but its standard is still pending.
+                            next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s')
                             next.set('tab', 'detailed')
                             return next
                           },
@@ -752,7 +768,7 @@ export function AlgorithmsView() {
                         )
                       }
                     >
-                      View Top 4 →
+                      Compare common starting points →
                     </Button>
                   ) : undefined
                 }
@@ -762,7 +778,7 @@ export function AlgorithmsView() {
               {cnsaLens && <Cnsa20Panel />}
 
               {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
-              {filterStatus === 'Candidate' && (
+              {(filterStatus === 'candidate' || filterStatus === 'Candidate') && (
                 <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
                   <Info size={16} className="text-info shrink-0 mt-0.5" />
                   <p className="text-xs text-foreground/85 leading-relaxed">
@@ -816,7 +832,7 @@ export function AlgorithmsView() {
                 value="support"
                 className="flex items-center gap-2"
                 data-workshop-target="tab-support"
-                title="Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually."
+                title="Tracks protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually."
               >
                 <Network size={18} />
                 <span className="hidden sm:inline">Protocol Support</span>
@@ -869,6 +885,8 @@ export function AlgorithmsView() {
                 transition={{ duration: 0.3 }}
                 data-workshop-target="section-algorithm-detailed"
               >
+                {/* Tab-level heading so the table sits under an H2, not straight under the page H1. */}
+                <h2 className="sr-only">Detailed comparison</h2>
                 <AlgorithmDetailedComparison
                   highlightAlgorithms={highlightAlgorithms}
                   onInfoOpen={() => setInfoOpen(true)}

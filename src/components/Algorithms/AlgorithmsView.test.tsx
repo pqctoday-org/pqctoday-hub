@@ -50,6 +50,7 @@ vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../data/pqcAlgorithmsData')>()),
   loadPQCAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedFileMetadata: { filename: 'pqc_complete_algorithm_reference.csv', date: null },
+  getWithheldCatalogueRows: vi.fn(() => ({ unclassified: 3, placeholder: 2 })),
 }))
 
 vi.mock('../../data/algorithmsData', async (importOriginal) => ({
@@ -253,7 +254,7 @@ describe('AlgorithmsView', () => {
       )
       // Teaser card heading is unique to the curious-preview branch.
       expect(
-        await screen.findByText(/algorithms — three you actually need to know/)
+        await screen.findByText(/catalogue entries — three common starting points/)
       ).toBeInTheDocument()
       // Tabs and comparison-table mocks must NOT render in preview mode.
       expect(screen.queryByText('Transition Guide')).not.toBeInTheDocument()
@@ -279,7 +280,7 @@ describe('AlgorithmsView', () => {
       // After unlock the teaser disappears and the tabs return.
       await waitFor(() => {
         expect(
-          screen.queryByText(/algorithms — three you actually need to know/)
+          screen.queryByText(/catalogue entries — three common starting points/)
         ).not.toBeInTheDocument()
       })
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
@@ -294,7 +295,7 @@ describe('AlgorithmsView', () => {
       )
       await screen.findByText('Transition Guide')
       expect(
-        screen.queryByText(/algorithms — three you actually need to know/)
+        screen.queryByText(/catalogue entries — three common starting points/)
       ).not.toBeInTheDocument()
     })
   })
@@ -356,12 +357,62 @@ describe('AlgorithmsView', () => {
           executive: /published NIST standards/,
           developer: /explicit maturity filters/,
           architect: /Use the Transition tab/,
-          researcher: /Switch to the Detailed tab/,
+          researcher: /Validation › Implementation Attacks has the side-channel/,
           ops: /Start with Published standard/,
         }
         expect(await screen.findByText(hintMarkers[persona])).toBeInTheDocument()
         unmount()
       }
+    })
+
+    it('discloses withheld catalogue rows next to the shown count', async () => {
+      usePersonaStore.getState().setPersona('developer')
+      await renderSettled(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      const counts = await screen.findByTestId('catalogue-row-counts')
+      expect(counts).toHaveTextContent(
+        /0 catalogue rows shown; 5 withheld \(3 unclassified, 2 placeholders\)/
+      )
+      expect(counts).not.toHaveTextContent(/published catalogue rows/)
+    })
+
+    it('executive shortcut is non-ranking and highlights published standards only', async () => {
+      usePersonaStore.getState().setPersona('executive')
+      await renderSettled(
+        <MemoryRouter initialEntries={['/algorithms']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(screen.queryByText(/View Top 4/)).not.toBeInTheDocument()
+      expect(
+        await screen.findByRole('button', { name: /Compare common starting points/ })
+      ).toBeInTheDocument()
+    })
+
+    it('role guidance does not claim which tab the page opened on', async () => {
+      usePersonaStore.getState().setPersona('cert-engineer')
+      await renderSettled(
+        <MemoryRouter initialEntries={['/algorithms?tab=transition']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(await screen.findByText(/Validation has known-answer tests/)).toBeInTheDocument()
+      expect(screen.queryByText(/opens first/)).not.toBeInTheDocument()
+    })
+
+    it('the Candidate cross-link shows for the current candidate status bucket', async () => {
+      usePersonaStore.getState().setPersona('developer')
+      await renderSettled(
+        <MemoryRouter initialEntries={['/algorithms?tab=detailed&status=candidate']}>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      expect(
+        await screen.findByRole('link', { name: /PQC Candidates & Standardisation Lifecycle/ })
+      ).toBeInTheDocument()
     })
 
     it('curious persona sees Protocol Support enabled from first paint (2026-08-02: lock removed)', async () => {

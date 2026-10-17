@@ -443,7 +443,9 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
     tab: 'transition',
     filters: { status: 'published-standard' },
     openSections: [],
-    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'FN-DSA-512'],
+    // Published FIPS examples only — FN-DSA (FIPS 206) is selected but its
+    // standard is not yet published, so it is not highlighted next to them.
+    highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },
   ops: {
     tab: 'transition',

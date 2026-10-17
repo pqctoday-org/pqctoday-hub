@@ -276,14 +276,14 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     developer:
       'Detailed Comparison sorts objective size and RAM fields, labels heterogeneous catalogue performance text as illustrative, and includes a same-harness hardware case study. Validation › “Known-answer checks” runs pinned vectors in your browser.',
     architect:
-      'The Protocol Support tab tracks 28 protocols across pure-KEM, hybrid-KEM, pure-Sig and hybrid-Sig, each marked RFC, Draft, Experimental or None, with filters for OSS, commercial and live deployment.',
+      'The Protocol Support tab tracks each protocol across pure-KEM, hybrid-KEM, pure-Sig and hybrid-Sig, each marked RFC, Draft, Experimental or None, with filters for OSS, commercial and live deployment.',
     researcher:
       'The "Research needed" toggle narrows to algorithms with an incomplete data row; Validation › "Implementation Attacks" gives side-channel and fault-injection notes per family; the Region filter includes KpqC, CACR and CRYPTREC.',
     'cert-engineer':
-      'The page opens on the Validation tab: "Implementation Attacks" gives side-channel and fault-injection notes per family, and the known-answer tests run in the browser; the hint keeps a CAVP validation apart from a module certificate.',
+      'On the Validation tab, "Implementation Attacks" gives side-channel and fault-injection notes per family and the known-answer tests run in the browser; a CAVP algorithm validation is a prerequisite for a module certificate, not the certificate itself.',
     ops: 'The “Final NIST standards” preset shows algorithms published in final NIST FIPS standards; it does not mean your implementation is validated. Protocol Support separates specification maturity from reviewed deployment evidence.',
     curious:
-      'You get a short preview — "three you actually need to know": ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s — then "Show full algorithm comparison" or "Learn the basics first".',
+      'You get a short preview of three common starting points from the published NIST standards — ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s — then "Show full algorithm comparison" or "Learn the basics first".',
   },
   '/migrate': {
     executive:

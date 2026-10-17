@@ -601,6 +601,20 @@ const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
 let cachedData: AlgorithmDetail[] | null = null
 export let loadedFileMetadata: { filename: string; date: Date | null } | null = null
 
+/** Rows the loader withheld from the latest catalogue file, by reason. */
+export interface WithheldCatalogueRows {
+  /** Rows with no name, algorithm family or cryptographic family. */
+  unclassified: number
+  /** Program-track placeholders with no algorithm selected yet. */
+  placeholder: number
+}
+let withheldRows: WithheldCatalogueRows = { unclassified: 0, placeholder: 0 }
+
+/** Withheld-row counts from the last load, so the page can disclose them. */
+export function getWithheldCatalogueRows(): WithheldCatalogueRows {
+  return { ...withheldRows }
+}
+
 // Helper to extract date from filename — exported for use by algorithmsData.ts
 export function getDateFromFilename(path: string): Date | null {
   const match = path.match(/_(\d{8})(?:_r\d+)?\.csv$/)
@@ -627,6 +641,7 @@ export function getRevisionFromFilename(path: string): number {
 export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   if (cachedData) return cachedData
 
+  const withheld: WithheldCatalogueRows = { unclassified: 0, placeholder: 0 }
   const { data, metadata } = await loadLatestCSVAsync<RawAlgorithmRow, AlgorithmDetail>(
     csvModule,
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
@@ -638,6 +653,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         isMissingEvidence(row.algorithm_family) ||
         isMissingEvidence(row.cryptographic_family)
       ) {
+        withheld.unclassified += 1
         return null
       }
       const statusTier = mapReferenceStatusToTier(row.status || '', row.fips_standard || '')
@@ -645,7 +661,10 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       // yet (confirmed by the CSV's own data-quality note) — not a real
       // algorithm to show in a user-facing comparison. Drop the row rather
       // than badge it, per WORKSTREAMS.md §WS-A step 4.
-      if (statusTier === 'placeholder') return null
+      if (statusTier === 'placeholder') {
+        withheld.placeholder += 1
+        return null
+      }
 
       const carriesAsymmetricObjects = [
         'KEM',
@@ -750,6 +769,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   )
 
   loadedFileMetadata = metadata ? { filename: metadata.filename, date: metadata.lastUpdate } : null
+  withheldRows = withheld
 
   cachedData = data
   return data
