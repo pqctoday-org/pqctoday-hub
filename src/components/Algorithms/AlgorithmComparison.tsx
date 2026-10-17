@@ -27,7 +27,11 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 import { transitionConsequence } from '@/data/algorithmConsequence'
-import { isTransitionGuidanceDate, TRANSITION_GUIDANCE_NOTE } from './transitionGuidance'
+import {
+  DATE_SOURCE_NOT_RECORDED_NOTE,
+  TRANSITION_GUIDANCE_NOTE,
+  transitionDateSource,
+} from './transitionGuidance'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -37,6 +41,8 @@ function jurisdictionStanceLabel(stance: JurisdictionStance): string {
   switch (stance) {
     case 'require':
       return 'Hybrid expected'
+    case 'recommend':
+      return 'Hybrid recommended'
     case 'prefer-pure':
       return 'Prefers pure'
     case 'interim':
@@ -50,6 +56,7 @@ function jurisdictionStanceLabel(stance: JurisdictionStance): string {
 function jurisdictionStanceChip(stance: JurisdictionStance): string {
   switch (stance) {
     case 'require':
+    case 'recommend':
       return 'bg-status-warning/10 text-status-warning border-status-warning/30'
     case 'prefer-pure':
       return 'bg-status-success/10 text-status-success border-status-success/30'
@@ -729,7 +736,8 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             >
                               {algo.deprecationDate || 'No reviewed transition date recorded'}
                             </span>
-                            {isTransitionGuidanceDate(algo.deprecationDate) && (
+                            {transitionDateSource(algo.deprecationDate, algo.region) ===
+                              'nist-ir-8547' && (
                               <span
                                 className="text-[10px] text-muted-foreground"
                                 title={TRANSITION_GUIDANCE_NOTE}
@@ -737,10 +745,21 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 Proposed: NIST IR 8547 (draft), US federal
                               </span>
                             )}
+                            {transitionDateSource(algo.deprecationDate, algo.region) ===
+                              'not-recorded' && (
+                              <span
+                                className="text-[10px] text-muted-foreground"
+                                title={DATE_SOURCE_NOT_RECORDED_NOTE}
+                              >
+                                Date source not recorded for {algo.region}
+                              </span>
+                            )}
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <ArrowRight size={14} className="opacity-50" />
                               <span className="font-mono">
-                                Standard published:{' '}
+                                {algo.statusTier === 'final'
+                                  ? 'Standard published:'
+                                  : 'Standards status:'}{' '}
                                 {algo.standardizationDate || 'not recorded in this catalogue'}
                               </span>
                             </div>
