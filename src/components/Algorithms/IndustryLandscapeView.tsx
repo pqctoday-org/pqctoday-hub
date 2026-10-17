@@ -20,7 +20,7 @@
 // renderer. There is deliberately NO deadlines row — see that file's header for
 // the measurement that killed it.
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   ArrowLeft,
@@ -107,7 +107,7 @@ const STATUS_LABEL: Record<IndustryUseCase['migrationStatus'], string> = {
   production: 'PQC in production',
   pilot: 'PQC pilots',
   draft: 'PQC drafts',
-  none: 'No PQC path yet',
+  none: 'No reviewed PQC migration evidence',
 }
 
 const protocolNames = new Map(PROTOCOL_MATRIX.map((p) => [p.id, p.name]))
@@ -284,7 +284,7 @@ const CLAIM_BASIS_LABEL: Record<PqcClaimBasis, { label: string; tone: string; he
   standardised: {
     label: 'Standardised',
     tone: 'border-primary/40 bg-primary/10 text-primary',
-    help: 'A published standard exists, but this sector has not migrated yet.',
+    help: 'A published standard exists, but no reviewed evidence shows this sector running it in production yet.',
   },
   'in-progress': {
     label: 'In progress',
@@ -345,8 +345,8 @@ function CertBadge({
       }`}
       title={`${scheme}${detail ? ` — ${detail}` : ''}${
         mandated
-          ? ' (required by the cited standard)'
-          : ' (common industry practice; no mandating text found)'
+          ? ' (named as a requirement in the cited standard — context, not a compliance determination)'
+          : ' (common industry practice; no mandating text in the reviewed sources)'
       }`}
     >
       {scheme}
@@ -395,7 +395,7 @@ function CertificationRow({ uc }: { uc: IndustryUseCase }) {
     <div className="mt-2 flex flex-wrap items-center gap-1.5">
       <span
         className="text-[11px] uppercase tracking-wide text-muted-foreground"
-        title="Certification the hardware protecting these keys must hold, per the cited standard."
+        title="Certification the cited standard names for the hardware protecting these keys — context from that source, not a compliance determination."
       >
         HSM certification
       </span>
@@ -412,9 +412,9 @@ function CertificationRow({ uc }: { uc: IndustryUseCase }) {
       {anyOf && (
         <span
           className="text-[10px] text-muted-foreground"
-          title="The cited standard accepts any one of these certifications — they are alternative routes, not cumulative requirements."
+          title="The cited standard lists these certifications as alternatives, not cumulative requirements. Context only — not a compliance determination."
         >
-          (any one satisfies)
+          (alternatives in the cited standard)
         </span>
       )}
     </div>
@@ -516,7 +516,7 @@ function RollupRow({
       <span className="flex w-24 shrink-0 items-center gap-1 text-[11px] uppercase tracking-wide text-muted-foreground">
         <Icon size={12} className="opacity-70" />
         {label}
-        {count !== undefined && count > 0 && <span className="opacity-60">({count})</span>}
+        {count !== undefined && count > 0 && <span>({count})</span>}
       </span>
       {children}
     </div>
@@ -830,7 +830,7 @@ function IndustryCrossRefs({
               title={manifest.description}
             >
               {manifest.title}
-              <span className="opacity-60">
+              <span className="text-muted-foreground">
                 {manifest.duration}
                 {manifest.difficulty ? ` · ${manifest.difficulty}` : ''}
               </span>
@@ -1093,8 +1093,34 @@ export function IndustryLandscapeView() {
   }
 
   // Picking another industry or mechanism moves off the linked use case/standard.
-  const pickIndustry = (industry: string | null) =>
+  // Keyboard/screen-reader users lose their place when the tile they pressed
+  // unmounts, so a user pick (not a deep link) moves focus to what replaced it:
+  // the industry's heading, or back to the tile they came from.
+  const pendingFocus = useRef<{ kind: 'industry' } | { kind: 'grid'; from: string | null } | null>(
+    null
+  )
+  const industryHeadingRef = useRef<HTMLHeadingElement>(null)
+  const backButtonRef = useRef<HTMLButtonElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const pickIndustry = (industry: string | null) => {
+    pendingFocus.current = industry
+      ? { kind: 'industry' }
+      : { kind: 'grid', from: selectedIndustry }
     update({ industry, mechanism: null, usecase: null, standard: null })
+  }
+  useEffect(() => {
+    const target = pendingFocus.current
+    if (!target) return
+    pendingFocus.current = null
+    if (target.kind === 'industry') {
+      ;(industryHeadingRef.current ?? backButtonRef.current)?.focus()
+      return
+    }
+    const tiles = gridRef.current?.querySelectorAll<HTMLElement>('[data-industry]')
+    if (!tiles || tiles.length === 0) return
+    const from = Array.from(tiles).find((t) => t.dataset.industry === target.from)
+    ;(from ?? tiles[0]).focus()
+  }, [selectedIndustry])
   const pickMechanism = (mechanism: string | null) =>
     update({ mechanism, industry: null, usecase: null, standard: null })
 
@@ -1190,6 +1216,13 @@ export function IndustryLandscapeView() {
           onDismiss={() => update({ standard: null })}
         />
       )}
+      <p
+        className="mb-3 text-xs leading-relaxed text-muted-foreground"
+        data-testid="landscape-scope-note"
+      >
+        Market estimates, candidate migration paths and certification notes here are context from
+        the cited sources, not recommendations or compliance conclusions.
+      </p>
       {/* Mode toggle */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="text-sm text-muted-foreground">Explore by</span>
@@ -1375,7 +1408,7 @@ export function IndustryLandscapeView() {
       )}
 
       {mode === 'industry' && !selectedIndustry && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div ref={gridRef} className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {industries.map((ind) => {
             const IndIcon = INDUSTRY_ICONS[ind] ?? Globe
             const market = marketByIndustry.get(ind)
@@ -1405,6 +1438,7 @@ export function IndustryLandscapeView() {
       {mode === 'industry' && selectedIndustry && (
         <div>
           <Button
+            ref={backButtonRef}
             type="button"
             variant="ghost"
             onClick={() => pickIndustry(null)}
@@ -1436,7 +1470,13 @@ export function IndustryLandscapeView() {
               <>
                 <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 p-4">
                   <IndIcon size={26} className="text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{selectedIndustry}</h3>
+                  <h3
+                    ref={industryHeadingRef}
+                    tabIndex={-1}
+                    className="text-lg font-semibold text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {selectedIndustry}
+                  </h3>
                   {market ? (
                     <MarketSizeBadge m={market} />
                   ) : (
