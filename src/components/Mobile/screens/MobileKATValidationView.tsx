@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  AlertTriangle,
   CheckCircle2,
   ChevronDown,
   ExternalLink,
@@ -24,7 +25,14 @@ import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
-import { KAT_EVIDENCE_META, evidenceForKind, katActionLabel } from '@/utils/katEvidence'
+import {
+  KAT_EVIDENCE_META,
+  evidenceForKind,
+  katActionLabel,
+  katRunAnnouncement,
+  katRunTone,
+} from '@/utils/katEvidence'
+import { useRestoreFocusAfterRun } from '@/hooks/useRestoreFocusAfterRun'
 
 const FIPS_203_URL = 'https://csrc.nist.gov/pubs/fips/203/final'
 const FIPS_204_URL = 'https://csrc.nist.gov/pubs/fips/204/final'
@@ -196,12 +204,47 @@ const SLH_DSA_VARIANTS: { value: SlhDsaVariant; label: string; level: number }[]
   { value: 'SHAKE-256s', label: 'SHAKE-256s', level: 5 },
 ]
 
+const TONE_CLASS = {
+  success: 'text-status-success',
+  warning: 'text-status-warning',
+  error: 'text-status-error',
+} as const
+
+/**
+ * Polite live region announcing a finished run (or why it could not run).
+ * Always mounted so the first announcement is not missed.
+ */
+function KatRunStatus({
+  name,
+  results,
+  done,
+  error,
+}: {
+  name: string
+  results: KATResult[]
+  done: boolean
+  error: string | null
+}) {
+  const counts = summarizeKatResults(results)
+  return (
+    <p role="status" aria-live="polite" className="sr-only" data-testid="kat-run-status">
+      {error
+        ? `${name}: the checks could not run. ${error}`
+        : done && counts.total > 0
+          ? katRunAnnouncement(name, counts)
+          : ''}
+    </p>
+  )
+}
+
 function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeof useHSM> }) {
   const [results, setResults] = useState<KATResult[]>([])
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   const handleRun = useCallback(async () => {
+    markRunStart()
     setRunning(true)
     setError(null)
     setResults([])
@@ -221,7 +264,7 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
     } finally {
       setRunning(false)
     }
-  }, [hsm, config.specs])
+  }, [hsm, config.specs, markRunStart])
 
   const counts = summarizeKatResults(results)
   const done = results.length === config.specs.length && !running
@@ -245,6 +288,7 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
       </a>
 
       <Button
+        ref={runButtonRef}
         type="button"
         variant="outline"
         size="sm"
@@ -261,9 +305,10 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
           katActionLabel(config.specs)
         )}
       </Button>
+      <KatRunStatus name={config.name} results={results} done={done} error={error} />
 
       {error && (
-        <p className="mt-2 rounded bg-status-error/10 px-2 py-1.5 text-[10.5px] text-status-error">
+        <p className="mt-2 rounded bg-destructive/12 px-2 py-1.5 text-[10.5px] text-status-error">
           {error}
         </p>
       )}
@@ -299,8 +344,10 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
               data-testid="kat-counts"
               className={cn(
                 'text-[10.5px] font-semibold',
-                counts.fail + counts.error === 0 ? 'text-status-success' : 'text-status-error'
+                // Green only when something passed: an all-skipped run is not a success.
+                TONE_CLASS[katRunTone(counts)]
               )}
+              data-tone={katRunTone(counts)}
             >
               {counts.pass}/{counts.total - counts.skip} passed
               {counts.skip > 0 && (
@@ -314,7 +361,10 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
   )
 }
 
-/** Pass / not tested (skip) / fail icon — a skip is never shown as a pass. */
+/**
+ * Pass / not tested (skip) / fail / could not run (error) icon — a skip is
+ * never shown as a pass, and a runner error is never shown as a failed check.
+ */
 function StatusIcon({ status }: { status: KatStatus }) {
   if (status === 'pass')
     return <CheckCircle2 size={13} className="shrink-0 text-status-success" aria-label="pass" />
@@ -322,7 +372,15 @@ function StatusIcon({ status }: { status: KatStatus }) {
     return (
       <MinusCircle size={13} className="shrink-0 text-status-warning" aria-label="not tested" />
     )
-  return <XCircle size={13} className="shrink-0 text-status-error" aria-label={status} />
+  if (status === 'error')
+    return (
+      <AlertTriangle
+        size={13}
+        className="shrink-0 text-status-warning"
+        aria-label="could not run"
+      />
+    )
+  return <XCircle size={13} className="shrink-0 text-status-error" aria-label="fail" />
 }
 
 function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
@@ -330,6 +388,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
   const [results, setResults] = useState<KATResult[]>([])
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   const level = SLH_DSA_VARIANTS.find((v) => v.value === variant)?.level ?? 1
   const spec: KatTestSpec = useMemo(
@@ -344,6 +403,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
   )
 
   const handleRun = useCallback(async () => {
+    markRunStart()
     setRunning(true)
     setError(null)
     setResults([])
@@ -359,7 +419,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
     } finally {
       setRunning(false)
     }
-  }, [hsm, spec])
+  }, [hsm, spec, markRunStart])
 
   return (
     <div className="rounded-lg border border-border bg-card p-3">
@@ -404,6 +464,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
       </div>
 
       <Button
+        ref={runButtonRef}
         type="button"
         variant="outline"
         size="sm"
@@ -420,9 +481,15 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
           katActionLabel([spec])
         )}
       </Button>
+      <KatRunStatus
+        name={`SLH-DSA-${variant}`}
+        results={results}
+        done={!running && results.length === 1}
+        error={error}
+      />
 
       {error && (
-        <p className="mt-2 rounded bg-status-error/10 px-2 py-1.5 text-[10.5px] text-status-error">
+        <p className="mt-2 rounded bg-destructive/12 px-2 py-1.5 text-[10.5px] text-status-error">
           {error}
         </p>
       )}

@@ -23,6 +23,23 @@ vi.mock('@/utils/katRunner', async (importOriginal) => {
 import { MobileKATValidationView } from './MobileKATValidationView'
 import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 
+const result = (id: string, status: string) => ({
+  id,
+  useCase: id,
+  algorithm: 'ML-KEM-512',
+  standard: 'FIPS 203',
+  referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+  status,
+  details: status,
+})
+
+const runButtonOf = (name: string) => {
+  const tile = screen.getByText(name).closest('div')!
+  return Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
+    b.textContent?.includes('Run known-answer checks')
+  )!
+}
+
 describe('MobileKATValidationView', () => {
   beforeEach(() => {
     mockRunKAT.mockReset()
@@ -120,4 +137,46 @@ describe('MobileKATValidationView', () => {
     expect(screen.getByText(ATTACK_PROFILES[0].algorithm)).toBeInTheDocument()
     expect(screen.getByText(ATTACK_PROFILES[0].summary)).toBeInTheDocument()
   })
+
+  it('an all-skipped run is not shown as a success', async () => {
+    mockRunKAT.mockReset()
+    mockRunKAT
+      .mockResolvedValueOnce(result('kat-algo-mlkem512-decap', 'skip'))
+      .mockResolvedValueOnce(result('kat-algo-mlkem512-rt', 'skip'))
+    render(<MobileKATValidationView />)
+    fireEvent.click(runButtonOf('ML-KEM-512'))
+    const counts = await screen.findByTestId('kat-counts')
+    expect(counts).toHaveTextContent('0/0 passed · 2 not tested')
+    expect(counts).toHaveAttribute('data-tone', 'warning')
+    expect(counts).not.toHaveClass('text-status-success')
+  })
+
+  it('a runner error has its own icon and label, distinct from a failed check', async () => {
+    mockRunKAT.mockReset()
+    mockRunKAT
+      .mockResolvedValueOnce(result('kat-algo-mlkem512-decap', 'fail'))
+      .mockResolvedValueOnce(result('kat-algo-mlkem512-rt', 'error'))
+    render(<MobileKATValidationView />)
+    fireEvent.click(runButtonOf('ML-KEM-512'))
+    expect(await screen.findByLabelText('could not run')).toBeInTheDocument()
+    expect(screen.getByLabelText('fail')).toBeInTheDocument()
+    expect(screen.getByTestId('kat-counts')).toHaveAttribute('data-tone', 'error')
+  })
+
+  it('announces the result in a polite live region and keeps focus on the run button', async () => {
+    render(<MobileKATValidationView />)
+    const button = runButtonOf('ML-KEM-768')
+    button.focus()
+    fireEvent.click(button)
+    const announced = () =>
+      screen
+        .getAllByTestId('kat-run-status')
+        .find((el) => el.textContent === 'ML-KEM-768: 2 of 2 checks passed.')
+    await waitFor(() => expect(announced()).toBeDefined())
+    expect(announced()).toHaveAttribute('role', 'status')
+    expect(announced()).toHaveAttribute('aria-live', 'polite')
+    await waitFor(() => expect(button).not.toBeDisabled())
+    expect(document.activeElement).toBe(button)
+  })
+
 })

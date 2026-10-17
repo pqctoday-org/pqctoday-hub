@@ -86,4 +86,20 @@ describe('KatValidationPanel', () => {
       screen.getAllByText(/HMAC-SHA2-256-2\.0\/internalProjection\.json @ 975de31e/).length
     ).toBe(1)
   })
+
+  it('an all-skipped run is not styled as a success, and the outcome is announced politely', async () => {
+    mockRunKAT.mockResolvedValueOnce(result('a', 'skip')).mockResolvedValueOnce(result('b', 'skip'))
+    render(<KatValidationPanel specs={SPECS} label="KATs" authorityNote="note" />)
+    const button = screen.getByRole('button', { name: /Run/ })
+    button.focus()
+    fireEvent.click(button)
+    const pass = await screen.findByTestId('kat-pass-count')
+    expect(pass).toHaveTextContent('0 passed')
+    expect(pass).not.toHaveClass('text-status-success')
+    const status = screen.getByTestId('kat-run-status')
+    expect(status).toHaveAttribute('role', 'status')
+    expect(status).toHaveAttribute('aria-live', 'polite')
+    expect(status).toHaveTextContent('KATs: 0 of 0 checks passed, 2 not tested.')
+    expect(document.activeElement).toBe(button)
+  })
 })
