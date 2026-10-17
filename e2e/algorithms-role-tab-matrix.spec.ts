@@ -50,6 +50,9 @@ for (const role of ROLES) {
     page,
   }) => {
     await seedRole(page, role)
+    // 900 px tall so the whole side menu (including "not offered" items) is
+    // inside the scroll container's visible area that axe evaluates.
+    await page.setViewportSize({ width: 1280, height: 900 })
     for (const tab of TABS) {
       await page.goto(`/algorithms?tab=${tab}&quickview=none`)
       await page.waitForLoadState('networkidle').catch(() => undefined)
@@ -282,5 +285,56 @@ for (const width of [320, 390]) {
         .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')
         .map((violation) => ({ id: violation.id, nodes: violation.nodes.length }))
     ).toEqual([])
+  })
+}
+
+// Axe reports badges that sit below the fold of the app's inner scroll
+// container as "incomplete" instead of failing them, which once hid
+// near-invisible severity badges and made the 390 px run flaky. Scroll each
+// badge kind into view and check it on its own, in both themes.
+for (const theme of ['light', 'dark'] as const) {
+  test(`Implementation Attacks badges stay legible in the ${theme} theme`, async ({ page }) => {
+    await seedRole(page, 'cert-engineer')
+    await page.addInitScript((value) => {
+      localStorage.setItem(
+        'theme-storage-v1',
+        JSON.stringify({ state: { theme: value, hasSetPreference: true }, version: 1 })
+      )
+    }, theme)
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await page.goto('/algorithms?tab=validation&section=attacks')
+    await expect(page.getByText('Reviewed sources').first()).toBeVisible({ timeout: 20_000 })
+    await injectAxe(page)
+
+    const badgeSelectors = [
+      '[title="Severity: Critical"]',
+      '[title="Severity: High"]',
+      '[title="Severity: Medium"]',
+      '[title="Severity: Low"]',
+    ]
+    for (const selector of badgeSelectors) {
+      const badge = page.locator(selector).first()
+      if ((await badge.count()) === 0) continue
+      await badge.scrollIntoViewIfNeeded()
+      const violations = await getViolations(page, selector, {
+        runOnly: { type: 'rule', values: ['color-contrast'] },
+      })
+      expect(
+        violations.map((violation) => ({ id: violation.id, nodes: violation.nodes.length })),
+        `${theme} ${selector} contrast`
+      ).toEqual([])
+    }
+    for (const text of ['Recorded evidence', 'No recorded evidence']) {
+      const badge = page.getByText(text, { exact: true }).first()
+      if ((await badge.count()) === 0) continue
+      await badge.scrollIntoViewIfNeeded()
+      const box = await badge.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return { background: style.backgroundColor, color: style.color }
+      })
+      expect(box.background, `${theme} "${text}" has a visible background`).not.toBe(
+        'rgba(0, 0, 0, 0)'
+      )
+    }
   })
 }

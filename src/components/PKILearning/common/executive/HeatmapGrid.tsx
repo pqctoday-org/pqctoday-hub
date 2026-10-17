@@ -26,17 +26,17 @@ function getCellColor(value: number, scale: 'risk' | 'priority' | 'readiness'): 
   const clamped = Math.max(0, Math.min(100, value))
 
   if (scale === 'risk') {
-    if (clamped >= 75) return 'bg-status-error/80 text-primary-foreground'
-    if (clamped >= 50) return 'bg-status-warning/80 text-foreground'
-    if (clamped >= 25) return 'bg-status-warning/40 text-foreground'
-    return 'bg-status-success/30 text-foreground'
+    if (clamped >= 75) return 'bg-destructive/30 text-foreground'
+    if (clamped >= 50) return 'bg-warning/40 text-foreground'
+    if (clamped >= 25) return 'bg-warning/20 text-foreground'
+    return 'bg-success/30 text-foreground'
   }
 
   if (scale === 'readiness') {
-    if (clamped >= 75) return 'bg-status-success/80 text-primary-foreground'
-    if (clamped >= 50) return 'bg-status-success/40 text-foreground'
-    if (clamped >= 25) return 'bg-status-warning/40 text-foreground'
-    return 'bg-status-error/30 text-foreground'
+    if (clamped >= 75) return 'bg-success/40 text-foreground'
+    if (clamped >= 50) return 'bg-success/20 text-foreground'
+    if (clamped >= 25) return 'bg-warning/30 text-foreground'
+    return 'bg-destructive/30 text-foreground'
   }
 
   // priority
@@ -116,32 +116,32 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
         {colorScale === 'risk' && (
           <>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-success/30" /> Low
+              <span className="w-3 h-3 rounded bg-success/30" /> Low
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-warning/40" /> Medium
+              <span className="w-3 h-3 rounded bg-warning/20" /> Medium
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-warning/80" /> High
+              <span className="w-3 h-3 rounded bg-warning/40" /> High
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-error/80" /> Critical
+              <span className="w-3 h-3 rounded bg-destructive/30" /> Critical
             </span>
           </>
         )}
         {colorScale === 'readiness' && (
           <>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-error/30" /> Not Ready
+              <span className="w-3 h-3 rounded bg-destructive/30" /> Not Ready
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-warning/40" /> Partial
+              <span className="w-3 h-3 rounded bg-warning/30" /> Partial
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-success/40" /> Good
+              <span className="w-3 h-3 rounded bg-success/20" /> Good
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-success/80" /> Ready
+              <span className="w-3 h-3 rounded bg-success/40" /> Ready
             </span>
           </>
         )}

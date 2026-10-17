@@ -61,10 +61,17 @@ const ATTACK_CATEGORY_META: Record<
 }
 
 const SEVERITY_LABELS: Record<AttackSeverity, { label: string; className: string }> = {
-  critical: { label: 'Critical', className: 'bg-status-error/90 text-primary-foreground' },
-  high: { label: 'High', className: 'bg-status-error/60 text-primary-foreground' },
-  medium: { label: 'Medium', className: 'bg-status-warning/70 text-primary-foreground' },
-  low: { label: 'Low', className: 'bg-status-warning/40 text-foreground' },
+  critical: {
+    label: 'Critical',
+    className:
+      'bg-destructive/20 text-destructive-legible border border-destructive/50 font-semibold',
+  },
+  high: {
+    label: 'High',
+    className: 'bg-destructive/12 text-destructive-legible border border-destructive/30',
+  },
+  medium: { label: 'Medium', className: 'bg-warning text-warning-foreground' },
+  low: { label: 'Low', className: 'bg-muted text-foreground border border-border' },
 }
 
 function StatusBadge({
@@ -91,14 +98,14 @@ function StatusBadge({
   }
   if (status === 'yes') {
     return (
-      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-error/80 text-primary-foreground font-medium">
+      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-destructive/12 text-destructive-legible border border-destructive/30 font-medium">
         Recorded evidence
       </span>
     )
   }
   if (status === 'no') {
     return (
-      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-success/80 text-primary-foreground font-medium">
+      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-muted text-foreground border border-border font-medium">
         No recorded evidence
       </span>
     )
@@ -176,7 +183,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
               {sev.label}
             </span>
           ))}
-          <span className="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-medium bg-status-success/80 text-primary-foreground">
+          <span className="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-foreground border border-border">
             No recorded evidence
           </span>
           <span className="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">

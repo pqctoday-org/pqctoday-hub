@@ -207,7 +207,7 @@ const RailAbsenceNotice: React.FC<{
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         title={`${label} — not offered for your role. ${reason}`}
-        className="w-full justify-start gap-2 min-h-[36px] rounded-md pl-2 pr-2 text-[11px] text-muted-foreground/60 hover:text-muted-foreground"
+        className="w-full justify-start gap-2 min-h-[36px] rounded-md pl-2 pr-2 text-[11px] text-muted-foreground hover:text-foreground"
       >
         {/* createElement rather than <Icon />, matching RailRow above: a
             capitalised local binding reads as a component declared during
