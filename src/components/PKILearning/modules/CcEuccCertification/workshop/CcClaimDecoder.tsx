@@ -19,7 +19,9 @@ import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/Cry
 import {
   ASSURANCE_COMPONENTS,
   AVA_VAN_ATTACK_POTENTIAL,
+  CC_BASELINE_AS_OF,
   CC_DECODER_RECORDS,
+  CC_MANDATORY_ERRATA_VERSION,
   CLAIM_VERDICT_LABEL,
   findDecoderRecord,
   type CertRecordFixture,
@@ -81,7 +83,8 @@ function decodedText(
     '',
     'Sources:',
     ...r.sources.map((s) => `  ${s.label}: ${s.url}`),
-    `Checked against the official record on ${r.checkedOn}. Practitioner orientation — not laboratory training.`
+    `Certificate record checked ${r.checkedOn}. CC:2022 baseline checked ${CC_BASELINE_AS_OF} with mandatory errata ${CC_MANDATORY_ERRATA_VERSION}.`,
+    'Practitioner orientation — not laboratory training.'
   )
   return lines.join('\n')
 }
@@ -121,7 +124,7 @@ export const CcClaimDecoder: FC<CertWorkshopStepProps> = ({ config }) => {
   const ring = (panel: string) => (focus === panel ? 'ring-2 ring-primary/60' : '')
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6 overflow-x-hidden">
       <div className="glass-panel space-y-3 p-5">
         <div className="flex items-start gap-3">
           <FileSearch size={20} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
@@ -318,7 +321,11 @@ export const CcClaimDecoder: FC<CertWorkshopStepProps> = ({ config }) => {
           <h3 className="text-base font-semibold text-foreground">Your decoded claim</h3>
           <CopyButton text={artifact} label="Copy decoded claim" />
         </div>
-        <CodeBlock code={artifact} language="text" className="mt-2 whitespace-pre-wrap" />
+        <CodeBlock
+          code={artifact}
+          language="text"
+          className="mt-2 max-w-full overflow-x-auto whitespace-pre-wrap break-words"
+        />
       </div>
 
       {/* Comparison */}

@@ -11,7 +11,14 @@
  * Output: an inspectable plain-text plan the learner copies into the capstone.
  */
 import { useMemo, useState, type FC, type ReactNode } from 'react'
-import { CheckCircle2, ClipboardList, RotateCcw, ShieldCheck, XCircle } from 'lucide-react'
+import {
+  CheckCircle2,
+  CircleHelp,
+  ClipboardList,
+  RotateCcw,
+  ShieldCheck,
+  XCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
@@ -28,6 +35,7 @@ import {
   LEVEL_OPTIONS,
   PLANNER_SCENARIOS,
   ROUTE_OPTIONS,
+  type EntropyArchitecture,
   type LevelChoice,
   type PlannerScenario,
   type PlannerScenarioId,
@@ -49,6 +57,7 @@ const componentLabel = (id: AnchorComponentId): string =>
 
 interface Verdict {
   ok: boolean
+  status: 'defensible' | 'conditional' | 'laboratory' | 'unsupported'
   notes: string[]
 }
 
@@ -56,6 +65,7 @@ interface PlanInput {
   scenario: PlannerScenario
   boundary: ReadonlySet<AnchorComponentId>
   level: LevelChoice | null
+  entropyArchitecture: EntropyArchitecture | null
   evidence: ReadonlySet<string>
   route: RouteChoice | null
   claim: number | null
@@ -65,7 +75,7 @@ interface PlanInput {
 function assessPlan(
   input: PlanInput
 ): Record<'boundary' | 'level' | 'evidence' | 'route' | 'claim', Verdict> {
-  const { scenario, boundary, level, evidence, route, claim } = input
+  const { scenario, boundary, level, entropyArchitecture, evidence, route, claim } = input
 
   const boundaryNotes: string[] = []
   let boundaryOk = true
@@ -91,9 +101,16 @@ function assessPlan(
 
   const levelVerdict: Verdict =
     level === null
-      ? { ok: false, notes: ['Pick a target level.'] }
+      ? { ok: false, status: 'laboratory', notes: ['Pick a target level.'] }
       : {
-          ok: scenario.fittingLevels.includes(level),
+          ok:
+            scenario.fittingLevels.includes(level) ||
+            Boolean(scenario.conditionalLevels?.includes(level)),
+          status: scenario.fittingLevels.includes(level)
+            ? 'defensible'
+            : scenario.conditionalLevels?.includes(level)
+              ? 'conditional'
+              : 'unsupported',
           notes: [scenario.levelFeedback[level]],
         }
 
@@ -101,33 +118,58 @@ function assessPlan(
   let evidenceOk = true
   for (const opt of EVIDENCE_OPTIONS) {
     const picked = evidence.has(opt.id)
-    if (opt.needed && !picked) {
+    const needed =
+      opt.requiredFor === 'always' ||
+      (entropyArchitecture !== null && opt.requiredFor === entropyArchitecture)
+    if (needed && !picked) {
       evidenceOk = false
       evidenceNotes.push(`Missing — ${opt.label}: ${opt.why}`)
-    } else if (!opt.needed && picked) {
+    } else if (!needed && picked) {
       evidenceOk = false
-      evidenceNotes.push(`Not evidence — ${opt.label}: ${opt.why}`)
+      evidenceNotes.push(`Not applicable to the declared architecture — ${opt.label}: ${opt.why}`)
     }
+  }
+  if (entropyArchitecture === null) {
+    evidenceOk = false
+    evidenceNotes.push(
+      'Declare where the changed service obtains entropy before selecting evidence.'
+    )
   }
   if (evidenceOk)
     evidenceNotes.push(
-      'Complete: algorithm validation, the module’s own self-tests and entropy evidence — and nothing that only looks like evidence.'
+      'Complete for the declared entropy architecture: algorithm validation, self-tests and the applicable entropy dependency evidence — and nothing that only looks like evidence.'
     )
 
   const routeOpt = ROUTE_OPTIONS.find((r) => r.id === route)
   const routeVerdict: Verdict = routeOpt
-    ? { ok: routeOpt.ok, notes: [routeOpt.why] }
-    : { ok: false, notes: ['Pick a route.'] }
+    ? {
+        ok: routeOpt.ok,
+        status: routeOpt.ok ? 'conditional' : 'unsupported',
+        notes: [routeOpt.why],
+      }
+    : { ok: false, status: 'laboratory', notes: ['Pick a route.'] }
 
   const claimOpt = claim === null ? undefined : scenario.claims.at(claim)
   const claimVerdict: Verdict = claimOpt
-    ? { ok: claimOpt.ok, notes: [claimOpt.why] }
-    : { ok: false, notes: ['Pick a claim.'] }
+    ? {
+        ok: claimOpt.ok,
+        status: claimOpt.ok ? 'defensible' : 'unsupported',
+        notes: [claimOpt.why],
+      }
+    : { ok: false, status: 'laboratory', notes: ['Pick a claim.'] }
 
   return {
-    boundary: { ok: boundaryOk, notes: boundaryNotes },
+    boundary: {
+      ok: boundaryOk,
+      status: boundaryOk ? 'defensible' : 'unsupported',
+      notes: boundaryNotes,
+    },
     level: levelVerdict,
-    evidence: { ok: evidenceOk, notes: evidenceNotes },
+    evidence: {
+      ok: evidenceOk,
+      status: evidenceOk ? 'defensible' : 'unsupported',
+      notes: evidenceNotes,
+    },
     route: routeVerdict,
     claim: claimVerdict,
   }
@@ -172,6 +214,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
   const [scenarioId, setScenarioId] = useState<PlannerScenarioId>(initialScenario)
   const [boundary, setBoundary] = useState<Set<AnchorComponentId>>(new Set())
   const [level, setLevel] = useState<LevelChoice | null>(null)
+  const [entropyArchitecture, setEntropyArchitecture] = useState<EntropyArchitecture | null>(null)
   const [evidence, setEvidence] = useState<Set<string>>(new Set())
   const [route, setRoute] = useState<RouteChoice | null>(null)
   const [claim, setClaim] = useState<number | null>(null)
@@ -182,6 +225,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
   const reset = () => {
     setBoundary(new Set())
     setLevel(null)
+    setEntropyArchitecture(null)
     setEvidence(new Set())
     setRoute(null)
     setClaim(null)
@@ -201,10 +245,11 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
     return next
   }
 
-  const complete = level !== null && route !== null && claim !== null
+  const complete =
+    level !== null && entropyArchitecture !== null && route !== null && claim !== null
   const result = useMemo(
-    () => assessPlan({ scenario, boundary, level, evidence, route, claim }),
-    [scenario, boundary, level, evidence, route, claim]
+    () => assessPlan({ scenario, boundary, level, entropyArchitecture, evidence, route, claim }),
+    [scenario, boundary, level, entropyArchitecture, evidence, route, claim]
   )
   const score = Object.values(result).filter((v) => v.ok).length
 
@@ -223,9 +268,12 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
       `Inside the module boundary: ${inside.join(', ') || '(nothing)'}`,
       `Outside: ${outside.join(', ') || '(nothing)'}`,
       `Target: ${levelLabel}`,
+      `Entropy architecture: ${entropyArchitecture ?? '(not chosen)'}`,
       `Evidence for ${ANCHOR_SCENARIO.change.toLowerCase()}: ${evidenceLabels.join('; ') || '(none)'}`,
       `CMVP route: ${routeLabel}`,
       `Procurement claim: "${claimText}"`,
+      'Assumptions to record: physical access; operator controls; operational environment; entropy-source location; tested configurations.',
+      'Questions for the CST laboratory: confirm applicable area targets, entropy evidence, change ratios, submission route and certificate wording.',
     ]
     if (checked) {
       lines.push(`Self-check: ${score} of 5 decisions defensible`)
@@ -238,10 +286,21 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
       'Practitioner orientation — not laboratory training.'
     )
     return lines.join('\n')
-  }, [boundary, checked, claim, evidence, level, result, route, scenario, score])
+  }, [
+    boundary,
+    checked,
+    claim,
+    entropyArchitecture,
+    evidence,
+    level,
+    result,
+    route,
+    scenario,
+    score,
+  ])
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 max-w-full space-y-5 overflow-x-hidden">
       <div className="glass-panel p-5">
         <div className="mb-2 flex items-center gap-2">
           <ShieldCheck size={20} className="text-primary" aria-hidden="true" />
@@ -318,8 +377,38 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
         </div>
       </Step>
 
+      <Step n={4} title="Declare the changed service’s entropy architecture">
+        <div className="grid gap-2">
+          {[
+            {
+              id: 'internal',
+              label: 'Entropy source is inside the module boundary',
+            },
+            {
+              id: 'external',
+              label: 'Module relies on a validated external entropy source',
+            },
+            {
+              id: 'not-used',
+              label: 'Changed service performs no random key or signature generation',
+            },
+          ].map((option) => (
+            <OptionTile
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              selected={entropyArchitecture === option.id}
+              onSelect={(id) => {
+                setEntropyArchitecture(id as EntropyArchitecture)
+                setChecked(false)
+              }}
+            />
+          ))}
+        </div>
+      </Step>
+
       <Step
-        n={4}
+        n={5}
         title="Which evidence does adding ML-KEM and ML-DSA need? (select all that apply)"
       >
         <div className="flex flex-col gap-2">
@@ -344,7 +433,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
       </Step>
 
       <Step
-        n={5}
+        n={6}
         title="A customer deadline is close. Which CMVP route adds PQC?"
         highlight={focus === 'route'}
       >
@@ -365,7 +454,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
       </Step>
 
       <Step
-        n={6}
+        n={7}
         title="Which procurement claim can the buyer rely on?"
         highlight={focus === 'claim'}
       >
@@ -396,7 +485,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
         </Button>
         {!complete ? (
           <p className="self-center text-xs text-muted-foreground">
-            Choose a level, a route and a claim to check the plan.
+            Choose a level, entropy architecture, route and claim to check the plan.
           </p>
         ) : null}
       </div>
@@ -409,11 +498,17 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
           <ul className="space-y-3">
             {(Object.entries(result) as [keyof typeof result, Verdict][]).map(([key, v]) => (
               <li key={key} className="flex items-start gap-2 text-sm">
-                {v.ok ? (
+                {v.status === 'defensible' ? (
                   <CheckCircle2
                     size={16}
                     className="mt-0.5 shrink-0 text-status-success"
                     aria-label="Defensible"
+                  />
+                ) : v.status === 'conditional' || v.status === 'laboratory' ? (
+                  <CircleHelp
+                    size={16}
+                    className="mt-0.5 shrink-0 text-status-warning"
+                    aria-label="Requires stated assumptions or laboratory determination"
                   />
                 ) : (
                   <XCircle
@@ -424,6 +519,15 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
                 )}
                 <div>
                   <p className="font-semibold text-foreground">{DECISION_LABELS[key]}</p>
+                  <p className="text-xs font-medium text-foreground/80">
+                    {v.status === 'defensible'
+                      ? 'Defensible'
+                      : v.status === 'conditional'
+                        ? 'Defensible with stated assumptions'
+                        : v.status === 'laboratory'
+                          ? 'Needs laboratory determination'
+                          : 'Unsupported'}
+                  </p>
                   {v.notes.map((n) => (
                     <p key={n} className="text-xs text-muted-foreground">
                       {n}
@@ -434,8 +538,8 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
             ))}
           </ul>
           <p className="text-xs text-muted-foreground">
-            The accepted levels are this planner’s teaching model for a fictional product, not a
-            CMVP rule. Your lab and the CMVP decide real submissions.
+            These are planning classifications for a fictional product, not CMVP determinations. The
+            CST laboratory and CMVP decide the accepted level evidence and submission route.
           </p>
         </div>
       ) : null}
@@ -447,7 +551,11 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
           </h3>
           <CopyButton text={planText} label="Copy plan" />
         </div>
-        <CodeBlock code={planText} language="text" className="mt-3 whitespace-pre-wrap px-4" />
+        <CodeBlock
+          code={planText}
+          language="text"
+          className="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap break-words px-4"
+        />
       </div>
     </div>
   )

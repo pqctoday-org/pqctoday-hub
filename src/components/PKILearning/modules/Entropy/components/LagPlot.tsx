@@ -46,21 +46,21 @@ const LagPlotInner: React.FC<LagPlotProps> = ({ data, size = 200, hideLagSelecto
   return (
     <div className="space-y-2">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex min-w-0 flex-col gap-2">
         <div className="flex items-center gap-2">
-          <ScatterChart size={14} className="text-primary" />
-          <span className="text-xs font-semibold text-foreground">
+          <ScatterChart size={14} className="shrink-0 text-primary" />
+          <span className="min-w-0 text-xs font-semibold leading-tight text-foreground">
             Lag-{lag} Autocorrelation Plot
           </span>
         </div>
         {!hideLagSelector && (
-          <div className="flex gap-1">
+          <div className="grid w-full max-w-48 grid-cols-4 gap-1" aria-label="Lag selection">
             {LAG_OPTIONS.map((k) => (
               <Button
                 key={k}
                 variant={lag === k ? 'secondary' : 'ghost'}
                 size="sm"
-                className="h-6 w-8 px-1 text-[10px]"
+                className="h-7 min-w-0 px-1 text-[10px]"
                 onClick={() => setLag(k)}
               >
                 k={k}
@@ -71,14 +71,13 @@ const LagPlotInner: React.FC<LagPlotProps> = ({ data, size = 200, hideLagSelecto
       </div>
 
       {/* Plot */}
-      <div className="bg-muted/20 rounded-lg p-2 border border-border flex justify-center">
+      <div className="flex min-w-0 justify-center overflow-hidden rounded-lg border border-border bg-muted/20 p-2">
         <svg
-          width={viewSize}
-          height={viewSize}
           viewBox={`0 0 ${viewSize} ${viewSize}`}
           role="img"
           aria-label={description}
-          className="select-none"
+          className="h-auto w-full select-none"
+          style={{ maxWidth: viewSize }}
         >
           {/* Background */}
           <rect

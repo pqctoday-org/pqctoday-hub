@@ -8,6 +8,7 @@ import {
   ShieldAlert,
   AlertTriangle,
   Eye,
+  Search,
   CheckCircle,
   XCircle,
   BookOpen,
@@ -39,6 +40,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
 import { migrateProductHref } from '@/utils/migrateLinks'
+import { recoverLcgTimestampSeed, type LcgSeedRecovery } from '../utils/lcgAttack'
 
 interface GenerationResult {
   hex: string
@@ -95,16 +97,16 @@ function binLabel(index: number): string {
 const FrequencyHistogram: React.FC<{
   label: string
   data: Uint8Array
-}> = ({ label, data }) => {
+  sharedMaxCount: number
+}> = ({ label, data, sharedMaxCount }) => {
   const bins = binnedFrequency(data, HISTOGRAM_BINS)
-  const maxCount = Math.max(...bins, 1)
 
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium text-foreground">{label}</p>
       <div className="flex items-end gap-1 h-[72px] px-1">
         {bins.map((count, i) => {
-          const heightPct = (count / maxCount) * 100
+          const heightPct = (count / sharedMaxCount) * 100
           return (
             <div
               key={i}
@@ -154,7 +156,7 @@ const TestComparisonTable: React.FC<{
   return (
     <div className="glass-panel p-4 space-y-4">
       <h3 className="text-sm font-semibold text-foreground">
-        Check comparison — read each group on its own
+        4 · Check Outputs — read each group on its own
       </h3>
       {groups.map((g) => (
         <div key={g.group} className="space-y-2">
@@ -242,12 +244,6 @@ const SourceCard: React.FC<{
         )}
         <h3 className="text-sm font-semibold text-foreground truncate">{source.label}</h3>
       </div>
-      {result && (
-        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5 shrink-0">
-          <Clock size={12} />
-          {formatTiming(result.timeMs)}
-        </span>
-      )}
     </div>
 
     {!source.secure && (
@@ -276,6 +272,15 @@ const SourceCard: React.FC<{
           {formatHex(result.data)}
         </pre>
         <BitMatrixGrid data={result.data} compact />
+        <details className="text-[10px] text-muted-foreground">
+          <summary className="cursor-pointer inline-flex items-center gap-1">
+            <Clock size={11} /> Generation timing
+          </summary>
+          <p className="mt-1">
+            Observed in this browser: {formatTiming(result.timeMs)}. Speed does not establish
+            unpredictability or security.
+          </p>
+        </details>
       </>
     ) : (
       <div className="h-24 flex items-center justify-center text-muted-foreground text-sm">
@@ -286,14 +291,22 @@ const SourceCard: React.FC<{
 )
 
 export const RandomGenerationDemo: React.FC = () => {
-  const [byteCount, setByteCount] = useState<number>(64)
-  const [enabledSources, setEnabledSources] = useState<SourceId[]>(['webcrypto', 'openssl'])
+  const [byteCount, setByteCount] = useState<number>(128)
+  const [enabledSources, setEnabledSources] = useState<SourceId[]>(['webcrypto', 'lcg'])
+  const [showAdditionalSources, setShowAdditionalSources] = useState(false)
+  const [appearancePrediction, setAppearancePrediction] = useState<
+    'webcrypto' | 'lcg' | 'cannot-tell' | null
+  >(null)
   const [results, setResults] = useState<Partial<Record<SourceId, GenerationResult>>>({})
   const [errors, setErrors] = useState<Partial<Record<SourceId, string>>>({})
   const [loading, setLoading] = useState(false)
   const [lcgState, setLcgState] = useState<LCGResult | null>(null)
   const [prediction, setPrediction] = useState<Uint8Array | null>(null)
   const [showPrediction, setShowPrediction] = useState(false)
+  const [predictionVerified, setPredictionVerified] = useState(false)
+  const [seedWindowMs, setSeedWindowMs] = useState(1_000)
+  const [seedRecovery, setSeedRecovery] = useState<LcgSeedRecovery | null>(null)
+  const [conclusion, setConclusion] = useState<'visual' | 'checks' | 'predictability' | null>(null)
   const [testResults, setTestResults] = useState<Record<string, TestResult[]>>({})
   const [showTests, setShowTests] = useState(false)
 
@@ -319,6 +332,9 @@ export const RandomGenerationDemo: React.FC = () => {
     setLcgState(null)
     setPrediction(null)
     setShowPrediction(false)
+    setPredictionVerified(false)
+    setSeedRecovery(null)
+    setConclusion(null)
     setTestResults({})
     setShowTests(false)
 
@@ -426,8 +442,22 @@ export const RandomGenerationDemo: React.FC = () => {
     if (!lcgState) return
     const predicted = lcgPredict(4, lcgState.finalState)
     setPrediction(predicted.bytes)
+    setPredictionVerified(false)
     setShowPrediction(true)
   }, [lcgState])
+
+  const handleVerifyPrediction = useCallback(() => {
+    if (!lcgState || !prediction) return
+    const actual = lcgBytes(prediction.length, lcgState.finalState)
+    setPredictionVerified(actual.bytes.every((byte, index) => byte === prediction[index]))
+  }, [lcgState, prediction])
+
+  const handleRecoverSeed = useCallback(() => {
+    if (!lcgState) return
+    setSeedRecovery(
+      recoverLcgTimestampSeed(lcgState.bytes.slice(0, 4), lcgState.seed, seedWindowMs)
+    )
+  }, [lcgState, seedWindowMs])
 
   const handleCompareAll = useCallback(() => {
     const allTestResults: Record<string, TestResult[]> = {}
@@ -442,11 +472,15 @@ export const RandomGenerationDemo: React.FC = () => {
   }, [enabledSources, results])
 
   const hasResults = Object.keys(results).length > 0
-  const gridCols =
-    enabledSources.length <= 2
-      ? 'grid-cols-1 md:grid-cols-2'
-      : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
+  const gridCols = 'grid-cols-1 md:grid-cols-2'
   const hasInsecure = enabledSources.includes('mathrandom') || enabledSources.includes('lcg')
+  const sharedHistogramMax = Math.max(
+    1,
+    ...enabledSources.flatMap((id) => {
+      const result = results[id]
+      return result ? binnedFrequency(result.data, HISTOGRAM_BINS) : []
+    })
+  )
 
   return (
     <div className="space-y-6">
@@ -462,13 +496,43 @@ export const RandomGenerationDemo: React.FC = () => {
         </div>
       </div>
 
+      <div className="glass-panel p-4 space-y-3" data-testid="appearance-prediction">
+        <div className="text-xs font-bold text-primary uppercase tracking-wider">1 · Predict</div>
+        <h3 className="text-sm font-semibold text-foreground">
+          Which 128-byte sample will look less random?
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Commit to a prediction before generating. You will test whether appearance reveals
+          predictability.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {(
+            [
+              ['webcrypto', 'Web Crypto'],
+              ['lcg', 'Timestamp LCG'],
+              ['cannot-tell', 'Cannot tell from appearance'],
+            ] as const
+          ).map(([id, label]) => (
+            <Button
+              key={id}
+              variant={appearancePrediction === id ? 'secondary' : 'outline'}
+              size="sm"
+              aria-pressed={appearancePrediction === id}
+              onClick={() => setAppearancePrediction(id)}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       {/* Source toggles */}
       <div className="glass-panel p-4">
         <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-          Sources
+          2 · Observe — sources
         </div>
         <div className="flex flex-wrap gap-2">
-          {SOURCES.map((src) => (
+          {SOURCES.filter((src) => src.id === 'webcrypto' || src.id === 'lcg').map((src) => (
             <Button
               key={src.id}
               variant={
@@ -476,6 +540,8 @@ export const RandomGenerationDemo: React.FC = () => {
               }
               size="sm"
               onClick={() => toggleSource(src.id)}
+              aria-pressed={enabledSources.includes(src.id)}
+              aria-label={`Toggle source: ${src.label}`}
               className={`gap-1.5 ${
                 enabledSources.includes(src.id) && !src.secure ? 'border-warning/50' : ''
               }`}
@@ -488,7 +554,46 @@ export const RandomGenerationDemo: React.FC = () => {
               {src.label}
             </Button>
           ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAdditionalSources((shown) => !shown)}
+            aria-expanded={showAdditionalSources}
+          >
+            {showAdditionalSources ? 'Hide optional sources' : 'Explore more sources'}
+          </Button>
         </div>
+        {showAdditionalSources && (
+          <div className="mt-3 border-t border-border/50 pt-3 space-y-2">
+            <p className="text-[10px] text-muted-foreground">
+              Optional extensions; the guided comparison uses Web Crypto and the timestamp LCG.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {SOURCES.filter((src) => src.id === 'openssl' || src.id === 'mathrandom').map(
+                (src) => (
+                  <Button
+                    key={src.id}
+                    variant={enabledSources.includes(src.id) ? 'outline' : 'ghost'}
+                    size="sm"
+                    onClick={() => toggleSource(src.id)}
+                    aria-pressed={enabledSources.includes(src.id)}
+                    aria-label={`Toggle source: ${src.label}`}
+                    className={
+                      enabledSources.includes(src.id) && !src.secure ? 'border-warning/50' : ''
+                    }
+                  >
+                    {src.secure ? (
+                      <ShieldCheck size={12} />
+                    ) : (
+                      <ShieldAlert size={12} className="text-warning" />
+                    )}
+                    {src.label}
+                  </Button>
+                )
+              )}
+            </div>
+          </div>
+        )}
         {hasInsecure && (
           <p className="text-[10px] text-warning mt-2 flex items-center gap-1">
             <AlertTriangle size={10} />
@@ -507,7 +612,11 @@ export const RandomGenerationDemo: React.FC = () => {
           noContainer
         />
 
-        <Button variant="gradient" onClick={handleGenerate} disabled={loading}>
+        <Button
+          variant="gradient"
+          onClick={handleGenerate}
+          disabled={loading || appearancePrediction === null}
+        >
           <Play size={16} className="mr-2" />
           {loading ? 'Generating...' : 'Generate'}
         </Button>
@@ -518,9 +627,9 @@ export const RandomGenerationDemo: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleCompareAll}
-              title="Run three SP 800-22-style visual checks and the two SP 800-90B health tests on every active source; results appear in separate groups"
+              title="Run descriptive output checks and SP 800-90B health-test demonstrations on every active source; results appear in separate groups"
             >
-              Compare All Tests
+              Run Output Checks
             </Button>
             <p className="text-[10px] text-muted-foreground mt-0.5">
               Visual checks and health tests, grouped
@@ -530,7 +639,7 @@ export const RandomGenerationDemo: React.FC = () => {
       </div>
 
       {/* Side-by-side results */}
-      <div className={`grid ${gridCols} gap-4`}>
+      <div className={`grid ${gridCols} gap-4`} data-testid="source-results-grid">
         {enabledSources.map((id) => {
           const src = SOURCES.find((s) => s.id === id)!
           return (
@@ -545,6 +654,32 @@ export const RandomGenerationDemo: React.FC = () => {
         })}
       </div>
 
+      {hasResults && (
+        <div
+          className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2"
+          data-testid="visual-similarity-callout"
+        >
+          <h3 className="text-sm font-semibold text-foreground">
+            The pictures may look alike. That is the result.
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            A {byteCount}-byte snapshot is too small—and visual inspection is the wrong tool—to
+            establish unpredictability. The timestamp LCG can resemble Web Crypto here even though
+            its output can be reproduced from a small seed search.
+          </p>
+          <p className="text-xs text-foreground">
+            Your prediction:{' '}
+            <strong>
+              {appearancePrediction === 'cannot-tell'
+                ? 'appearance cannot decide'
+                : appearancePrediction === 'webcrypto'
+                  ? 'Web Crypto would look less random'
+                  : 'the timestamp LCG would look less random'}
+            </strong>
+          </p>
+        </div>
+      )}
+
       {/* LCG Prediction Demo */}
       {lcgState && enabledSources.includes('lcg') && (
         <div className="glass-panel p-4 border-l-4 border-l-warning space-y-3">
@@ -552,7 +687,7 @@ export const RandomGenerationDemo: React.FC = () => {
             <div className="flex items-center gap-2">
               <Eye size={16} className="text-warning" />
               <h3 className="text-sm font-semibold text-foreground">
-                LCG Determinism — Can We Predict the Next Bytes?
+                3 · Prove Predictability — Recover and Continue the LCG
               </h3>
             </div>
             <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
@@ -561,70 +696,112 @@ export const RandomGenerationDemo: React.FC = () => {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            The LCG&apos;s internal state is fully deterministic. Knowing the state after generation
-            means we can predict every future output.
+            Visual similarity is not security. First recover the timestamp seed from four observed
+            bytes, then continue the exposed state to predict future output.
           </p>
 
-          {/* LCG parameter + seed breakdown */}
-          <div className="bg-muted/30 rounded-lg p-3 space-y-2">
-            <div className="flex items-baseline justify-between flex-wrap gap-2">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Recurrence: state = (a × state + c) mod m
+          <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-foreground">Bound the timestamp window</p>
+              <p className="text-[10px] text-muted-foreground">
+                This browser demonstration searches around the known generation time; a real
+                attacker estimates that time from surrounding events.
               </p>
-              <span className="text-[10px] text-muted-foreground italic">
-                Numerical Recipes parameters (Knuth, The Art of Computer Programming, Volume 2 —
-                Seminumerical Algorithms, 3rd ed., 1997)
-              </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
-              <div className="space-y-0.5">
-                <div className="text-[10px] text-muted-foreground uppercase">a (multiplier)</div>
-                <div className="text-foreground">{lcgState.a.toLocaleString()}</div>
-              </div>
-              <div className="space-y-0.5">
-                <div className="text-[10px] text-muted-foreground uppercase">c (increment)</div>
-                <div className="text-foreground">{lcgState.c.toLocaleString()}</div>
-              </div>
-              <div className="space-y-0.5">
-                <div className="text-[10px] text-muted-foreground uppercase">m (modulus)</div>
-                <div className="text-foreground">2³²</div>
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {[250, 1000, 5000].map((radius) => (
+                <Button
+                  key={radius}
+                  variant={seedWindowMs === radius ? 'secondary' : 'outline'}
+                  size="sm"
+                  aria-pressed={seedWindowMs === radius}
+                  onClick={() => {
+                    setSeedWindowMs(radius)
+                    setSeedRecovery(null)
+                  }}
+                >
+                  ±{radius.toLocaleString()} ms
+                </Button>
+              ))}
+              <Button variant="outline" size="sm" onClick={handleRecoverSeed}>
+                <Search size={14} className="mr-1.5" />
+                Recover Seed from First 4 Bytes
+              </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-snug border-t border-border/40 pt-2">
-              NIST SP 800-90A Rev. 1 §10 specifies three DRBG mechanisms:{' '}
-              <strong className="text-foreground">Hash_DRBG</strong>,{' '}
-              <strong className="text-foreground">HMAC_DRBG</strong> and{' '}
-              <strong className="text-foreground">CTR_DRBG</strong>. An LCG is not one of them, so
-              it is not an approved DRBG. Each state is a fixed linear function of the previous one,
-              so anyone who learns the state can compute every later output.
-            </p>
-            <div className="border-t border-border/50 pt-2 space-y-1.5">
-              <div className="flex items-baseline gap-2 text-xs font-mono flex-wrap">
-                <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
-                  Seed
-                </span>
-                <span className="text-warning">
-                  0x{lcgState.seed.toString(16).padStart(8, '0')}
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  = Date.now() &amp; 0xFFFFFFFF
-                </span>
-              </div>
-              <p className="text-[10px] text-warning leading-snug">
-                Date.now() has ~1ms resolution — an attacker who knows the approximate generation
-                time can enumerate ≤ 86,400,000 candidates per day, making brute-force trivial on
-                any modern CPU.
+            {seedRecovery && (
+              <p className="text-xs text-success" data-testid="lcg-seed-recovered">
+                Recovered seed 0x{seedRecovery.seed.toString(16).padStart(8, '0')} after checking{' '}
+                {seedRecovery.candidatesChecked.toLocaleString()} candidates. That seed reproduces
+                the stream and determines every later byte.
               </p>
-              <div className="flex items-baseline gap-2 text-xs font-mono">
-                <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
-                  State
-                </span>
-                <span className="text-foreground">
-                  0x{lcgState.finalState.toString(16).padStart(8, '0')}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
+
+          {/* LCG parameter + seed breakdown */}
+          <details className="bg-muted/30 rounded-lg p-3">
+            <summary className="cursor-pointer text-xs font-medium text-foreground">
+              Inspect LCG parameters and exposed state
+            </summary>
+            <div className="mt-3 space-y-2">
+              <div className="flex items-baseline justify-between flex-wrap gap-2">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Recurrence: state = (a × state + c) mod m
+                </p>
+                <span className="text-[10px] text-muted-foreground italic">
+                  Numerical Recipes parameters (Knuth, The Art of Computer Programming, Volume 2 —
+                  Seminumerical Algorithms, 3rd ed., 1997)
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                <div className="space-y-0.5">
+                  <div className="text-[10px] text-muted-foreground uppercase">a (multiplier)</div>
+                  <div className="text-foreground">{lcgState.a.toLocaleString()}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-[10px] text-muted-foreground uppercase">c (increment)</div>
+                  <div className="text-foreground">{lcgState.c.toLocaleString()}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-[10px] text-muted-foreground uppercase">m (modulus)</div>
+                  <div className="text-foreground">2³²</div>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground leading-snug border-t border-border/40 pt-2">
+                NIST SP 800-90A Rev. 1 §10 specifies three DRBG mechanisms:{' '}
+                <strong className="text-foreground">Hash_DRBG</strong>,{' '}
+                <strong className="text-foreground">HMAC_DRBG</strong> and{' '}
+                <strong className="text-foreground">CTR_DRBG</strong>. An LCG is not one of them, so
+                it is not an approved DRBG. Each state is a fixed linear function of the previous
+                one, so anyone who learns the state can compute every later output.
+              </p>
+              <div className="border-t border-border/50 pt-2 space-y-1.5">
+                <div className="flex items-baseline gap-2 text-xs font-mono flex-wrap">
+                  <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
+                    Seed
+                  </span>
+                  <span className="text-warning">
+                    0x{lcgState.seed.toString(16).padStart(8, '0')}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    = Date.now() &amp; 0xFFFFFFFF
+                  </span>
+                </div>
+                <p className="text-[10px] text-warning leading-snug">
+                  Date.now() has ~1ms resolution — an attacker who knows the approximate generation
+                  time can enumerate ≤ 86,400,000 candidates per day, making brute-force trivial on
+                  any modern CPU.
+                </p>
+                <div className="flex items-baseline gap-2 text-xs font-mono">
+                  <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
+                    State
+                  </span>
+                  <span className="text-foreground">
+                    0x{lcgState.finalState.toString(16).padStart(8, '0')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </details>
 
           {!showPrediction ? (
             <Button variant="outline" size="sm" onClick={handlePredictNext}>
@@ -639,10 +816,20 @@ export const RandomGenerationDemo: React.FC = () => {
                   {prediction ? formatHex(prediction) : ''}
                 </code>
               </div>
+              {!predictionVerified ? (
+                <Button variant="outline" size="sm" onClick={handleVerifyPrediction}>
+                  <CheckCircle size={14} className="mr-1.5" />
+                  Advance Same State and Verify
+                </Button>
+              ) : (
+                <p className="text-xs text-success" data-testid="lcg-prediction-verified">
+                  Exact match: continuing from the same exposed state produced these four bytes.
+                </p>
+              )}
               <p className="text-[10px] text-muted-foreground">
-                Generate again with the LCG to verify — the first 4 bytes of subsequent output from
-                the same state will always be identical. This is why LCGs must never be used for
-                cryptographic key generation.
+                An LCG is deterministic: knowing its state determines every later output. Generate
+                starts a new timestamp-seeded run; verification above continues this run instead.
+                LCGs must never be used for cryptographic key generation.
               </p>
             </div>
           )}
@@ -654,15 +841,22 @@ export const RandomGenerationDemo: React.FC = () => {
         <div className="glass-panel p-4 space-y-4">
           <h3 className="text-sm font-semibold text-foreground">Byte Frequency Distribution</h3>
           <p className="text-xs text-muted-foreground">
-            Each bar represents the count of bytes falling within a 16-value range. Uniform
-            randomness produces roughly equal bar heights.
+            Each bar counts bytes in a 16-value range. Every chart uses the same vertical scale;
+            this small sample can describe output, but cannot establish entropy or security.
           </p>
-          <div className={`grid ${gridCols} gap-6`}>
+          <div className={`grid ${gridCols} gap-6`} data-testid="frequency-grid">
             {enabledSources.map((id) => {
               const res = results[id]
               if (!res) return null
               const src = SOURCES.find((s) => s.id === id)!
-              return <FrequencyHistogram key={id} label={src.label} data={res.data} />
+              return (
+                <FrequencyHistogram
+                  key={id}
+                  label={src.label}
+                  data={res.data}
+                  sharedMaxCount={sharedHistogramMax}
+                />
+              )
             })}
           </div>
         </div>
@@ -676,22 +870,16 @@ export const RandomGenerationDemo: React.FC = () => {
             Plots (byte[i], byte[i+k]) pairs. Random data fills the square uniformly; patterns
             create lines, clusters, or voids that reveal sequential correlations.
           </p>
-          <div
-            className={`grid gap-6 ${
-              enabledSources.length <= 2
-                ? 'grid-cols-1 md:grid-cols-2'
-                : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'
-            }`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-testid="lag-plot-grid">
             {enabledSources.map((id) => {
               const res = results[id]
               if (!res) return null
               return (
-                <div key={id}>
+                <div key={id} className="min-w-0">
                   <p className="text-xs font-medium text-foreground mb-2">
                     {SOURCES.find((s) => s.id === id)!.label}
                   </p>
-                  <LagPlot data={res.data} size={enabledSources.length > 2 ? 200 : 220} />
+                  <LagPlot data={res.data} size={220} />
                 </div>
               )
             })}
@@ -705,6 +893,47 @@ export const RandomGenerationDemo: React.FC = () => {
           results={testResults as Record<SourceId, TestResult[]>}
           enabledSources={enabledSources.filter((id) => testResults[id])}
         />
+      )}
+
+      {hasResults && (
+        <div className="glass-panel p-4 space-y-3">
+          <div className="text-xs font-bold text-primary uppercase tracking-wider">
+            5 · Conclude
+          </div>
+          <h3 className="text-sm font-semibold text-foreground">
+            What can this experiment establish?
+          </h3>
+          <div className="flex flex-col items-start gap-2">
+            {(
+              [
+                ['visual', 'The secure generator is visibly better'],
+                ['checks', 'Passing these checks proves entropy'],
+                ['predictability', 'Appearance alone cannot establish unpredictability'],
+              ] as const
+            ).map(([id, label]) => (
+              <Button
+                key={id}
+                variant={conclusion === id ? 'secondary' : 'outline'}
+                size="sm"
+                aria-pressed={conclusion === id}
+                onClick={() => setConclusion(id)}
+                className="h-auto whitespace-normal text-left"
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+          {conclusion && (
+            <p
+              className={`text-xs ${conclusion === 'predictability' ? 'text-success' : 'text-warning'}`}
+              data-testid="experiment-conclusion"
+            >
+              {conclusion === 'predictability'
+                ? 'Correct. Security depends on the generator design, seed quality, state protection, and validation evidence—not a convincing-looking sample.'
+                : 'Not quite. Short samples and passing output checks can coexist with a completely predictable generator.'}
+            </p>
+          )}
+        </div>
       )}
 
       {/* Production entropy products */}

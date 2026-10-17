@@ -190,7 +190,7 @@ describe('Entropy Evidence Lab run record', () => {
     }
     const m = evidenceLabRunManifest(
       {
-        moduleVersion: 'entropy-randomness content 8',
+        moduleVersion: 'entropy-randomness content 9',
         evidence,
         sequential: { ran: true, ok: true, h: 2.8, hashConfirmedByTool: true },
         nativeReference: { sequential: { matches: true, identical: 40, compared: 40 } },
@@ -209,7 +209,7 @@ describe('Entropy Evidence Lab run record', () => {
     )
     expect(m.site).toEqual(SITE)
     expect(m.inputs).toEqual(evidence)
-    expect(m.tool.version).toBe('entropy-randomness content 8')
+    expect(m.tool.version).toBe('entropy-randomness content 9')
     expect(m.cases.map((c) => c.id)).toEqual([
       'sequential estimator run',
       'dataset hash confirmed by the tool',

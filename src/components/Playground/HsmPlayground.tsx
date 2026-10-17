@@ -11,7 +11,6 @@ import {
   ArrowLeftRight,
   Filter,
   AlertCircle,
-  Construction,
   FlaskConical,
   Code2,
   Route,
@@ -795,9 +794,8 @@ export const HsmPlayground = () => {
             className="ml-1 flex items-center gap-1 text-xs font-semibold px-2 py-0.5 h-auto rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
             aria-label="View PKCS#11 test methodology"
           >
-            <Construction size={11} />
-            WIP
             <FlaskConical size={11} />
+            Test methodology
           </Button>
         }
         actions={

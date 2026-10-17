@@ -26,6 +26,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { hidesWorkbench } from '@/utils/workbenchAccess'
 import { useHsmContext } from '../../../hsm/HsmContext'
 import {
@@ -120,6 +121,8 @@ AcvpResultRow.displayName = 'AcvpResultRow'
 
 export const AcvpSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
+  const compactViewport = useIsBelowLgViewport()
+  const certificationView = role === 'cert-engineer'
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const workbenchHidden = hidesWorkbench(role, viewAccess)
   const { engineMode } = useHsmContext()
@@ -155,6 +158,8 @@ export const AcvpSuiteWorkbench = () => {
   const [view, setView] = useState<SuiteView>('builder')
   const [codeRunning, setCodeRunning] = useState(false)
   const [codeOutput, setCodeOutput] = useState<CodeRunOutput | null>(null)
+  const [mobileAdvancedOpen, setMobileAdvancedOpen] = useState(false)
+  const [mobileTraceOpen, setMobileTraceOpen] = useState(false)
 
   const code = useMemo(
     () => emitAcvpSuite(selectedCategories, engineMode),
@@ -198,6 +203,217 @@ export const AcvpSuiteWorkbench = () => {
   }
 
   const running = loading || codeRunning
+
+  if (compactViewport) {
+    return (
+      <section
+        className="min-w-0 space-y-4 rounded-lg border border-border bg-background p-3"
+        data-testid="acvp-suite-workbench"
+      >
+        <div className="space-y-1">
+          <h3 className="text-base font-bold text-foreground">Compact validation runner</h3>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Choose focused algorithm families, run them against the same WASM PKCS#11 engine as the
+            desktop workbench, then expand a result for evidence and technical details.
+          </p>
+        </div>
+
+        <ValidationDisclaimer />
+
+        <div className="rounded-lg border border-border bg-muted/20 p-3">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+              Test families
+            </p>
+            <span className="text-[11px] text-muted-foreground">
+              {selectedCategories.size}/{CATEGORIES.length} selected
+            </span>
+          </div>
+          <div className="space-y-1.5">
+            {CATEGORIES.map((cat) => (
+              <label
+                key={cat.id}
+                className="flex min-h-11 items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs"
+              >
+                <input
+                  type="checkbox"
+                  aria-label={cat.label}
+                  data-testid={`acvp-category-checkbox-${cat.id}`}
+                  className="accent-primary"
+                  checked={selectedCategories.has(cat.id)}
+                  onChange={(e) =>
+                    setSelectedCategories((prev) => {
+                      const next = new Set(prev)
+                      if (e.target.checked) next.add(cat.id)
+                      else next.delete(cat.id)
+                      return next
+                    })
+                  }
+                />
+                <span className="min-w-0 flex-1 font-medium text-foreground">{cat.label}</span>
+                <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                  {cat.groups} groups
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="mt-2 flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              data-testid="acvp-select-all"
+              onClick={() => setSelectedCategories(new Set(ALL_CATEGORY_IDS))}
+            >
+              Select all
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              data-testid="acvp-select-none"
+              onClick={() => setSelectedCategories(new Set())}
+            >
+              Clear
+            </Button>
+          </div>
+        </div>
+
+        <Button
+          className="min-h-11 w-full"
+          data-testid="acvp-run-selected"
+          disabled={running || selectedCategories.size === 0}
+          aria-busy={loading}
+          onClick={() => void runTests()}
+        >
+          {loading ? (
+            <Loader2 size={15} className="mr-2 animate-spin" />
+          ) : (
+            <Play size={15} className="mr-2" />
+          )}
+          {loading ? 'Running selected families…' : 'Run selected families'}
+        </Button>
+
+        {(loading || totalChecks > 0) && (
+          <div className="space-y-2" aria-live="polite">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="font-medium text-foreground">
+                {loading ? progress?.current || 'Preparing validation run…' : 'Run complete'}
+              </span>
+              <span className="text-muted-foreground">
+                {passed} passed · {failed} failed · {skipped} not tested
+              </span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+              <div
+                className={clsx(
+                  'h-full w-full rounded-full',
+                  loading
+                    ? 'animate-pulse bg-primary'
+                    : failed > 0
+                      ? 'bg-destructive'
+                      : skipped > 0
+                        ? 'bg-status-warning'
+                        : 'bg-status-success'
+                )}
+              />
+            </div>
+          </div>
+        )}
+
+        {results.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-foreground">Results</h4>
+            {CATEGORIES.filter((cat) => results.some((r) => r.category === cat.id)).map((cat) => {
+              const groupResults = results.filter((r) => r.category === cat.id)
+              const groupFailed = groupResults.filter((r) => r.status === 'fail').length
+              const groupSkipped = groupResults.filter((r) => r.status === 'skip').length
+              return (
+                <details key={cat.id} className="rounded-lg border border-border bg-card p-3">
+                  <summary className="cursor-pointer text-xs font-semibold text-foreground">
+                    {cat.label} · {groupResults.length - groupFailed - groupSkipped} passed
+                    {groupFailed > 0 ? ` · ${groupFailed} failed` : ''}
+                    {groupSkipped > 0 ? ` · ${groupSkipped} not tested` : ''}
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {groupResults.map((res) => (
+                      <div key={res.id} className="rounded-md bg-muted/30 p-2 text-[11px]">
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="font-medium text-foreground">{res.testCase}</span>
+                          <span
+                            className={clsx(
+                              'shrink-0 font-bold uppercase',
+                              res.status === 'pass'
+                                ? 'text-status-success'
+                                : res.status === 'skip'
+                                  ? 'text-status-warning'
+                                  : 'text-destructive'
+                            )}
+                          >
+                            {res.status === 'skip' ? 'not tested' : res.status}
+                          </span>
+                        </div>
+                        <p className="mt-1 break-words text-muted-foreground">{res.details}</p>
+                        <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1.5" />
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )
+            })}
+          </div>
+        )}
+
+        {!certificationView && totalChecks > 0 && (
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">
+            <p className="font-semibold text-foreground">What this run shows</p>
+            <p className="mt-1 leading-relaxed text-muted-foreground">
+              The selected cases exercised this browser&apos;s WASM build. Passing cases support
+              only their named operation, parameters, evidence source, build, and target—not product
+              certification or exhaustive conformance.
+            </p>
+          </div>
+        )}
+
+        {logs.length > 0 && (
+          <details
+            open={certificationView && mobileTraceOpen}
+            onToggle={(e) => setMobileTraceOpen(e.currentTarget.open)}
+            className="rounded-lg border border-border bg-card p-3"
+          >
+            <summary className="cursor-pointer text-xs font-semibold text-foreground">
+              {certificationView ? 'Technical execution trace' : 'Technical details'} ·{' '}
+              {logs.length} entries
+            </summary>
+            <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-words rounded bg-muted/40 p-2 font-mono text-[10px] text-muted-foreground">
+              {logs.join('\n')}
+            </pre>
+          </details>
+        )}
+
+        <details
+          open={mobileAdvancedOpen}
+          onToggle={(e) => setMobileAdvancedOpen(e.currentTarget.open)}
+          className="rounded-lg border border-border bg-card p-3"
+        >
+          <summary className="cursor-pointer text-xs font-semibold text-foreground">
+            Advanced
+          </summary>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 w-full"
+            data-testid="acvp-run-all"
+            disabled={running}
+            onClick={() => void runTests(ALL_CATEGORY_IDS)}
+          >
+            Run every family
+          </Button>
+          <p className="mt-2 text-[10.5px] leading-relaxed text-muted-foreground">
+            A full run may take significantly longer and produces a large technical trace.
+          </p>
+        </details>
+      </section>
+    )
+  }
 
   const palette = (
     <>
@@ -423,20 +639,36 @@ export const AcvpSuiteWorkbench = () => {
       </Card>
       <Card className="p-3.5">
         <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-          Evidence classes
+          {certificationView ? 'Evidence classes' : 'How to read this run'}
         </div>
-        <p className="mb-1.5 text-[10.5px] text-muted-foreground">
-          Each row&apos;s class, case, parameters, source and limits come from the reviewed vector
-          manifest and test registry. Rows with no badge (skips, errors) are evidence of nothing.
-        </p>
-        <dl className="flex flex-col gap-1 text-[11px]" data-testid="acvp-evidence-legend">
-          {Object.values(EVIDENCE_CLASSES).map((c) => (
-            <div key={c.id}>
-              <dt className="font-medium text-foreground">{EVIDENCE_CLASS_SHORT[c.id]}</dt>
-              <dd className="text-muted-foreground">{c.permittedClaim}</dd>
-            </div>
-          ))}
-        </dl>
+        {certificationView ? (
+          <>
+            <p className="mb-1.5 text-[10.5px] text-muted-foreground">
+              Each row&apos;s class, case, parameters, source and limits come from the reviewed
+              vector manifest and test registry. Rows with no badge (skips, errors) are evidence of
+              nothing.
+            </p>
+            <dl className="flex flex-col gap-1 text-[11px]" data-testid="acvp-evidence-legend">
+              {Object.values(EVIDENCE_CLASSES).map((c) => (
+                <div key={c.id}>
+                  <dt className="font-medium text-foreground">{EVIDENCE_CLASS_SHORT[c.id]}</dt>
+                  <dd className="text-muted-foreground">{c.permittedClaim}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        ) : (
+          <div className="space-y-2 text-[11px] leading-relaxed text-muted-foreground">
+            <p>
+              A pass means the named case produced its expected behavior in this browser build. It
+              does not certify the implementation or cover every permitted parameter.
+            </p>
+            <p>
+              Open a row&apos;s evidence badge to see whether its expectation came from a public
+              reference sample, a standard, an independent oracle, or a functional round trip.
+            </p>
+          </div>
+        )}
         <a
           href={coverageMatrixUrl()}
           className="mt-2 inline-block text-[11px] text-primary hover:underline"
@@ -460,7 +692,9 @@ export const AcvpSuiteWorkbench = () => {
       </Card>
       <Card className="p-3.5 flex-1 min-h-0 flex flex-col">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-semibold uppercase text-muted-foreground">Execution log</div>
+          <div className="text-xs font-semibold uppercase text-muted-foreground">
+            {certificationView ? 'Execution log' : 'Technical details'}
+          </div>
           {logs.length > 0 && (
             <Button
               variant="ghost"
@@ -482,20 +716,34 @@ export const AcvpSuiteWorkbench = () => {
             </Button>
           )}
         </div>
-        <div
-          data-testid="acvp-execution-log"
-          className="bg-muted/50 border border-border rounded-md p-2 font-mono text-[10.5px] text-status-success/80 overflow-y-auto custom-scrollbar flex-1 min-h-[6rem] max-h-64"
-        >
-          {logs.length === 0 ? (
-            <span className="text-muted-foreground/80 italic">Ready to engage HSM suite…</span>
-          ) : (
-            logs.map((log, i) => (
-              <div key={i} className="mb-0.5">
-                {log}
-              </div>
-            ))
-          )}
-        </div>
+        {certificationView ? (
+          <div
+            data-testid="acvp-execution-log"
+            className="bg-muted/50 border border-border rounded-md p-2 font-mono text-[10.5px] text-status-success/80 overflow-y-auto custom-scrollbar flex-1 min-h-[6rem] max-h-64"
+          >
+            {logs.length === 0 ? (
+              <span className="text-muted-foreground/80 italic">Ready to engage HSM suite…</span>
+            ) : (
+              logs.map((log, i) => (
+                <div key={i} className="mb-0.5">
+                  {log}
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          <details className="rounded-md border border-border bg-muted/30 p-2">
+            <summary className="cursor-pointer text-[11px] text-foreground">
+              Show raw execution trace {logs.length > 0 ? `(${logs.length})` : ''}
+            </summary>
+            <div
+              data-testid="acvp-execution-log"
+              className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] text-muted-foreground"
+            >
+              {logs.length === 0 ? 'No run yet.' : logs.join('\n')}
+            </div>
+          </details>
+        )}
       </Card>
     </>
   )

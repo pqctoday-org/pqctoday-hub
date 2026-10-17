@@ -104,7 +104,7 @@ export interface DualVerifyResult {
   /** True iff every SignerInfo's signature math passed (`cms -verify -noverify`).
    *  Multi-SignerInfo CMS is all-or-nothing across signers in OpenSSL — true
    *  per-signer atomicity is a LAMPS draft-19 composite property, not a CMS
-   *  property. See the WIP chip in the DualSignDemo. */
+   *  property. See the composite-signature distinction in the DualSignDemo. */
   ok: boolean
   /** How many SignerInfo entries the verifier processed. */
   signerCount: number

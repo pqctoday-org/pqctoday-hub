@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   Globe,
@@ -25,6 +25,13 @@ import {
   type KmipSyncStep,
 } from '../data/kmsConstants'
 import { Button } from '@/components/ui/button'
+import { AuditTrailPanel } from '@/components/Playground/kmip/AuditTrailPanel'
+import {
+  getKmipEngine,
+  type AuditEvent,
+  type KmipEngine,
+  type OpResult,
+} from '@/wasm/kmip/kmipEngine'
 
 const PROVIDER_LABELS: Record<string, { name: string; short: string }> = {
   'aws-kms': { name: 'AWS KMS', short: 'AWS' },
@@ -51,24 +58,113 @@ function getStatusStyle(status: string): string {
 
 // ── Section 1: KMIP Operation Simulator ──────────────────────────────────────
 
+const LIVE_EXERCISE_LABELS: Record<string, string> = {
+  create: 'CreateKeyPair (ML-KEM-768)',
+  get: 'CreateKeyPair → Get',
+  activate: 'CreateKeyPair → Activate',
+  wrap: 'CreateKeyPair → Activate → Encapsulate',
+  rotate: 'CreateKeyPair → create replacement key pair',
+  destroy: 'CreateKeyPair → Destroy',
+}
+
 const OperationSimulator: React.FC = () => {
   const [selectedOp, setSelectedOp] = useState<KmipOperation>(KMIP_OPERATIONS[0])
   const [selectedProvider, setSelectedProvider] = useState('aws-kms')
   const [showResponse, setShowResponse] = useState(false)
+  const [engine, setEngine] = useState<KmipEngine | null>(null)
+  const [engineError, setEngineError] = useState<string | null>(null)
+  const [running, setRunning] = useState(false)
+  const [liveResult, setLiveResult] = useState<OpResult | null>(null)
+  const [liveAudit, setLiveAudit] = useState<AuditEvent[]>([])
 
   const providerApi = selectedOp.providerApis[selectedProvider]
+
+  useEffect(() => {
+    let mounted = true
+    void getKmipEngine()
+      .then((loaded) => {
+        if (mounted) setEngine(loaded)
+      })
+      .catch((error: unknown) => {
+        if (mounted)
+          setEngineError(
+            error instanceof Error ? error.message : 'The local KMIP engine failed to load.'
+          )
+      })
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const runLiveExercise = () => {
+    if (!engine) return
+    setRunning(true)
+    setEngineError(null)
+    setLiveResult(null)
+    setLiveAudit([])
+    try {
+      const results: OpResult[] = []
+      const run = (spec: Parameters<KmipEngine['runOp']>[0]) => {
+        const result = engine.runOp(spec)
+        results.push(result)
+        if (!result.ok) throw new Error(result.message || `${spec.op} failed`)
+        return result
+      }
+      const createPair = () => {
+        const result = run({
+          op: 'CreateKeyPair',
+          algorithm: 'ML-KEM-768',
+          name: `learn-${selectedOp.id}`,
+        })
+        const privateKeyUid = String(result.summary.privateKeyUid || '')
+        const publicKeyUid = String(result.summary.publicKeyUid || '')
+        if (!privateKeyUid || !publicKeyUid)
+          throw new Error('The engine did not return both key identifiers.')
+        return { privateKeyUid, publicKeyUid, result }
+      }
+
+      let finalResult: OpResult
+      const pair = createPair()
+      switch (selectedOp.id) {
+        case 'get':
+          finalResult = run({ op: 'Get', uid: pair.privateKeyUid })
+          break
+        case 'activate':
+          finalResult = run({ op: 'Activate', uid: pair.privateKeyUid })
+          break
+        case 'wrap':
+          run({ op: 'Activate', uid: pair.publicKeyUid })
+          finalResult = run({ op: 'Encapsulate', uid: pair.publicKeyUid })
+          break
+        case 'rotate':
+          finalResult = createPair().result
+          break
+        case 'destroy':
+          finalResult = run({ op: 'Destroy', uid: pair.privateKeyUid })
+          break
+        default:
+          finalResult = pair.result
+      }
+      setLiveResult(finalResult)
+      setLiveAudit(results.flatMap((result) => result.audit))
+    } catch (error: unknown) {
+      setEngineError(error instanceof Error ? error.message : 'The local KMIP exercise failed.')
+    } finally {
+      setRunning(false)
+    }
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Globe size={18} className="text-primary" />
-        <h3 className="text-lg font-bold text-foreground">KMIP Operation Simulator</h3>
+        <h3 className="text-lg font-bold text-foreground">KMIP Operation Lab</h3>
       </div>
       <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" className="mb-2" />
       <p className="text-sm text-muted-foreground">
-        Compare the same key operation expressed as KMIP v3.0 XML vs. provider-specific API calls.
-        KMIP provides a single vendor-neutral interface — each provider translates it into their
-        native API.
+        Compare illustrative KMIP v3.0 XML with provider-specific API examples, then execute the
+        lifecycle concept in the browser-local KMIP/PKCS#11 engine. No cloud account or provider API
+        is contacted.
       </p>
 
       {/* Operation selector */}
@@ -80,6 +176,9 @@ const OperationSimulator: React.FC = () => {
             onClick={() => {
               setSelectedOp(op)
               setShowResponse(false)
+              setLiveResult(null)
+              setLiveAudit([])
+              setEngineError(null)
             }}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
               selectedOp.id === op.id
@@ -100,7 +199,7 @@ const OperationSimulator: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
-              KMIP v3.0 XML
+              Illustrative KMIP v3.0 XML
             </span>
             <Button
               variant="ghost"
@@ -120,7 +219,7 @@ const OperationSimulator: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
-              Provider API
+              Illustrative provider API
             </span>
             <div className="flex gap-1 ml-auto">
               {Object.keys(PROVIDER_LABELS).map((id) => (
@@ -151,6 +250,64 @@ const OperationSimulator: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">
+              Live browser-local exercise
+            </p>
+            <p className="mt-1 text-sm font-semibold text-foreground">
+              {LIVE_EXERCISE_LABELS[selectedOp.id] ?? 'CreateKeyPair (ML-KEM-768)'}
+            </p>
+            <p className="mt-1 max-w-3xl text-xs text-muted-foreground">
+              This path builds and dispatches real KMIP requests through the local policy plane and
+              PKCS#11-backed WebAssembly engine. It does not execute the provider examples above.
+            </p>
+            {(selectedOp.id === 'wrap' || selectedOp.id === 'rotate') && (
+              <p className="mt-1 text-xs text-warning">
+                {selectedOp.id === 'wrap'
+                  ? 'The runnable analogue demonstrates ML-KEM encapsulation, not KMIP Get-with-KeyWrappingSpecification.'
+                  : 'The runnable analogue creates a replacement pair; it does not claim to implement KMIP ReKey semantics.'}
+              </p>
+            )}
+          </div>
+          <Button onClick={runLiveExercise} disabled={!engine || running}>
+            {running && <Loader2 size={14} className="mr-2 animate-spin" />}
+            {engine ? `Run ${selectedOp.name}` : 'Loading engine…'}
+          </Button>
+        </div>
+
+        {engineError && (
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-xs text-status-error">
+            {engineError}
+          </div>
+        )}
+        {liveResult && (
+          <div className="grid gap-3 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <div className="min-w-0 rounded-lg border border-border bg-background/70 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <CheckCircle2 size={14} className="text-success" />
+                <span className="text-sm font-semibold text-foreground">
+                  {liveResult.operation} · {liveResult.status}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {liveResult.responseWireLen} response bytes
+                </span>
+              </div>
+              <pre className="mt-2 max-h-44 overflow-auto whitespace-pre-wrap break-words rounded bg-muted/40 p-2 text-[10px] text-muted-foreground">
+                {JSON.stringify(liveResult.summary, null, 2)}
+              </pre>
+            </div>
+            <div className="min-w-0 rounded-lg border border-border bg-background/70 p-3">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Causal trace · policy → KMIP → PKCS#11
+              </p>
+              <AuditTrailPanel events={liveAudit} detailed />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Insight callout */}
@@ -307,8 +464,9 @@ const CrossProviderSync: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground">Cross-Provider Key Sync</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        Walk through a real-world scenario: a KMIP orchestrator managing an ML-KEM-768 key lifecycle
-        across an on-prem HSM, AWS KMS, and Google Cloud KMS simultaneously.
+        Walk through an illustrative deployment scenario: a KMIP orchestrator managing an ML-KEM-768
+        key lifecycle across an on-prem HSM, AWS KMS, and Google Cloud KMS. These backend statuses
+        are teaching examples, not live provider telemetry.
       </p>
 
       {/* Step timeline */}

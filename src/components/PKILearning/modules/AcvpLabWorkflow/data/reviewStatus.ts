@@ -5,9 +5,10 @@
  * The ACVP validation remediation plan (2026-09-24, WS-I) requires this module
  * to be reviewed by at least one validation-lab practitioner before it may be
  * described as a lab training resource. Until that review is recorded, the
- * module ships as a draft: `workInProgress: true` in manifest.ts (catalogue
- * "WIP" chip + header "Work in progress" chip), no `lastReviewed` in
- * content.ts, and this notice on every tab that teaches or exercises.
+ * module ships as a draft: `workInProgress: true` in manifest.ts for internal
+ * status/routing, no `lastReviewed` in content.ts, and this explicit notice on
+ * every tab that teaches or exercises. Generic WIP logos are intentionally not
+ * rendered.
  *
  * When the review happens: record it with record_module_review.py (which sets
  * content.ts lastReviewed), flip `state` to 'practitioner-reviewed', name the

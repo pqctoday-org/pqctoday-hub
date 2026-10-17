@@ -12,7 +12,6 @@ import {
   UserCog,
   Bot,
   Map,
-  Wrench,
   ChevronDown,
   ChevronRight,
   type LucideIcon,
@@ -112,7 +111,6 @@ import {
   ALWAYS_VISIBLE_PATHS,
   isPersonaVisiblePath,
   NAV_PATH_LABELS,
-  PERSONA_MARKED_NAV_PATHS,
   PERSONA_TIMELINE_REGION,
   PERSONA_THREATS_DEFAULT_INDUSTRIES,
 } from '../../data/personaConfig'
@@ -302,17 +300,6 @@ const RailRow: React.FC<RailRowProps> = ({
         className: 'shrink-0',
       })}
       <span className="truncate">{label}</span>
-      {/* Marks the dashed/"marked" treatment ON the row rather than in a
-          detached legend at the foot of the rail. `title` (set by the caller)
-          carries the full sentence. */}
-      {treatment === 'marked' && !isMore && (
-        <span
-          className="ml-auto shrink-0 rounded bg-status-warning/15 px-1 text-[9px] font-bold uppercase leading-4 tracking-wide text-status-warning"
-          aria-hidden="true"
-        >
-          wip
-        </span>
-      )}
     </NavLink>
   )
 }
@@ -596,14 +583,6 @@ export const MainLayout = () => {
 
   // ── Top bar data ───────────────────────────────────────────────────────────
   const currentLabel = NAV_PATH_LABELS[location.pathname] ?? 'PQC Today'
-  const markedPaths = selectedPersona
-    ? // eslint-disable-next-line security/detect-object-injection
-      (PERSONA_MARKED_NAV_PATHS[selectedPersona] ?? [])
-    : []
-  // Simpler of the two spec-offered options: show the WIP chip whenever this
-  // persona has ANY marked/pending rail rows at all, rather than only while
-  // the user is actively on one of those routes.
-  const showWipChip = markedPaths.length > 0
   const pageActions = usePageActionsStore((s) => s.current)
   // Merged persona + region/industry summary (2026-08-01 follow-up: "merge
   // the persona filtering in one drop down" / "become a persona dropdown") —
@@ -982,15 +961,6 @@ export const MainLayout = () => {
                 scrollClassName="flex items-center justify-between gap-2 flex-nowrap"
               >
                 <div className="flex items-center gap-1.5 shrink-0">
-                  {showWipChip && (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-lg border text-status-warning bg-status-warning px-1.5 py-1 text-[10px] font-medium shrink-0"
-                      title="Some destinations on this board are marked in-progress — see the dashed rail rows."
-                    >
-                      <Wrench size={11} aria-hidden="true" />
-                      WIP
-                    </span>
-                  )}
                   {pageActions && (
                     <>
                       <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />

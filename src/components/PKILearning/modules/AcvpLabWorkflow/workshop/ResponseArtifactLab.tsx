@@ -20,6 +20,38 @@ const AcvpFormatPrototypePanel = lazy(() =>
   }))
 )
 
+class PrototypeBoundary extends React.Component<
+  { children: React.ReactNode },
+  { failed: boolean; message: string }
+> {
+  state = { failed: false, message: '' }
+
+  static getDerivedStateFromError(error: unknown) {
+    return {
+      failed: true,
+      message: error instanceof Error ? error.message : 'The ACVP engine panel could not load.',
+    }
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children
+    return (
+      <div
+        role="alert"
+        className="rounded-lg border border-status-error/30 bg-status-error/10 p-4 text-sm"
+      >
+        <p className="font-semibold text-foreground">The ACVP engine panel is unavailable.</p>
+        <p className="mt-1 text-foreground/80">{this.state.message}</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Reload the module and confirm that browser WASM is enabled. You can still inspect the
+          pinned vector-set structure in Step 2; do not report a response or disposition from this
+          incomplete run.
+        </p>
+      </div>
+    )
+  }
+}
+
 const FilePick: React.FC<{ label: string; onText: (name: string, text: string) => void }> = ({
   label,
   onText,
@@ -95,7 +127,7 @@ export const ResponseArtifactLab: React.FC = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
       <section className="glass-panel space-y-3 p-4 text-sm" aria-labelledby="ral-step-a">
         <h3 id="ral-step-a" className="font-semibold text-foreground">
           A. Save a public sample prompt
@@ -148,14 +180,21 @@ export const ResponseArtifactLab: React.FC = () => {
             . Import the file you saved, choose an engine, run it, then download both response.json
             and evidence.json.
           </p>
+          <p className="mt-2 text-xs text-muted-foreground" role="note">
+            Preflight: this step needs browser WASM and a successfully loaded C++ or Rust engine.
+            Engine identity, prompt/response hashes and unsupported cases belong in evidence.json;
+            loading the panel alone proves nothing.
+          </p>
         </div>
-        <Suspense
-          fallback={
-            <p className="text-xs text-muted-foreground">Loading the ACVP-format prototype…</p>
-          }
-        >
-          <AcvpFormatPrototypePanel />
-        </Suspense>
+        <PrototypeBoundary>
+          <Suspense
+            fallback={
+              <p className="text-xs text-muted-foreground">Loading the ACVP-format prototype…</p>
+            }
+          >
+            <AcvpFormatPrototypePanel />
+          </Suspense>
+        </PrototypeBoundary>
       </section>
 
       <section className="glass-panel space-y-3 p-4 text-sm" aria-labelledby="ral-step-c">

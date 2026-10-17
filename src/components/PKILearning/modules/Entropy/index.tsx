@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { FC } from 'react'
+import { useEffect, type FC } from 'react'
 import { Dice5, BarChart3, ShieldCheck, Workflow, Combine, Microscope } from 'lucide-react'
 import { EntropyIntroduction } from './components/EntropyIntroduction'
 import { EntropyExercises } from './components/EntropyExercises'
@@ -11,6 +11,9 @@ import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
 import { EntropyEvidenceLab } from './workshop/evidenceLab/EntropyEvidenceLab'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { useModuleStore } from '@/store/useModuleStore'
+import { defaultEntropyLearnPath } from './learnPath'
 
 const PARTS: WorkshopPart[] = [
   {
@@ -29,7 +32,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'esv-walkthrough',
     title: 'Step 3: ESV Validation',
-    description: 'Walk through the NIST Entropy Source Validation process.',
+    description: 'Walk through the CMVP Entropy Source Validation process.',
     icon: ShieldCheck,
   },
   {
@@ -55,37 +58,51 @@ const PARTS: WorkshopPart[] = [
   },
 ]
 
-export const EntropyModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    description="Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require."
-    learn={(api) => <EntropyIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => (
-      <EntropyExercises
-        onNavigateToWorkshop={api.goToWorkshop}
-        onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
-      />
-    )}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey, config) => {
-      const c = config as
-        { sampleType?: 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment' } | undefined
-      switch (index) {
-        case 0:
-          return <RandomGenerationDemo key={`rng-${configKey}`} />
-        case 1:
-          return <EntropyTestingDemo key={`test-${configKey}`} initialSampleType={c?.sampleType} />
-        case 2:
-          return <ESVWalkthroughDemo key={`esv-${configKey}`} />
-        case 3:
-          return <DrbgArchitectureDemo key={`drbg-${configKey}`} />
-        case 4:
-          return <SourceCombiningDemo key={`combine-${configKey}`} />
-        case 5:
-          return <EntropyEvidenceLab key={`evidence-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const EntropyModule: FC = () => {
+  const persona = usePersonaStore((state) => state.selectedPersona)
+  const activePath = useModuleStore((state) => state.modules[manifest.id]?.activeLearnPath)
+  const setActiveLearnPath = useModuleStore((state) => state.setActiveLearnPath)
+
+  useEffect(() => {
+    if (!persona || activePath) return
+    const path = defaultEntropyLearnPath(persona)
+    if (path) setActiveLearnPath(manifest.id, path)
+  }, [activePath, persona, setActiveLearnPath])
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      description="Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require."
+      learn={(api) => <EntropyIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={(api) => (
+        <EntropyExercises
+          onNavigateToWorkshop={api.goToWorkshop}
+          onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
+        />
+      )}
+      workshopParts={PARTS}
+      renderWorkshopStep={(index, configKey, config) => {
+        const c = config as
+          { sampleType?: 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment' } | undefined
+        switch (index) {
+          case 0:
+            return <RandomGenerationDemo key={`rng-${configKey}`} />
+          case 1:
+            return (
+              <EntropyTestingDemo key={`test-${configKey}`} initialSampleType={c?.sampleType} />
+            )
+          case 2:
+            return <ESVWalkthroughDemo key={`esv-${configKey}`} />
+          case 3:
+            return <DrbgArchitectureDemo key={`drbg-${configKey}`} />
+          case 4:
+            return <SourceCombiningDemo key={`combine-${configKey}`} />
+          case 5:
+            return <EntropyEvidenceLab key={`evidence-${configKey}`} />
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

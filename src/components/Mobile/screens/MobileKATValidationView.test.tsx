@@ -8,6 +8,7 @@ const HSM_STUB = {
   hSessionRef: { current: 1 },
   slotRef: { current: 0 },
   initialize: vi.fn().mockResolvedValue(undefined),
+  addStepLog: vi.fn(),
 }
 vi.mock('@/hooks/useHSM', () => ({
   useHSM: () => HSM_STUB,
@@ -25,15 +26,18 @@ import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 describe('MobileKATValidationView', () => {
   beforeEach(() => {
     mockRunKAT.mockReset()
-    mockRunKAT.mockResolvedValue({
-      id: 'kat-algo-mlkem512-decap',
-      useCase: 'ML-KEM-512 decapsulation',
-      algorithm: 'ML-KEM-512',
-      standard: 'FIPS 203',
-      referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
-      status: 'pass',
-      details: 'ok',
-    })
+    HSM_STUB.addStepLog.mockReset()
+    mockRunKAT.mockImplementation(
+      async (_module: unknown, _session: unknown, spec: { id: string; useCase: string }) => ({
+        id: spec.id,
+        useCase: spec.useCase,
+        algorithm: 'ML-KEM-512',
+        standard: 'FIPS 203',
+        referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+        status: 'pass',
+        details: 'ok',
+      })
+    )
   })
 
   it('shows only the 7 real PQC tiles — 3 ML-KEM, 3 ML-DSA, 1 SLH-DSA', () => {
@@ -65,6 +69,7 @@ describe('MobileKATValidationView', () => {
     )
     await waitFor(() => expect(mockRunKAT).toHaveBeenCalled())
     expect(await screen.findByText('2/2 passed')).toBeInTheDocument()
+    expect(HSM_STUB.addStepLog).toHaveBeenCalledTimes(2)
   })
 
   it("a 'skip' (not tested) result is its own count, never a pass", async () => {

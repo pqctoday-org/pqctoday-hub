@@ -222,7 +222,7 @@
       "lm_id": "LM-003",
       "title": "Entropy & Randomness",
       "description": "Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.",
-      "duration": "40 min",
+      "duration": "130 min",
       "difficulty": "advanced",
       "frameworkPhase": "foundations"
     },
@@ -1374,6 +1374,10 @@
       {
         "id": "testing",
         "label": "Entropy Testing (90B)"
+      },
+      {
+        "id": "esv",
+        "label": "CMVP ESV Process"
       },
       {
         "id": "qrng",
@@ -2953,7 +2957,8 @@
     "entropy-randomness": [
       {
         "id": "random-generation",
-        "label": "Random Byte Generation"
+        "label": "Random Byte Generation",
+        "paths": ["general-practitioner"]
       },
       {
         "id": "entropy-testing",
@@ -2961,7 +2966,8 @@
       },
       {
         "id": "esv-walkthrough",
-        "label": "ESV Validation Walkthrough"
+        "label": "ESV Validation Walkthrough",
+        "paths": ["certification-engineer"]
       },
       {
         "id": "drbg-state-machine",
@@ -2973,7 +2979,8 @@
       },
       {
         "id": "entropy-evidence-lab",
-        "label": "Entropy Evidence Lab (SP 800-90B)"
+        "label": "Entropy Evidence Lab (SP 800-90B)",
+        "paths": ["certification-engineer"]
       }
     ],
     "exec-quantum-impact": [
@@ -3977,7 +3984,7 @@
           "lm_id": "LM-003",
           "title": "Entropy & Randomness",
           "description": "Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.",
-          "duration": "40 min",
+          "duration": "130 min",
           "difficulty": "advanced",
           "frameworkPhase": "foundations"
         },

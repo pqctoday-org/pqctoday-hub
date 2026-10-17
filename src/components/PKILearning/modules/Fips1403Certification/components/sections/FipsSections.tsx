@@ -508,17 +508,17 @@ const PLANNING_CASES: readonly { level: string; case: string; why: string }[] = 
   {
     level: 'Level 1',
     case: 'A software crypto library on a controlled server fleet',
-    why: 'Physical security is N/A for software; the questions are the operational environment, the approved mode and the tested platforms.',
+    why: 'Illustrative starting point, not a software-only rule. Establish the operational environment, applicable requirement areas, approved mode and tested platforms.',
   },
   {
     level: 'Level 3',
     case: 'A network HSM where an attacker could get physical access',
-    why: 'Physical security is part of the threat model. All four HSMs whose certificates approve ML-KEM and ML-DSA are overall Level 3.',
+    why: 'Planning recommendation: physical security is part of the threat model. Current PQC HSM certificates at Level 3 are market examples, not the normative basis.',
   },
   {
     level: 'Level 4',
     case: 'An offline root-key HSM at an unattended site, with physical attack in the threat model',
-    why: 'Argued from a stated physical threat, not prestige. What Level 4 requires area by area: open question — check the current standard.',
+    why: 'Planning target from a stated physical threat, not prestige. Confirm every applicable area against ISO/IEC 19790 as modified by SP 800-140 with the laboratory.',
   },
 ]
 
@@ -588,6 +588,14 @@ export const FipsLevels = () => (
     </p>
 
     <SubHeading>The three planning cases</SubHeading>
+    <Callout tone="info" title="Requirement first; examples second">
+      <p>
+        A normative requirement comes from FIPS 140-3, ISO/IEC 19790 as modified by the SP 800-140
+        series, the current IG and programme rules. A published certificate is evidence that one
+        named module met its stated profile. A planning recommendation applies those requirements to
+        declared threats and assumptions. Do not turn today&apos;s market pattern into a rule.
+      </p>
+    </Callout>
     <div className="grid gap-3 md:grid-cols-3">
       {PLANNING_CASES.map((c) => (
         <div key={c.level} className="rounded-lg border border-border bg-muted/30 p-3">
@@ -598,7 +606,9 @@ export const FipsLevels = () => (
       ))}
     </div>
     <p className="text-xs text-muted-foreground">
-      Level 2 is a real level too. The planner focuses on Levels 1 and 3, plus one Level 4 case.
+      Level 2 is a real level too. The planner accepts it when the learner states the operational
+      environment and confirms the applicable requirement-area evidence; embodiment alone never
+      rules it out.
     </p>
 
     <Callout tone="warning" title="FIPS Level 3 and PCI: don’t over-correct">

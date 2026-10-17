@@ -101,6 +101,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of specs) {
+        hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         const op = beginOp(`Running ${spec.useCase || spec.id} via PKCS#11…`)
         try {
           const r = await runKAT(M, hSession, spec, { advertised })

@@ -133,31 +133,56 @@ export function AuditTrailPanel({
               {t.id.slice(0, 8)}
             </span>
           </div>
-          {/* Swimlanes — one column per plane, so "one op → P1 decision → P2
-              request/response → P3 mechanism call" reads top-to-bottom in its
-              own lane instead of as an undifferentiated flat list. */}
-          <div className="grid grid-cols-3 border-t border-border/30 bg-muted/10 text-[9px] font-semibold uppercase tracking-wide">
-            {LANES.map((p) => (
-              <span key={p} className={`${PLANE_INFO[p]?.tone ?? ''} px-2 py-1`}>
-                {PLANE_INFO[p]?.label ?? p}
-              </span>
-            ))}
+          {/* Wide screens retain the comparative three-plane swimlane. */}
+          <div className="hidden sm:block" data-testid="kmip-audit-desktop-lanes">
+            <div className="grid grid-cols-3 border-t border-border/30 bg-muted/10 text-[9px] font-semibold uppercase tracking-wide">
+              {LANES.map((p) => (
+                <span key={p} className={`${PLANE_INFO[p]?.tone ?? ''} px-2 py-1`}>
+                  {PLANE_INFO[p]?.label ?? p}
+                </span>
+              ))}
+            </div>
+            <div className="divide-y divide-border/30">
+              {t.events.map((e, i) => (
+                <div key={i} className="grid grid-cols-3">
+                  {LANES.map((p) => (
+                    <span
+                      key={p}
+                      aria-hidden={p !== e.plane || undefined}
+                      className="border-r border-border/20 px-2 py-1 text-[11px] font-mono text-muted-foreground break-words last:border-r-0"
+                    >
+                      {p === e.plane ? describe(obj(e.event), detailed) : ' '}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="divide-y divide-border/30">
+
+          {/* Phones use a causal timeline. Compressing three columns into a
+              390px viewport made function names wrap one character at a time. */}
+          <ol
+            className="divide-y divide-border/30 border-t border-border/30 sm:hidden"
+            data-testid="kmip-audit-mobile-timeline"
+          >
             {t.events.map((e, i) => (
-              <div key={i} className="grid grid-cols-3">
-                {LANES.map((p) => (
-                  <span
-                    key={p}
-                    aria-hidden={p !== e.plane || undefined}
-                    className="border-r border-border/20 px-2 py-1 text-[11px] font-mono text-muted-foreground break-all last:border-r-0"
+              <li key={i} className="flex min-w-0 gap-2 px-2 py-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-[9px] font-bold text-foreground">
+                  {i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`text-[9px] font-bold uppercase tracking-wide ${PLANE_INFO[e.plane]?.tone ?? ''}`}
                   >
-                    {p === e.plane ? describe(obj(e.event), detailed) : ' '}
-                  </span>
-                ))}
-              </div>
+                    {PLANE_INFO[e.plane]?.label ?? e.plane}
+                  </p>
+                  <p className="mt-0.5 break-words font-mono text-[11px] leading-relaxed text-muted-foreground">
+                    {describe(obj(e.event), detailed)}
+                  </p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       ))}
     </div>

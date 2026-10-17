@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { Bookmark, BookmarkCheck, GraduationCap, Monitor, Wrench } from 'lucide-react'
+import { Bookmark, BookmarkCheck, GraduationCap, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { cn } from '@/lib/utils'
@@ -353,12 +353,6 @@ function ToolCardMobile({
           >
             {tool.difficulty}
           </span>
-          {tool.wip && (
-            <span className="inline-flex items-center gap-1 rounded border border-status-warning/30 bg-status-warning/15 px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-status-warning">
-              <Wrench className="h-2.5 w-2.5" aria-hidden="true" />
-              WIP
-            </span>
-          )}
           {unmet.length > 0 && (
             <span
               className="inline-flex items-center gap-1 rounded border border-border bg-muted px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-muted-foreground"

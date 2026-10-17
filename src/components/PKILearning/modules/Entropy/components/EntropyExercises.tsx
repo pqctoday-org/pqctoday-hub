@@ -202,9 +202,14 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
                     </span>
                   </div>
                   <p className="text-sm text-foreground/80 mb-2">{exercise.description}</p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>What to observe:</strong> {exercise.observe}
-                  </p>
+                  <details className="text-xs text-muted-foreground">
+                    <summary className="cursor-pointer font-medium text-foreground/70">
+                      Reveal what to observe after your attempt
+                    </summary>
+                    <p className="mt-2">
+                      <strong>What to observe:</strong> {exercise.observe}
+                    </p>
+                  </details>
                 </div>
                 <Button
                   variant="outline"

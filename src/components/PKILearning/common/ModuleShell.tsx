@@ -517,11 +517,6 @@ export const ModuleShell = ({
           {manifest.duration ? (
             <span className={`${chip} bg-muted text-muted-foreground`}>{manifest.duration}</span>
           ) : null}
-          {manifest.workInProgress ? (
-            <span className={`${chip} bg-status-warning/15 text-status-warning`}>
-              Work in progress
-            </span>
-          ) : null}
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
         {/* UX batch 2 (2026-09-19, CC-5): on the Workshop tab the description,

@@ -518,7 +518,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
           }
         >
           <ExternalLink size={14} className="mr-2" />
-          Visit NIST ESV Program
+          Visit the CMVP ESV Process
         </Button>
       </div>
     </div>

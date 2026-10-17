@@ -34,6 +34,7 @@ import { StreamingEntropyMonitor } from '../components/StreamingEntropyMonitor'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KATResult, KatTestSpec } from '@/utils/katRunner'
 import { entropyTestingRunManifest } from '../utils/entropyRunRecords'
+import { parseHexBytes } from '../utils/hexInput'
 import { downloadRunManifestJson } from '@/services/runRecordExport'
 import { RunRecordActions } from '@/components/shared/RunRecordActions'
 
@@ -146,22 +147,13 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   }, [])
 
   const handlePasteHex = useCallback(() => {
-    const cleaned = pasteHex.replace(/[\s,0x]/g, '')
-    if (cleaned.length < 2) {
-      setPasteHexError('Hex string must be at least 2 characters (1 byte).')
+    const parsed = parseHexBytes(pasteHex)
+    if (!parsed.ok) {
+      setPasteHexError(parsed.error)
       return
     }
-    if (!/^[0-9a-fA-F]+$/.test(cleaned)) {
-      setPasteHexError('Invalid hex characters. Only 0-9 and A-F are allowed.')
-      return
-    }
-    const byteCount = Math.floor(cleaned.length / 2)
-    const hexPairs = Array.from({ length: byteCount }, (_, idx) =>
-      parseInt(cleaned.slice(idx * 2, idx * 2 + 2), 16)
-    )
-    const bytes = new Uint8Array(hexPairs)
-    setSampleData(bytes)
-    setSampleLabel(`Pasted Hex (${bytes.length} bytes)`)
+    setSampleData(parsed.bytes)
+    setSampleLabel(`Pasted Hex (${parsed.bytes.length} bytes)`)
     setTestResults(null)
     setPasteHexError(null)
   }, [pasteHex])
@@ -286,15 +278,10 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                   onChange={(e) => {
                     const val = e.target.value
                     setPasteHex(val)
-                    const cleaned = val.replace(/[\s,0x]/g, '')
-                    if (cleaned.length > 0 && !/^[0-9a-fA-F]+$/.test(cleaned)) {
-                      setPasteHexError(
-                        'Invalid characters — enter hexadecimal digits only (0–9, a–f)'
-                      )
-                    } else if (cleaned.length > 0 && cleaned.length % 2 !== 0) {
-                      setPasteHexError('Odd number of hex digits — each byte requires 2 digits')
-                    } else {
-                      setPasteHexError(null)
+                    if (!val.trim()) setPasteHexError(null)
+                    else {
+                      const parsed = parseHexBytes(val)
+                      setPasteHexError(parsed.ok ? null : parsed.error)
                     }
                   }}
                   placeholder="e.g. deadbeef01020304..."
@@ -304,7 +291,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                   variant="outline"
                   size="sm"
                   onClick={handlePasteHex}
-                  disabled={pasteHex.length === 0}
+                  disabled={pasteHex.length === 0 || pasteHexError !== null}
                 >
                   Load
                 </Button>

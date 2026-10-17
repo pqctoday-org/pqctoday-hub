@@ -115,7 +115,7 @@ export function Inspector({
   return (
     <section className="rounded-xl border border-border bg-card overflow-hidden">
       {/* Tab bar */}
-      <div className="flex items-center gap-1 border-b border-border bg-muted/20 px-2 py-1.5">
+      <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/20 px-2 py-1.5">
         {tabs.map((t) => {
           const on = active === t.id
           const Icon = t.id === 'keystore' ? Boxes : t.id === 'wire' ? Server : Database
@@ -135,7 +135,7 @@ export function Inspector({
             </Button>
           )
         })}
-        <span className="ml-auto pr-1 text-[10px] text-muted-foreground">{metaCount}</span>
+        <span className="ml-auto shrink-0 pr-1 text-[10px] text-muted-foreground">{metaCount}</span>
         <Button
           variant="ghost"
           size="sm"

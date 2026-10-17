@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   // No lastReviewed: this is a DRAFT awaiting review by a validation-lab
   // practitioner (plan WS-I). record_module_review.py sets it when that review
   // is recorded — never by hand.
-  lastEdited: '2026-10-15',
+  lastEdited: '2026-10-16',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -51,7 +51,7 @@ export const content: ModuleContent = {
 
   narratives: {
     reviewStatus: 'Draft — awaiting review by a validation-lab practitioner',
-    acvpSpecRevision: 'draft-ietf-acvp-spec-01 (14 Aug 2026)',
+    acvpSpecRevision: 'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
     publicSampleCommit: 'usnistgov/ACVP-Server @ 975de31',
     evidenceClassCount: '8',

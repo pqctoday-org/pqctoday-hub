@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { motion } from 'framer-motion'
-import { MessageSquare, ExternalLink, Construction, Wrench } from 'lucide-react'
+import { MessageSquare, ExternalLink, Construction } from 'lucide-react'
 
 export function TransparencySection() {
   return (
@@ -14,10 +14,6 @@ export function TransparencySection() {
       <div className="flex items-center gap-3 mb-4">
         <Construction className="text-primary shrink-0" size={24} />
         <h2 className="text-xl font-semibold flex-1">Transparency &amp; Disclaimer</h2>
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow">
-          <Wrench size={12} className="animate-bounce-subtle" />
-          WIP
-        </span>
       </div>
       <div className="prose prose-invert max-w-none">
         <p className="text-muted-foreground">

@@ -17,7 +17,7 @@
  * combined OID like id-MLDSA65-ECDSA-P256-SHA256). It's multi-SignerInfo
  * — two signatures, one .p7m, RFC 5652 standard. Educationally equivalent
  * for "two algorithms must verify" trust model, but a malicious party
- * could strip one SignerInfo. The WIP chip below points users at the
+ * could strip one SignerInfo. The distinction below points users at the
  * LAMPS roadmap entry for the strictly-stronger composite path.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -61,7 +61,7 @@ const DEFAULT_PAYLOAD =
   'Dual-signed workshop message: ML-DSA-65 + ECDSA-P256 SignerInfos.\n' +
   'A LAMPS-conformant verifier of draft-ietf-lamps-pq-composite-sigs would\n' +
   'reject the message if EITHER signature failed; this multi-SignerInfo\n' +
-  'CMS accepts a partial match — see the WIP chip below.\n'
+  'CMS accepts a partial match — see the composite-signature distinction below.\n'
 
 const PQ_ALG_CHOICES: CmsAlg[] = ['ML-DSA-65', 'ML-DSA-44', 'ML-DSA-87', 'SLH-DSA-SHA2-128s']
 const CL_ALG_CHOICES: CmsAlg[] = ['EC', 'RSA-PSS']
@@ -234,7 +234,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
             className="ml-2 rounded border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-status-warning"
             title="Multi-SignerInfo (RFC 5652) is NOT LAMPS draft-19 composite. A malicious party can strip one SignerInfo. LAMPS composite-sigs (single combined OID) requires both to verify atomically."
           >
-            WIP · not LAMPS composite
+            Multi-SignerInfo ≠ LAMPS composite
           </span>
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -435,7 +435,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
                   <code>cms -verify -noverify</code> walked every SignerInfo and checked each
                   signature against its embedded signer cert. Chain validation skipped (these certs
                   are self-signed for the demo). Per-SignerInfo atomicity is a LAMPS composite
-                  property — see the WIP chip above.
+                  property — see the distinction above.
                 </p>
               </>
             )}

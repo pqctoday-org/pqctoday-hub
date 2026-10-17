@@ -11,7 +11,7 @@ import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { AcvpLabWorkflowModule } from './index'
 
 describe('AcvpLabWorkflowModule render parity', () => {
-  it('renders the header, the draft status chip, and all six tabs', () => {
+  it('renders the header without a generic WIP chip and shows all six tabs', () => {
     render(
       <EmbedProvider>
         <MemoryRouter>
@@ -22,7 +22,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     expect(
       screen.getByRole('heading', { name: 'ACVP Lab Workflow: From Vector Set to Evidence' })
     ).toBeInTheDocument()
-    expect(screen.getByText('Work in progress')).toBeInTheDocument()
+    expect(screen.queryByText('Work in progress')).not.toBeInTheDocument()
     for (const name of [
       'Learn',
       'Visual',
