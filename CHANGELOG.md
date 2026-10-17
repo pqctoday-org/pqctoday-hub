@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.163.0] - 2026-10-17
+
+The KMIP protocol workshop now runs its own local engine with a real audit trail, entropy and certification lessons separate test results from compliance claims, and workshop controls and results fit phone screens.
+
+### Changed
+
+- **Entropy learning paths for both audiences** [view:/learn/entropy-randomness] [persona:developer] [persona:researcher] [persona:cert-engineer] [persona:curious]: general practitioners get a concepts-first route while certification engineers get the validation and evidence route. The random-generation workshop now makes a predictable generator visibly different, recovers its parameters as an exercise, and separates statistical observations from claims about entropy.
+- **Validation workbenches fit the role and screen** [view:/algorithms] [view:/playground] [persona:developer] [persona:cert-engineer] [persona:researcher]: certification engineers open on technical evidence and traces; other roles get plain-language interpretation with raw details available. Phones get a compact ACVP runner, readable KAT results and an ordered KMIP policy-to-protocol-to-PKCS#11 timeline instead of compressed desktop panes.
+- **The KMIP lesson now runs the local engine** [view:/learn/kms-pqc] [persona:architect] [persona:developer] [persona:ops] [persona:cert-engineer]: the protocol workshop executes browser-local KMIP requests and shows their real result and audit trail. Cloud-provider commands and cross-provider states are clearly marked as teaching examples, and the wrap and rotation exercises name where their runnable analogue differs from the exact KMIP operation.
+
+### Fixed
+
+- **Entropy exercises distinguish randomness tests from entropy evidence** [view:/learn/entropy-randomness] [persona:researcher] [persona:cert-engineer] [persona:developer]: the module no longer treats visual plots, health tests, estimators and primitive self-checks as one pass score. Hex input is checked consistently, deterministic-generator recovery is verified, DRBG and entropy-source responsibilities are stated separately, and lag plots no longer spill into adjacent columns.
+- **Certification lessons match the current validation boundaries** [view:/learn/acvp-lab-workflow] [view:/learn/fips-140-3-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: ACVP response artifacts distinguish local demonstrations from NIST submissions, FIPS level planning no longer turns physical-security examples into automatic level claims, and Common Criteria/EUCC exercises distinguish assurance claims, national certification and scheme recognition.
+- **Workshop controls and results stay inside phone layouts** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer] [persona:ops]: long workshop titles and methodology controls wrap without shifting the page sideways, KMIP inspector actions wrap, and mobile KAT cards show their explanatory result instead of only a pass icon.
+
 ## [4.162.0] - 2026-10-16
 
 Each role now starts from its own questions and downloads (including a new operations pack for IT Ops), beginner pages keep their qualifiers, Library labels say what stage a document is at and how far to trust it, and 20 new certificates join the certification records. The Terms of Service now cover the website only.
@@ -77,9 +93,6 @@ Each role now starts from its own questions and downloads (including a new opera
 - **Engines from a published release, with their notices** [view:/openssl] [persona:developer] [persona:ops]: all six browser engines are taken from the engines-2 release, and each ships its full third-party licence notices. OpenSSL Studio uses the engine built in the public HSM repository; the other engines are unchanged.
 - **The roadmap lists every upcoming milestone and who set it** [view:/report] [persona:executive] [persona:grc]: besides the country's next milestone, the migration roadmap groups upcoming dates by the body that set them (for the United States: federal civilian agencies, national security systems, certified products), each marked binding or guidance, with a note that a date applies only to what its issuing body covers.
 - **The Compliance drawer says how binding a framework is** [view:/compliance] [persona:grc] [persona:executive]: the framework drawer has a "Binding" line worded as in the report: binding for its scope, with the framework's own words for who it applies to (and our translation where the original is not in English), binding, or guidance or draft, followed by its basis. The report quotes who a scoped framework binds in the same way.
-- **Entropy learning paths for both audiences** [view:/learn/entropy-randomness] [persona:developer] [persona:researcher] [persona:cert-engineer] [persona:curious]: general practitioners get a concepts-first route while certification engineers get the validation and evidence route. The random-generation workshop now makes a predictable generator visibly different, recovers its parameters as an exercise, and separates statistical observations from claims about entropy.
-- **Validation workbenches fit the role and screen** [view:/algorithms] [view:/playground] [persona:developer] [persona:cert-engineer] [persona:researcher]: certification engineers open on technical evidence and traces; other roles get plain-language interpretation with raw details available. Phones get a compact ACVP runner, readable KAT results and an ordered KMIP policy-to-protocol-to-PKCS#11 timeline instead of compressed desktop panes.
-- **The KMIP lesson now runs the local engine** [view:/learn/kms-pqc] [persona:architect] [persona:developer] [persona:ops] [persona:cert-engineer]: the protocol workshop executes browser-local KMIP requests and shows their real result and audit trail. Cloud-provider commands and cross-provider states are clearly marked as teaching examples, and the wrap and rotation exercises name where their runnable analogue differs from the exact KMIP operation.
 
 ### Fixed
 
@@ -113,9 +126,6 @@ Each role now starts from its own questions and downloads (including a new opera
 - **History links open where items were made** [view:/business] [persona:architect] [persona:ops]: saved architecture-pack and operations-pack items, and KMIP quick runs, now open their pack or tab instead of an empty Learn page.
 - **A lesson you have opened but not progressed in now says "Start"**, not "Resume" [view:/learn] [persona:curious] [persona:developer].
 - **The sample organisation reads as sample data** [view:/simulation] [persona:executive] [persona:architect]: loading the fictional bank no longer labels it "Your assessment", and the landing says "the 10-minute intro".
-- **Entropy exercises distinguish randomness tests from entropy evidence** [view:/learn/entropy-randomness] [persona:researcher] [persona:cert-engineer] [persona:developer]: the module no longer treats visual plots, health tests, estimators and primitive self-checks as one pass score. Hex input is checked consistently, deterministic-generator recovery is verified, DRBG and entropy-source responsibilities are stated separately, and lag plots no longer spill into adjacent columns.
-- **Certification lessons match the current validation boundaries** [view:/learn/acvp-lab-workflow] [view:/learn/fips-140-3-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: ACVP response artifacts distinguish local demonstrations from NIST submissions, FIPS level planning no longer turns physical-security examples into automatic level claims, and Common Criteria/EUCC exercises distinguish assurance claims, national certification and scheme recognition.
-- **Workshop controls and results stay inside phone layouts** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer] [persona:ops]: long workshop titles and methodology controls wrap without shifting the page sideways, KMIP inspector actions wrap, and mobile KAT cards show their explanatory result instead of only a pass icon.
 
 ### Data
 
