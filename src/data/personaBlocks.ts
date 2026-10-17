@@ -567,13 +567,20 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     ops: "Step 5's per-component quantum risk assessment and migration plan is the operational output; Step 1's architecture comparison says which TEE features your platforms expose today.",
   },
   '/learn/homomorphic-encryption': {
+    executive:
+      'Use the FHE foundations path to separate the business promise from the limits: FHE can reduce evaluator trust, but cost, metadata leakage, result integrity and key-custody decisions remain.',
+    grc: 'Use the FHE foundations path to test vendor claims against the actual boundary: FHE is not anonymisation, result integrity, FIPS validation or proof that a computation was correct.',
     developer:
-      'The CKKS and TFHE single-HSM scenarios show which calls the data owner, the cloud and the HSM each make: key generation, encryption, computing on ciphertexts and decryption under policy.',
+      'Start with scheme choice, noise and circuit shape, then use the optional advanced path to trace the calls made by the owner, evaluator and custodian.',
     architect:
-      'Each workshop scenario shows where the secret key, the public keys and the data sit at every step, and "What can run in the HSM?" says what belongs in the HSM and what belongs on GPUs: the placement decisions an FHE design has to make.',
+      'Use the foundations path to choose the scheme and parameter envelope; the advanced path then maps secrets, public evaluation keys, ciphertexts and controlled decryption across trust zones.',
     researcher:
-      'The learn sections cover the four ISO/IEC 28033 draft schemes, the lattice basis of FHE against the quantum threat and the decryption attacks that shape HSM policy; the threshold scenarios (OpenFHE and Lattigo) show where no single party holds the key.',
-    ops: 'The custody steps cover what an operator has to run: a non-extractable seed in the HSM, decryption under policy with an audit log and rate limits, and an HSM-to-HSM backup so the key survives the loss of a device.',
+      'Compare the four ISO/IEC 28033 draft scheme families and the measured implementation evidence, then use the advanced path for decryption-oracle, flooding and threshold limitations.',
+    'cert-engineer':
+      'Your default advanced path separates FHE behavior from approved surrounding functions and labels each result as measured, reproduced or independently reviewed rather than implying certification.',
+    ops: 'Start with the operational cost and failure boundary, then use the advanced path for controlled decryption, audit, rate limits, rotation, backup and recovery.',
+    curious:
+      'Follow the foundations path for the central idea: a server can calculate on encrypted data, but it pays a large performance cost and still reveals some metadata. The HSM custody material is intentionally left out of this path.',
   },
   '/learn/crypto-agility': {
     executive:

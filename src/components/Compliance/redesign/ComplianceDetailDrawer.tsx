@@ -41,6 +41,7 @@ import {
   buildFrameworkEndorsementUrl,
   buildFrameworkFlagUrl,
 } from '@/components/Compliance/complianceEndorsement'
+import { SourceFreshnessBadge } from '../SourceFreshnessBadge'
 
 /**
  * A compliance row's trustedSourceId resolves against EITHER of two
@@ -279,14 +280,12 @@ export function ComplianceDetailDrawer({
                       </dd>
                     </div>
                   )}
-                  {framework.lastVerified && (
-                    <div className="flex items-start justify-between gap-3">
-                      <dt className="shrink-0 text-muted-foreground">Last verified</dt>
-                      <dd className="min-w-0 text-right font-medium text-foreground">
-                        {framework.lastVerified}
-                      </dd>
-                    </div>
-                  )}
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="shrink-0 text-muted-foreground">Source freshness</dt>
+                    <dd className="min-w-0 text-right">
+                      <SourceFreshnessBadge lastVerified={framework.lastVerified} />
+                    </dd>
+                  </div>
                   {/* Review provenance ("LLM · <reviewer> · <month> · via
                       <method>") lives here rather than on the landscape tile —
                       the reviewer string is free text and was overflowing the

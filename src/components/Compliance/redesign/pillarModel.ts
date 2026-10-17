@@ -72,13 +72,18 @@ export function bodyTypesForPillar(pillar: PillarId): BodyType[] {
     case 'certify':
       return ['certification_body']
     case 'comply':
-      return ['compliance_framework', 'regulatory_body']
+      return ['compliance_framework', 'regulatory_body', 'executive_order']
   }
 }
 
 export function pillarForBodyType(bodyType: BodyType): PillarId {
   if (bodyType === 'certification_body') return 'certify'
-  if (bodyType === 'compliance_framework' || bodyType === 'regulatory_body') return 'comply'
+  if (
+    bodyType === 'compliance_framework' ||
+    bodyType === 'regulatory_body' ||
+    bodyType === 'executive_order'
+  )
+    return 'comply'
   return 'standardize'
 }
 
@@ -105,6 +110,7 @@ const BODY_TYPE_LABEL: Record<BodyType, string> = {
   certification_body: 'Certification scheme',
   compliance_framework: 'Compliance framework',
   regulatory_body: 'Regulatory body',
+  executive_order: 'Executive order',
 }
 
 export function bodyTypeLabel(bodyType: BodyType): string {

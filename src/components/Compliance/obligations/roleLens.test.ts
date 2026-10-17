@@ -99,7 +99,7 @@ describe('roleNoteFor and roleFramingFor', () => {
     const zeroReq = ROWS.find((r) => r.requirementCount === 0)
     if (zeroReq) {
       const note = roleNoteFor(zeroReq, 'grc')
-      expect(note).toMatch(/not extracted|review the source/i)
+      expect(note).toMatch(/no practices extracted|primary source/i)
       expect(note).not.toMatch(/noncompliant|fails|violation/i)
     }
     const withReq = ROWS.find((r) => r.requirementCount > 0)!
@@ -112,7 +112,7 @@ describe('roleNoteFor and roleFramingFor', () => {
   })
 
   it('falls back to a neutral framing with no persona', () => {
-    expect(roleFramingFor(null)).toMatch(/applies to your country and sector/i)
+    expect(roleFramingFor(null)).toMatch(/associated with the selected country and sector/i)
   })
 })
 

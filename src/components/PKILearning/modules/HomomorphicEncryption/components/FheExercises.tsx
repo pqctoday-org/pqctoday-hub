@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
-import { Play, BookOpen, ArrowRight } from 'lucide-react'
+import React, { useState } from 'react'
+import { Play, BookOpen, ArrowRight, Eye } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { useLearnPathFilter } from '@/components/PKILearning/common/useLearnPath'
+import type { PathScoped } from '@/components/PKILearning/manifest/types'
 
 interface ExercisesProps {
-  onNavigateToWorkshop: () => void
+  onNavigateToWorkshop: (step?: number) => void
   /** opens the Learn tab, for the exercises that work from the Learn sections */
   onNavigateToLearn?: () => void
 }
 
-interface Scenario {
+interface Scenario extends PathScoped {
   id: string
   title: string
   description: string
@@ -19,6 +21,7 @@ interface Scenario {
   observe: string
   /** where the exercise is worked: the workshop (default) or the Learn tab */
   target?: 'workshop' | 'learn'
+  workshopStep?: number
 }
 
 // Exercises 1–5 name the workshop scenario to pick inside the one workshop step
@@ -35,6 +38,8 @@ const SCENARIOS: Scenario[] = [
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
       'The relinearization, rotation and bootstrapping keys are public, but each one encrypts something derived from the secret key, so only the HSM can make them. A bootstrappable CKKS set is 7.87 GB, 3.94 GB as exported (measured): too large for an HSM to hold, so it streams the set out in 1,001 bounded PKCS#11 calls with a token peak of about 16 MiB. What limits the step is CPU time, not memory or the PKCS#11 interface: 473 s on one MX95 Cortex-A55 core, 42–44 s on one Mac core, with the network adding about 5 %. Letting the token cache work between calls cuts it to 214 s on one MX95 core and 72–84 s on six MX95 Pro cores, at the cost of more token memory (65–124 MiB). It is a one-time cost per key set, paid again on rotation or recovery.',
+    paths: ['hsm-custody'],
+    workshopStep: 1,
   },
   {
     id: 'tfhe-why-it-fits',
@@ -45,6 +50,8 @@ const SCENARIOS: Scenario[] = [
     badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
     observe:
       'Every key the HSM creates is kilobytes to tens of megabytes: the secret is a few hundred bytes of key bits (tens of KB as stored), the server key is tens of MB compressed and generated in seconds, and decryption is a dot product. The trade-off is that TFHE computes on bits and small integers, so heavy numeric workloads run slower than with CKKS.',
+    paths: ['hsm-custody'],
+    workshopStep: 1,
   },
   {
     id: 'threshold-no-single-decryptor',
@@ -55,6 +62,8 @@ const SCENARIOS: Scenario[] = [
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     observe:
       "OpenFHE's threshold extension with BFV uses additive key shares and chained key generation, and every party must contribute a partial decryption. Lattigo's multiparty protocols with BGV use t-of-N shares and collective key generation, with an interactive refresh among the key holders instead of bootstrapping keys, so no GB-scale bootstrapping keys are generated. Each party still produces a full-size share of every Galois key the application needs.",
+    paths: ['hsm-custody'],
+    workshopStep: 1,
   },
   {
     id: 'what-runs-in-the-hsm',
@@ -65,6 +74,8 @@ const SCENARIOS: Scenario[] = [
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     observe:
       'Seed and secret-key generation and decryption fit: small inputs and milliseconds of compute. Evaluation-key generation fits when streamed: a TFHE server key of about 30 MB fits in one piece, and a CKKS bootstrapping key set (3.94 GB exported) streams out in bounded pieces, taking minutes on a small board core. Homomorphic evaluation and bootstrapping do not run in the HSM: they need gigabytes of keys in memory plus GPU or FPGA acceleration, and they need no secret, so running them in the HSM would add nothing but load.',
+    paths: ['hsm-custody'],
+    workshopStep: 1,
   },
   {
     id: 'transciphering-kreyvium',
@@ -75,6 +86,8 @@ const SCENARIOS: Scenario[] = [
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
       "The client uploads data encrypted with the Kreyvium stream cipher, plus its Kreyvium key encrypted under FHE once. The server runs the keystream inside FHE and ends with FHE ciphertexts it never saw in the clear. Uploads stay at plaintext size instead of FHE size, which can be a thousand times larger or more. Use Kreyvium's 128-bit key: Trivium's 80-bit key is already below the 112-bit minimum before Grover.",
+    paths: ['hsm-custody'],
+    workshopStep: 1,
   },
   {
     id: 'read-noisy-ckks-result',
@@ -116,23 +129,24 @@ export const FheExercises: React.FC<ExercisesProps> = ({
   onNavigateToLearn,
 }) => {
   const navigate = useNavigate()
+  const scenarios = useLearnPathFilter(SCENARIOS, 'homomorphic-encryption')
+  const [revealed, setRevealed] = useState<Set<string>>(new Set())
 
   return (
     <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
-          Work through these scenarios to see how FHE keys, ciphertexts and decryption requests move
-          between a data owner, an HSM and an untrusted cloud. Exercises 1&ndash;5 name the scenario
-          to pick in the FHE + HSM Flows workshop &mdash; click &quot;Open Workshop&quot; to begin.
-          Exercises 6&ndash;8 work from the Learn sections.
+          Predict the outcome first, try the linked interaction or Learn section, then reveal the
+          explanation. The foundations path focuses on noise, scheme choice and assurance claims;
+          the advanced path adds custody, threshold operation and transciphering.
         </p>
       </div>
 
       <div className="space-y-4">
-        {SCENARIOS.map((scenario) => (
+        {scenarios.map((scenario) => (
           <div key={scenario.id} className="glass-panel p-5">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-lg font-bold text-foreground">{scenario.title}</h3>
@@ -143,29 +157,52 @@ export const FheExercises: React.FC<ExercisesProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-2">{scenario.description}</p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>What to observe:</strong> {scenario.observe}
+                <p className="text-xs font-semibold text-primary">
+                  Predict first: what result do you expect, and why?
                 </p>
+                {revealed.has(scenario.id) && (
+                  <p className="mt-2 text-xs text-muted-foreground" role="status">
+                    <strong className="text-foreground">Explanation:</strong> {scenario.observe}
+                  </p>
+                )}
               </div>
-              {scenario.target === 'learn' ? (
-                onNavigateToLearn && (
+              <div className="flex w-full shrink-0 flex-wrap gap-2 sm:w-auto sm:justify-end">
+                {scenario.target === 'learn' ? (
+                  onNavigateToLearn && (
+                    <Button
+                      variant="ghost"
+                      onClick={onNavigateToLearn}
+                      className="flex items-center gap-2"
+                    >
+                      <BookOpen size={14} /> Open Learn
+                    </Button>
+                  )
+                ) : (
                   <Button
                     variant="ghost"
-                    onClick={onNavigateToLearn}
-                    className="btn btn-secondary flex items-center gap-2 px-4 py-2 shrink-0"
+                    onClick={() => onNavigateToWorkshop(scenario.workshopStep)}
+                    className="flex items-center gap-2"
                   >
-                    <BookOpen size={14} /> Open Learn
+                    <Play size={14} fill="currentColor" /> Open Workshop
                   </Button>
-                )
-              ) : (
+                )}
                 <Button
-                  variant="ghost"
-                  onClick={onNavigateToWorkshop}
-                  className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
+                  variant="outline"
+                  onClick={() =>
+                    setRevealed((current) => {
+                      const next = new Set(current)
+                      if (next.has(scenario.id)) next.delete(scenario.id)
+                      else next.add(scenario.id)
+                      return next
+                    })
+                  }
+                  aria-expanded={revealed.has(scenario.id)}
+                  className="gap-2"
                 >
-                  <Play size={14} fill="currentColor" /> Open Workshop
+                  <Eye size={14} />{' '}
+                  {revealed.has(scenario.id) ? 'Hide explanation' : 'Reveal explanation'}
                 </Button>
-              )}
+              </div>
             </div>
           </div>
         ))}

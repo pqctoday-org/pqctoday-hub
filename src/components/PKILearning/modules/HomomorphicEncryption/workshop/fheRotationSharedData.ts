@@ -21,7 +21,7 @@ export type LifecycleFamily = 'concepts' | 'flows'
 export type OpenLifecycleView = (view: LifecycleView, family: LifecycleFamily) => void
 
 /** Workshop step index of each family (manifest workshopSteps order). */
-export const LIFECYCLE_STEP: Record<LifecycleFamily, number> = { flows: 0, concepts: 1 }
+export const LIFECYCLE_STEP: Record<LifecycleFamily, number> = { concepts: 0, flows: 1 }
 
 /** Flow-scenario id of each view in the FHE + HSM Flows step. */
 export const LIFECYCLE_FLOW_ID = {

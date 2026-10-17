@@ -78,7 +78,7 @@ export type ScalingVerdict = 'scales' | 'scales-when-streamed' | 'does-not-scale
  * scenario contract (fhe-hsm-scenarios.v1.json) says the same. The replication steps stay planned.
  */
 const CKKS_ENGINE_MERGED =
-  'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy, key rotation) are merged in pqctoday-hsm (#351, #353, #354), behind a non-default build feature of the educational engine. Validated on the MX95 boards (see the evidence badges).'
+  'The CKKS mechanisms (key generation, streamed export of the public and evaluation keys, decryption under policy, key rotation) are merged in pqctoday-hsm (#351, #353, #354), behind a non-default build feature of the educational engine. Measured on the MX95 boards (see the evidence badges).'
 
 /** The corrected flood sizing (pqctoday-hsm #355, merged) and what is measured; decrypt step only. */
 const CKKS_FLOOD_SIZING = `The width of the flood for third-party releases follows the published analysis and is merged (pqctoday-hsm #355, merge commit d6b23452d92e4250069db9b993f818e65712b7b1): ${FLOOD_FORMULA}. Measured with the second parameter set on a Mac and with the token on both MX95 boards (depth 0, 1 and 3): ${FLOOD_ID3.rangeLow}–${FLOOD_ID3.rangeHigh} bits against a bar of ${GATE_F_BAR_BITS}, a thin margin of about ${FLOOD_ID3.margin} bits; the default parameter set is refused.`
@@ -240,7 +240,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Validated end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. The second parameter set was also validated end to end on both boards with the corrected flood width (flooded release 11.1–11.4 bits against a bar of 10, depth 0, 1 and 3). Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge. The HSM’s Lattigo-based sets (registry IDs 2 and 3) cannot be used in OpenFHE; its registry ID 4, built from OpenFHE’s own primes and key list, was run in OpenFHE with only the token’s keys and was also generated with the token on both MX95 boards (export only). OpenFHE’s two-round (iterative) bootstrapping raised the precision with those keys from about 13 bits to 21 at the setting its example recommends and about 32 at the best setting found, on a Mac only.',
+        'Measured end to end with Lattigo v6.2.0’s default bootstrappable set: a software token on the MX95 and on the MX95 Pro streamed the whole evaluation-key set to a Mac (M5 Max), every piece matched the reference, the Mac bootstrapped with those keys, and each board decrypted the result under policy. The second parameter set was also measured end to end on both boards with the corrected flood width (flooded release 11.1–11.4 bits against a bar of 10, depth 0, 1 and 3). These runs demonstrate the stated configuration; they are not product or certification validation. Public-key and ciphertext sizes in the panels are still estimates. OpenFHE v1.6.0 CKKS was measured separately on 2026-10-11 (80 keys, 13.26 GB at settings OpenFHE checks as 128-bit, one bootstrap at 13.3 bits), and keys in Lattigo’s layout ran in OpenFHE with equal precision through a format bridge. The HSM’s Lattigo-based sets (registry IDs 2 and 3) cannot be used in OpenFHE; its registry ID 4, built from OpenFHE’s own primes and key list, was run in OpenFHE with only the token’s keys and was also generated with the token on both MX95 boards (export only). OpenFHE’s two-round (iterative) bootstrapping raised the precision with those keys from about 13 bits to 21 at the setting its example recommends and about 32 at the best setting found, on a Mac only.',
       reference:
         'Lattigo v6.2.0 reference spec in pqctoday-fhe; OpenFHE v1.6.0 and Microsoft SEAL v4.1.2 CKKS reference runs in pqctoday-fhe',
     },
@@ -444,7 +444,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Token-validated: every HSM step through PKCS#11 v3.2 vendor mechanisms in pqctoday-hsm, plus reference-validated with TFHE-rs.',
+        'Measured through the pqctoday-hsm software-token mechanisms and reproduced against the pinned TFHE-rs reference implementation; this is not product or certification validation.',
       reference: 'TFHE-rs, pinned release',
     },
     label: 'TFHE single-HSM custody',
@@ -652,7 +652,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Reference-validated with OpenFHE BFV. A PKCS#11 path through a Rust BFV backend (fhe.rs multiparty) only if its feasibility and independent-review gates pass.',
+        'Reproduced with the pinned OpenFHE BFV reference implementation. A PKCS#11 path through a Rust BFV backend (fhe.rs multiparty) remains conditional on feasibility and independent review.',
       reference: 'OpenFHE BFV, pinned in pqctoday-sandbox',
     },
     label: 'Threshold: OpenFHE BFV (3-of-3)',
@@ -866,7 +866,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Token-validated through a Rust port of Lattigo’s protocols behind PKCS#11 v3.2 vendor mechanisms, only if its feasibility and review gates pass. The port is tested against Lattigo itself in Go (byte-exact fixtures, mixed Rust and Go parties) and needs an independent review.',
+        'Measured through a Rust port of Lattigo’s protocols behind PKCS#11 v3.2 vendor mechanisms. The port is tested against Lattigo itself in Go (byte-exact fixtures, mixed Rust and Go parties) and still needs independent review.',
       reference: 'Lattigo v6.2.0 (Go), the test oracle',
     },
     label: 'Threshold: Lattigo BGV (2-of-3)',
@@ -1228,7 +1228,7 @@ export const FHE_HSM_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'HSM steps token-validated as in TFHE custody; server steps reference-validated with TFHE-rs apps/trivium.',
+        'HSM steps were measured with the software token as in TFHE custody; server steps were reproduced with TFHE-rs apps/trivium.',
       reference: 'TFHE-rs apps/trivium, pinned release',
     },
     label: 'Transciphering: TFHE-rs Kreyvium',

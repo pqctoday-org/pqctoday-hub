@@ -304,7 +304,7 @@ describe('ComplianceView', () => {
       </MemoryRouter>
     )
     const exportButtons = screen.queryAllByRole('button', {
-      name: /Export audit-ready summary/i,
+      name: /Export learning worksheet/i,
     })
     expect(exportButtons.length).toBeGreaterThan(0)
   }, 15000)

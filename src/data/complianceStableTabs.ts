@@ -31,18 +31,25 @@ export type StableTab =
   | 'foryou'
   | 'cswp39'
 
-export const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
+export type ComplianceTabGroup = 'Understand' | 'Explore evidence' | 'Apply the lesson'
+
+export const STABLE_TABS: {
+  id: StableTab
+  label: string
+  icon: typeof Layers
+  group: ComplianceTabGroup
+}[] = [
   // RENAMED 2026-08-11: 'Obligations' overclaimed. Most rows here are
   // standards and certification schemes that merely APPLY — the tier system
   // exists precisely to separate those from the ones that bind — and the page
   // calls itself a reference, not a workspace. The id stays 'obligations' so
   // every ?tab= and #hash link already in the wild keeps resolving.
-  { id: 'obligations', label: 'Rules & Standards', icon: ShieldCheck },
-  { id: 'requirements', label: 'Requirements', icon: BookOpen },
-  { id: 'progress', label: 'Progress', icon: CalendarClock },
-  { id: 'products', label: 'Products', icon: PackageSearch },
-  { id: 'landscape', label: 'Landscape', icon: Layers },
-  { id: 'records', label: 'Product Records', icon: GlobeLock },
-  { id: 'foryou', label: 'For You', icon: Sparkles },
-  { id: 'cswp39', label: 'CSWP.39 Agility', icon: Workflow },
+  { id: 'obligations', label: 'Rules & Standards', icon: ShieldCheck, group: 'Understand' },
+  { id: 'requirements', label: 'Sources & Practices', icon: BookOpen, group: 'Understand' },
+  { id: 'progress', label: 'Progress', icon: CalendarClock, group: 'Understand' },
+  { id: 'products', label: 'Products', icon: PackageSearch, group: 'Explore evidence' },
+  { id: 'landscape', label: 'Landscape', icon: Layers, group: 'Explore evidence' },
+  { id: 'records', label: 'Product Records', icon: GlobeLock, group: 'Explore evidence' },
+  { id: 'foryou', label: 'For You', icon: Sparkles, group: 'Apply the lesson' },
+  { id: 'cswp39', label: 'CSWP.39 Agility', icon: Workflow, group: 'Apply the lesson' },
 ]

@@ -28,10 +28,7 @@ const PENDING: Record<string, string> = {}
  * Binding or scoped rows whose basis (the citation shown next to the binding label)
  * is approved but not yet in the data, with the reason. Entries go as the data lands.
  */
-const PENDING_BASIS: Record<string, string> = {
-  'E-ITS-ESTONIAN-INFORMATION-SEC':
-    'classified with the basis only in the decision note; evidence replaced since, so the basis is being re-checked',
-}
+const PENDING_BASIS: Record<string, string> = {}
 
 /** Latest compliance_MMDDYYYY[_rN].csv, by date and then revision. */
 function latestCompliance(): string {

@@ -43,7 +43,7 @@ describe('MobileComplianceView — deep-link PR 2', () => {
   it('?reqfw= alone opens Requirements on that framework', () => {
     const fw = complianceFrameworks[3]
     renderAt(`/compliance?reqfw=${encodeURIComponent(fw.id)}`)
-    pressed('Requirements')
+    pressed('Sources & Practices')
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(fw.label)
   })
 
@@ -94,7 +94,7 @@ describe('MobileComplianceView — deep-link PR 2', () => {
     usePersonaStore.setState({ selectedRegion: null })
     const fw = complianceFrameworks.find((f) => f.id === 'CNSA-2') ?? complianceFrameworks[0]
     renderAt(`/compliance?reqfw=${encodeURIComponent(fw.id)}`)
-    pressed('Requirements')
+    pressed('Sources & Practices')
     expect(screen.queryByText('Nothing in scope yet')).toBeNull()
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(fw.label)
     expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(
@@ -114,7 +114,7 @@ describe('MobileComplianceView — deep-link PR 2', () => {
     pressed('CSWP.39')
     const panel = screen.getByRole('region', { name: 'Linked evidence' })
     expect(panel).toHaveTextContent(reqs[0].sourceName)
-    expect(panel).toHaveTextContent(`${reqs.length} extracted requirement`)
+    expect(panel).toHaveTextContent(`${reqs.length} extracted practice`)
     expect(panel).toHaveTextContent('on a larger screen')
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(urlParams().get('evref')).toBeNull()

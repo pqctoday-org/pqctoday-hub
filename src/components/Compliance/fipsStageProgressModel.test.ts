@@ -130,6 +130,16 @@ describe('buildProductStageTimeline', () => {
     const { undated } = buildProductStageTimeline([p], certs, [], REF, '2025-01')
     expect(undated).toBe(1)
   })
+
+  it('never treats a Common Criteria evaluation as FIPS module validation', () => {
+    const p = product({ pqcCertified: 'yes' })
+    const certs = new Map([
+      ['p', [cert({ certType: 'Common Criteria', certId: 'CC1', pqcAlgorithms: 'ML-KEM' })]],
+    ])
+    const { points, undated } = buildProductStageTimeline([p], certs, [], REF, '2025-01')
+    expect(undated).toBe(1)
+    expect(at(points, '2026-09').certified).toBe(0)
+  })
 })
 
 describe('buildListingStageTrend', () => {

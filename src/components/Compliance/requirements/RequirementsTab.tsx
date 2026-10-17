@@ -82,8 +82,8 @@ export function RequirementsTab({
           <BookOpen size={24} className="mx-auto text-muted-foreground" />
           <p className="mt-2 text-sm font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Set a country and a sector on Rules & Standards, and the requirements behind each
-            instrument appear here.
+            Set a country and a sector on Rules & Standards, and the cited sources and extracted
+            practices behind each instrument appear here.
           </p>
         </div>
       </>
@@ -119,8 +119,8 @@ export function RequirementsTab({
                       </span>
                       <span className="mt-0.5 block text-[10.5px] font-normal text-muted-foreground">
                         {row.requirementCount > 0
-                          ? `${row.requirementCount} requirements · ${row.requirementSources.length} document${row.requirementSources.length === 1 ? '' : 's'}`
-                          : 'no extracted requirements'}
+                          ? `${row.requirementCount} extracted practices · ${row.requirementSources.length} document${row.requirementSources.length === 1 ? '' : 's'}`
+                          : 'no extracted practices'}
                       </span>
                     </span>
                   </Button>
@@ -137,13 +137,14 @@ export function RequirementsTab({
               <h3 className="text-base font-bold text-foreground">{selected.framework.label}</h3>
               <p className="mt-0.5 text-[11.5px] text-muted-foreground">{selected.reason}</p>
               <p className="mt-2 text-xs text-muted-foreground">
-                These requirements are extracted from the documents this instrument{' '}
-                <span className="font-semibold text-foreground">cites</span> — not from its own
-                text.
+                These practices are machine-extracted from documents this instrument{' '}
+                <span className="font-semibold text-foreground">cites</span> — not from its own text
+                and not automatically legal requirements. Verify the passage and primary instrument
+                before relying on them.
                 {docs.length > 0 && (
                   <>
                     {' '}
-                    {totalFor(docs)} requirement{totalFor(docs) === 1 ? '' : 's'} across{' '}
+                    {totalFor(docs)} extracted practice{totalFor(docs) === 1 ? '' : 's'} across{' '}
                     {docs.length} cited document{docs.length === 1 ? '' : 's'}.
                   </>
                 )}
@@ -155,7 +156,7 @@ export function RequirementsTab({
             <div className="rounded-xl border border-border bg-card p-6 text-center">
               <BookOpen size={22} className="mx-auto text-muted-foreground" />
               <p className="mt-2 text-sm font-semibold text-foreground">
-                No extracted requirements for this one
+                No extracted practices for this one
               </p>
               <p className="mx-auto mt-1 max-w-lg text-xs text-muted-foreground">
                 Nothing it cites has been through requirement extraction yet. That is a gap in our
@@ -202,7 +203,10 @@ export function RequirementsTab({
 
                   {/* The reason no percentage appears anywhere on this page. */}
                   <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                    extracted by {doc.extractionModel || 'unknown model'}
+                    <span className="mr-1.5 inline-flex rounded border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 font-sans font-semibold text-status-warning">
+                      Human review not recorded
+                    </span>
+                    machine-extracted by {doc.extractionModel || 'unknown model'}
                     {doc.extractionDate ? ` · ${doc.extractionDate}` : ''} · confidence{' '}
                     {doc.confidence}
                   </p>
@@ -215,7 +219,8 @@ export function RequirementsTab({
                         <span className="font-semibold text-foreground">
                           {doc.alsoCitedBy.join(', ')}
                         </span>{' '}
-                        — these are the same requirements, read through a different instrument.
+                        — these are the same extracted practices, read through a different
+                        instrument.
                       </span>
                     </p>
                   )}

@@ -58,37 +58,37 @@ interface PhaseMeta {
 const PHASE_META: Record<DeadlinePhase, PhaseMeta> = {
   active: {
     label: 'Active now',
-    blurb: 'Deadline has passed or is in effect — rotation is overdue.',
+    blurb: 'This date is in effect or has passed — verify implementation and evidence status.',
     Icon: ShieldAlert,
     className: 'border-status-error/40 bg-status-error/5 text-status-error',
   },
   imminent: {
     label: 'Imminent (≤ 12 months)',
-    blurb: 'Plan the cutover window now — certs issued today will straddle the deadline.',
+    blurb: 'If this source applies, ask whether certificates issued now would cross its date.',
     Icon: CalendarClock,
     className: 'border-status-warning/40 bg-status-warning/5 text-status-warning',
   },
   near: {
     label: 'Near term (1–2 yr)',
-    blurb: 'Pilot new algorithms in non-prod; budget for HSM firmware refresh.',
+    blurb: 'Practice identifying pilot, capacity and HSM-refresh questions for this time horizon.',
     Icon: Hourglass,
     className: 'border-status-warning/30 bg-status-warning/5 text-status-warning',
   },
   mid: {
     label: 'Mid term (3–5 yr)',
-    blurb: 'Strategy phase — pick crypto-agile patterns and standards bets.',
+    blurb: 'Compare crypto-agile patterns and the evidence needed to justify a standards choice.',
     Icon: Clock,
     className: 'border-primary/30 bg-primary/5 text-primary',
   },
   long: {
     label: 'Long term (5 yr+)',
-    blurb: 'Watch for revisions; nothing rotates yet.',
+    blurb: 'Watch for revisions; the date alone does not decide when a real fleet rotates.',
     Icon: Clock,
     className: 'border-border bg-card/30 text-muted-foreground',
   },
   ongoing: {
     label: 'Ongoing guidance',
-    blurb: 'Living guidance, no hard deadline — track revisions.',
+    blurb: 'Living guidance with no hard deadline — study how revisions change the example.',
     Icon: Clock,
     className: 'border-border bg-card/30 text-muted-foreground',
   },
@@ -193,7 +193,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       <div className="space-y-3">
         <ProfileEditor
           profile={profile}
-          message="Tell us where you operate — industry and country drive which compliance deadlines actually set your rotation clock."
+          message="Choose an industry and country to compare the dates associated with that educational scenario."
         />
         <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">

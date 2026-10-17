@@ -4,6 +4,8 @@ import {
   buildProductRows,
   coverageOf,
   isPqcCertificate,
+  pqcEvidenceKind,
+  pqcEvidenceLabel,
   summarizeCoverage,
   summarizeProduct,
 } from './productsModel'
@@ -43,6 +45,13 @@ describe('isPqcCertificate', () => {
   it('does not count an empty field', () => {
     expect(isPqcCertificate(cert({ pqcAlgorithms: '' }))).toBe(false)
   })
+
+  it('does not call a Common Criteria Security Target reference PQC validation', () => {
+    const cc = cert({ certType: 'Common Criteria', pqcAlgorithms: 'ML-KEM' })
+    expect(isPqcCertificate(cc)).toBe(false)
+    expect(pqcEvidenceKind(cc)).toBe('evaluated-claim')
+    expect(pqcEvidenceLabel(cc)).toMatch(/not algorithm validation/)
+  })
 })
 
 describe('coverageOf', () => {
@@ -67,6 +76,7 @@ describe('summarizeProduct', () => {
     ])
     expect(row.certificates).toHaveLength(1)
     expect(row.pqcCount).toBe(1)
+    expect(row.evaluatedClaimCount).toBe(0)
   })
 
   it('aggregates schemes with counts', () => {
@@ -97,6 +107,16 @@ describe('summarizeProduct', () => {
     expect(row.coverage).toBe('mixed')
     expect(row.pqcCount).toBe(1)
     expect(row.classicalCount).toBe(1)
+  })
+
+  it('reports evaluated PQC claims separately from classical and validated evidence', () => {
+    const row = summarizeProduct('p1', 'Product', [
+      cert({ certId: 'CC1', certType: 'Common Criteria', pqcAlgorithms: 'ML-DSA' }),
+    ])
+    expect(row.pqcCount).toBe(0)
+    expect(row.evaluatedClaimCount).toBe(1)
+    expect(row.classicalCount).toBe(0)
+    expect(row.coverage).toBe('none')
   })
 })
 

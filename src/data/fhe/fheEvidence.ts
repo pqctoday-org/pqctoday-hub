@@ -420,11 +420,11 @@ function transferLabel(r: EvidenceRecord, s: Scenario | undefined, stepId: strin
   return `transfer between ${devices.join(' and ')}`
 }
 
-/** Label for one step of a passing record. Never says "hardware" or "HSM-validated". */
+/** Label for one step of a passing record. Describes evidence, never certification. */
 export function stepLabel(r: EvidenceRecord, stepId: string): string {
   if (r.level === 'reference')
-    return `reference-validated (${r.library.name} ${r.library.version}${r.platformLabel ? `, ${r.platformLabel}` : ''})`
-  if (r.level === 'emulator') return 'token-validated · software token emulator'
+    return `reproduced reference run (${r.library.name} ${r.library.version}${r.platformLabel ? `, ${r.platformLabel}` : ''})`
+  if (r.level === 'emulator') return 'measured · software token emulator'
   const scenario = SCENARIO_CONTRACT.scenarios.find((s) => s.id === r.scenarioId)
   const part = r.parts?.find((p) => p.stepIds.includes(stepId))
   const base = part
@@ -482,7 +482,7 @@ const isFailover = (r: EvidenceRecord) => !!r.parts?.some((p) => p.failover)
 const BOARDS = new Set<EvidenceDevice>(['kv260', 'mx95', 'mx95-pro', 'ventuno-q'])
 
 /**
- * One line per scenario (owner 2026-10-03): "Validated on boards: … (software token)" from the
+ * One line per scenario: measured or reproduced evidence from the
  * best board run by device layout, else the reference runs, else null. Links to that run's
  * evidence. Never claims hardware-protected keys.
  */
@@ -520,7 +520,7 @@ export function scenarioValidation(
     ].filter(Boolean)
     const token = parts.some((p) => p.claimScope === 'board-software-token')
     return {
-      label: `Validated on boards: ${roles.join(', ')} (${token ? 'software token' : 'software-held keys'})`,
+      label: `Measured on boards: ${roles.join(', ')} (${token ? 'software token' : 'software-held keys'})`,
       url: board.artifacts[0].url,
       count: ok.length,
     }
@@ -530,7 +530,7 @@ export function scenarioValidation(
   const lib = `${refs[0].library.name} ${refs[0].library.version}`
   const platforms = [...new Set(refs.map((r) => r.platformLabel).filter(Boolean))]
   return {
-    label: `Validated by reference runs: ${lib}${platforms.length ? ` on ${platforms.join(' and ')}` : ''}`,
+    label: `Reproduced in reference runs: ${lib}${platforms.length ? ` on ${platforms.join(' and ')}` : ''}`,
     url: refs[0].artifacts[0].url,
     count: ok.length,
   }

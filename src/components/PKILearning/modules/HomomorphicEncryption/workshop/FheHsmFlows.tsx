@@ -120,9 +120,16 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Scenario selector */}
-      <div className="glass-panel p-3">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {FHE_HSM_FLOWS.map((f, i) => (
+      <div className="glass-panel p-3 space-y-3">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Start with a custody pattern</p>
+          <p className="text-xs text-muted-foreground">
+            Compare CKKS and TFHE first. Open the specialist scenarios only when your design needs
+            threshold custody, transciphering, rotation or placement detail.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {FHE_HSM_FLOWS.slice(0, 2).map((f, i) => (
             <Button
               key={f.id}
               variant="ghost"
@@ -145,6 +152,38 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
             </Button>
           ))}
         </div>
+        <details open={idx >= 2}>
+          <summary className="cursor-pointer text-xs font-semibold text-primary">
+            Specialist comparisons ({FHE_HSM_FLOWS.length - 2})
+          </summary>
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {FHE_HSM_FLOWS.slice(2).map((f, offset) => {
+              const i = offset + 2
+              return (
+                <Button
+                  key={f.id}
+                  variant="ghost"
+                  size="tile"
+                  onClick={() => selectFlow(i)}
+                  className={`rounded-md border p-2 text-left transition-colors h-auto block ${
+                    i === idx
+                      ? `${f.borderClass} ${f.bgClass}`
+                      : 'border-border bg-card/40 hover:bg-card'
+                  }`}
+                >
+                  <div
+                    className={`text-xs sm:text-sm font-bold ${i === idx ? f.colorClass : 'text-foreground'}`}
+                  >
+                    {f.label}
+                  </div>
+                  <div className="hidden sm:block text-[10px] text-muted-foreground mt-0.5 font-mono">
+                    {f.tileHint}
+                  </div>
+                </Button>
+              )
+            })}
+          </div>
+        </details>
       </div>
 
       <div className={`glass-panel p-3 sm:p-5 space-y-4 border ${flow.borderClass}`}>
@@ -303,6 +342,18 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
           </p>
         )}
 
+        <div
+          className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground"
+          aria-live="polite"
+        >
+          <strong className="text-foreground">What your choices mean: </strong>
+          viewing step {step + 1}, “{current.title}”. The quantum-risk overlay is{' '}
+          {overlay ? 'on' : 'off'}; migration fixes are {pqcFixed ? 'applied' : 'not applied'}.
+          Clear results go to{' '}
+          {shared && canShare ? 'the owner and an approved third party' : 'the data owner only'}.
+          The third party {persisted ? 'stores its copy at rest' : 'keeps its copy in memory only'}.
+        </div>
+
         {/* Sequence diagram */}
         <div className="rounded-lg border border-border bg-card/40 p-2 sm:p-3 overflow-hidden">
           {/* Swimlane diagram from md up; below that a compact step list so nothing shrinks
@@ -316,8 +367,27 @@ export const FheHsmFlows: React.FC<FheHsmFlowsProps> = ({ initialFlowId }) => {
               pqcFixed={pqcFixed}
               persisted={persisted}
               shared={shared}
-              onSelect={openDetail}
             />
+            <div
+              className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4"
+              role="group"
+              aria-label="Choose a flow step"
+            >
+              {flow.steps.map((flowStep, index) => (
+                <Button
+                  key={flowStep.id}
+                  type="button"
+                  variant={index === step ? 'default' : 'outline'}
+                  size="sm"
+                  aria-pressed={index === step}
+                  onClick={() => openDetail(index)}
+                  className="h-auto min-w-0 justify-start whitespace-normal py-2 text-left text-xs"
+                >
+                  <span className="mr-1 font-mono">{index + 1}.</span>
+                  {flowStep.title}
+                </Button>
+              ))}
+            </div>
           </div>
           <div className="md:hidden">
             <CompactStepList
@@ -695,9 +765,9 @@ export const EvidenceLine: React.FC<{ flow: FheFlow; step: FlowStep }> = ({ flow
   }
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-      <span className="text-muted-foreground">Validated:</span>
+      <span className="text-muted-foreground">Evidence:</span>
       {found.length === 0 ? (
-        <span className="text-muted-foreground">not yet (no signed evidence for this step)</span>
+        <span className="text-muted-foreground">not yet measured in a signed record</span>
       ) : (
         found.map((v) => (
           <Button
@@ -1175,8 +1245,7 @@ const SequenceDiagram: React.FC<{
   pqcFixed: boolean
   persisted: boolean
   shared: boolean
-  onSelect: (i: number) => void
-}> = ({ flow, costs, step, overlay, pqcFixed, persisted, shared, onSelect }) => {
+}> = ({ flow, costs, step, overlay, pqcFixed, persisted, shared }) => {
   const cols = holdingColumns(flow)
   const n = cols.length
   const spacing = (LANES_W - 2 * MARGIN_X) / Math.max(1, n - 1)
@@ -1605,28 +1674,6 @@ const SequenceDiagram: React.FC<{
             </motion.g>
           )
         })}
-        {/* Click / keyboard targets: one full-width row per step */}
-        {flow.steps.map((s, i) => (
-          <rect
-            key={`hit-${flow.id}-${i}`}
-            x={0}
-            y={ys[i] - ROW_H / 2} // eslint-disable-line security/detect-object-injection
-            width={VB_W}
-            height={ROW_H}
-            rx={4}
-            role="button"
-            tabIndex={0}
-            aria-label={`Step ${i + 1}: ${s.title}. Open details`}
-            className="fill-transparent hover:fill-primary/5 focus-visible:fill-primary/10 cursor-pointer outline-none"
-            onClick={() => onSelect(i)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onSelect(i)
-              }
-            }}
-          />
-        ))}
       </svg>
     </MotionConfig>
   )

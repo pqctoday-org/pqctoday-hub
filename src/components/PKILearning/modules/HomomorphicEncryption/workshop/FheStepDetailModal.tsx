@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useModalPosition } from '@/hooks/useModalPosition'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { LINK_LABELS, type FheFlow } from '../data/fheHsmFlows'
 import { EngineStatusLine, EvidenceLine, HoldingsList, StepRef } from './FheHsmFlows'
 import {
@@ -84,6 +85,7 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
   useOverlayEscape(open, onClose)
+  const focusTrapRef = useFocusTrap(open)
 
   const step = flow.steps[index] // eslint-disable-line security/detect-object-injection
   const name = (id: string) => flow.actors.find((a) => a.id === id)?.label ?? id
@@ -118,6 +120,7 @@ export const FheStepDetailModal: React.FC<FheStepDetailModalProps> = ({
             style={isEmbedded ? undefined : { zIndex: 9999 }}
           >
             <motion.div
+              ref={focusTrapRef}
               initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}

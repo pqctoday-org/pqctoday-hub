@@ -31,11 +31,11 @@ export function LearningFrameBanner() {
       <Library size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary mr-2">
-          Reference
+          Educational reference
         </span>
         <span className="text-sm text-foreground">
-          A catalog of standards, certifications, and regulations governing PQC. Use it to find what
-          applies to your context — not as a workspace.
+          Learn how standards, certification evidence, and regulatory sources relate to PQC. This is
+          not a GRC system, legal advice, an applicability decision, or proof of compliance.
         </span>
       </div>
       <span className="text-[10px] uppercase tracking-[0.06em] text-muted-foreground whitespace-nowrap shrink-0 self-center">
