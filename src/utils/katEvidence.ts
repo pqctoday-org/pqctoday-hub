@@ -84,7 +84,7 @@ const ACTION_LABEL: Record<KatEvidenceClass, string> = {
   'functional-round-trip': 'Run functional tests',
   'oasis-profile-case': 'Run OASIS profile cases',
   'product-mechanism-probe': 'Run product probes',
-  'unverified-provenance': 'Run validation tests',
+  'unverified-provenance': 'Run known-answer checks',
 }
 
 /**
@@ -98,7 +98,7 @@ export function katActionLabel(specs: readonly Pick<KatTestSpec, 'kind'>[]): str
     const label = ACTION_LABEL[only]
     return specs.length === 1 ? label.replace(/s$/, '') : label
   }
-  return 'Run validation tests'
+  return 'Run known-answer checks'
 }
 
 /** Distinct evidence classes in a spec set, in a stable display order. */

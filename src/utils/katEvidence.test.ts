@@ -225,7 +225,7 @@ describe('katEvidence classification (generated from the manifest + registry)', 
     expect(katActionLabel([decap])).toBe('Run reference sample')
     expect(katActionLabel([decap, decap])).toBe('Run reference samples')
     expect(katActionLabel([rt])).toBe('Run functional test')
-    expect(katActionLabel([decap, rt])).toBe('Run validation tests')
+    expect(katActionLabel([decap, rt])).toBe('Run known-answer checks')
     expect(katActionLabel([{ kind: { type: 'aeskw-wrap' } }])).toBe('Run standard KAT')
   })
 })

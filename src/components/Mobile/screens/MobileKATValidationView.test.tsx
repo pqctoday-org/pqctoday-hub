@@ -64,7 +64,7 @@ describe('MobileKATValidationView', () => {
     const tile = screen.getByText('ML-KEM-512').closest('div')!
     fireEvent.click(
       Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
-        b.textContent?.includes('Run validation tests')
+        b.textContent?.includes('Run known-answer checks')
       )!
     )
     await waitFor(() => expect(mockRunKAT).toHaveBeenCalled())
@@ -97,7 +97,7 @@ describe('MobileKATValidationView', () => {
     const tile = screen.getByText('ML-KEM-512').closest('div')!
     fireEvent.click(
       Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
-        b.textContent?.includes('Run validation tests')
+        b.textContent?.includes('Run known-answer checks')
       )!
     )
     const counts = await screen.findByTestId('kat-counts')

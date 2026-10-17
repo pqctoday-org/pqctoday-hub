@@ -6,7 +6,7 @@
  * tests and displays results inline. Each row carries the evidence class of
  * its expected value (derived from the vector file's provenance by
  * katEvidence.ts), and the run button names that class only when every spec
- * shares it — a mixed set gets the neutral "Run validation tests".
+ * shares it — a mixed set gets the neutral "Run known-answer checks".
  */
 import { useState } from 'react'
 import { ShieldCheck, Loader2, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
