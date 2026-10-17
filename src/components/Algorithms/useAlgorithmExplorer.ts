@@ -28,12 +28,7 @@ import {
   type AlgorithmFilterKey,
   type AlgorithmTabId,
 } from '../../data/personaConfig'
-import {
-  FUNCTION_ITEMS,
-  STATUS_ITEMS,
-  REGION_ITEMS,
-  CRYPTO_FAMILY_ITEMS,
-} from './algorithmFilterOptions'
+import { filterValueLabel } from './algorithmFilterOptions'
 import {
   algoMatchesHighlight,
   findTransitionRows,
@@ -156,23 +151,6 @@ const FILTER_KEY_NAMES: Record<AlgorithmFilterKey, string> = {
   level: 'level',
   region: 'region',
   status: 'maturity',
-}
-
-/** The dropdown's own label for a filter value (falls back to the raw value). */
-export function filterValueLabel(key: AlgorithmFilterKey, value: string): string {
-  const items =
-    key === 'family'
-      ? CRYPTO_FAMILY_ITEMS
-      : key === 'fn'
-        ? FUNCTION_ITEMS
-        : key === 'region'
-          ? REGION_ITEMS
-          : key === 'status'
-            ? STATUS_ITEMS
-            : null
-  if (value === 'All') return 'All'
-  if (key === 'level') return `Level ${value}`
-  return items?.find((i) => i.id === value)?.label ?? value
 }
 
 /** Every filter that can hide an algorithm/transition row. */
@@ -483,6 +461,7 @@ export function useAlgorithmExplorer(
   //     ?quickview=none ("Everything"), which means no preset at all, so the
   //     same link shows the same rows whatever role the reader picked. ---
   const roleFilterDefault = (key: AlgorithmFilterKey): string | undefined =>
+    // eslint-disable-next-line security/detect-object-injection -- key is a typed union
     searchParams.get('quickview') === 'none' ? undefined : personaDefaults.filters[key]
   const [filterCryptoFamily, setFilterCryptoFamily] = useState(
     () => searchParams.get('family') || roleFilterDefault('family') || 'All'
@@ -727,6 +706,7 @@ export function useAlgorithmExplorer(
   // a reload or shared link does not bring the role default back.
   const keepAllFor = useCallback(
     (key: AlgorithmFilterKey): readonly string[] => {
+      // eslint-disable-next-line security/detect-object-injection -- key is a typed union
       const def = personaDefaults.filters[key]
       return def && def !== 'All' ? [key] : []
     },

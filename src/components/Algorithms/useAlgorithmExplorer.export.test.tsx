@@ -24,9 +24,9 @@ const wrapperFor =
 
 async function explorer(url: string, persona: Parameters<typeof getAlgorithmDefaults>[0]) {
   const defaults = getAlgorithmDefaults(persona)
-  const hook = renderHook(() => useAlgorithmExplorer(defaults), { wrapper: wrapperFor(url) })
-  await waitFor(() => expect(hook.result.current.isLoading).toBe(false))
-  return hook
+  const view = renderHook(() => useAlgorithmExplorer(defaults), { wrapper: wrapperFor(url) })
+  await waitFor(() => expect(view.result.current.isLoading).toBe(false))
+  return view
 }
 
 beforeEach(() => {
