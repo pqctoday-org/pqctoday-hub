@@ -55,6 +55,10 @@ The KMIP protocol workshop now runs its own local engine with a real audit trail
 - **Certification lessons match the current validation boundaries** [view:/learn/acvp-lab-workflow] [view:/learn/fips-140-3-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: ACVP response artifacts distinguish local demonstrations from NIST submissions, FIPS level planning no longer turns physical-security examples into automatic level claims, and Common Criteria/EUCC exercises distinguish assurance claims, national certification and scheme recognition.
 - **Workshop controls and results stay inside phone layouts** [view:/playground] [view:/algorithms] [persona:developer] [persona:cert-engineer] [persona:ops]: long workshop titles and methodology controls wrap without shifting the page sideways, KMIP inspector actions wrap, and mobile KAT cards show their explanatory result instead of only a pass icon.
 
+### Data
+
+- **Algorithm statuses match the latest standards news** [view:/algorithms] [persona:architect] [persona:developer] [persona:researcher] [persona:ops]: the TLS hybrid key exchanges (X25519MLKEM768 and its P-256/P-384 siblings) are shown as published in RFC 10024 and the SSH hybrids as RFC 10042; HAWK, withdrawn by its authors in July 2026, is no longer listed as an active candidate; and FrodoKEM-640 and two Classic McEliece parameter sets no longer claim a BSI recommendation they do not have.
+
 ## [4.162.0] - 2026-10-16
 
 Each role now starts from its own questions and downloads (including a new operations pack for IT Ops), beginner pages keep their qualifiers, Library labels say what stage a document is at and how far to trust it, and 20 new certificates join the certification records. The Terms of Service now cover the website only.
