@@ -8,8 +8,16 @@
  */
 import { ATTACK_PROFILES, type AlgorithmAttackProfile } from '@/data/implementationAttackProfiles'
 
-/** Lowercase alphanumerics only — 'ML-KEM-768' and 'ml-kem-768' compare equal. */
-const squash = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+/**
+ * Lowercase alphanumerics only — 'ML-KEM-768' and 'ml-kem-768' compare equal.
+ * '+' is spelled out first so 'NTRU+' ('ntruplus') stays distinct from plain
+ * 'NTRU' and 'NTRU Prime' instead of collapsing to the same key.
+ */
+const squash = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/\+/g, 'plus')
+    .replace(/[^a-z0-9]/g, '')
 
 /** Stable anchor id for a profile: kebab slug of its display name. */
 export function attackProfileId(profile: { algorithm: string }): string {
