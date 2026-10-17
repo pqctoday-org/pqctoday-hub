@@ -32,6 +32,11 @@ export function HardwareBenchmarkEvidence() {
           key generation, verification, encapsulation, or a promise about another product. The
           highlighted KV260 SLH-DSA-SHAKE rows used FPGA fabric; its ML-DSA rows used Arm software.
         </p>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Measurement window: 2 s per measurement after a 0.5 s warm-up, with at least 20
+          operations. The M4 Pro ran inside a bench container with about 18% background CPU load.
+          Each cell is one reported value; no run-to-run spread is recorded for these figures.
+        </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-xs">
             <caption className="sr-only">
@@ -51,7 +56,11 @@ export function HardwareBenchmarkEvidence() {
               {LEARNING_ROWS.map((row) => {
                 const fpga = KV260_FPGA_ROWS.includes(row.algorithm)
                 return (
-                  <tr key={row.algorithm} className="border-b border-border/60 last:border-0">
+                  <tr
+                    key={row.algorithm}
+                    className={`border-b border-border/60 last:border-0 ${fpga ? 'bg-primary/10' : ''}`}
+                    data-kv260-fpga={fpga ? 'true' : undefined}
+                  >
                     <th scope="row" className="px-2 py-2 font-medium text-foreground">
                       {row.algorithm}
                     </th>
@@ -64,7 +73,9 @@ export function HardwareBenchmarkEvidence() {
                     <td className="px-2 py-2 text-right tabular-nums">
                       {row.ops.kv260.toLocaleString()}
                     </td>
-                    <td className="px-2 py-2">{fpga ? 'FPGA' : 'Arm CPU'}</td>
+                    <td className={`px-2 py-2 ${fpga ? 'font-semibold text-foreground' : ''}`}>
+                      {fpga ? 'FPGA (highlighted)' : 'Arm CPU'}
+                    </td>
                   </tr>
                 )
               })}
